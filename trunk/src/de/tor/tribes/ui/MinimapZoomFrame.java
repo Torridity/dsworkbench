@@ -38,16 +38,18 @@ public class MinimapZoomFrame extends javax.swing.JFrame {
     public void update(BufferedImage bImage, int dx, int dy) {
         if (isVisible()) {
             BufferStrategy bs = getBufferStrategy();
-            Graphics2D g2d = (Graphics2D) bs.getDrawGraphics();
-            g2d.setColor(new Color(35, 125, 0));
-            g2d.fillRect(0, 0, getWidth(), getHeight());
+            if (bs != null) {
+                Graphics2D g2d = (Graphics2D) bs.getDrawGraphics();
+                g2d.setColor(new Color(35, 125, 0));
+                g2d.fillRect(0, 0, getWidth(), getHeight());
 
-            g2d.drawImage(bImage, null, dx, dy);
-            if (mBorder != null) {
-                g2d.drawImage(mBorder, null, 0, 0);
+                g2d.drawImage(bImage, null, dx, dy);
+                if (mBorder != null) {
+                    g2d.drawImage(mBorder, null, 0, 0);
+                }
+                g2d.dispose();
+                bs.show();
             }
-            g2d.dispose();
-            bs.show();
         }
     }
 

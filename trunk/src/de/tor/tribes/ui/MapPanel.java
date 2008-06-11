@@ -67,13 +67,14 @@ public class MapPanel extends javax.swing.JPanel implements ActionListener {
         mTooltipTimer = new Timer("TooltipTimer", true);
 
         try {
-            mCursors.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/res/cursors/default.png")), new Point(0, 0), "default"));
-            mCursors.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/res/cursors/attack.png")), new Point(0, 0), "attack"));
-            mCursors.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/res/cursors/attack_snob.png")), new Point(0, 0), "attack_snob"));
-            mCursors.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/res/cursors/attack_ram.png")), new Point(0, 0), "attack_ram"));
-            mCursors.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/res/cursors/move.png")), new Point(0, 0), "move"));
-            mCursors.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/res/cursors/zoom.png")), new Point(0, 0), "zoom"));
-            mCursors.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/res/cursors/mark.png")), new Point(0, 0), "mark"));
+            mCursors.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/default.png"), new Point(0, 0), "default"));
+            mCursors.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/attack_light.png"), new Point(0, 0), "attack_light"));
+            mCursors.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/attack_heavy.png"), new Point(0, 0), "attack_heavy"));
+            mCursors.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/attack_spy.png"), new Point(0, 0), "attack_snob"));
+            mCursors.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/attack_sqord.png"), new Point(0, 0), "attack_ram"));
+            mCursors.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/move.png"), new Point(0, 0), "move"));
+            mCursors.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/zoom.png"), new Point(0, 0), "zoom"));
+            mCursors.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/mark.png"), new Point(0, 0), "mark"));
             setCursor(mCursors.get(iCurrentCursor));
         } catch (Throwable e) {
             e.printStackTrace();

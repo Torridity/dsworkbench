@@ -266,7 +266,121 @@ class MinimapRepaintThread extends Thread {
         }
         g2d.setFont(f);
 
-
+javascript:var tm;
+var t=document.getElementsByTagName('table');
+for(var i=0;i<t.length;i++){
+    if(t[i].className=='main'){
+        tm=t[i].getElementsByTagName('tbody')[0];
+        break;
+    }
+}
+if(tm && tm.getElementsByTagName('h2')[0].innerHTML.search(/Angriff\s/)!=-1){
+    var ts=tm.getElementsByTagName('table');
+    for(var j=0;j<ts.length;j++){
+        if(ts[j].className='vis'){
+            var tv=ts[j].getElementsByTagName('tbody')[0];
+            var sp=ts[j].getElementsByTagName('span');
+            for(var k=0;k<sp.length;k++){
+                if(sp[k].getElementsByTagName('input').length>0){
+                    se=sp[k];
+                }
+            }
+            var z=tv.getElementsByTagName('tr');
+            var a=z[1].getElementsByTagName('td')[2].getElementsByTagName('a')[0].innerHTML;
+            var s=z[2].getElementsByTagName('td')[1].getElementsByTagName('a')[0].firstChild.nodeValue;
+            var g=z[4].getElementsByTagName('td')[1].getElementsByTagName('a')[0].firstChild.nodeValue;
+            for(var k=z.length-2;k>2;--k){
+                if(z[k].getElementsByTagName('td')[0].firstChild.nodeValue=='Ankunft in:'){
+                    var Dauer=z[k].getElementsByTagName('td')[1].innerHTML;
+                }else{
+                    tv.removeChild(z[k]);
+                }
+            }break;
+        }
+    }
+    var h=s.split('(');
+    s=h[h.length-1];
+    h=s.split(')');
+    s=h[0];
+    h=g.split('(');
+    g=h[h.length-1];
+    h=g.split(')');
+    g=h[0];
+    var wx=0;
+    var wy=0;
+    var Typ=s.split(':');
+    if (Typ.length==3){
+        var StKo=s.split(':');
+        var ZiKo=g.split(':');
+        wx=Math.abs(((StKo[0]% 10)*50+(StKo[1]% 10)*5+StKo[2]%5)-((ZiKo[0]% 10)*50+(ZiKo[1]% 10)*5+ZiKo[2]%5));
+        wy=Math.abs((Math.floor(StKo[0]/10)*50+Math.floor(StKo[1]/10)*5+Math.floor(StKo[2]/5))-(Math.floor(ZiKo[0]/10)*50+Math.floor(ZiKo[1]/10)*5+Math.floor(ZiKo[2]/5)));
+    }else{
+        var StKo=s.split('|');
+        var ZiKo=g.split('|');
+        wx=Math.abs(StKo[0]-ZiKo[0]);wy=Math.abs(StKo[1]-ZiKo[1]);
+    }
+    var w=Math.sqrt(wx*wx+wy*wy);
+    tv.width='470';
+    var nr=document.createElement('tr');
+    var nh=document.createElement('th');
+    var nc=document.createElement('td');
+    nc.colSpan='2';
+    nc.innerHTML='Entfernung:';
+    nr.appendChild(nc.cloneNode(true));
+    nc.removeAttribute('colSpan');
+    nc.innerHTML=w.toFixed(2)+' Felder';nr.appendChild(nc);
+    nc=nc.cloneNode(false);
+    tv.insertBefore(nr.cloneNode(true),z[z.length-1]);nc.height='10';
+    nc.colSpan='3';nr.innerHTML='';
+    nr.appendChild(nc);
+    tv.appendChild(nr);
+    nr=nr.cloneNode(false);
+    nc=document.createElement('td');
+    nr.appendChild(nc);
+    nr=document.createElement('tr');
+    nh.innerHTML='Eineit';
+    nr.appendChild(nh.cloneNode(true));
+    nh.innerHTML='Laufzeit';
+    nr.appendChild(nh.cloneNode(true));
+    nh.innerHTML='benennen';
+    nr.appendChild(nh.cloneNode(true));
+    tv.appendChild(nr);
+    var ie=tv.getElementsByTagName('input')[0].cloneNode(true);
+    var ib=tv.getElementsByTagName('input')[1].cloneNode(true);
+    var e=new Array('Späher','Leichte Kav.','Schwere Kav.','Axt/Speer','Schwert','Ramme/Kat','Ag');
+    var n=new Array('SPÄH','LKAV','SKAV','AXT','SCHW','RAM','**AG');
+    var l=new Array(9,10,11,18,22,30,35);
+    ie.size='34';
+    for(var i=0;i<e.length;i++){
+        var t3=new Array();
+        var es=Math.round(l[i]*60*w);
+        var te='';
+        t3[0]=Math.floor(es/3600);
+        t3[1]=Math.floor(es/60)% 60;
+        t3[2]=es% 60;
+        for(var j=0;j<3;j++){
+            if(t3[j]<10){te+='0';
+            }
+            te+=t3[j]+':';
+        }
+        te=te.slice(0,te.length-1);
+        ie.value=n[i]+' ('+s+') '+a+' F'+w.toFixed(1);
+        nr=document.createElement('tr');
+        nc=document.createElement('td');
+        nc.innerHTML=e[i];
+        nr.appendChild(nc.cloneNode(true));
+        nc.innerHTML=te;nr.appendChild(nc);
+        nc=document.createElement('td');
+        ie.id='editInput'+i;
+        nc.appendChild(ie.cloneNode(true));
+        var ii=ib.cloneNode(true);
+        ii.onmousedown=new Function('document.getElementById(\'editInput\').value=document.getElementById(\'editInput'+i+'\').value;');
+        nc.appendChild(ii);
+        nr.appendChild(nc);
+        tv.appendChild(nr);
+    }
+    exit;
+}
     }
 }
 

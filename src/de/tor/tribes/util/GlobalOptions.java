@@ -13,10 +13,15 @@ import de.tor.tribes.io.DataHolderListener;
 import de.tor.tribes.io.WorldDataHolder;
 import de.tor.tribes.io.WorldDecorationHolder;
 import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Point;
+import java.awt.Toolkit;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.Hashtable;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Properties;
 
 /**Global settings used by almost all components. e.g. WorldData or UI specific objects
@@ -24,6 +29,20 @@ import java.util.Properties;
  */
 public class GlobalOptions {
 
+    //mappanel default
+    public static int CURSOR_DEFAULT = 0;
+    public static int CURSOR_MARK = 1;
+    //mappanel attack
+    public static int CURSOR_ATTACK_RAM = 2;
+    public static int CURSOR_ATTACK_AXE = 3;
+    public static int CURSOR_ATTACK_SNOB = 4;
+    public static int CURSOR_ATTACK_SPY = 5;
+    public static int CURSOR_ATTACK_SWORD = 6;
+    public static int CURSOR_ATTACK_LIGHT = 7;
+    public static int CURSOR_ATTACK_HEAVY = 8;
+    //minimap
+    public static int CURSOR_MOVE = 9;
+    public static int CURSOR_ZOOM = 10;
     private static boolean INITIALIZED = false;
     /**Active skin used by the MapPanel*/
     private static Skin mSkin;
@@ -35,6 +54,7 @@ public class GlobalOptions {
     private static String SELECTED_SERVER = "de12";
     private static DataHolderListener mListener;
     private static Properties GLOBAL_PROPERTIES = null;
+    private static List<Cursor> CURSORS = null;
 
     /**Init all managed objects
      * @param pDownloadData TRUE=download the WorldData from the tribes server
@@ -47,6 +67,7 @@ public class GlobalOptions {
         INITIALIZED = true;
         mListener = pListener;
         loadProperties();
+        loadCursors();
         loadSkin();//"/res/skins/symbol"
         loadMarkers();
         loadDecoration();
@@ -78,6 +99,33 @@ public class GlobalOptions {
 
     public static String getProperty(String pKey) {
         return GLOBAL_PROPERTIES.getProperty(pKey);
+    }
+
+    private static void loadCursors() throws Exception {
+        CURSORS = new LinkedList<Cursor>();
+        try {
+            //default map panel cursors 
+            CURSORS.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/default.png"), new Point(0, 0), "default"));
+            CURSORS.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/mark.png"), new Point(0, 0), "mark"));
+            //map panel cursors for attack purposes
+            CURSORS.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/attack_sword.png"), new Point(0, 0), "attack_ram"));
+            CURSORS.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/attack_axe.png"), new Point(0, 0), "attack_axe"));
+            CURSORS.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/attack_snob.png"), new Point(0, 0), "attack_snob"));
+            CURSORS.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/attack_spy.png"), new Point(0, 0), "attack_spy"));
+            CURSORS.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/attack_sword.png"), new Point(0, 0), "attack_sword"));
+            CURSORS.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/attack_light.png"), new Point(0, 0), "attack_light"));
+            CURSORS.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/attack_heavy.png"), new Point(0, 0), "attack_heavy"));
+            //minimap cursors
+            CURSORS.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/move.png"), new Point(0, 0), "move"));
+            CURSORS.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/zoom.png"), new Point(0, 0), "zoom"));
+
+        } catch (Throwable e) {
+            throw new Exception("Fehler beim laden der Cursor");
+        }
+    }
+
+    public static Cursor getCursor(int pID) {
+        return CURSORS.get(pID);
     }
 
     /**Load the default skin

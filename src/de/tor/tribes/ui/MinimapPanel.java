@@ -7,15 +7,17 @@ package de.tor.tribes.ui;
 
 import de.tor.tribes.types.Village;
 import de.tor.tribes.util.GlobalOptions;
+import java.awt.AlphaComposite;
 import java.awt.Color;
+import java.awt.Composite;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
 /**
@@ -73,9 +75,9 @@ public class MinimapPanel extends javax.swing.JPanel {
             }
 
             public void mouseMoved(MouseEvent e) {
-                mZoomFrame.setLocation(e.getPoint());
-                int x = (int)Math.rint((double)1000 / (double)getWidth() * (double)e.getX());
-                int y = (int)Math.rint((double)1000 / (double)getHeight() * (double)e.getY());
+                mZoomFrame.setLocation(0,0);
+                int x = (int) Math.rint((double) 1000 / (double) getWidth() * (double) e.getX());
+                int y = (int) Math.rint((double) 1000 / (double) getHeight() * (double) e.getY());
                 mZoomFrame.updatePosition(x, y);
             }
         });
@@ -236,6 +238,35 @@ class MinimapRepaintThread extends Thread {
                 }
             }
         }
+        g2d.setColor(Color.BLACK);
+        Composite c = g2d.getComposite();
+        Composite a = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f);
+        Font f = g2d.getFont();
+        Font t = new Font("Serif", Font.BOLD, 30);
+        g2d.setFont(t);
+
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 10; j++) {
+                g2d.setComposite(a);
+                String conti = "K" + (i * 10 + j);
+                Rectangle2D bounds = g2d.getFontMetrics(t).getStringBounds(conti, g2d);
+
+                g2d.drawString(conti, (int) Math.rint(i * 100 + 50 - bounds.getWidth() / 2), (int) Math.rint(j * 100 + 80 - bounds.getHeight() / 2));
+                g2d.setComposite(c);
+                int wk = 100;
+                int hk = 100;
+                if (i == 9) {
+                    wk = 99;
+                }
+                if (j == 9) {
+                    hk = 99;
+                }
+                g2d.drawRect(i * 100, j * 100, wk, hk);
+            }
+        }
+        g2d.setFont(f);
+
+
     }
 }
 

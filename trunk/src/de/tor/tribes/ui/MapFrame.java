@@ -69,8 +69,12 @@ public class MapFrame extends javax.swing.JFrame implements DataHolderListener {
         jPanel1.add(mPanel);
         mMiniPanel = new MinimapPanel(this);
         jMinimapPanel.add(mMiniPanel);
-        jMarkerList.setModel(new MarkerListModel());
-        jMarkerList.setCellRenderer(new MarkerListCellRenderer());
+        /*RankingFrame rf = new RankingFrame();
+        long s = System.currentTimeMillis();
+        rf.buildRanking();
+        System.out.println("Dur " + (System.currentTimeMillis() - s));
+        rf.setVisible(true);*/
+        
         mIcons = new LinkedList<ImageIcon>();
         mIcons.add(new ImageIcon(this.getClass().getResource("/res/forbidden.gif")));
         mIcons.add(new ImageIcon(this.getClass().getResource("/res/holz.png")));
@@ -134,10 +138,11 @@ public class MapFrame extends javax.swing.JFrame implements DataHolderListener {
         jZoomInButton = new javax.swing.JButton();
         jZoomOutButton = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jMarkerList = new javax.swing.JList();
-        jRemoveMarkerButton = new javax.swing.JButton();
-        jAddMarkerButton = new javax.swing.JButton();
+        jLabel5 = new javax.swing.JLabel();
+        jSearchTerm = new javax.swing.JTextField();
+        jSearchPlayer = new javax.swing.JCheckBox();
+        jSearchAlly = new javax.swing.JCheckBox();
+        jButton4 = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
         jVillageInfo = new javax.swing.JLabel();
         jPlayerInfo = new javax.swing.JLabel();
@@ -395,7 +400,7 @@ public class MapFrame extends javax.swing.JFrame implements DataHolderListener {
                                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                                 .add(jCenterY, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                             .add(jRefresh, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                .addContainerGap(22, Short.MAX_VALUE))
+                .addContainerGap(59, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -430,28 +435,20 @@ public class MapFrame extends javax.swing.JFrame implements DataHolderListener {
                 .addContainerGap(41, Short.MAX_VALUE))
         );
 
-        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Markierungen"));
+        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Suche"));
 
-        jMarkerList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        jScrollPane1.setViewportView(jMarkerList);
+        jLabel5.setText("Suchbegriff");
 
-        jRemoveMarkerButton.setText("-");
-        jRemoveMarkerButton.setMaximumSize(new java.awt.Dimension(23, 23));
-        jRemoveMarkerButton.setMinimumSize(new java.awt.Dimension(23, 23));
-        jRemoveMarkerButton.setPreferredSize(new java.awt.Dimension(23, 23));
-        jRemoveMarkerButton.addMouseListener(new java.awt.event.MouseAdapter() {
+        jSearchPlayer.setSelected(true);
+        jSearchPlayer.setText("Spieler");
+
+        jSearchAlly.setSelected(true);
+        jSearchAlly.setText("Stämme");
+
+        jButton4.setText("Suchen");
+        jButton4.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireModifyMarkersEvent(evt);
-            }
-        });
-
-        jAddMarkerButton.setText("+");
-        jAddMarkerButton.setMaximumSize(new java.awt.Dimension(23, 23));
-        jAddMarkerButton.setMinimumSize(new java.awt.Dimension(23, 23));
-        jAddMarkerButton.setPreferredSize(new java.awt.Dimension(23, 23));
-        jAddMarkerButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireModifyMarkersEvent(evt);
+                fireDoSearchEvent(evt);
             }
         });
 
@@ -459,25 +456,33 @@ public class MapFrame extends javax.swing.JFrame implements DataHolderListener {
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel3Layout.createSequentialGroup()
+            .add(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false)
-                    .add(jRemoveMarkerButton, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(jAddMarkerButton, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 45, Short.MAX_VALUE))
-                .addContainerGap())
+                .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(jPanel3Layout.createSequentialGroup()
+                        .add(jLabel5)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(jPanel3Layout.createSequentialGroup()
+                                .add(jSearchPlayer)
+                                .add(18, 18, 18)
+                                .add(jSearchAlly)
+                                .addContainerGap())
+                            .add(jSearchTerm, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 185, Short.MAX_VALUE)))
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jButton4)))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel3Layout.createSequentialGroup()
-                .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(jPanel3Layout.createSequentialGroup()
-                        .add(jAddMarkerButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(jRemoveMarkerButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                    .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 89, Short.MAX_VALUE))
-                .addContainerGap())
+                .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(jLabel5)
+                    .add(jSearchTerm, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(jSearchPlayer)
+                    .add(jSearchAlly))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 33, Short.MAX_VALUE)
+                .add(jButton4))
         );
 
         jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("Info"));
@@ -559,10 +564,10 @@ public class MapFrame extends javax.swing.JFrame implements DataHolderListener {
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
                     .add(org.jdesktop.layout.GroupLayout.LEADING, jPanel4, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .add(layout.createSequentialGroup()
-                        .add(jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 564, Short.MAX_VALUE)
+                        .add(jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 531, Short.MAX_VALUE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(jMinimapPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 233, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(jMinimapPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 270, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                             .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
                                 .add(jPanel2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .add(jPanel3, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
@@ -578,8 +583,8 @@ public class MapFrame extends javax.swing.JFrame implements DataHolderListener {
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(jPanel3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(jMinimapPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 229, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                    .add(jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 500, Short.MAX_VALUE))
+                        .add(jMinimapPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 233, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 510, Short.MAX_VALUE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jPanel4, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -663,26 +668,6 @@ private void fireFrameResizedEvent(java.awt.event.ComponentEvent evt) {//GEN-FIR
     }
 }//GEN-LAST:event_fireFrameResizedEvent
 
-private void fireModifyMarkersEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireModifyMarkersEvent
-    if (evt.getSource() == jAddMarkerButton) {
-        MarkerAddDialog madd = new MarkerAddDialog(this, false);
-        madd.setVisible(true);
-        String player = madd.getPlayer();
-        Color c = madd.getMarkerColor();
-        GlobalOptions.getMarkers().put(player, c);
-        mMiniPanel.redraw();
-    } else {
-        MarkerPanel selection = (MarkerPanel) jMarkerList.getSelectedValue();
-        if (selection == null) {
-            return;
-        }
-
-        GlobalOptions.getMarkers().remove(selection.getPlayerName());
-    }
-    ((MarkerListModel) jMarkerList.getModel()).updateModel();
-    jMarkerList.updateUI();
-}//GEN-LAST:event_fireModifyMarkersEvent
-
 private void fireZoomEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireZoomEvent
     if (evt.getSource() == jZoomInButton) {
         dZoomFactor += 1.0 / 10.0;
@@ -727,6 +712,10 @@ private void fireRefreshServerDataEvent(java.awt.event.MouseEvent evt) {//GEN-FI
 private void fireSelectPlayerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSelectPlayerEvent
     jPlayerSelectionDialog.setVisible(false);
 }//GEN-LAST:event_fireSelectPlayerEvent
+
+private void fireDoSearchEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireDoSearchEvent
+// TODO add your handling code here:
+}//GEN-LAST:event_fireDoSearchEvent
 
     public void updateLocationByMinimap(int pX, int pY) {
         double dx = 1000 / (double) mMiniPanel.getWidth() * (double) pX;
@@ -832,11 +821,11 @@ private void fireSelectPlayerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jAddMarkerButton;
     private javax.swing.JLabel jAllyInfo;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton4;
     private javax.swing.JTextField jCenterX;
     private javax.swing.JTextField jCenterY;
     private javax.swing.JMenuItem jExitItem;
@@ -846,7 +835,7 @@ private void fireSelectPlayerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JList jMarkerList;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPanel jMinimapPanel;
     private javax.swing.JButton jMoveE;
@@ -867,8 +856,9 @@ private void fireSelectPlayerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
     private javax.swing.JComboBox jPlayerSelection;
     private javax.swing.JDialog jPlayerSelectionDialog;
     private javax.swing.JButton jRefresh;
-    private javax.swing.JButton jRemoveMarkerButton;
-    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JCheckBox jSearchAlly;
+    private javax.swing.JCheckBox jSearchPlayer;
+    private javax.swing.JTextField jSearchTerm;
     private javax.swing.JComboBox jServerSelection;
     private javax.swing.JMenu jToolsMenu;
     private javax.swing.JMenu jViewMenu;

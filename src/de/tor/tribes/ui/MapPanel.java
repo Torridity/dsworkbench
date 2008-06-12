@@ -13,7 +13,6 @@ import java.awt.Cursor;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -66,36 +65,25 @@ public class MapPanel extends javax.swing.JPanel implements ActionListener {
         jPopupMenu1.add(infoItem);
         mTooltipTimer = new Timer("TooltipTimer", true);
 
-        try {
-            mCursors.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/default.png"), new Point(0, 0), "default"));
-            mCursors.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/attack_light.png"), new Point(0, 0), "attack_light"));
-            mCursors.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/attack_heavy.png"), new Point(0, 0), "attack_heavy"));
-            mCursors.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/attack_spy.png"), new Point(0, 0), "attack_snob"));
-            mCursors.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/attack_sqord.png"), new Point(0, 0), "attack_ram"));
-            mCursors.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/move.png"), new Point(0, 0), "move"));
-            mCursors.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/zoom.png"), new Point(0, 0), "zoom"));
-            mCursors.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/mark.png"), new Point(0, 0), "mark"));
-            setCursor(mCursors.get(iCurrentCursor));
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
-
         addMouseWheelListener(new MouseWheelListener() {
 
+            @Override
             public void mouseWheelMoved(MouseWheelEvent e) {
 
                 iCurrentCursor += e.getWheelRotation();
                 if (iCurrentCursor < 0) {
-                    iCurrentCursor = mCursors.size() - 1;
-                } else if (iCurrentCursor > mCursors.size() - 1) {
-                    iCurrentCursor = 0;
+                    iCurrentCursor = GlobalOptions.CURSOR_ATTACK_HEAVY;
+                } else if (iCurrentCursor > GlobalOptions.CURSOR_ATTACK_HEAVY) {
+                    iCurrentCursor = GlobalOptions.CURSOR_DEFAULT;
+
                 }
-                setCursor(mCursors.get(iCurrentCursor));
+                setCursor(GlobalOptions.getCursor(iCurrentCursor));
             }
         });
 
         addMouseListener(new MouseListener() {
 
+            @Override
             public void mouseClicked(MouseEvent e) {
                 //switch between left and right clicking the map panel
                 if (e.getButton() == MouseEvent.BUTTON1) {
@@ -103,28 +91,34 @@ public class MapPanel extends javax.swing.JPanel implements ActionListener {
                 }
             }
 
+            @Override
             public void mousePressed(MouseEvent e) {
             }
 
+            @Override
             public void mouseReleased(MouseEvent e) {
             }
 
+            @Override
             public void mouseEntered(MouseEvent e) {
             }
 
+            @Override
             public void mouseExited(MouseEvent e) {
             }
         });
 
         addMouseMotionListener(new MouseMotionListener() {
 
+            @Override
             public void mouseDragged(MouseEvent e) {
             }
 
+            @Override
             public void mouseMoved(MouseEvent e) {
-            //reset tooltip timer
+                //reset tooltip timer
                /* mTooltipFrame.setVisible(false);
-            resetTimer();*/
+                resetTimer();*/
             }
         });
 
@@ -156,6 +150,7 @@ public class MapPanel extends javax.swing.JPanel implements ActionListener {
             .add(0, 300, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
+
     /**Draw buffer into panel*/
     @Override
     public void paint(Graphics g) {
@@ -225,6 +220,7 @@ public class MapPanel extends javax.swing.JPanel implements ActionListener {
         updating = false;
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == infoItem) {
             fireShowVillageInfoEvent();
@@ -258,6 +254,7 @@ class RepaintThread extends Thread {
     //mBuffer = new BufferedImage(mParent.getWidth(), mParent.getHeight(), BufferedImage.TYPE_INT_RGB);
     }
 //boolean painted = false;
+
     protected void setCoordinates(int pX, int pY) {
         iX = pX;
         iY = pY;

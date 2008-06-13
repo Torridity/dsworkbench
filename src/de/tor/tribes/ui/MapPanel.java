@@ -8,40 +8,40 @@ package de.tor.tribes.ui;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.Skin;
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.RenderingHints;
+import java.awt.TexturePaint;
 import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Timer;
-import javax.swing.JFrame;
-import javax.swing.JMenuItem;
+import javax.imageio.ImageIO;
 import javax.swing.JPanel;
+import org.apache.log4j.Logger;
 
 /**
  *
  * @author  Charon
  */
-public class MapPanel extends javax.swing.JPanel implements ActionListener {
+public class MapPanel extends javax.swing.JPanel {
 
+    private static Logger logger = Logger.getLogger(MapPanel.class);
     private Village[][] mVisibleVillages = null;
     private Image mBuffer = null;
-    private VillageInfoPanel mInfoPanel = null;
-    private Village mTempVillage = null;
     private double dScaling = 1.0;
-    private JMenuItem infoItem;
     private int downX = 0;
     private int downY = 0;
     private int mX = 456;
@@ -52,17 +52,16 @@ public class MapPanel extends javax.swing.JPanel implements ActionListener {
     private MapFrame mParent;
     private List<Cursor> mCursors = null;
     private int iCurrentCursor = 0;
-
+    private Village mSourceVillage = null;
+    private Village mTargetVillage = null;
     // private VillageTooltipFrame mTooltipFrame = null;
+
     /** Creates new form MapPanel */
     public MapPanel(MapFrame pParent) {
         initComponents();
         mCursors = new LinkedList<Cursor>();
         final JPanel parent = this;
         mParent = pParent;
-        infoItem = new JMenuItem("Info");
-        infoItem.addActionListener(this);
-        jPopupMenu1.add(infoItem);
         mTooltipTimer = new Timer("TooltipTimer", true);
 
         addMouseWheelListener(new MouseWheelListener() {
@@ -85,18 +84,25 @@ public class MapPanel extends javax.swing.JPanel implements ActionListener {
 
             @Override
             public void mouseClicked(MouseEvent e) {
-                //switch between left and right clicking the map panel
-                if (e.getButton() == MouseEvent.BUTTON1) {
-                    fireShowVillageInfoEvent();
-                }
+                //check current cursor for used tool and react
             }
 
             @Override
             public void mousePressed(MouseEvent e) {
+                //start drag if attack tool is active
+                downX = e.getX();
+                downY = e.getY();
+                mSourceVillage = getVillageAtMousePos();
+            //select attack start village
+            //getVillageAtMousePos()
             }
 
             @Override
             public void mouseReleased(MouseEvent e) {
+                //stop attack if attack tool is active
+                downX = 0;
+                downY = 0;
+                mRepaintThread.setDragLine(0, 0, 0, 0);
             }
 
             @Override
@@ -112,13 +118,14 @@ public class MapPanel extends javax.swing.JPanel implements ActionListener {
 
             @Override
             public void mouseDragged(MouseEvent e) {
+                //update drag if attack tool is active
+                mRepaintThread.setDragLine(downX, downY, e.getX(), e.getY());
+                mTargetVillage = getVillageAtMousePos();
+
             }
 
             @Override
             public void mouseMoved(MouseEvent e) {
-                //reset tooltip timer
-               /* mTooltipFrame.setVisible(false);
-                resetTimer();*/
             }
         });
 
@@ -137,8 +144,6 @@ public class MapPanel extends javax.swing.JPanel implements ActionListener {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPopupMenu1 = new javax.swing.JPopupMenu();
-
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -155,13 +160,9 @@ public class MapPanel extends javax.swing.JPanel implements ActionListener {
     @Override
     public void paint(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
-        super.paint(g);
-        int dx = 0;
-        int dy = 0;
-
+        //super.paint(g);
         g2d.drawImage(mBuffer, 0, 0, null);
         Toolkit.getDefaultToolkit().sync();
-
     }
 
     /**Update map to new position*/
@@ -194,40 +195,18 @@ public class MapPanel extends javax.swing.JPanel implements ActionListener {
         }
     }
 
-    /**Show info of village located at current mouse position*/
-    public void fireShowVillageInfoEvent() {
-        Village v = getVillageAtMousePos();
-        if (v != null) {
-            final JFrame f = new JFrame();
-            f.setTitle("Dorf " + v.getName());
-            VillageInfoPanel vinp = new VillageInfoPanel(GlobalOptions.getDataHolder());
-            vinp.showVillage(v.getX(), v.getY());
-            f.add(vinp);
-            f.setLocationRelativeTo(this);
-            f.setLocation(getMousePosition());
-            f.pack();
-            f.setVisible(true);
-        }
-    }
-
     /**Update operation perfomed by the RepaintThread was completed*/
     protected void updateComplete(Village[][] pVillages, Image pBuffer) {
         mBuffer = pBuffer;
         mVisibleVillages = pVillages;
-        repaint();
+        updateUI();
         Village v = getVillageAtMousePos();
-        mParent.showInfo(v);
+        //mParent.updateDetailedInfoPanel(v);
+        mParent.updateDistancePanel(mSourceVillage, mTargetVillage);
         updating = false;
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == infoItem) {
-            fireShowVillageInfoEvent();
-        }
-    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JPopupMenu jPopupMenu1;
     // End of variables declaration//GEN-END:variables
 }
 
@@ -251,7 +230,7 @@ class RepaintThread extends Thread {
         mParent = pParent;
         iFieldWidth = GlobalOptions.getSkin().getFieldWidth();
         iFieldHeight = GlobalOptions.getSkin().getFieldHeight();
-    //mBuffer = new BufferedImage(mParent.getWidth(), mParent.getHeight(), BufferedImage.TYPE_INT_RGB);
+
     }
 //boolean painted = false;
 
@@ -274,6 +253,17 @@ class RepaintThread extends Thread {
 
     public void setZoom(double pZoom) {
         dScaling = pZoom;
+    }
+    private int x1 = 0;
+    private int y1 = 0;
+    private int x2 = 0;
+    private int y2 = 0;
+
+    public void setDragLine(int xs, int ys, int xe, int ye) {
+        x1 = xs;
+        y1 = ys;
+        x2 = xe;
+        y2 = ye;
     }
 
     /**Extract the selected villages*/
@@ -484,7 +474,17 @@ class RepaintThread extends Thread {
             yPos = pYStart;
             xPos++;
         }
+        // g2d.setColor(Color.YELLOW);
 
+
+        // Create a round rectangle.
+        float[] Dashes = {10.0F, 1.0F, 1.0F,1.0F,1.0F,1.0F,1.0F, 10.0F};
+
+        g2d.setStroke(new BasicStroke(5.0F, BasicStroke.CAP_BUTT,
+                BasicStroke.JOIN_MITER, 10.0F, Dashes, 0.F));
+
+        g2d.drawLine(
+                x1, y1, x2, y2);
         // System.out.println("Villages " + (System.currentTimeMillis() - s));
         g2d.dispose();
     }

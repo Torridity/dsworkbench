@@ -7,22 +7,24 @@ package de.tor.tribes.ui;
 
 import de.tor.tribes.io.DataHolderListener;
 import de.tor.tribes.io.ServerList;
+import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Ally;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
-import de.tor.tribes.ui.models.MarkerListModel;
-import de.tor.tribes.ui.renderes.MarkerListCellRenderer;
 import de.tor.tribes.util.GlobalOptions;
-import java.awt.Color;
 import java.text.Collator;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.UIManager;
+import org.apache.log4j.Logger;
+import org.apache.log4j.xml.DOMConfigurator;
 
 /**
  *
@@ -30,6 +32,7 @@ import javax.swing.UIManager;
  */
 public class MapFrame extends javax.swing.JFrame implements DataHolderListener {
 
+    private static Logger logger = Logger.getLogger(MapFrame.class);
     private MapPanel mPanel = null;
     private MinimapPanel mMiniPanel = null;
     private int iCenterX = 456;
@@ -69,12 +72,7 @@ public class MapFrame extends javax.swing.JFrame implements DataHolderListener {
         jPanel1.add(mPanel);
         mMiniPanel = new MinimapPanel(this);
         jMinimapPanel.add(mMiniPanel);
-        /*RankingFrame rf = new RankingFrame();
-        long s = System.currentTimeMillis();
-        rf.buildRanking();
-        System.out.println("Dur " + (System.currentTimeMillis() - s));
-        rf.setVisible(true);*/
-        
+        jDynPanel.add(jDistancePanel);
         mIcons = new LinkedList<ImageIcon>();
         mIcons.add(new ImageIcon(this.getClass().getResource("/res/forbidden.gif")));
         mIcons.add(new ImageIcon(this.getClass().getResource("/res/holz.png")));
@@ -111,6 +109,10 @@ public class MapFrame extends javax.swing.JFrame implements DataHolderListener {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jDetailedInfoPanel = new javax.swing.JPanel();
+        jVillageInfo = new javax.swing.JLabel();
+        jPlayerInfo = new javax.swing.JLabel();
+        jAllyInfo = new javax.swing.JLabel();
         jPlayerSelectionDialog = new javax.swing.JDialog();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
@@ -119,6 +121,31 @@ public class MapFrame extends javax.swing.JFrame implements DataHolderListener {
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
+        jDistancePanel = new javax.swing.JPanel();
+        jSpearTime = new javax.swing.JTextField();
+        jSwordTime = new javax.swing.JTextField();
+        jSpyTime = new javax.swing.JTextField();
+        jLightTime = new javax.swing.JTextField();
+        jMArcherTime = new javax.swing.JTextField();
+        jAxeTime = new javax.swing.JTextField();
+        jLabel6 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        jLabel9 = new javax.swing.JLabel();
+        jLabel10 = new javax.swing.JLabel();
+        jLabel11 = new javax.swing.JLabel();
+        jHeavyTime = new javax.swing.JTextField();
+        jLabel12 = new javax.swing.JLabel();
+        jLabel13 = new javax.swing.JLabel();
+        jLabel14 = new javax.swing.JLabel();
+        jLabel15 = new javax.swing.JLabel();
+        jLabel16 = new javax.swing.JLabel();
+        jLabel17 = new javax.swing.JLabel();
+        jBowTime = new javax.swing.JTextField();
+        jRamTime = new javax.swing.JTextField();
+        jCataTime = new javax.swing.JTextField();
+        jSnobTime = new javax.swing.JTextField();
+        jKnightTime = new javax.swing.JTextField();
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         jMoveE = new javax.swing.JButton();
@@ -143,11 +170,8 @@ public class MapFrame extends javax.swing.JFrame implements DataHolderListener {
         jSearchPlayer = new javax.swing.JCheckBox();
         jSearchAlly = new javax.swing.JCheckBox();
         jButton4 = new javax.swing.JButton();
-        jPanel4 = new javax.swing.JPanel();
-        jVillageInfo = new javax.swing.JLabel();
-        jPlayerInfo = new javax.swing.JLabel();
-        jAllyInfo = new javax.swing.JLabel();
         jMinimapPanel = new javax.swing.JPanel();
+        jDynPanel = new javax.swing.JPanel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jGeneralMenu = new javax.swing.JMenu();
         jOptionsItem = new javax.swing.JMenuItem();
@@ -156,6 +180,48 @@ public class MapFrame extends javax.swing.JFrame implements DataHolderListener {
         jWorldMapItem = new javax.swing.JMenuItem();
         jToolsMenu = new javax.swing.JMenu();
         jInfoMenu = new javax.swing.JMenu();
+
+        jDetailedInfoPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Info"));
+
+        jVillageInfo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/forbidden.gif"))); // NOI18N
+        jVillageInfo.setText("jLabel3");
+        jVillageInfo.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
+        jVillageInfo.setMaximumSize(new java.awt.Dimension(54, 20));
+        jVillageInfo.setMinimumSize(new java.awt.Dimension(54, 20));
+        jVillageInfo.setPreferredSize(new java.awt.Dimension(54, 20));
+
+        jPlayerInfo.setText("jLabel4");
+        jPlayerInfo.setMaximumSize(new java.awt.Dimension(54, 20));
+        jPlayerInfo.setMinimumSize(new java.awt.Dimension(54, 20));
+        jPlayerInfo.setOpaque(true);
+        jPlayerInfo.setPreferredSize(new java.awt.Dimension(54, 20));
+
+        jAllyInfo.setText("jLabel5");
+        jAllyInfo.setMaximumSize(new java.awt.Dimension(54, 20));
+        jAllyInfo.setMinimumSize(new java.awt.Dimension(54, 20));
+        jAllyInfo.setPreferredSize(new java.awt.Dimension(54, 20));
+
+        org.jdesktop.layout.GroupLayout jDetailedInfoPanelLayout = new org.jdesktop.layout.GroupLayout(jDetailedInfoPanel);
+        jDetailedInfoPanel.setLayout(jDetailedInfoPanelLayout);
+        jDetailedInfoPanelLayout.setHorizontalGroup(
+            jDetailedInfoPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jDetailedInfoPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .add(jDetailedInfoPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(jVillageInfo, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 771, Short.MAX_VALUE)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jPlayerInfo, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 771, Short.MAX_VALUE)
+                    .add(jAllyInfo, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 771, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        jDetailedInfoPanelLayout.setVerticalGroup(
+            jDetailedInfoPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jDetailedInfoPanelLayout.createSequentialGroup()
+                .add(jVillageInfo, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(4, 4, 4)
+                .add(jPlayerInfo, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(jAllyInfo, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+        );
 
         jPlayerSelectionDialog.setTitle("Spielerauswahl");
         jPlayerSelectionDialog.setAlwaysOnTop(true);
@@ -221,6 +287,235 @@ public class MapFrame extends javax.swing.JFrame implements DataHolderListener {
                 .add(jPlayerSelectionDialogLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(jButton1)
                     .add(jButton2))
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        jDistancePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Entfernung"));
+
+        jSpearTime.setEditable(false);
+        jSpearTime.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        jSpearTime.setText("00:00:00");
+        jSpearTime.setMaximumSize(new java.awt.Dimension(54, 20));
+        jSpearTime.setMinimumSize(new java.awt.Dimension(54, 20));
+        jSpearTime.setOpaque(false);
+        jSpearTime.setPreferredSize(new java.awt.Dimension(54, 20));
+
+        jSwordTime.setEditable(false);
+        jSwordTime.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        jSwordTime.setText("00:00:00");
+        jSwordTime.setMaximumSize(new java.awt.Dimension(54, 20));
+        jSwordTime.setMinimumSize(new java.awt.Dimension(54, 20));
+        jSwordTime.setOpaque(false);
+        jSwordTime.setPreferredSize(new java.awt.Dimension(54, 20));
+
+        jSpyTime.setEditable(false);
+        jSpyTime.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        jSpyTime.setText("00:00:00");
+        jSpyTime.setMaximumSize(new java.awt.Dimension(54, 20));
+        jSpyTime.setMinimumSize(new java.awt.Dimension(54, 20));
+        jSpyTime.setOpaque(false);
+        jSpyTime.setPreferredSize(new java.awt.Dimension(54, 20));
+
+        jLightTime.setEditable(false);
+        jLightTime.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        jLightTime.setText("00:00:00");
+        jLightTime.setMaximumSize(new java.awt.Dimension(54, 20));
+        jLightTime.setMinimumSize(new java.awt.Dimension(54, 20));
+        jLightTime.setOpaque(false);
+        jLightTime.setPreferredSize(new java.awt.Dimension(54, 20));
+
+        jMArcherTime.setEditable(false);
+        jMArcherTime.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        jMArcherTime.setText("00:00:00");
+        jMArcherTime.setMaximumSize(new java.awt.Dimension(54, 20));
+        jMArcherTime.setMinimumSize(new java.awt.Dimension(54, 20));
+        jMArcherTime.setOpaque(false);
+        jMArcherTime.setPreferredSize(new java.awt.Dimension(54, 20));
+
+        jAxeTime.setEditable(false);
+        jAxeTime.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        jAxeTime.setText("00:00:00");
+        jAxeTime.setMaximumSize(new java.awt.Dimension(54, 20));
+        jAxeTime.setMinimumSize(new java.awt.Dimension(54, 20));
+        jAxeTime.setOpaque(false);
+        jAxeTime.setPreferredSize(new java.awt.Dimension(54, 20));
+
+        jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/skins/symbol/axe.png"))); // NOI18N
+
+        jLabel7.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/skins/symbol/sword.png"))); // NOI18N
+
+        jLabel8.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/skins/symbol/spy.png"))); // NOI18N
+
+        jLabel9.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel9.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/skins/symbol/light.png"))); // NOI18N
+
+        jLabel10.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel10.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/skins/symbol/heavy.png"))); // NOI18N
+
+        jLabel11.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel11.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/skins/symbol/ram.png"))); // NOI18N
+
+        jHeavyTime.setEditable(false);
+        jHeavyTime.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        jHeavyTime.setText("00:00:00");
+        jHeavyTime.setMaximumSize(new java.awt.Dimension(54, 20));
+        jHeavyTime.setMinimumSize(new java.awt.Dimension(54, 20));
+        jHeavyTime.setOpaque(false);
+        jHeavyTime.setPreferredSize(new java.awt.Dimension(54, 20));
+
+        jLabel12.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel12.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/skins/symbol/snob.png"))); // NOI18N
+
+        jLabel13.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel13.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/skins/symbol/knight.png"))); // NOI18N
+
+        jLabel14.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel14.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/skins/symbol/spear.png"))); // NOI18N
+
+        jLabel15.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel15.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/skins/symbol/archer.png"))); // NOI18N
+
+        jLabel16.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel16.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/skins/symbol/marcher.png"))); // NOI18N
+
+        jLabel17.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel17.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/skins/symbol/cata.png"))); // NOI18N
+
+        jBowTime.setEditable(false);
+        jBowTime.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        jBowTime.setText("00:00:00");
+        jBowTime.setMaximumSize(new java.awt.Dimension(54, 20));
+        jBowTime.setMinimumSize(new java.awt.Dimension(54, 20));
+        jBowTime.setOpaque(false);
+        jBowTime.setPreferredSize(new java.awt.Dimension(54, 20));
+
+        jRamTime.setEditable(false);
+        jRamTime.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        jRamTime.setText("00:00:00");
+        jRamTime.setMaximumSize(new java.awt.Dimension(54, 20));
+        jRamTime.setMinimumSize(new java.awt.Dimension(54, 20));
+        jRamTime.setOpaque(false);
+        jRamTime.setPreferredSize(new java.awt.Dimension(54, 20));
+
+        jCataTime.setEditable(false);
+        jCataTime.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        jCataTime.setText("00:00:00");
+        jCataTime.setMaximumSize(new java.awt.Dimension(54, 20));
+        jCataTime.setMinimumSize(new java.awt.Dimension(54, 20));
+        jCataTime.setOpaque(false);
+        jCataTime.setPreferredSize(new java.awt.Dimension(54, 20));
+
+        jSnobTime.setEditable(false);
+        jSnobTime.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        jSnobTime.setText("00:00:00");
+        jSnobTime.setMaximumSize(new java.awt.Dimension(54, 20));
+        jSnobTime.setMinimumSize(new java.awt.Dimension(54, 20));
+        jSnobTime.setOpaque(false);
+        jSnobTime.setPreferredSize(new java.awt.Dimension(54, 20));
+
+        jKnightTime.setEditable(false);
+        jKnightTime.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        jKnightTime.setText("00:00:00");
+        jKnightTime.setMaximumSize(new java.awt.Dimension(54, 20));
+        jKnightTime.setMinimumSize(new java.awt.Dimension(54, 20));
+        jKnightTime.setOpaque(false);
+        jKnightTime.setPreferredSize(new java.awt.Dimension(54, 20));
+
+        org.jdesktop.layout.GroupLayout jDistancePanelLayout = new org.jdesktop.layout.GroupLayout(jDistancePanel);
+        jDistancePanel.setLayout(jDistancePanelLayout);
+        jDistancePanelLayout.setHorizontalGroup(
+            jDistancePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jDistancePanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .add(jDistancePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                    .add(jLabel14, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 54, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(jSpearTime, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(jDistancePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                    .add(jLabel7, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 54, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(jSwordTime, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(jDistancePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                    .add(jLabel15, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 54, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(jBowTime, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(jDistancePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                    .add(jLabel6, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 54, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(jAxeTime, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(jDistancePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(jSpyTime, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(jLabel8, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 54, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(jDistancePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(jLabel9, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 54, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(jLightTime, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 54, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(jDistancePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                    .add(jLabel16, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 54, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(jMArcherTime, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .add(6, 6, 6)
+                .add(jDistancePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(jLabel10, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 54, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(jHeavyTime, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 54, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(jDistancePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(jLabel11, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 54, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(jRamTime, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 54, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(jDistancePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(jLabel17, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 54, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(jCataTime, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 54, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(jDistancePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(jLabel12, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 54, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(jSnobTime, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 54, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(jDistancePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(jLabel13, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 54, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(jKnightTime, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 54, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
+        );
+        jDistancePanelLayout.setVerticalGroup(
+            jDistancePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jDistancePanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .add(jDistancePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(jDistancePanelLayout.createSequentialGroup()
+                        .add(jDistancePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(jLabel14)
+                            .add(jLabel7)
+                            .add(jLabel15)
+                            .add(jLabel8)
+                            .add(jLabel6))
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(jDistancePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                            .add(jSpearTime, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(jSwordTime, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(jBowTime, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(jAxeTime, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(jSpyTime, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                    .add(jDistancePanelLayout.createSequentialGroup()
+                        .add(jDistancePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(jLabel10)
+                            .add(jLabel17)
+                            .add(jLabel12)
+                            .add(jLabel13)
+                            .add(jLabel16)
+                            .add(jLabel9)
+                            .add(jLabel11))
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(jDistancePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                            .add(jMArcherTime, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(jHeavyTime, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(jLightTime, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(jRamTime, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(jCataTime, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(jSnobTime, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(jKnightTime, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -485,50 +780,10 @@ public class MapFrame extends javax.swing.JFrame implements DataHolderListener {
                 .add(jButton4))
         );
 
-        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("Info"));
-
-        jVillageInfo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/forbidden.gif"))); // NOI18N
-        jVillageInfo.setText("jLabel3");
-        jVillageInfo.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
-        jVillageInfo.setMaximumSize(new java.awt.Dimension(54, 20));
-        jVillageInfo.setMinimumSize(new java.awt.Dimension(54, 20));
-        jVillageInfo.setPreferredSize(new java.awt.Dimension(54, 20));
-
-        jPlayerInfo.setText("jLabel4");
-        jPlayerInfo.setMaximumSize(new java.awt.Dimension(54, 20));
-        jPlayerInfo.setMinimumSize(new java.awt.Dimension(54, 20));
-        jPlayerInfo.setOpaque(true);
-        jPlayerInfo.setPreferredSize(new java.awt.Dimension(54, 20));
-
-        jAllyInfo.setText("jLabel5");
-        jAllyInfo.setMaximumSize(new java.awt.Dimension(54, 20));
-        jAllyInfo.setMinimumSize(new java.awt.Dimension(54, 20));
-        jAllyInfo.setPreferredSize(new java.awt.Dimension(54, 20));
-
-        org.jdesktop.layout.GroupLayout jPanel4Layout = new org.jdesktop.layout.GroupLayout(jPanel4);
-        jPanel4.setLayout(jPanel4Layout);
-        jPanel4Layout.setHorizontalGroup(
-            jPanel4Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jPanel4Layout.createSequentialGroup()
-                .addContainerGap()
-                .add(jPanel4Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(jVillageInfo, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 771, Short.MAX_VALUE)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jPlayerInfo, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 771, Short.MAX_VALUE)
-                    .add(jAllyInfo, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 771, Short.MAX_VALUE))
-                .addContainerGap())
-        );
-        jPanel4Layout.setVerticalGroup(
-            jPanel4Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jPanel4Layout.createSequentialGroup()
-                .add(jVillageInfo, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(4, 4, 4)
-                .add(jPlayerInfo, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jAllyInfo, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-        );
-
         jMinimapPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Minimap"));
         jMinimapPanel.setLayout(new java.awt.BorderLayout());
+
+        jDynPanel.setLayout(new java.awt.BorderLayout());
 
         jGeneralMenu.setText("Allgemein");
 
@@ -559,23 +814,23 @@ public class MapFrame extends javax.swing.JFrame implements DataHolderListener {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
+            .add(layout.createSequentialGroup()
                 .addContainerGap()
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, jPanel4, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(layout.createSequentialGroup()
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
                         .add(jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 531, Short.MAX_VALUE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                             .add(jMinimapPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 270, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                             .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
                                 .add(jPanel2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .add(jPanel3, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
+                                .add(jPanel3, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jDynPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 807, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
+            .add(layout.createSequentialGroup()
                 .addContainerGap()
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(layout.createSequentialGroup()
@@ -584,9 +839,9 @@ public class MapFrame extends javax.swing.JFrame implements DataHolderListener {
                         .add(jPanel3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(jMinimapPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 233, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                    .add(jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 510, Short.MAX_VALUE))
+                    .add(jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 515, Short.MAX_VALUE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jPanel4, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(jDynPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 102, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -736,7 +991,93 @@ private void fireDoSearchEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
         jPanel2.updateUI();
     }
 
-    public void showInfo(Village pVillage) {
+    public void switchDynPanel(int pType) {
+        jDynPanel.removeAll();
+        switch (pType) {
+            default:
+                jDynPanel.add(jDetailedInfoPanel);
+                break;
+        }
+    }
+
+    public void updateDistancePanel(Village pSource, Village pTarget) {
+        if ((pSource == null) || (pTarget == null)) {
+            jSpearTime.setText("------");
+            jSwordTime.setText("------");
+            jAxeTime.setText("------");
+            jBowTime.setText("------");
+            jSpyTime.setText("------");
+            jLightTime.setText("------");
+            jMArcherTime.setText("------");
+            jHeavyTime.setText("------");
+            jRamTime.setText("------");
+            jCataTime.setText("------");
+            jSnobTime.setText("------");
+            jKnightTime.setText("------");
+            return;
+        }
+
+        int xs = pSource.getX();
+        int ys = pSource.getY();
+        int xt = pTarget.getX();
+        int yt = pTarget.getY();
+
+        double dist = Math.sqrt(Math.pow(xt - xs, 2) + Math.pow(yt - ys, 2));
+
+        List<UnitHolder> units = GlobalOptions.getDataHolder().getUnits();
+        for (UnitHolder unit : units) {
+            double dur = unit.getSpeed() * dist;
+            int hour = (int) Math.floor(dur / 60);
+            dur -= hour * 60;
+            int min = (int) Math.floor(dur);
+            int sec = (int) Math.rint((dur - min) * 60);
+
+            String result = "";
+            if (hour < 10) {
+                result += "0" + hour + ":";
+            } else {
+                result += hour + ":";
+            }
+            if (min < 10) {
+                result += "0" + min + ":";
+            } else {
+                result += min + ":";
+            }
+            if (sec < 10) {
+                result += "0" + sec;
+            } else {
+                result += sec;
+            }
+
+            if (unit.getName().equals("Speerträger")) {
+                jSpearTime.setText(result);
+            } else if (unit.getName().equals("Schwertkämpfer")) {
+                jSwordTime.setText(result);
+            } else if (unit.getName().equals("Axtkämpfer")) {
+                jAxeTime.setText(result);
+            } else if (unit.getName().equals("Bogenschütze")) {
+                jBowTime.setText(result);
+            } else if (unit.getName().equals("Späher")) {
+                jSpyTime.setText(result);
+            } else if (unit.getName().equals("Leichte Kavallerie")) {
+                jLightTime.setText(result);
+            } else if (unit.getName().equals("Berittener Bogenschütze")) {
+                jMArcherTime.setText(result);
+            } else if (unit.getName().equals("Schwere Kavallerie")) {
+                jHeavyTime.setText(result);
+            } else if (unit.getName().equals("Ramme")) {
+                jRamTime.setText(result);
+            } else if (unit.getName().equals("Katapult")) {
+                jCataTime.setText(result);
+            } else if (unit.getName().equals("Adelsgeschlecht")) {
+                jSnobTime.setText(result);
+            } else if (unit.getName().equals("Paladin")) {
+                jKnightTime.setText(result);
+            }
+        }
+    }
+
+    public void updateDetailedInfoPanel(Village pVillage) {
         if (pVillage == null) {
             jPlayerInfo.setText("");
             jVillageInfo.setText("");
@@ -799,9 +1140,11 @@ private void fireDoSearchEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
         }
     }
 
+    @Override
     public void fireDataHolderEvent(String pMessage) {
     }
 
+    @Override
     public void fireDataLoadedEvent() {
     }
 
@@ -809,10 +1152,13 @@ private void fireDoSearchEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+        DOMConfigurator.configure("log4j.xml");
+
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
         }
+
         java.awt.EventQueue.invokeLater(new Runnable() {
 
             public void run() {
@@ -822,20 +1168,42 @@ private void fireDoSearchEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jAllyInfo;
+    private javax.swing.JTextField jAxeTime;
+    private javax.swing.JTextField jBowTime;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
+    private javax.swing.JTextField jCataTime;
     private javax.swing.JTextField jCenterX;
     private javax.swing.JTextField jCenterY;
+    private javax.swing.JPanel jDetailedInfoPanel;
+    private javax.swing.JPanel jDistancePanel;
+    private javax.swing.JPanel jDynPanel;
     private javax.swing.JMenuItem jExitItem;
     private javax.swing.JMenu jGeneralMenu;
+    private javax.swing.JTextField jHeavyTime;
     private javax.swing.JMenu jInfoMenu;
+    private javax.swing.JTextField jKnightTime;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel14;
+    private javax.swing.JLabel jLabel15;
+    private javax.swing.JLabel jLabel16;
+    private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
+    private javax.swing.JTextField jLightTime;
+    private javax.swing.JTextField jMArcherTime;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPanel jMinimapPanel;
     private javax.swing.JButton jMoveE;
@@ -851,15 +1219,19 @@ private void fireDoSearchEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
-    private javax.swing.JPanel jPanel4;
     private javax.swing.JLabel jPlayerInfo;
     private javax.swing.JComboBox jPlayerSelection;
     private javax.swing.JDialog jPlayerSelectionDialog;
+    private javax.swing.JTextField jRamTime;
     private javax.swing.JButton jRefresh;
     private javax.swing.JCheckBox jSearchAlly;
     private javax.swing.JCheckBox jSearchPlayer;
     private javax.swing.JTextField jSearchTerm;
     private javax.swing.JComboBox jServerSelection;
+    private javax.swing.JTextField jSnobTime;
+    private javax.swing.JTextField jSpearTime;
+    private javax.swing.JTextField jSpyTime;
+    private javax.swing.JTextField jSwordTime;
     private javax.swing.JMenu jToolsMenu;
     private javax.swing.JMenu jViewMenu;
     private javax.swing.JLabel jVillageInfo;

@@ -25,50 +25,48 @@ public class UnitHolder {
     private int carry = 0;
     private double buildTime = 0;
 
-    public UnitHolder( Element pElement) throws Exception{
-        try{
-        if(pElement.getName().equals("spear")){
-            setName("Speerträger");
-        }else if(pElement.getName().equals("spear")){
-            setName("Speerträger");
-        }else if(pElement.getName().equals("sword")){
-            setName("Schwertkämpfer");
-        }else if(pElement.getName().equals("axt")){
-            setName("Axtkämpfer");
-        }else if(pElement.getName().equals("archer")){
-            setName("Bogenschütze");
-        }else if(pElement.getName().equals("spy")){
-            setName("Späher");
-        }else if(pElement.getName().equals("light")){
-            setName("Leichte Kavallerie");
-        }else if(pElement.getName().equals("marcher")){
-            setName("Berittener Bogenschütze");
-        }else if(pElement.getName().equals("heavy")){
-            setName("Schwere Kavallerie");
-        }else if(pElement.getName().equals("ram")){
-            setName("Ramme");
-        }else if(pElement.getName().equals("catapult")){
-            setName("Katapult");
-        }else if(pElement.getName().equals("knight")){
-            setName("Paladin");
-        }else if(pElement.getName().equals("snob")){
-            setName("Adelsgeschlecht");
-        }else{
-            setName("Unbekannt (" + pElement.getName() + ")");
-        }
+    public UnitHolder(Element pElement) throws Exception {
+        try {
+            if (pElement.getName().equals("spear")) {
+                setName("Speerträger");
+            } else if (pElement.getName().equals("sword")) {
+                setName("Schwertkämpfer");
+            } else if (pElement.getName().equals("axe")) {
+                setName("Axtkämpfer");
+            } else if (pElement.getName().equals("archer")) {
+                setName("Bogenschütze");
+            } else if (pElement.getName().equals("spy")) {
+                setName("Späher");
+            } else if (pElement.getName().equals("light")) {
+                setName("Leichte Kavallerie");
+            } else if (pElement.getName().equals("marcher")) {
+                setName("Berittener Bogenschütze");
+            } else if (pElement.getName().equals("heavy")) {
+                setName("Schwere Kavallerie");
+            } else if (pElement.getName().equals("ram")) {
+                setName("Ramme");
+            } else if (pElement.getName().equals("catapult")) {
+                setName("Katapult");
+            } else if (pElement.getName().equals("knight")) {
+                setName("Paladin");
+            } else if (pElement.getName().equals("snob")) {
+                setName("Adelsgeschlecht");
+            } else {
+                setName("Unbekannt (" + pElement.getName() + ")");
+            }
 
-        setWood(Integer.parseInt(pElement.getChild("wood").getText()));
-        setStone(Integer.parseInt(pElement.getChild("stone").getText()));
-        setIron(Integer.parseInt(pElement.getChild("iron").getText()));
-        setPop(Integer.parseInt(pElement.getChild("pop").getText()));
-        setSpeed(Integer.parseInt(pElement.getChild("speed").getText()));
-        setAttack(Integer.parseInt(pElement.getChild("attack").getText()));
-        setDefense(Integer.parseInt(pElement.getChild("defense").getText()));
-        setDefenseCavalry(Integer.parseInt(pElement.getChild("defense_cavalry").getText()));
-        setDefenseArcher(Integer.parseInt(pElement.getChild("defense_archer").getText()));
-        setCarry(Integer.parseInt(pElement.getChild("carry").getText()));
-        setBuildTime(Double.parseDouble(pElement.getChild("build_time").getText()));
-        }catch(Exception e){
+            setWood(Integer.parseInt(pElement.getChild("wood").getText()));
+            setStone(Integer.parseInt(pElement.getChild("stone").getText()));
+            setIron(Integer.parseInt(pElement.getChild("iron").getText()));
+            setPop(Integer.parseInt(pElement.getChild("pop").getText()));
+            setSpeed(Integer.parseInt(pElement.getChild("speed").getText()));
+            setAttack(Integer.parseInt(pElement.getChild("attack").getText()));
+            setDefense(Integer.parseInt(pElement.getChild("defense").getText()));
+            setDefenseCavalry(Integer.parseInt(pElement.getChild("defense_cavalry").getText()));
+            setDefenseArcher(Integer.parseInt(pElement.getChild("defense_archer").getText()));
+            setCarry(Integer.parseInt(pElement.getChild("carry").getText()));
+            setBuildTime(Double.parseDouble(pElement.getChild("build_time").getText()));
+        } catch (Exception e) {
             throw new Exception("Fehler beim laden von Einheit '" + pElement.getName() + "'");
         }
     }

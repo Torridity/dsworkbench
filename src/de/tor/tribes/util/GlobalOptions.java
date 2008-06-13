@@ -23,26 +23,29 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
+import org.apache.log4j.Logger;
 
 /**Global settings used by almost all components. e.g. WorldData or UI specific objects
  * @author Charon
  */
 public class GlobalOptions {
 
+    private static Logger logger = Logger.getLogger(GlobalOptions.class);
     //mappanel default
     public static int CURSOR_DEFAULT = 0;
     public static int CURSOR_MARK = 1;
+    public static int CURSOR_MEASURE = 2;
     //mappanel attack
-    public static int CURSOR_ATTACK_RAM = 2;
-    public static int CURSOR_ATTACK_AXE = 3;
-    public static int CURSOR_ATTACK_SNOB = 4;
-    public static int CURSOR_ATTACK_SPY = 5;
-    public static int CURSOR_ATTACK_SWORD = 6;
-    public static int CURSOR_ATTACK_LIGHT = 7;
-    public static int CURSOR_ATTACK_HEAVY = 8;
+    public static int CURSOR_ATTACK_RAM = 3;
+    public static int CURSOR_ATTACK_AXE = 4;
+    public static int CURSOR_ATTACK_SNOB = 5;
+    public static int CURSOR_ATTACK_SPY = 6;
+    public static int CURSOR_ATTACK_SWORD = 7;
+    public static int CURSOR_ATTACK_LIGHT = 8;
+    public static int CURSOR_ATTACK_HEAVY = 9;
     //minimap
-    public static int CURSOR_MOVE = 9;
-    public static int CURSOR_ZOOM = 10;
+    public static int CURSOR_MOVE = 10;
+    public static int CURSOR_ZOOM = 11;
     private static boolean INITIALIZED = false;
     /**Active skin used by the MapPanel*/
     private static Skin mSkin;
@@ -66,10 +69,15 @@ public class GlobalOptions {
         }
         INITIALIZED = true;
         mListener = pListener;
+        logger.debug("Loading properties");
         loadProperties();
+        logger.debug("Loading cursors");
         loadCursors();
-        loadSkin();//"/res/skins/symbol"
+        logger.debug("Loading graphic pack");
+        loadSkin();
+        logger.debug("Loading markers");
         loadMarkers();
+        logger.debug("Loading world.dat");
         loadDecoration();
     }
 
@@ -80,8 +88,10 @@ public class GlobalOptions {
     private static void loadProperties() throws Exception {
         GLOBAL_PROPERTIES = new Properties();
         if (new File("global.properties").exists()) {
+            logger.debug("Loading existing properties file");
             GLOBAL_PROPERTIES.load(new FileInputStream("global.properties"));
         } else {
+            logger.debug("Creating empty properties file");
             saveProperties();
         }
     }
@@ -107,6 +117,7 @@ public class GlobalOptions {
             //default map panel cursors 
             CURSORS.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/default.png"), new Point(0, 0), "default"));
             CURSORS.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/mark.png"), new Point(0, 0), "mark"));
+            CURSORS.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/measure.png"), new Point(0, 0), "measure"));
             //map panel cursors for attack purposes
             CURSORS.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/attack_ram.png"), new Point(0, 0), "attack_ram"));
             CURSORS.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/attack_axe.png"), new Point(0, 0), "attack_axe"));
@@ -119,8 +130,9 @@ public class GlobalOptions {
             CURSORS.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/move.png"), new Point(0, 0), "move"));
             CURSORS.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/zoom.png"), new Point(0, 0), "zoom"));
 
-        } catch (Throwable e) {
-            throw new Exception("Fehler beim laden der Cursor");
+        } catch (Throwable t) {
+            logger.error("Failed to load cursor images", t);
+            throw new Exception("Cursor konnten nicht geladen werden");
         }
     }
 

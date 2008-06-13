@@ -387,6 +387,14 @@ public class DataHolder {
         return mTribes;
     }
 
+    public List<UnitHolder> getUnits(){
+        return mUnits;
+    }
+    
+    public List<BuildingHolder> getBuildings(){
+        return mBuildings;
+    }
+    
     public void fireDataHolderEvents(String pMessage) {
         if (mListener != null) {
             mListener.fireDataHolderEvent(pMessage);

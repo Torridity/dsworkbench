@@ -55,7 +55,6 @@ public class MapPanel extends javax.swing.JPanel {
     private Village mSourceVillage = null;
     private Village mTargetVillage = null;
     // private VillageTooltipFrame mTooltipFrame = null;
-
     /** Creates new form MapPanel */
     public MapPanel(MapFrame pParent) {
         initComponents();
@@ -103,14 +102,23 @@ public class MapPanel extends javax.swing.JPanel {
                 downX = 0;
                 downY = 0;
                 mRepaintThread.setDragLine(0, 0, 0, 0);
+                dragged = false;
             }
 
             @Override
             public void mouseEntered(MouseEvent e) {
+                if(dragged){
+                System.out.println("DRAG ENTER");
+            }
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
+            if(dragged){
+                System.out.println("DRAG LEAVE");
+                System.out.println(e.getX());
+                System.out.println(e.getY());
+            }
             }
         });
 
@@ -121,7 +129,7 @@ public class MapPanel extends javax.swing.JPanel {
                 //update drag if attack tool is active
                 mRepaintThread.setDragLine(downX, downY, e.getX(), e.getY());
                 mTargetVillage = getVillageAtMousePos();
-
+dragged = true;
             }
 
             @Override
@@ -130,7 +138,7 @@ public class MapPanel extends javax.swing.JPanel {
         });
 
     }
-
+boolean dragged = false;
     public void setZoom(double pZoom) {
         dScaling = pZoom;
         mRepaintThread.setZoom(dScaling);
@@ -326,7 +334,7 @@ class RepaintThread extends Thread {
             g2d.fillRect(0, 0, mBuffer.getWidth(null), mBuffer.getHeight(null));
         }
         g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-        g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
         // Speed
         g2d.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED);
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
@@ -338,8 +346,11 @@ class RepaintThread extends Thread {
 
         int xPos = pXStart;
         int yPos = pYStart;
-        // long s = System.currentTimeMillis();
-        //System.out.println("Villages# " + (iVillagesX * iVillagesY));
+        //disable decoration if field size is not equal the decoration texture size
+        boolean useDecoration = true;
+        if ((GlobalOptions.getWorldDecorationHolder().getTexture(0, 0, 1).getWidth(null) != GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, 1).getWidth(null)) || (GlobalOptions.getWorldDecorationHolder().getTexture(0, 0, 1).getHeight(null) != GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, 1).getHeight(null))) {
+            useDecoration = false;
+        }
         for (int i = 0; i < iVillagesX; i++) {
             for (int j = 0; j < iVillagesY; j++) {
                 Village v = mVisibleVillages[i][j];
@@ -360,8 +371,12 @@ class RepaintThread extends Thread {
 
 
                 if (v == null) {
-                    g2d.drawImage(GlobalOptions.getWorldDecorationHolder().getTexture(xPos, yPos, dScaling), x, y, null);
-                //g2d.fillRect(xPos, yPos, 10, 10);
+                    if(useDecoration){
+                        g2d.drawImage(GlobalOptions.getWorldDecorationHolder().getTexture(xPos, yPos, dScaling), x, y, null);
+                    } else {
+                        g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, dScaling), x, y, null);
+                    }
+                
                 } else {
                     boolean isLeft = false;
                     if (v.getTribe() == null) {
@@ -474,18 +489,10 @@ class RepaintThread extends Thread {
             yPos = pYStart;
             xPos++;
         }
-        // g2d.setColor(Color.YELLOW);
+         g2d.setColor(Color.YELLOW);
+        g2d.setStroke(new BasicStroke(5.0F, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
 
-
-        // Create a round rectangle.
-        float[] Dashes = {10.0F, 1.0F, 1.0F,1.0F,1.0F,1.0F,1.0F, 10.0F};
-
-        g2d.setStroke(new BasicStroke(5.0F, BasicStroke.CAP_BUTT,
-                BasicStroke.JOIN_MITER, 10.0F, Dashes, 0.F));
-
-        g2d.drawLine(
-                x1, y1, x2, y2);
-        // System.out.println("Villages " + (System.currentTimeMillis() - s));
+        g2d.drawLine( x1, y1, x2, y2);
         g2d.dispose();
     }
 }

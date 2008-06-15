@@ -3,37 +3,78 @@
  *
  * Created on 7. Oktober 2007, 14:06
  */
-
 package de.tor.tribes.ui;
 
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import net.java.dev.colorchooser.ColorChooser;
 
 /**
  *
  * @author  Charon
  */
 public class MarkerPanel extends javax.swing.JPanel {
-    
+
+    final ColorChooser chooser = new ColorChooser();
+
     /** Creates new form MarkerPanel */
     public MarkerPanel(String pPlayerName, Color pPlayerColor) {
         initComponents();
         jPlayerField.setText(pPlayerName);
-        jColorField.setBackground(pPlayerColor);
-        jColorField.setForeground(pPlayerColor);
+        chooser.setColor(Color.WHITE);
+        chooser.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("Test");
+            }
+        });
+        
+        addMouseListener(new MouseListener() {
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                System.out.println("clicker");
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+            }
+        });
+        jPanel1.add(chooser);
     }
-    
-    public void setSelected(boolean v){
-        if(v){
+
+    public void setSelected(boolean v) {
+        if (v) {
             jPlayerField.setBackground(Color.LIGHT_GRAY);
             setBackground(Color.LIGHT_GRAY);
-        }else{
+        } else {
             jPlayerField.setBackground(Color.WHITE);
             setBackground(Color.WHITE);
         }
     }
-    
-    public String getPlayerName(){
+
+    public String getPlayerName() {
         return jPlayerField.getText();
+    }
+
+    public Color getColor(){
+        return chooser.getColor();
     }
     /** This method is called from within the constructor to
      * initialize the form.
@@ -45,7 +86,7 @@ public class MarkerPanel extends javax.swing.JPanel {
 
         jButton1 = new javax.swing.JButton();
         jPlayerField = new javax.swing.JTextField();
-        jColorField = new javax.swing.JButton();
+        jPanel1 = new javax.swing.JPanel();
 
         jButton1.setText("jButton1");
 
@@ -53,10 +94,20 @@ public class MarkerPanel extends javax.swing.JPanel {
 
         jPlayerField.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
 
-        jColorField.setBackground(new java.awt.Color(255, 255, 255));
-        jColorField.setMaximumSize(new java.awt.Dimension(23, 23));
-        jColorField.setMinimumSize(new java.awt.Dimension(23, 23));
-        jColorField.setPreferredSize(new java.awt.Dimension(23, 23));
+        jPanel1.setMaximumSize(new java.awt.Dimension(16, 16));
+        jPanel1.setMinimumSize(new java.awt.Dimension(16, 16));
+        jPanel1.setPreferredSize(new java.awt.Dimension(16, 16));
+
+        org.jdesktop.layout.GroupLayout jPanel1Layout = new org.jdesktop.layout.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(0, 16, Short.MAX_VALUE)
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(0, 16, Short.MAX_VALUE)
+        );
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
         this.setLayout(layout);
@@ -65,20 +116,17 @@ public class MarkerPanel extends javax.swing.JPanel {
             .add(layout.createSequentialGroup()
                 .add(jPlayerField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 111, Short.MAX_VALUE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jColorField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .add(jPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jColorField, 0, 0, Short.MAX_VALUE)
+            .add(jPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
             .add(jPlayerField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
         );
     }// </editor-fold>//GEN-END:initComponents
-    
-    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
-    private javax.swing.JButton jColorField;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JTextField jPlayerField;
     // End of variables declaration//GEN-END:variables
-    
 }

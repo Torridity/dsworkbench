@@ -11,18 +11,23 @@ import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Ally;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
+import de.tor.tribes.ui.editors.ColorChooserCellEditor;
+import de.tor.tribes.ui.renderes.ColorChooserCellRenderer;
 import de.tor.tribes.util.GlobalOptions;
+import java.awt.Color;
 import java.text.Collator;
 import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import javax.swing.UIManager;
+import javax.swing.table.DefaultTableModel;
+import net.java.dev.colorchooser.ColorChooser;
 import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
 
@@ -72,7 +77,36 @@ public class MapFrame extends javax.swing.JFrame implements DataHolderListener {
         jPanel1.add(mPanel);
         mMiniPanel = new MinimapPanel(this);
         jMinimapPanel.add(mMiniPanel);
-        jDynPanel.add(jDistancePanel);
+        //jDynPanel.add(jDistancePanel);
+        jMarkerTable.setModel(new javax.swing.table.DefaultTableModel(
+                new Object[][]{},
+                new String[]{
+                    "Name", "Markierung"
+                }) {
+
+            Class[] types = new Class[]{
+                java.lang.String.class, ColorChooser.class
+            };
+            boolean[] canEdit = new boolean[]{
+                false, true
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types[columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit[columnIndex];
+            }
+        });
+
+        jMarkerTable.getColumnModel().getColumn(1).setMaxWidth(75);
+        GlobalOptions.getMarkers().put("Torridity", Color.WHITE);
+        jMarkerTable.setDefaultRenderer(ColorChooser.class, new ColorChooserCellRenderer());
+        jMarkerTable.setDefaultEditor(ColorChooser.class, new ColorChooserCellEditor());
+        ((DefaultTableModel) jMarkerTable.getModel()).addRow(new Object[]{"Torridity", new ColorChooser()});
+        jDynPanel.add(jMarkerPanel);
+
         mIcons = new LinkedList<ImageIcon>();
         mIcons.add(new ImageIcon(this.getClass().getResource("/res/forbidden.gif")));
         mIcons.add(new ImageIcon(this.getClass().getResource("/res/holz.png")));
@@ -146,6 +180,11 @@ public class MapFrame extends javax.swing.JFrame implements DataHolderListener {
         jCataTime = new javax.swing.JTextField();
         jSnobTime = new javax.swing.JTextField();
         jKnightTime = new javax.swing.JTextField();
+        jMarkerPanel = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jMarkerTable = new javax.swing.JTable();
+        jButton5 = new javax.swing.JButton();
+        jButton6 = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         jMoveE = new javax.swing.JButton();
@@ -517,6 +556,61 @@ public class MapFrame extends javax.swing.JFrame implements DataHolderListener {
                             .add(jSnobTime, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                             .add(jKnightTime, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        jMarkerTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Name", "Markierung"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.Object.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, true
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane1.setViewportView(jMarkerTable);
+
+        jButton5.setText("Aktualisieren");
+
+        jButton6.setText("Löschen");
+
+        org.jdesktop.layout.GroupLayout jMarkerPanelLayout = new org.jdesktop.layout.GroupLayout(jMarkerPanel);
+        jMarkerPanel.setLayout(jMarkerPanelLayout);
+        jMarkerPanelLayout.setHorizontalGroup(
+            jMarkerPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jMarkerPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(jMarkerPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                    .add(jButton6, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(jButton5, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(80, Short.MAX_VALUE))
+        );
+        jMarkerPanelLayout.setVerticalGroup(
+            jMarkerPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jMarkerPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .add(jMarkerPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(jMarkerPanelLayout.createSequentialGroup()
+                        .add(jButton5)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(jButton6))
+                    .add(jScrollPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 75, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(14, Short.MAX_VALUE))
         );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -929,6 +1023,18 @@ private void fireZoomEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fir
     } else {
         dZoomFactor -= 1.0 / 10;
     }
+
+    if (dZoomFactor < 0.1) {
+        dZoomFactor = 0.1;
+        jZoomOutButton.setEnabled(false);
+    } else if (dZoomFactor > 2.5) {
+        dZoomFactor = 2.5;
+        jZoomInButton.setEnabled(false);
+    } else {
+        jZoomInButton.setEnabled(true);
+        jZoomOutButton.setEnabled(true);
+    }
+
     dZoomFactor = Double.parseDouble(NumberFormat.getInstance().format(dZoomFactor).replaceAll(",", "."));
 
     mPanel.setZoom(dZoomFactor);
@@ -969,7 +1075,39 @@ private void fireSelectPlayerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
 }//GEN-LAST:event_fireSelectPlayerEvent
 
 private void fireDoSearchEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireDoSearchEvent
-// TODO add your handling code here:
+    if (!jSearchAlly.isSelected() && !jSearchPlayer.isSelected()) {
+        JOptionPane.showMessageDialog(this, "Spieler oder/und Stamm muss für eine Suche aktiviert sein", "Fehler", JOptionPane.INFORMATION_MESSAGE);
+        return;
+    }
+
+    String term = jSearchTerm.getText();
+    if (term.length() < 3) {
+        JOptionPane.showMessageDialog(this, "Suchbegriff muss mindestens 3 Zeichen enthalten", "Fehler", JOptionPane.WARNING_MESSAGE);
+        return;
+    }
+    term = term.toLowerCase();
+
+    if (jSearchPlayer.isSelected()) {
+        Enumeration<Integer> tribes = GlobalOptions.getDataHolder().getTribes().keys();
+        while (tribes.hasMoreElements()) {
+            Integer next = tribes.nextElement();
+            Tribe t = GlobalOptions.getDataHolder().getTribes().get(next);
+            if (t.getName().toLowerCase().indexOf(term) >= 0) {
+                System.out.println("Found Tribe: " + t.getName());
+            }
+        }
+    }
+    if (jSearchAlly.isSelected()) {
+        Enumeration<Integer> allies = GlobalOptions.getDataHolder().getAllies().keys();
+        while (allies.hasMoreElements()) {
+            Integer next = allies.nextElement();
+            Ally a = GlobalOptions.getDataHolder().getAllies().get(next);
+            if (a.getName().toLowerCase().indexOf(term) >= 0) {
+                System.out.println("Found Ally: " + a.getName());
+            }
+        }
+    }
+
 }//GEN-LAST:event_fireDoSearchEvent
 
     public void updateLocationByMinimap(int pX, int pY) {
@@ -1153,7 +1291,6 @@ private void fireDoSearchEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
      */
     public static void main(String[] args) {
         DOMConfigurator.configure("log4j.xml");
-
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
@@ -1174,6 +1311,8 @@ private void fireDoSearchEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
+    private javax.swing.JButton jButton5;
+    private javax.swing.JButton jButton6;
     private javax.swing.JTextField jCataTime;
     private javax.swing.JTextField jCenterX;
     private javax.swing.JTextField jCenterY;
@@ -1204,6 +1343,8 @@ private void fireDoSearchEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
     private javax.swing.JLabel jLabel9;
     private javax.swing.JTextField jLightTime;
     private javax.swing.JTextField jMArcherTime;
+    private javax.swing.JPanel jMarkerPanel;
+    private javax.swing.JTable jMarkerTable;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPanel jMinimapPanel;
     private javax.swing.JButton jMoveE;
@@ -1224,6 +1365,7 @@ private void fireDoSearchEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
     private javax.swing.JDialog jPlayerSelectionDialog;
     private javax.swing.JTextField jRamTime;
     private javax.swing.JButton jRefresh;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JCheckBox jSearchAlly;
     private javax.swing.JCheckBox jSearchPlayer;
     private javax.swing.JTextField jSearchTerm;

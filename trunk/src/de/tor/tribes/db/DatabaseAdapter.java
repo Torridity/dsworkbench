@@ -5,7 +5,6 @@
 package de.tor.tribes.db;
 
 import de.tor.tribes.sec.SecurityAdapter;
-import de.tor.tribes.util.GlobalLogger;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;

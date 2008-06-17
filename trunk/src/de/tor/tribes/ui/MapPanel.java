@@ -10,25 +10,17 @@ import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.Skin;
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Cursor;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.RenderingHints;
-import java.awt.TexturePaint;
 import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Timer;
-import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import org.apache.log4j.Logger;
 
@@ -48,20 +40,18 @@ public class MapPanel extends javax.swing.JPanel {
     private int mY = 468;
     private RepaintThread mRepaintThread = null;
     boolean updating = false;
-    private Timer mTooltipTimer = null;
     private MapFrame mParent;
-    private List<Cursor> mCursors = null;
     private int iCurrentCursor = 0;
     private Village mSourceVillage = null;
     private Village mTargetVillage = null;
-    // private VillageTooltipFrame mTooltipFrame = null;
+    private MarkerAddFrame mMarkerAddFrame = null;
+    boolean dragged = false;
+
     /** Creates new form MapPanel */
     public MapPanel(MapFrame pParent) {
         initComponents();
-        mCursors = new LinkedList<Cursor>();
-        final JPanel parent = this;
+        mMarkerAddFrame = new MarkerAddFrame(pParent);
         mParent = pParent;
-        mTooltipTimer = new Timer("TooltipTimer", true);
 
         addMouseWheelListener(new MouseWheelListener() {
 
@@ -76,6 +66,7 @@ public class MapPanel extends javax.swing.JPanel {
 
                 }
                 setCursor(GlobalOptions.getCursor(iCurrentCursor));
+                mParent.changeTool(iCurrentCursor);
             }
         });
 
@@ -83,62 +74,97 @@ public class MapPanel extends javax.swing.JPanel {
 
             @Override
             public void mouseClicked(MouseEvent e) {
-                //check current cursor for used tool and react
+
+                switch (iCurrentCursor) {
+                    case GlobalOptions.CURSOR_MARK: {
+                        Village current = getVillageAtMousePos();
+                        if (current != null) {
+                            if (current.getTribe() == null) {
+                                //empty village
+                                return;
+                            }
+                            mMarkerAddFrame.setLocation(e.getPoint());
+                            mMarkerAddFrame.setVillage(current);
+                            mMarkerAddFrame.setVisible(true);
+                        }
+                        break;
+                    }
+                }
             }
 
             @Override
             public void mousePressed(MouseEvent e) {
-                //start drag if attack tool is active
-                downX = e.getX();
-                downY = e.getY();
-                mSourceVillage = getVillageAtMousePos();
-            //select attack start village
-            //getVillageAtMousePos()
+                switch (iCurrentCursor) {
+                    case GlobalOptions.CURSOR_MEASURE: {
+                        //start drag if attack tool is active
+                        downX = e.getX();
+                        downY = e.getY();
+                        mSourceVillage = getVillageAtMousePos();
+                        break;
+                    }
+                }
             }
 
             @Override
             public void mouseReleased(MouseEvent e) {
-                //stop attack if attack tool is active
-                downX = 0;
-                downY = 0;
-                mRepaintThread.setDragLine(0, 0, 0, 0);
-                dragged = false;
+                switch (iCurrentCursor) {
+                    case GlobalOptions.CURSOR_MEASURE: {
+                        //stop attack if attack tool is active
+                        downX = 0;
+                        downY = 0;
+                        mRepaintThread.setDragLine(0, 0, 0, 0);
+                        dragged = false;
+                        break;
+                    }
+                }
             }
 
             @Override
             public void mouseEntered(MouseEvent e) {
-                if(dragged){
-                System.out.println("DRAG ENTER");
-            }
+                if (dragged) {
+                    System.out.println("DRAG ENTER");
+                }
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
-            if(dragged){
-                System.out.println("DRAG LEAVE");
-                System.out.println(e.getX());
-                System.out.println(e.getY());
-            }
-            }
-        });
-
-        addMouseMotionListener(new MouseMotionListener() {
-
-            @Override
-            public void mouseDragged(MouseEvent e) {
-                //update drag if attack tool is active
-                mRepaintThread.setDragLine(downX, downY, e.getX(), e.getY());
-                mTargetVillage = getVillageAtMousePos();
-dragged = true;
-            }
-
-            @Override
-            public void mouseMoved(MouseEvent e) {
+                if (dragged) {
+                    System.out.println("DRAG LEAVE");
+                    System.out.println(e.getX());
+                    System.out.println(e.getY());
+                }
             }
         });
+
+        addMouseMotionListener(
+                new MouseMotionListener() {
+
+                    @Override
+                    public void mouseDragged(MouseEvent e) {
+                        switch (iCurrentCursor) {
+                            case GlobalOptions.CURSOR_MEASURE: {
+                                //update drag if attack tool is active
+                                mRepaintThread.setDragLine(downX, downY, e.getX(), e.getY());
+                                mTargetVillage = getVillageAtMousePos();
+                                mParent.updateDistancePanel(mSourceVillage, mTargetVillage);
+                                dragged = true;
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void mouseMoved(MouseEvent e) {
+                        switch (iCurrentCursor) {
+                            case GlobalOptions.CURSOR_DEFAULT: {
+                                mParent.updateDetailedInfoPanel(getVillageAtMousePos());
+                                break;
+                            }
+                        }
+                    }
+                });
 
     }
-boolean dragged = false;
+
     public void setZoom(double pZoom) {
         dScaling = pZoom;
         mRepaintThread.setZoom(dScaling);
@@ -152,15 +178,15 @@ boolean dragged = false;
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 400, Short.MAX_VALUE)
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 207, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 300, Short.MAX_VALUE)
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 89, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -168,7 +194,7 @@ boolean dragged = false;
     @Override
     public void paint(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
-        //super.paint(g);
+        super.paint(g);
         g2d.drawImage(mBuffer, 0, 0, null);
         Toolkit.getDefaultToolkit().sync();
     }
@@ -194,8 +220,8 @@ boolean dragged = false;
             int x = (int) getMousePosition().getX();
             int y = (int) getMousePosition().getY();
 
-            x /= GlobalOptions.getSkin().getFieldWidth() / dScaling;
-            y /= GlobalOptions.getSkin().getFieldHeight() / dScaling;
+            x /= (int) Math.rint(GlobalOptions.getSkin().getFieldWidth() / dScaling);
+            y /= (int) Math.rint(GlobalOptions.getSkin().getFieldHeight() / dScaling);
 
             return mVisibleVillages[x][y];
         } catch (Exception e) {
@@ -208,9 +234,9 @@ boolean dragged = false;
         mBuffer = pBuffer;
         mVisibleVillages = pVillages;
         updateUI();
-        Village v = getVillageAtMousePos();
+        //Village v = getVillageAtMousePos();
         //mParent.updateDetailedInfoPanel(v);
-        mParent.updateDistancePanel(mSourceVillage, mTargetVillage);
+        //mParent.updateDistancePanel(mSourceVillage, mTargetVillage);
         updating = false;
     }
 
@@ -351,37 +377,44 @@ class RepaintThread extends Thread {
         if ((GlobalOptions.getWorldDecorationHolder().getTexture(0, 0, 1).getWidth(null) != GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, 1).getWidth(null)) || (GlobalOptions.getWorldDecorationHolder().getTexture(0, 0, 1).getHeight(null) != GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, 1).getHeight(null))) {
             useDecoration = false;
         }
+
         for (int i = 0; i < iVillagesX; i++) {
             for (int j = 0; j < iVillagesY; j++) {
                 Village v = mVisibleVillages[i][j];
                 Color marker = Color.WHITE;
                 g2d.setColor(marker);
-                try {
-                    marker = GlobalOptions.getMarkers().get(GlobalOptions.getDataHolder().getTribes().get(v.getTribe()).getName());
-                    if (marker == null) {
-                        String name = GlobalOptions.getDataHolder().getAllies().get(GlobalOptions.getDataHolder().getTribes().get(v.getTribe()).getAlly()).getName();
-                        marker = GlobalOptions.getMarkers().get(name);
+                if (v != null) {
+                    if (v.getTribe() != null) {
 
-                        if (marker == null) {
-                            throw new NullPointerException("");
+                        try {
+                            marker = GlobalOptions.getMarkers().get(v.getTribe().getName());
+                            if (marker == null) {
+                                marker = GlobalOptions.getMarkers().get(v.getTribe().getAlly().getName());
+                                if (marker == null) {
+                                    throw new NullPointerException("");
+                                }
+                            }
+                        } catch (Throwable t) {
+                            marker = Color.WHITE;
                         }
                     }
-                } catch (Exception e) {
                 }
 
 
+
                 if (v == null) {
-                    if(useDecoration){
+                    if (useDecoration) {
                         g2d.drawImage(GlobalOptions.getWorldDecorationHolder().getTexture(xPos, yPos, dScaling), x, y, null);
                     } else {
                         g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, dScaling), x, y, null);
                     }
-                
+
                 } else {
                     boolean isLeft = false;
                     if (v.getTribe() == null) {
                         isLeft = true;
                     }
+
                     if (v.getPoints() < 300) {
                         if (!isLeft) {
                             Image img = GlobalOptions.getSkin().getImage(Skin.ID_V1, dScaling);
@@ -489,10 +522,13 @@ class RepaintThread extends Thread {
             yPos = pYStart;
             xPos++;
         }
-         g2d.setColor(Color.YELLOW);
-        g2d.setStroke(new BasicStroke(5.0F, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
 
-        g2d.drawLine( x1, y1, x2, y2);
+        g2d.setColor(Color.YELLOW);
+
+        g2d.setStroke(new BasicStroke(
+                5.0F, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
+
+        g2d.drawLine(x1, y1, x2, y2);
         g2d.dispose();
     }
 }

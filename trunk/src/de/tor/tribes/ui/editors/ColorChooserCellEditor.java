@@ -4,7 +4,10 @@
  */
 package de.tor.tribes.ui.editors;
 
+import java.awt.Color;
 import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.AbstractCellEditor;
 import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
@@ -18,15 +21,25 @@ public class ColorChooserCellEditor extends AbstractCellEditor implements TableC
 
     private final ColorChooser chooserComponent = new ColorChooser();
 
+    public ColorChooserCellEditor(ActionListener pListener) {
+        chooserComponent.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                fireEditingStopped();
+            }
+        });
+        chooserComponent.addActionListener(pListener);
+    }
+
     @Override
     public Object getCellEditorValue() {
-        return chooserComponent;
+        return chooserComponent.getColor();
     }
 
     @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-        chooserComponent.setColor(((ColorChooser) value).getColor());
+        chooserComponent.setColor((Color) value);
         return chooserComponent;
-
     }
 }

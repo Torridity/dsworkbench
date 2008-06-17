@@ -166,4 +166,8 @@ public class UnitHolder {
     public void setBuildTime(double buildTime) {
         this.buildTime = buildTime;
     }
+    
+    public String toString(){
+        return getName() + "(" + getSpeed() + " Felder/min)";
+    }
 }

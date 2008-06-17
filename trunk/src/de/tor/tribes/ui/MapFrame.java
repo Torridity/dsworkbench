@@ -14,6 +14,7 @@ import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.editors.ColorChooserCellEditor;
 import de.tor.tribes.ui.renderer.ColorCellRenderer;
 import de.tor.tribes.ui.renderer.MarkerPanelCellRenderer;
+import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.GlobalOptions;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -620,9 +621,9 @@ public class MapFrame extends javax.swing.JFrame implements DataHolderListener {
             .addGroup(jMarkerPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jMarkerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton6)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(14, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 107, Short.MAX_VALUE)
+                    .addComponent(jButton6))
+                .addContainerGap())
         );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -1232,37 +1233,9 @@ private void fireRemoveMarkerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
             return;
         }
 
-        int xs = pSource.getX();
-        int ys = pSource.getY();
-        int xt = pTarget.getX();
-        int yt = pTarget.getY();
-
-        double dist = Math.sqrt(Math.pow(xt - xs, 2) + Math.pow(yt - ys, 2));
-
         List<UnitHolder> units = GlobalOptions.getDataHolder().getUnits();
         for (UnitHolder unit : units) {
-            double dur = unit.getSpeed() * dist;
-            int hour = (int) Math.floor(dur / 60);
-            dur -= hour * 60;
-            int min = (int) Math.floor(dur);
-            int sec = (int) Math.rint((dur - min) * 60);
-
-            String result = "";
-            if (hour < 10) {
-                result += "0" + hour + ":";
-            } else {
-                result += hour + ":";
-            }
-            if (min < 10) {
-                result += "0" + min + ":";
-            } else {
-                result += min + ":";
-            }
-            if (sec < 10) {
-                result += "0" + sec;
-            } else {
-                result += sec;
-            }
+            String result = DSCalculator.formatTimeInMinutes(DSCalculator.calculateMoveTimeInMinutes(pSource, pTarget, unit.getSpeed()));
 
             if (unit.getName().equals("Speerträger")) {
                 jSpearTime.setText(result);

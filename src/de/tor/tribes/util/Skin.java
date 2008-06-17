@@ -22,7 +22,6 @@ import javax.imageio.ImageIO;
  */
 public class Skin {
 
-    
     //init with default skin dimensions
     private int iFieldWidth = 53;
     private int iFieldHeight = 38;
@@ -78,22 +77,9 @@ public class Skin {
     private final String B5_LEFT_FILE = "b5_left.png";
     private final String B6_LEFT_FILE = "b6_left.png";
     private final String DEFAULT_UNDERGROUND = "default_underground.png";
-    /*   private final String SPEAR_FILE = "spear.png";
-    private final String SWORD_FILE = "sword.png";
-    private final String AXE_FILE = "axe.png";
-    private final String ARCHER_FILE = "archer.png";
-    private final String SPY_FILE = "spy.png";
-    private final String LKAV_FILE = "light.png";
-    private final String BKAV_FILE = "marcher.png";
-    private final String SKAV_FILE = "heavy.png";
-    private final String RAM_FILE = "ram.png";
-    private final String CATA_FILE = "cata.png";
-    private final String PALA_FILE = "knight.png";
-    private final String SNOB_FILE = "snob.png";*/
     private final int TEXTURE_COUNT = 25;
     private String BASE_PATH = "graphics/skins";
     private String DEFAULT_PATH = "graphics/skins/default";
-    
     private Hashtable<Integer, Image> mTextures = null;
 
     public Skin() throws Exception {
@@ -105,8 +91,8 @@ public class Skin {
     }
 
     private void loadSkin(String pSkinID) throws Exception {
-        if(pSkinID == null){
-            pSkinID = "default";
+        if (pSkinID == null) {
+            pSkinID = "symbol";
         }
         String path = BASE_PATH + "/" + pSkinID;
         mTextures = new Hashtable<Integer, Image>();
@@ -152,9 +138,9 @@ public class Skin {
             }
 
         //try loading units, ignore exceptions due to not all skins have all units
-        } catch(IOException ioe){
-               throw new Exception("Fehler beim laden des Grafikpaketes");
-        }catch (Exception e) {
+        } catch (IOException ioe) {
+            throw new Exception("Fehler beim laden des Grafikpaketes");
+        } catch (Exception e) {
             throw new Exception("Grafikpaket ungültig (" + e.getMessage() + ")");
         }
     }

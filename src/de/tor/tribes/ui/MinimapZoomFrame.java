@@ -7,6 +7,7 @@ package de.tor.tribes.ui;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -35,7 +36,7 @@ public class MinimapZoomFrame extends javax.swing.JFrame {
         }
     }
 
-    public void update(BufferedImage bImage, int dx, int dy) {
+    public void update(Image bImage, int dx, int dy) {
         if (isVisible()) {
             BufferStrategy bs = getBufferStrategy();
             if (bs != null) {
@@ -43,7 +44,7 @@ public class MinimapZoomFrame extends javax.swing.JFrame {
                 g2d.setColor(new Color(35, 125, 0));
                 g2d.fillRect(0, 0, getWidth(), getHeight());
 
-                g2d.drawImage(bImage, null, dx, dy);
+                g2d.drawImage(bImage, dx, dy, null);
                 if (mBorder != null) {
                     g2d.drawImage(mBorder, null, 0, 0);
                 }
@@ -102,8 +103,8 @@ class DrawThread extends Thread {
     public void run() {
         while (true) {
             if (mParent.isVisible()) {
-                int pWidth = mParent.getWidth();
-                int pHeight = mParent.getHeight();
+                int pWidth = mParent.getWidth() / 2;
+                int pHeight = mParent.getHeight() / 2;
                 int dx = 0;
                 int dy = 0;
                 int pXStart = centerX - pWidth / 2;
@@ -125,8 +126,8 @@ class DrawThread extends Thread {
                     pHeight = mParent.mMap.getHeight() - pYStart;
                 }
                 BufferedImage part = mParent.mMap.getSubimage(pXStart, pYStart, pWidth, pHeight);
-
-                mParent.update(part, dx, dy);
+                
+                mParent.update(part.getScaledInstance(mParent.getWidth(), mParent.getHeight(), BufferedImage.SCALE_DEFAULT), dx, dy);
             }
             try {
                 Thread.sleep(100);

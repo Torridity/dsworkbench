@@ -32,20 +32,20 @@ public class GlobalOptions {
 
     private static Logger logger = Logger.getLogger(GlobalOptions.class);
     //mappanel default
-    public static int CURSOR_DEFAULT = 0;
-    public static int CURSOR_MARK = 1;
-    public static int CURSOR_MEASURE = 2;
+    public final static int CURSOR_DEFAULT = 0;
+    public final static int CURSOR_MARK = 1;
+    public final static int CURSOR_MEASURE = 2;
     //mappanel attack
-    public static int CURSOR_ATTACK_RAM = 3;
-    public static int CURSOR_ATTACK_AXE = 4;
-    public static int CURSOR_ATTACK_SNOB = 5;
-    public static int CURSOR_ATTACK_SPY = 6;
-    public static int CURSOR_ATTACK_SWORD = 7;
-    public static int CURSOR_ATTACK_LIGHT = 8;
-    public static int CURSOR_ATTACK_HEAVY = 9;
+    public final static int CURSOR_ATTACK_RAM = 3;
+    public final static int CURSOR_ATTACK_AXE = 4;
+    public final static int CURSOR_ATTACK_SNOB = 5;
+    public final static int CURSOR_ATTACK_SPY = 6;
+    public final static int CURSOR_ATTACK_SWORD = 7;
+    public final static int CURSOR_ATTACK_LIGHT = 8;
+    public final static int CURSOR_ATTACK_HEAVY = 9;
     //minimap
-    public static int CURSOR_MOVE = 10;
-    public static int CURSOR_ZOOM = 11;
+    public final static int CURSOR_MOVE = 10;
+    public final static int CURSOR_ZOOM = 11;
     private static boolean INITIALIZED = false;
     /**Active skin used by the MapPanel*/
     private static Skin mSkin;

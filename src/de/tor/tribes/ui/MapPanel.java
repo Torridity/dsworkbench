@@ -141,6 +141,8 @@ public class MapPanel extends javax.swing.JPanel {
 
                     @Override
                     public void mouseDragged(MouseEvent e) {
+                        mParent.updateDetailedInfoPanel(getVillageAtMousePos());
+
                         switch (iCurrentCursor) {
                             case GlobalOptions.CURSOR_MEASURE: {
                                 //update drag if attack tool is active
@@ -154,12 +156,7 @@ public class MapPanel extends javax.swing.JPanel {
 
                     @Override
                     public void mouseMoved(MouseEvent e) {
-                        switch (iCurrentCursor) {
-                            case GlobalOptions.CURSOR_DEFAULT: {
-                                mParent.updateDetailedInfoPanel(getVillageAtMousePos());
-                                break;
-                            }
-                        }
+                        mParent.updateDetailedInfoPanel(getVillageAtMousePos());
                     }
                 });
 

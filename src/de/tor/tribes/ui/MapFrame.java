@@ -17,11 +17,8 @@ import de.tor.tribes.ui.renderer.MarkerPanelCellRenderer;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.GlobalOptions;
 import java.awt.Color;
-import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.text.Collator;
 import java.text.NumberFormat;
 import java.util.Arrays;
@@ -52,9 +49,10 @@ public class MapFrame extends javax.swing.JFrame implements DataHolderListener {
 
     /** Creates new form MapFrame */
     public MapFrame() {
-
         initComponents();
-
+        jMainControlPanel.setupPanel(this, true, true);
+        jMainControlPanel.setTitle(getTitle());
+        pack();
         System.getProperties().put("proxySet", "true");
         System.getProperties().put("proxyHost", "proxy.fzk.de");
         System.getProperties().put("proxyPort", "8000");
@@ -123,7 +121,6 @@ public class MapFrame extends javax.swing.JFrame implements DataHolderListener {
         });
 
         jMarkerTable.setDefaultEditor(Color.class, editor);
-        jDynPanel.add(jMarkerPanel);
 
         //load icons for bonus villages at information panel
         mIcons = new LinkedList<ImageIcon>();
@@ -141,41 +138,14 @@ public class MapFrame extends javax.swing.JFrame implements DataHolderListener {
         jVillageInfo.setText("");
         jVillageInfo.setIcon(null);
         jAllyInfo.setText("");
-        
+        jInfoPanel.add(jDetailedInfoPanel);
+        jDynFrameControlPanel.setupPanel(jDynFrame, true, true);
+        jDynFrameControlPanel.setTitle("Toolbox");
+
         jTabbedPane1.addTab("Entfernung", jDistancePanel);
         jTabbedPane1.addTab("Markierungen", jMarkerPanel);
         jDynFrame.pack();
         jDynFrame.setVisible(true);
-        jLabel18.addMouseListener(new MouseListener() {
-
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                
-            }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-                
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                jLabel18.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/bullet_ball_grey.png")));
-                jLabel18.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                jLabel18.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/bullet_ball_blue.png")));
-                jLabel18.setCursor(Cursor.getDefaultCursor());
-            }
-        });
-        
     }
 
     @Override
@@ -232,15 +202,17 @@ public class MapFrame extends javax.swing.JFrame implements DataHolderListener {
         jCataTime = new javax.swing.JTextField();
         jSnobTime = new javax.swing.JTextField();
         jKnightTime = new javax.swing.JTextField();
+        jLabel18 = new javax.swing.JLabel();
+        jLabel19 = new javax.swing.JLabel();
+        jDistanceSourceVillage = new javax.swing.JLabel();
+        jDistanceTargetVillage = new javax.swing.JLabel();
         jMarkerPanel = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jMarkerTable = new javax.swing.JTable();
         jButton6 = new javax.swing.JButton();
         jDynFrame = new javax.swing.JFrame();
         jTabbedPane1 = new javax.swing.JTabbedPane();
-        jLabel18 = new javax.swing.JLabel();
-        jLabel19 = new javax.swing.JLabel();
-        jLabel20 = new javax.swing.JLabel();
+        jDynFrameControlPanel = new de.tor.tribes.ui.FrameControlPanel();
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         jMoveE = new javax.swing.JButton();
@@ -266,15 +238,8 @@ public class MapFrame extends javax.swing.JFrame implements DataHolderListener {
         jSearchAlly = new javax.swing.JCheckBox();
         jButton4 = new javax.swing.JButton();
         jMinimapPanel = new javax.swing.JPanel();
-        jDynPanel = new javax.swing.JPanel();
-        jMenuBar1 = new javax.swing.JMenuBar();
-        jGeneralMenu = new javax.swing.JMenu();
-        jOptionsItem = new javax.swing.JMenuItem();
-        jExitItem = new javax.swing.JMenuItem();
-        jViewMenu = new javax.swing.JMenu();
-        jWorldMapItem = new javax.swing.JMenuItem();
-        jToolsMenu = new javax.swing.JMenu();
-        jInfoMenu = new javax.swing.JMenu();
+        jInfoPanel = new javax.swing.JPanel();
+        jMainControlPanel = new de.tor.tribes.ui.FrameControlPanel();
 
         jDetailedInfoPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Info"));
 
@@ -521,6 +486,14 @@ public class MapFrame extends javax.swing.JFrame implements DataHolderListener {
         jKnightTime.setOpaque(false);
         jKnightTime.setPreferredSize(new java.awt.Dimension(54, 20));
 
+        jLabel18.setText("<html><u>Von</u></html>");
+
+        jLabel19.setText("<html><u>Nach</u></html>");
+
+        jDistanceSourceVillage.setText("------");
+
+        jDistanceTargetVillage.setText("------");
+
         javax.swing.GroupLayout jDistancePanelLayout = new javax.swing.GroupLayout(jDistancePanel);
         jDistancePanel.setLayout(jDistancePanelLayout);
         jDistancePanelLayout.setHorizontalGroup(
@@ -528,58 +501,75 @@ public class MapFrame extends javax.swing.JFrame implements DataHolderListener {
             .addGroup(jDistancePanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jDistancePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jSpearTime, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jDistancePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jSwordTime, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jDistancePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jBowTime, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jDistancePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jAxeTime, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jDistancePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jSpyTime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jDistancePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLightTime, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jDistancePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel16, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jMArcherTime, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(6, 6, 6)
-                .addGroup(jDistancePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jHeavyTime, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jDistancePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jRamTime, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jDistancePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel17, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jCataTime, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jDistancePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jSnobTime, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jDistancePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jKnightTime, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
+                    .addGroup(jDistancePanelLayout.createSequentialGroup()
+                        .addGroup(jDistancePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jSpearTime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jDistancePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jSwordTime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jDistancePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jBowTime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jDistancePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jAxeTime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jDistancePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jSpyTime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jDistancePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLightTime, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jDistancePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel16, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jMArcherTime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(6, 6, 6)
+                        .addGroup(jDistancePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jHeavyTime, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jDistancePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jRamTime, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jDistancePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel17, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jCataTime, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jDistancePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jSnobTime, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jDistancePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jKnightTime, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(jDistancePanelLayout.createSequentialGroup()
+                        .addGroup(jDistancePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(jLabel18, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel19, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(18, 18, 18)
+                        .addGroup(jDistancePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jDistanceTargetVillage, javax.swing.GroupLayout.DEFAULT_SIZE, 672, Short.MAX_VALUE)
+                            .addComponent(jDistanceSourceVillage, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                .addContainerGap(14, Short.MAX_VALUE))
         );
         jDistancePanelLayout.setVerticalGroup(
             jDistancePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jDistancePanelLayout.createSequentialGroup()
-                .addContainerGap()
+                .addGroup(jDistancePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel18)
+                    .addComponent(jDistanceSourceVillage))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jDistancePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel19)
+                    .addComponent(jDistanceTargetVillage))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jDistancePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jDistancePanelLayout.createSequentialGroup()
                         .addGroup(jDistancePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -613,7 +603,7 @@ public class MapFrame extends javax.swing.JFrame implements DataHolderListener {
                             .addComponent(jCataTime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jSnobTime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jKnightTime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(93, Short.MAX_VALUE))
         );
 
         jMarkerPanel.setMaximumSize(new java.awt.Dimension(750, 305));
@@ -675,42 +665,27 @@ public class MapFrame extends javax.swing.JFrame implements DataHolderListener {
         jDynFrame.setAlwaysOnTop(true);
         jDynFrame.setUndecorated(true);
 
-        jLabel18.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/bullet_ball_blue.png"))); // NOI18N
-
-        jLabel19.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/bullet_ball_yellow.png"))); // NOI18N
-
-        jLabel20.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/bullet_ball_red.png"))); // NOI18N
-
         javax.swing.GroupLayout jDynFrameLayout = new javax.swing.GroupLayout(jDynFrame.getContentPane());
         jDynFrame.getContentPane().setLayout(jDynFrameLayout);
         jDynFrameLayout.setHorizontalGroup(
             jDynFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jDynFrameControlPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 444, Short.MAX_VALUE)
             .addGroup(jDynFrameLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jDynFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jDynFrameLayout.createSequentialGroup()
-                        .addComponent(jLabel18)
-                        .addGap(0, 0, 0)
-                        .addComponent(jLabel19)
-                        .addGap(0, 0, 0)
-                        .addComponent(jLabel20))
-                    .addGroup(jDynFrameLayout.createSequentialGroup()
-                        .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 424, Short.MAX_VALUE)
-                        .addContainerGap())))
+                .addGap(10, 10, 10)
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 434, Short.MAX_VALUE))
         );
         jDynFrameLayout.setVerticalGroup(
             jDynFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jDynFrameLayout.createSequentialGroup()
-                .addGroup(jDynFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel18)
-                    .addComponent(jLabel19)
-                    .addComponent(jLabel20))
+                .addComponent(jDynFrameControlPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 124, Short.MAX_VALUE)
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 262, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("DS Workbench 0.9b");
+        setUndecorated(true);
         addComponentListener(new java.awt.event.ComponentAdapter() {
             public void componentResized(java.awt.event.ComponentEvent evt) {
                 fireFrameResizedEvent(evt);
@@ -974,32 +949,7 @@ public class MapFrame extends javax.swing.JFrame implements DataHolderListener {
         jMinimapPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Minimap"));
         jMinimapPanel.setLayout(new java.awt.BorderLayout());
 
-        jDynPanel.setLayout(new java.awt.BorderLayout());
-
-        jGeneralMenu.setText("Allgemein");
-
-        jOptionsItem.setText("Einstellungen");
-        jGeneralMenu.add(jOptionsItem);
-
-        jExitItem.setText("Beenden");
-        jGeneralMenu.add(jExitItem);
-
-        jMenuBar1.add(jGeneralMenu);
-
-        jViewMenu.setText("Ansicht");
-
-        jWorldMapItem.setText("Weltkarte");
-        jViewMenu.add(jWorldMapItem);
-
-        jMenuBar1.add(jViewMenu);
-
-        jToolsMenu.setText("Tools");
-        jMenuBar1.add(jToolsMenu);
-
-        jInfoMenu.setText("Info");
-        jMenuBar1.add(jInfoMenu);
-
-        setJMenuBar(jMenuBar1);
+        jInfoPanel.setLayout(new java.awt.BorderLayout());
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -1016,13 +966,15 @@ public class MapFrame extends javax.swing.JFrame implements DataHolderListener {
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                 .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                    .addComponent(jDynPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 807, Short.MAX_VALUE))
+                    .addComponent(jInfoPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 807, Short.MAX_VALUE))
                 .addContainerGap())
+            .addComponent(jMainControlPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 827, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
+                .addComponent(jMainControlPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1030,13 +982,11 @@ public class MapFrame extends javax.swing.JFrame implements DataHolderListener {
                         .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jMinimapPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 233, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 515, Short.MAX_VALUE))
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 519, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jDynPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jInfoPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
-
-        pack();
     }// </editor-fold>//GEN-END:initComponents
 
 private void fireRefreshMapEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireRefreshMapEvent
@@ -1223,31 +1173,17 @@ private void fireRemoveMarkerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
 
     public void changeTool(int pTool) {
         switch (pTool) {
-            case GlobalOptions.CURSOR_DEFAULT: {
-                jDynPanel.removeAll();
-                jDynPanel.add(jDetailedInfoPanel);
-                break;
-            }
             case GlobalOptions.CURSOR_MARK: {
-                /*jDynPanel.removeAll();
-                jDynPanel.add(jMarkerPanel);*/
                 jTabbedPane1.setSelectedIndex(1);
                 jDynFrame.pack();
                 break;
             }
             case GlobalOptions.CURSOR_MEASURE: {
-               jTabbedPane1.setSelectedIndex(0);
-               jDynFrame.pack();
-                /* jDynPanel.removeAll();
-                jDynPanel.add(jDistancePanel);*/
+                jTabbedPane1.setSelectedIndex(0);
+                jDynFrame.pack();
                 break;
             }
-            default: {
-                jDynPanel.removeAll();
-            //attack panel
-            }
         }
-        jDynPanel.updateUI();
     }
 
     /**Update the marker table and the maps if one marker added or removed
@@ -1291,10 +1227,10 @@ private void fireRemoveMarkerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
     /**Switch between DynPanels triggered by the MapFrame
      */
     public void switchDynPanel(int pType) {
-        jDynPanel.removeAll();
+        jInfoPanel.removeAll();
         switch (pType) {
             default:
-                jDynPanel.add(jDetailedInfoPanel);
+                jInfoPanel.add(jDetailedInfoPanel);
                 break;
         }
     }
@@ -1305,6 +1241,7 @@ private void fireRemoveMarkerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
         if (!jDistancePanel.isVisible()) {
             return;
         }
+        boolean calculate = true;
         if ((pSource == null) || (pTarget == null)) {
             jSpearTime.setText("------");
             jSwordTime.setText("------");
@@ -1318,8 +1255,38 @@ private void fireRemoveMarkerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
             jCataTime.setText("------");
             jSnobTime.setText("------");
             jKnightTime.setText("------");
+            jDistanceTargetVillage.setText("------");
+            calculate = false;
+        }
+
+        String text = "";
+        if (pSource != null) {
+            text = "<html>";
+            if (pSource.getTribe() == null) {
+                text += "kein Besitzer - ";
+            } else {
+                text += pSource.getTribe().getName() + " - ";
+            }
+            text += pSource.getName() + " (" + pSource.getX() + "|" + pSource.getY() + ")</html>";
+
+            jDistanceSourceVillage.setText(text);
+        } else {
+            jDistanceSourceVillage.setText("------");
+        }
+
+        if (!calculate) {
             return;
         }
+
+        text = "<html>";
+        if (pTarget.getTribe() == null) {
+            text += "kein Besitzer - ";
+        } else {
+            text += pTarget.getTribe().getName() + " - ";
+        }
+        text += pTarget.getName() + " (" + pTarget.getX() + "|" + pTarget.getY() + ")</html>";
+
+        jDistanceTargetVillage.setText(text);
 
         List<UnitHolder> units = GlobalOptions.getDataHolder().getUnits();
         for (UnitHolder unit : units) {
@@ -1423,11 +1390,9 @@ private void fireRemoveMarkerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
     }
 
     /**Add a new marker to the marker table and finally update the maps if the marker panel is visible
+     * @TODO Allow to change marker color directly on map and replace existing markers
      */
     public void updateMarkerPanel(Village pVillage, boolean pMarkTribe, boolean pMarkAlly, Color pTribeColor, Color pAllyColor) {
-        if (!jMarkerPanel.isVisible()) {
-            return;
-        }
         if (pVillage.getTribe() == null) {
             //can not mark empty villages
             logger.debug("Cannot mark empty villages");
@@ -1437,15 +1402,13 @@ private void fireRemoveMarkerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
         MarkerCell p = null;
         if (pMarkAlly) {
             if (pVillage.getTribe().getAlly() != null) {
-                if (GlobalOptions.getMarkers().containsKey(pVillage.getTribe().getAlly().getName())) {
-                    //marker already set
-                    return;
-                } else {
+                if (!GlobalOptions.getMarkers().containsKey(pVillage.getTribe().getAlly().getName())) {
                     GlobalOptions.getMarkers().put(pVillage.getTribe().getAlly().getName(), Color.WHITE);
-                }
-                p = MarkerCell.factoryAllyMarker("<html>" + pVillage.getTribe().getAlly().getName() + "</html>");
-                Color c = (pAllyColor != null) ? pAllyColor : Color.WHITE;
-                ((DefaultTableModel) jMarkerTable.getModel()).addRow(new Object[]{p, c});
+                    p = MarkerCell.factoryAllyMarker("<html>" + pVillage.getTribe().getAlly().getName() + "</html>");
+                    Color c = (pAllyColor != null) ? pAllyColor : Color.WHITE;
+                    ((DefaultTableModel) jMarkerTable.getModel()).addRow(new Object[]{p, c});
+                }//else: marker already available
+
             } else {
                 //tribe has no ally. Skip.
                 logger.info("No ally found for selected tribe. Skip marking ally");
@@ -1453,15 +1416,12 @@ private void fireRemoveMarkerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
         }
 
         if (pMarkTribe) {
-            if (GlobalOptions.getMarkers().containsKey(pVillage.getTribe().getName())) {
-                //marker already set
-                return;
-            } else {
+            if (!GlobalOptions.getMarkers().containsKey(pVillage.getTribe().getName())) {
                 GlobalOptions.getMarkers().put(pVillage.getTribe().getName(), Color.WHITE);
+                Color c = (pTribeColor != null) ? pTribeColor : Color.WHITE;
+                p = MarkerCell.factoryPlayerMarker("<html>" + pVillage.getTribe().getName() + "</html>");
+                ((DefaultTableModel) jMarkerTable.getModel()).addRow(new Object[]{p, c});
             }
-            Color c = (pTribeColor != null) ? pTribeColor : Color.WHITE;
-            p = MarkerCell.factoryPlayerMarker("<html>" + pVillage.getTribe().getName() + "</html>");
-            ((DefaultTableModel) jMarkerTable.getModel()).addRow(new Object[]{p, c});
         }
         updateMarkers();
     }
@@ -1505,12 +1465,12 @@ private void fireRemoveMarkerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
     private javax.swing.JTextField jCenterY;
     private javax.swing.JPanel jDetailedInfoPanel;
     private javax.swing.JPanel jDistancePanel;
+    private javax.swing.JLabel jDistanceSourceVillage;
+    private javax.swing.JLabel jDistanceTargetVillage;
     private javax.swing.JFrame jDynFrame;
-    private javax.swing.JPanel jDynPanel;
-    private javax.swing.JMenuItem jExitItem;
-    private javax.swing.JMenu jGeneralMenu;
+    private de.tor.tribes.ui.FrameControlPanel jDynFrameControlPanel;
     private javax.swing.JTextField jHeavyTime;
-    private javax.swing.JMenu jInfoMenu;
+    private javax.swing.JPanel jInfoPanel;
     private javax.swing.JTextField jKnightTime;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
@@ -1524,7 +1484,6 @@ private void fireRemoveMarkerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
     private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -1534,9 +1493,9 @@ private void fireRemoveMarkerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
     private javax.swing.JLabel jLabel9;
     private javax.swing.JTextField jLightTime;
     private javax.swing.JTextField jMArcherTime;
+    private de.tor.tribes.ui.FrameControlPanel jMainControlPanel;
     private javax.swing.JPanel jMarkerPanel;
     private javax.swing.JTable jMarkerTable;
-    private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPanel jMinimapPanel;
     private javax.swing.JButton jMoveE;
     private javax.swing.JButton jMoveE1;
@@ -1547,7 +1506,6 @@ private void fireRemoveMarkerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
     private javax.swing.JButton jMoveSE;
     private javax.swing.JButton jMoveSW;
     private javax.swing.JButton jMoveW;
-    private javax.swing.JMenuItem jOptionsItem;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
@@ -1566,10 +1524,7 @@ private void fireRemoveMarkerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
     private javax.swing.JTextField jSpyTime;
     private javax.swing.JTextField jSwordTime;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JMenu jToolsMenu;
-    private javax.swing.JMenu jViewMenu;
     private javax.swing.JLabel jVillageInfo;
-    private javax.swing.JMenuItem jWorldMapItem;
     private javax.swing.JButton jZoomInButton;
     private javax.swing.JButton jZoomOutButton;
     // End of variables declaration//GEN-END:variables

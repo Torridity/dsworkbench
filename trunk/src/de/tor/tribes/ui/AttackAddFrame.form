@@ -33,7 +33,7 @@
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jSpinner1" pref="306" max="32767" attributes="1"/>
+                  <Component id="jTimeSpinner" pref="306" max="32767" attributes="1"/>
                   <Component id="jTargetVillage" alignment="0" pref="306" max="32767" attributes="1"/>
                   <Component id="jSourceVillage" alignment="0" pref="306" max="32767" attributes="1"/>
                   <Component id="jDistance" alignment="0" pref="306" max="32767" attributes="1"/>
@@ -75,7 +75,7 @@
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="jSpinner1" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="jTimeSpinner" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="jSendArriveSpinner" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace min="-2" max="-2" attributes="0"/>
@@ -166,13 +166,13 @@
         </Property>
       </Properties>
       <Events>
-        <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="iscl"/>
+        <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="fireUnitChangedEvent"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JSpinner" name="jSpinner1">
+    <Component class="javax.swing.JSpinner" name="jTimeSpinner">
       <Properties>
         <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.editors2.SpinnerModelEditor">
-          <SpinnerModel initial="now" stepSize="11" type="date"/>
+          <SpinnerModel initial="now" stepSize="13" type="date"/>
         </Property>
       </Properties>
     </Component>

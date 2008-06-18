@@ -17,8 +17,11 @@ import de.tor.tribes.ui.renderer.MarkerPanelCellRenderer;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.GlobalOptions;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.text.Collator;
 import java.text.NumberFormat;
 import java.util.Arrays;
@@ -29,8 +32,6 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
@@ -140,6 +141,41 @@ public class MapFrame extends javax.swing.JFrame implements DataHolderListener {
         jVillageInfo.setText("");
         jVillageInfo.setIcon(null);
         jAllyInfo.setText("");
+        
+        jTabbedPane1.addTab("Entfernung", jDistancePanel);
+        jTabbedPane1.addTab("Markierungen", jMarkerPanel);
+        jDynFrame.pack();
+        jDynFrame.setVisible(true);
+        jLabel18.addMouseListener(new MouseListener() {
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                jLabel18.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/bullet_ball_grey.png")));
+                jLabel18.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                jLabel18.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/bullet_ball_blue.png")));
+                jLabel18.setCursor(Cursor.getDefaultCursor());
+            }
+        });
+        
     }
 
     @Override
@@ -200,6 +236,11 @@ public class MapFrame extends javax.swing.JFrame implements DataHolderListener {
         jScrollPane1 = new javax.swing.JScrollPane();
         jMarkerTable = new javax.swing.JTable();
         jButton6 = new javax.swing.JButton();
+        jDynFrame = new javax.swing.JFrame();
+        jTabbedPane1 = new javax.swing.JTabbedPane();
+        jLabel18 = new javax.swing.JLabel();
+        jLabel19 = new javax.swing.JLabel();
+        jLabel20 = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         jMoveE = new javax.swing.JButton();
@@ -345,6 +386,8 @@ public class MapFrame extends javax.swing.JFrame implements DataHolderListener {
         );
 
         jDistancePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Entfernung"));
+        jDistancePanel.setMaximumSize(new java.awt.Dimension(750, 96));
+        jDistancePanel.setMinimumSize(new java.awt.Dimension(750, 96));
 
         jSpearTime.setEditable(false);
         jSpearTime.setHorizontalAlignment(javax.swing.JTextField.CENTER);
@@ -573,6 +616,9 @@ public class MapFrame extends javax.swing.JFrame implements DataHolderListener {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        jMarkerPanel.setMaximumSize(new java.awt.Dimension(750, 305));
+        jMarkerPanel.setMinimumSize(new java.awt.Dimension(750, 305));
+
         jMarkerTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
@@ -614,15 +660,53 @@ public class MapFrame extends javax.swing.JFrame implements DataHolderListener {
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton6)
-                .addContainerGap(102, Short.MAX_VALUE))
+                .addContainerGap(211, Short.MAX_VALUE))
         );
         jMarkerPanelLayout.setVerticalGroup(
             jMarkerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jMarkerPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jMarkerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 107, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 283, Short.MAX_VALUE)
                     .addComponent(jButton6))
+                .addContainerGap())
+        );
+
+        jDynFrame.setAlwaysOnTop(true);
+        jDynFrame.setUndecorated(true);
+
+        jLabel18.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/bullet_ball_blue.png"))); // NOI18N
+
+        jLabel19.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/bullet_ball_yellow.png"))); // NOI18N
+
+        jLabel20.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/bullet_ball_red.png"))); // NOI18N
+
+        javax.swing.GroupLayout jDynFrameLayout = new javax.swing.GroupLayout(jDynFrame.getContentPane());
+        jDynFrame.getContentPane().setLayout(jDynFrameLayout);
+        jDynFrameLayout.setHorizontalGroup(
+            jDynFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jDynFrameLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jDynFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jDynFrameLayout.createSequentialGroup()
+                        .addComponent(jLabel18)
+                        .addGap(0, 0, 0)
+                        .addComponent(jLabel19)
+                        .addGap(0, 0, 0)
+                        .addComponent(jLabel20))
+                    .addGroup(jDynFrameLayout.createSequentialGroup()
+                        .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 424, Short.MAX_VALUE)
+                        .addContainerGap())))
+        );
+        jDynFrameLayout.setVerticalGroup(
+            jDynFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jDynFrameLayout.createSequentialGroup()
+                .addGroup(jDynFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel18)
+                    .addComponent(jLabel19)
+                    .addComponent(jLabel20))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 124, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -1145,13 +1229,17 @@ private void fireRemoveMarkerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
                 break;
             }
             case GlobalOptions.CURSOR_MARK: {
-                jDynPanel.removeAll();
-                jDynPanel.add(jMarkerPanel);
+                /*jDynPanel.removeAll();
+                jDynPanel.add(jMarkerPanel);*/
+                jTabbedPane1.setSelectedIndex(1);
+                jDynFrame.pack();
                 break;
             }
             case GlobalOptions.CURSOR_MEASURE: {
-                jDynPanel.removeAll();
-                jDynPanel.add(jDistancePanel);
+               jTabbedPane1.setSelectedIndex(0);
+               jDynFrame.pack();
+                /* jDynPanel.removeAll();
+                jDynPanel.add(jDistancePanel);*/
                 break;
             }
             default: {
@@ -1417,6 +1505,7 @@ private void fireRemoveMarkerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
     private javax.swing.JTextField jCenterY;
     private javax.swing.JPanel jDetailedInfoPanel;
     private javax.swing.JPanel jDistancePanel;
+    private javax.swing.JFrame jDynFrame;
     private javax.swing.JPanel jDynPanel;
     private javax.swing.JMenuItem jExitItem;
     private javax.swing.JMenu jGeneralMenu;
@@ -1432,7 +1521,10 @@ private void fireRemoveMarkerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel17;
+    private javax.swing.JLabel jLabel18;
+    private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -1473,6 +1565,7 @@ private void fireRemoveMarkerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
     private javax.swing.JTextField jSpearTime;
     private javax.swing.JTextField jSpyTime;
     private javax.swing.JTextField jSwordTime;
+    private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JMenu jToolsMenu;
     private javax.swing.JMenu jViewMenu;
     private javax.swing.JLabel jVillageInfo;

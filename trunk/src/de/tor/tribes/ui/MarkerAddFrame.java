@@ -56,7 +56,7 @@ public class MarkerAddFrame extends javax.swing.JFrame {
         jButton2.setText("OK");
         jButton2.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jButton2fireAddMarkEvent(evt);
+                fireAddMarkEvent(evt);
             }
         });
 
@@ -93,27 +93,21 @@ public class MarkerAddFrame extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jTribeColorPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 239, Short.MAX_VALUE)
+                    .addComponent(jAllyColorPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 239, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jTribeColorPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 235, Short.MAX_VALUE)
-                        .addContainerGap())
+                        .addComponent(jMarkTribe)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jTribeName, javax.swing.GroupLayout.DEFAULT_SIZE, 126, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jAllyColorPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 235, Short.MAX_VALUE)
-                        .addContainerGap())
+                        .addComponent(jMarkAlly)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jAllyName, javax.swing.GroupLayout.DEFAULT_SIZE, 126, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jMarkTribe)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jTribeName, javax.swing.GroupLayout.DEFAULT_SIZE, 122, Short.MAX_VALUE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jMarkAlly)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jAllyName, javax.swing.GroupLayout.DEFAULT_SIZE, 122, Short.MAX_VALUE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jButton1)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 103, Short.MAX_VALUE)
-                                .addComponent(jButton2)))
-                        .addContainerGap())))
+                        .addComponent(jButton1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 103, Short.MAX_VALUE)
+                        .addComponent(jButton2)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -153,10 +147,10 @@ public class MarkerAddFrame extends javax.swing.JFrame {
         }
     }
 
-private void jButton2fireAddMarkEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton2fireAddMarkEvent
+private void fireAddMarkEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireAddMarkEvent
     setVisible(false);
     mParent.updateMarkerPanel(mVillage, jMarkTribe.isSelected(), jMarkAlly.isSelected(), mTribeColorChooser.getColor(), mAllyColorChooser.getColor());
-}//GEN-LAST:event_jButton2fireAddMarkEvent
+}//GEN-LAST:event_fireAddMarkEvent
 
 private void jButton1fireAbortMarkEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1fireAbortMarkEvent
     setVisible(false);

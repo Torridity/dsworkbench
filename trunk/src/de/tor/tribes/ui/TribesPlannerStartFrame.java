@@ -24,6 +24,8 @@ public class TribesPlannerStartFrame extends javax.swing.JFrame implements DataH
     /** Creates new form TribesPlannerStartFrame */
     public TribesPlannerStartFrame() {
         initComponents();
+        jControlPanel.setupPanel(this, true, false);
+        
         try {
             GlobalOptions.initialize(false, this);
         } catch (Exception e) {
@@ -102,8 +104,10 @@ public class TribesPlannerStartFrame extends javax.swing.JFrame implements DataH
         jButton2 = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
+        jControlPanel = new de.tor.tribes.ui.FrameControlPanel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Einstellungen");
+        setAlwaysOnTop(true);
 
         jLabel1.setText("Server");
 
@@ -153,7 +157,7 @@ public class TribesPlannerStartFrame extends javax.swing.JFrame implements DataH
                     .addComponent(jLabel2)
                     .addComponent(jTribeNames, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 172, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -183,7 +187,7 @@ public class TribesPlannerStartFrame extends javax.swing.JFrame implements DataH
                 .addComponent(jGraphicPacks, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton4)
-                .addContainerGap(142, Short.MAX_VALUE))
+                .addContainerGap(140, Short.MAX_VALUE))
         );
         jGeneralSettingsLayout.setVerticalGroup(
             jGeneralSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -193,7 +197,7 @@ public class TribesPlannerStartFrame extends javax.swing.JFrame implements DataH
                     .addComponent(jLabel5)
                     .addComponent(jGraphicPacks, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton4))
-                .addContainerGap(219, Short.MAX_VALUE))
+                .addContainerGap(222, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Allgemein", jGeneralSettings);
@@ -270,7 +274,7 @@ public class TribesPlannerStartFrame extends javax.swing.JFrame implements DataH
                     .addComponent(jProxyPort, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton2)
-                .addContainerGap(111, Short.MAX_VALUE))
+                .addContainerGap(114, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Netzwerk", jNetworkSettings);
@@ -302,11 +306,13 @@ public class TribesPlannerStartFrame extends javax.swing.JFrame implements DataH
                         .addComponent(jButton1))
                     .addComponent(jTabbedPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 427, Short.MAX_VALUE))
                 .addContainerGap())
+            .addComponent(jControlPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 447, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
+                .addComponent(jControlPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 281, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -432,6 +438,7 @@ public class TribesPlannerStartFrame extends javax.swing.JFrame implements DataH
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
+    private de.tor.tribes.ui.FrameControlPanel jControlPanel;
     private javax.swing.JRadioButton jDirectConnectOption;
     private javax.swing.JPanel jGeneralSettings;
     private javax.swing.JComboBox jGraphicPacks;

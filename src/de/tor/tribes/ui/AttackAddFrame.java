@@ -26,34 +26,44 @@ import javax.swing.event.ChangeListener;
  */
 public class AttackAddFrame extends javax.swing.JFrame {
 
-    private Village pSource;
-    private Village pTarget;
+    private Village mSource;
+    private Village mTarget;
 
     /** Creates new form AttackAddFrame */
     public AttackAddFrame() {
         initComponents();
-        buildUnitBox();
-        ((DateEditor) jSpinner1.getEditor()).getTextField().setHorizontalAlignment(JTextField.CENTER);
-        jSpinner1.addChangeListener(new ChangeListener() {
+        ((DateEditor) jTimeSpinner.getEditor()).getTextField().setHorizontalAlignment(JTextField.CENTER);
+        ((DateEditor) jTimeSpinner.getEditor()).getFormat().applyPattern("dd.MM.yy HH:mm:ss");
+        jTimeSpinner.addChangeListener(new ChangeListener() {
 
             @Override
             public void stateChanged(ChangeEvent e) {
-                if(!validateTime()){
-                    ((DateEditor)jSpinner1.getEditor()).getTextField().setForeground(Color.RED);
-                }else{
-                    ((DateEditor)jSpinner1.getEditor()).getTextField().setForeground(Color.BLACK);
+                if (!validateTime()) {
+                    ((DateEditor) jTimeSpinner.getEditor()).getTextField().setForeground(Color.RED);
+                } else {
+                    ((DateEditor) jTimeSpinner.getEditor()).getTextField().setForeground(Color.BLACK);
                 }
             }
         });
+        buildUnitBox();
     }
 
-    private boolean validateTime(){
-        
-        //check time depending selected unit
-        
-        return false;
+    /**Check if the currently selected unit can arrive at the target village at the selected time.
+     * Returns result depending on the time mode (arrive or send) 
+     */
+    private boolean validateTime() {
+        long sendMillis = ((Date) jTimeSpinner.getValue()).getTime();
+        if (!isArrivalTime()) {
+            //if "send time" is selected only check if send time is in future
+            return (sendMillis > System.currentTimeMillis());
+        } else {
+            //check time depending selected unit
+            int speed = ((UnitHolder) jUnitBox.getSelectedItem()).getSpeed();
+            long moveTime = (long) DSCalculator.calculateMoveTimeInMinutes(mSource, mTarget, speed) * 60000;
+            return (sendMillis > System.currentTimeMillis() + moveTime);
+        }
     }
-    
+
     private void buildUnitBox() {
         DefaultComboBoxModel model = new DefaultComboBoxModel();
         for (UnitHolder unit : GlobalOptions.getDataHolder().getUnits()) {
@@ -63,31 +73,44 @@ public class AttackAddFrame extends javax.swing.JFrame {
     }
 
     public boolean isArrivalTime() {
-        return ((String) jSendArriveSpinner.getValue()).equals("Ankunftszeit");
+        return ((String) jSendArriveSpinner.getValue()).equals("Ankunftzeit");
     }
 
     public Date getTime() {
-        return (Date) jSpinner1.getValue();
+        return (Date) jTimeSpinner.getValue();
     }
 
     public UnitHolder getSelectedUnit() {
         return (UnitHolder) jUnitBox.getSelectedItem();
     }
 
-    public void setupAttack(Village pSource, Village pTarget) {
+    public void setupAttack(Village pSource, Village pTarget, int pInitialUnit) {
         if ((pSource == null) || (pTarget == null)) {
             return;
         }
+        int initialUnit = (pInitialUnit>=0)?pInitialUnit:0;
+        if(initialUnit > jUnitBox.getItemCount()-1){
+            initialUnit = -1;
+        }
+
+        mSource = pSource;
+        mTarget = pTarget;
         jSourceVillage.setText(pSource.getTribe().getName() + " (" + pSource.getX() + "|" + pSource.getY() + ")");
         jTargetVillage.setText(pTarget.getTribe().getName() + " (" + pTarget.getX() + "|" + pTarget.getY() + ")");
-        double d = DSCalculator.calculateDistance(pSource, pTarget);
+        double d = DSCalculator.calculateDistance(mSource, mTarget);
         NumberFormat nf = NumberFormat.getInstance();
         nf.setMaximumFractionDigits(2);
         nf.setMinimumFractionDigits(2);
         jDistance.setText(nf.format(d));
+        jUnitBox.setSelectedIndex(initialUnit);
+        fireUnitChangedEvent(new ItemEvent(jUnitBox, ItemEvent.SELECTED, jUnitBox.getItemAt(0), ItemEvent.SELECTED));
         setVisible(true);
     }
 
+     public void setupAttack(Village pSource, Village pTarget) {
+         setupAttack(pSource, pTarget, -1);
+     }
+    
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -105,7 +128,7 @@ public class AttackAddFrame extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jUnitBox = new javax.swing.JComboBox();
-        jSpinner1 = new javax.swing.JSpinner();
+        jTimeSpinner = new javax.swing.JSpinner();
         jSendArriveSpinner = new javax.swing.JSpinner();
         jLabel4 = new javax.swing.JLabel();
         jTargetVillage = new javax.swing.JLabel();
@@ -139,11 +162,11 @@ public class AttackAddFrame extends javax.swing.JFrame {
         jUnitBox.setPreferredSize(new java.awt.Dimension(300, 20));
         jUnitBox.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                iscl(evt);
+                fireUnitChangedEvent(evt);
             }
         });
 
-        jSpinner1.setModel(new javax.swing.SpinnerDateModel(new java.util.Date(), null, null, java.util.Calendar.HOUR_OF_DAY));
+        jTimeSpinner.setModel(new javax.swing.SpinnerDateModel(new java.util.Date(), null, null, java.util.Calendar.SECOND));
 
         jSendArriveSpinner.setModel(new javax.swing.SpinnerListModel(new String[] {"Ankunftzeit", "Abschickzeit"}));
 
@@ -170,7 +193,7 @@ public class AttackAddFrame extends javax.swing.JFrame {
                     .addComponent(jSendArriveSpinner, javax.swing.GroupLayout.DEFAULT_SIZE, 120, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jSpinner1, javax.swing.GroupLayout.DEFAULT_SIZE, 306, Short.MAX_VALUE)
+                    .addComponent(jTimeSpinner, javax.swing.GroupLayout.DEFAULT_SIZE, 306, Short.MAX_VALUE)
                     .addComponent(jTargetVillage, javax.swing.GroupLayout.DEFAULT_SIZE, 306, Short.MAX_VALUE)
                     .addComponent(jSourceVillage, javax.swing.GroupLayout.DEFAULT_SIZE, 306, Short.MAX_VALUE)
                     .addComponent(jDistance, javax.swing.GroupLayout.DEFAULT_SIZE, 306, Short.MAX_VALUE)
@@ -204,7 +227,7 @@ public class AttackAddFrame extends javax.swing.JFrame {
                     .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jSpinner1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jTimeSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jSendArriveSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -216,12 +239,18 @@ public class AttackAddFrame extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-private void iscl(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_iscl
-
+private void fireUnitChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireUnitChangedEvent
     if (evt.getStateChange() == ItemEvent.SELECTED) {
         UnitHolder u = (UnitHolder) evt.getItem();
+        if (isArrivalTime()) {
+            long arriveTime = (long) (System.currentTimeMillis() + DSCalculator.calculateMoveTimeInSeconds(mSource, mTarget, u.getSpeed()) * 1000 + 1000);
+            if (((Date) jTimeSpinner.getValue()).getTime() < arriveTime) {
+                //only set new arrive time if unit could not arrive at the current time
+                jTimeSpinner.setValue(new Date(arriveTime));
+            }
+        }
     }
-}//GEN-LAST:event_iscl
+}//GEN-LAST:event_fireUnitChangedEvent
 
     /**
      * @param args the command line arguments
@@ -231,7 +260,8 @@ private void iscl(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_iscl
             GlobalOptions.initialize(false, new DataHolderListener() {
 
                 @Override
-                public void fireDataHolderEvent(String pFile) {
+                public void fireDataHolderEvent(
+                        String pFile) {
                 }
 
                 @Override
@@ -245,20 +275,20 @@ private void iscl(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_iscl
         }
         Village source = GlobalOptions.getDataHolder().getVillages()[452][467];
         Village target = GlobalOptions.getDataHolder().getVillages()[449][466];
-       /* for (int i = 0; i < 1000; i++) {
-            for (int j = 0; j < 1000; j++) {
-                Village v = GlobalOptions.getDataHolder().getVillages()[i][j];
-                if (v != null) {
-                    if (source == null) {
-                        source = v;
-                    } else if (target == null) {
-                        target = v;
-                    } else {
-                        break;
-                    }
-                }
-            }
-
+        /* for (int i = 0; i < 1000; i++) {
+        for (int j = 0; j < 1000; j++) {
+        Village v = GlobalOptions.getDataHolder().getVillages()[i][j];
+        if (v != null) {
+        if (source == null) {
+        source = v;
+        } else if (target == null) {
+        target = v;
+        } else {
+        break;
+        }
+        }
+        }
+        
         }*/
 
         new AttackAddFrame().setupAttack(source, target);
@@ -275,8 +305,8 @@ private void iscl(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_iscl
     private javax.swing.JLabel jLabel4;
     private javax.swing.JSpinner jSendArriveSpinner;
     private javax.swing.JLabel jSourceVillage;
-    private javax.swing.JSpinner jSpinner1;
     private javax.swing.JLabel jTargetVillage;
+    private javax.swing.JSpinner jTimeSpinner;
     private javax.swing.JComboBox jUnitBox;
     // End of variables declaration//GEN-END:variables
 }

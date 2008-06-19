@@ -56,6 +56,10 @@ public class DataHolder {
         new File(sServerBaseDir).mkdir();
     }
 
+    public String getDataDirectory() {
+        return sServerBaseDir + "/" + GlobalOptions.getSelectedServer();
+    }
+
     private void abort() {
         bAborted = true;
     }
@@ -154,17 +158,24 @@ public class DataHolder {
         Enumeration<Integer> tribes = mTribes.keys();
         while (tribes.hasMoreElements()) {
             Tribe current = mTribes.get(tribes.nextElement());
-            current.setAlly(mAllies.get(current.getAllyID()));
+            Ally currentAlly = mAllies.get(current.getAllyID());
+            if (currentAlly != null) {
+                currentAlly.addTribe(current);
+            }
+            current.setAlly(currentAlly);
         }
         for (int i = 0; i < 1000; i++) {
             for (int j = 0; j < 1000; j++) {
                 Village current = mVillages[i][j];
                 if (current != null) {
-                    current.setTribe(mTribes.get(current.getTribeID()));
+                    Tribe t = mTribes.get(current.getTribeID());
+                    current.setTribe(t);
+                    if (t != null) {
+                        t.addVillage(current);
+                    }
                 }
             }
         }
-
     }
 
     private boolean isDataAvailable() {
@@ -269,7 +280,9 @@ public class DataHolder {
         }
         entry.setId(Integer.parseInt(entries.get(0)));
         try {
-            entry.setName(URLDecoder.decode(entries.get(1), "UTF-8"));
+            String name = URLDecoder.decode(entries.get(1), "UTF-8");
+            name = name.replaceAll("&gt;", ">").replaceAll("&lt;", "<");
+            entry.setName(name);
         } catch (Exception e) {
             return null;
         }
@@ -387,14 +400,14 @@ public class DataHolder {
         return mTribes;
     }
 
-    public List<UnitHolder> getUnits(){
+    public List<UnitHolder> getUnits() {
         return mUnits;
     }
-    
-    public List<BuildingHolder> getBuildings(){
+
+    public List<BuildingHolder> getBuildings() {
         return mBuildings;
     }
-    
+
     public void fireDataHolderEvents(String pMessage) {
         if (mListener != null) {
             mListener.fireDataHolderEvent(pMessage);

@@ -6,8 +6,10 @@
  * To change this template, choose Tools | Template Manager
  * and open the template in the editor.
  */
-
 package de.tor.tribes.types;
+
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  *
@@ -23,8 +25,10 @@ public class Ally {
     private int points = 0;
     private int all_points = 0;
     private int rank = 0;
-    
+    private List<Tribe> tribes = null;
+
     public Ally() {
+        tribes = new LinkedList();
     }
 
     public int getId() {
@@ -91,4 +95,16 @@ public class Ally {
         this.rank = rank;
     }
 
+    public void addTribe(Tribe t) {
+        tribes.add(t);
+    }
+
+    public List<Tribe> getTribes() {
+        return tribes;
+    }
+    
+    public String toString(){
+        return getName();
+    }
+    
 }

@@ -7,9 +7,9 @@ package de.tor.tribes.ui;
 
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.GraphicsEnvironment;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.Window;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.MouseEvent;
@@ -33,13 +33,11 @@ public class FrameControlPanel extends javax.swing.JPanel {
     private transient final ImageIcon UNSTICKY_ICON = new javax.swing.ImageIcon(getClass().getResource("/res/ui/bullet_ball_grey.png"));
     private int dx = 0;
     private int dy = 0;
-    private int w = 0;
-    private int h = 0;
     private boolean titleSetOnNullParent = false;
     private boolean scaling = false;
     private int minWidth = 0;
     private int minHeight = 0;
-    private final Color ACTIVE_COLOR = new Color(204, 204, 204);
+    private final Color ACTIVE_COLOR = new Color(153, 153, 153);
     private final Color INACTIVE_COLOR = new Color(240, 240, 240);
     /**Listeners for buttons*/
     private MouseListener minimizeListener = null;
@@ -60,6 +58,8 @@ public class FrameControlPanel extends javax.swing.JPanel {
 
     public void setupPanel(JFrame pParent, boolean pAllowSticky, boolean pAllowMaximize) {
         parent = pParent;
+        GraphicsEnvironment graphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        parent.setMaximizedBounds(graphicsEnvironment.getMaximumWindowBounds());
         setupListeners();
         //add resize listeners
         parent.addMouseListener(resizeListener);
@@ -89,8 +89,8 @@ public class FrameControlPanel extends javax.swing.JPanel {
             configureMinControl();
         }
 
-        minWidth = 4 * jButton1.getWidth();
-        minHeight = getHeight();
+        minWidth = (int) jTitleLabel.getMinimumSize().getWidth() + 4 * jButton1.getWidth();
+        minHeight = getHeight() * 2;
     }
 
     private void setupListeners() {
@@ -248,14 +248,14 @@ public class FrameControlPanel extends javax.swing.JPanel {
 
             @Override
             public void mousePressed(MouseEvent e) {
-                Point loc = parent.getLocationOnScreen();
-                loc.move(parent.getWidth() - 20, parent.getHeight() - 20);
-                Rectangle sensArea = new Rectangle(loc.x, loc.y, loc.x + 20, loc.y + 20);
-                if (sensArea.contains(e.getPoint())) {
-                    dx = e.getLocationOnScreen().x;
-                    dy = e.getLocationOnScreen().y;
-                    scaling = true;
-                }
+                /*if (parent.getExtendedState() == JFrame.MAXIMIZED_BOTH) {
+                //don't drag in maximized mode
+                return;
+                }*/
+                dx = e.getLocationOnScreen().x;
+                dy = e.getLocationOnScreen().y;
+                scaling = true;
+                parent.setCursor(Cursor.getPredefinedCursor(Cursor.SE_RESIZE_CURSOR));
             }
 
             @Override
@@ -280,6 +280,7 @@ public class FrameControlPanel extends javax.swing.JPanel {
             public void mouseClicked(MouseEvent e) {
                 if (e.getButton() == MouseEvent.BUTTON1) {
                     if (e.getClickCount() == 2) {
+
                         if (parent.getExtendedState() == JFrame.MAXIMIZED_BOTH) {
                             parent.setExtendedState(JFrame.NORMAL);
                         } else {
@@ -291,6 +292,10 @@ public class FrameControlPanel extends javax.swing.JPanel {
 
             @Override
             public void mousePressed(MouseEvent e) {
+                if (parent.getExtendedState() == JFrame.MAXIMIZED_BOTH) {
+                    //don't drag in maximized mode
+                    return;
+                }
                 dx = e.getX();
                 dy = e.getY();
             }
@@ -313,8 +318,10 @@ public class FrameControlPanel extends javax.swing.JPanel {
 
             @Override
             public void mouseDragged(MouseEvent e) {
-
-
+                if (parent.getExtendedState() == JFrame.MAXIMIZED_BOTH) {
+                    //don't drag in maximized mode
+                    return;
+                }
                 Point l = e.getLocationOnScreen();
                 parent.setLocation(l.x - dx, l.y - dy);
             }
@@ -327,13 +334,15 @@ public class FrameControlPanel extends javax.swing.JPanel {
 
             @Override
             public void mouseDragged(MouseEvent e) {
-
-
                 if (scaling) {
                     int width = parent.getWidth() + e.getLocationOnScreen().x - dx;
                     int height = parent.getHeight() + e.getLocationOnScreen().y - dy;
-                    if ((width >= minWidth) && (height >= minHeight)) {
-                        parent.setSize(width, height);
+                    if ((width >= parent.getMinimumSize().getWidth()) && (height >= parent.getMinimumSize().getHeight())) {
+                        if ((width <= parent.getMaximumSize().getWidth()) && (height <= parent.getMaximumSize().getHeight())) {
+                            if (parent.isResizable()) {
+                                parent.setSize(width, height);
+                            }
+                        }
                     }
                     dx = e.getLocationOnScreen().x;
                     dy = e.getLocationOnScreen().y;
@@ -342,16 +351,6 @@ public class FrameControlPanel extends javax.swing.JPanel {
 
             @Override
             public void mouseMoved(MouseEvent e) {
-                Point loc = parent.getLocationOnScreen();
-                loc.move(parent.getWidth() - 20, parent.getHeight() - 20);
-                Rectangle sensArea = new Rectangle(loc.x, loc.y, loc.x + 20, loc.y + 20);
-                if (sensArea.contains(e.getPoint())) {
-                    parent.setCursor(Cursor.getPredefinedCursor(Cursor.SE_RESIZE_CURSOR));
-                } else {
-                    if (parent.getCursor() != Cursor.getDefaultCursor()) {
-                        parent.setCursor(Cursor.getDefaultCursor());
-                    }
-                }
             }
         };
     }
@@ -433,7 +432,7 @@ public class FrameControlPanel extends javax.swing.JPanel {
         jButton1 = new javax.swing.JLabel();
         jTitleLabel = new javax.swing.JLabel();
 
-        setBackground(new java.awt.Color(204, 204, 204));
+        setBackground(new java.awt.Color(153, 153, 153));
         setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
         jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/bullet_ball_yellow.png"))); // NOI18N
@@ -466,10 +465,10 @@ public class FrameControlPanel extends javax.swing.JPanel {
                 .addGap(0, 0, 0))
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jButton2)
                         .addComponent(jButton1)
                         .addComponent(jButton3)

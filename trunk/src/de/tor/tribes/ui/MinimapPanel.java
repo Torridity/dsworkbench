@@ -257,7 +257,7 @@ class MinimapRepaintThread extends Thread {
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
                 g2d.setComposite(a);
-                String conti = "K" + (i * 10 + j);
+                String conti = "K" + (j * 10 + i);
                 Rectangle2D bounds = g2d.getFontMetrics(t).getStringBounds(conti, g2d);
 
                 g2d.drawString(conti, (int) Math.rint(i * 100 + 50 - bounds.getWidth() / 2), (int) Math.rint(j * 100 + 80 - bounds.getHeight() / 2));

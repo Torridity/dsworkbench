@@ -19,6 +19,8 @@ import java.awt.Toolkit;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
@@ -162,6 +164,29 @@ public class GlobalOptions {
      */
     public static void loadMarkers() {
         mMarkers = new Hashtable<String, Color>();
+        String path = mDataHolder.getDataDirectory() + "/markers.bin";
+        if (new File(path).exists()) {
+            try {
+                ObjectInputStream oin = new ObjectInputStream(new FileInputStream(path));
+                mMarkers = (Hashtable<String, Color>) oin.readObject();
+                oin.close();
+            } catch (Exception e) {
+                logger.error("Failed to read markers");
+            }
+        } else {
+            logger.info("No markers available for selected server");
+        }
+    }
+
+    public static void storeMarkers() {
+        String path = mDataHolder.getDataDirectory() + "/markers.bin";
+        try {
+            ObjectOutputStream oout = new ObjectOutputStream(new FileOutputStream(path));
+            oout.writeObject(mMarkers);
+            oout.close();
+        } catch (Exception e) {
+            logger.error("Failed to store markers");
+        }
     }
 
     /**Load the WorldData from the harddisk

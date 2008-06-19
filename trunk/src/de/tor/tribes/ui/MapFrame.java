@@ -10,9 +10,14 @@ import de.tor.tribes.io.ServerList;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Ally;
 import de.tor.tribes.types.Tribe;
+import de.tor.tribes.types.Unit;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.editors.ColorChooserCellEditor;
+import de.tor.tribes.ui.editors.DateSpinEditor;
+import de.tor.tribes.ui.editors.UnitCellEditor;
+import de.tor.tribes.ui.editors.VillageCellEditor;
 import de.tor.tribes.ui.renderer.ColorCellRenderer;
+import de.tor.tribes.ui.renderer.DateCellRenderer;
 import de.tor.tribes.ui.renderer.MarkerPanelCellRenderer;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.GlobalOptions;
@@ -22,6 +27,8 @@ import java.awt.event.ActionListener;
 import java.text.Collator;
 import java.text.NumberFormat;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
@@ -73,16 +80,28 @@ public class MapFrame extends javax.swing.JFrame implements DataHolderListener {
         try {
             GlobalOptions.initialize(false, this);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.fatal("Failed to initialize global data structures", e);
             System.exit(0);
         }
 
+        setupMaps();
+        setupMarkerPanel();
+        setupDetailsPanel();
+        setupAttackPanel();
+        setupDynFrame();
+
+    }
+
+    private void setupMaps() {
         //build the mappanel
         mPanel = new MapPanel(this);
         jPanel1.add(mPanel);
         //build the minimap
         mMiniPanel = new MinimapPanel(this);
         jMinimapPanel.add(mMiniPanel);
+    }
+
+    private void setupMarkerPanel() {
         //build the marker table
         jMarkerTable.setModel(new javax.swing.table.DefaultTableModel(
                 new Object[][]{},
@@ -122,6 +141,43 @@ public class MapFrame extends javax.swing.JFrame implements DataHolderListener {
 
         jMarkerTable.setDefaultEditor(Color.class, editor);
 
+        //insert loaded markers to marker table
+        Enumeration<Integer> tribes = GlobalOptions.getDataHolder().getTribes().keys();
+        List<String> tribeMarkers = new LinkedList<String>();
+        List<String> allyMarkers = new LinkedList<String>();
+        int markerCount = GlobalOptions.getMarkers().size();
+        while (tribes.hasMoreElements()) {
+            Tribe t = GlobalOptions.getDataHolder().getTribes().get(tribes.nextElement());
+            //if(GlobalOptions.gett.getName()
+            Color c = GlobalOptions.getMarkers().get(t.getName());
+            if (c != null) {
+                if (!tribeMarkers.contains(t.getName())) {
+                    MarkerCell p = MarkerCell.factoryPlayerMarker("<html>" + t.getName() + "</html>");
+                    ((DefaultTableModel) jMarkerTable.getModel()).addRow(new Object[]{p, c});
+                    tribeMarkers.add(t.getName());
+                    markerCount--;
+                }
+            }
+
+            if (t.getAlly() != null) {
+                c = GlobalOptions.getMarkers().get(t.getAlly().getName());
+                if (c != null) {
+                    if (!allyMarkers.contains(t.getAlly().getName())) {
+                        MarkerCell p = MarkerCell.factoryAllyMarker("<html>" + t.getAlly().getName() + "</html>");
+                        ((DefaultTableModel) jMarkerTable.getModel()).addRow(new Object[]{p, c});
+                        allyMarkers.add(t.getAlly().getName());
+                        markerCount--;
+                    }
+                }
+            }
+            if (markerCount == 0) {
+                //all markers read
+                break;
+            }
+        }
+    }
+
+    private void setupDetailsPanel() {
         //load icons for bonus villages at information panel
         mIcons = new LinkedList<ImageIcon>();
         mIcons.add(new ImageIcon(this.getClass().getResource("/res/forbidden.gif")));
@@ -139,11 +195,59 @@ public class MapFrame extends javax.swing.JFrame implements DataHolderListener {
         jVillageInfo.setIcon(null);
         jAllyInfo.setText("");
         jInfoPanel.add(jDetailedInfoPanel);
+    }
+
+    private void setupAttackPanel() {
+        DefaultTableModel model = new javax.swing.table.DefaultTableModel(
+                new Object[][]{},
+                new String[]{
+                    "Herkunft", "Ziel", "Einheit", "Zeit"
+                }) {
+
+            Class[] types = new Class[]{
+                Village.class, Village.class, Unit.class, Date.class
+            };
+
+            @Override
+            public Class getColumnClass(int columnIndex) {
+                return types[columnIndex];
+            }
+        };
+        jAttackTable.setModel(model);
+
+
+        jAttackTable.setDefaultRenderer(Date.class, new DateCellRenderer());
+        jAttackTable.setDefaultEditor(Date.class, new DateSpinEditor());
+        jAttackTable.setDefaultEditor(Unit.class, new UnitCellEditor());
+        jAttackTable.setDefaultEditor(Village.class, new VillageCellEditor());
+
+        Enumeration<Integer> tribes = GlobalOptions.getDataHolder().getTribes().keys();
+        Village source = null;
+        Village target = null;
+        while (tribes.hasMoreElements()) {
+            Integer next = tribes.nextElement();
+            Tribe t = GlobalOptions.getDataHolder().getTribes().get(next);
+            if (t.getName().toLowerCase().equals("torridity")) {
+                source = t.getVillageList().get(0);
+            } else if (t.getName().toLowerCase().equals("samen17")) {
+                target = t.getVillageList().get(0);
+            }
+
+            if ((source != null) && (target != null)) {
+                break;
+            }
+        }
+
+        ((DefaultTableModel) jAttackTable.getModel()).addRow(new Object[]{source, target, GlobalOptions.getDataHolder().getUnits().get(0), Calendar.getInstance().getTime()});
+    }
+
+    private void setupDynFrame() {
         jDynFrameControlPanel.setupPanel(jDynFrame, true, true);
         jDynFrameControlPanel.setTitle("Toolbox");
 
         jTabbedPane1.addTab("Entfernung", jDistancePanel);
         jTabbedPane1.addTab("Markierungen", jMarkerPanel);
+        jTabbedPane1.addTab("Angriffe", jAttackPanel);
         jDynFrame.pack();
         jDynFrame.setVisible(true);
     }
@@ -213,6 +317,10 @@ public class MapFrame extends javax.swing.JFrame implements DataHolderListener {
         jDynFrame = new javax.swing.JFrame();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jDynFrameControlPanel = new de.tor.tribes.ui.FrameControlPanel();
+        jAttackPanel = new javax.swing.JPanel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jAttackTable = new javax.swing.JTable();
+        jButton5 = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         jMoveE = new javax.swing.JButton();
@@ -350,7 +458,6 @@ public class MapFrame extends javax.swing.JFrame implements DataHolderListener {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jDistancePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Entfernung"));
         jDistancePanel.setMaximumSize(new java.awt.Dimension(750, 96));
         jDistancePanel.setMinimumSize(new java.awt.Dimension(750, 96));
 
@@ -500,7 +607,16 @@ public class MapFrame extends javax.swing.JFrame implements DataHolderListener {
             jDistancePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jDistancePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jDistancePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(jDistancePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jDistancePanelLayout.createSequentialGroup()
+                        .addGroup(jDistancePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(jLabel18, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel19, javax.swing.GroupLayout.Alignment.LEADING))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jDistancePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jDistanceTargetVillage, javax.swing.GroupLayout.DEFAULT_SIZE, 672, Short.MAX_VALUE)
+                            .addComponent(jDistanceSourceVillage, javax.swing.GroupLayout.DEFAULT_SIZE, 672, Short.MAX_VALUE))
+                        .addContainerGap(42, Short.MAX_VALUE))
                     .addGroup(jDistancePanelLayout.createSequentialGroup()
                         .addGroup(jDistancePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -548,20 +664,13 @@ public class MapFrame extends javax.swing.JFrame implements DataHolderListener {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jDistancePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jKnightTime, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(jDistancePanelLayout.createSequentialGroup()
-                        .addGroup(jDistancePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(jLabel18, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel19, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(18, 18, 18)
-                        .addGroup(jDistancePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jDistanceTargetVillage, javax.swing.GroupLayout.DEFAULT_SIZE, 672, Short.MAX_VALUE)
-                            .addComponent(jDistanceSourceVillage, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                .addContainerGap(14, Short.MAX_VALUE))
+                            .addComponent(jKnightTime, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addContainerGap(30, Short.MAX_VALUE))))
         );
         jDistancePanelLayout.setVerticalGroup(
             jDistancePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jDistancePanelLayout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(jDistancePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel18)
                     .addComponent(jDistanceSourceVillage))
@@ -569,7 +678,7 @@ public class MapFrame extends javax.swing.JFrame implements DataHolderListener {
                 .addGroup(jDistancePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel19)
                     .addComponent(jDistanceTargetVillage))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(18, 18, 18)
                 .addGroup(jDistancePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jDistancePanelLayout.createSequentialGroup()
                         .addGroup(jDistancePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -603,7 +712,7 @@ public class MapFrame extends javax.swing.JFrame implements DataHolderListener {
                             .addComponent(jCataTime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jSnobTime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jKnightTime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(93, Short.MAX_VALUE))
+                .addContainerGap(105, Short.MAX_VALUE))
         );
 
         jMarkerPanel.setMaximumSize(new java.awt.Dimension(750, 305));
@@ -672,7 +781,8 @@ public class MapFrame extends javax.swing.JFrame implements DataHolderListener {
             .addComponent(jDynFrameControlPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 444, Short.MAX_VALUE)
             .addGroup(jDynFrameLayout.createSequentialGroup()
                 .addGap(10, 10, 10)
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 434, Short.MAX_VALUE))
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 424, Short.MAX_VALUE)
+                .addContainerGap())
         );
         jDynFrameLayout.setVerticalGroup(
             jDynFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -680,6 +790,51 @@ public class MapFrame extends javax.swing.JFrame implements DataHolderListener {
                 .addComponent(jDynFrameControlPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 262, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        jAttackPanel.setMinimumSize(new java.awt.Dimension(750, 305));
+        jAttackPanel.setPreferredSize(new java.awt.Dimension(750, 305));
+        jAttackPanel.setRequestFocusEnabled(false);
+
+        jAttackTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.Object.class, java.lang.Double.class, java.lang.Object.class
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+        });
+        jScrollPane2.setViewportView(jAttackTable);
+
+        jButton5.setText("Entfernen");
+
+        javax.swing.GroupLayout jAttackPanelLayout = new javax.swing.GroupLayout(jAttackPanel);
+        jAttackPanel.setLayout(jAttackPanelLayout);
+        jAttackPanelLayout.setHorizontalGroup(
+            jAttackPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jAttackPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 643, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton5)
+                .addContainerGap())
+        );
+        jAttackPanelLayout.setVerticalGroup(
+            jAttackPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jAttackPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jAttackPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 283, Short.MAX_VALUE)
+                    .addComponent(jButton5))
                 .addContainerGap())
         );
 
@@ -1133,6 +1288,8 @@ private void fireDoSearchEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
         return;
     }
     term = term.toLowerCase();
+    List<Tribe> foundTribes = new LinkedList<Tribe>();
+    List<Ally> foundAllies = new LinkedList<Ally>();
 
     if (jSearchPlayer.isSelected()) {
         Enumeration<Integer> tribes = GlobalOptions.getDataHolder().getTribes().keys();
@@ -1140,7 +1297,7 @@ private void fireDoSearchEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
             Integer next = tribes.nextElement();
             Tribe t = GlobalOptions.getDataHolder().getTribes().get(next);
             if (t.getName().toLowerCase().indexOf(term) >= 0) {
-                System.out.println("Found Tribe: " + t.getName());
+                foundTribes.add(t);
             }
         }
     }
@@ -1150,10 +1307,12 @@ private void fireDoSearchEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
             Integer next = allies.nextElement();
             Ally a = GlobalOptions.getDataHolder().getAllies().get(next);
             if (a.getName().toLowerCase().indexOf(term) >= 0) {
-                System.out.println("Found Ally: " + a.getName());
+                foundAllies.add(a);
             }
         }
     }
+
+
 
 }//GEN-LAST:event_fireDoSearchEvent
 
@@ -1198,6 +1357,7 @@ private void fireRemoveMarkerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
             Color c = (Color) model.getValueAt(i, 1);
             GlobalOptions.getMarkers().put(name, c);
         }
+        GlobalOptions.storeMarkers();
         //update maps
         mPanel.repaint();
         mMiniPanel.redraw();
@@ -1453,12 +1613,15 @@ private void fireRemoveMarkerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jAllyInfo;
+    private javax.swing.JPanel jAttackPanel;
+    private javax.swing.JTable jAttackTable;
     private javax.swing.JTextField jAxeTime;
     private javax.swing.JTextField jBowTime;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
+    private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
     private javax.swing.JTextField jCataTime;
     private javax.swing.JTextField jCenterX;
@@ -1515,6 +1678,7 @@ private void fireRemoveMarkerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
     private javax.swing.JTextField jRamTime;
     private javax.swing.JButton jRefresh;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JCheckBox jSearchAlly;
     private javax.swing.JCheckBox jSearchPlayer;
     private javax.swing.JTextField jSearchTerm;

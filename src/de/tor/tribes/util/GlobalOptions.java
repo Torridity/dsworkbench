@@ -12,6 +12,7 @@ import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.DataHolderListener;
 import de.tor.tribes.io.WorldDataHolder;
 import de.tor.tribes.io.WorldDecorationHolder;
+import de.tor.tribes.types.Attack;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Point;
@@ -56,10 +57,11 @@ public class GlobalOptions {
     private static WorldDataHolder mWorldData = null;
     private static Hashtable<String, Color> mMarkers = null;
     private static WorldDecorationHolder mDecorationHolder = null;
-    private static String SELECTED_SERVER = "de12";
+    private static String SELECTED_SERVER = "de26";
     private static DataHolderListener mListener;
     private static Properties GLOBAL_PROPERTIES = null;
     private static List<Cursor> CURSORS = null;
+    private static List<Attack> mAttacks = null;
 
     /**Init all managed objects
      * @param pDownloadData TRUE=download the WorldData from the tribes server
@@ -79,6 +81,8 @@ public class GlobalOptions {
         loadSkin();
         logger.debug("Loading markers");
         loadMarkers();
+        logger.debug("Loading attacks");
+        loadAttacks();
         logger.debug("Loading world.dat");
         loadDecoration();
     }
@@ -186,6 +190,37 @@ public class GlobalOptions {
             oout.close();
         } catch (Exception e) {
             logger.error("Failed to store markers");
+        }
+    }
+
+    public static void loadAttacks() {
+        mAttacks = new LinkedList<Attack>();
+        String path = mDataHolder.getDataDirectory() + "/attacks.bin";
+        if (new File(path).exists()) {
+            try {
+                ObjectInputStream oin = new ObjectInputStream(new FileInputStream(path));
+                mAttacks = (List<Attack>) oin.readObject();
+                oin.close();
+            } catch (Exception e) {
+                logger.error("Failed to read attacks");
+            }
+        } else {
+            logger.info("No attacks available for selected server");
+        }
+    }
+
+    public static synchronized List<Attack> getAttacks() {
+        return mAttacks;
+    }
+
+    public static void storeAttacks() {
+        String path = mDataHolder.getDataDirectory() + "/attacks.bin";
+        try {
+            ObjectOutputStream oout = new ObjectOutputStream(new FileOutputStream(path));
+            oout.writeObject(mAttacks);
+            oout.close();
+        } catch (Exception e) {
+            logger.error("Failed to store attacks");
         }
     }
 

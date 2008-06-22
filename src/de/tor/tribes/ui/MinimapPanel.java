@@ -36,14 +36,14 @@ public class MinimapPanel extends javax.swing.JPanel {
     private int iHeight = 0;
     private MapFrame mParent;
     private MinimapZoomFrame mZoomFrame = null;
-    private int iCurrentCursor = GlobalOptions.CURSOR_MOVE;
+    private int iCurrentCursor = GlobalOptions.CURSOR_DEFAULT;
 
     /** Creates new form MinimapPanel */
     public MinimapPanel(MapFrame pParent) {
         initComponents();
         setSize(100, 100);
         mParent = pParent;
-
+        setCursor(GlobalOptions.getCursor(iCurrentCursor));
         mPaintThread = new MinimapRepaintThread(this);
         mPaintThread.start();
         addMouseListener(new MouseListener() {
@@ -65,12 +65,20 @@ public class MinimapPanel extends javax.swing.JPanel {
 
             @Override
             public void mouseEntered(MouseEvent e) {
-                mZoomFrame.setVisible(true);
+                switch (iCurrentCursor) {
+                    case GlobalOptions.CURSOR_ZOOM: {
+                        mZoomFrame.setVisible(true);
+                    }
+                }
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
-                mZoomFrame.setVisible(false);
+                switch (iCurrentCursor) {
+                    case GlobalOptions.CURSOR_ZOOM: {
+                        mZoomFrame.setVisible(false);
+                    }
+                }
             }
         });
 
@@ -78,17 +86,27 @@ public class MinimapPanel extends javax.swing.JPanel {
 
             @Override
             public void mouseDragged(MouseEvent e) {
-                int x = e.getX();
-                int y = e.getY();
-                mParent.updateLocationByMinimap(x, y);
+                switch (iCurrentCursor) {
+                    case GlobalOptions.CURSOR_MOVE:
+                        int x = e.getX();
+                        int y = e.getY();
+                        mParent.updateLocationByMinimap(x, y);
+                }
             }
 
             @Override
             public void mouseMoved(MouseEvent e) {
-                mZoomFrame.setLocation(0, 0);
-                int x = (int) Math.rint((double) 1000 / (double) getWidth() * (double) e.getX());
-                int y = (int) Math.rint((double) 1000 / (double) getHeight() * (double) e.getY());
-                mZoomFrame.updatePosition(x, y);
+                switch (iCurrentCursor) {
+                    case GlobalOptions.CURSOR_ZOOM: {
+                        if (!mZoomFrame.isVisible()) {
+                            mZoomFrame.setVisible(true);
+                        }
+                        mZoomFrame.setLocation(0,0);
+                        int x = (int) Math.rint((double) 1000 / (double) getWidth() * (double) e.getX());
+                        int y = (int) Math.rint((double) 1000 / (double) getHeight() * (double) e.getY());
+                        mZoomFrame.updatePosition(x, y);
+                    }
+                }
             }
         });
 

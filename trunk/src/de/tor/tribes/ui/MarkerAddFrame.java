@@ -8,6 +8,7 @@ package de.tor.tribes.ui;
 import java.awt.Color;
 import net.java.dev.colorchooser.ColorChooser;
 import de.tor.tribes.types.Village;
+import de.tor.tribes.util.GlobalOptions;
 
 /**
  *
@@ -136,9 +137,18 @@ public class MarkerAddFrame extends javax.swing.JFrame {
 
     public void setVillage(Village pVillage) {
         mVillage = pVillage;
-        jTribeName.setText("<html>(" + mVillage.getTribe().getName() + ")</html>");
+
+        Color tribeColor = GlobalOptions.getMarkers().get(mVillage.getTribe().getName());
+        if (tribeColor != null) {
+            mTribeColorChooser.setColor(tribeColor);
+        }
+        jTribeName.setText("(" + mVillage.getTribe().getName() + ")");
         try {
-            jAllyName.setText("<html>(" + mVillage.getTribe().getAlly().getTag() + ")</html>");
+            jAllyName.setText("(" + mVillage.getTribe().getAlly().getTag() + ")");
+            Color allyColor = GlobalOptions.getMarkers().get(mVillage.getTribe().getAlly().getName());
+            if (allyColor != null) {
+                mAllyColorChooser.setColor(allyColor);
+            }
             jMarkAlly.setEnabled(true);
         } catch (Exception e) {
             jAllyName.setText("kein Stamm");
@@ -147,6 +157,24 @@ public class MarkerAddFrame extends javax.swing.JFrame {
         }
     }
 
+    public void setAllyOnly(){
+        jMarkTribe.setEnabled(false);
+        jTribeColorPanel.setEnabled(false);
+        jTribeColorPanel.removeAll();
+        jAllyColorPanel.add(mAllyColorChooser);
+        jTribeName.setText("------");
+        jMarkAlly.setSelected(true);
+    }
+    
+    public void setTribeOnly(){
+        jMarkAlly.setEnabled(false);
+        jAllyColorPanel.setEnabled(false);
+        jAllyColorPanel.removeAll();
+        jTribeColorPanel.add(mTribeColorChooser);
+        jAllyName.setText("------");
+        jMarkTribe.setSelected(true);
+    }
+    
 private void fireAddMarkEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireAddMarkEvent
     setVisible(false);
     mParent.updateMarkerPanel(mVillage, jMarkTribe.isSelected(), jMarkAlly.isSelected(), mTribeColorChooser.getColor(), mAllyColorChooser.getColor());

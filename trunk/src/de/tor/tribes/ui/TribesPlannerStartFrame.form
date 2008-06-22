@@ -34,17 +34,15 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jButton1" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <Component id="jTabbedPane1" alignment="1" pref="427" max="32767" attributes="0"/>
+                  <Component id="jTabbedPane1" alignment="0" pref="427" max="32767" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
-          <Component id="jControlPanel" alignment="0" pref="447" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
-              <Component id="jControlPanel" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="jTabbedPane1" min="-2" pref="281" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
@@ -374,8 +372,6 @@
       <Events>
         <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fireCloseEvent"/>
       </Events>
-    </Component>
-    <Component class="de.tor.tribes.ui.FrameControlPanel" name="jControlPanel">
     </Component>
   </SubComponents>
 </Form>

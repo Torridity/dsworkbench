@@ -10,7 +10,6 @@ import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.util.GlobalOptions;
 import java.awt.event.ItemEvent;
-import java.net.URLDecoder;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
@@ -24,11 +23,13 @@ public class SearchFrame extends javax.swing.JFrame implements SearchListener {
 
     private String sLastPlayerValue = null;
     private SearchThread mSearchThread = null;
+    private MapFrame mParent = null;
 
     /** Creates new form SearchFrame */
-    public SearchFrame() {
+    public SearchFrame(MapFrame pParent) {
         initComponents();
-        frameControlPanel1.setupPanel(this, true, true);
+        mParent = pParent;
+        // frameControlPanel1.setupPanel(this, true, true);
         mSearchThread = new SearchThread("", this);
         mSearchThread.setDaemon(true);
         mSearchThread.start();
@@ -43,23 +44,21 @@ public class SearchFrame extends javax.swing.JFrame implements SearchListener {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        frameControlPanel1 = new de.tor.tribes.ui.FrameControlPanel();
         jPlayerSearch = new javax.swing.JPanel();
         jSearchTerm = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         jTribesList = new javax.swing.JComboBox();
         jLabel2 = new javax.swing.JLabel();
-        jButton2 = new javax.swing.JButton();
+        jMarkAllyButton = new javax.swing.JButton();
         jAllyList = new javax.swing.JComboBox();
         jLabel3 = new javax.swing.JLabel();
-        jButton3 = new javax.swing.JButton();
+        jMarkTribeButton = new javax.swing.JButton();
         jLabel6 = new javax.swing.JLabel();
         jButton5 = new javax.swing.JButton();
         jVillageList = new javax.swing.JComboBox();
 
         setTitle("Suche");
         setAlwaysOnTop(true);
-        setUndecorated(true);
 
         jSearchTerm.setMaximumSize(new java.awt.Dimension(200, 20));
         jSearchTerm.setMinimumSize(new java.awt.Dimension(200, 20));
@@ -83,7 +82,12 @@ public class SearchFrame extends javax.swing.JFrame implements SearchListener {
 
         jLabel2.setText("Spieler");
 
-        jButton2.setText("Markieren");
+        jMarkAllyButton.setText("Markieren");
+        jMarkAllyButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireAddMarkerEvent(evt);
+            }
+        });
 
         jAllyList.setMaximumSize(new java.awt.Dimension(200, 20));
         jAllyList.setMinimumSize(new java.awt.Dimension(200, 20));
@@ -96,11 +100,21 @@ public class SearchFrame extends javax.swing.JFrame implements SearchListener {
 
         jLabel3.setText("Stämme");
 
-        jButton3.setText("Markieren");
+        jMarkTribeButton.setText("Markieren");
+        jMarkTribeButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireAddMarkerEvent(evt);
+            }
+        });
 
         jLabel6.setText("Dörfer");
 
         jButton5.setText("Zentrieren");
+        jButton5.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireCenterMapEvent(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPlayerSearchLayout = new javax.swing.GroupLayout(jPlayerSearch);
         jPlayerSearch.setLayout(jPlayerSearchLayout);
@@ -115,15 +129,15 @@ public class SearchFrame extends javax.swing.JFrame implements SearchListener {
                     .addComponent(jLabel3))
                 .addGap(6, 6, 6)
                 .addGroup(jPlayerSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jAllyList, 0, 226, Short.MAX_VALUE)
+                    .addComponent(jAllyList, 0, 228, Short.MAX_VALUE)
                     .addComponent(jTribesList, 0, 0, Short.MAX_VALUE)
-                    .addComponent(jSearchTerm, javax.swing.GroupLayout.DEFAULT_SIZE, 226, Short.MAX_VALUE)
-                    .addComponent(jVillageList, 0, 226, Short.MAX_VALUE))
+                    .addComponent(jSearchTerm, javax.swing.GroupLayout.DEFAULT_SIZE, 228, Short.MAX_VALUE)
+                    .addComponent(jVillageList, 0, 228, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPlayerSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jButton5, javax.swing.GroupLayout.DEFAULT_SIZE, 83, Short.MAX_VALUE)
-                    .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 83, Short.MAX_VALUE)
+                    .addComponent(jMarkTribeButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jMarkAllyButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPlayerSearchLayout.setVerticalGroup(
@@ -135,12 +149,12 @@ public class SearchFrame extends javax.swing.JFrame implements SearchListener {
                     .addComponent(jSearchTerm, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPlayerSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton2)
+                    .addComponent(jMarkAllyButton)
                     .addComponent(jAllyList, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPlayerSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton3)
+                    .addComponent(jMarkTribeButton)
                     .addComponent(jLabel2)
                     .addComponent(jTribesList, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -148,26 +162,24 @@ public class SearchFrame extends javax.swing.JFrame implements SearchListener {
                     .addComponent(jLabel6)
                     .addComponent(jButton5)
                     .addComponent(jVillageList, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(110, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(frameControlPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 416, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
-                .addGap(10, 10, 10)
+                .addContainerGap()
                 .addComponent(jPlayerSearch, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addComponent(frameControlPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
                 .addComponent(jPlayerSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -209,6 +221,25 @@ private void fireAllySelectionChangedEvent(java.awt.event.ItemEvent evt) {//GEN-
     }
 }//GEN-LAST:event_fireAllySelectionChangedEvent
 
+private void fireAddMarkerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireAddMarkerEvent
+    if (evt.getSource() == jMarkAllyButton) {
+        MarkerAddFrame f = new MarkerAddFrame(mParent);
+        f.setVillage(((Ally) jAllyList.getSelectedItem()).getTribes().get(0).getVillageList().get(0));
+        f.setAllyOnly();
+        f.setVisible(true);
+    } else {
+        MarkerAddFrame f = new MarkerAddFrame(mParent);
+        f.setVillage(((Tribe) jTribesList.getSelectedItem()).getVillageList().get(0));
+        f.setTribeOnly();
+        f.setVisible(true);
+    }
+
+}//GEN-LAST:event_fireAddMarkerEvent
+
+private void fireCenterMapEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCenterMapEvent
+    mParent.centerVillage(((Village) jVillageList.getSelectedItem()));
+}//GEN-LAST:event_fireCenterMapEvent
+
     /**
      * @param args the command line arguments
      */
@@ -228,22 +259,21 @@ private void fireAllySelectionChangedEvent(java.awt.event.ItemEvent evt) {//GEN-
 
                  @Override
             public void run() {
-                new SearchFrame().setVisible(true);
+                new SearchFrame(null).setVisible(true);
             }
         });
-      
+
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private de.tor.tribes.ui.FrameControlPanel frameControlPanel1;
     private javax.swing.JComboBox jAllyList;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton5;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JButton jMarkAllyButton;
+    private javax.swing.JButton jMarkTribeButton;
     private javax.swing.JPanel jPlayerSearch;
     private javax.swing.JTextField jSearchTerm;
     private javax.swing.JComboBox jTribesList;

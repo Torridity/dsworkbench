@@ -168,6 +168,6 @@ public class UnitHolder {
     }
     
     public String toString(){
-        return getName() + "(" + getSpeed() + " Felder/min)";
+        return getName() + "(" + getSpeed() + " Minuten/Feld)";
     }
 }

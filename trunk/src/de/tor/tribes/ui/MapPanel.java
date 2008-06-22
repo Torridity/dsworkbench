@@ -5,6 +5,7 @@
  */
 package de.tor.tribes.ui;
 
+import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.Skin;
@@ -20,8 +21,10 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.awt.geom.Line2D;
 import java.awt.image.BufferedImage;
-import javax.swing.JPanel;
+import java.util.Enumeration;
+import java.util.Hashtable;
 import org.apache.log4j.Logger;
 
 /**
@@ -45,12 +48,14 @@ public class MapPanel extends javax.swing.JPanel {
     private Village mSourceVillage = null;
     private Village mTargetVillage = null;
     private MarkerAddFrame mMarkerAddFrame = null;
+    private AttackAddFrame mAttackAddFrame = null;
     boolean dragged = false;
 
     /** Creates new form MapPanel */
     public MapPanel(MapFrame pParent) {
         initComponents();
         mMarkerAddFrame = new MarkerAddFrame(pParent);
+        mAttackAddFrame = new AttackAddFrame(pParent);
         mParent = pParent;
 
         addMouseWheelListener(new MouseWheelListener() {
@@ -94,6 +99,17 @@ public class MapPanel extends javax.swing.JPanel {
 
             @Override
             public void mousePressed(MouseEvent e) {
+                boolean isAttack = false;
+                if ((iCurrentCursor == GlobalOptions.CURSOR_ATTACK_AXE) ||
+                        (iCurrentCursor == GlobalOptions.CURSOR_ATTACK_SWORD) ||
+                        (iCurrentCursor == GlobalOptions.CURSOR_ATTACK_SPY) ||
+                        (iCurrentCursor == GlobalOptions.CURSOR_ATTACK_LIGHT) ||
+                        (iCurrentCursor == GlobalOptions.CURSOR_ATTACK_HEAVY) ||
+                        (iCurrentCursor == GlobalOptions.CURSOR_ATTACK_RAM) ||
+                        (iCurrentCursor == GlobalOptions.CURSOR_ATTACK_SNOB)) {
+                    isAttack = true;
+                }
+
                 switch (iCurrentCursor) {
                     case GlobalOptions.CURSOR_MEASURE: {
                         //start drag if attack tool is active
@@ -102,37 +118,86 @@ public class MapPanel extends javax.swing.JPanel {
                         mSourceVillage = getVillageAtMousePos();
                         break;
                     }
-                }
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                switch (iCurrentCursor) {
-                    case GlobalOptions.CURSOR_MEASURE: {
-                        //stop attack if attack tool is active
-                        downX = 0;
-                        downY = 0;
-                        mRepaintThread.setDragLine(0, 0, 0, 0);
-                        dragged = false;
-                        break;
+                    default: {
+                        if (isAttack) {
+                            downX = e.getX();
+                            downY = e.getY();
+                            mSourceVillage = getVillageAtMousePos();
+                        }
                     }
                 }
             }
 
             @Override
-            public void mouseEntered(MouseEvent e) {
-                if (dragged) {
-                    System.out.println("DRAG ENTER");
+            public void mouseReleased(MouseEvent e) {
+                int unit = -1;
+                boolean isAttack = false;
+                if ((iCurrentCursor == GlobalOptions.CURSOR_ATTACK_AXE) ||
+                        (iCurrentCursor == GlobalOptions.CURSOR_ATTACK_SWORD) ||
+                        (iCurrentCursor == GlobalOptions.CURSOR_ATTACK_SPY) ||
+                        (iCurrentCursor == GlobalOptions.CURSOR_ATTACK_LIGHT) ||
+                        (iCurrentCursor == GlobalOptions.CURSOR_ATTACK_HEAVY) ||
+                        (iCurrentCursor == GlobalOptions.CURSOR_ATTACK_RAM) ||
+                        (iCurrentCursor == GlobalOptions.CURSOR_ATTACK_SNOB)) {
+                    isAttack = true;
+                }
+
+                switch (iCurrentCursor) {
+                    case GlobalOptions.CURSOR_MEASURE: {
+                        break;
+                    }
+                    case GlobalOptions.CURSOR_ATTACK_AXE: {
+                        unit = GlobalOptions.getDataHolder().getUnitID("Axtkämpfer");
+                        break;
+                    }
+                    case GlobalOptions.CURSOR_ATTACK_SWORD: {
+                        unit = GlobalOptions.getDataHolder().getUnitID("Schwertkämpfer");
+                        break;
+                    }
+                    case GlobalOptions.CURSOR_ATTACK_SPY: {
+                        unit = GlobalOptions.getDataHolder().getUnitID("Späher");
+                        break;
+                    }
+                    case GlobalOptions.CURSOR_ATTACK_LIGHT: {
+                        unit = GlobalOptions.getDataHolder().getUnitID("Leichte Kavallerie");
+                        break;
+                    }
+                    case GlobalOptions.CURSOR_ATTACK_HEAVY: {
+                        unit = GlobalOptions.getDataHolder().getUnitID("Schwere Kavallerie");
+                        break;
+                    }
+                    case GlobalOptions.CURSOR_ATTACK_RAM: {
+                        unit = GlobalOptions.getDataHolder().getUnitID("Ramme");
+                        break;
+                    }
+                    case GlobalOptions.CURSOR_ATTACK_SNOB: {
+                        unit = GlobalOptions.getDataHolder().getUnitID("Adelsgeschlecht");
+                        break;
+                    }
+                }
+                downX = 0;
+                downY = 0;
+
+                mRepaintThread.setDragLine(0, 0, 0, 0);
+                dragged = false;
+                if (isAttack) {
+                    mAttackAddFrame.setLocation(e.getLocationOnScreen());
+                    mAttackAddFrame.setupAttack(mSourceVillage, mTargetVillage, unit);
                 }
             }
 
+            /**
+             * @TODO Implement handling if cursor leaves map while dragging
+             */
+            @Override
+            public void mouseEntered(MouseEvent e) {
+            }
+
+            /**
+             * @TODO Implement handling if cursor leaves map while dragging
+             */
             @Override
             public void mouseExited(MouseEvent e) {
-                if (dragged) {
-                    System.out.println("DRAG LEAVE");
-                    System.out.println(e.getX());
-                    System.out.println(e.getY());
-                }
             }
         });
 
@@ -142,6 +207,16 @@ public class MapPanel extends javax.swing.JPanel {
                     @Override
                     public void mouseDragged(MouseEvent e) {
                         mParent.updateDetailedInfoPanel(getVillageAtMousePos());
+                        boolean isAttack = false;
+                        if ((iCurrentCursor == GlobalOptions.CURSOR_ATTACK_AXE) ||
+                                (iCurrentCursor == GlobalOptions.CURSOR_ATTACK_SWORD) ||
+                                (iCurrentCursor == GlobalOptions.CURSOR_ATTACK_SPY) ||
+                                (iCurrentCursor == GlobalOptions.CURSOR_ATTACK_LIGHT) ||
+                                (iCurrentCursor == GlobalOptions.CURSOR_ATTACK_HEAVY) ||
+                                (iCurrentCursor == GlobalOptions.CURSOR_ATTACK_RAM) ||
+                                (iCurrentCursor == GlobalOptions.CURSOR_ATTACK_SNOB)) {
+                            isAttack = true;
+                        }
 
                         switch (iCurrentCursor) {
                             case GlobalOptions.CURSOR_MEASURE: {
@@ -150,6 +225,13 @@ public class MapPanel extends javax.swing.JPanel {
                                 mTargetVillage = getVillageAtMousePos();
                                 mParent.updateDistancePanel(mSourceVillage, mTargetVillage);
                                 dragged = true;
+                            }
+                            default: {
+                                if (isAttack) {
+                                    mRepaintThread.setDragLine(downX, downY, e.getX(), e.getY());
+                                    mTargetVillage = getVillageAtMousePos();
+                                    dragged = true;
+                                }
                             }
                         }
                     }
@@ -343,7 +425,6 @@ class RepaintThread extends Thread {
 
     /**Redraw the buffer*/
     private void redraw(int pXStart, int pYStart) {
-//BufferStrategy b = new BufferStrategy() {}
         int x = 0;
         int y = 0;
         Graphics2D g2d = null;
@@ -375,6 +456,8 @@ class RepaintThread extends Thread {
             useDecoration = false;
         }
 
+        Hashtable<Attack, Line2D> attackLines = new Hashtable<Attack, Line2D>();
+
         for (int i = 0; i < iVillagesX; i++) {
             for (int j = 0; j < iVillagesY; j++) {
                 Village v = mVisibleVillages[i][j];
@@ -382,7 +465,6 @@ class RepaintThread extends Thread {
                 g2d.setColor(marker);
                 if (v != null) {
                     if (v.getTribe() != null) {
-
                         try {
                             marker = GlobalOptions.getMarkers().get(v.getTribe().getName());
                             if (marker == null) {
@@ -397,6 +479,25 @@ class RepaintThread extends Thread {
                     }
                 }
 
+                //insert attacks
+                for (Attack attack : GlobalOptions.getAttacks()) {
+                    Line2D existing = attackLines.get(attack);
+                    if (attack.isSourceVillage(v)) {
+                        if (existing == null) {
+                            Line2D.Double line = new Line2D.Double(x, y, 0, 0);
+                            attackLines.put(attack, line);
+                        } else {
+                            existing.setLine(x, y, existing.getX2(), existing.getY2());
+                        }
+                    } else if (attack.isTargetVillage(v)) {
+                        if (existing == null) {
+                            Line2D.Double line = new Line2D.Double(0, 0, x, y);
+                            attackLines.put(attack, line);
+                        } else {
+                            existing.setLine(existing.getX1(), existing.getY1(), x, y);
+                        }
+                    }
+                }
 
 
                 if (v == null) {
@@ -519,13 +620,44 @@ class RepaintThread extends Thread {
             yPos = pYStart;
             xPos++;
         }
+        
+        Enumeration<Attack> attackEnum = attackLines.keys();
+         g2d.setColor(Color.RED);
+        g2d.setStroke(new BasicStroke(2.0F, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
+         int dx = (int)Math.rint(GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, dScaling).getWidth(null)/2);
+         int dy = (int)Math.rint(GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, dScaling).getHeight(null)/2);
+        while(attackEnum.hasMoreElements()){
+            Line2D l = attackLines.get(attackEnum.nextElement());
+            g2d.drawLine((int)l.getX1()+dx, (int)l.getY1()+dy, (int)l.getX2()+dx, (int)l.getY2()+dy);
+        }
 
+
+        //draw dragging line for distance and attack
         g2d.setColor(Color.YELLOW);
-
-        g2d.setStroke(new BasicStroke(
-                5.0F, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
-
+        g2d.setStroke(new BasicStroke(5.0F, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
         g2d.drawLine(x1, y1, x2, y2);
         g2d.dispose();
+    }
+
+    private Village getSourceVillage(Attack pAttack) {
+        for (int i = 0; i < iVillagesX; i++) {
+            for (int j = 0; j < iVillagesY; j++) {
+                if (pAttack.isSourceVillage(mVisibleVillages[i][j])) {
+                    return mVisibleVillages[i][j];
+                }
+            }
+        }
+        return null;
+    }
+
+    private Village getTargetVillage(Attack pAttack) {
+        for (int i = 0; i < iVillagesX; i++) {
+            for (int j = 0; j < iVillagesY; j++) {
+                if (pAttack.isTargetVillage(mVisibleVillages[i][j])) {
+                    return mVisibleVillages[i][j];
+                }
+            }
+        }
+        return null;
     }
 }

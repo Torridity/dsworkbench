@@ -9,6 +9,7 @@
 package de.tor.tribes.io;
 
 import de.tor.tribes.types.Ally;
+import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.util.GlobalOptions;
@@ -402,6 +403,20 @@ public class DataHolder {
 
     public List<UnitHolder> getUnits() {
         return mUnits;
+    }
+
+    public int getUnitID(String pUnitName) {
+        int result = -1;
+        int cnt = 0;
+        for (UnitHolder unit : mUnits) {
+            if (unit.getName().equals(pUnitName)) {
+                result = cnt;
+                break;
+            } else {
+                cnt++;
+            }
+        }
+        return result;
     }
 
     public List<BuildingHolder> getBuildings() {

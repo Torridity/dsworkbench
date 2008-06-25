@@ -74,10 +74,8 @@ public class MinimapPanel extends javax.swing.JPanel {
 
             @Override
             public void mouseExited(MouseEvent e) {
-                switch (iCurrentCursor) {
-                    case GlobalOptions.CURSOR_ZOOM: {
-                        mZoomFrame.setVisible(false);
-                    }
+                if (mZoomFrame.isVisible()) {
+                    mZoomFrame.setVisible(false);
                 }
             }
         });
@@ -101,10 +99,16 @@ public class MinimapPanel extends javax.swing.JPanel {
                         if (!mZoomFrame.isVisible()) {
                             mZoomFrame.setVisible(true);
                         }
-                        mZoomFrame.setLocation(0,0);
+
                         int x = (int) Math.rint((double) 1000 / (double) getWidth() * (double) e.getX());
                         int y = (int) Math.rint((double) 1000 / (double) getHeight() * (double) e.getY());
                         mZoomFrame.updatePosition(x, y);
+                        break;
+                    }
+                    default: {
+                        if (mZoomFrame.isVisible()) {
+                            mZoomFrame.setVisible(false);
+                        }
                     }
                 }
             }
@@ -115,10 +119,24 @@ public class MinimapPanel extends javax.swing.JPanel {
             @Override
             public void mouseWheelMoved(MouseWheelEvent e) {
                 iCurrentCursor += e.getWheelRotation();
-                if (iCurrentCursor < GlobalOptions.CURSOR_MOVE) {
-                    iCurrentCursor = GlobalOptions.CURSOR_ZOOM;
+                //MOve: 10, Zoom: 11
+                if (iCurrentCursor == GlobalOptions.CURSOR_DEFAULT + e.getWheelRotation()) {
+                    if (e.getWheelRotation() < 0) {
+                        iCurrentCursor = GlobalOptions.CURSOR_ZOOM;
+                    } else {
+                        iCurrentCursor = GlobalOptions.CURSOR_MOVE;
+                    }
+                } else if (iCurrentCursor < GlobalOptions.CURSOR_MOVE) {
+                    iCurrentCursor = GlobalOptions.CURSOR_DEFAULT;
                 } else if (iCurrentCursor > GlobalOptions.CURSOR_ZOOM) {
-                    iCurrentCursor = GlobalOptions.CURSOR_MOVE;
+                    iCurrentCursor = GlobalOptions.CURSOR_DEFAULT;
+                }
+                if (iCurrentCursor != GlobalOptions.CURSOR_ZOOM) {
+                    if (mZoomFrame.isVisible()) {
+                        mZoomFrame.setVisible(false);
+                    }
+                }else{
+                       mZoomFrame.setVisible(true);
                 }
                 setCursor(GlobalOptions.getCursor(iCurrentCursor));
             }
@@ -152,6 +170,7 @@ public class MinimapPanel extends javax.swing.JPanel {
         if (mZoomFrame == null) {
             mZoomFrame = new MinimapZoomFrame(pBuffer);
             mZoomFrame.setSize(300, 300);
+            mZoomFrame.setLocation(0, 0);
         }
 
         if (mBuffer == null) {

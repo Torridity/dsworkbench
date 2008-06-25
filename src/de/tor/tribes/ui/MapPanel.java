@@ -225,6 +225,7 @@ public class MapPanel extends javax.swing.JPanel {
                                 mTargetVillage = getVillageAtMousePos();
                                 mParent.updateDistancePanel(mSourceVillage, mTargetVillage);
                                 dragged = true;
+                                break;
                             }
                             default: {
                                 if (isAttack) {
@@ -299,8 +300,8 @@ public class MapPanel extends javax.swing.JPanel {
             int x = (int) getMousePosition().getX();
             int y = (int) getMousePosition().getY();
 
-            x /= (int) Math.rint(GlobalOptions.getSkin().getFieldWidth() / dScaling);
-            y /= (int) Math.rint(GlobalOptions.getSkin().getFieldHeight() / dScaling);
+            x /= GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, dScaling).getWidth(null);
+            y /= GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, dScaling).getHeight(null);
 
             return mVisibleVillages[x][y];
         } catch (Exception e) {
@@ -386,8 +387,8 @@ class RepaintThread extends Thread {
 
         Village[][] villages = GlobalOptions.getDataHolder().getVillages();
 
-        iVillagesX = (int) ((double) mParent.getWidth() / (double) iFieldWidth * dScaling);
-        iVillagesY = (int) ((double) mParent.getHeight() / (double) iFieldHeight * dScaling);
+        iVillagesX = (int) Math.rint((double) mParent.getWidth() / GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, dScaling).getWidth(null));
+        iVillagesY = (int) Math.rint((double) mParent.getHeight() / GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, dScaling).getHeight(null));
 
         if (iVillagesX % 2 == 0) {
             iVillagesX++;
@@ -395,12 +396,12 @@ class RepaintThread extends Thread {
         if (iVillagesY % 2 == 0) {
             iVillagesY++;
         }
-        int xStart = pX - iVillagesX / 2;
-        int yStart = pY - iVillagesY / 2;
+        int xStart = (int) Math.rint((double) pX - (double) iVillagesX / 2.0);
+        int yStart = (int) Math.rint((double) pY - (double) iVillagesY / 2.0);
         xStart = (xStart < 0) ? 0 : xStart;
         yStart = (yStart < 0) ? 0 : yStart;
-        int xEnd = iX + iVillagesX / 2;
-        int yEnd = iY + iVillagesY / 2;
+        int xEnd = (int) Math.rint((double) iX + (double) iVillagesX / 2);
+        int yEnd = (int) Math.rint((double) iY + (double) iVillagesY / 2);
 
         xEnd = (xEnd > 999) ? 999 : xEnd;
         yEnd = (yEnd > 999) ? 999 : yEnd;
@@ -481,24 +482,25 @@ class RepaintThread extends Thread {
 
                 //insert attacks
                 for (Attack attack : GlobalOptions.getAttacks()) {
-                    Line2D existing = attackLines.get(attack);
-                    if (attack.isSourceVillage(v)) {
-                        if (existing == null) {
-                            Line2D.Double line = new Line2D.Double(x, y, 0, 0);
-                            attackLines.put(attack, line);
-                        } else {
-                            existing.setLine(x, y, existing.getX2(), existing.getY2());
-                        }
-                    } else if (attack.isTargetVillage(v)) {
-                        if (existing == null) {
-                            Line2D.Double line = new Line2D.Double(0, 0, x, y);
-                            attackLines.put(attack, line);
-                        } else {
-                            existing.setLine(existing.getX1(), existing.getY1(), x, y);
+                    if (attack.isShowOnMap()) {
+                        Line2D existing = attackLines.get(attack);
+                        if (attack.isSourceVillage(v)) {
+                            if (existing == null) {
+                                Line2D.Double line = new Line2D.Double(x, y, attack.getTarget().getX(), attack.getTarget().getY());
+                                attackLines.put(attack, line);
+                            } else {
+                                existing.setLine(x, y, existing.getX2(), existing.getY2());
+                            }
+                        } else if (attack.isTargetVillage(v)) {
+                            if (existing == null) {
+                                Line2D.Double line = new Line2D.Double(attack.getSource().getX(), attack.getSource().getY(), x, y);
+                                attackLines.put(attack, line);
+                            } else {
+                                existing.setLine(existing.getX1(), existing.getY1(), x, y);
+                            }
                         }
                     }
                 }
-
 
                 if (v == null) {
                     if (useDecoration) {
@@ -620,15 +622,15 @@ class RepaintThread extends Thread {
             yPos = pYStart;
             xPos++;
         }
-        
+
         Enumeration<Attack> attackEnum = attackLines.keys();
-         g2d.setColor(Color.RED);
+        g2d.setColor(Color.RED);
         g2d.setStroke(new BasicStroke(2.0F, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
-         int dx = (int)Math.rint(GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, dScaling).getWidth(null)/2);
-         int dy = (int)Math.rint(GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, dScaling).getHeight(null)/2);
-        while(attackEnum.hasMoreElements()){
+        int dx = (int) Math.rint(GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, dScaling).getWidth(null) / 2);
+        int dy = (int) Math.rint(GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, dScaling).getHeight(null) / 2);
+        while (attackEnum.hasMoreElements()) {
             Line2D l = attackLines.get(attackEnum.nextElement());
-            g2d.drawLine((int)l.getX1()+dx, (int)l.getY1()+dy, (int)l.getX2()+dx, (int)l.getY2()+dy);
+            g2d.drawLine((int) l.getX1() + dx, (int) l.getY1() + dy, (int) l.getX2() + dx, (int) l.getY2() + dy);
         }
 
 

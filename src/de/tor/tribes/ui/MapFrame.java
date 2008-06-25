@@ -202,11 +202,11 @@ public class MapFrame extends javax.swing.JFrame implements DataHolderListener {
         DefaultTableModel model = new javax.swing.table.DefaultTableModel(
                 new Object[][]{},
                 new String[]{
-                    "Herkunft", "Ziel", "Einheit", "Ankunftszeit"
+                    "Herkunft", "Ziel", "Einheit", "Ankunftszeit", "Einzeichnen"
                 }) {
 
             Class[] types = new Class[]{
-                Village.class, Village.class, Unit.class, Date.class
+                Village.class, Village.class, Unit.class, Date.class, Boolean.class
             };
 
             @Override
@@ -1381,11 +1381,13 @@ private void fireAlwaysInFrontChangeEvent(javax.swing.event.ChangeEvent evt) {//
             Village target = (Village) model.getValueAt(i, 1);
             UnitHolder unit = (UnitHolder) model.getValueAt(i, 2);
             Date arriveTime = (Date) model.getValueAt(i, 3);
+            Boolean showOnMap = (Boolean) model.getValueAt(i, 4);
             Attack a = new Attack();
             a.setSource(source);
             a.setTarget(target);
             a.setUnit(unit);
             a.setArriveTime(arriveTime);
+            a.setShowOnMap(showOnMap);
             GlobalOptions.getAttacks().add(a);
         }
         GlobalOptions.storeAttacks();
@@ -1663,7 +1665,7 @@ private void fireAlwaysInFrontChangeEvent(javax.swing.event.ChangeEvent evt) {//
     }
 
     public void addAttack(Village pSource, Village pTarget, UnitHolder pUnit, Date pArriveTime) {
-        ((DefaultTableModel) jAttackTable.getModel()).addRow(new Object[]{pSource, pTarget, pUnit, pArriveTime});
+        ((DefaultTableModel) jAttackTable.getModel()).addRow(new Object[]{pSource, pTarget, pUnit, pArriveTime, false});
         updateAttacks();
     }
 

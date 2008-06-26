@@ -78,7 +78,6 @@ public class MapFrame extends javax.swing.JFrame implements DataHolderListener {
         jServerSelection.setModel(model);
         jPlayerSelectionDialog.pack();
         jPlayerSelectionDialog.setVisible(true);
-
         //init the global options
         try {
             GlobalOptions.initialize(false, this);
@@ -86,7 +85,6 @@ public class MapFrame extends javax.swing.JFrame implements DataHolderListener {
             logger.fatal("Failed to initialize global data structures", e);
             System.exit(0);
         }
-
         setupMaps();
         setupMarkerPanel();
         setupDetailsPanel();
@@ -105,10 +103,11 @@ public class MapFrame extends javax.swing.JFrame implements DataHolderListener {
 
     private void setupMarkerPanel() {
         //build the marker table
-        jMarkerTable.setModel(new javax   .swing.table.DefaultTableModel(
+        jMarkerTable.setModel(new javax.swing.table.DefaultTableModel(
                 new Object[][]{},
                 new String[]{
-                    "Name", "Markierung"}) {
+                    "Name", "Markierung"
+                }) {
 
             Class[] types = new Class[]{
                 MarkerCell.class, Color.class
@@ -131,22 +130,9 @@ public class MapFrame extends javax.swing.JFrame implements DataHolderListener {
         jMarkerTable.getColumnModel().getColumn(1).setMaxWidth(75);
         jMarkerTable.setDefaultRenderer(Color.class, new ColorCellRenderer());
         jMarkerTable.setDefaultRenderer(MarkerCell.class, new MarkerPanelCellRenderer());
-        ColorChooserCellEditor editor = new ColorChooserCellEditor(new  
+        ColorChooserCellEditor editor = new ColorChooserCellEditor(new ActionListener() {
 
-              ActionListener( ) {
-
-                
-            
-        
-         
-           
-            
-            
-           
-          
-               
-               
-               @Override
+            @Override
             public void actionPerformed(ActionEvent e) {
                 //update markers as soon as the colorchooser cell editor has closed
                 updateMarkers();
@@ -212,7 +198,7 @@ public class MapFrame extends javax.swing.JFrame implements DataHolderListener {
     }
 
     private void setupAttackPanel() {
-        DefaultTableModel model = new javax   .swing.table.DefaultTableModel(
+        DefaultTableModel model = new javax.swing.table   .DefaultTableModel(
                 new Object[][]{},
                 new String[]{
                     "Herkunft", "Ziel", "Einheit", "Ankunftszeit", "Einzeichnen"}) {
@@ -233,32 +219,24 @@ public class MapFrame extends javax.swing.JFrame implements DataHolderListener {
         jAttackTable.setDefaultEditor(Date.class, new DateSpinEditor());
         jAttackTable.setDefaultEditor(Unit.class, new UnitCellEditor());
         jAttackTable.setDefaultEditor(Village.class, new VillageCellEditor());
-        CellEditorListener attackChangedListener = new  
-
-              CellEditorListener( ) {
-
-                 
-                    
-                    
-                
-            
+        CellEditorListener attackChangedListener = new CellEditorListener() {
 
             @Override
-            public  void editingStopped(ChangeEvent e) {
+            public void editingStopped(ChangeEvent e) {
                 //"attack shown" value changed. redraw map panel
-                
-        
-        
-        
-        
-        
-             
-                  
-        
-    
 
-       
-        try {
+
+
+
+
+
+
+
+
+
+
+
+                try {
                     updateAttacks();
                 } catch (NumberFormatException nfe) {
                 }
@@ -1332,7 +1310,6 @@ private void fireRefreshServerDataEvent(java.awt.event.MouseEvent evt) {//GEN-FI
                 model.addElement(name);
             }
             jPlayerSelection.setModel(model);
-
         }
     } catch (Exception e) {
     }
@@ -1713,11 +1690,9 @@ private void fireRemoveAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
         } catch (Exception e) {
         }
 
-        java.awt.EventQueue.invokeLater(new  
+        java.awt.EventQueue.invokeLater(new Runnable() {
 
-              Runnable() {
-
-                 public void run() {
+            public void run() {
                 new MapFrame().setVisible(true);
             }
         });

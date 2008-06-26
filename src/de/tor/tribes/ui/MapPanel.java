@@ -313,10 +313,7 @@ public class MapPanel extends javax.swing.JPanel {
     protected void updateComplete(Village[][] pVillages, Image pBuffer) {
         mBuffer = pBuffer;
         mVisibleVillages = pVillages;
-        updateUI();
-        //Village v = getVillageAtMousePos();
-        //mParent.updateDetailedInfoPanel(v);
-        //mParent.updateDistancePanel(mSourceVillage, mTargetVillage);
+        repaint();
         updating = false;
     }
 
@@ -640,33 +637,10 @@ class RepaintThread extends Thread {
             g2d.drawLine((int) l.getX1() + dx, (int) l.getY1() + dy, (int) l.getX2() + dx, (int) l.getY2() + dy);
         }
 
-
         //draw dragging line for distance and attack
         g2d.setColor(Color.YELLOW);
         g2d.setStroke(new BasicStroke(5.0F, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
         g2d.drawLine(x1, y1, x2, y2);
         g2d.dispose();
-    }
-
-    private Village getSourceVillage(Attack pAttack) {
-        for (int i = 0; i < iVillagesX; i++) {
-            for (int j = 0; j < iVillagesY; j++) {
-                if (pAttack.isSourceVillage(mVisibleVillages[i][j])) {
-                    return mVisibleVillages[i][j];
-                }
-            }
-        }
-        return null;
-    }
-
-    private Village getTargetVillage(Attack pAttack) {
-        for (int i = 0; i < iVillagesX; i++) {
-            for (int j = 0; j < iVillagesY; j++) {
-                if (pAttack.isTargetVillage(mVisibleVillages[i][j])) {
-                    return mVisibleVillages[i][j];
-                }
-            }
-        }
-        return null;
     }
 }

@@ -9,7 +9,6 @@
 package de.tor.tribes.io;
 
 import de.tor.tribes.types.Ally;
-import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.util.GlobalOptions;
@@ -27,6 +26,7 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
+import org.apache.log4j.Logger;
 import org.jdom.Document;
 import org.jdom.Element;
 
@@ -36,6 +36,7 @@ import org.jdom.Element;
  */
 public class DataHolder {
 
+    private static Logger logger = Logger.getLogger(DataHolder.class);
     public final static int MAX_AGE = 24 * 60 * 60 * 1000;
     private Village[][] mVillages = null;
     private Hashtable<Integer, Ally> mAllies = null;
@@ -75,6 +76,20 @@ public class DataHolder {
                     fireDataHolderEvents("Download fehlgeschlagen!");
                     return false;
                 }
+            }
+            fireDataHolderEvents("Prüfe Server Einstellungen");
+            Document d = JaxenUtils.getDocument(new File(serverDir + "/settings.xml"));
+            try {
+                Integer mapType = Integer.parseInt(JaxenUtils.getNodeValue(d, "//coord/sector"));
+                if (mapType != 2) {
+                    fireDataHolderEvents("Der gewählte Sever wird leider (noch) nicht unterstützt");
+                    logger.error("Map type '" + mapType + "' is not supported yet");
+                    return false;
+                }
+            } catch (Exception e) {
+                logger.error("Failed to check server settings", e);
+                fireDataHolderEvents("Der gewählte Sever wird leider (noch) nicht unterstützt");
+                return false;
             }
 
             String line = "";
@@ -186,7 +201,8 @@ public class DataHolder {
         File allys = new File(serverDir + "/" + "ally.txt");
         File units = new File(serverDir + "/" + "units.xml");
         File buildings = new File(serverDir + "/" + "buildings.xml");
-        return (villages.exists() && tribes.exists() && allys.exists() && units.exists() && buildings.exists());
+        File settings = new File(serverDir + "/" + "settings.xml");
+        return (villages.exists() && tribes.exists() && allys.exists() && units.exists() && buildings.exists() && settings.exists());
     }
 
     private boolean downloadData() {
@@ -196,10 +212,19 @@ public class DataHolder {
         try {
             //download village.txt
             URL sURL = ServerList.getServerURL(GlobalOptions.getSelectedServer());
+
+            fireDataHolderEvents("Lese Server Einstellungen");
+            File target = new File(serverDir + "/settings.xml");
+            if (!target.exists()) {
+                file = new URL(sURL.toString() + "/interface.php?func=get_config");
+                downloadDataFile(file, "settings_tmp.xml");
+                new File("settings_tmp.xml").renameTo(target);
+            }
+
             fireDataHolderEvents("Lade village.txt");
             file = new URL(sURL.toString() + "/map/village.txt");
             downloadDataFile(file, "village_tmp.txt");
-            File target = new File(serverDir + "/village.txt");
+            target = new File(serverDir + "/village.txt");
             if (target.exists()) {
                 target.delete();
             }
@@ -247,7 +272,7 @@ public class DataHolder {
             fireDataHolderEvents("Download erfolgreich beendet.");
         } catch (Exception e) {
             fireDataHolderEvents("Download fehlgeschlagen.");
-            e.printStackTrace();
+            logger.error("Failed to download data", e);
             return false;
         }
         return true;
@@ -367,6 +392,7 @@ public class DataHolder {
                 }
             }
         } catch (Exception outer) {
+            logger.error("Failed to load units", outer);
             fireDataHolderEvents("Laden der Einheiten fehlgeschlagen");
         }
     }
@@ -385,6 +411,7 @@ public class DataHolder {
                 }
             }
         } catch (Exception outer) {
+            logger.error("Failed to load buildings", outer);
             fireDataHolderEvents("Laden der Gebäude fehlgeschlagen");
         }
     }
@@ -427,11 +454,5 @@ public class DataHolder {
         if (mListener != null) {
             mListener.fireDataHolderEvent(pMessage);
         }
-    }
-
-    public static void main(String[] args) {
-        DataHolder dh = new DataHolder(null);
-    //dh.loadData(true);
-
     }
 }

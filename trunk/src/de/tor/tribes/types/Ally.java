@@ -8,6 +8,8 @@
  */
 package de.tor.tribes.types;
 
+import java.io.Serializable;
+import java.text.NumberFormat;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -15,7 +17,7 @@ import java.util.List;
  *
  * @author Charon
  */
-public class Ally {
+public class Ally implements Serializable {
 
     private int id = 0;
     private String name = null;
@@ -102,9 +104,16 @@ public class Ally {
     public List<Tribe> getTribes() {
         return tribes;
     }
-    
-    public String toString(){
+
+    public String getHTMLInfo() {
+        NumberFormat nf = NumberFormat.getInstance();
+        String allyInfo = "<html><b>Name (Tag):</b> " + getName() + " (" + getTag() + ")";
+        allyInfo += " <b>Punkte (Rang):</b> " + nf.format(getPoints()) + " (" + nf.format(getRank()) + ")";
+        allyInfo += " <b>Member (Dörfer):</b> " + nf.format(getMembers()) + " (" + nf.format(getVillages()) + ")</html>";
+        return allyInfo;
+    }
+
+    public String toString() {
         return getName();
     }
-    
 }

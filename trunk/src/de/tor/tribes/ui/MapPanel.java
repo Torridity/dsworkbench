@@ -276,7 +276,7 @@ public class MapPanel extends javax.swing.JPanel {
         Graphics2D g2d = (Graphics2D) g;
         super.paint(g);
         g2d.drawImage(mBuffer, 0, 0, null);
-        Toolkit.getDefaultToolkit().sync();
+    //Toolkit.getDefaultToolkit().sync();
     }
 
     /**Update map to new position*/
@@ -337,6 +337,10 @@ class RepaintThread extends Thread {
     private int iX = 456;
     private int iY = 468;
     private double dScaling = 1.0;
+    private int x1 = 0;
+    private int y1 = 0;
+    private int x2 = 0;
+    private int y2 = 0;
 
     public RepaintThread(MapPanel pParent, int pX, int pY) {
         mVisibleVillages = new Village[iVillagesX][iVillagesY];
@@ -346,7 +350,6 @@ class RepaintThread extends Thread {
         iFieldHeight = GlobalOptions.getSkin().getFieldHeight();
 
     }
-//boolean painted = false;
 
     protected void setCoordinates(int pX, int pY) {
         iX = pX;
@@ -368,10 +371,6 @@ class RepaintThread extends Thread {
     public void setZoom(double pZoom) {
         dScaling = pZoom;
     }
-    private int x1 = 0;
-    private int y1 = 0;
-    private int x2 = 0;
-    private int y2 = 0;
 
     public void setDragLine(int xs, int ys, int xe, int ye) {
         x1 = xs;
@@ -486,14 +485,22 @@ class RepaintThread extends Thread {
                         Line2D existing = attackLines.get(attack);
                         if (attack.isSourceVillage(v)) {
                             if (existing == null) {
-                                Line2D.Double line = new Line2D.Double(x, y, attack.getTarget().getX(), attack.getTarget().getY());
+                                int tx = attack.getTarget().getX() - attack.getSource().getX();
+                                int ty = attack.getTarget().getY() - attack.getSource().getY();
+                                tx = x + GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, dScaling).getWidth(null) * tx;
+                                ty = y + GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, dScaling).getHeight(null) * ty;
+                                Line2D.Double line = new Line2D.Double(x, y, tx, ty);
                                 attackLines.put(attack, line);
                             } else {
                                 existing.setLine(x, y, existing.getX2(), existing.getY2());
                             }
                         } else if (attack.isTargetVillage(v)) {
                             if (existing == null) {
-                                Line2D.Double line = new Line2D.Double(attack.getSource().getX(), attack.getSource().getY(), x, y);
+                                int sx = attack.getSource().getX() - attack.getTarget().getX();
+                                int sy = attack.getSource().getY() - attack.getTarget().getY();
+                                sx = x + GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, dScaling).getWidth(null) * sx;
+                                sy = y + GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, dScaling).getHeight(null) * sy;
+                                Line2D.Double line = new Line2D.Double(sx, sy, x, y);
                                 attackLines.put(attack, line);
                             } else {
                                 existing.setLine(existing.getX1(), existing.getY1(), x, y);

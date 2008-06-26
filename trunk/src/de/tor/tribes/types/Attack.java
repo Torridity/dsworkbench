@@ -5,13 +5,14 @@
 package de.tor.tribes.types;
 
 import de.tor.tribes.io.UnitHolder;
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  *
  * @author Charon
  */
-public class Attack {
+public class Attack implements Serializable{
 
     private Village source = null;
     private Village target = null;

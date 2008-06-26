@@ -4,13 +4,14 @@
  */
 package de.tor.tribes.io;
 
+import java.io.Serializable;
 import org.jdom.Element;
 
 /**
  *
  * @author Charon
  */
-public class UnitHolder {
+public class UnitHolder implements Serializable{
 
     private String name = null;
     private int wood = 0;

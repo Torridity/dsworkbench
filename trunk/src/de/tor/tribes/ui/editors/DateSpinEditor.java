@@ -6,12 +6,17 @@ package de.tor.tribes.ui.editors;
 
 import java.awt.Component;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.util.Date;
 import javax.swing.AbstractCellEditor;
 import javax.swing.JSpinner;
 import javax.swing.JSpinner.DateEditor;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.table.TableCellEditor;
 
 /**
@@ -26,17 +31,6 @@ public class DateSpinEditor extends AbstractCellEditor implements TableCellEdito
         spinnerComponent.setModel(new javax.swing.SpinnerDateModel(new java.util.Date(), null, null, java.util.Calendar.SECOND));
         ((DateEditor) spinnerComponent.getEditor()).getTextField().setHorizontalAlignment(JTextField.CENTER);
         ((DateEditor) spinnerComponent.getEditor()).getFormat().applyPattern("dd.MM.yy HH:mm:ss");
-    /*jTimeSpinner.addChangeListener(new ChangeListener() {
-    
-    @Override
-    public void stateChanged(ChangeEvent e) {
-    if (!validateTime()) {
-    ((DateEditor) jTimeSpinner.getEditor()).getTextField().setForeground(Color.RED);
-    } else {
-    ((DateEditor) jTimeSpinner.getEditor()).getTextField().setForeground(Color.BLACK);
-    }
-    }
-    });*/
     }
 
     @Override

@@ -8,18 +8,20 @@
  */
 package de.tor.tribes.types;
 
+import java.io.Serializable;
+
 /**
  *
  * @author Charon
  */
-public class Village {
+public class Village implements Serializable {
 
     private int id = 0;
     private String name = null;
     private int x = 0;
     private int y = 0;
     private int tribeID = 0;
-    private Tribe tribe = null;
+    private transient Tribe tribe = null;
     private int points = 0;
     private int rank = 0;
     private int type = 0;
@@ -94,6 +96,45 @@ public class Village {
 
     public void setTribe(Tribe tribe) {
         this.tribe = tribe;
+    }
+
+    public String getHTMLInfo() {
+        String villageInfo = "<html><b>Dorf:</b> " + getName() + " (" + getX() + "|" + getY() + "), <b>Punkte:</b> " + getPoints() + ", <b>Bonus:</b> ";
+        switch (getType()) {
+            case 1:
+                villageInfo += "+ 10% </html>";
+                break;
+
+            case 2:
+                villageInfo += "+ 10% </html>";
+                break;
+
+            case 3:
+                villageInfo += "+ 10% </html>";
+                break;
+
+            case 4:
+                villageInfo += "+ 10% </html>";
+                break;
+
+            case 5:
+                villageInfo += "+ 10% </html>";
+                break;
+
+            case 6:
+                villageInfo += "+ 10% </html>";
+                break;
+
+            case 7:
+                villageInfo += "+ 10% </html>";
+                break;
+
+            case 8:
+                villageInfo += "+ 3% </html>";
+                break;
+
+        }
+        return villageInfo;
     }
 
     @Override

@@ -6,6 +6,8 @@ package de.tor.tribes.ui.editors;
 
 import de.tor.tribes.types.Village;
 import java.awt.Component;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import javax.swing.AbstractCellEditor;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
@@ -21,6 +23,15 @@ public class VillageCellEditor extends AbstractCellEditor implements TableCellEd
     private final JComboBox comboComponent = new javax.swing.JComboBox();
 
     public VillageCellEditor() {
+        comboComponent.addItemListener(new ItemListener() {
+
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                    fireEditingStopped();
+                }
+            }
+        });
     }
 
     @Override

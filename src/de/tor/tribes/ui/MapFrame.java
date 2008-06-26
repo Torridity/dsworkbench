@@ -37,6 +37,8 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
+import javax.swing.event.CellEditorListener;
+import javax.swing.event.ChangeEvent;
 import javax.swing.table.DefaultTableModel;
 import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
@@ -90,7 +92,6 @@ public class MapFrame extends javax.swing.JFrame implements DataHolderListener {
         setupDetailsPanel();
         setupAttackPanel();
         setupDynFrame();
-
     }
 
     private void setupMaps() {
@@ -104,11 +105,10 @@ public class MapFrame extends javax.swing.JFrame implements DataHolderListener {
 
     private void setupMarkerPanel() {
         //build the marker table
-        jMarkerTable.setModel(new javax.swing.table.DefaultTableModel(
+        jMarkerTable.setModel(new javax   .swing.table.DefaultTableModel(
                 new Object[][]{},
                 new String[]{
-                    "Name", "Markierung"
-                }) {
+                    "Name", "Markierung"}) {
 
             Class[] types = new Class[]{
                 MarkerCell.class, Color.class
@@ -131,9 +131,22 @@ public class MapFrame extends javax.swing.JFrame implements DataHolderListener {
         jMarkerTable.getColumnModel().getColumn(1).setMaxWidth(75);
         jMarkerTable.setDefaultRenderer(Color.class, new ColorCellRenderer());
         jMarkerTable.setDefaultRenderer(MarkerCell.class, new MarkerPanelCellRenderer());
-        ColorChooserCellEditor editor = new ColorChooserCellEditor(new ActionListener() {
+        ColorChooserCellEditor editor = new ColorChooserCellEditor(new  
 
-            @Override
+              ActionListener( ) {
+
+                
+            
+        
+         
+           
+            
+            
+           
+          
+               
+               
+               @Override
             public void actionPerformed(ActionEvent e) {
                 //update markers as soon as the colorchooser cell editor has closed
                 updateMarkers();
@@ -199,11 +212,10 @@ public class MapFrame extends javax.swing.JFrame implements DataHolderListener {
     }
 
     private void setupAttackPanel() {
-        DefaultTableModel model = new javax.swing.table.DefaultTableModel(
+        DefaultTableModel model = new javax   .swing.table.DefaultTableModel(
                 new Object[][]{},
                 new String[]{
-                    "Herkunft", "Ziel", "Einheit", "Ankunftszeit", "Einzeichnen"
-                }) {
+                    "Herkunft", "Ziel", "Einheit", "Ankunftszeit", "Einzeichnen"}) {
 
             Class[] types = new Class[]{
                 Village.class, Village.class, Unit.class, Date.class, Boolean.class
@@ -221,6 +233,48 @@ public class MapFrame extends javax.swing.JFrame implements DataHolderListener {
         jAttackTable.setDefaultEditor(Date.class, new DateSpinEditor());
         jAttackTable.setDefaultEditor(Unit.class, new UnitCellEditor());
         jAttackTable.setDefaultEditor(Village.class, new VillageCellEditor());
+        CellEditorListener attackChangedListener = new  
+
+              CellEditorListener( ) {
+
+                 
+                    
+                    
+                
+            
+
+            @Override
+            public  void editingStopped(ChangeEvent e) {
+                //"attack shown" value changed. redraw map panel
+                
+        
+        
+        
+        
+        
+             
+                  
+        
+    
+
+       
+        try {
+                    updateAttacks();
+                } catch (NumberFormatException nfe) {
+                }
+            }
+
+            @Override
+            public void editingCanceled(ChangeEvent e) {
+            }
+        };
+        jAttackTable.getDefaultEditor(Boolean.class).addCellEditorListener(attackChangedListener);
+        jAttackTable.getDefaultEditor(Date.class).addCellEditorListener(attackChangedListener);
+        jAttackTable.getDefaultEditor(Unit.class).addCellEditorListener(attackChangedListener);
+        jAttackTable.getDefaultEditor(Village.class).addCellEditorListener(attackChangedListener);
+        for (Attack a : GlobalOptions.getAttacks()) {
+            ((DefaultTableModel) jAttackTable.getModel()).addRow(new Object[]{a.getSource(), a.getTarget(), a.getUnit(), a.getArriveTime(), a.isShowOnMap()});
+        }
     }
 
     private void setupDynFrame() {
@@ -808,6 +862,11 @@ public class MapFrame extends javax.swing.JFrame implements DataHolderListener {
         jScrollPane2.setViewportView(jAttackTable);
 
         jButton5.setText("Entfernen");
+        jButton5.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireRemoveAttackEvent(evt);
+            }
+        });
 
         jButton7.setText("Überprüfen");
         jButton7.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -825,7 +884,7 @@ public class MapFrame extends javax.swing.JFrame implements DataHolderListener {
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 635, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jAttackPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButton7, javax.swing.GroupLayout.DEFAULT_SIZE, 89, Short.MAX_VALUE)
                     .addComponent(jButton5, javax.swing.GroupLayout.DEFAULT_SIZE, 89, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -1130,7 +1189,7 @@ public class MapFrame extends javax.swing.JFrame implements DataHolderListener {
                             .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jMinimapPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 270, Short.MAX_VALUE)
                             .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(jInfoPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 807, Short.MAX_VALUE))
+                    .addComponent(jInfoPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 811, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -1144,7 +1203,7 @@ public class MapFrame extends javax.swing.JFrame implements DataHolderListener {
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 562, Short.MAX_VALUE))
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 568, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jInfoPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -1332,6 +1391,20 @@ private void fireAlwaysInFrontChangeEvent(javax.swing.event.ChangeEvent evt) {//
     jDynFrame.setAlwaysOnTop(jDynFrameAlwaysOnTopSelection.isSelected());
 }//GEN-LAST:event_fireAlwaysInFrontChangeEvent
 
+private void fireRemoveAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireRemoveAttackEvent
+    int row = jAttackTable.getSelectedRow();
+    if (row < 0) {
+        return;
+    } else {
+        int res = JOptionPane.showConfirmDialog(jDynFrame, "Ausgewählten Angriff wirklich löschen?", "Angriff entfernen", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        if (res != JOptionPane.YES_OPTION) {
+            return;
+        }
+        ((DefaultTableModel) jAttackTable.getModel()).removeRow(row);
+        updateAttacks();
+    }
+}//GEN-LAST:event_fireRemoveAttackEvent
+
     public void changeTool(int pTool) {
         switch (pTool) {
             case GlobalOptions.CURSOR_MARK: {
@@ -1341,15 +1414,21 @@ private void fireAlwaysInFrontChangeEvent(javax.swing.event.ChangeEvent evt) {//
 
             }
 
-
             case GlobalOptions.CURSOR_MEASURE: {
                 jTabbedPane1.setSelectedIndex(0);
                 jDynFrame.pack();
                 break;
-
             }
-
-
+            case GlobalOptions.CURSOR_DEFAULT: {
+                //do nothing
+                break;
+            }
+            default: {
+                //one of the attack tools
+                jTabbedPane1.setSelectedIndex(2);
+                jDynFrame.pack();
+                break;
+            }
         }
     }
 
@@ -1373,6 +1452,8 @@ private void fireAlwaysInFrontChangeEvent(javax.swing.event.ChangeEvent evt) {//
         mMiniPanel.redraw();
     }
 
+    /**Update the globally stored list of attacks with the contents of the  attack table
+     */
     private void updateAttacks() {
         DefaultTableModel model = (DefaultTableModel) jAttackTable.getModel();
         GlobalOptions.getAttacks().clear();
@@ -1387,11 +1468,10 @@ private void fireAlwaysInFrontChangeEvent(javax.swing.event.ChangeEvent evt) {//
             a.setTarget(target);
             a.setUnit(unit);
             a.setArriveTime(arriveTime);
-            a.setShowOnMap(showOnMap);
+            a.setShowOnMap(showOnMap.booleanValue());
             GlobalOptions.getAttacks().add(a);
         }
         GlobalOptions.storeAttacks();
-        mPanel.repaint();
     }
 
     /**Update the MapPanel when dragging the ROI at the MiniMap
@@ -1404,10 +1484,8 @@ private void fireAlwaysInFrontChangeEvent(javax.swing.event.ChangeEvent evt) {//
         int y = (int) dy;
         jCenterX.setText(Integer.toString(x));
         jCenterY.setText(Integer.toString(y));
-        iCenterX =
-                x;
-        iCenterY =
-                y;
+        iCenterX = x;
+        iCenterY = y;
         mPanel.updateMap(iCenterX, iCenterY);
 
         double w = (double) mPanel.getWidth() / GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
@@ -1434,6 +1512,7 @@ private void fireAlwaysInFrontChangeEvent(javax.swing.event.ChangeEvent evt) {//
         }
 
         boolean calculate = true;
+
         if ((pSource == null) || (pTarget == null)) {
             jSpearTime.setText("------");
             jSwordTime.setText("------");
@@ -1448,8 +1527,7 @@ private void fireAlwaysInFrontChangeEvent(javax.swing.event.ChangeEvent evt) {//
             jSnobTime.setText("------");
             jKnightTime.setText("------");
             jDistanceTargetVillage.setText("------");
-            calculate =
-                    false;
+            calculate = false;
         }
 
         String text = "";
@@ -1512,7 +1590,6 @@ private void fireAlwaysInFrontChangeEvent(javax.swing.event.ChangeEvent evt) {//
             } else if (unit.getName().equals("Paladin")) {
                 jKnightTime.setText(result);
             }
-
         }
     }
 
@@ -1530,71 +1607,20 @@ private void fireAlwaysInFrontChangeEvent(javax.swing.event.ChangeEvent evt) {//
             jAllyInfo.setText("");
             jVillageInfo.setIcon(null);
             return;
-
         }
 
-
-        String villageInfo = "<html><b>Dorf:</b> " + pVillage.getName() + " (" + pVillage.getX() + "|" + pVillage.getY() + "), <b>Punkte:</b> " + pVillage.getPoints() + ", <b>Bonus:</b> ";
-        switch (pVillage.getType()) {
-            case 1:
-                villageInfo += "+ 10% </html>";
-                break;
-
-            case 2:
-                villageInfo += "+ 10% </html>";
-                break;
-
-            case 3:
-                villageInfo += "+ 10% </html>";
-                break;
-
-            case 4:
-                villageInfo += "+ 10% </html>";
-                break;
-
-            case 5:
-                villageInfo += "+ 10% </html>";
-                break;
-
-            case 6:
-                villageInfo += "+ 10% </html>";
-                break;
-
-            case 7:
-                villageInfo += "+ 10% </html>";
-                break;
-
-            case 8:
-                villageInfo += "+ 3% </html>";
-                break;
-
-        }
-
-
-
-        jVillageInfo.setText(villageInfo);
+        jVillageInfo.setText(pVillage.getHTMLInfo());
         jVillageInfo.setIcon(mIcons.get(pVillage.getType()));
 
         try {
-            NumberFormat nf = NumberFormat.getInstance();
-            Tribe player = pVillage.getTribe();
-            String playerInfo = "<html><b>Name:</b> " + player.getName();
-            playerInfo +=
-                    " <b>Punkte (Rang):</b> " + nf.format(player.getPoints()) + " (" + nf.format(player.getRank()) + ")";
-            playerInfo +=
-                    " <b>Dörfer:</b> " + nf.format(player.getVillages()) + "</html>";
-            jPlayerInfo.setText(playerInfo);
+            Tribe tribe = pVillage.getTribe();
+            jPlayerInfo.setText(tribe.getHTMLInfo());
 
-            Ally ally = player.getAlly();
+            Ally ally = tribe.getAlly();
             if (ally == null) {
                 jAllyInfo.setText("kein Stamm");
             } else {
-                String allyInfo = "<html><b>Name (Tag):</b> " + ally.getName() + " (" + ally.getTag() + ")";
-                allyInfo +=
-                        " <b>Punkte (Rang):</b> " + nf.format(ally.getPoints()) + " (" + nf.format(ally.getRank()) + ")";
-                allyInfo +=
-                        " <b>Member (Dörfer):</b> " + nf.format(ally.getMembers()) + " (" + nf.format(ally.getVillages()) + ")</html>";
-                jAllyInfo.setText(allyInfo);
+                jAllyInfo.setText(ally.getHTMLInfo());
             }
 
         } catch (NullPointerException e) {
@@ -1695,6 +1721,13 @@ private void fireAlwaysInFrontChangeEvent(javax.swing.event.ChangeEvent evt) {//
                 new MapFrame().setVisible(true);
             }
         });
+
+    /*try {
+    Runtime.getRuntime().exec("cmd.exe /c start http://de26.die-staemme.de/game.php?village=7462&screen=overview&intro");
+    //http://de26.die-staemme.de/game.php?screen=overview_villages
+    } catch (Exception e) {
+    e.printStackTrace();
+    }*/
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jAllyInfo;

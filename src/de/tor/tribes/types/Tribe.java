@@ -8,6 +8,8 @@
  */
 package de.tor.tribes.types;
 
+import java.io.Serializable;
+import java.text.NumberFormat;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -15,7 +17,7 @@ import java.util.List;
  *
  * @author Charon
  */
-public class Tribe {
+public class Tribe implements Serializable {
 
     private int id = 0;
     private String name = null;
@@ -92,6 +94,14 @@ public class Tribe {
 
     public List<Village> getVillageList() {
         return villageList;
+    }
+
+    public String getHTMLInfo() {
+        NumberFormat nf = NumberFormat.getInstance();
+        String tribeInfo = "<html><b>Name:</b> " + getName();
+        tribeInfo += " <b>Punkte (Rang):</b> " + nf.format(getPoints()) + " (" + nf.format(getRank()) + ")";
+        tribeInfo += " <b>Dörfer:</b> " + nf.format(getVillages()) + "</html>";
+        return tribeInfo;
     }
 
     public String toString() {

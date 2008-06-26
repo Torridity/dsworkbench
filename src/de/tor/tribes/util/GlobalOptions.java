@@ -202,11 +202,17 @@ public class GlobalOptions {
                 mAttacks = (List<Attack>) oin.readObject();
                 oin.close();
             } catch (Exception e) {
-                logger.error("Failed to read attacks");
+                logger.error("Failed to read attacks", e);
             }
         } else {
             logger.info("No attacks available for selected server");
         }
+
+        for (Attack a : mAttacks) {
+            a.setSource(mDataHolder.getVillages()[a.getSource().getX()][a.getSource().getY()]);
+            a.setTarget(mDataHolder.getVillages()[a.getTarget().getX()][a.getTarget().getY()]);
+        }
+
     }
 
     public static synchronized List<Attack> getAttacks() {
@@ -220,7 +226,7 @@ public class GlobalOptions {
             oout.writeObject(mAttacks);
             oout.close();
         } catch (Exception e) {
-            logger.error("Failed to store attacks");
+            logger.error("Failed to store attacks", e);
         }
     }
 

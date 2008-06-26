@@ -801,7 +801,7 @@
                   <Component id="jScrollPane2" pref="635" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="jButton7" max="32767" attributes="1"/>
+                      <Component id="jButton7" pref="89" max="32767" attributes="1"/>
                       <Component id="jButton5" pref="89" max="32767" attributes="1"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
@@ -851,6 +851,9 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="Entfernen"/>
           </Properties>
+          <Events>
+            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fireRemoveAttackEvent"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JButton" name="jButton7">
           <Properties>
@@ -914,7 +917,7 @@
                           <Component id="jPanel4" alignment="1" min="-2" max="-2" attributes="1"/>
                       </Group>
                   </Group>
-                  <Component id="jInfoPanel" alignment="1" pref="807" max="32767" attributes="0"/>
+                  <Component id="jInfoPanel" alignment="1" pref="811" max="32767" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -932,7 +935,7 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jPanel4" max="32767" attributes="0"/>
                   </Group>
-                  <Component id="jPanel1" pref="562" max="32767" attributes="1"/>
+                  <Component id="jPanel1" pref="568" max="32767" attributes="1"/>
               </Group>
               <EmptySpace min="-2" max="-2" attributes="0"/>
               <Component id="jInfoPanel" min="-2" pref="102" max="-2" attributes="0"/>

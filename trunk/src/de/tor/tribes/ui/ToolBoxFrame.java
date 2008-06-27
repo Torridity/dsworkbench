@@ -5,6 +5,7 @@
  */
 package de.tor.tribes.ui;
 
+import de.tor.tribes.util.GlobalOptions;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -17,16 +18,20 @@ import javax.swing.JFrame;
  */
 public class ToolBoxFrame extends javax.swing.JFrame {
 
+    private MapPanel mMap = null;
+    private MinimapPanel mMiniMap = null;
     private HideThread hThread = null;
     private int dx = 0;
     private int dy = 0;
 
     /** Creates new form ToolBoxFrame */
-    public ToolBoxFrame() {
+    public ToolBoxFrame(MapPanel pMap, MinimapPanel pMinimap) {
         initComponents();
         buildButtons();
         initListeners();
         pack();
+        mMap = pMap;
+        mMiniMap = pMinimap;
         hThread = new HideThread(this);
         hThread.start();
     }
@@ -45,6 +50,8 @@ public class ToolBoxFrame extends javax.swing.JFrame {
             jAttackSwordButton.setIcon(new ImageIcon("./graphics/icons/attack_sword.png"));
             jMoveButton.setIcon(new ImageIcon("./graphics/icons/move.png"));
             jZoomButton.setIcon(new ImageIcon("./graphics/icons/zoom.png"));
+            jSearchButton.setIcon(new ImageIcon("./graphics/icons/search.png"));
+            jSettingsButton.setIcon(new ImageIcon("./graphics/icons/settings.png"));
         } catch (Exception e) {
         }
     }
@@ -106,30 +113,27 @@ public class ToolBoxFrame extends javax.swing.JFrame {
 
         jPanel1 = new javax.swing.JPanel();
         jMeasureButton = new javax.swing.JButton();
-        jAttackRamButton = new javax.swing.JButton();
         jMarkButton = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
         jAttackAxeButton = new javax.swing.JButton();
+        jAttackRamButton = new javax.swing.JButton();
         jAttackSnobButton = new javax.swing.JButton();
         jAttackSpyButton = new javax.swing.JButton();
         jAttackLightButton = new javax.swing.JButton();
         jAttackHeavyButton = new javax.swing.JButton();
         jAttackSwordButton = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
         jMoveButton = new javax.swing.JButton();
         jZoomButton = new javax.swing.JButton();
+        jLabel3 = new javax.swing.JLabel();
+        jSearchButton = new javax.swing.JButton();
+        jSettingsButton = new javax.swing.JButton();
         jDragLabel = new javax.swing.JLabel();
 
         setTitle("Tools");
         setAlwaysOnTop(true);
         setResizable(false);
         setUndecorated(true);
-        addWindowFocusListener(new java.awt.event.WindowFocusListener() {
-            public void windowGainedFocus(java.awt.event.WindowEvent evt) {
-                fireGainedFocusEvent(evt);
-            }
-            public void windowLostFocus(java.awt.event.WindowEvent evt) {
-                fireLostFocusEvent(evt);
-            }
-        });
 
         jPanel1.setMaximumSize(new java.awt.Dimension(30, 330));
         jPanel1.setMinimumSize(new java.awt.Dimension(30, 330));
@@ -139,67 +143,153 @@ public class ToolBoxFrame extends javax.swing.JFrame {
         jMeasureButton.setMaximumSize(new java.awt.Dimension(30, 30));
         jMeasureButton.setMinimumSize(new java.awt.Dimension(30, 30));
         jMeasureButton.setPreferredSize(new java.awt.Dimension(30, 30));
+        jMeasureButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireToolClickedEvent(evt);
+            }
+        });
         jPanel1.add(jMeasureButton);
 
-        jAttackRamButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/cursors/mark.png"))); // NOI18N
-        jAttackRamButton.setMaximumSize(new java.awt.Dimension(30, 30));
-        jAttackRamButton.setMinimumSize(new java.awt.Dimension(30, 30));
-        jAttackRamButton.setPreferredSize(new java.awt.Dimension(30, 30));
-        jPanel1.add(jAttackRamButton);
-
-        jMarkButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/cursors/attack.png"))); // NOI18N
         jMarkButton.setMaximumSize(new java.awt.Dimension(30, 30));
         jMarkButton.setMinimumSize(new java.awt.Dimension(30, 30));
         jMarkButton.setPreferredSize(new java.awt.Dimension(30, 30));
+        jMarkButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireToolClickedEvent(evt);
+            }
+        });
         jPanel1.add(jMarkButton);
 
-        jAttackAxeButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/cursors/mark.png"))); // NOI18N
+        jLabel2.setBackground(new java.awt.Color(102, 102, 102));
+        jLabel2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        jLabel2.setMaximumSize(new java.awt.Dimension(40, 4));
+        jLabel2.setMinimumSize(new java.awt.Dimension(40, 4));
+        jLabel2.setPreferredSize(new java.awt.Dimension(40, 4));
+        jPanel1.add(jLabel2);
+
         jAttackAxeButton.setMaximumSize(new java.awt.Dimension(30, 30));
         jAttackAxeButton.setMinimumSize(new java.awt.Dimension(30, 30));
         jAttackAxeButton.setPreferredSize(new java.awt.Dimension(30, 30));
+        jAttackAxeButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireToolClickedEvent(evt);
+            }
+        });
         jPanel1.add(jAttackAxeButton);
 
-        jAttackSnobButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/cursors/mark.png"))); // NOI18N
+        jAttackRamButton.setMaximumSize(new java.awt.Dimension(30, 30));
+        jAttackRamButton.setMinimumSize(new java.awt.Dimension(30, 30));
+        jAttackRamButton.setPreferredSize(new java.awt.Dimension(30, 30));
+        jAttackRamButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireToolClickedEvent(evt);
+            }
+        });
+        jPanel1.add(jAttackRamButton);
+
         jAttackSnobButton.setMaximumSize(new java.awt.Dimension(30, 30));
         jAttackSnobButton.setMinimumSize(new java.awt.Dimension(30, 30));
         jAttackSnobButton.setPreferredSize(new java.awt.Dimension(30, 30));
+        jAttackSnobButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireToolClickedEvent(evt);
+            }
+        });
         jPanel1.add(jAttackSnobButton);
 
-        jAttackSpyButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/cursors/mark.png"))); // NOI18N
         jAttackSpyButton.setMaximumSize(new java.awt.Dimension(30, 30));
         jAttackSpyButton.setMinimumSize(new java.awt.Dimension(30, 30));
         jAttackSpyButton.setPreferredSize(new java.awt.Dimension(30, 30));
+        jAttackSpyButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireToolClickedEvent(evt);
+            }
+        });
         jPanel1.add(jAttackSpyButton);
 
-        jAttackLightButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/cursors/mark.png"))); // NOI18N
         jAttackLightButton.setMaximumSize(new java.awt.Dimension(30, 30));
         jAttackLightButton.setMinimumSize(new java.awt.Dimension(30, 30));
         jAttackLightButton.setPreferredSize(new java.awt.Dimension(30, 30));
+        jAttackLightButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireToolClickedEvent(evt);
+            }
+        });
         jPanel1.add(jAttackLightButton);
 
-        jAttackHeavyButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/cursors/mark.png"))); // NOI18N
         jAttackHeavyButton.setMaximumSize(new java.awt.Dimension(30, 30));
         jAttackHeavyButton.setMinimumSize(new java.awt.Dimension(30, 30));
         jAttackHeavyButton.setPreferredSize(new java.awt.Dimension(30, 30));
+        jAttackHeavyButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireToolClickedEvent(evt);
+            }
+        });
         jPanel1.add(jAttackHeavyButton);
 
-        jAttackSwordButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/cursors/mark.png"))); // NOI18N
         jAttackSwordButton.setMaximumSize(new java.awt.Dimension(30, 30));
         jAttackSwordButton.setMinimumSize(new java.awt.Dimension(30, 30));
         jAttackSwordButton.setPreferredSize(new java.awt.Dimension(30, 30));
+        jAttackSwordButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireToolClickedEvent(evt);
+            }
+        });
         jPanel1.add(jAttackSwordButton);
 
-        jMoveButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/cursors/mark.png"))); // NOI18N
+        jLabel1.setBackground(new java.awt.Color(102, 102, 102));
+        jLabel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        jLabel1.setMaximumSize(new java.awt.Dimension(40, 4));
+        jLabel1.setMinimumSize(new java.awt.Dimension(40, 4));
+        jLabel1.setPreferredSize(new java.awt.Dimension(40, 4));
+        jPanel1.add(jLabel1);
+
         jMoveButton.setMaximumSize(new java.awt.Dimension(30, 30));
         jMoveButton.setMinimumSize(new java.awt.Dimension(30, 30));
         jMoveButton.setPreferredSize(new java.awt.Dimension(30, 30));
+        jMoveButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireToolClickedEvent(evt);
+            }
+        });
         jPanel1.add(jMoveButton);
 
-        jZoomButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/cursors/mark.png"))); // NOI18N
         jZoomButton.setMaximumSize(new java.awt.Dimension(30, 30));
         jZoomButton.setMinimumSize(new java.awt.Dimension(30, 30));
         jZoomButton.setPreferredSize(new java.awt.Dimension(30, 30));
+        jZoomButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireToolClickedEvent(evt);
+            }
+        });
         jPanel1.add(jZoomButton);
+
+        jLabel3.setBackground(new java.awt.Color(102, 102, 102));
+        jLabel3.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        jLabel3.setMaximumSize(new java.awt.Dimension(40, 4));
+        jLabel3.setMinimumSize(new java.awt.Dimension(40, 4));
+        jLabel3.setPreferredSize(new java.awt.Dimension(40, 4));
+        jPanel1.add(jLabel3);
+
+        jSearchButton.setMaximumSize(new java.awt.Dimension(30, 30));
+        jSearchButton.setMinimumSize(new java.awt.Dimension(30, 30));
+        jSearchButton.setPreferredSize(new java.awt.Dimension(30, 30));
+        jSearchButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireToolClickedEvent(evt);
+            }
+        });
+        jPanel1.add(jSearchButton);
+
+        jSettingsButton.setMaximumSize(new java.awt.Dimension(30, 30));
+        jSettingsButton.setMinimumSize(new java.awt.Dimension(30, 30));
+        jSettingsButton.setPreferredSize(new java.awt.Dimension(30, 30));
+        jSettingsButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireToolClickedEvent(evt);
+            }
+        });
+        jPanel1.add(jSettingsButton);
 
         jDragLabel.setBackground(new java.awt.Color(153, 153, 153));
         jDragLabel.setMaximumSize(new java.awt.Dimension(30, 30));
@@ -210,25 +300,45 @@ public class ToolBoxFrame extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addComponent(jDragLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addGroup(layout.createSequentialGroup()
                 .addComponent(jDragLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 403, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-private void fireLostFocusEvent(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_fireLostFocusEvent
-}//GEN-LAST:event_fireLostFocusEvent
-
-private void fireGainedFocusEvent(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_fireGainedFocusEvent
-}//GEN-LAST:event_fireGainedFocusEvent
+private void fireToolClickedEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireToolClickedEvent
+    if (evt.getSource() == jMeasureButton) {
+        mMap.setCurrentCursor(GlobalOptions.CURSOR_MEASURE);
+    } else if (evt.getSource() == jMarkButton) {
+        mMap.setCurrentCursor(GlobalOptions.CURSOR_MARK);
+    } else if (evt.getSource() == jAttackAxeButton) {
+        mMap.setCurrentCursor(GlobalOptions.CURSOR_ATTACK_AXE);
+    } else if (evt.getSource() == jAttackRamButton) {
+        mMap.setCurrentCursor(GlobalOptions.CURSOR_ATTACK_RAM);
+    } else if (evt.getSource() == jAttackSnobButton) {
+        mMap.setCurrentCursor(GlobalOptions.CURSOR_ATTACK_SNOB);
+    } else if (evt.getSource() == jAttackSpyButton) {
+        mMap.setCurrentCursor(GlobalOptions.CURSOR_ATTACK_SPY);
+    } else if (evt.getSource() == jAttackLightButton) {
+        mMap.setCurrentCursor(GlobalOptions.CURSOR_ATTACK_LIGHT);
+    } else if (evt.getSource() == jAttackHeavyButton) {
+        mMap.setCurrentCursor(GlobalOptions.CURSOR_ATTACK_HEAVY);
+    } else if (evt.getSource() == jAttackSwordButton) {
+        mMap.setCurrentCursor(GlobalOptions.CURSOR_ATTACK_SWORD);
+    } else if (evt.getSource() == jMoveButton) {
+        mMiniMap.setCurrentCursor(GlobalOptions.CURSOR_MOVE);
+    } else if (evt.getSource() == jZoomButton) {
+        mMiniMap.setCurrentCursor(GlobalOptions.CURSOR_ZOOM);
+    }
+}//GEN-LAST:event_fireToolClickedEvent
 
     /**
      * @param args the command line arguments
@@ -237,7 +347,7 @@ private void fireGainedFocusEvent(java.awt.event.WindowEvent evt) {//GEN-FIRST:e
         java.awt.EventQueue.invokeLater(new Runnable() {
 
             public void run() {
-                new ToolBoxFrame().setVisible(true);
+                new ToolBoxFrame(null, null).setVisible(true);
             }
         });
     }
@@ -251,10 +361,15 @@ private void fireGainedFocusEvent(java.awt.event.WindowEvent evt) {//GEN-FIRST:e
     private javax.swing.JButton jAttackSpyButton;
     private javax.swing.JButton jAttackSwordButton;
     private javax.swing.JLabel jDragLabel;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JButton jMarkButton;
     private javax.swing.JButton jMeasureButton;
     private javax.swing.JButton jMoveButton;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JButton jSearchButton;
+    private javax.swing.JButton jSettingsButton;
     private javax.swing.JButton jZoomButton;
     // End of variables declaration//GEN-END:variables
 }
@@ -272,8 +387,8 @@ class HideThread extends Thread {
     public void setHidden(boolean v) {
         hidden = v;
     }
-    
-    public boolean isHidden(){
+
+    public boolean isHidden() {
         return hidden;
     }
 
@@ -281,15 +396,16 @@ class HideThread extends Thread {
     public void run() {
         while (true) {
             if (hidden) {
-                if (mParent.getHeight() > 36) {
+                if (mParent.getHeight() > 40) {
                     mParent.setSize(mParent.getWidth(), mParent.getHeight() - 10);
                 }
             } else {
-                if (mParent.getHeight() < 366) {
-                    mParent.setSize(mParent.getWidth(), mParent.getHeight() + 10);
+                if (mParent.getHeight() < 440) {
+                    if (mParent.getHeight() != 440) {
+                        mParent.setSize(mParent.getWidth(), mParent.getHeight() + 10);
+                    }
                 }
             }
-
             try {
                 Thread.sleep(10);
             } catch (Exception e) {

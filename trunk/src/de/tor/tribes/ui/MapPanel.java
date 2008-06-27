@@ -245,6 +245,12 @@ public class MapPanel extends javax.swing.JPanel {
 
     }
 
+    public void setCurrentCursor(int pCurrentCursor) {
+        iCurrentCursor = pCurrentCursor;
+        setCursor(GlobalOptions.getCursor(iCurrentCursor));
+        mParent.changeTool(iCurrentCursor);
+    }
+
     public void setZoom(double pZoom) {
         dScaling = pZoom;
         mRepaintThread.setZoom(dScaling);

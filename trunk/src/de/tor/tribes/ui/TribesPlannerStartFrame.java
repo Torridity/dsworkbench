@@ -5,6 +5,7 @@
  */
 package de.tor.tribes.ui;
 
+import de.tor.tribes.db.DatabaseAdapter;
 import de.tor.tribes.io.DataHolderListener;
 import de.tor.tribes.io.ServerList;
 import de.tor.tribes.util.GlobalOptions;
@@ -12,6 +13,8 @@ import java.util.Arrays;
 import java.util.Enumeration;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
+import org.apache.log4j.Logger;
+import org.apache.log4j.xml.DOMConfigurator;
 
 /**
  *
@@ -19,13 +22,14 @@ import javax.swing.JOptionPane;
  */
 public class TribesPlannerStartFrame extends javax.swing.JFrame implements DataHolderListener {
 
+    private static Logger logger = Logger.getLogger(TribesPlannerStartFrame.class);
     private boolean updating = false;
 
     /** Creates new form TribesPlannerStartFrame */
     public TribesPlannerStartFrame() {
         initComponents();
-       // jControlPanel.setupPanel(this, true, false);
-        
+        // jControlPanel.setupPanel(this, true, false);
+
         try {
             GlobalOptions.initialize(false, this);
         } catch (Exception e) {
@@ -70,6 +74,16 @@ public class TribesPlannerStartFrame extends javax.swing.JFrame implements DataH
         }
 
         fireUpdateProxySettingsEvent(null);
+
+        String name = GlobalOptions.getProperty("account.name");
+        String password = GlobalOptions.getProperty("account.password");
+        if ((name != null) && (password != null)) {
+            jSavePassword.setEnabled(true);
+            jAccountName.setText(name);
+            jAccountPassword.setText(password);
+        } else if (name != null) {
+            jAccountName.setText(name);
+        }
     }
 
     /** This method is called from within the constructor to
@@ -82,6 +96,13 @@ public class TribesPlannerStartFrame extends javax.swing.JFrame implements DataH
 
         connectionTypeGroup = new javax.swing.ButtonGroup();
         jTabbedPane1 = new javax.swing.JTabbedPane();
+        jLoginPanel = new javax.swing.JPanel();
+        jLabel6 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        jAccountPassword = new javax.swing.JPasswordField();
+        jAccountName = new javax.swing.JTextField();
+        jButton5 = new javax.swing.JButton();
+        jSavePassword = new javax.swing.JCheckBox();
         jPlayerServerSettings = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jServerList = new javax.swing.JComboBox();
@@ -104,9 +125,75 @@ public class TribesPlannerStartFrame extends javax.swing.JFrame implements DataH
         jButton2 = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
+        jButton6 = new javax.swing.JButton();
 
         setTitle("Einstellungen");
         setAlwaysOnTop(true);
+
+        jLabel6.setText("Name");
+
+        jLabel7.setText("Passwort");
+
+        jAccountPassword.setMaximumSize(new java.awt.Dimension(200, 20));
+        jAccountPassword.setMinimumSize(new java.awt.Dimension(200, 20));
+        jAccountPassword.setPreferredSize(new java.awt.Dimension(200, 20));
+
+        jAccountName.setMaximumSize(new java.awt.Dimension(200, 20));
+        jAccountName.setMinimumSize(new java.awt.Dimension(200, 20));
+        jAccountName.setPreferredSize(new java.awt.Dimension(200, 20));
+
+        jButton5.setText("Einloggen");
+        jButton5.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireLoginIntoAccountEvent(evt);
+            }
+        });
+
+        jSavePassword.setText("Passwort speichern");
+        jSavePassword.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                fireChangeSavePasswordEvent(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jLoginPanelLayout = new javax.swing.GroupLayout(jLoginPanel);
+        jLoginPanel.setLayout(jLoginPanelLayout);
+        jLoginPanelLayout.setHorizontalGroup(
+            jLoginPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jLoginPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jLoginPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel7)
+                    .addComponent(jLabel6))
+                .addGap(21, 21, 21)
+                .addGroup(jLoginPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(jAccountName, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jAccountPassword, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jLoginPanelLayout.createSequentialGroup()
+                        .addComponent(jSavePassword)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButton5)))
+                .addContainerGap(147, Short.MAX_VALUE))
+        );
+        jLoginPanelLayout.setVerticalGroup(
+            jLoginPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jLoginPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jLoginPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel6)
+                    .addComponent(jAccountName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jLoginPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jAccountPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel7))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jLoginPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton5)
+                    .addComponent(jSavePassword))
+                .addContainerGap(163, Short.MAX_VALUE))
+        );
+
+        jTabbedPane1.addTab("Login", new javax.swing.ImageIcon(getClass().getResource("/res/login.png")), jLoginPanel); // NOI18N
 
         jLabel1.setText("Server");
 
@@ -156,11 +243,11 @@ public class TribesPlannerStartFrame extends javax.swing.JFrame implements DataH
                     .addComponent(jLabel2)
                     .addComponent(jTribeNames, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 172, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 167, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
-        jTabbedPane1.addTab("Spieler/Server", jPlayerServerSettings);
+        jTabbedPane1.addTab("Spieler/Server", new javax.swing.ImageIcon(getClass().getResource("/res/face.png")), jPlayerServerSettings); // NOI18N
 
         jLabel5.setText("Grafikpaket");
 
@@ -186,7 +273,7 @@ public class TribesPlannerStartFrame extends javax.swing.JFrame implements DataH
                 .addComponent(jGraphicPacks, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton4)
-                .addContainerGap(140, Short.MAX_VALUE))
+                .addContainerGap(142, Short.MAX_VALUE))
         );
         jGeneralSettingsLayout.setVerticalGroup(
             jGeneralSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -196,10 +283,10 @@ public class TribesPlannerStartFrame extends javax.swing.JFrame implements DataH
                     .addComponent(jLabel5)
                     .addComponent(jGraphicPacks, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton4))
-                .addContainerGap(222, Short.MAX_VALUE))
+                .addContainerGap(215, Short.MAX_VALUE))
         );
 
-        jTabbedPane1.addTab("Allgemein", jGeneralSettings);
+        jTabbedPane1.addTab("Allgemein", new javax.swing.ImageIcon(getClass().getResource("/res/settings.png")), jGeneralSettings); // NOI18N
 
         connectionTypeGroup.add(jDirectConnectOption);
         jDirectConnectOption.setText("Ich bin direkt mit dem Internet verbunden");
@@ -273,10 +360,10 @@ public class TribesPlannerStartFrame extends javax.swing.JFrame implements DataH
                     .addComponent(jProxyPort, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton2)
-                .addContainerGap(114, Short.MAX_VALUE))
+                .addContainerGap(107, Short.MAX_VALUE))
         );
 
-        jTabbedPane1.addTab("Netzwerk", jNetworkSettings);
+        jTabbedPane1.addTab("Netzwerk", new javax.swing.ImageIcon(getClass().getResource("/res/proxy.png")), jNetworkSettings); // NOI18N
 
         jButton1.setText("OK");
         jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -292,6 +379,13 @@ public class TribesPlannerStartFrame extends javax.swing.JFrame implements DataH
             }
         });
 
+        jButton6.setText("Neuen Account erstellen");
+        jButton6.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireCreateAccountEvent(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -300,10 +394,12 @@ public class TribesPlannerStartFrame extends javax.swing.JFrame implements DataH
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(jButton6)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 140, Short.MAX_VALUE)
                         .addComponent(jButton3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton1))
-                    .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 427, Short.MAX_VALUE))
+                    .addComponent(jTabbedPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 427, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -314,7 +410,8 @@ public class TribesPlannerStartFrame extends javax.swing.JFrame implements DataH
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
-                    .addComponent(jButton3))
+                    .addComponent(jButton3)
+                    .addComponent(jButton6))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -343,6 +440,7 @@ public class TribesPlannerStartFrame extends javax.swing.JFrame implements DataH
                 model.addElement(serverID);
             }
             jServerList.setModel(model);
+
             if (GlobalOptions.getProperty("default.server") != null) {
                 if (model.getIndexOf(GlobalOptions.getProperty("default.server")) != -1) {
                     jServerList.setSelectedItem(GlobalOptions.getProperty("default.server"));
@@ -362,7 +460,6 @@ public class TribesPlannerStartFrame extends javax.swing.JFrame implements DataH
     private void fireChangeConnectTypeEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireChangeConnectTypeEvent
         jProxyHost.setEnabled(jProxyConnectOption.isSelected());
         jProxyPort.setEnabled(jProxyConnectOption.isSelected());
-   
     }//GEN-LAST:event_fireChangeConnectTypeEvent
 
     private void fireSelectServerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSelectServerEvent
@@ -379,7 +476,7 @@ public class TribesPlannerStartFrame extends javax.swing.JFrame implements DataH
         jSelectServerButton.setEnabled(false);
         updating = true;
         jStatusArea.setText("");
-
+        jTribeNames.setModel(new DefaultComboBoxModel());
         new Thread(new Runnable() {
 
             public void run() {
@@ -388,7 +485,7 @@ public class TribesPlannerStartFrame extends javax.swing.JFrame implements DataH
                 } catch (Exception e) {
                 }
             }
-            }).start();
+        }).start();
     }//GEN-LAST:event_fireSelectServerEvent
 
     private void fireCloseEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCloseEvent
@@ -396,9 +493,10 @@ public class TribesPlannerStartFrame extends javax.swing.JFrame implements DataH
     }//GEN-LAST:event_fireCloseEvent
 
     private void fireOkEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireOkEvent
-        GlobalOptions.addProperty("default.player", (String) jTribeNames.getSelectedItem());
+        logger.debug("Setting default player for server '" + GlobalOptions.getSelectedServer() + "' to " + jTribeNames.getSelectedItem());
+        GlobalOptions.addProperty("player." + GlobalOptions.getSelectedServer(), (String) jTribeNames.getSelectedItem());
         GlobalOptions.saveProperties();
-        setVisible(false);        
+        setVisible(false);
     }//GEN-LAST:event_fireOkEvent
 
     private void fireSelectGraphicPackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSelectGraphicPackEvent
@@ -406,21 +504,59 @@ public class TribesPlannerStartFrame extends javax.swing.JFrame implements DataH
         try {
             GlobalOptions.loadSkin();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Failed to load skin '" + jGraphicPacks.getSelectedItem() + "'", e);
             JOptionPane.showMessageDialog(this, "Fehler beim laden des Grafikpaketes.");
             //load default
             GlobalOptions.addProperty("default.skin", "default");
             try {
                 GlobalOptions.loadSkin();
             } catch (Exception ie) {
+                logger.error("Failed to load default skin", ie);
             }
         }
     }//GEN-LAST:event_fireSelectGraphicPackEvent
+
+private void fireCreateAccountEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCreateAccountEvent
+// TODO add your handling code here:
+}//GEN-LAST:event_fireCreateAccountEvent
+
+private void fireLoginIntoAccountEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireLoginIntoAccountEvent
+    String name = jAccountName.getText();
+    String password = new String(jAccountPassword.getPassword());
+    if ((name != null) && (password != null)) {
+        int ret = DatabaseAdapter.checkUser(name, password);
+        if (ret == DatabaseAdapter.ID_SUCCESS) {
+            GlobalOptions.setLoggedInAs(name);
+            GlobalOptions.addProperty("account.name", jAccountName.getText());
+        } else if (ret == DatabaseAdapter.ID_CONNECTION_FAILED) {
+            JOptionPane.showMessageDialog(this, "Keine Verbindung zur Datenbank.\nBitte überprüfe die Netzwerkeinstellungen.", "Fehler", JOptionPane.ERROR_MESSAGE);
+        } else if (ret == DatabaseAdapter.ID_USER_NOT_EXIST) {
+            JOptionPane.showMessageDialog(this, "Der Benutzer '" + name + "' existiert nicht.\nBitte erstelle einen neuen Account.", "Information", JOptionPane.INFORMATION_MESSAGE);
+        } else if (ret == DatabaseAdapter.ID_UNKNOWN_ERROR) {
+            JOptionPane.showMessageDialog(this, "Ein unbekannter Fehler ist aufgetreten.", "Fehler", JOptionPane.ERROR_MESSAGE);
+        }
+        if (jSavePassword.isSelected()) {
+            GlobalOptions.addProperty("account.password", new String(jAccountPassword.getPassword()));
+            GlobalOptions.saveProperties();
+        }
+    }
+
+}//GEN-LAST:event_fireLoginIntoAccountEvent
+
+private void fireChangeSavePasswordEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireChangeSavePasswordEvent
+    if (jSavePassword.isSelected()) {
+        GlobalOptions.addProperty("account.name", jAccountName.getText());
+        GlobalOptions.addProperty("account.password", new String(jAccountPassword.getPassword()));
+        GlobalOptions.saveProperties();
+    }
+}//GEN-LAST:event_fireChangeSavePasswordEvent
 
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
+        DOMConfigurator.configure("log4j.xml");
+
         java.awt.EventQueue.invokeLater(new Runnable() {
 
             public void run() {
@@ -431,10 +567,14 @@ public class TribesPlannerStartFrame extends javax.swing.JFrame implements DataH
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup connectionTypeGroup;
+    private javax.swing.JTextField jAccountName;
+    private javax.swing.JPasswordField jAccountPassword;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
+    private javax.swing.JButton jButton5;
+    private javax.swing.JButton jButton6;
     private javax.swing.JRadioButton jDirectConnectOption;
     private javax.swing.JPanel jGeneralSettings;
     private javax.swing.JComboBox jGraphicPacks;
@@ -443,11 +583,15 @@ public class TribesPlannerStartFrame extends javax.swing.JFrame implements DataH
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JPanel jLoginPanel;
     private javax.swing.JPanel jNetworkSettings;
     private javax.swing.JPanel jPlayerServerSettings;
     private javax.swing.JRadioButton jProxyConnectOption;
     private javax.swing.JTextField jProxyHost;
     private javax.swing.JTextField jProxyPort;
+    private javax.swing.JCheckBox jSavePassword;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JButton jSelectServerButton;
     private javax.swing.JComboBox jServerList;
@@ -455,10 +599,13 @@ public class TribesPlannerStartFrame extends javax.swing.JFrame implements DataH
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JComboBox jTribeNames;
     // End of variables declaration//GEN-END:variables
+
+    @Override
     public void fireDataHolderEvent(String pMessage) {
         jStatusArea.insert(pMessage + "\n", jStatusArea.getText().length());
     }
 
+    @Override
     public void fireDataLoadedEvent() {
         updating = false;
         jSelectServerButton.setEnabled(true);
@@ -475,9 +622,9 @@ public class TribesPlannerStartFrame extends javax.swing.JFrame implements DataH
             model.addElement(tribe);
         }
         jTribeNames.setModel(model);
-        if (GlobalOptions.getProperty("default.player") != null) {
-            if (model.getIndexOf(GlobalOptions.getProperty("default.player")) != -1) {
-                jTribeNames.setSelectedItem(GlobalOptions.getProperty("default.player"));
+        if (GlobalOptions.getProperty("player." + GlobalOptions.getSelectedServer()) != null) {
+            if (model.getIndexOf(GlobalOptions.getProperty("player." + GlobalOptions.getSelectedServer())) != -1) {
+                jTribeNames.setSelectedItem(GlobalOptions.getProperty("player." + GlobalOptions.getSelectedServer()));
             } else {
                 jTribeNames.setSelectedIndex(0);
             }

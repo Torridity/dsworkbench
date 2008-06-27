@@ -8,6 +8,7 @@
  */
 package de.tor.tribes.util;
 
+import de.tor.tribes.db.DatabaseAdapter;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.DataHolderListener;
 import de.tor.tribes.io.WorldDataHolder;
@@ -62,6 +63,8 @@ public class GlobalOptions {
     private static Properties GLOBAL_PROPERTIES = null;
     private static List<Cursor> CURSORS = null;
     private static List<Attack> mAttacks = null;
+    //flag which is set if the user is logged in with hin account name
+    private static String loggedInAs = null;
 
     /**Init all managed objects
      * @param pDownloadData TRUE=download the WorldData from the tribes server
@@ -240,6 +243,14 @@ public class GlobalOptions {
     public static void loadDecoration() throws Exception {
         mDecorationHolder = new WorldDecorationHolder();
         mDecorationHolder.loadWorld();
+    }
+    
+    public static void setLoggedInAs(String pAccount){
+        loggedInAs = pAccount;
+    }
+    
+    public static String isLoggedInAs(){
+        return loggedInAs;
     }
 
     /**Get the DataHolder

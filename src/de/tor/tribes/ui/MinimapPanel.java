@@ -135,12 +135,17 @@ public class MinimapPanel extends javax.swing.JPanel {
                     if (mZoomFrame.isVisible()) {
                         mZoomFrame.setVisible(false);
                     }
-                }else{
-                       mZoomFrame.setVisible(true);
+                } else {
+                    mZoomFrame.setVisible(true);
                 }
                 setCursor(GlobalOptions.getCursor(iCurrentCursor));
             }
         });
+    }
+
+    public void setCurrentCursor(int pCurrentCursor) {
+        iCurrentCursor = pCurrentCursor;
+        setCursor(GlobalOptions.getCursor(iCurrentCursor));
     }
 
     public void setSelection(int pX, int pY, int pWidth, int pHeight) {

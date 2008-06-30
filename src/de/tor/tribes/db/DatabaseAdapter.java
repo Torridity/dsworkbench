@@ -5,6 +5,7 @@
 package de.tor.tribes.db;
 
 import de.tor.tribes.sec.SecurityAdapter;
+import de.tor.tribes.util.GlobalOptions;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -12,7 +13,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
-import org.omg.CORBA.INITIALIZE;
 
 /**
  *
@@ -20,13 +20,13 @@ import org.omg.CORBA.INITIALIZE;
  */
 public class DatabaseAdapter {
 
-    public static final int ID_UNKNOWN_ERROR = -1;
-    public static final int ID_SUCCESS = 0;
-    public static final int ID_CONNECTION_FAILED = 1;
-    public static final int ID_USER_ALREADY_EXIST = 2;
-    public static final int ID_USER_NOT_EXIST = 3;
-    private static Connection DB_CONNECTION = null;
     private static Logger logger = Logger.getLogger(DatabaseAdapter.class);
+    public static final int ID_UNKNOWN_ERROR = -666;
+    public static final int ID_SUCCESS = 0;
+    public static final int ID_CONNECTION_FAILED = -1;
+    public static final int ID_USER_ALREADY_EXIST = -2;
+    public static final int ID_USER_NOT_EXIST = -3;
+    private static Connection DB_CONNECTION = null;
     private static boolean DRIVER_AVAILABLE = false;
     private static boolean INITIALIZED = false;
 
@@ -145,12 +145,12 @@ public class DatabaseAdapter {
      * @param pServer Server on which the update should be performed
      * @return long Timestamp of the last update
      */
-    public static long checkLastUpdate(String pUsername, String pServer) {
+    public static boolean isUpdatePossible(String pUsername, String pServer) {
         if (!openConnection()) {
-            return ID_CONNECTION_FAILED;
+            return false;
         }
-        int retVal = ID_SUCCESS;
-        long lastUpdate = 0;
+        boolean retVal = false;
+        long lastUpdate = -1;
         try {
             //get user id
             Statement s = DB_CONNECTION.createStatement();
@@ -177,10 +177,28 @@ public class DatabaseAdapter {
             }
         } catch (Exception e) {
             logger.error("Failed to check for last update", e);
-            retVal = ID_UNKNOWN_ERROR;
+            retVal = false;
         }
+
+        long currentTime = getCurrentServerTime();
+        if ((currentTime < 0) || (lastUpdate < 0)) {
+            //failed to get last update or current time
+            return false;
+        }
+
+        //get delte between now and the last update
+        long delta = currentTime - lastUpdate;
+
+        if (delta < 1000 * 60 * 60) {
+            //last update is less than 1 hour in past
+            retVal = false;
+        } else {
+            retVal = true;
+        }
+
+
         closeConnection();
-        return lastUpdate;
+        return retVal;
     }
 
     /**Store an update of server data in the database

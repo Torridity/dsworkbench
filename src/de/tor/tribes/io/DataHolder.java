@@ -8,6 +8,7 @@
  */
 package de.tor.tribes.io;
 
+import de.tor.tribes.db.DatabaseAdapter;
 import de.tor.tribes.types.Ally;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
@@ -206,6 +207,16 @@ public class DataHolder {
     }
 
     private boolean downloadData() {
+
+        /*************************
+         ***Check update information
+         *************************/
+        if (!DatabaseAdapter.isUpdatePossible(GlobalOptions.getProperty("account.name"), GlobalOptions.getSelectedServer())) {
+            logger.info("Update is not yet allowed/possible");
+            fireDataHolderEvents("Update ist momentan (noch) nicht möglich");
+            return false;
+        }
+
         URL file = null;
         String serverDir = sServerBaseDir + "/" + GlobalOptions.getSelectedServer();
         new File(serverDir).mkdirs();

@@ -34,12 +34,12 @@ public class MinimapPanel extends javax.swing.JPanel {
     private int iY = 0;
     private int iWidth = 0;
     private int iHeight = 0;
-    private MapFrame mParent;
+    private DSWorkbenchMainFrame mParent;
     private MinimapZoomFrame mZoomFrame = null;
     private int iCurrentCursor = GlobalOptions.CURSOR_DEFAULT;
 
     /** Creates new form MinimapPanel */
-    public MinimapPanel(MapFrame pParent) {
+    public MinimapPanel(DSWorkbenchMainFrame pParent) {
         initComponents();
         setSize(100, 100);
         mParent = pParent;

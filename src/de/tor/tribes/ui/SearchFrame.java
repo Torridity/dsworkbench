@@ -23,10 +23,10 @@ public class SearchFrame extends javax.swing.JFrame implements SearchListener {
 
     private String sLastPlayerValue = null;
     private SearchThread mSearchThread = null;
-    private MapFrame mParent = null;
+    private DSWorkbenchMainFrame mParent = null;
 
     /** Creates new form SearchFrame */
-    public SearchFrame(MapFrame pParent) {
+    public SearchFrame(DSWorkbenchMainFrame pParent) {
         initComponents();
         mParent = pParent;
         // frameControlPanel1.setupPanel(this, true, true);
@@ -247,17 +247,15 @@ private void fireCenterMapEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:even
         try {
             GlobalOptions.setSelectedServer("de26");
             GlobalOptions.loadData(false);
-            GlobalOptions.initialize(false, null);
+            GlobalOptions.initialize(null);
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(1);
         }
 
-        java.awt.EventQueue.invokeLater(new  
+        java.awt.EventQueue.invokeLater(new Runnable() {
 
-              Runnable() {
-
-                 @Override
+            @Override
             public void run() {
                 new SearchFrame(null).setVisible(true);
             }

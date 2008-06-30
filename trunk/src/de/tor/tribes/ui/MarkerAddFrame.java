@@ -16,13 +16,13 @@ import de.tor.tribes.util.GlobalOptions;
  */
 public class MarkerAddFrame extends javax.swing.JFrame {
 
-    private MapFrame mParent = null;
+    private DSWorkbenchMainFrame mParent = null;
     private Village mVillage = null;
     private ColorChooser mTribeColorChooser = new ColorChooser();
     private ColorChooser mAllyColorChooser = new ColorChooser();
 
     /** Creates new form MarkerAddFrame */
-    public MarkerAddFrame(MapFrame pParent) {
+    public MarkerAddFrame(DSWorkbenchMainFrame pParent) {
         initComponents();
         mParent = pParent;
         mTribeColorChooser.setColor(Color.WHITE);

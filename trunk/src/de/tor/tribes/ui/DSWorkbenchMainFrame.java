@@ -47,44 +47,51 @@ import org.apache.log4j.xml.DOMConfigurator;
  *
  * @author  Charon
  */
-public class MapFrame extends javax.swing.JFrame implements DataHolderListener {
+public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHolderListener {
 
-    private static Logger logger = Logger.getLogger(MapFrame.class);
+    private static Logger logger = Logger.getLogger(DSWorkbenchMainFrame.class);
     private MapPanel mPanel = null;
     private MinimapPanel mMiniPanel = null;
     private int iCenterX = 456;
     private int iCenterY = 468;
     private List<ImageIcon> mIcons;
     private double dZoomFactor = 1.0;
+    private DSWorkbenchSettingsFrame mSettingsFrame;
 
     /** Creates new form MapFrame */
-    public MapFrame() {
+    public DSWorkbenchMainFrame() {
         initComponents();
         /*  jMainControlPanel.setupPanel(this, true, true);
         jMainControlPanel.setTitle(getTitle());*/
         pack();
-        System.getProperties().put("proxySet", "true");
-        System.getProperties().put("proxyHost", "proxy.fzk.de");
-        System.getProperties().put("proxyPort", "8000");
-        try {
-            ServerList.loadServerList();
-        } catch (Exception e) {
-        }
-        //show server/player-selection dialog
-        DefaultComboBoxModel model = new DefaultComboBoxModel();
-        for (String sID : ServerList.getServerIDs()) {
-            model.addElement(sID);
-        }
-        jServerSelection.setModel(model);
-        jPlayerSelectionDialog.pack();
-        jPlayerSelectionDialog.setVisible(true);
-        //init the global options
-        try {
-            GlobalOptions.initialize(false, this);
-        } catch (Exception e) {
-            logger.fatal("Failed to initialize global data structures", e);
-            System.exit(0);
-        }
+    /* System.getProperties().put("proxySet", "true");
+    System.getProperties().put("proxyHost", "proxy.fzk.de");
+    System.getProperties().put("proxyPort", "8000");
+    try {
+    ServerList.loadServerList();
+    } catch (Exception e) {
+    }
+    //show server/player-selection dialog
+    DefaultComboBoxModel model = new DefaultComboBoxModel();
+    for (String sID : ServerList.getServerIDs()) {
+    model.addElement(sID);
+    }
+    jServerSelection.setModel(model);
+    jPlayerSelectionDialog.pack();
+    jPlayerSelectionDialog.setVisible(true);*/
+    //init the global options
+
+
+    /*try {
+    GlobalOptions.initialize(false, this);
+    } catch (Exception e) {
+    logger.fatal("Failed to initialize global data structures", e);
+    System.exit(0);
+    }*/
+    }
+
+    public void init() {
+        //setup everything
         setupMaps();
         setupMarkerPanel();
         setupDetailsPanel();
@@ -198,10 +205,11 @@ public class MapFrame extends javax.swing.JFrame implements DataHolderListener {
     }
 
     private void setupAttackPanel() {
-        DefaultTableModel model = new javax.swing.table   .DefaultTableModel(
+        DefaultTableModel model = new javax.swing.table.DefaultTableModel(
                 new Object[][]{},
                 new String[]{
-                    "Herkunft", "Ziel", "Einheit", "Ankunftszeit", "Einzeichnen"}) {
+                    "Herkunft", "Ziel", "Einheit", "Ankunftszeit", "Einzeichnen"
+                }) {
 
             Class[] types = new Class[]{
                 Village.class, Village.class, Unit.class, Date.class, Boolean.class
@@ -1150,7 +1158,7 @@ public class MapFrame extends javax.swing.JFrame implements DataHolderListener {
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel21)
                     .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(93, Short.MAX_VALUE))
+                .addContainerGap(99, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -1161,13 +1169,13 @@ public class MapFrame extends javax.swing.JFrame implements DataHolderListener {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 527, Short.MAX_VALUE)
+                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 531, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jMinimapPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 270, Short.MAX_VALUE)
                             .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(jInfoPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 811, Short.MAX_VALUE))
+                    .addComponent(jInfoPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 815, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -1181,7 +1189,7 @@ public class MapFrame extends javax.swing.JFrame implements DataHolderListener {
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 568, Short.MAX_VALUE))
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 574, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jInfoPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -1693,7 +1701,7 @@ private void fireRemoveAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
         java.awt.EventQueue.invokeLater(new Runnable() {
 
             public void run() {
-                new MapFrame().setVisible(true);
+                new DSWorkbenchMainFrame().setVisible(true);
             }
         });
 

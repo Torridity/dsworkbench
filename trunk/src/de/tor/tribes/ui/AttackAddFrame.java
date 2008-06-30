@@ -28,10 +28,10 @@ public class AttackAddFrame extends javax.swing.JFrame {
 
     private Village mSource;
     private Village mTarget;
-    private MapFrame mParent = null;
+    private DSWorkbenchMainFrame mParent = null;
 
     /** Creates new form AttackAddFrame */
-    public AttackAddFrame(MapFrame pParent) {
+    public AttackAddFrame(DSWorkbenchMainFrame pParent) {
         initComponents();
         mParent = pParent;
         ((DateEditor) jTimeSpinner.getEditor()).getTextField().setHorizontalAlignment(JTextField.CENTER);
@@ -296,7 +296,7 @@ private void fireAddAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:even
      */
     public static void main(String args[]) {
         try {
-            GlobalOptions.initialize(false, new DataHolderListener() {
+            GlobalOptions.initialize( new DataHolderListener() {
 
                 @Override
                 public void fireDataHolderEvent(

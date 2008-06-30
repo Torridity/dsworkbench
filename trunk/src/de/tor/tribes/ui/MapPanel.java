@@ -15,7 +15,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.RenderingHints;
-import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -43,7 +42,7 @@ public class MapPanel extends javax.swing.JPanel {
     private int mY = 468;
     private RepaintThread mRepaintThread = null;
     boolean updating = false;
-    private MapFrame mParent;
+    private DSWorkbenchMainFrame mParent;
     private int iCurrentCursor = 0;
     private Village mSourceVillage = null;
     private Village mTargetVillage = null;
@@ -52,7 +51,7 @@ public class MapPanel extends javax.swing.JPanel {
     boolean dragged = false;
 
     /** Creates new form MapPanel */
-    public MapPanel(MapFrame pParent) {
+    public MapPanel(DSWorkbenchMainFrame pParent) {
         initComponents();
         mMarkerAddFrame = new MarkerAddFrame(pParent);
         mAttackAddFrame = new AttackAddFrame(pParent);

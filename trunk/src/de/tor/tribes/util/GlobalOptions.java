@@ -47,6 +47,13 @@ public class GlobalOptions {
     public final static int CURSOR_ATTACK_SWORD = 7;
     public final static int CURSOR_ATTACK_LIGHT = 8;
     public final static int CURSOR_ATTACK_HEAVY = 9;
+    //auto-update frequence
+    public final static int AUTO_UPDATE_NEVER = 0;
+    public final static int AUTO_UPDATE_HOURLY = 1;
+    public final static int AUTO_UPDATE_2_HOURS = 2;
+    public final static int AUTO_UPDATE_4_HOURS = 3;
+    public final static int AUTO_UPDATE_12_HOURS = 4;
+    public final static int AUTO_UPDATE_DAILY = 5;
     //minimap
     public final static int CURSOR_MOVE = 10;
     public final static int CURSOR_ZOOM = 11;
@@ -58,7 +65,7 @@ public class GlobalOptions {
     private static WorldDataHolder mWorldData = null;
     private static Hashtable<String, Color> mMarkers = null;
     private static WorldDecorationHolder mDecorationHolder = null;
-    private static String SELECTED_SERVER = "de26";
+    private static String SELECTED_SERVER = null;
     private static DataHolderListener mListener;
     private static Properties GLOBAL_PROPERTIES = null;
     private static List<Cursor> CURSORS = null;
@@ -70,7 +77,7 @@ public class GlobalOptions {
      * @param pDownloadData TRUE=download the WorldData from the tribes server
      * @throws Exception If an Error occurs while initializing the objects
      */
-    public static void initialize(boolean pDownloadData, DataHolderListener pListener) throws Exception {
+    public static void initialize(DataHolderListener pListener) throws Exception {
         if (INITIALIZED) {
             return;
         }
@@ -82,12 +89,9 @@ public class GlobalOptions {
         loadCursors();
         logger.debug("Loading graphic pack");
         loadSkin();
-        logger.debug("Loading markers");
-        loadMarkers();
-        logger.debug("Loading attacks");
-        loadAttacks();
         logger.debug("Loading world.dat");
         loadDecoration();
+        setSelectedServer(getProperty("default.server"));
     }
 
     public static String[] getAvailableSkins() {
@@ -164,6 +168,15 @@ public class GlobalOptions {
         mDataHolder = new DataHolder(mListener);
         if (!mDataHolder.loadData(pDownload)) {
             throw new Exception("Daten konnten nicht geladen werden");
+        }
+    }
+
+    public static void loadUserData() {
+        if (getSelectedServer() != null) {
+            logger.debug("Loading markers");
+            loadMarkers();
+            logger.debug("Loading attacks");
+            loadAttacks();
         }
     }
 
@@ -244,12 +257,12 @@ public class GlobalOptions {
         mDecorationHolder = new WorldDecorationHolder();
         mDecorationHolder.loadWorld();
     }
-    
-    public static void setLoggedInAs(String pAccount){
+
+    public static void setLoggedInAs(String pAccount) {
         loggedInAs = pAccount;
     }
-    
-    public static String isLoggedInAs(){
+
+    public static String isLoggedInAs() {
         return loggedInAs;
     }
 

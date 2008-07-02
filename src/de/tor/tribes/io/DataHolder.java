@@ -50,13 +50,24 @@ public class DataHolder {
     private String sServerBaseDir = "./servers";
 
     public DataHolder(DataHolderListener pListener) {
-        mListener = pListener;
+        setListener(pListener);
+        initialize();
+    }
+
+    public void initialize() {
         mVillages = new Village[1000][1000];
         mAllies = new Hashtable<Integer, Ally>();
         mTribes = new Hashtable<Integer, Tribe>();
         mBuildings = new LinkedList<BuildingHolder>();
         mUnits = new LinkedList<UnitHolder>();
-        new File(sServerBaseDir).mkdir();
+        File serverDir = new File(sServerBaseDir);
+        if (!serverDir.exists()) {
+            serverDir.mkdir();
+        }
+    }
+
+    public void setListener(DataHolderListener pListener) {
+        mListener = pListener;
     }
 
     public String getDataDirectory() {

@@ -56,7 +56,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
     private int iCenterY = 468;
     private List<ImageIcon> mIcons;
     private double dZoomFactor = 1.0;
-    private DSWorkbenchSettingsFrame mSettingsFrame;
 
     /** Creates new form MapFrame */
     public DSWorkbenchMainFrame() {

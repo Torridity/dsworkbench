@@ -82,7 +82,8 @@ public class GlobalOptions {
             return;
         }
         INITIALIZED = true;
-        mListener = pListener;
+        setDataHolderListener(pListener);
+
         logger.debug("Loading properties");
         loadProperties();
         logger.debug("Loading cursors");
@@ -92,6 +93,14 @@ public class GlobalOptions {
         logger.debug("Loading world.dat");
         loadDecoration();
         setSelectedServer(getProperty("default.server"));
+    }
+
+    public static void setDataHolderListener(DataHolderListener pListener) {
+        if (mDataHolder != null) {
+            mDataHolder.setListener(pListener);
+        } else {
+            mListener = pListener;
+        }
     }
 
     public static String[] getAvailableSkins() {
@@ -165,9 +174,25 @@ public class GlobalOptions {
      * @throws Exception If an exception occurs while loading the data
      */
     public static void loadData(boolean pDownload) throws Exception {
-        mDataHolder = new DataHolder(mListener);
-        if (!mDataHolder.loadData(pDownload)) {
-            throw new Exception("Daten konnten nicht geladen werden");
+        if (mDataHolder == null) {
+            mDataHolder = new DataHolder(mListener);
+            mDataHolder.initialize();
+            if (!mDataHolder.loadData(pDownload)) {
+                throw new Exception("Daten konnten nicht geladen werden");
+            }
+        } else {
+            if (DatabaseAdapter.isUpdatePossible(getProperty("account.name"), getProperty("account.password"))) {
+                mDataHolder.initialize();
+                if (!mDataHolder.loadData(pDownload)) {
+                    logger.error("Failed to obtain data from server. Loading local backup");
+                    if(!mDataHolder.loadData(false)){
+                        logger.error("Failed to load server date from local backup");
+                        throw new Exception("Daten konnten nicht geladen werden");
+                    }
+                }
+            } else {
+                throw new Exception("Der Mindestabstand zwischen zwei Datenabgleichen beträgt eine Stunde.");
+            }
         }
     }
 

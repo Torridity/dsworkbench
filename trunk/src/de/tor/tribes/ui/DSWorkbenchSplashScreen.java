@@ -9,9 +9,10 @@ import de.tor.tribes.util.GlobalOptions;
 import javax.swing.JOptionPane;
 import org.apache.log4j.Logger;
 import de.tor.tribes.io.DataHolderListener;
-import java.awt.Toolkit;
 import java.util.Timer;
 import java.util.TimerTask;
+import javax.swing.UIManager;
+import org.apache.log4j.xml.DOMConfigurator;
 
 /**
  *
@@ -47,11 +48,11 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setUndecorated(true);
 
-        jStatusOutput.setFont(new java.awt.Font("Comic Sans MS", 0, 14)); // NOI18N
+        jStatusOutput.setFont(new java.awt.Font("Comic Sans MS", 0, 14));
         jStatusOutput.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jStatusOutput.setText("Starte...");
 
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/splash.jpg"))); // NOI18N
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/splash.png"))); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -60,7 +61,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jLabel1)
                 .addGap(0, 0, 0))
-            .addComponent(jStatusOutput, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+            .addComponent(jStatusOutput, javax.swing.GroupLayout.DEFAULT_SIZE, 800, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -75,41 +76,48 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
 
     protected void hideSplash() {
         try {
-            GlobalOptions.initialize(self);
+            GlobalOptions.initialize();
+            GlobalOptions.addDataHolderListener(this);
+            GlobalOptions.addDataHolderListener(DSWorkbenchSettingsDialog.getGlobalSettingsFrame());
         } catch (Exception e) {
             logger.error("Failed to initialize global options", e);
-            JOptionPane.showMessageDialog(self, "Fehler bei der Initialisierung.\nMöglicherweise ist deine DSWorkBench Installation defekt.", "Fehler", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(self, "Fehler bei der Initialisierung.\nMöglicherweise ist deine DS Workbench Installation defekt.", "Fehler", JOptionPane.ERROR_MESSAGE);
             System.exit(1);
         }
 
         if (!DSWorkbenchSettingsDialog.getGlobalSettingsFrame().checkSettings()) {
-            JOptionPane.showMessageDialog(self, "Die Benutzereinstellungen konnten nicht erfolgreich geprüft werden.\nMöglicherweise wurde DSWorkBench das erste Mal gestartet und muss daher konfiguriert werden.\nFalls dies nicht der Fall ist, prüfe bitte deine Account, Netzwerk und Servereinstellungen.", "Information", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(self, "Die Benutzereinstellungen konnten nicht erfolgreich geprüft werden.\nMöglicherweise wurde DS Workbench das erste Mal gestartet und muss daher konfiguriert werden.\nFalls dies nicht der Fall ist, prüfe bitte deine Account, Netzwerk und Servereinstellungen.", "Information", JOptionPane.INFORMATION_MESSAGE);
             DSWorkbenchSettingsDialog.getGlobalSettingsFrame().setVisible(true);
-        } else {
-            try {
-                GlobalOptions.loadData(false);
-                GlobalOptions.loadUserData();
-            } catch (Exception e) {
-                logger.error("Failed to load server data", e);
-                System.exit(1);
-            }
-            DSWorkbenchMainFrame mainFrame = new DSWorkbenchMainFrame();
-            mainFrame.init();
-            mainFrame.setVisible(true);
-            t.stopRunning();
-            setVisible(false);
+        } 
+        
+        try {
+            GlobalOptions.loadData(false);
+            GlobalOptions.loadUserData();
+        } catch (Exception e) {
+            logger.error("Failed to load server data", e);
+            System.exit(1);
         }
+        DSWorkbenchMainFrame mainFrame = new DSWorkbenchMainFrame();
+        mainFrame.init();
+        mainFrame.setVisible(true);
+        t.stopRunning();
+        setVisible(false);
+
     }
 
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        java.awt.EventQueue.invokeLater(new  
+          DOMConfigurator.configure("log4j.xml");
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception e) {
+        }
 
-              Runnable() {
-
-                    
+          
+        
+        java.awt.EventQueue.invokeLater(new Runnable() {
                 public void run() {
                 DSWorkbenchSplashScreen splash = new DSWorkbenchSplashScreen();
                 splash.setLocationRelativeTo(null);
@@ -126,8 +134,6 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
     @Override
     public void fireDataHolderEvent(String pText) {
         jStatusOutput.setText(pText);
-    /* jStatusOutput.updateUI();
-    Toolkit.getDefaultToolkit().sync();*/
     }
 
     public void updateStatus() {
@@ -136,7 +142,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
 
     @Override
     public void fireDataLoadedEvent() {
-        jStatusOutput.setText("Starte DS Workbench");
+        jStatusOutput.setText("Daten geladen");
     }
 }
 

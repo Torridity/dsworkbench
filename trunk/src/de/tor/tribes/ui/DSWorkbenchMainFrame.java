@@ -5,8 +5,6 @@
  */
 package de.tor.tribes.ui;
 
-import de.tor.tribes.io.DataHolderListener;
-import de.tor.tribes.io.ServerList;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Ally;
 import de.tor.tribes.types.Attack;
@@ -25,6 +23,7 @@ import de.tor.tribes.util.GlobalOptions;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
 import java.text.Collator;
 import java.text.NumberFormat;
 import java.util.Arrays;
@@ -36,18 +35,16 @@ import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
-import javax.swing.UIManager;
 import javax.swing.event.CellEditorListener;
 import javax.swing.event.ChangeEvent;
 import javax.swing.table.DefaultTableModel;
 import org.apache.log4j.Logger;
-import org.apache.log4j.xml.DOMConfigurator;
 
 /**
  *
  * @author  Charon
  */
-public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHolderListener {
+public class DSWorkbenchMainFrame extends javax.swing.JFrame {
 
     private static Logger logger = Logger.getLogger(DSWorkbenchMainFrame.class);
     private MapPanel mPanel = null;
@@ -63,30 +60,42 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
         /*  jMainControlPanel.setupPanel(this, true, true);
         jMainControlPanel.setTitle(getTitle());*/
         pack();
-    /* System.getProperties().put("proxySet", "true");
-    System.getProperties().put("proxyHost", "proxy.fzk.de");
-    System.getProperties().put("proxyPort", "8000");
-    try {
-    ServerList.loadServerList();
-    } catch (Exception e) {
-    }
-    //show server/player-selection dialog
-    DefaultComboBoxModel model = new DefaultComboBoxModel();
-    for (String sID : ServerList.getServerIDs()) {
-    model.addElement(sID);
-    }
-    jServerSelection.setModel(model);
-    jPlayerSelectionDialog.pack();
-    jPlayerSelectionDialog.setVisible(true);*/
-    //init the global options
+        /* System.getProperties().put("proxySet", "true");
+        System.getProperties().put("proxyHost", "proxy.fzk.de");
+        System.getProperties().put("proxyPort", "8000");
+        try {
+        ServerList.loadServerList();
+        } catch (Exception e) {
+        }
+        //show server/player-selection dialog
+        DefaultComboBoxModel model = new DefaultComboBoxModel();
+        for (String sID : ServerList.getServerIDs()) {
+        model.addElement(sID);
+        }
+        jServerSelection.setModel(model);
+        jPlayerSelectionDialog.pack();
+        jPlayerSelectionDialog.setVisible(true);*/
+        //init the global options
 
 
-    /*try {
-    GlobalOptions.initialize(false, this);
-    } catch (Exception e) {
-    logger.fatal("Failed to initialize global data structures", e);
-    System.exit(0);
-    }*/
+        /*try {
+        GlobalOptions.initialize(false, this);
+        } catch (Exception e) {
+        logger.fatal("Failed to initialize global data structures", e);
+        System.exit(0);
+        }*/
+        jCurrentPlayer.setText(GlobalOptions.getProperty("player." + GlobalOptions.getSelectedServer()));
+        jCurrentServer.setText(GlobalOptions.getSelectedServer());
+        Tribe t = GlobalOptions.getDataHolder().getTribeByName(jCurrentPlayer.getText());
+
+        if (t != null) {
+            DefaultComboBoxModel model = new DefaultComboBoxModel(t.getVillageList().toArray());
+            jCurrentPlayerVillages.setModel(model);
+        } else {
+            DefaultComboBoxModel model = new DefaultComboBoxModel(new Object[]{"Keine Dörfer"});
+            jCurrentPlayerVillages.setModel(model);
+        }
+
     }
 
     public void init() {
@@ -95,6 +104,8 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
         setupMarkerPanel();
         setupDetailsPanel();
         setupAttackPanel();
+
+
         setupDynFrame();
     }
 
@@ -368,9 +379,9 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
         jLabel5 = new javax.swing.JLabel();
         jLabel20 = new javax.swing.JLabel();
         jLabel21 = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox();
-        jLabel22 = new javax.swing.JLabel();
-        jLabel23 = new javax.swing.JLabel();
+        jCurrentPlayerVillages = new javax.swing.JComboBox();
+        jCurrentPlayer = new javax.swing.JLabel();
+        jCurrentServer = new javax.swing.JLabel();
 
         jDetailedInfoPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Info"));
 
@@ -1121,15 +1132,21 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
 
         jLabel21.setText("<html><u>Dörfer</u></html>");
 
-        jLabel22.setText("jLabel22");
+        jCurrentPlayerVillages.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                fireChangeCurrentPlayerVillageEvent(evt);
+            }
+        });
 
-        jLabel23.setText("jLabel23");
+        jCurrentPlayer.setMaximumSize(new java.awt.Dimension(155, 14));
+        jCurrentPlayer.setMinimumSize(new java.awt.Dimension(155, 14));
+        jCurrentPlayer.setPreferredSize(new java.awt.Dimension(155, 14));
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel5)
@@ -1137,9 +1154,9 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
                     .addComponent(jLabel21))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel23)
-                    .addComponent(jLabel22)
-                    .addComponent(jComboBox1, 0, 155, Short.MAX_VALUE))
+                    .addComponent(jCurrentPlayer, javax.swing.GroupLayout.DEFAULT_SIZE, 155, Short.MAX_VALUE)
+                    .addComponent(jCurrentServer, javax.swing.GroupLayout.DEFAULT_SIZE, 155, Short.MAX_VALUE)
+                    .addComponent(jCurrentPlayerVillages, 0, 155, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
@@ -1148,16 +1165,16 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
                 .addContainerGap()
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
-                    .addComponent(jLabel22))
+                    .addComponent(jCurrentPlayer, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel20)
-                    .addComponent(jLabel23))
+                    .addComponent(jCurrentServer, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel21)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(99, Short.MAX_VALUE))
+                    .addComponent(jCurrentPlayerVillages, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(105, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -1168,7 +1185,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 531, Short.MAX_VALUE)
+                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 535, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -1388,6 +1405,12 @@ private void fireRemoveAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
         updateAttacks();
     }
 }//GEN-LAST:event_fireRemoveAttackEvent
+
+private void fireChangeCurrentPlayerVillageEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireChangeCurrentPlayerVillageEvent
+    if (evt.getStateChange() == ItemEvent.SELECTED) {
+        centerVillage((Village) jCurrentPlayerVillages.getSelectedItem());
+    }
+}//GEN-LAST:event_fireChangeCurrentPlayerVillageEvent
 
     public void changeTool(int pTool) {
         switch (pTool) {
@@ -1679,27 +1702,16 @@ private void fireRemoveAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
         updateAttacks();
     }
 
-    @Override
-    public void fireDataHolderEvent(String pMessage) {
-    }
-
-    @Override
-    public void fireDataLoadedEvent() {
-    }
-
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        DOMConfigurator.configure("log4j.xml");
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception e) {
-        }
 
-        java.awt.EventQueue.invokeLater(new Runnable() {
+        java.awt.EventQueue.invokeLater(new  
 
-            public void run() {
+              Runnable() {
+
+                 public void run() {
                 new DSWorkbenchMainFrame().setVisible(true);
             }
         });
@@ -1726,7 +1738,9 @@ private void fireRemoveAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
     private javax.swing.JTextField jCataTime;
     private javax.swing.JTextField jCenterX;
     private javax.swing.JTextField jCenterY;
-    private javax.swing.JComboBox jComboBox1;
+    private javax.swing.JLabel jCurrentPlayer;
+    private javax.swing.JComboBox jCurrentPlayerVillages;
+    private javax.swing.JLabel jCurrentServer;
     private javax.swing.JPanel jDetailedInfoPanel;
     private javax.swing.JPanel jDistancePanel;
     private javax.swing.JLabel jDistanceSourceVillage;
@@ -1750,8 +1764,6 @@ private void fireRemoveAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel21;
-    private javax.swing.JLabel jLabel22;
-    private javax.swing.JLabel jLabel23;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;

@@ -581,7 +581,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
                         jTribeNames.setModel(model);
                         jTribeNames.setSelectedIndex(0);
                     } else {
-                        model.addElement("Bitte Server auswählen");
+                        model.addElement("Bitte auswählen");
                         jTribeNames.setModel(model);
                         jTribeNames.setSelectedIndex(0);
                     }
@@ -629,6 +629,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
                 try {
                     GlobalOptions.loadData(false);
                 } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         }).start();
@@ -639,7 +640,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
             return;
         }
         if (!checkSettings()) {
-            if (JOptionPane.showConfirmDialog(this, "Die Einstellungen sind fehlerhaft.\nDSWorkBench wirklich beenden?", "Fehler", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION) {
+            if (JOptionPane.showConfirmDialog(this, "Die Einstellungen sind fehlerhaft.\nDS Workbench wirklich beenden?", "Fehler", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION) {
                 System.exit(0);
             }
         }
@@ -651,7 +652,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
             return;
         }
         String selection = (String) jTribeNames.getSelectedItem();
-        if ((selection != null) && (!selection.equals("Bitte wählen"))) {
+        if ((selection != null) && (!selection.equals("Bitte auswählen"))) {
             logger.debug("Setting default player for server '" + GlobalOptions.getSelectedServer() + "' to " + jTribeNames.getSelectedItem());
             GlobalOptions.addProperty("player." + GlobalOptions.getSelectedServer(), (String) jTribeNames.getSelectedItem());
             GlobalOptions.saveProperties();
@@ -753,9 +754,11 @@ private void fireCancelRegistrationEvent(java.awt.event.MouseEvent evt) {//GEN-F
     public static void main(String args[]) {
         DOMConfigurator.configure("log4j.xml");
 
-        java.awt.EventQueue.invokeLater(new Runnable() {
+        java.awt.EventQueue.invokeLater(new  
 
-            public void run() {
+              Runnable() {
+
+                 public void run() {
                 new DSWorkbenchSettingsDialog().setVisible(true);
 
             }
@@ -804,7 +807,6 @@ private void fireCancelRegistrationEvent(java.awt.event.MouseEvent evt) {//GEN-F
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JComboBox jTribeNames;
     // End of variables declaration//GEN-END:variables
-
     @Override
     public void fireDataHolderEvent(String pMessage) {
         jStatusArea.insert(pMessage + "\n", jStatusArea.getText().length());

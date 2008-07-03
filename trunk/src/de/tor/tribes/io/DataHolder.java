@@ -44,13 +44,13 @@ public class DataHolder {
     private Hashtable<Integer, Tribe> mTribes = null;
     private List<BuildingHolder> mBuildings = null;
     private List<UnitHolder> mUnits = null;
-    private DataHolderListener mListener = null;
+    private List<DataHolderListener> mListeners = null;
     private boolean bAborted = false;
     private String sSelectedServer = null;
     private String sServerBaseDir = "./servers";
 
-    public DataHolder(DataHolderListener pListener) {
-        setListener(pListener);
+    public DataHolder() {
+        mListeners = new LinkedList<DataHolderListener>();
         initialize();
     }
 
@@ -66,8 +66,12 @@ public class DataHolder {
         }
     }
 
-    public void setListener(DataHolderListener pListener) {
-        mListener = pListener;
+    public synchronized void addListener(DataHolderListener pListener) {
+        mListeners.add(pListener);
+    }
+
+    public synchronized void removeListener(DataHolderListener pListener) {
+        mListeners.remove(pListener);
     }
 
     public String getDataDirectory() {
@@ -170,15 +174,11 @@ public class DataHolder {
             fireDataHolderEvents("Fehler beim Lesen der Daten.");
             e.printStackTrace();
             if (bAborted) {
-                if (mListener != null) {
-                    mListener.fireDataLoadedEvent();
-                }
+                fireDataLoadedEvents();
                 return false;
             }
         }
-        if (mListener != null) {
-            mListener.fireDataLoadedEvent();
-        }
+        fireDataLoadedEvents();
         return true;
     }
 
@@ -446,8 +446,38 @@ public class DataHolder {
         return mAllies;
     }
 
+    public Ally getAllyByName(String pName) {
+        Enumeration<Integer> ids = getAllies().keys();
+        while (ids.hasMoreElements()) {
+            Ally a = getAllies().get(ids.nextElement());
+            if (a != null) {
+                if (a.getName() != null) {
+                    if (a.getName().equals(pName)) {
+                        return a;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
     public Hashtable<Integer, Tribe> getTribes() {
         return mTribes;
+    }
+
+    public Tribe getTribeByName(String pName) {
+        Enumeration<Integer> ids = getTribes().keys();
+        while (ids.hasMoreElements()) {
+            Tribe t = getTribes().get(ids.nextElement());
+            if (t != null) {
+                if (t.getName() != null) {
+                    if (t.getName().equals(pName)) {
+                        return t;
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     public List<UnitHolder> getUnits() {
@@ -472,9 +502,15 @@ public class DataHolder {
         return mBuildings;
     }
 
-    public void fireDataHolderEvents(String pMessage) {
-        if (mListener != null) {
-            mListener.fireDataHolderEvent(pMessage);
+    public synchronized void fireDataHolderEvents(String pMessage) {
+        for (DataHolderListener listener : mListeners) {
+            listener.fireDataHolderEvent(pMessage);
+        }
+    }
+
+    public synchronized void fireDataLoadedEvents() {
+        for (DataHolderListener listener : mListeners) {
+            listener.fireDataLoadedEvent();
         }
     }
 }

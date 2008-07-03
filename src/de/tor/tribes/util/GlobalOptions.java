@@ -77,13 +77,11 @@ public class GlobalOptions {
      * @param pDownloadData TRUE=download the WorldData from the tribes server
      * @throws Exception If an Error occurs while initializing the objects
      */
-    public static void initialize(DataHolderListener pListener) throws Exception {
+    public static void initialize() throws Exception {
         if (INITIALIZED) {
             return;
         }
         INITIALIZED = true;
-        setDataHolderListener(pListener);
-
         logger.debug("Loading properties");
         loadProperties();
         logger.debug("Loading cursors");
@@ -95,12 +93,11 @@ public class GlobalOptions {
         setSelectedServer(getProperty("default.server"));
     }
 
-    public static void setDataHolderListener(DataHolderListener pListener) {
-        if (mDataHolder != null) {
-            mDataHolder.setListener(pListener);
-        } else {
-            mListener = pListener;
+    public static void addDataHolderListener(DataHolderListener pListener) {
+        if (mDataHolder == null) {
+            mDataHolder = new DataHolder();
         }
+        mDataHolder.addListener(pListener);
     }
 
     public static String[] getAvailableSkins() {
@@ -175,23 +172,30 @@ public class GlobalOptions {
      */
     public static void loadData(boolean pDownload) throws Exception {
         if (mDataHolder == null) {
-            mDataHolder = new DataHolder(mListener);
+            mDataHolder = new DataHolder();
             mDataHolder.initialize();
             if (!mDataHolder.loadData(pDownload)) {
                 throw new Exception("Daten konnten nicht geladen werden");
             }
         } else {
-            if (DatabaseAdapter.isUpdatePossible(getProperty("account.name"), getProperty("account.password"))) {
-                mDataHolder.initialize();
-                if (!mDataHolder.loadData(pDownload)) {
-                    logger.error("Failed to obtain data from server. Loading local backup");
-                    if(!mDataHolder.loadData(false)){
-                        logger.error("Failed to load server date from local backup");
-                        throw new Exception("Daten konnten nicht geladen werden");
+            if (pDownload) {
+                if (DatabaseAdapter.isUpdatePossible(getProperty("account.name"), getProperty("account.password"))) {
+                    mDataHolder.initialize();
+                    if (!mDataHolder.loadData(pDownload)) {
+                        logger.error("Failed to obtain data from server. Loading local backup");
+                        if (!mDataHolder.loadData(false)) {
+                            logger.error("Failed to load server date from local backup");
+                            throw new Exception("Daten konnten nicht geladen werden");
+                        }
                     }
+                } else {
+                    throw new Exception("Der Mindestabstand zwischen zwei Datenabgleichen beträgt eine Stunde.");
                 }
             } else {
-                throw new Exception("Der Mindestabstand zwischen zwei Datenabgleichen beträgt eine Stunde.");
+                mDataHolder.initialize();
+                if (!mDataHolder.loadData(false)) {
+                    throw new Exception("Daten konnten nicht geladen werden");
+                }
             }
         }
     }

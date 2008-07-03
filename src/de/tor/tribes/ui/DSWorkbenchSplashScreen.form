@@ -26,7 +26,7 @@
               <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
               <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
           </Group>
-          <Component id="jStatusOutput" alignment="0" pref="400" max="32767" attributes="0"/>
+          <Component id="jStatusOutput" alignment="0" pref="800" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
@@ -52,7 +52,7 @@
     <Component class="javax.swing.JLabel" name="jLabel1">
       <Properties>
         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-          <Image iconType="3" name="/res/splash.jpg"/>
+          <Image iconType="3" name="/res/splash.png"/>
         </Property>
       </Properties>
     </Component>

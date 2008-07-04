@@ -20,10 +20,14 @@ import de.tor.tribes.ui.renderer.DateCellRenderer;
 import de.tor.tribes.ui.renderer.MarkerPanelCellRenderer;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.GlobalOptions;
+import java.awt.AWTEvent;
 import java.awt.Color;
+import java.awt.Toolkit;
+import java.awt.event.AWTEventListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
+import java.awt.event.KeyEvent;
 import java.text.Collator;
 import java.text.NumberFormat;
 import java.util.Arrays;
@@ -95,6 +99,24 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame {
             DefaultComboBoxModel model = new DefaultComboBoxModel(new Object[]{"Keine Dörfer"});
             jCurrentPlayerVillages.setModel(model);
         }
+
+        Toolkit.getDefaultToolkit().addAWTEventListener(new AWTEventListener() {
+
+            @Override
+            public void eventDispatched(AWTEvent event) {
+                if (((KeyEvent) event).getID() == KeyEvent.KEY_PRESSED) {
+                    if (((KeyEvent) event).getKeyCode() == KeyEvent.VK_DOWN) {
+                        scroll(0, 2);
+                    } else if (((KeyEvent) event).getKeyCode() == KeyEvent.VK_UP) {
+                        scroll(0, -2);
+                    } else if (((KeyEvent) event).getKeyCode() == KeyEvent.VK_LEFT) {
+                        scroll(-2, 0);
+                    } else if (((KeyEvent) event).getKeyCode() == KeyEvent.VK_RIGHT) {
+                        scroll(2, 0);
+                    }
+                }
+            }
+        }, AWTEvent.KEY_EVENT_MASK);
 
     }
 
@@ -1502,6 +1524,21 @@ private void fireChangeCurrentPlayerVillageEvent(java.awt.event.ItemEvent evt) {
         jPanel2.updateUI();
     }
 
+    public void scroll(int pXDir, int pYDir) {
+        iCenterX = iCenterX + pXDir;
+        iCenterY = iCenterY + pYDir;
+        jCenterX.setText(Integer.toString(iCenterX));
+        jCenterY.setText(Integer.toString(iCenterY));
+
+        mPanel.updateMap(iCenterX, iCenterY);
+
+        double w = (double) mPanel.getWidth() / GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
+        double h = (double) mPanel.getHeight() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
+        mMiniPanel.setSelection(iCenterX, iCenterY, (int) Math.rint(w), (int) Math.rint(h));
+        jPanel1.updateUI();
+        jPanel2.updateUI();
+    }
+
     public void centerVillage(Village pVillage) {
         if (pVillage == null) {
             return;
@@ -1707,11 +1744,9 @@ private void fireChangeCurrentPlayerVillageEvent(java.awt.event.ItemEvent evt) {
      */
     public static void main(String[] args) {
 
-        java.awt.EventQueue.invokeLater(new  
+        java.awt.EventQueue.invokeLater(new Runnable() {
 
-              Runnable() {
-
-                 public void run() {
+            public void run() {
                 new DSWorkbenchMainFrame().setVisible(true);
             }
         });

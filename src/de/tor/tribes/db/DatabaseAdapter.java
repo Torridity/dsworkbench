@@ -20,13 +20,13 @@ import org.apache.log4j.xml.DOMConfigurator;
  */
 public class DatabaseAdapter {
 
-    private static Logger logger = Logger.getLogger(DatabaseAdapter.class);
     public static final int ID_UNKNOWN_ERROR = -666;
     public static final int ID_SUCCESS = 0;
     public static final int ID_CONNECTION_FAILED = -1;
     public static final int ID_USER_ALREADY_EXIST = -2;
     public static final int ID_USER_NOT_EXIST = -3;
     private static Connection DB_CONNECTION = null;
+    private static Logger logger = Logger.getLogger(DatabaseAdapter.class);
     private static boolean DRIVER_AVAILABLE = false;
     private static boolean INITIALIZED = false;
 

@@ -247,7 +247,7 @@ private void fireCenterMapEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:even
         try {
             GlobalOptions.setSelectedServer("de26");
             GlobalOptions.loadData(false);
-            GlobalOptions.initialize(null);
+            GlobalOptions.initialize();
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(1);

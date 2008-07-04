@@ -296,17 +296,7 @@ private void fireAddAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:even
      */
     public static void main(String args[]) {
         try {
-            GlobalOptions.initialize( new DataHolderListener() {
-
-                @Override
-                public void fireDataHolderEvent(
-                        String pFile) {
-                }
-
-                @Override
-                public void fireDataLoadedEvent() {
-                }
-            });
+            GlobalOptions.initialize( );
             GlobalOptions.setSelectedServer("de26");
 
             GlobalOptions.loadData(false);

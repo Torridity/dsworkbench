@@ -158,6 +158,7 @@ public class MarkerAddFrame extends javax.swing.JFrame {
     }
 
     public void setAllyOnly(){
+        jMarkTribe.setSelected(false);
         jMarkTribe.setEnabled(false);
         jTribeColorPanel.setEnabled(false);
         jTribeColorPanel.removeAll();
@@ -167,6 +168,7 @@ public class MarkerAddFrame extends javax.swing.JFrame {
     }
     
     public void setTribeOnly(){
+        jMarkAlly.setSelected(false);
         jMarkAlly.setEnabled(false);
         jAllyColorPanel.setEnabled(false);
         jAllyColorPanel.removeAll();

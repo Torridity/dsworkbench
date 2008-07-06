@@ -52,6 +52,7 @@ public class ToolBoxFrame extends javax.swing.JFrame {
             jZoomButton.setIcon(new ImageIcon("./graphics/icons/zoom.png"));
             jSearchButton.setIcon(new ImageIcon("./graphics/icons/search.png"));
             jSettingsButton.setIcon(new ImageIcon("./graphics/icons/settings.png"));
+          //  jScreenshotButton.setIcon(new ImageIcon("./graphics/icons/camera.gif"));
         } catch (Exception e) {
         }
     }
@@ -140,6 +141,7 @@ public class ToolBoxFrame extends javax.swing.JFrame {
         jPanel1.setPreferredSize(new java.awt.Dimension(30, 330));
         jPanel1.setLayout(new javax.swing.BoxLayout(jPanel1, javax.swing.BoxLayout.Y_AXIS));
 
+        jMeasureButton.setToolTipText("Entfernungen messen");
         jMeasureButton.setMaximumSize(new java.awt.Dimension(30, 30));
         jMeasureButton.setMinimumSize(new java.awt.Dimension(30, 30));
         jMeasureButton.setPreferredSize(new java.awt.Dimension(30, 30));
@@ -150,6 +152,7 @@ public class ToolBoxFrame extends javax.swing.JFrame {
         });
         jPanel1.add(jMeasureButton);
 
+        jMarkButton.setToolTipText("Markieren");
         jMarkButton.setMaximumSize(new java.awt.Dimension(30, 30));
         jMarkButton.setMinimumSize(new java.awt.Dimension(30, 30));
         jMarkButton.setPreferredSize(new java.awt.Dimension(30, 30));
@@ -167,6 +170,7 @@ public class ToolBoxFrame extends javax.swing.JFrame {
         jLabel2.setPreferredSize(new java.awt.Dimension(40, 4));
         jPanel1.add(jLabel2);
 
+        jAttackAxeButton.setToolTipText("Angriff (Axt)");
         jAttackAxeButton.setMaximumSize(new java.awt.Dimension(30, 30));
         jAttackAxeButton.setMinimumSize(new java.awt.Dimension(30, 30));
         jAttackAxeButton.setPreferredSize(new java.awt.Dimension(30, 30));
@@ -177,6 +181,7 @@ public class ToolBoxFrame extends javax.swing.JFrame {
         });
         jPanel1.add(jAttackAxeButton);
 
+        jAttackRamButton.setToolTipText("Angriff (Ramme)");
         jAttackRamButton.setMaximumSize(new java.awt.Dimension(30, 30));
         jAttackRamButton.setMinimumSize(new java.awt.Dimension(30, 30));
         jAttackRamButton.setPreferredSize(new java.awt.Dimension(30, 30));
@@ -187,6 +192,7 @@ public class ToolBoxFrame extends javax.swing.JFrame {
         });
         jPanel1.add(jAttackRamButton);
 
+        jAttackSnobButton.setToolTipText("Angriff (AG)");
         jAttackSnobButton.setMaximumSize(new java.awt.Dimension(30, 30));
         jAttackSnobButton.setMinimumSize(new java.awt.Dimension(30, 30));
         jAttackSnobButton.setPreferredSize(new java.awt.Dimension(30, 30));
@@ -197,6 +203,7 @@ public class ToolBoxFrame extends javax.swing.JFrame {
         });
         jPanel1.add(jAttackSnobButton);
 
+        jAttackSpyButton.setToolTipText("Angriff (Späher)");
         jAttackSpyButton.setMaximumSize(new java.awt.Dimension(30, 30));
         jAttackSpyButton.setMinimumSize(new java.awt.Dimension(30, 30));
         jAttackSpyButton.setPreferredSize(new java.awt.Dimension(30, 30));
@@ -207,6 +214,7 @@ public class ToolBoxFrame extends javax.swing.JFrame {
         });
         jPanel1.add(jAttackSpyButton);
 
+        jAttackLightButton.setToolTipText("Angriff (LKav)");
         jAttackLightButton.setMaximumSize(new java.awt.Dimension(30, 30));
         jAttackLightButton.setMinimumSize(new java.awt.Dimension(30, 30));
         jAttackLightButton.setPreferredSize(new java.awt.Dimension(30, 30));
@@ -217,6 +225,7 @@ public class ToolBoxFrame extends javax.swing.JFrame {
         });
         jPanel1.add(jAttackLightButton);
 
+        jAttackHeavyButton.setToolTipText("Angriff (SKav)");
         jAttackHeavyButton.setMaximumSize(new java.awt.Dimension(30, 30));
         jAttackHeavyButton.setMinimumSize(new java.awt.Dimension(30, 30));
         jAttackHeavyButton.setPreferredSize(new java.awt.Dimension(30, 30));
@@ -227,6 +236,7 @@ public class ToolBoxFrame extends javax.swing.JFrame {
         });
         jPanel1.add(jAttackHeavyButton);
 
+        jAttackSwordButton.setToolTipText("Angriff (Schwert)");
         jAttackSwordButton.setMaximumSize(new java.awt.Dimension(30, 30));
         jAttackSwordButton.setMinimumSize(new java.awt.Dimension(30, 30));
         jAttackSwordButton.setPreferredSize(new java.awt.Dimension(30, 30));
@@ -244,6 +254,7 @@ public class ToolBoxFrame extends javax.swing.JFrame {
         jLabel1.setPreferredSize(new java.awt.Dimension(40, 4));
         jPanel1.add(jLabel1);
 
+        jMoveButton.setToolTipText("Minimap bewegen");
         jMoveButton.setMaximumSize(new java.awt.Dimension(30, 30));
         jMoveButton.setMinimumSize(new java.awt.Dimension(30, 30));
         jMoveButton.setPreferredSize(new java.awt.Dimension(30, 30));
@@ -254,6 +265,7 @@ public class ToolBoxFrame extends javax.swing.JFrame {
         });
         jPanel1.add(jMoveButton);
 
+        jZoomButton.setToolTipText("Minimap zoomen");
         jZoomButton.setMaximumSize(new java.awt.Dimension(30, 30));
         jZoomButton.setMinimumSize(new java.awt.Dimension(30, 30));
         jZoomButton.setPreferredSize(new java.awt.Dimension(30, 30));
@@ -271,6 +283,7 @@ public class ToolBoxFrame extends javax.swing.JFrame {
         jLabel3.setPreferredSize(new java.awt.Dimension(40, 4));
         jPanel1.add(jLabel3);
 
+        jSearchButton.setToolTipText("Suche");
         jSearchButton.setMaximumSize(new java.awt.Dimension(30, 30));
         jSearchButton.setMinimumSize(new java.awt.Dimension(30, 30));
         jSearchButton.setPreferredSize(new java.awt.Dimension(30, 30));
@@ -281,6 +294,7 @@ public class ToolBoxFrame extends javax.swing.JFrame {
         });
         jPanel1.add(jSearchButton);
 
+        jSettingsButton.setToolTipText("Einstellungen");
         jSettingsButton.setMaximumSize(new java.awt.Dimension(30, 30));
         jSettingsButton.setMinimumSize(new java.awt.Dimension(30, 30));
         jSettingsButton.setPreferredSize(new java.awt.Dimension(30, 30));
@@ -308,7 +322,8 @@ public class ToolBoxFrame extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jDragLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 403, Short.MAX_VALUE))
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 409, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -337,7 +352,14 @@ private void fireToolClickedEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
         mMiniMap.setCurrentCursor(GlobalOptions.CURSOR_MOVE);
     } else if (evt.getSource() == jZoomButton) {
         mMiniMap.setCurrentCursor(GlobalOptions.CURSOR_ZOOM);
-    }
+    }else if (evt.getSource() == jSearchButton) {
+        SearchFrame.getGlobalSearchFrame().setVisible(true);
+    }else if (evt.getSource() == jSettingsButton) {
+        DSWorkbenchSettingsDialog.getGlobalSettingsFrame().setVisible(true);
+    }/*else if (evt.getSource() == jScreenshotButton) {
+        MinimapPanel.getGlobalMinimap().makeScreenshot();
+    }*/
+    
 }//GEN-LAST:event_fireToolClickedEvent
 
     /**
@@ -400,8 +422,8 @@ class HideThread extends Thread {
                     mParent.setSize(mParent.getWidth(), mParent.getHeight() - 10);
                 }
             } else {
-                if (mParent.getHeight() < 440) {
-                    if (mParent.getHeight() != 440) {
+                if (mParent.getHeight() < 456) {
+                    if (mParent.getHeight() != 456) {
                         mParent.setSize(mParent.getWidth(), mParent.getHeight() + 10);
                     }
                 }

@@ -98,11 +98,11 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
             System.exit(1);
         }
         DSWorkbenchMainFrame mainFrame = new DSWorkbenchMainFrame();
+        SearchFrame.createSearchFrame(mainFrame);
         mainFrame.init();
         mainFrame.setVisible(true);
         t.stopRunning();
         setVisible(false);
-
     }
 
     /**

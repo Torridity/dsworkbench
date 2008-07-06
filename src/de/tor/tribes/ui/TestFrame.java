@@ -5,10 +5,8 @@
  */
 package de.tor.tribes.ui;
 
-import java.awt.Color;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.util.Properties;
+import java.awt.Desktop;
+import java.net.URI;
 
 /**
  *
@@ -64,13 +62,23 @@ public class TestFrame extends javax.swing.JFrame {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-
+/*
         java.awt.EventQueue.invokeLater(new Runnable() {
 
             public void run() {
                 new TestFrame().setVisible(true);
             }
-        });
+        });*/
+        try{
+            Desktop d = Desktop.getDesktop();
+        String v = "http://de26.die-staemme.de/game.php?village=6223&screen=place&mode=command&target=5115";
+        //"http://de26.die-staemme.de/game.php?village=6223&screen=place&mode=command&taget=4717"
+        //Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + v);
+       d.browse(new URI(v));
+        //Runtime.getRuntime().exec("cmd.exe /C start " + v);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

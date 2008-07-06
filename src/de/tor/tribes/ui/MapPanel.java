@@ -17,7 +17,6 @@ import java.awt.Image;
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.RenderingHints;
-import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -28,7 +27,6 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import javax.swing.SwingUtilities;
 import org.apache.log4j.Logger;
 
 /**
@@ -54,6 +52,9 @@ public class MapPanel extends javax.swing.JPanel {
     private MarkerAddFrame mMarkerAddFrame = null;
     private AttackAddFrame mAttackAddFrame = null;
     boolean mouseDown = false;
+    private boolean isOutside = false;
+    private Rectangle2D screenRect = null;
+    private Point mousePos = null;
 
     /** Creates new form MapPanel */
     public MapPanel(DSWorkbenchMainFrame pParent) {
@@ -90,7 +91,6 @@ public class MapPanel extends javax.swing.JPanel {
 
             @Override
             public void mouseClicked(MouseEvent e) {
-
                 switch (iCurrentCursor) {
                     case GlobalOptions.CURSOR_MARK: {
                         Village current = getVillageAtMousePos();
@@ -128,6 +128,7 @@ public class MapPanel extends javax.swing.JPanel {
                         downX = e.getX();
                         downY = e.getY();
                         mSourceVillage = getVillageAtMousePos();
+                        mRepaintThread.setDragLine(mSourceVillage, e.getX(), e.getY());
                         break;
                     }
                     default: {
@@ -135,6 +136,7 @@ public class MapPanel extends javax.swing.JPanel {
                             downX = e.getX();
                             downY = e.getY();
                             mSourceVillage = getVillageAtMousePos();
+                            mRepaintThread.setDragLine(mSourceVillage, e.getX(), e.getY());
                         }
                     }
                 }
@@ -271,9 +273,6 @@ public class MapPanel extends javax.swing.JPanel {
         });
     //</editor-fold>
     }
-    private boolean isOutside = false;
-    private Rectangle2D screenRect = null;
-    private Point mousePos = null;
 
     protected boolean isOutside() {
         return isOutside;
@@ -386,27 +385,20 @@ class RepaintThread extends Thread {
 
     private Village[][] mVisibleVillages = null;
     private BufferedImage mBuffer = null;
-    private int iFieldWidth = 0;
-    private int iFieldHeight = 0;
     private int iVillagesX = 0;
     private int iVillagesY = 0;
     private MapPanel mParent = null;
     private int iX = 456;
     private int iY = 468;
     private double dScaling = 1.0;
-    private int x1 = 0;
-    private int y1 = 0;
-    private int x2 = 0;
-    private int y2 = 0;
+    private int xe = 0;
+    private int ye = 0;
     private Village mSourceVillage = null;
 
     public RepaintThread(MapPanel pParent, int pX, int pY) {
         mVisibleVillages = new Village[iVillagesX][iVillagesY];
         setCoordinates(pX, pY);
         mParent = pParent;
-        iFieldWidth = GlobalOptions.getSkin().getFieldWidth();
-        iFieldHeight = GlobalOptions.getSkin().getFieldHeight();
-
     }
 
     protected void setCoordinates(int pX, int pY) {
@@ -420,7 +412,7 @@ class RepaintThread extends Thread {
             updateMap(iX, iY);
             mParent.updateComplete(mVisibleVillages, mBuffer.getScaledInstance(mParent.getWidth(), mParent.getHeight(), BufferedImage.SCALE_FAST));
             try {
-                Thread.sleep(80);
+                Thread.sleep(100);
             } catch (Exception e) {
             }
         }
@@ -430,12 +422,10 @@ class RepaintThread extends Thread {
         dScaling = pZoom;
     }
 
-    public void setDragLine(Village pSource, int xe, int ye) {
-        /*x1 = xs;
-        y1 = ys;*/
+    public void setDragLine(Village pSource, int pXE, int pYE) {
         mSourceVillage = pSource;
-        x2 = xe;
-        y2 = ye;
+        xe = pXE;
+        ye = pYE;
     }
 
     /**Extract the selected villages*/
@@ -484,9 +474,13 @@ class RepaintThread extends Thread {
 
     /**Redraw the buffer*/
     private void redraw(int pXStart, int pYStart) {
+      //  long start = System.currentTimeMillis();
+
         int x = 0;
         int y = 0;
         Graphics2D g2d = null;
+        int width = GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, dScaling).getWidth(null);
+        int height = GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, dScaling).getHeight(null);
 
         if ((mBuffer == null) || ((mBuffer.getWidth(null) * mBuffer.getHeight(null)) != (mParent.getWidth() * mParent.getHeight()))) {
             mBuffer = new BufferedImage(mParent.getWidth(), mParent.getHeight(), BufferedImage.TYPE_INT_RGB);
@@ -516,9 +510,8 @@ class RepaintThread extends Thread {
         }
 
         Hashtable<Attack, Line2D> attackLines = new Hashtable<Attack, Line2D>();
-
-
-        Line2D.Double dragLine = new Line2D.Double(-1, -1, x2, y2);
+        
+        Line2D.Double dragLine = new Line2D.Double(-1, -1, xe, ye);
         for (int i = 0; i < iVillagesX; i++) {
             for (int j = 0; j < iVillagesY; j++) {
                 Village v = mVisibleVillages[i][j];
@@ -556,8 +549,8 @@ class RepaintThread extends Thread {
                             if (existing == null) {
                                 int tx = attack.getTarget().getX() - attack.getSource().getX();
                                 int ty = attack.getTarget().getY() - attack.getSource().getY();
-                                tx = x + GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, dScaling).getWidth(null) * tx;
-                                ty = y + GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, dScaling).getHeight(null) * ty;
+                                tx = x + width * tx;
+                                ty = y + height * ty;
                                 Line2D.Double line = new Line2D.Double(x, y, tx, ty);
                                 attackLines.put(attack, line);
                             } else {
@@ -567,8 +560,8 @@ class RepaintThread extends Thread {
                             if (existing == null) {
                                 int sx = attack.getSource().getX() - attack.getTarget().getX();
                                 int sy = attack.getSource().getY() - attack.getTarget().getY();
-                                sx = x + GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, dScaling).getWidth(null) * sx;
-                                sy = y + GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, dScaling).getHeight(null) * sy;
+                                sx = x + width * sx;
+                                sy = y + height * sy;
                                 Line2D.Double line = new Line2D.Double(sx, sy, x, y);
                                 attackLines.put(attack, line);
                             } else {
@@ -580,7 +573,7 @@ class RepaintThread extends Thread {
                 //</editor-fold>
 
                 if (v == mSourceVillage) {
-                    dragLine.setLine(x + GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, dScaling).getWidth(null) / 2, y + GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, dScaling).getHeight(null) / 2, dragLine.getX2(), dragLine.getY2());
+                    dragLine.setLine(x + width / 2, y + height / 2, dragLine.getX2(), dragLine.getY2());
                 }
 
                 // <editor-fold defaultstate="collapsed" desc="Village drawing">
@@ -697,24 +690,27 @@ class RepaintThread extends Thread {
                 }
                 //</editor-fold>
 
-                y += iFieldHeight / dScaling;
+                y += height;
                 yPos++;
-
             }
             y = 0;
-            x += iFieldWidth / dScaling;
+            x += width;
             yPos = pYStart;
             xPos++;
         }
-
+      
         Enumeration<Attack> attackEnum = attackLines.keys();
         g2d.setColor(Color.RED);
         g2d.setStroke(new BasicStroke(2.0F, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
-        int dx = (int) Math.rint(GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, dScaling).getWidth(null) / 2);
-        int dy = (int) Math.rint(GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, dScaling).getHeight(null) / 2);
+        int dx = (int) Math.rint(width / 2);
+        int dy = (int) Math.rint(height / 2);
         while (attackEnum.hasMoreElements()) {
             Line2D l = attackLines.get(attackEnum.nextElement());
+            g2d.setColor(Color.RED);
             g2d.drawLine((int) l.getX1() + dx, (int) l.getY1() + dy, (int) l.getX2() + dx, (int) l.getY2() + dy);
+            g2d.setColor(Color.YELLOW);
+            g2d.fillRect((int)l.getX1() + dx - 3, (int)l.getY1() + dy - 3, 6, 6);
+            g2d.fillOval((int) l.getX2() + dx-3, (int) l.getY2() + dy-3, 6, 6);
         }
 
         if (mSourceVillage != null) {
@@ -722,19 +718,27 @@ class RepaintThread extends Thread {
             g2d.setColor(Color.YELLOW);
             g2d.setStroke(new BasicStroke(5.0F, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
             if (dragLine.getX1() == -1) {
-                int xx = pXStart + x2 / GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, dScaling).getHeight(null);
-                int yy = pYStart + y2 / GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, dScaling).getWidth(null);
+                int xx = pXStart + xe / width;
+                int yy = pYStart + ye / height;
                 int tx = xx - mSourceVillage.getX();
                 int ty = yy - mSourceVillage.getY();
 
-                tx = x2 - GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, dScaling).getWidth(null) * tx;
-                ty = y2 - GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, dScaling).getHeight(null) * ty;
-                dragLine.setLine(tx, ty, x2, y2);
+                tx = xe - width * tx;
+                ty = ye - height * ty;
+                dragLine.setLine(tx, ty, xe, ye);
             }
-
-            g2d.drawLine((int) dragLine.getX1(), (int) dragLine.getY1(), (int) dragLine.getX2(), (int) dragLine.getY2());
-
+           
+            
+            if((dragLine.getX2() != 0)&&(dragLine.getY2() != 0)){
+            g2d.drawLine((int) dragLine.getX1(), (int) dragLine.getY1(), (int)dragLine.getX2(), (int)dragLine.getY2());
+            }
         }
         g2d.dispose();
+       /* cnt++;
+        dur += (System.currentTimeMillis() - start);
+        System.out.println("Med " + (dur/cnt));*/
     }
+  /*  long dur = 0;
+    long cnt = 0;*/
+    
 }

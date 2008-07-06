@@ -33,7 +33,8 @@
           <Group type="102" alignment="0" attributes="0">
               <Component id="jDragLabel" min="-2" pref="30" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="jPanel1" pref="403" max="32767" attributes="0"/>
+              <Component id="jPanel1" min="-2" pref="409" max="-2" attributes="0"/>
+              <EmptySpace max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -58,6 +59,7 @@
       <SubComponents>
         <Component class="javax.swing.JButton" name="jMeasureButton">
           <Properties>
+            <Property name="toolTipText" type="java.lang.String" value="Entfernungen messen"/>
             <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
               <Dimension value="[30, 30]"/>
             </Property>
@@ -74,6 +76,7 @@
         </Component>
         <Component class="javax.swing.JButton" name="jMarkButton">
           <Properties>
+            <Property name="toolTipText" type="java.lang.String" value="Markieren"/>
             <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
               <Dimension value="[30, 30]"/>
             </Property>
@@ -111,6 +114,7 @@
         </Component>
         <Component class="javax.swing.JButton" name="jAttackAxeButton">
           <Properties>
+            <Property name="toolTipText" type="java.lang.String" value="Angriff (Axt)"/>
             <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
               <Dimension value="[30, 30]"/>
             </Property>
@@ -127,6 +131,7 @@
         </Component>
         <Component class="javax.swing.JButton" name="jAttackRamButton">
           <Properties>
+            <Property name="toolTipText" type="java.lang.String" value="Angriff (Ramme)"/>
             <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
               <Dimension value="[30, 30]"/>
             </Property>
@@ -143,6 +148,7 @@
         </Component>
         <Component class="javax.swing.JButton" name="jAttackSnobButton">
           <Properties>
+            <Property name="toolTipText" type="java.lang.String" value="Angriff (AG)"/>
             <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
               <Dimension value="[30, 30]"/>
             </Property>
@@ -159,6 +165,7 @@
         </Component>
         <Component class="javax.swing.JButton" name="jAttackSpyButton">
           <Properties>
+            <Property name="toolTipText" type="java.lang.String" value="Angriff (Sp&#xe4;her)"/>
             <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
               <Dimension value="[30, 30]"/>
             </Property>
@@ -175,6 +182,7 @@
         </Component>
         <Component class="javax.swing.JButton" name="jAttackLightButton">
           <Properties>
+            <Property name="toolTipText" type="java.lang.String" value="Angriff (LKav)"/>
             <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
               <Dimension value="[30, 30]"/>
             </Property>
@@ -191,6 +199,7 @@
         </Component>
         <Component class="javax.swing.JButton" name="jAttackHeavyButton">
           <Properties>
+            <Property name="toolTipText" type="java.lang.String" value="Angriff (SKav)"/>
             <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
               <Dimension value="[30, 30]"/>
             </Property>
@@ -207,6 +216,7 @@
         </Component>
         <Component class="javax.swing.JButton" name="jAttackSwordButton">
           <Properties>
+            <Property name="toolTipText" type="java.lang.String" value="Angriff (Schwert)"/>
             <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
               <Dimension value="[30, 30]"/>
             </Property>
@@ -244,6 +254,7 @@
         </Component>
         <Component class="javax.swing.JButton" name="jMoveButton">
           <Properties>
+            <Property name="toolTipText" type="java.lang.String" value="Minimap bewegen"/>
             <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
               <Dimension value="[30, 30]"/>
             </Property>
@@ -260,6 +271,7 @@
         </Component>
         <Component class="javax.swing.JButton" name="jZoomButton">
           <Properties>
+            <Property name="toolTipText" type="java.lang.String" value="Minimap zoomen"/>
             <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
               <Dimension value="[30, 30]"/>
             </Property>
@@ -297,6 +309,7 @@
         </Component>
         <Component class="javax.swing.JButton" name="jSearchButton">
           <Properties>
+            <Property name="toolTipText" type="java.lang.String" value="Suche"/>
             <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
               <Dimension value="[30, 30]"/>
             </Property>
@@ -313,6 +326,7 @@
         </Component>
         <Component class="javax.swing.JButton" name="jSettingsButton">
           <Properties>
+            <Property name="toolTipText" type="java.lang.String" value="Einstellungen"/>
             <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
               <Dimension value="[30, 30]"/>
             </Property>

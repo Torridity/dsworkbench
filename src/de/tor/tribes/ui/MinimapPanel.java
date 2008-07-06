@@ -37,13 +37,26 @@ public class MinimapPanel extends javax.swing.JPanel {
     private DSWorkbenchMainFrame mParent;
     private MinimapZoomFrame mZoomFrame = null;
     private int iCurrentCursor = GlobalOptions.CURSOR_DEFAULT;
+    private static MinimapPanel GLOBAL_MINIMAP = null;
+    private ScreenshotPanel mScreenshotPanel = null;
+    private boolean doRedraw = false;
+
+    public static MinimapPanel getGlobalMinimap() {
+        return GLOBAL_MINIMAP;
+    }
+
+    public static void initGlobalMinimap(DSWorkbenchMainFrame pParent) {
+        GLOBAL_MINIMAP = new MinimapPanel(pParent);
+    }
 
     /** Creates new form MinimapPanel */
-    public MinimapPanel(DSWorkbenchMainFrame pParent) {
+    MinimapPanel(DSWorkbenchMainFrame pParent) {
         initComponents();
-        setSize(100, 100);
+        setSize(270, 233);
         mParent = pParent;
         setCursor(GlobalOptions.getCursor(iCurrentCursor));
+        /* mScreenshotPanel = new ScreenshotPanel();
+        jPanel1.add(mScreenshotPanel);*/
         mPaintThread = new MinimapRepaintThread(this);
         mPaintThread.start();
         addMouseListener(new MouseListener() {
@@ -170,24 +183,37 @@ public class MinimapPanel extends javax.swing.JPanel {
         g2d.setColor(Color.BLACK);
     }
 
+    public void makeScreenshot() {
+        jScreenshotPreview.setVisible(true);
+    }
+
+    public void resetBuffer() {
+        mBuffer = null;
+    }
+
     protected void updateComplete(BufferedImage pBuffer) {
         if (mZoomFrame == null) {
             mZoomFrame = new MinimapZoomFrame(pBuffer);
             mZoomFrame.setSize(300, 300);
             mZoomFrame.setLocation(0, 0);
         }
-
+        // mScreenshotPanel.setBuffer(pBuffer);
         if (mBuffer == null) {
             mBuffer = pBuffer;
             mBuffer = mBuffer.getScaledInstance(getWidth(), getHeight(), BufferedImage.SCALE_SMOOTH);
         } else if ((mBuffer.getWidth(null) != getWidth()) || (mBuffer.getHeight(null) != getHeight())) {
             mBuffer = pBuffer;
             mBuffer = mBuffer.getScaledInstance(getWidth(), getHeight(), BufferedImage.SCALE_SMOOTH);
+        } else if (doRedraw) {
+            mBuffer = pBuffer;
+            mBuffer = mBuffer.getScaledInstance(getWidth(), getHeight(), BufferedImage.SCALE_SMOOTH);
         }
+        doRedraw = false;
         repaint();
     }
 
     public void redraw() {
+        doRedraw = true;
         mPaintThread.update();
     }
 
@@ -199,18 +225,46 @@ public class MinimapPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jScreenshotPreview = new javax.swing.JFrame();
+        jPanel1 = new javax.swing.JPanel();
+
+        jPanel1.setMaximumSize(new java.awt.Dimension(1000, 1000));
+        jPanel1.setMinimumSize(new java.awt.Dimension(1000, 1000));
+        jPanel1.setPreferredSize(new java.awt.Dimension(1000, 1000));
+        jPanel1.setLayout(new java.awt.BorderLayout());
+
+        javax.swing.GroupLayout jScreenshotPreviewLayout = new javax.swing.GroupLayout(jScreenshotPreview.getContentPane());
+        jScreenshotPreview.getContentPane().setLayout(jScreenshotPreviewLayout);
+        jScreenshotPreviewLayout.setHorizontalGroup(
+            jScreenshotPreviewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jScreenshotPreviewLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jScreenshotPreviewLayout.setVerticalGroup(
+            jScreenshotPreviewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jScreenshotPreviewLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGap(0, 1020, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addGap(0, 1051, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JFrame jScreenshotPreview;
     // End of variables declaration//GEN-END:variables
 }
 
@@ -237,6 +291,7 @@ class MinimapRepaintThread extends Thread {
                 drawn = true;
             }
             mParent.updateComplete(mBuffer);
+
             try {
                 Thread.sleep(100);
             } catch (Exception e) {
@@ -288,33 +343,40 @@ class MinimapRepaintThread extends Thread {
                 }
             }
         }
-        g2d.setColor(Color.BLACK);
-        Composite c = g2d.getComposite();
-        Composite a = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f);
-        Font f = g2d.getFont();
-        Font t = new Font("Serif", Font.BOLD, 30);
-        g2d.setFont(t);
 
-        for (int i = 0; i < 10; i++) {
-            for (int j = 0; j < 10; j++) {
-                g2d.setComposite(a);
-                String conti = "K" + (j * 10 + i);
-                Rectangle2D bounds = g2d.getFontMetrics(t).getStringBounds(conti, g2d);
+        try {
+            if (Boolean.parseBoolean(GlobalOptions.getProperty("minimap.showcontinents"))) {
+                g2d.setColor(Color.BLACK);
+                Composite c = g2d.getComposite();
+                Composite a = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f);
+                Font f = g2d.getFont();
+                Font t = new Font("Serif", Font.BOLD, 30);
+                g2d.setFont(t);
 
-                g2d.drawString(conti, (int) Math.rint(i * 100 + 50 - bounds.getWidth() / 2), (int) Math.rint(j * 100 + 80 - bounds.getHeight() / 2));
-                g2d.setComposite(c);
-                int wk = 100;
-                int hk = 100;
-                if (i == 9) {
-                    wk = 99;
+                for (int i = 0; i < 10; i++) {
+                    for (int j = 0; j < 10; j++) {
+                        g2d.setComposite(a);
+                        String conti = "K" + (j * 10 + i);
+                        Rectangle2D bounds = g2d.getFontMetrics(t).getStringBounds(conti, g2d);
+
+                        g2d.drawString(conti, (int) Math.rint(i * 100 + 50 - bounds.getWidth() / 2), (int) Math.rint(j * 100 + 80 - bounds.getHeight() / 2));
+                        g2d.setComposite(c);
+                        int wk = 100;
+                        int hk = 100;
+                        if (i == 9) {
+                            wk = 99;
+                        }
+                        if (j == 9) {
+                            hk = 99;
+                        }
+                        g2d.drawRect(i * 100, j * 100, wk, hk);
+                    }
                 }
-                if (j == 9) {
-                    hk = 99;
-                }
-                g2d.drawRect(i * 100, j * 100, wk, hk);
+                g2d.setFont(f);
             }
+        } catch (Exception e) {
         }
-        g2d.setFont(f);
+        g2d.dispose();
     }
 }
 

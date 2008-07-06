@@ -18,6 +18,7 @@ import de.tor.tribes.ui.editors.VillageCellEditor;
 import de.tor.tribes.ui.renderer.ColorCellRenderer;
 import de.tor.tribes.ui.renderer.DateCellRenderer;
 import de.tor.tribes.ui.renderer.MarkerPanelCellRenderer;
+import de.tor.tribes.util.BrowserCommandSender;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.GlobalOptions;
 import java.awt.AWTEvent;
@@ -52,11 +53,11 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame {
 
     private static Logger logger = Logger.getLogger(DSWorkbenchMainFrame.class);
     private MapPanel mPanel = null;
-    private MinimapPanel mMiniPanel = null;
     private int iCenterX = 456;
     private int iCenterY = 468;
     private List<ImageIcon> mIcons;
     private double dZoomFactor = 1.0;
+    private ToolBoxFrame mToolbox = null;
 
     /** Creates new form MapFrame */
     public DSWorkbenchMainFrame() {
@@ -64,30 +65,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame {
         /*  jMainControlPanel.setupPanel(this, true, true);
         jMainControlPanel.setTitle(getTitle());*/
         pack();
-        /* System.getProperties().put("proxySet", "true");
-        System.getProperties().put("proxyHost", "proxy.fzk.de");
-        System.getProperties().put("proxyPort", "8000");
-        try {
-        ServerList.loadServerList();
-        } catch (Exception e) {
-        }
-        //show server/player-selection dialog
-        DefaultComboBoxModel model = new DefaultComboBoxModel();
-        for (String sID : ServerList.getServerIDs()) {
-        model.addElement(sID);
-        }
-        jServerSelection.setModel(model);
-        jPlayerSelectionDialog.pack();
-        jPlayerSelectionDialog.setVisible(true);*/
-        //init the global options
 
-
-        /*try {
-        GlobalOptions.initialize(false, this);
-        } catch (Exception e) {
-        logger.fatal("Failed to initialize global data structures", e);
-        System.exit(0);
-        }*/
         jCurrentPlayer.setText(GlobalOptions.getProperty("player." + GlobalOptions.getSelectedServer()));
         jCurrentServer.setText(GlobalOptions.getSelectedServer());
         Tribe t = GlobalOptions.getDataHolder().getTribeByName(jCurrentPlayer.getText());
@@ -126,9 +104,8 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame {
         setupMarkerPanel();
         setupDetailsPanel();
         setupAttackPanel();
-
-
         setupDynFrame();
+        mToolbox = new ToolBoxFrame(mPanel, MinimapPanel.getGlobalMinimap());
     }
 
     private void setupMaps() {
@@ -136,8 +113,8 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame {
         mPanel = new MapPanel(this);
         jPanel1.add(mPanel);
         //build the minimap
-        mMiniPanel = new MinimapPanel(this);
-        jMinimapPanel.add(mMiniPanel);
+        MinimapPanel.initGlobalMinimap(this);
+        jMinimapPanel.add(MinimapPanel.getGlobalMinimap());
     }
 
     private void setupMarkerPanel() {
@@ -296,14 +273,17 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame {
     }
 
     private void setupDynFrame() {
-        /*jDynFrameControlPanel.setupPanel(jDynFrame, true, true);
-        jDynFrameControlPanel.setTitle("Toolbox");
-         */
         jTabbedPane1.addTab("Entfernung", jDistancePanel);
         jTabbedPane1.addTab("Markierungen", jMarkerPanel);
         jTabbedPane1.addTab("Angriffe", jAttackPanel);
         jDynFrame.pack();
-        jDynFrame.setVisible(true);
+        jTabbedPane1.setSelectedIndex(0);
+        try {
+            jDynFrameAlwaysOnTopSelection.setSelected(Boolean.parseBoolean(GlobalOptions.getProperty("dynframe.alwaysOnTop")));
+            fireAlwaysInFrontChangeEvent(null);
+        } catch (Exception e) {
+            //setting not available
+        }
     }
 
     @Override
@@ -312,7 +292,22 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame {
         mPanel.updateMap(iCenterX, iCenterY);
         double w = (double) mPanel.getWidth() / GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
         double h = (double) mPanel.getHeight() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
-        mMiniPanel.setSelection(iCenterX, iCenterY, (int) Math.rint(w), (int) Math.rint(h));
+        MinimapPanel.getGlobalMinimap().setSelection(iCenterX, iCenterY, (int) Math.rint(w), (int) Math.rint(h));
+        try {
+            if (Boolean.parseBoolean(GlobalOptions.getProperty("dynframe.visible"))) {
+                jShowDynFrameItem.setSelected(true);
+                fireShowDynFrameEvent(null);
+            }
+        } catch (Exception e) {
+        }
+
+        try {
+            if (Boolean.parseBoolean(GlobalOptions.getProperty("toolbar.visible"))) {
+                jShowToolboxItem.setSelected(true);
+                fireShowToolbarEvent(null);
+            }
+        } catch (Exception e) {
+        }
     }
 
     /** This method is called from within the constructor to
@@ -376,7 +371,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame {
         jAttackTable = new javax.swing.JTable();
         jButton5 = new javax.swing.JButton();
         jButton7 = new javax.swing.JButton();
-        jPanel3 = new javax.swing.JPanel();
+        jButton4 = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         jMoveE = new javax.swing.JButton();
@@ -395,6 +390,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame {
         jMoveE1 = new javax.swing.JButton();
         jZoomInButton = new javax.swing.JButton();
         jZoomOutButton = new javax.swing.JButton();
+        jButton9 = new javax.swing.JButton();
         jMinimapPanel = new javax.swing.JPanel();
         jInfoPanel = new javax.swing.JPanel();
         jPanel4 = new javax.swing.JPanel();
@@ -404,6 +400,14 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame {
         jCurrentPlayerVillages = new javax.swing.JComboBox();
         jCurrentPlayer = new javax.swing.JLabel();
         jCurrentServer = new javax.swing.JLabel();
+        jButton8 = new javax.swing.JButton();
+        jMenuBar1 = new javax.swing.JMenuBar();
+        jMenu1 = new javax.swing.JMenu();
+        jMenuItem1 = new javax.swing.JMenuItem();
+        jMenuItem2 = new javax.swing.JMenuItem();
+        jMenu2 = new javax.swing.JMenu();
+        jShowToolboxItem = new javax.swing.JCheckBoxMenuItem();
+        jShowDynFrameItem = new javax.swing.JCheckBoxMenuItem();
 
         jDetailedInfoPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Info"));
 
@@ -828,6 +832,11 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame {
         );
 
         jDynFrame.setTitle("Toolbox");
+        jDynFrame.addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                fireDynFrameClosingEvent(evt);
+            }
+        });
 
         jDynFrameAlwaysOnTopSelection.setText("Immer im Vordergrund");
         jDynFrameAlwaysOnTopSelection.addChangeListener(new javax.swing.event.ChangeListener() {
@@ -893,6 +902,13 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame {
             }
         });
 
+        jButton4.setText("Abschicken");
+        jButton4.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireSendAttackEvent(evt);
+            }
+        });
+
         javax.swing.GroupLayout jAttackPanelLayout = new javax.swing.GroupLayout(jAttackPanel);
         jAttackPanel.setLayout(jAttackPanelLayout);
         jAttackPanelLayout.setHorizontalGroup(
@@ -903,7 +919,8 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jAttackPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jButton7, javax.swing.GroupLayout.DEFAULT_SIZE, 89, Short.MAX_VALUE)
-                    .addComponent(jButton5, javax.swing.GroupLayout.DEFAULT_SIZE, 89, Short.MAX_VALUE))
+                    .addComponent(jButton5, javax.swing.GroupLayout.DEFAULT_SIZE, 89, Short.MAX_VALUE)
+                    .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, 89, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jAttackPanelLayout.setVerticalGroup(
@@ -915,19 +932,10 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame {
                     .addGroup(jAttackPanelLayout.createSequentialGroup()
                         .addComponent(jButton7)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton5)))
+                        .addComponent(jButton5)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton4)))
                 .addContainerGap())
-        );
-
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 100, Short.MAX_VALUE)
-        );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 100, Short.MAX_VALUE)
         );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -1064,23 +1072,26 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame {
             }
         });
 
+        jButton9.setText("Zentrieren (InGame)");
+        jButton9.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireCenterCurrentPosInGameEvent(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(10, 10, 10)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jMoveSW, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jMoveS, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jMoveSE, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jZoomInButton, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jZoomOutButton, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jMoveSE, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel2Layout.createSequentialGroup()
@@ -1094,54 +1105,66 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jMoveNE, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jMoveE, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jMoveE, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jButton9, javax.swing.GroupLayout.DEFAULT_SIZE, 133, Short.MAX_VALUE)
                             .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addComponent(jLabel1)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jCenterX, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 33, Short.MAX_VALUE)
                                 .addComponent(jLabel2)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jCenterY, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jRefresh, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                .addContainerGap(63, Short.MAX_VALUE))
+                            .addComponent(jRefresh, javax.swing.GroupLayout.DEFAULT_SIZE, 133, Short.MAX_VALUE))
+                        .addGap(34, 34, 34))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jZoomInButton, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jZoomOutButton, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(113, 113, 113))))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jMoveNE, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jMoveN, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jMoveNW, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(4, 4, 4)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jMoveE, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jMoveW, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jMoveE1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jMoveSW, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jMoveS, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jMoveSE, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jZoomInButton)
-                    .addComponent(jZoomOutButton))
-                .addContainerGap())
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(jCenterX, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2)
-                    .addComponent(jCenterY, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(4, 4, 4)
-                .addComponent(jRefresh)
-                .addContainerGap(41, Short.MAX_VALUE))
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jMoveNE, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jMoveN, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jMoveNW, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(4, 4, 4)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jMoveE, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jMoveW, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jMoveE1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jMoveSW, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jMoveS, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jMoveSE, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel1)
+                            .addComponent(jCenterX, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jCenterY, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel2))
+                        .addGap(4, 4, 4)
+                        .addComponent(jRefresh)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton9)))
+                .addGap(8, 8, 8)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jZoomInButton)
+                    .addComponent(jZoomOutButton))
+                .addContainerGap(62, Short.MAX_VALUE))
         );
 
-        jMinimapPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Minimap"));
+        jMinimapPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jMinimapPanel.setLayout(new java.awt.BorderLayout());
 
         jInfoPanel.setLayout(new java.awt.BorderLayout());
@@ -1164,11 +1187,18 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame {
         jCurrentPlayer.setMinimumSize(new java.awt.Dimension(155, 14));
         jCurrentPlayer.setPreferredSize(new java.awt.Dimension(155, 14));
 
+        jButton8.setText("Zentrieren (InGame)");
+        jButton8.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireCenterVillageIngameEvent(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+            .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel5)
@@ -1178,7 +1208,8 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame {
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jCurrentPlayer, javax.swing.GroupLayout.DEFAULT_SIZE, 155, Short.MAX_VALUE)
                     .addComponent(jCurrentServer, javax.swing.GroupLayout.DEFAULT_SIZE, 155, Short.MAX_VALUE)
-                    .addComponent(jCurrentPlayerVillages, 0, 155, Short.MAX_VALUE))
+                    .addComponent(jCurrentPlayerVillages, 0, 155, Short.MAX_VALUE)
+                    .addComponent(jButton8, javax.swing.GroupLayout.DEFAULT_SIZE, 155, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
@@ -1196,8 +1227,58 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame {
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel21)
                     .addComponent(jCurrentPlayerVillages, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(105, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton8)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
+
+        jMenu1.setMnemonic('a');
+        jMenu1.setText("Allgemein");
+
+        jMenuItem1.setMnemonic('e');
+        jMenuItem1.setText("Einstellungen");
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fireShowSettingsEvent(evt);
+            }
+        });
+        jMenu1.add(jMenuItem1);
+
+        jMenuItem2.setMnemonic('n');
+        jMenuItem2.setText("Beenden");
+        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fireExitEvent(evt);
+            }
+        });
+        jMenu1.add(jMenuItem2);
+
+        jMenuBar1.add(jMenu1);
+
+        jMenu2.setMnemonic('s');
+        jMenu2.setText("Ansicht");
+
+        jShowToolboxItem.setMnemonic('w');
+        jShowToolboxItem.setText("Werkzeugleiste");
+        jShowToolboxItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fireShowToolbarEvent(evt);
+            }
+        });
+        jMenu2.add(jShowToolboxItem);
+
+        jShowDynFrameItem.setMnemonic('t');
+        jShowDynFrameItem.setText("Toolbox anzeigen");
+        jShowDynFrameItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fireShowDynFrameEvent(evt);
+            }
+        });
+        jMenu2.add(jShowDynFrameItem);
+
+        jMenuBar1.add(jMenu2);
+
+        setJMenuBar(jMenuBar1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -1207,27 +1288,27 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 535, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 543, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jMinimapPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 270, Short.MAX_VALUE)
-                            .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(jInfoPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 815, Short.MAX_VALUE))
+                            .addComponent(jMinimapPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addComponent(jInfoPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 819, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(28, 28, 28)
+                .addGap(37, 37, 37)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jMinimapPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 233, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 574, Short.MAX_VALUE))
+                        .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 592, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jInfoPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -1251,7 +1332,7 @@ private void fireRefreshMapEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:eve
 
     double w = (double) mPanel.getWidth() / GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
     double h = (double) mPanel.getHeight() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
-    mMiniPanel.setSelection(cx, cy, (int) Math.rint(w), (int) Math.rint(h));
+    MinimapPanel.getGlobalMinimap().setSelection(cx, cy, (int) Math.rint(w), (int) Math.rint(h));
     mPanel.updateMap(iCenterX, iCenterY);
     jPanel1.updateUI();
     jPanel2.updateUI();
@@ -1297,7 +1378,7 @@ private void fireMoveMapEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
 
     double w = (double) mPanel.getWidth() / GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
     double h = (double) mPanel.getHeight() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
-    mMiniPanel.setSelection(cx, cy, (int) Math.rint(w), (int) Math.rint(h));
+    MinimapPanel.getGlobalMinimap().setSelection(cx, cy, (int) Math.rint(w), (int) Math.rint(h));
     jPanel1.updateUI();
     jPanel2.updateUI();
 }//GEN-LAST:event_fireMoveMapEvent
@@ -1332,7 +1413,7 @@ private void fireZoomEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fir
     mPanel.setZoom(dZoomFactor);
     double w = (double) mPanel.getWidth() / GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
     double h = (double) mPanel.getHeight() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
-    mMiniPanel.setSelection(Integer.parseInt(jCenterX.getText()), Integer.parseInt(jCenterY.getText()), (int) Math.rint(w), (int) Math.rint(h));
+    MinimapPanel.getGlobalMinimap().setSelection(Integer.parseInt(jCenterX.getText()), Integer.parseInt(jCenterY.getText()), (int) Math.rint(w), (int) Math.rint(h));
     mPanel.repaint();
 }//GEN-LAST:event_fireZoomEvent
 
@@ -1370,7 +1451,7 @@ private void fireRemoveMarkerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
     if (row < 0) {
         return;
     }
-    int ret = JOptionPane.showConfirmDialog(this, "Ausgewählte Markierung wirklich löschen?", "Löschen", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+    int ret = JOptionPane.showConfirmDialog(jDynFrame, "Ausgewählte Markierung wirklich löschen?", "Löschen", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
     if (ret == JOptionPane.YES_OPTION) {
         String value = ((MarkerCell) ((DefaultTableModel) jMarkerTable.getModel()).getValueAt(row, 0)).getMarkerName();
         GlobalOptions.getMarkers().remove(value);
@@ -1412,6 +1493,8 @@ private void fireValidateAttacksEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
 
 private void fireAlwaysInFrontChangeEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireAlwaysInFrontChangeEvent
     jDynFrame.setAlwaysOnTop(jDynFrameAlwaysOnTopSelection.isSelected());
+    GlobalOptions.addProperty("dynframe.alwaysOnTop", Boolean.toString(jDynFrameAlwaysOnTopSelection.isSelected()));
+    GlobalOptions.saveProperties();
 }//GEN-LAST:event_fireAlwaysInFrontChangeEvent
 
 private void fireRemoveAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireRemoveAttackEvent
@@ -1433,6 +1516,59 @@ private void fireChangeCurrentPlayerVillageEvent(java.awt.event.ItemEvent evt) {
         centerVillage((Village) jCurrentPlayerVillages.getSelectedItem());
     }
 }//GEN-LAST:event_fireChangeCurrentPlayerVillageEvent
+
+private void fireShowSettingsEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireShowSettingsEvent
+    DSWorkbenchSettingsDialog.getGlobalSettingsFrame().setVisible(true);
+}//GEN-LAST:event_fireShowSettingsEvent
+
+private void fireExitEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireExitEvent
+    GlobalOptions.saveProperties();
+    GlobalOptions.storeAttacks();
+    GlobalOptions.storeMarkers();
+    this.dispose();
+}//GEN-LAST:event_fireExitEvent
+
+private void fireShowToolbarEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireShowToolbarEvent
+    mToolbox.setVisible(jShowToolboxItem.isSelected());
+    GlobalOptions.addProperty("toolbar.visible", Boolean.toString(jShowToolboxItem.isSelected()));
+    GlobalOptions.saveProperties();
+}//GEN-LAST:event_fireShowToolbarEvent
+
+private void fireSendAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSendAttackEvent
+    int selectedRow = jAttackTable.getSelectedRow();
+    if (selectedRow < 0) {
+        return;
+    }
+    Village source = (Village) ((DefaultTableModel) jAttackTable.getModel()).getValueAt(selectedRow, 0);
+    Village target = (Village) ((DefaultTableModel) jAttackTable.getModel()).getValueAt(selectedRow, 1);
+    BrowserCommandSender.sendAttack(source, target);
+}//GEN-LAST:event_fireSendAttackEvent
+
+private void fireShowDynFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireShowDynFrameEvent
+    jDynFrame.setVisible(jShowDynFrameItem.isSelected());
+    GlobalOptions.addProperty("dynframe.visible", Boolean.toString(jShowDynFrameItem.isSelected()));
+    GlobalOptions.saveProperties();
+}//GEN-LAST:event_fireShowDynFrameEvent
+
+private void fireDynFrameClosingEvent(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_fireDynFrameClosingEvent
+    jShowDynFrameItem.setSelected(false);
+    GlobalOptions.addProperty("dynframe.visible", Boolean.toString(false));
+    GlobalOptions.saveProperties();
+}//GEN-LAST:event_fireDynFrameClosingEvent
+
+private void fireCenterVillageIngameEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCenterVillageIngameEvent
+    Village v = (Village) jCurrentPlayerVillages.getSelectedItem();
+    if (v != null) {
+        BrowserCommandSender.centerVillageInGame(v);
+    }
+}//GEN-LAST:event_fireCenterVillageIngameEvent
+
+private void fireCenterCurrentPosInGameEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCenterCurrentPosInGameEvent
+    try {
+        BrowserCommandSender.centerPointInGame(Integer.parseInt(jCenterX.getText()), Integer.parseInt(jCenterY.getText()));
+    } catch (Exception e) {
+    }
+}//GEN-LAST:event_fireCenterCurrentPosInGameEvent
 
     public void changeTool(int pTool) {
         switch (pTool) {
@@ -1469,8 +1605,7 @@ private void fireChangeCurrentPlayerVillageEvent(java.awt.event.ItemEvent evt) {
         GlobalOptions.getMarkers().clear();
         for (int i = 0; i < model.getRowCount(); i++) {
             String name = ((MarkerCell) model.getValueAt(i, 0)).getMarkerName();
-            name =
-                    name.replaceAll("<html>", "").replaceAll("</html>", "");
+            name = name.replaceAll("<html>", "").replaceAll("</html>", "");
             Color c = (Color) model.getValueAt(i, 1);
             GlobalOptions.getMarkers().put(name, c);
         }
@@ -1478,7 +1613,7 @@ private void fireChangeCurrentPlayerVillageEvent(java.awt.event.ItemEvent evt) {
         GlobalOptions.storeMarkers();
         //update maps
         mPanel.repaint();
-        mMiniPanel.redraw();
+        MinimapPanel.getGlobalMinimap().redraw();
     }
 
     /**Update the globally stored list of attacks with the contents of the  attack table
@@ -1506,8 +1641,8 @@ private void fireChangeCurrentPlayerVillageEvent(java.awt.event.ItemEvent evt) {
     /**Update the MapPanel when dragging the ROI at the MiniMap
      */
     public void updateLocationByMinimap(int pX, int pY) {
-        double dx = 1000 / (double) mMiniPanel.getWidth() * (double) pX;
-        double dy = 1000 / (double) mMiniPanel.getHeight() * (double) pY;
+        double dx = 1000 / (double) MinimapPanel.getGlobalMinimap().getWidth() * (double) pX;
+        double dy = 1000 / (double) MinimapPanel.getGlobalMinimap().getHeight() * (double) pY;
 
         int x = (int) dx;
         int y = (int) dy;
@@ -1519,7 +1654,7 @@ private void fireChangeCurrentPlayerVillageEvent(java.awt.event.ItemEvent evt) {
 
         double w = (double) mPanel.getWidth() / GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
         double h = (double) mPanel.getHeight() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
-        mMiniPanel.setSelection(x, y, (int) Math.rint(w), (int) Math.rint(h));
+        MinimapPanel.getGlobalMinimap().setSelection(x, y, (int) Math.rint(w), (int) Math.rint(h));
         jPanel1.updateUI();
         jPanel2.updateUI();
     }
@@ -1534,7 +1669,7 @@ private void fireChangeCurrentPlayerVillageEvent(java.awt.event.ItemEvent evt) {
 
         double w = (double) mPanel.getWidth() / GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
         double h = (double) mPanel.getHeight() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
-        mMiniPanel.setSelection(iCenterX, iCenterY, (int) Math.rint(w), (int) Math.rint(h));
+        MinimapPanel.getGlobalMinimap().setSelection(iCenterX, iCenterY, (int) Math.rint(w), (int) Math.rint(h));
         jPanel1.updateUI();
         jPanel2.updateUI();
     }
@@ -1688,8 +1823,7 @@ private void fireChangeCurrentPlayerVillageEvent(java.awt.event.ItemEvent evt) {
             if (pVillage.getTribe().getAlly() != null) {
                 if (GlobalOptions.getMarkers().containsKey(pVillage.getTribe().getAlly().getName())) {
                     logger.debug("Replace existing ally marker");
-                    for (int i = 0; i <
-                            ((DefaultTableModel) jMarkerTable.getModel()).getRowCount(); i++) {
+                    for (int i = 0; i < ((DefaultTableModel) jMarkerTable.getModel()).getRowCount(); i++) {
                         MarkerCell c = (MarkerCell) ((DefaultTableModel) jMarkerTable.getModel()).getValueAt(i, 0);
                         if (c.getMarkerName().equals(pVillage.getTribe().getAlly().getName())) {
                             ((DefaultTableModel) jMarkerTable.getModel()).setValueAt(pAllyColor, i, 1);
@@ -1699,8 +1833,7 @@ private void fireChangeCurrentPlayerVillageEvent(java.awt.event.ItemEvent evt) {
                 } else {
                     logger.debug("Add new ally marker");
                     GlobalOptions.getMarkers().put(pVillage.getTribe().getAlly().getName(), Color.WHITE);
-                    p =
-                            MarkerCell.factoryAllyMarker(pVillage.getTribe().getAlly().getName());
+                    p = MarkerCell.factoryAllyMarker(pVillage.getTribe().getAlly().getName());
                     Color c = (pAllyColor != null) ? pAllyColor : Color.WHITE;
                     ((DefaultTableModel) jMarkerTable.getModel()).addRow(new Object[]{p, c});
                 }
@@ -1714,8 +1847,7 @@ private void fireChangeCurrentPlayerVillageEvent(java.awt.event.ItemEvent evt) {
         if (pMarkTribe) {
             if (GlobalOptions.getMarkers().containsKey(pVillage.getTribe().getName())) {
                 logger.debug("Replace existing tribe marker");
-                for (int i = 0; i <
-                        ((DefaultTableModel) jMarkerTable.getModel()).getRowCount(); i++) {
+                for (int i = 0; i < ((DefaultTableModel) jMarkerTable.getModel()).getRowCount(); i++) {
                     MarkerCell c = (MarkerCell) ((DefaultTableModel) jMarkerTable.getModel()).getValueAt(i, 0);
                     if (c.getMarkerName().equals(pVillage.getTribe().getName())) {
                         ((DefaultTableModel) jMarkerTable.getModel()).setValueAt(pTribeColor, i, 1);
@@ -1726,8 +1858,7 @@ private void fireChangeCurrentPlayerVillageEvent(java.awt.event.ItemEvent evt) {
                 logger.debug("Add new tribe marker");
                 GlobalOptions.getMarkers().put(pVillage.getTribe().getName(), Color.WHITE);
                 Color c = (pTribeColor != null) ? pTribeColor : Color.WHITE;
-                p =
-                        MarkerCell.factoryPlayerMarker(pVillage.getTribe().getName());
+                p = MarkerCell.factoryPlayerMarker(pVillage.getTribe().getName());
                 ((DefaultTableModel) jMarkerTable.getModel()).addRow(new Object[]{p, c});
             }
         }
@@ -1744,9 +1875,11 @@ private void fireChangeCurrentPlayerVillageEvent(java.awt.event.ItemEvent evt) {
      */
     public static void main(String[] args) {
 
-        java.awt.EventQueue.invokeLater(new Runnable() {
+        java.awt.EventQueue.invokeLater(new  
 
-            public void run() {
+              Runnable() {
+
+                 public void run() {
                 new DSWorkbenchMainFrame().setVisible(true);
             }
         });
@@ -1767,9 +1900,12 @@ private void fireChangeCurrentPlayerVillageEvent(java.awt.event.ItemEvent evt) {
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
     private javax.swing.JButton jButton7;
+    private javax.swing.JButton jButton8;
+    private javax.swing.JButton jButton9;
     private javax.swing.JTextField jCataTime;
     private javax.swing.JTextField jCenterX;
     private javax.swing.JTextField jCenterY;
@@ -1810,6 +1946,11 @@ private void fireChangeCurrentPlayerVillageEvent(java.awt.event.ItemEvent evt) {
     private javax.swing.JTextField jMArcherTime;
     private javax.swing.JPanel jMarkerPanel;
     private javax.swing.JTable jMarkerTable;
+    private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenu jMenu2;
+    private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JPanel jMinimapPanel;
     private javax.swing.JButton jMoveE;
     private javax.swing.JButton jMoveE1;
@@ -1822,7 +1963,6 @@ private void fireChangeCurrentPlayerVillageEvent(java.awt.event.ItemEvent evt) {
     private javax.swing.JButton jMoveW;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JLabel jPlayerInfo;
     private javax.swing.JComboBox jPlayerSelection;
@@ -1832,6 +1972,8 @@ private void fireChangeCurrentPlayerVillageEvent(java.awt.event.ItemEvent evt) {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JComboBox jServerSelection;
+    private javax.swing.JCheckBoxMenuItem jShowDynFrameItem;
+    private javax.swing.JCheckBoxMenuItem jShowToolboxItem;
     private javax.swing.JTextField jSnobTime;
     private javax.swing.JTextField jSpearTime;
     private javax.swing.JTextField jSpyTime;

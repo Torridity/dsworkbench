@@ -81,6 +81,7 @@ public class Skin {
     private String BASE_PATH = "graphics/skins";
     private String DEFAULT_PATH = "graphics/skins/default";
     private Hashtable<Integer, Image> mTextures = null;
+    private Hashtable<Double, Hashtable<Integer, Image>> mCache = null;
 
     public Skin() throws Exception {
         loadSkin("default");
@@ -124,6 +125,7 @@ public class Skin {
             mTextures.put(ID_B4_LEFT, ImageIO.read(new File(path + "/" + B4_LEFT_FILE)));
             mTextures.put(ID_B5_LEFT, ImageIO.read(new File(path + "/" + B5_LEFT_FILE)));
             mTextures.put(ID_B6_LEFT, ImageIO.read(new File(path + "/" + B6_LEFT_FILE)));
+
             if (mTextures.size() < TEXTURE_COUNT) {
                 throw new Exception("#Texturen < " + TEXTURE_COUNT);
             }
@@ -136,7 +138,8 @@ public class Skin {
                     throw new Exception("Textur " + id + " hat nicht die erwartete Größe " + iFieldWidth + "x" + iFieldHeight);
                 }
             }
-
+            mCache = new Hashtable<Double, Hashtable<Integer, Image>>();
+            mCache.put(1.0, mTextures);
         //try loading units, ignore exceptions due to not all skins have all units
         } catch (IOException ioe) {
             throw new Exception("Fehler beim laden des Grafikpaketes");
@@ -149,7 +152,18 @@ public class Skin {
         if (pScaling == 1) {
             return mTextures.get(pID);
         }
-        return mTextures.get(pID).getScaledInstance((int) (iFieldWidth / pScaling), (int) (iFieldHeight / pScaling), BufferedImage.SCALE_FAST);
+        Hashtable<Integer, Image> cache = mCache.get(pScaling);
+        if (cache != null) {
+            if (cache.get(pID) == null) {
+                cache.put(pID, mTextures.get(pID).getScaledInstance((int) (iFieldWidth / pScaling), (int) (iFieldHeight / pScaling), BufferedImage.SCALE_FAST));
+            }
+        } else {
+            cache = new Hashtable<Integer, Image>();
+            cache.put(pID, mTextures.get(pID).getScaledInstance((int) (iFieldWidth / pScaling), (int) (iFieldHeight / pScaling), BufferedImage.SCALE_FAST));
+            mCache.put(pScaling, cache);
+        }
+        return cache.get(pID);
+        //return mTextures.get(pID).getScaledInstance((int) (iFieldWidth / pScaling), (int) (iFieldHeight / pScaling), BufferedImage.SCALE_FAST);
     }
 
     public int getFieldWidth() {

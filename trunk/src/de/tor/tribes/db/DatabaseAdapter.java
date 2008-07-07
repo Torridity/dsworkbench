@@ -20,13 +20,14 @@ import org.apache.log4j.xml.DOMConfigurator;
  */
 public class DatabaseAdapter {
 
+    private static Logger logger = Logger.getLogger(DatabaseAdapter.class);
     public static final int ID_UNKNOWN_ERROR = -666;
     public static final int ID_SUCCESS = 0;
     public static final int ID_CONNECTION_FAILED = -1;
     public static final int ID_USER_ALREADY_EXIST = -2;
     public static final int ID_USER_NOT_EXIST = -3;
+    public static final int ID_WRONG_PASSWORD = -4;
     private static Connection DB_CONNECTION = null;
-    private static Logger logger = Logger.getLogger(DatabaseAdapter.class);
     private static boolean DRIVER_AVAILABLE = false;
     private static boolean INITIALIZED = false;
 
@@ -92,7 +93,16 @@ public class DatabaseAdapter {
 
             if (count != 1) {
                 if (count == 0) {
-                    retVal = ID_USER_NOT_EXIST;
+                    query = "SELECT COUNT(*) FROM users WHERE name='" + pUsername + "';";
+                    rs = s.executeQuery(query);
+                    while (rs.next()) {
+                        count = rs.getInt(1);
+                    }
+                    if (count == 0) {
+                        retVal = ID_USER_NOT_EXIST;
+                    } else {
+                        retVal = ID_WRONG_PASSWORD;
+                    }
                 } else {
                     throw new Exception("There are " + count + " users with name '" + pUsername + "' inside the database");
                 }

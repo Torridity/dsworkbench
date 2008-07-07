@@ -61,7 +61,7 @@ public class GlobalOptions {
     /**Active skin used by the MapPanel*/
     private static Skin mSkin;
     /**DataHolder which holds and manages the WorldData*/
-    private static DataHolder mDataHolder;
+    private static DataHolder mDataHolder = null;
     private static WorldDataHolder mWorldData = null;
     private static Hashtable<String, Color> mMarkers = null;
     private static WorldDecorationHolder mDecorationHolder = null;
@@ -72,6 +72,7 @@ public class GlobalOptions {
     private static List<Attack> mAttacks = null;
     //flag which is set if the user is logged in with hin account name
     private static String loggedInAs = null;
+    private static boolean isOfflineMode = false;
 
     /**Init all managed objects
      * @param pDownloadData TRUE=download the WorldData from the tribes server
@@ -98,6 +99,14 @@ public class GlobalOptions {
             mDataHolder = new DataHolder();
         }
         mDataHolder.addListener(pListener);
+    }
+
+    public static boolean isOfflineMode() {
+        return isOfflineMode;
+    }
+
+    public static void setOfflineMode(boolean pValue) {
+        isOfflineMode = pValue;
     }
 
     public static String[] getAvailableSkins() {

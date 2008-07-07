@@ -74,6 +74,16 @@ public class DataHolder {
         mListeners.remove(pListener);
     }
 
+    public String[] getLocalServers(){
+        List<String> servers = new LinkedList<String>();
+        for(File serverDir : new File(getDataDirectory()).listFiles()){
+            if(serverDir.isDirectory()){
+                servers.add(serverDir.getName());
+            }
+        }
+        return servers.toArray(new String[]{});
+    }
+    
     public String getDataDirectory() {
         return sServerBaseDir + "/" + GlobalOptions.getSelectedServer();
     }

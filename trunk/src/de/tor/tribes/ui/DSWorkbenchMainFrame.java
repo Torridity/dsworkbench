@@ -65,7 +65,9 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame {
         /*  jMainControlPanel.setupPanel(this, true, true);
         jMainControlPanel.setTitle(getTitle());*/
         pack();
-
+        if (GlobalOptions.isOfflineMode()) {
+            setTitle(getTitle() + "(Offline)");
+        }
         jCurrentPlayer.setText(GlobalOptions.getProperty("player." + GlobalOptions.getSelectedServer()));
         jCurrentServer.setText(GlobalOptions.getSelectedServer());
         Tribe t = GlobalOptions.getDataHolder().getTribeByName(jCurrentPlayer.getText());
@@ -405,6 +407,9 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame {
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
         jMenuItem2 = new javax.swing.JMenuItem();
+        jMenu3 = new javax.swing.JMenu();
+        jSearchItem = new javax.swing.JMenuItem();
+        jClockItem = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
         jShowToolboxItem = new javax.swing.JCheckBoxMenuItem();
         jShowDynFrameItem = new javax.swing.JCheckBoxMenuItem();
@@ -1235,7 +1240,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame {
         jMenu1.setMnemonic('a');
         jMenu1.setText("Allgemein");
 
-        jMenuItem1.setMnemonic('e');
+        jMenuItem1.setMnemonic('t');
         jMenuItem1.setText("Einstellungen");
         jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1255,7 +1260,29 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame {
 
         jMenuBar1.add(jMenu1);
 
-        jMenu2.setMnemonic('s');
+        jMenu3.setMnemonic('e');
+        jMenu3.setText("Werkzeuge");
+
+        jSearchItem.setMnemonic('s');
+        jSearchItem.setText("Suche");
+        jSearchItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fireToolsActionEvent(evt);
+            }
+        });
+        jMenu3.add(jSearchItem);
+
+        jClockItem.setText("Uhr");
+        jClockItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fireToolsActionEvent(evt);
+            }
+        });
+        jMenu3.add(jClockItem);
+
+        jMenuBar1.add(jMenu3);
+
+        jMenu2.setMnemonic('n');
         jMenu2.setText("Ansicht");
 
         jShowToolboxItem.setMnemonic('w');
@@ -1267,7 +1294,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame {
         });
         jMenu2.add(jShowToolboxItem);
 
-        jShowDynFrameItem.setMnemonic('t');
+        jShowDynFrameItem.setMnemonic('o');
         jShowDynFrameItem.setText("Toolbox anzeigen");
         jShowDynFrameItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1294,7 +1321,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame {
                             .addComponent(jMinimapPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addComponent(jInfoPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 819, Short.MAX_VALUE))
+                    .addComponent(jInfoPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 823, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -1308,7 +1335,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame {
                         .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 592, Short.MAX_VALUE))
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 598, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jInfoPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -1541,7 +1568,7 @@ private void fireSendAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:eve
     }
     Village source = (Village) ((DefaultTableModel) jAttackTable.getModel()).getValueAt(selectedRow, 0);
     Village target = (Village) ((DefaultTableModel) jAttackTable.getModel()).getValueAt(selectedRow, 1);
-    BrowserCommandSender.sendAttack(source, target);
+    BrowserCommandSender.sendTroops(source, target);
 }//GEN-LAST:event_fireSendAttackEvent
 
 private void fireShowDynFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireShowDynFrameEvent
@@ -1559,16 +1586,21 @@ private void fireDynFrameClosingEvent(java.awt.event.WindowEvent evt) {//GEN-FIR
 private void fireCenterVillageIngameEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCenterVillageIngameEvent
     Village v = (Village) jCurrentPlayerVillages.getSelectedItem();
     if (v != null) {
-        BrowserCommandSender.centerVillageInGame(v);
+        BrowserCommandSender.centerVillage(v);
     }
 }//GEN-LAST:event_fireCenterVillageIngameEvent
 
 private void fireCenterCurrentPosInGameEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCenterCurrentPosInGameEvent
-    try {
-        BrowserCommandSender.centerPointInGame(Integer.parseInt(jCenterX.getText()), Integer.parseInt(jCenterY.getText()));
-    } catch (Exception e) {
-    }
+    BrowserCommandSender.centerCoordinate(Integer.parseInt(jCenterX.getText()), Integer.parseInt(jCenterY.getText()));
 }//GEN-LAST:event_fireCenterCurrentPosInGameEvent
+
+private void fireToolsActionEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireToolsActionEvent
+    if (evt.getSource() == jSearchItem) {
+        SearchFrame.getGlobalSearchFrame().setVisible(true);
+    } else if (evt.getSource() == jClockItem) {
+        ClockFrame.getGlobalClockFrame().setVisible(true);
+    }
+}//GEN-LAST:event_fireToolsActionEvent
 
     public void changeTool(int pTool) {
         switch (pTool) {
@@ -1576,7 +1608,6 @@ private void fireCenterCurrentPosInGameEvent(java.awt.event.MouseEvent evt) {//G
                 jTabbedPane1.setSelectedIndex(1);
                 jDynFrame.pack();
                 break;
-
             }
 
             case GlobalOptions.CURSOR_MEASURE: {
@@ -1870,16 +1901,18 @@ private void fireCenterCurrentPosInGameEvent(java.awt.event.MouseEvent evt) {//G
         updateAttacks();
     }
 
+    public Village getCurrentUserVillage() {
+        return (Village) jCurrentPlayerVillages.getSelectedItem();
+    }
+
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
 
-        java.awt.EventQueue.invokeLater(new  
+        java.awt.EventQueue.invokeLater(new Runnable() {
 
-              Runnable() {
-
-                 public void run() {
+            public void run() {
                 new DSWorkbenchMainFrame().setVisible(true);
             }
         });
@@ -1909,6 +1942,7 @@ private void fireCenterCurrentPosInGameEvent(java.awt.event.MouseEvent evt) {//G
     private javax.swing.JTextField jCataTime;
     private javax.swing.JTextField jCenterX;
     private javax.swing.JTextField jCenterY;
+    private javax.swing.JMenuItem jClockItem;
     private javax.swing.JLabel jCurrentPlayer;
     private javax.swing.JComboBox jCurrentPlayerVillages;
     private javax.swing.JLabel jCurrentServer;
@@ -1948,6 +1982,7 @@ private void fireCenterCurrentPosInGameEvent(java.awt.event.MouseEvent evt) {//G
     private javax.swing.JTable jMarkerTable;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
+    private javax.swing.JMenu jMenu3;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;
@@ -1971,6 +2006,7 @@ private void fireCenterCurrentPosInGameEvent(java.awt.event.MouseEvent evt) {//G
     private javax.swing.JButton jRefresh;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JMenuItem jSearchItem;
     private javax.swing.JComboBox jServerSelection;
     private javax.swing.JCheckBoxMenuItem jShowDynFrameItem;
     private javax.swing.JCheckBoxMenuItem jShowToolboxItem;

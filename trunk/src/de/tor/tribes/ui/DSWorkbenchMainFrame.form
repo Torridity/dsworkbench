@@ -889,12 +889,15 @@
           <SubComponents>
             <MenuItem class="javax.swing.JMenuItem" name="jMenuItem1">
               <Properties>
-                <Property name="mnemonic" type="int" value="101"/>
+                <Property name="mnemonic" type="int" value="116"/>
                 <Property name="text" type="java.lang.String" value="Einstellungen"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fireShowSettingsEvent"/>
               </Events>
+              <AuxValues>
+                <AuxValue name="generateMnemonicsCode" type="java.lang.Boolean" value="false"/>
+              </AuxValues>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="jMenuItem2">
               <Properties>
@@ -907,9 +910,34 @@
             </MenuItem>
           </SubComponents>
         </Menu>
+        <Menu class="javax.swing.JMenu" name="jMenu3">
+          <Properties>
+            <Property name="mnemonic" type="int" value="101"/>
+            <Property name="text" type="java.lang.String" value="Werkzeuge"/>
+          </Properties>
+          <SubComponents>
+            <MenuItem class="javax.swing.JMenuItem" name="jSearchItem">
+              <Properties>
+                <Property name="mnemonic" type="int" value="115"/>
+                <Property name="text" type="java.lang.String" value="Suche"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fireToolsActionEvent"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="jClockItem">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Uhr"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fireToolsActionEvent"/>
+              </Events>
+            </MenuItem>
+          </SubComponents>
+        </Menu>
         <Menu class="javax.swing.JMenu" name="jMenu2">
           <Properties>
-            <Property name="mnemonic" type="int" value="115"/>
+            <Property name="mnemonic" type="int" value="110"/>
             <Property name="text" type="java.lang.String" value="Ansicht"/>
           </Properties>
           <SubComponents>
@@ -924,7 +952,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="jShowDynFrameItem">
               <Properties>
-                <Property name="mnemonic" type="int" value="116"/>
+                <Property name="mnemonic" type="int" value="111"/>
                 <Property name="text" type="java.lang.String" value="Toolbox anzeigen"/>
               </Properties>
               <Events>
@@ -973,7 +1001,7 @@
                           <Component id="jPanel2" alignment="1" max="32767" attributes="1"/>
                       </Group>
                   </Group>
-                  <Component id="jInfoPanel" alignment="1" pref="819" max="32767" attributes="0"/>
+                  <Component id="jInfoPanel" alignment="1" pref="823" max="32767" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -991,7 +1019,7 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jPanel4" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <Component id="jPanel1" pref="592" max="32767" attributes="1"/>
+                  <Component id="jPanel1" pref="598" max="32767" attributes="1"/>
               </Group>
               <EmptySpace min="-2" max="-2" attributes="0"/>
               <Component id="jInfoPanel" min="-2" pref="102" max="-2" attributes="0"/>

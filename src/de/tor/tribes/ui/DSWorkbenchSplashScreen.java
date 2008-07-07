@@ -50,7 +50,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
 
         jStatusOutput.setFont(new java.awt.Font("Comic Sans MS", 0, 14));
         jStatusOutput.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jStatusOutput.setText("Starte...");
+        jStatusOutput.setText("Lade Einstellungen...");
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/splash.png"))); // NOI18N
 
@@ -88,8 +88,8 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
         if (!DSWorkbenchSettingsDialog.getGlobalSettingsFrame().checkSettings()) {
             JOptionPane.showMessageDialog(self, "Die Benutzereinstellungen konnten nicht erfolgreich geprüft werden.\nMöglicherweise wurde DS Workbench das erste Mal gestartet und muss daher konfiguriert werden.\nFalls dies nicht der Fall ist, prüfe bitte deine Account, Netzwerk und Servereinstellungen.", "Information", JOptionPane.INFORMATION_MESSAGE);
             DSWorkbenchSettingsDialog.getGlobalSettingsFrame().setVisible(true);
-        } 
-        
+        }
+
         try {
             GlobalOptions.loadData(false);
             GlobalOptions.loadUserData();
@@ -109,16 +109,17 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-          DOMConfigurator.configure("log4j.xml");
+        DOMConfigurator.configure("log4j.xml");
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
         }
 
-          
-        
+
+
         java.awt.EventQueue.invokeLater(new Runnable() {
-                public void run() {
+
+            public void run() {
                 DSWorkbenchSplashScreen splash = new DSWorkbenchSplashScreen();
                 splash.setLocationRelativeTo(null);
                 splash.setVisible(true);

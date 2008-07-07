@@ -372,7 +372,7 @@ public class MapPanel extends javax.swing.JPanel {
     protected void updateComplete(Village[][] pVillages, Image pBuffer) {
         mBuffer = pBuffer;
         mVisibleVillages = pVillages;
-        repaint();
+       
         updating = false;
     }
 
@@ -411,6 +411,7 @@ class RepaintThread extends Thread {
         while (true) {
             updateMap(iX, iY);
             mParent.updateComplete(mVisibleVillages, mBuffer.getScaledInstance(mParent.getWidth(), mParent.getHeight(), BufferedImage.SCALE_FAST));
+            mParent.repaint();
             try {
                 Thread.sleep(100);
             } catch (Exception e) {

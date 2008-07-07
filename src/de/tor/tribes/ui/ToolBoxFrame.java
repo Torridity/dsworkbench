@@ -52,7 +52,7 @@ public class ToolBoxFrame extends javax.swing.JFrame {
             jZoomButton.setIcon(new ImageIcon("./graphics/icons/zoom.png"));
             jSearchButton.setIcon(new ImageIcon("./graphics/icons/search.png"));
             jSettingsButton.setIcon(new ImageIcon("./graphics/icons/settings.png"));
-          //  jScreenshotButton.setIcon(new ImageIcon("./graphics/icons/camera.gif"));
+            jClockButton.setIcon(new ImageIcon("./graphics/icons/clock.png"));
         } catch (Exception e) {
         }
     }
@@ -128,6 +128,7 @@ public class ToolBoxFrame extends javax.swing.JFrame {
         jZoomButton = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
         jSearchButton = new javax.swing.JButton();
+        jClockButton = new javax.swing.JButton();
         jSettingsButton = new javax.swing.JButton();
         jDragLabel = new javax.swing.JLabel();
 
@@ -294,6 +295,17 @@ public class ToolBoxFrame extends javax.swing.JFrame {
         });
         jPanel1.add(jSearchButton);
 
+        jClockButton.setToolTipText("Uhr");
+        jClockButton.setMaximumSize(new java.awt.Dimension(30, 30));
+        jClockButton.setMinimumSize(new java.awt.Dimension(30, 30));
+        jClockButton.setPreferredSize(new java.awt.Dimension(30, 30));
+        jClockButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireToolClickedEvent(evt);
+            }
+        });
+        jPanel1.add(jClockButton);
+
         jSettingsButton.setToolTipText("Einstellungen");
         jSettingsButton.setMaximumSize(new java.awt.Dimension(30, 30));
         jSettingsButton.setMinimumSize(new java.awt.Dimension(30, 30));
@@ -322,8 +334,8 @@ public class ToolBoxFrame extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jDragLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 409, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 435, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         pack();
@@ -356,9 +368,9 @@ private void fireToolClickedEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
         SearchFrame.getGlobalSearchFrame().setVisible(true);
     }else if (evt.getSource() == jSettingsButton) {
         DSWorkbenchSettingsDialog.getGlobalSettingsFrame().setVisible(true);
-    }/*else if (evt.getSource() == jScreenshotButton) {
-        MinimapPanel.getGlobalMinimap().makeScreenshot();
-    }*/
+    }else if (evt.getSource() == jClockButton) {
+        ClockFrame.getGlobalClockFrame().setVisible(true);
+    }
     
 }//GEN-LAST:event_fireToolClickedEvent
 
@@ -382,6 +394,7 @@ private void fireToolClickedEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
     private javax.swing.JButton jAttackSnobButton;
     private javax.swing.JButton jAttackSpyButton;
     private javax.swing.JButton jAttackSwordButton;
+    private javax.swing.JButton jClockButton;
     private javax.swing.JLabel jDragLabel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -422,8 +435,8 @@ class HideThread extends Thread {
                     mParent.setSize(mParent.getWidth(), mParent.getHeight() - 10);
                 }
             } else {
-                if (mParent.getHeight() < 456) {
-                    if (mParent.getHeight() != 456) {
+                if (mParent.getHeight() < 482) {
+                    if (mParent.getHeight() != 482) {
                         mParent.setSize(mParent.getWidth(), mParent.getHeight() + 10);
                     }
                 }

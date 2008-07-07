@@ -33,6 +33,7 @@ public class FrameControlPanel extends javax.swing.JPanel {
     private transient final ImageIcon UNSTICKY_ICON = new javax.swing.ImageIcon(getClass().getResource("/res/ui/bullet_ball_grey.png"));
     private int dx = 0;
     private int dy = 0;
+    private boolean bAllowMaximize = false;
     private boolean titleSetOnNullParent = false;
     private boolean scaling = false;
     private int minWidth = 0;
@@ -58,6 +59,7 @@ public class FrameControlPanel extends javax.swing.JPanel {
 
     public void setupPanel(JFrame pParent, boolean pAllowSticky, boolean pAllowMaximize) {
         parent = pParent;
+        bAllowMaximize = pAllowMaximize;
         GraphicsEnvironment graphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment();
         parent.setMaximizedBounds(graphicsEnvironment.getMaximumWindowBounds());
         setupListeners();
@@ -280,11 +282,12 @@ public class FrameControlPanel extends javax.swing.JPanel {
             public void mouseClicked(MouseEvent e) {
                 if (e.getButton() == MouseEvent.BUTTON1) {
                     if (e.getClickCount() == 2) {
-
-                        if (parent.getExtendedState() == JFrame.MAXIMIZED_BOTH) {
-                            parent.setExtendedState(JFrame.NORMAL);
-                        } else {
-                            parent.setExtendedState(JFrame.MAXIMIZED_BOTH);
+                        if (bAllowMaximize) {
+                            if (parent.getExtendedState() == JFrame.MAXIMIZED_BOTH) {
+                                parent.setExtendedState(JFrame.NORMAL);
+                            } else {
+                                parent.setExtendedState(JFrame.MAXIMIZED_BOTH);
+                            }
                         }
                     }
                 }

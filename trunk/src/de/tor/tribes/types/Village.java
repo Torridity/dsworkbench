@@ -16,6 +16,7 @@ import java.io.Serializable;
  */
 public class Village implements Serializable {
 
+    private static final long serialVersionUID = 10L;
     private int id = 0;
     private String name = null;
     private int x = 0;
@@ -99,7 +100,7 @@ public class Village implements Serializable {
     }
 
     public String getHTMLInfo() {
-        String villageInfo = "<html><b>Dorf:</b> " + getName() + " (" + getX() + "|" + getY() + "), <b>Punkte:</b> " + getPoints() + ", <b>Bonus:</b> ";
+        String villageInfo = "<html><b>Name (X|Y):</b> " + getName() + " (" + getX() + "|" + getY() + "), <b>Punkte:</b> " + getPoints() + ", <b>Bonus:</b> ";
         switch (getType()) {
             case 1:
                 villageInfo += "+ 10% </html>";

@@ -12,8 +12,9 @@ import java.util.Date;
  *
  * @author Charon
  */
-public class Attack implements Serializable{
+public class Attack implements Serializable {
 
+    private static final long serialVersionUID = 10L;
     private Village source = null;
     private Village target = null;
     private UnitHolder unit = null;

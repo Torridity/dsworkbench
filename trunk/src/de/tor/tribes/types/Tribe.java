@@ -19,6 +19,7 @@ import java.util.List;
  */
 public class Tribe implements Serializable {
 
+    private static final long serialVersionUID = 10L;
     private int id = 0;
     private String name = null;
     private int allyID = 0;
@@ -27,6 +28,10 @@ public class Tribe implements Serializable {
     private int points = 0;
     private int rank = 0;
     private List<Village> villageList = null;
+    private int killsAtt = 0;
+    private int rankAtt = 0;
+    private int killsDef = 0;
+    private int rankDef = 0;
 
     public Tribe() {
         villageList = new LinkedList();
@@ -98,13 +103,48 @@ public class Tribe implements Serializable {
 
     public String getHTMLInfo() {
         NumberFormat nf = NumberFormat.getInstance();
-        String tribeInfo = "<html><b>Name:</b> " + getName();
+        String tribeInfo = "<html><b>Spieler:</b> " + getName();
         tribeInfo += " <b>Punkte (Rang):</b> " + nf.format(getPoints()) + " (" + nf.format(getRank()) + ")";
-        tribeInfo += " <b>Dörfer:</b> " + nf.format(getVillages()) + "</html>";
+        tribeInfo += " <b>Dörfer:</b> " + nf.format(getVillages());
+        tribeInfo += " <b>Kills Off (Rang):</b> " + nf.format(getKillsAtt()) + " (" + nf.format(getRankAtt()) + ") ";
+        tribeInfo += " <b>Kills Def (Rang):</b> " + nf.format(getKillsDef()) + " (" + nf.format(getRankDef()) + ") " + "</html>";
         return tribeInfo;
     }
 
+    @Override
     public String toString() {
         return getName();
+    }
+
+    public int getKillsAtt() {
+        return killsAtt;
+    }
+
+    public void setKillsAtt(int killsAtt) {
+        this.killsAtt = killsAtt;
+    }
+
+    public int getRankAtt() {
+        return rankAtt;
+    }
+
+    public void setRankAtt(int rankAtt) {
+        this.rankAtt = rankAtt;
+    }
+
+    public int getKillsDef() {
+        return killsDef;
+    }
+
+    public void setKillsDef(int killsDef) {
+        this.killsDef = killsDef;
+    }
+
+    public int getRankDef() {
+        return rankDef;
+    }
+
+    public void setRankDeff(int rankDef) {
+        this.rankDef = rankDef;
     }
 }

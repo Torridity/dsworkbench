@@ -10,8 +10,6 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
 
@@ -22,12 +20,13 @@ import org.apache.log4j.xml.DOMConfigurator;
 public class DatabaseAdapter {
 
     private static Logger logger = Logger.getLogger(DatabaseAdapter.class);
-    public static final int ID_UNKNOWN_ERROR = -666;
+    public static final int ID_UNKNOWN_ERROR = -4711;
     public static final int ID_SUCCESS = 0;
     public static final int ID_CONNECTION_FAILED = -1;
     public static final int ID_USER_ALREADY_EXIST = -2;
-    public static final int ID_USER_NOT_EXIST = -3;
-    public static final int ID_WRONG_PASSWORD = -4;
+    public static final int ID_DUAL_ACCOUNT = -3;
+    public static final int ID_USER_NOT_EXIST = -4;
+    public static final int ID_WRONG_PASSWORD = -5;
     public static final long ID_UPDATE_NEVER = -666;
     private static Connection DB_CONNECTION = null;
     private static boolean DRIVER_AVAILABLE = false;
@@ -113,6 +112,7 @@ public class DatabaseAdapter {
             logger.error("Failed to validate user", e);
             retVal = ID_UNKNOWN_ERROR;
         }
+
         closeConnection();
         return retVal;
     }
@@ -126,10 +126,11 @@ public class DatabaseAdapter {
         if (!openConnection()) {
             return ID_CONNECTION_FAILED;
         }
+
         int retVal = ID_SUCCESS;
         try {
             Statement s = DB_CONNECTION.createStatement();
-            String query = "SELECT COUNT(*) FROM users WHERE name='" + pUsername + "';";
+            String query = "SELECT COUNT(*) FROM registrants WHERE uniqueKey='" + SecurityAdapter.getUniqueID() + "';";
             ResultSet rs = s.executeQuery(query);
             int count = 0;
             while (rs.next()) {
@@ -137,17 +138,53 @@ public class DatabaseAdapter {
             }
 
             if (count != 0) {
-                retVal = ID_USER_ALREADY_EXIST;
-            } else {
-                String update = "INSERT INTO users(name, password) VALUES ('" + pUsername + "', '" + SecurityAdapter.hashStringMD5(pPassword) + "');";
-                if (s.executeUpdate(update) != 1) {
-                    throw new Exception("Unknown error while adding user to database");
+                logger.error("User obviously already created an account");
+                retVal = ID_DUAL_ACCOUNT;
+            }
+
+            if (retVal == ID_SUCCESS) {
+                s = DB_CONNECTION.createStatement();
+                query = "SELECT COUNT(*) FROM users WHERE name='" + pUsername + "';";
+                rs = s.executeQuery(query);
+                count = 0;
+                while (rs.next()) {
+                    count = rs.getInt(1);
+                }
+
+                if (count != 0) {
+                    retVal = ID_USER_ALREADY_EXIST;
+                } else {
+                    s = DB_CONNECTION.createStatement();
+                    String update = "INSERT INTO users(name, password) VALUES ('" + pUsername + "', '" + SecurityAdapter.hashStringMD5(pPassword) + "');";
+                    if (s.executeUpdate(update) != 1) {
+                        throw new Exception("Unknown error while adding user to database");
+                    }
+
+                    //get user id
+                    s = DB_CONNECTION.createStatement();
+                    query = "SELECT id FROM users WHERE name='" + pUsername + "';";
+                    rs = s.executeQuery(query);
+                    int id = -1;
+                    while (rs.next()) {
+                        id = rs.getInt(1);
+                    }
+                    if (id == -1) {
+                        logger.error("Failed to get user id");
+                    } else {
+                        s = DB_CONNECTION.createStatement();
+                        update = "INSERT INTO registrants(uniqueKey, userID) VALUES ('" + SecurityAdapter.getUniqueID() + "'," + id + ")";
+                        if (s.executeUpdate(update) != 1) {
+                            logger.error("Failed to store unique ID in database");
+                        }
+                    }
                 }
             }
         } catch (Exception e) {
             logger.error("Failed to add user", e);
+            e.printStackTrace();
             retVal = ID_UNKNOWN_ERROR;
         }
+
         closeConnection();
         return retVal;
     }
@@ -161,6 +198,7 @@ public class DatabaseAdapter {
         if (!openConnection()) {
             return false;
         }
+
         boolean retVal = false;
         long lastUpdate = ID_UPDATE_NEVER;
         try {
@@ -172,21 +210,26 @@ public class DatabaseAdapter {
             while (rs.next()) {
                 id = rs.getInt(1);
             }
+
             if (id == -1) {
                 throw new Exception("ID for user " + pUsername + " not found");
             }
-            //check last update
+//check last update
             s = DB_CONNECTION.createStatement();
 
-            query = "SELECT timestamp FROM updates WHERE UserID=" + id + " AND ServerID='" + pServer + "';";
-            rs = s.executeQuery(query);
+            query =
+                    "SELECT timestamp FROM updates WHERE UserID=" + id + " AND ServerID='" + pServer + "';";
+            rs =
+                    s.executeQuery(query);
 
             while (rs.next()) {
                 lastUpdate = rs.getTimestamp(1).getTime();
             }
+
             if (lastUpdate == ID_UPDATE_NEVER) {
                 logger.info("No update made yet.");
-                retVal = true;
+                retVal =
+                        true;
             } else {
                 long currentTime = getCurrentServerTime();
                 if ((currentTime < 0) || (lastUpdate < 0)) {
@@ -203,11 +246,14 @@ public class DatabaseAdapter {
                 } else {
                     retVal = true;
                 }
+
             }
         } catch (Exception e) {
             logger.error("Failed to check for last update", e);
-            retVal = false;
+            retVal =
+                    false;
         }
+
         closeConnection();
         return retVal;
     }
@@ -216,6 +262,7 @@ public class DatabaseAdapter {
         if (!openConnection()) {
             return ID_CONNECTION_FAILED;
         }
+
         long delta = 0;
         long lastUpdate = ID_UPDATE_NEVER;
         try {
@@ -227,6 +274,7 @@ public class DatabaseAdapter {
             while (rs.next()) {
                 id = rs.getInt(1);
             }
+
             if (id == -1) {
                 throw new Exception("ID for user " + pUsername + " not found");
             }
@@ -245,21 +293,26 @@ public class DatabaseAdapter {
             //last update is only set UPDATE_NEVER if no update was made yet
             if (lastUpdate == ID_UPDATE_NEVER) {
                 logger.info("No update made yet.");
-                delta = currentServerTime;
+                delta =
+                        currentServerTime;
             } else {
                 if (currentServerTime < 0) {
                     //failed to get last update or current time
                     logger.error("Failed to read server time");
-                    delta = 0;
+                    delta =
+                            0;
                 } else {
                     //get delta between now and the last update
                     delta = currentServerTime - lastUpdate;
                 }
+
             }
         } catch (Exception e) {
             logger.error("Failed to check for last update", e);
-            delta = 0;
+            delta =
+                    0;
         }
+
         closeConnection();
         return delta;
     }
@@ -273,6 +326,7 @@ public class DatabaseAdapter {
         if (!openConnection()) {
             return ID_CONNECTION_FAILED;
         }
+
         int retVal = ID_SUCCESS;
 
         try {
@@ -284,25 +338,33 @@ public class DatabaseAdapter {
             while (rs.next()) {
                 id = rs.getInt(1);
             }
+
             if (id == -1) {
                 throw new Exception("ID for user " + pUsername + " not found");
             }
-            //check last update
+//check last update
             s = DB_CONNECTION.createStatement();
-            query = "DELETE FROM updates WHERE UserID=" + id + " AND ServerID='" + pServer + "';";
+            query =
+                    "DELETE FROM updates WHERE UserID=" + id + " AND ServerID='" + pServer + "';";
             int changed = s.executeUpdate(query);
 
-            s = DB_CONNECTION.createStatement();
-            query = "INSERT INTO updates(UserID, ServerID, timestamp) VALUES(" + id + ",'" + pServer + "', CURRENT_TIMESTAMP);";
-            changed = s.executeUpdate(query);
+            s =
+                    DB_CONNECTION.createStatement();
+            query =
+                    "INSERT INTO updates(UserID, ServerID, timestamp) VALUES(" + id + ",'" + pServer + "', CURRENT_TIMESTAMP);";
+            changed =
+                    s.executeUpdate(query);
 
             if (changed != 1) {
                 throw new Exception("Failed to update timestamp");
             }
+
         } catch (Exception e) {
             logger.error("Failed to check for last update", e);
-            retVal = ID_UNKNOWN_ERROR;
+            retVal =
+                    ID_UNKNOWN_ERROR;
         }
+
         closeConnection();
         return retVal;
     }
@@ -323,9 +385,11 @@ public class DatabaseAdapter {
             while (rs.next()) {
                 t = rs.getTimestamp(1).getTime();
             }
+
         } catch (Exception e) {
             logger.error("Failed to obtain the current server time", e);
         }
+
         closeConnection();
         return t;
     }
@@ -342,5 +406,6 @@ public class DatabaseAdapter {
         System.out.println("Check: " + DatabaseAdapter.checkLastUpdate("Torridity", "de26"));*/
 
         // System.out.println("Du " + (System.currentTimeMillis() - s));
+
     }
 }

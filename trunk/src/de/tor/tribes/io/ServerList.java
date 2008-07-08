@@ -18,6 +18,7 @@ import java.util.StringTokenizer;
 public class ServerList {
 
     private static Hashtable<String, URL> SERVER_LIST = null;
+    
 
     static {
         SERVER_LIST = new Hashtable<String, URL>();

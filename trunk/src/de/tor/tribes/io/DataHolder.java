@@ -74,16 +74,17 @@ public class DataHolder {
         mListeners.remove(pListener);
     }
 
-    public String[] getLocalServers(){
+    public String[] getLocalServers() {
         List<String> servers = new LinkedList<String>();
-        for(File serverDir : new File(getDataDirectory()).listFiles()){
-            if(serverDir.isDirectory()){
+        for (File serverDir : new File(sServerBaseDir).listFiles()) {
+            if (serverDir.isDirectory()) {
+                System.out.println("Dir " + serverDir.getName());
                 servers.add(serverDir.getName());
             }
         }
-        return servers.toArray(new String[]{});
+        return servers.toArray(new String[0]);
     }
-    
+
     public String getDataDirectory() {
         return sServerBaseDir + "/" + GlobalOptions.getSelectedServer();
     }
@@ -96,27 +97,19 @@ public class DataHolder {
         bAborted = false;
         try {
             String serverDir = sServerBaseDir + "/" + GlobalOptions.getSelectedServer();
-            if (pReload || !isDataAvailable()) {
+            if (pReload) {
                 fireDataHolderEvents("Daten werden heruntergeladen...");
                 if (!downloadData()) {
-                    fireDataHolderEvents("Download fehlgeschlagen!");
+                    fireDataHolderEvents("Download abgebrochen/fehlgeschlagen!");
+                    return false;
+                }
+            } else {
+                if (!isDataAvailable()) {
+                    logger.error("Local data brocken but no reload requested");
                     return false;
                 }
             }
-            fireDataHolderEvents("Prüfe Server Einstellungen");
-            Document d = JaxenUtils.getDocument(new File(serverDir + "/settings.xml"));
-            try {
-                Integer mapType = Integer.parseInt(JaxenUtils.getNodeValue(d, "//coord/sector"));
-                if (mapType != 2) {
-                    fireDataHolderEvents("Der gewählte Sever wird leider (noch) nicht unterstützt");
-                    logger.error("Map type '" + mapType + "' is not supported yet");
-                    return false;
-                }
-            } catch (Exception e) {
-                logger.error("Failed to check server settings", e);
-                fireDataHolderEvents("Der gewählte Sever wird leider (noch) nicht unterstützt");
-                return false;
-            }
+
 
             String line = "";
             int bytes = 0;
@@ -132,9 +125,7 @@ public class DataHolder {
                         return false;
                     }
                 } catch (Exception e) {
-                    System.out.println("Error while reading village " + line);
-                    e.printStackTrace();
-                    fireDataHolderEvents("Fehler beim Lesen der Dörferliste!");
+                    //ignored (should only occur on single villages)
                 }
             }
 
@@ -150,9 +141,7 @@ public class DataHolder {
                         return false;
                     }
                 } catch (Exception e) {
-                    System.out.println("Error while reading ally " + line);
-                    fireDataHolderEvents("Fehler beim Lesen der Stämmeliste!");
-                    e.printStackTrace();
+                    //ignored (should only occur on single allies)
                 }
             }
 
@@ -168,9 +157,7 @@ public class DataHolder {
                         return false;
                     }
                 } catch (Exception e) {
-                    System.out.println("Error while reading tribe " + line);
-                    fireDataHolderEvents("Fehler beim Lesen der Spielerliste!");
-                    e.printStackTrace();
+                    //ignored (should only occur on single tribes)
                 }
             }
 
@@ -182,7 +169,7 @@ public class DataHolder {
             fireDataHolderEvents("Daten erfolgreich gelesen.");
         } catch (Exception e) {
             fireDataHolderEvents("Fehler beim Lesen der Daten.");
-            e.printStackTrace();
+            logger.error("Failed to read server data", e);
             if (bAborted) {
                 fireDataLoadedEvents();
                 return false;
@@ -228,16 +215,6 @@ public class DataHolder {
     }
 
     private boolean downloadData() {
-
-        /*************************
-         ***Check update information
-         *************************/
-        if (!DatabaseAdapter.isUpdatePossible(GlobalOptions.getProperty("account.name"), GlobalOptions.getSelectedServer())) {
-            logger.info("Update is not yet allowed/possible");
-            fireDataHolderEvents("Update ist momentan (noch) nicht möglich");
-            return false;
-        }
-
         URL file = null;
         String serverDir = sServerBaseDir + "/" + GlobalOptions.getSelectedServer();
         new File(serverDir).mkdirs();
@@ -251,6 +228,11 @@ public class DataHolder {
                 file = new URL(sURL.toString() + "/interface.php?func=get_config");
                 downloadDataFile(file, "settings_tmp.xml");
                 new File("settings_tmp.xml").renameTo(target);
+            }
+
+            if (!serverSupported()) {
+                fireDataHolderEvents("Der gewählte Sever wird leider (noch) nicht unterstützt");
+                return false;
             }
 
             fireDataHolderEvents("Lade village.txt");
@@ -305,6 +287,22 @@ public class DataHolder {
         } catch (Exception e) {
             fireDataHolderEvents("Download fehlgeschlagen.");
             logger.error("Failed to download data", e);
+            return false;
+        }
+        return true;
+    }
+
+    public boolean serverSupported() {
+        fireDataHolderEvents("Prüfe Server Einstellungen");
+        try {
+            Document d = JaxenUtils.getDocument(new File(getDataDirectory() + "/settings.xml"));
+            Integer mapType = Integer.parseInt(JaxenUtils.getNodeValue(d, "//coord/sector"));
+            if (mapType != 2) {
+                logger.error("Map type '" + mapType + "' is not supported yet");
+                return false;
+            }
+        } catch (Exception e) {
+            logger.error("Failed to check server settings", e);
             return false;
         }
         return true;

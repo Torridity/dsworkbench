@@ -187,23 +187,22 @@ public class GlobalOptions {
                 throw new Exception("Daten konnten nicht geladen werden");
             }
         } else {
-            if (pDownload) {
-                if (DatabaseAdapter.isUpdatePossible(getProperty("account.name"), getProperty("account.password"))) {
-                    mDataHolder.initialize();
-                    if (!mDataHolder.loadData(pDownload)) {
-                        logger.error("Failed to obtain data from server. Loading local backup");
-                        if (!mDataHolder.loadData(false)) {
-                            logger.error("Failed to load server date from local backup");
-                            throw new Exception("Daten konnten nicht geladen werden");
-                        }
-                    }
+            mDataHolder.initialize();
+            if (!mDataHolder.loadData(pDownload)) {
+                if (!mDataHolder.serverSupported()) {
+                    mDataHolder.fireDataHolderEvents("Der gewählte Sever wird leider (noch) nicht unterstützt");
+                    mDataHolder.fireDataLoadedEvents();
+                    throw new Exception("Server not supported yet");
                 } else {
-                    throw new Exception("Der Mindestabstand zwischen zwei Datenabgleichen beträgt eine Stunde.");
-                }
-            } else {
-                mDataHolder.initialize();
-                if (!mDataHolder.loadData(false)) {
-                    throw new Exception("Daten konnten nicht geladen werden");
+                    logger.error("Failed to obtain data from server. Loading local backup");
+                    mDataHolder.fireDataHolderEvents("Download fehlgeschlagen. Suche nach lokaler Kopie.");
+
+                    if (!mDataHolder.loadData(false)) {
+                        logger.error("Failed to load server data from local backup");
+                        mDataHolder.fireDataHolderEvents("Lokale Kopie fehlerhaft oder nicht vorhanden.");
+                        mDataHolder.fireDataLoadedEvents();
+                        throw new Exception("Daten konnten nicht geladen werden");
+                    }
                 }
             }
         }

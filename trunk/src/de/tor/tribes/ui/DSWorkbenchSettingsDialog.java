@@ -113,16 +113,16 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
         if (!updateServerList(false)) {
             //remote update failed and no local servers found
             String message = "Serverliste konnte nicht geladen werden.\n";
-            message = "Mögliche Ursachen sind fehlerhafte Netzwerkeinstellungen oder keine Verbindung zum Internet.\n";
-            message = "Da noch kein Datenabgleich mit dem Server stattgefunden hat, korrigier bitte deine Netzwerkeinstellungen um diesen einmalig durchzuführen.";
+            message += "Mögliche Ursachen sind fehlerhafte Netzwerkeinstellungen oder keine Verbindung zum Internet.\n";
+            message += "Da noch kein Datenabgleich mit dem Server stattgefunden hat, korrigier bitte deine Netzwerkeinstellungen um diesen einmalig durchzuführen.";
             JOptionPane.showMessageDialog(this, message, "Warnung", JOptionPane.WARNING_MESSAGE);
             return false;
         } else if (GlobalOptions.isOfflineMode()) {
             //remote update failed but local servers found
             String message = "Serverliste konnte nicht geladen werden.\n";
-            message = "Mögliche Ursachen sind fehlerhafte Netzwerkeinstellungen oder keine Verbindung zum Internet.\n";
-            message = "Da bereits Serverdaten auf deiner Festplatte existieren, wechselt DS Workbench in den Offline-Modus.\n";
-            message = "Um Online-Funktionen zu nutzen korrigieren bitte später deine Netzwerkeinstellungen oder verbinde dich mit dem Internet.";
+            message += "Mögliche Ursachen sind fehlerhafte Netzwerkeinstellungen oder keine Verbindung zum Internet.\n";
+            message += "Da bereits Serverdaten auf deiner Festplatte existieren, wechselt DS Workbench in den Offline-Modus.\n";
+            message += "Um Online-Funktionen zu nutzen korrigieren bitte später deine Netzwerkeinstellungen oder verbinde dich mit dem Internet.";
             JOptionPane.showMessageDialog(this, message, "Warnung", JOptionPane.WARNING_MESSAGE);
         }
 
@@ -137,10 +137,10 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
             UIManager.put("OptionPane.yesButtonText", "Einstellungen überprüfen");
             if ((result == DatabaseAdapter.ID_USER_NOT_EXIST) || (result == DatabaseAdapter.ID_WRONG_PASSWORD)) {
                 logger.info("Account check failed (account error)");
-                String message = "Die Accountüberprüfung ist fehlgeschlagen.\n";
+                String message = "Die Accountvalidierung ist fehlgeschlagen.\n";
                 message += "Wenn du noch nicht registriert bist tu dies bitte über den entsprechenden Button.\n";
                 message += "Falls du bereits registriert bist, überprüfe bitte deinen Benutzernamen und dein Passwort.\n";
-                message += "Solange die Accountüberprüfung nicht erfolgreich war wird es dir nicht möglich sein, Serverdaten zu aktualisieren.";
+                message += "Solange die Accountvalidierung nicht erfolgreich war wird es dir nicht möglich sein, Serverdaten zu aktualisieren.";
                 if (JOptionPane.showConfirmDialog(this, message, "Warnung", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.NO_OPTION) {
                     //NO_OPTION selected, so check settings again
                     UIManager.put("OptionPane.noButtonText", "No");
@@ -149,9 +149,9 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
                 }
             } else if (result == DatabaseAdapter.ID_CONNECTION_FAILED) {
                 logger.info("Account check failed (connection error)");
-                String message = "Die Accountüberprüfung ist fehlgeschlagen.\n";
+                String message = "Die Accountvalidierung ist fehlgeschlagen.\n";
                 message += "Bitte überprüfe deine Netzwerkeinstellungen und ob du mit dem Internet verbunden bist.\n";
-                message += "Solange die Accountüberprüfung nicht erfolgreich war wird es dir nicht möglich sein, Serverdaten zu aktualisieren.";
+                message += "Solange die Accountvalidierung nicht erfolgreich war wird es dir nicht möglich sein, Serverdaten zu aktualisieren.";
                 if (JOptionPane.showConfirmDialog(this, message, "Warnung", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.NO_OPTION) {
                     //NO_OPTION selected, so check settings again
                     UIManager.put("OptionPane.noButtonText", "No");
@@ -162,7 +162,6 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
             UIManager.put("OptionPane.noButtonText", "No");
             UIManager.put("OptionPane.yesButtonText", "Yes");
         }
-
 
         /*************************
          ***Check server and DS user
@@ -216,6 +215,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
         jSelectServerButton = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jStatusArea = new javax.swing.JTextArea();
+        jButton7 = new javax.swing.JButton();
         jGeneralSettings = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
         jGraphicPacks = new javax.swing.JComboBox();
@@ -342,10 +342,10 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
                     .addComponent(jLabel6))
                 .addGap(21, 21, 21)
                 .addGroup(jLoginPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jAccountName, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jAccountPassword, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jAccountName, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 203, Short.MAX_VALUE)
+                    .addComponent(jAccountPassword, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 203, Short.MAX_VALUE)
                     .addComponent(jButton5))
-                .addContainerGap(174, Short.MAX_VALUE))
+                .addContainerGap(177, Short.MAX_VALUE))
         );
         jLoginPanelLayout.setVerticalGroup(
             jLoginPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -360,7 +360,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
                     .addComponent(jLabel7))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton5)
-                .addContainerGap(163, Short.MAX_VALUE))
+                .addContainerGap(166, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Login", new javax.swing.ImageIcon(getClass().getResource("/res/login.png")), jLoginPanel); // NOI18N
@@ -369,7 +369,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
 
         jLabel2.setText("Spieler");
 
-        jSelectServerButton.setText("Daten abgleichen");
+        jSelectServerButton.setText("Server auswählen");
         jSelectServerButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireUpdateDataEvent(evt);
@@ -380,6 +380,13 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
         jStatusArea.setRows(5);
         jScrollPane1.setViewportView(jStatusArea);
 
+        jButton7.setText("Daten downloaden");
+        jButton7.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireDownloadDataEvent(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPlayerServerSettingsLayout = new javax.swing.GroupLayout(jPlayerServerSettings);
         jPlayerServerSettings.setLayout(jPlayerServerSettingsLayout);
         jPlayerServerSettingsLayout.setHorizontalGroup(
@@ -387,7 +394,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPlayerServerSettingsLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPlayerServerSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 429, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 435, Short.MAX_VALUE)
                     .addGroup(jPlayerServerSettingsLayout.createSequentialGroup()
                         .addGroup(jPlayerServerSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1)
@@ -397,7 +404,9 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
                             .addComponent(jTribeNames, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jServerList, 0, 262, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jSelectServerButton, javax.swing.GroupLayout.DEFAULT_SIZE, 121, Short.MAX_VALUE)))
+                        .addGroup(jPlayerServerSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jButton7, javax.swing.GroupLayout.DEFAULT_SIZE, 127, Short.MAX_VALUE)
+                            .addComponent(jSelectServerButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 127, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         jPlayerServerSettingsLayout.setVerticalGroup(
@@ -411,7 +420,8 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPlayerServerSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(jTribeNames, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jTribeNames, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton7))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 167, Short.MAX_VALUE)
                 .addContainerGap())
@@ -458,8 +468,8 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
                 .addGroup(jGeneralSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jGeneralSettingsLayout.createSequentialGroup()
                         .addGroup(jGeneralSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jComboBox1, 0, 194, Short.MAX_VALUE)
-                            .addComponent(jGraphicPacks, 0, 194, Short.MAX_VALUE))
+                            .addComponent(jComboBox1, 0, 198, Short.MAX_VALUE)
+                            .addComponent(jGraphicPacks, 0, 198, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton4))
                     .addComponent(jContinentsOnMinimap))
@@ -481,7 +491,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
                 .addGroup(jGeneralSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jContinentsOnMinimap, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(162, Short.MAX_VALUE))
+                .addContainerGap(163, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Allgemein", new javax.swing.ImageIcon(getClass().getResource("/res/settings.png")), jGeneralSettings); // NOI18N
@@ -534,7 +544,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
                             .addComponent(jLabel4))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jNetworkSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jProxyHost, javax.swing.GroupLayout.DEFAULT_SIZE, 355, Short.MAX_VALUE)
+                            .addComponent(jProxyHost, javax.swing.GroupLayout.DEFAULT_SIZE, 361, Short.MAX_VALUE)
                             .addComponent(jProxyPort, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addComponent(jButton2, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jDirectConnectOption)
@@ -558,7 +568,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
                     .addComponent(jProxyPort, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton2)
-                .addContainerGap(107, Short.MAX_VALUE))
+                .addContainerGap(110, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Netzwerk", new javax.swing.ImageIcon(getClass().getResource("/res/proxy.png")), jNetworkSettings); // NOI18N
@@ -597,7 +607,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
                         .addComponent(jCancelButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jOKButton))
-                    .addComponent(jTabbedPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 454, Short.MAX_VALUE))
+                    .addComponent(jTabbedPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 460, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -620,15 +630,18 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
             System.getProperties().put("proxySet", "false");
             System.getProperties().put("proxyHost", "");
             System.getProperties().put("proxyPort", "");
+            GlobalOptions.addProperty("proxySet", Boolean.toString(false));
+            GlobalOptions.addProperty("proxyHost", "");
+            GlobalOptions.addProperty("proxyPort", "");
         } else {
             System.getProperties().put("proxySet", "true");
             System.getProperties().put("proxyHost", jProxyHost.getText());
             System.getProperties().put("proxyPort", jProxyPort.getText());
+            GlobalOptions.addProperty("proxySet", Boolean.toString(true));
+            GlobalOptions.addProperty("proxyHost", jProxyHost.getText());
+            GlobalOptions.addProperty("proxyPort", jProxyPort.getText());
         }
 
-        GlobalOptions.addProperty("proxySet", Boolean.toString(jDirectConnectOption.isSelected()));
-        GlobalOptions.addProperty("proxyHost", jProxyHost.getText());
-        GlobalOptions.addProperty("proxyPort", jProxyPort.getText());
         GlobalOptions.saveProperties();
         if (!updateServerList(false)) {
             //remote update failed and no local servers found
@@ -664,18 +677,14 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
         GlobalOptions.saveProperties();
         GlobalOptions.setSelectedServer((String) jServerList.getSelectedItem());
         jSelectServerButton.setEnabled(false);
-        updating =
-                true;
+        updating = true;
         jStatusArea.setText("");
         jOKButton.setEnabled(false);
         jCancelButton.setEnabled(false);
         jTribeNames.setModel(new DefaultComboBoxModel());
-        new Thread(new  
+        new Thread(new Runnable() {
 
-              Runnable() {
-
-                 
-                    @Override
+            @Override
             public void run() {
                 try {
                     GlobalOptions.loadData(false);
@@ -692,12 +701,6 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
             return;
         }
 
-        if (!checkSettings()) {
-            if (JOptionPane.showConfirmDialog(this, "Die Einstellungen sind fehlerhaft.\nDS Workbench wirklich beenden?", "Fehler", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION) {
-                System.exit(0);
-            }
-
-        }
         setVisible(false);
     }//GEN-LAST:event_fireCloseEvent
 
@@ -775,7 +778,6 @@ private void fireRegisterEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
 
     }
 
-
     int ret = DatabaseAdapter.addUser(jRegistrationAccountName.getText(), new String(jRegistrationPassword.getPassword()));
     switch (ret) {
         case DatabaseAdapter.ID_CONNECTION_FAILED: {
@@ -783,29 +785,22 @@ private void fireRegisterEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
             break;
 
         }
-
-
         case DatabaseAdapter.ID_USER_ALREADY_EXIST: {
             JOptionPane.showMessageDialog(jCreateAccountDialog, "Es existiert bereits ein Benutzer mit dem angegebenen Namen.\nBitte wähle einen anderen Namen.", "Fehler", JOptionPane.ERROR);
             break;
 
         }
-
-
         case DatabaseAdapter.ID_UNKNOWN_ERROR: {
             JOptionPane.showMessageDialog(jCreateAccountDialog, "Ein unbekannter Fehler ist aufgetreten.\nBitte wende dich an den Entwickler.", "Fehler", JOptionPane.ERROR);
             break;
 
         }
-
-
         default: {
             JOptionPane.showMessageDialog(jCreateAccountDialog, "Dein Account wurde erfolgreich angelegt.\nDu kannst nun DS-Serverdaten herunterladen.", "Account angelegt", JOptionPane.INFORMATION_MESSAGE);
             jAccountName.setText(jRegistrationAccountName.getText());
             jAccountPassword.setText(new String(jRegistrationPassword.getPassword()));
             jCreateAccountDialog.setVisible(false);
         }
-
     }
 }//GEN-LAST:event_fireRegisterEvent
 
@@ -819,6 +814,57 @@ private void fireChangeContinentsOnMinimapEvent(javax.swing.event.ChangeEvent ev
     MinimapPanel.getGlobalMinimap().resetBuffer();
     MinimapPanel.getGlobalMinimap().redraw();
 }//GEN-LAST:event_fireChangeContinentsOnMinimapEvent
+
+private void fireDownloadDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireDownloadDataEvent
+    if (!jSelectServerButton.isEnabled()) {
+        return;
+    }
+
+    if (jServerList.getSelectedItem() == null) {
+        return;
+    }
+
+    if (GlobalOptions.isOfflineMode()) {
+        JOptionPane.showMessageDialog(this, "Du befindest dich im Offline-Modus.\nBitte korrigiere deine Netzwerkeinstellungen um den Download durchzuführen.", "Warnung", JOptionPane.WARNING_MESSAGE);
+        return;
+    }
+    final String selectedServer = (String) jServerList.getSelectedItem();
+    final String name = GlobalOptions.getProperty("account.name");
+    String password = GlobalOptions.getProperty("account.password");
+    if (DatabaseAdapter.checkUser(name, password) != DatabaseAdapter.ID_SUCCESS) {
+        JOptionPane.showMessageDialog(this, "Die Accountvalidierung ist fehlgeschlagen.\nBitte überprüfe deine Account- und Netzwerkeinstellungen und versuches es erneut.", "Fehler", JOptionPane.ERROR_MESSAGE);
+        return;
+    } else {
+        if (!DatabaseAdapter.isUpdatePossible(name, selectedServer)) {
+            JOptionPane.showMessageDialog(this, "Ein Datenabgleich ist maximal einmal in der Stunde möglich.\nBitte versuch es später noch einmal.", "Fehler", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+    }
+
+    GlobalOptions.addProperty("default.server", selectedServer);
+    GlobalOptions.saveProperties();
+    GlobalOptions.setSelectedServer((String) jServerList.getSelectedItem());
+    jSelectServerButton.setEnabled(false);
+    updating = true;
+    jStatusArea.setText("");
+    jOKButton.setEnabled(false);
+    jCancelButton.setEnabled(false);
+    jTribeNames.setModel(new DefaultComboBoxModel());
+
+    new Thread(new Runnable() {
+
+        @Override
+        public void run() {
+            try {
+                GlobalOptions.loadData(true);
+                DatabaseAdapter.storeLastUpdate(name, selectedServer);
+            } catch (Exception e) {
+                logger.error("Failed to update data", e);
+            }
+
+        }
+    }).start();
+}//GEN-LAST:event_fireDownloadDataEvent
 
     private boolean updateServerList(boolean pLocal) {
         String[] servers = null;
@@ -839,9 +885,10 @@ private void fireChangeContinentsOnMinimapEvent(javax.swing.event.ChangeEvent ev
 
         if (servers.length < 1) {
             logger.error("No locally stored server found");
+            jServerList.setModel(new DefaultComboBoxModel());
+            jTribeNames.setModel(new DefaultComboBoxModel());
             return false;
         }
-
 
         Arrays.sort(servers, null);
         DefaultComboBoxModel model = new DefaultComboBoxModel();
@@ -879,11 +926,9 @@ private void fireChangeContinentsOnMinimapEvent(javax.swing.event.ChangeEvent ev
     public static void main(String args[]) {
         DOMConfigurator.configure("log4j.xml");
 
-        java.awt.EventQueue.invokeLater(new  
+        java.awt.EventQueue.invokeLater(new Runnable() {
 
-              Runnable() {
-
-                 public void run() {
+            public void run() {
                 new DSWorkbenchSettingsDialog().setVisible(true);
 
             }
@@ -899,6 +944,7 @@ private void fireChangeContinentsOnMinimapEvent(javax.swing.event.ChangeEvent ev
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
+    private javax.swing.JButton jButton7;
     private javax.swing.JButton jCancelButton;
     private javax.swing.JComboBox jComboBox1;
     private javax.swing.JCheckBox jContinentsOnMinimap;
@@ -933,7 +979,6 @@ private void fireChangeContinentsOnMinimapEvent(javax.swing.event.ChangeEvent ev
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JComboBox jTribeNames;
     // End of variables declaration//GEN-END:variables
-
     @Override
     public void fireDataHolderEvent(String pMessage) {
         jStatusArea.insert(pMessage + "\n", jStatusArea.getText().length());

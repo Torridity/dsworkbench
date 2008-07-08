@@ -5,6 +5,10 @@
 package de.tor.tribes.sec;
 
 import java.math.BigInteger;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import org.apache.commons.ssl.OpenSSL;
@@ -49,5 +53,31 @@ public class SecurityAdapter {
             logger.warn("Unknown error while hashing string (ignored)", nsae);
         }
         return hashed;
+    }
+
+    public static String getUniqueID() {
+        String result = "";
+        try {
+            InetAddress address = InetAddress.getLocalHost();
+
+            /*
+             * Get NetworkInterface for the current host and then read the 
+             * hardware address.
+             */
+            NetworkInterface ni = NetworkInterface.getByInetAddress(address);
+            byte[] mac = ni.getHardwareAddress();
+
+            /*
+             * Extract each array of mac address and convert it to hexa with the 
+             * following format 08-00-27-DC-4A-9E.
+             */
+            for (int i = 0; i < mac.length; i++) {
+                result += String.format("%02X", mac[i]);
+            }
+        } catch (Exception e) {
+            logger.error("Failed to get unique ID", e);
+            result = null;
+        }
+        return result;
     }
 }

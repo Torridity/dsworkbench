@@ -19,6 +19,7 @@ import java.util.List;
  */
 public class Ally implements Serializable {
 
+    private static final long serialVersionUID = 10L;
     private int id = 0;
     private String name = null;
     private String tag = null;
@@ -107,7 +108,7 @@ public class Ally implements Serializable {
 
     public String getHTMLInfo() {
         NumberFormat nf = NumberFormat.getInstance();
-        String allyInfo = "<html><b>Name (Tag):</b> " + getName() + " (" + getTag() + ")";
+        String allyInfo = "<html><b>Stamm (Tag):</b> " + getName() + " (" + getTag() + ")";
         allyInfo += " <b>Punkte (Rang):</b> " + nf.format(getPoints()) + " (" + nf.format(getRank()) + ")";
         allyInfo += " <b>Member (Dörfer):</b> " + nf.format(getMembers()) + " (" + nf.format(getVillages()) + ")</html>";
         return allyInfo;

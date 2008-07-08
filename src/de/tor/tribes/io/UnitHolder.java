@@ -13,6 +13,7 @@ import org.jdom.Element;
  */
 public class UnitHolder implements Serializable{
 
+    private static final long serialVersionUID = 10L;
     private String name = null;
     private int wood = 0;
     private int stone = 0;

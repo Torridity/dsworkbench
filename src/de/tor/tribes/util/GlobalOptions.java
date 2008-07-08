@@ -8,7 +8,6 @@
  */
 package de.tor.tribes.util;
 
-import de.tor.tribes.db.DatabaseAdapter;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.DataHolderListener;
 import de.tor.tribes.io.WorldDataHolder;
@@ -197,9 +196,9 @@ public class GlobalOptions {
                     throw new Exception("Failed to validate server settings");
                 } else {
                     logger.error("Failed to obtain data from server. Loading local backup");
-                    if(pDownload){
-                    mDataHolder.fireDataHolderEvents("Download fehlgeschlagen. Suche nach lokaler Kopie.");
-                    }else{
+                    if (pDownload) {
+                        mDataHolder.fireDataHolderEvents("Download fehlgeschlagen. Suche nach lokaler Kopie.");
+                    } else {
                         mDataHolder.fireDataHolderEvents("Lokale Daten unvollständig. Starte Korrekturversuch.");
                     }
                     if (!mDataHolder.loadData(false)) {

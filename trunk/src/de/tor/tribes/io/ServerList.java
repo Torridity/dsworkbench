@@ -7,7 +7,6 @@ package de.tor.tribes.io;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
 
@@ -19,7 +18,6 @@ public class ServerList {
 
     private static Hashtable<String, URL> SERVER_LIST = null;
     
-
     static {
         SERVER_LIST = new Hashtable<String, URL>();
     }

@@ -113,7 +113,8 @@ public class Ally implements Serializable {
         return allyInfo;
     }
 
+    @Override
     public String toString() {
-        return getName();
+        return getName() + " (" + getTag() + ")";
     }
 }

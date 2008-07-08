@@ -9,9 +9,12 @@ import de.tor.tribes.db.DatabaseAdapter;
 import de.tor.tribes.io.DataHolderListener;
 import de.tor.tribes.io.ServerList;
 import de.tor.tribes.util.GlobalOptions;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Enumeration;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import org.apache.log4j.Logger;
@@ -27,6 +30,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
     private static DSWorkbenchSettingsDialog SETTINGS_DIALOG = null;
     boolean updating = false;
     boolean gotServerList = false;
+    private DSWorkbenchMainFrame mMainFrame = null;
 
     public static DSWorkbenchSettingsDialog getGlobalSettingsFrame() {
         if (SETTINGS_DIALOG != null) {
@@ -41,6 +45,20 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
         initComponents();
         setAlwaysOnTop(true);
         // jControlPanel.setupPanel(this, true, false);
+
+        String interval = GlobalOptions.getProperty("auto.update.interval");
+        if (interval != null) {
+            try {
+                jUpdateIntervalBox.setSelectedIndex(Integer.parseInt(interval));
+            } catch (Exception e) {
+                jUpdateIntervalBox.setSelectedIndex(0);
+                GlobalOptions.addProperty("auto.update.interval", "0");
+            }
+        } else {
+            jUpdateIntervalBox.setSelectedIndex(0);
+            GlobalOptions.addProperty("auto.update.interval", "0");
+        }
+
 
         // <editor-fold defaultstate="collapsed" desc="Skin Setup">
         DefaultComboBoxModel model = new DefaultComboBoxModel(GlobalOptions.getAvailableSkins());
@@ -104,6 +122,10 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
         }
     }
 
+    public void setMainFrame(DSWorkbenchMainFrame pMainFrame) {
+        mMainFrame = pMainFrame;
+    }
+
     protected boolean checkSettings() {
         logger.debug("Checking settings");
 
@@ -123,13 +145,13 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
             message += "Mögliche Ursachen sind fehlerhafte Netzwerkeinstellungen oder keine Verbindung zum Internet.\n";
             message += "Da bereits Serverdaten auf deiner Festplatte existieren, wechselt DS Workbench in den Offline-Modus.\n";
             message += "Um Online-Funktionen zu nutzen korrigieren bitte später deine Netzwerkeinstellungen oder verbinde dich mit dem Internet.";
-            JOptionPane.showMessageDialog(this, message, "Warnung", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, message, "Information", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            GlobalOptions.setOfflineMode(false);
         }
 
+        // <editor-fold defaultstate="collapsed" desc="Check Account (only if online-mode)">
         if (!GlobalOptions.isOfflineMode()) {
-            /*************************
-             ***Check Account
-             *************************/
             String name = GlobalOptions.getProperty("account.name");
             String password = GlobalOptions.getProperty("account.password");
             int result = DatabaseAdapter.checkUser(name, password);
@@ -140,7 +162,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
                 String message = "Die Accountvalidierung ist fehlgeschlagen.\n";
                 message += "Wenn du noch nicht registriert bist tu dies bitte über den entsprechenden Button.\n";
                 message += "Falls du bereits registriert bist, überprüfe bitte deinen Benutzernamen und dein Passwort.\n";
-                message += "Solange die Accountvalidierung nicht erfolgreich war wird es dir nicht möglich sein, Serverdaten zu aktualisieren.";
+                message += "Solange die Accountvalidierung nicht durchgeführt wurde, ist es dir nicht möglich sein, Serverdaten zu aktualisieren.";
                 if (JOptionPane.showConfirmDialog(this, message, "Warnung", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.NO_OPTION) {
                     //NO_OPTION selected, so check settings again
                     UIManager.put("OptionPane.noButtonText", "No");
@@ -162,7 +184,29 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
             UIManager.put("OptionPane.noButtonText", "No");
             UIManager.put("OptionPane.yesButtonText", "Yes");
         }
+        //</editor-fold>
 
+        // <editor-fold defaultstate="collapsed" desc="Check Server/Player settings">
+        if (!checkPlayerSettings()) {
+            String message = "Bitte überprüfe die Spieler-/Servereinstellungen und schließe die Einstellungen mit OK.\n";
+            message += "Möglicherweise wurde noch kein Server oder kein Spieler ausgewählt.\n";
+            message += "Diese Einstellungen sind für einen korrekten Ablauf zwingend notwendig.";
+            UIManager.put("OptionPane.noButtonText", "Beenden");
+            UIManager.put("OptionPane.yesButtonText", "Korrigieren");
+            if (JOptionPane.showConfirmDialog(this, message, "Warnung", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.NO_OPTION) {
+                logger.error("Player/Server settings incorrect. User requested application to terminate");
+                System.exit(1);
+            }
+            UIManager.put("OptionPane.noButtonText", "No");
+            UIManager.put("OptionPane.yesButtonText", "Yes");
+            return false;
+        } else {
+            return true;
+        }
+    //</editor-fold>
+    }
+
+    private boolean checkPlayerSettings() {
         /*************************
          ***Check server and DS user
          *************************/
@@ -171,15 +215,23 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
 
         if (defaultServer == null) {
             logger.warn("Default server is not set");
-            String message = "Es wurde kein Server ausgewählt.";
-            JOptionPane.showMessageDialog(this, message, "Warnung", JOptionPane.WARNING_MESSAGE);
-            return false;
+            String selection = (String) jServerList.getSelectedItem();
+            if ((selection != null) && (selection.length() > 1)) {
+                GlobalOptions.setSelectedServer(selection);
+                GlobalOptions.addProperty("default.server", (String) selection);
+            } else {
+                return false;
+            }
         }
         if (serverUser == null) {
             logger.warn("Default user is not set");
-            String message = "Es wurde kein Spieler für den aktuellen Server ausgewählt.";
-            JOptionPane.showMessageDialog(this, message, "Warnung", JOptionPane.WARNING_MESSAGE);
-            return false;
+            String selection = (String) jTribeNames.getSelectedItem();
+
+            if ((selection != null) && (!selection.equals("Bitte auswählen")) && (selection.length() > 1)) {
+                GlobalOptions.getProperty("player." + defaultServer);
+            } else {
+                return false;
+            }
         }
         return true;
     }
@@ -221,7 +273,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
         jGraphicPacks = new javax.swing.JComboBox();
         jButton4 = new javax.swing.JButton();
         jLabel8 = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox();
+        jUpdateIntervalBox = new javax.swing.JComboBox();
         jLabel11 = new javax.swing.JLabel();
         jContinentsOnMinimap = new javax.swing.JCheckBox();
         jNetworkSettings = new javax.swing.JPanel();
@@ -360,7 +412,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
                     .addComponent(jLabel7))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton5)
-                .addContainerGap(166, Short.MAX_VALUE))
+                .addContainerGap(163, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Login", new javax.swing.ImageIcon(getClass().getResource("/res/login.png")), jLoginPanel); // NOI18N
@@ -423,7 +475,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
                     .addComponent(jTribeNames, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton7))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 167, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 164, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -444,7 +496,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
 
         jLabel8.setText("Automatischer Datenabgleich");
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Nie", "Bei Programmstart", "Stündlich", "Alle 2 Stunden", "Alle 4 Stunden", "Alle 12 Stunden", "Täglich" }));
+        jUpdateIntervalBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Nie", "Bei Programmstart", "Stündlich", "Alle 2 Stunden", "Alle 4 Stunden", "Alle 12 Stunden", "Täglich" }));
 
         jLabel11.setText("Kontinente auf Minimap");
 
@@ -468,8 +520,8 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
                 .addGroup(jGeneralSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jGeneralSettingsLayout.createSequentialGroup()
                         .addGroup(jGeneralSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jComboBox1, 0, 198, Short.MAX_VALUE)
-                            .addComponent(jGraphicPacks, 0, 198, Short.MAX_VALUE))
+                            .addComponent(jUpdateIntervalBox, 0, 200, Short.MAX_VALUE)
+                            .addComponent(jGraphicPacks, 0, 200, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton4))
                     .addComponent(jContinentsOnMinimap))
@@ -486,12 +538,12 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jGeneralSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel8)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jUpdateIntervalBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jGeneralSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jContinentsOnMinimap, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(163, Short.MAX_VALUE))
+                .addContainerGap(162, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Allgemein", new javax.swing.ImageIcon(getClass().getResource("/res/settings.png")), jGeneralSettings); // NOI18N
@@ -568,7 +620,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
                     .addComponent(jProxyPort, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton2)
-                .addContainerGap(110, Short.MAX_VALUE))
+                .addContainerGap(107, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Netzwerk", new javax.swing.ImageIcon(getClass().getResource("/res/proxy.png")), jNetworkSettings); // NOI18N
@@ -603,7 +655,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(jButton6)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 167, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 173, Short.MAX_VALUE)
                         .addComponent(jCancelButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jOKButton))
@@ -673,6 +725,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
             return;
         }
 
+        GlobalOptions.setSelectedServer((String) jServerList.getSelectedItem());
         GlobalOptions.addProperty("default.server", (String) jServerList.getSelectedItem());
         GlobalOptions.saveProperties();
         GlobalOptions.setSelectedServer((String) jServerList.getSelectedItem());
@@ -682,6 +735,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
         jOKButton.setEnabled(false);
         jCancelButton.setEnabled(false);
         jTribeNames.setModel(new DefaultComboBoxModel());
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         new Thread(new Runnable() {
 
             @Override
@@ -700,7 +754,24 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
         if (!jCancelButton.isEnabled()) {
             return;
         }
-
+        if (!checkPlayerSettings()) {
+            String message = "Bitte überprüfe die Spieler-/Servereinstellungen und schließe die Einstellungen mit OK.\n";
+            message += "Möglicherweise wurde noch kein Server oder kein Spieler ausgewählt.\n";
+            message += "Diese Einstellungen sind für einen korrekten Ablauf zwingend notwendig.";
+            UIManager.put("OptionPane.noButtonText", "Beenden");
+            UIManager.put("OptionPane.yesButtonText", "Korrigieren");
+            if (JOptionPane.showConfirmDialog(this, message, "Warnung", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.NO_OPTION) {
+                logger.error("Player/Server settings incorrect. User requested application to terminate");
+                System.exit(1);
+            } else {
+                UIManager.put("OptionPane.noButtonText", "No");
+                UIManager.put("OptionPane.yesButtonText", "Yes");
+                return;
+            }
+        }
+        if (mMainFrame != null) {
+            mMainFrame.serverSettingsChangedEvent();
+        }
         setVisible(false);
     }//GEN-LAST:event_fireCloseEvent
 
@@ -709,18 +780,21 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
             return;
         }
 
-        if (!checkSettings()) {
-            return;
-        }
+        GlobalOptions.addProperty("auto.update.interval", Integer.toString(jUpdateIntervalBox.getSelectedIndex()));
         String selection = (String) jTribeNames.getSelectedItem();
         if ((selection != null) && (!selection.equals("Bitte auswählen"))) {
             logger.debug("Setting default player for server '" + GlobalOptions.getSelectedServer() + "' to " + jTribeNames.getSelectedItem());
             GlobalOptions.addProperty("player." + GlobalOptions.getSelectedServer(), (String) jTribeNames.getSelectedItem());
-            GlobalOptions.saveProperties();
         }
+        GlobalOptions.saveProperties();
 
+        if (!checkSettings()) {
+            return;
+        }
+        if (mMainFrame != null) {
+            mMainFrame.serverSettingsChangedEvent();
+        }
         setVisible(false);
-    // runMainApplication();
     }//GEN-LAST:event_fireOkEvent
 
     private void fireSelectGraphicPackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSelectGraphicPackEvent
@@ -775,7 +849,6 @@ private void fireRegisterEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
     if ((jRegistrationAccountName.getText().length() < 3) || (new String(jRegistrationPassword.getPassword()).length() < 3)) {
         JOptionPane.showMessageDialog(jCreateAccountDialog, "Accountname und Passwort müssen mindestens 3 Zeichen lang sein.", "Fehler", JOptionPane.INFORMATION_MESSAGE);
         return;
-
     }
 
     int ret = DatabaseAdapter.addUser(jRegistrationAccountName.getText(), new String(jRegistrationPassword.getPassword()));
@@ -828,15 +901,22 @@ private void fireDownloadDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
         JOptionPane.showMessageDialog(this, "Du befindest dich im Offline-Modus.\nBitte korrigiere deine Netzwerkeinstellungen um den Download durchzuführen.", "Warnung", JOptionPane.WARNING_MESSAGE);
         return;
     }
-    final String selectedServer = (String) jServerList.getSelectedItem();
-    final String name = GlobalOptions.getProperty("account.name");
+    String selectedServer = (String) jServerList.getSelectedItem();
+    String name = GlobalOptions.getProperty("account.name");
     String password = GlobalOptions.getProperty("account.password");
     if (DatabaseAdapter.checkUser(name, password) != DatabaseAdapter.ID_SUCCESS) {
         JOptionPane.showMessageDialog(this, "Die Accountvalidierung ist fehlgeschlagen.\nBitte überprüfe deine Account- und Netzwerkeinstellungen und versuches es erneut.", "Fehler", JOptionPane.ERROR_MESSAGE);
         return;
     } else {
         if (!DatabaseAdapter.isUpdatePossible(name, selectedServer)) {
-            JOptionPane.showMessageDialog(this, "Ein Datenabgleich ist maximal einmal in der Stunde möglich.\nBitte versuch es später noch einmal.", "Fehler", JOptionPane.ERROR_MESSAGE);
+            long delta = DatabaseAdapter.getTimeSinceLastUpdate(name, selectedServer);
+            if (delta != 0) {
+                long next = 1000 * 60 * 60 - delta;
+                String nextUpdate = new SimpleDateFormat("mm 'min' ss 's'").format(new Date(next));
+                JOptionPane.showMessageDialog(this, "Ein Datenabgleich ist maximal einmal in der Stunde möglich.\nNächstmögliches Update in: " + nextUpdate, "Fehler", JOptionPane.ERROR_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "Ein Datenabgleich ist maximal einmal in der Stunde möglich.\nÜberprüfung auf nächstmögliches Update fehlgeschlagen.\nBitte korrigiere deine Account Einstellungen.", "Fehler", JOptionPane.ERROR_MESSAGE);
+            }
             return;
         }
     }
@@ -857,7 +937,6 @@ private void fireDownloadDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
         public void run() {
             try {
                 GlobalOptions.loadData(true);
-                DatabaseAdapter.storeLastUpdate(name, selectedServer);
             } catch (Exception e) {
                 logger.error("Failed to update data", e);
             }
@@ -946,7 +1025,6 @@ private void fireDownloadDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
     private javax.swing.JButton jButton6;
     private javax.swing.JButton jButton7;
     private javax.swing.JButton jCancelButton;
-    private javax.swing.JComboBox jComboBox1;
     private javax.swing.JCheckBox jContinentsOnMinimap;
     private javax.swing.JDialog jCreateAccountDialog;
     private javax.swing.JRadioButton jDirectConnectOption;
@@ -978,7 +1056,9 @@ private void fireDownloadDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
     private javax.swing.JTextArea jStatusArea;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JComboBox jTribeNames;
+    private javax.swing.JComboBox jUpdateIntervalBox;
     // End of variables declaration//GEN-END:variables
+
     @Override
     public void fireDataHolderEvent(String pMessage) {
         jStatusArea.insert(pMessage + "\n", jStatusArea.getText().length());
@@ -986,25 +1066,19 @@ private void fireDownloadDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
 
     @Override
     public void fireDataLoadedEvent() {
-        updating = false;
-        jSelectServerButton.setEnabled(true);
-        jOKButton.setEnabled(true);
-        jCancelButton.setEnabled(true);
+        fireDataHolderEvent("Erstelle Spielerliste");
         String[] tribeNames = new String[GlobalOptions.getDataHolder().getTribes().size()];
         Enumeration<Integer> tribes = GlobalOptions.getDataHolder().getTribes().keys();
         int cnt = 0;
         while (tribes.hasMoreElements()) {
             tribeNames[cnt] = GlobalOptions.getDataHolder().getTribes().get(tribes.nextElement()).getName();
             cnt++;
-
         }
-
-
-
 
         Arrays.sort(tribeNames, null);
         DefaultComboBoxModel model = new DefaultComboBoxModel();
         model.addElement("Bitte wählen");
+
         for (String tribe : tribeNames) {
             model.addElement(tribe);
         }
@@ -1016,9 +1090,19 @@ private void fireDownloadDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
             } else {
                 jTribeNames.setSelectedIndex(0);
             }
-
         } else {
             jTribeNames.setSelectedIndex(0);
         }
+        if (mMainFrame != null) {
+            mMainFrame.serverSettingsChangedEvent();
+        }
+        fireDataHolderEvent("Fertig");
+        updating = false;
+        setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        jSelectServerButton.setEnabled(true);
+        jOKButton.setEnabled(true);
+        jCancelButton.setEnabled(true);
     }
 }
+
+

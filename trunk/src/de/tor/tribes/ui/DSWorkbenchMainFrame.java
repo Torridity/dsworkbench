@@ -5,6 +5,7 @@
  */
 package de.tor.tribes.ui;
 
+import de.tor.tribes.io.DataHolderListener;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Ally;
 import de.tor.tribes.types.Attack;
@@ -18,6 +19,7 @@ import de.tor.tribes.ui.editors.VillageCellEditor;
 import de.tor.tribes.ui.renderer.ColorCellRenderer;
 import de.tor.tribes.ui.renderer.DateCellRenderer;
 import de.tor.tribes.ui.renderer.MarkerPanelCellRenderer;
+import de.tor.tribes.util.AutoUpdateThread;
 import de.tor.tribes.util.BrowserCommandSender;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.GlobalOptions;
@@ -49,12 +51,12 @@ import org.apache.log4j.Logger;
  *
  * @author  Charon
  */
-public class DSWorkbenchMainFrame extends javax.swing.JFrame {
+public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHolderListener {
 
     private static Logger logger = Logger.getLogger(DSWorkbenchMainFrame.class);
     private MapPanel mPanel = null;
-    private int iCenterX = 456;
-    private int iCenterY = 468;
+    private int iCenterX = 500;
+    private int iCenterY = 500;
     private List<ImageIcon> mIcons;
     private double dZoomFactor = 1.0;
     private ToolBoxFrame mToolbox = null;
@@ -65,21 +67,8 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame {
         /*  jMainControlPanel.setupPanel(this, true, true);
         jMainControlPanel.setTitle(getTitle());*/
         pack();
-        if (GlobalOptions.isOfflineMode()) {
-            setTitle(getTitle() + " (Offline)");
-        }
-        jCurrentPlayer.setText(GlobalOptions.getProperty("player." + GlobalOptions.getSelectedServer()));
-        jCurrentServer.setText(GlobalOptions.getSelectedServer());
-        Tribe t = GlobalOptions.getDataHolder().getTribeByName(jCurrentPlayer.getText());
-
-        if (t != null) {
-            DefaultComboBoxModel model = new DefaultComboBoxModel(t.getVillageList().toArray());
-            jCurrentPlayerVillages.setModel(model);
-        } else {
-            DefaultComboBoxModel model = new DefaultComboBoxModel(new Object[]{"Keine Dörfer"});
-            jCurrentPlayerVillages.setModel(model);
-        }
-
+        GlobalOptions.getDataHolder().addListener(this);
+        serverSettingsChangedEvent();
         Toolkit.getDefaultToolkit().addAWTEventListener(new AWTEventListener() {
 
             @Override
@@ -98,6 +87,55 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame {
             }
         }, AWTEvent.KEY_EVENT_MASK);
 
+        try {
+            jOnlineLabel.setIcon(new ImageIcon("./graphics/icons/online.png"));
+            jUpdateButton.setIcon(new ImageIcon("./graphics/icons/update.png"));
+            jCenterIngameButton.setIcon(new ImageIcon("./graphics/icons/center.png"));
+            jRefreshButton.setIcon(new ImageIcon("./graphics/icons/refresh.png"));
+            jCenterCoordinateIngame.setIcon(new ImageIcon("./graphics/icons/center.png"));
+        } catch (Exception e) {
+            logger.error("Failed to load status icon(s)", e);
+        }
+        onlineStateChanged();
+        jUpdateButton.setEnabled(false);
+
+    }
+
+    public void serverSettingsChangedEvent() {
+        jCurrentPlayer.setText(GlobalOptions.getProperty("player." + GlobalOptions.getSelectedServer()));
+        jCurrentServer.setText(GlobalOptions.getSelectedServer());
+        Tribe t = GlobalOptions.getDataHolder().getTribeByName(jCurrentPlayer.getText());
+        if (t != null) {
+            DefaultComboBoxModel model = new DefaultComboBoxModel(t.getVillageList().toArray());
+            jCurrentPlayerVillages.setModel(model);
+            if (isVisible()) {
+                centerVillage(t.getVillageList().get(0));
+            } else {
+                iCenterX = t.getVillageList().get(0).getX();
+                iCenterY = t.getVillageList().get(0).getY();
+                jCenterX.setText(""+iCenterX);
+                jCenterY.setText(""+iCenterY);
+            }
+        } else {
+            DefaultComboBoxModel model = new DefaultComboBoxModel(new Object[]{"Keine Dörfer"});
+            jCurrentPlayerVillages.setModel(model);
+        }
+        if (MinimapPanel.getGlobalMinimap() != null) {
+            MinimapPanel.getGlobalMinimap().redraw();
+        }
+    }
+
+    public void onlineStateChanged() {
+        jOnlineLabel.setEnabled(!GlobalOptions.isOfflineMode());
+        if (GlobalOptions.isOfflineMode()) {
+            jOnlineLabel.setToolTipText("Offline");
+        } else {
+            jOnlineLabel.setToolTipText("Online");
+        }
+    }
+
+    public void updateAvailable() {
+        jUpdateButton.setEnabled(true);
     }
 
     public void init() {
@@ -310,6 +348,8 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame {
             }
         } catch (Exception e) {
         }
+        logger.info("Starting auto update thread");
+        new AutoUpdateThread(this).start();
     }
 
     /** This method is called from within the constructor to
@@ -388,11 +428,11 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jCenterY = new javax.swing.JTextField();
-        jRefresh = new javax.swing.JButton();
+        jRefreshButton = new javax.swing.JButton();
         jMoveE1 = new javax.swing.JButton();
         jZoomInButton = new javax.swing.JButton();
         jZoomOutButton = new javax.swing.JButton();
-        jButton9 = new javax.swing.JButton();
+        jCenterCoordinateIngame = new javax.swing.JButton();
         jMinimapPanel = new javax.swing.JPanel();
         jInfoPanel = new javax.swing.JPanel();
         jPanel4 = new javax.swing.JPanel();
@@ -402,7 +442,9 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame {
         jCurrentPlayerVillages = new javax.swing.JComboBox();
         jCurrentPlayer = new javax.swing.JLabel();
         jCurrentServer = new javax.swing.JLabel();
-        jButton8 = new javax.swing.JButton();
+        jCenterIngameButton = new javax.swing.JButton();
+        jOnlineLabel = new javax.swing.JLabel();
+        jUpdateButton = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
@@ -414,7 +456,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame {
         jShowToolboxItem = new javax.swing.JCheckBoxMenuItem();
         jShowDynFrameItem = new javax.swing.JCheckBoxMenuItem();
 
-        jDetailedInfoPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Info"));
+        jDetailedInfoPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
 
         jVillageInfo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/forbidden.gif"))); // NOI18N
         jVillageInfo.setText("jLabel3");
@@ -441,9 +483,9 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame {
             .addGroup(jDetailedInfoPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jDetailedInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jVillageInfo, javax.swing.GroupLayout.DEFAULT_SIZE, 771, Short.MAX_VALUE)
-                    .addComponent(jPlayerInfo, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 771, Short.MAX_VALUE)
-                    .addComponent(jAllyInfo, javax.swing.GroupLayout.DEFAULT_SIZE, 771, Short.MAX_VALUE))
+                    .addComponent(jVillageInfo, javax.swing.GroupLayout.DEFAULT_SIZE, 785, Short.MAX_VALUE)
+                    .addComponent(jPlayerInfo, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 785, Short.MAX_VALUE)
+                    .addComponent(jAllyInfo, javax.swing.GroupLayout.DEFAULT_SIZE, 785, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jDetailedInfoPanelLayout.setVerticalGroup(
@@ -1036,7 +1078,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame {
             }
         });
 
-        jCenterX.setText("456");
+        jCenterX.setText("500");
         jCenterX.setMaximumSize(new java.awt.Dimension(40, 20));
         jCenterX.setMinimumSize(new java.awt.Dimension(40, 20));
         jCenterX.setPreferredSize(new java.awt.Dimension(40, 20));
@@ -1045,13 +1087,16 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame {
 
         jLabel2.setText("Y");
 
-        jCenterY.setText("468");
+        jCenterY.setText("500");
         jCenterY.setMaximumSize(new java.awt.Dimension(40, 20));
         jCenterY.setMinimumSize(new java.awt.Dimension(40, 20));
         jCenterY.setPreferredSize(new java.awt.Dimension(40, 20));
 
-        jRefresh.setText("Aktualisieren");
-        jRefresh.addMouseListener(new java.awt.event.MouseAdapter() {
+        jRefreshButton.setToolTipText("Position aktualisieren");
+        jRefreshButton.setMaximumSize(new java.awt.Dimension(30, 30));
+        jRefreshButton.setMinimumSize(new java.awt.Dimension(30, 30));
+        jRefreshButton.setPreferredSize(new java.awt.Dimension(30, 30));
+        jRefreshButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireRefreshMapEvent(evt);
             }
@@ -1064,6 +1109,9 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame {
         jMoveE1.setPreferredSize(new java.awt.Dimension(21, 21));
 
         jZoomInButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/zoom_out.png"))); // NOI18N
+        jZoomInButton.setMaximumSize(new java.awt.Dimension(30, 30));
+        jZoomInButton.setMinimumSize(new java.awt.Dimension(30, 30));
+        jZoomInButton.setPreferredSize(new java.awt.Dimension(30, 30));
         jZoomInButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireZoomEvent(evt);
@@ -1071,14 +1119,20 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame {
         });
 
         jZoomOutButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/zoom_in.png"))); // NOI18N
+        jZoomOutButton.setMaximumSize(new java.awt.Dimension(30, 30));
+        jZoomOutButton.setMinimumSize(new java.awt.Dimension(30, 30));
+        jZoomOutButton.setPreferredSize(new java.awt.Dimension(30, 30));
         jZoomOutButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireZoomEvent(evt);
             }
         });
 
-        jButton9.setText("Zentrieren (InGame)");
-        jButton9.addMouseListener(new java.awt.event.MouseAdapter() {
+        jCenterCoordinateIngame.setToolTipText("Zentrieren (InGame)");
+        jCenterCoordinateIngame.setMaximumSize(new java.awt.Dimension(30, 30));
+        jCenterCoordinateIngame.setMinimumSize(new java.awt.Dimension(30, 30));
+        jCenterCoordinateIngame.setPreferredSize(new java.awt.Dimension(30, 30));
+        jCenterCoordinateIngame.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireCenterCurrentPosInGameEvent(evt);
             }
@@ -1114,28 +1168,28 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jButton9, javax.swing.GroupLayout.DEFAULT_SIZE, 133, Short.MAX_VALUE)
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(jLabel1)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jCenterX, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 33, Short.MAX_VALUE)
-                                .addComponent(jLabel2)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jCenterY, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jRefresh, javax.swing.GroupLayout.DEFAULT_SIZE, 133, Short.MAX_VALUE))
-                        .addGap(34, 34, 34))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jZoomInButton, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jZoomInButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jZoomOutButton, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(113, 113, 113))))
+                        .addComponent(jZoomOutButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jCenterCoordinateIngame, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jRefreshButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(29, 29, 29))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jCenterX, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jCenterY, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -1156,25 +1210,25 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame {
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel1)
                             .addComponent(jCenterX, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jCenterY, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel2))
-                        .addGap(4, 4, 4)
-                        .addComponent(jRefresh)
+                            .addComponent(jLabel2)
+                            .addComponent(jCenterY, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton9)))
-                .addGap(8, 8, 8)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jZoomInButton)
-                    .addComponent(jZoomOutButton))
-                .addContainerGap(62, Short.MAX_VALUE))
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(jCenterCoordinateIngame, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jRefreshButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jZoomOutButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jZoomInButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addGap(59, 59, 59))
         );
 
         jMinimapPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jMinimapPanel.setLayout(new java.awt.BorderLayout());
 
+        jInfoPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Dorfdetails"));
         jInfoPanel.setLayout(new java.awt.BorderLayout());
 
-        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("Spielerinformationen"));
+        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("Spieler-/Serverinformationen"));
 
         jLabel5.setText("<html><u>Aktueller Spieler</u></html>");
 
@@ -1192,10 +1246,29 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame {
         jCurrentPlayer.setMinimumSize(new java.awt.Dimension(155, 14));
         jCurrentPlayer.setPreferredSize(new java.awt.Dimension(155, 14));
 
-        jButton8.setText("Zentrieren (InGame)");
-        jButton8.addMouseListener(new java.awt.event.MouseAdapter() {
+        jCenterIngameButton.setToolTipText("Zentrieren (InGame)");
+        jCenterIngameButton.setMaximumSize(new java.awt.Dimension(30, 30));
+        jCenterIngameButton.setMinimumSize(new java.awt.Dimension(30, 30));
+        jCenterIngameButton.setPreferredSize(new java.awt.Dimension(30, 30));
+        jCenterIngameButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireCenterVillageIngameEvent(evt);
+            }
+        });
+
+        jOnlineLabel.setToolTipText("Online/Offline Modus");
+        jOnlineLabel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        jOnlineLabel.setMaximumSize(new java.awt.Dimension(30, 30));
+        jOnlineLabel.setMinimumSize(new java.awt.Dimension(30, 30));
+        jOnlineLabel.setPreferredSize(new java.awt.Dimension(30, 30));
+
+        jUpdateButton.setToolTipText("Daten mit Server abgleichen");
+        jUpdateButton.setMaximumSize(new java.awt.Dimension(30, 30));
+        jUpdateButton.setMinimumSize(new java.awt.Dimension(30, 30));
+        jUpdateButton.setPreferredSize(new java.awt.Dimension(30, 30));
+        jUpdateButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireUpdateClickedEvent(evt);
             }
         });
 
@@ -1210,11 +1283,16 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame {
                     .addComponent(jLabel20)
                     .addComponent(jLabel21))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jCurrentPlayer, javax.swing.GroupLayout.DEFAULT_SIZE, 155, Short.MAX_VALUE)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jCurrentPlayer, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 155, Short.MAX_VALUE)
+                    .addComponent(jCurrentPlayerVillages, javax.swing.GroupLayout.Alignment.LEADING, 0, 155, Short.MAX_VALUE)
                     .addComponent(jCurrentServer, javax.swing.GroupLayout.DEFAULT_SIZE, 155, Short.MAX_VALUE)
-                    .addComponent(jCurrentPlayerVillages, 0, 155, Short.MAX_VALUE)
-                    .addComponent(jButton8, javax.swing.GroupLayout.DEFAULT_SIZE, 155, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel4Layout.createSequentialGroup()
+                        .addComponent(jCenterIngameButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jUpdateButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jOnlineLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
@@ -1225,7 +1303,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame {
                     .addComponent(jLabel5)
                     .addComponent(jCurrentPlayer, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jLabel20)
                     .addComponent(jCurrentServer, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -1233,8 +1311,11 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame {
                     .addComponent(jLabel21)
                     .addComponent(jCurrentPlayerVillages, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton8)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jCenterIngameButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jUpdateButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jOnlineLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(43, Short.MAX_VALUE))
         );
 
         jMenu1.setMnemonic('a');
@@ -1314,27 +1395,29 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                    .addGroup(layout.createSequentialGroup()
                         .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 543, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(jMinimapPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addComponent(jInfoPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 823, Short.MAX_VALUE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(4, 4, 4)
+                                .addComponent(jMinimapPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jInfoPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 823, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(37, 37, 37)
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jMinimapPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 233, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 598, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jInfoPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1343,6 +1426,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
 private void fireRefreshMapEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireRefreshMapEvent
+
     int cx = iCenterX;
     int cy = iCenterY;
     try {
@@ -1366,6 +1450,7 @@ private void fireRefreshMapEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:eve
 }//GEN-LAST:event_fireRefreshMapEvent
 
 private void fireMoveMapEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireMoveMapEvent
+
     int cx = iCenterX;
     int cy = iCenterY;
     try {
@@ -1411,6 +1496,7 @@ private void fireMoveMapEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
 }//GEN-LAST:event_fireMoveMapEvent
 
 private void fireFrameResizedEvent(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_fireFrameResizedEvent
+
     try {
         mPanel.updateMap(iCenterX, iCenterY);
     } catch (Exception e) {
@@ -1418,6 +1504,7 @@ private void fireFrameResizedEvent(java.awt.event.ComponentEvent evt) {//GEN-FIR
 }//GEN-LAST:event_fireFrameResizedEvent
 
 private void fireZoomEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireZoomEvent
+
     if (evt.getSource() == jZoomInButton) {
         dZoomFactor += 1.0 / 10.0;
     } else {
@@ -1445,6 +1532,7 @@ private void fireZoomEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fir
 }//GEN-LAST:event_fireZoomEvent
 
 private void fireRefreshServerDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireRefreshServerDataEvent
+
     try {
         String serverSelection = (String) jServerSelection.getSelectedItem();
         if (serverSelection != null) {
@@ -1470,10 +1558,12 @@ private void fireRefreshServerDataEvent(java.awt.event.MouseEvent evt) {//GEN-FI
 }//GEN-LAST:event_fireRefreshServerDataEvent
 
 private void fireSelectPlayerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSelectPlayerEvent
+
     jPlayerSelectionDialog.setVisible(false);
 }//GEN-LAST:event_fireSelectPlayerEvent
 
 private void fireRemoveMarkerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireRemoveMarkerEvent
+
     int row = jMarkerTable.getSelectedRow();
     if (row < 0) {
         return;
@@ -1488,6 +1578,7 @@ private void fireRemoveMarkerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
 }//GEN-LAST:event_fireRemoveMarkerEvent
 
 private void fireValidateAttacksEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireValidateAttacksEvent
+
     DefaultTableModel model = (DefaultTableModel) jAttackTable.getModel();
     Hashtable<Integer, String> errors = new Hashtable<Integer, String>();
     for (int i = 0; i < model.getRowCount(); i++) {
@@ -1519,12 +1610,14 @@ private void fireValidateAttacksEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
 }//GEN-LAST:event_fireValidateAttacksEvent
 
 private void fireAlwaysInFrontChangeEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireAlwaysInFrontChangeEvent
+
     jDynFrame.setAlwaysOnTop(jDynFrameAlwaysOnTopSelection.isSelected());
     GlobalOptions.addProperty("dynframe.alwaysOnTop", Boolean.toString(jDynFrameAlwaysOnTopSelection.isSelected()));
     GlobalOptions.saveProperties();
 }//GEN-LAST:event_fireAlwaysInFrontChangeEvent
 
 private void fireRemoveAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireRemoveAttackEvent
+
     int row = jAttackTable.getSelectedRow();
     if (row < 0) {
         return;
@@ -1539,16 +1632,20 @@ private void fireRemoveAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
 }//GEN-LAST:event_fireRemoveAttackEvent
 
 private void fireChangeCurrentPlayerVillageEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireChangeCurrentPlayerVillageEvent
+
     if (evt.getStateChange() == ItemEvent.SELECTED) {
         centerVillage((Village) jCurrentPlayerVillages.getSelectedItem());
+        jCurrentPlayerVillages.transferFocus();
     }
 }//GEN-LAST:event_fireChangeCurrentPlayerVillageEvent
 
 private void fireShowSettingsEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireShowSettingsEvent
+
     DSWorkbenchSettingsDialog.getGlobalSettingsFrame().setVisible(true);
 }//GEN-LAST:event_fireShowSettingsEvent
 
 private void fireExitEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireExitEvent
+
     GlobalOptions.saveProperties();
     GlobalOptions.storeAttacks();
     GlobalOptions.storeMarkers();
@@ -1556,12 +1653,14 @@ private void fireExitEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fi
 }//GEN-LAST:event_fireExitEvent
 
 private void fireShowToolbarEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireShowToolbarEvent
+
     mToolbox.setVisible(jShowToolboxItem.isSelected());
     GlobalOptions.addProperty("toolbar.visible", Boolean.toString(jShowToolboxItem.isSelected()));
     GlobalOptions.saveProperties();
 }//GEN-LAST:event_fireShowToolbarEvent
 
 private void fireSendAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSendAttackEvent
+
     int selectedRow = jAttackTable.getSelectedRow();
     if (selectedRow < 0) {
         return;
@@ -1572,18 +1671,21 @@ private void fireSendAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:eve
 }//GEN-LAST:event_fireSendAttackEvent
 
 private void fireShowDynFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireShowDynFrameEvent
+
     jDynFrame.setVisible(jShowDynFrameItem.isSelected());
     GlobalOptions.addProperty("dynframe.visible", Boolean.toString(jShowDynFrameItem.isSelected()));
     GlobalOptions.saveProperties();
 }//GEN-LAST:event_fireShowDynFrameEvent
 
 private void fireDynFrameClosingEvent(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_fireDynFrameClosingEvent
+
     jShowDynFrameItem.setSelected(false);
     GlobalOptions.addProperty("dynframe.visible", Boolean.toString(false));
     GlobalOptions.saveProperties();
 }//GEN-LAST:event_fireDynFrameClosingEvent
 
 private void fireCenterVillageIngameEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCenterVillageIngameEvent
+
     Village v = (Village) jCurrentPlayerVillages.getSelectedItem();
     if (v != null) {
         BrowserCommandSender.centerVillage(v);
@@ -1591,16 +1693,37 @@ private void fireCenterVillageIngameEvent(java.awt.event.MouseEvent evt) {//GEN-
 }//GEN-LAST:event_fireCenterVillageIngameEvent
 
 private void fireCenterCurrentPosInGameEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCenterCurrentPosInGameEvent
+
     BrowserCommandSender.centerCoordinate(Integer.parseInt(jCenterX.getText()), Integer.parseInt(jCenterY.getText()));
 }//GEN-LAST:event_fireCenterCurrentPosInGameEvent
 
 private void fireToolsActionEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireToolsActionEvent
+
     if (evt.getSource() == jSearchItem) {
         SearchFrame.getGlobalSearchFrame().setVisible(true);
     } else if (evt.getSource() == jClockItem) {
         ClockFrame.getGlobalClockFrame().setVisible(true);
     }
 }//GEN-LAST:event_fireToolsActionEvent
+
+private void fireUpdateClickedEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireUpdateClickedEvent
+    if (!jUpdateButton.isEnabled()) {
+        return;
+    }
+    new Thread(new Runnable() {
+
+        @Override
+        public void run() {
+            try {
+                GlobalOptions.getDataHolder().loadData(true);
+            } catch (Exception e) {
+                logger.error("Failed to execute auto update", e);
+                fireDataLoadedEvent();
+            }
+        }
+    }).start();
+    jUpdateButton.setEnabled(false);
+}//GEN-LAST:event_fireUpdateClickedEvent
 
     public void changeTool(int pTool) {
         switch (pTool) {
@@ -1811,7 +1934,6 @@ private void fireToolsActionEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:e
         }
 
         if (pVillage == null) {
-            logger.debug("No village selected. Details reset");
             jPlayerInfo.setText("");
             jVillageInfo.setText("");
             jAllyInfo.setText("");
@@ -1853,7 +1975,7 @@ private void fireToolsActionEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:e
         if (pMarkAlly) {
             if (pVillage.getTribe().getAlly() != null) {
                 if (GlobalOptions.getMarkers().containsKey(pVillage.getTribe().getAlly().getName())) {
-                    logger.debug("Replace existing ally marker");
+                    logger.debug("Replacing existing ally marker");
                     for (int i = 0; i < ((DefaultTableModel) jMarkerTable.getModel()).getRowCount(); i++) {
                         MarkerCell c = (MarkerCell) ((DefaultTableModel) jMarkerTable.getModel()).getValueAt(i, 0);
                         if (c.getMarkerName().equals(pVillage.getTribe().getAlly().getName())) {
@@ -1862,7 +1984,7 @@ private void fireToolsActionEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:e
 
                     }
                 } else {
-                    logger.debug("Add new ally marker");
+                    logger.debug("Adding new ally marker");
                     GlobalOptions.getMarkers().put(pVillage.getTribe().getAlly().getName(), Color.WHITE);
                     p = MarkerCell.factoryAllyMarker(pVillage.getTribe().getAlly().getName());
                     Color c = (pAllyColor != null) ? pAllyColor : Color.WHITE;
@@ -1877,7 +1999,7 @@ private void fireToolsActionEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:e
 
         if (pMarkTribe) {
             if (GlobalOptions.getMarkers().containsKey(pVillage.getTribe().getName())) {
-                logger.debug("Replace existing tribe marker");
+                logger.debug("Replacing existing tribe marker");
                 for (int i = 0; i < ((DefaultTableModel) jMarkerTable.getModel()).getRowCount(); i++) {
                     MarkerCell c = (MarkerCell) ((DefaultTableModel) jMarkerTable.getModel()).getValueAt(i, 0);
                     if (c.getMarkerName().equals(pVillage.getTribe().getName())) {
@@ -1886,7 +2008,7 @@ private void fireToolsActionEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:e
 
                 }
             } else {
-                logger.debug("Add new tribe marker");
+                logger.debug("Adding new tribe marker");
                 GlobalOptions.getMarkers().put(pVillage.getTribe().getName(), Color.WHITE);
                 Color c = (pTribeColor != null) ? pTribeColor : Color.WHITE;
                 p = MarkerCell.factoryPlayerMarker(pVillage.getTribe().getName());
@@ -1905,25 +2027,29 @@ private void fireToolsActionEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:e
         return (Village) jCurrentPlayerVillages.getSelectedItem();
     }
 
+    @Override
+    public void fireDataHolderEvent(String pFile) {
+        //do nothing
+    }
+
+    @Override
+    public void fireDataLoadedEvent() {
+        jUpdateButton.setEnabled(false);
+    }
+
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-
         java.awt.EventQueue.invokeLater(new Runnable() {
 
             public void run() {
                 new DSWorkbenchMainFrame().setVisible(true);
             }
         });
-
-    /*try {
-    Runtime.getRuntime().exec("cmd.exe /c start http://de26.die-staemme.de/game.php?village=7462&screen=overview&intro");
-    //http://de26.die-staemme.de/game.php?screen=overview_villages
-    } catch (Exception e) {
-    e.printStackTrace();
-    }*/
     }
+    // <editor-fold defaultstate="collapsed" desc="Generated Variables">
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jAllyInfo;
     private javax.swing.JPanel jAttackPanel;
@@ -1937,9 +2063,9 @@ private void fireToolsActionEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:e
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
     private javax.swing.JButton jButton7;
-    private javax.swing.JButton jButton8;
-    private javax.swing.JButton jButton9;
     private javax.swing.JTextField jCataTime;
+    private javax.swing.JButton jCenterCoordinateIngame;
+    private javax.swing.JButton jCenterIngameButton;
     private javax.swing.JTextField jCenterX;
     private javax.swing.JTextField jCenterY;
     private javax.swing.JMenuItem jClockItem;
@@ -1996,6 +2122,7 @@ private void fireToolsActionEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:e
     private javax.swing.JButton jMoveSE;
     private javax.swing.JButton jMoveSW;
     private javax.swing.JButton jMoveW;
+    private javax.swing.JLabel jOnlineLabel;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel4;
@@ -2003,7 +2130,7 @@ private void fireToolsActionEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:e
     private javax.swing.JComboBox jPlayerSelection;
     private javax.swing.JDialog jPlayerSelectionDialog;
     private javax.swing.JTextField jRamTime;
-    private javax.swing.JButton jRefresh;
+    private javax.swing.JButton jRefreshButton;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JMenuItem jSearchItem;
@@ -2015,8 +2142,10 @@ private void fireToolsActionEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:e
     private javax.swing.JTextField jSpyTime;
     private javax.swing.JTextField jSwordTime;
     private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JButton jUpdateButton;
     private javax.swing.JLabel jVillageInfo;
     private javax.swing.JButton jZoomInButton;
     private javax.swing.JButton jZoomOutButton;
     // End of variables declaration//GEN-END:variables
+//</editor-fold>
 }

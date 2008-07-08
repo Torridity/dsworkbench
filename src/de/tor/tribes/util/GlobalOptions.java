@@ -183,20 +183,25 @@ public class GlobalOptions {
         if (mDataHolder == null) {
             mDataHolder = new DataHolder();
             mDataHolder.initialize();
-            if (!mDataHolder.loadData(pDownload)) {
+            if (!mDataHolder.serverSupported()) {
+                mDataHolder.fireDataLoadedEvents();
+                throw new Exception("Daten konnten nicht geladen werden");
+            } else if (!mDataHolder.loadData(pDownload)) {
                 throw new Exception("Daten konnten nicht geladen werden");
             }
         } else {
             mDataHolder.initialize();
             if (!mDataHolder.loadData(pDownload)) {
                 if (!mDataHolder.serverSupported()) {
-                    mDataHolder.fireDataHolderEvents("Der gewählte Sever wird leider (noch) nicht unterstützt");
                     mDataHolder.fireDataLoadedEvents();
-                    throw new Exception("Server not supported yet");
+                    throw new Exception("Failed to validate server settings");
                 } else {
                     logger.error("Failed to obtain data from server. Loading local backup");
+                    if(pDownload){
                     mDataHolder.fireDataHolderEvents("Download fehlgeschlagen. Suche nach lokaler Kopie.");
-
+                    }else{
+                        mDataHolder.fireDataHolderEvents("Lokale Daten unvollständig. Starte Korrekturversuch.");
+                    }
                     if (!mDataHolder.loadData(false)) {
                         logger.error("Failed to load server data from local backup");
                         mDataHolder.fireDataHolderEvents("Lokale Kopie fehlerhaft oder nicht vorhanden.");

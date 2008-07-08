@@ -398,12 +398,10 @@ private void fireSendResEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
         jAllyList.setModel(new DefaultComboBoxModel(a));
 
         try {
-            //jAllyList.setSelectedIndex(-1);
             String result = a.length + ((a.length == 1) ? " Stamm " : " Stämme ") + "gefunden";
 
             ((DefaultComboBoxModel) jAllyList.getModel()).insertElementAt(result, 0);
             jAllyList.setSelectedIndex(0);
-        //   jAllyList.updateUI();
         } catch (Exception e) {
         }
     }
@@ -456,7 +454,7 @@ class SearchThread extends Thread {
                         }
                         Ally a = t.getAlly();
                         if (a != null) {
-                            if (a.getName().toLowerCase().startsWith(sSearchTerm.toLowerCase())) {
+                            if ((a.getName().toLowerCase().startsWith(sSearchTerm.toLowerCase())) || (a.getTag().toLowerCase().startsWith(sSearchTerm.toLowerCase()))) {
                                 if (!allyList.contains(a)) {
                                     allyList.add(a);
                                 }

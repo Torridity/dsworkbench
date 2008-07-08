@@ -5,12 +5,13 @@
 package de.tor.tribes.db;
 
 import de.tor.tribes.sec.SecurityAdapter;
-import de.tor.tribes.util.GlobalOptions;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
 
@@ -27,6 +28,7 @@ public class DatabaseAdapter {
     public static final int ID_USER_ALREADY_EXIST = -2;
     public static final int ID_USER_NOT_EXIST = -3;
     public static final int ID_WRONG_PASSWORD = -4;
+    public static final long ID_UPDATE_NEVER = -666;
     private static Connection DB_CONNECTION = null;
     private static boolean DRIVER_AVAILABLE = false;
     private static boolean INITIALIZED = false;
@@ -160,7 +162,7 @@ public class DatabaseAdapter {
             return false;
         }
         boolean retVal = false;
-        long lastUpdate = -1;
+        long lastUpdate = ID_UPDATE_NEVER;
         try {
             //get user id
             Statement s = DB_CONNECTION.createStatement();
@@ -182,7 +184,7 @@ public class DatabaseAdapter {
             while (rs.next()) {
                 lastUpdate = rs.getTimestamp(1).getTime();
             }
-            if (lastUpdate <= 0) {
+            if (lastUpdate == ID_UPDATE_NEVER) {
                 logger.info("No update made yet.");
                 retVal = true;
             } else {
@@ -208,6 +210,58 @@ public class DatabaseAdapter {
         }
         closeConnection();
         return retVal;
+    }
+
+    public static long getTimeSinceLastUpdate(String pUsername, String pServer) {
+        if (!openConnection()) {
+            return ID_CONNECTION_FAILED;
+        }
+        long delta = 0;
+        long lastUpdate = ID_UPDATE_NEVER;
+        try {
+            //get user id
+            Statement s = DB_CONNECTION.createStatement();
+            String query = "SELECT id FROM users WHERE name='" + pUsername + "';";
+            ResultSet rs = s.executeQuery(query);
+            int id = -1;
+            while (rs.next()) {
+                id = rs.getInt(1);
+            }
+            if (id == -1) {
+                throw new Exception("ID for user " + pUsername + " not found");
+            }
+            //check last update
+            s = DB_CONNECTION.createStatement();
+
+            query = "SELECT timestamp FROM updates WHERE UserID=" + id + " AND ServerID='" + pServer + "';";
+            rs = s.executeQuery(query);
+
+            while (rs.next()) {
+                lastUpdate = rs.getTimestamp(1).getTime();
+            }
+            //get current server time
+            long currentServerTime = getCurrentServerTime();
+
+            //last update is only set UPDATE_NEVER if no update was made yet
+            if (lastUpdate == ID_UPDATE_NEVER) {
+                logger.info("No update made yet.");
+                delta = currentServerTime;
+            } else {
+                if (currentServerTime < 0) {
+                    //failed to get last update or current time
+                    logger.error("Failed to read server time");
+                    delta = 0;
+                } else {
+                    //get delta between now and the last update
+                    delta = currentServerTime - lastUpdate;
+                }
+            }
+        } catch (Exception e) {
+            logger.error("Failed to check for last update", e);
+            delta = 0;
+        }
+        closeConnection();
+        return delta;
     }
 
     /**Store an update of server data in the database
@@ -282,11 +336,11 @@ public class DatabaseAdapter {
         long s = System.currentTimeMillis();
         System.out.println(DatabaseAdapter.checkUser("Torridity", "realstyx13"));*/
 
-        System.out.println(DatabaseAdapter.isUpdatePossible("Torridity", "de3"));
+        //  System.out.println(DatabaseAdapter.isUpdatePossible("Torridity", "de3"));
     /*System.out.println("Check: " + DatabaseAdapter.checkLastUpdate("Torridity", "de26"));
-    System.out.println("Store: " + DatabaseAdapter.storeLastUpdate("Torridity", "de26"));
-    System.out.println("Check: " + DatabaseAdapter.checkLastUpdate("Torridity", "de26"));*/
+        System.out.println("Store: " + DatabaseAdapter.storeLastUpdate("Torridity", "de26"));
+        System.out.println("Check: " + DatabaseAdapter.checkLastUpdate("Torridity", "de26"));*/
 
-    // System.out.println("Du " + (System.currentTimeMillis() - s));
+        // System.out.println("Du " + (System.currentTimeMillis() - s));
     }
 }

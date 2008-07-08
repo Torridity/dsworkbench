@@ -46,7 +46,6 @@ public class DataHolder {
     private List<UnitHolder> mUnits = null;
     private List<DataHolderListener> mListeners = null;
     private boolean bAborted = false;
-    private String sSelectedServer = null;
     private String sServerBaseDir = "./servers";
 
     public DataHolder() {
@@ -96,34 +95,40 @@ public class DataHolder {
     public boolean loadData(boolean pReload) {
         bAborted = false;
         try {
-            String serverDir = sServerBaseDir + "/" + GlobalOptions.getSelectedServer();
             if (pReload) {
+                //completely reload data
                 fireDataHolderEvents("Daten werden heruntergeladen...");
+                //try to download
                 if (!downloadData()) {
                     fireDataHolderEvents("Download abgebrochen/fehlgeschlagen!");
                     return false;
                 }
             } else {
+                //check if local loading could work
                 if (!isDataAvailable()) {
-                    logger.error("Local data brocken but no reload requested");
+                    logger.error("Local data brocken. Try to download data");
+                    fireDataHolderEvents("Lokal gespeicherte Daten sind fehlerhaft. Versuche erneuten Download");
+                    if (!downloadData()) {
+                        logger.fatal("Download failed. No data available at the moment");
+                        fireDataHolderEvents("Download abgebrochen/fehlgeschlagen");
+                        return false;
+                    }
+                } else if (!serverSupported()) {
+                    logger.error("Local data available but server not supported");
                     return false;
                 }
             }
-
 
             String line = "";
             int bytes = 0;
             fireDataHolderEvents("Lese Dörferliste...");
             //read villages
-            BufferedReader reader = new BufferedReader(new FileReader(serverDir + "/village.txt"));
+            BufferedReader reader = new BufferedReader(new FileReader(getDataDirectory() + "/village.txt"));
 
             while ((line = reader.readLine()) != null) {
                 bytes += line.length();
                 try {
                     Village v = parseVillage(line);
-                    if (bAborted) {
-                        return false;
-                    }
                 } catch (Exception e) {
                     //ignored (should only occur on single villages)
                 }
@@ -131,15 +136,12 @@ public class DataHolder {
 
             fireDataHolderEvents("Lese Stämmeliste...");
             //read allies
-            reader = new BufferedReader(new FileReader(serverDir + "/ally.txt"));
+            reader = new BufferedReader(new FileReader(getDataDirectory() + "/ally.txt"));
 
             while ((line = reader.readLine()) != null) {
                 bytes += line.length();
                 try {
                     Ally a = parseAlly(line);
-                    if (bAborted) {
-                        return false;
-                    }
                 } catch (Exception e) {
                     //ignored (should only occur on single allies)
                 }
@@ -147,15 +149,12 @@ public class DataHolder {
 
             fireDataHolderEvents("Lese Spielerliste...");
             //read tribes
-            reader = new BufferedReader(new FileReader(serverDir + "/tribe.txt"));
+            reader = new BufferedReader(new FileReader(getDataDirectory() + "/tribe.txt"));
 
             while ((line = reader.readLine()) != null) {
                 bytes += line.length();
                 try {
                     Tribe t = parseTribe(line);
-                    if (bAborted) {
-                        return false;
-                    }
                 } catch (Exception e) {
                     //ignored (should only occur on single tribes)
                 }
@@ -166,7 +165,7 @@ public class DataHolder {
             fireDataHolderEvents("Lese Servereinstellungen...");
             parseUnits();
             parseBuildings();
-            fireDataHolderEvents("Daten erfolgreich gelesen.");
+            fireDataHolderEvents("Daten erfolgreich gelesen");
         } catch (Exception e) {
             fireDataHolderEvents("Fehler beim Lesen der Daten.");
             logger.error("Failed to read server data", e);
@@ -175,6 +174,7 @@ public class DataHolder {
                 return false;
             }
         }
+
         fireDataLoadedEvents();
         return true;
     }
@@ -189,8 +189,11 @@ public class DataHolder {
             }
             current.setAlly(currentAlly);
         }
-        for (int i = 0; i < 1000; i++) {
-            for (int j = 0; j < 1000; j++) {
+
+        for (int i = 0; i <
+                1000; i++) {
+            for (int j = 0; j <
+                    1000; j++) {
                 Village current = mVillages[i][j];
                 if (current != null) {
                     Tribe t = mTribes.get(current.getTribeID());
@@ -204,13 +207,12 @@ public class DataHolder {
     }
 
     private boolean isDataAvailable() {
-        String serverDir = sServerBaseDir + "/" + GlobalOptions.getSelectedServer();
-        File villages = new File(serverDir + "/" + "village.txt");
-        File tribes = new File(serverDir + "/" + "tribe.txt");
-        File allys = new File(serverDir + "/" + "ally.txt");
-        File units = new File(serverDir + "/" + "units.xml");
-        File buildings = new File(serverDir + "/" + "buildings.xml");
-        File settings = new File(serverDir + "/" + "settings.xml");
+        File villages = new File(getDataDirectory() + "/" + "village.txt");
+        File tribes = new File(getDataDirectory() + "/" + "tribe.txt");
+        File allys = new File(getDataDirectory() + "/" + "ally.txt");
+        File units = new File(getDataDirectory() + "/" + "units.xml");
+        File buildings = new File(getDataDirectory() + "/" + "buildings.xml");
+        File settings = new File(getDataDirectory() + "/" + "settings.xml");
         return (villages.exists() && tribes.exists() && allys.exists() && units.exists() && buildings.exists() && settings.exists());
     }
 
@@ -219,7 +221,25 @@ public class DataHolder {
         String serverDir = sServerBaseDir + "/" + GlobalOptions.getSelectedServer();
         new File(serverDir).mkdirs();
         try {
-            //download village.txt
+            //check account
+            String accountName = GlobalOptions.getProperty("account.name");
+            String accountPassword = GlobalOptions.getProperty("account.password");
+            if ((accountName == null) || (accountPassword == null)) {
+                logger.error("No account name or password set");
+                return false;
+            }
+            if (DatabaseAdapter.checkUser(accountName, accountPassword) != DatabaseAdapter.ID_SUCCESS) {
+                logger.error("Failed to validate account (Wrong username or password?)");
+                return false;
+            }
+            if (DatabaseAdapter.isUpdatePossible(accountName, GlobalOptions.getSelectedServer())) {
+                logger.info("Update possible, try starting download");
+            } else {
+                logger.error("Download not yet possible");
+                return false;
+            }
+
+            //download settings.xml
             URL sURL = ServerList.getServerURL(GlobalOptions.getSelectedServer());
 
             fireDataHolderEvents("Lese Server Einstellungen");
@@ -231,7 +251,6 @@ public class DataHolder {
             }
 
             if (!serverSupported()) {
-                fireDataHolderEvents("Der gewählte Sever wird leider (noch) nicht unterstützt");
                 return false;
             }
 
@@ -242,6 +261,7 @@ public class DataHolder {
             if (target.exists()) {
                 target.delete();
             }
+
             new File("village_tmp.txt").renameTo(target);
 
             //download tribe.txt
@@ -252,6 +272,7 @@ public class DataHolder {
             if (target.exists()) {
                 target.delete();
             }
+
             new File("tribe_tmp.txt").renameTo(target);
 
             //download ally.txt
@@ -262,6 +283,7 @@ public class DataHolder {
             if (target.exists()) {
                 target.delete();
             }
+
             new File("ally_tmp.txt").renameTo(target);
 
             //download unit information, but only once
@@ -280,10 +302,11 @@ public class DataHolder {
                 fireDataHolderEvents("Lade Information über Gebäude");
                 file = new URL(sURL.toString() + "/interface.php?func=get_building_info");
                 downloadDataFile(file, "buildings_tmp.xml");
-
                 new File("buildings_tmp.xml").renameTo(target);
             }
+
             fireDataHolderEvents("Download erfolgreich beendet.");
+            DatabaseAdapter.storeLastUpdate(accountName, GlobalOptions.getSelectedServer());
         } catch (Exception e) {
             fireDataHolderEvents("Download fehlgeschlagen.");
             logger.error("Failed to download data", e);
@@ -295,16 +318,41 @@ public class DataHolder {
     public boolean serverSupported() {
         fireDataHolderEvents("Prüfe Server Einstellungen");
         try {
-            Document d = JaxenUtils.getDocument(new File(getDataDirectory() + "/settings.xml"));
-            Integer mapType = Integer.parseInt(JaxenUtils.getNodeValue(d, "//coord/sector"));
-            if (mapType != 2) {
-                logger.error("Map type '" + mapType + "' is not supported yet");
-                return false;
+            File settings = new File(getDataDirectory() + "/settings.xml");
+            if (settings.exists()) {
+                Document d = JaxenUtils.getDocument(settings);
+                Integer mapType = Integer.parseInt(JaxenUtils.getNodeValue(d, "//coord/sector"));
+                if (mapType != 2) {
+                    logger.error("Map type '" + mapType + "' is not supported yet");
+                    fireDataHolderEvents("Der gewählte Sever wird leider (noch) nicht unterstützt");
+                    return false;
+                }
+            } else {
+                if (GlobalOptions.isOfflineMode()) {
+                    fireDataHolderEvents("Servereinstellungen nicht gefunden. Download im Offline-Modus nicht möglich.");
+                    return false;
+                } else {
+                    //download settings.xml
+                    URL sURL = ServerList.getServerURL(GlobalOptions.getSelectedServer());
+                    new File(GlobalOptions.getDataHolder().getDataDirectory()).mkdirs();
+                    fireDataHolderEvents("Lese Server Einstellungen");
+                    URL file = new URL(sURL.toString() + "/interface.php?func=get_config");
+                    downloadDataFile(file, "settings_tmp.xml");
+                    new File("settings_tmp.xml").renameTo(settings);
+                    Document d = JaxenUtils.getDocument(settings);
+                    Integer mapType = Integer.parseInt(JaxenUtils.getNodeValue(d, "//coord/sector"));
+                    if (mapType != 2) {
+                        logger.error("Map type '" + mapType + "' is not supported yet");
+                        fireDataHolderEvents("Der gewählte Sever wird leider (noch) nicht unterstützt");
+                        return false;
+                    }
+                }
             }
         } catch (Exception e) {
             logger.error("Failed to check server settings", e);
             return false;
         }
+
         return true;
     }
 
@@ -316,10 +364,12 @@ public class DataHolder {
         int bytes = 0;
         while (bytes != -1) {
             byte[] data = new byte[1024];
-            bytes = isr.read(data);
+            bytes =
+                    isr.read(data);
             if (bytes != -1) {
                 tempWriter.write(data, 0, bytes);
             }
+
         }
         tempWriter.close();
     }
@@ -331,17 +381,21 @@ public class DataHolder {
         if (tokenizer.countTokens() < 7) {
             return null;
         }
+
         while (tokenizer.hasMoreTokens()) {
             entries.add(tokenizer.nextToken());
         }
+
         entry.setId(Integer.parseInt(entries.get(0)));
         try {
             String name = URLDecoder.decode(entries.get(1), "UTF-8");
-            name = name.replaceAll("&gt;", ">").replaceAll("&lt;", "<");
+            name =
+                    name.replaceAll("&gt;", ">").replaceAll("&lt;", "<");
             entry.setName(name);
         } catch (Exception e) {
             return null;
         }
+
         entry.setX(Integer.parseInt(entries.get(2)));
         entry.setY(Integer.parseInt(entries.get(3)));
         entry.setTribeID(Integer.parseInt(entries.get(4)));
@@ -364,9 +418,11 @@ public class DataHolder {
         if (tokenizer.countTokens() < 8) {
             return null;
         }
+
         while (tokenizer.hasMoreTokens()) {
             entries.add(tokenizer.nextToken());
         }
+
         entry.setId(Integer.parseInt(entries.get(0)));
         try {
             entry.setName(URLDecoder.decode(entries.get(1), "UTF-8"));
@@ -374,6 +430,7 @@ public class DataHolder {
         } catch (Exception e) {
             return null;
         }
+
         entry.setMembers(Integer.parseInt(entries.get(3)));
         entry.setVillages(Integer.parseInt(entries.get(4)));
         entry.setPoints(Integer.parseInt(entries.get(5)));
@@ -391,15 +448,18 @@ public class DataHolder {
         if (tokenizer.countTokens() < 6) {
             return null;
         }
+
         while (tokenizer.hasMoreTokens()) {
             entries.add(tokenizer.nextToken());
         }
+
         entry.setId(Integer.parseInt(entries.get(0)));
         try {
             entry.setName(URLDecoder.decode(entries.get(1), "UTF-8"));
         } catch (Exception e) {
             return null;
         }
+
         entry.setAllyID(Integer.parseInt(entries.get(2)));
         entry.setVillages(Integer.parseInt(entries.get(3)));
         entry.setPoints(Integer.parseInt(entries.get(4)));
@@ -410,10 +470,12 @@ public class DataHolder {
 
     private void parseUnits() {
         String buildingsFile = sServerBaseDir + "/" + GlobalOptions.getSelectedServer();
-        buildingsFile += "/units.xml";
+        buildingsFile +=
+                "/units.xml";
         try {
             Document d = JaxenUtils.getDocument(new File(buildingsFile));
-            d = JaxenUtils.getDocument(new File(buildingsFile));
+            d =
+                    JaxenUtils.getDocument(new File(buildingsFile));
             List<Element> l = JaxenUtils.getNodes(d, "/config/*");
             for (Element e : l) {
                 try {
@@ -425,14 +487,17 @@ public class DataHolder {
             logger.error("Failed to load units", outer);
             fireDataHolderEvents("Laden der Einheiten fehlgeschlagen");
         }
+
     }
 
     public void parseBuildings() {
         String buildingsFile = sServerBaseDir + "/" + GlobalOptions.getSelectedServer();
-        buildingsFile += "/buildings.xml";
+        buildingsFile +=
+                "/buildings.xml";
         try {
             Document d = JaxenUtils.getDocument(new File(buildingsFile));
-            d = JaxenUtils.getDocument(new File(buildingsFile));
+            d =
+                    JaxenUtils.getDocument(new File(buildingsFile));
             List<Element> l = JaxenUtils.getNodes(d, "/config/*");
             for (Element e : l) {
                 try {
@@ -444,6 +509,7 @@ public class DataHolder {
             logger.error("Failed to load buildings", outer);
             fireDataHolderEvents("Laden der Gebäude fehlgeschlagen");
         }
+
     }
 
     public Village[][] getVillages() {
@@ -454,7 +520,8 @@ public class DataHolder {
         return mAllies;
     }
 
-    public Ally getAllyByName(String pName) {
+    public Ally getAllyByName(
+            String pName) {
         Enumeration<Integer> ids = getAllies().keys();
         while (ids.hasMoreElements()) {
             Ally a = getAllies().get(ids.nextElement());
@@ -463,6 +530,7 @@ public class DataHolder {
                     if (a.getName().equals(pName)) {
                         return a;
                     }
+
                 }
             }
         }
@@ -473,7 +541,8 @@ public class DataHolder {
         return mTribes;
     }
 
-    public Tribe getTribeByName(String pName) {
+    public Tribe getTribeByName(
+            String pName) {
         Enumeration<Integer> ids = getTribes().keys();
         while (ids.hasMoreElements()) {
             Tribe t = getTribes().get(ids.nextElement());
@@ -482,6 +551,7 @@ public class DataHolder {
                     if (t.getName().equals(pName)) {
                         return t;
                     }
+
                 }
             }
         }
@@ -499,9 +569,11 @@ public class DataHolder {
             if (unit.getName().equals(pUnitName)) {
                 result = cnt;
                 break;
+
             } else {
                 cnt++;
             }
+
         }
         return result;
     }
@@ -514,6 +586,7 @@ public class DataHolder {
         for (DataHolderListener listener : mListeners) {
             listener.fireDataHolderEvent(pMessage);
         }
+
     }
 
     public synchronized void fireDataLoadedEvents() {

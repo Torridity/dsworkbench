@@ -86,7 +86,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
         }
 
         if (!DSWorkbenchSettingsDialog.getGlobalSettingsFrame().checkSettings()) {
-            JOptionPane.showMessageDialog(self, "Die Benutzereinstellungen konnten nicht erfolgreich geprüft werden.\nMöglicherweise wurde DS Workbench das erste Mal gestartet und muss daher konfiguriert werden.\nFalls dies nicht der Fall ist, prüfe bitte deine Account, Netzwerk und Servereinstellungen.", "Information", JOptionPane.INFORMATION_MESSAGE);
+            logger.info("Reading user settings returned error(s)");
             DSWorkbenchSettingsDialog.getGlobalSettingsFrame().setVisible(true);
         }
 
@@ -99,6 +99,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
         }
         DSWorkbenchMainFrame mainFrame = new DSWorkbenchMainFrame();
         SearchFrame.createSearchFrame(mainFrame);
+        DSWorkbenchSettingsDialog.getGlobalSettingsFrame().setMainFrame(mainFrame);
         mainFrame.init();
         mainFrame.setVisible(true);
         t.stopRunning();

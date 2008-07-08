@@ -66,7 +66,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame {
         jMainControlPanel.setTitle(getTitle());*/
         pack();
         if (GlobalOptions.isOfflineMode()) {
-            setTitle(getTitle() + "(Offline)");
+            setTitle(getTitle() + " (Offline)");
         }
         jCurrentPlayer.setText(GlobalOptions.getProperty("player." + GlobalOptions.getSelectedServer()));
         jCurrentServer.setText(GlobalOptions.getSelectedServer());

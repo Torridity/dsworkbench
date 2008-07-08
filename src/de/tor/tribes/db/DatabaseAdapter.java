@@ -182,31 +182,30 @@ public class DatabaseAdapter {
             while (rs.next()) {
                 lastUpdate = rs.getTimestamp(1).getTime();
             }
-            if (lastUpdate == 0) {
+            if (lastUpdate <= 0) {
                 logger.info("No update made yet.");
+                retVal = true;
+            } else {
+                long currentTime = getCurrentServerTime();
+                if ((currentTime < 0) || (lastUpdate < 0)) {
+                    //failed to get last update or current time
+                    return false;
+                }
+
+                //get delte between now and the last update
+                long delta = currentTime - lastUpdate;
+
+                if (delta < 1000 * 60 * 60) {
+                    //last update is less than 1 hour in past
+                    retVal = false;
+                } else {
+                    retVal = true;
+                }
             }
         } catch (Exception e) {
             logger.error("Failed to check for last update", e);
             retVal = false;
         }
-
-        long currentTime = getCurrentServerTime();
-        if ((currentTime < 0) || (lastUpdate < 0)) {
-            //failed to get last update or current time
-            return false;
-        }
-
-        //get delte between now and the last update
-        long delta = currentTime - lastUpdate;
-
-        if (delta < 1000 * 60 * 60) {
-            //last update is less than 1 hour in past
-            retVal = false;
-        } else {
-            retVal = true;
-        }
-
-
         closeConnection();
         return retVal;
     }
@@ -283,7 +282,7 @@ public class DatabaseAdapter {
         long s = System.currentTimeMillis();
         System.out.println(DatabaseAdapter.checkUser("Torridity", "realstyx13"));*/
 
-        System.out.println(DatabaseAdapter.getCurrentServerTime());
+        System.out.println(DatabaseAdapter.isUpdatePossible("Torridity", "de3"));
     /*System.out.println("Check: " + DatabaseAdapter.checkLastUpdate("Torridity", "de26"));
     System.out.println("Store: " + DatabaseAdapter.storeLastUpdate("Torridity", "de26"));
     System.out.println("Check: " + DatabaseAdapter.checkLastUpdate("Torridity", "de26"));*/

@@ -25,15 +25,16 @@ import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.GlobalOptions;
 import java.awt.AWTEvent;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Toolkit;
 import java.awt.event.AWTEventListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.KeyEvent;
-import java.text.Collator;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.text.NumberFormat;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -42,8 +43,10 @@ import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import javax.swing.event.CellEditorListener;
 import javax.swing.event.ChangeEvent;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import org.apache.log4j.Logger;
 
@@ -60,14 +63,13 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
     private List<ImageIcon> mIcons;
     private double dZoomFactor = 1.0;
     private ToolBoxFrame mToolbox = null;
-    private final Color DS_BACK = new Color(225, 213, 190);
 
     /** Creates new form MapFrame */
     public DSWorkbenchMainFrame() {
         initComponents();
-        getContentPane().setBackground(DS_BACK);
-        jDynFrame.getContentPane().setBackground(DS_BACK);
-        
+        getContentPane().setBackground(GlobalOptions.DS_BACK);
+        jDynFrame.getContentPane().setBackground(GlobalOptions.DS_BACK);
+
         /*  jMainControlPanel.setupPanel(this, true, true);
         jMainControlPanel.setTitle(getTitle());*/
         pack();
@@ -153,6 +155,37 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
         // setupAttackPanel();
         setupDynFrame();
         mToolbox = new ToolBoxFrame(mPanel, MinimapPanel.getGlobalMinimap());
+        mToolbox.addWindowListener(new WindowListener() {
+
+            @Override
+            public void windowOpened(WindowEvent e) {
+            }
+
+            @Override
+            public void windowClosing(WindowEvent e) {
+                jShowToolboxItem.setSelected(false);
+            }
+
+            @Override
+            public void windowClosed(WindowEvent e) {
+            }
+
+            @Override
+            public void windowIconified(WindowEvent e) {
+            }
+
+            @Override
+            public void windowDeiconified(WindowEvent e) {
+            }
+
+            @Override
+            public void windowActivated(WindowEvent e) {
+            }
+
+            @Override
+            public void windowDeactivated(WindowEvent e) {
+            }
+        });
     }
 
     private void setupMaps() {
@@ -203,7 +236,25 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
         });
 
         jMarkerTable.setDefaultEditor(Color.class, editor);
+        jScrollPane1.getViewport().setBackground(GlobalOptions.DS_BACK_LIGHT);
 
+        DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
+
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
+                String t = ((DefaultTableCellRenderer) c).getText();
+                ((DefaultTableCellRenderer) c).setText("<html><b>" + t + "</b></html>");
+                c.setBackground(GlobalOptions.DS_BACK);
+                return c;
+            }
+        };
+
+        for (int i = 0; i < jMarkerTable.getColumnCount(); i++) {
+            jMarkerTable.getColumn(jMarkerTable.getColumnName(i)).setHeaderRenderer(headerRenderer);
+        }
+
+        jMarkerTable.getColumn("Markierung").setHeaderRenderer(headerRenderer);
         //insert loaded markers to marker table
         Enumeration<Integer> tribes = GlobalOptions.getDataHolder().getTribes().keys();
         List<String> tribeMarkers = new LinkedList<String>();
@@ -283,6 +334,8 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
         jAttackTable.setDefaultEditor(Date.class, new DateSpinEditor());
         jAttackTable.setDefaultEditor(Unit.class, new UnitCellEditor());
         jAttackTable.setDefaultEditor(Village.class, new VillageCellEditor());
+        jScrollPane2.getViewport().setBackground(GlobalOptions.DS_BACK_LIGHT);
+
         CellEditorListener attackChangedListener = new CellEditorListener() {
 
             @Override
@@ -302,6 +355,24 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
         jAttackTable.getDefaultEditor(Date.class).addCellEditorListener(attackChangedListener);
         jAttackTable.getDefaultEditor(Unit.class).addCellEditorListener(attackChangedListener);
         jAttackTable.getDefaultEditor(Village.class).addCellEditorListener(attackChangedListener);
+
+        DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
+
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
+                String t = ((DefaultTableCellRenderer) c).getText();
+                ((DefaultTableCellRenderer) c).setText("<html><b>" + t + "</b></html>");
+                c.setBackground(GlobalOptions.DS_BACK);
+                return c;
+            }
+        };
+
+        for (int i = 0; i < jAttackTable.getColumnCount(); i++) {
+            jAttackTable.getColumn(jAttackTable.getColumnName(i)).setHeaderRenderer(headerRenderer);
+        }
+
+
         for (Attack a : GlobalOptions.getAttacks()) {
             ((DefaultTableModel) jAttackTable.getModel()).addRow(new Object[]{a.getSource(), a.getTarget(), a.getUnit(), a.getArriveTime(), a.isShowOnMap()});
         }
@@ -444,6 +515,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
         jShowDynFrameItem = new javax.swing.JCheckBoxMenuItem();
 
         jDetailedInfoPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        jDetailedInfoPanel.setOpaque(false);
 
         jVillageInfo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/forbidden.gif"))); // NOI18N
         jVillageInfo.setText("jLabel3");
@@ -455,7 +527,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
         jPlayerInfo.setText("jLabel4");
         jPlayerInfo.setMaximumSize(new java.awt.Dimension(54, 20));
         jPlayerInfo.setMinimumSize(new java.awt.Dimension(54, 20));
-        jPlayerInfo.setOpaque(true);
         jPlayerInfo.setPreferredSize(new java.awt.Dimension(54, 20));
 
         jAllyInfo.setText("jLabel5");
@@ -485,10 +556,11 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
                 .addComponent(jAllyInfo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
+        jDistancePanel.setBackground(new java.awt.Color(239, 235, 223));
         jDistancePanel.setMaximumSize(new java.awt.Dimension(750, 96));
         jDistancePanel.setMinimumSize(new java.awt.Dimension(750, 96));
-        jDistancePanel.setOpaque(false);
 
+        jSpearTime.setBackground(new java.awt.Color(239, 235, 223));
         jSpearTime.setEditable(false);
         jSpearTime.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         jSpearTime.setText("00:00:00");
@@ -497,6 +569,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
         jSpearTime.setOpaque(false);
         jSpearTime.setPreferredSize(new java.awt.Dimension(54, 20));
 
+        jSwordTime.setBackground(new java.awt.Color(239, 235, 223));
         jSwordTime.setEditable(false);
         jSwordTime.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         jSwordTime.setText("00:00:00");
@@ -505,6 +578,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
         jSwordTime.setOpaque(false);
         jSwordTime.setPreferredSize(new java.awt.Dimension(54, 20));
 
+        jSpyTime.setBackground(new java.awt.Color(239, 235, 223));
         jSpyTime.setEditable(false);
         jSpyTime.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         jSpyTime.setText("00:00:00");
@@ -513,6 +587,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
         jSpyTime.setOpaque(false);
         jSpyTime.setPreferredSize(new java.awt.Dimension(54, 20));
 
+        jLightTime.setBackground(new java.awt.Color(239, 235, 223));
         jLightTime.setEditable(false);
         jLightTime.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         jLightTime.setText("00:00:00");
@@ -521,6 +596,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
         jLightTime.setOpaque(false);
         jLightTime.setPreferredSize(new java.awt.Dimension(54, 20));
 
+        jMArcherTime.setBackground(new java.awt.Color(239, 235, 223));
         jMArcherTime.setEditable(false);
         jMArcherTime.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         jMArcherTime.setText("00:00:00");
@@ -529,6 +605,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
         jMArcherTime.setOpaque(false);
         jMArcherTime.setPreferredSize(new java.awt.Dimension(54, 20));
 
+        jAxeTime.setBackground(new java.awt.Color(239, 235, 223));
         jAxeTime.setEditable(false);
         jAxeTime.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         jAxeTime.setText("00:00:00");
@@ -581,6 +658,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
         jLabel17.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel17.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/skins/symbol/cata.png"))); // NOI18N
 
+        jBowTime.setBackground(new java.awt.Color(239, 235, 223));
         jBowTime.setEditable(false);
         jBowTime.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         jBowTime.setText("00:00:00");
@@ -743,11 +821,14 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
                 .addContainerGap(105, Short.MAX_VALUE))
         );
 
-        jMarkerPanel.setBackground(new java.awt.Color(225, 213, 190));
+        jMarkerPanel.setBackground(new java.awt.Color(239, 235, 223));
         jMarkerPanel.setMaximumSize(new java.awt.Dimension(750, 305));
         jMarkerPanel.setMinimumSize(new java.awt.Dimension(750, 305));
-        jMarkerPanel.setOpaque(false);
 
+        jScrollPane1.setBackground(new java.awt.Color(239, 235, 223));
+        jScrollPane1.setOpaque(false);
+
+        jMarkerTable.setBackground(new java.awt.Color(239, 235, 223));
         jMarkerTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
@@ -771,9 +852,11 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
                 return canEdit [columnIndex];
             }
         });
+        jMarkerTable.setGridColor(new java.awt.Color(239, 235, 223));
         jMarkerTable.setOpaque(false);
         jScrollPane1.setViewportView(jMarkerTable);
 
+        jButton6.setBackground(new java.awt.Color(239, 235, 223));
         jButton6.setText("Löschen");
         jButton6.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -810,7 +893,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
             }
         });
 
-        jTabbedPane1.setBackground(new java.awt.Color(225, 213, 190));
+        jTabbedPane1.setBackground(new java.awt.Color(239, 235, 223));
 
         jDynFrameAlwaysOnTopSelection.setText("Immer im Vordergrund");
         jDynFrameAlwaysOnTopSelection.setOpaque(false);
@@ -930,8 +1013,9 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
         jPanel1.setLayout(new javax.swing.BoxLayout(jPanel1, javax.swing.BoxLayout.LINE_AXIS));
 
         jPanel2.setBackground(new java.awt.Color(239, 235, 223));
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(128, 64, 0), 2), "Navigation", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 11), new java.awt.Color(0, 0, 0))); // NOI18N
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(128, 64, 0), 2), "Navigation"));
 
+        jMoveE.setBackground(new java.awt.Color(239, 235, 223));
         jMoveE.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/map_e.png"))); // NOI18N
         jMoveE.setMaximumSize(new java.awt.Dimension(21, 21));
         jMoveE.setMinimumSize(new java.awt.Dimension(21, 21));
@@ -942,6 +1026,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
             }
         });
 
+        jMoveNE.setBackground(new java.awt.Color(239, 235, 223));
         jMoveNE.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/map_ne.png"))); // NOI18N
         jMoveNE.setMaximumSize(new java.awt.Dimension(21, 21));
         jMoveNE.setMinimumSize(new java.awt.Dimension(21, 21));
@@ -952,6 +1037,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
             }
         });
 
+        jMoveN.setBackground(new java.awt.Color(239, 235, 223));
         jMoveN.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/map_n.png"))); // NOI18N
         jMoveN.setMaximumSize(new java.awt.Dimension(21, 21));
         jMoveN.setMinimumSize(new java.awt.Dimension(21, 21));
@@ -962,6 +1048,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
             }
         });
 
+        jMoveNW.setBackground(new java.awt.Color(239, 235, 223));
         jMoveNW.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/map_nw.png"))); // NOI18N
         jMoveNW.setMaximumSize(new java.awt.Dimension(21, 21));
         jMoveNW.setMinimumSize(new java.awt.Dimension(21, 21));
@@ -972,6 +1059,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
             }
         });
 
+        jMoveW.setBackground(new java.awt.Color(239, 235, 223));
         jMoveW.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/map_w.png"))); // NOI18N
         jMoveW.setMaximumSize(new java.awt.Dimension(21, 21));
         jMoveW.setMinimumSize(new java.awt.Dimension(21, 21));
@@ -982,6 +1070,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
             }
         });
 
+        jMoveSW.setBackground(new java.awt.Color(239, 235, 223));
         jMoveSW.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/map_sw.png"))); // NOI18N
         jMoveSW.setMaximumSize(new java.awt.Dimension(21, 21));
         jMoveSW.setMinimumSize(new java.awt.Dimension(21, 21));
@@ -992,6 +1081,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
             }
         });
 
+        jMoveS.setBackground(new java.awt.Color(239, 235, 223));
         jMoveS.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/map_s.png"))); // NOI18N
         jMoveS.setMaximumSize(new java.awt.Dimension(21, 21));
         jMoveS.setMinimumSize(new java.awt.Dimension(21, 21));
@@ -1002,6 +1092,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
             }
         });
 
+        jMoveSE.setBackground(new java.awt.Color(239, 235, 223));
         jMoveSE.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/map_se.png"))); // NOI18N
         jMoveSE.setMaximumSize(new java.awt.Dimension(21, 21));
         jMoveSE.setMinimumSize(new java.awt.Dimension(21, 21));
@@ -1026,6 +1117,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
         jCenterY.setMinimumSize(new java.awt.Dimension(40, 20));
         jCenterY.setPreferredSize(new java.awt.Dimension(40, 20));
 
+        jRefreshButton.setBackground(new java.awt.Color(239, 235, 223));
         jRefreshButton.setToolTipText("Position aktualisieren");
         jRefreshButton.setMaximumSize(new java.awt.Dimension(30, 30));
         jRefreshButton.setMinimumSize(new java.awt.Dimension(30, 30));
@@ -1036,12 +1128,14 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
             }
         });
 
+        jMoveE1.setBackground(new java.awt.Color(239, 235, 223));
         jMoveE1.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         jMoveE1.setEnabled(false);
         jMoveE1.setMaximumSize(new java.awt.Dimension(21, 21));
         jMoveE1.setMinimumSize(new java.awt.Dimension(21, 21));
         jMoveE1.setPreferredSize(new java.awt.Dimension(21, 21));
 
+        jZoomInButton.setBackground(new java.awt.Color(239, 235, 223));
         jZoomInButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/zoom_out.png"))); // NOI18N
         jZoomInButton.setMaximumSize(new java.awt.Dimension(30, 30));
         jZoomInButton.setMinimumSize(new java.awt.Dimension(30, 30));
@@ -1052,6 +1146,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
             }
         });
 
+        jZoomOutButton.setBackground(new java.awt.Color(239, 235, 223));
         jZoomOutButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/zoom_in.png"))); // NOI18N
         jZoomOutButton.setMaximumSize(new java.awt.Dimension(30, 30));
         jZoomOutButton.setMinimumSize(new java.awt.Dimension(30, 30));
@@ -1062,6 +1157,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
             }
         });
 
+        jCenterCoordinateIngame.setBackground(new java.awt.Color(239, 235, 223));
         jCenterCoordinateIngame.setToolTipText("Zentrieren (InGame)");
         jCenterCoordinateIngame.setMaximumSize(new java.awt.Dimension(30, 30));
         jCenterCoordinateIngame.setMinimumSize(new java.awt.Dimension(30, 30));
@@ -1077,7 +1173,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(10, 10, 10)
+                .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jMoveSW, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1111,18 +1207,17 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
                         .addComponent(jRefreshButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 38, Short.MAX_VALUE)
                         .addComponent(jCenterX, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel2)
-                        .addGap(18, 18, 18)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jCenterY, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(45, 45, 45))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -1152,18 +1247,18 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
                             .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                 .addComponent(jCenterCoordinateIngame, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addComponent(jRefreshButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                .addGap(59, 59, 59))
+                .addContainerGap(70, Short.MAX_VALUE))
         );
 
         jMinimapPanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(128, 64, 0), 2));
         jMinimapPanel.setLayout(new java.awt.BorderLayout());
 
         jInfoPanel.setBackground(new java.awt.Color(239, 235, 223));
-        jInfoPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(128, 64, 0), 2), "Dorfdetails", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 11), new java.awt.Color(0, 0, 0))); // NOI18N
+        jInfoPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(128, 64, 0), 2), "Dorfdetails"));
         jInfoPanel.setLayout(new java.awt.BorderLayout());
 
         jPanel4.setBackground(new java.awt.Color(239, 235, 223));
-        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(128, 64, 0), 2), "Spieler-/Serverinformationen", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 11), new java.awt.Color(0, 0, 0))); // NOI18N
+        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(128, 64, 0), 2), "Spieler-/Serverinformationen"));
 
         jLabel5.setText("<html><u>Aktueller Spieler</u></html>");
 
@@ -1171,6 +1266,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
 
         jLabel21.setText("<html><u>Dörfer</u></html>");
 
+        jCurrentPlayerVillages.setBackground(new java.awt.Color(239, 235, 223));
         jCurrentPlayerVillages.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 fireChangeCurrentPlayerVillageEvent(evt);
@@ -1181,6 +1277,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
         jCurrentPlayer.setMinimumSize(new java.awt.Dimension(155, 14));
         jCurrentPlayer.setPreferredSize(new java.awt.Dimension(155, 14));
 
+        jCenterIngameButton.setBackground(new java.awt.Color(239, 235, 223));
         jCenterIngameButton.setToolTipText("Zentrieren (InGame)");
         jCenterIngameButton.setMaximumSize(new java.awt.Dimension(30, 30));
         jCenterIngameButton.setMinimumSize(new java.awt.Dimension(30, 30));
@@ -1197,6 +1294,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
         jOnlineLabel.setMinimumSize(new java.awt.Dimension(30, 30));
         jOnlineLabel.setPreferredSize(new java.awt.Dimension(30, 30));
 
+        jUpdateButton.setBackground(new java.awt.Color(239, 235, 223));
         jUpdateButton.setToolTipText("Daten mit Server abgleichen");
         jUpdateButton.setMaximumSize(new java.awt.Dimension(30, 30));
         jUpdateButton.setMinimumSize(new java.awt.Dimension(30, 30));
@@ -1259,6 +1357,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
         jMenu1.setMnemonic('a');
         jMenu1.setText("Allgemein");
 
+        jMenuItem1.setBackground(new java.awt.Color(239, 235, 223));
         jMenuItem1.setMnemonic('t');
         jMenuItem1.setText("Einstellungen");
         jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
@@ -1268,6 +1367,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
         });
         jMenu1.add(jMenuItem1);
 
+        jMenuItem2.setBackground(new java.awt.Color(239, 235, 223));
         jMenuItem2.setMnemonic('n');
         jMenuItem2.setText("Beenden");
         jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
@@ -1283,6 +1383,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
         jMenu3.setMnemonic('e');
         jMenu3.setText("Werkzeuge");
 
+        jSearchItem.setBackground(new java.awt.Color(239, 235, 223));
         jSearchItem.setMnemonic('s');
         jSearchItem.setText("Suche");
         jSearchItem.addActionListener(new java.awt.event.ActionListener() {
@@ -1292,6 +1393,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
         });
         jMenu3.add(jSearchItem);
 
+        jClockItem.setBackground(new java.awt.Color(239, 235, 223));
         jClockItem.setText("Uhr");
         jClockItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1306,6 +1408,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
         jMenu2.setMnemonic('n');
         jMenu2.setText("Ansicht");
 
+        jShowToolboxItem.setBackground(new java.awt.Color(239, 235, 223));
         jShowToolboxItem.setMnemonic('w');
         jShowToolboxItem.setText("Werkzeugleiste");
         jShowToolboxItem.addActionListener(new java.awt.event.ActionListener() {
@@ -1315,6 +1418,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
         });
         jMenu2.add(jShowToolboxItem);
 
+        jShowDynFrameItem.setBackground(new java.awt.Color(239, 235, 223));
         jShowDynFrameItem.setMnemonic('o');
         jShowDynFrameItem.setText("Toolbox anzeigen");
         jShowDynFrameItem.addActionListener(new java.awt.event.ActionListener() {
@@ -1356,7 +1460,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
                         .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 604, Short.MAX_VALUE))
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 606, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jInfoPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -1434,7 +1538,6 @@ private void fireMoveMapEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
 }//GEN-LAST:event_fireMoveMapEvent
 
 private void fireFrameResizedEvent(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_fireFrameResizedEvent
-
     try {
         mPanel.updateMap(iCenterX, iCenterY);
     } catch (Exception e) {

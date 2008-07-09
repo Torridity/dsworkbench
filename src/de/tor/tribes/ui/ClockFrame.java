@@ -5,13 +5,11 @@
  */
 package de.tor.tribes.ui;
 
+import de.tor.tribes.util.GlobalOptions;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import javax.swing.JSpinner;
 import javax.swing.JSpinner.DateEditor;
 import javax.swing.SpinnerDateModel;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 /**
  *
@@ -32,6 +30,7 @@ public class ClockFrame extends javax.swing.JFrame {
     /** Creates new form ClockFrame */
     ClockFrame() {
         initComponents();
+        getContentPane().setBackground(GlobalOptions.DS_BACK);
         frameControlPanel1.setupPanel(this, true, false);
         SpinnerDateModel dateModel = new SpinnerDateModel();
         jSpinner1.setValue(new Date(System.currentTimeMillis()));
@@ -61,11 +60,15 @@ public class ClockFrame extends javax.swing.JFrame {
         setTitle("Uhr");
         setUndecorated(true);
 
+        jLabel1.setBackground(new java.awt.Color(239, 235, 223));
         jLabel1.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
         jLabel1.setText("jLabel1");
+        jLabel1.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jLabel1.setOpaque(true);
 
         jSpinner1.setModel(new javax.swing.SpinnerDateModel(new java.util.Date(), null, null, java.util.Calendar.MILLISECOND));
 
+        jActivateTimerButton.setBackground(new java.awt.Color(239, 235, 223));
         jActivateTimerButton.setText("Aktivieren");
         jActivateTimerButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -80,14 +83,14 @@ public class ClockFrame extends javax.swing.JFrame {
             .addComponent(frameControlPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 256, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1)
-                .addContainerGap(196, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
                 .addComponent(jSpinner1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jActivateTimerButton)
-                .addContainerGap(61, Short.MAX_VALUE))
+                .addContainerGap(64, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 236, Short.MAX_VALUE)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

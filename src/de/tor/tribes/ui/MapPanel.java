@@ -8,6 +8,7 @@ package de.tor.tribes.ui;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.util.BrowserCommandSender;
+import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.Skin;
 import java.awt.BasicStroke;
@@ -26,8 +27,11 @@ import java.awt.event.MouseWheelListener;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.text.NumberFormat;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import javax.imageio.ImageIO;
 import org.apache.log4j.Logger;
 
 /**
@@ -108,12 +112,17 @@ public class MapPanel extends javax.swing.JPanel {
                     }
                     case GlobalOptions.CURSOR_ATTACK_INGAME: {
                         Village v = getVillageAtMousePos();
-                    //notify main frame to send troops from selected own village to target v
-                        //mParent.
+                        Village u = mParent.getCurrentUserVillage();
+                        if ((u != null) && (v != null)) {
+                            BrowserCommandSender.sendTroops(u, v);
+                        }
                     }
                     case GlobalOptions.CURSOR_SEND_RES_INGAME: {
                         Village v = getVillageAtMousePos();
-                    //notify main frame to send res from selected own village to target v
+                        Village u = mParent.getCurrentUserVillage();
+                        if ((u != null) && (v != null)) {
+                            BrowserCommandSender.sendRes(u, v);
+                        }
                     }
                 }
             }
@@ -389,6 +398,7 @@ public class MapPanel extends javax.swing.JPanel {
 
 /**Thread for updating after scroll operations*/
 class RepaintThread extends Thread {
+    private static Logger logger = Logger.getLogger(RepaintThread.class);
 
     private Village[][] mVisibleVillages = null;
     private BufferedImage mBuffer = null;
@@ -401,11 +411,16 @@ class RepaintThread extends Thread {
     private int xe = 0;
     private int ye = 0;
     private Village mSourceVillage = null;
+    private BufferedImage mDistBorder = null;
 
     public RepaintThread(MapPanel pParent, int pX, int pY) {
         mVisibleVillages = new Village[iVillagesX][iVillagesY];
         setCoordinates(pX, pY);
         mParent = pParent;
+        try {
+            mDistBorder = ImageIO.read(new File("./graphics/dist_border.png"));
+        } catch (Exception e) {
+        }
     }
 
     protected void setCoordinates(int pX, int pY) {
@@ -416,11 +431,15 @@ class RepaintThread extends Thread {
     @Override
     public void run() {
         while (true) {
+            try{
             updateMap(iX, iY);
             mParent.updateComplete(mVisibleVillages, mBuffer.getScaledInstance(mParent.getWidth(), mParent.getHeight(), BufferedImage.SCALE_FAST));
             mParent.repaint();
+            }catch(Throwable t){
+                logger.error("Redrawing map failed", t);
+            }
             try {
-                Thread.sleep(100);
+                Thread.sleep(80);
             } catch (Exception e) {
             }
         }
@@ -550,7 +569,8 @@ class RepaintThread extends Thread {
 
                 // <editor-fold defaultstate="collapsed" desc="Attack-line calculation">
 
-                for (Attack attack : GlobalOptions.getAttacks()) {
+                Attack[] attacks = GlobalOptions.getAttacks().toArray(new Attack[]{});
+                for (Attack attack : attacks) {
                     if (attack.isShowOnMap()) {
                         Line2D existing = attackLines.get(attack);
                         if (attack.isSourceVillage(v)) {
@@ -738,14 +758,30 @@ class RepaintThread extends Thread {
 
 
             if ((dragLine.getX2() != 0) && (dragLine.getY2() != 0)) {
-                g2d.drawLine((int) dragLine.getX1(), (int) dragLine.getY1(), (int) dragLine.getX2(), (int) dragLine.getY2());
+                int x1 = (int) dragLine.getX1();
+                int y1 = (int) dragLine.getY1();
+                int x2 = (int) dragLine.getX2();
+                int y2 = (int) dragLine.getY2();
+                g2d.drawLine(x1, y1, x2, y2);
+                boolean drawDistance = false;
+                try {
+                    drawDistance = Boolean.parseBoolean(GlobalOptions.getProperty("draw.distance"));
+                } catch (Exception e) {
+                }
+                if (drawDistance) {
+                    Village t = mParent.getVillageAtMousePos();
+                    if (t != null) {
+                        double d = DSCalculator.calculateDistance(mSourceVillage, t);
+                        String dist = NumberFormat.getInstance().format(d);
+                        Rectangle2D b = g2d.getFontMetrics().getStringBounds(dist, g2d);
+      
+                        g2d.drawImage(mDistBorder, null, x2 - 6, y2 - (int) Math.rint(b.getHeight()));
+                        //g2d.fillRect(x2, y2 - (int) b.getHeight(), (int) Math.rint(b.getWidth()), (int) Math.rint(b.getHeight()));
+                        g2d.drawString(dist, x2, y2);
+                    }
+                }
             }
         }
         g2d.dispose();
-    /* cnt++;
-    dur += (System.currentTimeMillis() - start);
-    System.out.println("Med " + (dur/cnt));*/
     }
-    /*  long dur = 0;
-    long cnt = 0;*/
 }

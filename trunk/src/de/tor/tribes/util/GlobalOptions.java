@@ -26,6 +26,7 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
+import javax.swing.UIManager;
 import org.apache.log4j.Logger;
 
 /**Global settings used by almost all components. e.g. WorldData or UI specific objects
@@ -74,6 +75,8 @@ public class GlobalOptions {
     //flag which is set if the user is logged in with hin account name
     private static String loggedInAs = null;
     private static boolean isOfflineMode = false;
+    public final static Color DS_BACK = new Color(225, 213, 190);
+    public final static Color DS_BACK_LIGHT = new Color(239, 235, 223);
 
     /**Init all managed objects
      * @param pDownloadData TRUE=download the WorldData from the tribes server
@@ -93,6 +96,9 @@ public class GlobalOptions {
         logger.debug("Loading world.dat");
         loadDecoration();
         setSelectedServer(getProperty("default.server"));
+        UIManager.put("OptionPane.background", DS_BACK);
+        UIManager.put("Panel.background", DS_BACK);
+        UIManager.put("Button.background", DS_BACK_LIGHT);
     }
 
     public static void addDataHolderListener(DataHolderListener pListener) {

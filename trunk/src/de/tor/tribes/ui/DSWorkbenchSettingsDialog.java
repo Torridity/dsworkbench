@@ -34,7 +34,6 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
     boolean updating = false;
     boolean gotServerList = false;
     private DSWorkbenchMainFrame mMainFrame = null;
-    private final Color DS_BACK = new Color(225, 213, 190);
 
     public static DSWorkbenchSettingsDialog getGlobalSettingsFrame() {
         if (SETTINGS_DIALOG != null) {
@@ -47,8 +46,10 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
     /** Creates new form TribesPlannerStartFrame */
     DSWorkbenchSettingsDialog() {
         initComponents();
-        getContentPane().setBackground(DS_BACK);
+
         jCreateAccountDialog.pack();
+        getContentPane().setBackground(GlobalOptions.DS_BACK);
+        jCreateAccountDialog.getContentPane().setBackground(GlobalOptions.DS_BACK);
         setAlwaysOnTop(true);
         // jControlPanel.setupPanel(this, true, false);
 
@@ -123,6 +124,12 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
         try {
             if (Boolean.parseBoolean(GlobalOptions.getProperty("minimap.showcontinents"))) {
                 jContinentsOnMinimap.setSelected(true);
+            }
+        } catch (Exception e) {
+        }
+        try {
+            if (Boolean.parseBoolean(GlobalOptions.getProperty("draw.distance"))) {
+                jShowDistanceBox.setSelected(true);
             }
         } catch (Exception e) {
         }
@@ -284,6 +291,8 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
         jUpdateIntervalBox = new javax.swing.JComboBox();
         jLabel11 = new javax.swing.JLabel();
         jContinentsOnMinimap = new javax.swing.JCheckBox();
+        jLabel13 = new javax.swing.JLabel();
+        jShowDistanceBox = new javax.swing.JCheckBox();
         jNetworkSettings = new javax.swing.JPanel();
         jDirectConnectOption = new javax.swing.JRadioButton();
         jProxyConnectOption = new javax.swing.JRadioButton();
@@ -298,6 +307,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
 
         jCreateAccountDialog.setTitle("Registrierung");
         jCreateAccountDialog.setAlwaysOnTop(true);
+        jCreateAccountDialog.setBackground(new java.awt.Color(239, 235, 223));
         jCreateAccountDialog.setModal(true);
 
         jLabel9.setText("Name");
@@ -312,6 +322,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
         jRegistrationPassword.setMinimumSize(new java.awt.Dimension(200, 20));
         jRegistrationPassword.setPreferredSize(new java.awt.Dimension(200, 20));
 
+        jButton1.setBackground(new java.awt.Color(239, 235, 223));
         jButton1.setText("Registrieren");
         jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -319,6 +330,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
             }
         });
 
+        jButton3.setBackground(new java.awt.Color(239, 235, 223));
         jButton3.setText("Abbrechen");
         jButton3.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -381,6 +393,10 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
             }
         });
 
+        jTabbedPane1.setBackground(new java.awt.Color(239, 235, 223));
+
+        jLoginPanel.setBackground(new java.awt.Color(239, 235, 223));
+
         jLabel6.setText("Name");
 
         jLabel7.setText("Passwort");
@@ -393,6 +409,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
         jAccountName.setMinimumSize(new java.awt.Dimension(200, 20));
         jAccountName.setPreferredSize(new java.awt.Dimension(200, 20));
 
+        jButton5.setBackground(new java.awt.Color(239, 235, 223));
         jButton5.setText("Prüfen");
         jButton5.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -411,10 +428,10 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
                     .addComponent(jLabel6))
                 .addGap(21, 21, 21)
                 .addGroup(jLoginPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jAccountName, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 206, Short.MAX_VALUE)
-                    .addComponent(jAccountPassword, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 206, Short.MAX_VALUE)
+                    .addComponent(jAccountName, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 209, Short.MAX_VALUE)
+                    .addComponent(jAccountPassword, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 209, Short.MAX_VALUE)
                     .addComponent(jButton5))
-                .addContainerGap(180, Short.MAX_VALUE))
+                .addContainerGap(183, Short.MAX_VALUE))
         );
         jLoginPanelLayout.setVerticalGroup(
             jLoginPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -429,15 +446,18 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
                     .addComponent(jLabel7))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton5)
-                .addContainerGap(163, Short.MAX_VALUE))
+                .addContainerGap(166, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Login", new javax.swing.ImageIcon(getClass().getResource("/res/login.png")), jLoginPanel); // NOI18N
+
+        jPlayerServerSettings.setBackground(new java.awt.Color(239, 235, 223));
 
         jLabel1.setText("Server");
 
         jLabel2.setText("Spieler");
 
+        jSelectServerButton.setBackground(new java.awt.Color(239, 235, 223));
         jSelectServerButton.setText("Server auswählen");
         jSelectServerButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -449,6 +469,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
         jStatusArea.setRows(5);
         jScrollPane1.setViewportView(jStatusArea);
 
+        jDownloadDataButton.setBackground(new java.awt.Color(239, 235, 223));
         jDownloadDataButton.setText("Daten downloaden");
         jDownloadDataButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -463,7 +484,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPlayerServerSettingsLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPlayerServerSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 441, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 447, Short.MAX_VALUE)
                     .addGroup(jPlayerServerSettingsLayout.createSequentialGroup()
                         .addGroup(jPlayerServerSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1)
@@ -474,8 +495,8 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
                             .addComponent(jServerList, 0, 262, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPlayerServerSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jDownloadDataButton, javax.swing.GroupLayout.DEFAULT_SIZE, 133, Short.MAX_VALUE)
-                            .addComponent(jSelectServerButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 133, Short.MAX_VALUE))))
+                            .addComponent(jDownloadDataButton, javax.swing.GroupLayout.DEFAULT_SIZE, 139, Short.MAX_VALUE)
+                            .addComponent(jSelectServerButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 139, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         jPlayerServerSettingsLayout.setVerticalGroup(
@@ -492,18 +513,21 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
                     .addComponent(jTribeNames, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jDownloadDataButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 164, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 167, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
         jTabbedPane1.addTab("Spieler/Server", new javax.swing.ImageIcon(getClass().getResource("/res/face.png")), jPlayerServerSettings); // NOI18N
 
+        jGeneralSettings.setBackground(new java.awt.Color(239, 235, 223));
+
         jLabel5.setText("Grafikpaket");
 
-        jGraphicPacks.setMaximumSize(new java.awt.Dimension(120, 18));
-        jGraphicPacks.setMinimumSize(new java.awt.Dimension(120, 18));
-        jGraphicPacks.setPreferredSize(new java.awt.Dimension(120, 18));
+        jGraphicPacks.setMaximumSize(new java.awt.Dimension(114, 22));
+        jGraphicPacks.setMinimumSize(new java.awt.Dimension(114, 22));
+        jGraphicPacks.setPreferredSize(new java.awt.Dimension(114, 22));
 
+        jButton4.setBackground(new java.awt.Color(239, 235, 223));
         jButton4.setText("Auswählen");
         jButton4.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -515,11 +539,23 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
 
         jUpdateIntervalBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Nie", "Bei Programmstart", "Stündlich", "Alle 2 Stunden", "Alle 4 Stunden", "Alle 12 Stunden", "Täglich" }));
 
-        jLabel11.setText("Kontinente auf Minimap");
+        jLabel11.setText("Kontinente anzeigen");
 
+        jContinentsOnMinimap.setContentAreaFilled(false);
+        jContinentsOnMinimap.setMargin(new java.awt.Insets(0, 0, 0, 0));
         jContinentsOnMinimap.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 fireChangeContinentsOnMinimapEvent(evt);
+            }
+        });
+
+        jLabel13.setText("Entfernung anzeigen");
+
+        jShowDistanceBox.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        jShowDistanceBox.setOpaque(false);
+        jShowDistanceBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fireChangeDrawDistanceEvent(evt);
             }
         });
 
@@ -532,16 +568,16 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
                 .addGroup(jGeneralSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel8)
                     .addComponent(jLabel5)
-                    .addComponent(jLabel11))
+                    .addComponent(jLabel11)
+                    .addComponent(jLabel13))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jGeneralSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jGeneralSettingsLayout.createSequentialGroup()
-                        .addGroup(jGeneralSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jUpdateIntervalBox, 0, 206, Short.MAX_VALUE)
-                            .addComponent(jGraphicPacks, 0, 206, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton4))
-                    .addComponent(jContinentsOnMinimap))
+                    .addComponent(jContinentsOnMinimap, javax.swing.GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE)
+                    .addComponent(jShowDistanceBox, javax.swing.GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE)
+                    .addComponent(jGraphicPacks, 0, 210, Short.MAX_VALUE)
+                    .addComponent(jUpdateIntervalBox, javax.swing.GroupLayout.Alignment.TRAILING, 0, 210, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton4)
                 .addContainerGap())
         );
         jGeneralSettingsLayout.setVerticalGroup(
@@ -556,18 +592,25 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
                 .addGroup(jGeneralSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel8)
                     .addComponent(jUpdateIntervalBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jGeneralSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jContinentsOnMinimap, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(162, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 10, Short.MAX_VALUE)
+                .addGroup(jGeneralSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel11)
+                    .addComponent(jContinentsOnMinimap))
+                .addGap(12, 12, 12)
+                .addGroup(jGeneralSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel13)
+                    .addComponent(jShowDistanceBox))
+                .addContainerGap(134, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Allgemein", new javax.swing.ImageIcon(getClass().getResource("/res/settings.png")), jGeneralSettings); // NOI18N
 
+        jNetworkSettings.setBackground(new java.awt.Color(239, 235, 223));
+
         connectionTypeGroup.add(jDirectConnectOption);
         jDirectConnectOption.setSelected(true);
         jDirectConnectOption.setText("Ich bin direkt mit dem Internet verbunden");
+        jDirectConnectOption.setOpaque(false);
         jDirectConnectOption.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 fireChangeConnectTypeEvent(evt);
@@ -576,6 +619,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
 
         connectionTypeGroup.add(jProxyConnectOption);
         jProxyConnectOption.setText("Ich benutze einen Proxy für den Internetzugang");
+        jProxyConnectOption.setOpaque(false);
         jProxyConnectOption.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 fireChangeConnectTypeEvent(evt);
@@ -584,15 +628,18 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
 
         jLabel3.setText("Proxy Adresse");
 
+        jProxyHost.setBackground(new java.awt.Color(239, 235, 223));
         jProxyHost.setEnabled(false);
 
         jLabel4.setText("Proxy Port");
 
+        jProxyPort.setBackground(new java.awt.Color(239, 235, 223));
         jProxyPort.setEnabled(false);
         jProxyPort.setMaximumSize(new java.awt.Dimension(40, 20));
         jProxyPort.setMinimumSize(new java.awt.Dimension(40, 20));
         jProxyPort.setPreferredSize(new java.awt.Dimension(40, 20));
 
+        jButton2.setBackground(new java.awt.Color(239, 235, 223));
         jButton2.setText("Aktualisieren");
         jButton2.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -613,7 +660,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
                             .addComponent(jLabel4))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jNetworkSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jProxyHost, javax.swing.GroupLayout.DEFAULT_SIZE, 367, Short.MAX_VALUE)
+                            .addComponent(jProxyHost, javax.swing.GroupLayout.DEFAULT_SIZE, 373, Short.MAX_VALUE)
                             .addComponent(jProxyPort, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addComponent(jButton2, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jDirectConnectOption)
@@ -637,11 +684,12 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
                     .addComponent(jProxyPort, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton2)
-                .addContainerGap(107, Short.MAX_VALUE))
+                .addContainerGap(110, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Netzwerk", new javax.swing.ImageIcon(getClass().getResource("/res/proxy.png")), jNetworkSettings); // NOI18N
 
+        jOKButton.setBackground(new java.awt.Color(239, 235, 223));
         jOKButton.setText("OK");
         jOKButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -649,6 +697,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
             }
         });
 
+        jCancelButton.setBackground(new java.awt.Color(239, 235, 223));
         jCancelButton.setText("Abbrechen");
         jCancelButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -656,6 +705,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
             }
         });
 
+        jCreateAccountButton.setBackground(new java.awt.Color(239, 235, 223));
         jCreateAccountButton.setText("Neuen Account erstellen");
         jCreateAccountButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -676,7 +726,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
                         .addComponent(jCancelButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jOKButton))
-                    .addComponent(jTabbedPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 466, Short.MAX_VALUE))
+                    .addComponent(jTabbedPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 472, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -985,6 +1035,11 @@ private void fireDownloadDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
     t.start();
 }//GEN-LAST:event_fireDownloadDataEvent
 
+private void fireChangeDrawDistanceEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireChangeDrawDistanceEvent
+    GlobalOptions.addProperty("draw.distance", Boolean.toString(jShowDistanceBox.isSelected()));
+    GlobalOptions.saveProperties();
+}//GEN-LAST:event_fireChangeDrawDistanceEvent
+
     private boolean updateServerList(boolean pLocal) {
         String[] servers = null;
         if (!pLocal) {
@@ -1074,6 +1129,7 @@ private void fireDownloadDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -1095,12 +1151,12 @@ private void fireDownloadDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JButton jSelectServerButton;
     private javax.swing.JComboBox jServerList;
+    private javax.swing.JCheckBox jShowDistanceBox;
     private javax.swing.JTextArea jStatusArea;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JComboBox jTribeNames;
     private javax.swing.JComboBox jUpdateIntervalBox;
     // End of variables declaration//GEN-END:variables
-
     @Override
     public void fireDataHolderEvent(String pMessage) {
         SimpleDateFormat f = new SimpleDateFormat("HH:mm:ss");

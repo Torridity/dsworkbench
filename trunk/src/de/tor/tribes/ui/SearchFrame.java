@@ -40,6 +40,7 @@ public class SearchFrame extends javax.swing.JFrame implements SearchListener {
     SearchFrame(DSWorkbenchMainFrame pParent) {
         initComponents();
         mParent = pParent;
+        getContentPane().setBackground(GlobalOptions.DS_BACK);
         // frameControlPanel1.setupPanel(this, true, true);
         jCenterInGameButton.setIcon(new ImageIcon("./graphics/icons/center.png"));
         jSendResButton.setIcon(new ImageIcon("./graphics/icons/booty.png"));
@@ -78,6 +79,8 @@ public class SearchFrame extends javax.swing.JFrame implements SearchListener {
         setTitle("Suche");
         setAlwaysOnTop(true);
 
+        jPlayerSearch.setOpaque(false);
+
         jSearchTerm.setMaximumSize(new java.awt.Dimension(200, 20));
         jSearchTerm.setMinimumSize(new java.awt.Dimension(200, 20));
         jSearchTerm.setPreferredSize(new java.awt.Dimension(200, 20));
@@ -100,6 +103,7 @@ public class SearchFrame extends javax.swing.JFrame implements SearchListener {
 
         jLabel2.setText("Spieler");
 
+        jMarkAllyButton.setBackground(new java.awt.Color(239, 235, 223));
         jMarkAllyButton.setText("Markieren");
         jMarkAllyButton.setMaximumSize(new java.awt.Dimension(100, 23));
         jMarkAllyButton.setMinimumSize(new java.awt.Dimension(100, 23));
@@ -121,6 +125,7 @@ public class SearchFrame extends javax.swing.JFrame implements SearchListener {
 
         jLabel3.setText("Stämme");
 
+        jMarkTribeButton.setBackground(new java.awt.Color(239, 235, 223));
         jMarkTribeButton.setText("Markieren");
         jMarkTribeButton.setMaximumSize(new java.awt.Dimension(100, 23));
         jMarkTribeButton.setMinimumSize(new java.awt.Dimension(100, 23));
@@ -133,6 +138,7 @@ public class SearchFrame extends javax.swing.JFrame implements SearchListener {
 
         jLabel6.setText("Dörfer");
 
+        jButton5.setBackground(new java.awt.Color(239, 235, 223));
         jButton5.setText("Zentrieren");
         jButton5.setMaximumSize(new java.awt.Dimension(100, 23));
         jButton5.setMinimumSize(new java.awt.Dimension(100, 23));
@@ -143,6 +149,7 @@ public class SearchFrame extends javax.swing.JFrame implements SearchListener {
             }
         });
 
+        jCenterInGameButton.setBackground(new java.awt.Color(239, 235, 223));
         jCenterInGameButton.setToolTipText("Karte zentrieren");
         jCenterInGameButton.setMaximumSize(new java.awt.Dimension(31, 31));
         jCenterInGameButton.setMinimumSize(new java.awt.Dimension(31, 31));
@@ -153,6 +160,7 @@ public class SearchFrame extends javax.swing.JFrame implements SearchListener {
             }
         });
 
+        jSendResButton.setBackground(new java.awt.Color(239, 235, 223));
         jSendResButton.setToolTipText("Rohstoffe schicken");
         jSendResButton.setMaximumSize(new java.awt.Dimension(31, 31));
         jSendResButton.setMinimumSize(new java.awt.Dimension(31, 31));
@@ -163,6 +171,7 @@ public class SearchFrame extends javax.swing.JFrame implements SearchListener {
             }
         });
 
+        jSendDefButton.setBackground(new java.awt.Color(239, 235, 223));
         jSendDefButton.setToolTipText("Unterstützugn schicken");
         jSendDefButton.setMaximumSize(new java.awt.Dimension(31, 31));
         jSendDefButton.setMinimumSize(new java.awt.Dimension(31, 31));

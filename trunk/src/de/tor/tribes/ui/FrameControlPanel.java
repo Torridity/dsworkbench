@@ -9,7 +9,6 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.GraphicsEnvironment;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.MouseEvent;
@@ -325,6 +324,7 @@ public class FrameControlPanel extends javax.swing.JPanel {
                     //don't drag in maximized mode
                     return;
                 }
+
                 Point l = e.getLocationOnScreen();
                 parent.setLocation(l.x - dx, l.y - dy);
             }
@@ -487,7 +487,6 @@ public class FrameControlPanel extends javax.swing.JPanel {
     private javax.swing.JLabel jButton4;
     private javax.swing.JLabel jTitleLabel;
     // End of variables declaration//GEN-END:variables
-
     public static void main(String[] args) {
         JFrame f = new JFrame("test");
         f.add(new FrameControlPanel());

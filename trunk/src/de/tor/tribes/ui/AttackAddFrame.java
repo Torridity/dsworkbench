@@ -35,6 +35,8 @@ public class AttackAddFrame extends javax.swing.JFrame {
         initComponents();
         frameControlPanel1.setupPanel(this, true, false);
         mParent = pParent;
+        getContentPane().setBackground(GlobalOptions.DS_BACK);
+
         ((DateEditor) jTimeSpinner.getEditor()).getTextField().setHorizontalAlignment(JTextField.CENTER);
         ((DateEditor) jTimeSpinner.getEditor()).getFormat().applyPattern("dd.MM.yy HH:mm:ss");
         jTimeSpinner.addChangeListener(new ChangeListener() {
@@ -81,6 +83,9 @@ public class AttackAddFrame extends javax.swing.JFrame {
 
     public void setupAttack(Village pSource, Village pTarget, int pInitialUnit, Date pInititalTime) {
         if ((pSource == null) || (pTarget == null)) {
+            return;
+        }
+        if(pSource.equals(pTarget)){
             return;
         }
         if(pSource.getTribe() == null){
@@ -151,6 +156,7 @@ public class AttackAddFrame extends javax.swing.JFrame {
         setTitle("Angriff hinzufügen");
         setUndecorated(true);
 
+        jButton1.setBackground(new java.awt.Color(239, 235, 223));
         jButton1.setText("OK");
         jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -158,6 +164,7 @@ public class AttackAddFrame extends javax.swing.JFrame {
             }
         });
 
+        jButton2.setBackground(new java.awt.Color(239, 235, 223));
         jButton2.setText("Abbrechen");
         jButton2.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -165,11 +172,15 @@ public class AttackAddFrame extends javax.swing.JFrame {
             }
         });
 
+        jDistance.setBackground(new java.awt.Color(239, 235, 223));
         jDistance.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jDistance.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        jDistance.setOpaque(true);
 
+        jSourceVillage.setBackground(new java.awt.Color(239, 235, 223));
         jSourceVillage.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jSourceVillage.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        jSourceVillage.setOpaque(true);
 
         jLabel1.setText("<html><u>Herkunft</u></html>");
         jLabel1.setBorder(javax.swing.BorderFactory.createCompoundBorder());
@@ -195,11 +206,13 @@ public class AttackAddFrame extends javax.swing.JFrame {
 
         jLabel4.setText("<html><u>Entfernung</u></html>");
 
+        jTargetVillage.setBackground(new java.awt.Color(239, 235, 223));
         jTargetVillage.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jTargetVillage.setAutoscrolls(true);
         jTargetVillage.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jTargetVillage.setMaximumSize(new java.awt.Dimension(2147483647, 20));
         jTargetVillage.setMinimumSize(new java.awt.Dimension(39, 20));
+        jTargetVillage.setOpaque(true);
         jTargetVillage.setPreferredSize(new java.awt.Dimension(39, 20));
 
         jLabel5.setText("<html><u>Ankunftzeit</u></html>");

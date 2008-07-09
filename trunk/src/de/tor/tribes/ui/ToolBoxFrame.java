@@ -41,6 +41,8 @@ public class ToolBoxFrame extends javax.swing.JFrame {
             jDragLabel.setIcon(new ImageIcon("./graphics/icons/tools.png"));
             jMeasureButton.setIcon(new ImageIcon("./graphics/icons/measure.png"));
             jMarkButton.setIcon(new ImageIcon("./graphics/icons/mark.png"));
+            jSendTroopsIngameButton.setIcon(new ImageIcon("./graphics/icons/def.png"));
+            jSendResIngameButton.setIcon(new ImageIcon("./graphics/icons/booty.png"));
             jAttackAxeButton.setIcon(new ImageIcon("./graphics/icons/attack_axe.png"));
             jAttackRamButton.setIcon(new ImageIcon("./graphics/icons/attack_ram.png"));
             jAttackSnobButton.setIcon(new ImageIcon("./graphics/icons/attack_snob.png"));
@@ -115,6 +117,8 @@ public class ToolBoxFrame extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jMeasureButton = new javax.swing.JButton();
         jMarkButton = new javax.swing.JButton();
+        jSendTroopsIngameButton = new javax.swing.JButton();
+        jSendResIngameButton = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
         jAttackAxeButton = new javax.swing.JButton();
         jAttackRamButton = new javax.swing.JButton();
@@ -163,6 +167,28 @@ public class ToolBoxFrame extends javax.swing.JFrame {
             }
         });
         jPanel1.add(jMarkButton);
+
+        jSendTroopsIngameButton.setToolTipText("Markieren");
+        jSendTroopsIngameButton.setMaximumSize(new java.awt.Dimension(30, 30));
+        jSendTroopsIngameButton.setMinimumSize(new java.awt.Dimension(30, 30));
+        jSendTroopsIngameButton.setPreferredSize(new java.awt.Dimension(30, 30));
+        jSendTroopsIngameButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireToolClickedEvent(evt);
+            }
+        });
+        jPanel1.add(jSendTroopsIngameButton);
+
+        jSendResIngameButton.setToolTipText("Markieren");
+        jSendResIngameButton.setMaximumSize(new java.awt.Dimension(30, 30));
+        jSendResIngameButton.setMinimumSize(new java.awt.Dimension(30, 30));
+        jSendResIngameButton.setPreferredSize(new java.awt.Dimension(30, 30));
+        jSendResIngameButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireToolClickedEvent(evt);
+            }
+        });
+        jPanel1.add(jSendResIngameButton);
 
         jLabel2.setBackground(new java.awt.Color(102, 102, 102));
         jLabel2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -334,7 +360,7 @@ public class ToolBoxFrame extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jDragLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 435, Short.MAX_VALUE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 497, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -346,6 +372,10 @@ private void fireToolClickedEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
         mMap.setCurrentCursor(GlobalOptions.CURSOR_MEASURE);
     } else if (evt.getSource() == jMarkButton) {
         mMap.setCurrentCursor(GlobalOptions.CURSOR_MARK);
+    } else if (evt.getSource() == jSendTroopsIngameButton) {
+        mMap.setCurrentCursor(GlobalOptions.CURSOR_ATTACK_INGAME);
+    } else if (evt.getSource() == jSendResIngameButton) {
+        mMap.setCurrentCursor(GlobalOptions.CURSOR_SEND_RES_INGAME);
     } else if (evt.getSource() == jAttackAxeButton) {
         mMap.setCurrentCursor(GlobalOptions.CURSOR_ATTACK_AXE);
     } else if (evt.getSource() == jAttackRamButton) {
@@ -364,14 +394,14 @@ private void fireToolClickedEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
         mMiniMap.setCurrentCursor(GlobalOptions.CURSOR_MOVE);
     } else if (evt.getSource() == jZoomButton) {
         mMiniMap.setCurrentCursor(GlobalOptions.CURSOR_ZOOM);
-    }else if (evt.getSource() == jSearchButton) {
+    } else if (evt.getSource() == jSearchButton) {
         SearchFrame.getGlobalSearchFrame().setVisible(true);
-    }else if (evt.getSource() == jSettingsButton) {
+    } else if (evt.getSource() == jSettingsButton) {
         DSWorkbenchSettingsDialog.getGlobalSettingsFrame().setVisible(true);
-    }else if (evt.getSource() == jClockButton) {
+    } else if (evt.getSource() == jClockButton) {
         ClockFrame.getGlobalClockFrame().setVisible(true);
     }
-    
+
 }//GEN-LAST:event_fireToolClickedEvent
 
     /**
@@ -404,6 +434,8 @@ private void fireToolClickedEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
     private javax.swing.JButton jMoveButton;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JButton jSearchButton;
+    private javax.swing.JButton jSendResIngameButton;
+    private javax.swing.JButton jSendTroopsIngameButton;
     private javax.swing.JButton jSettingsButton;
     private javax.swing.JButton jZoomButton;
     // End of variables declaration//GEN-END:variables
@@ -435,8 +467,8 @@ class HideThread extends Thread {
                     mParent.setSize(mParent.getWidth(), mParent.getHeight() - 10);
                 }
             } else {
-                if (mParent.getHeight() < 482) {
-                    if (mParent.getHeight() != 482) {
+                if (mParent.getHeight() < 544) {
+                    if (mParent.getHeight() != 544) {
                         mParent.setSize(mParent.getWidth(), mParent.getHeight() + 10);
                     }
                 }

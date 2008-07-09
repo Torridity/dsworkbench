@@ -41,6 +41,9 @@
   </Layout>
   <SubComponents>
     <Container class="javax.swing.JPanel" name="jPlayerSearch">
+      <Properties>
+        <Property name="opaque" type="boolean" value="false"/>
+      </Properties>
 
       <Layout>
         <DimensionLayout dim="0">
@@ -166,6 +169,9 @@
         </Component>
         <Component class="javax.swing.JButton" name="jMarkAllyButton">
           <Properties>
+            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="df" green="eb" red="ef" type="rgb"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="Markieren"/>
             <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
               <Dimension value="[100, 23]"/>
@@ -207,6 +213,9 @@
         </Component>
         <Component class="javax.swing.JButton" name="jMarkTribeButton">
           <Properties>
+            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="df" green="eb" red="ef" type="rgb"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="Markieren"/>
             <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
               <Dimension value="[100, 23]"/>
@@ -229,6 +238,9 @@
         </Component>
         <Component class="javax.swing.JButton" name="jButton5">
           <Properties>
+            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="df" green="eb" red="ef" type="rgb"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="Zentrieren"/>
             <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
               <Dimension value="[100, 23]"/>
@@ -253,6 +265,9 @@
         </Component>
         <Component class="javax.swing.JButton" name="jCenterInGameButton">
           <Properties>
+            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="df" green="eb" red="ef" type="rgb"/>
+            </Property>
             <Property name="toolTipText" type="java.lang.String" value="Karte zentrieren"/>
             <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
               <Dimension value="[31, 31]"/>
@@ -270,6 +285,9 @@
         </Component>
         <Component class="javax.swing.JButton" name="jSendResButton">
           <Properties>
+            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="df" green="eb" red="ef" type="rgb"/>
+            </Property>
             <Property name="toolTipText" type="java.lang.String" value="Rohstoffe schicken"/>
             <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
               <Dimension value="[31, 31]"/>
@@ -287,6 +305,9 @@
         </Component>
         <Component class="javax.swing.JButton" name="jSendDefButton">
           <Properties>
+            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="df" green="eb" red="ef" type="rgb"/>
+            </Property>
             <Property name="toolTipText" type="java.lang.String" value="Unterst&#xfc;tzugn schicken"/>
             <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
               <Dimension value="[31, 31]"/>

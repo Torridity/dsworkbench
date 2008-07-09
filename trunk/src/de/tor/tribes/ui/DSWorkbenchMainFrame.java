@@ -60,10 +60,14 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
     private List<ImageIcon> mIcons;
     private double dZoomFactor = 1.0;
     private ToolBoxFrame mToolbox = null;
+    private final Color DS_BACK = new Color(225, 213, 190);
 
     /** Creates new form MapFrame */
     public DSWorkbenchMainFrame() {
         initComponents();
+        getContentPane().setBackground(DS_BACK);
+        jDynFrame.getContentPane().setBackground(DS_BACK);
+        
         /*  jMainControlPanel.setupPanel(this, true, true);
         jMainControlPanel.setTitle(getTitle());*/
         pack();
@@ -98,7 +102,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
         }
         onlineStateChanged();
         jUpdateButton.setEnabled(false);
-
     }
 
     public void serverSettingsChangedEvent() {
@@ -113,8 +116,8 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
             } else {
                 iCenterX = t.getVillageList().get(0).getX();
                 iCenterY = t.getVillageList().get(0).getY();
-                jCenterX.setText(""+iCenterX);
-                jCenterY.setText(""+iCenterY);
+                jCenterX.setText("" + iCenterX);
+                jCenterY.setText("" + iCenterY);
             }
         } else {
             DefaultComboBoxModel model = new DefaultComboBoxModel(new Object[]{"Keine Dörfer"});
@@ -124,7 +127,9 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
             MinimapPanel.getGlobalMinimap().redraw();
         }
         setupMarkerPanel();
+        jMarkerPanel.updateUI();
         setupAttackPanel();
+        jAttackPanel.updateUI();
     }
 
     public void onlineStateChanged() {
@@ -143,9 +148,9 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
     public void init() {
         //setup everything
         setupMaps();
-        setupMarkerPanel();
+        //setupMarkerPanel();
         setupDetailsPanel();
-        setupAttackPanel();
+        // setupAttackPanel();
         setupDynFrame();
         mToolbox = new ToolBoxFrame(mPanel, MinimapPanel.getGlobalMinimap());
     }
@@ -283,18 +288,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
             @Override
             public void editingStopped(ChangeEvent e) {
                 //"attack shown" value changed. redraw map panel
-
-
-
-
-
-
-
-
-
-
-
-
                 try {
                     updateAttacks();
                 } catch (NumberFormatException nfe) {
@@ -366,14 +359,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
         jVillageInfo = new javax.swing.JLabel();
         jPlayerInfo = new javax.swing.JLabel();
         jAllyInfo = new javax.swing.JLabel();
-        jPlayerSelectionDialog = new javax.swing.JDialog();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
-        jPlayerSelection = new javax.swing.JComboBox();
-        jServerSelection = new javax.swing.JComboBox();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
         jDistancePanel = new javax.swing.JPanel();
         jSpearTime = new javax.swing.JTextField();
         jSwordTime = new javax.swing.JTextField();
@@ -500,75 +485,9 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
                 .addComponent(jAllyInfo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
-        jPlayerSelectionDialog.setTitle("Spielerauswahl");
-        jPlayerSelectionDialog.setAlwaysOnTop(true);
-        jPlayerSelectionDialog.setModal(true);
-
-        jLabel3.setText("Spielername");
-
-        jLabel4.setText("Server");
-
-        jButton1.setText("OK");
-        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireSelectPlayerEvent(evt);
-            }
-        });
-
-        jButton2.setText("Abbrechen");
-
-        jButton3.setText("Server auswählen");
-        jButton3.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireRefreshServerDataEvent(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jPlayerSelectionDialogLayout = new javax.swing.GroupLayout(jPlayerSelectionDialog.getContentPane());
-        jPlayerSelectionDialog.getContentPane().setLayout(jPlayerSelectionDialogLayout);
-        jPlayerSelectionDialogLayout.setHorizontalGroup(
-            jPlayerSelectionDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPlayerSelectionDialogLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPlayerSelectionDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPlayerSelectionDialogLayout.createSequentialGroup()
-                        .addComponent(jLabel4)
-                        .addGap(30, 30, 30)
-                        .addComponent(jServerSelection, 0, 318, Short.MAX_VALUE))
-                    .addGroup(jPlayerSelectionDialogLayout.createSequentialGroup()
-                        .addComponent(jLabel3)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPlayerSelectionDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPlayerSelectionDialogLayout.createSequentialGroup()
-                                .addComponent(jButton2)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton1))
-                            .addComponent(jPlayerSelection, 0, 318, Short.MAX_VALUE)))
-                    .addComponent(jButton3, javax.swing.GroupLayout.Alignment.TRAILING))
-                .addContainerGap())
-        );
-        jPlayerSelectionDialogLayout.setVerticalGroup(
-            jPlayerSelectionDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPlayerSelectionDialogLayout.createSequentialGroup()
-                .addGap(14, 14, 14)
-                .addGroup(jPlayerSelectionDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4)
-                    .addComponent(jServerSelection, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPlayerSelectionDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(jPlayerSelection, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPlayerSelectionDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
         jDistancePanel.setMaximumSize(new java.awt.Dimension(750, 96));
         jDistancePanel.setMinimumSize(new java.awt.Dimension(750, 96));
+        jDistancePanel.setOpaque(false);
 
         jSpearTime.setEditable(false);
         jSpearTime.setHorizontalAlignment(javax.swing.JTextField.CENTER);
@@ -824,8 +743,10 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
                 .addContainerGap(105, Short.MAX_VALUE))
         );
 
+        jMarkerPanel.setBackground(new java.awt.Color(225, 213, 190));
         jMarkerPanel.setMaximumSize(new java.awt.Dimension(750, 305));
         jMarkerPanel.setMinimumSize(new java.awt.Dimension(750, 305));
+        jMarkerPanel.setOpaque(false);
 
         jMarkerTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -850,6 +771,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
                 return canEdit [columnIndex];
             }
         });
+        jMarkerTable.setOpaque(false);
         jScrollPane1.setViewportView(jMarkerTable);
 
         jButton6.setText("Löschen");
@@ -881,13 +803,17 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
         );
 
         jDynFrame.setTitle("Toolbox");
+        jDynFrame.setBackground(new java.awt.Color(225, 213, 190));
         jDynFrame.addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 fireDynFrameClosingEvent(evt);
             }
         });
 
+        jTabbedPane1.setBackground(new java.awt.Color(225, 213, 190));
+
         jDynFrameAlwaysOnTopSelection.setText("Immer im Vordergrund");
+        jDynFrameAlwaysOnTopSelection.setOpaque(false);
         jDynFrameAlwaysOnTopSelection.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 fireAlwaysInFrontChangeEvent(evt);
@@ -915,10 +841,13 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        jAttackPanel.setBackground(new java.awt.Color(225, 213, 190));
         jAttackPanel.setMinimumSize(new java.awt.Dimension(750, 305));
+        jAttackPanel.setOpaque(false);
         jAttackPanel.setPreferredSize(new java.awt.Dimension(750, 305));
         jAttackPanel.setRequestFocusEnabled(false);
 
+        jAttackTable.setBackground(new java.awt.Color(236, 233, 216));
         jAttackTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
@@ -935,6 +864,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
                 return types [columnIndex];
             }
         });
+        jAttackTable.setOpaque(false);
         jScrollPane2.setViewportView(jAttackTable);
 
         jButton5.setText("Entfernen");
@@ -989,16 +919,18 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("DS Workbench 0.9b");
+        setBackground(new java.awt.Color(225, 213, 190));
         addComponentListener(new java.awt.event.ComponentAdapter() {
             public void componentResized(java.awt.event.ComponentEvent evt) {
                 fireFrameResizedEvent(evt);
             }
         });
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(128, 64, 0), 2));
         jPanel1.setLayout(new javax.swing.BoxLayout(jPanel1, javax.swing.BoxLayout.LINE_AXIS));
 
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Navigation"));
+        jPanel2.setBackground(new java.awt.Color(239, 235, 223));
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(128, 64, 0), 2), "Navigation", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 11), new java.awt.Color(0, 0, 0))); // NOI18N
 
         jMoveE.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/map_e.png"))); // NOI18N
         jMoveE.setMaximumSize(new java.awt.Dimension(21, 21));
@@ -1185,7 +1117,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
                         .addComponent(jLabel2)
                         .addGap(18, 18, 18)
                         .addComponent(jCenterY, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(29, 29, 29))
+                .addGap(45, 45, 45))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1223,13 +1155,15 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
                 .addGap(59, 59, 59))
         );
 
-        jMinimapPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        jMinimapPanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(128, 64, 0), 2));
         jMinimapPanel.setLayout(new java.awt.BorderLayout());
 
-        jInfoPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Dorfdetails"));
+        jInfoPanel.setBackground(new java.awt.Color(239, 235, 223));
+        jInfoPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(128, 64, 0), 2), "Dorfdetails", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 11), new java.awt.Color(0, 0, 0))); // NOI18N
         jInfoPanel.setLayout(new java.awt.BorderLayout());
 
-        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("Spieler-/Serverinformationen"));
+        jPanel4.setBackground(new java.awt.Color(239, 235, 223));
+        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(128, 64, 0), 2), "Spieler-/Serverinformationen", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 11), new java.awt.Color(0, 0, 0))); // NOI18N
 
         jLabel5.setText("<html><u>Aktueller Spieler</u></html>");
 
@@ -1285,9 +1219,9 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
                     .addComponent(jLabel21))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jCurrentPlayer, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 155, Short.MAX_VALUE)
-                    .addComponent(jCurrentPlayerVillages, javax.swing.GroupLayout.Alignment.LEADING, 0, 155, Short.MAX_VALUE)
-                    .addComponent(jCurrentServer, javax.swing.GroupLayout.DEFAULT_SIZE, 155, Short.MAX_VALUE)
+                    .addComponent(jCurrentPlayer, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE)
+                    .addComponent(jCurrentPlayerVillages, javax.swing.GroupLayout.Alignment.LEADING, 0, 171, Short.MAX_VALUE)
+                    .addComponent(jCurrentServer, javax.swing.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel4Layout.createSequentialGroup()
                         .addComponent(jCenterIngameButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -1316,9 +1250,12 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
                     .addComponent(jCenterIngameButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jUpdateButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jOnlineLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(49, Short.MAX_VALUE))
+                .addContainerGap(57, Short.MAX_VALUE))
         );
 
+        jMenuBar1.setBackground(new java.awt.Color(225, 213, 190));
+
+        jMenu1.setBackground(new java.awt.Color(225, 213, 190));
         jMenu1.setMnemonic('a');
         jMenu1.setText("Allgemein");
 
@@ -1342,6 +1279,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
 
         jMenuBar1.add(jMenu1);
 
+        jMenu3.setBackground(new java.awt.Color(225, 213, 190));
         jMenu3.setMnemonic('e');
         jMenu3.setText("Werkzeuge");
 
@@ -1364,6 +1302,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
 
         jMenuBar1.add(jMenu3);
 
+        jMenu2.setBackground(new java.awt.Color(225, 213, 190));
         jMenu2.setMnemonic('n');
         jMenu2.setText("Ansicht");
 
@@ -1397,14 +1336,12 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 543, Short.MAX_VALUE)
+                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 531, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(4, 4, 4)
-                                .addComponent(jMinimapPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(jMinimapPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 284, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addComponent(jInfoPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 823, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -1416,10 +1353,10 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jMinimapPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 233, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 598, Short.MAX_VALUE))
+                        .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 604, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jInfoPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -1531,37 +1468,6 @@ private void fireZoomEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fir
     MinimapPanel.getGlobalMinimap().setSelection(Integer.parseInt(jCenterX.getText()), Integer.parseInt(jCenterY.getText()), (int) Math.rint(w), (int) Math.rint(h));
     mPanel.repaint();
 }//GEN-LAST:event_fireZoomEvent
-
-private void fireRefreshServerDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireRefreshServerDataEvent
-
-    try {
-        String serverSelection = (String) jServerSelection.getSelectedItem();
-        if (serverSelection != null) {
-            GlobalOptions.setSelectedServer(serverSelection);
-            GlobalOptions.loadData(false);
-            DefaultComboBoxModel model = new DefaultComboBoxModel();
-            Enumeration<Integer> tribes = GlobalOptions.getDataHolder().getTribes().keys();
-            String[] names = new String[GlobalOptions.getDataHolder().getTribes().size()];
-            int idx = 0;
-            while (tribes.hasMoreElements()) {
-                names[idx] = GlobalOptions.getDataHolder().getTribes().get(tribes.nextElement()).getName();
-                idx++;
-            }
-            final Collator col = Collator.getInstance();
-            Arrays.sort(names, null);
-            for (String name : names) {
-                model.addElement(name);
-            }
-            jPlayerSelection.setModel(model);
-        }
-    } catch (Exception e) {
-    }
-}//GEN-LAST:event_fireRefreshServerDataEvent
-
-private void fireSelectPlayerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSelectPlayerEvent
-
-    jPlayerSelectionDialog.setVisible(false);
-}//GEN-LAST:event_fireSelectPlayerEvent
 
 private void fireRemoveMarkerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireRemoveMarkerEvent
 
@@ -2057,9 +1963,6 @@ private void fireUpdateClickedEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
     private javax.swing.JTable jAttackTable;
     private javax.swing.JTextField jAxeTime;
     private javax.swing.JTextField jBowTime;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
@@ -2096,8 +1999,6 @@ private void fireUpdateClickedEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel21;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
@@ -2128,14 +2029,11 @@ private void fireUpdateClickedEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JLabel jPlayerInfo;
-    private javax.swing.JComboBox jPlayerSelection;
-    private javax.swing.JDialog jPlayerSelectionDialog;
     private javax.swing.JTextField jRamTime;
     private javax.swing.JButton jRefreshButton;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JMenuItem jSearchItem;
-    private javax.swing.JComboBox jServerSelection;
     private javax.swing.JCheckBoxMenuItem jShowDynFrameItem;
     private javax.swing.JCheckBoxMenuItem jShowToolboxItem;
     private javax.swing.JTextField jSnobTime;

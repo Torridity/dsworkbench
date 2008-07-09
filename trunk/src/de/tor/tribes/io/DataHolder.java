@@ -58,6 +58,7 @@ public class DataHolder {
         initialize();
     }
 
+    /**Clear all data an re-initialize the structures*/
     public void initialize() {
         mVillages = new Village[1000][1000];
         mAllies = new Hashtable<Integer, Ally>();
@@ -68,6 +69,8 @@ public class DataHolder {
         if (!serverDir.exists()) {
             serverDir.mkdir();
         }
+
+        System.gc();
     }
 
     public synchronized void addListener(DataHolderListener pListener) {
@@ -78,6 +81,7 @@ public class DataHolder {
         mListeners.remove(pListener);
     }
 
+    /**Get the listof locally stored servers*/
     public String[] getLocalServers() {
         List<String> servers = new LinkedList<String>();
         for (File serverDir : new File(sServerBaseDir).listFiles()) {
@@ -89,12 +93,9 @@ public class DataHolder {
         return servers.toArray(new String[0]);
     }
 
+    /**Get the server data directory, depending on the selected server*/
     public String getDataDirectory() {
         return sServerBaseDir + "/" + GlobalOptions.getSelectedServer();
-    }
-
-    private void abort() {
-        bAborted = true;
     }
 
     /**Check if all needed files are located in the data directory of the selected server*/
@@ -190,12 +191,16 @@ public class DataHolder {
             while ((line = reader.readLine()) != null) {
                 bytes += line.length();
                 try {
-                    Village v = parseVillage(line);
+                    parseVillage(line);
                 } catch (Exception e) {
                     //ignored (should only occur on single villages)
                 }
             }
 
+            try {
+                reader.close();
+            } catch (Exception ignored) {
+            }
             fireDataHolderEvents("Lese Stämmeliste...");
             //read allies
 
@@ -204,7 +209,7 @@ public class DataHolder {
             while ((line = reader.readLine()) != null) {
                 bytes += line.length();
                 try {
-                    Ally a = parseAlly(line);
+                    parseAlly(line);
                 } catch (Exception e) {
                     //ignored (should only occur on single allies)
                 }
@@ -216,12 +221,15 @@ public class DataHolder {
             while ((line = reader.readLine()) != null) {
                 bytes += line.length();
                 try {
-                    Tribe t = parseTribe(line);
+                    parseTribe(line);
                 } catch (Exception e) {
                     //ignored (should only occur on single tribes)
                 }
             }
-
+            try {
+                reader.close();
+            } catch (Exception ignored) {
+            }
             fireDataHolderEvents("Lese besiegte Gegner (Angriff)...");
             //read tribes
             reader = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(getDataDirectory() + "/kill_att.txt.gz"))));
@@ -230,8 +238,12 @@ public class DataHolder {
                 try {
                     parseConqueredLine(line, ID_ATT);
                 } catch (Exception e) {
-                    //ignored (should only occur on single tribes)
+                    //ignored (should only occur on single lines)
                 }
+            }
+            try {
+                reader.close();
+            } catch (Exception ignored) {
             }
 
             fireDataHolderEvents("Lese besiegte Gegner (Verteidigung)...");
@@ -243,10 +255,13 @@ public class DataHolder {
                     // Tribe t = parseTribe(line);
                     parseConqueredLine(line, ID_DEF);
                 } catch (Exception e) {
-                    //ignored (should only occur on single tribes)
+                    //ignored (should only occur on single lines)
                 }
             }
-
+            try {
+                reader.close();
+            } catch (Exception ignored) {
+            }
 
             fireDataHolderEvents("Kombiniere Daten...");
             mergeData();
@@ -264,7 +279,6 @@ public class DataHolder {
         }
 
         fireDataLoadedEvents();
-
         return true;
     }
 
@@ -387,26 +401,19 @@ public class DataHolder {
 
     /**Merge all data into the village data structure to ease searching*/
     private void mergeData() {
-        Enumeration<Integer> tribes = mTribes.keys();
-        while (tribes.hasMoreElements()) {
-            Tribe current = mTribes.get(tribes.nextElement());
-            Ally currentAlly = mAllies.get(current.getAllyID());
-            if (currentAlly != null) {
-                currentAlly.addTribe(current);
-            }
-            current.setAlly(currentAlly);
-        }
-
-        for (int i = 0; i <
-                1000; i++) {
-            for (int j = 0; j <
-                    1000; j++) {
+        for (int i = 0; i < 1000; i++) {
+            for (int j = 0; j < 1000; j++) {
                 Village current = mVillages[i][j];
                 if (current != null) {
                     Tribe t = mTribes.get(current.getTribeID());
                     current.setTribe(t);
                     if (t != null) {
                         t.addVillage(current);
+                        Ally currentAlly = mAllies.get(t.getAllyID());
+                        t.setAlly(currentAlly);
+                        if (currentAlly != null) {
+                            currentAlly.addTribe(t);
+                        }
                     }
                 }
             }
@@ -422,113 +429,92 @@ public class DataHolder {
         int bytes = 0;
         while (bytes != -1) {
             byte[] data = new byte[1024];
-            bytes =
-                    isr.read(data);
+            bytes = isr.read(data);
             if (bytes != -1) {
                 tempWriter.write(data, 0, bytes);
             }
 
         }
-        tempWriter.close();
+        try {
+            isr.close();
+            tempWriter.close();
+        } catch (Exception e) {
+        }
     }
 
     /**Parse a village*/
-    private Village parseVillage(String line) {
+    private void parseVillage(String line) {
         StringTokenizer tokenizer = new StringTokenizer(line, ",");
+
         Village entry = new Village();
-        List<String> entries = new LinkedList();
         if (tokenizer.countTokens() < 7) {
-            return null;
+            return;
         }
 
-        while (tokenizer.hasMoreTokens()) {
-            entries.add(tokenizer.nextToken());
-        }
-
-        entry.setId(Integer.parseInt(entries.get(0)));
         try {
-            String name = URLDecoder.decode(entries.get(1), "UTF-8");
-            name =
-                    name.replaceAll("&gt;", ">").replaceAll("&lt;", "<");
+            entry.setId(Integer.parseInt(tokenizer.nextToken()));
+            String name = URLDecoder.decode(tokenizer.nextToken(), "UTF-8");
+            //replace HTML characters
+            name = name.replaceAll("&gt;", ">").replaceAll("&lt;", "<");
             entry.setName(name);
+            entry.setX(Short.parseShort(tokenizer.nextToken()));
+            entry.setY(Short.parseShort(tokenizer.nextToken()));
+            entry.setTribeID(Integer.parseInt(tokenizer.nextToken()));
+            entry.setPoints(Integer.parseInt(tokenizer.nextToken()));
+            entry.setType(Byte.parseByte(tokenizer.nextToken()));
+            mVillages[entry.getX()][entry.getY()] = entry;
         } catch (Exception e) {
-            return null;
+            //village invalid
         }
-
-        entry.setX(Integer.parseInt(entries.get(2)));
-        entry.setY(Integer.parseInt(entries.get(3)));
-        entry.setTribeID(Integer.parseInt(entries.get(4)));
-        entry.setPoints(Integer.parseInt(entries.get(5)));
-
-        //set village type on new servers
-        try {
-            entry.setType(Integer.parseInt(entries.get(6)));
-        } catch (Exception e) {
-        }
-        mVillages[entry.getX()][entry.getY()] = entry;
-        return entry;
     }
 
     /**Parse an ally*/
-    private Ally parseAlly(String line) {
+    private void parseAlly(String line) {
         //$id, $name, $tag, $members, $villages, $points, $all_points, $rank
         StringTokenizer tokenizer = new StringTokenizer(line, ",");
         Ally entry = new Ally();
-        List<String> entries = new LinkedList();
         if (tokenizer.countTokens() < 8) {
-            return null;
+            return;
         }
 
-        while (tokenizer.hasMoreTokens()) {
-            entries.add(tokenizer.nextToken());
-        }
-
-        entry.setId(Integer.parseInt(entries.get(0)));
         try {
-            entry.setName(URLDecoder.decode(entries.get(1), "UTF-8"));
-            entry.setTag(URLDecoder.decode(entries.get(2), "UTF-8"));
+            entry.setId(Integer.parseInt(tokenizer.nextToken()));
+            entry.setName(URLDecoder.decode(tokenizer.nextToken(), "UTF-8"));
+            entry.setTag(URLDecoder.decode(tokenizer.nextToken(), "UTF-8"));
+            entry.setMembers(Short.parseShort(tokenizer.nextToken()));
+            entry.setVillages(Integer.parseInt(tokenizer.nextToken()));
+            entry.setPoints(Integer.parseInt(tokenizer.nextToken()));
+            entry.setAll_points(Integer.parseInt(tokenizer.nextToken()));
+            entry.setRank(Integer.parseInt(tokenizer.nextToken()));
+            mAllies.put(entry.getId(), entry);
         } catch (Exception e) {
-            return null;
+            //ally entry invalid
         }
-
-        entry.setMembers(Integer.parseInt(entries.get(3)));
-        entry.setVillages(Integer.parseInt(entries.get(4)));
-        entry.setPoints(Integer.parseInt(entries.get(5)));
-        entry.setAll_points(Integer.parseInt(entries.get(6)));
-        entry.setRank(Integer.parseInt(entries.get(7)));
-        mAllies.put(entry.getId(), entry);
-        return entry;
     }
 
     /**Parse a tribe*/
-    private Tribe parseTribe(String line) {
+    private void parseTribe(String line) {
         //$id, $name, $ally, $villages, $points, $rank
         StringTokenizer tokenizer = new StringTokenizer(line, ",");
         Tribe entry = new Tribe();
-        List<String> entries = new LinkedList();
         if (tokenizer.countTokens() < 6) {
-            return null;
+            return;
         }
 
-        while (tokenizer.hasMoreTokens()) {
-            entries.add(tokenizer.nextToken());
-        }
-
-        entry.setId(Integer.parseInt(entries.get(0)));
         try {
-            entry.setName(URLDecoder.decode(entries.get(1), "UTF-8"));
+            entry.setId(Integer.parseInt(tokenizer.nextToken()));
+            entry.setName(URLDecoder.decode(tokenizer.nextToken(), "UTF-8"));
+            entry.setAllyID(Integer.parseInt(tokenizer.nextToken()));
+            entry.setVillages(Short.parseShort(tokenizer.nextToken()));
+            entry.setPoints(Integer.parseInt(tokenizer.nextToken()));
+            entry.setRank(Integer.parseInt(tokenizer.nextToken()));
+            mTribes.put(entry.getId(), entry);
         } catch (Exception e) {
-            return null;
+            //tribe entry invalid
         }
-
-        entry.setAllyID(Integer.parseInt(entries.get(2)));
-        entry.setVillages(Integer.parseInt(entries.get(3)));
-        entry.setPoints(Integer.parseInt(entries.get(4)));
-        entry.setRank(Integer.parseInt(entries.get(5)));
-        mTribes.put(entry.getId(), entry);
-        return entry;
     }
 
+    /**Parse a line of a conquered units file and set the data for the associated tribe*/
     private void parseConqueredLine(String pLine, int pType) {
         StringTokenizer tokenizer = new StringTokenizer(pLine, ",");
         try {
@@ -539,7 +525,7 @@ public class DataHolder {
             if (pType == ID_ATT) {
                 t.setKillsAtt(Integer.parseInt(kills));
                 t.setRankAtt(Integer.parseInt(rank));
-            }else{
+            } else {
                 t.setKillsDef(Integer.parseInt(kills));
                 t.setRankDeff(Integer.parseInt(rank));
             }
@@ -602,8 +588,8 @@ public class DataHolder {
         return mAllies;
     }
 
-    public Ally getAllyByName(
-            String pName) {
+    /**Search the ally list for the ally with the provided name*/
+    public Ally getAllyByName(String pName) {
         Enumeration<Integer> ids = getAllies().keys();
         while (ids.hasMoreElements()) {
             Ally a = getAllies().get(ids.nextElement());
@@ -623,8 +609,8 @@ public class DataHolder {
         return mTribes;
     }
 
-    public Tribe getTribeByName(
-            String pName) {
+    /**Search the tribes list for the tribe with the provided name*/
+    public Tribe getTribeByName(String pName) {
         Enumeration<Integer> ids = getTribes().keys();
         while (ids.hasMoreElements()) {
             Tribe t = getTribes().get(ids.nextElement());
@@ -651,11 +637,9 @@ public class DataHolder {
             if (unit.getName().equals(pUnitName)) {
                 result = cnt;
                 break;
-
             } else {
                 cnt++;
             }
-
         }
         return result;
     }
@@ -668,7 +652,6 @@ public class DataHolder {
         for (DataHolderListener listener : mListeners) {
             listener.fireDataHolderEvent(pMessage);
         }
-
     }
 
     public synchronized void fireDataLoadedEvents() {

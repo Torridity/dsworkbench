@@ -9,6 +9,8 @@ import de.tor.tribes.db.DatabaseAdapter;
 import de.tor.tribes.io.DataHolderListener;
 import de.tor.tribes.io.ServerList;
 import de.tor.tribes.util.GlobalOptions;
+import java.awt.Color;
+import java.awt.Point;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -16,6 +18,7 @@ import java.util.Enumeration;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JViewport;
 import javax.swing.UIManager;
 import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
@@ -31,6 +34,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
     boolean updating = false;
     boolean gotServerList = false;
     private DSWorkbenchMainFrame mMainFrame = null;
+    private final Color DS_BACK = new Color(225, 213, 190);
 
     public static DSWorkbenchSettingsDialog getGlobalSettingsFrame() {
         if (SETTINGS_DIALOG != null) {
@@ -43,6 +47,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
     /** Creates new form TribesPlannerStartFrame */
     DSWorkbenchSettingsDialog() {
         initComponents();
+        getContentPane().setBackground(DS_BACK);
         jCreateAccountDialog.pack();
         setAlwaysOnTop(true);
         // jControlPanel.setupPanel(this, true, false);
@@ -270,7 +275,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
         jSelectServerButton = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jStatusArea = new javax.swing.JTextArea();
-        jButton7 = new javax.swing.JButton();
+        jDownloadDataButton = new javax.swing.JButton();
         jGeneralSettings = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
         jGraphicPacks = new javax.swing.JComboBox();
@@ -289,7 +294,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
         jButton2 = new javax.swing.JButton();
         jOKButton = new javax.swing.JButton();
         jCancelButton = new javax.swing.JButton();
-        jButton6 = new javax.swing.JButton();
+        jCreateAccountButton = new javax.swing.JButton();
 
         jCreateAccountDialog.setTitle("Registrierung");
         jCreateAccountDialog.setAlwaysOnTop(true);
@@ -424,7 +429,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
                     .addComponent(jLabel7))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton5)
-                .addContainerGap(166, Short.MAX_VALUE))
+                .addContainerGap(163, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Login", new javax.swing.ImageIcon(getClass().getResource("/res/login.png")), jLoginPanel); // NOI18N
@@ -444,8 +449,8 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
         jStatusArea.setRows(5);
         jScrollPane1.setViewportView(jStatusArea);
 
-        jButton7.setText("Daten downloaden");
-        jButton7.addMouseListener(new java.awt.event.MouseAdapter() {
+        jDownloadDataButton.setText("Daten downloaden");
+        jDownloadDataButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireDownloadDataEvent(evt);
             }
@@ -469,7 +474,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
                             .addComponent(jServerList, 0, 262, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPlayerServerSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jButton7, javax.swing.GroupLayout.DEFAULT_SIZE, 133, Short.MAX_VALUE)
+                            .addComponent(jDownloadDataButton, javax.swing.GroupLayout.DEFAULT_SIZE, 133, Short.MAX_VALUE)
                             .addComponent(jSelectServerButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 133, Short.MAX_VALUE))))
                 .addContainerGap())
         );
@@ -485,9 +490,9 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
                 .addGroup(jPlayerServerSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(jTribeNames, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton7))
+                    .addComponent(jDownloadDataButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 167, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 164, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -532,8 +537,8 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
                 .addGroup(jGeneralSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jGeneralSettingsLayout.createSequentialGroup()
                         .addGroup(jGeneralSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jUpdateIntervalBox, 0, 204, Short.MAX_VALUE)
-                            .addComponent(jGraphicPacks, 0, 204, Short.MAX_VALUE))
+                            .addComponent(jUpdateIntervalBox, 0, 206, Short.MAX_VALUE)
+                            .addComponent(jGraphicPacks, 0, 206, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton4))
                     .addComponent(jContinentsOnMinimap))
@@ -555,7 +560,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
                 .addGroup(jGeneralSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jContinentsOnMinimap, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(163, Short.MAX_VALUE))
+                .addContainerGap(162, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Allgemein", new javax.swing.ImageIcon(getClass().getResource("/res/settings.png")), jGeneralSettings); // NOI18N
@@ -632,7 +637,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
                     .addComponent(jProxyPort, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton2)
-                .addContainerGap(110, Short.MAX_VALUE))
+                .addContainerGap(107, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Netzwerk", new javax.swing.ImageIcon(getClass().getResource("/res/proxy.png")), jNetworkSettings); // NOI18N
@@ -651,8 +656,8 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
             }
         });
 
-        jButton6.setText("Neuen Account erstellen");
-        jButton6.addMouseListener(new java.awt.event.MouseAdapter() {
+        jCreateAccountButton.setText("Neuen Account erstellen");
+        jCreateAccountButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireCreateAccountEvent(evt);
             }
@@ -666,8 +671,8 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jButton6)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 173, Short.MAX_VALUE)
+                        .addComponent(jCreateAccountButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 179, Short.MAX_VALUE)
                         .addComponent(jCancelButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jOKButton))
@@ -683,7 +688,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jOKButton)
                     .addComponent(jCancelButton)
-                    .addComponent(jButton6))
+                    .addComponent(jCreateAccountButton))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -742,13 +747,14 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
         GlobalOptions.saveProperties();
         GlobalOptions.setSelectedServer((String) jServerList.getSelectedItem());
         jSelectServerButton.setEnabled(false);
+        jDownloadDataButton.setEnabled(false);
         updating = true;
         jStatusArea.setText("");
         jOKButton.setEnabled(false);
         jCancelButton.setEnabled(false);
         jTribeNames.setModel(new DefaultComboBoxModel());
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        new Thread(new Runnable() {
+        Thread t = new Thread(new Runnable() {
 
             @Override
             public void run() {
@@ -759,7 +765,10 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
                 }
 
             }
-        }).start();
+        });
+        t.setPriority(Thread.MIN_PRIORITY);
+        t.setDaemon(true);
+        t.start();
 }//GEN-LAST:event_fireUpdateDataEvent
 
     private void fireCloseEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCloseEvent
@@ -828,6 +837,9 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
     }//GEN-LAST:event_fireSelectGraphicPackEvent
 
 private void fireCreateAccountEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCreateAccountEvent
+    if (!jCreateAccountButton.isEnabled()) {
+        return;
+    }
     jCreateAccountDialog.setVisible(true);
 }//GEN-LAST:event_fireCreateAccountEvent
 
@@ -948,13 +960,15 @@ private void fireDownloadDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
     GlobalOptions.saveProperties();
     GlobalOptions.setSelectedServer((String) jServerList.getSelectedItem());
     jSelectServerButton.setEnabled(false);
+    jDownloadDataButton.setEnabled(false);
+    jCreateAccountButton.setEnabled(false);
     updating = true;
     jStatusArea.setText("");
     jOKButton.setEnabled(false);
     jCancelButton.setEnabled(false);
     jTribeNames.setModel(new DefaultComboBoxModel());
 
-    new Thread(new Runnable() {
+    Thread t = new Thread(new Runnable() {
 
         @Override
         public void run() {
@@ -965,7 +979,10 @@ private void fireDownloadDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
             }
 
         }
-    }).start();
+    });
+    t.setPriority(Thread.MIN_PRIORITY);
+    t.setDaemon(true);
+    t.start();
 }//GEN-LAST:event_fireDownloadDataEvent
 
     private boolean updateServerList(boolean pLocal) {
@@ -1045,12 +1062,12 @@ private void fireDownloadDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
-    private javax.swing.JButton jButton6;
-    private javax.swing.JButton jButton7;
     private javax.swing.JButton jCancelButton;
     private javax.swing.JCheckBox jContinentsOnMinimap;
+    private javax.swing.JButton jCreateAccountButton;
     private javax.swing.JDialog jCreateAccountDialog;
     private javax.swing.JRadioButton jDirectConnectOption;
+    private javax.swing.JButton jDownloadDataButton;
     private javax.swing.JPanel jGeneralSettings;
     private javax.swing.JComboBox jGraphicPacks;
     private javax.swing.JLabel jLabel1;
@@ -1083,10 +1100,20 @@ private void fireDownloadDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
     private javax.swing.JComboBox jTribeNames;
     private javax.swing.JComboBox jUpdateIntervalBox;
     // End of variables declaration//GEN-END:variables
+
     @Override
     public void fireDataHolderEvent(String pMessage) {
         SimpleDateFormat f = new SimpleDateFormat("HH:mm:ss");
         jStatusArea.insert("(" + f.format(new Date(System.currentTimeMillis())) + ") " + pMessage + "\n", jStatusArea.getText().length());
+        try {
+            Point point = new Point(0, (int) (jStatusArea.getSize().getHeight()));
+            JViewport vp = jScrollPane1.getViewport();
+            if ((vp == null) || (point == null)) {
+                return;
+            }
+            vp.setViewPosition(point);
+        } catch (Throwable t) {
+        }
     }
 
     @Override
@@ -1101,16 +1128,13 @@ private void fireDownloadDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
         }
         long s = System.currentTimeMillis();
         Arrays.sort(tribeNames, null);
-        System.out.println("sort " + (System.currentTimeMillis() - s));
         DefaultComboBoxModel model = new DefaultComboBoxModel();
         model.addElement("Bitte wählen");
 
         for (String tribe : tribeNames) {
             model.addElement(tribe);
         }
-        System.out.println("build model " + (System.currentTimeMillis() - s));
         jTribeNames.setModel(model);
-        System.out.println("set model " + (System.currentTimeMillis() - s));
         if (GlobalOptions.getProperty("player." + GlobalOptions.getSelectedServer()) != null) {
             if (model.getIndexOf(GlobalOptions.getProperty("player." + GlobalOptions.getSelectedServer())) != -1) {
                 jTribeNames.setSelectedItem(GlobalOptions.getProperty("player." + GlobalOptions.getSelectedServer()));
@@ -1120,24 +1144,20 @@ private void fireDownloadDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
         } else {
             jTribeNames.setSelectedIndex(0);
         }
-        System.out.println("selected " + (System.currentTimeMillis() - s));
         if (mMainFrame != null) {
             mMainFrame.serverSettingsChangedEvent();
         }
-        System.out.println("main update " + (System.currentTimeMillis() - s));
         fireDataHolderEvent("Lade Benutzerdaten");
         GlobalOptions.loadUserData();
-        System.out.println("update user data " + (System.currentTimeMillis() - s));
 
         fireDataHolderEvent("Fertig");
-        System.out.println("done ! " + (System.currentTimeMillis() - s));
         updating = false;
         setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         jSelectServerButton.setEnabled(true);
+        jDownloadDataButton.setEnabled(true);
+        jCreateAccountButton.setEnabled(true);
         jOKButton.setEnabled(true);
         jCancelButton.setEnabled(true);
-                System.out.println("return ! " + (System.currentTimeMillis() - s));
-
     }
 }
 

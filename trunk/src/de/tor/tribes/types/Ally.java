@@ -23,7 +23,7 @@ public class Ally implements Serializable {
     private int id = 0;
     private String name = null;
     private String tag = null;
-    private int members = 0;
+    private short members = 0;
     private int villages = 0;
     private int points = 0;
     private int all_points = 0;
@@ -58,11 +58,11 @@ public class Ally implements Serializable {
         this.tag = tag;
     }
 
-    public int getMembers() {
+    public short getMembers() {
         return members;
     }
 
-    public void setMembers(int members) {
+    public void setMembers(short members) {
         this.members = members;
     }
 
@@ -99,7 +99,9 @@ public class Ally implements Serializable {
     }
 
     public void addTribe(Tribe t) {
-        tribes.add(t);
+        if (!tribes.contains(t)) {
+            tribes.add(t);
+        }
     }
 
     public List<Tribe> getTribes() {

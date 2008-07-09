@@ -38,14 +38,16 @@ public class GlobalOptions {
     public final static int CURSOR_DEFAULT = 0;
     public final static int CURSOR_MARK = 1;
     public final static int CURSOR_MEASURE = 2;
+    public final static int CURSOR_ATTACK_INGAME = 3;
+    public final static int CURSOR_SEND_RES_INGAME = 4;
     //mappanel attack
-    public final static int CURSOR_ATTACK_RAM = 3;
-    public final static int CURSOR_ATTACK_AXE = 4;
-    public final static int CURSOR_ATTACK_SNOB = 5;
-    public final static int CURSOR_ATTACK_SPY = 6;
-    public final static int CURSOR_ATTACK_SWORD = 7;
-    public final static int CURSOR_ATTACK_LIGHT = 8;
-    public final static int CURSOR_ATTACK_HEAVY = 9;
+    public final static int CURSOR_ATTACK_RAM = 5;
+    public final static int CURSOR_ATTACK_AXE = 6;
+    public final static int CURSOR_ATTACK_SNOB = 7;
+    public final static int CURSOR_ATTACK_SPY = 8;
+    public final static int CURSOR_ATTACK_SWORD = 9;
+    public final static int CURSOR_ATTACK_LIGHT = 10;
+    public final static int CURSOR_ATTACK_HEAVY = 11;
     //auto-update frequence
     public final static int AUTO_UPDATE_NEVER = 0;
     public final static int AUTO_UPDATE_HOURLY = 1;
@@ -54,8 +56,8 @@ public class GlobalOptions {
     public final static int AUTO_UPDATE_12_HOURS = 4;
     public final static int AUTO_UPDATE_DAILY = 5;
     //minimap
-    public final static int CURSOR_MOVE = 10;
-    public final static int CURSOR_ZOOM = 11;
+    public final static int CURSOR_MOVE = 12;
+    public final static int CURSOR_ZOOM = 13;
     private static boolean INITIALIZED = false;
     /**Active skin used by the MapPanel*/
     private static Skin mSkin;
@@ -145,6 +147,8 @@ public class GlobalOptions {
             CURSORS.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/default.png"), new Point(0, 0), "default"));
             CURSORS.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/mark.png"), new Point(0, 0), "mark"));
             CURSORS.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/measure.png"), new Point(0, 0), "measure"));
+            CURSORS.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/attack_ingame.png"), new Point(0, 0), "attack_ingame"));
+            CURSORS.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/res_ingame.png"), new Point(0, 0), "res_ingame"));
             //map panel cursors for attack purposes
             CURSORS.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/attack_ram.png"), new Point(0, 0), "attack_ram"));
             CURSORS.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/attack_axe.png"), new Point(0, 0), "attack_axe"));

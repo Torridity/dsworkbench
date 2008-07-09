@@ -157,8 +157,8 @@
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="1" attributes="0">
-                      <Component id="jButton6" min="-2" max="-2" attributes="1"/>
-                      <EmptySpace pref="173" max="32767" attributes="0"/>
+                      <Component id="jCreateAccountButton" min="-2" max="-2" attributes="1"/>
+                      <EmptySpace pref="179" max="32767" attributes="0"/>
                       <Component id="jCancelButton" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jOKButton" min="-2" max="-2" attributes="0"/>
@@ -178,7 +178,7 @@
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="jOKButton" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="jCancelButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="jButton6" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="jCreateAccountButton" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="32767" attributes="0"/>
           </Group>
@@ -236,7 +236,7 @@
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jButton5" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="166" max="32767" attributes="0"/>
+                      <EmptySpace pref="163" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -319,7 +319,7 @@
                               </Group>
                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="1" attributes="0">
-                                  <Component id="jButton7" pref="133" max="32767" attributes="0"/>
+                                  <Component id="jDownloadDataButton" pref="133" max="32767" attributes="0"/>
                                   <Component id="jSelectServerButton" alignment="0" pref="133" max="32767" attributes="0"/>
                               </Group>
                           </Group>
@@ -341,10 +341,10 @@
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="jTribeNames" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jButton7" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jDownloadDataButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="jScrollPane1" pref="167" max="32767" attributes="0"/>
+                      <Component id="jScrollPane1" pref="164" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -398,7 +398,7 @@
                 </Component>
               </SubComponents>
             </Container>
-            <Component class="javax.swing.JButton" name="jButton7">
+            <Component class="javax.swing.JButton" name="jDownloadDataButton">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Daten downloaden"/>
               </Properties>
@@ -434,8 +434,8 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="jUpdateIntervalBox" pref="204" max="32767" attributes="1"/>
-                                  <Component id="jGraphicPacks" alignment="0" pref="204" max="32767" attributes="1"/>
+                                  <Component id="jUpdateIntervalBox" pref="206" max="32767" attributes="1"/>
+                                  <Component id="jGraphicPacks" alignment="0" pref="206" max="32767" attributes="1"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="jButton4" min="-2" max="-2" attributes="0"/>
@@ -465,7 +465,7 @@
                           <Component id="jLabel11" max="32767" attributes="1"/>
                           <Component id="jContinentsOnMinimap" alignment="0" max="32767" attributes="1"/>
                       </Group>
-                      <EmptySpace pref="163" max="32767" attributes="0"/>
+                      <EmptySpace pref="162" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -588,7 +588,7 @@
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jButton2" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="110" max="32767" attributes="0"/>
+                      <EmptySpace pref="107" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -674,7 +674,7 @@
         <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fireCloseEvent"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JButton" name="jButton6">
+    <Component class="javax.swing.JButton" name="jCreateAccountButton">
       <Properties>
         <Property name="text" type="java.lang.String" value="Neuen Account erstellen"/>
       </Properties>

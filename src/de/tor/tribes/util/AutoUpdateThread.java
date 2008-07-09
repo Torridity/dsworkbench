@@ -27,6 +27,7 @@ public class AutoUpdateThread extends Thread {
 
     public AutoUpdateThread(DSWorkbenchMainFrame pParent) {
         setDaemon(true);
+        setPriority(MIN_PRIORITY);
         mParent = pParent;
     }
 

@@ -24,7 +24,7 @@ public class Tribe implements Serializable {
     private String name = null;
     private int allyID = 0;
     private Ally ally = null;
-    private int villages = 0;
+    private short villages = 0;
     private int points = 0;
     private int rank = 0;
     private List<Village> villageList = null;
@@ -61,11 +61,11 @@ public class Tribe implements Serializable {
         this.allyID = allyID;
     }
 
-    public int getVillages() {
+    public short getVillages() {
         return villages;
     }
 
-    public void setVillages(int villages) {
+    public void setVillages(short villages) {
         this.villages = villages;
     }
 

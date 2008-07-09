@@ -19,13 +19,13 @@ public class Village implements Serializable {
     private static final long serialVersionUID = 10L;
     private int id = 0;
     private String name = null;
-    private int x = 0;
-    private int y = 0;
+    private short x = 0;
+    private short y = 0;
     private int tribeID = 0;
     private transient Tribe tribe = null;
     private int points = 0;
     private int rank = 0;
-    private int type = 0;
+    private byte type = 0;
 
     public int getId() {
         return id;
@@ -43,19 +43,19 @@ public class Village implements Serializable {
         this.name = name;
     }
 
-    public int getX() {
+    public short getX() {
         return x;
     }
 
-    public void setX(int x) {
+    public void setX(short x) {
         this.x = x;
     }
 
-    public int getY() {
+    public short getY() {
         return y;
     }
 
-    public void setY(int y) {
+    public void setY(short y) {
         this.y = y;
     }
 
@@ -83,11 +83,11 @@ public class Village implements Serializable {
         this.rank = rank;
     }
 
-    public void setType(int type) {
+    public void setType(byte type) {
         this.type = type;
     }
 
-    public int getType() {
+    public byte getType() {
         return this.type;
     }
 

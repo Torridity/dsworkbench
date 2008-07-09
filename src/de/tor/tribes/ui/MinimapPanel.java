@@ -300,6 +300,7 @@ class MinimapRepaintThread extends Thread {
     }
 
     private void redraw() {
+        long s = System.currentTimeMillis();
         int x = 0;
         int y = 0;
         Graphics2D g2d = (Graphics2D) mBuffer.getGraphics();

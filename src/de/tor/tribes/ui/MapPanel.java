@@ -7,6 +7,7 @@ package de.tor.tribes.ui;
 
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.Village;
+import de.tor.tribes.util.BrowserCommandSender;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.Skin;
 import java.awt.BasicStroke;
@@ -105,6 +106,15 @@ public class MapPanel extends javax.swing.JPanel {
                         }
                         break;
                     }
+                    case GlobalOptions.CURSOR_ATTACK_INGAME: {
+                        Village v = getVillageAtMousePos();
+                    //notify main frame to send troops from selected own village to target v
+                        //mParent.
+                    }
+                    case GlobalOptions.CURSOR_SEND_RES_INGAME: {
+                        Village v = getVillageAtMousePos();
+                    //notify main frame to send res from selected own village to target v
+                    }
                 }
             }
 
@@ -192,7 +202,6 @@ public class MapPanel extends javax.swing.JPanel {
                 downX = 0;
                 downY = 0;
 
-                //mRepaintThread.setDragLine(0, 0, 0, 0);
                 mRepaintThread.setDragLine(null, 0, 0);
                 mouseDown = false;
                 if (isAttack) {
@@ -247,7 +256,6 @@ public class MapPanel extends javax.swing.JPanel {
                 switch (iCurrentCursor) {
                     case GlobalOptions.CURSOR_MEASURE: {
                         //update drag if attack tool is active
-                        //mRepaintThread.setDragLine(downX, downY, e.getX(), e.getY());
                         mRepaintThread.setDragLine(mSourceVillage, e.getX(), e.getY());
                         mTargetVillage = getVillageAtMousePos();
                         mParent.updateDistancePanel(mSourceVillage, mTargetVillage);
@@ -255,7 +263,6 @@ public class MapPanel extends javax.swing.JPanel {
                     }
                     default: {
                         if (isAttack) {
-                            //mRepaintThread.setDragLine(downX, downY, e.getX(), e.getY());
                             mRepaintThread.setDragLine(mSourceVillage, e.getX(), e.getY());
                             mTargetVillage = getVillageAtMousePos();
                         }
@@ -372,7 +379,7 @@ public class MapPanel extends javax.swing.JPanel {
     protected void updateComplete(Village[][] pVillages, Image pBuffer) {
         mBuffer = pBuffer;
         mVisibleVillages = pVillages;
-       
+
         updating = false;
     }
 
@@ -475,7 +482,7 @@ class RepaintThread extends Thread {
 
     /**Redraw the buffer*/
     private void redraw(int pXStart, int pYStart) {
-      //  long start = System.currentTimeMillis();
+        //  long start = System.currentTimeMillis();
 
         int x = 0;
         int y = 0;
@@ -511,7 +518,7 @@ class RepaintThread extends Thread {
         }
 
         Hashtable<Attack, Line2D> attackLines = new Hashtable<Attack, Line2D>();
-        
+
         Line2D.Double dragLine = new Line2D.Double(-1, -1, xe, ye);
         for (int i = 0; i < iVillagesX; i++) {
             for (int j = 0; j < iVillagesY; j++) {
@@ -699,7 +706,7 @@ class RepaintThread extends Thread {
             yPos = pYStart;
             xPos++;
         }
-      
+
         Enumeration<Attack> attackEnum = attackLines.keys();
         g2d.setColor(Color.RED);
         g2d.setStroke(new BasicStroke(2.0F, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
@@ -710,8 +717,8 @@ class RepaintThread extends Thread {
             g2d.setColor(Color.RED);
             g2d.drawLine((int) l.getX1() + dx, (int) l.getY1() + dy, (int) l.getX2() + dx, (int) l.getY2() + dy);
             g2d.setColor(Color.YELLOW);
-            g2d.fillRect((int)l.getX1() + dx - 3, (int)l.getY1() + dy - 3, 6, 6);
-            g2d.fillOval((int) l.getX2() + dx-3, (int) l.getY2() + dy-3, 6, 6);
+            g2d.fillRect((int) l.getX1() + dx - 3, (int) l.getY1() + dy - 3, 6, 6);
+            g2d.fillOval((int) l.getX2() + dx - 3, (int) l.getY2() + dy - 3, 6, 6);
         }
 
         if (mSourceVillage != null) {
@@ -728,18 +735,17 @@ class RepaintThread extends Thread {
                 ty = ye - height * ty;
                 dragLine.setLine(tx, ty, xe, ye);
             }
-           
-            
-            if((dragLine.getX2() != 0)&&(dragLine.getY2() != 0)){
-            g2d.drawLine((int) dragLine.getX1(), (int) dragLine.getY1(), (int)dragLine.getX2(), (int)dragLine.getY2());
+
+
+            if ((dragLine.getX2() != 0) && (dragLine.getY2() != 0)) {
+                g2d.drawLine((int) dragLine.getX1(), (int) dragLine.getY1(), (int) dragLine.getX2(), (int) dragLine.getY2());
             }
         }
         g2d.dispose();
-       /* cnt++;
-        dur += (System.currentTimeMillis() - start);
-        System.out.println("Med " + (dur/cnt));*/
+    /* cnt++;
+    dur += (System.currentTimeMillis() - start);
+    System.out.println("Med " + (dur/cnt));*/
     }
-  /*  long dur = 0;
+    /*  long dur = 0;
     long cnt = 0;*/
-    
 }

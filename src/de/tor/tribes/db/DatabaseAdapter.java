@@ -78,7 +78,6 @@ public class DatabaseAdapter {
      */
     public static int checkUser(String pUsername, String pPassword) {
         if (!openConnection()) {
-            System.out.println("Datenbankverbindung fehlgeschlagen");
             return ID_CONNECTION_FAILED;
         }
 

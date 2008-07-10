@@ -446,7 +446,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
                     .addComponent(jLabel7))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton5)
-                .addContainerGap(166, Short.MAX_VALUE))
+                .addContainerGap(163, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Login", new javax.swing.ImageIcon(getClass().getResource("/res/login.png")), jLoginPanel); // NOI18N
@@ -466,6 +466,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
         });
 
         jStatusArea.setColumns(20);
+        jStatusArea.setEditable(false);
         jStatusArea.setRows(5);
         jScrollPane1.setViewportView(jStatusArea);
 
@@ -513,7 +514,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
                     .addComponent(jTribeNames, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jDownloadDataButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 167, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 164, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -572,10 +573,10 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
                     .addComponent(jLabel13))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jGeneralSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jContinentsOnMinimap, javax.swing.GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE)
-                    .addComponent(jShowDistanceBox, javax.swing.GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE)
-                    .addComponent(jGraphicPacks, 0, 210, Short.MAX_VALUE)
-                    .addComponent(jUpdateIntervalBox, javax.swing.GroupLayout.Alignment.TRAILING, 0, 210, Short.MAX_VALUE))
+                    .addComponent(jContinentsOnMinimap, javax.swing.GroupLayout.DEFAULT_SIZE, 212, Short.MAX_VALUE)
+                    .addComponent(jShowDistanceBox, javax.swing.GroupLayout.DEFAULT_SIZE, 212, Short.MAX_VALUE)
+                    .addComponent(jGraphicPacks, 0, 212, Short.MAX_VALUE)
+                    .addComponent(jUpdateIntervalBox, javax.swing.GroupLayout.Alignment.TRAILING, 0, 212, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton4)
                 .addContainerGap())
@@ -600,7 +601,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
                 .addGroup(jGeneralSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel13)
                     .addComponent(jShowDistanceBox))
-                .addContainerGap(134, Short.MAX_VALUE))
+                .addContainerGap(133, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Allgemein", new javax.swing.ImageIcon(getClass().getResource("/res/settings.png")), jGeneralSettings); // NOI18N
@@ -684,7 +685,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
                     .addComponent(jProxyPort, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton2)
-                .addContainerGap(110, Short.MAX_VALUE))
+                .addContainerGap(107, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Netzwerk", new javax.swing.ImageIcon(getClass().getResource("/res/proxy.png")), jNetworkSettings); // NOI18N
@@ -722,7 +723,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(jCreateAccountButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 179, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 185, Short.MAX_VALUE)
                         .addComponent(jCancelButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jOKButton))
@@ -776,6 +777,9 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
             message = "Um Online-Funktionen zu nutzen korrigieren bitte später deine Netzwerkeinstellungen oder verbinde dich mit dem Internet.";
             JOptionPane.showMessageDialog(this, message, "Warnung", JOptionPane.WARNING_MESSAGE);
         }
+        if (mMainFrame != null) {
+            mMainFrame.onlineStateChanged();
+        }
     }//GEN-LAST:event_fireUpdateProxySettingsEvent
 
     private void fireChangeConnectTypeEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireChangeConnectTypeEvent
@@ -801,6 +805,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
         updating = true;
         jStatusArea.setText("");
         jOKButton.setEnabled(false);
+        jCreateAccountButton.setEnabled(false);
         jCancelButton.setEnabled(false);
         jTribeNames.setModel(new DefaultComboBoxModel());
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -1157,6 +1162,7 @@ private void fireChangeDrawDistanceEvent(java.awt.event.ActionEvent evt) {//GEN-
     private javax.swing.JComboBox jTribeNames;
     private javax.swing.JComboBox jUpdateIntervalBox;
     // End of variables declaration//GEN-END:variables
+
     @Override
     public void fireDataHolderEvent(String pMessage) {
         SimpleDateFormat f = new SimpleDateFormat("HH:mm:ss");

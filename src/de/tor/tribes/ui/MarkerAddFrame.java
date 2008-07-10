@@ -24,6 +24,7 @@ public class MarkerAddFrame extends javax.swing.JFrame {
     /** Creates new form MarkerAddFrame */
     public MarkerAddFrame(DSWorkbenchMainFrame pParent) {
         initComponents();
+        getContentPane().setBackground(GlobalOptions.DS_BACK);
         mParent = pParent;
         mTribeColorChooser.setColor(Color.WHITE);
         mAllyColorChooser.setColor(Color.WHITE);
@@ -54,6 +55,7 @@ public class MarkerAddFrame extends javax.swing.JFrame {
         setResizable(false);
         setUndecorated(true);
 
+        jButton2.setBackground(new java.awt.Color(239, 235, 223));
         jButton2.setText("OK");
         jButton2.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -61,6 +63,7 @@ public class MarkerAddFrame extends javax.swing.JFrame {
             }
         });
 
+        jButton1.setBackground(new java.awt.Color(239, 235, 223));
         jButton1.setText("Abbrechen");
         jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -74,9 +77,11 @@ public class MarkerAddFrame extends javax.swing.JFrame {
         jTribeColorPanel.setLayout(new java.awt.BorderLayout());
 
         jMarkAlly.setText("Stamm markieren");
+        jMarkAlly.setOpaque(false);
 
         jMarkTribe.setSelected(true);
         jMarkTribe.setText("Spieler markieren");
+        jMarkTribe.setOpaque(false);
 
         jAllyColorPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jAllyColorPanel.setMaximumSize(new java.awt.Dimension(16, 16));
@@ -94,19 +99,19 @@ public class MarkerAddFrame extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jTribeColorPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 239, Short.MAX_VALUE)
-                    .addComponent(jAllyColorPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 239, Short.MAX_VALUE)
+                    .addComponent(jTribeColorPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 243, Short.MAX_VALUE)
+                    .addComponent(jAllyColorPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 243, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jMarkTribe)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jTribeName, javax.swing.GroupLayout.DEFAULT_SIZE, 126, Short.MAX_VALUE))
+                        .addComponent(jTribeName, javax.swing.GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jMarkAlly)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jAllyName, javax.swing.GroupLayout.DEFAULT_SIZE, 126, Short.MAX_VALUE))
+                        .addComponent(jAllyName, javax.swing.GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jButton1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 103, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 111, Short.MAX_VALUE)
                         .addComponent(jButton2)))
                 .addContainerGap())
         );

@@ -44,6 +44,7 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.CellEditorListener;
 import javax.swing.event.ChangeEvent;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -335,6 +336,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
         jAttackTable.setDefaultEditor(Unit.class, new UnitCellEditor());
         jAttackTable.setDefaultEditor(Village.class, new VillageCellEditor());
         jScrollPane2.getViewport().setBackground(GlobalOptions.DS_BACK_LIGHT);
+        jAttackTable.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
 
         CellEditorListener attackChangedListener = new CellEditorListener() {
 
@@ -854,10 +856,12 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
         });
         jMarkerTable.setGridColor(new java.awt.Color(239, 235, 223));
         jMarkerTable.setOpaque(false);
+        jMarkerTable.setSelectionMode(javax.swing.ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         jScrollPane1.setViewportView(jMarkerTable);
 
         jButton6.setBackground(new java.awt.Color(239, 235, 223));
         jButton6.setText("Löschen");
+        jButton6.setToolTipText("Löscht die ausgewählten Markierungen");
         jButton6.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireRemoveMarkerEvent(evt);
@@ -948,9 +952,11 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
             }
         });
         jAttackTable.setOpaque(false);
+        jAttackTable.setSelectionMode(javax.swing.ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         jScrollPane2.setViewportView(jAttackTable);
 
-        jButton5.setText("Entfernen");
+        jButton5.setText("Löschen");
+        jButton5.setToolTipText("Löscht die ausgewählten Angriffe");
         jButton5.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireRemoveAttackEvent(evt);
@@ -958,6 +964,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
         });
 
         jButton7.setText("Überprüfen");
+        jButton7.setToolTipText("Prüft ob alle Angriffe gültig sind.\nUngültige Angriffe werden markiert \nund können korrigiert oder gelöscht werden.");
         jButton7.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireValidateAttacksEvent(evt);
@@ -965,6 +972,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
         });
 
         jButton4.setText("Abschicken");
+        jButton4.setToolTipText("Öffnet den Versammlungsplatz des Herkunfsdorfes im Browser");
         jButton4.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireSendAttackEvent(evt);
@@ -1247,7 +1255,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
                             .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                 .addComponent(jCenterCoordinateIngame, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addComponent(jRefreshButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                .addContainerGap(70, Short.MAX_VALUE))
+                .addContainerGap(72, Short.MAX_VALUE))
         );
 
         jMinimapPanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(128, 64, 0), 2));
@@ -1266,7 +1274,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
 
         jLabel21.setText("<html><u>Dörfer</u></html>");
 
-        jCurrentPlayerVillages.setBackground(new java.awt.Color(239, 235, 223));
         jCurrentPlayerVillages.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 fireChangeCurrentPlayerVillageEvent(evt);
@@ -1574,22 +1581,28 @@ private void fireZoomEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fir
 
 private void fireRemoveMarkerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireRemoveMarkerEvent
 
-    int row = jMarkerTable.getSelectedRow();
-    if (row < 0) {
+    int[] rows = jMarkerTable.getSelectedRows();
+    if (rows.length == 0) {
         return;
     }
-    int ret = JOptionPane.showConfirmDialog(jDynFrame, "Ausgewählte Markierung wirklich löschen?", "Löschen", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+    String message = ((rows.length == 1) ? "Markierung " : (rows.length + " Markierungen ")) + "wirklich löschen?";
+
+    int ret = JOptionPane.showConfirmDialog(jDynFrame, message, "Löschen", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
     if (ret == JOptionPane.YES_OPTION) {
-        String value = ((MarkerCell) ((DefaultTableModel) jMarkerTable.getModel()).getValueAt(row, 0)).getMarkerName();
-        GlobalOptions.getMarkers().remove(value);
-        ((DefaultTableModel) jMarkerTable.getModel()).removeRow(row);
+        for (int i = rows.length - 1; i >= 0; i--) {
+            int row = rows[i];
+            String value = ((MarkerCell) ((DefaultTableModel) jMarkerTable.getModel()).getValueAt(row, 0)).getMarkerName();
+            GlobalOptions.getMarkers().remove(value);
+            ((DefaultTableModel) jMarkerTable.getModel()).removeRow(row);
+        }
     }
+
     updateMarkers();
 }//GEN-LAST:event_fireRemoveMarkerEvent
 
 private void fireValidateAttacksEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireValidateAttacksEvent
-
     DefaultTableModel model = (DefaultTableModel) jAttackTable.getModel();
+
     Hashtable<Integer, String> errors = new Hashtable<Integer, String>();
     for (int i = 0; i < model.getRowCount(); i++) {
         Village source = (Village) model.getValueAt(i, 0);
@@ -1607,11 +1620,13 @@ private void fireValidateAttacksEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
     if (errors.size() != 0) {
         String message = "";
         Enumeration<Integer> keys = errors.keys();
-
+        ListSelectionModel sModel = jAttackTable.getSelectionModel();
+        sModel.removeSelectionInterval(0, jAttackTable.getRowCount());
         while (keys.hasMoreElements()) {
             int row = keys.nextElement();
             String error = errors.get(row);
             message = "Zeile " + (row + 1) + ": " + error + "\n" + message;
+            sModel.addSelectionInterval(row, row);
         }
         JOptionPane.showMessageDialog(jDynFrame, message, "Fehler", JOptionPane.WARNING_MESSAGE);
     } else {
@@ -1628,17 +1643,21 @@ private void fireAlwaysInFrontChangeEvent(javax.swing.event.ChangeEvent evt) {//
 
 private void fireRemoveAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireRemoveAttackEvent
 
-    int row = jAttackTable.getSelectedRow();
-    if (row < 0) {
+    int[] rows = jAttackTable.getSelectedRows();
+    if (rows.length == 0) {
         return;
-    } else {
-        int res = JOptionPane.showConfirmDialog(jDynFrame, "Ausgewählten Angriff wirklich löschen?", "Angriff entfernen", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-        if (res != JOptionPane.YES_OPTION) {
-            return;
-        }
-        ((DefaultTableModel) jAttackTable.getModel()).removeRow(row);
-        updateAttacks();
     }
+
+    String message = ((rows.length == 1) ? "Angriff " : (rows.length + " Angriffe ")) + "wirklich löschen?";
+    int res = JOptionPane.showConfirmDialog(jDynFrame, message, "Angriff entfernen", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+    if (res != JOptionPane.YES_OPTION) {
+        return;
+    }
+    for (int i = rows.length - 1; i >= 0; i--) {
+        int row = rows[i];
+        ((DefaultTableModel) jAttackTable.getModel()).removeRow(row);
+    }
+    updateAttacks();
 }//GEN-LAST:event_fireRemoveAttackEvent
 
 private void fireChangeCurrentPlayerVillageEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireChangeCurrentPlayerVillageEvent

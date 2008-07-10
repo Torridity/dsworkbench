@@ -93,7 +93,7 @@
         </Component>
         <Component class="javax.swing.JButton" name="jSendTroopsIngameButton">
           <Properties>
-            <Property name="toolTipText" type="java.lang.String" value="Markieren"/>
+            <Property name="toolTipText" type="java.lang.String" value="Truppen schicken (InGame)"/>
             <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
               <Dimension value="[30, 30]"/>
             </Property>
@@ -110,7 +110,7 @@
         </Component>
         <Component class="javax.swing.JButton" name="jSendResIngameButton">
           <Properties>
-            <Property name="toolTipText" type="java.lang.String" value="Markieren"/>
+            <Property name="toolTipText" type="java.lang.String" value="Rohstoffe schicken (InGame)"/>
             <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
               <Dimension value="[30, 30]"/>
             </Property>

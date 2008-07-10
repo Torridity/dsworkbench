@@ -5,8 +5,14 @@
  */
 package de.tor.tribes.ui;
 
-import java.awt.Desktop;
-import java.net.URI;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
+import javax.swing.text.html.HTMLDocument;
+import javax.swing.text.html.HTMLEditorKit;
+import javax.swing.text.html.parser.ParserDelegator;
 
 /**
  *
@@ -17,6 +23,17 @@ public class TestFrame extends javax.swing.JFrame {
     /** Creates new form TestFrame */
     public TestFrame() {
         initComponents();
+        System.getProperties().put("proxySet", "true");
+        System.getProperties().put("proxyHost", "proxy.fzk.de");
+        System.getProperties().put("proxyPort", "8000");
+        jEditorPane1.setContentType("text/html");
+        try {
+            URL url = new URL("http://www.heise.de");
+
+            jEditorPane1.setPage(url);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         frameControlPanel1.setupPanel(this, true, true);
         frameControlPanel1.setTitle("Test Frame with title and laberzeug und so weiet damit es lang");
     }
@@ -31,10 +48,13 @@ public class TestFrame extends javax.swing.JFrame {
     private void initComponents() {
 
         frameControlPanel1 = new de.tor.tribes.ui.FrameControlPanel();
-        jTabbedPane1 = new javax.swing.JTabbedPane();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jEditorPane1 = new javax.swing.JEditorPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setUndecorated(true);
+
+        jScrollPane1.setViewportView(jEditorPane1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -43,15 +63,15 @@ public class TestFrame extends javax.swing.JFrame {
             .addComponent(frameControlPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 420, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addGap(10, 10, 10)
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(frameControlPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 256, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 261, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -69,11 +89,12 @@ public class TestFrame extends javax.swing.JFrame {
                 new TestFrame().setVisible(true);
             }
         });
-       
+
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private de.tor.tribes.ui.FrameControlPanel frameControlPanel1;
-    private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JEditorPane jEditorPane1;
+    private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
 }

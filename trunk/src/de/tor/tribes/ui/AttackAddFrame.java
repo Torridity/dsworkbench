@@ -17,6 +17,7 @@ import java.util.Date;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JSpinner.DateEditor;
 import javax.swing.JTextField;
+import javax.swing.SpinnerDateModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -29,10 +30,14 @@ public class AttackAddFrame extends javax.swing.JFrame {
     private Village mSource;
     private Village mTarget;
     private DSWorkbenchMainFrame mParent = null;
+    private final NumberFormat nf = NumberFormat.getInstance();
+    private boolean skipValidation = false;
 
     /** Creates new form AttackAddFrame */
     public AttackAddFrame(DSWorkbenchMainFrame pParent) {
         initComponents();
+        nf.setMaximumFractionDigits(2);
+        nf.setMinimumFractionDigits(2);
         frameControlPanel1.setupPanel(this, true, false);
         mParent = pParent;
         getContentPane().setBackground(GlobalOptions.DS_BACK);
@@ -43,6 +48,9 @@ public class AttackAddFrame extends javax.swing.JFrame {
 
             @Override
             public void stateChanged(ChangeEvent e) {
+                if (skipValidation) {
+                    return;
+                }
                 if (!validateTime()) {
                     ((DateEditor) jTimeSpinner.getEditor()).getTextField().setForeground(Color.RED);
                 } else {
@@ -60,9 +68,9 @@ public class AttackAddFrame extends javax.swing.JFrame {
         long sendMillis = ((Date) jTimeSpinner.getValue()).getTime();
         //check time depending selected unit
         int speed = ((UnitHolder) jUnitBox.getSelectedItem()).getSpeed();
-        long moveTime = (long) DSCalculator.calculateMoveTimeInMinutes(mSource, mTarget, speed) * 60000;
+        double minTime = DSCalculator.calculateMoveTimeInMinutes(mSource, mTarget, speed);
+        long moveTime = (long) minTime * 60000;
         return (sendMillis > System.currentTimeMillis() + moveTime);
-
     }
 
     private void buildUnitBox() {
@@ -85,14 +93,14 @@ public class AttackAddFrame extends javax.swing.JFrame {
         if ((pSource == null) || (pTarget == null)) {
             return;
         }
-        if(pSource.equals(pTarget)){
+        if (pSource.equals(pTarget)) {
             return;
         }
-        if(pSource.getTribe() == null){
+        if (pSource.getTribe() == null) {
             //empty villages cannot attack
             return;
         }
-        
+        skipValidation = true;
         int initialUnit = (pInitialUnit >= 0) ? pInitialUnit : 0;
         if (initialUnit > jUnitBox.getItemCount() - 1) {
             initialUnit = -1;
@@ -103,23 +111,23 @@ public class AttackAddFrame extends javax.swing.JFrame {
             jTimeSpinner.setValue(pInititalTime);
         } else {
             double dur = DSCalculator.calculateMoveTimeInMinutes(pSource, pTarget, ((UnitHolder) jUnitBox.getSelectedItem()).getSpeed());
-            dur = dur*60000;
+            dur = dur * 60000;
             jTimeSpinner.setValue(new Date(System.currentTimeMillis() + (long) dur + 60000));
+            ((DateEditor) jTimeSpinner.getEditor()).getTextField().setForeground(Color.BLACK);
         }
         mSource = pSource;
         mTarget = pTarget;
-        jSourceVillage.setText(pSource.getTribe().getName() + " (" + pSource.getX() + "|" + pSource.getY() + ")");
-        if(pTarget.getTribe() != null){
-        jTargetVillage.setText(pTarget.getTribe().getName() + " (" + pTarget.getX() + "|" + pTarget.getY() + ")");
-        }else{
+        jSourceVillage.setText(pSource.getTribe() + " (" + pSource + ")");
+        if (pTarget.getTribe() != null) {
+            jTargetVillage.setText(pTarget.getTribe() + " (" + pTarget + ")");
+        } else {
             jTargetVillage.setText("Barbarendorf" + " (" + pTarget.getX() + "|" + pTarget.getY() + ")");
         }
         double d = DSCalculator.calculateDistance(mSource, mTarget);
-        NumberFormat nf = NumberFormat.getInstance();
-        nf.setMaximumFractionDigits(2);
-        nf.setMinimumFractionDigits(2);
+
         jDistance.setText(nf.format(d));
         setVisible(true);
+        skipValidation = false;
     }
 
     public void setupAttack(Village pSource, Village pTarget, int pInitialUnit) {
@@ -313,7 +321,7 @@ private void fireAddAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:even
      */
     public static void main(String args[]) {
         try {
-            GlobalOptions.initialize( );
+            GlobalOptions.initialize();
             GlobalOptions.setSelectedServer("de26");
 
             GlobalOptions.loadData(false);

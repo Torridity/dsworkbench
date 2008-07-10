@@ -167,7 +167,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="1" attributes="0">
                       <Component id="jCreateAccountButton" min="-2" max="-2" attributes="1"/>
-                      <EmptySpace pref="179" max="32767" attributes="0"/>
+                      <EmptySpace pref="185" max="32767" attributes="0"/>
                       <Component id="jCancelButton" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jOKButton" min="-2" max="-2" attributes="0"/>
@@ -255,7 +255,7 @@
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jButton5" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="166" max="32767" attributes="0"/>
+                      <EmptySpace pref="163" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -371,7 +371,7 @@
                           <Component id="jDownloadDataButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="jScrollPane1" pref="167" max="32767" attributes="0"/>
+                      <Component id="jScrollPane1" pref="164" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -423,6 +423,7 @@
                 <Component class="javax.swing.JTextArea" name="jStatusArea">
                   <Properties>
                     <Property name="columns" type="int" value="20"/>
+                    <Property name="editable" type="boolean" value="false"/>
                     <Property name="rows" type="int" value="5"/>
                   </Properties>
                 </Component>
@@ -471,10 +472,10 @@
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jContinentsOnMinimap" pref="210" max="32767" attributes="1"/>
-                          <Component id="jShowDistanceBox" alignment="0" pref="210" max="32767" attributes="1"/>
-                          <Component id="jGraphicPacks" alignment="0" pref="210" max="32767" attributes="1"/>
-                          <Component id="jUpdateIntervalBox" alignment="1" pref="210" max="32767" attributes="1"/>
+                          <Component id="jContinentsOnMinimap" pref="212" max="32767" attributes="1"/>
+                          <Component id="jShowDistanceBox" alignment="0" pref="212" max="32767" attributes="1"/>
+                          <Component id="jGraphicPacks" alignment="0" pref="212" max="32767" attributes="1"/>
+                          <Component id="jUpdateIntervalBox" alignment="1" pref="212" max="32767" attributes="1"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jButton4" min="-2" max="-2" attributes="0"/>
@@ -506,7 +507,7 @@
                           <Component id="jLabel13" min="-2" max="-2" attributes="0"/>
                           <Component id="jShowDistanceBox" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="134" max="32767" attributes="0"/>
+                      <EmptySpace pref="133" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -659,7 +660,7 @@
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jButton2" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="110" max="32767" attributes="0"/>
+                      <EmptySpace pref="107" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>

@@ -168,7 +168,7 @@ public class ToolBoxFrame extends javax.swing.JFrame {
         });
         jPanel1.add(jMarkButton);
 
-        jSendTroopsIngameButton.setToolTipText("Markieren");
+        jSendTroopsIngameButton.setToolTipText("Truppen schicken (InGame)");
         jSendTroopsIngameButton.setMaximumSize(new java.awt.Dimension(30, 30));
         jSendTroopsIngameButton.setMinimumSize(new java.awt.Dimension(30, 30));
         jSendTroopsIngameButton.setPreferredSize(new java.awt.Dimension(30, 30));
@@ -179,7 +179,7 @@ public class ToolBoxFrame extends javax.swing.JFrame {
         });
         jPanel1.add(jSendTroopsIngameButton);
 
-        jSendResIngameButton.setToolTipText("Markieren");
+        jSendResIngameButton.setToolTipText("Rohstoffe schicken (InGame)");
         jSendResIngameButton.setMaximumSize(new java.awt.Dimension(30, 30));
         jSendResIngameButton.setMinimumSize(new java.awt.Dimension(30, 30));
         jSendResIngameButton.setPreferredSize(new java.awt.Dimension(30, 30));
@@ -401,7 +401,6 @@ private void fireToolClickedEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
     } else if (evt.getSource() == jClockButton) {
         ClockFrame.getGlobalClockFrame().setVisible(true);
     }
-
 }//GEN-LAST:event_fireToolClickedEvent
 
     /**

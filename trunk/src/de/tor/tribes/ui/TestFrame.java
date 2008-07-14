@@ -5,14 +5,10 @@
  */
 package de.tor.tribes.ui;
 
-import java.io.BufferedReader;
+import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
-import javax.swing.text.html.HTMLDocument;
-import javax.swing.text.html.HTMLEditorKit;
-import javax.swing.text.html.parser.ParserDelegator;
 
 /**
  *
@@ -78,18 +74,38 @@ public class TestFrame extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**Download one single file from a URL*/
+    private void downloadDataFile(URL pSource, String pLocalName) throws Exception {
+        URLConnection ucon = pSource.openConnection();
+        FileOutputStream tempWriter = new FileOutputStream(pLocalName);
+        //BufferedReader reader = new BufferedReader(new InputStreamReader(ucon.getInputStream()));
+        InputStream isr = ucon.getInputStream();
+        int bytes = 0;
+        while (bytes != -1) {
+            byte[] data = new byte[1024];
+            bytes = isr.read(data);
+            if (bytes != -1) {
+                tempWriter.write(data, 0, bytes);
+            }
+
+        }
+        try {
+            isr.close();
+            tempWriter.close();
+        } catch (Exception e) {
+        }
+    }
+
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
-
-        java.awt.EventQueue.invokeLater(new Runnable() {
-
-            public void run() {
-                new TestFrame().setVisible(true);
-            }
-        });
-
+    public static void main(String args[]) throws Exception {
+        /*java.awt.EventQueue.invokeLater(new Runnable() {
+        
+        public void run() {
+        new TestFrame().setVisible(true);
+        }
+        });*/
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

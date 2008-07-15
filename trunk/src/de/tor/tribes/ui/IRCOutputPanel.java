@@ -5,8 +5,12 @@
  */
 package de.tor.tribes.ui;
 
+import java.awt.Color;
 import java.awt.Point;
-import javax.swing.text.Document;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.DefaultStyledDocument;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
 import jerklib.Channel;
 
 /**
@@ -16,27 +20,68 @@ import jerklib.Channel;
 public class IRCOutputPanel extends javax.swing.JPanel {
 
     private Channel mChannel = null;
+    public final static SimpleAttributeSet NORMAL_ATTRIBUTES = new SimpleAttributeSet();
+    public final static SimpleAttributeSet INFO_ATTRIBUTES = new SimpleAttributeSet();
+    public final static SimpleAttributeSet ERROR_ATTRIBUTES = new SimpleAttributeSet();
+    public final static SimpleAttributeSet SELF_ATTRIBUTES = new SimpleAttributeSet();
+    public final static SimpleAttributeSet OTHER_ATTRIBUTES = new SimpleAttributeSet();
+    private final char COLOR_START = (char) new byte[]{3}[0];
 
     /** Creates new form IRCOutputPanel */
     public IRCOutputPanel(Channel pChannel) {
         initComponents();
         mChannel = pChannel;
+        StyleConstants.setItalic(INFO_ATTRIBUTES, true);
+        StyleConstants.setForeground(INFO_ATTRIBUTES, Color.LIGHT_GRAY);
+        StyleConstants.setItalic(ERROR_ATTRIBUTES, true);
+        StyleConstants.setForeground(ERROR_ATTRIBUTES, Color.RED);
+        StyleConstants.setBold(SELF_ATTRIBUTES, true);
+        StyleConstants.setForeground(SELF_ATTRIBUTES, Color.BLUE);
+        StyleConstants.setBold(OTHER_ATTRIBUTES, true);
+        StyleConstants.setForeground(OTHER_ATTRIBUTES, Color.RED);
     }
 
     public Channel getChannel() {
         return mChannel;
     }
 
-    public void insertText(String pText) {
+    public void insertMessage(String pUser, String pText, boolean pSelf) {
         try {
-            Document d = jEditorPanel.getDocument();
+            DefaultStyledDocument d = (DefaultStyledDocument) jEditorPane.getStyledDocument();
+            if (pSelf) {
+                d.insertString(d.getLength(), pUser + ": ", SELF_ATTRIBUTES);
+            } else {
+                d.insertString(d.getLength(), pUser + ": ", OTHER_ATTRIBUTES);
+            }
             d.insertString(d.getLength(), pText + "\n", null);
-
             jScrollPane1.getViewport().setViewPosition(new Point(0, d.getLength()));
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
 
+    public void insertText(String pText, AttributeSet pAttributes) {
+        try {
+            DefaultStyledDocument d = (DefaultStyledDocument) jEditorPane.getStyledDocument();
+            if (pAttributes != null) {
+                d.insertString(d.getLength(), pText + "\n", pAttributes);
+            } else {
+//                insertColorParsedText(pText);
+                d.insertString(d.getLength(), pText + "\n", null);
+            }
+            jScrollPane1.getViewport().setViewPosition(new Point(0, d.getLength()));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void insertText(String pText) {
+        insertText(pText, NORMAL_ATTRIBUTES);
+    }
+
+    public void insertColorParsedText(String pText) {
+        /*  Colors.
+        pText.indexOf(3);*/
     }
 
     /** This method is called from within the constructor to
@@ -49,9 +94,9 @@ public class IRCOutputPanel extends javax.swing.JPanel {
     private void initComponents() {
 
         jScrollPane1 = new javax.swing.JScrollPane();
-        jEditorPanel = new javax.swing.JEditorPane();
+        jEditorPane = new javax.swing.JTextPane();
 
-        jScrollPane1.setViewportView(jEditorPanel);
+        jScrollPane1.setViewportView(jEditorPane);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -65,7 +110,12 @@ public class IRCOutputPanel extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JEditorPane jEditorPanel;
+    private javax.swing.JTextPane jEditorPane;
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
+
+    public static void main(String[] args) {
+        String test = "3,1\\1,3\\9,3\\3,9\\0,9\\9,0\\0,0-15,0\\0,15\\14,15\\15,14\\1,14";
+        System.out.println(new String("\u000f"));
+    }
 }

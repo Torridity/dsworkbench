@@ -8,7 +8,11 @@ package de.tor.tribes.ui;
 import de.tor.tribes.util.irc.IRCHandler;
 import de.tor.tribes.util.irc.IRCHandlerListener;
 import java.awt.event.KeyEvent;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Hashtable;
+import java.util.List;
+import javax.swing.DefaultListModel;
 import jerklib.Channel;
 import jerklib.Profile;
 import jerklib.events.AwayEvent;
@@ -18,6 +22,7 @@ import jerklib.events.ConnectionLostEvent;
 import jerklib.events.IRCEvent;
 import jerklib.events.InviteEvent;
 import jerklib.events.JoinCompleteEvent;
+import jerklib.events.JoinEvent;
 import jerklib.events.KickEvent;
 import jerklib.events.MessageEvent;
 import jerklib.events.MotdEvent;
@@ -33,6 +38,8 @@ import jerklib.events.TopicEvent;
 import jerklib.events.WhoEvent;
 import jerklib.events.WhoisEvent;
 import jerklib.events.WhowasEvent;
+import jerklib.events.modes.ModeAdjustment;
+import jerklib.events.modes.ModeAdjustment.Action;
 import jerklib.events.modes.ModeEvent;
 
 /**
@@ -63,16 +70,47 @@ public class IRCFrame extends javax.swing.JFrame implements IRCHandlerListener {
         } else {
             mProfile = pProfile;
         }
+        jOutputTabs.setTabComponentAt(0, new TabComponentPanel(null, "System"));
         mHandler = new IRCHandler(mProfile, this);
+    }
+
+    public Profile getProfile() {
+        return mProfile;
+    }
+
+    public void addChannel(Channel pChannel) {
+        String chanName = pChannel.getName();
+        jOutputTabs.addTab(chanName, new IRCOutputPanel(pChannel));
+        mTabs.put(chanName, jOutputTabs.getTabCount() - 1);
+        TabComponentPanel tabCom = new TabComponentPanel(this, pChannel.getName());
+
+        jOutputTabs.setTabComponentAt(jOutputTabs.getTabCount() - 1, tabCom);
+    }
+
+    public void partChannel(String pChannelName) {
+        mHandler.sayRaw("PART " + pChannelName);
+    }
+
+    public void removeChannel(String pChannelName) {
+        Integer id = mTabs.remove(pChannelName);
+        jOutputTabs.remove(id);
     }
 
     public IRCOutputPanel getPanel(String pName) {
         Integer idx = mTabs.get(pName);
+        if (idx == -1) {
+            //drop message
+            return null;
+        }
         if (idx > jOutputTabs.getTabCount() - 1) {
             return (IRCOutputPanel) jOutputTabs.getComponentAt(0);
         } else {
             return (IRCOutputPanel) jOutputTabs.getComponentAt(idx);
         }
+    }
+
+    public IRCOutputPanel getActivePanel() {
+        return (IRCOutputPanel) jOutputTabs.getSelectedComponent();
     }
 
     /** This method is called from within the constructor to
@@ -102,6 +140,11 @@ public class IRCFrame extends javax.swing.JFrame implements IRCHandlerListener {
         });
 
         jOutputTabs.setTabLayoutPolicy(javax.swing.JTabbedPane.SCROLL_TAB_LAYOUT);
+        jOutputTabs.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                fireChangeTabEvent(evt);
+            }
+        });
 
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("Benutzer");
@@ -162,7 +205,7 @@ private void fireSendInputEvent(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_
         IRCOutputPanel currentPanel = ((IRCOutputPanel) jOutputTabs.getSelectedComponent());
         if (currentPanel != mSystemPanel) {
             Channel current = currentPanel.getChannel();
-            currentPanel.insertText(mProfile.getActualNick() + ": " + text);
+            currentPanel.insertMessage(mProfile.getActualNick(), text, true);
             current.say(text);
         } else {
             mHandler.sayRaw(text);
@@ -170,9 +213,23 @@ private void fireSendInputEvent(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_
     }
 }//GEN-LAST:event_fireSendInputEvent
 
-private void sendSystemOutput(String pString){
-    
-}
+private void fireChangeTabEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireChangeTabEvent
+    IRCOutputPanel selected = (IRCOutputPanel) jOutputTabs.getSelectedComponent();
+    if (selected.getChannel() != null) {
+        List<String> nicks = selected.getChannel().getNicks();
+        DefaultListModel model = new DefaultListModel();
+        for (String nick : nicks) {
+            model.addElement(nick);
+        }
+        jUserList.setModel(model);
+    } else {
+        jUserList.setModel(new DefaultListModel());
+    }
+    repaint();
+}//GEN-LAST:event_fireChangeTabEvent
+
+    private void sendSystemOutput(String pString) {
+    }
 
     /**
      * @param args the command line arguments
@@ -184,6 +241,7 @@ private void sendSystemOutput(String pString){
                 new IRCFrame().setVisible(true);
             }
         });
+
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -197,7 +255,7 @@ private void sendSystemOutput(String pString){
 
     @Override
     public void fireConnectedEvent(ConnectionCompleteEvent event) {
-        getPanel("System").insertText("Verbunden mit " + event.getActualHostName());
+        getPanel("System").insertText("Verbunden mit " + event.getActualHostName(), IRCOutputPanel.INFO_ATTRIBUTES);
     }
 
     @Override
@@ -206,99 +264,225 @@ private void sendSystemOutput(String pString){
         if (channelPanel == null) {
             return;
         } else {
-            channelPanel.insertText(event.getNick() + ": " + event.getMessage());
+            channelPanel.insertMessage(event.getNick(), event.getMessage(), false);
         }
     }
 
     @Override
     public void fireChannelJoinEvent(JoinCompleteEvent event) {
-        System.out.println("Joined");
-        String chanName = event.getChannel().getName();
-        jOutputTabs.addTab(chanName, new IRCOutputPanel(event.getChannel()));
-        mTabs.put(chanName, jOutputTabs.getTabCount() - 1);
+        addChannel(event.getChannel());
+    }
+
+    @Override
+    public void fireJoinEvent(JoinEvent event) {
+        IRCOutputPanel panel = getPanel(event.getChannelName());
+        if (panel != null) {
+            panel.insertText(event.getNick() + " hat den Channel betreten", IRCOutputPanel.INFO_ATTRIBUTES);
+        }
+        fireChangeTabEvent(null);
     }
 
     @Override
     public void fireAwayEvent(AwayEvent event) {
+       // IRCOutputPanel panel = getPanel(event.getChannelName());
+        //event.
+      /*  if (panel != null) {
+            panel.insertText(event.getNick() + " meldet sich ab (" + event.getAwayMessage() + ")", IRCOutputPanel.INFO_ATTRIBUTES);
+        }
+        fireChangeTabEvent(null);*/
     }
 
     @Override
     public void fireChannelListEvent(ChannelListEvent event) {
+        System.out.println("chan list");
     }
 
     @Override
     public void fireConnectionLostEvent(ConnectionLostEvent event) {
+        System.out.println("con los");
     }
 
     @Override
     public void fireInviteEvent(InviteEvent event) {
+        System.out.println("inv");
     }
 
     @Override
     public void fireKickEvent(KickEvent event) {
+        System.out.println("kick");
     }
 
     @Override
     public void fireModeEvent(ModeEvent event) {
+        String addModes = "+";
+        String removeModes = "-";
+        for (ModeAdjustment m : event.getModeAdjustments()) {
+            if (m.getAction().equals(Action.PLUS)) {
+                addModes += m.getMode();
+            } else {
+                removeModes += m.getMode();
+            }
+        }
+        IRCOutputPanel panel = mSystemPanel;
+        if (event.getChannel() != null) {
+            panel = getPanel(event.getChannel().getName());
+        }
+        if (addModes.length() == 1) {
+            addModes = "";
+        }
+
+        if (removeModes.length() == 1) {
+            removeModes = "";
+        }
+        String message = "Rechteänderung";
+        if ((event.setBy() != null) && (event.setBy().length() > 2)) {
+            message += " durch " + event.setBy();
+        }
+        message += ": " + addModes + " " + removeModes;
+        panel.insertText(message, IRCOutputPanel.INFO_ATTRIBUTES);
+
     }
 
     @Override
     public void fireNickChangeEvent(NickChangeEvent event) {
+        mSystemPanel.insertText(event.getOldNick() + " heisst jetzt " + event.getNewNick(), IRCOutputPanel.INFO_ATTRIBUTES);
     }
 
     @Override
     public void fireMotdEvent(MotdEvent event) {
+        sendSystemOutput(event.getMotdLine());
     }
 
     @Override
     public void fireNickInUseEvent(NickInUseEvent event) {
+        mSystemPanel.insertText("Nickname " + event.getInUseNick() + " wird bereits verwendet", IRCOutputPanel.ERROR_ATTRIBUTES);
     }
 
     @Override
     public void fireNickListEvent(NickListEvent event) {
+        if (event.getChannel() == null) {
+            //what?
+            mSystemPanel.insertText(event.getRawEventData(), IRCOutputPanel.INFO_ATTRIBUTES);
+        } else {
+            getPanel(event.getChannel().getName()).insertText("Anwesende: " + event.getNicks(), IRCOutputPanel.INFO_ATTRIBUTES);
+        }
     }
 
     @Override
     public void fireNoticeEvent(NoticeEvent event) {
+        sendSystemOutput(event.getNoticeMessage());
     }
 
     @Override
     public void firePartEvent(PartEvent event) {
+        if (event.getUserName().equals("~" + mProfile.getActualNick())) {
+            removeChannel(event.getChannelName());
+        } else {
+            getPanel(event.getChannelName()).insertText(event.getUserName() + " verlässt den Channel (" + event.getPartMessage() + ")", IRCOutputPanel.ERROR_ATTRIBUTES);
+            fireChangeTabEvent(null);
+        }
     }
 
     @Override
     public void firePrivateMessageEvent(MessageEvent event) {
+        System.out.println("msg");
     }
 
     @Override
     public void fireQuitEvent(QuitEvent event) {
+        if (event.getNick().equals("~" + mProfile.getActualNick())) {
+            mSystemPanel.insertText("Du hast den IRC verlassen", IRCOutputPanel.ERROR_ATTRIBUTES);
+        } else {
+            mSystemPanel.insertText(event.getNick() + " hat den IRC verlassen (" + event.getQuitMessage() + ")", IRCOutputPanel.ERROR_ATTRIBUTES);
+        }
     }
 
     @Override
     public void fireServerInformationEvent(ServerInformationEvent event) {
+        String message = "ServerName: " + event.getServerInformation().getServerName() + "\n";
+        message += "CaseMapping: " + event.getServerInformation().getCaseMapping() + "\n";
+        message += "MaxAwayLength: " + event.getServerInformation().getMaxAwayLength() + "\n";
+        message += "MaxChannelNameLength: " + event.getServerInformation().getMaxChannelNameLength() + "\n";
+        message += "MaxKickLength: " + event.getServerInformation().getMaxKickLength() + "\n";
+        message += "MaxHostLength: " + event.getServerInformation().getMaxHostLength() + "\n";
+        message += "MaxModesPerCommand: " + event.getServerInformation().getMaxModesPerCommnad() + "\n";
+        message += "MaxNickLength: " + event.getServerInformation().getMaxNickLength() + "\n";
+        message += "MaxSilenceListSize: " + event.getServerInformation().getMaxSilenceListSize() + "\n";
+        message += "MaxTopicLength: " + event.getServerInformation().getMaxTopicLength() + "\n";
+        message += "MaxUserLength: " + event.getServerInformation().getMaxUserLength() + "\n";
+        message += "ChannelPrefixes: " + Arrays.asList(event.getServerInformation().getChannelPrefixes()) + "\n";
+        message += "NickPrefixes: " + Arrays.asList(event.getServerInformation().getNickPrefixes()) + "\n";
+        message += "ChannelPrefixes: " + Arrays.asList(event.getServerInformation().getChannelPrefixes()) + "\n";
+        message += "StatusPrefixes: " + Arrays.asList(event.getServerInformation().getStatusPrefixes()) + "\n";
+        message += "SupportedChannelModes: " + Arrays.asList(event.getServerInformation().getSupportedChannelModes());
+        mSystemPanel.insertText(message, IRCOutputPanel.INFO_ATTRIBUTES);
     }
 
     @Override
     public void fireServerVersionEvent(ServerVersionEvent event) {
+        String message = "Server: " + event.getHostName() + "\n";
+        message += "Server Version: " + event.getVersion() + "\n";
+        message += "Kommentar: " + event.getComment() + "\n";
+        message += "Debug Level: " + event.getdebugLevel();
+        mSystemPanel.insertText(message, IRCOutputPanel.INFO_ATTRIBUTES);
     }
 
     @Override
     public void fireTopicEvent(TopicEvent event) {
+        if (event.getChannel() != null) {
+            String message = "Channel Thema: " + event.getTopic() + "\n";
+            message += "Gesetzt am " + new SimpleDateFormat("dd.MM.yy").format(event.getSetWhen()) + " um " + new SimpleDateFormat("HH:mm:ss").format(event.getSetWhen()) + " durch " + event.getSetBy();
+            getPanel(event.getChannel().getName()).insertText(message, IRCOutputPanel.INFO_ATTRIBUTES);
+        }
     }
 
     @Override
     public void fireWhoisEvent(WhoisEvent event) {
+        String message = "(WHOIS) Nick: " + event.getNick() + "\n";
+        message += "(WHOIS) Real Name: " + event.getRealName() + "\n";
+        message += "(WHOIS) Host: " + event.getHost() + "\n";
+        message += "(WHOIS) Channel: " + event.getChannelNames();
+        if (getActivePanel() == mSystemPanel) {
+            mSystemPanel.insertText(message, IRCOutputPanel.INFO_ATTRIBUTES);
+        } else {
+            getActivePanel().insertText(message, IRCOutputPanel.INFO_ATTRIBUTES);
+        }
     }
 
     @Override
     public void fireWhowasEvent(WhowasEvent event) {
+        String message = "(WHOWAS) Nick: " + event.getNick() + "\n";
+        message += "(WHOWAS) Real Name: " + event.getRealName() + "\n";
+        message += "(WHOWAS) User Name: " + event.getUserName() + "\n";
+        message += "(WHOWAS) Host: " + event.getHostName() + "\n";
+        if (getActivePanel() == mSystemPanel) {
+            mSystemPanel.insertText(message, IRCOutputPanel.INFO_ATTRIBUTES);
+        } else {
+            getActivePanel().insertText(message, IRCOutputPanel.INFO_ATTRIBUTES);
+        }
     }
 
     @Override
     public void fireWhoEvent(WhoEvent event) {
+        String message = "(WHO) Nick: " + event.getNick() + "\n";
+        message += "(WHO) Real Name: " + event.getRealName() + "\n";
+        message += "(WHO) User Name: " + event.getUserName() + "\n";
+        message += "(WHO) Host: " + event.getHostName() + "\n";
+        message += "(WHO) Server Name: " + event.getServerName() + "\n";
+        message += "(WHO) Away: " + ((event.isAway()) ? "ja" : "nein");
+        IRCOutputPanel panel = mSystemPanel;
+        if (event.getChannel() != null) {
+            panel = getPanel(event.getChannel());
+        }
+        if (panel == null) {
+            mSystemPanel.insertText(message, IRCOutputPanel.INFO_ATTRIBUTES);
+        } else {
+            panel.insertText(message, IRCOutputPanel.INFO_ATTRIBUTES);
+        }
     }
 
     @Override
     public void fireIRCEvent(IRCEvent event) {
+        mSystemPanel.insertText(event.getRawEventData(), IRCOutputPanel.INFO_ATTRIBUTES);
     }
 }

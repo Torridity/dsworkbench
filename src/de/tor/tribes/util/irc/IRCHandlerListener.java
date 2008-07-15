@@ -11,6 +11,7 @@ import jerklib.events.ConnectionLostEvent;
 import jerklib.events.IRCEvent;
 import jerklib.events.InviteEvent;
 import jerklib.events.JoinCompleteEvent;
+import jerklib.events.JoinEvent;
 import jerklib.events.KickEvent;
 import jerklib.events.MessageEvent;
 import jerklib.events.MotdEvent;
@@ -39,6 +40,8 @@ public interface IRCHandlerListener {
     public void fireChannelMessageEvent(MessageEvent event);
 
     public void fireChannelJoinEvent(JoinCompleteEvent event);
+
+    public void fireJoinEvent(JoinEvent event);
 
     public void fireAwayEvent(AwayEvent event);
 

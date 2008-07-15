@@ -15,6 +15,7 @@ import jerklib.events.IRCEvent;
 import jerklib.events.IRCEvent.Type;
 import jerklib.events.InviteEvent;
 import jerklib.events.JoinCompleteEvent;
+import jerklib.events.JoinEvent;
 import jerklib.events.KickEvent;
 import jerklib.events.MessageEvent;
 import jerklib.events.MotdEvent;
@@ -101,6 +102,8 @@ public class IRCHandler implements IRCEventListener {
             mListener.fireChannelMessageEvent((MessageEvent) e);
         } else if (e.getType() == Type.JOIN_COMPLETE) {
             mListener.fireChannelJoinEvent((JoinCompleteEvent) e);
+        } else if (e.getType() == Type.JOIN) {
+            mListener.fireJoinEvent((JoinEvent) e);
         } else if (e.getType() == Type.AWAY_EVENT) {
             mListener.fireAwayEvent((AwayEvent) e);
         } else if (e.getType() == Type.CHANNEL_LIST_EVENT) {

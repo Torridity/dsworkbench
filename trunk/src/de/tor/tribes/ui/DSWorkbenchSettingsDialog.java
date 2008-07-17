@@ -772,9 +772,9 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
         } else if (GlobalOptions.isOfflineMode()) {
             //remote update failed but local servers found
             String message = "Serverliste konnte nicht geladen werden.\n";
-            message = "Mögliche Ursachen sind fehlerhafte Netzwerkeinstellungen oder keine Verbindung zum Internet.\n";
-            message = "Da bereits Serverdaten auf deiner Festplatte existieren, wechselt DS Workbench in den Offline-Modus.\n";
-            message = "Um Online-Funktionen zu nutzen korrigieren bitte später deine Netzwerkeinstellungen oder verbinde dich mit dem Internet.";
+            message += "Mögliche Ursachen sind fehlerhafte Netzwerkeinstellungen oder keine Verbindung zum Internet.\n";
+            message += "Da bereits Serverdaten auf deiner Festplatte existieren, wechselt DS Workbench in den Offline-Modus.\n";
+            message += "Um Online-Funktionen zu nutzen korrigieren bitte später deine Netzwerkeinstellungen oder verbinde dich mit dem Internet.";
             JOptionPane.showMessageDialog(this, message, "Warnung", JOptionPane.WARNING_MESSAGE);
         }
         if (mMainFrame != null) {
@@ -1053,7 +1053,7 @@ private void fireChangeDrawDistanceEvent(java.awt.event.ActionEvent evt) {//GEN-
                 servers = ServerList.getServerIDs();
                 GlobalOptions.setOfflineMode(false);
             } catch (Exception e) {
-                logger.error("Failed to load server list");
+                logger.error("Failed to load server list", e);
                 GlobalOptions.setOfflineMode(true);
             }
         }

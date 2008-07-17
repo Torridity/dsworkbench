@@ -17,8 +17,8 @@ import de.tor.tribes.util.xml.JaxenUtils;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -30,6 +30,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 import org.apache.log4j.Logger;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -287,7 +288,9 @@ public class DataHolder {
         URL file = null;
         String serverDir = sServerBaseDir + "/" + GlobalOptions.getSelectedServer();
         new File(serverDir).mkdirs();
+
         try {
+            // <editor-fold defaultstate="collapsed" desc="Account check">
             //check account
             String accountName = GlobalOptions.getProperty("account.name");
             String accountPassword = GlobalOptions.getProperty("account.password");
@@ -306,6 +309,9 @@ public class DataHolder {
                 return false;
             }
 
+            //</editor-fold>
+
+            // <editor-fold defaultstate="collapsed" desc="Server settings check">
             //download settings.xml
             URL sURL = ServerList.getServerURL(GlobalOptions.getSelectedServer());
 
@@ -320,56 +326,117 @@ public class DataHolder {
             if (!serverSupported()) {
                 return false;
             }
+            //</editor-fold>
 
+
+            //villages download/merge
+            File localFile = new File(getDataDirectory() + "/" + "village.txt.gz");
             fireDataHolderEvents("Lade village.txt.gz");
-            file = new URL(sURL.toString() + "/map/village.txt.gz");
+            if (localFile.exists()) {
+                //download diff
+                downloadDiff("village");
+            } else {
+                //download full
+                downloadFull("village");
+            }
+
+            //tribe download/merge
+            localFile = new File(getDataDirectory() + "/" + "tribe.txt.gz");
+            fireDataHolderEvents("Lade tribe.txt.gz");
+            if (localFile.exists()) {
+                //download diff
+                downloadDiff("tribe");
+            } else {
+                //download full
+                downloadFull("tribe");
+            }
+
+            //ally download/merge
+            localFile = new File(getDataDirectory() + "/" + "ally.txt.gz");
+            fireDataHolderEvents("Lade ally.txt.gz");
+            if (localFile.exists()) {
+                //download diff
+                downloadDiff("ally");
+            } else {
+                //download full
+                downloadFull("allys");
+            }
+
+            //kill_att download/merge
+            localFile = new File(getDataDirectory() + "/" + "kill_att.txt.gz");
+            fireDataHolderEvents("Lade kill_att.txt.gz");
+            if (localFile.exists()) {
+                //download diff
+                downloadDiff("kill_att");
+            } else {
+                //download full
+                downloadFull("kill_att");
+            }
+
+            //kill_def download/merge
+            localFile = new File(getDataDirectory() + "/" + "kill_def.txt.gz");
+            fireDataHolderEvents("Lade kill_def.txt.gz");
+            if (localFile.exists()) {
+                //download diff
+                downloadDiff("kill_def");
+            } else {
+                //download full
+                downloadFull("kill_def");
+            }
+
+            //sURL = new URL("http://www.torridity.de/servers/" + GlobalOptions.getSelectedServer() + "/village.diff");
+
+
+            /* file = new URL(sURL.toString() + "/map/village.txt.gz");
             downloadDataFile(file, "village_tmp.txt.gz");
             target = new File(serverDir + "/village.txt.gz");
             if (target.exists()) {
-                target.delete();
+            target.delete();
             }
             new File("village_tmp.txt.gz").renameTo(target);
-
+            
             //download tribe.txt
             fireDataHolderEvents("Lade tribe.txt.gz");
             file = new URL(sURL.toString() + "/map/tribe.txt.gz");
             downloadDataFile(file, "tribe_tmp.txt.gz");
             target = new File(serverDir + "/tribe.txt.gz");
             if (target.exists()) {
-                target.delete();
+            target.delete();
             }
             new File("tribe_tmp.txt.gz").renameTo(target);
-
+            
             //download ally.txt
             fireDataHolderEvents("Lade ally.txt.gz");
             file = new URL(sURL.toString() + "/map/ally.txt.gz");
             downloadDataFile(file, "ally_tmp.txt.gz");
             target = new File(serverDir + "/ally.txt.gz");
             if (target.exists()) {
-                target.delete();
+            target.delete();
             }
             new File("ally_tmp.txt.gz").renameTo(target);
-
+            
             //download kill_att.txt
             fireDataHolderEvents("Lade kill_att.txt.gz");
             file = new URL(sURL.toString() + "/map/kill_att.txt.gz");
             downloadDataFile(file, "kill_att_tmp.txt.gz");
             target = new File(serverDir + "/kill_att.txt.gz");
             if (target.exists()) {
-                target.delete();
+            target.delete();
             }
             new File("kill_att_tmp.txt.gz").renameTo(target);
-
+            
             //download kill_def.txt
             fireDataHolderEvents("Lade kill_def.txt.gz");
             file = new URL(sURL.toString() + "/map/kill_def.txt.gz");
             downloadDataFile(file, "kill_def_tmp.txt.gz");
             target = new File(serverDir + "/kill_def.txt.gz");
             if (target.exists()) {
-                target.delete();
+            target.delete();
             }
             new File("kill_def_tmp.txt.gz").renameTo(target);
+             */
 
+            // <editor-fold defaultstate="collapsed" desc="Direct download from DS-Servers">
             //download unit information, but only once
             target = new File(serverDir + "/units.xml");
             if (!target.exists()) {
@@ -388,6 +455,7 @@ public class DataHolder {
                 downloadDataFile(file, "buildings_tmp.xml");
                 new File("buildings_tmp.xml").renameTo(target);
             }
+            //</editor-fold>
 
             fireDataHolderEvents("Download erfolgreich beendet.");
             DatabaseAdapter.storeLastUpdate(accountName, GlobalOptions.getSelectedServer());
@@ -397,6 +465,80 @@ public class DataHolder {
             return false;
         }
         return true;
+    }
+
+    private void downloadDiff(String pFile) throws Exception {
+        String localFile = getDataDirectory() + "/" + pFile + ".txt.gz";
+        URL remoteDiffFile = new URL("http://www.torridity.de/servers/" + GlobalOptions.getSelectedServer() + "/" + pFile + ".diff");
+        InputStream diffIn = null;
+        try {
+            diffIn = remoteDiffFile.openStream();
+        } catch (FileNotFoundException fnf) {
+            //no diff available, perform full update
+            logger.info("No differential update available. Doing full update");
+            downloadFull(pFile);
+            return;
+        }
+
+        BufferedReader diffReader = new BufferedReader(new InputStreamReader(new GZIPInputStream(diffIn)));
+        BufferedReader localReader = new BufferedReader(new InputStreamReader(new FileInputStream(localFile)));
+        String diffLine = "";
+
+        StringBuffer merged = new StringBuffer();
+        while ((diffLine = diffReader.readLine()) != null) {
+            String localLine = localReader.readLine();
+            if (localLine != null) {
+                //read all diff content
+                if (diffLine.trim().length() == 0) {
+                    //no change
+                    merged.append(localLine + "\n");
+                } else {
+                    StringTokenizer diffTokens = new StringTokenizer(diffLine.trim(), ",");
+                    StringTokenizer localTokens = new StringTokenizer(localLine.trim(), ",");
+                    if (localTokens.countTokens() == diffTokens.countTokens()) {
+                        //format of both files is equal
+                        while (diffTokens.hasMoreTokens()) {
+                            //loop over all tokens
+                            String diffToken = diffTokens.nextToken();
+                            if (diffToken.length() == 0) {
+                                //diff token is empty, no change
+                                merged.append(localTokens.nextToken() + ",");
+                            } else {
+                                //diff token is not empty, value has changed
+                                merged.append(diffToken + ",");
+                            }
+                        }
+                        merged.append("\n");
+                    } else {
+                        logger.error("Remote diff file for '" + pFile + "' seems to be invalid");
+                    }
+                }
+            } else {
+                merged.append(diffLine + "\n");
+            }
+        }
+        logger.debug("Writing merged data");
+        GZIPOutputStream mergedOut = new GZIPOutputStream(new FileOutputStream(localFile));
+        mergedOut.write(merged.toString().getBytes());
+        mergedOut.finish();
+        mergedOut.close();
+    }
+
+    private void downloadFull(String pFile) throws Exception {
+        String localFile = getDataDirectory() + "/" + pFile + ".txt.gz";
+        URL remoteFile = new URL("http://www.torridity.de/servers/" + GlobalOptions.getSelectedServer() + "/" + pFile + ".txt.gz");
+        BufferedReader remoteReader = new BufferedReader(new InputStreamReader(new GZIPInputStream(remoteFile.openStream())));
+
+        StringBuffer buffer = new StringBuffer();
+        String line = "";
+        while ((line = remoteReader.readLine()) != null) {
+            buffer.append(line + "\n");
+        }
+        logger.debug("Writing  data");
+        GZIPOutputStream out = new GZIPOutputStream(new FileOutputStream(localFile));
+        out.write(buffer.toString().getBytes());
+        out.finish();
+        out.close();
     }
 
     /**Merge all data into the village data structure to ease searching*/

@@ -55,7 +55,7 @@ public class DatabaseAdapter {
             return false;
         }
         try {
-            DB_CONNECTION = DriverManager.getConnection("jdbc:mysql://www.torridity.de/dsworkbench?" + "user=dsworkbench&password=DSwb'08");
+            DB_CONNECTION = DriverManager.getConnection("jdbc:mysql://www.torridity.de:3306/dsworkbench?" + "user=dsworkbench&password=DSwb'08");
             return true;
         } catch (SQLException se) {
             logger.error("Failed to establish database connection", se);
@@ -395,16 +395,20 @@ public class DatabaseAdapter {
 
     public static void main(String[] args) {
         DOMConfigurator.configure("log4j.xml");
-        /*  System.out.println(DatabaseAdapter.addUser("Torridity", "realstyx13"));
-        long s = System.currentTimeMillis();
-        System.out.println(DatabaseAdapter.checkUser("Torridity", "realstyx13"));*/
+        System.setProperty("proxyUse", "true");
+        System.setProperty("proxyHost", "proxy.fzk.de");
+        System.setProperty("proxyPort", "8000");
+        System.out.println(DatabaseAdapter.checkUser("Torridity", "realstyx13"));
+    /*  System.out.println(DatabaseAdapter.addUser("Torridity", "realstyx13"));
+    long s = System.currentTimeMillis();
+    System.out.println(DatabaseAdapter.checkUser("Torridity", "realstyx13"));*/
 
-        //  System.out.println(DatabaseAdapter.isUpdatePossible("Torridity", "de3"));
+    //  System.out.println(DatabaseAdapter.isUpdatePossible("Torridity", "de3"));
     /*System.out.println("Check: " + DatabaseAdapter.checkLastUpdate("Torridity", "de26"));
-        System.out.println("Store: " + DatabaseAdapter.storeLastUpdate("Torridity", "de26"));
-        System.out.println("Check: " + DatabaseAdapter.checkLastUpdate("Torridity", "de26"));*/
+    System.out.println("Store: " + DatabaseAdapter.storeLastUpdate("Torridity", "de26"));
+    System.out.println("Check: " + DatabaseAdapter.checkLastUpdate("Torridity", "de26"));*/
 
-        // System.out.println("Du " + (System.currentTimeMillis() - s));
+    // System.out.println("Du " + (System.currentTimeMillis() - s));
 
     }
 }

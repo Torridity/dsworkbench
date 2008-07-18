@@ -9,8 +9,11 @@ import de.tor.tribes.util.GlobalOptions;
 import javax.swing.JOptionPane;
 import org.apache.log4j.Logger;
 import de.tor.tribes.io.DataHolderListener;
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.zip.GZIPOutputStream;
 import javax.swing.UIManager;
 import org.apache.log4j.xml.DOMConfigurator;
 
@@ -97,6 +100,20 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
             logger.error("Failed to load server data", e);
             System.exit(1);
         }
+      /*  try {
+            long start = System.currentTimeMillis();
+            ObjectOutputStream oout = new ObjectOutputStream(new GZIPOutputStream(new FileOutputStream("c:/serial.txt")));
+          
+                    oout.writeObject(GlobalOptions.getDataHolder().getVillages());
+   
+
+            oout.close();
+            System.out.println("Dur: " + (System.currentTimeMillis() - start));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        System.exit(0);*/
         DSWorkbenchMainFrame mainFrame = new DSWorkbenchMainFrame();
         SearchFrame.createSearchFrame(mainFrame);
         DSWorkbenchSettingsDialog.getGlobalSettingsFrame().setMainFrame(mainFrame);

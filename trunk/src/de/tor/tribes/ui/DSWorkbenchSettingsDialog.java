@@ -1007,7 +1007,7 @@ private void fireDownloadDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
             } else {
                 JOptionPane.showMessageDialog(this, "Ein Datenabgleich ist maximal einmal in der Stunde möglich.\nÜberprüfung auf nächstmögliches Update fehlgeschlagen.\nBitte korrigiere deine Account Einstellungen.", "Fehler", JOptionPane.ERROR_MESSAGE);
             }
-            return;
+           // return;
         }
     }
 

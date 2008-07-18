@@ -55,7 +55,7 @@ public class DatabaseAdapter {
             return false;
         }
         try {
-            DB_CONNECTION = DriverManager.getConnection("jdbc:mysql://www.torridity.de:3306/dsworkbench?" + "user=dsworkbench&password=DSwb'08");
+            DB_CONNECTION = DriverManager.getConnection("jdbc:mysql://www.torridity.de/dsworkbench?" + "user=dsworkbench&password=DSwb'08");
             return true;
         } catch (SQLException se) {
             logger.error("Failed to establish database connection", se);

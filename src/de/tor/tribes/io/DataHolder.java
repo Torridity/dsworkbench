@@ -306,7 +306,7 @@ public class DataHolder {
                 logger.info("Update possible, try starting download");
             } else {
                 logger.error("Download not yet possible");
-                return false;
+            //           return false;
             }
 
             //</editor-fold>
@@ -342,34 +342,39 @@ public class DataHolder {
 
             //tribe download/merge
             localFile = new File(getDataDirectory() + "/" + "tribe.txt.gz");
-            fireDataHolderEvents("Lade tribe.txt.gz");
+
             if (localFile.exists()) {
                 //download diff
+                fireDataHolderEvents("Lade tribe.diff");
                 downloadDiff("tribe");
             } else {
                 //download full
+                fireDataHolderEvents("Lade tribe.txt.gz");
                 downloadFull("tribe");
             }
 
             //ally download/merge
             localFile = new File(getDataDirectory() + "/" + "ally.txt.gz");
-            fireDataHolderEvents("Lade ally.txt.gz");
             if (localFile.exists()) {
                 //download diff
+                fireDataHolderEvents("Lade ally.diff");
                 downloadDiff("ally");
             } else {
                 //download full
+                fireDataHolderEvents("Lade ally.txt.gz");
                 downloadFull("allys");
             }
 
             //kill_att download/merge
             localFile = new File(getDataDirectory() + "/" + "kill_att.txt.gz");
-            fireDataHolderEvents("Lade kill_att.txt.gz");
+
             if (localFile.exists()) {
                 //download diff
+                fireDataHolderEvents("Lade kill_att.diff");
                 downloadDiff("kill_att");
             } else {
                 //download full
+                fireDataHolderEvents("Lade kill_att.txt.gz");
                 downloadFull("kill_att");
             }
 
@@ -378,9 +383,11 @@ public class DataHolder {
             fireDataHolderEvents("Lade kill_def.txt.gz");
             if (localFile.exists()) {
                 //download diff
+                fireDataHolderEvents("Lade kill_def.diff");
                 downloadDiff("kill_def");
             } else {
                 //download full
+                fireDataHolderEvents("Lade kill_def.txt.gz");
                 downloadFull("kill_def");
             }
 
@@ -481,7 +488,7 @@ public class DataHolder {
         }
 
         BufferedReader diffReader = new BufferedReader(new InputStreamReader(new GZIPInputStream(diffIn)));
-        BufferedReader localReader = new BufferedReader(new InputStreamReader(new FileInputStream(localFile)));
+        BufferedReader localReader = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(localFile))));
         String diffLine = "";
 
         StringBuffer merged = new StringBuffer();
@@ -493,29 +500,39 @@ public class DataHolder {
                     //no change
                     merged.append(localLine + "\n");
                 } else {
-                    StringTokenizer diffTokens = new StringTokenizer(diffLine.trim(), ",");
-                    StringTokenizer localTokens = new StringTokenizer(localLine.trim(), ",");
-                    if (localTokens.countTokens() == diffTokens.countTokens()) {
-                        //format of both files is equal
-                        while (diffTokens.hasMoreTokens()) {
-                            //loop over all tokens
-                            String diffToken = diffTokens.nextToken();
-                            if (diffToken.length() == 0) {
-                                //diff token is empty, no change
+                    StringTokenizer diffTokens = new StringTokenizer(diffLine, ",");
+                    StringTokenizer localTokens = new StringTokenizer(localLine, ",");
+                    while (diffTokens.hasMoreTokens()) {
+                        //loop over all tokens
+                        String diffToken = diffTokens.nextToken();
+                        if (diffToken.trim().length() == 0) {
+                            //diff token is empty, no change
+                            if (diffTokens.hasMoreTokens()) {
                                 merged.append(localTokens.nextToken() + ",");
                             } else {
-                                //diff token is not empty, value has changed
-                                merged.append(diffToken + ",");
+                                merged.append(localTokens.nextToken().trim());
                             }
+                        } else {
+                            //diff token is not empty, value has changed
+                            if (diffTokens.hasMoreTokens()) {
+                                merged.append(diffToken + ",");
+                            } else {
+                                merged.append(diffToken.trim());
+                            }
+                            //drop the local token
+                            localTokens.nextToken();
                         }
-                        merged.append("\n");
-                    } else {
-                        logger.error("Remote diff file for '" + pFile + "' seems to be invalid");
                     }
+                    merged.append("\n");
                 }
             } else {
                 merged.append(diffLine + "\n");
             }
+        }
+        try {
+            localReader.close();
+            diffReader.close();
+        } catch (Exception e) {
         }
         logger.debug("Writing merged data");
         GZIPOutputStream mergedOut = new GZIPOutputStream(new FileOutputStream(localFile));

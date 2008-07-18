@@ -8,13 +8,17 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.String;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Arrays;
 import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.zip.GZIPInputStream;
@@ -63,11 +67,19 @@ public class IncServerSync {
                                 String localToken = localTokens.nextToken();
                                 if (localToken.equals(remoteToken)) {
                                     //local and remote tokens are equal, so don't change
-                                    diffBuffer.append(",");
+                                    if (remoteTokens.hasMoreTokens()) {
+                                        diffBuffer.append(" ,");
+                                    } else {
+                                        diffBuffer.append(" ");
+                                    }
                                 } else {
                                     //local and remote token are different, so insert the new value
                                     diffBuffer.append(remoteToken);
-                                    diffBuffer.append(",");
+                                    if (remoteTokens.hasMoreTokens()) {
+                                        diffBuffer.append(",");
+                                    } else {
+                                        diffBuffer.append(" ");
+                                    }
                                     changedTokens++;
                                 }
                             }
@@ -154,9 +166,10 @@ public class IncServerSync {
         }
     }
 
-    /* private static void testDiff() throws Exception {
-    createDiff(new File("D:/GRID/src/DSWorkbench/servers/de26/village_new.txt.gz").toURI().toURL(), "D:/GRID/src/DSWorkbench/servers/de26/village.txt.gz");
-    }*/
+    private static void testDiff() throws Exception {
+        createDiff(new File("c:/village_target.txt.gz").toURI().toURL(), "D:/GRID/src/DSWorkbench/servers/de14/village.txt.gz");
+    }
+
     private static void downloadDataFile(URL pSource, String pLocalName) throws Exception {
         logger.info("Downloading " + pSource);
         URLConnection ucon = pSource.openConnection();
@@ -177,8 +190,171 @@ public class IncServerSync {
         }
     }
 
+    private static void mergeDiff() throws Exception {
+        String localFile = "c:/tribe.txt.gz";
+        /*URL remoteDiffFile = new URL("http://www.torridity.de/servers/" + GlobalOptions.getSelectedServer() + "/" + pFile + ".diff");
+        InputStream diffIn = null;
+        try {
+        diffIn = remoteDiffFile.openStream();
+        } catch (FileNotFoundException fnf) {
+        //no diff available, perform full update
+        logger.info("No differential update available. Doing full update");
+        downloadFull(pFile);
+        return;
+        }
+         */
+        String remoteFile = "c:/tribe.diff";
+        BufferedReader diffReader = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(remoteFile))));
+        BufferedReader localReader = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(localFile))));
+        String diffLine = "";
+
+        StringBuffer merged = new StringBuffer();
+        while ((diffLine = diffReader.readLine()) != null) {
+            String localLine = localReader.readLine();
+            if (localLine != null) {
+                //read all diff content
+                if (diffLine.trim().length() == 0) {
+                    //no change
+                    merged.append(localLine + "\n");
+                } else {
+                    StringTokenizer diffTokens = new StringTokenizer(diffLine, ",");
+                    StringTokenizer localTokens = new StringTokenizer(localLine, ",");
+                    while (diffTokens.hasMoreTokens()) {
+                        //loop over all tokens
+                        String diffToken = diffTokens.nextToken();
+                        if (diffToken.trim().length() == 0) {
+                            //diff token is empty, no change
+                            if (diffTokens.hasMoreTokens()) {
+                                merged.append(localTokens.nextToken() + ",");
+                            } else {
+                                merged.append(localTokens.nextToken());
+                            }
+                        } else {
+                            //diff token is not empty, value has changed
+                            if (diffTokens.hasMoreTokens()) {
+                                merged.append(diffToken + ",");
+                            } else {
+                                merged.append(diffToken);
+                            }
+                            //drop the local token
+                            localTokens.nextToken();
+                        }
+                    }
+                    merged.append("\n");
+                }
+            } else {
+                merged.append(diffLine + "\n");
+            }
+        }
+        logger.debug("Writing merged data");
+        GZIPOutputStream mergedOut = new GZIPOutputStream(new FileOutputStream("c:/merge.txt.gz"));
+        mergedOut.write(merged.toString().getBytes());
+        mergedOut.finish();
+        mergedOut.close();
+    }
+
     public static void main(String[] args) {
         DOMConfigurator.configure("log4j.xml");
+
+        long start = System.currentTimeMillis();
+        try {
+            BufferedReader b1 = new BufferedReader(new InputStreamReader(new FileInputStream("c:/tribe_1.txt")));
+            BufferedReader b2 = new BufferedReader(new InputStreamReader(new FileInputStream("c:/tribe_2.txt")));
+            String l = "";
+            Hashtable<Integer, String> lines1 = new Hashtable<Integer, String>();
+            while ((l = b1.readLine()) != null) {
+                Integer id = Integer.parseInt(l.substring(0, l.indexOf(",")));
+                lines1.put(id, l.substring(l.indexOf(",") + 1));
+            }
+
+            l = "";
+            Hashtable<Integer, String> lines2 = new Hashtable<Integer, String>();
+
+            while ((l = b2.readLine()) != null) {
+                Integer id = Integer.parseInt(l.substring(0, l.indexOf(",")));
+                lines2.put(id, l.substring(l.indexOf(",") + 1));
+            }
+            Integer[] ll1 = lines1.keySet().toArray(new Integer[]{});
+            Arrays.sort(ll1);
+            Integer[] ll2 = lines2.keySet().toArray(new Integer[]{});
+            Arrays.sort(ll2);
+
+            int c = 0;
+            StringBuffer b = new StringBuffer();
+            for (Integer id : ll1) {
+                String line_old = lines2.get(id);
+                //insert the ID 
+                if (line_old == null) {
+                    //new line -> append to new file
+                    b.append( id + "," + lines1.get(id) + "\n");
+                } else {
+                    //parse line
+                    if (lines1.get(id).equals(line_old)) {
+                        //empty line because unchanged
+                        //b.append("\n");
+                    } else {
+                        //diff -> insert differing fields
+                        StringTokenizer t1 = new StringTokenizer(line_old, ",");
+                        StringTokenizer t2 = new StringTokenizer(lines1.get(id), ",");
+                        //String diffLine = "";
+                        b.append(id + ",");
+                        while (t1.hasMoreTokens()) {
+                            String to1 = t1.nextToken();
+                            String to2 = t2.nextToken();
+                            if (to1.equals(to2)) {
+                                if (t1.hasMoreTokens()) {
+                                    b.append(", ");
+                                } else {
+                                    //append nothing
+                                }
+                            } else {
+                                if (t1.hasMoreTokens()) {
+                                    b.append(to2 + ", ");
+                                } else {
+                                    b.append(to2);
+                                }
+                            }
+                        }
+                        b.append("\n");
+                    }
+                }
+            }
+            GZIPOutputStream gout = new GZIPOutputStream(new FileOutputStream(new File("c:/v.diff")));
+            gout.write(b.toString().getBytes());
+            gout.finish();
+            gout.close();
+        //lines1.keySet().toArray(new String[]{})
+        /*String[] ll1 = (String[]) lines1.toArray(new String[]{});
+        Arrays.sort(ll1);
+        String[] ll2 = (String[]) lines2.toArray(new String[]{});
+        Arrays.sort(ll2);
+         */
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        System.out.println("Dur: " + (System.currentTimeMillis() - start));
+
+        /*try {
+        BufferedReader b = new BufferedReader(new InputStreamReader(new FileInputStream("c:/tribe_target.txt")));
+        String l = "";
+        List<String> lines = new LinkedList<String>();
+        while ((l = b.readLine()) != null) {
+        lines.add(l);
+        }
+        String[] ll = (String[]) lines.toArray(new String[]{});
+        Arrays.sort(ll);
+        FileWriter w = new FileWriter("c:/sorted.txt");
+        for (String line : ll) {
+        w.write(line + "\n");
+        }
+        w.close();
+        } catch (Exception e) {
+        e.printStackTrace();
+        }
+         */
+
+
         /* try {
         //testDiff();
         BufferedReader b = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream("c:/village.diff"))));
@@ -196,7 +372,15 @@ public class IncServerSync {
         return;
         }*/
 
-
+        /*try {
+        mergeDiff();
+        //testDiff();
+        } catch (Exception e) {
+        e.printStackTrace();
+        }*/
+        if (true) {
+            return;
+        }
         if (args.length < 1) {
             logger.error("args length is smaller 1");
             System.out.println("Usage");
@@ -230,7 +414,7 @@ public class IncServerSync {
         if (true) {
         return;
         }*/
-        
+
         //get server base dir
         String baseDir = p.getProperty("server.base.dir");
         if (!new File(baseDir).exists()) {

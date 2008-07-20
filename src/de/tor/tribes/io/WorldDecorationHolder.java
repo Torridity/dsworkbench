@@ -6,11 +6,17 @@ package de.tor.tribes.io;
 
 import java.awt.Image;
 import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.nio.ByteBuffer;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 import javax.imageio.ImageIO;
+import org.apache.log4j.Logger;
 
 /**
  *
@@ -18,20 +24,28 @@ import javax.imageio.ImageIO;
  */
 public class WorldDecorationHolder {
 
+    private static Logger logger = Logger.getLogger(WorldDecorationHolder.class);
     byte[] decoration = new byte[1000000];
     private List<BufferedImage> mTextures;
 
     public void loadWorld() throws FileNotFoundException, FileFormatException {
-        FileInputStream fin = new FileInputStream("world.dat");
         try {
-            fin.read(decoration);
+            GZIPInputStream fin = new GZIPInputStream(new FileInputStream("world.dat.gz"));
+            // FileInputStream fin = new FileInputStream("world.dat");
+            ByteBuffer bb = ByteBuffer.allocate(1000000);
+            byte[] d = new byte[1024];
+            int c = 0;
+            while ((c = fin.read(d)) != -1) {
+                bb.put(d, 0, c);
+            }
+            decoration = bb.array();            
         } catch (Exception e) {
-            throw new FileFormatException("world.dat hat ein ungültiges Format. (" + e.getMessage() + ")");
+            logger.error("Failed to read world.dat.gz");
+            throw new FileFormatException("world.dat.gz hat ein ungültiges Format. (" + e.getMessage() + ")");
         }
         loadTextures();
     }
     //private List<String> paths = new LinkedList<String>();
-
     private void loadTextures() throws FileNotFoundException {
         mTextures = new LinkedList<BufferedImage>();
         try {
@@ -120,6 +134,16 @@ public class WorldDecorationHolder {
 
     public static void main(String[] args) {
         try {
+            FileInputStream r = new FileInputStream("world.dat");
+            GZIPOutputStream o = new GZIPOutputStream(new FileOutputStream("world.dat.gz"));
+            int b = 0;
+            byte[] v = new byte[1024];
+            while ((b = r.read(v)) != -1) {
+                o.write(v, 0, b);
+            }
+            o.finish();
+            o.close();
+
             WorldDecorationHolder h = new WorldDecorationHolder();
             h.loadWorld();
         } catch (Exception e) {

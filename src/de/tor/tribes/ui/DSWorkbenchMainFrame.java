@@ -190,6 +190,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
     }
 
     private void setupMaps() {
+        logger.info("Initializing maps");
         //build the mappanel
         mPanel = new MapPanel(this);
         jPanel1.add(mPanel);
@@ -200,11 +201,10 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
 
     private void setupMarkerPanel() {
         //build the marker table
-        jMarkerTable.setModel(new javax.swing.table.DefaultTableModel(
+        jMarkerTable.setModel(new javax.swing.table   .DefaultTableModel(
                 new Object[][]{},
                 new String[]{
-                    "Name", "Markierung"
-                }) {
+                    "Name", "Markierung"}) {
 
             Class[] types = new Class[]{
                 MarkerCell.class, Color.class
@@ -313,11 +313,10 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
     }
 
     private void setupAttackPanel() {
-        DefaultTableModel model = new javax.swing.table.DefaultTableModel(
+        DefaultTableModel model = new javax.swing.table   .DefaultTableModel(
                 new Object[][]{},
                 new String[]{
-                    "Herkunft", "Ziel", "Einheit", "Ankunftszeit", "Einzeichnen"
-                }) {
+                    "Herkunft", "Ziel", "Einheit", "Ankunftszeit", "Einzeichnen"}) {
 
             Class[] types = new Class[]{
                 Village.class, Village.class, Unit.class, Date.class, Boolean.class
@@ -1678,7 +1677,7 @@ private void fireExitEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fi
     GlobalOptions.saveProperties();
     GlobalOptions.storeAttacks();
     GlobalOptions.storeMarkers();
-    this.dispose();
+    System.exit(0);
 }//GEN-LAST:event_fireExitEvent
 
 private void fireShowToolbarEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireShowToolbarEvent
@@ -1739,9 +1738,12 @@ private void fireUpdateClickedEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
     if (!jUpdateButton.isEnabled()) {
         return;
     }
-    new Thread(new Runnable() {
+    new Thread(new  
 
-        @Override
+          Runnable() {
+
+             
+                @Override
         public void run() {
             try {
                 GlobalOptions.getDataHolder().loadData(true);
@@ -2070,9 +2072,11 @@ private void fireUpdateClickedEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        java.awt.EventQueue.invokeLater(new Runnable() {
+        java.awt.EventQueue.invokeLater(new  
 
-            public void run() {
+              Runnable() {
+
+                 public void run() {
                 new DSWorkbenchMainFrame().setVisible(true);
             }
         });

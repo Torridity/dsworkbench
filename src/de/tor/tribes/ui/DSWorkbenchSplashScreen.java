@@ -9,11 +9,8 @@ import de.tor.tribes.util.GlobalOptions;
 import javax.swing.JOptionPane;
 import org.apache.log4j.Logger;
 import de.tor.tribes.io.DataHolderListener;
-import java.io.FileOutputStream;
-import java.io.ObjectOutputStream;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.zip.GZIPOutputStream;
 import javax.swing.UIManager;
 import org.apache.log4j.xml.DOMConfigurator;
 

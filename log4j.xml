@@ -13,7 +13,7 @@
   <appender name="FILE" class="org.apache.log4j.RollingFileAppender">
         <param name="file"   value="log/dsworkbench.log" />
         <param name="append" value="true" />
-        <param name="maxFileSize" value="100KB" />
+        <!--param name="maxFileSize" value="100KB" /-->
         <param name="maxBackupIndex" value="0" />
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern" value="%d [%t] %-5p %C{6} (%F:%L) - %m%n"/>

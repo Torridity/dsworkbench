@@ -23,6 +23,8 @@ import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
 
@@ -38,9 +40,9 @@ public class IncServerSync {
 
     private static void createDiff(URL pRemoteFile, String pLocalFile) throws Exception {
         logger.info("Creating diff between " + pRemoteFile + " and " + pLocalFile);
-        try {
-            BufferedReader remoteReader = new BufferedReader(new InputStreamReader(new GZIPInputStream((pRemoteFile.openStream()))));
-            BufferedReader localReader = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(pLocalFile))));
+        try {//new GZIPInputStream()
+            BufferedReader remoteReader = new BufferedReader(new InputStreamReader((pRemoteFile.openStream())));
+            BufferedReader localReader = new BufferedReader(new InputStreamReader(new FileInputStream(pLocalFile)));
 
             StringBuffer diffBuffer = new StringBuffer();
             String remoteLine = "";
@@ -110,9 +112,14 @@ public class IncServerSync {
 
             String diffFile = pLocalFile.substring(0, pLocalFile.indexOf(".")) + ".diff";
             logger.info("Writing diff to " + diffFile);
-            GZIPOutputStream out = new GZIPOutputStream(new FileOutputStream(new File(diffFile)));
+            ZipOutputStream out = new ZipOutputStream(new FileOutputStream(new File("file.zip")));
+            out.setLevel(9);
+            out.putNextEntry(new ZipEntry("village.txt"));
             out.write(diffBuffer.toString().getBytes());
             out.finish();
+            GZIPOutputStream out2 = new GZIPOutputStream(new FileOutputStream(new File(diffFile)));
+             out2.write(diffBuffer.toString().getBytes());
+            out2.finish();
         } catch (Exception e) {
             logger.error("Failed to create diff from URL " + pRemoteFile + " for local file " + pLocalFile, e);
         }
@@ -167,7 +174,7 @@ public class IncServerSync {
     }
 
     private static void testDiff() throws Exception {
-        createDiff(new File("c:/village_target.txt.gz").toURI().toURL(), "D:/GRID/src/DSWorkbench/servers/de14/village.txt.gz");
+        createDiff(new File("h:/servers/tribe_new.txt").toURI().toURL(), "h:/servers/tribe_old.txt");
     }
 
     private static void downloadDataFile(URL pSource, String pLocalName) throws Exception {
@@ -255,63 +262,69 @@ public class IncServerSync {
 
     public static void main(String[] args) {
         DOMConfigurator.configure("log4j.xml");
-
+try{
+        testDiff();
+}catch(Exception e){e.printStackTrace();}
+        if(true){
+            return;
+        }
+        
         long start = System.currentTimeMillis();
-        try {
-            BufferedReader b1 = new BufferedReader(new InputStreamReader(new FileInputStream("c:/tribe_1.txt")));
-            BufferedReader b2 = new BufferedReader(new InputStreamReader(new FileInputStream("c:/tribe_2.txt")));
-            String l = "";
-            Hashtable<Integer, String> lines1 = new Hashtable<Integer, String>();
-            while ((l = b1.readLine()) != null) {
-                Integer id = Integer.parseInt(l.substring(0, l.indexOf(",")));
-                lines1.put(id, l.substring(l.indexOf(",") + 1));
+        try {String name = "village";
+            BufferedReader oldReader = new BufferedReader(new InputStreamReader(new FileInputStream("h:/servers/" + name + "_old.txt")));
+            BufferedReader newReader = new BufferedReader(new InputStreamReader(new FileInputStream("h:/servers/" + name + "_new.txt")));
+            String line = "";
+            Hashtable<Integer, String> oldLines = new Hashtable<Integer, String>();
+            while ((line = oldReader.readLine()) != null) {
+                Integer id = Integer.parseInt(line.substring(0, line.indexOf(",")));
+                oldLines.put(id, line.substring(line.indexOf(",") + 1));
             }
 
-            l = "";
-            Hashtable<Integer, String> lines2 = new Hashtable<Integer, String>();
+            line = "";
+            Hashtable<Integer, String> newLines = new Hashtable<Integer, String>();
 
-            while ((l = b2.readLine()) != null) {
-                Integer id = Integer.parseInt(l.substring(0, l.indexOf(",")));
-                lines2.put(id, l.substring(l.indexOf(",") + 1));
+            while ((line = newReader.readLine()) != null) {
+                Integer id = Integer.parseInt(line.substring(0, line.indexOf(",")));
+                newLines.put(id, line.substring(line.indexOf(",") + 1));
             }
-            Integer[] ll1 = lines1.keySet().toArray(new Integer[]{});
-            Arrays.sort(ll1);
-            Integer[] ll2 = lines2.keySet().toArray(new Integer[]{});
-            Arrays.sort(ll2);
+            Integer[] oldIDs = oldLines.keySet().toArray(new Integer[]{});
+            Arrays.sort(oldIDs);
+            Integer[] newIDs = newLines.keySet().toArray(new Integer[]{});
+            Arrays.sort(newIDs);
 
-            int c = 0;
             StringBuffer b = new StringBuffer();
-            for (Integer id : ll1) {
-                String line_old = lines2.get(id);
+            for (Integer id : newIDs) {
+                String line_old = oldLines.get(id);
                 //insert the ID 
                 if (line_old == null) {
                     //new line -> append to new file
-                    b.append( id + "," + lines1.get(id) + "\n");
+                     
+                    b.append(id + "," + newLines.get(id) + "\n");
                 } else {
                     //parse line
-                    if (lines1.get(id).equals(line_old)) {
+                    if (newLines.get(id).equals(line_old)) {
                         //empty line because unchanged
                         //b.append("\n");
                     } else {
                         //diff -> insert differing fields
-                        StringTokenizer t1 = new StringTokenizer(line_old, ",");
-                        StringTokenizer t2 = new StringTokenizer(lines1.get(id), ",");
+                        StringTokenizer oldTokens = new StringTokenizer(line_old, ",");
+                        StringTokenizer newTokens = new StringTokenizer(newLines.get(id), ",");
                         //String diffLine = "";
-                        b.append(id + ",");
-                        while (t1.hasMoreTokens()) {
-                            String to1 = t1.nextToken();
-                            String to2 = t2.nextToken();
-                            if (to1.equals(to2)) {
-                                if (t1.hasMoreTokens()) {
+                       b.append(id + ",");
+                        while (oldTokens.hasMoreTokens()) {
+                            String oldToken = oldTokens.nextToken();
+                            String newToken = newTokens.nextToken();
+                            if (oldToken.equals(newToken)) {
+                                if (oldTokens.hasMoreTokens()) {
                                     b.append(", ");
                                 } else {
                                     //append nothing
                                 }
                             } else {
-                                if (t1.hasMoreTokens()) {
-                                    b.append(to2 + ", ");
+                                if (oldTokens.hasMoreTokens()) {
+                                    b.append(newToken + ", ");
                                 } else {
-                                    b.append(to2);
+                                    b.append(newToken);
                                 }
                             }
                         }
@@ -319,10 +332,11 @@ public class IncServerSync {
                     }
                 }
             }
-            GZIPOutputStream gout = new GZIPOutputStream(new FileOutputStream(new File("c:/v.diff")));
+            GZIPOutputStream gout = new GZIPOutputStream(new FileOutputStream(new File("h:/servers/" + name + ".diff")));
             gout.write(b.toString().getBytes());
             gout.finish();
             gout.close();
+            new FileOutputStream(new File("h:/servers/" + name + "_diff.txt")).write(b.toString().getBytes());
         //lines1.keySet().toArray(new String[]{})
         /*String[] ll1 = (String[]) lines1.toArray(new String[]{});
         Arrays.sort(ll1);

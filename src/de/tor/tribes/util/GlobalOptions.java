@@ -13,6 +13,7 @@ import de.tor.tribes.io.DataHolderListener;
 import de.tor.tribes.io.WorldDataHolder;
 import de.tor.tribes.io.WorldDecorationHolder;
 import de.tor.tribes.types.Attack;
+import de.tor.tribes.types.Village;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Point;
@@ -22,6 +23,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
@@ -35,6 +37,7 @@ import org.apache.log4j.Logger;
 public class GlobalOptions {
 
     private static Logger logger = Logger.getLogger(GlobalOptions.class);
+    public final static double VERSION = 0.9;
     //mappanel default
     public final static int CURSOR_DEFAULT = 0;
     public final static int CURSOR_MARK = 1;
@@ -72,6 +75,7 @@ public class GlobalOptions {
     private static Properties GLOBAL_PROPERTIES = null;
     private static List<Cursor> CURSORS = null;
     private static List<Attack> mAttacks = null;
+    private static Hashtable<Village, List<String>> mTags = null;
     //flag which is set if the user is logged in with hin account name
     private static String loggedInAs = null;
     private static boolean isOfflineMode = false;
@@ -228,6 +232,8 @@ public class GlobalOptions {
             loadMarkers();
             logger.debug("Loading attacks");
             loadAttacks();
+            logger.debug("Loading tags");
+            loadTags();
         }
     }
 
@@ -247,6 +253,13 @@ public class GlobalOptions {
         } else {
             logger.info("No markers available for selected server");
         }
+    }
+
+    /**Get the list of markers
+     * @return Hashtable<String, Color> List of MapMarkers
+     */
+    public static Hashtable<String, Color> getMarkers() {
+        return mMarkers;
     }
 
     public static void storeMarkers() {
@@ -297,6 +310,59 @@ public class GlobalOptions {
         }
     }
 
+    public static void loadTags() {
+        mTags = new Hashtable<Village, List<String>>();
+        String path = mDataHolder.getDataDirectory() + "/tags.bin";
+        if (new File(path).exists()) {
+            try {
+                ObjectInputStream oin = new ObjectInputStream(new FileInputStream(path));
+                mTags = (Hashtable<Village, List<String>>) oin.readObject();
+                oin.close();
+            } catch (Exception e) {
+                logger.error("Failed to read tags", e);
+            }
+        } else {
+            logger.info("No tags available for selected server");
+        }
+
+        Enumeration<Village> keys = mTags.keys();
+        while (keys.hasMoreElements()) {
+            Village next = keys.nextElement();
+            List<String> tags = mTags.remove(next);
+            mTags.put(mDataHolder.getVillages()[next.getX()][next.getY()], tags);
+        }
+    }
+
+    public static List<String> getTags(Village v) {
+        return mTags.get(v);
+    }
+
+    public static void addTag(Village v, String tag) {
+        List<String> tags = mTags.get(v);
+        if (tags == null) {
+            tags = new LinkedList<String>();
+            tags.add(tag);
+            mTags.put(v, tags);
+        } else {
+            tags.add(tag);
+        }
+    }
+
+    public static void removeTags(Village v) {
+        mTags.remove(v);
+    }
+
+    public static void storeTags() {
+        String path = mDataHolder.getDataDirectory() + "/tags.bin";
+        try {
+            ObjectOutputStream oout = new ObjectOutputStream(new FileOutputStream(path));
+            oout.writeObject(mTags);
+            oout.close();
+        } catch (Exception e) {
+            logger.error("Failed to store tags", e);
+        }
+    }
+
     /**Load the WorldData from the harddisk
      */
     public static void loadWorldData() throws Exception {
@@ -329,13 +395,6 @@ public class GlobalOptions {
      */
     public static Skin getSkin() {
         return mSkin;
-    }
-
-    /**Get the list of markers
-     * @return Hashtable<String, Color> List of MapMarkers
-     */
-    public static Hashtable<String, Color> getMarkers() {
-        return mMarkers;
     }
 
     /**Get the WorldData

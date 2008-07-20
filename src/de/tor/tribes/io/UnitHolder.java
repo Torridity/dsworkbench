@@ -169,7 +169,8 @@ public class UnitHolder implements Serializable{
         this.buildTime = buildTime;
     }
     
+    @Override
     public String toString(){
-        return getName() + "(" + getSpeed() + " Minuten/Feld)";
+        return getName();// + "(" + getSpeed() + " Minuten/Feld)";
     }
 }

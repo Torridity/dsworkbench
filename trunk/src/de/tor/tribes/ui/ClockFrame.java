@@ -6,6 +6,7 @@
 package de.tor.tribes.ui;
 
 import de.tor.tribes.util.GlobalOptions;
+import java.awt.Toolkit;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.swing.JSpinner.DateEditor;
@@ -139,8 +140,7 @@ private void fireActivateTimerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
 
     public void beep() {
         jActivateTimerButton.setSelected(false);
-        System.out.print("\007");
-        System.out.flush();
+        Toolkit.getDefaultToolkit().beep();
     }
 }
 
@@ -167,8 +167,10 @@ class TimerThread extends Thread {
                 mParent.beep();
                 lNotifyTime = -1;
             }
-            mParent.updateTime(FORMAT.format(new Date(currentTime)));
-            mParent.repaint();
+            if (mParent.isVisible()) {
+                mParent.updateTime(FORMAT.format(new Date(currentTime)));
+                mParent.repaint();
+            }
             try {
                 Thread.sleep(50);
             } catch (InterruptedException ie) {

@@ -302,13 +302,21 @@ public class DataHolder {
                 logger.error("Failed to validate account (Wrong username or password?)");
                 return false;
             }
+
             if (DatabaseAdapter.isUpdatePossible(accountName, GlobalOptions.getSelectedServer())) {
                 logger.info("Update possible, try starting download");
             } else {
                 logger.error("Download not yet possible");
-            //           return false;
+                return false;
             }
 
+            //</editor-fold>
+            // <editor-fold defaultstate="collapsed" desc="Version check">
+            if (DatabaseAdapter.isVersionAllowed() != DatabaseAdapter.ID_SUCCESS) {
+                logger.error("Current version is not allowed any longer");
+                fireDataHolderEvents("Deine DS-Workbench Version ist zu alt. Bitte lade dir die aktuelle Version herunter.");
+                return false;
+            }
             //</editor-fold>
 
             // <editor-fold defaultstate="collapsed" desc="Server settings check">
@@ -328,120 +336,120 @@ public class DataHolder {
             }
             //</editor-fold>
 
-
+            /*
             //villages download/merge
             File localFile = new File(getDataDirectory() + "/" + "village.txt.gz");
             fireDataHolderEvents("Lade village.txt.gz");
             if (localFile.exists()) {
-                //download diff
-                downloadDiff("village");
+            //download diff
+            downloadDiff("village");
             } else {
-                //download full
-                downloadFull("village");
+            //download full
+            downloadFull("village");
             }
-
+            
             //tribe download/merge
             localFile = new File(getDataDirectory() + "/" + "tribe.txt.gz");
-
+            
             if (localFile.exists()) {
-                //download diff
-                fireDataHolderEvents("Lade tribe.diff");
-                downloadDiff("tribe");
+            //download diff
+            fireDataHolderEvents("Lade tribe.diff");
+            downloadDiff("tribe");
             } else {
-                //download full
-                fireDataHolderEvents("Lade tribe.txt.gz");
-                downloadFull("tribe");
+            //download full
+            fireDataHolderEvents("Lade tribe.txt.gz");
+            downloadFull("tribe");
             }
-
+            
             //ally download/merge
             localFile = new File(getDataDirectory() + "/" + "ally.txt.gz");
             if (localFile.exists()) {
-                //download diff
-                fireDataHolderEvents("Lade ally.diff");
-                downloadDiff("ally");
+            //download diff
+            fireDataHolderEvents("Lade ally.diff");
+            downloadDiff("ally");
             } else {
-                //download full
-                fireDataHolderEvents("Lade ally.txt.gz");
-                downloadFull("allys");
+            //download full
+            fireDataHolderEvents("Lade ally.txt.gz");
+            downloadFull("ally");
             }
-
+            
             //kill_att download/merge
             localFile = new File(getDataDirectory() + "/" + "kill_att.txt.gz");
-
+            
             if (localFile.exists()) {
-                //download diff
-                fireDataHolderEvents("Lade kill_att.diff");
-                downloadDiff("kill_att");
+            //download diff
+            fireDataHolderEvents("Lade kill_att.diff");
+            downloadDiff("kill_att");
             } else {
-                //download full
-                fireDataHolderEvents("Lade kill_att.txt.gz");
-                downloadFull("kill_att");
+            //download full
+            fireDataHolderEvents("Lade kill_att.txt.gz");
+            downloadFull("kill_att");
             }
-
+            
             //kill_def download/merge
             localFile = new File(getDataDirectory() + "/" + "kill_def.txt.gz");
             fireDataHolderEvents("Lade kill_def.txt.gz");
             if (localFile.exists()) {
-                //download diff
-                fireDataHolderEvents("Lade kill_def.diff");
-                downloadDiff("kill_def");
+            //download diff
+            fireDataHolderEvents("Lade kill_def.diff");
+            downloadDiff("kill_def");
             } else {
-                //download full
-                fireDataHolderEvents("Lade kill_def.txt.gz");
-                downloadFull("kill_def");
+            //download full
+            fireDataHolderEvents("Lade kill_def.txt.gz");
+            downloadFull("kill_def");
             }
-
-            //sURL = new URL("http://www.torridity.de/servers/" + GlobalOptions.getSelectedServer() + "/village.diff");
-
-
-            /* file = new URL(sURL.toString() + "/map/village.txt.gz");
+            
+            sURL = new URL("http://www.torridity.de/servers/" + GlobalOptions.getSelectedServer() + "/village.diff");
+             */
+            
+            fireDataHolderEvents("Lade village.txt.gz");
+            file = new URL(sURL.toString() + "/map/village.txt.gz");
             downloadDataFile(file, "village_tmp.txt.gz");
             target = new File(serverDir + "/village.txt.gz");
             if (target.exists()) {
-            target.delete();
+                target.delete();
             }
             new File("village_tmp.txt.gz").renameTo(target);
-            
+
             //download tribe.txt
             fireDataHolderEvents("Lade tribe.txt.gz");
             file = new URL(sURL.toString() + "/map/tribe.txt.gz");
             downloadDataFile(file, "tribe_tmp.txt.gz");
             target = new File(serverDir + "/tribe.txt.gz");
             if (target.exists()) {
-            target.delete();
+                target.delete();
             }
             new File("tribe_tmp.txt.gz").renameTo(target);
-            
+
             //download ally.txt
             fireDataHolderEvents("Lade ally.txt.gz");
             file = new URL(sURL.toString() + "/map/ally.txt.gz");
             downloadDataFile(file, "ally_tmp.txt.gz");
             target = new File(serverDir + "/ally.txt.gz");
             if (target.exists()) {
-            target.delete();
+                target.delete();
             }
             new File("ally_tmp.txt.gz").renameTo(target);
-            
+
             //download kill_att.txt
             fireDataHolderEvents("Lade kill_att.txt.gz");
             file = new URL(sURL.toString() + "/map/kill_att.txt.gz");
             downloadDataFile(file, "kill_att_tmp.txt.gz");
             target = new File(serverDir + "/kill_att.txt.gz");
             if (target.exists()) {
-            target.delete();
+                target.delete();
             }
             new File("kill_att_tmp.txt.gz").renameTo(target);
-            
+
             //download kill_def.txt
             fireDataHolderEvents("Lade kill_def.txt.gz");
             file = new URL(sURL.toString() + "/map/kill_def.txt.gz");
             downloadDataFile(file, "kill_def_tmp.txt.gz");
             target = new File(serverDir + "/kill_def.txt.gz");
             if (target.exists()) {
-            target.delete();
+                target.delete();
             }
             new File("kill_def_tmp.txt.gz").renameTo(target);
-             */
 
             // <editor-fold defaultstate="collapsed" desc="Direct download from DS-Servers">
             //download unit information, but only once

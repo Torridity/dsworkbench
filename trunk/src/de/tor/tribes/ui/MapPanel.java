@@ -56,6 +56,7 @@ public class MapPanel extends javax.swing.JPanel {
     private Village mTargetVillage = null;
     private MarkerAddFrame mMarkerAddFrame = null;
     private AttackAddFrame mAttackAddFrame = null;
+    private VillageTagFrame mTagFrame = null;
     boolean mouseDown = false;
     private boolean isOutside = false;
     private Rectangle2D screenRect = null;
@@ -64,8 +65,10 @@ public class MapPanel extends javax.swing.JPanel {
     /** Creates new form MapPanel */
     public MapPanel(DSWorkbenchMainFrame pParent) {
         initComponents();
+        logger.info("Creating MapPanel");
         mMarkerAddFrame = new MarkerAddFrame(pParent);
         mAttackAddFrame = new AttackAddFrame(pParent);
+        mTagFrame = new VillageTagFrame();
         mParent = pParent;
         setCursor(GlobalOptions.getCursor(iCurrentCursor));
         initListeners();
@@ -116,9 +119,12 @@ public class MapPanel extends javax.swing.JPanel {
                                 //empty village
                                 return;
                             }
-                            mMarkerAddFrame.setLocation(e.getPoint());
+                     /*       mMarkerAddFrame.setLocation(e.getPoint());
                             mMarkerAddFrame.setVillage(current);
                             mMarkerAddFrame.setVisible(true);
+                      */
+                            mTagFrame.setLocation(e.getPoint());
+                            mTagFrame.showTagsFrame(current);
                         }
                         break;
                     }
@@ -412,9 +418,10 @@ public class MapPanel extends javax.swing.JPanel {
     }
 
     /**Update map to new position*/
-    protected void updateMap(int pX, int pY) {
+    protected synchronized void updateMap(int pX, int pY) {
         updating = true;
         if (mRepaintThread == null) {
+            logger.info("Creating MapPaintThread");
             mRepaintThread = new RepaintThread(this, pX, pY);
             mRepaintThread.start();
             mX = pX;
@@ -492,11 +499,11 @@ class RepaintThread extends Thread {
     public void run() {
         while (true) {
             try {
-                // long start = System.currentTimeMillis();
                 updateMap(iX, iY);
+              //logger.info("Scal " + dScaling);
+              // logger.info("w " + mParent.getWidth() + " h: " +mParent.getHeight() );
                 mParent.updateComplete(mVisibleVillages, mBuffer.getScaledInstance(mParent.getWidth(), mParent.getHeight(), BufferedImage.SCALE_FAST));
                 mParent.repaint();
-            //System.out.println("Dur " + (System.currentTimeMillis() - start));
             } catch (Throwable t) {
                 logger.error("Redrawing map failed", t);
             }
@@ -818,9 +825,7 @@ class RepaintThread extends Thread {
                 tx = xe - width * tx;
                 ty = ye - height * ty;
                 dragLine.setLine(tx, ty, xe, ye);
-            }/* else {
-            System.out.println("DL -1");
-            }*/
+            }
 
 
             if ((dragLine.getX2() != 0) && (dragLine.getY2() != 0)) {

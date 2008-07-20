@@ -5,6 +5,7 @@
 package de.tor.tribes.db;
 
 import de.tor.tribes.sec.SecurityAdapter;
+import de.tor.tribes.util.GlobalOptions;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -27,6 +28,7 @@ public class DatabaseAdapter {
     public static final int ID_DUAL_ACCOUNT = -3;
     public static final int ID_USER_NOT_EXIST = -4;
     public static final int ID_WRONG_PASSWORD = -5;
+    public static final int ID_VERSION_NOT_ALLOWED = -6;
     public static final long ID_UPDATE_NEVER = -666;
     private static Connection DB_CONNECTION = null;
     private static boolean DRIVER_AVAILABLE = false;
@@ -213,13 +215,11 @@ public class DatabaseAdapter {
             if (id == -1) {
                 throw new Exception("ID for user " + pUsername + " not found");
             }
-//check last update
+            //check last update
             s = DB_CONNECTION.createStatement();
 
-            query =
-                    "SELECT timestamp FROM updates WHERE UserID=" + id + " AND ServerID='" + pServer + "';";
-            rs =
-                    s.executeQuery(query);
+            query = "SELECT timestamp FROM updates WHERE UserID=" + id + " AND ServerID='" + pServer + "';";
+            rs = s.executeQuery(query);
 
             while (rs.next()) {
                 lastUpdate = rs.getTimestamp(1).getTime();
@@ -227,8 +227,7 @@ public class DatabaseAdapter {
 
             if (lastUpdate == ID_UPDATE_NEVER) {
                 logger.info("No update made yet.");
-                retVal =
-                        true;
+                retVal = true;
             } else {
                 long currentTime = getCurrentServerTime();
                 if ((currentTime < 0) || (lastUpdate < 0)) {
@@ -239,8 +238,32 @@ public class DatabaseAdapter {
                 //get delte between now and the last update
                 long delta = currentTime - lastUpdate;
 
-                if (delta < 1000 * 60 * 60) {
-                    //last update is less than 1 hour in past
+                //s = DB_CONNECTION.createStatement();
+                query = "SELECT value FROM settings WHERE variable='trime_between_update';";
+                rs = s.executeQuery(query);
+                String value = null;
+                while (rs.next()) {
+                    value = rs.getString("value");
+                }
+
+                long minDelta = -1;
+                if (value != null) {
+                    try {
+                        minDelta = Long.parseLong(value);
+                    } catch (Exception e) {
+                        minDelta = ID_UNKNOWN_ERROR;
+                    }
+                } else {
+                    minDelta = ID_UNKNOWN_ERROR;
+                }
+
+                if (minDelta < 0) {
+                    logger.error("Failed to check min update interval");
+                    retVal = false;
+                }
+
+                if (delta < minDelta) {
+                    //more than one update per day not allowed
                     retVal = false;
                 } else {
                     retVal = true;
@@ -249,8 +272,7 @@ public class DatabaseAdapter {
             }
         } catch (Exception e) {
             logger.error("Failed to check for last update", e);
-            retVal =
-                    false;
+            retVal = false;
         }
 
         closeConnection();
@@ -278,7 +300,7 @@ public class DatabaseAdapter {
                 throw new Exception("ID for user " + pUsername + " not found");
             }
             //check last update
-            s = DB_CONNECTION.createStatement();
+           // s = DB_CONNECTION.createStatement();
 
             query = "SELECT timestamp FROM updates WHERE UserID=" + id + " AND ServerID='" + pServer + "';";
             rs = s.executeQuery(query);
@@ -316,6 +338,84 @@ public class DatabaseAdapter {
         return delta;
     }
 
+    public static int isVersionAllowed() {
+        if (!openConnection()) {
+            return ID_CONNECTION_FAILED;
+        }
+
+        int retVal = ID_SUCCESS;
+        try {
+            //get user id
+            Statement s = DB_CONNECTION.createStatement();
+            String query = "SELECT value FROM settings WHERE variable='min_version';";
+            ResultSet rs = s.executeQuery(query);
+            String min_version = null;
+            while (rs.next()) {
+                min_version = rs.getString("value");
+            }
+
+            if (min_version != null) {
+                try {
+                    double v = Double.parseDouble(min_version);
+                    if (GlobalOptions.VERSION < v) {
+                        retVal = ID_VERSION_NOT_ALLOWED;
+                    }
+
+                } catch (Exception e) {
+                    retVal = ID_UNKNOWN_ERROR;
+                }
+
+            } else {
+                retVal = ID_UNKNOWN_ERROR;
+            }
+
+        } catch (Exception e) {
+            logger.error("Failed to check min version", e);
+            retVal =
+                    ID_UNKNOWN_ERROR;
+        }
+
+        closeConnection();
+        return retVal;
+    }
+
+    public static long getMinUpdateInterval() {
+        if (!openConnection()) {
+            return ID_CONNECTION_FAILED;
+        }
+
+        long retVal = ID_SUCCESS;
+        try {
+            //get user id
+            Statement s = DB_CONNECTION.createStatement();
+            String query = "SELECT value FROM settings WHERE variable='trime_between_update';";
+            ResultSet rs = s.executeQuery(query);
+            String value = null;
+            while (rs.next()) {
+                value = rs.getString("value");
+            }
+
+            if (value != null) {
+                try {
+                    retVal = Long.parseLong(value);
+                } catch (Exception e) {
+                    retVal = ID_UNKNOWN_ERROR;
+                }
+
+            } else {
+                retVal = ID_UNKNOWN_ERROR;
+            }
+
+        } catch (Exception e) {
+            logger.error("Failed to check min version", e);
+            retVal =
+                    ID_UNKNOWN_ERROR;
+        }
+
+        closeConnection();
+        return retVal;
+    }
+
     /**Store an update of server data in the database
      * @param pUsername User who performed the update
      * @param pServer Server on which the update was performed
@@ -341,18 +441,14 @@ public class DatabaseAdapter {
             if (id == -1) {
                 throw new Exception("ID for user " + pUsername + " not found");
             }
-//check last update
-            s = DB_CONNECTION.createStatement();
-            query =
-                    "DELETE FROM updates WHERE UserID=" + id + " AND ServerID='" + pServer + "';";
+            //check last update
+            //s = DB_CONNECTION.createStatement();
+            query = "DELETE FROM updates WHERE UserID=" + id + " AND ServerID='" + pServer + "';";
             int changed = s.executeUpdate(query);
 
-            s =
-                    DB_CONNECTION.createStatement();
-            query =
-                    "INSERT INTO updates(UserID, ServerID, timestamp) VALUES(" + id + ",'" + pServer + "', CURRENT_TIMESTAMP);";
-            changed =
-                    s.executeUpdate(query);
+            //s = DB_CONNECTION.createStatement();
+            query = "INSERT INTO updates(UserID, ServerID, timestamp) VALUES(" + id + ",'" + pServer + "', CURRENT_TIMESTAMP);";
+            changed = s.executeUpdate(query);
 
             if (changed != 1) {
                 throw new Exception("Failed to update timestamp");

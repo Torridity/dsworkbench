@@ -8,7 +8,9 @@
  */
 package de.tor.tribes.types;
 
+import de.tor.tribes.util.GlobalOptions;
 import java.io.Serializable;
+import java.util.List;
 
 /**
  *
@@ -100,7 +102,19 @@ public class Village implements Serializable {
     }
 
     public String getHTMLInfo() {
-        String villageInfo = "<html><b>Name (X|Y):</b> " + getName() + " (" + getX() + "|" + getY() + "), <b>Punkte:</b> " + getPoints() + ", <b>Bonus:</b> ";
+        String villageInfo = "<html><b>Name (X|Y):</b> " + getName() + " (" + getX() + "|" + getY() + "), <b>Punkte:</b> " + getPoints() + ",";
+        List<String> tags = GlobalOptions.getTags(this);
+        villageInfo += "<b>Tags:</b> ";
+        if (tags == null) {
+            villageInfo += "keine, ";
+        } else {
+            for(String tag : tags){
+                villageInfo += tag + "|";
+            }
+            villageInfo = villageInfo.substring(0, villageInfo.length()-1);
+            villageInfo += ", ";
+        }
+        villageInfo += "<b>Bonus:</b> ";
         switch (getType()) {
             case 1:
                 villageInfo += "+ 10% </html>";

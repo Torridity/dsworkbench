@@ -97,27 +97,20 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
             logger.error("Failed to load server data", e);
             System.exit(1);
         }
-      /*  try {
-            long start = System.currentTimeMillis();
-            ObjectOutputStream oout = new ObjectOutputStream(new GZIPOutputStream(new FileOutputStream("c:/serial.txt")));
-          
-                    oout.writeObject(GlobalOptions.getDataHolder().getVillages());
-   
 
-            oout.close();
-            System.out.println("Dur: " + (System.currentTimeMillis() - start));
+        try {
+            DSWorkbenchMainFrame mainFrame = new DSWorkbenchMainFrame();
+            SearchFrame.createSearchFrame(mainFrame);
+            DSWorkbenchSettingsDialog.getGlobalSettingsFrame().setMainFrame(mainFrame);
+            mainFrame.init();
+            mainFrame.setVisible(true);
+            t.stopRunning();
+            setVisible(false);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Failed to start initialize MainFrame", e);
+            JOptionPane.showMessageDialog(self, "Fehler bei der Initialisierung.\nMöglicherweise ist deine DS Workbench Installation defekt.", "Fehler", JOptionPane.ERROR_MESSAGE);
+            System.exit(1);
         }
-
-        System.exit(0);*/
-        DSWorkbenchMainFrame mainFrame = new DSWorkbenchMainFrame();
-        SearchFrame.createSearchFrame(mainFrame);
-        DSWorkbenchSettingsDialog.getGlobalSettingsFrame().setMainFrame(mainFrame);
-        mainFrame.init();
-        mainFrame.setVisible(true);
-        t.stopRunning();
-        setVisible(false);
     }
 
     /**
@@ -132,9 +125,12 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
 
 
 
-        java.awt.EventQueue.invokeLater(new Runnable() {
+        java.awt.EventQueue.invokeLater(new  
 
-            public void run() {
+              Runnable() {
+
+                    
+                public void run() {
                 DSWorkbenchSplashScreen splash = new DSWorkbenchSplashScreen();
                 splash.setLocationRelativeTo(null);
                 splash.setVisible(true);

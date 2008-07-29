@@ -15,7 +15,6 @@ public class MarkerCell extends javax.swing.JPanel {
 
     public final static int PLAYER_MARKER = 0;
     public final static int ALLY_MARKER = 1;
-    private int iMarkerType = PLAYER_MARKER;
     private static ImageIcon PLAYER_ICON = null;
     private static ImageIcon ALLY_ICON = null;
     
@@ -67,7 +66,7 @@ public class MarkerCell extends javax.swing.JPanel {
         setBackground(new java.awt.Color(255, 255, 255));
 
         jMarkerLabel.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jMarkerLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ally.gif"))); // NOI18N
+        jMarkerLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ally.png"))); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);

@@ -300,7 +300,7 @@ public class DatabaseAdapter {
                 throw new Exception("ID for user " + pUsername + " not found");
             }
             //check last update
-           // s = DB_CONNECTION.createStatement();
+            // s = DB_CONNECTION.createStatement();
 
             query = "SELECT timestamp FROM updates WHERE UserID=" + id + " AND ServerID='" + pServer + "';";
             rs = s.executeQuery(query);

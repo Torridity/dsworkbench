@@ -59,11 +59,11 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
                 jUpdateIntervalBox.setSelectedIndex(Integer.parseInt(interval));
             } catch (Exception e) {
                 jUpdateIntervalBox.setSelectedIndex(0);
-                GlobalOptions.addProperty("auto.update.interval", "0");
+                GlobalOptions.addProperty("auto.update.interval", "7");
             }
         } else {
             jUpdateIntervalBox.setSelectedIndex(0);
-            GlobalOptions.addProperty("auto.update.interval", "0");
+            GlobalOptions.addProperty("auto.update.interval", "7");
         }
 
 
@@ -149,7 +149,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
             //remote update failed and no local servers found
             String message = "Serverliste konnte nicht geladen werden.\n";
             message += "Mögliche Ursachen sind fehlerhafte Netzwerkeinstellungen oder keine Verbindung zum Internet.\n";
-            message += "Da noch kein Datenabgleich mit dem Server stattgefunden hat, korrigier bitte deine Netzwerkeinstellungen um diesen einmalig durchzuführen.";
+            message += "Da noch kein Datenabgleich mit dem Server stattgefunden hat, korrigiere bitte deine Netzwerkeinstellungen um diesen einmalig durchzuführen.";
             JOptionPane.showMessageDialog(this, message, "Warnung", JOptionPane.WARNING_MESSAGE);
             return false;
         } else if (GlobalOptions.isOfflineMode()) {
@@ -769,7 +769,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
             //remote update failed and no local servers found
             String message = "Serverliste konnte nicht geladen werden.\n";
             message = "Mögliche Ursachen sind fehlerhafte Netzwerkeinstellungen oder keine Verbindung zum Internet.\n";
-            message = "Da noch kein Datenabgleich mit dem Server stattgefunden hat, korrigier bitte deine Netzwerkeinstellungen um diesen einmalig durchzuführen.";
+            message = "Da noch kein Datenabgleich mit dem Server stattgefunden hat, korrigiere bitte deine Netzwerkeinstellungen um diesen einmalig durchzuführen.";
             JOptionPane.showMessageDialog(this, message, "Warnung", JOptionPane.WARNING_MESSAGE);
         } else if (GlobalOptions.isOfflineMode()) {
             //remote update failed but local servers found
@@ -1165,6 +1165,7 @@ private void fireChangeDrawDistanceEvent(java.awt.event.ActionEvent evt) {//GEN-
     private javax.swing.JComboBox jTribeNames;
     private javax.swing.JComboBox jUpdateIntervalBox;
     // End of variables declaration//GEN-END:variables
+
     @Override
     public void fireDataHolderEvent(String pMessage) {
         SimpleDateFormat f = new SimpleDateFormat("HH:mm:ss");

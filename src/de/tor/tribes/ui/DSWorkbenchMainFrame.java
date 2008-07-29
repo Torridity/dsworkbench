@@ -10,7 +10,6 @@ import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Ally;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.Tribe;
-import de.tor.tribes.types.Unit;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.editors.ColorChooserCellEditor;
 import de.tor.tribes.ui.editors.DateSpinEditor;
@@ -64,6 +63,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
     private List<ImageIcon> mIcons;
     private double dZoomFactor = 1.0;
     private ToolBoxFrame mToolbox = null;
+    private AllyAllyAttackFrame mAllyAllyAttackFrame = null;
 
     /** Creates new form MapFrame */
     public DSWorkbenchMainFrame() {
@@ -108,6 +108,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
     }
 
     public void serverSettingsChangedEvent() {
+
         jCurrentPlayer.setText(GlobalOptions.getProperty("player." + GlobalOptions.getSelectedServer()));
         jCurrentServer.setText(GlobalOptions.getSelectedServer());
         Tribe t = GlobalOptions.getDataHolder().getTribeByName(jCurrentPlayer.getText());
@@ -187,6 +188,8 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
             public void windowDeactivated(WindowEvent e) {
             }
         });
+        mAllyAllyAttackFrame = new AllyAllyAttackFrame(this);
+        mAllyAllyAttackFrame.pack();
     }
 
     private void setupMaps() {
@@ -201,10 +204,11 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
 
     private void setupMarkerPanel() {
         //build the marker table
-        jMarkerTable.setModel(new javax.swing.table   .DefaultTableModel(
+        jMarkerTable.setModel(new javax.swing.table.DefaultTableModel(
                 new Object[][]{},
                 new String[]{
-                    "Name", "Markierung"}) {
+                    "Name", "Markierung"
+                }) {
 
             Class[] types = new Class[]{
                 MarkerCell.class, Color.class
@@ -313,13 +317,14 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
     }
 
     private void setupAttackPanel() {
-        DefaultTableModel model = new javax.swing.table   .DefaultTableModel(
+        DefaultTableModel model = new javax.swing.table.DefaultTableModel(
                 new Object[][]{},
                 new String[]{
-                    "Herkunft", "Ziel", "Einheit", "Ankunftszeit", "Einzeichnen"}) {
+                    "Herkunft", "Ziel", "Einheit", "Ankunftszeit", "Einzeichnen"
+                }) {
 
             Class[] types = new Class[]{
-                Village.class, Village.class, Unit.class, Date.class, Boolean.class
+                Village.class, Village.class, UnitHolder.class, Date.class, Boolean.class
             };
 
             @Override
@@ -332,7 +337,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
 
         jAttackTable.setDefaultRenderer(Date.class, new DateCellRenderer());
         jAttackTable.setDefaultEditor(Date.class, new DateSpinEditor());
-        jAttackTable.setDefaultEditor(Unit.class, new UnitCellEditor());
+        jAttackTable.setDefaultEditor(UnitHolder.class, new UnitCellEditor());
         jAttackTable.setDefaultEditor(Village.class, new VillageCellEditor());
         jScrollPane2.getViewport().setBackground(GlobalOptions.DS_BACK_LIGHT);
         jAttackTable.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
@@ -354,7 +359,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
         };
         jAttackTable.getDefaultEditor(Boolean.class).addCellEditorListener(attackChangedListener);
         jAttackTable.getDefaultEditor(Date.class).addCellEditorListener(attackChangedListener);
-        jAttackTable.getDefaultEditor(Unit.class).addCellEditorListener(attackChangedListener);
+        jAttackTable.getDefaultEditor(UnitHolder.class).addCellEditorListener(attackChangedListener);
         jAttackTable.getDefaultEditor(Village.class).addCellEditorListener(attackChangedListener);
 
         DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
@@ -511,6 +516,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
         jMenu3 = new javax.swing.JMenu();
         jSearchItem = new javax.swing.JMenuItem();
         jClockItem = new javax.swing.JMenuItem();
+        jAllyAllyAttackItem = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
         jShowToolboxItem = new javax.swing.JCheckBoxMenuItem();
         jShowDynFrameItem = new javax.swing.JCheckBoxMenuItem();
@@ -518,7 +524,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
         jDetailedInfoPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
         jDetailedInfoPanel.setOpaque(false);
 
-        jVillageInfo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/forbidden.gif"))); // NOI18N
         jVillageInfo.setText("jLabel3");
         jVillageInfo.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
         jVillageInfo.setMaximumSize(new java.awt.Dimension(54, 20));
@@ -1254,7 +1259,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
                             .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                 .addComponent(jCenterCoordinateIngame, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addComponent(jRefreshButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                .addContainerGap(72, Short.MAX_VALUE))
+                .addContainerGap(74, Short.MAX_VALUE))
         );
 
         jMinimapPanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(128, 64, 0), 2));
@@ -1408,6 +1413,15 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
         });
         jMenu3.add(jClockItem);
 
+        jAllyAllyAttackItem.setBackground(new java.awt.Color(239, 235, 223));
+        jAllyAllyAttackItem.setText("Großangriff");
+        jAllyAllyAttackItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fireToolsActionEvent(evt);
+            }
+        });
+        jMenu3.add(jAllyAllyAttackItem);
+
         jMenuBar1.add(jMenu3);
 
         jMenu2.setBackground(new java.awt.Color(225, 213, 190));
@@ -1466,7 +1480,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
                         .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 606, Short.MAX_VALUE))
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 608, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jInfoPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -1731,6 +1745,8 @@ private void fireToolsActionEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:e
         SearchFrame.getGlobalSearchFrame().setVisible(true);
     } else if (evt.getSource() == jClockItem) {
         ClockFrame.getGlobalClockFrame().setVisible(true);
+    } else if (evt.getSource() == jAllyAllyAttackItem) {
+        mAllyAllyAttackFrame.setVisible(true);
     }
 }//GEN-LAST:event_fireToolsActionEvent
 
@@ -1738,12 +1754,9 @@ private void fireUpdateClickedEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
     if (!jUpdateButton.isEnabled()) {
         return;
     }
-    new Thread(new  
+    new Thread(new Runnable() {
 
-          Runnable() {
-
-             
-                @Override
+        @Override
         public void run() {
             try {
                 GlobalOptions.getDataHolder().loadData(true);
@@ -2072,11 +2085,9 @@ private void fireUpdateClickedEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        java.awt.EventQueue.invokeLater(new  
+        java.awt.EventQueue.invokeLater(new Runnable() {
 
-              Runnable() {
-
-                 public void run() {
+            public void run() {
                 new DSWorkbenchMainFrame().setVisible(true);
             }
         });
@@ -2084,6 +2095,7 @@ private void fireUpdateClickedEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
     // <editor-fold defaultstate="collapsed" desc="Generated Variables">
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuItem jAllyAllyAttackItem;
     private javax.swing.JLabel jAllyInfo;
     private javax.swing.JPanel jAttackPanel;
     private javax.swing.JTable jAttackTable;

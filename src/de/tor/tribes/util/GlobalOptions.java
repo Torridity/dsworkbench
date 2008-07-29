@@ -10,7 +10,6 @@ package de.tor.tribes.util;
 
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.DataHolderListener;
-import de.tor.tribes.io.WorldDataHolder;
 import de.tor.tribes.io.WorldDecorationHolder;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.Village;
@@ -42,16 +41,17 @@ public class GlobalOptions {
     public final static int CURSOR_DEFAULT = 0;
     public final static int CURSOR_MARK = 1;
     public final static int CURSOR_MEASURE = 2;
-    public final static int CURSOR_ATTACK_INGAME = 3;
-    public final static int CURSOR_SEND_RES_INGAME = 4;
+    public final static int CURSOR_TAG = 3;
+    public final static int CURSOR_ATTACK_INGAME = 4;
+    public final static int CURSOR_SEND_RES_INGAME = 5;
     //mappanel attack
-    public final static int CURSOR_ATTACK_RAM = 5;
-    public final static int CURSOR_ATTACK_AXE = 6;
-    public final static int CURSOR_ATTACK_SNOB = 7;
-    public final static int CURSOR_ATTACK_SPY = 8;
-    public final static int CURSOR_ATTACK_SWORD = 9;
-    public final static int CURSOR_ATTACK_LIGHT = 10;
-    public final static int CURSOR_ATTACK_HEAVY = 11;
+    public final static int CURSOR_ATTACK_RAM = 6;
+    public final static int CURSOR_ATTACK_AXE = 7;
+    public final static int CURSOR_ATTACK_SNOB = 8;
+    public final static int CURSOR_ATTACK_SPY = 9;
+    public final static int CURSOR_ATTACK_SWORD = 10;
+    public final static int CURSOR_ATTACK_LIGHT = 11;
+    public final static int CURSOR_ATTACK_HEAVY = 12;
     //auto-update frequence
     public final static int AUTO_UPDATE_NEVER = 0;
     public final static int AUTO_UPDATE_HOURLY = 1;
@@ -67,7 +67,6 @@ public class GlobalOptions {
     private static Skin mSkin;
     /**DataHolder which holds and manages the WorldData*/
     private static DataHolder mDataHolder = null;
-    private static WorldDataHolder mWorldData = null;
     private static Hashtable<String, Color> mMarkers = null;
     private static WorldDecorationHolder mDecorationHolder = null;
     private static String SELECTED_SERVER = null;
@@ -157,6 +156,7 @@ public class GlobalOptions {
             CURSORS.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/default.png"), new Point(0, 0), "default"));
             CURSORS.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/mark.png"), new Point(0, 0), "mark"));
             CURSORS.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/measure.png"), new Point(0, 0), "measure"));
+            CURSORS.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/tag.png"), new Point(0, 0), "tag"));
             CURSORS.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/attack_ingame.png"), new Point(0, 0), "attack_ingame"));
             CURSORS.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/res_ingame.png"), new Point(0, 0), "res_ingame"));
             //map panel cursors for attack purposes
@@ -363,13 +363,6 @@ public class GlobalOptions {
         }
     }
 
-    /**Load the WorldData from the harddisk
-     */
-    public static void loadWorldData() throws Exception {
-        mWorldData = new WorldDataHolder();
-        mWorldData.loadUnits();
-    }
-
     public static void loadDecoration() throws Exception {
         mDecorationHolder = new WorldDecorationHolder();
         mDecorationHolder.loadWorld();
@@ -395,13 +388,6 @@ public class GlobalOptions {
      */
     public static Skin getSkin() {
         return mSkin;
-    }
-
-    /**Get the WorldData
-     * @return WorldDataHolder WorldDataHolder
-     */
-    public static WorldDataHolder getWorldData() {
-        return mWorldData;
     }
 
     /**Get the DataHolder

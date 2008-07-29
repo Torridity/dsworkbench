@@ -28,18 +28,6 @@ public class ServerList {
             //URL serverURL = new URL("http://www.die-staemme.de/backend/get_servers.php");
             URLConnection con = new URL("http://www.torridity.de/servers/server.list").openConnection();
             SERVERS.load(con.getInputStream());
-
-        /*    BufferedReader reader = new BufferedReader(new InputStreamReader(serverURL.openConnection().getInputStream()));
-        String servers = reader.readLine();
-        StringTokenizer t = new StringTokenizer(servers, "\"");
-        t.nextToken();
-        while (t.hasMoreTokens()) {
-        String serverID = t.nextToken();
-        t.nextToken();
-        URL url = new URL(t.nextToken());
-        SERVER_LIST.put(serverID, url);
-        t.nextToken();
-        }*/
         } catch (Exception e) {
             throw new Exception("Serverliste konnte nicht heruntergeladen werden.\nBitte Netzwerkeinstellungen überprüfen.", e);
         }

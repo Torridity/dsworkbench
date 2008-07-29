@@ -119,13 +119,22 @@ public class MapPanel extends javax.swing.JPanel {
                                 //empty village
                                 return;
                             }
-                     /*       mMarkerAddFrame.setLocation(e.getPoint());
+                            mMarkerAddFrame.setLocation(e.getPoint());
                             mMarkerAddFrame.setVillage(current);
                             mMarkerAddFrame.setVisible(true);
-                      */
-                            mTagFrame.setLocation(e.getPoint());
-                            mTagFrame.showTagsFrame(current);
                         }
+                        break;
+                    }
+                    case GlobalOptions.CURSOR_TAG: {
+                        Village current = getVillageAtMousePos();
+                        if (current != null) {
+                            if (current.getTribe() == null) {
+                                //empty village
+                                return;
+                            }
+                        }
+                        mTagFrame.setLocation(e.getPoint());
+                        mTagFrame.showTagsFrame(current);
                         break;
                     }
                     case GlobalOptions.CURSOR_ATTACK_INGAME: {
@@ -500,8 +509,8 @@ class RepaintThread extends Thread {
         while (true) {
             try {
                 updateMap(iX, iY);
-              //logger.info("Scal " + dScaling);
-              // logger.info("w " + mParent.getWidth() + " h: " +mParent.getHeight() );
+                //logger.info("Scal " + dScaling);
+                // logger.info("w " + mParent.getWidth() + " h: " +mParent.getHeight() );
                 mParent.updateComplete(mVisibleVillages, mBuffer.getScaledInstance(mParent.getWidth(), mParent.getHeight(), BufferedImage.SCALE_FAST));
                 mParent.repaint();
             } catch (Throwable t) {
@@ -606,6 +615,17 @@ class RepaintThread extends Thread {
         }
 
         Hashtable<Attack, Line2D> attackLines = new Hashtable<Attack, Line2D>();
+        Attack[] attacks = GlobalOptions.getAttacks().toArray(new Attack[]{});
+        for (Attack attack : attacks) {
+            int tx = attack.getTarget().getX() - attack.getSource().getX();
+            int ty = attack.getTarget().getY() - attack.getSource().getY();
+            int sx = pXStart - attack.getSource().getX();
+            int sy = pYStart - attack.getSource().getX();
+            tx = x + width * tx;
+            ty = y + height * ty;
+            Line2D.Double line = new Line2D.Double(sx, sy, tx, ty);
+            attackLines.put(attack, line);
+        }
 
         Line2D.Double dragLine = new Line2D.Double(-1, -1, xe, ye);
         for (int i = 0; i < iVillagesX; i++) {
@@ -638,12 +658,16 @@ class RepaintThread extends Thread {
 
                 // <editor-fold defaultstate="collapsed" desc="Attack-line calculation">
 
-                Attack[] attacks = GlobalOptions.getAttacks().toArray(new Attack[]{});
                 for (Attack attack : attacks) {
+                    //go through all attacks
                     if (attack.isShowOnMap()) {
+                        //only enter if attack should be visible
+                        //get line for this attack
                         Line2D existing = attackLines.get(attack);
                         if (attack.isSourceVillage(v)) {
+                            //current village is source
                             if (existing == null) {
+                                //line does not exist, add line with source and virtual target coordinates
                                 int tx = attack.getTarget().getX() - attack.getSource().getX();
                                 int ty = attack.getTarget().getY() - attack.getSource().getY();
                                 tx = x + width * tx;
@@ -651,6 +675,7 @@ class RepaintThread extends Thread {
                                 Line2D.Double line = new Line2D.Double(x, y, tx, ty);
                                 attackLines.put(attack, line);
                             } else {
+                                //line already exists, add source coordinates
                                 existing.setLine(x, y, existing.getX2(), existing.getY2());
                             }
                         } else if (attack.isTargetVillage(v)) {
@@ -664,6 +689,7 @@ class RepaintThread extends Thread {
                             } else {
                                 existing.setLine(existing.getX1(), existing.getY1(), x, y);
                             }
+                        } else {
                         }
                     }
                 }

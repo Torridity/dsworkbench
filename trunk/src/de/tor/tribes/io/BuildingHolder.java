@@ -4,6 +4,11 @@
  */
 package de.tor.tribes.io;
 
+import de.tor.tribes.util.xml.JaxenUtils;
+import java.io.File;
+import java.util.LinkedList;
+import java.util.List;
+import org.jdom.Document;
 import org.jdom.Element;
 
 /**
@@ -73,9 +78,9 @@ public class BuildingHolder {
             setWoodFactor(Double.parseDouble(pElement.getChild("wood_factor").getText()));
             setStoneFactor(Double.parseDouble(pElement.getChild("stone_factor").getText()));
             setIronFactor(Double.parseDouble(pElement.getChild("iron_factor").getText()));
-            setIronFactor(Double.parseDouble(pElement.getChild("pop_factor").getText()));
-            setIronFactor(Double.parseDouble(pElement.getChild("build_time").getText()));
-            setIronFactor(Double.parseDouble(pElement.getChild("build_time_factor").getText()));
+            setPopFactor(Double.parseDouble(pElement.getChild("pop_factor").getText()));
+            setBuildTime(Double.parseDouble(pElement.getChild("build_time").getText()));
+            setBuildTimeFactor(Double.parseDouble(pElement.getChild("build_time_factor").getText()));
         } catch (Exception e) {
             throw new Exception("Fehler beim Einlesen von Gebäude '" + pElement.getName() + "'");
         }
@@ -183,5 +188,30 @@ public class BuildingHolder {
 
     public void setBuildTimeFactor(double buildTimeFactor) {
         this.buildTimeFactor = buildTimeFactor;
+    }
+
+    public String toString() {
+        return getName();
+    }
+
+    public static void main(String[] args) throws Exception {
+        List<BuildingHolder> mBuildings = new LinkedList<BuildingHolder>();
+        try {
+            Document d = JaxenUtils.getDocument(new File("D:/GRID/src/DSWorkbench/servers/de14/buildings.xml"));
+            //d = JaxenUtils.getDocument(new File(buildingsFile));
+
+            List<Element> l = JaxenUtils.getNodes(d, "/config/*");
+            for (Element e : l) {
+                try {
+                    mBuildings.add(new BuildingHolder(e));
+                } catch (Exception inner) {
+                }
+            }
+        } catch (Exception outer) {
+            outer.printStackTrace();
+        }
+        System.out.println(mBuildings.get(0).getBuildTimeFactor());
+        System.out.println(mBuildings.get(0).getName());
+        System.out.println(mBuildings.get(0).getBuildTime());
     }
 }

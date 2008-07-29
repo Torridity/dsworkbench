@@ -17,7 +17,7 @@ import java.util.List;
  *
  * @author Charon
  */
-public class Ally implements Serializable {
+public class Ally implements Serializable, Comparable {
 
     private static final long serialVersionUID = 10L;
     private int id = 0;
@@ -119,5 +119,10 @@ public class Ally implements Serializable {
     @Override
     public String toString() {
         return getName() + " (" + getTag() + ")";
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        return toString().compareTo(o.toString());
     }
 }

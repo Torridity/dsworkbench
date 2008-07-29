@@ -42,7 +42,6 @@ import org.jdom.Element;
 public class DataHolder {
 
     private static Logger logger = Logger.getLogger(DataHolder.class);
-    public final static int MAX_AGE = 24 * 60 * 60 * 1000;
     private final int ID_ATT = 0;
     private final int ID_DEF = 1;
     private Village[][] mVillages = null;
@@ -70,7 +69,6 @@ public class DataHolder {
         if (!serverDir.exists()) {
             serverDir.mkdir();
         }
-
         System.gc();
     }
 
@@ -87,7 +85,6 @@ public class DataHolder {
         List<String> servers = new LinkedList<String>();
         for (File serverDir : new File(sServerBaseDir).listFiles()) {
             if (serverDir.isDirectory()) {
-                System.out.println("Dir " + serverDir.getName());
                 servers.add(serverDir.getName());
             }
         }
@@ -110,7 +107,7 @@ public class DataHolder {
         File buildings = new File(getDataDirectory() + "/" + "buildings.xml");
         File settings = new File(getDataDirectory() + "/" + "settings.xml");
 
-        return (villages.exists() && tribes.exists() && allys.exists() && units.exists() && buildings.exists() && settings.exists());
+        return (villages.exists() && tribes.exists() && allys.exists() && killsOff.exists() && killsDef.exists() && units.exists() && buildings.exists() && settings.exists());
     }
 
     /**Check if server is supported or not. Currently only 1000x1000 servers are allowed*/
@@ -401,7 +398,7 @@ public class DataHolder {
             
             sURL = new URL("http://www.torridity.de/servers/" + GlobalOptions.getSelectedServer() + "/village.diff");
              */
-            
+
             fireDataHolderEvents("Lade village.txt.gz");
             file = new URL(sURL.toString() + "/map/village.txt.gz");
             downloadDataFile(file, "village_tmp.txt.gz");
@@ -731,8 +728,7 @@ public class DataHolder {
                 "/buildings.xml";
         try {
             Document d = JaxenUtils.getDocument(new File(buildingsFile));
-            d =
-                    JaxenUtils.getDocument(new File(buildingsFile));
+            d = JaxenUtils.getDocument(new File(buildingsFile));
             List<Element> l = JaxenUtils.getNodes(d, "/config/*");
             for (Element e : l) {
                 try {

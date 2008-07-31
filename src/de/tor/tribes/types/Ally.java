@@ -121,8 +121,13 @@ public class Ally implements Serializable, Comparable {
         return getName() + " (" + getTag() + ")";
     }
 
+    public String toBBCode(){
+        return "[ally]" +getName() + "[/ally]";
+    }
+    
     @Override
     public int compareTo(Object o) {
         return toString().compareTo(o.toString());
     }
+    
 }

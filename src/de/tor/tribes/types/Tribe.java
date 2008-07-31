@@ -116,6 +116,10 @@ public class Tribe implements Serializable {
         return getName();
     }
 
+    public String toBBCode() {
+        return "[player]" + getName() + "[/player]";
+    }
+
     public int getKillsAtt() {
         return killsAtt;
     }

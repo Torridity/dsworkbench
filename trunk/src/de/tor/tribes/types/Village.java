@@ -156,4 +156,8 @@ public class Village implements Serializable {
     public String toString() {
         return getX() + "|" + getY() + " " + getName();
     }
+    
+    public String toBBCode(){
+        return "[village](" +getX() + "|" + getY() + ")[/village]";
+    }
 }

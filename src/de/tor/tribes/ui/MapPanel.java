@@ -25,13 +25,13 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.geom.Line2D;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.text.NumberFormat;
-import java.util.Enumeration;
-import java.util.Hashtable;
 import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import org.apache.log4j.Logger;
 
 /**
@@ -579,7 +579,7 @@ class RepaintThread extends Thread {
 
     /**Redraw the buffer*/
     private void redraw(int pXStart, int pYStart) {
-        //  long start = System.currentTimeMillis();
+     //   long dStart = System.currentTimeMillis();
 
         int x = 0;
         int y = 0;
@@ -614,19 +614,6 @@ class RepaintThread extends Thread {
             useDecoration = false;
         }
 
-        Hashtable<Attack, Line2D> attackLines = new Hashtable<Attack, Line2D>();
-        Attack[] attacks = GlobalOptions.getAttacks().toArray(new Attack[]{});
-        for (Attack attack : attacks) {
-            int tx = attack.getTarget().getX() - attack.getSource().getX();
-            int ty = attack.getTarget().getY() - attack.getSource().getY();
-            int sx = pXStart - attack.getSource().getX();
-            int sy = pYStart - attack.getSource().getX();
-            tx = x + width * tx;
-            ty = y + height * ty;
-            Line2D.Double line = new Line2D.Double(sx, sy, tx, ty);
-            attackLines.put(attack, line);
-        }
-
         Line2D.Double dragLine = new Line2D.Double(-1, -1, xe, ye);
         for (int i = 0; i < iVillagesX; i++) {
             for (int j = 0; j < iVillagesY; j++) {
@@ -651,45 +638,6 @@ class RepaintThread extends Thread {
                             } catch (Throwable t) {
                                 marker = Color.WHITE;
                             }
-                        }
-                    }
-                }
-                //</editor-fold>
-
-                // <editor-fold defaultstate="collapsed" desc="Attack-line calculation">
-
-                for (Attack attack : attacks) {
-                    //go through all attacks
-                    if (attack.isShowOnMap()) {
-                        //only enter if attack should be visible
-                        //get line for this attack
-                        Line2D existing = attackLines.get(attack);
-                        if (attack.isSourceVillage(v)) {
-                            //current village is source
-                            if (existing == null) {
-                                //line does not exist, add line with source and virtual target coordinates
-                                int tx = attack.getTarget().getX() - attack.getSource().getX();
-                                int ty = attack.getTarget().getY() - attack.getSource().getY();
-                                tx = x + width * tx;
-                                ty = y + height * ty;
-                                Line2D.Double line = new Line2D.Double(x, y, tx, ty);
-                                attackLines.put(attack, line);
-                            } else {
-                                //line already exists, add source coordinates
-                                existing.setLine(x, y, existing.getX2(), existing.getY2());
-                            }
-                        } else if (attack.isTargetVillage(v)) {
-                            if (existing == null) {
-                                int sx = attack.getSource().getX() - attack.getTarget().getX();
-                                int sy = attack.getSource().getY() - attack.getTarget().getY();
-                                sx = x + width * sx;
-                                sy = y + height * sy;
-                                Line2D.Double line = new Line2D.Double(sx, sy, x, y);
-                                attackLines.put(attack, line);
-                            } else {
-                                existing.setLine(existing.getX1(), existing.getY1(), x, y);
-                            }
-                        } else {
                         }
                     }
                 }
@@ -824,20 +772,6 @@ class RepaintThread extends Thread {
             xPos++;
         }
 
-        Enumeration<Attack> attackEnum = attackLines.keys();
-        g2d.setColor(Color.RED);
-        g2d.setStroke(new BasicStroke(2.0F, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
-        int dx = (int) Math.rint(width / 2);
-        int dy = (int) Math.rint(height / 2);
-        while (attackEnum.hasMoreElements()) {
-            Line2D l = attackLines.get(attackEnum.nextElement());
-            g2d.setColor(Color.RED);
-            g2d.drawLine((int) l.getX1() + dx, (int) l.getY1() + dy, (int) l.getX2() + dx, (int) l.getY2() + dy);
-            g2d.setColor(Color.YELLOW);
-            g2d.fillRect((int) l.getX1() + dx - 3, (int) l.getY1() + dy - 3, 6, 6);
-            g2d.fillOval((int) l.getX2() + dx - 3, (int) l.getY2() + dy - 3, 6, 6);
-        }
-
         if (mSourceVillage != null) {
             //draw dragging line for distance and attack
             g2d.setColor(Color.YELLOW);
@@ -859,7 +793,6 @@ class RepaintThread extends Thread {
                 int y1 = (int) dragLine.getY1();
                 int x2 = (int) dragLine.getX2();
                 int y2 = (int) dragLine.getY2();
-                //  System.out.println("DRAW DL");
                 g2d.drawLine(x1, y1, x2, y2);
                 boolean drawDistance = false;
                 try {
@@ -874,17 +807,122 @@ class RepaintThread extends Thread {
                         String dist = nf.format(d);
 
                         Rectangle2D b = g2d.getFontMetrics().getStringBounds(dist, g2d);
-
                         g2d.drawImage(mDistBorder, null, x2 - 6, y2 - (int) Math.rint(b.getHeight()));
                         g2d.drawString(dist, x2, y2);
                     }
                 }
-            } /*else {
-        System.out.println("DRAG LINE INV");
-        }*/
-        } /*else {
-        System.out.println("SOURCE NULL");
-        }*/
+            }
+        }
+       
+        // <editor-fold defaultstate="collapsed" desc="Attack-line drawing">
+
+        g2d.setStroke(new BasicStroke(2.0F, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
+      
+        for (Attack attack : GlobalOptions.getAttacks()) {
+            //go through all attacks
+            if (attack.isShowOnMap()) {
+                 //only enter if attack should be visible
+                //get line for this attack
+                Line2D.Double attackLine = new Line2D.Double(attack.getSource().getX(), attack.getSource().getY(), attack.getTarget().getX(), attack.getTarget().getY());
+                Rectangle2D.Double bounds = new Rectangle2D.Double(pXStart, pYStart, iVillagesX, iVillagesY);
+
+                int xStart = ((int) attackLine.getX1() - pXStart) * width + width / 2;
+                int yStart = ((int) attackLine.getY1() - pYStart) * height + height / 2;
+                int xEnd = (int) (attackLine.getX2() - pXStart) * width + width / 2;
+                int yEnd = (int) (attackLine.getY2() - pYStart) * height + height / 2;
+                ImageIcon unitIcon = null;
+                if (attack.getUnit().getName().equals("Speerträger")) {
+                    unitIcon = GlobalOptions.getUnitIcon(GlobalOptions.ICON_SPEAR);
+                } else if (attack.getUnit().getName().equals("Schwertkämpfer")) {
+                    unitIcon = GlobalOptions.getUnitIcon(GlobalOptions.ICON_SWORD);
+                } else if (attack.getUnit().getName().equals("Axtkämpfer")) {
+                    unitIcon = GlobalOptions.getUnitIcon(GlobalOptions.ICON_AXE);
+                } else if (attack.getUnit().getName().equals("Bogenschütze")) {
+                    unitIcon = GlobalOptions.getUnitIcon(GlobalOptions.ICON_ARCHER);
+                } else if (attack.getUnit().getName().equals("Späher")) {
+                    unitIcon = GlobalOptions.getUnitIcon(GlobalOptions.ICON_SPY);
+                } else if (attack.getUnit().getName().equals("Leichte Kavallerie")) {
+                    unitIcon = GlobalOptions.getUnitIcon(GlobalOptions.ICON_LKAV);
+                } else if (attack.getUnit().getName().equals("Berittener Bogenschütze")) {
+                    unitIcon = GlobalOptions.getUnitIcon(GlobalOptions.ICON_MARCHER);
+                } else if (attack.getUnit().getName().equals("Schwere Kavallerie")) {
+                    unitIcon = GlobalOptions.getUnitIcon(GlobalOptions.ICON_HEAVY);
+                } else if (attack.getUnit().getName().equals("Ramme")) {
+                    unitIcon = GlobalOptions.getUnitIcon(GlobalOptions.ICON_RAM);
+                } else if (attack.getUnit().getName().equals("Katapult")) {
+                    unitIcon = GlobalOptions.getUnitIcon(GlobalOptions.ICON_CATA);
+                } else if (attack.getUnit().getName().equals("Adelsgeschlecht")) {
+                    unitIcon = GlobalOptions.getUnitIcon(GlobalOptions.ICON_SNOB);
+                } else if (attack.getUnit().getName().equals("Paladin")) {
+                    unitIcon = GlobalOptions.getUnitIcon(GlobalOptions.ICON_KNIGHT);
+                }
+
+                long dur = (long) (DSCalculator.calculateMoveTimeInSeconds(attack.getSource(), attack.getTarget(),attack.getUnit().getSpeed()) * 1000);                  
+                long arrive = attack.getArriveTime().getTime();
+                long start = arrive - dur;
+                long current = System.currentTimeMillis();
+                int unitXPos = 0;
+                int unitYPos = 0;
+                if((start < current) && (arrive > current)){
+                    //attack running
+                    long runTime = System.currentTimeMillis() - start;
+                    double perc = 100*runTime/dur;
+                    perc /= 100;
+                    double xTar = xStart + (xEnd - xStart)* perc;
+                    double yTar = yStart  + (yEnd - yStart) * perc;
+                    unitXPos = (int)xTar - unitIcon.getIconWidth()/2;
+                    unitYPos = (int)yTar-unitIcon.getIconHeight()/2;
+                }else if ((start > System.currentTimeMillis()) && (arrive > current)) {
+                    //attack not running, draw unit in source village
+                    unitXPos = (int)xStart - unitIcon.getIconWidth()/2;
+                    unitYPos = (int)yStart-unitIcon.getIconHeight()/2;
+                } else {
+                    //attack arrived
+                     unitXPos = (int)xEnd - unitIcon.getIconWidth()/2;
+                    unitYPos = (int)yEnd-unitIcon.getIconHeight()/2;
+                }
+                g2d.setColor(Color.RED);
+                g2d.drawLine(xStart, yStart, xEnd, yEnd);
+                g2d.setColor(Color.YELLOW);
+                if (bounds.contains(attackLine.getP1())) {
+                    g2d.fillRect((int) xStart - 3, yStart - 1, 6, 6);
+                }
+                if (bounds.contains(attackLine.getP2())) {
+                    g2d.fillOval((int) xEnd - 3, (int) yEnd - 3, 6, 6);
+                }
+                
+                if (unitIcon != null) {
+                    g2d.drawImage(unitIcon.getImage(), unitXPos, unitYPos, null);
+                }
+            }
+        }
+        //</editor-fold>
         g2d.dispose();
+      //  System.out.println("DUr " + (System.currentTimeMillis() - dStart));
+    }
+
+    static boolean getLineLineIntersection(Line2D.Double l1,
+            Line2D.Double l2,
+            Point2D.Double intersection) {
+        if (!l1.intersectsLine(l2)) {
+            return false;
+        }
+        double x1 = l1.getX1(), y1 = l1.getY1(),
+                x2 = l1.getX2(), y2 = l1.getY2(),
+                x3 = l2.getX1(), y3 = l2.getY1(),
+                x4 = l2.getX2(), y4 = l2.getY2();
+
+        intersection.x = det(det(x1, y1, x2, y2), x1 - x2,
+                det(x3, y3, x4, y4), x3 - x4) /
+                det(x1 - x2, y1 - y2, x3 - x4, y3 - y4);
+        intersection.y = det(det(x1, y1, x2, y2), y1 - y2,
+                det(x3, y3, x4, y4), y3 - y4) /
+                det(x1 - x2, y1 - y2, x3 - x4, y3 - y4);
+
+        return true;
+    }
+
+    static double det(double a, double b, double c, double d) {
+        return a * d - b * c;
     }
 }

@@ -27,6 +27,7 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
+import javax.swing.ImageIcon;
 import javax.swing.UIManager;
 import org.apache.log4j.Logger;
 
@@ -52,6 +53,19 @@ public class GlobalOptions {
     public final static int CURSOR_ATTACK_SWORD = 10;
     public final static int CURSOR_ATTACK_LIGHT = 11;
     public final static int CURSOR_ATTACK_HEAVY = 12;
+    //unit icons
+    public final static int ICON_SPEAR = 0;
+    public final static int ICON_SWORD = 1;
+    public final static int ICON_AXE = 2;
+    public final static int ICON_ARCHER = 3;
+    public final static int ICON_SPY = 4;
+    public final static int ICON_LKAV = 5;
+    public final static int ICON_MARCHER = 6;
+    public final static int ICON_HEAVY = 7;
+    public final static int ICON_RAM = 8;
+    public final static int ICON_CATA = 9;
+    public final static int ICON_KNIGHT = 10;
+    public final static int ICON_SNOB = 11;
     //auto-update frequence
     public final static int AUTO_UPDATE_NEVER = 0;
     public final static int AUTO_UPDATE_HOURLY = 1;
@@ -80,6 +94,7 @@ public class GlobalOptions {
     private static boolean isOfflineMode = false;
     public final static Color DS_BACK = new Color(225, 213, 190);
     public final static Color DS_BACK_LIGHT = new Color(239, 235, 223);
+    private final static List<ImageIcon> UNIT_ICONS = new LinkedList<ImageIcon>();
 
     /**Init all managed objects
      * @param pDownloadData TRUE=download the WorldData from the tribes server
@@ -94,6 +109,8 @@ public class GlobalOptions {
         loadProperties();
         logger.debug("Loading cursors");
         loadCursors();
+        logger.debug("Loading unit icons");
+        loadUnitIcons();
         logger.debug("Loading graphic pack");
         loadSkin();
         logger.debug("Loading world.dat");
@@ -121,6 +138,25 @@ public class GlobalOptions {
 
     public static String[] getAvailableSkins() {
         return new File("graphics/skins").list();
+    }
+
+    public static void loadUnitIcons() {
+        UNIT_ICONS.add(new ImageIcon("./graphics/icons/spear.png"));
+        UNIT_ICONS.add(new ImageIcon("./graphics/icons/sword.png"));
+        UNIT_ICONS.add(new ImageIcon("./graphics/icons/axe.png"));
+        UNIT_ICONS.add(new ImageIcon("./graphics/icons/archer.png"));
+        UNIT_ICONS.add(new ImageIcon("./graphics/icons/spy.png"));
+        UNIT_ICONS.add(new ImageIcon("./graphics/icons/light.png"));
+        UNIT_ICONS.add(new ImageIcon("./graphics/icons/marcher.png"));
+        UNIT_ICONS.add(new ImageIcon("./graphics/icons/heavy.png"));
+        UNIT_ICONS.add(new ImageIcon("./graphics/icons/ram.png"));
+        UNIT_ICONS.add(new ImageIcon("./graphics/icons/cata.png"));
+        UNIT_ICONS.add(new ImageIcon("./graphics/icons/knight.png"));
+        UNIT_ICONS.add(new ImageIcon("./graphics/icons/snob.png"));
+    }
+
+    public static ImageIcon getUnitIcon(int pId) {
+        return UNIT_ICONS.get(pId);
     }
 
     private static void loadProperties() throws Exception {

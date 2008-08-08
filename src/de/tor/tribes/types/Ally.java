@@ -9,9 +9,11 @@
 package de.tor.tribes.types;
 
 import java.io.Serializable;
+import java.net.URLDecoder;
 import java.text.NumberFormat;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 /**
  *
@@ -29,6 +31,30 @@ public class Ally implements Serializable, Comparable {
     private int all_points = 0;
     private int rank = 0;
     private List<Tribe> tribes = null;
+
+    public static Ally parseFromPlainData(String pLine) {
+        //$id, $name, $tag, $members, $villages, $points, $all_points, $rank
+        StringTokenizer tokenizer = new StringTokenizer(pLine, ",");
+        Ally entry = new Ally();
+        if (tokenizer.countTokens() < 8) {
+            return null;
+        }
+
+        try {
+            entry.setId(Integer.parseInt(tokenizer.nextToken()));
+            entry.setName(URLDecoder.decode(tokenizer.nextToken(), "UTF-8"));
+            entry.setTag(URLDecoder.decode(tokenizer.nextToken(), "UTF-8"));
+            entry.setMembers(Short.parseShort(tokenizer.nextToken()));
+            entry.setVillages(Integer.parseInt(tokenizer.nextToken()));
+            entry.setPoints(Integer.parseInt(tokenizer.nextToken()));
+            entry.setAll_points(Integer.parseInt(tokenizer.nextToken()));
+            entry.setRank(Integer.parseInt(tokenizer.nextToken()));
+            return entry;
+        } catch (Exception e) {
+            //ally entry invalid
+        }
+        return null;
+    }
 
     public Ally() {
         tribes = new LinkedList();
@@ -121,13 +147,103 @@ public class Ally implements Serializable, Comparable {
         return getName() + " (" + getTag() + ")";
     }
 
-    public String toBBCode(){
-        return "[ally]" +getName() + "[/ally]";
+    public String toBBCode() {
+        return "[ally]" + getName() + "[/ally]";
     }
-    
+
+    public String createDiff(Ally old) {
+        String diff = null;
+        if (old == null) {
+            diff = getId() + "," + getName() + "," + getTag() + "," + getMembers() + "," + getVillages() + "," + getPoints() + "," + getAll_points() + "," + getRank() + "\n";
+            return diff;
+        }
+
+        boolean nameChange = false;
+        boolean tagChange = false;
+        boolean membersChange = false;
+        boolean villagesChange = false;
+        boolean pointsChange = false;
+        boolean allPointsChange = false;
+        boolean rankChange = false;
+
+        if (!getName().equals(old.getName())) {
+            nameChange = true;
+        }
+
+        if (!getTag().equals(old.getTag())) {
+            tagChange = true;
+        }
+
+        if (getMembers() != old.getMembers()) {
+            membersChange = true;
+        }
+
+        if (getVillages() != old.getVillages()) {
+            villagesChange = true;
+        }
+
+        if (getPoints() != old.getPoints()) {
+            pointsChange = true;
+        }
+
+        if (getAll_points() != old.getAll_points()) {
+            allPointsChange = true;
+        }
+
+        if (getRank() != old.getRank()) {
+            rankChange = true;
+        }
+
+
+        if (nameChange || tagChange || membersChange || villagesChange || pointsChange || allPointsChange || rankChange) {
+            diff = Integer.toString(getId()) + ",";
+        }
+
+        if (nameChange) {
+            diff += getName() + ",";
+        } else {
+            diff += " ,";
+        }
+
+        if (tagChange) {
+            diff += getTag() + ",";
+        } else {
+            diff += " ,";
+        }
+        
+        if (membersChange) {
+            diff += getMembers() + ",";
+        } else {
+            diff += " ,";
+        }
+        
+        if (villagesChange) {
+            diff += getVillages() + ",";
+        } else {
+            diff += " ,";
+        }
+        
+        if (pointsChange) {
+            diff += getPoints() + ",";
+        } else {
+            diff += " ,";
+        }
+        if (allPointsChange) {
+            diff += getAll_points() + ",";
+        } else {
+            diff += " ,";
+        }
+        if (rankChange) {
+            diff += getRank();
+        } else {
+            diff += " ";
+        }
+
+        return diff;
+    }
+
     @Override
     public int compareTo(Object o) {
         return toString().compareTo(o.toString());
     }
-    
 }

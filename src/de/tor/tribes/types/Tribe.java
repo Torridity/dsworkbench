@@ -9,9 +9,11 @@
 package de.tor.tribes.types;
 
 import java.io.Serializable;
+import java.net.URLDecoder;
 import java.text.NumberFormat;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 /**
  *
@@ -35,6 +37,28 @@ public class Tribe implements Serializable {
 
     public Tribe() {
         villageList = new LinkedList();
+    }
+
+    public static Tribe parseFromPlainData(String pLine) {
+        //$id, $name, $ally, $villages, $points, $rank
+        StringTokenizer tokenizer = new StringTokenizer(pLine, ",");
+        Tribe entry = new Tribe();
+        if (tokenizer.countTokens() < 6) {
+            return null;
+        }
+
+        try {
+            entry.setId(Integer.parseInt(tokenizer.nextToken()));
+            entry.setName(URLDecoder.decode(tokenizer.nextToken(), "UTF-8"));
+            entry.setAllyID(Integer.parseInt(tokenizer.nextToken()));
+            entry.setVillages(Short.parseShort(tokenizer.nextToken()));
+            entry.setPoints(Integer.parseInt(tokenizer.nextToken()));
+            entry.setRank(Integer.parseInt(tokenizer.nextToken()));
+            return entry;
+        } catch (Exception e) {
+            //tribe entry invalid
+        }
+        return null;
     }
 
     public int getId() {
@@ -118,6 +142,65 @@ public class Tribe implements Serializable {
 
     public String toBBCode() {
         return "[player]" + getName() + "[/player]";
+    }
+
+    public String createDiff(Tribe old) {
+        String diff = null;
+        if (old == null) {
+            diff = getId() + "," + getName() + "," + getAllyID() + "," + getVillages() + "," + getPoints() + "," + getRank() + "\n";
+            return diff;
+        }
+
+        boolean allyChange = false;
+        boolean villagesChange = false;
+        boolean pointsChange = false;
+        boolean rankChange = false;
+
+        if (getAllyID() != old.getAllyID()) {
+            allyChange = true;
+        }
+
+        if (getVillages() != old.getVillages()) {
+            villagesChange = true;
+        }
+
+        if (getPoints() != old.getPoints()) {
+            pointsChange = true;
+        }
+
+        if (getRank() != old.getRank()) {
+            rankChange = true;
+        }
+
+        if (allyChange || villagesChange || pointsChange || rankChange) {
+            diff = Integer.toString(getId()) + ", ,";
+
+            if (allyChange) {
+                diff += getAllyID() + ",";
+            } else {
+                diff += " ,";
+            }
+
+            if (villagesChange) {
+                diff += getVillages() + ",";
+            } else {
+                diff += " ,";
+            }
+
+            if (pointsChange) {
+                diff += getPoints() + ",";
+            } else {
+                diff += " ,";
+            }
+
+            if (rankChange) {
+                diff += getRank();
+            } else {
+                diff += " ";
+            }
+        }
+
+        return diff;
     }
 
     public int getKillsAtt() {

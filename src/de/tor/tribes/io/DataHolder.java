@@ -181,13 +181,11 @@ public class DataHolder {
             }
 
             String line = "";
-            int bytes = 0;
             fireDataHolderEvents("Lese Dörferliste...");
             //read villages
             BufferedReader reader = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(getDataDirectory() + "/village.txt.gz"))));
 
             while ((line = reader.readLine()) != null) {
-                bytes += line.length();
                 try {
                     parseVillage(line);
                 } catch (Exception e) {
@@ -205,7 +203,6 @@ public class DataHolder {
             reader = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(getDataDirectory() + "/ally.txt.gz"))));
 
             while ((line = reader.readLine()) != null) {
-                bytes += line.length();
                 try {
                     parseAlly(line);
                 } catch (Exception e) {
@@ -217,7 +214,6 @@ public class DataHolder {
             //read tribes
             reader = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(getDataDirectory() + "/tribe.txt.gz"))));
             while ((line = reader.readLine()) != null) {
-                bytes += line.length();
                 try {
                     parseTribe(line);
                 } catch (Exception e) {
@@ -232,7 +228,6 @@ public class DataHolder {
             //read tribes
             reader = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(getDataDirectory() + "/kill_att.txt.gz"))));
             while ((line = reader.readLine()) != null) {
-                bytes += line.length();
                 try {
                     parseConqueredLine(line, ID_ATT);
                 } catch (Exception e) {
@@ -248,7 +243,6 @@ public class DataHolder {
             //read tribes
             reader = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(getDataDirectory() + "/kill_def.txt.gz"))));
             while ((line = reader.readLine()) != null) {
-                bytes += line.length();
                 try {
                     // Tribe t = parseTribe(line);
                     parseConqueredLine(line, ID_DEF);
@@ -308,6 +302,7 @@ public class DataHolder {
             }
 
             //</editor-fold>
+
             // <editor-fold defaultstate="collapsed" desc="Version check">
             if (DatabaseAdapter.isVersionAllowed() != DatabaseAdapter.ID_SUCCESS) {
                 logger.error("Current version is not allowed any longer");

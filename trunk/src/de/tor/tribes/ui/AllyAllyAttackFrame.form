@@ -122,7 +122,7 @@
           <Group type="102" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jScrollPane1" alignment="0" pref="632" max="32767" attributes="1"/>
+                  <Component id="jScrollPane1" alignment="0" pref="636" max="32767" attributes="1"/>
                   <Component id="jButton2" alignment="1" min="-2" max="-2" attributes="0"/>
                   <Group type="102" alignment="0" attributes="0">
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
@@ -135,7 +135,7 @@
                           <Component id="jSourceVillageList" alignment="0" max="32767" attributes="1"/>
                           <Component id="jButton8" alignment="0" max="32767" attributes="1"/>
                       </Group>
-                      <EmptySpace pref="20" max="32767" attributes="0"/>
+                      <EmptySpace pref="22" max="32767" attributes="0"/>
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
                           <Component id="jLabel2" alignment="1" max="32767" attributes="1"/>
                           <Component id="jLabel7" alignment="1" min="-2" max="-2" attributes="1"/>
@@ -146,7 +146,7 @@
                           <Component id="jSourceTribeList" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jLabel9" pref="95" max="32767" attributes="1"/>
+                      <Component id="jLabel9" pref="97" max="32767" attributes="1"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="jTimeFrame" alignment="1" min="-2" pref="129" max="-2" attributes="0"/>
@@ -640,7 +640,7 @@
     <Component class="javax.swing.JComboBox" name="jTimeFrame">
       <Properties>
         <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-          <StringArray count="7">
+          <StringArray count="8">
             <StringItem index="0" value="egal"/>
             <StringItem index="1" value="Fr&#xfc;h (6-8)"/>
             <StringItem index="2" value="Vormittag (8-12)"/>
@@ -648,6 +648,7 @@
             <StringItem index="4" value="Abend (18-0)"/>
             <StringItem index="5" value="Nacht (0-6)"/>
             <StringItem index="6" value="Lupii"/>
+            <StringItem index="7" value="RedAngel"/>
           </StringArray>
         </Property>
       </Properties>

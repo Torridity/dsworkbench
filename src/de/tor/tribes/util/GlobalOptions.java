@@ -12,7 +12,9 @@ import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.DataHolderListener;
 import de.tor.tribes.io.WorldDecorationHolder;
 import de.tor.tribes.types.Attack;
+import de.tor.tribes.types.Marker;
 import de.tor.tribes.types.Village;
+import de.tor.tribes.util.xml.JaxenUtils;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Point;
@@ -20,6 +22,7 @@ import java.awt.Toolkit;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Enumeration;
@@ -30,6 +33,8 @@ import java.util.Properties;
 import javax.swing.ImageIcon;
 import javax.swing.UIManager;
 import org.apache.log4j.Logger;
+import org.jdom.Document;
+import org.jdom.Element;
 
 /**Global settings used by almost all components. e.g. WorldData or UI specific objects
  * @author Charon
@@ -81,9 +86,9 @@ public class GlobalOptions {
     private static Skin mSkin;
     /**DataHolder which holds and manages the WorldData*/
     private static DataHolder mDataHolder = null;
-    private static Hashtable<String, Color> mMarkers = null;
+    private static List<Marker> mMarkers = null;
     private static WorldDecorationHolder mDecorationHolder = null;
-    private static String SELECTED_SERVER = null;
+    private static String SELECTED_SERVER = "de26";
     private static DataHolderListener mListener;
     private static Properties GLOBAL_PROPERTIES = null;
     private static List<Cursor> CURSORS = null;
@@ -276,15 +281,17 @@ public class GlobalOptions {
     /**Load the PlayerMarkers from the harddisk
      */
     public static void loadMarkers() {
-        mMarkers = new Hashtable<String, Color>();
-        String path = mDataHolder.getDataDirectory() + "/markers.bin";
+        mMarkers = new LinkedList<Marker>();
+        String path = mDataHolder.getDataDirectory() + "/markers.xml";
         if (new File(path).exists()) {
             try {
-                ObjectInputStream oin = new ObjectInputStream(new FileInputStream(path));
-                mMarkers = (Hashtable<String, Color>) oin.readObject();
-                oin.close();
+                Document d = JaxenUtils.getDocument(new File(path));
+                for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//markers/marker")) {
+                    mMarkers.add(new Marker(e));
+                }
             } catch (Exception e) {
                 logger.error("Failed to read markers");
+                e.printStackTrace();
             }
         } else {
             logger.info("No markers available for selected server");
@@ -294,16 +301,30 @@ public class GlobalOptions {
     /**Get the list of markers
      * @return Hashtable<String, Color> List of MapMarkers
      */
-    public static Hashtable<String, Color> getMarkers() {
+    public static List<Marker> getMarkers() {
         return mMarkers;
     }
 
+    public static Marker getMarkerByValue(String pValue) {
+        for (Marker m : mMarkers) {
+            if (m.getMarkerValue().equals(pValue)) {
+                return m;
+            }
+        }
+        return null;
+    }
+
     public static void storeMarkers() {
-        String path = mDataHolder.getDataDirectory() + "/markers.bin";
+        String path = mDataHolder.getDataDirectory() + "/markers.xml";
         try {
-            ObjectOutputStream oout = new ObjectOutputStream(new FileOutputStream(path));
-            oout.writeObject(mMarkers);
-            oout.close();
+            FileWriter w = new FileWriter(path);
+            w.write("<markers>\n");
+            for (Marker m : mMarkers) {
+                w.write(m.toXml() + "\n");
+            }
+            w.write("</markers>");
+            w.flush();
+            w.close();
         } catch (Exception e) {
             logger.error("Failed to store markers");
         }
@@ -311,12 +332,14 @@ public class GlobalOptions {
 
     public static void loadAttacks() {
         mAttacks = new LinkedList<Attack>();
-        String path = mDataHolder.getDataDirectory() + "/attacks.bin";
+        String path = mDataHolder.getDataDirectory() + "/attacks.xml";
+
         if (new File(path).exists()) {
             try {
-                ObjectInputStream oin = new ObjectInputStream(new FileInputStream(path));
-                mAttacks = (List<Attack>) oin.readObject();
-                oin.close();
+                Document d = JaxenUtils.getDocument(new File(path));
+                for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//attacks/attack")) {
+                    mAttacks.add(new Attack(e));
+                }
             } catch (Exception e) {
                 logger.error("Failed to read attacks", e);
             }
@@ -336,11 +359,16 @@ public class GlobalOptions {
     }
 
     public static void storeAttacks() {
-        String path = mDataHolder.getDataDirectory() + "/attacks.bin";
+        String path = mDataHolder.getDataDirectory() + "/attacks.xml";
         try {
-            ObjectOutputStream oout = new ObjectOutputStream(new FileOutputStream(path));
-            oout.writeObject(mAttacks);
-            oout.close();
+            FileWriter w = new FileWriter(path);
+            w.write("<attacks>\n");
+            for (Attack a : mAttacks) {
+                w.write(a.toXml() + "\n");
+            }
+            w.write("</attacks>\n");
+            w.flush();
+            w.close();
         } catch (Exception e) {
             logger.error("Failed to store attacks", e);
         }

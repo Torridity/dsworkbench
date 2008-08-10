@@ -5,6 +5,7 @@
  */
 package de.tor.tribes.ui;
 
+import de.tor.tribes.types.Marker;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.util.GlobalOptions;
 import java.awt.AlphaComposite;
@@ -321,9 +322,14 @@ class MinimapRepaintThread extends Thread {
                         isLeft = true;
                     } else {
                         try {
-                            mark = GlobalOptions.getMarkers().get(v.getTribe().getName());
-                            if (mark == null) {
-                                mark = GlobalOptions.getMarkers().get(v.getTribe().getAlly().getName());
+                            Marker m  = GlobalOptions.getMarkerByValue(v.getTribe().getName());
+                            if (m == null) {
+                                m = GlobalOptions.getMarkerByValue(v.getTribe().getAlly().getName());
+                                if(m != null){
+                                    mark = m.getMarkerColor();
+                                }
+                            }else{
+                                mark = m.getMarkerColor();
                             }
                         } catch (Exception e) {
                             mark = null;

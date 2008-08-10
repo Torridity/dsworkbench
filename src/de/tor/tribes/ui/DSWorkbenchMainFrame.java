@@ -9,6 +9,7 @@ import de.tor.tribes.io.DataHolderListener;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Ally;
 import de.tor.tribes.types.Attack;
+import de.tor.tribes.types.Marker;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.editors.ColorChooserCellEditor;
@@ -267,23 +268,22 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
         int markerCount = GlobalOptions.getMarkers().size();
         while (tribes.hasMoreElements()) {
             Tribe t = GlobalOptions.getDataHolder().getTribes().get(tribes.nextElement());
-            //if(GlobalOptions.gett.getName()
-            Color c = GlobalOptions.getMarkers().get(t.getName());
-            if (c != null) {
+            Marker m = GlobalOptions.getMarkerByValue(t.getName());
+            if (m != null) {
                 if (!tribeMarkers.contains(t.getName())) {
                     MarkerCell p = MarkerCell.factoryPlayerMarker(t.getName());
-                    ((DefaultTableModel) jMarkerTable.getModel()).addRow(new Object[]{p, c});
+                    ((DefaultTableModel) jMarkerTable.getModel()).addRow(new Object[]{p, m.getMarkerColor()});
                     tribeMarkers.add(t.getName());
                     markerCount--;
                 }
             }
 
             if (t.getAlly() != null) {
-                c = GlobalOptions.getMarkers().get(t.getAlly().getName());
-                if (c != null) {
+                m = GlobalOptions.getMarkerByValue(t.getAlly().getName());
+                if (m != null) {
                     if (!allyMarkers.contains(t.getAlly().getName())) {
                         MarkerCell p = MarkerCell.factoryAllyMarker(t.getAlly().getName());
-                        ((DefaultTableModel) jMarkerTable.getModel()).addRow(new Object[]{p, c});
+                        ((DefaultTableModel) jMarkerTable.getModel()).addRow(new Object[]{p, m.getMarkerColor()});
                         allyMarkers.add(t.getAlly().getName());
                         markerCount--;
                     }
@@ -1803,9 +1803,19 @@ private void fireUpdateClickedEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
         GlobalOptions.getMarkers().clear();
         for (int i = 0; i < model.getRowCount(); i++) {
             String name = ((MarkerCell) model.getValueAt(i, 0)).getMarkerName();
+            int type = ((MarkerCell) model.getValueAt(i, 0)).getType();
             name = name.replaceAll("<html>", "").replaceAll("</html>", "");
             Color c = (Color) model.getValueAt(i, 1);
-            GlobalOptions.getMarkers().put(name, c);
+            Marker m = GlobalOptions.getMarkerByValue(name);
+            if (m != null) {
+                m.setMarkerColor(c);
+            } else {
+                m = new Marker();
+                m.setMarkerType(type);
+                m.setMarkerValue(name);
+                m.setMarkerColor(c);
+                GlobalOptions.getMarkers().add(m);
+            }
         }
 
         GlobalOptions.storeMarkers();
@@ -2018,7 +2028,8 @@ private void fireUpdateClickedEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
         MarkerCell p = null;
         if (pMarkAlly) {
             if (pVillage.getTribe().getAlly() != null) {
-                if (GlobalOptions.getMarkers().containsKey(pVillage.getTribe().getAlly().getName())) {
+                Marker m = GlobalOptions.getMarkerByValue(pVillage.getTribe().getAlly().getName());
+                if (m != null) {
                     logger.debug("Replacing existing ally marker");
                     for (int i = 0; i < ((DefaultTableModel) jMarkerTable.getModel()).getRowCount(); i++) {
                         MarkerCell c = (MarkerCell) ((DefaultTableModel) jMarkerTable.getModel()).getValueAt(i, 0);
@@ -2029,7 +2040,11 @@ private void fireUpdateClickedEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
                     }
                 } else {
                     logger.debug("Adding new ally marker");
-                    GlobalOptions.getMarkers().put(pVillage.getTribe().getAlly().getName(), Color.WHITE);
+                    m = new Marker();
+                    m.setMarkerType(Marker.ALLY_MARKER_TYPE);
+                    m.setMarkerValue(pVillage.getTribe().getAlly().getName());
+                    m.setMarkerColor(Color.WHITE);
+                    GlobalOptions.getMarkers().add(m);
                     p = MarkerCell.factoryAllyMarker(pVillage.getTribe().getAlly().getName());
                     Color c = (pAllyColor != null) ? pAllyColor : Color.WHITE;
                     ((DefaultTableModel) jMarkerTable.getModel()).addRow(new Object[]{p, c});
@@ -2042,18 +2057,22 @@ private void fireUpdateClickedEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
         }
 
         if (pMarkTribe) {
-            if (GlobalOptions.getMarkers().containsKey(pVillage.getTribe().getName())) {
+            Marker m = GlobalOptions.getMarkerByValue(pVillage.getTribe().getName());
+            if (m != null) {
                 logger.debug("Replacing existing tribe marker");
                 for (int i = 0; i < ((DefaultTableModel) jMarkerTable.getModel()).getRowCount(); i++) {
                     MarkerCell c = (MarkerCell) ((DefaultTableModel) jMarkerTable.getModel()).getValueAt(i, 0);
                     if (c.getMarkerName().equals(pVillage.getTribe().getName())) {
                         ((DefaultTableModel) jMarkerTable.getModel()).setValueAt(pTribeColor, i, 1);
                     }
-
                 }
             } else {
                 logger.debug("Adding new tribe marker");
-                GlobalOptions.getMarkers().put(pVillage.getTribe().getName(), Color.WHITE);
+                m = new Marker();
+                m.setMarkerType(Marker.TRIBE_MARKER_TYPE);
+                m.setMarkerValue(pVillage.getTribe().getName());
+                m.setMarkerColor(Color.WHITE);
+                GlobalOptions.getMarkers().add(m);
                 Color c = (pTribeColor != null) ? pTribeColor : Color.WHITE;
                 p = MarkerCell.factoryPlayerMarker(pVillage.getTribe().getName());
                 ((DefaultTableModel) jMarkerTable.getModel()).addRow(new Object[]{p, c});

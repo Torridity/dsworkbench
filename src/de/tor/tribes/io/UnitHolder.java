@@ -11,9 +11,10 @@ import org.jdom.Element;
  *
  * @author Charon
  */
-public class UnitHolder implements Serializable{
+public class UnitHolder implements Serializable {
 
     private static final long serialVersionUID = 10L;
+    private String plainName = null;
     private String name = null;
     private int wood = 0;
     private int stone = 0;
@@ -29,6 +30,7 @@ public class UnitHolder implements Serializable{
 
     public UnitHolder(Element pElement) throws Exception {
         try {
+            setPlainName(pElement.getName());
             if (pElement.getName().equals("spear")) {
                 setName("Speerträger");
             } else if (pElement.getName().equals("sword")) {
@@ -71,6 +73,14 @@ public class UnitHolder implements Serializable{
         } catch (Exception e) {
             throw new Exception("Fehler beim laden von Einheit '" + pElement.getName() + "'");
         }
+    }
+
+    public String getPlainName() {
+        return plainName;
+    }
+
+    public void setPlainName(String name) {
+        this.plainName = name;
     }
 
     public String getName() {
@@ -168,9 +178,9 @@ public class UnitHolder implements Serializable{
     public void setBuildTime(double buildTime) {
         this.buildTime = buildTime;
     }
-    
+
     @Override
-    public String toString(){
+    public String toString() {
         return getName();// + "(" + getSpeed() + " Minuten/Feld)";
     }
 }

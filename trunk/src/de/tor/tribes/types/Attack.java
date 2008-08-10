@@ -5,8 +5,11 @@
 package de.tor.tribes.types;
 
 import de.tor.tribes.io.UnitHolder;
+import de.tor.tribes.util.GlobalOptions;
+import de.tor.tribes.util.xml.JaxenUtils;
 import java.io.Serializable;
 import java.util.Date;
+import org.jdom.Element;
 
 /**
  *
@@ -20,6 +23,17 @@ public class Attack implements Serializable {
     private UnitHolder unit = null;
     private Date arriveTime = null;
     private boolean showOnMap = false;
+
+    public Attack() {
+    }
+
+    public Attack(Element pElement) {
+        setSource(GlobalOptions.getDataHolder().getVillagesById().get(Integer.parseInt(pElement.getChild("source").getText())));
+        setTarget(GlobalOptions.getDataHolder().getVillagesById().get(Integer.parseInt(pElement.getChild("target").getText())));
+        setArriveTime(new Date(Long.parseLong(pElement.getChild("arrive").getText())));
+        setUnit(GlobalOptions.getDataHolder().getUnitByPlainName(pElement.getChild("unit").getText()));
+        setShowOnMap(Boolean.parseBoolean(JaxenUtils.getNodeValue(pElement, "extensions/showOnMap")));
+    }
 
     public boolean isSourceVillage(Village pVillage) {
         return (pVillage == source);
@@ -67,5 +81,22 @@ public class Attack implements Serializable {
 
     public void setShowOnMap(boolean showOnMap) {
         this.showOnMap = showOnMap;
+    }
+
+    public static Attack fromXml(Element pElement) {
+        return new Attack(pElement);
+    }
+
+    public String toXml() {
+        String xml = "<attack>\n";
+        xml += "<source>" + getSource().getId() + "</source>\n";
+        xml += "<target>" + getTarget().getId() + "</target>\n";
+        xml += "<arrive>" + getArriveTime().getTime() + "</arrive>\n";
+        xml += "<unit>" + getUnit().getPlainName() + "</unit>\n";
+        xml += "<extensions>\n";
+        xml += "\t<showOnMap>" + isShowOnMap() + "</showOnMap>\n";
+        xml += "</extensions>\n";
+        xml += "</attack>";
+        return xml;
     }
 }

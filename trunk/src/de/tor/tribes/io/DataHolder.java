@@ -45,6 +45,7 @@ public class DataHolder {
     private final int ID_ATT = 0;
     private final int ID_DEF = 1;
     private Village[][] mVillages = null;
+    private Hashtable<Integer, Village> mVillagesTable = null;
     private Hashtable<Integer, Ally> mAllies = null;
     private Hashtable<Integer, Tribe> mTribes = null;
     private List<BuildingHolder> mBuildings = null;
@@ -61,6 +62,7 @@ public class DataHolder {
     /**Clear all data an re-initialize the structures*/
     public void initialize() {
         mVillages = new Village[1000][1000];
+        mVillagesTable = new Hashtable<Integer, Village>();
         mAllies = new Hashtable<Integer, Ally>();
         mTribes = new Hashtable<Integer, Tribe>();
         mBuildings = new LinkedList<BuildingHolder>();
@@ -564,6 +566,7 @@ public class DataHolder {
             for (int j = 0; j < 1000; j++) {
                 Village current = mVillages[i][j];
                 if (current != null) {
+                    mVillagesTable.put(current.getId(), current);
                     Tribe t = mTribes.get(current.getTribeID());
                     current.setTribe(t);
                     if (t != null) {
@@ -742,6 +745,10 @@ public class DataHolder {
         return mVillages;
     }
 
+    public Hashtable<Integer, Village> getVillagesById() {
+        return mVillagesTable;
+    }
+
     public Hashtable<Integer, Ally> getAllies() {
         return mAllies;
     }
@@ -786,6 +793,15 @@ public class DataHolder {
 
     public List<UnitHolder> getUnits() {
         return mUnits;
+    }
+
+    public UnitHolder getUnitByPlainName(String pName) {
+        for (UnitHolder u : getUnits()) {
+            if (u.getPlainName().equals(pName)) {
+                return u;
+            }
+        }
+        return null;
     }
 
     public int getUnitID(String pUnitName) {

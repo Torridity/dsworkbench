@@ -26,17 +26,17 @@
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jTribeColorPanel" alignment="0" pref="243" max="32767" attributes="1"/>
-                  <Component id="jAllyColorPanel" alignment="0" pref="243" max="32767" attributes="1"/>
+                  <Component id="jTribeColorPanel" alignment="0" pref="247" max="32767" attributes="1"/>
+                  <Component id="jAllyColorPanel" alignment="0" pref="247" max="32767" attributes="1"/>
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="jMarkTribe" min="-2" max="-2" attributes="1"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="jTribeName" pref="130" max="32767" attributes="0"/>
+                      <Component id="jTribeName" pref="134" max="32767" attributes="0"/>
                   </Group>
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="jMarkAlly" min="-2" max="-2" attributes="1"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="jAllyName" pref="130" max="32767" attributes="0"/>
+                      <Component id="jAllyName" pref="134" max="32767" attributes="0"/>
                   </Group>
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="jButton1" min="-2" max="-2" attributes="1"/>

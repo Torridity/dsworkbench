@@ -5,6 +5,7 @@
  */
 package de.tor.tribes.ui;
 
+import de.tor.tribes.types.Marker;
 import javax.swing.ImageIcon;
 
 /**
@@ -13,39 +14,47 @@ import javax.swing.ImageIcon;
  */
 public class MarkerCell extends javax.swing.JPanel {
 
-    public final static int PLAYER_MARKER = 0;
-    public final static int ALLY_MARKER = 1;
     private static ImageIcon PLAYER_ICON = null;
     private static ImageIcon ALLY_ICON = null;
-    
+    private int type = Marker.TRIBE_MARKER_TYPE;
 
     static {
         try {
             PLAYER_ICON = new javax.swing.ImageIcon(MarkerCell.class.getResource("/res/face.png"));
-            ALLY_ICON = new javax.swing.ImageIcon(MarkerCell.class.getResource("/res/ally.gif"));
+            ALLY_ICON = new javax.swing.ImageIcon(MarkerCell.class.getResource("/res/ally.png"));
         } catch (Exception e) {
         }
     }
 
     public static MarkerCell factoryPlayerMarker(String pPlayerName) {
-        return new MarkerCell(pPlayerName, PLAYER_MARKER);
+        return new MarkerCell(pPlayerName, Marker.TRIBE_MARKER_TYPE);
     }
 
     public static MarkerCell factoryAllyMarker(String pAllyName) {
-        return new MarkerCell(pAllyName, ALLY_MARKER);
+        return new MarkerCell(pAllyName, Marker.ALLY_MARKER_TYPE);
     }
 
     /** Creates new form MarkerPanel */
     MarkerCell(String pName, int pType) {
         initComponents();
         jMarkerLabel.setText(pName);
-        if (pType == PLAYER_MARKER) {
+        if (pType == Marker.TRIBE_MARKER_TYPE) {
             jMarkerLabel.setIcon(PLAYER_ICON);
+            type = pType;
         } else {
             jMarkerLabel.setIcon(ALLY_ICON);
+            type = pType;
         }
     }
 
+    public int getType(){
+        return type;
+    }
+    
+    public void setType(int pType){
+        type = pType;
+    }
+    
     public String getMarkerName() {
         return jMarkerLabel.getText();
     }

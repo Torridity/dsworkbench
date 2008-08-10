@@ -5,6 +5,7 @@
  */
 package de.tor.tribes.ui;
 
+import de.tor.tribes.types.Marker;
 import java.awt.Color;
 import net.java.dev.colorchooser.ColorChooser;
 import de.tor.tribes.types.Village;
@@ -143,16 +144,20 @@ public class MarkerAddFrame extends javax.swing.JFrame {
     public void setVillage(Village pVillage) {
         mVillage = pVillage;
 
-        Color tribeColor = GlobalOptions.getMarkers().get(mVillage.getTribe().getName());
-        if (tribeColor != null) {
-            mTribeColorChooser.setColor(tribeColor);
+        Marker m = GlobalOptions.getMarkerByValue(mVillage.getTribe().getName());
+        if (m != null) {
+            mTribeColorChooser.setColor(m.getMarkerColor());
+        }else{
+            mTribeColorChooser.setColor(Color.WHITE);
         }
         jTribeName.setText("(" + mVillage.getTribe().getName() + ")");
         try {
             jAllyName.setText("(" + mVillage.getTribe().getAlly().getTag() + ")");
-            Color allyColor = GlobalOptions.getMarkers().get(mVillage.getTribe().getAlly().getName());
-            if (allyColor != null) {
-                mAllyColorChooser.setColor(allyColor);
+            m = GlobalOptions.getMarkerByValue(mVillage.getTribe().getAlly().getName());
+            if(m != null){
+                mAllyColorChooser.setColor(m.getMarkerColor());
+            }else{
+                mAllyColorChooser.setColor(Color.WHITE);
             }
             jMarkAlly.setEnabled(true);
         } catch (Exception e) {

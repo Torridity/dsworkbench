@@ -293,6 +293,8 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
         jContinentsOnMinimap = new javax.swing.JCheckBox();
         jLabel13 = new javax.swing.JLabel();
         jShowDistanceBox = new javax.swing.JCheckBox();
+        jShowAttackMovementBox = new javax.swing.JCheckBox();
+        jLabel14 = new javax.swing.JLabel();
         jNetworkSettings = new javax.swing.JPanel();
         jDirectConnectOption = new javax.swing.JRadioButton();
         jProxyConnectOption = new javax.swing.JRadioButton();
@@ -562,6 +564,16 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
             }
         });
 
+        jShowAttackMovementBox.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        jShowAttackMovementBox.setOpaque(false);
+        jShowAttackMovementBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fireChangeShowAttackMovementEvent(evt);
+            }
+        });
+
+        jLabel14.setText("Angriffsbewegung anzeigen");
+
         javax.swing.GroupLayout jGeneralSettingsLayout = new javax.swing.GroupLayout(jGeneralSettings);
         jGeneralSettings.setLayout(jGeneralSettingsLayout);
         jGeneralSettingsLayout.setHorizontalGroup(
@@ -571,10 +583,12 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
                 .addGroup(jGeneralSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel8)
                     .addComponent(jLabel5)
-                    .addComponent(jLabel11)
-                    .addComponent(jLabel13))
+                    .addComponent(jLabel14)
+                    .addComponent(jLabel13)
+                    .addComponent(jLabel11))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jGeneralSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jShowAttackMovementBox, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 216, Short.MAX_VALUE)
                     .addComponent(jContinentsOnMinimap, javax.swing.GroupLayout.DEFAULT_SIZE, 216, Short.MAX_VALUE)
                     .addComponent(jShowDistanceBox, javax.swing.GroupLayout.DEFAULT_SIZE, 216, Short.MAX_VALUE)
                     .addComponent(jGraphicPacks, 0, 216, Short.MAX_VALUE)
@@ -595,15 +609,19 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
                 .addGroup(jGeneralSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel8)
                     .addComponent(jUpdateIntervalBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 11, Short.MAX_VALUE)
-                .addGroup(jGeneralSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel11)
-                    .addComponent(jContinentsOnMinimap))
-                .addGap(12, 12, 12)
-                .addGroup(jGeneralSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel13)
-                    .addComponent(jShowDistanceBox))
-                .addContainerGap(133, Short.MAX_VALUE))
+                .addGap(13, 13, 13)
+                .addGroup(jGeneralSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jContinentsOnMinimap, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(13, 13, 13)
+                .addGroup(jGeneralSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabel13, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jShowDistanceBox, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(13, 13, 13)
+                .addGroup(jGeneralSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabel14, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jShowAttackMovementBox, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(100, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Allgemein", new javax.swing.ImageIcon(getClass().getResource("/res/settings.png")), jGeneralSettings); // NOI18N
@@ -1048,6 +1066,11 @@ private void fireChangeDrawDistanceEvent(java.awt.event.ActionEvent evt) {//GEN-
     GlobalOptions.saveProperties();
 }//GEN-LAST:event_fireChangeDrawDistanceEvent
 
+private void fireChangeShowAttackMovementEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireChangeShowAttackMovementEvent
+    GlobalOptions.addProperty("attack.movement", Boolean.toString(jShowAttackMovementBox.isSelected()));
+    GlobalOptions.saveProperties();
+}//GEN-LAST:event_fireChangeShowAttackMovementEvent
+
     private boolean updateServerList(boolean pLocal) {
         String[] servers = null;
         if (!pLocal) {
@@ -1138,6 +1161,7 @@ private void fireChangeDrawDistanceEvent(java.awt.event.ActionEvent evt) {//GEN-
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -1159,13 +1183,13 @@ private void fireChangeDrawDistanceEvent(java.awt.event.ActionEvent evt) {//GEN-
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JButton jSelectServerButton;
     private javax.swing.JComboBox jServerList;
+    private javax.swing.JCheckBox jShowAttackMovementBox;
     private javax.swing.JCheckBox jShowDistanceBox;
     private javax.swing.JTextArea jStatusArea;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JComboBox jTribeNames;
     private javax.swing.JComboBox jUpdateIntervalBox;
     // End of variables declaration//GEN-END:variables
-
     @Override
     public void fireDataHolderEvent(String pMessage) {
         SimpleDateFormat f = new SimpleDateFormat("HH:mm:ss");

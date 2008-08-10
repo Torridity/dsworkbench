@@ -6,6 +6,7 @@
 package de.tor.tribes.ui;
 
 import de.tor.tribes.types.Attack;
+import de.tor.tribes.types.Marker;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.util.BrowserCommandSender;
 import de.tor.tribes.util.DSCalculator;
@@ -628,12 +629,17 @@ class RepaintThread extends Thread {
                             marker = Color.YELLOW;
                         } else {
                             try {
-                                marker = GlobalOptions.getMarkers().get(v.getTribe().getName());
+                                Marker m = GlobalOptions.getMarkerByValue(v.getTribe().getName());
                                 if (marker == null) {
-                                    marker = GlobalOptions.getMarkers().get(v.getTribe().getAlly().getName());
-                                    if (marker == null) {
+                                    m = GlobalOptions.getMarkerByValue(v.getTribe().getAlly().getName());
+                                    if(m != null){
+                                    marker = m.getMarkerColor();    
+                                    }else{
+                                        //abort this mark
                                         throw new NullPointerException("");
-                                    }
+                                    }                    
+                                }else{
+                                    marker = m.getMarkerColor();
                                 }
                             } catch (Throwable t) {
                                 marker = Color.WHITE;
@@ -825,61 +831,66 @@ class RepaintThread extends Thread {
                 //get line for this attack
                 Line2D.Double attackLine = new Line2D.Double(attack.getSource().getX(), attack.getSource().getY(), attack.getTarget().getX(), attack.getTarget().getY());
                 Rectangle2D.Double bounds = new Rectangle2D.Double(pXStart, pYStart, iVillagesX, iVillagesY);
-
+                String value = GlobalOptions.getProperty("attack.movement");
+                boolean showAttackMovement = (value==null)?false:Boolean.parseBoolean(value);
                 int xStart = ((int) attackLine.getX1() - pXStart) * width + width / 2;
                 int yStart = ((int) attackLine.getY1() - pYStart) * height + height / 2;
                 int xEnd = (int) (attackLine.getX2() - pXStart) * width + width / 2;
                 int yEnd = (int) (attackLine.getY2() - pYStart) * height + height / 2;
                 ImageIcon unitIcon = null;
-                if (attack.getUnit().getName().equals("Speerträger")) {
-                    unitIcon = GlobalOptions.getUnitIcon(GlobalOptions.ICON_SPEAR);
-                } else if (attack.getUnit().getName().equals("Schwertkämpfer")) {
-                    unitIcon = GlobalOptions.getUnitIcon(GlobalOptions.ICON_SWORD);
-                } else if (attack.getUnit().getName().equals("Axtkämpfer")) {
-                    unitIcon = GlobalOptions.getUnitIcon(GlobalOptions.ICON_AXE);
-                } else if (attack.getUnit().getName().equals("Bogenschütze")) {
-                    unitIcon = GlobalOptions.getUnitIcon(GlobalOptions.ICON_ARCHER);
-                } else if (attack.getUnit().getName().equals("Späher")) {
-                    unitIcon = GlobalOptions.getUnitIcon(GlobalOptions.ICON_SPY);
-                } else if (attack.getUnit().getName().equals("Leichte Kavallerie")) {
-                    unitIcon = GlobalOptions.getUnitIcon(GlobalOptions.ICON_LKAV);
-                } else if (attack.getUnit().getName().equals("Berittener Bogenschütze")) {
-                    unitIcon = GlobalOptions.getUnitIcon(GlobalOptions.ICON_MARCHER);
-                } else if (attack.getUnit().getName().equals("Schwere Kavallerie")) {
-                    unitIcon = GlobalOptions.getUnitIcon(GlobalOptions.ICON_HEAVY);
-                } else if (attack.getUnit().getName().equals("Ramme")) {
-                    unitIcon = GlobalOptions.getUnitIcon(GlobalOptions.ICON_RAM);
-                } else if (attack.getUnit().getName().equals("Katapult")) {
-                    unitIcon = GlobalOptions.getUnitIcon(GlobalOptions.ICON_CATA);
-                } else if (attack.getUnit().getName().equals("Adelsgeschlecht")) {
-                    unitIcon = GlobalOptions.getUnitIcon(GlobalOptions.ICON_SNOB);
-                } else if (attack.getUnit().getName().equals("Paladin")) {
-                    unitIcon = GlobalOptions.getUnitIcon(GlobalOptions.ICON_KNIGHT);
-                }
-
-                long dur = (long) (DSCalculator.calculateMoveTimeInSeconds(attack.getSource(), attack.getTarget(),attack.getUnit().getSpeed()) * 1000);                  
-                long arrive = attack.getArriveTime().getTime();
-                long start = arrive - dur;
-                long current = System.currentTimeMillis();
                 int unitXPos = 0;
                 int unitYPos = 0;
-                if((start < current) && (arrive > current)){
-                    //attack running
-                    long runTime = System.currentTimeMillis() - start;
-                    double perc = 100*runTime/dur;
-                    perc /= 100;
-                    double xTar = xStart + (xEnd - xStart)* perc;
-                    double yTar = yStart  + (yEnd - yStart) * perc;
-                    unitXPos = (int)xTar - unitIcon.getIconWidth()/2;
-                    unitYPos = (int)yTar-unitIcon.getIconHeight()/2;
-                }else if ((start > System.currentTimeMillis()) && (arrive > current)) {
-                    //attack not running, draw unit in source village
-                    unitXPos = (int)xStart - unitIcon.getIconWidth()/2;
-                    unitYPos = (int)yStart-unitIcon.getIconHeight()/2;
-                } else {
-                    //attack arrived
-                     unitXPos = (int)xEnd - unitIcon.getIconWidth()/2;
-                    unitYPos = (int)yEnd-unitIcon.getIconHeight()/2;
+                if (showAttackMovement) {
+
+                    if (attack.getUnit().getName().equals("Speerträger")) {
+                        unitIcon = GlobalOptions.getUnitIcon(GlobalOptions.ICON_SPEAR);
+                    } else if (attack.getUnit().getName().equals("Schwertkämpfer")) {
+                        unitIcon = GlobalOptions.getUnitIcon(GlobalOptions.ICON_SWORD);
+                    } else if (attack.getUnit().getName().equals("Axtkämpfer")) {
+                        unitIcon = GlobalOptions.getUnitIcon(GlobalOptions.ICON_AXE);
+                    } else if (attack.getUnit().getName().equals("Bogenschütze")) {
+                        unitIcon = GlobalOptions.getUnitIcon(GlobalOptions.ICON_ARCHER);
+                    } else if (attack.getUnit().getName().equals("Späher")) {
+                        unitIcon = GlobalOptions.getUnitIcon(GlobalOptions.ICON_SPY);
+                    } else if (attack.getUnit().getName().equals("Leichte Kavallerie")) {
+                        unitIcon = GlobalOptions.getUnitIcon(GlobalOptions.ICON_LKAV);
+                    } else if (attack.getUnit().getName().equals("Berittener Bogenschütze")) {
+                        unitIcon = GlobalOptions.getUnitIcon(GlobalOptions.ICON_MARCHER);
+                    } else if (attack.getUnit().getName().equals("Schwere Kavallerie")) {
+                        unitIcon = GlobalOptions.getUnitIcon(GlobalOptions.ICON_HEAVY);
+                    } else if (attack.getUnit().getName().equals("Ramme")) {
+                        unitIcon = GlobalOptions.getUnitIcon(GlobalOptions.ICON_RAM);
+                    } else if (attack.getUnit().getName().equals("Katapult")) {
+                        unitIcon = GlobalOptions.getUnitIcon(GlobalOptions.ICON_CATA);
+                    } else if (attack.getUnit().getName().equals("Adelsgeschlecht")) {
+                        unitIcon = GlobalOptions.getUnitIcon(GlobalOptions.ICON_SNOB);
+                    } else if (attack.getUnit().getName().equals("Paladin")) {
+                        unitIcon = GlobalOptions.getUnitIcon(GlobalOptions.ICON_KNIGHT);
+                    }
+
+                    long dur = (long) (DSCalculator.calculateMoveTimeInSeconds(attack.getSource(), attack.getTarget(), attack.getUnit().getSpeed()) * 1000);
+                    long arrive = attack.getArriveTime().getTime();
+                    long start = arrive - dur;
+                    long current = System.currentTimeMillis();
+                   
+                    if ((start < current) && (arrive > current)) {
+                        //attack running
+                        long runTime = System.currentTimeMillis() - start;
+                        double perc = 100 * runTime / dur;
+                        perc /= 100;
+                        double xTar = xStart + (xEnd - xStart) * perc;
+                        double yTar = yStart + (yEnd - yStart) * perc;
+                        unitXPos = (int) xTar - unitIcon.getIconWidth() / 2;
+                        unitYPos = (int) yTar - unitIcon.getIconHeight() / 2;
+                    } else if ((start > System.currentTimeMillis()) && (arrive > current)) {
+                        //attack not running, draw unit in source village
+                        unitXPos = (int) xStart - unitIcon.getIconWidth() / 2;
+                        unitYPos = (int) yStart - unitIcon.getIconHeight() / 2;
+                    } else {
+                        //attack arrived
+                        unitXPos = (int) xEnd - unitIcon.getIconWidth() / 2;
+                        unitYPos = (int) yEnd - unitIcon.getIconHeight() / 2;
+                    }
                 }
                 g2d.setColor(Color.RED);
                 g2d.drawLine(xStart, yStart, xEnd, yEnd);
@@ -890,7 +901,7 @@ class RepaintThread extends Thread {
                 if (bounds.contains(attackLine.getP2())) {
                     g2d.fillOval((int) xEnd - 3, (int) yEnd - 3, 6, 6);
                 }
-                
+
                 if (unitIcon != null) {
                     g2d.drawImage(unitIcon.getImage(), unitXPos, unitYPos, null);
                 }

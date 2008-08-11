@@ -99,4 +99,16 @@ public class Attack implements Serializable {
         xml += "</attack>";
         return xml;
     }
+    
+    /*
+     <attack>
+        <source>VillageID</source>
+        <target>VillageID</target>
+        <arrive>Timestamp</arrive>
+        <unit>Name</unit>
+        <extensions>
+           <showOnMap>true</showOnMap>
+        </extensions>
+     </attack>
+     */
 }

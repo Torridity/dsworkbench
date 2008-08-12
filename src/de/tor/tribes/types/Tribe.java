@@ -25,11 +25,11 @@ public class Tribe implements Serializable {
     private int id = 0;
     private String name = null;
     private int allyID = 0;
-    private Ally ally = null;
+    private transient Ally ally = null;
     private short villages = 0;
     private int points = 0;
     private int rank = 0;
-    private List<Village> villageList = null;
+    private transient List<Village> villageList = null;
     private int killsAtt = 0;
     private int rankAtt = 0;
     private int killsDef = 0;
@@ -118,10 +118,16 @@ public class Tribe implements Serializable {
     }
 
     public void addVillage(Village v) {
+        if(villageList == null){
+            villageList = new LinkedList<Village>();
+        }
         villageList.add(v);
     }
 
     public List<Village> getVillageList() {
+        if(villageList == null){
+            villageList = new LinkedList<Village>();
+        }
         return villageList;
     }
 
@@ -194,9 +200,9 @@ public class Tribe implements Serializable {
             }
 
             if (rankChange) {
-                diff += getRank();
+                diff += getRank() + "\n";
             } else {
-                diff += " ";
+                diff += " \n";
             }
         }
 

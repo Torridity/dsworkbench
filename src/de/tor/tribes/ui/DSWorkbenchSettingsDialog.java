@@ -9,7 +9,6 @@ import de.tor.tribes.db.DatabaseAdapter;
 import de.tor.tribes.io.DataHolderListener;
 import de.tor.tribes.io.ServerList;
 import de.tor.tribes.util.GlobalOptions;
-import java.awt.Color;
 import java.awt.Point;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -1018,16 +1017,10 @@ private void fireDownloadDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
         JOptionPane.showMessageDialog(this, "Die Accountvalidierung ist fehlgeschlagen.\nBitte überprüfe deine Account- und Netzwerkeinstellungen und versuches es erneut.", "Fehler", JOptionPane.ERROR_MESSAGE);
         return;
     } else {
-        if (!DatabaseAdapter.isUpdatePossible(name, selectedServer)) {
-            long delta = DatabaseAdapter.getTimeSinceLastUpdate(name, selectedServer);
-            long minDelta = DatabaseAdapter.getMinUpdateInterval();
-            if ((delta > 0) && (minDelta > 0)) {
-                long next = minDelta - delta;
-                String nextUpdate = new SimpleDateFormat("hh 'h' mm 'min' ss 's'").format(new Date(next));
-                JOptionPane.showMessageDialog(this, "Ein Datenabgleich ist momentan nur einmal täglich erlaubt.\nNächstmögliches Update in: " + nextUpdate, "Fehler", JOptionPane.ERROR_MESSAGE);
-            } else {
-                JOptionPane.showMessageDialog(this, "Ein Datenabgleich ist momentan nur einmal täglich erlaubt.\nÜberprüfung auf nächstmögliches Update fehlgeschlagen.\nBitte korrigiere deine Account Einstellungen.", "Fehler", JOptionPane.ERROR_MESSAGE);
-            }
+        int serverDataVersion = DatabaseAdapter.getDataVersion(selectedServer);
+        int userDataVersion = DatabaseAdapter.getUserDataVersion(name, selectedServer);
+        if (userDataVersion == serverDataVersion) {
+            JOptionPane.showMessageDialog(this, "Du besitzt bereits die aktuellsten Daten.", "Information", JOptionPane.ERROR_MESSAGE);
             return;
         }
     }
@@ -1131,9 +1124,11 @@ private void fireChangeShowAttackMovementEvent(java.awt.event.ActionEvent evt) {
     public static void main(String args[]) {
         DOMConfigurator.configure("log4j.xml");
 
-        java.awt.EventQueue.invokeLater(new Runnable() {
+        java.awt.EventQueue.invokeLater(new  
 
-            public void run() {
+              Runnable() {
+
+                 public void run() {
                 new DSWorkbenchSettingsDialog().setVisible(true);
 
             }
@@ -1190,6 +1185,7 @@ private void fireChangeShowAttackMovementEvent(java.awt.event.ActionEvent evt) {
     private javax.swing.JComboBox jTribeNames;
     private javax.swing.JComboBox jUpdateIntervalBox;
     // End of variables declaration//GEN-END:variables
+
     @Override
     public void fireDataHolderEvent(String pMessage) {
         SimpleDateFormat f = new SimpleDateFormat("HH:mm:ss");

@@ -100,7 +100,7 @@ public class AutoUpdateThread extends Thread {
             }
         }
         //account check ok, check update
-        long delta = DatabaseAdapter.getTimeSinceLastUpdate(name, GlobalOptions.getSelectedServer());
+       /* long delta = DatabaseAdapter.getTimeSinceLastUpdate(name, GlobalOptions.getSelectedServer());
 
         if (delta == 0) {
             //check failed, do not allow update
@@ -111,6 +111,7 @@ public class AutoUpdateThread extends Thread {
         } else {
             //update possible
             return true;
-        }
+        }*/
+        return false;
     }
 }

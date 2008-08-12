@@ -4,6 +4,8 @@
  */
 package de.tor.tribes.io.server;
 
+import de.tor.tribes.db.DatabaseAdapter;
+import de.tor.tribes.db.DatabaseServerEntry;
 import de.tor.tribes.types.Ally;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
@@ -15,17 +17,15 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
-import java.net.URLDecoder;
 import java.util.Calendar;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
-import java.util.StringTokenizer;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 import org.apache.log4j.Logger;
+import org.apache.log4j.xml.DOMConfigurator;
 
 /**
  *
@@ -42,31 +42,41 @@ public class DataBuilderDaemon {
     public void downloadData() throws Exception {
         logger.info("Starting update");
         //load settings for daemon
-        DAEMON_SETTINGS.load(new FileInputStream("daemon.settings"));
+        /*DAEMON_SETTINGS.load(new FileInputStream("daemon.settings"));
         String baseDir = DAEMON_SETTINGS.getProperty(BASE_DIR_PROPERTY);
         String serverList = DAEMON_SETTINGS.getProperty(SERVER_LIST_PROPERTY);
         if (baseDir == null) {
-            //no server base dir found
-            throw new Exception("'base.dir' property not found.");
+        //no server base dir found
+        throw new Exception("'base.dir' property not found.");
         }
-
+        
         if (serverList == null) {
-            //service list file not found
-            throw new Exception("'server.list.path' property not found.");
+        //service list file not found
+        throw new Exception("'server.list.path' property not found.");
+        }
+        
+        //load server list
+        SERVER_LIST.load(new FileInputStream(serverList));*/
+        logger.info("Setting database adapter to local mode");
+        DatabaseAdapter.setToLocalMode();
+        
+        String baseDir = DatabaseAdapter.getPropertyValue("update_base_dir");
+        if (baseDir == null) {
+            //no server base dir found
+            throw new Exception("Could not obtain 'update_base_dir' property from database.");
         }
 
-        //load server list
-        SERVER_LIST.load(new FileInputStream(serverList));
-        Enumeration servers = SERVER_LIST.keys();
+        List<DatabaseServerEntry> servers = DatabaseAdapter.getServerList();
+
         //update all servers in server list
-        while (servers.hasMoreElements()) {
-            String sId = (String) servers.nextElement();
-            String sUrl = (String) SERVER_LIST.getProperty(sId);
+        for (DatabaseServerEntry server : servers) {
+            String sId = server.getServerID();
+            String url = server.getServerURL();
+            int version = server.getDataVersion();
             logger.info("Updating server '" + sId + "'");
-            String serverDir = baseDir + "/" + sId;
+            String serverDir = baseDir + "/servers/" + sId;
             boolean newServer = false;
             //check if dir for current server exists
-            int updateId = 0;
             if (!new File(serverDir).exists()) {
                 newServer = true;
                 logger.info("Creating server dir for server '" + sId + "'");
@@ -75,17 +85,12 @@ public class DataBuilderDaemon {
                 } else {
                     logger.info("Server dir created successfully");
                 }
-            } else {
-                //load updateId from file
-                Properties p = new Properties();
-                p.load(new FileInputStream(serverDir + "/update.id"));
-                updateId = Integer.parseInt(p.getProperty("update.id", "0"));
             }
 
             //increment updateId
-            updateId++;
+            version++;
 
-            downloadServerData(sUrl, serverDir);
+            //downloadServerData(url, serverDir);
 
             //Resulting FileList: 
             //village_tmp.txt.gz
@@ -93,47 +98,47 @@ public class DataBuilderDaemon {
             //tribe_tmp.txt.gz
             //kill_off.txt.gz
             //kill_def.txt.gz
-
-            if ((!new File(serverDir + "/village_full.txt.gz").exists()) ||
-                    (!new File(serverDir + "/tribe_full.txt.gz").exists()) ||
-                    (!new File(serverDir + "/ally_full.txt.gz").exists()) ||
-                    (!new File(serverDir + "/kill_off_full.txt.gz").exists()) ||
-                    (!new File(serverDir + "/kill_def_full.txt.gz").exists())) {
+            if ((!new File(serverDir + "/village.txt.gz").exists()) ||
+                    (!new File(serverDir + "/tribe.txt.gz").exists()) ||
+                    (!new File(serverDir + "/ally.txt.gz").exists()) ||
+                    (!new File(serverDir + "/kill_att.txt.gz").exists()) ||
+                    (!new File(serverDir + "/kill_def.txt.gz").exists())) {
                 //one of the full data files does not exist
                 newServer = true;
             }
 
-            Calendar c = Calendar.getInstance();
-            int dom = c.get(Calendar.DAY_OF_MONTH);
-
+          
             if (!newServer) {
-                buildDailyData(serverDir, dom);
+                buildDailyData(serverDir, version);
                 //rename current data
+                new File(serverDir + "/village_tmp.txt.gz").renameTo(new File(serverDir + "/village.txt.gz"));
+                new File(serverDir + "/ally_tmp.txt.gz").renameTo(new File(serverDir + "/ally.txt.gz"));
+                new File(serverDir + "/tribe_tmp.txt.gz").renameTo(new File(serverDir + "/tribe.txt.gz"));
+            } else {
+                //if we have a new server only rename the data files
                 new File(serverDir + "/village_tmp.txt.gz").renameTo(new File(serverDir + "/village.txt.gz"));
                 new File(serverDir + "/ally_tmp.txt.gz").renameTo(new File(serverDir + "/ally.txt.gz"));
                 new File(serverDir + "/tribe_tmp.txt.gz").renameTo(new File(serverDir + "/tribe.txt.gz"));
             }
 
             //delete last diff which is older than 10 days
-            int idToDelete = updateId - 10;
+            int idToDelete = version - 10;
             if (idToDelete > 0) {
-                logger.info("Deleting diff older than 10 days");
+                logger.info("Deleting diffs older than 10 days");
                 new File(serverDir + "/village" + idToDelete + ".txt.gz").delete();
                 new File(serverDir + "/tribe" + idToDelete + ".txt.gz").delete();
                 new File(serverDir + "/ally" + idToDelete + ".txt.gz").delete();
             }
 
-            //store current updateId on successfull diff
-            Properties p = new Properties();
-            p.put("update.id", updateId);
-            p.store(new FileOutputStream(serverDir + "/update.id"), null);
+            if (!DatabaseAdapter.setDataVersion(sId, version)) {
+                logger.warn("Failed to update data for server with ID '" + sId + "'");
+            }
         }
 
         logger.info("Update finished");
     }
 
     protected void buildDailyData(String pServerDir, int pDayOfMonth) throws Exception {
-
         // <editor-fold defaultstate="collapsed" desc="Diff'ing villages">
         logger.info("Reading old village data");
         String currentFile = pServerDir + "/village.txt.gz";
@@ -147,10 +152,11 @@ public class DataBuilderDaemon {
             }
         }
         logger.info("Reading new village data and creating diff");
-        currentFile = pServerDir + "/village_tmp.txt.gz";
+        currentFile = "village_tmp.txt.gz";
 
         reader = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(currentFile))));
         line = "";
+
         GZIPOutputStream diffS = new GZIPOutputStream(new FileOutputStream(pServerDir + "/village" + pDayOfMonth + ".txt.gz"));
         //create diff for all new villages
         while ((line = reader.readLine()) != null) {
@@ -180,7 +186,7 @@ public class DataBuilderDaemon {
         }
 
         logger.info("Reading new tribe data and creating diff");
-        currentFile = pServerDir + "/tribe_tmp.txt.gz";
+        currentFile = "tribe_tmp.txt.gz";
 
         reader = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(currentFile))));
         line = "";
@@ -222,7 +228,7 @@ public class DataBuilderDaemon {
         }
         logger.info("Reading new ally data and creating diff");
 
-        currentFile = pServerDir + "/ally_tmp.txt.gz";
+        currentFile = "ally_tmp.txt.gz";
 
         reader = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(currentFile))));
         line = "";
@@ -303,7 +309,8 @@ public class DataBuilderDaemon {
     }
 
     public static void main(String[] args) throws Exception {
+        DOMConfigurator.configure("log4j.xml");
         DataBuilderDaemon d = new DataBuilderDaemon();
-        d.buildDailyData("c:/", 1);
+        d.downloadData();
     }
 }

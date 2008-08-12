@@ -225,7 +225,7 @@ public class Village implements Serializable {
                 diff += " ,";
             }
             //add type placeholder
-            diff += " ";
+            diff += " \n";
         }
 
         return diff;

@@ -4,9 +4,12 @@
  */
 package de.tor.tribes.io;
 
+import de.tor.tribes.db.DatabaseAdapter;
+import de.tor.tribes.db.DatabaseServerEntry;
 import java.net.URL;
-import java.net.URLConnection;
-import java.util.Properties;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  *
@@ -15,34 +18,35 @@ import java.util.Properties;
 public class ServerList {
 
     // private static Hashtable<String, URL> SERVER_LIST = null;
-    private static Properties SERVERS = null;
+    private static List<DatabaseServerEntry> SERVERS = null;
     
 
     static {
         // SERVER_LIST = new Hashtable<String, URL>();
-        SERVERS = new Properties();
+        SERVERS = new LinkedList<DatabaseServerEntry>();
     }
 
     public static void loadServerList() throws Exception {
-        try {
-            //URL serverURL = new URL("http://www.die-staemme.de/backend/get_servers.php");
-            URLConnection con = new URL("http://www.torridity.de/servers/server.list").openConnection();
-            SERVERS.load(con.getInputStream());
-        } catch (Exception e) {
-            throw new Exception("Serverliste konnte nicht heruntergeladen werden.\nBitte Netzwerkeinstellungen überprüfen.", e);
-        }
+        SERVERS = DatabaseAdapter.getServerList();
     }
 
     public static String[] getServerIDs() {
-        return (String[]) SERVERS.keySet().toArray(new String[0]);
+        List<String> ids = new LinkedList<String>();
+        for (DatabaseServerEntry entry : SERVERS) {
+            ids.add(entry.getServerID());
+        }
+        String[] s = ids.toArray(new String[0]);
+        Arrays.sort(s);
+        return s;
     }
 
-    public static URL getServerURL(String pServerID) {
-        try {
-            return new URL((String) SERVERS.get(pServerID));
-        } catch (Exception e) {
-            return null;
+    public static String getServerURL(String pServerID) {
+        for (DatabaseServerEntry entry : SERVERS) {
+            if (entry.getServerID().equals(pServerID)) {
+                return entry.getServerURL();
+            }
         }
+        return null;
     }
 
     public static void main(String[] args) throws Exception {

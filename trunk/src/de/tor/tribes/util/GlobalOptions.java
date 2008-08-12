@@ -267,6 +267,7 @@ public class GlobalOptions {
         }
     }
 
+    /**Load user data (attacks, markers...)*/
     public static void loadUserData() {
         if (getSelectedServer() != null) {
             logger.debug("Loading markers");
@@ -427,6 +428,7 @@ public class GlobalOptions {
         }
     }
 
+    /**Load the world decoration file*/
     public static void loadDecoration() throws Exception {
         mDecorationHolder = new WorldDecorationHolder();
         mDecorationHolder.loadWorld();

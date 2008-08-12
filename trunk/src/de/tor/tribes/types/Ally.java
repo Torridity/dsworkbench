@@ -30,7 +30,7 @@ public class Ally implements Serializable, Comparable {
     private int points = 0;
     private int all_points = 0;
     private int rank = 0;
-    private List<Tribe> tribes = null;
+    private transient List<Tribe> tribes = null;
 
     public static Ally parseFromPlainData(String pLine) {
         //$id, $name, $tag, $members, $villages, $points, $all_points, $rank
@@ -57,7 +57,7 @@ public class Ally implements Serializable, Comparable {
     }
 
     public Ally() {
-        tribes = new LinkedList();
+        tribes = new LinkedList<Tribe>();
     }
 
     public int getId() {
@@ -125,12 +125,18 @@ public class Ally implements Serializable, Comparable {
     }
 
     public void addTribe(Tribe t) {
+        if (tribes == null) {
+            tribes = new LinkedList<Tribe>();
+        }
         if (!tribes.contains(t)) {
             tribes.add(t);
         }
     }
 
     public List<Tribe> getTribes() {
+        if (tribes == null) {
+            tribes = new LinkedList<Tribe>();
+        }
         return tribes;
     }
 
@@ -210,19 +216,19 @@ public class Ally implements Serializable, Comparable {
         } else {
             diff += " ,";
         }
-        
+
         if (membersChange) {
             diff += getMembers() + ",";
         } else {
             diff += " ,";
         }
-        
+
         if (villagesChange) {
             diff += getVillages() + ",";
         } else {
             diff += " ,";
         }
-        
+
         if (pointsChange) {
             diff += getPoints() + ",";
         } else {
@@ -234,9 +240,9 @@ public class Ally implements Serializable, Comparable {
             diff += " ,";
         }
         if (rankChange) {
-            diff += getRank();
+            diff += getRank() + "\n";
         } else {
-            diff += " ";
+            diff += " \n";
         }
 
         return diff;

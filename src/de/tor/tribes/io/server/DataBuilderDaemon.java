@@ -90,7 +90,7 @@ public class DataBuilderDaemon {
             //increment updateId
             version++;
 
-            //downloadServerData(url, serverDir);
+            downloadServerData(url, serverDir);
 
             //Resulting FileList: 
             //village_tmp.txt.gz
@@ -111,14 +111,14 @@ public class DataBuilderDaemon {
             if (!newServer) {
                 buildDailyData(serverDir, version);
                 //rename current data
-                new File(serverDir + "/village_tmp.txt.gz").renameTo(new File(serverDir + "/village.txt.gz"));
-                new File(serverDir + "/ally_tmp.txt.gz").renameTo(new File(serverDir + "/ally.txt.gz"));
-                new File(serverDir + "/tribe_tmp.txt.gz").renameTo(new File(serverDir + "/tribe.txt.gz"));
+                /*new File("village_tmp.txt.gz").renameTo(new File(serverDir + "/village.txt.gz"));
+                new File("ally_tmp.txt.gz").renameTo(new File(serverDir + "/ally.txt.gz"));
+                new File("tribe_tmp.txt.gz").renameTo(new File(serverDir + "/tribe.txt.gz"));*/
             } else {
                 //if we have a new server only rename the data files
-                new File(serverDir + "/village_tmp.txt.gz").renameTo(new File(serverDir + "/village.txt.gz"));
-                new File(serverDir + "/ally_tmp.txt.gz").renameTo(new File(serverDir + "/ally.txt.gz"));
-                new File(serverDir + "/tribe_tmp.txt.gz").renameTo(new File(serverDir + "/tribe.txt.gz"));
+                new File("village_tmp.txt.gz").renameTo(new File(serverDir + "/village.txt.gz"));
+                new File("ally_tmp.txt.gz").renameTo(new File(serverDir + "/ally.txt.gz"));
+                new File("tribe_tmp.txt.gz").renameTo(new File(serverDir + "/tribe.txt.gz"));
             }
 
             //delete last diff which is older than 10 days

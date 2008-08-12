@@ -10,6 +10,7 @@ package de.tor.tribes.types;
 
 import java.io.Serializable;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.text.NumberFormat;
 import java.util.LinkedList;
 import java.util.List;
@@ -32,6 +33,7 @@ public class Ally implements Serializable, Comparable {
     private int rank = 0;
     private transient List<Tribe> tribes = null;
 
+    //$id, $name, $tag, $members, $villages, $points, $all_points, $rank
     public static Ally parseFromPlainData(String pLine) {
         //$id, $name, $tag, $members, $villages, $points, $all_points, $rank
         StringTokenizer tokenizer = new StringTokenizer(pLine, ",");
@@ -54,6 +56,47 @@ public class Ally implements Serializable, Comparable {
             //ally entry invalid
         }
         return null;
+    }
+
+    public void updateFromDiff(String pDiff) {
+        StringTokenizer t = new StringTokenizer(pDiff, ",");
+        //skip id
+        t.nextToken();
+
+        try {
+            setName(URLDecoder.decode(t.nextToken(), "UTF-8"));
+        } catch (Exception e) {
+        }
+
+        try {
+            setTag(URLDecoder.decode(t.nextToken(), "UTF-8"));
+        } catch (Exception e) {
+        }
+
+        try {
+            setMembers(Short.parseShort(t.nextToken().trim()));
+        } catch (Exception e) {
+        }
+
+        try {
+            setVillages(Integer.parseInt(t.nextToken().trim()));
+        } catch (Exception e) {
+        }
+
+        try {
+            setPoints(Integer.parseInt(t.nextToken().trim()));
+        } catch (Exception e) {
+        }
+
+        try {
+            setAll_points(Integer.parseInt(t.nextToken().trim()));
+        } catch (Exception e) {
+        }
+
+        try {
+            setRank(Integer.parseInt(t.nextToken().trim()));
+        } catch (Exception e) {
+        }
     }
 
     public Ally() {
@@ -206,13 +249,19 @@ public class Ally implements Serializable, Comparable {
         }
 
         if (nameChange) {
-            diff += getName() + ",";
+            try {
+                diff += URLEncoder.encode(getName(), "UTF-8") + ",";
+            } catch (Exception e) {
+            }
         } else {
             diff += " ,";
         }
 
         if (tagChange) {
-            diff += getTag() + ",";
+            try {
+                diff += URLEncoder.encode(getTag(), "UTF-8") + ",";
+            } catch (Exception e) {
+            }
         } else {
             diff += " ,";
         }

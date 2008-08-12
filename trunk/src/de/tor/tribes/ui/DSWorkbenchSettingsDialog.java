@@ -828,6 +828,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
         jCancelButton.setEnabled(false);
         jTribeNames.setModel(new DefaultComboBoxModel());
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        GlobalOptions.getDataHolder().initialize();
         Thread t = new Thread(new Runnable() {
 
             @Override

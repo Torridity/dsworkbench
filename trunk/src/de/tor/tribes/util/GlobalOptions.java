@@ -244,7 +244,6 @@ public class GlobalOptions {
                 throw new Exception("Daten konnten nicht geladen werden");
             }
         } else {
-            mDataHolder.initialize();
             if (!mDataHolder.loadData(pDownload)) {
                 if (!mDataHolder.serverSupported()) {
                     mDataHolder.fireDataLoadedEvents();

@@ -11,6 +11,7 @@ package de.tor.tribes.types;
 import de.tor.tribes.util.GlobalOptions;
 import java.io.Serializable;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -30,6 +31,7 @@ public class Village implements Serializable {
     private int points;
     private byte type;
 
+    //$id, $name, $x, $y, $tribe, $points, $type
     public static Village parseFromPlainData(String pLine) {
         StringTokenizer tokenizer = new StringTokenizer(pLine, ",");
 
@@ -54,6 +56,31 @@ public class Village implements Serializable {
             //village invalid
         }
         return null;
+    }
+
+    public void updateFromDiff(String pDiff) {
+        StringTokenizer t = new StringTokenizer(pDiff, ",");
+        //skip id
+        t.nextToken();
+        try {
+            String name = URLDecoder.decode(t.nextToken().trim(), "UTF-8");
+            //replace HTML characters
+            name = name.replaceAll("&gt;", ">").replaceAll("&lt;", "<");
+            setName(name);
+        } catch (Exception e) {
+        }
+        //skip x 
+        t.nextToken();
+        //skip y
+        t.nextToken();
+        try {
+            setTribeID(Integer.parseInt(t.nextToken().trim()));
+        } catch (Exception e) {
+        }
+        try {
+            setPoints(Integer.parseInt(t.nextToken().trim()));
+        } catch (Exception e) {
+        }
     }
 
     public int getId() {
@@ -206,7 +233,10 @@ public class Village implements Serializable {
         if (nameChange || tribeChange || pointsChange) {
             diff = Integer.toString(getId()) + ",";
             if (nameChange) {
-                diff += getName() + ",";
+                try {
+                    diff += URLEncoder.encode(getName(), "UTF-8") + ",";
+                } catch (Exception e) {
+                }
             } else {
                 diff += " ,";
             }

@@ -38,7 +38,7 @@ public class Tribe implements Serializable {
     public Tribe() {
         villageList = new LinkedList();
     }
-
+    //$id, $name, $ally, $villages, $points, $rank
     public static Tribe parseFromPlainData(String pLine) {
         //$id, $name, $ally, $villages, $points, $rank
         StringTokenizer tokenizer = new StringTokenizer(pLine, ",");
@@ -59,6 +59,34 @@ public class Tribe implements Serializable {
             //tribe entry invalid
         }
         return null;
+    }
+
+    public void updateFromDiff(String pDiff) {
+        StringTokenizer t = new StringTokenizer(pDiff, ",");
+        //skip id
+        t.nextToken();
+        //skip name
+        t.nextToken();
+
+        try {
+            setAllyID(Integer.parseInt(t.nextToken().trim()));
+        } catch (Exception e) {
+        }
+
+        try {
+            setVillages(Short.parseShort(t.nextToken().trim()));
+        } catch (Exception e) {
+        }
+
+        try {
+            setPoints(Integer.parseInt(t.nextToken().trim()));
+        } catch (Exception e) {
+        }
+
+        try {
+            setRank(Integer.parseInt(t.nextToken().trim()));
+        } catch (Exception e) {
+        }
     }
 
     public int getId() {
@@ -118,14 +146,14 @@ public class Tribe implements Serializable {
     }
 
     public void addVillage(Village v) {
-        if(villageList == null){
+        if (villageList == null) {
             villageList = new LinkedList<Village>();
         }
         villageList.add(v);
     }
 
     public List<Village> getVillageList() {
-        if(villageList == null){
+        if (villageList == null) {
             villageList = new LinkedList<Village>();
         }
         return villageList;

@@ -8,6 +8,8 @@
  */
 package de.tor.tribes.types;
 
+import java.io.FileInputStream;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -35,7 +37,6 @@ public class Ally implements Serializable, Comparable {
 
     //$id, $name, $tag, $members, $villages, $points, $all_points, $rank
     public static Ally parseFromPlainData(String pLine) {
-        //$id, $name, $tag, $members, $villages, $points, $all_points, $rank
         StringTokenizer tokenizer = new StringTokenizer(pLine, ",");
         Ally entry = new Ally();
         if (tokenizer.countTokens() < 8) {
@@ -58,18 +59,53 @@ public class Ally implements Serializable, Comparable {
         return null;
     }
 
+    public String toPlainData() {
+        StringBuffer b = new StringBuffer();
+        b.append(getId());
+        b.append(",");
+        try {
+            b.append(URLEncoder.encode(getName(), "UTF-8"));
+        } catch (Exception e) {
+            b.append(getName());
+        }
+        b.append(",");
+        try {
+            b.append(URLEncoder.encode(getTag(), "UTF-8"));
+        } catch (Exception e) {
+            b.append(getTag());
+        }
+        b.append(",");
+        b.append(getMembers());
+        b.append(",");
+        b.append(getVillages());
+        b.append(",");
+        b.append(getPoints());
+        b.append(",");
+        b.append(getAll_points());
+        b.append(",");
+        b.append(getRank());
+        return b.toString();
+    }
     public void updateFromDiff(String pDiff) {
         StringTokenizer t = new StringTokenizer(pDiff, ",");
+        //2340, , , ,8190,80474060,80474060, 
+
         //skip id
         t.nextToken();
 
         try {
-            setName(URLDecoder.decode(t.nextToken(), "UTF-8"));
+            String n = t.nextToken().trim();
+            if (n.length() > 0) {
+                setName(URLDecoder.decode(n, "UTF-8"));
+            }
         } catch (Exception e) {
         }
 
         try {
-            setTag(URLDecoder.decode(t.nextToken(), "UTF-8"));
+            String n = t.nextToken().trim();
+            if (n.length() > 0) {
+                setTag(URLDecoder.decode(n, "UTF-8"));
+            }
         } catch (Exception e) {
         }
 
@@ -197,7 +233,7 @@ public class Ally implements Serializable, Comparable {
     }
 
     public String toBBCode() {
-        return "[ally]" + getName() + "[/ally]";
+        return "[ally]" + getTag() + "[/ally]";
     }
 
     public String createDiff(Ally old) {
@@ -300,5 +336,21 @@ public class Ally implements Serializable, Comparable {
     @Override
     public int compareTo(Object o) {
         return toString().compareTo(o.toString());
+    }
+
+    public static void main(String[] args) {
+        try {
+            ObjectInputStream oin = new ObjectInputStream(new FileInputStream("D:/GRID/src/DSWorkbench/servers/de14/Kopie von ally.bin"));
+            while (true) {
+                Ally a = (Ally) oin.readObject();
+                // System.out.println(a.toBBCode());
+                if (a.getTag().equals("HdL")) {
+                    System.out.println(a.getId());
+                }
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -121,6 +121,8 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
      */
     public static void main(String args[]) {
         DOMConfigurator.configure("log4j.xml");
+        System.setProperty("user.language", "en");
+        System.setProperty("user.country", "US");
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
@@ -128,14 +130,9 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
 
 
 
-        java.awt.EventQueue.invokeLater(new  
+        java.awt.EventQueue.invokeLater(new Runnable() {
 
-              Runnable() {
-
-
-
-                    
-                public void run() {
+            public void run() {
                 DSWorkbenchSplashScreen splash = new DSWorkbenchSplashScreen();
                 splash.setLocationRelativeTo(null);
                 splash.setVisible(true);

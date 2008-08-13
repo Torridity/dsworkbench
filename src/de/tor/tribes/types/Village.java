@@ -58,6 +58,28 @@ public class Village implements Serializable {
         return null;
     }
 
+    public String toPlainData() {
+        StringBuffer b = new StringBuffer();
+        b.append(getId());
+        b.append(",");
+        try {
+            b.append(URLEncoder.encode(getName(), "UTF-8"));
+        } catch (Exception e) {
+            b.append(getName());
+        }
+        b.append(",");
+        b.append(getX());
+        b.append(",");
+        b.append(getY());
+        b.append(",");
+        b.append(getTribeID());
+        b.append(",");
+        b.append(getPoints());
+        b.append(",");
+        b.append(getType());
+        return b.toString();
+    }
+
     public void updateFromDiff(String pDiff) {
         StringTokenizer t = new StringTokenizer(pDiff, ",");
         //skip id

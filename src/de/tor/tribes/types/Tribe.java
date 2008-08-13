@@ -10,6 +10,7 @@ package de.tor.tribes.types;
 
 import java.io.Serializable;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.text.NumberFormat;
 import java.util.LinkedList;
 import java.util.List;
@@ -39,6 +40,7 @@ public class Tribe implements Serializable {
         villageList = new LinkedList();
     }
     //$id, $name, $ally, $villages, $points, $rank
+
     public static Tribe parseFromPlainData(String pLine) {
         //$id, $name, $ally, $villages, $points, $rank
         StringTokenizer tokenizer = new StringTokenizer(pLine, ",");
@@ -59,6 +61,26 @@ public class Tribe implements Serializable {
             //tribe entry invalid
         }
         return null;
+    }
+
+    public String toPlainData() {
+        StringBuffer b = new StringBuffer();
+        b.append(getId());
+        b.append(",");
+        try {
+            b.append(URLEncoder.encode(getName(), "UTF-8"));
+        } catch (Exception e) {
+            b.append(getName());
+        }
+        b.append(",");
+        b.append(getAllyID());
+        b.append(",");
+        b.append(getVillages());
+        b.append(",");
+        b.append(getPoints());
+        b.append(",");
+        b.append(getRank());
+        return b.toString();
     }
 
     public void updateFromDiff(String pDiff) {

@@ -15,25 +15,20 @@ import de.tor.tribes.types.Village;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.io.BufferedReader;
-import java.io.EOFException;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.net.URL;
 import java.net.URLConnection;
-import java.net.URLDecoder;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
 import org.apache.log4j.Logger;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -108,15 +103,16 @@ public class DataHolder {
         /* File villages = new File(getDataDirectory() + "/" + "village.txt.gz");
         File tribes = new File(getDataDirectory() + "/" + "tribe.txt.gz");
         File allys = new File(getDataDirectory() + "/" + "ally.txt.gz");*/
-        File villages = new File(getDataDirectory() + "/" + "village.bin");
+        /*File villages = new File(getDataDirectory() + "/" + "village.bin");
         File tribes = new File(getDataDirectory() + "/" + "tribe.bin");
         File allys = new File(getDataDirectory() + "/" + "ally.bin");
-
+         */
+        File data = new File(getDataDirectory() + "/" + "serverdata.bin");
         File units = new File(getDataDirectory() + "/" + "units.xml");
         File buildings = new File(getDataDirectory() + "/" + "buildings.xml");
         File settings = new File(getDataDirectory() + "/" + "settings.xml");
 
-        return (villages.exists() && tribes.exists() && allys.exists() && units.exists() && buildings.exists() && settings.exists());
+        return (data.exists() && units.exists() && buildings.exists() && settings.exists());
     }
 
     /**Check if server is supported or not. Currently only 1000x1000 servers are allowed*/
@@ -229,71 +225,169 @@ public class DataHolder {
     }
 
     private boolean createLocalDataCopy(String pServerDir) {
+
+        // <editor-fold defaultstate="collapsed" desc="DEPRECATED">
+        /*try {
+        ObjectOutputStream oout = new ObjectOutputStream(new FileOutputStream(pServerDir + "/village.bin"));
+        for (int i = 0; i < 1000; i++) {
+        for (int j = 0; j < 1000; j++) {
+        Village v = mVillages[i][j];
+        if (v != null) {
+        oout.writeObject(v);
+        }
+        }
+        }
+        
+        Enumeration<Integer> e = mTribes.keys();
+        oout = new ObjectOutputStream(new FileOutputStream(pServerDir + "/tribe.bin"));
+        while (e.hasMoreElements()) {
+        oout.writeObject(mTribes.get(e.nextElement()));
+        }
+        
+        e = mAllies.keys();
+        oout = new ObjectOutputStream(new FileOutputStream(pServerDir + "/ally.bin"));
+        while (e.hasMoreElements()) {
+        oout.writeObject(mAllies.get(e.nextElement()));
+        }
+        } catch (Exception e) {
+        logger.error("Failed to store local copy", e);
+        return false;
+        }
+        return true;*/
+        //</editor-fold>
         try {
-            ObjectOutputStream oout = new ObjectOutputStream(new FileOutputStream(pServerDir + "/village.bin"));
+            FileWriter w = new FileWriter(pServerDir + "/serverdata.bin");
+            logger.info("Writing villages");
+            w.write("<villages>\n");
             for (int i = 0; i < 1000; i++) {
                 for (int j = 0; j < 1000; j++) {
                     Village v = mVillages[i][j];
                     if (v != null) {
-                        oout.writeObject(v);
+                        w.write(v.toPlainData() + "\n");
                     }
                 }
             }
 
+            logger.info("Writing tribes");
+            w.write("<tribes>\n");
             Enumeration<Integer> e = mTribes.keys();
-            oout = new ObjectOutputStream(new FileOutputStream(pServerDir + "/tribe.bin"));
             while (e.hasMoreElements()) {
-                oout.writeObject(mTribes.get(e.nextElement()));
+                Tribe t = mTribes.get(e.nextElement());
+                w.write(t.toPlainData() + "\n");
             }
 
+            logger.info("Writing allies");
+            w.write("<allies>\n");
             e = mAllies.keys();
-            oout = new ObjectOutputStream(new FileOutputStream(pServerDir + "/ally.bin"));
             while (e.hasMoreElements()) {
-                oout.writeObject(mAllies.get(e.nextElement()));
+                Ally a = mAllies.get(e.nextElement());
+                w.write(a.toPlainData() + "\n");
             }
         } catch (Exception e) {
-            logger.error("Failed to store local copy", e);
+            logger.error("Failed to store local data", e);
             return false;
         }
         return true;
     }
 
     public boolean readLocalDataCopy(String pServerDir) {
+        // <editor-fold defaultstate="collapsed" desc="DEPRECATED">
+       /* try {
+        ObjectInputStream oin = new ObjectInputStream(new FileInputStream(pServerDir + "/village.bin"));
+        while (true) {
         try {
-            ObjectInputStream oin = new ObjectInputStream(new FileInputStream(pServerDir + "/village.bin"));
-            while (true) {
-                try {
-                    Village v = (Village) oin.readObject();
-                    if (v != null) {
-                        mVillages[v.getX()][v.getY()] = v;
-                        mVillagesTable.put(v.getId(), v);
-                    }
-                } catch (EOFException oefe) {
-                    break;
-                }
-            }
-
-            oin = new ObjectInputStream(new FileInputStream(pServerDir + "/tribe.bin"));
-            while (true) {
-                try {
-                    Tribe t = (Tribe) oin.readObject();
-                    mTribes.put(t.getId(), t);
-                } catch (EOFException oefe) {
-                    break;
-                }
-            }
-
-            oin = new ObjectInputStream(new FileInputStream(pServerDir + "/ally.bin"));
-            while (true) {
-                try {
-                    Ally a = (Ally) oin.readObject();
-                    mAllies.put(a.getId(), a);
-                } catch (EOFException oefe) {
-                    break;
-                }
-            }
+        Village v = (Village) oin.readObject();
+        if (v != null) {
+        mVillages[v.getX()][v.getY()] = v;
+        mVillagesTable.put(v.getId(), v);
+        }
+        } catch (EOFException oefe) {
+        break;
+        }
+        }
+        
+        oin = new ObjectInputStream(new FileInputStream(pServerDir + "/tribe.bin"));
+        while (true) {
+        try {
+        Tribe t = (Tribe) oin.readObject();
+        mTribes.put(t.getId(), t);
+        } catch (EOFException oefe) {
+        break;
+        }
+        }
+        
+        oin = new ObjectInputStream(new FileInputStream(pServerDir + "/ally.bin"));
+        while (true) {
+        try {
+        Ally a = (Ally) oin.readObject();
+        mAllies.put(a.getId(), a);
+        } catch (EOFException oefe) {
+        break;
+        }
+        }
         } catch (Exception e) {
-            logger.error("Failed to read local copy", e);
+        logger.error("Failed to read local copy", e);
+        return false;
+        }
+        return true;*/
+        //</editor-fold>
+
+        try {
+            BufferedReader r = new BufferedReader(new FileReader(pServerDir + "/serverdata.bin"));
+            String line = "";
+            int step = 0;
+            int ac = 0;
+            int vc = 0;
+            int tc = 0;
+            while ((line = r.readLine()) != null) {
+                if (line.equals("<villages>")) {
+                    logger.info("Reading villages");
+                    step = 1;
+                } else if (line.equals("<tribes>")) {
+                    logger.info("Reading tribes");
+                    step = 2;
+                } else if (line.equals("<allies>")) {
+                    logger.info("Reading allies");
+                    step = 3;
+                }
+                switch (step) {
+                    case 1: {
+                        Village v = Village.parseFromPlainData(line);
+                        if (v != null) {
+                            mVillages[v.getX()][v.getY()] = v;
+                            mVillagesTable.put(v.getId(), v);
+                            vc++;
+                        }
+                        break;
+                    }
+                    case 2: {
+                        Tribe t = Tribe.parseFromPlainData(line);
+                        if (t != null) {
+                            mTribes.put(t.getId(), t);
+                            tc++;
+                        }
+                        break;
+                    }
+                    case 3: {
+                        Ally a = Ally.parseFromPlainData(line);
+                        if (a != null) {
+                            mAllies.put(a.getId(), a);
+                            ac++;
+                        }
+                        break;
+                    }
+                    default: {
+                        //sth. else!?
+                    }
+                }
+            }
+
+            logger.info("Read " + vc + " villages");
+            logger.info("Read " + ac + " allies");
+            logger.info("Read " + tc + " tribes");
+            r.close();
+        } catch (Exception e) {
+            logger.error("Failed loading local data", e);
             return false;
         }
         return true;
@@ -384,7 +478,6 @@ public class DataHolder {
                     } catch (Exception e) {
                         //ignore invalid tribe
                     }
-
                 }
                 r.close();
                 //load allies
@@ -435,7 +528,6 @@ public class DataHolder {
                     DatabaseAdapter.registerUserForServer(accountName, serverID);
                 }
             } else {
-                //readLocalDataCopy(serverDir);
                 //normal update of all diffs
                 for (int i = userDataVersion + 1; i <= dataVersion; i++) {
                     //download every diff between user version and server version
@@ -466,6 +558,7 @@ public class DataHolder {
                     u = new URL(downloadURL + "/tribe" + i + ".txt.gz");
                     r = new BufferedReader(new InputStreamReader(new GZIPInputStream(u.openConnection().getInputStream())));
                     line = "";
+
                     while ((line = r.readLine()) != null) {
                         line = line.replaceAll(",,", ", ,");
                         try {
@@ -478,7 +571,6 @@ public class DataHolder {
                                 Tribe t = mTribes.get(id);
                                 if (t == null) {
                                     //new tribe
-                                    System.out.println("NEW TRIBE " + t);
                                     mTribes.put(id, Tribe.parseFromPlainData(line));
                                 } else {
                                     t.updateFromDiff(line);
@@ -493,6 +585,7 @@ public class DataHolder {
                     u = new URL(downloadURL + "/ally" + i + ".txt.gz");
                     r = new BufferedReader(new InputStreamReader(new GZIPInputStream(u.openConnection().getInputStream())));
                     line = "";
+                    System.out.println("ALlies: " + mAllies.size());
                     while ((line = r.readLine()) != null) {
                         line = line.replaceAll(",,", ", ,");
                         try {
@@ -505,22 +598,21 @@ public class DataHolder {
                                 Ally a = mAllies.get(id);
                                 if (a == null) {
                                     //new ally 
-                                    System.out.println("NEW ALLY (" + id + ") " + line);
-                                    mAllies.put(id, Ally.parseFromPlainData(line));
+                                    a = Ally.parseFromPlainData(line);
+                                    if (a != null) {
+                                        mAllies.put(a.getId(), a);
+                                    }
                                 } else {
                                     a.updateFromDiff(line);
                                 }
                             }
                         } catch (Exception e) {
                             //ignore invalid ally
-                            System.out.println("ERROR WITH LINE " + line);
                         }
                     }
                     r.close();
                 }
-                System.out.println("MERGE");
                 mergeData();
-                System.out.println("DONE");
             }
 
             // <editor-fold defaultstate="collapsed" desc="DEPRECATED">
@@ -598,7 +690,7 @@ public class DataHolder {
             }
             //</editor-fold>
 
-            // DatabaseAdapter.updateUserDataVersion(accountName, serverID, dataVersion);
+            DatabaseAdapter.updateUserDataVersion(accountName, serverID, dataVersion);
 
             fireDataHolderEvents("Download erfolgreich beendet.");
         } catch (Exception e) {

@@ -23,8 +23,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;
@@ -79,8 +77,8 @@ public class GlobalOptions {
     public final static int AUTO_UPDATE_12_HOURS = 4;
     public final static int AUTO_UPDATE_DAILY = 5;
     //minimap
-    public final static int CURSOR_MOVE = 12;
-    public final static int CURSOR_ZOOM = 13;
+    public final static int CURSOR_MOVE = 13;
+    public final static int CURSOR_ZOOM = 14;
     private static boolean INITIALIZED = false;
     /**Active skin used by the MapPanel*/
     private static Skin mSkin;
@@ -376,12 +374,26 @@ public class GlobalOptions {
 
     public static void loadTags() {
         mTags = new Hashtable<Village, List<String>>();
-        String path = mDataHolder.getDataDirectory() + "/tags.bin";
+        String path = mDataHolder.getDataDirectory() + "/tags.xml";
         if (new File(path).exists()) {
             try {
-                ObjectInputStream oin = new ObjectInputStream(new FileInputStream(path));
-                mTags = (Hashtable<Village, List<String>>) oin.readObject();
-                oin.close();
+
+                Document d = JaxenUtils.getDocument(new File(path));
+                for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//villageTags/villageTagList")) {
+                    try {
+                        Integer id = Integer.parseInt(JaxenUtils.getNodeValue(e, "id"));
+                        Village v = GlobalOptions.getDataHolder().getVillagesById().get(id);
+                        if (v != null) {
+                            List<Element> tags = (List<Element>) JaxenUtils.getNodes(e, "tags/tag");
+                            List<String> tagList = new LinkedList<String>();
+                            for (Element tag : tags) {
+                                tagList.add(tag.getText());
+                            }
+                            mTags.put(v, tagList);
+                        }
+                    } catch (Exception inner) {
+                    }
+                }
             } catch (Exception e) {
                 logger.error("Failed to read tags", e);
             }
@@ -395,6 +407,7 @@ public class GlobalOptions {
             List<String> tags = mTags.remove(next);
             mTags.put(mDataHolder.getVillages()[next.getX()][next.getY()], tags);
         }
+
     }
 
     public static List<String> getTags(Village v) {
@@ -417,11 +430,30 @@ public class GlobalOptions {
     }
 
     public static void storeTags() {
-        String path = mDataHolder.getDataDirectory() + "/tags.bin";
+        String path = mDataHolder.getDataDirectory() + "/tags.xml";
         try {
-            ObjectOutputStream oout = new ObjectOutputStream(new FileOutputStream(path));
-            oout.writeObject(mTags);
-            oout.close();
+            FileWriter w = new FileWriter(path);
+            w.write("<villageTags>\n");
+            Enumeration<Village> e = mTags.keys();
+            while (e.hasMoreElements()) {
+                Village current = e.nextElement();
+                if (current != null) {
+                    w.write("<villageTagList>\n");
+                    w.write("<id>" + current.getId() + "</id>\n");
+                    List<String> tags = mTags.get(mTags.get(current));
+                    if (tags.size() > 0) {
+                        w.write("<tags>\n");
+                        for (String tag : tags) {
+                            w.write("<tag>" + tag + "</tag>\n");
+                        }
+                        w.write("</tags>\n");
+                    }
+                    w.write("</villageTagList>\n");
+                }
+            }
+            w.write("</villageTags>\n");
+            w.flush();
+            w.close();
         } catch (Exception e) {
             logger.error("Failed to store tags", e);
         }

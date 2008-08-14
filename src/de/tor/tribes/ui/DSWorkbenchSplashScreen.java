@@ -11,6 +11,7 @@ import org.apache.log4j.Logger;
 import de.tor.tribes.io.DataHolderListener;
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
+import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.zip.GZIPOutputStream;
@@ -121,14 +122,13 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
      */
     public static void main(String args[]) {
         DOMConfigurator.configure("log4j.xml");
-        System.setProperty("user.language", "en");
-        System.setProperty("user.country", "US");
+        /*System.setProperty("user.language", "en");
+        System.setProperty("user.country", "US");*/
+       // Locale.setDefault(new Locale("en", "US"));
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
         }
-
-
 
         java.awt.EventQueue.invokeLater(new Runnable() {
 

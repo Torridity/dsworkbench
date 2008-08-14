@@ -21,6 +21,20 @@ public class BrowserCommandSender {
         try {
             String url = "http://" + GlobalOptions.getSelectedServer() + ".die-staemme.de/game.php?village=";
             url += pSource.getId() + "&screen=place&mode=command&target=" + pTarget.getId();
+            /*            
+            javascript:
+            var A;
+            if (frames.length>=1){
+            A=main
+            }else{
+            A=this;
+            };
+            A.insertUnit(A.document.forms['units'].elements['spy'],100);
+            A.insertUnit(A.document.forms['units'].elements['x'],456);
+            A.insertUnit(A.document.forms['units'].elements['y'],472);
+            A.insertUnit(A.document.forms['units'].elements['attack'].click());    
+             */
+            
             DESKTOP.browse(new URI(url));
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Fehler beim Öffnen des Browsers", "Fehler", JOptionPane.ERROR_MESSAGE);

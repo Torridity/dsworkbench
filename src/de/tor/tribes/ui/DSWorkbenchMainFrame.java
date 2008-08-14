@@ -64,7 +64,8 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
     private List<ImageIcon> mIcons;
     private double dZoomFactor = 1.0;
     private ToolBoxFrame mToolbox = null;
-    private AllyAllyAttackFrame mAllyAllyAttackFrame = null;
+//    private AllyAllyAttackFrame mAllyAllyAttackFrame = null;
+    private TribeTribeAttackFrame mTribeTribeAttackFrame = null;
 
     /** Creates new form MapFrame */
     public DSWorkbenchMainFrame() {
@@ -189,8 +190,10 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
             public void windowDeactivated(WindowEvent e) {
             }
         });
-        mAllyAllyAttackFrame = new AllyAllyAttackFrame(this);
-        mAllyAllyAttackFrame.pack();
+        /*mAllyAllyAttackFrame = new AllyAllyAttackFrame(this);
+        mAllyAllyAttackFrame.pack();*/
+        mTribeTribeAttackFrame = new TribeTribeAttackFrame(this);
+        mTribeTribeAttackFrame.pack();
     }
 
     private void setupMaps() {
@@ -516,7 +519,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
         jMenu3 = new javax.swing.JMenu();
         jSearchItem = new javax.swing.JMenuItem();
         jClockItem = new javax.swing.JMenuItem();
-        jAllyAllyAttackItem = new javax.swing.JMenuItem();
+        jTribeTribeAttackItem = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
         jShowToolboxItem = new javax.swing.JCheckBoxMenuItem();
         jShowDynFrameItem = new javax.swing.JCheckBoxMenuItem();
@@ -621,22 +624,22 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
         jAxeTime.setPreferredSize(new java.awt.Dimension(54, 20));
 
         jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/skins/symbol/axe.png"))); // NOI18N
+        jLabel6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/axe.png"))); // NOI18N
 
         jLabel7.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/skins/symbol/sword.png"))); // NOI18N
+        jLabel7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/sword.png"))); // NOI18N
 
         jLabel8.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/skins/symbol/spy.png"))); // NOI18N
+        jLabel8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/spy.png"))); // NOI18N
 
         jLabel9.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel9.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/skins/symbol/light.png"))); // NOI18N
+        jLabel9.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/light.png"))); // NOI18N
 
         jLabel10.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel10.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/skins/symbol/heavy.png"))); // NOI18N
+        jLabel10.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/heavy.png"))); // NOI18N
 
         jLabel11.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel11.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/skins/symbol/ram.png"))); // NOI18N
+        jLabel11.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/ram.png"))); // NOI18N
 
         jHeavyTime.setEditable(false);
         jHeavyTime.setHorizontalAlignment(javax.swing.JTextField.CENTER);
@@ -647,22 +650,22 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
         jHeavyTime.setPreferredSize(new java.awt.Dimension(54, 20));
 
         jLabel12.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel12.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/skins/symbol/snob.png"))); // NOI18N
+        jLabel12.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/snob.png"))); // NOI18N
 
         jLabel13.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel13.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/skins/symbol/knight.png"))); // NOI18N
+        jLabel13.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/knight.png"))); // NOI18N
 
         jLabel14.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel14.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/skins/symbol/spear.png"))); // NOI18N
+        jLabel14.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/spear.png"))); // NOI18N
 
         jLabel15.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel15.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/skins/symbol/archer.png"))); // NOI18N
+        jLabel15.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/archer.png"))); // NOI18N
 
         jLabel16.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel16.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/skins/symbol/marcher.png"))); // NOI18N
+        jLabel16.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/marcher.png"))); // NOI18N
 
         jLabel17.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel17.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/skins/symbol/cata.png"))); // NOI18N
+        jLabel17.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/cata.png"))); // NOI18N
 
         jBowTime.setBackground(new java.awt.Color(239, 235, 223));
         jBowTime.setEditable(false);
@@ -1413,14 +1416,14 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
         });
         jMenu3.add(jClockItem);
 
-        jAllyAllyAttackItem.setBackground(new java.awt.Color(239, 235, 223));
-        jAllyAllyAttackItem.setText("Großangriff");
-        jAllyAllyAttackItem.addActionListener(new java.awt.event.ActionListener() {
+        jTribeTribeAttackItem.setBackground(new java.awt.Color(239, 235, 223));
+        jTribeTribeAttackItem.setText("Angriffsplaner");
+        jTribeTribeAttackItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 fireToolsActionEvent(evt);
             }
         });
-        jMenu3.add(jAllyAllyAttackItem);
+        jMenu3.add(jTribeTribeAttackItem);
 
         jMenuBar1.add(jMenu3);
 
@@ -1745,8 +1748,8 @@ private void fireToolsActionEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:e
         SearchFrame.getGlobalSearchFrame().setVisible(true);
     } else if (evt.getSource() == jClockItem) {
         ClockFrame.getGlobalClockFrame().setVisible(true);
-    } else if (evt.getSource() == jAllyAllyAttackItem) {
-        mAllyAllyAttackFrame.setVisible(true);
+    } else if (evt.getSource() == jTribeTribeAttackItem) {
+        mTribeTribeAttackFrame.setVisible(true);
     }
 }//GEN-LAST:event_fireToolsActionEvent
 
@@ -2114,7 +2117,6 @@ private void fireUpdateClickedEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
     // <editor-fold defaultstate="collapsed" desc="Generated Variables">
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JMenuItem jAllyAllyAttackItem;
     private javax.swing.JLabel jAllyInfo;
     private javax.swing.JPanel jAttackPanel;
     private javax.swing.JTable jAttackTable;
@@ -2198,6 +2200,7 @@ private void fireUpdateClickedEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
     private javax.swing.JTextField jSpyTime;
     private javax.swing.JTextField jSwordTime;
     private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JMenuItem jTribeTribeAttackItem;
     private javax.swing.JButton jUpdateButton;
     private javax.swing.JLabel jVillageInfo;
     private javax.swing.JButton jZoomInButton;

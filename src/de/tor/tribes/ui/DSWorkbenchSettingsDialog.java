@@ -314,26 +314,25 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
         jCancelButton = new javax.swing.JButton();
         jCreateAccountButton = new javax.swing.JButton();
 
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("de/tor/tribes/ui/Bundle"); // NOI18N
-        jCreateAccountDialog.setTitle(bundle.getString("DSWorkbenchSettingsDialog.jCreateAccountDialog.title")); // NOI18N
+        jCreateAccountDialog.setTitle("Registrierung");
         jCreateAccountDialog.setAlwaysOnTop(true);
         jCreateAccountDialog.setBackground(new java.awt.Color(239, 235, 223));
         jCreateAccountDialog.setModal(true);
 
-        jLabel9.setText(bundle.getString("DSWorkbenchSettingsDialog.jLabel9.text")); // NOI18N
+        jLabel9.setText("Name");
 
         jRegistrationAccountName.setMaximumSize(new java.awt.Dimension(200, 20));
         jRegistrationAccountName.setMinimumSize(new java.awt.Dimension(200, 20));
         jRegistrationAccountName.setPreferredSize(new java.awt.Dimension(200, 20));
 
-        jLabel10.setText(bundle.getString("DSWorkbenchSettingsDialog.jLabel10.text")); // NOI18N
+        jLabel10.setText("Passwort");
 
         jRegistrationPassword.setMaximumSize(new java.awt.Dimension(200, 20));
         jRegistrationPassword.setMinimumSize(new java.awt.Dimension(200, 20));
         jRegistrationPassword.setPreferredSize(new java.awt.Dimension(200, 20));
 
         jButton1.setBackground(new java.awt.Color(239, 235, 223));
-        jButton1.setText(bundle.getString("DSWorkbenchSettingsDialog.jButton1.text")); // NOI18N
+        jButton1.setText("Registrieren");
         jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireRegisterEvent(evt);
@@ -341,14 +340,14 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
         });
 
         jButton3.setBackground(new java.awt.Color(239, 235, 223));
-        jButton3.setText(bundle.getString("DSWorkbenchSettingsDialog.jButton3.text")); // NOI18N
+        jButton3.setText("Abbrechen");
         jButton3.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireCancelRegistrationEvent(evt);
             }
         });
 
-        jLabel12.setText(bundle.getString("DSWorkbenchSettingsDialog.jLabel12.text")); // NOI18N
+        jLabel12.setText("Passwort wiederholen");
 
         javax.swing.GroupLayout jCreateAccountDialogLayout = new javax.swing.GroupLayout(jCreateAccountDialog.getContentPane());
         jCreateAccountDialog.getContentPane().setLayout(jCreateAccountDialogLayout);
@@ -394,7 +393,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        setTitle(bundle.getString("DSWorkbenchSettingsDialog.title")); // NOI18N
+        setTitle("Einstellungen");
         setAlwaysOnTop(true);
         setModal(true);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -407,9 +406,9 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
 
         jLoginPanel.setBackground(new java.awt.Color(239, 235, 223));
 
-        jLabel6.setText(bundle.getString("DSWorkbenchSettingsDialog.jLabel6.text")); // NOI18N
+        jLabel6.setText("Name");
 
-        jLabel7.setText(bundle.getString("DSWorkbenchSettingsDialog.jLabel7.text")); // NOI18N
+        jLabel7.setText("Passwort");
 
         jAccountPassword.setMaximumSize(new java.awt.Dimension(200, 20));
         jAccountPassword.setMinimumSize(new java.awt.Dimension(200, 20));
@@ -420,7 +419,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
         jAccountName.setPreferredSize(new java.awt.Dimension(200, 20));
 
         jButton5.setBackground(new java.awt.Color(239, 235, 223));
-        jButton5.setText(bundle.getString("DSWorkbenchSettingsDialog.jButton5.text")); // NOI18N
+        jButton5.setText("Prüfen");
         jButton5.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireLoginIntoAccountEvent(evt);
@@ -459,16 +458,16 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
                 .addContainerGap(163, Short.MAX_VALUE))
         );
 
-        jTabbedPane1.addTab(bundle.getString("DSWorkbenchSettingsDialog.jLoginPanel.TabConstraints.tabTitle"), new javax.swing.ImageIcon(getClass().getResource("/res/login.png")), jLoginPanel); // NOI18N
+        jTabbedPane1.addTab("Login", new javax.swing.ImageIcon(getClass().getResource("/res/login.png")), jLoginPanel); // NOI18N
 
         jPlayerServerSettings.setBackground(new java.awt.Color(239, 235, 223));
 
-        jLabel1.setText(bundle.getString("DSWorkbenchSettingsDialog.jLabel1.text")); // NOI18N
+        jLabel1.setText("Server");
 
-        jLabel2.setText(bundle.getString("DSWorkbenchSettingsDialog.jLabel2.text")); // NOI18N
+        jLabel2.setText("Spieler");
 
         jSelectServerButton.setBackground(new java.awt.Color(239, 235, 223));
-        jSelectServerButton.setText(bundle.getString("DSWorkbenchSettingsDialog.jSelectServerButton.text")); // NOI18N
+        jSelectServerButton.setText("Server auswählen");
         jSelectServerButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireUpdateDataEvent(evt);
@@ -481,7 +480,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
         jScrollPane1.setViewportView(jStatusArea);
 
         jDownloadDataButton.setBackground(new java.awt.Color(239, 235, 223));
-        jDownloadDataButton.setText(bundle.getString("DSWorkbenchSettingsDialog.jDownloadDataButton.text")); // NOI18N
+        jDownloadDataButton.setText("Daten downloaden");
         jDownloadDataButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireDownloadDataEvent(evt);
@@ -528,31 +527,31 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
                 .addContainerGap())
         );
 
-        jTabbedPane1.addTab(bundle.getString("DSWorkbenchSettingsDialog.jPlayerServerSettings.TabConstraints.tabTitle"), new javax.swing.ImageIcon(getClass().getResource("/res/face.png")), jPlayerServerSettings); // NOI18N
+        jTabbedPane1.addTab("Spieler/Server", new javax.swing.ImageIcon(getClass().getResource("/res/face.png")), jPlayerServerSettings); // NOI18N
 
         jGeneralSettings.setBackground(new java.awt.Color(239, 235, 223));
 
-        jLabel5.setText(bundle.getString("DSWorkbenchSettingsDialog.jLabel5.text")); // NOI18N
+        jLabel5.setText("Grafikpaket");
 
         jGraphicPacks.setMaximumSize(new java.awt.Dimension(114, 22));
         jGraphicPacks.setMinimumSize(new java.awt.Dimension(114, 22));
         jGraphicPacks.setPreferredSize(new java.awt.Dimension(114, 22));
 
         jButton4.setBackground(new java.awt.Color(239, 235, 223));
-        jButton4.setText(bundle.getString("DSWorkbenchSettingsDialog.jButton4.text")); // NOI18N
+        jButton4.setText("Auswählen");
         jButton4.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireSelectGraphicPackEvent(evt);
             }
         });
 
-        jLabel8.setText(bundle.getString("DSWorkbenchSettingsDialog.jLabel8.text")); // NOI18N
+        jLabel8.setText("Automatischer Datenabgleich");
 
         jUpdateIntervalBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Nie", "Bei Programmstart", "Stündlich", "Alle 2 Stunden", "Alle 4 Stunden", "Alle 12 Stunden", "Täglich" }));
         jUpdateIntervalBox.setSelectedIndex(6);
         jUpdateIntervalBox.setEnabled(false);
 
-        jLabel11.setText(bundle.getString("DSWorkbenchSettingsDialog.jLabel11.text")); // NOI18N
+        jLabel11.setText("Kontinente anzeigen");
 
         jContinentsOnMinimap.setContentAreaFilled(false);
         jContinentsOnMinimap.setMargin(new java.awt.Insets(0, 0, 0, 0));
@@ -562,7 +561,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
             }
         });
 
-        jLabel13.setText(bundle.getString("DSWorkbenchSettingsDialog.jLabel13.text")); // NOI18N
+        jLabel13.setText("Entfernung anzeigen");
 
         jShowDistanceBox.setMargin(new java.awt.Insets(0, 0, 0, 0));
         jShowDistanceBox.setOpaque(false);
@@ -580,7 +579,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
             }
         });
 
-        jLabel14.setText(bundle.getString("DSWorkbenchSettingsDialog.jLabel14.text")); // NOI18N
+        jLabel14.setText("Angriffsbewegung anzeigen");
 
         javax.swing.GroupLayout jGeneralSettingsLayout = new javax.swing.GroupLayout(jGeneralSettings);
         jGeneralSettings.setLayout(jGeneralSettingsLayout);
@@ -632,13 +631,13 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
                 .addContainerGap(99, Short.MAX_VALUE))
         );
 
-        jTabbedPane1.addTab(bundle.getString("DSWorkbenchSettingsDialog.jGeneralSettings.TabConstraints.tabTitle"), new javax.swing.ImageIcon(getClass().getResource("/res/settings.png")), jGeneralSettings); // NOI18N
+        jTabbedPane1.addTab("Allgemein", new javax.swing.ImageIcon(getClass().getResource("/res/settings.png")), jGeneralSettings); // NOI18N
 
         jNetworkSettings.setBackground(new java.awt.Color(239, 235, 223));
 
         connectionTypeGroup.add(jDirectConnectOption);
         jDirectConnectOption.setSelected(true);
-        jDirectConnectOption.setText(bundle.getString("DSWorkbenchSettingsDialog.jDirectConnectOption.text")); // NOI18N
+        jDirectConnectOption.setText("Ich bin direkt mit dem Internet verbunden");
         jDirectConnectOption.setOpaque(false);
         jDirectConnectOption.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
@@ -647,7 +646,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
         });
 
         connectionTypeGroup.add(jProxyConnectOption);
-        jProxyConnectOption.setText(bundle.getString("DSWorkbenchSettingsDialog.jProxyConnectOption.text")); // NOI18N
+        jProxyConnectOption.setText("Ich benutze einen Proxy für den Internetzugang");
         jProxyConnectOption.setOpaque(false);
         jProxyConnectOption.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
@@ -655,12 +654,12 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
             }
         });
 
-        jLabel3.setText(bundle.getString("DSWorkbenchSettingsDialog.jLabel3.text")); // NOI18N
+        jLabel3.setText("Proxy Adresse");
 
         jProxyHost.setBackground(new java.awt.Color(239, 235, 223));
         jProxyHost.setEnabled(false);
 
-        jLabel4.setText(bundle.getString("DSWorkbenchSettingsDialog.jLabel4.text")); // NOI18N
+        jLabel4.setText("Proxy Port");
 
         jProxyPort.setBackground(new java.awt.Color(239, 235, 223));
         jProxyPort.setEnabled(false);
@@ -669,7 +668,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
         jProxyPort.setPreferredSize(new java.awt.Dimension(40, 20));
 
         jButton2.setBackground(new java.awt.Color(239, 235, 223));
-        jButton2.setText(bundle.getString("DSWorkbenchSettingsDialog.jButton2.text")); // NOI18N
+        jButton2.setText("Aktualisieren");
         jButton2.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireUpdateProxySettingsEvent(evt);
@@ -716,10 +715,10 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
                 .addContainerGap(107, Short.MAX_VALUE))
         );
 
-        jTabbedPane1.addTab(bundle.getString("DSWorkbenchSettingsDialog.jNetworkSettings.TabConstraints.tabTitle"), new javax.swing.ImageIcon(getClass().getResource("/res/proxy.png")), jNetworkSettings); // NOI18N
+        jTabbedPane1.addTab("Netzwerk", new javax.swing.ImageIcon(getClass().getResource("/res/proxy.png")), jNetworkSettings); // NOI18N
 
         jOKButton.setBackground(new java.awt.Color(239, 235, 223));
-        jOKButton.setText(bundle.getString("DSWorkbenchSettingsDialog.jOKButton.text")); // NOI18N
+        jOKButton.setText("OK");
         jOKButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireOkEvent(evt);
@@ -727,7 +726,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
         });
 
         jCancelButton.setBackground(new java.awt.Color(239, 235, 223));
-        jCancelButton.setText(bundle.getString("DSWorkbenchSettingsDialog.jCancelButton.text")); // NOI18N
+        jCancelButton.setText("Abbrechen");
         jCancelButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireCloseEvent(evt);
@@ -735,7 +734,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
         });
 
         jCreateAccountButton.setBackground(new java.awt.Color(239, 235, 223));
-        jCreateAccountButton.setText(bundle.getString("DSWorkbenchSettingsDialog.jCreateAccountButton.text")); // NOI18N
+        jCreateAccountButton.setText("Neuen Account erstellen");
         jCreateAccountButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireCreateAccountEvent(evt);
@@ -859,6 +858,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
         if (!jCancelButton.isEnabled()) {
             return;
         }
+    
         if (!checkPlayerSettings()) {
             String message = "Bitte überprüfe die Spieler-/Servereinstellungen und schließe die Einstellungen mit OK.\n";
             message += "Möglicherweise wurde noch kein Server oder kein Spieler ausgewählt.\n";

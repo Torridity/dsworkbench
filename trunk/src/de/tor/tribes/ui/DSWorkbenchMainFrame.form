@@ -365,7 +365,7 @@
           <Properties>
             <Property name="horizontalAlignment" type="int" value="0"/>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/res/skins/symbol/axe.png"/>
+              <Image iconType="3" name="/res/ui/axe.png"/>
             </Property>
           </Properties>
         </Component>
@@ -373,7 +373,7 @@
           <Properties>
             <Property name="horizontalAlignment" type="int" value="0"/>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/res/skins/symbol/sword.png"/>
+              <Image iconType="3" name="/res/ui/sword.png"/>
             </Property>
           </Properties>
         </Component>
@@ -381,7 +381,7 @@
           <Properties>
             <Property name="horizontalAlignment" type="int" value="0"/>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/res/skins/symbol/spy.png"/>
+              <Image iconType="3" name="/res/ui/spy.png"/>
             </Property>
           </Properties>
         </Component>
@@ -389,7 +389,7 @@
           <Properties>
             <Property name="horizontalAlignment" type="int" value="0"/>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/res/skins/symbol/light.png"/>
+              <Image iconType="3" name="/res/ui/light.png"/>
             </Property>
           </Properties>
         </Component>
@@ -397,7 +397,7 @@
           <Properties>
             <Property name="horizontalAlignment" type="int" value="0"/>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/res/skins/symbol/heavy.png"/>
+              <Image iconType="3" name="/res/ui/heavy.png"/>
             </Property>
           </Properties>
         </Component>
@@ -405,7 +405,7 @@
           <Properties>
             <Property name="horizontalAlignment" type="int" value="0"/>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/res/skins/symbol/ram.png"/>
+              <Image iconType="3" name="/res/ui/ram.png"/>
             </Property>
           </Properties>
         </Component>
@@ -430,7 +430,7 @@
           <Properties>
             <Property name="horizontalAlignment" type="int" value="0"/>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/res/skins/symbol/snob.png"/>
+              <Image iconType="3" name="/res/ui/snob.png"/>
             </Property>
           </Properties>
         </Component>
@@ -438,7 +438,7 @@
           <Properties>
             <Property name="horizontalAlignment" type="int" value="0"/>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/res/skins/symbol/knight.png"/>
+              <Image iconType="3" name="/res/ui/knight.png"/>
             </Property>
           </Properties>
         </Component>
@@ -446,7 +446,7 @@
           <Properties>
             <Property name="horizontalAlignment" type="int" value="0"/>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/res/skins/symbol/spear.png"/>
+              <Image iconType="3" name="/res/ui/spear.png"/>
             </Property>
           </Properties>
         </Component>
@@ -454,7 +454,7 @@
           <Properties>
             <Property name="horizontalAlignment" type="int" value="0"/>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/res/skins/symbol/archer.png"/>
+              <Image iconType="3" name="/res/ui/archer.png"/>
             </Property>
           </Properties>
         </Component>
@@ -462,7 +462,7 @@
           <Properties>
             <Property name="horizontalAlignment" type="int" value="0"/>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/res/skins/symbol/marcher.png"/>
+              <Image iconType="3" name="/res/ui/marcher.png"/>
             </Property>
           </Properties>
         </Component>
@@ -470,7 +470,7 @@
           <Properties>
             <Property name="horizontalAlignment" type="int" value="0"/>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/res/skins/symbol/cata.png"/>
+              <Image iconType="3" name="/res/ui/cata.png"/>
             </Property>
           </Properties>
         </Component>
@@ -914,12 +914,12 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fireToolsActionEvent"/>
               </Events>
             </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="jAllyAllyAttackItem">
+            <MenuItem class="javax.swing.JMenuItem" name="jTribeTribeAttackItem">
               <Properties>
                 <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="df" green="eb" red="ef" type="rgb"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="Gro&#xdf;angriff"/>
+                <Property name="text" type="java.lang.String" value="Angriffsplaner"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fireToolsActionEvent"/>

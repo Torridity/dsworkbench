@@ -39,7 +39,7 @@ public class MinimapPanel extends javax.swing.JPanel {
     private MinimapZoomFrame mZoomFrame = null;
     private int iCurrentCursor = GlobalOptions.CURSOR_DEFAULT;
     private static MinimapPanel GLOBAL_MINIMAP = null;
-    private ScreenshotPanel mScreenshotPanel = null;
+    //private ScreenshotPanel mScreenshotPanel = null;
     private boolean doRedraw = false;
 
     public static MinimapPanel getGlobalMinimap() {
@@ -67,6 +67,9 @@ public class MinimapPanel extends javax.swing.JPanel {
                 int x = e.getX();
                 int y = e.getY();
                 mParent.updateLocationByMinimap(x, y);
+                if (mZoomFrame.isVisible()) {
+                    mZoomFrame.toFront();
+                }
             }
 
             @Override
@@ -133,7 +136,6 @@ public class MinimapPanel extends javax.swing.JPanel {
             @Override
             public void mouseWheelMoved(MouseWheelEvent e) {
                 iCurrentCursor += e.getWheelRotation();
-                //MOve: 10, Zoom: 11
                 if (iCurrentCursor == GlobalOptions.CURSOR_DEFAULT + e.getWheelRotation()) {
                     if (e.getWheelRotation() < 0) {
                         iCurrentCursor = GlobalOptions.CURSOR_ZOOM;
@@ -322,13 +324,13 @@ class MinimapRepaintThread extends Thread {
                         isLeft = true;
                     } else {
                         try {
-                            Marker m  = GlobalOptions.getMarkerByValue(v.getTribe().getName());
+                            Marker m = GlobalOptions.getMarkerByValue(v.getTribe().getName());
                             if (m == null) {
                                 m = GlobalOptions.getMarkerByValue(v.getTribe().getAlly().getName());
-                                if(m != null){
+                                if (m != null) {
                                     mark = m.getMarkerColor();
                                 }
-                            }else{
+                            } else {
                                 mark = m.getMarkerColor();
                             }
                         } catch (Exception e) {

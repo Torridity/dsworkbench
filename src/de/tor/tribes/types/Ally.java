@@ -337,20 +337,4 @@ public class Ally implements Serializable, Comparable {
     public int compareTo(Object o) {
         return toString().compareTo(o.toString());
     }
-
-    public static void main(String[] args) {
-        try {
-            ObjectInputStream oin = new ObjectInputStream(new FileInputStream("D:/GRID/src/DSWorkbench/servers/de14/Kopie von ally.bin"));
-            while (true) {
-                Ally a = (Ally) oin.readObject();
-                // System.out.println(a.toBBCode());
-                if (a.getTag().equals("HdL")) {
-                    System.out.println(a.getId());
-                }
-
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 }

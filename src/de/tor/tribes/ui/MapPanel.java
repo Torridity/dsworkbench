@@ -214,7 +214,9 @@ public class MapPanel extends javax.swing.JPanel {
                         downX = e.getX();
                         downY = e.getY();
                         mSourceVillage = getVillageAtMousePos();
-                        mRepaintThread.setDragLine(mSourceVillage.getX(), mSourceVillage.getY(), e.getX(), e.getY());
+                        if (mSourceVillage != null) {
+                            mRepaintThread.setDragLine(mSourceVillage.getX(), mSourceVillage.getY(), e.getX(), e.getY());
+                        }
                         break;
                     }
                     default: {
@@ -222,7 +224,9 @@ public class MapPanel extends javax.swing.JPanel {
                             downX = e.getX();
                             downY = e.getY();
                             mSourceVillage = getVillageAtMousePos();
-                            mRepaintThread.setDragLine(mSourceVillage.getX(), mSourceVillage.getY(), e.getX(), e.getY());
+                            if (mSourceVillage != null) {
+                                mRepaintThread.setDragLine(mSourceVillage.getX(), mSourceVillage.getY(), e.getX(), e.getY());
+                            }
                         }
                     }
                 }
@@ -334,9 +338,12 @@ public class MapPanel extends javax.swing.JPanel {
                 switch (iCurrentCursor) {
                     case GlobalOptions.CURSOR_MEASURE: {
                         //update drag if attack tool is active
-                        mRepaintThread.setDragLine(mSourceVillage.getX(), mSourceVillage.getY(), e.getX(), e.getY());
+                        if (mSourceVillage != null) {
+                            mRepaintThread.setDragLine(mSourceVillage.getX(), mSourceVillage.getY(), e.getX(), e.getY());
+                        }
                         mTargetVillage = getVillageAtMousePos();
                         mParent.updateDistancePanel(mSourceVillage, mTargetVillage);
+
                         break;
                     }
                     default: {
@@ -510,8 +517,6 @@ class RepaintThread extends Thread {
         while (true) {
             try {
                 updateMap(iX, iY);
-                //logger.info("Scal " + dScaling);
-                // logger.info("w " + mParent.getWidth() + " h: " +mParent.getHeight() );
                 mParent.updateComplete(mVisibleVillages, mBuffer.getScaledInstance(mParent.getWidth(), mParent.getHeight(), BufferedImage.SCALE_FAST));
                 mParent.repaint();
             } catch (Throwable t) {
@@ -580,7 +585,7 @@ class RepaintThread extends Thread {
 
     /**Redraw the buffer*/
     private void redraw(int pXStart, int pYStart) {
-     //   long dStart = System.currentTimeMillis();
+        //   long dStart = System.currentTimeMillis();
 
         int x = 0;
         int y = 0;
@@ -630,15 +635,15 @@ class RepaintThread extends Thread {
                         } else {
                             try {
                                 Marker m = GlobalOptions.getMarkerByValue(v.getTribe().getName());
-                                if (marker == null) {
+                                if (m == null) {
                                     m = GlobalOptions.getMarkerByValue(v.getTribe().getAlly().getName());
-                                    if(m != null){
-                                    marker = m.getMarkerColor();    
-                                    }else{
+                                    if (m != null) {
+                                        marker = m.getMarkerColor();
+                                    } else {
                                         //abort this mark
                                         throw new NullPointerException("");
-                                    }                    
-                                }else{
+                                    }
+                                } else {
                                     marker = m.getMarkerColor();
                                 }
                             } catch (Throwable t) {
@@ -819,20 +824,20 @@ class RepaintThread extends Thread {
                 }
             }
         }
-       
+
         // <editor-fold defaultstate="collapsed" desc="Attack-line drawing">
 
         g2d.setStroke(new BasicStroke(2.0F, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
-      
+
         for (Attack attack : GlobalOptions.getAttacks()) {
             //go through all attacks
             if (attack.isShowOnMap()) {
-                 //only enter if attack should be visible
+                //only enter if attack should be visible
                 //get line for this attack
                 Line2D.Double attackLine = new Line2D.Double(attack.getSource().getX(), attack.getSource().getY(), attack.getTarget().getX(), attack.getTarget().getY());
                 Rectangle2D.Double bounds = new Rectangle2D.Double(pXStart, pYStart, iVillagesX, iVillagesY);
                 String value = GlobalOptions.getProperty("attack.movement");
-                boolean showAttackMovement = (value==null)?false:Boolean.parseBoolean(value);
+                boolean showAttackMovement = (value == null) ? false : Boolean.parseBoolean(value);
                 int xStart = ((int) attackLine.getX1() - pXStart) * width + width / 2;
                 int yStart = ((int) attackLine.getY1() - pYStart) * height + height / 2;
                 int xEnd = (int) (attackLine.getX2() - pXStart) * width + width / 2;
@@ -872,7 +877,7 @@ class RepaintThread extends Thread {
                     long arrive = attack.getArriveTime().getTime();
                     long start = arrive - dur;
                     long current = System.currentTimeMillis();
-                   
+
                     if ((start < current) && (arrive > current)) {
                         //attack running
                         long runTime = System.currentTimeMillis() - start;
@@ -909,7 +914,7 @@ class RepaintThread extends Thread {
         }
         //</editor-fold>
         g2d.dispose();
-      //  System.out.println("DUr " + (System.currentTimeMillis() - dStart));
+    //  System.out.println("DUr " + (System.currentTimeMillis() - dStart));
     }
 
     static boolean getLineLineIntersection(Line2D.Double l1,
@@ -918,7 +923,17 @@ class RepaintThread extends Thread {
         if (!l1.intersectsLine(l2)) {
             return false;
         }
-        double x1 = l1.getX1(), y1 = l1.getY1(),
+           
+           
+           
+           
+           
+           
+           
+           
+                                    
+                                    
+         double x1 = l1.getX1(), y1 = l1.getY1(),
                 x2 = l1.getX2(), y2 = l1.getY2(),
                 x3 = l2.getX1(), y3 = l2.getY1(),
                 x4 = l2.getX2(), y4 = l2.getY2();

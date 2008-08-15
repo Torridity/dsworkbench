@@ -9,12 +9,12 @@ import de.tor.tribes.db.DatabaseAdapter;
 import de.tor.tribes.io.DataHolderListener;
 import de.tor.tribes.io.ServerList;
 import de.tor.tribes.util.GlobalOptions;
+import de.tor.tribes.util.Skin;
 import java.awt.Point;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Enumeration;
-import java.util.Locale;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -46,33 +46,12 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
     /** Creates new form TribesPlannerStartFrame */
     DSWorkbenchSettingsDialog() {
         initComponents();
-        /*for (Locale l : Locale.getAvailableLocales()) {
-            System.out.println(l.getLanguage() + "_" + l.getCountry());
-            if (l.getLanguage().toLowerCase().equals("en") && l.getCountry().toLowerCase().equals("us")) {
-                System.
-                setLocale(l);
-            }
-        }*/
-             
+
         jCreateAccountDialog.pack();
         getContentPane().setBackground(GlobalOptions.DS_BACK);
         jCreateAccountDialog.getContentPane().setBackground(GlobalOptions.DS_BACK);
         setAlwaysOnTop(true);
         // jControlPanel.setupPanel(this, true, false);
-
-        String interval = GlobalOptions.getProperty("auto.update.interval");
-        if (interval != null) {
-            try {
-                jUpdateIntervalBox.setSelectedIndex(Integer.parseInt(interval));
-            } catch (Exception e) {
-                jUpdateIntervalBox.setSelectedIndex(0);
-                GlobalOptions.addProperty("auto.update.interval", "7");
-            }
-        } else {
-            jUpdateIntervalBox.setSelectedIndex(0);
-            GlobalOptions.addProperty("auto.update.interval", "7");
-        }
-
 
         // <editor-fold defaultstate="collapsed" desc="Skin Setup">
         DefaultComboBoxModel model = new DefaultComboBoxModel(GlobalOptions.getAvailableSkins());
@@ -223,7 +202,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
         } else {
             return true;
         }
-        //</editor-fold>
+    //</editor-fold>
     }
 
     private boolean checkPlayerSettings() {
@@ -294,14 +273,13 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
         jLabel5 = new javax.swing.JLabel();
         jGraphicPacks = new javax.swing.JComboBox();
         jButton4 = new javax.swing.JButton();
-        jLabel8 = new javax.swing.JLabel();
-        jUpdateIntervalBox = new javax.swing.JComboBox();
         jLabel11 = new javax.swing.JLabel();
         jContinentsOnMinimap = new javax.swing.JCheckBox();
         jLabel13 = new javax.swing.JLabel();
         jShowDistanceBox = new javax.swing.JCheckBox();
         jShowAttackMovementBox = new javax.swing.JCheckBox();
         jLabel14 = new javax.swing.JLabel();
+        jButton6 = new javax.swing.JButton();
         jNetworkSettings = new javax.swing.JPanel();
         jDirectConnectOption = new javax.swing.JRadioButton();
         jProxyConnectOption = new javax.swing.JRadioButton();
@@ -366,7 +344,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 107, Short.MAX_VALUE))
+                        .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 109, Short.MAX_VALUE))
                     .addComponent(jRegistrationAccountName, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jRegistrationPassword, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
@@ -545,12 +523,6 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
             }
         });
 
-        jLabel8.setText("Automatischer Datenabgleich");
-
-        jUpdateIntervalBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Nie", "Bei Programmstart", "Stündlich", "Alle 2 Stunden", "Alle 4 Stunden", "Alle 12 Stunden", "Täglich" }));
-        jUpdateIntervalBox.setSelectedIndex(6);
-        jUpdateIntervalBox.setEnabled(false);
-
         jLabel11.setText("Kontinente anzeigen");
 
         jContinentsOnMinimap.setContentAreaFilled(false);
@@ -581,6 +553,13 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
 
         jLabel14.setText("Angriffsbewegung anzeigen");
 
+        jButton6.setText("Vorschau");
+        jButton6.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireShowSkinPreviewEvent(evt);
+            }
+        });
+
         javax.swing.GroupLayout jGeneralSettingsLayout = new javax.swing.GroupLayout(jGeneralSettings);
         jGeneralSettings.setLayout(jGeneralSettingsLayout);
         jGeneralSettingsLayout.setHorizontalGroup(
@@ -588,20 +567,25 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
             .addGroup(jGeneralSettingsLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jGeneralSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel8)
-                    .addComponent(jLabel5)
-                    .addComponent(jLabel14)
-                    .addComponent(jLabel13)
-                    .addComponent(jLabel11))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jGeneralSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jShowAttackMovementBox, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 224, Short.MAX_VALUE)
-                    .addComponent(jContinentsOnMinimap, javax.swing.GroupLayout.DEFAULT_SIZE, 224, Short.MAX_VALUE)
-                    .addComponent(jShowDistanceBox, javax.swing.GroupLayout.DEFAULT_SIZE, 224, Short.MAX_VALUE)
-                    .addComponent(jGraphicPacks, 0, 224, Short.MAX_VALUE)
-                    .addComponent(jUpdateIntervalBox, javax.swing.GroupLayout.Alignment.TRAILING, 0, 224, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton4)
+                    .addGroup(jGeneralSettingsLayout.createSequentialGroup()
+                        .addComponent(jLabel5)
+                        .addGap(89, 89, 89)
+                        .addComponent(jGraphicPacks, 0, 224, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
+                    .addGroup(jGeneralSettingsLayout.createSequentialGroup()
+                        .addGroup(jGeneralSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel14)
+                            .addComponent(jLabel13)
+                            .addComponent(jLabel11))
+                        .addGap(10, 10, 10)
+                        .addGroup(jGeneralSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jShowAttackMovementBox, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 224, Short.MAX_VALUE)
+                            .addComponent(jContinentsOnMinimap, javax.swing.GroupLayout.DEFAULT_SIZE, 224, Short.MAX_VALUE)
+                            .addComponent(jShowDistanceBox, javax.swing.GroupLayout.DEFAULT_SIZE, 224, Short.MAX_VALUE))
+                        .addGap(6, 6, 6)))
+                .addGroup(jGeneralSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jButton6, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButton4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jGeneralSettingsLayout.setVerticalGroup(
@@ -613,22 +597,21 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
                     .addComponent(jButton4)
                     .addComponent(jGraphicPacks, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jGeneralSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel8)
-                    .addComponent(jUpdateIntervalBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(13, 13, 13)
-                .addGroup(jGeneralSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jContinentsOnMinimap, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(13, 13, 13)
-                .addGroup(jGeneralSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel13, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jShowDistanceBox, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(13, 13, 13)
-                .addGroup(jGeneralSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel14, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jShowAttackMovementBox, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(99, Short.MAX_VALUE))
+                .addGroup(jGeneralSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jGeneralSettingsLayout.createSequentialGroup()
+                        .addGroup(jGeneralSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jContinentsOnMinimap))
+                        .addGap(13, 13, 13)
+                        .addGroup(jGeneralSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel13, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jShowDistanceBox))
+                        .addGap(13, 13, 13)
+                        .addGroup(jGeneralSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel14, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jShowAttackMovementBox)))
+                    .addComponent(jButton6))
+                .addContainerGap(132, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Allgemein", new javax.swing.ImageIcon(getClass().getResource("/res/settings.png")), jGeneralSettings); // NOI18N
@@ -858,7 +841,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
         if (!jCancelButton.isEnabled()) {
             return;
         }
-    
+
         if (!checkPlayerSettings()) {
             String message = "Bitte überprüfe die Spieler-/Servereinstellungen und schließe die Einstellungen mit OK.\n";
             message += "Möglicherweise wurde noch kein Server oder kein Spieler ausgewählt.\n";
@@ -885,7 +868,6 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
             return;
         }
 
-        GlobalOptions.addProperty("auto.update.interval", Integer.toString(jUpdateIntervalBox.getSelectedIndex()));
         String selection = (String) jTribeNames.getSelectedItem();
         if ((selection != null) && (!selection.equals("Bitte auswählen"))) {
             logger.debug("Setting default player for server '" + GlobalOptions.getSelectedServer() + "' to " + jTribeNames.getSelectedItem());
@@ -916,7 +898,6 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
             } catch (Exception ie) {
                 logger.error("Failed to load default skin", ie);
             }
-
         }
     }//GEN-LAST:event_fireSelectGraphicPackEvent
 
@@ -1074,6 +1055,17 @@ private void fireChangeShowAttackMovementEvent(java.awt.event.ActionEvent evt) {
     GlobalOptions.saveProperties();
 }//GEN-LAST:event_fireChangeShowAttackMovementEvent
 
+private void fireShowSkinPreviewEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireShowSkinPreviewEvent
+    String selection = (String) jGraphicPacks.getSelectedItem();
+    try {
+        if (selection != null) {
+            Skin.showPreview(selection, evt.getLocationOnScreen());
+        }
+    } catch (Exception e) {
+        logger.error("No preview available for skin '" + selection + "'");
+    }
+}//GEN-LAST:event_fireShowSkinPreviewEvent
+
     private boolean updateServerList(boolean pLocal) {
         String[] servers = null;
         if (!pLocal) {
@@ -1151,6 +1143,7 @@ private void fireChangeShowAttackMovementEvent(java.awt.event.ActionEvent evt) {
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
+    private javax.swing.JButton jButton6;
     private javax.swing.JButton jCancelButton;
     private javax.swing.JCheckBox jContinentsOnMinimap;
     private javax.swing.JButton jCreateAccountButton;
@@ -1171,7 +1164,6 @@ private void fireChangeShowAttackMovementEvent(java.awt.event.ActionEvent evt) {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jLoginPanel;
     private javax.swing.JPanel jNetworkSettings;
@@ -1191,7 +1183,6 @@ private void fireChangeShowAttackMovementEvent(java.awt.event.ActionEvent evt) {
     private javax.swing.JTextArea jStatusArea;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JComboBox jTribeNames;
-    private javax.swing.JComboBox jUpdateIntervalBox;
     // End of variables declaration//GEN-END:variables
 
     @Override

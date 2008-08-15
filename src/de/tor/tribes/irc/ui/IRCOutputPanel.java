@@ -3,7 +3,7 @@
  *
  * Created on 14. Juli 2008, 11:12
  */
-package de.tor.tribes.ui;
+package de.tor.tribes.irc.ui;
 
 import java.awt.Color;
 import java.awt.Point;

@@ -3,10 +3,12 @@
  *
  * Created on 14. Juli 2008, 11:09
  */
-package de.tor.tribes.ui;
+package de.tor.tribes.irc.ui;
 
-import de.tor.tribes.util.irc.IRCHandler;
-import de.tor.tribes.util.irc.IRCHandlerListener;
+import de.tor.tribes.ui.*;
+import de.tor.tribes.irc.ui.IRCOutputPanel;
+import de.tor.tribes.irc.util.IRCHandler;
+import de.tor.tribes.irc.util.IRCHandlerListener;
 import java.awt.event.KeyEvent;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;

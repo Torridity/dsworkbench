@@ -163,7 +163,7 @@ public class DatabaseAdapter {
         int retVal = ID_SUCCESS;
         try {
             Statement s = DB_CONNECTION.createStatement();
-            String query = "SELECT COUNT(*) FROM registrants WHERE uniqueKey='" + SecurityAdapter.getUniqueID() + "';";
+            String query = "SELECT COUNT(*) FROM users WHERE name='" + pUsername + "';";
             ResultSet rs = s.executeQuery(query);
             int count = 0;
             while (rs.next()) {
@@ -171,45 +171,12 @@ public class DatabaseAdapter {
             }
 
             if (count != 0) {
-                logger.error("User obviously already created an account");
-                retVal = ID_DUAL_ACCOUNT;
-            }
-
-            if (retVal == ID_SUCCESS) {
+                retVal = ID_USER_ALREADY_EXIST;
+            } else {
                 s = DB_CONNECTION.createStatement();
-                query = "SELECT COUNT(*) FROM users WHERE name='" + pUsername + "';";
-                rs = s.executeQuery(query);
-                count = 0;
-                while (rs.next()) {
-                    count = rs.getInt(1);
-                }
-
-                if (count != 0) {
-                    retVal = ID_USER_ALREADY_EXIST;
-                } else {
-                    s = DB_CONNECTION.createStatement();
-                    String update = "INSERT INTO users(name, password) VALUES ('" + pUsername + "', '" + SecurityAdapter.hashStringMD5(pPassword) + "');";
-                    if (s.executeUpdate(update) != 1) {
-                        throw new Exception("Unknown error while adding user to database");
-                    }
-
-                    //get user id
-                    s = DB_CONNECTION.createStatement();
-                    query = "SELECT id FROM users WHERE name='" + pUsername + "';";
-                    rs = s.executeQuery(query);
-                    int id = -1;
-                    while (rs.next()) {
-                        id = rs.getInt(1);
-                    }
-                    if (id == -1) {
-                        logger.error("Failed to get user id");
-                    } else {
-                        s = DB_CONNECTION.createStatement();
-                        update = "INSERT INTO registrants(uniqueKey, userID) VALUES ('" + SecurityAdapter.getUniqueID() + "'," + id + ")";
-                        if (s.executeUpdate(update) != 1) {
-                            logger.error("Failed to store unique ID in database");
-                        }
-                    }
+                String update = "INSERT INTO users(name, password) VALUES ('" + pUsername + "', '" + SecurityAdapter.hashStringMD5(pPassword) + "');";
+                if (s.executeUpdate(update) != 1) {
+                    throw new Exception("Unknown error while adding user to database");
                 }
             }
         } catch (Exception e) {

@@ -3,11 +3,11 @@
  *
  * Created on 15. Juli 2008, 08:45
  */
-package de.tor.tribes.ui;
+package de.tor.tribes.irc.ui;
 
+import de.tor.tribes.irc.ui.IRCFrame;
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;
-import jerklib.events.impl.PartEventImpl;
 
 /**
  *

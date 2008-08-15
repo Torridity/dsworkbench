@@ -19,7 +19,6 @@ import de.tor.tribes.ui.editors.VillageCellEditor;
 import de.tor.tribes.ui.renderer.ColorCellRenderer;
 import de.tor.tribes.ui.renderer.DateCellRenderer;
 import de.tor.tribes.ui.renderer.MarkerPanelCellRenderer;
-import de.tor.tribes.util.AutoUpdateThread;
 import de.tor.tribes.util.BrowserCommandSender;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.GlobalOptions;
@@ -423,8 +422,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
             }
         } catch (Exception e) {
         }
-        logger.info("Starting auto update thread");
-        new AutoUpdateThread(this).start();
     }
 
     /** This method is called from within the constructor to

@@ -9,12 +9,9 @@ import de.tor.tribes.util.GlobalOptions;
 import javax.swing.JOptionPane;
 import org.apache.log4j.Logger;
 import de.tor.tribes.io.DataHolderListener;
-import java.io.FileOutputStream;
-import java.io.ObjectOutputStream;
-import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.zip.GZIPOutputStream;
+import javax.swing.ImageIcon;
 import javax.swing.UIManager;
 import org.apache.log4j.xml.DOMConfigurator;
 
@@ -31,6 +28,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
     /** Creates new form DSWorkbenchSplashScreen */
     public DSWorkbenchSplashScreen() {
         initComponents();
+        jLabel1.setIcon(new ImageIcon("./graphics/splash_beta.png"));
         new Timer("StartupTimer", true).schedule(new HideSplashTask(this), 3000);
         t = new SplashRepaintThread(this);
         t.setDaemon(true);
@@ -56,21 +54,19 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
         jStatusOutput.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jStatusOutput.setText("Lade Einstellungen...");
 
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/splash.png"))); // NOI18N
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jLabel1)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 800, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0))
             .addComponent(jStatusOutput, javax.swing.GroupLayout.DEFAULT_SIZE, 800, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jLabel1)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 213, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
                 .addComponent(jStatusOutput))
         );
@@ -124,7 +120,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
         DOMConfigurator.configure("log4j.xml");
         /*System.setProperty("user.language", "en");
         System.setProperty("user.country", "US");*/
-       // Locale.setDefault(new Locale("en", "US"));
+        // Locale.setDefault(new Locale("en", "US"));
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {

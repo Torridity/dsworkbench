@@ -585,7 +585,6 @@ public class DataHolder {
                     u = new URL(downloadURL + "/ally" + i + ".txt.gz");
                     r = new BufferedReader(new InputStreamReader(new GZIPInputStream(u.openConnection().getInputStream())));
                     line = "";
-                    System.out.println("ALlies: " + mAllies.size());
                     while ((line = r.readLine()) != null) {
                         line = line.replaceAll(",,", ", ,");
                         try {
@@ -612,6 +611,36 @@ public class DataHolder {
                     }
                     r.close();
                 }
+
+                //finally update the bash points
+                //load conquers off
+                fireDataHolderEvents("Lese besiegte Gegner (Angriff)...");
+                URL u = new URL(downloadURL + "/kill_att.txt.gz");
+                BufferedReader r = new BufferedReader(new InputStreamReader(u.openConnection().getInputStream()));
+                String line = "";
+                while ((line = r.readLine()) != null) {
+                    try {
+                        parseConqueredLine(line, ID_ATT);
+                    } catch (Exception e) {
+                        //ignored (should only occur on single lines)
+                    }
+                }
+                r.close();
+
+                //read conquers def
+                fireDataHolderEvents("Lese besiegte Gegner (Verteidigung)...");
+                u = new URL(downloadURL + "/kill_def.txt.gz");
+                r = new BufferedReader(new InputStreamReader(u.openConnection().getInputStream()));
+                line = "";
+                while ((line = r.readLine()) != null) {
+                    try {
+                        parseConqueredLine(line, ID_DEF);
+                    } catch (Exception e) {
+                        //ignored (should only occur on single lines)
+                    }
+                }
+                r.close();
+
                 mergeData();
             }
 
@@ -791,8 +820,7 @@ public class DataHolder {
     /**Parse the list of buildings*/
     public void parseBuildings() {
         String buildingsFile = sServerBaseDir + "/" + GlobalOptions.getSelectedServer();
-        buildingsFile +=
-                "/buildings.xml";
+        buildingsFile += "/buildings.xml";
         try {
             Document d = JaxenUtils.getDocument(new File(buildingsFile));
             d = JaxenUtils.getDocument(new File(buildingsFile));
@@ -807,7 +835,6 @@ public class DataHolder {
             logger.error("Failed to load buildings", outer);
             fireDataHolderEvents("Laden der Gebäude fehlgeschlagen");
         }
-
     }
 
     public Village[][] getVillages() {

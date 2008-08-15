@@ -1,35 +1,21 @@
 /*
- * URLImageTest.java
+ * AboutDialog.java
  *
- * Created on 16. Juli 2008, 14:38
+ * Created on 15. August 2008, 14:51
  */
-package de.tor.tribes;
 
-import java.net.URL;
-import javax.swing.ImageIcon;
+package de.tor.tribes.ui;
 
 /**
  *
  * @author  Jejkal
  */
-public class URLImageTest extends javax.swing.JFrame {
+public class AboutDialog extends javax.swing.JDialog {
 
-    /** Creates new form URLImageTest */
-    public URLImageTest() {
+    /** Creates new form AboutDialog */
+    public AboutDialog(java.awt.Frame parent, boolean modal) {
+        super(parent, modal);
         initComponents();
-        System.setProperty("proxySet", "true");
-        System.setProperty("proxyHost", "proxy.fzk.de");
-        System.setProperty("proxyPort", "8000");
-        setChart();
-        pack();
-    }
-
-    void setChart() {
-        try {
-            URL u = new URL("http://dsreal.de/chart/chart.php?id=865608&world=de26&mode=player&art=points");
-            jLabel1.setIcon(new ImageIcon(u));
-        } catch (Exception e) {
-        }
     }
 
     /** This method is called from within the constructor to
@@ -41,37 +27,40 @@ public class URLImageTest extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
-
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+            .addGap(0, 400, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
+            .addGap(0, 300, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     /**
-     * @param args the command line arguments
-     */
+    * @param args the command line arguments
+    */
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
-
             public void run() {
-                new URLImageTest().setVisible(true);
+                AboutDialog dialog = new AboutDialog(new javax.swing.JFrame(), true);
+                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+                    public void windowClosing(java.awt.event.WindowEvent e) {
+                        System.exit(0);
+                    }
+                });
+                dialog.setVisible(true);
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel jLabel1;
     // End of variables declaration//GEN-END:variables
+
 }

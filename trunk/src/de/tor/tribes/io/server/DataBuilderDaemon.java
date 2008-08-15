@@ -42,24 +42,9 @@ public class DataBuilderDaemon {
     public void downloadData() throws Exception {
         logger.info("Starting update");
         //load settings for daemon
-        /*DAEMON_SETTINGS.load(new FileInputStream("daemon.settings"));
-        String baseDir = DAEMON_SETTINGS.getProperty(BASE_DIR_PROPERTY);
-        String serverList = DAEMON_SETTINGS.getProperty(SERVER_LIST_PROPERTY);
-        if (baseDir == null) {
-        //no server base dir found
-        throw new Exception("'base.dir' property not found.");
-        }
-        
-        if (serverList == null) {
-        //service list file not found
-        throw new Exception("'server.list.path' property not found.");
-        }
-        
-        //load server list
-        SERVER_LIST.load(new FileInputStream(serverList));*/
         logger.info("Setting database adapter to local mode");
         DatabaseAdapter.setToLocalMode();
-        
+
         String baseDir = DatabaseAdapter.getPropertyValue("update_base_dir");
         if (baseDir == null) {
             //no server base dir found
@@ -96,8 +81,8 @@ public class DataBuilderDaemon {
             //village_tmp.txt.gz
             //ally_tmp.txt.gz
             //tribe_tmp.txt.gz
-            //kill_off.txt.gz
-            //kill_def.txt.gz
+            //<SERVER_DIR>/kill_off.txt.gz
+            //<SERVER_DIR>/kill_def.txt.gz
             if ((!new File(serverDir + "/village.txt.gz").exists()) ||
                     (!new File(serverDir + "/tribe.txt.gz").exists()) ||
                     (!new File(serverDir + "/ally.txt.gz").exists()) ||
@@ -107,13 +92,13 @@ public class DataBuilderDaemon {
                 newServer = true;
             }
 
-          
+
             if (!newServer) {
                 buildDailyData(serverDir, version);
                 //rename current data
-                /*new File("village_tmp.txt.gz").renameTo(new File(serverDir + "/village.txt.gz"));
+                new File("village_tmp.txt.gz").renameTo(new File(serverDir + "/village.txt.gz"));
                 new File("ally_tmp.txt.gz").renameTo(new File(serverDir + "/ally.txt.gz"));
-                new File("tribe_tmp.txt.gz").renameTo(new File(serverDir + "/tribe.txt.gz"));*/
+                new File("tribe_tmp.txt.gz").renameTo(new File(serverDir + "/tribe.txt.gz"));
             } else {
                 //if we have a new server only rename the data files
                 new File("village_tmp.txt.gz").renameTo(new File(serverDir + "/village.txt.gz"));
@@ -278,12 +263,12 @@ public class DataBuilderDaemon {
         //download kill_att.txt
         logger.info("Loading kill_att.txt.gz from " + pUrl);
         file = new URL(sURL.toString() + "/map/kill_att.txt.gz");
-        downloadDataFile(file, "kill_att.txt.gz");
+        downloadDataFile(file, pServerDir + "kill_att.txt.gz");
 
         //download kill_def.txt
         logger.info("Loading kill_def.txt.gz from " + pUrl);
         file = new URL(sURL.toString() + "/map/kill_def.txt.gz");
-        downloadDataFile(file, "kill_def.txt.gz");
+        downloadDataFile(file, pServerDir + "kill_def.txt.gz");
     }
 
     /**Download one single data file to the local FS*/

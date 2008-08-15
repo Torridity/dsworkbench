@@ -5,6 +5,8 @@
 package de.tor.tribes.types;
 
 import java.awt.Color;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import org.jdom.Element;
 
 /**
@@ -22,9 +24,9 @@ public class Marker {
     public Marker() {
     }
 
-    public Marker(Element pElement) {
+    public Marker(Element pElement) throws Exception{
         setMarkerType(Integer.parseInt(pElement.getChild("type").getText()));
-        setMarkerValue(pElement.getChild("value").getText());
+        setMarkerValue(URLDecoder.decode(pElement.getChild("value").getText(), "UTF-8"));
         setMarkerColor(Color.decode(pElement.getChild("color").getText()));
     }
 
@@ -52,18 +54,22 @@ public class Marker {
         this.markerColor = markerColor;
     }
 
-    public static Marker fromXml(Element pElement) {
+    public static Marker fromXml(Element pElement) throws Exception{
         return new Marker(pElement);
     }
 
     public String toXml() {
-        String xml = "<marker>\n";
-        xml += "<type>" + getMarkerType() + "</type>\n";
-        xml += "<value>" + getMarkerValue() + "</value>\n";
-        String hexCol = Integer.toHexString(getMarkerColor().getRGB());
-        hexCol = "#" + hexCol.substring(2, hexCol.length());
-        xml += "<color>" + hexCol + "</color>\n";
-        xml += "</marker>";
-        return xml;
+        try {
+            String xml = "<marker>\n";
+            xml += "<type>" + getMarkerType() + "</type>\n";
+            xml += "<value>" + URLEncoder.encode(getMarkerValue(), "UTF-8") + "</value>\n";
+            String hexCol = Integer.toHexString(getMarkerColor().getRGB());
+            hexCol = "#" + hexCol.substring(2, hexCol.length());
+            xml += "<color>" + hexCol + "</color>\n";
+            xml += "</marker>";
+            return xml;
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

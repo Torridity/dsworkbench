@@ -285,7 +285,11 @@ public class GlobalOptions {
             try {
                 Document d = JaxenUtils.getDocument(new File(path));
                 for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//markers/marker")) {
-                    mMarkers.add(new Marker(e));
+                    try {
+                        mMarkers.add(new Marker(e));
+                    } catch (Exception inner) {
+                        //ignored, marker invalid
+                    }
                 }
             } catch (Exception e) {
                 logger.error("Failed to read markers");
@@ -318,7 +322,10 @@ public class GlobalOptions {
             FileWriter w = new FileWriter(path);
             w.write("<markers>\n");
             for (Marker m : mMarkers) {
-                w.write(m.toXml() + "\n");
+                String xml = m.toXml();
+                if (xml != null) {
+                    w.write(m.toXml() + "\n");
+                }
             }
             w.write("</markers>");
             w.flush();
@@ -377,7 +384,6 @@ public class GlobalOptions {
         String path = mDataHolder.getDataDirectory() + "/tags.xml";
         if (new File(path).exists()) {
             try {
-
                 Document d = JaxenUtils.getDocument(new File(path));
                 for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//villageTags/villageTagList")) {
                     try {
@@ -395,7 +401,7 @@ public class GlobalOptions {
                     }
                 }
             } catch (Exception e) {
-                logger.error("Failed to read tags", e);
+                logger.error("Failed to read tags");
             }
         } else {
             logger.info("No tags available for selected server");
@@ -440,7 +446,7 @@ public class GlobalOptions {
                 if (current != null) {
                     w.write("<villageTagList>\n");
                     w.write("<id>" + current.getId() + "</id>\n");
-                    List<String> tags = mTags.get(mTags.get(current));
+                    List<String> tags = mTags.get(current);
                     if (tags.size() > 0) {
                         w.write("<tags>\n");
                         for (String tag : tags) {

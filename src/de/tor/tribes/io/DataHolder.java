@@ -173,10 +173,10 @@ public class DataHolder {
                     recreateLocal = true;
                 }
             } else {
-                //check if local loading could work
+                //check if local loading possible
                 if (!isDataAvailable()) {
                     logger.error("Local data not available. Try to download data");
-                    fireDataHolderEvents("Lokale Kopie nicht gefinden. Lade Daten vom Server");
+                    fireDataHolderEvents("Lokale Kopie nicht gefunden. Lade Daten vom Server");
                     if (!downloadData()) {
                         logger.fatal("Download failed. No data available at the moment");
                         fireDataHolderEvents("Download abgebrochen/fehlgeschlagen");
@@ -191,8 +191,17 @@ public class DataHolder {
                     //load data from local copy
                     fireDataHolderEvents("Lade lokale Kopie");
                     if (!readLocalDataCopy(sServerBaseDir + "/" + serverID)) {
-                        logger.error("Failed to read local copy from " + sServerBaseDir + "/" + serverID);
-                        return false;
+                        //local copy invalid, download data
+                        new File(getDataDirectory() + "/" + "serverdata.bin").delete();
+                        logger.error("Failed to read local copy from " + sServerBaseDir + "/" + serverID + ". Try to download data");
+                        fireDataHolderEvents("Lokale Kopie nicht gefunden. Lade Daten vom Server");
+                        if (!downloadData()) {
+                            logger.fatal("Download failed. No data available at the moment");
+                            fireDataHolderEvents("Download abgebrochen/fehlgeschlagen");
+                            return false;
+                        } else {
+                            recreateLocal = true;
+                        }
                     }
                 }
             }
@@ -381,7 +390,11 @@ public class DataHolder {
                     }
                 }
             }
-
+            if (vc == 0 || ac == 0 || tc == 0) {
+                //data obviously invalid
+                logger.error("#villages | #allies | #tribes is 0");
+                return false;
+            }
             logger.info("Read " + vc + " villages");
             logger.info("Read " + ac + " allies");
             logger.info("Read " + tc + " tribes");
@@ -416,7 +429,7 @@ public class DataHolder {
             }
             //</editor-fold>
 
-            // <editor-fold defaultstate="collapsed" desc="Version check">
+            // <editor-fold defaultstate="collapsed" desc="DS Workbench Version check">
             if (DatabaseAdapter.isVersionAllowed() != DatabaseAdapter.ID_SUCCESS) {
                 logger.error("Current version is not allowed any longer");
                 fireDataHolderEvents("Deine DS-Workbench Version ist zu alt. Bitte lade dir die aktuelle Version herunter.");
@@ -445,7 +458,7 @@ public class DataHolder {
             int userDataVersion = DatabaseAdapter.getUserDataVersion(accountName, serverID);
             int maxDiff = Integer.parseInt(DatabaseAdapter.getPropertyValue("max_user_diff"));
             String downloadURL = DatabaseAdapter.getServerDownloadURL(serverID);
-            if ((userDataVersion == dataVersion)) {
+            if ((userDataVersion == dataVersion) && isDataAvailable()) {
                 //no update needed
                 return true;
             } else if ((userDataVersion == -666) || (dataVersion - userDataVersion > maxDiff) || !isDataAvailable()) {
@@ -720,7 +733,6 @@ public class DataHolder {
             //</editor-fold>
 
             DatabaseAdapter.updateUserDataVersion(accountName, serverID, dataVersion);
-
             fireDataHolderEvents("Download erfolgreich beendet.");
         } catch (Exception e) {
             fireDataHolderEvents("Download fehlgeschlagen.");

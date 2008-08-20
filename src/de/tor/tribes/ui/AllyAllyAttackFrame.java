@@ -100,15 +100,15 @@ public class AllyAllyAttackFrame extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         jAttacksTable = new javax.swing.JTable();
         jSourceAllyList = new javax.swing.JComboBox();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
+        jSourceTribeLabel = new javax.swing.JLabel();
+        jSourcePlayerLabel = new javax.swing.JLabel();
         jSourceTribeList = new javax.swing.JComboBox();
-        jLabel3 = new javax.swing.JLabel();
+        jSourceVillageLabel = new javax.swing.JLabel();
         jSourceVillageList = new javax.swing.JComboBox();
         jButton1 = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         jTargetAllyList = new javax.swing.JComboBox();
-        jLabel4 = new javax.swing.JLabel();
+        jTargetAllyLabel = new javax.swing.JLabel();
         jArriveTime = new javax.swing.JSpinner();
         jLabel5 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
@@ -126,12 +126,12 @@ public class AllyAllyAttackFrame extends javax.swing.JFrame {
         jRandomizeTribes = new javax.swing.JCheckBox();
         jLabel14 = new javax.swing.JLabel();
         jButton2 = new javax.swing.JButton();
-        jLabel7 = new javax.swing.JLabel();
+        jSourceUnitLabel = new javax.swing.JLabel();
         jTroopsList = new javax.swing.JComboBox();
         jButton3 = new javax.swing.JButton();
-        jLabel9 = new javax.swing.JLabel();
+        jTimeFrameLabel = new javax.swing.JLabel();
         jTimeFrame = new javax.swing.JComboBox();
-        jButton8 = new javax.swing.JButton();
+        jAllSourceButton = new javax.swing.JButton();
 
         jResultFrame.setTitle("Angriffsplan");
 
@@ -228,9 +228,9 @@ public class AllyAllyAttackFrame extends javax.swing.JFrame {
             }
         });
 
-        jLabel1.setText("Stamm");
+        jSourceTribeLabel.setText("Stamm");
 
-        jLabel2.setText("Spieler");
+        jSourcePlayerLabel.setText("Spieler");
 
         jSourceTribeList.setMaximumSize(new java.awt.Dimension(150, 20));
         jSourceTribeList.setMinimumSize(new java.awt.Dimension(150, 20));
@@ -241,7 +241,7 @@ public class AllyAllyAttackFrame extends javax.swing.JFrame {
             }
         });
 
-        jLabel3.setText("Dorf");
+        jSourceVillageLabel.setText("Dorf");
 
         jSourceVillageList.setMaximumSize(new java.awt.Dimension(150, 20));
         jSourceVillageList.setMinimumSize(new java.awt.Dimension(150, 20));
@@ -263,7 +263,7 @@ public class AllyAllyAttackFrame extends javax.swing.JFrame {
         jTargetAllyList.setMinimumSize(new java.awt.Dimension(150, 20));
         jTargetAllyList.setPreferredSize(new java.awt.Dimension(150, 20));
 
-        jLabel4.setText("Ziel-Stamm");
+        jTargetAllyLabel.setText("Ziel-Stamm");
 
         jArriveTime.setModel(new javax.swing.SpinnerDateModel(new java.util.Date(), new java.util.Date(), null, java.util.Calendar.SECOND));
         jArriveTime.setMaximumSize(new java.awt.Dimension(150, 20));
@@ -318,7 +318,7 @@ public class AllyAllyAttackFrame extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 124, Short.MAX_VALUE)
-                    .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, 124, Short.MAX_VALUE)
+                    .addComponent(jTargetAllyLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 124, Short.MAX_VALUE)
                     .addComponent(jLabel12, javax.swing.GroupLayout.DEFAULT_SIZE, 124, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -358,7 +358,7 @@ public class AllyAllyAttackFrame extends javax.swing.JFrame {
                             .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jTargetPlayerList, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jTargetAllyLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jTargetAllyList, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addComponent(jAttackPlayerBox))
@@ -398,7 +398,7 @@ public class AllyAllyAttackFrame extends javax.swing.JFrame {
             }
         });
 
-        jLabel7.setText("Truppen");
+        jSourceUnitLabel.setText("Truppen");
 
         jTroopsList.setMaximumSize(new java.awt.Dimension(150, 20));
         jTroopsList.setMinimumSize(new java.awt.Dimension(150, 20));
@@ -414,12 +414,12 @@ public class AllyAllyAttackFrame extends javax.swing.JFrame {
             }
         });
 
-        jLabel9.setText("Zeitrahmen");
+        jTimeFrameLabel.setText("Zeitrahmen");
 
         jTimeFrame.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "egal", "Früh (6-8)", "Vormittag (8-12)", "Nachmittag (12-18)", "Abend (18-0)", "Nacht (0-6)", "Lupii", "RedAngel" }));
 
-        jButton8.setText("Alle");
-        jButton8.addMouseListener(new java.awt.event.MouseAdapter() {
+        jAllSourceButton.setText("Alle");
+        jAllSourceButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireAddAllPlayerVillages(evt);
             }
@@ -436,23 +436,23 @@ public class AllyAllyAttackFrame extends javax.swing.JFrame {
                     .addComponent(jButton2, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING))
+                            .addComponent(jSourceVillageLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jSourceTribeLabel, javax.swing.GroupLayout.Alignment.TRAILING))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jSourceAllyList, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jSourceVillageList, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jButton8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(jAllSourceButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 22, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel7, javax.swing.GroupLayout.Alignment.TRAILING))
+                            .addComponent(jSourcePlayerLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jSourceUnitLabel, javax.swing.GroupLayout.Alignment.TRAILING))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jTroopsList, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jSourceTribeList, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, 97, Short.MAX_VALUE)
+                        .addComponent(jTimeFrameLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 97, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jTimeFrame, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -470,23 +470,23 @@ public class AllyAllyAttackFrame extends javax.swing.JFrame {
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 189, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
+                    .addComponent(jSourceTribeLabel)
                     .addComponent(jSourceAllyList, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2)
+                    .addComponent(jSourcePlayerLabel)
                     .addComponent(jSourceTribeList, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jTimeFrame, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel9))
+                    .addComponent(jTimeFrameLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel3)
+                        .addComponent(jSourceVillageLabel)
                         .addComponent(jSourceVillageList, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel7)
+                        .addComponent(jSourceUnitLabel)
                         .addComponent(jTroopsList, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton8)
+                .addComponent(jAllSourceButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -862,6 +862,7 @@ private void fireAddAllPlayerVillages(java.awt.event.MouseEvent evt) {//GEN-FIRS
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jAllSourceButton;
     private javax.swing.JSpinner jArriveTime;
     private javax.swing.JCheckBox jAttackPlayerBox;
     private javax.swing.JTable jAttacksTable;
@@ -872,21 +873,14 @@ private void fireAddAllPlayerVillages(java.awt.event.MouseEvent evt) {//GEN-FIRS
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
     private javax.swing.JButton jButton7;
-    private javax.swing.JButton jButton8;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
     private javax.swing.JComboBox jMaxAttacksPerPlayer;
     private javax.swing.JComboBox jMaxAttacksPerVillage;
     private javax.swing.JCheckBox jNightForbidden;
@@ -898,11 +892,17 @@ private void fireAddAllPlayerVillages(java.awt.event.MouseEvent evt) {//GEN-FIRS
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSpinner jSendTime;
     private javax.swing.JComboBox jSourceAllyList;
+    private javax.swing.JLabel jSourcePlayerLabel;
+    private javax.swing.JLabel jSourceTribeLabel;
     private javax.swing.JComboBox jSourceTribeList;
+    private javax.swing.JLabel jSourceUnitLabel;
+    private javax.swing.JLabel jSourceVillageLabel;
     private javax.swing.JComboBox jSourceVillageList;
+    private javax.swing.JLabel jTargetAllyLabel;
     private javax.swing.JComboBox jTargetAllyList;
     private javax.swing.JComboBox jTargetPlayerList;
     private javax.swing.JComboBox jTimeFrame;
+    private javax.swing.JLabel jTimeFrameLabel;
     private javax.swing.JComboBox jTroopsList;
     // End of variables declaration//GEN-END:variables
 }

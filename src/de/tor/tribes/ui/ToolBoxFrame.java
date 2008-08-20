@@ -138,7 +138,8 @@ public class ToolBoxFrame extends javax.swing.JFrame {
         jSettingsButton = new javax.swing.JButton();
         jDragLabel = new javax.swing.JLabel();
 
-        setTitle("Tools");
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("de/tor/tribes/ui/Bundle"); // NOI18N
+        setTitle(bundle.getString("ToolBoxFrame.title")); // NOI18N
         setAlwaysOnTop(true);
         setResizable(false);
         setUndecorated(true);
@@ -148,7 +149,7 @@ public class ToolBoxFrame extends javax.swing.JFrame {
         jPanel1.setPreferredSize(new java.awt.Dimension(30, 330));
         jPanel1.setLayout(new javax.swing.BoxLayout(jPanel1, javax.swing.BoxLayout.Y_AXIS));
 
-        jMeasureButton.setToolTipText("Entfernungen messen");
+        jMeasureButton.setToolTipText(bundle.getString("ToolBoxFrame.jMeasureButton.toolTipText")); // NOI18N
         jMeasureButton.setMaximumSize(new java.awt.Dimension(30, 30));
         jMeasureButton.setMinimumSize(new java.awt.Dimension(30, 30));
         jMeasureButton.setPreferredSize(new java.awt.Dimension(30, 30));
@@ -159,7 +160,7 @@ public class ToolBoxFrame extends javax.swing.JFrame {
         });
         jPanel1.add(jMeasureButton);
 
-        jMarkButton.setToolTipText("Markieren");
+        jMarkButton.setToolTipText(bundle.getString("ToolBoxFrame.jMarkButton.toolTipText")); // NOI18N
         jMarkButton.setMaximumSize(new java.awt.Dimension(30, 30));
         jMarkButton.setMinimumSize(new java.awt.Dimension(30, 30));
         jMarkButton.setPreferredSize(new java.awt.Dimension(30, 30));
@@ -170,7 +171,7 @@ public class ToolBoxFrame extends javax.swing.JFrame {
         });
         jPanel1.add(jMarkButton);
 
-        jTagButton.setToolTipText("Einstellungen");
+        jTagButton.setToolTipText(bundle.getString("ToolBoxFrame.jTagButton.toolTipText")); // NOI18N
         jTagButton.setMaximumSize(new java.awt.Dimension(30, 30));
         jTagButton.setMinimumSize(new java.awt.Dimension(30, 30));
         jTagButton.setPreferredSize(new java.awt.Dimension(30, 30));
@@ -181,7 +182,7 @@ public class ToolBoxFrame extends javax.swing.JFrame {
         });
         jPanel1.add(jTagButton);
 
-        jSendTroopsIngameButton.setToolTipText("Truppen schicken (InGame)");
+        jSendTroopsIngameButton.setToolTipText(bundle.getString("ToolBoxFrame.jSendTroopsIngameButton.toolTipText")); // NOI18N
         jSendTroopsIngameButton.setMaximumSize(new java.awt.Dimension(30, 30));
         jSendTroopsIngameButton.setMinimumSize(new java.awt.Dimension(30, 30));
         jSendTroopsIngameButton.setPreferredSize(new java.awt.Dimension(30, 30));
@@ -192,7 +193,7 @@ public class ToolBoxFrame extends javax.swing.JFrame {
         });
         jPanel1.add(jSendTroopsIngameButton);
 
-        jSendResIngameButton.setToolTipText("Rohstoffe schicken (InGame)");
+        jSendResIngameButton.setToolTipText(bundle.getString("ToolBoxFrame.jSendResIngameButton.toolTipText")); // NOI18N
         jSendResIngameButton.setMaximumSize(new java.awt.Dimension(30, 30));
         jSendResIngameButton.setMinimumSize(new java.awt.Dimension(30, 30));
         jSendResIngameButton.setPreferredSize(new java.awt.Dimension(30, 30));
@@ -210,7 +211,7 @@ public class ToolBoxFrame extends javax.swing.JFrame {
         jLabel2.setPreferredSize(new java.awt.Dimension(40, 4));
         jPanel1.add(jLabel2);
 
-        jAttackAxeButton.setToolTipText("Angriff (Axt)");
+        jAttackAxeButton.setToolTipText(bundle.getString("ToolBoxFrame.jAttackAxeButton.toolTipText")); // NOI18N
         jAttackAxeButton.setMaximumSize(new java.awt.Dimension(30, 30));
         jAttackAxeButton.setMinimumSize(new java.awt.Dimension(30, 30));
         jAttackAxeButton.setPreferredSize(new java.awt.Dimension(30, 30));
@@ -221,7 +222,7 @@ public class ToolBoxFrame extends javax.swing.JFrame {
         });
         jPanel1.add(jAttackAxeButton);
 
-        jAttackRamButton.setToolTipText("Angriff (Ramme)");
+        jAttackRamButton.setToolTipText(bundle.getString("ToolBoxFrame.jAttackRamButton.toolTipText")); // NOI18N
         jAttackRamButton.setMaximumSize(new java.awt.Dimension(30, 30));
         jAttackRamButton.setMinimumSize(new java.awt.Dimension(30, 30));
         jAttackRamButton.setPreferredSize(new java.awt.Dimension(30, 30));
@@ -232,7 +233,7 @@ public class ToolBoxFrame extends javax.swing.JFrame {
         });
         jPanel1.add(jAttackRamButton);
 
-        jAttackSnobButton.setToolTipText("Angriff (AG)");
+        jAttackSnobButton.setToolTipText(bundle.getString("ToolBoxFrame.jAttackSnobButton.toolTipText")); // NOI18N
         jAttackSnobButton.setMaximumSize(new java.awt.Dimension(30, 30));
         jAttackSnobButton.setMinimumSize(new java.awt.Dimension(30, 30));
         jAttackSnobButton.setPreferredSize(new java.awt.Dimension(30, 30));
@@ -243,7 +244,7 @@ public class ToolBoxFrame extends javax.swing.JFrame {
         });
         jPanel1.add(jAttackSnobButton);
 
-        jAttackSpyButton.setToolTipText("Angriff (Späher)");
+        jAttackSpyButton.setToolTipText(bundle.getString("ToolBoxFrame.jAttackSpyButton.toolTipText")); // NOI18N
         jAttackSpyButton.setMaximumSize(new java.awt.Dimension(30, 30));
         jAttackSpyButton.setMinimumSize(new java.awt.Dimension(30, 30));
         jAttackSpyButton.setPreferredSize(new java.awt.Dimension(30, 30));
@@ -254,7 +255,7 @@ public class ToolBoxFrame extends javax.swing.JFrame {
         });
         jPanel1.add(jAttackSpyButton);
 
-        jAttackLightButton.setToolTipText("Angriff (LKav)");
+        jAttackLightButton.setToolTipText(bundle.getString("ToolBoxFrame.jAttackLightButton.toolTipText")); // NOI18N
         jAttackLightButton.setMaximumSize(new java.awt.Dimension(30, 30));
         jAttackLightButton.setMinimumSize(new java.awt.Dimension(30, 30));
         jAttackLightButton.setPreferredSize(new java.awt.Dimension(30, 30));
@@ -265,7 +266,7 @@ public class ToolBoxFrame extends javax.swing.JFrame {
         });
         jPanel1.add(jAttackLightButton);
 
-        jAttackHeavyButton.setToolTipText("Angriff (SKav)");
+        jAttackHeavyButton.setToolTipText(bundle.getString("ToolBoxFrame.jAttackHeavyButton.toolTipText")); // NOI18N
         jAttackHeavyButton.setMaximumSize(new java.awt.Dimension(30, 30));
         jAttackHeavyButton.setMinimumSize(new java.awt.Dimension(30, 30));
         jAttackHeavyButton.setPreferredSize(new java.awt.Dimension(30, 30));
@@ -276,7 +277,7 @@ public class ToolBoxFrame extends javax.swing.JFrame {
         });
         jPanel1.add(jAttackHeavyButton);
 
-        jAttackSwordButton.setToolTipText("Angriff (Schwert)");
+        jAttackSwordButton.setToolTipText(bundle.getString("ToolBoxFrame.jAttackSwordButton.toolTipText")); // NOI18N
         jAttackSwordButton.setMaximumSize(new java.awt.Dimension(30, 30));
         jAttackSwordButton.setMinimumSize(new java.awt.Dimension(30, 30));
         jAttackSwordButton.setPreferredSize(new java.awt.Dimension(30, 30));
@@ -294,7 +295,7 @@ public class ToolBoxFrame extends javax.swing.JFrame {
         jLabel1.setPreferredSize(new java.awt.Dimension(40, 4));
         jPanel1.add(jLabel1);
 
-        jMoveButton.setToolTipText("Minimap bewegen");
+        jMoveButton.setToolTipText(bundle.getString("ToolBoxFrame.jMoveButton.toolTipText")); // NOI18N
         jMoveButton.setMaximumSize(new java.awt.Dimension(30, 30));
         jMoveButton.setMinimumSize(new java.awt.Dimension(30, 30));
         jMoveButton.setPreferredSize(new java.awt.Dimension(30, 30));
@@ -305,7 +306,7 @@ public class ToolBoxFrame extends javax.swing.JFrame {
         });
         jPanel1.add(jMoveButton);
 
-        jZoomButton.setToolTipText("Minimap zoomen");
+        jZoomButton.setToolTipText(bundle.getString("ToolBoxFrame.jZoomButton.toolTipText")); // NOI18N
         jZoomButton.setMaximumSize(new java.awt.Dimension(30, 30));
         jZoomButton.setMinimumSize(new java.awt.Dimension(30, 30));
         jZoomButton.setPreferredSize(new java.awt.Dimension(30, 30));
@@ -323,7 +324,7 @@ public class ToolBoxFrame extends javax.swing.JFrame {
         jLabel3.setPreferredSize(new java.awt.Dimension(40, 4));
         jPanel1.add(jLabel3);
 
-        jSearchButton.setToolTipText("Suche");
+        jSearchButton.setToolTipText(bundle.getString("ToolBoxFrame.jSearchButton.toolTipText")); // NOI18N
         jSearchButton.setMaximumSize(new java.awt.Dimension(30, 30));
         jSearchButton.setMinimumSize(new java.awt.Dimension(30, 30));
         jSearchButton.setPreferredSize(new java.awt.Dimension(30, 30));
@@ -334,7 +335,7 @@ public class ToolBoxFrame extends javax.swing.JFrame {
         });
         jPanel1.add(jSearchButton);
 
-        jClockButton.setToolTipText("Uhr");
+        jClockButton.setToolTipText(bundle.getString("ToolBoxFrame.jClockButton.toolTipText")); // NOI18N
         jClockButton.setMaximumSize(new java.awt.Dimension(30, 30));
         jClockButton.setMinimumSize(new java.awt.Dimension(30, 30));
         jClockButton.setPreferredSize(new java.awt.Dimension(30, 30));
@@ -345,7 +346,7 @@ public class ToolBoxFrame extends javax.swing.JFrame {
         });
         jPanel1.add(jClockButton);
 
-        jSettingsButton.setToolTipText("Einstellungen");
+        jSettingsButton.setToolTipText(bundle.getString("ToolBoxFrame.jSettingsButton.toolTipText")); // NOI18N
         jSettingsButton.setMaximumSize(new java.awt.Dimension(30, 30));
         jSettingsButton.setMinimumSize(new java.awt.Dimension(30, 30));
         jSettingsButton.setPreferredSize(new java.awt.Dimension(30, 30));

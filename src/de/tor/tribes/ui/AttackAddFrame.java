@@ -5,7 +5,6 @@
  */
 package de.tor.tribes.ui;
 
-import de.tor.tribes.io.DataHolderListener;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.util.DSCalculator;
@@ -147,34 +146,35 @@ public class AttackAddFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        jOKButton = new javax.swing.JButton();
+        jCancelButton = new javax.swing.JButton();
         jDistance = new javax.swing.JLabel();
         jSourceVillage = new javax.swing.JLabel();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
+        jSourceLabel = new javax.swing.JLabel();
+        jTargetLabel = new javax.swing.JLabel();
+        jUnitLabel = new javax.swing.JLabel();
         jUnitBox = new javax.swing.JComboBox();
         jTimeSpinner = new javax.swing.JSpinner();
-        jLabel4 = new javax.swing.JLabel();
+        jDistanceLabel = new javax.swing.JLabel();
         jTargetVillage = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
+        jArriveTimeLabel = new javax.swing.JLabel();
         frameControlPanel1 = new de.tor.tribes.ui.FrameControlPanel();
 
-        setTitle("Angriff hinzufügen");
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("de/tor/tribes/ui/Bundle"); // NOI18N
+        setTitle(bundle.getString("AttackAddFrame.title")); // NOI18N
         setUndecorated(true);
 
-        jButton1.setBackground(new java.awt.Color(239, 235, 223));
-        jButton1.setText("OK");
-        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+        jOKButton.setBackground(new java.awt.Color(239, 235, 223));
+        jOKButton.setText(bundle.getString("AttackAddFrame.jOKButton.text")); // NOI18N
+        jOKButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireAddAttackEvent(evt);
             }
         });
 
-        jButton2.setBackground(new java.awt.Color(239, 235, 223));
-        jButton2.setText("Abbrechen");
-        jButton2.addMouseListener(new java.awt.event.MouseAdapter() {
+        jCancelButton.setBackground(new java.awt.Color(239, 235, 223));
+        jCancelButton.setText(bundle.getString("AttackAddFrame.jCancelButton.text")); // NOI18N
+        jCancelButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireCancelAddAttackEvent(evt);
             }
@@ -190,15 +190,15 @@ public class AttackAddFrame extends javax.swing.JFrame {
         jSourceVillage.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jSourceVillage.setOpaque(true);
 
-        jLabel1.setText("<html><u>Herkunft</u></html>");
-        jLabel1.setBorder(javax.swing.BorderFactory.createCompoundBorder());
+        jSourceLabel.setText(bundle.getString("AttackAddFrame.jSourceLabel.text")); // NOI18N
+        jSourceLabel.setBorder(javax.swing.BorderFactory.createCompoundBorder());
 
-        jLabel2.setText("<html><u>Ziel</u></html>");
+        jTargetLabel.setText(bundle.getString("AttackAddFrame.jTargetLabel.text")); // NOI18N
 
-        jLabel3.setText("<html><u>Langsamste Einheit</u></html>");
-        jLabel3.setMaximumSize(new java.awt.Dimension(120, 14));
-        jLabel3.setMinimumSize(new java.awt.Dimension(120, 14));
-        jLabel3.setPreferredSize(new java.awt.Dimension(120, 14));
+        jUnitLabel.setText(bundle.getString("AttackAddFrame.jUnitLabel.text")); // NOI18N
+        jUnitLabel.setMaximumSize(new java.awt.Dimension(120, 14));
+        jUnitLabel.setMinimumSize(new java.awt.Dimension(120, 14));
+        jUnitLabel.setPreferredSize(new java.awt.Dimension(120, 14));
 
         jUnitBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Speerträger (18)", "Adelsgeschlecht (35)", "Berittener Bogenschütze (11 Felder/min)" }));
         jUnitBox.setSelectedIndex(2);
@@ -212,7 +212,7 @@ public class AttackAddFrame extends javax.swing.JFrame {
 
         jTimeSpinner.setModel(new javax.swing.SpinnerDateModel(new java.util.Date(), null, null, java.util.Calendar.SECOND));
 
-        jLabel4.setText("<html><u>Entfernung</u></html>");
+        jDistanceLabel.setText(bundle.getString("AttackAddFrame.jDistanceLabel.text")); // NOI18N
 
         jTargetVillage.setBackground(new java.awt.Color(239, 235, 223));
         jTargetVillage.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
@@ -223,10 +223,10 @@ public class AttackAddFrame extends javax.swing.JFrame {
         jTargetVillage.setOpaque(true);
         jTargetVillage.setPreferredSize(new java.awt.Dimension(39, 20));
 
-        jLabel5.setText("<html><u>Ankunftzeit</u></html>");
-        jLabel5.setMaximumSize(new java.awt.Dimension(120, 14));
-        jLabel5.setMinimumSize(new java.awt.Dimension(120, 14));
-        jLabel5.setPreferredSize(new java.awt.Dimension(120, 14));
+        jArriveTimeLabel.setText(bundle.getString("AttackAddFrame.jArriveTimeLabel.text")); // NOI18N
+        jArriveTimeLabel.setMaximumSize(new java.awt.Dimension(120, 14));
+        jArriveTimeLabel.setMinimumSize(new java.awt.Dimension(120, 14));
+        jArriveTimeLabel.setPreferredSize(new java.awt.Dimension(120, 14));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -235,11 +235,11 @@ public class AttackAddFrame extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 120, Short.MAX_VALUE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 120, Short.MAX_VALUE)
-                    .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, 120, Short.MAX_VALUE)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jTargetLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 120, Short.MAX_VALUE)
+                    .addComponent(jSourceLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 120, Short.MAX_VALUE)
+                    .addComponent(jDistanceLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 120, Short.MAX_VALUE)
+                    .addComponent(jUnitLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jArriveTimeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jTimeSpinner, javax.swing.GroupLayout.DEFAULT_SIZE, 306, Short.MAX_VALUE)
@@ -248,9 +248,9 @@ public class AttackAddFrame extends javax.swing.JFrame {
                     .addComponent(jDistance, javax.swing.GroupLayout.DEFAULT_SIZE, 306, Short.MAX_VALUE)
                     .addComponent(jUnitBox, 0, 306, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jButton2)
+                        .addComponent(jCancelButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton1)))
+                        .addComponent(jOKButton)))
                 .addContainerGap())
             .addComponent(frameControlPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 452, Short.MAX_VALUE)
         );
@@ -267,23 +267,23 @@ public class AttackAddFrame extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jDistance, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jSourceLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jTargetLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jDistanceLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jUnitBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jUnitLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jTimeSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jArriveTimeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2))
+                    .addComponent(jOKButton)
+                    .addComponent(jCancelButton))
                 .addContainerGap())
         );
 
@@ -351,17 +351,17 @@ private void fireAddAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:even
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private de.tor.tribes.ui.FrameControlPanel frameControlPanel1;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
+    private javax.swing.JLabel jArriveTimeLabel;
+    private javax.swing.JButton jCancelButton;
     private javax.swing.JLabel jDistance;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jDistanceLabel;
+    private javax.swing.JButton jOKButton;
+    private javax.swing.JLabel jSourceLabel;
     private javax.swing.JLabel jSourceVillage;
+    private javax.swing.JLabel jTargetLabel;
     private javax.swing.JLabel jTargetVillage;
     private javax.swing.JSpinner jTimeSpinner;
     private javax.swing.JComboBox jUnitBox;
+    private javax.swing.JLabel jUnitLabel;
     // End of variables declaration//GEN-END:variables
 }

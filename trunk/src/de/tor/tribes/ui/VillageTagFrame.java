@@ -5,7 +5,6 @@
  */
 package de.tor.tribes.ui;
 
-import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.util.GlobalOptions;
 import java.util.List;
@@ -54,8 +53,8 @@ public class VillageTagFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
+        jTribeLabel = new javax.swing.JLabel();
+        jVillageLabel = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTagsList = new javax.swing.JList();
         jLabel3 = new javax.swing.JLabel();
@@ -63,17 +62,18 @@ public class VillageTagFrame extends javax.swing.JFrame {
         jTagsChooser = new javax.swing.JComboBox();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
+        jOKButton = new javax.swing.JButton();
+        jCancelButton = new javax.swing.JButton();
         jVillageList = new javax.swing.JComboBox();
 
-        jLabel1.setText("Spieler");
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("de/tor/tribes/ui/Bundle"); // NOI18N
+        jTribeLabel.setText(bundle.getString("VillageTagFrame.jTribeLabel.text")); // NOI18N
 
-        jLabel2.setText("Dorf");
+        jVillageLabel.setText(bundle.getString("VillageTagFrame.jVillageLabel.text")); // NOI18N
 
         jScrollPane1.setViewportView(jTagsList);
 
-        jLabel3.setText("Tags");
+        jLabel3.setText(bundle.getString("VillageTagFrame.jLabel3.text")); // NOI18N
 
         jPlayerName.setEditable(false);
 
@@ -99,15 +99,15 @@ public class VillageTagFrame extends javax.swing.JFrame {
             }
         });
 
-        jButton3.setText("OK");
-        jButton3.addMouseListener(new java.awt.event.MouseAdapter() {
+        jOKButton.setText(bundle.getString("VillageTagFrame.jOKButton.text")); // NOI18N
+        jOKButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireOkEvent(evt);
             }
         });
 
-        jButton4.setText("Abbrechen");
-        jButton4.addMouseListener(new java.awt.event.MouseAdapter() {
+        jCancelButton.setText(bundle.getString("VillageTagFrame.jCancelButton.text")); // NOI18N
+        jCancelButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireCancelEvent(evt);
             }
@@ -126,8 +126,8 @@ public class VillageTagFrame extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1)
-                    .addComponent(jLabel2)
+                    .addComponent(jTribeLabel)
+                    .addComponent(jVillageLabel)
                     .addComponent(jLabel3))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -136,11 +136,11 @@ public class VillageTagFrame extends javax.swing.JFrame {
                     .addComponent(jVillageList, 0, 344, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jButton4)
+                            .addComponent(jCancelButton)
                             .addComponent(jTagsChooser, 0, 282, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jOKButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -152,11 +152,11 @@ public class VillageTagFrame extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
+                    .addComponent(jTribeLabel)
                     .addComponent(jPlayerName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
+                    .addComponent(jVillageLabel)
                     .addComponent(jVillageList, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -170,8 +170,8 @@ public class VillageTagFrame extends javax.swing.JFrame {
                         .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton3)
-                    .addComponent(jButton4))
+                    .addComponent(jOKButton)
+                    .addComponent(jCancelButton))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -253,15 +253,15 @@ private void fireVillageSelectionChangedEvent(java.awt.event.ItemEvent evt) {//G
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
+    private javax.swing.JButton jCancelButton;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JButton jOKButton;
     private javax.swing.JTextField jPlayerName;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JComboBox jTagsChooser;
     private javax.swing.JList jTagsList;
+    private javax.swing.JLabel jTribeLabel;
+    private javax.swing.JLabel jVillageLabel;
     private javax.swing.JComboBox jVillageList;
     // End of variables declaration//GEN-END:variables
 

@@ -9,6 +9,7 @@ import de.tor.tribes.util.GlobalOptions;
 import javax.swing.JOptionPane;
 import org.apache.log4j.Logger;
 import de.tor.tribes.io.DataHolderListener;
+import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 import javax.swing.ImageIcon;
@@ -118,9 +119,8 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
      */
     public static void main(String args[]) {
         DOMConfigurator.configure("log4j.xml");
-        /*System.setProperty("user.language", "en");
-        System.setProperty("user.country", "US");*/
-        // Locale.setDefault(new Locale("en", "US"));
+
+        Locale.setDefault(Locale.US);
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {

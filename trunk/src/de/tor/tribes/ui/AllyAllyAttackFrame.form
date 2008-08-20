@@ -126,19 +126,19 @@
                   <Component id="jButton2" alignment="1" min="-2" max="-2" attributes="0"/>
                   <Group type="102" alignment="0" attributes="0">
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                          <Component id="jLabel3" alignment="1" max="32767" attributes="1"/>
-                          <Component id="jLabel1" alignment="1" min="-2" max="-2" attributes="1"/>
+                          <Component id="jSourceVillageLabel" alignment="1" max="32767" attributes="1"/>
+                          <Component id="jSourceTribeLabel" alignment="1" min="-2" max="-2" attributes="1"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
                           <Component id="jSourceAllyList" alignment="0" max="32767" attributes="1"/>
                           <Component id="jSourceVillageList" alignment="0" max="32767" attributes="1"/>
-                          <Component id="jButton8" alignment="0" max="32767" attributes="1"/>
+                          <Component id="jAllSourceButton" alignment="0" max="32767" attributes="1"/>
                       </Group>
                       <EmptySpace pref="22" max="32767" attributes="0"/>
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                          <Component id="jLabel2" alignment="1" max="32767" attributes="1"/>
-                          <Component id="jLabel7" alignment="1" min="-2" max="-2" attributes="1"/>
+                          <Component id="jSourcePlayerLabel" alignment="1" max="32767" attributes="1"/>
+                          <Component id="jSourceUnitLabel" alignment="1" min="-2" max="-2" attributes="1"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
@@ -146,7 +146,7 @@
                           <Component id="jSourceTribeList" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jLabel9" pref="97" max="32767" attributes="1"/>
+                      <Component id="jTimeFrameLabel" pref="97" max="32767" attributes="1"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="jTimeFrame" alignment="1" min="-2" pref="129" max="-2" attributes="0"/>
@@ -170,26 +170,26 @@
               <Component id="jScrollPane1" pref="189" max="32767" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="jSourceTribeLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="jSourceAllyList" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="jSourcePlayerLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="jSourceTribeList" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="jTimeFrame" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="jLabel9" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="jTimeFrameLabel" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="103" alignment="0" groupAlignment="3" attributes="0">
-                      <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="jSourceVillageLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="jSourceVillageList" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="jLabel7" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="jSourceUnitLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="jTroopsList" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <Component id="jButton3" min="-2" max="-2" attributes="0"/>
                   <Component id="jButton1" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="jButton8" min="-2" max="-2" attributes="0"/>
+              <Component id="jAllSourceButton" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
               <EmptySpace min="-2" max="-2" attributes="0"/>
@@ -238,12 +238,12 @@
         <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="fireSourceAllyChangedEvent"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JLabel" name="jLabel1">
+    <Component class="javax.swing.JLabel" name="jSourceTribeLabel">
       <Properties>
         <Property name="text" type="java.lang.String" value="Stamm"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JLabel" name="jLabel2">
+    <Component class="javax.swing.JLabel" name="jSourcePlayerLabel">
       <Properties>
         <Property name="text" type="java.lang.String" value="Spieler"/>
       </Properties>
@@ -267,7 +267,7 @@
         <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="fireSourceTribeChangedEvent"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JLabel" name="jLabel3">
+    <Component class="javax.swing.JLabel" name="jSourceVillageLabel">
       <Properties>
         <Property name="text" type="java.lang.String" value="Dorf"/>
       </Properties>
@@ -322,7 +322,7 @@
               <Group type="102" attributes="0">
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Component id="jLabel5" alignment="1" pref="124" max="32767" attributes="1"/>
-                      <Component id="jLabel4" alignment="0" pref="124" max="32767" attributes="1"/>
+                      <Component id="jTargetAllyLabel" alignment="0" pref="124" max="32767" attributes="1"/>
                       <Component id="jLabel12" alignment="0" pref="124" max="32767" attributes="1"/>
                       <Group type="102" alignment="1" attributes="0">
                           <Group type="103" groupAlignment="1" attributes="0">
@@ -372,7 +372,7 @@
                               <Component id="jTargetPlayerList" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <Group type="103" alignment="0" groupAlignment="3" attributes="0">
-                              <Component id="jLabel4" alignment="3" min="-2" pref="18" max="-2" attributes="0"/>
+                              <Component id="jTargetAllyLabel" alignment="3" min="-2" pref="18" max="-2" attributes="0"/>
                               <Component id="jTargetAllyList" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="jLabel6" alignment="3" min="-2" pref="19" max="-2" attributes="0"/>
                           </Group>
@@ -434,7 +434,7 @@
             </Property>
           </Properties>
         </Component>
-        <Component class="javax.swing.JLabel" name="jLabel4">
+        <Component class="javax.swing.JLabel" name="jTargetAllyLabel">
           <Properties>
             <Property name="text" type="java.lang.String" value="Ziel-Stamm"/>
           </Properties>
@@ -592,7 +592,7 @@
         <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fireCalculateAttackEvent"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JLabel" name="jLabel7">
+    <Component class="javax.swing.JLabel" name="jSourceUnitLabel">
       <Properties>
         <Property name="text" type="java.lang.String" value="Truppen"/>
       </Properties>
@@ -632,7 +632,7 @@
         <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fireRemoveAttackEvent"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JLabel" name="jLabel9">
+    <Component class="javax.swing.JLabel" name="jTimeFrameLabel">
       <Properties>
         <Property name="text" type="java.lang.String" value="Zeitrahmen"/>
       </Properties>
@@ -653,7 +653,7 @@
         </Property>
       </Properties>
     </Component>
-    <Component class="javax.swing.JButton" name="jButton8">
+    <Component class="javax.swing.JButton" name="jAllSourceButton">
       <Properties>
         <Property name="text" type="java.lang.String" value="Alle"/>
       </Properties>

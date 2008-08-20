@@ -64,20 +64,20 @@ public class SearchFrame extends javax.swing.JFrame implements SearchListener {
         buttonGroup1 = new javax.swing.ButtonGroup();
         jPlayerSearch = new javax.swing.JPanel();
         jSearchTerm = new javax.swing.JTextField();
-        jLabel1 = new javax.swing.JLabel();
+        jSearchTermLabel = new javax.swing.JLabel();
         jTribesList = new javax.swing.JComboBox();
-        jLabel2 = new javax.swing.JLabel();
+        jTribesLabel = new javax.swing.JLabel();
         jMarkAllyButton = new javax.swing.JButton();
         jAllyList = new javax.swing.JComboBox();
-        jLabel3 = new javax.swing.JLabel();
+        jAlliesLabel = new javax.swing.JLabel();
         jMarkTribeButton = new javax.swing.JButton();
-        jLabel6 = new javax.swing.JLabel();
-        jButton5 = new javax.swing.JButton();
+        jVillagesLabel = new javax.swing.JLabel();
+        jCenterButton = new javax.swing.JButton();
         jVillageList = new javax.swing.JComboBox();
         jCenterInGameButton = new javax.swing.JButton();
         jSendResButton = new javax.swing.JButton();
         jSendDefButton = new javax.swing.JButton();
-        jLabel4 = new javax.swing.JLabel();
+        jInGameOptionsLabel = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         jTribeStats = new javax.swing.JRadioButton();
@@ -87,7 +87,8 @@ public class SearchFrame extends javax.swing.JFrame implements SearchListener {
         jShowBashDef = new javax.swing.JCheckBox();
         jButton1 = new javax.swing.JButton();
 
-        setTitle("Suche");
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("de/tor/tribes/ui/Bundle"); // NOI18N
+        setTitle(bundle.getString("SearchFrame.title")); // NOI18N
         setAlwaysOnTop(true);
 
         jPlayerSearch.setOpaque(false);
@@ -101,7 +102,7 @@ public class SearchFrame extends javax.swing.JFrame implements SearchListener {
             }
         });
 
-        jLabel1.setText("Suchbegriff");
+        jSearchTermLabel.setText(bundle.getString("SearchFrame.jSearchTermLabel.text")); // NOI18N
 
         jTribesList.setMaximumSize(new java.awt.Dimension(200, 20));
         jTribesList.setMinimumSize(new java.awt.Dimension(200, 20));
@@ -112,10 +113,10 @@ public class SearchFrame extends javax.swing.JFrame implements SearchListener {
             }
         });
 
-        jLabel2.setText("Spieler");
+        jTribesLabel.setText(bundle.getString("SearchFrame.jTribesLabel.text")); // NOI18N
 
         jMarkAllyButton.setBackground(new java.awt.Color(239, 235, 223));
-        jMarkAllyButton.setText("Markieren");
+        jMarkAllyButton.setText(bundle.getString("SearchFrame.jMarkAllyButton.text")); // NOI18N
         jMarkAllyButton.setMaximumSize(new java.awt.Dimension(100, 23));
         jMarkAllyButton.setMinimumSize(new java.awt.Dimension(100, 23));
         jMarkAllyButton.setPreferredSize(new java.awt.Dimension(100, 23));
@@ -134,10 +135,10 @@ public class SearchFrame extends javax.swing.JFrame implements SearchListener {
             }
         });
 
-        jLabel3.setText("Stämme");
+        jAlliesLabel.setText(bundle.getString("SearchFrame.jAlliesLabel.text")); // NOI18N
 
         jMarkTribeButton.setBackground(new java.awt.Color(239, 235, 223));
-        jMarkTribeButton.setText("Markieren");
+        jMarkTribeButton.setText(bundle.getString("SearchFrame.jMarkTribeButton.text")); // NOI18N
         jMarkTribeButton.setMaximumSize(new java.awt.Dimension(100, 23));
         jMarkTribeButton.setMinimumSize(new java.awt.Dimension(100, 23));
         jMarkTribeButton.setPreferredSize(new java.awt.Dimension(100, 23));
@@ -147,21 +148,21 @@ public class SearchFrame extends javax.swing.JFrame implements SearchListener {
             }
         });
 
-        jLabel6.setText("Dörfer");
+        jVillagesLabel.setText(bundle.getString("SearchFrame.jVillagesLabel.text")); // NOI18N
 
-        jButton5.setBackground(new java.awt.Color(239, 235, 223));
-        jButton5.setText("Zentrieren");
-        jButton5.setMaximumSize(new java.awt.Dimension(100, 23));
-        jButton5.setMinimumSize(new java.awt.Dimension(100, 23));
-        jButton5.setPreferredSize(new java.awt.Dimension(100, 23));
-        jButton5.addMouseListener(new java.awt.event.MouseAdapter() {
+        jCenterButton.setBackground(new java.awt.Color(239, 235, 223));
+        jCenterButton.setText(bundle.getString("SearchFrame.jCenterButton.text")); // NOI18N
+        jCenterButton.setMaximumSize(new java.awt.Dimension(100, 23));
+        jCenterButton.setMinimumSize(new java.awt.Dimension(100, 23));
+        jCenterButton.setPreferredSize(new java.awt.Dimension(100, 23));
+        jCenterButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireCenterMapEvent(evt);
             }
         });
 
         jCenterInGameButton.setBackground(new java.awt.Color(239, 235, 223));
-        jCenterInGameButton.setToolTipText("Karte zentrieren");
+        jCenterInGameButton.setToolTipText(bundle.getString("SearchFrame.jCenterInGameButton.toolTipText")); // NOI18N
         jCenterInGameButton.setMaximumSize(new java.awt.Dimension(31, 31));
         jCenterInGameButton.setMinimumSize(new java.awt.Dimension(31, 31));
         jCenterInGameButton.setPreferredSize(new java.awt.Dimension(31, 31));
@@ -172,7 +173,7 @@ public class SearchFrame extends javax.swing.JFrame implements SearchListener {
         });
 
         jSendResButton.setBackground(new java.awt.Color(239, 235, 223));
-        jSendResButton.setToolTipText("Rohstoffe schicken");
+        jSendResButton.setToolTipText(bundle.getString("SearchFrame.jSendResButton.toolTipText")); // NOI18N
         jSendResButton.setMaximumSize(new java.awt.Dimension(31, 31));
         jSendResButton.setMinimumSize(new java.awt.Dimension(31, 31));
         jSendResButton.setPreferredSize(new java.awt.Dimension(31, 31));
@@ -183,7 +184,7 @@ public class SearchFrame extends javax.swing.JFrame implements SearchListener {
         });
 
         jSendDefButton.setBackground(new java.awt.Color(239, 235, 223));
-        jSendDefButton.setToolTipText("Unterstützugn schicken");
+        jSendDefButton.setToolTipText(bundle.getString("SearchFrame.jSendDefButton.toolTipText")); // NOI18N
         jSendDefButton.setMaximumSize(new java.awt.Dimension(31, 31));
         jSendDefButton.setMinimumSize(new java.awt.Dimension(31, 31));
         jSendDefButton.setPreferredSize(new java.awt.Dimension(31, 31));
@@ -193,30 +194,30 @@ public class SearchFrame extends javax.swing.JFrame implements SearchListener {
             }
         });
 
-        jLabel4.setText("InGame Optionen");
+        jInGameOptionsLabel.setText(bundle.getString("SearchFrame.jInGameOptionsLabel.text")); // NOI18N
 
-        jLabel5.setText("DS Real Stats");
+        jLabel5.setText(bundle.getString("SearchFrame.jLabel5.text")); // NOI18N
 
         buttonGroup1.add(jTribeStats);
         jTribeStats.setSelected(true);
-        jTribeStats.setText("Spieler");
+        jTribeStats.setText(bundle.getString("SearchFrame.jTribeStats.text")); // NOI18N
         jTribeStats.setOpaque(false);
 
         buttonGroup1.add(jAllyStats);
-        jAllyStats.setText("Stamm");
+        jAllyStats.setText(bundle.getString("SearchFrame.jAllyStats.text")); // NOI18N
         jAllyStats.setOpaque(false);
 
         jShowPoints.setSelected(true);
-        jShowPoints.setText("Punkte");
+        jShowPoints.setText(bundle.getString("SearchFrame.jShowPoints.text")); // NOI18N
         jShowPoints.setOpaque(false);
 
-        jShowBashOff.setText("Bash (Off)");
+        jShowBashOff.setText(bundle.getString("SearchFrame.jShowBashOff.text")); // NOI18N
         jShowBashOff.setOpaque(false);
 
-        jShowBashDef.setText("Bash (Def)");
+        jShowBashDef.setText(bundle.getString("SearchFrame.jShowBashDef.text")); // NOI18N
         jShowBashDef.setOpaque(false);
 
-        jButton1.setText("Anzeigen");
+        jButton1.setText(bundle.getString("SearchFrame.jButton1.text")); // NOI18N
         jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireShowDSRealStatsEvent(evt);
@@ -238,7 +239,7 @@ public class SearchFrame extends javax.swing.JFrame implements SearchListener {
                         .addComponent(jShowBashOff)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jShowBashDef)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 20, Short.MAX_VALUE)
                         .addComponent(jButton1)))
                 .addContainerGap())
         );
@@ -265,11 +266,11 @@ public class SearchFrame extends javax.swing.JFrame implements SearchListener {
             .addGroup(jPlayerSearchLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPlayerSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel4)
-                    .addComponent(jLabel1)
-                    .addComponent(jLabel6)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel3)
+                    .addComponent(jInGameOptionsLabel)
+                    .addComponent(jSearchTermLabel)
+                    .addComponent(jVillagesLabel)
+                    .addComponent(jTribesLabel)
+                    .addComponent(jAlliesLabel)
                     .addComponent(jLabel5))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPlayerSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -288,7 +289,7 @@ public class SearchFrame extends javax.swing.JFrame implements SearchListener {
                 .addGroup(jPlayerSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jMarkTribeButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jMarkAllyButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jCenterButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
         jPlayerSearchLayout.setVerticalGroup(
@@ -296,28 +297,28 @@ public class SearchFrame extends javax.swing.JFrame implements SearchListener {
             .addGroup(jPlayerSearchLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPlayerSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
+                    .addComponent(jSearchTermLabel)
                     .addComponent(jSearchTerm, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPlayerSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jMarkAllyButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jAllyList, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3))
+                    .addComponent(jAlliesLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPlayerSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jMarkTribeButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2)
+                    .addComponent(jTribesLabel)
                     .addComponent(jTribesList, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPlayerSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel6)
-                    .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jVillagesLabel)
+                    .addComponent(jCenterButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jVillageList, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPlayerSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPlayerSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                         .addComponent(jCenterInGameButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(jInGameOptionsLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addComponent(jSendResButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jSendDefButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -472,30 +473,30 @@ private void fireShowDSRealStatsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.JLabel jAlliesLabel;
     private javax.swing.JComboBox jAllyList;
     private javax.swing.JRadioButton jAllyStats;
     private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton5;
+    private javax.swing.JButton jCenterButton;
     private javax.swing.JButton jCenterInGameButton;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jInGameOptionsLabel;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
     private javax.swing.JButton jMarkAllyButton;
     private javax.swing.JButton jMarkTribeButton;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPlayerSearch;
     private javax.swing.JTextField jSearchTerm;
+    private javax.swing.JLabel jSearchTermLabel;
     private javax.swing.JButton jSendDefButton;
     private javax.swing.JButton jSendResButton;
     private javax.swing.JCheckBox jShowBashDef;
     private javax.swing.JCheckBox jShowBashOff;
     private javax.swing.JCheckBox jShowPoints;
     private javax.swing.JRadioButton jTribeStats;
+    private javax.swing.JLabel jTribesLabel;
     private javax.swing.JComboBox jTribesList;
     private javax.swing.JComboBox jVillageList;
+    private javax.swing.JLabel jVillagesLabel;
     // End of variables declaration//GEN-END:variables
 
     @Override

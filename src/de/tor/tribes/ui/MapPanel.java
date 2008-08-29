@@ -5,6 +5,7 @@
  */
 package de.tor.tribes.ui;
 
+import de.tor.tribes.io.WorldDecorationHolder;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.Marker;
 import de.tor.tribes.types.Village;
@@ -52,7 +53,7 @@ public class MapPanel extends javax.swing.JPanel {
     private RepaintThread mRepaintThread = null;
     boolean updating = false;
     private DSWorkbenchMainFrame mParent;
-    private int iCurrentCursor = GlobalOptions.CURSOR_DEFAULT;
+    private int iCurrentCursor = ImageManager.CURSOR_DEFAULT;
     private Village mSourceVillage = null;
     private Village mTargetVillage = null;
     private MarkerAddFrame mMarkerAddFrame = null;
@@ -71,7 +72,7 @@ public class MapPanel extends javax.swing.JPanel {
         mAttackAddFrame = new AttackAddFrame(pParent);
         mTagFrame = new VillageTagFrame();
         mParent = pParent;
-        setCursor(GlobalOptions.getCursor(iCurrentCursor));
+        setCursor(ImageManager.getCursor(iCurrentCursor));
         initListeners();
     }
 
@@ -85,12 +86,12 @@ public class MapPanel extends javax.swing.JPanel {
 
                 iCurrentCursor += e.getWheelRotation();
                 if (iCurrentCursor < 0) {
-                    iCurrentCursor = GlobalOptions.CURSOR_ATTACK_HEAVY;
-                } else if (iCurrentCursor > GlobalOptions.CURSOR_ATTACK_HEAVY) {
-                    iCurrentCursor = GlobalOptions.CURSOR_DEFAULT;
+                    iCurrentCursor = ImageManager.CURSOR_ATTACK_HEAVY;
+                } else if (iCurrentCursor > ImageManager.CURSOR_ATTACK_HEAVY) {
+                    iCurrentCursor = ImageManager.CURSOR_DEFAULT;
 
                 }
-                setCursor(GlobalOptions.getCursor(iCurrentCursor));
+                setCursor(ImageManager.getCursor(iCurrentCursor));
                 mParent.changeTool(iCurrentCursor);
             }
         });
@@ -103,17 +104,17 @@ public class MapPanel extends javax.swing.JPanel {
             public void mouseClicked(MouseEvent e) {
                 int unit = -1;
                 boolean isAttack = false;
-                if ((iCurrentCursor == GlobalOptions.CURSOR_ATTACK_AXE) ||
-                        (iCurrentCursor == GlobalOptions.CURSOR_ATTACK_SWORD) ||
-                        (iCurrentCursor == GlobalOptions.CURSOR_ATTACK_SPY) ||
-                        (iCurrentCursor == GlobalOptions.CURSOR_ATTACK_LIGHT) ||
-                        (iCurrentCursor == GlobalOptions.CURSOR_ATTACK_HEAVY) ||
-                        (iCurrentCursor == GlobalOptions.CURSOR_ATTACK_RAM) ||
-                        (iCurrentCursor == GlobalOptions.CURSOR_ATTACK_SNOB)) {
+                if ((iCurrentCursor == ImageManager.CURSOR_ATTACK_AXE) ||
+                        (iCurrentCursor == ImageManager.CURSOR_ATTACK_SWORD) ||
+                        (iCurrentCursor == ImageManager.CURSOR_ATTACK_SPY) ||
+                        (iCurrentCursor == ImageManager.CURSOR_ATTACK_LIGHT) ||
+                        (iCurrentCursor == ImageManager.CURSOR_ATTACK_HEAVY) ||
+                        (iCurrentCursor == ImageManager.CURSOR_ATTACK_RAM) ||
+                        (iCurrentCursor == ImageManager.CURSOR_ATTACK_SNOB)) {
                     isAttack = true;
                 }
                 switch (iCurrentCursor) {
-                    case GlobalOptions.CURSOR_MARK: {
+                    case ImageManager.CURSOR_MARK: {
                         Village current = getVillageAtMousePos();
                         if (current != null) {
                             if (current.getTribe() == null) {
@@ -126,7 +127,7 @@ public class MapPanel extends javax.swing.JPanel {
                         }
                         break;
                     }
-                    case GlobalOptions.CURSOR_TAG: {
+                    case ImageManager.CURSOR_TAG: {
                         Village current = getVillageAtMousePos();
                         if (current != null) {
                             if (current.getTribe() == null) {
@@ -138,7 +139,7 @@ public class MapPanel extends javax.swing.JPanel {
                         mTagFrame.showTagsFrame(current);
                         break;
                     }
-                    case GlobalOptions.CURSOR_ATTACK_INGAME: {
+                    case ImageManager.CURSOR_ATTACK_INGAME: {
                         if (e.getClickCount() == 2) {
                             Village v = getVillageAtMousePos();
                             Village u = mParent.getCurrentUserVillage();
@@ -147,7 +148,7 @@ public class MapPanel extends javax.swing.JPanel {
                             }
                         }
                     }
-                    case GlobalOptions.CURSOR_SEND_RES_INGAME: {
+                    case ImageManager.CURSOR_SEND_RES_INGAME: {
                         if (e.getClickCount() == 2) {
                             Village v = getVillageAtMousePos();
                             Village u = mParent.getCurrentUserVillage();
@@ -156,31 +157,31 @@ public class MapPanel extends javax.swing.JPanel {
                             }
                         }
                     }
-                    case GlobalOptions.CURSOR_ATTACK_AXE: {
+                    case ImageManager.CURSOR_ATTACK_AXE: {
                         unit = GlobalOptions.getDataHolder().getUnitID("Axtkämpfer");
                         break;
                     }
-                    case GlobalOptions.CURSOR_ATTACK_SWORD: {
+                    case ImageManager.CURSOR_ATTACK_SWORD: {
                         unit = GlobalOptions.getDataHolder().getUnitID("Schwertkämpfer");
                         break;
                     }
-                    case GlobalOptions.CURSOR_ATTACK_SPY: {
+                    case ImageManager.CURSOR_ATTACK_SPY: {
                         unit = GlobalOptions.getDataHolder().getUnitID("Späher");
                         break;
                     }
-                    case GlobalOptions.CURSOR_ATTACK_LIGHT: {
+                    case ImageManager.CURSOR_ATTACK_LIGHT: {
                         unit = GlobalOptions.getDataHolder().getUnitID("Leichte Kavallerie");
                         break;
                     }
-                    case GlobalOptions.CURSOR_ATTACK_HEAVY: {
+                    case ImageManager.CURSOR_ATTACK_HEAVY: {
                         unit = GlobalOptions.getDataHolder().getUnitID("Schwere Kavallerie");
                         break;
                     }
-                    case GlobalOptions.CURSOR_ATTACK_RAM: {
+                    case ImageManager.CURSOR_ATTACK_RAM: {
                         unit = GlobalOptions.getDataHolder().getUnitID("Ramme");
                         break;
                     }
-                    case GlobalOptions.CURSOR_ATTACK_SNOB: {
+                    case ImageManager.CURSOR_ATTACK_SNOB: {
                         unit = GlobalOptions.getDataHolder().getUnitID("Adelsgeschlecht");
                         break;
                     }
@@ -198,18 +199,18 @@ public class MapPanel extends javax.swing.JPanel {
             public void mousePressed(MouseEvent e) {
                 boolean isAttack = false;
                 mouseDown = true;
-                if ((iCurrentCursor == GlobalOptions.CURSOR_ATTACK_AXE) ||
-                        (iCurrentCursor == GlobalOptions.CURSOR_ATTACK_SWORD) ||
-                        (iCurrentCursor == GlobalOptions.CURSOR_ATTACK_SPY) ||
-                        (iCurrentCursor == GlobalOptions.CURSOR_ATTACK_LIGHT) ||
-                        (iCurrentCursor == GlobalOptions.CURSOR_ATTACK_HEAVY) ||
-                        (iCurrentCursor == GlobalOptions.CURSOR_ATTACK_RAM) ||
-                        (iCurrentCursor == GlobalOptions.CURSOR_ATTACK_SNOB)) {
+                if ((iCurrentCursor == ImageManager.CURSOR_ATTACK_AXE) ||
+                        (iCurrentCursor == ImageManager.CURSOR_ATTACK_SWORD) ||
+                        (iCurrentCursor == ImageManager.CURSOR_ATTACK_SPY) ||
+                        (iCurrentCursor == ImageManager.CURSOR_ATTACK_LIGHT) ||
+                        (iCurrentCursor == ImageManager.CURSOR_ATTACK_HEAVY) ||
+                        (iCurrentCursor == ImageManager.CURSOR_ATTACK_RAM) ||
+                        (iCurrentCursor == ImageManager.CURSOR_ATTACK_SNOB)) {
                     isAttack = true;
                 }
 
                 switch (iCurrentCursor) {
-                    case GlobalOptions.CURSOR_MEASURE: {
+                    case ImageManager.CURSOR_MEASURE: {
                         //start drag if attack tool is active
                         downX = e.getX();
                         downY = e.getY();
@@ -236,45 +237,45 @@ public class MapPanel extends javax.swing.JPanel {
             public void mouseReleased(MouseEvent e) {
                 int unit = -1;
                 boolean isAttack = false;
-                if ((iCurrentCursor == GlobalOptions.CURSOR_ATTACK_AXE) ||
-                        (iCurrentCursor == GlobalOptions.CURSOR_ATTACK_SWORD) ||
-                        (iCurrentCursor == GlobalOptions.CURSOR_ATTACK_SPY) ||
-                        (iCurrentCursor == GlobalOptions.CURSOR_ATTACK_LIGHT) ||
-                        (iCurrentCursor == GlobalOptions.CURSOR_ATTACK_HEAVY) ||
-                        (iCurrentCursor == GlobalOptions.CURSOR_ATTACK_RAM) ||
-                        (iCurrentCursor == GlobalOptions.CURSOR_ATTACK_SNOB)) {
+                if ((iCurrentCursor == ImageManager.CURSOR_ATTACK_AXE) ||
+                        (iCurrentCursor == ImageManager.CURSOR_ATTACK_SWORD) ||
+                        (iCurrentCursor == ImageManager.CURSOR_ATTACK_SPY) ||
+                        (iCurrentCursor == ImageManager.CURSOR_ATTACK_LIGHT) ||
+                        (iCurrentCursor == ImageManager.CURSOR_ATTACK_HEAVY) ||
+                        (iCurrentCursor == ImageManager.CURSOR_ATTACK_RAM) ||
+                        (iCurrentCursor == ImageManager.CURSOR_ATTACK_SNOB)) {
                     isAttack = true;
                 }
 
                 switch (iCurrentCursor) {
-                    case GlobalOptions.CURSOR_MEASURE: {
+                    case ImageManager.CURSOR_MEASURE: {
                         break;
                     }
-                    case GlobalOptions.CURSOR_ATTACK_AXE: {
+                    case ImageManager.CURSOR_ATTACK_AXE: {
                         unit = GlobalOptions.getDataHolder().getUnitID("Axtkämpfer");
                         break;
                     }
-                    case GlobalOptions.CURSOR_ATTACK_SWORD: {
+                    case ImageManager.CURSOR_ATTACK_SWORD: {
                         unit = GlobalOptions.getDataHolder().getUnitID("Schwertkämpfer");
                         break;
                     }
-                    case GlobalOptions.CURSOR_ATTACK_SPY: {
+                    case ImageManager.CURSOR_ATTACK_SPY: {
                         unit = GlobalOptions.getDataHolder().getUnitID("Späher");
                         break;
                     }
-                    case GlobalOptions.CURSOR_ATTACK_LIGHT: {
+                    case ImageManager.CURSOR_ATTACK_LIGHT: {
                         unit = GlobalOptions.getDataHolder().getUnitID("Leichte Kavallerie");
                         break;
                     }
-                    case GlobalOptions.CURSOR_ATTACK_HEAVY: {
+                    case ImageManager.CURSOR_ATTACK_HEAVY: {
                         unit = GlobalOptions.getDataHolder().getUnitID("Schwere Kavallerie");
                         break;
                     }
-                    case GlobalOptions.CURSOR_ATTACK_RAM: {
+                    case ImageManager.CURSOR_ATTACK_RAM: {
                         unit = GlobalOptions.getDataHolder().getUnitID("Ramme");
                         break;
                     }
-                    case GlobalOptions.CURSOR_ATTACK_SNOB: {
+                    case ImageManager.CURSOR_ATTACK_SNOB: {
                         unit = GlobalOptions.getDataHolder().getUnitID("Adelsgeschlecht");
                         break;
                     }
@@ -325,18 +326,18 @@ public class MapPanel extends javax.swing.JPanel {
             public void mouseDragged(MouseEvent e) {
                 mParent.updateDetailedInfoPanel(getVillageAtMousePos());
                 boolean isAttack = false;
-                if ((iCurrentCursor == GlobalOptions.CURSOR_ATTACK_AXE) ||
-                        (iCurrentCursor == GlobalOptions.CURSOR_ATTACK_SWORD) ||
-                        (iCurrentCursor == GlobalOptions.CURSOR_ATTACK_SPY) ||
-                        (iCurrentCursor == GlobalOptions.CURSOR_ATTACK_LIGHT) ||
-                        (iCurrentCursor == GlobalOptions.CURSOR_ATTACK_HEAVY) ||
-                        (iCurrentCursor == GlobalOptions.CURSOR_ATTACK_RAM) ||
-                        (iCurrentCursor == GlobalOptions.CURSOR_ATTACK_SNOB)) {
+                if ((iCurrentCursor == ImageManager.CURSOR_ATTACK_AXE) ||
+                        (iCurrentCursor == ImageManager.CURSOR_ATTACK_SWORD) ||
+                        (iCurrentCursor == ImageManager.CURSOR_ATTACK_SPY) ||
+                        (iCurrentCursor == ImageManager.CURSOR_ATTACK_LIGHT) ||
+                        (iCurrentCursor == ImageManager.CURSOR_ATTACK_HEAVY) ||
+                        (iCurrentCursor == ImageManager.CURSOR_ATTACK_RAM) ||
+                        (iCurrentCursor == ImageManager.CURSOR_ATTACK_SNOB)) {
                     isAttack = true;
                 }
 
                 switch (iCurrentCursor) {
-                    case GlobalOptions.CURSOR_MEASURE: {
+                    case ImageManager.CURSOR_MEASURE: {
                         //update drag if attack tool is active
                         if (mSourceVillage != null) {
                             mRepaintThread.setDragLine(mSourceVillage.getX(), mSourceVillage.getY(), e.getX(), e.getY());
@@ -348,8 +349,10 @@ public class MapPanel extends javax.swing.JPanel {
                     }
                     default: {
                         if (isAttack) {
-                            mRepaintThread.setDragLine((int) mSourceVillage.getX(), (int) mSourceVillage.getY(), e.getX(), e.getY());
-                            mTargetVillage = getVillageAtMousePos();
+                            if (mSourceVillage != null) {
+                                mRepaintThread.setDragLine((int) mSourceVillage.getX(), (int) mSourceVillage.getY(), e.getX(), e.getY());
+                                mTargetVillage = getVillageAtMousePos();
+                            }
                         }
                     }
                 }
@@ -376,7 +379,7 @@ public class MapPanel extends javax.swing.JPanel {
 
     public void setCurrentCursor(int pCurrentCursor) {
         iCurrentCursor = pCurrentCursor;
-        setCursor(GlobalOptions.getCursor(iCurrentCursor));
+        setCursor(ImageManager.getCursor(iCurrentCursor));
         mParent.changeTool(iCurrentCursor);
     }
 
@@ -616,7 +619,7 @@ class RepaintThread extends Thread {
         int yPos = pYStart;
         //disable decoration if field size is not equal the decoration texture size
         boolean useDecoration = true;
-        if ((GlobalOptions.getWorldDecorationHolder().getTexture(0, 0, 1).getWidth(null) != GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, 1).getWidth(null)) || (GlobalOptions.getWorldDecorationHolder().getTexture(0, 0, 1).getHeight(null) != GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, 1).getHeight(null))) {
+        if ((WorldDecorationHolder.getTexture(0, 0, 1).getWidth(null) != GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, 1).getWidth(null)) || (GlobalOptions.getWorldDecorationHolder().getTexture(0, 0, 1).getHeight(null) != GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, 1).getHeight(null))) {
             useDecoration = false;
         }
 
@@ -848,29 +851,29 @@ class RepaintThread extends Thread {
                 if (showAttackMovement) {
 
                     if (attack.getUnit().getName().equals("Speerträger")) {
-                        unitIcon = GlobalOptions.getUnitIcon(GlobalOptions.ICON_SPEAR);
+                        unitIcon = ImageManager.getUnitIcon(ImageManager.ICON_SPEAR);
                     } else if (attack.getUnit().getName().equals("Schwertkämpfer")) {
-                        unitIcon = GlobalOptions.getUnitIcon(GlobalOptions.ICON_SWORD);
+                        unitIcon = ImageManager.getUnitIcon(ImageManager.ICON_SWORD);
                     } else if (attack.getUnit().getName().equals("Axtkämpfer")) {
-                        unitIcon = GlobalOptions.getUnitIcon(GlobalOptions.ICON_AXE);
+                        unitIcon = ImageManager.getUnitIcon(ImageManager.ICON_AXE);
                     } else if (attack.getUnit().getName().equals("Bogenschütze")) {
-                        unitIcon = GlobalOptions.getUnitIcon(GlobalOptions.ICON_ARCHER);
+                        unitIcon = ImageManager.getUnitIcon(ImageManager.ICON_ARCHER);
                     } else if (attack.getUnit().getName().equals("Späher")) {
-                        unitIcon = GlobalOptions.getUnitIcon(GlobalOptions.ICON_SPY);
+                        unitIcon = ImageManager.getUnitIcon(ImageManager.ICON_SPY);
                     } else if (attack.getUnit().getName().equals("Leichte Kavallerie")) {
-                        unitIcon = GlobalOptions.getUnitIcon(GlobalOptions.ICON_LKAV);
+                        unitIcon = ImageManager.getUnitIcon(ImageManager.ICON_LKAV);
                     } else if (attack.getUnit().getName().equals("Berittener Bogenschütze")) {
-                        unitIcon = GlobalOptions.getUnitIcon(GlobalOptions.ICON_MARCHER);
+                        unitIcon = ImageManager.getUnitIcon(ImageManager.ICON_MARCHER);
                     } else if (attack.getUnit().getName().equals("Schwere Kavallerie")) {
-                        unitIcon = GlobalOptions.getUnitIcon(GlobalOptions.ICON_HEAVY);
+                        unitIcon = ImageManager.getUnitIcon(ImageManager.ICON_HEAVY);
                     } else if (attack.getUnit().getName().equals("Ramme")) {
-                        unitIcon = GlobalOptions.getUnitIcon(GlobalOptions.ICON_RAM);
+                        unitIcon = ImageManager.getUnitIcon(ImageManager.ICON_RAM);
                     } else if (attack.getUnit().getName().equals("Katapult")) {
-                        unitIcon = GlobalOptions.getUnitIcon(GlobalOptions.ICON_CATA);
+                        unitIcon = ImageManager.getUnitIcon(ImageManager.ICON_CATA);
                     } else if (attack.getUnit().getName().equals("Adelsgeschlecht")) {
-                        unitIcon = GlobalOptions.getUnitIcon(GlobalOptions.ICON_SNOB);
+                        unitIcon = ImageManager.getUnitIcon(ImageManager.ICON_SNOB);
                     } else if (attack.getUnit().getName().equals("Paladin")) {
-                        unitIcon = GlobalOptions.getUnitIcon(GlobalOptions.ICON_KNIGHT);
+                        unitIcon = ImageManager.getUnitIcon(ImageManager.ICON_KNIGHT);
                     }
 
                     long dur = (long) (DSCalculator.calculateMoveTimeInSeconds(attack.getSource(), attack.getTarget(), attack.getUnit().getSpeed()) * 1000);
@@ -923,17 +926,17 @@ class RepaintThread extends Thread {
         if (!l1.intersectsLine(l2)) {
             return false;
         }
-           
-           
-           
-           
-           
-           
-           
-           
-                                    
-                                    
-         double x1 = l1.getX1(), y1 = l1.getY1(),
+
+
+
+
+
+
+
+
+
+
+        double x1 = l1.getX1(), y1 = l1.getY1(),
                 x2 = l1.getX2(), y2 = l1.getY2(),
                 x3 = l2.getX1(), y3 = l2.getY1(),
                 x4 = l2.getX2(), y4 = l2.getY2();

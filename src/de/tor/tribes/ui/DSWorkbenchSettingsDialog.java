@@ -8,6 +8,7 @@ package de.tor.tribes.ui;
 import de.tor.tribes.db.DatabaseAdapter;
 import de.tor.tribes.io.DataHolderListener;
 import de.tor.tribes.io.ServerList;
+import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.Skin;
 import java.awt.Point;
@@ -48,8 +49,8 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
         initComponents();
 
         jCreateAccountDialog.pack();
-        getContentPane().setBackground(GlobalOptions.DS_BACK);
-        jCreateAccountDialog.getContentPane().setBackground(GlobalOptions.DS_BACK);
+        getContentPane().setBackground(Constants.DS_BACK);
+        jCreateAccountDialog.getContentPane().setBackground(Constants.DS_BACK);
         setAlwaysOnTop(true);
         // jControlPanel.setupPanel(this, true, false);
 

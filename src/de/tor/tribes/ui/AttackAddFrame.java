@@ -7,6 +7,7 @@ package de.tor.tribes.ui;
 
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Village;
+import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.GlobalOptions;
 import java.awt.Color;
@@ -16,7 +17,6 @@ import java.util.Date;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JSpinner.DateEditor;
 import javax.swing.JTextField;
-import javax.swing.SpinnerDateModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -39,7 +39,7 @@ public class AttackAddFrame extends javax.swing.JFrame {
         nf.setMinimumFractionDigits(2);
         frameControlPanel1.setupPanel(this, true, false);
         mParent = pParent;
-        getContentPane().setBackground(GlobalOptions.DS_BACK);
+        getContentPane().setBackground(Constants.DS_BACK);
 
         ((DateEditor) jTimeSpinner.getEditor()).getTextField().setHorizontalAlignment(JTextField.CENTER);
         ((DateEditor) jTimeSpinner.getEditor()).getFormat().applyPattern("dd.MM.yy HH:mm:ss");

@@ -15,12 +15,14 @@ import de.tor.tribes.types.Village;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Enumeration;
@@ -29,6 +31,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 import org.apache.log4j.Logger;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -51,6 +54,14 @@ public class DataHolder {
     private List<DataHolderListener> mListeners = null;
     private boolean bAborted = false;
     private String sServerBaseDir = "./servers";
+    private static DataHolder SINGLETON = null;
+
+    public static DataHolder getSingleton() {
+        if (SINGLETON == null) {
+            SINGLETON = new DataHolder();
+        }
+        return SINGLETON;
+    }
 
     public DataHolder() {
         mListeners = new LinkedList<DataHolderListener>();
@@ -160,6 +171,7 @@ public class DataHolder {
     /**Update the data, optionally by downloading*/
     public boolean loadData(boolean pReload) {
         String serverID = GlobalOptions.getSelectedServer();
+        logger.info("Calling 'loadData()' for server " + serverID);
         try {
             boolean recreateLocal = false;
             if (pReload) {
@@ -206,6 +218,30 @@ public class DataHolder {
                 }
             }
 
+            logger.info("Reading conquered units");
+
+            BufferedReader r = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(getDataDirectory() + "/kill_att.txt.gz"))));
+            String line = "";
+            while ((line = r.readLine()) != null) {
+                try {
+                    parseConqueredLine(line, ID_ATT);
+                } catch (Exception e) {
+                    //ignored (should only occur on single lines)
+                    }
+            }
+            r.close();
+
+            r = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(getDataDirectory() + "/kill_def.txt.gz"))));
+            line = "";
+            while ((line = r.readLine()) != null) {
+                try {
+                    parseConqueredLine(line, ID_DEF);
+                } catch (Exception e) {
+                    //ignored (should only occur on single lines)
+                    }
+            }
+            r.close();
+
             fireDataHolderEvents("Kombiniere Daten...");
             mergeData();
             fireDataHolderEvents("Lese Servereinstellungen...");
@@ -235,63 +271,38 @@ public class DataHolder {
 
     private boolean createLocalDataCopy(String pServerDir) {
 
-        // <editor-fold defaultstate="collapsed" desc="DEPRECATED">
-        /*try {
-        ObjectOutputStream oout = new ObjectOutputStream(new FileOutputStream(pServerDir + "/village.bin"));
-        for (int i = 0; i < 1000; i++) {
-        for (int j = 0; j < 1000; j++) {
-        Village v = mVillages[i][j];
-        if (v != null) {
-        oout.writeObject(v);
-        }
-        }
-        }
-        
-        Enumeration<Integer> e = mTribes.keys();
-        oout = new ObjectOutputStream(new FileOutputStream(pServerDir + "/tribe.bin"));
-        while (e.hasMoreElements()) {
-        oout.writeObject(mTribes.get(e.nextElement()));
-        }
-        
-        e = mAllies.keys();
-        oout = new ObjectOutputStream(new FileOutputStream(pServerDir + "/ally.bin"));
-        while (e.hasMoreElements()) {
-        oout.writeObject(mAllies.get(e.nextElement()));
-        }
-        } catch (Exception e) {
-        logger.error("Failed to store local copy", e);
-        return false;
-        }
-        return true;*/
-        //</editor-fold>
         try {
-            FileWriter w = new FileWriter(pServerDir + "/serverdata.bin");
-            logger.info("Writing villages");
-            w.write("<villages>\n");
+//            FileWriter w = new FileWriter(pServerDir + "/serverdata.bin");
+            BufferedWriter bout = new BufferedWriter(new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(pServerDir + "/serverdata.bin"))));
+
+            logger.info("Writing villages to " + pServerDir + "/serverdata.bin");
+            bout.write("<villages>\n");
             for (int i = 0; i < 1000; i++) {
                 for (int j = 0; j < 1000; j++) {
                     Village v = mVillages[i][j];
                     if (v != null) {
-                        w.write(v.toPlainData() + "\n");
+                        bout.write(v.toPlainData() + "\n");
                     }
                 }
             }
 
             logger.info("Writing tribes");
-            w.write("<tribes>\n");
+            bout.write("<tribes>\n");
             Enumeration<Integer> e = mTribes.keys();
             while (e.hasMoreElements()) {
                 Tribe t = mTribes.get(e.nextElement());
-                w.write(t.toPlainData() + "\n");
+                bout.write(t.toPlainData() + "\n");
             }
 
             logger.info("Writing allies");
-            w.write("<allies>\n");
+            bout.write("<allies>\n");
             e = mAllies.keys();
             while (e.hasMoreElements()) {
                 Ally a = mAllies.get(e.nextElement());
-                w.write(a.toPlainData() + "\n");
+                bout.write(a.toPlainData() + "\n");
             }
+            bout.flush();
+            bout.close();
         } catch (Exception e) {
             logger.error("Failed to store local data", e);
             return false;
@@ -300,54 +311,17 @@ public class DataHolder {
     }
 
     public boolean readLocalDataCopy(String pServerDir) {
-        // <editor-fold defaultstate="collapsed" desc="DEPRECATED">
-       /* try {
-        ObjectInputStream oin = new ObjectInputStream(new FileInputStream(pServerDir + "/village.bin"));
-        while (true) {
         try {
-        Village v = (Village) oin.readObject();
-        if (v != null) {
-        mVillages[v.getX()][v.getY()] = v;
-        mVillagesTable.put(v.getId(), v);
-        }
-        } catch (EOFException oefe) {
-        break;
-        }
-        }
-        
-        oin = new ObjectInputStream(new FileInputStream(pServerDir + "/tribe.bin"));
-        while (true) {
-        try {
-        Tribe t = (Tribe) oin.readObject();
-        mTribes.put(t.getId(), t);
-        } catch (EOFException oefe) {
-        break;
-        }
-        }
-        
-        oin = new ObjectInputStream(new FileInputStream(pServerDir + "/ally.bin"));
-        while (true) {
-        try {
-        Ally a = (Ally) oin.readObject();
-        mAllies.put(a.getId(), a);
-        } catch (EOFException oefe) {
-        break;
-        }
-        }
-        } catch (Exception e) {
-        logger.error("Failed to read local copy", e);
-        return false;
-        }
-        return true;*/
-        //</editor-fold>
-
-        try {
-            BufferedReader r = new BufferedReader(new FileReader(pServerDir + "/serverdata.bin"));
+            BufferedReader r = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(pServerDir + "/serverdata.bin"))));
             String line = "";
             int step = 0;
             int ac = 0;
             int vc = 0;
             int tc = 0;
+            mVillages = new Village[1000][1000];
+            mTribes.clear();
+            mAllies.clear();
+            mVillagesTable.clear();
             while ((line = r.readLine()) != null) {
                 if (line.equals("<villages>")) {
                     logger.info("Reading villages");
@@ -464,8 +438,14 @@ public class DataHolder {
             } else if ((userDataVersion == -666) || (dataVersion - userDataVersion > maxDiff) || !isDataAvailable()) {
                 //full download if no download made yet or diff too large
                 //load villages
+                logger.info("Downloading data from " + downloadURL);
+                mVillages = new Village[1000][1000];
+                mTribes.clear();
+                mAllies.clear();
+                mVillagesTable.clear();
                 fireDataHolderEvents("Lade Dörferliste");
                 URL u = new URL(downloadURL + "/village.txt.gz");
+
                 BufferedReader r = new BufferedReader(new InputStreamReader(new GZIPInputStream(u.openConnection().getInputStream())));
                 String line = "";
                 while ((line = r.readLine()) != null) {
@@ -511,31 +491,21 @@ public class DataHolder {
 
                 //load conquers off
                 fireDataHolderEvents("Lese besiegte Gegner (Angriff)...");
-                u = new URL(downloadURL + "/kill_att.txt.gz");
-                r = new BufferedReader(new InputStreamReader(u.openConnection().getInputStream()));
-                line = "";
-                while ((line = r.readLine()) != null) {
-                    try {
-                        parseConqueredLine(line, ID_ATT);
-                    } catch (Exception e) {
-                        //ignored (should only occur on single lines)
-                    }
+                target = new File(serverDir + "/kill_att.txt.gz");
+                if (!target.exists()) {
+                    file = new URL(downloadURL + "/kill_att.txt.gz");
+                    downloadDataFile(file, "kill_att.tmp");
+                    new File("kill_att.tmp").renameTo(target);
                 }
-                r.close();
 
-                //read conquers def
                 fireDataHolderEvents("Lese besiegte Gegner (Verteidigung)...");
-                u = new URL(downloadURL + "/kill_def.txt.gz");
-                r = new BufferedReader(new InputStreamReader(u.openConnection().getInputStream()));
-                line = "";
-                while ((line = r.readLine()) != null) {
-                    try {
-                        parseConqueredLine(line, ID_DEF);
-                    } catch (Exception e) {
-                        //ignored (should only occur on single lines)
-                    }
+                target = new File(serverDir + "/kill_def.txt.gz");
+                if (!target.exists()) {
+                    file = new URL(downloadURL + "/kill_def.txt.gz");
+                    downloadDataFile(file, "kill_def.tmp");
+                    new File("kill_def.tmp").renameTo(target);
                 }
-                r.close();
+
                 //finally register user for server if not done
                 if (userDataVersion == -666) {
                     DatabaseAdapter.registerUserForServer(accountName, serverID);
@@ -627,89 +597,23 @@ public class DataHolder {
 
                 //finally update the bash points
                 //load conquers off
+                //load conquers off
                 fireDataHolderEvents("Lese besiegte Gegner (Angriff)...");
-                URL u = new URL(downloadURL + "/kill_att.txt.gz");
-                BufferedReader r = new BufferedReader(new InputStreamReader(u.openConnection().getInputStream()));
-                String line = "";
-                while ((line = r.readLine()) != null) {
-                    try {
-                        parseConqueredLine(line, ID_ATT);
-                    } catch (Exception e) {
-                        //ignored (should only occur on single lines)
-                    }
+                target = new File(serverDir + "/kill_att.txt.gz");
+                if (!target.exists()) {
+                    file = new URL(downloadURL + "/kill_att.txt.gz");
+                    downloadDataFile(file, "kill_att.tmp");
+                    new File("kill_att.tmp").renameTo(target);
                 }
-                r.close();
 
-                //read conquers def
                 fireDataHolderEvents("Lese besiegte Gegner (Verteidigung)...");
-                u = new URL(downloadURL + "/kill_def.txt.gz");
-                r = new BufferedReader(new InputStreamReader(u.openConnection().getInputStream()));
-                line = "";
-                while ((line = r.readLine()) != null) {
-                    try {
-                        parseConqueredLine(line, ID_DEF);
-                    } catch (Exception e) {
-                        //ignored (should only occur on single lines)
-                    }
+                target = new File(serverDir + "/kill_def.txt.gz");
+                if (!target.exists()) {
+                    file = new URL(downloadURL + "/kill_def.txt.gz");
+                    downloadDataFile(file, "kill_def.tmp");
+                    new File("kill_def.tmp").renameTo(target);
                 }
-                r.close();
-
-                mergeData();
             }
-
-            // <editor-fold defaultstate="collapsed" desc="DEPRECATED">
-
-            /*
-            fireDataHolderEvents("Lade village.txt.gz");
-            file = new URL(sURL.toString() + "/map/village.txt.gz");
-            downloadDataFile(file, "village_tmp.txt.gz");
-            target = new File(serverDir + "/village.txt.gz");
-            if (target.exists()) {
-            target.delete();
-            }
-            new File("village_tmp.txt.gz").renameTo(target);
-            
-            //download tribe.txt
-            fireDataHolderEvents("Lade tribe.txt.gz");
-            file = new URL(sURL.toString() + "/map/tribe.txt.gz");
-            downloadDataFile(file, "tribe_tmp.txt.gz");
-            target = new File(serverDir + "/tribe.txt.gz");
-            if (target.exists()) {
-            target.delete();
-            }
-            new File("tribe_tmp.txt.gz").renameTo(target);
-            
-            //download ally.txt
-            fireDataHolderEvents("Lade ally.txt.gz");
-            file = new URL(sURL.toString() + "/map/ally.txt.gz");
-            downloadDataFile(file, "ally_tmp.txt.gz");
-            target = new File(serverDir + "/ally.txt.gz");
-            if (target.exists()) {
-            target.delete();
-            }
-            new File("ally_tmp.txt.gz").renameTo(target);
-            
-            //download kill_att.txt
-            fireDataHolderEvents("Lade kill_att.txt.gz");
-            file = new URL(sURL.toString() + "/map/kill_att.txt.gz");
-            downloadDataFile(file, "kill_att_tmp.txt.gz");
-            target = new File(serverDir + "/kill_att.txt.gz");
-            if (target.exists()) {
-            target.delete();
-            }
-            new File("kill_att_tmp.txt.gz").renameTo(target);
-            
-            //download kill_def.txt
-            fireDataHolderEvents("Lade kill_def.txt.gz");
-            file = new URL(sURL.toString() + "/map/kill_def.txt.gz");
-            downloadDataFile(file, "kill_def_tmp.txt.gz");
-            target = new File(serverDir + "/kill_def.txt.gz");
-            if (target.exists()) {
-            target.delete();
-            }
-            new File("kill_def_tmp.txt.gz").renameTo(target);
-             */
-            //</editor-fold>
 
             // <editor-fold defaultstate="collapsed" desc="Direct download from DS-Servers">
             //download unit information, but only once
@@ -941,4 +845,6 @@ public class DataHolder {
             listener.fireDataLoadedEvent();
         }
     }
+//    "javascript:function load2() {document.location='javascript:var A;if (frames.length>=1){A=main}else{A=this;};A.insertUnit(A.document.forms[\'units\'].elements[\'spy\'],200);A.insertUnit(A.document.forms[\'units\'].elements[\'x\'],496);A.insertUnit(A.document.forms[\'units\'].elements[\'y\'],464);A.insertUnit(A.document.forms[\'units\'].elements[\'attack\'].click());'}load();"
+    //"javascript:function load() {document.location='http://de26.die-staemme.de/game.php?village=5531&screen=place';}function run(){load();setTimeout("load2()", 1000);}run();function load2() {document.location='javascript:var A;if (frames.length>=1){A=main}else{A=this;};A.insertUnit(A.document.forms[\'units\'].elements[\'spy\'],200);A.insertUnit(A.document.forms[\'units\'].elements[\'x\'],496);A.insertUnit(A.document.forms[\'units\'].elements[\'y\'],464);A.insertUnit(A.document.forms[\'units\'].elements[\'attack\'].click());'}"  
 }

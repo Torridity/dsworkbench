@@ -5,8 +5,10 @@
  */
 package de.tor.tribes.ui;
 
+import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.util.GlobalOptions;
+import de.tor.tribes.util.tag.TagManager;
 import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
@@ -32,7 +34,7 @@ public class VillageTagFrame extends javax.swing.JFrame {
         jVillageList.setModel(model);
         jVillageList.setSelectedItem(pVillage);
 
-        List<String> tags = GlobalOptions.getTags(pVillage);
+        List<String> tags = TagManager.getSingleton().getTags(pVillage);
         DefaultListModel lModel = new DefaultListModel();
         if (tags != null) {
             for (String tag : tags) {
@@ -191,7 +193,7 @@ private void fireAddTagEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_f
     DefaultListModel model = (DefaultListModel) jTagsList.getModel();
     if (!model.contains(tag)) {
         model.addElement(tag);
-        GlobalOptions.addTag(selection, tag);
+        TagManager.getSingleton().addTag(selection, tag);
     }
 }//GEN-LAST:event_fireAddTagEvent
 
@@ -204,20 +206,14 @@ private void fireRemoveTagEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:even
     if (selectedTag == null) {
         return;
     }
-    List<String> tags = GlobalOptions.getTags(selection);
-    if (tags != null) {
-        tags.remove(selectedTag);
-        if (tags.size() == 0) {
-            GlobalOptions.removeTags(selection);
-        }
-    }
+    TagManager.getSingleton().removeTag(selection, selectedTag);
 
     DefaultListModel model = (DefaultListModel) jTagsList.getModel();
     model.removeElement(selectedTag);
 }//GEN-LAST:event_fireRemoveTagEvent
 
 private void fireOkEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireOkEvent
-    GlobalOptions.storeTags();
+    TagManager.getSingleton().saveTagsToFile(DataHolder.getSingleton().getDataDirectory() + "/tags.xml");
     setVisible(false);
 }//GEN-LAST:event_fireOkEvent
 
@@ -229,7 +225,7 @@ private void fireVillageSelectionChangedEvent(java.awt.event.ItemEvent evt) {//G
     if (evt.getStateChange() == java.awt.event.ItemEvent.SELECTED) {
         DefaultListModel model = new DefaultListModel();
         Village selection = (Village) jVillageList.getSelectedItem();
-        List<String> tags = GlobalOptions.getTags(selection);
+        List<String> tags = TagManager.getSingleton().getTags(selection);
         if (tags != null) {
             for (String tag : tags) {
                 model.addElement(tag);
@@ -240,10 +236,11 @@ private void fireVillageSelectionChangedEvent(java.awt.event.ItemEvent evt) {//G
 }//GEN-LAST:event_fireVillageSelectionChangedEvent
 
     /**
-    * @param args the command line arguments
-    */
+     * @param args the command line arguments
+     */
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
+
             public void run() {
                 new VillageTagFrame().setVisible(true);
             }
@@ -264,5 +261,4 @@ private void fireVillageSelectionChangedEvent(java.awt.event.ItemEvent evt) {//G
     private javax.swing.JLabel jVillageLabel;
     private javax.swing.JComboBox jVillageList;
     // End of variables declaration//GEN-END:variables
-
 }

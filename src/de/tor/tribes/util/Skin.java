@@ -28,8 +28,8 @@ public class Skin {
     private static Logger logger = Logger.getLogger(Skin.class);
 
     //init with default skin dimensions
-    private int iFieldWidth = 53;
-    private int iFieldHeight = 38;
+    private int iFieldWidth = 0;
+    private int iFieldHeight = 0;
     /**Texture IDs*/
     public static int ID_DEFAULT_UNDERGROUND = 0;
     public static int ID_V1 = 1;
@@ -83,7 +83,7 @@ public class Skin {
     private final String B6_LEFT_FILE = "b6_left.png";
     private final String DEFAULT_UNDERGROUND = "default_underground.png";
     private final int TEXTURE_COUNT = 25;
-    private String BASE_PATH = "graphics/skins";
+    private static String BASE_PATH = "graphics/skins";
     private Hashtable<Integer, Image> mTextures = null;
     private Hashtable<Double, Hashtable<Integer, Image>> mCache = null;
     private String sSkinID = null;
@@ -96,11 +96,16 @@ public class Skin {
         loadSkin(pSkinPath);
     }
 
+    /**Get the list of available skins*/
+    public static String[] getAvailableSkins() {
+        return new File(BASE_PATH).list();
+    }
+
     public String getPreviewFile() {
         return BASE_PATH + "/" + sSkinID + "/preview.png";
     }
 
-    public static void showPreview(String pSkinID, Point pPos) throws Exception{
+    public static void showPreview(String pSkinID, Point pPos) throws Exception {
         SkinPreviewFrame f = new SkinPreviewFrame(new Skin(pSkinID));
         f.setLocation(pPos);
         f.setVisible(true);
@@ -117,10 +122,8 @@ public class Skin {
                 new Hashtable<Integer, Image>();
         try {
             mTextures.put(ID_DEFAULT_UNDERGROUND, ImageIO.read(new File(path + "/" + DEFAULT_UNDERGROUND)));
-            iFieldWidth =
-                    mTextures.get(0).getWidth(null);
-            iFieldHeight =
-                    mTextures.get(0).getHeight(null);
+            iFieldWidth = mTextures.get(0).getWidth(null);
+            iFieldHeight = mTextures.get(0).getHeight(null);
             mTextures.put(ID_V1, ImageIO.read(new File(path + "/" + V1_FILE)));
             mTextures.put(ID_V2, ImageIO.read(new File(path + "/" + V2_FILE)));
             mTextures.put(ID_V3, ImageIO.read(new File(path + "/" + V3_FILE)));

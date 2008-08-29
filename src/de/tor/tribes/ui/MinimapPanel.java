@@ -37,7 +37,7 @@ public class MinimapPanel extends javax.swing.JPanel {
     private int iHeight = 0;
     private DSWorkbenchMainFrame mParent;
     private MinimapZoomFrame mZoomFrame = null;
-    private int iCurrentCursor = GlobalOptions.CURSOR_DEFAULT;
+    private int iCurrentCursor = ImageManager.CURSOR_DEFAULT;
     private static MinimapPanel GLOBAL_MINIMAP = null;
     //private ScreenshotPanel mScreenshotPanel = null;
     private boolean doRedraw = false;
@@ -55,7 +55,7 @@ public class MinimapPanel extends javax.swing.JPanel {
         initComponents();
         setSize(270, 233);
         mParent = pParent;
-        setCursor(GlobalOptions.getCursor(iCurrentCursor));
+        setCursor(ImageManager.getCursor(iCurrentCursor));
         /* mScreenshotPanel = new ScreenshotPanel();
         jPanel1.add(mScreenshotPanel);*/
         mPaintThread = new MinimapRepaintThread(this);
@@ -83,7 +83,7 @@ public class MinimapPanel extends javax.swing.JPanel {
             @Override
             public void mouseEntered(MouseEvent e) {
                 switch (iCurrentCursor) {
-                    case GlobalOptions.CURSOR_ZOOM: {
+                    case ImageManager.CURSOR_ZOOM: {
                         mZoomFrame.setVisible(true);
                     }
                 }
@@ -102,7 +102,7 @@ public class MinimapPanel extends javax.swing.JPanel {
             @Override
             public void mouseDragged(MouseEvent e) {
                 switch (iCurrentCursor) {
-                    case GlobalOptions.CURSOR_MOVE:
+                    case ImageManager.CURSOR_MOVE:
                         int x = e.getX();
                         int y = e.getY();
                         mParent.updateLocationByMinimap(x, y);
@@ -112,7 +112,7 @@ public class MinimapPanel extends javax.swing.JPanel {
             @Override
             public void mouseMoved(MouseEvent e) {
                 switch (iCurrentCursor) {
-                    case GlobalOptions.CURSOR_ZOOM: {
+                    case ImageManager.CURSOR_ZOOM: {
                         if (!mZoomFrame.isVisible()) {
                             mZoomFrame.setVisible(true);
                         }
@@ -136,32 +136,32 @@ public class MinimapPanel extends javax.swing.JPanel {
             @Override
             public void mouseWheelMoved(MouseWheelEvent e) {
                 iCurrentCursor += e.getWheelRotation();
-                if (iCurrentCursor == GlobalOptions.CURSOR_DEFAULT + e.getWheelRotation()) {
+                if (iCurrentCursor == ImageManager.CURSOR_DEFAULT + e.getWheelRotation()) {
                     if (e.getWheelRotation() < 0) {
-                        iCurrentCursor = GlobalOptions.CURSOR_ZOOM;
+                        iCurrentCursor = ImageManager.CURSOR_ZOOM;
                     } else {
-                        iCurrentCursor = GlobalOptions.CURSOR_MOVE;
+                        iCurrentCursor = ImageManager.CURSOR_MOVE;
                     }
-                } else if (iCurrentCursor < GlobalOptions.CURSOR_MOVE) {
-                    iCurrentCursor = GlobalOptions.CURSOR_DEFAULT;
-                } else if (iCurrentCursor > GlobalOptions.CURSOR_ZOOM) {
-                    iCurrentCursor = GlobalOptions.CURSOR_DEFAULT;
+                } else if (iCurrentCursor < ImageManager.CURSOR_MOVE) {
+                    iCurrentCursor = ImageManager.CURSOR_DEFAULT;
+                } else if (iCurrentCursor > ImageManager.CURSOR_ZOOM) {
+                    iCurrentCursor = ImageManager.CURSOR_DEFAULT;
                 }
-                if (iCurrentCursor != GlobalOptions.CURSOR_ZOOM) {
+                if (iCurrentCursor != ImageManager.CURSOR_ZOOM) {
                     if (mZoomFrame.isVisible()) {
                         mZoomFrame.setVisible(false);
                     }
                 } else {
                     mZoomFrame.setVisible(true);
                 }
-                setCursor(GlobalOptions.getCursor(iCurrentCursor));
+                setCursor(ImageManager.getCursor(iCurrentCursor));
             }
         });
     }
 
     public void setCurrentCursor(int pCurrentCursor) {
         iCurrentCursor = pCurrentCursor;
-        setCursor(GlobalOptions.getCursor(iCurrentCursor));
+        setCursor(ImageManager.getCursor(iCurrentCursor));
     }
 
     public void setSelection(int pX, int pY, int pWidth, int pHeight) {

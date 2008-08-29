@@ -9,6 +9,7 @@ import de.tor.tribes.types.Marker;
 import java.awt.Color;
 import net.java.dev.colorchooser.ColorChooser;
 import de.tor.tribes.types.Village;
+import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 
 /**
@@ -25,7 +26,7 @@ public class MarkerAddFrame extends javax.swing.JFrame {
     /** Creates new form MarkerAddFrame */
     public MarkerAddFrame(DSWorkbenchMainFrame pParent) {
         initComponents();
-        getContentPane().setBackground(GlobalOptions.DS_BACK);
+        getContentPane().setBackground(Constants.DS_BACK);
         mParent = pParent;
         mTribeColorChooser.setColor(Color.WHITE);
         mAllyColorChooser.setColor(Color.WHITE);

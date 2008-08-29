@@ -383,33 +383,33 @@ public class ToolBoxFrame extends javax.swing.JFrame {
 
 private void fireToolClickedEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireToolClickedEvent
     if (evt.getSource() == jMeasureButton) {
-        mMap.setCurrentCursor(GlobalOptions.CURSOR_MEASURE);
+        mMap.setCurrentCursor(ImageManager.CURSOR_MEASURE);
     } else if (evt.getSource() == jMarkButton) {
-        mMap.setCurrentCursor(GlobalOptions.CURSOR_MARK);
+        mMap.setCurrentCursor(ImageManager.CURSOR_MARK);
     }else if (evt.getSource() == jTagButton) {
-        mMap.setCurrentCursor(GlobalOptions.CURSOR_TAG);
+        mMap.setCurrentCursor(ImageManager.CURSOR_TAG);
     } else if (evt.getSource() == jSendTroopsIngameButton) {
-        mMap.setCurrentCursor(GlobalOptions.CURSOR_ATTACK_INGAME);
+        mMap.setCurrentCursor(ImageManager.CURSOR_ATTACK_INGAME);
     } else if (evt.getSource() == jSendResIngameButton) {
-        mMap.setCurrentCursor(GlobalOptions.CURSOR_SEND_RES_INGAME);
+        mMap.setCurrentCursor(ImageManager.CURSOR_SEND_RES_INGAME);
     } else if (evt.getSource() == jAttackAxeButton) {
-        mMap.setCurrentCursor(GlobalOptions.CURSOR_ATTACK_AXE);
+        mMap.setCurrentCursor(ImageManager.CURSOR_ATTACK_AXE);
     } else if (evt.getSource() == jAttackRamButton) {
-        mMap.setCurrentCursor(GlobalOptions.CURSOR_ATTACK_RAM);
+        mMap.setCurrentCursor(ImageManager.CURSOR_ATTACK_RAM);
     } else if (evt.getSource() == jAttackSnobButton) {
-        mMap.setCurrentCursor(GlobalOptions.CURSOR_ATTACK_SNOB);
+        mMap.setCurrentCursor(ImageManager.CURSOR_ATTACK_SNOB);
     } else if (evt.getSource() == jAttackSpyButton) {
-        mMap.setCurrentCursor(GlobalOptions.CURSOR_ATTACK_SPY);
+        mMap.setCurrentCursor(ImageManager.CURSOR_ATTACK_SPY);
     } else if (evt.getSource() == jAttackLightButton) {
-        mMap.setCurrentCursor(GlobalOptions.CURSOR_ATTACK_LIGHT);
+        mMap.setCurrentCursor(ImageManager.CURSOR_ATTACK_LIGHT);
     } else if (evt.getSource() == jAttackHeavyButton) {
-        mMap.setCurrentCursor(GlobalOptions.CURSOR_ATTACK_HEAVY);
+        mMap.setCurrentCursor(ImageManager.CURSOR_ATTACK_HEAVY);
     } else if (evt.getSource() == jAttackSwordButton) {
-        mMap.setCurrentCursor(GlobalOptions.CURSOR_ATTACK_SWORD);
+        mMap.setCurrentCursor(ImageManager.CURSOR_ATTACK_SWORD);
     } else if (evt.getSource() == jMoveButton) {
-        mMiniMap.setCurrentCursor(GlobalOptions.CURSOR_MOVE);
+        mMiniMap.setCurrentCursor(ImageManager.CURSOR_MOVE);
     } else if (evt.getSource() == jZoomButton) {
-        mMiniMap.setCurrentCursor(GlobalOptions.CURSOR_ZOOM);
+        mMiniMap.setCurrentCursor(ImageManager.CURSOR_ZOOM);
     } else if (evt.getSource() == jSearchButton) {
         SearchFrame.getGlobalSearchFrame().setVisible(true);
     } else if (evt.getSource() == jSettingsButton) {

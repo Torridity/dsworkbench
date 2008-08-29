@@ -263,12 +263,12 @@ public class DataBuilderDaemon {
         //download kill_att.txt
         logger.info("Loading kill_att.txt.gz from " + pUrl);
         file = new URL(sURL.toString() + "/map/kill_att.txt.gz");
-        downloadDataFile(file, pServerDir + "kill_att.txt.gz");
+        downloadDataFile(file, pServerDir + "/kill_att.txt.gz");
 
         //download kill_def.txt
         logger.info("Loading kill_def.txt.gz from " + pUrl);
         file = new URL(sURL.toString() + "/map/kill_def.txt.gz");
-        downloadDataFile(file, pServerDir + "kill_def.txt.gz");
+        downloadDataFile(file, pServerDir + "/kill_def.txt.gz");
     }
 
     /**Download one single data file to the local FS*/

@@ -7,6 +7,7 @@ package de.tor.tribes.io;
 import de.tor.tribes.db.DatabaseAdapter;
 import de.tor.tribes.db.DatabaseServerEntry;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;

@@ -8,7 +8,7 @@
  */
 package de.tor.tribes.types;
 
-import de.tor.tribes.util.GlobalOptions;
+import de.tor.tribes.util.tag.TagManager;
 import java.io.Serializable;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -171,7 +171,7 @@ public class Village implements Serializable {
 
     public String getHTMLInfo() {
         String villageInfo = "<html><b>Name (X|Y):</b> " + getName() + " (" + getX() + "|" + getY() + "), <b>Punkte:</b> " + getPoints() + ",";
-        List<String> tags = GlobalOptions.getTags(this);
+        List<String> tags = TagManager.getSingleton().getTags(this);
         villageInfo += "<b>Tags:</b> ";
         if (tags == null) {
             villageInfo += "keine, ";

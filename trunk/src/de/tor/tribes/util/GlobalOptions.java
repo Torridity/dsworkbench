@@ -14,11 +14,10 @@ import de.tor.tribes.io.WorldDecorationHolder;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.Marker;
 import de.tor.tribes.types.Village;
+import de.tor.tribes.ui.ImageManager;
+import de.tor.tribes.util.mark.MarkerManager;
+import de.tor.tribes.util.tag.TagManager;
 import de.tor.tribes.util.xml.JaxenUtils;
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.Point;
-import java.awt.Toolkit;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -28,7 +27,6 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
-import javax.swing.ImageIcon;
 import javax.swing.UIManager;
 import org.apache.log4j.Logger;
 import org.jdom.Document;
@@ -41,44 +39,6 @@ public class GlobalOptions {
 
     private static Logger logger = Logger.getLogger(GlobalOptions.class);
     public final static double VERSION = 0.9;
-    //mappanel default
-    public final static int CURSOR_DEFAULT = 0;
-    public final static int CURSOR_MARK = 1;
-    public final static int CURSOR_MEASURE = 2;
-    public final static int CURSOR_TAG = 3;
-    public final static int CURSOR_ATTACK_INGAME = 4;
-    public final static int CURSOR_SEND_RES_INGAME = 5;
-    //mappanel attack
-    public final static int CURSOR_ATTACK_RAM = 6;
-    public final static int CURSOR_ATTACK_AXE = 7;
-    public final static int CURSOR_ATTACK_SNOB = 8;
-    public final static int CURSOR_ATTACK_SPY = 9;
-    public final static int CURSOR_ATTACK_SWORD = 10;
-    public final static int CURSOR_ATTACK_LIGHT = 11;
-    public final static int CURSOR_ATTACK_HEAVY = 12;
-    //unit icons
-    public final static int ICON_SPEAR = 0;
-    public final static int ICON_SWORD = 1;
-    public final static int ICON_AXE = 2;
-    public final static int ICON_ARCHER = 3;
-    public final static int ICON_SPY = 4;
-    public final static int ICON_LKAV = 5;
-    public final static int ICON_MARCHER = 6;
-    public final static int ICON_HEAVY = 7;
-    public final static int ICON_RAM = 8;
-    public final static int ICON_CATA = 9;
-    public final static int ICON_KNIGHT = 10;
-    public final static int ICON_SNOB = 11;
-    //auto-update frequence
-    public final static int AUTO_UPDATE_NEVER = 0;
-    public final static int AUTO_UPDATE_HOURLY = 1;
-    public final static int AUTO_UPDATE_2_HOURS = 2;
-    public final static int AUTO_UPDATE_4_HOURS = 3;
-    public final static int AUTO_UPDATE_12_HOURS = 4;
-    public final static int AUTO_UPDATE_DAILY = 5;
-    //minimap
-    public final static int CURSOR_MOVE = 13;
-    public final static int CURSOR_ZOOM = 14;
     private static boolean INITIALIZED = false;
     /**Active skin used by the MapPanel*/
     private static Skin mSkin;
@@ -87,17 +47,12 @@ public class GlobalOptions {
     private static List<Marker> mMarkers = null;
     private static WorldDecorationHolder mDecorationHolder = null;
     private static String SELECTED_SERVER = "de26";
-    private static DataHolderListener mListener;
     private static Properties GLOBAL_PROPERTIES = null;
-    private static List<Cursor> CURSORS = null;
     private static List<Attack> mAttacks = null;
     private static Hashtable<Village, List<String>> mTags = null;
     //flag which is set if the user is logged in with hin account name
     private static String loggedInAs = null;
     private static boolean isOfflineMode = false;
-    public final static Color DS_BACK = new Color(225, 213, 190);
-    public final static Color DS_BACK_LIGHT = new Color(239, 235, 223);
-    private final static List<ImageIcon> UNIT_ICONS = new LinkedList<ImageIcon>();
 
     /**Init all managed objects
      * @param pDownloadData TRUE=download the WorldData from the tribes server
@@ -111,17 +66,17 @@ public class GlobalOptions {
         logger.debug("Loading properties");
         loadProperties();
         logger.debug("Loading cursors");
-        loadCursors();
+        ImageManager.loadCursors();
         logger.debug("Loading unit icons");
-        loadUnitIcons();
+        ImageManager.loadUnitIcons();
         logger.debug("Loading graphic pack");
         loadSkin();
         logger.debug("Loading world.dat");
-        loadDecoration();
+        WorldDecorationHolder.initialize();
         setSelectedServer(getProperty("default.server"));
-        UIManager.put("OptionPane.background", DS_BACK);
-        UIManager.put("Panel.background", DS_BACK);
-        UIManager.put("Button.background", DS_BACK_LIGHT);
+        UIManager.put("OptionPane.background", Constants.DS_BACK);
+        UIManager.put("Panel.background", Constants.DS_BACK);
+        UIManager.put("Button.background", Constants.DS_BACK_LIGHT);
     }
 
     public static void addDataHolderListener(DataHolderListener pListener) {
@@ -131,37 +86,22 @@ public class GlobalOptions {
         mDataHolder.addListener(pListener);
     }
 
+    /**Tells if a network connection is established or not*/
     public static boolean isOfflineMode() {
         return isOfflineMode;
     }
 
+    /**Set the network status*/
     public static void setOfflineMode(boolean pValue) {
         isOfflineMode = pValue;
     }
 
+    /**Get the list of available skins*/
     public static String[] getAvailableSkins() {
         return new File("graphics/skins").list();
     }
 
-    public static void loadUnitIcons() {
-        UNIT_ICONS.add(new ImageIcon("./graphics/icons/spear.png"));
-        UNIT_ICONS.add(new ImageIcon("./graphics/icons/sword.png"));
-        UNIT_ICONS.add(new ImageIcon("./graphics/icons/axe.png"));
-        UNIT_ICONS.add(new ImageIcon("./graphics/icons/archer.png"));
-        UNIT_ICONS.add(new ImageIcon("./graphics/icons/spy.png"));
-        UNIT_ICONS.add(new ImageIcon("./graphics/icons/light.png"));
-        UNIT_ICONS.add(new ImageIcon("./graphics/icons/marcher.png"));
-        UNIT_ICONS.add(new ImageIcon("./graphics/icons/heavy.png"));
-        UNIT_ICONS.add(new ImageIcon("./graphics/icons/ram.png"));
-        UNIT_ICONS.add(new ImageIcon("./graphics/icons/cata.png"));
-        UNIT_ICONS.add(new ImageIcon("./graphics/icons/knight.png"));
-        UNIT_ICONS.add(new ImageIcon("./graphics/icons/snob.png"));
-    }
-
-    public static ImageIcon getUnitIcon(int pId) {
-        return UNIT_ICONS.get(pId);
-    }
-
+    /**Load the global properties*/
     private static void loadProperties() throws Exception {
         GLOBAL_PROPERTIES = new Properties();
         if (new File("global.properties").exists()) {
@@ -173,6 +113,7 @@ public class GlobalOptions {
         }
     }
 
+    /**Store the global properties*/
     public static void saveProperties() {
         try {
             GLOBAL_PROPERTIES.store(new FileOutputStream("global.properties"), "Automatically generated. Please do not modify!");
@@ -180,44 +121,14 @@ public class GlobalOptions {
         }
     }
 
+    /**Add a property*/
     public static void addProperty(String pKey, String pValue) {
         GLOBAL_PROPERTIES.put(pKey, pValue);
     }
 
+    /**Get the value of a property*/
     public static String getProperty(String pKey) {
         return GLOBAL_PROPERTIES.getProperty(pKey);
-    }
-
-    private static void loadCursors() throws Exception {
-        CURSORS = new LinkedList<Cursor>();
-        try {
-            //default map panel cursors 
-            CURSORS.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/default.png"), new Point(0, 0), "default"));
-            CURSORS.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/mark.png"), new Point(0, 0), "mark"));
-            CURSORS.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/measure.png"), new Point(0, 0), "measure"));
-            CURSORS.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/tag.png"), new Point(0, 0), "tag"));
-            CURSORS.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/attack_ingame.png"), new Point(0, 0), "attack_ingame"));
-            CURSORS.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/res_ingame.png"), new Point(0, 0), "res_ingame"));
-            //map panel cursors for attack purposes
-            CURSORS.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/attack_ram.png"), new Point(0, 0), "attack_ram"));
-            CURSORS.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/attack_axe.png"), new Point(0, 0), "attack_axe"));
-            CURSORS.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/attack_snob.png"), new Point(0, 0), "attack_snob"));
-            CURSORS.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/attack_spy.png"), new Point(0, 0), "attack_spy"));
-            CURSORS.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/attack_sword.png"), new Point(0, 0), "attack_sword"));
-            CURSORS.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/attack_light.png"), new Point(0, 0), "attack_light"));
-            CURSORS.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/attack_heavy.png"), new Point(0, 0), "attack_heavy"));
-            //minimap cursors
-            CURSORS.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/move.png"), new Point(0, 0), "move"));
-            CURSORS.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/zoom.png"), new Point(0, 0), "zoom"));
-
-        } catch (Throwable t) {
-            logger.error("Failed to load cursor images", t);
-            throw new Exception("Cursor konnten nicht geladen werden");
-        }
-    }
-
-    public static Cursor getCursor(int pID) {
-        return CURSORS.get(pID);
     }
 
     /**Load the default skin
@@ -268,17 +179,17 @@ public class GlobalOptions {
     public static void loadUserData() {
         if (getSelectedServer() != null) {
             logger.debug("Loading markers");
-            loadMarkers();
+            MarkerManager.getSingleton().loadMarkersFromFile(DataHolder.getSingleton().getDataDirectory() + "/markers.xml");
             logger.debug("Loading attacks");
             loadAttacks();
             logger.debug("Loading tags");
-            loadTags();
+            TagManager.getSingleton().loadTagsFromFile(DataHolder.getSingleton().getDataDirectory() + "/tags.xml");
         }
     }
 
     /**Load the PlayerMarkers from the harddisk
      */
-    public static void loadMarkers() {
+ /*   private static void loadMarkers() {
         mMarkers = new LinkedList<Marker>();
         String path = mDataHolder.getDataDirectory() + "/markers.xml";
         if (new File(path).exists()) {
@@ -299,15 +210,15 @@ public class GlobalOptions {
             logger.info("No markers available for selected server");
         }
     }
-
+*/
     /**Get the list of markers
      * @return Hashtable<String, Color> List of MapMarkers
      */
-    public static List<Marker> getMarkers() {
+/*    public static List<Marker> getMarkers() {
         return mMarkers;
     }
-
-    public static Marker getMarkerByValue(String pValue) {
+*/
+ /*   public static Marker getMarkerByValue(String pValue) {
         for (Marker m : mMarkers) {
             if (m.getMarkerValue().equals(pValue)) {
                 return m;
@@ -315,8 +226,8 @@ public class GlobalOptions {
         }
         return null;
     }
-
-    public static void storeMarkers() {
+*/
+/*    public static void storeMarkers() {
         String path = mDataHolder.getDataDirectory() + "/markers.xml";
         try {
             FileWriter w = new FileWriter(path);
@@ -334,8 +245,8 @@ public class GlobalOptions {
             logger.error("Failed to store markers");
         }
     }
-
-    public static void loadAttacks() {
+*/
+    private static void loadAttacks() {
         mAttacks = new LinkedList<Attack>();
         String path = mDataHolder.getDataDirectory() + "/attacks.xml";
 
@@ -379,98 +290,7 @@ public class GlobalOptions {
         }
     }
 
-    public static void loadTags() {
-        mTags = new Hashtable<Village, List<String>>();
-        String path = mDataHolder.getDataDirectory() + "/tags.xml";
-        if (new File(path).exists()) {
-            try {
-                Document d = JaxenUtils.getDocument(new File(path));
-                for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//villageTags/villageTagList")) {
-                    try {
-                        Integer id = Integer.parseInt(JaxenUtils.getNodeValue(e, "id"));
-                        Village v = GlobalOptions.getDataHolder().getVillagesById().get(id);
-                        if (v != null) {
-                            List<Element> tags = (List<Element>) JaxenUtils.getNodes(e, "tags/tag");
-                            List<String> tagList = new LinkedList<String>();
-                            for (Element tag : tags) {
-                                tagList.add(tag.getText());
-                            }
-                            mTags.put(v, tagList);
-                        }
-                    } catch (Exception inner) {
-                    }
-                }
-            } catch (Exception e) {
-                logger.error("Failed to read tags");
-            }
-        } else {
-            logger.info("No tags available for selected server");
-        }
-
-        Enumeration<Village> keys = mTags.keys();
-        while (keys.hasMoreElements()) {
-            Village next = keys.nextElement();
-            List<String> tags = mTags.remove(next);
-            mTags.put(mDataHolder.getVillages()[next.getX()][next.getY()], tags);
-        }
-
-    }
-
-    public static List<String> getTags(Village v) {
-        return mTags.get(v);
-    }
-
-    public static void addTag(Village v, String tag) {
-        List<String> tags = mTags.get(v);
-        if (tags == null) {
-            tags = new LinkedList<String>();
-            tags.add(tag);
-            mTags.put(v, tags);
-        } else {
-            tags.add(tag);
-        }
-    }
-
-    public static void removeTags(Village v) {
-        mTags.remove(v);
-    }
-
-    public static void storeTags() {
-        String path = mDataHolder.getDataDirectory() + "/tags.xml";
-        try {
-            FileWriter w = new FileWriter(path);
-            w.write("<villageTags>\n");
-            Enumeration<Village> e = mTags.keys();
-            while (e.hasMoreElements()) {
-                Village current = e.nextElement();
-                if (current != null) {
-                    w.write("<villageTagList>\n");
-                    w.write("<id>" + current.getId() + "</id>\n");
-                    List<String> tags = mTags.get(current);
-                    if (tags.size() > 0) {
-                        w.write("<tags>\n");
-                        for (String tag : tags) {
-                            w.write("<tag>" + tag + "</tag>\n");
-                        }
-                        w.write("</tags>\n");
-                    }
-                    w.write("</villageTagList>\n");
-                }
-            }
-            w.write("</villageTags>\n");
-            w.flush();
-            w.close();
-        } catch (Exception e) {
-            logger.error("Failed to store tags", e);
-        }
-    }
-
-    /**Load the world decoration file*/
-    public static void loadDecoration() throws Exception {
-        mDecorationHolder = new WorldDecorationHolder();
-        mDecorationHolder.loadWorld();
-    }
-
+   
     public static void setLoggedInAs(String pAccount) {
         loggedInAs = pAccount;
     }
@@ -512,9 +332,11 @@ public class GlobalOptions {
             if (SELECTED_SERVER.equals(pServer)) {
                 return;
             } else {
+                logger.info("Setting selected server to " + pServer);
                 SELECTED_SERVER = pServer;
             }
         } else {
+            logger.info("Setting selected server to " + pServer);
             SELECTED_SERVER = pServer;
         }
     }

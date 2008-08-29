@@ -5,7 +5,7 @@
  */
 package de.tor.tribes.ui;
 
-import de.tor.tribes.util.GlobalOptions;
+import de.tor.tribes.util.Constants;
 import java.awt.Toolkit;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -31,7 +31,7 @@ public class ClockFrame extends javax.swing.JFrame {
     /** Creates new form ClockFrame */
     ClockFrame() {
         initComponents();
-        getContentPane().setBackground(GlobalOptions.DS_BACK);
+        getContentPane().setBackground(Constants.DS_BACK);
         frameControlPanel1.setupPanel(this, true, false);
         SpinnerDateModel dateModel = new SpinnerDateModel();
         jSpinner1.setValue(new Date(System.currentTimeMillis()));

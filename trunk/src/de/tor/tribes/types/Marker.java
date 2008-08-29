@@ -4,6 +4,7 @@
  */
 package de.tor.tribes.types;
 
+import de.tor.tribes.ui.MarkerCell;
 import java.awt.Color;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -20,11 +21,12 @@ public class Marker {
     private int markerType = 0;
     private String markerValue = null;
     private Color markerColor = null;
+    private transient MarkerCell mView = null;
 
     public Marker() {
     }
 
-    public Marker(Element pElement) throws Exception{
+    public Marker(Element pElement) throws Exception {
         setMarkerType(Integer.parseInt(pElement.getChild("type").getText()));
         setMarkerValue(URLDecoder.decode(pElement.getChild("value").getText(), "UTF-8"));
         setMarkerColor(Color.decode(pElement.getChild("color").getText()));
@@ -36,6 +38,7 @@ public class Marker {
 
     public void setMarkerType(int markerType) {
         this.markerType = markerType;
+        mView = null;
     }
 
     public String getMarkerValue() {
@@ -44,6 +47,7 @@ public class Marker {
 
     public void setMarkerValue(String markerValue) {
         this.markerValue = markerValue;
+        mView = null;
     }
 
     public Color getMarkerColor() {
@@ -54,7 +58,14 @@ public class Marker {
         this.markerColor = markerColor;
     }
 
-    public static Marker fromXml(Element pElement) throws Exception{
+    public MarkerCell getView() {
+        if (mView == null) {
+            mView = MarkerCell.factoryMarkerCell(this);
+        }
+        return mView;
+    }
+
+    public static Marker fromXml(Element pElement) throws Exception {
         return new Marker(pElement);
     }
 

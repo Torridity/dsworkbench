@@ -17,6 +17,7 @@ public class MarkerCell extends javax.swing.JPanel {
     private static ImageIcon PLAYER_ICON = null;
     private static ImageIcon ALLY_ICON = null;
     private int type = Marker.TRIBE_MARKER_TYPE;
+    
 
     static {
         try {
@@ -34,6 +35,19 @@ public class MarkerCell extends javax.swing.JPanel {
         return new MarkerCell(pAllyName, Marker.ALLY_MARKER_TYPE);
     }
 
+    public static MarkerCell factoryMarkerCell(Marker pMarker) {
+        if (pMarker == null) {
+            return null;
+        } else {
+            if (pMarker.getMarkerType() == Marker.TRIBE_MARKER_TYPE) {
+                return new MarkerCell(pMarker.getMarkerValue(), Marker.TRIBE_MARKER_TYPE);
+            } else if (pMarker.getMarkerType() == Marker.ALLY_MARKER_TYPE) {
+                return new MarkerCell(pMarker.getMarkerValue(), Marker.ALLY_MARKER_TYPE);
+            }
+        }
+        return null;
+    }
+
     /** Creates new form MarkerPanel */
     MarkerCell(String pName, int pType) {
         initComponents();
@@ -47,14 +61,14 @@ public class MarkerCell extends javax.swing.JPanel {
         }
     }
 
-    public int getType(){
+    public int getType() {
         return type;
     }
-    
-    public void setType(int pType){
+
+    public void setType(int pType) {
         type = pType;
     }
-    
+
     public String getMarkerName() {
         return jMarkerLabel.getText();
     }

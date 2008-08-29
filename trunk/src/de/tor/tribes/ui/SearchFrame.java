@@ -9,6 +9,7 @@ import de.tor.tribes.types.Ally;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.util.BrowserCommandSender;
+import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import java.awt.event.ItemEvent;
 import java.util.Enumeration;
@@ -42,7 +43,7 @@ public class SearchFrame extends javax.swing.JFrame implements SearchListener {
     SearchFrame(DSWorkbenchMainFrame pParent) {
         initComponents();
         mParent = pParent;
-        getContentPane().setBackground(GlobalOptions.DS_BACK);
+        getContentPane().setBackground(Constants.DS_BACK);
         // frameControlPanel1.setupPanel(this, true, true);
         jCenterInGameButton.setIcon(new ImageIcon("./graphics/icons/center.png"));
         jSendResButton.setIcon(new ImageIcon("./graphics/icons/booty.png"));

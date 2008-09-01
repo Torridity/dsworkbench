@@ -19,13 +19,13 @@ import javax.swing.SpinnerDateModel;
 public class ClockFrame extends javax.swing.JFrame {
 
     private TimerThread tThread = null;
-    private static ClockFrame CLOCK = null;
+    private static ClockFrame SINGLETON = null;
 
-    public static ClockFrame getGlobalClockFrame() {
-        if (CLOCK == null) {
-            CLOCK = new ClockFrame();
+    public static ClockFrame getSingleton() {
+        if (SINGLETON == null) {
+            SINGLETON = new ClockFrame();
         }
-        return CLOCK;
+        return SINGLETON;
     }
 
     /** Creates new form ClockFrame */
@@ -121,11 +121,9 @@ private void fireActivateTimerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        java.awt.EventQueue.invokeLater(new  
+        java.awt.EventQueue.invokeLater(new Runnable() {
 
-              Runnable() {
-
-                 public void run() {
+            public void run() {
                 new ClockFrame().setVisible(true);
             }
         });

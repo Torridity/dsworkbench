@@ -5,9 +5,12 @@
  */
 package de.tor.tribes.ui;
 
+import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Marker;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.util.GlobalOptions;
+import de.tor.tribes.util.mark.MarkerManager;
+import de.tor.tribes.util.mark.MarkerManagerListener;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;
@@ -22,12 +25,14 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  *
  * @author  jejkal
  */
-public class MinimapPanel extends javax.swing.JPanel {
+public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerListener {
 
     private Image mBuffer = null;
     private MinimapRepaintThread mPaintThread = null;
@@ -35,38 +40,38 @@ public class MinimapPanel extends javax.swing.JPanel {
     private int iY = 0;
     private int iWidth = 0;
     private int iHeight = 0;
-    private DSWorkbenchMainFrame mParent;
     private MinimapZoomFrame mZoomFrame = null;
     private int iCurrentCursor = ImageManager.CURSOR_DEFAULT;
-    private static MinimapPanel GLOBAL_MINIMAP = null;
+    private static MinimapPanel SINGLETON = null;
     //private ScreenshotPanel mScreenshotPanel = null;
+    private List<MinimapListener> mListeners = null;
     private boolean doRedraw = false;
 
-    public static MinimapPanel getGlobalMinimap() {
-        return GLOBAL_MINIMAP;
-    }
-
-    public static void initGlobalMinimap(DSWorkbenchMainFrame pParent) {
-        GLOBAL_MINIMAP = new MinimapPanel(pParent);
+    public static MinimapPanel getSingleton() {
+        if (SINGLETON == null) {
+            SINGLETON = new MinimapPanel();
+        }
+        return SINGLETON;
     }
 
     /** Creates new form MinimapPanel */
-    MinimapPanel(DSWorkbenchMainFrame pParent) {
+    MinimapPanel() {
         initComponents();
         setSize(270, 233);
-        mParent = pParent;
+        mListeners = new LinkedList<MinimapListener>();
+        //mParent = pParent;
         setCursor(ImageManager.getCursor(iCurrentCursor));
         /* mScreenshotPanel = new ScreenshotPanel();
         jPanel1.add(mScreenshotPanel);*/
+        MarkerManager.getSingleton().addMarkerManagerListener(this);
         mPaintThread = new MinimapRepaintThread(this);
         mPaintThread.start();
+
         addMouseListener(new MouseListener() {
 
             @Override
             public void mouseClicked(MouseEvent e) {
-                int x = e.getX();
-                int y = e.getY();
-                mParent.updateLocationByMinimap(x, y);
+                fireUpdateLocationByMinimapEvents(e.getX(), e.getY());
                 if (mZoomFrame.isVisible()) {
                     mZoomFrame.toFront();
                 }
@@ -103,9 +108,7 @@ public class MinimapPanel extends javax.swing.JPanel {
             public void mouseDragged(MouseEvent e) {
                 switch (iCurrentCursor) {
                     case ImageManager.CURSOR_MOVE:
-                        int x = e.getX();
-                        int y = e.getY();
-                        mParent.updateLocationByMinimap(x, y);
+                        fireUpdateLocationByMinimapEvents(e.getX(), e.getY());
                 }
             }
 
@@ -157,6 +160,14 @@ public class MinimapPanel extends javax.swing.JPanel {
                 setCursor(ImageManager.getCursor(iCurrentCursor));
             }
         });
+    }
+
+    public synchronized void addMinimapListener(MinimapListener pListener) {
+        mListeners.add(pListener);
+    }
+
+    public synchronized void removeMinimapListener(MinimapListener pListener) {
+        mListeners.remove(pListener);
     }
 
     public void setCurrentCursor(int pCurrentCursor) {
@@ -220,6 +231,17 @@ public class MinimapPanel extends javax.swing.JPanel {
         mPaintThread.update();
     }
 
+    @Override
+    public void fireMarkersChangedEvent() {
+        redraw();
+    }
+
+    public void fireUpdateLocationByMinimapEvents(int pX, int pY) {
+        for (MinimapListener l : mListeners) {
+            l.fireUpdateLocationByMinimap(pX, pY);
+        }
+    }
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -257,11 +279,11 @@ public class MinimapPanel extends javax.swing.JPanel {
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1020, Short.MAX_VALUE)
+            .addGap(0, 300, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1051, Short.MAX_VALUE)
+            .addGap(0, 145, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -312,7 +334,7 @@ class MinimapRepaintThread extends Thread {
         g2d.fillRect(0, 0, mBuffer.getWidth(null), mBuffer.getHeight(null));
         int cx = 0;
         int cy = 0;
-        Village[][] mVisibleVillages = GlobalOptions.getDataHolder().getVillages();
+        Village[][] mVisibleVillages = DataHolder.getSingleton().getVillages();
 
         for (int i = 0; i < 1000; i++) {
             for (int j = 0; j < 1000; j++) {
@@ -324,9 +346,9 @@ class MinimapRepaintThread extends Thread {
                         isLeft = true;
                     } else {
                         try {
-                            Marker m = GlobalOptions.getMarkerByValue(v.getTribe().getName());
+                            Marker m = MarkerManager.getSingleton().getMarkerByValue(v.getTribe().getName());
                             if (m == null) {
-                                m = GlobalOptions.getMarkerByValue(v.getTribe().getAlly().getName());
+                                m = MarkerManager.getSingleton().getMarkerByValue(v.getTribe().getAlly().getName());
                                 if (m != null) {
                                     mark = m.getMarkerColor();
                                 }

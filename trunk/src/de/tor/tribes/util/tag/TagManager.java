@@ -56,7 +56,7 @@ public class TagManager {
                 for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//villageTags/villageTagList")) {
                     try {
                         Integer id = Integer.parseInt(JaxenUtils.getNodeValue(e, "id"));
-                        Village v = GlobalOptions.getDataHolder().getVillagesById().get(id);
+                        Village v = DataHolder.getSingleton().getVillagesById().get(id);
                         if (v != null) {
                             List<Element> tags = (List<Element>) JaxenUtils.getNodes(e, "tags/tag");
                             List<String> tagList = new LinkedList<String>();

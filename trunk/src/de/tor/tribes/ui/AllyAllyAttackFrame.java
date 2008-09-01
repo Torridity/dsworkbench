@@ -5,12 +5,12 @@
  */
 package de.tor.tribes.ui;
 
+import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Ally;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.util.DSCalculator;
-import de.tor.tribes.util.GlobalOptions;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 import java.text.SimpleDateFormat;
@@ -31,12 +31,9 @@ import javax.swing.table.DefaultTableModel;
  */
 public class AllyAllyAttackFrame extends javax.swing.JFrame {
 
-    private DSWorkbenchMainFrame mParent = null;
-
     /** Creates new form AllyAllyAttackFrame */
-    public AllyAllyAttackFrame(DSWorkbenchMainFrame pParent) {
+    public AllyAllyAttackFrame() {
         initComponents();
-        mParent = pParent;
         DefaultTableModel attackModel = new javax.swing.table.DefaultTableModel(
                 new Object[][]{},
                 new String[]{
@@ -55,10 +52,10 @@ public class AllyAllyAttackFrame extends javax.swing.JFrame {
         jAttacksTable.setModel(attackModel);
 
         try {
-            Enumeration<Integer> allyKeys = GlobalOptions.getDataHolder().getAllies().keys();
+            Enumeration<Integer> allyKeys = DataHolder.getSingleton().getAllies().keys();
             List<Ally> allies = new LinkedList();
             while (allyKeys.hasMoreElements()) {
-                allies.add(GlobalOptions.getDataHolder().getAllies().get(allyKeys.nextElement()));
+                allies.add(DataHolder.getSingleton().getAllies().get(allyKeys.nextElement()));
             }
 
             Ally[] aAllies = allies.toArray(new Ally[]{});
@@ -72,7 +69,7 @@ public class AllyAllyAttackFrame extends javax.swing.JFrame {
             jTargetAllyList.setSelectedIndex(0);
             jArriveTime.setValue(Calendar.getInstance().getTime());
             DefaultComboBoxModel unitModel = new DefaultComboBoxModel();
-            for (UnitHolder u : GlobalOptions.getDataHolder().getUnits()) {
+            for (UnitHolder u : DataHolder.getSingleton().getUnits()) {
                 unitModel.addElement(u);
             }
             jTroopsList.setModel(unitModel);
@@ -747,7 +744,7 @@ private void fireTransferToAttackPlanningEvent(java.awt.event.MouseEvent evt) {/
         UnitHolder unit = (UnitHolder) resultModel.getValueAt(i, 2);
         Village target = (Village) resultModel.getValueAt(i, 3);
 
-        mParent.addAttack(source, target, unit, (Date) jArriveTime.getValue());
+        DSWorkbenchMainFrame.getSingleton().addAttack(source, target, unit, (Date) jArriveTime.getValue());
     }
 
 }//GEN-LAST:event_fireTransferToAttackPlanningEvent
@@ -856,7 +853,7 @@ private void fireAddAllPlayerVillages(java.awt.event.MouseEvent evt) {//GEN-FIRS
         java.awt.EventQueue.invokeLater(new Runnable() {
 
             public void run() {
-                new AllyAllyAttackFrame(null).setVisible(true);
+                new AllyAllyAttackFrame().setVisible(true);
             }
         });
     }

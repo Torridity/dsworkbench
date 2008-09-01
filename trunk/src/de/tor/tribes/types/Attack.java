@@ -4,8 +4,8 @@
  */
 package de.tor.tribes.types;
 
+import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
-import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.io.Serializable;
 import java.util.Date;
@@ -28,10 +28,10 @@ public class Attack implements Serializable {
     }
 
     public Attack(Element pElement) {
-        setSource(GlobalOptions.getDataHolder().getVillagesById().get(Integer.parseInt(pElement.getChild("source").getText())));
-        setTarget(GlobalOptions.getDataHolder().getVillagesById().get(Integer.parseInt(pElement.getChild("target").getText())));
+        setSource(DataHolder.getSingleton().getVillagesById().get(Integer.parseInt(pElement.getChild("source").getText())));
+        setTarget(DataHolder.getSingleton().getVillagesById().get(Integer.parseInt(pElement.getChild("target").getText())));
         setArriveTime(new Date(Long.parseLong(pElement.getChild("arrive").getText())));
-        setUnit(GlobalOptions.getDataHolder().getUnitByPlainName(pElement.getChild("unit").getText()));
+        setUnit(DataHolder.getSingleton().getUnitByPlainName(pElement.getChild("unit").getText()));
         setShowOnMap(Boolean.parseBoolean(JaxenUtils.getNodeValue(pElement, "extensions/showOnMap")));
     }
 

@@ -174,6 +174,10 @@ public class MarkerManager {
         fireMarkerChangedEvents();
     }
 
+    public void removeMarkers(String[] pValues) {
+        removeMarkersInternal(pValues);
+    }
+
     /**Remove a marker by its value*/
     public void removeMarker(String pValue) {
         if (pValue == null) {
@@ -208,12 +212,29 @@ public class MarkerManager {
         fireMarkerChangedEvents();
     }
 
+    /**Remove a marker by its value (for internal use only)*/
+    private void removeMarkersInternal(String[] pValues) {
+        if (pValues == null) {
+            return;
+        }
+        for (String v : pValues) {
+            Marker toRemove = getMarkerByValue(v);
+            lMarkers.remove(toRemove);
+        }
+        fireMarkerChangedEvents();
+    }
+
+    public void markerUpdatedExternally() {
+        fireMarkerChangedEvents();
+    }
+
     /**Get the table model which contains all markers*/
     public DefaultTableModel getTableModel() {
-        DefaultTableModel model = new javax   .swing.table.DefaultTableModel(
+        DefaultTableModel model = new javax.swing.table.DefaultTableModel(
                 new Object[][]{},
                 new String[]{
-                    "Name", "Markierung"}) {
+                    "Name", "Markierung"
+                }) {
 
             Class[] types = new Class[]{
                 MarkerCell.class, Color.class
@@ -233,11 +254,11 @@ public class MarkerManager {
             }
         };
         Marker[] markers = getMarkers();
-        for (int i = 0; i < markers.length; i++) {
-            model.setValueAt(markers[i].getView(), i, 0);
-            model.setValueAt(markers[i].getMarkerColor(), i, 1);
+        if (markers.length > 0) {
+            for (int i = 0; i < markers.length; i++) {
+                model.addRow(new Object[]{markers[i].getView(), markers[i].getMarkerColor()});
+            }
         }
-
         return model;
     }
 

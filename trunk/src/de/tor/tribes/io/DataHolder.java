@@ -63,7 +63,7 @@ public class DataHolder {
         return SINGLETON;
     }
 
-    public DataHolder() {
+    DataHolder() {
         mListeners = new LinkedList<DataHolderListener>();
         initialize();
     }
@@ -146,7 +146,7 @@ public class DataHolder {
                 } else {
                     //download settings.xml
                     String sURL = ServerList.getServerURL(GlobalOptions.getSelectedServer());
-                    new File(GlobalOptions.getDataHolder().getDataDirectory()).mkdirs();
+                    new File(DataHolder.getSingleton().getDataDirectory()).mkdirs();
                     fireDataHolderEvents("Lese Server Einstellungen");
                     URL file = new URL(sURL + "/interface.php?func=get_config");
                     downloadDataFile(file, "settings_tmp.xml");
@@ -406,7 +406,7 @@ public class DataHolder {
             // <editor-fold defaultstate="collapsed" desc="DS Workbench Version check">
             if (DatabaseAdapter.isVersionAllowed() != DatabaseAdapter.ID_SUCCESS) {
                 logger.error("Current version is not allowed any longer");
-                fireDataHolderEvents("Deine DS-Workbench Version ist zu alt. Bitte lade dir die aktuelle Version herunter.");
+                fireDataHolderEvents("Deine DS Workbench Version ist zu alt. Bitte lade dir die aktuelle Version herunter.");
                 return false;
             }
             //</editor-fold>
@@ -835,13 +835,15 @@ public class DataHolder {
     }
 
     public synchronized void fireDataHolderEvents(String pMessage) {
-        for (DataHolderListener listener : mListeners) {
+        DataHolderListener[] listeners = mListeners.toArray(new DataHolderListener[]{});
+        for (DataHolderListener listener : listeners) {
             listener.fireDataHolderEvent(pMessage);
         }
     }
 
     public synchronized void fireDataLoadedEvents() {
-        for (DataHolderListener listener : mListeners) {
+        DataHolderListener[] listeners = mListeners.toArray(new DataHolderListener[]{});
+        for (DataHolderListener listener : listeners) {
             listener.fireDataLoadedEvent();
         }
     }

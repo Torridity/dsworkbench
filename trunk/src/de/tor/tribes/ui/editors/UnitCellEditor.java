@@ -4,10 +4,9 @@
  */
 package de.tor.tribes.ui.editors;
 
+import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
-import de.tor.tribes.util.GlobalOptions;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import javax.swing.AbstractCellEditor;
@@ -26,7 +25,7 @@ public class UnitCellEditor extends AbstractCellEditor implements TableCellEdito
 
     public UnitCellEditor() {
         DefaultComboBoxModel model = new DefaultComboBoxModel();
-        for (UnitHolder unit : GlobalOptions.getDataHolder().getUnits()) {
+        for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
             model.addElement(unit);
         }
         comboComponent.setModel(model);

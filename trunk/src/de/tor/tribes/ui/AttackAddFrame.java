@@ -5,6 +5,7 @@
  */
 package de.tor.tribes.ui;
 
+import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.util.Constants;
@@ -28,17 +29,15 @@ public class AttackAddFrame extends javax.swing.JFrame {
 
     private Village mSource;
     private Village mTarget;
-    private DSWorkbenchMainFrame mParent = null;
     private final NumberFormat nf = NumberFormat.getInstance();
     private boolean skipValidation = false;
 
     /** Creates new form AttackAddFrame */
-    public AttackAddFrame(DSWorkbenchMainFrame pParent) {
+    public AttackAddFrame() {
         initComponents();
         nf.setMaximumFractionDigits(2);
         nf.setMinimumFractionDigits(2);
         frameControlPanel1.setupPanel(this, true, false);
-        mParent = pParent;
         getContentPane().setBackground(Constants.DS_BACK);
 
         ((DateEditor) jTimeSpinner.getEditor()).getTextField().setHorizontalAlignment(JTextField.CENTER);
@@ -74,7 +73,7 @@ public class AttackAddFrame extends javax.swing.JFrame {
 
     private void buildUnitBox() {
         DefaultComboBoxModel model = new DefaultComboBoxModel();
-        for (UnitHolder unit : GlobalOptions.getDataHolder().getUnits()) {
+        for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
             model.addElement(unit);
         }
         jUnitBox.setModel(model);
@@ -311,7 +310,7 @@ private void fireAddAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:even
         return;
     }
 
-    mParent.addAttack(mSource, mTarget, getSelectedUnit(), getTime());
+    DSWorkbenchMainFrame.getSingleton().addAttack(mSource, mTarget, getSelectedUnit(), getTime());
 
     setVisible(false);
 }//GEN-LAST:event_fireAddAttackEvent
@@ -327,11 +326,11 @@ private void fireAddAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:even
             GlobalOptions.loadData(false);
         } catch (Exception e) {
         }
-        Village source = GlobalOptions.getDataHolder().getVillages()[452][467];
-        Village target = GlobalOptions.getDataHolder().getVillages()[449][466];
+        Village source = DataHolder.getSingleton().getVillages()[452][467];
+        Village target = DataHolder.getSingleton().getVillages()[449][466];
         /* for (int i = 0; i < 1000; i++) {
         for (int j = 0; j < 1000; j++) {
-        Village v = GlobalOptions.getDataHolder().getVillages()[i][j];
+        Village v = DataHolder.getSingleton().getVillages()[i][j];
         if (v != null) {
         if (source == null) {
         source = v;
@@ -345,7 +344,7 @@ private void fireAddAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:even
         
         }*/
 
-        new AttackAddFrame(null).setupAttack(source, target);
+        new AttackAddFrame().setupAttack(source, target);
 
     }
 

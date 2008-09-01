@@ -5,6 +5,7 @@
  */
 package de.tor.tribes.ui;
 
+import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.WorldDecorationHolder;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.Marker;
@@ -13,6 +14,7 @@ import de.tor.tribes.util.BrowserCommandSender;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.Skin;
+import de.tor.tribes.util.mark.MarkerManager;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -32,6 +34,8 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.text.NumberFormat;
+import java.util.LinkedList;
+import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import org.apache.log4j.Logger;
@@ -46,13 +50,10 @@ public class MapPanel extends javax.swing.JPanel {
     private Village[][] mVisibleVillages = null;
     private Image mBuffer = null;
     private double dScaling = 1.0;
-    private int downX = 0;
-    private int downY = 0;
     private int mX = 456;
     private int mY = 468;
     private RepaintThread mRepaintThread = null;
     boolean updating = false;
-    private DSWorkbenchMainFrame mParent;
     private int iCurrentCursor = ImageManager.CURSOR_DEFAULT;
     private Village mSourceVillage = null;
     private Village mTargetVillage = null;
@@ -63,17 +64,36 @@ public class MapPanel extends javax.swing.JPanel {
     private boolean isOutside = false;
     private Rectangle2D screenRect = null;
     private Point mousePos = null;
+    private static MapPanel SINGLETON = null;
+    private List<MapPanelListener> mListeners = null;
+    private int xDir = 0;
+    private int yDir = 0;
+
+    public static synchronized MapPanel getSingleton() {
+        if (SINGLETON == null) {
+            SINGLETON = new MapPanel();
+        }
+        return SINGLETON;
+    }
 
     /** Creates new form MapPanel */
-    public MapPanel(DSWorkbenchMainFrame pParent) {
+    MapPanel() {
         initComponents();
         logger.info("Creating MapPanel");
-        mMarkerAddFrame = new MarkerAddFrame(pParent);
-        mAttackAddFrame = new AttackAddFrame(pParent);
+        mListeners = new LinkedList<MapPanelListener>();
+        mMarkerAddFrame = new MarkerAddFrame();
+        mAttackAddFrame = new AttackAddFrame();
         mTagFrame = new VillageTagFrame();
-        mParent = pParent;
         setCursor(ImageManager.getCursor(iCurrentCursor));
         initListeners();
+    }
+
+    public synchronized void addMapPanelListener(MapPanelListener pListener) {
+        mListeners.add(pListener);
+    }
+
+    public synchronized void removeMapPanelListener(MapPanelListener pListener) {
+        mListeners.remove(pListener);
     }
 
     private void initListeners() {
@@ -92,7 +112,7 @@ public class MapPanel extends javax.swing.JPanel {
 
                 }
                 setCursor(ImageManager.getCursor(iCurrentCursor));
-                mParent.changeTool(iCurrentCursor);
+                fireToolChangedEvents(iCurrentCursor);
             }
         });
         //</editor-fold>
@@ -142,7 +162,7 @@ public class MapPanel extends javax.swing.JPanel {
                     case ImageManager.CURSOR_ATTACK_INGAME: {
                         if (e.getClickCount() == 2) {
                             Village v = getVillageAtMousePos();
-                            Village u = mParent.getCurrentUserVillage();
+                            Village u = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage();
                             if ((u != null) && (v != null)) {
                                 BrowserCommandSender.sendTroops(u, v);
                             }
@@ -151,38 +171,38 @@ public class MapPanel extends javax.swing.JPanel {
                     case ImageManager.CURSOR_SEND_RES_INGAME: {
                         if (e.getClickCount() == 2) {
                             Village v = getVillageAtMousePos();
-                            Village u = mParent.getCurrentUserVillage();
+                            Village u = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage();
                             if ((u != null) && (v != null)) {
                                 BrowserCommandSender.sendRes(u, v);
                             }
                         }
                     }
                     case ImageManager.CURSOR_ATTACK_AXE: {
-                        unit = GlobalOptions.getDataHolder().getUnitID("Axtkämpfer");
+                        unit = DataHolder.getSingleton().getUnitID("Axtkämpfer");
                         break;
                     }
                     case ImageManager.CURSOR_ATTACK_SWORD: {
-                        unit = GlobalOptions.getDataHolder().getUnitID("Schwertkämpfer");
+                        unit = DataHolder.getSingleton().getUnitID("Schwertkämpfer");
                         break;
                     }
                     case ImageManager.CURSOR_ATTACK_SPY: {
-                        unit = GlobalOptions.getDataHolder().getUnitID("Späher");
+                        unit = DataHolder.getSingleton().getUnitID("Späher");
                         break;
                     }
                     case ImageManager.CURSOR_ATTACK_LIGHT: {
-                        unit = GlobalOptions.getDataHolder().getUnitID("Leichte Kavallerie");
+                        unit = DataHolder.getSingleton().getUnitID("Leichte Kavallerie");
                         break;
                     }
                     case ImageManager.CURSOR_ATTACK_HEAVY: {
-                        unit = GlobalOptions.getDataHolder().getUnitID("Schwere Kavallerie");
+                        unit = DataHolder.getSingleton().getUnitID("Schwere Kavallerie");
                         break;
                     }
                     case ImageManager.CURSOR_ATTACK_RAM: {
-                        unit = GlobalOptions.getDataHolder().getUnitID("Ramme");
+                        unit = DataHolder.getSingleton().getUnitID("Ramme");
                         break;
                     }
                     case ImageManager.CURSOR_ATTACK_SNOB: {
-                        unit = GlobalOptions.getDataHolder().getUnitID("Adelsgeschlecht");
+                        unit = DataHolder.getSingleton().getUnitID("Adelsgeschlecht");
                         break;
                     }
                 }
@@ -190,7 +210,7 @@ public class MapPanel extends javax.swing.JPanel {
                 if (e.getClickCount() == 2) {
                     if (isAttack) {
                         mAttackAddFrame.setLocation(e.getLocationOnScreen());
-                        mAttackAddFrame.setupAttack(mParent.getCurrentUserVillage(), getVillageAtMousePos(), unit);
+                        mAttackAddFrame.setupAttack(DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage(), getVillageAtMousePos(), unit);
                     }
                 }
             }
@@ -212,8 +232,6 @@ public class MapPanel extends javax.swing.JPanel {
                 switch (iCurrentCursor) {
                     case ImageManager.CURSOR_MEASURE: {
                         //start drag if attack tool is active
-                        downX = e.getX();
-                        downY = e.getY();
                         mSourceVillage = getVillageAtMousePos();
                         if (mSourceVillage != null) {
                             mRepaintThread.setDragLine(mSourceVillage.getX(), mSourceVillage.getY(), e.getX(), e.getY());
@@ -222,8 +240,6 @@ public class MapPanel extends javax.swing.JPanel {
                     }
                     default: {
                         if (isAttack) {
-                            downX = e.getX();
-                            downY = e.getY();
                             mSourceVillage = getVillageAtMousePos();
                             if (mSourceVillage != null) {
                                 mRepaintThread.setDragLine(mSourceVillage.getX(), mSourceVillage.getY(), e.getX(), e.getY());
@@ -236,6 +252,8 @@ public class MapPanel extends javax.swing.JPanel {
             @Override
             public void mouseReleased(MouseEvent e) {
                 int unit = -1;
+                xDir = 0;
+                yDir = 0;
                 boolean isAttack = false;
                 if ((iCurrentCursor == ImageManager.CURSOR_ATTACK_AXE) ||
                         (iCurrentCursor == ImageManager.CURSOR_ATTACK_SWORD) ||
@@ -252,36 +270,34 @@ public class MapPanel extends javax.swing.JPanel {
                         break;
                     }
                     case ImageManager.CURSOR_ATTACK_AXE: {
-                        unit = GlobalOptions.getDataHolder().getUnitID("Axtkämpfer");
+                        unit = DataHolder.getSingleton().getUnitID("Axtkämpfer");
                         break;
                     }
                     case ImageManager.CURSOR_ATTACK_SWORD: {
-                        unit = GlobalOptions.getDataHolder().getUnitID("Schwertkämpfer");
+                        unit = DataHolder.getSingleton().getUnitID("Schwertkämpfer");
                         break;
                     }
                     case ImageManager.CURSOR_ATTACK_SPY: {
-                        unit = GlobalOptions.getDataHolder().getUnitID("Späher");
+                        unit = DataHolder.getSingleton().getUnitID("Späher");
                         break;
                     }
                     case ImageManager.CURSOR_ATTACK_LIGHT: {
-                        unit = GlobalOptions.getDataHolder().getUnitID("Leichte Kavallerie");
+                        unit = DataHolder.getSingleton().getUnitID("Leichte Kavallerie");
                         break;
                     }
                     case ImageManager.CURSOR_ATTACK_HEAVY: {
-                        unit = GlobalOptions.getDataHolder().getUnitID("Schwere Kavallerie");
+                        unit = DataHolder.getSingleton().getUnitID("Schwere Kavallerie");
                         break;
                     }
                     case ImageManager.CURSOR_ATTACK_RAM: {
-                        unit = GlobalOptions.getDataHolder().getUnitID("Ramme");
+                        unit = DataHolder.getSingleton().getUnitID("Ramme");
                         break;
                     }
                     case ImageManager.CURSOR_ATTACK_SNOB: {
-                        unit = GlobalOptions.getDataHolder().getUnitID("Adelsgeschlecht");
+                        unit = DataHolder.getSingleton().getUnitID("Adelsgeschlecht");
                         break;
                     }
                 }
-                downX = 0;
-                downY = 0;
 
                 mouseDown = false;
                 if (isAttack) {
@@ -293,9 +309,6 @@ public class MapPanel extends javax.swing.JPanel {
                 mRepaintThread.setDragLine(0, 0, 0, 0);
             }
 
-            /**
-             * @TODO Implement handling if cursor leaves map while dragging
-             */
             @Override
             public void mouseEntered(MouseEvent e) {
                 isOutside = false;
@@ -303,9 +316,6 @@ public class MapPanel extends javax.swing.JPanel {
                 mousePos = null;
             }
 
-            /**
-             * @TODO Implement handling if cursor leaves map while dragging
-             */
             @Override
             public void mouseExited(MouseEvent e) {
                 if (mouseDown) {
@@ -324,7 +334,7 @@ public class MapPanel extends javax.swing.JPanel {
 
             @Override
             public void mouseDragged(MouseEvent e) {
-                mParent.updateDetailedInfoPanel(getVillageAtMousePos());
+                fireVillageAtMousePosChangedEvents(getVillageAtMousePos());
                 boolean isAttack = false;
                 if ((iCurrentCursor == ImageManager.CURSOR_ATTACK_AXE) ||
                         (iCurrentCursor == ImageManager.CURSOR_ATTACK_SWORD) ||
@@ -343,8 +353,8 @@ public class MapPanel extends javax.swing.JPanel {
                             mRepaintThread.setDragLine(mSourceVillage.getX(), mSourceVillage.getY(), e.getX(), e.getY());
                         }
                         mTargetVillage = getVillageAtMousePos();
-                        mParent.updateDistancePanel(mSourceVillage, mTargetVillage);
 
+                        fireDistanceEvents(mSourceVillage, mTargetVillage);
                         break;
                     }
                     default: {
@@ -360,7 +370,7 @@ public class MapPanel extends javax.swing.JPanel {
 
             @Override
             public void mouseMoved(MouseEvent e) {
-                mParent.updateDetailedInfoPanel(getVillageAtMousePos());
+                fireVillageAtMousePosChangedEvents(getVillageAtMousePos());
                 if (isOutside) {
                     mousePos = e.getLocationOnScreen();
                 }
@@ -380,7 +390,7 @@ public class MapPanel extends javax.swing.JPanel {
     public void setCurrentCursor(int pCurrentCursor) {
         iCurrentCursor = pCurrentCursor;
         setCursor(ImageManager.getCursor(iCurrentCursor));
-        mParent.changeTool(iCurrentCursor);
+        fireToolChangedEvents(iCurrentCursor);
     }
 
     public void setZoom(double pZoom) {
@@ -417,23 +427,40 @@ public class MapPanel extends javax.swing.JPanel {
         if (isOutside) {
             mousePos = MouseInfo.getPointerInfo().getLocation();
             int outcodes = screenRect.outcode(mousePos);
-            int xDir = 0;
-            int yDir = 0;
+
 
             if ((outcodes & Rectangle2D.OUT_LEFT) != 0) {
-                xDir = -1;
+                xDir += -1;
             } else if ((outcodes & Rectangle2D.OUT_RIGHT) != 0) {
-                xDir = 1;
+                xDir += 1;
             }
 
             if ((outcodes & Rectangle2D.OUT_TOP) != 0) {
-                yDir = -1;
+                yDir += -1;
             } else if ((outcodes & Rectangle2D.OUT_BOTTOM) != 0) {
-                yDir = 1;
+                yDir += 1;
             }
-            downX += xDir;
-            downY += yDir;
-            mParent.scroll(xDir, yDir);
+
+            //lower scroll speed
+            int sx = 0;
+            int sy = 0;
+            if (xDir >= 10) {
+                sx = 1;
+                xDir = 0;
+            } else if (xDir <= -10) {
+                sx = -1;
+                xDir = 0;
+            }
+
+            if (yDir >= 10) {
+                sy = 1;
+                yDir = 0;
+            } else if (yDir <= -10) {
+                sy = -1;
+                yDir = 0;
+            }
+
+            fireScrollEvents(sx, sy);
         }
     }
 
@@ -442,7 +469,7 @@ public class MapPanel extends javax.swing.JPanel {
         updating = true;
         if (mRepaintThread == null) {
             logger.info("Creating MapPaintThread");
-            mRepaintThread = new RepaintThread(this, pX, pY);
+            mRepaintThread = new RepaintThread(pX, pY);
             mRepaintThread.start();
             mX = pX;
             mY = pY;
@@ -476,6 +503,29 @@ public class MapPanel extends javax.swing.JPanel {
         updating = false;
     }
 
+    public synchronized void fireToolChangedEvents(int pTool) {
+        for (MapPanelListener listener : mListeners) {
+            listener.fireToolChangedEvent(pTool);
+        }
+    }
+
+    public synchronized void fireVillageAtMousePosChangedEvents(Village pVillage) {
+        for (MapPanelListener listener : mListeners) {
+            listener.fireVillageAtMousePosChangedEvent(pVillage);
+        }
+    }
+
+    public synchronized void fireDistanceEvents(Village pSource, Village pTarget) {
+        for (MapPanelListener listener : mListeners) {
+            listener.fireDistanceEvent(pSource, pTarget);
+        }
+    }
+
+    public synchronized void fireScrollEvents(int pX, int pY) {
+        for (MapPanelListener listener : mListeners) {
+            listener.fireScrollEvent(pX, pY);
+        }
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
 }
@@ -488,7 +538,6 @@ class RepaintThread extends Thread {
     private BufferedImage mBuffer = null;
     private int iVillagesX = 0;
     private int iVillagesY = 0;
-    private MapPanel mParent = null;
     private int iX = 456;
     private int iY = 468;
     private double dScaling = 1.0;
@@ -498,12 +547,11 @@ class RepaintThread extends Thread {
     private BufferedImage mDistBorder = null;
     private final NumberFormat nf = NumberFormat.getInstance();
 
-    public RepaintThread(MapPanel pParent, int pX, int pY) {
+    public RepaintThread(int pX, int pY) {
         mVisibleVillages = new Village[iVillagesX][iVillagesY];
         setCoordinates(pX, pY);
         nf.setMaximumFractionDigits(2);
         nf.setMinimumFractionDigits(2);
-        mParent = pParent;
         try {
             mDistBorder = ImageIO.read(new File("./graphics/dist_border.png"));
         } catch (Exception e) {
@@ -520,8 +568,10 @@ class RepaintThread extends Thread {
         while (true) {
             try {
                 updateMap(iX, iY);
-                mParent.updateComplete(mVisibleVillages, mBuffer.getScaledInstance(mParent.getWidth(), mParent.getHeight(), BufferedImage.SCALE_FAST));
-                mParent.repaint();
+                if (mBuffer != null) {
+                    MapPanel.getSingleton().updateComplete(mVisibleVillages, mBuffer.getScaledInstance(MapPanel.getSingleton().getWidth(), MapPanel.getSingleton().getHeight(), BufferedImage.SCALE_FAST));
+                    MapPanel.getSingleton().repaint();
+                }
             } catch (Throwable t) {
                 logger.error("Redrawing map failed", t);
             }
@@ -537,7 +587,7 @@ class RepaintThread extends Thread {
     }
 
     public void setDragLine(int pXS, int pYS, int pXE, int pYE) {
-        mSourceVillage = GlobalOptions.getDataHolder().getVillages()[pXS][pYS];
+        mSourceVillage = DataHolder.getSingleton().getVillages()[pXS][pYS];
         xe = pXE;
         ye = pYE;
     }
@@ -547,10 +597,10 @@ class RepaintThread extends Thread {
         iX = pX;
         iY = pY;
 
-        Village[][] villages = GlobalOptions.getDataHolder().getVillages();
+        Village[][] villages = DataHolder.getSingleton().getVillages();
 
-        iVillagesX = (int) Math.rint((double) mParent.getWidth() / GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, dScaling).getWidth(null));
-        iVillagesY = (int) Math.rint((double) mParent.getHeight() / GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, dScaling).getHeight(null));
+        iVillagesX = (int) Math.rint((double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, dScaling).getWidth(null));
+        iVillagesY = (int) Math.rint((double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, dScaling).getHeight(null));
 
         if (iVillagesX % 2 == 0) {
             iVillagesX++;
@@ -596,10 +646,15 @@ class RepaintThread extends Thread {
         int width = GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, dScaling).getWidth(null);
         int height = GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, dScaling).getHeight(null);
 
-        if ((mBuffer == null) || ((mBuffer.getWidth(null) * mBuffer.getHeight(null)) != (mParent.getWidth() * mParent.getHeight()))) {
-            mBuffer = new BufferedImage(mParent.getWidth(), mParent.getHeight(), BufferedImage.TYPE_INT_RGB);
+        if ((mBuffer == null) || ((mBuffer.getWidth(null) * mBuffer.getHeight(null)) != (MapPanel.getSingleton().getWidth() * MapPanel.getSingleton().getHeight()))) {
+            int w = MapPanel.getSingleton().getWidth();
+            int h = MapPanel.getSingleton().getHeight();
+            if (w == 0 || h == 0) {
+                //both are 0 if map was not drawn yet
+                return;
+            }
+            mBuffer = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
             g2d = (Graphics2D) mBuffer.getGraphics();
-
         } else {
             g2d = (Graphics2D) mBuffer.getGraphics();
             g2d.fillRect(0, 0, mBuffer.getWidth(null), mBuffer.getHeight(null));
@@ -637,9 +692,9 @@ class RepaintThread extends Thread {
                             marker = Color.YELLOW;
                         } else {
                             try {
-                                Marker m = GlobalOptions.getMarkerByValue(v.getTribe().getName());
+                                Marker m = MarkerManager.getSingleton().getMarkerByValue(v.getTribe().getName());
                                 if (m == null) {
-                                    m = GlobalOptions.getMarkerByValue(v.getTribe().getAlly().getName());
+                                    m = MarkerManager.getSingleton().getMarkerByValue(v.getTribe().getAlly().getName());
                                     if (m != null) {
                                         marker = m.getMarkerColor();
                                     } else {
@@ -815,7 +870,7 @@ class RepaintThread extends Thread {
                 }
                 if (drawDistance) {
 
-                    Village t = mParent.getVillageAtMousePos();
+                    Village t = MapPanel.getSingleton().getVillageAtMousePos();
                     if (t != null) {
                         double d = DSCalculator.calculateDistance(mSourceVillage, t);
                         String dist = nf.format(d);
@@ -926,6 +981,26 @@ class RepaintThread extends Thread {
         if (!l1.intersectsLine(l2)) {
             return false;
         }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

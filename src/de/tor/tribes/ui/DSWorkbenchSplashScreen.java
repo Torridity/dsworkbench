@@ -79,16 +79,16 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
         try {
             GlobalOptions.initialize();
             GlobalOptions.addDataHolderListener(this);
-            GlobalOptions.addDataHolderListener(DSWorkbenchSettingsDialog.getGlobalSettingsFrame());
+            GlobalOptions.addDataHolderListener(DSWorkbenchSettingsDialog.getSingleton());
         } catch (Exception e) {
             logger.error("Failed to initialize global options", e);
             JOptionPane.showMessageDialog(self, "Fehler bei der Initialisierung.\nMöglicherweise ist deine DS Workbench Installation defekt.", "Fehler", JOptionPane.ERROR_MESSAGE);
             System.exit(1);
         }
 
-        if (!DSWorkbenchSettingsDialog.getGlobalSettingsFrame().checkSettings()) {
+        if (!DSWorkbenchSettingsDialog.getSingleton().checkSettings()) {
             logger.info("Reading user settings returned error(s)");
-            DSWorkbenchSettingsDialog.getGlobalSettingsFrame().setVisible(true);
+            DSWorkbenchSettingsDialog.getSingleton().setVisible(true);
         }
 
         try {
@@ -100,11 +100,9 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
         }
 
         try {
-            DSWorkbenchMainFrame mainFrame = new DSWorkbenchMainFrame();
-            SearchFrame.createSearchFrame(mainFrame);
-            DSWorkbenchSettingsDialog.getGlobalSettingsFrame().setMainFrame(mainFrame);
-            mainFrame.init();
-            mainFrame.setVisible(true);
+             DSWorkbenchMainFrame.getSingleton().init();
+            //SearchFrame.createSearchFrame();
+            DSWorkbenchMainFrame.getSingleton().setVisible(true);
             t.stopRunning();
             setVisible(false);
         } catch (Exception e) {
@@ -120,7 +118,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
     public static void main(String args[]) {
         DOMConfigurator.configure("log4j.xml");
 
-        Locale.setDefault(Locale.US);
+       // Locale.setDefault(Locale.US);
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
@@ -128,6 +126,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
 
         java.awt.EventQueue.invokeLater(new Runnable() {
 
+            @Override
             public void run() {
                 DSWorkbenchSplashScreen splash = new DSWorkbenchSplashScreen();
                 splash.setLocationRelativeTo(null);

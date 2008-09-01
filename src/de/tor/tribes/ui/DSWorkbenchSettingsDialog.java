@@ -6,6 +6,7 @@
 package de.tor.tribes.ui;
 
 import de.tor.tribes.db.DatabaseAdapter;
+import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.DataHolderListener;
 import de.tor.tribes.io.ServerList;
 import de.tor.tribes.util.Constants;
@@ -31,17 +32,16 @@ import org.apache.log4j.xml.DOMConfigurator;
 public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements DataHolderListener {
 
     private static Logger logger = Logger.getLogger(DSWorkbenchSettingsDialog.class);
-    private static DSWorkbenchSettingsDialog SETTINGS_DIALOG = null;
+    private static DSWorkbenchSettingsDialog SINGLETON = null;
     boolean updating = false;
     boolean gotServerList = false;
-    private DSWorkbenchMainFrame mMainFrame = null;
 
-    public static DSWorkbenchSettingsDialog getGlobalSettingsFrame() {
-        if (SETTINGS_DIALOG != null) {
-            return SETTINGS_DIALOG;
+    public static DSWorkbenchSettingsDialog getSingleton() {
+        if (SINGLETON == null) {
+            SINGLETON = new DSWorkbenchSettingsDialog();
         }
-        SETTINGS_DIALOG = new DSWorkbenchSettingsDialog();
-        return SETTINGS_DIALOG;
+
+        return SINGLETON;
     }
 
     /** Creates new form TribesPlannerStartFrame */
@@ -120,10 +120,6 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
             }
         } catch (Exception e) {
         }
-    }
-
-    public void setMainFrame(DSWorkbenchMainFrame pMainFrame) {
-        mMainFrame = pMainFrame;
     }
 
     protected boolean checkSettings() {
@@ -789,9 +785,8 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
             message += "Um Online-Funktionen zu nutzen korrigieren bitte später deine Netzwerkeinstellungen oder verbinde dich mit dem Internet.";
             JOptionPane.showMessageDialog(this, message, "Warnung", JOptionPane.WARNING_MESSAGE);
         }
-        if (mMainFrame != null) {
-            mMainFrame.onlineStateChanged();
-        }
+        DSWorkbenchMainFrame.getSingleton().onlineStateChanged();
+
     }//GEN-LAST:event_fireUpdateProxySettingsEvent
 
     private void fireChangeConnectTypeEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireChangeConnectTypeEvent
@@ -821,7 +816,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
         jCancelButton.setEnabled(false);
         jTribeNames.setModel(new DefaultComboBoxModel());
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        GlobalOptions.getDataHolder().initialize();
+        DataHolder.getSingleton().initialize();
         Thread t = new Thread(new Runnable() {
 
             @Override
@@ -859,9 +854,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
                 return;
             }
         }
-        if (mMainFrame != null) {
-            mMainFrame.serverSettingsChangedEvent();
-        }
+        DSWorkbenchMainFrame.getSingleton().serverSettingsChangedEvent();
         setVisible(false);
     }//GEN-LAST:event_fireCloseEvent
 
@@ -880,9 +873,8 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
         if (!checkSettings()) {
             return;
         }
-        if (mMainFrame != null) {
-            mMainFrame.serverSettingsChangedEvent();
-        }
+
+        DSWorkbenchMainFrame.getSingleton().serverSettingsChangedEvent();
         setVisible(false);
     }//GEN-LAST:event_fireOkEvent
 
@@ -986,8 +978,8 @@ private void fireCancelRegistrationEvent(java.awt.event.MouseEvent evt) {//GEN-F
 private void fireChangeContinentsOnMinimapEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireChangeContinentsOnMinimapEvent
     GlobalOptions.addProperty("minimap.showcontinents", Boolean.toString(jContinentsOnMinimap.isSelected()));
     GlobalOptions.saveProperties();
-    MinimapPanel.getGlobalMinimap().resetBuffer();
-    MinimapPanel.getGlobalMinimap().redraw();
+    MinimapPanel.getSingleton().resetBuffer();
+    MinimapPanel.getSingleton().redraw();
 }//GEN-LAST:event_fireChangeContinentsOnMinimapEvent
 
 private void fireDownloadDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireDownloadDataEvent
@@ -1082,7 +1074,7 @@ private void fireShowSkinPreviewEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
         }
         if (servers == null) {
             GlobalOptions.setOfflineMode(true);
-            servers = GlobalOptions.getDataHolder().getLocalServers();
+            servers = DataHolder.getSingleton().getLocalServers();
         }
 
         if (servers.length < 1) {
@@ -1205,14 +1197,13 @@ private void fireShowSkinPreviewEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
     @Override
     public void fireDataLoadedEvent() {
         fireDataHolderEvent("Erstelle Spielerliste");
-        String[] tribeNames = new String[GlobalOptions.getDataHolder().getTribes().size()];
-        Enumeration<Integer> tribes = GlobalOptions.getDataHolder().getTribes().keys();
+        String[] tribeNames = new String[DataHolder.getSingleton().getTribes().size()];
+        Enumeration<Integer> tribes = DataHolder.getSingleton().getTribes().keys();
         int cnt = 0;
         while (tribes.hasMoreElements()) {
-            tribeNames[cnt] = GlobalOptions.getDataHolder().getTribes().get(tribes.nextElement()).getName();
+            tribeNames[cnt] = DataHolder.getSingleton().getTribes().get(tribes.nextElement()).getName();
             cnt++;
         }
-        long s = System.currentTimeMillis();
         Arrays.sort(tribeNames, null);
         DefaultComboBoxModel model = new DefaultComboBoxModel();
         model.addElement("Bitte wählen");
@@ -1230,8 +1221,8 @@ private void fireShowSkinPreviewEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
         } else {
             jTribeNames.setSelectedIndex(0);
         }
-        if (mMainFrame != null) {
-            mMainFrame.serverSettingsChangedEvent();
+        if (DSWorkbenchMainFrame.getSingleton().isInitialized()) {
+            DSWorkbenchMainFrame.getSingleton().serverSettingsChangedEvent();
         }
         fireDataHolderEvent("Lade Benutzerdaten");
         GlobalOptions.loadUserData();

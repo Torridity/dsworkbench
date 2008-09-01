@@ -5,7 +5,6 @@
  */
 package de.tor.tribes.ui;
 
-import com.sun.corba.se.spi.ior.TaggedComponent;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.DataHolderListener;
 import de.tor.tribes.io.UnitHolder;
@@ -27,6 +26,7 @@ import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.mark.MarkerManager;
 import de.tor.tribes.util.mark.MarkerManagerListener;
+import de.tor.tribes.util.tag.TagManager;
 import java.awt.AWTEvent;
 import java.awt.Color;
 import java.awt.Component;
@@ -59,10 +59,13 @@ import org.apache.log4j.Logger;
  *
  * @author  Charon
  */
-public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHolderListener, MarkerManagerListener {
+public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
+        DataHolderListener,
+        MarkerManagerListener,
+        MapPanelListener,
+        MinimapListener {
 
     private static Logger logger = Logger.getLogger(DSWorkbenchMainFrame.class);
-    private MapPanel mPanel = null;
     private int iCenterX = 500;
     private int iCenterY = 500;
     private List<ImageIcon> mIcons;
@@ -71,18 +74,34 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
     private AllyAllyAttackFrame mAllyAllyAttackFrame = null;
     private TribeTribeAttackFrame mTribeTribeAttackFrame = null;
     private AboutDialog mAbout = null;
+    private static DSWorkbenchMainFrame SINGLETON = null;
+    private boolean initialized = false;
+
+    public static DSWorkbenchMainFrame getSingleton() {
+        if (SINGLETON == null) {
+            SINGLETON = new DSWorkbenchMainFrame();
+        }
+        return SINGLETON;
+    }
 
     /** Creates new form MapFrame */
-    public DSWorkbenchMainFrame() {
+    DSWorkbenchMainFrame() {
         initComponents();
+        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                logger.info("Performing ShutdownHook");
+                TagManager.getSingleton().saveTagsToFile(DataHolder.getSingleton().getDataDirectory() + "/tags.xml");
+                MarkerManager.getSingleton().saveMarkersToFile(DataHolder.getSingleton().getDataDirectory() + "/markers.xml");
+
+            }
+        }));
         getContentPane().setBackground(Constants.DS_BACK);
         jDynFrame.getContentPane().setBackground(Constants.DS_BACK);
-
-        /*  jMainControlPanel.setupPanel(this, true, true);
-        jMainControlPanel.setTitle(getTitle());*/
         pack();
-        GlobalOptions.getDataHolder().addListener(this);
-        serverSettingsChangedEvent();
+        DataHolder.getSingleton().addListener(this);
+
         Toolkit.getDefaultToolkit().addAWTEventListener(new AWTEventListener() {
 
             @Override
@@ -117,7 +136,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
     public void serverSettingsChangedEvent() {
         jCurrentPlayer.setText(GlobalOptions.getProperty("player." + GlobalOptions.getSelectedServer()));
         jCurrentServer.setText(GlobalOptions.getSelectedServer());
-        Tribe t = GlobalOptions.getDataHolder().getTribeByName(jCurrentPlayer.getText());
+        Tribe t = DataHolder.getSingleton().getTribeByName(jCurrentPlayer.getText());
         if (t != null) {
             DefaultComboBoxModel model = new DefaultComboBoxModel(t.getVillageList().toArray());
             jCurrentPlayerVillages.setModel(model);
@@ -133,9 +152,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
             DefaultComboBoxModel model = new DefaultComboBoxModel(new Object[]{"Keine Dörfer"});
             jCurrentPlayerVillages.setModel(model);
         }
-        if (MinimapPanel.getGlobalMinimap() != null) {
-            MinimapPanel.getGlobalMinimap().redraw();
-        }
+        MinimapPanel.getSingleton().redraw();
         setupMarkerPanel();
         jMarkerPanel.updateUI();
         setupAttackPanel();
@@ -155,14 +172,13 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
         jUpdateButton.setEnabled(true);
     }
 
-    public void init() {
+    protected void init() {
         //setup everything
+        serverSettingsChangedEvent();
         setupMaps();
-        //setupMarkerPanel();
         setupDetailsPanel();
-        // setupAttackPanel();
         setupDynFrame();
-        mToolbox = new ToolBoxFrame(mPanel, MinimapPanel.getGlobalMinimap());
+        mToolbox = new ToolBoxFrame();
         mToolbox.addWindowListener(new WindowListener() {
 
             @Override
@@ -194,58 +210,55 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
             public void windowDeactivated(WindowEvent e) {
             }
         });
-        mAllyAllyAttackFrame = new AllyAllyAttackFrame(this);
+        mAllyAllyAttackFrame = new AllyAllyAttackFrame();
         mAllyAllyAttackFrame.pack();
-        mTribeTribeAttackFrame = new TribeTribeAttackFrame(this);
+        mTribeTribeAttackFrame = new TribeTribeAttackFrame();
         mTribeTribeAttackFrame.pack();
         mAbout = new AboutDialog(this, true);
+        initialized = true;
+        serverSettingsChangedEvent();
+    }
+
+    public boolean isInitialized() {
+        return initialized;
     }
 
     private void setupMaps() {
         logger.info("Initializing maps");
         //build the mappanel
-        mPanel = new MapPanel(this);
-        jPanel1.add(mPanel);
+        MapPanel.getSingleton().addMapPanelListener(this);
+        jPanel1.add(MapPanel.getSingleton());
         //build the minimap
-        MinimapPanel.initGlobalMinimap(this);
-        jMinimapPanel.add(MinimapPanel.getGlobalMinimap());
+        MinimapPanel.getSingleton().addMinimapListener(this);
+        jMinimapPanel.add(MinimapPanel.getSingleton());
     }
 
     private void setupMarkerPanel() {
-        //build the marker table
-        jMarkerTable.setModel(new javax.swing.table.DefaultTableModel(
-                new Object[][]{},
-                new String[]{
-                    "Name", "Markierung"
-                }) {
-
-            Class[] types = new Class[]{
-                MarkerCell.class, Color.class
-            };
-            boolean[] canEdit = new boolean[]{
-                false, true
-            };
-
-            @Override
-            public Class getColumnClass(int columnIndex) {
-                return types[columnIndex];
-            }
-
-            @Override
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit[columnIndex];
-            }
-        });
-
+        jMarkerTable.setModel(MarkerManager.getSingleton().getTableModel());
+        MarkerManager.getSingleton().addMarkerManagerListener(this);
         jMarkerTable.getColumnModel().getColumn(1).setMaxWidth(75);
         jMarkerTable.setDefaultRenderer(Color.class, new ColorCellRenderer());
         jMarkerTable.setDefaultRenderer(MarkerCell.class, new MarkerPanelCellRenderer());
-        ColorChooserCellEditor editor = new ColorChooserCellEditor(new ActionListener() {
+        ColorChooserCellEditor editor = new ColorChooserCellEditor(new  
 
-            @Override
+              ActionListener( ) {
+
+
+                 
+                         @Override
             public void actionPerformed(ActionEvent e) {
                 //update markers as soon as the colorchooser cell editor has closed
-                updateMarkers();
+                try {
+                    String value = ((MarkerCell) jMarkerTable.getModel().getValueAt(jMarkerTable.getSelectedRow(), 0)).getMarkerName();
+                    Color color = (Color) jMarkerTable.getModel().getValueAt(jMarkerTable.getSelectedRow(), 1);
+                    if (value != null && color != null) {
+                        Marker m = MarkerManager.getSingleton().getMarkerByValue(value);
+                        m.setMarkerColor(color);
+                        MarkerManager.getSingleton().markerUpdatedExternally();
+                    }
+                } catch (NullPointerException npe) {
+                    //ignored
+                }
             }
         });
 
@@ -267,41 +280,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
         for (int i = 0; i < jMarkerTable.getColumnCount(); i++) {
             jMarkerTable.getColumn(jMarkerTable.getColumnName(i)).setHeaderRenderer(headerRenderer);
         }
-
         jMarkerTable.getColumn("Markierung").setHeaderRenderer(headerRenderer);
-        //insert loaded markers to marker table
-        Enumeration<Integer> tribes = GlobalOptions.getDataHolder().getTribes().keys();
-        List<String> tribeMarkers = new LinkedList<String>();
-        List<String> allyMarkers = new LinkedList<String>();
-        int markerCount = MarkerManager.getSingleton().getMarkers().length;
-        while (tribes.hasMoreElements()) {
-            Tribe t = GlobalOptions.getDataHolder().getTribes().get(tribes.nextElement());
-            Marker m = MarkerManager.getSingleton().getMarkerByValue(t.getName());
-            if (m != null) {
-                if (!tribeMarkers.contains(t.getName())) {
-                    MarkerCell p = MarkerCell.factoryPlayerMarker(t.getName());
-                    ((DefaultTableModel) jMarkerTable.getModel()).addRow(new Object[]{p, m.getMarkerColor()});
-                    tribeMarkers.add(t.getName());
-                    markerCount--;
-                }
-            }
-
-            if (t.getAlly() != null) {
-                m = MarkerManager.getSingleton().getMarkerByValue(t.getAlly().getName());
-                if (m != null) {
-                    if (!allyMarkers.contains(t.getAlly().getName())) {
-                        MarkerCell p = MarkerCell.factoryAllyMarker(t.getAlly().getName());
-                        ((DefaultTableModel) jMarkerTable.getModel()).addRow(new Object[]{p, m.getMarkerColor()});
-                        allyMarkers.add(t.getAlly().getName());
-                        markerCount--;
-                    }
-                }
-            }
-            if (markerCount == 0) {
-                //all markers read
-                break;
-            }
-        }
     }
 
     private void setupDetailsPanel() {
@@ -325,11 +304,10 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
     }
 
     private void setupAttackPanel() {
-        DefaultTableModel model = new javax.swing.table.DefaultTableModel(
+        DefaultTableModel model = new javax.swing   .table.DefaultTableModel(
                 new Object[][]{},
                 new String[]{
-                    "Herkunft", "Ziel", "Einheit", "Ankunftszeit", "Einzeichnen"
-                }) {
+                    "Herkunft", "Ziel", "Einheit", "Ankunftszeit", "Einzeichnen"}) {
 
             Class[] types = new Class[]{
                 Village.class, Village.class, UnitHolder.class, Date.class, Boolean.class
@@ -355,6 +333,17 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
             @Override
             public void editingStopped(ChangeEvent e) {
                 //"attack shown" value changed. redraw map panel
+
+
+
+
+
+
+
+
+
+
+
                 try {
                     updateAttacks();
                 } catch (NumberFormatException nfe) {
@@ -386,7 +375,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
             jAttackTable.getColumn(jAttackTable.getColumnName(i)).setHeaderRenderer(headerRenderer);
         }
 
-
         for (Attack a : GlobalOptions.getAttacks()) {
             ((DefaultTableModel) jAttackTable.getModel()).addRow(new Object[]{a.getSource(), a.getTarget(), a.getUnit(), a.getArriveTime(), a.isShowOnMap()});
         }
@@ -409,10 +397,10 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements DataHold
     @Override
     public void setVisible(boolean v) {
         super.setVisible(v);
-        mPanel.updateMap(iCenterX, iCenterY);
-        double w = (double) mPanel.getWidth() / GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
-        double h = (double) mPanel.getHeight() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
-        MinimapPanel.getGlobalMinimap().setSelection(iCenterX, iCenterY, (int) Math.rint(w), (int) Math.rint(h));
+        MapPanel.getSingleton().updateMap(iCenterX, iCenterY);
+        double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
+        double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
+        MinimapPanel.getSingleton().setSelection(iCenterX, iCenterY, (int) Math.rint(w), (int) Math.rint(h));
         try {
             if (Boolean.parseBoolean(GlobalOptions.getProperty("dynframe.visible"))) {
                 jShowDynFrameItem.setSelected(true);
@@ -1546,12 +1534,12 @@ private void fireRefreshMapEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:eve
     iCenterX = cx;
     iCenterY = cy;
 
-    double w = (double) mPanel.getWidth() / GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
-    double h = (double) mPanel.getHeight() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
-    MinimapPanel.getGlobalMinimap().setSelection(cx, cy, (int) Math.rint(w), (int) Math.rint(h));
-    mPanel.updateMap(iCenterX, iCenterY);
-    jPanel1.updateUI();
-    jNavigationPanel.updateUI();
+    double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
+    double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
+    MinimapPanel.getSingleton().setSelection(cx, cy, (int) Math.rint(w), (int) Math.rint(h));
+    MapPanel.getSingleton().updateMap(iCenterX, iCenterY);
+// jPanel1.updateUI();
+// jNavigationPanel.updateUI();
 }//GEN-LAST:event_fireRefreshMapEvent
 
 private void fireMoveMapEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireMoveMapEvent
@@ -1566,43 +1554,43 @@ private void fireMoveMapEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
         cy = iCenterY;
     }
     if (evt.getSource() == jMoveN) {
-        cy -= mPanel.getHeight() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
+        cy -= MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
     } else if (evt.getSource() == jMoveNE) {
-        cx += mPanel.getWidth() / GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
-        cy -= mPanel.getWidth() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
+        cx += MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
+        cy -= MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
     } else if (evt.getSource() == jMoveE) {
-        cx += mPanel.getWidth() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
+        cx += MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
     } else if (evt.getSource() == jMoveSE) {
-        cx += mPanel.getWidth() / GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
-        cy += mPanel.getWidth() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
+        cx += MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
+        cy += MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
     } else if (evt.getSource() == jMoveS) {
-        cy += mPanel.getHeight() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
+        cy += MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
     } else if (evt.getSource() == jMoveSW) {
-        cx -= mPanel.getWidth() / GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
-        cy += mPanel.getWidth() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
+        cx -= MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
+        cy += MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
     } else if (evt.getSource() == jMoveW) {
-        cx -= mPanel.getWidth() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
+        cx -= MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
     } else if (evt.getSource() == jMoveNW) {
-        cx -= mPanel.getWidth() / GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
-        cy -= mPanel.getWidth() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
+        cx -= MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
+        cy -= MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
     }
 
     jCenterX.setText(Integer.toString(cx));
     jCenterY.setText(Integer.toString(cy));
     iCenterX = cx;
     iCenterY = cy;
-    mPanel.updateMap(iCenterX, iCenterY);
+    MapPanel.getSingleton().updateMap(iCenterX, iCenterY);
 
-    double w = (double) mPanel.getWidth() / GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
-    double h = (double) mPanel.getHeight() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
-    MinimapPanel.getGlobalMinimap().setSelection(cx, cy, (int) Math.rint(w), (int) Math.rint(h));
-    jPanel1.updateUI();
-    jNavigationPanel.updateUI();
+    double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
+    double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
+    MinimapPanel.getSingleton().setSelection(cx, cy, (int) Math.rint(w), (int) Math.rint(h));
+/* jPanel1.updateUI();
+jNavigationPanel.updateUI();*/
 }//GEN-LAST:event_fireMoveMapEvent
 
 private void fireFrameResizedEvent(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_fireFrameResizedEvent
     try {
-        mPanel.updateMap(iCenterX, iCenterY);
+        MapPanel.getSingleton().updateMap(iCenterX, iCenterY);
     } catch (Exception e) {
     }
 }//GEN-LAST:event_fireFrameResizedEvent
@@ -1628,15 +1616,14 @@ private void fireZoomEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fir
 
     dZoomFactor = Double.parseDouble(NumberFormat.getInstance().format(dZoomFactor).replaceAll(",", "."));
 
-    mPanel.setZoom(dZoomFactor);
-    double w = (double) mPanel.getWidth() / GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
-    double h = (double) mPanel.getHeight() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
-    MinimapPanel.getGlobalMinimap().setSelection(Integer.parseInt(jCenterX.getText()), Integer.parseInt(jCenterY.getText()), (int) Math.rint(w), (int) Math.rint(h));
-    mPanel.repaint();
+    MapPanel.getSingleton().setZoom(dZoomFactor);
+    double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
+    double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
+    MinimapPanel.getSingleton().setSelection(Integer.parseInt(jCenterX.getText()), Integer.parseInt(jCenterY.getText()), (int) Math.rint(w), (int) Math.rint(h));
+    MapPanel.getSingleton().repaint();
 }//GEN-LAST:event_fireZoomEvent
 
 private void fireRemoveMarkerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireRemoveMarkerEvent
-
     int[] rows = jMarkerTable.getSelectedRows();
     if (rows.length == 0) {
         return;
@@ -1645,15 +1632,16 @@ private void fireRemoveMarkerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
 
     int ret = JOptionPane.showConfirmDialog(jDynFrame, message, "Löschen", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
     if (ret == JOptionPane.YES_OPTION) {
+        //get markers to remove
+        List<String> toRemove = new LinkedList<String>();
         for (int i = rows.length - 1; i >= 0; i--) {
             int row = rows[i];
             String value = ((MarkerCell) ((DefaultTableModel) jMarkerTable.getModel()).getValueAt(row, 0)).getMarkerName();
-            MarkerManager.getSingleton().removeMarker(value);
-            ((DefaultTableModel) jMarkerTable.getModel()).removeRow(row);
+            toRemove.add(value);
         }
+        //remove all selected markers and update the view once
+        MarkerManager.getSingleton().removeMarkers(toRemove.toArray(new String[]{}));
     }
-
-    updateMarkers();
 }//GEN-LAST:event_fireRemoveMarkerEvent
 
 private void fireValidateAttacksEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireValidateAttacksEvent
@@ -1691,7 +1679,6 @@ private void fireValidateAttacksEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
 }//GEN-LAST:event_fireValidateAttacksEvent
 
 private void fireAlwaysInFrontChangeEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireAlwaysInFrontChangeEvent
-
     jDynFrame.setAlwaysOnTop(jDynFrameAlwaysOnTopSelection.isSelected());
     GlobalOptions.addProperty("dynframe.alwaysOnTop", Boolean.toString(jDynFrameAlwaysOnTopSelection.isSelected()));
     GlobalOptions.saveProperties();
@@ -1723,7 +1710,7 @@ private void fireChangeCurrentPlayerVillageEvent(java.awt.event.ItemEvent evt) {
 }//GEN-LAST:event_fireChangeCurrentPlayerVillageEvent
 
 private void fireShowSettingsEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireShowSettingsEvent
-    DSWorkbenchSettingsDialog.getGlobalSettingsFrame().setVisible(true);
+    DSWorkbenchSettingsDialog.getSingleton().setVisible(true);
 }//GEN-LAST:event_fireShowSettingsEvent
 
 private void fireExitEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireExitEvent
@@ -1774,9 +1761,9 @@ private void fireCenterCurrentPosInGameEvent(java.awt.event.MouseEvent evt) {//G
 
 private void fireToolsActionEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireToolsActionEvent
     if (evt.getSource() == jSearchItem) {
-        SearchFrame.getGlobalSearchFrame().setVisible(true);
+        SearchFrame.getSingleton().setVisible(true);
     } else if (evt.getSource() == jClockItem) {
-        ClockFrame.getGlobalClockFrame().setVisible(true);
+        ClockFrame.getSingleton().setVisible(true);
     } else if (evt.getSource() == jTribeTribeAttackItem) {
         mTribeTribeAttackFrame.setVisible(true);
     } else if (evt.getSource() == jMassAttackItem) {
@@ -1788,12 +1775,16 @@ private void fireUpdateClickedEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
     if (!jUpdateButton.isEnabled()) {
         return;
     }
-    new Thread(new Runnable() {
+    new Thread(new  
 
-        @Override
+          Runnable() {
+
+
+             
+                @Override
         public void run() {
             try {
-                GlobalOptions.getDataHolder().loadData(true);
+                DataHolder.getSingleton().loadData(true);
             } catch (Exception e) {
                 logger.error("Failed to execute auto update", e);
                 fireDataLoadedEvent();
@@ -1811,7 +1802,7 @@ private void fireShowHelpEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:even
 // TODO add your handling code here:
 }//GEN-LAST:event_fireShowHelpEvent
 
-    public void changeTool(int pTool) {
+    private void changeTool(int pTool) {
         switch (pTool) {
             case ImageManager.CURSOR_MARK: {
                 jTabbedPane1.setSelectedIndex(1);
@@ -1835,35 +1826,6 @@ private void fireShowHelpEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:even
                 break;
             }
         }
-    }
-
-    /**Update the marker table and the maps if one marker added or removed
-     */
-    private void updateMarkers() {
-        //update global markers and maps
-        DefaultTableModel model = (DefaultTableModel) jMarkerTable.getModel();
-        MarkerManager.getSingleton().getMarkers().clear();
-        for (int i = 0; i < model.getRowCount(); i++) {
-            String name = ((MarkerCell) model.getValueAt(i, 0)).getMarkerName();
-            int type = ((MarkerCell) model.getValueAt(i, 0)).getType();
-            name = name.replaceAll("<html>", "").replaceAll("</html>", "");
-            Color c = (Color) model.getValueAt(i, 1);
-            Marker m = GlobalOptions.getMarkerByValue(name);
-            if (m != null) {
-                m.setMarkerColor(c);
-            } else {
-                m = new Marker();
-                m.setMarkerType(type);
-                m.setMarkerValue(name);
-                m.setMarkerColor(c);
-                GlobalOptions.getMarkers().add(m);
-            }
-        }
-
-        GlobalOptions.storeMarkers();
-        //update maps
-        mPanel.repaint();
-        MinimapPanel.getGlobalMinimap().redraw();
     }
 
     /**Update the globally stored list of attacks with the contents of the  attack table
@@ -1890,9 +1852,9 @@ private void fireShowHelpEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:even
 
     /**Update the MapPanel when dragging the ROI at the MiniMap
      */
-    public void updateLocationByMinimap(int pX, int pY) {
-        double dx = 1000 / (double) MinimapPanel.getGlobalMinimap().getWidth() * (double) pX;
-        double dy = 1000 / (double) MinimapPanel.getGlobalMinimap().getHeight() * (double) pY;
+    private void updateLocationByMinimap(int pX, int pY) {
+        double dx = 1000 / (double) MinimapPanel.getSingleton().getWidth() * (double) pX;
+        double dy = 1000 / (double) MinimapPanel.getSingleton().getHeight() * (double) pY;
 
         int x = (int) dx;
         int y = (int) dy;
@@ -1900,13 +1862,13 @@ private void fireShowHelpEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:even
         jCenterY.setText(Integer.toString(y));
         iCenterX = x;
         iCenterY = y;
-        mPanel.updateMap(iCenterX, iCenterY);
+        MapPanel.getSingleton().updateMap(iCenterX, iCenterY);
 
-        double w = (double) mPanel.getWidth() / GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
-        double h = (double) mPanel.getHeight() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
-        MinimapPanel.getGlobalMinimap().setSelection(x, y, (int) Math.rint(w), (int) Math.rint(h));
-        jPanel1.updateUI();
-        jNavigationPanel.updateUI();
+        double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
+        double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
+        MinimapPanel.getSingleton().setSelection(x, y, (int) Math.rint(w), (int) Math.rint(h));
+    /*jPanel1.updateUI();
+    jNavigationPanel.updateUI();*/
     }
 
     public void scroll(int pXDir, int pYDir) {
@@ -1915,13 +1877,11 @@ private void fireShowHelpEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:even
         jCenterX.setText(Integer.toString(iCenterX));
         jCenterY.setText(Integer.toString(iCenterY));
 
-        mPanel.updateMap(iCenterX, iCenterY);
-
-        double w = (double) mPanel.getWidth() / GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
-        double h = (double) mPanel.getHeight() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
-        MinimapPanel.getGlobalMinimap().setSelection(iCenterX, iCenterY, (int) Math.rint(w), (int) Math.rint(h));
-        jPanel1.updateUI();
-        jNavigationPanel.updateUI();
+        double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
+        double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
+        MinimapPanel.getSingleton().setSelection(iCenterX, iCenterY, (int) Math.rint(w), (int) Math.rint(h));
+        MapPanel.getSingleton().updateMap(iCenterX, iCenterY);
+        MapPanel.getSingleton().repaint();
     }
 
     public void centerVillage(Village pVillage) {
@@ -1990,7 +1950,7 @@ private void fireShowHelpEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:even
 
         jDistanceTargetVillage.setText(text);
 
-        List<UnitHolder> units = GlobalOptions.getDataHolder().getUnits();
+        List<UnitHolder> units = DataHolder.getSingleton().getUnits();
         for (UnitHolder unit : units) {
             String result = DSCalculator.formatTimeInMinutes(DSCalculator.calculateMoveTimeInMinutes(pSource, pTarget, unit.getSpeed()));
 
@@ -2058,71 +2018,6 @@ private void fireShowHelpEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:even
 
     }
 
-    /**Add a new marker to the marker table and finally update the maps if the marker panel is visible
-     */
-    public void updateMarkerPanel(Village pVillage, boolean pMarkTribe, boolean pMarkAlly, Color pTribeColor, Color pAllyColor) {
-        if (pVillage.getTribe() == null) {
-            //can not mark empty villages
-            logger.debug("Cannot mark empty villages");
-            return;
-        }
-
-        MarkerCell p = null;
-        if (pMarkAlly) {
-            if (pVillage.getTribe().getAlly() != null) {
-                Marker m = GlobalOptions.getMarkerByValue(pVillage.getTribe().getAlly().getName());
-                if (m != null) {
-                    logger.debug("Replacing existing ally marker");
-                    for (int i = 0; i < ((DefaultTableModel) jMarkerTable.getModel()).getRowCount(); i++) {
-                        MarkerCell c = (MarkerCell) ((DefaultTableModel) jMarkerTable.getModel()).getValueAt(i, 0);
-                        if (c.getMarkerName().equals(pVillage.getTribe().getAlly().getName())) {
-                            ((DefaultTableModel) jMarkerTable.getModel()).setValueAt(pAllyColor, i, 1);
-                        }
-
-                    }
-                } else {
-                    logger.debug("Adding new ally marker");
-                    m = new Marker();
-                    m.setMarkerType(Marker.ALLY_MARKER_TYPE);
-                    m.setMarkerValue(pVillage.getTribe().getAlly().getName());
-                    m.setMarkerColor(Color.WHITE);
-                    GlobalOptions.getMarkers().add(m);
-                    p = MarkerCell.factoryAllyMarker(pVillage.getTribe().getAlly().getName());
-                    Color c = (pAllyColor != null) ? pAllyColor : Color.WHITE;
-                    ((DefaultTableModel) jMarkerTable.getModel()).addRow(new Object[]{p, c});
-                }
-
-            } else {
-                //tribe has no ally. Skip.
-                logger.info("No ally found for selected tribe. Skip marking ally");
-            }
-        }
-
-        if (pMarkTribe) {
-            Marker m = GlobalOptions.getMarkerByValue(pVillage.getTribe().getName());
-            if (m != null) {
-                logger.debug("Replacing existing tribe marker");
-                for (int i = 0; i < ((DefaultTableModel) jMarkerTable.getModel()).getRowCount(); i++) {
-                    MarkerCell c = (MarkerCell) ((DefaultTableModel) jMarkerTable.getModel()).getValueAt(i, 0);
-                    if (c.getMarkerName().equals(pVillage.getTribe().getName())) {
-                        ((DefaultTableModel) jMarkerTable.getModel()).setValueAt(pTribeColor, i, 1);
-                    }
-                }
-            } else {
-                logger.debug("Adding new tribe marker");
-                m = new Marker();
-                m.setMarkerType(Marker.TRIBE_MARKER_TYPE);
-                m.setMarkerValue(pVillage.getTribe().getName());
-                m.setMarkerColor(Color.WHITE);
-                GlobalOptions.getMarkers().add(m);
-                Color c = (pTribeColor != null) ? pTribeColor : Color.WHITE;
-                p = MarkerCell.factoryPlayerMarker(pVillage.getTribe().getName());
-                ((DefaultTableModel) jMarkerTable.getModel()).addRow(new Object[]{p, c});
-            }
-        }
-        updateMarkers();
-    }
-
     public void addAttack(Village pSource, Village pTarget, UnitHolder pUnit, Date pArriveTime) {
         ((DefaultTableModel) jAttackTable.getModel()).addRow(new Object[]{pSource, pTarget, pUnit, pArriveTime, false});
         updateAttacks();
@@ -2142,12 +2037,44 @@ private void fireShowHelpEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:even
         jUpdateButton.setEnabled(false);
     }
 
+    @Override
+    public void fireMarkersChangedEvent() {
+        jMarkerTable.setModel(MarkerManager.getSingleton().getTableModel());
+    }
+
+    @Override
+    public void fireToolChangedEvent(int pTool) {
+        changeTool(pTool);
+    }
+
+    @Override
+    public void fireVillageAtMousePosChangedEvent(Village pVillage) {
+        updateDetailedInfoPanel(pVillage);
+    }
+
+    @Override
+    public void fireDistanceEvent(Village pSource, Village pTarget) {
+        updateDistancePanel(pSource, pTarget);
+    }
+
+    @Override
+    public void fireScrollEvent(int pX, int pY) {
+        scroll(pX, pY);
+    }
+
+    public void fireUpdateLocationByMinimap(int pX, int pY) {
+        updateLocationByMinimap(pX, pY);
+    }
+
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        java.awt.EventQueue.invokeLater(new Runnable() {
+        java.awt.EventQueue.invokeLater(new  
 
+              Runnable() {
+
+                 @Override
             public void run() {
                 new DSWorkbenchMainFrame().setVisible(true);
             }

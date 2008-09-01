@@ -10,7 +10,7 @@ import java.awt.Color;
 import net.java.dev.colorchooser.ColorChooser;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.util.Constants;
-import de.tor.tribes.util.GlobalOptions;
+import de.tor.tribes.util.mark.MarkerManager;
 
 /**
  *
@@ -18,16 +18,14 @@ import de.tor.tribes.util.GlobalOptions;
  */
 public class MarkerAddFrame extends javax.swing.JFrame {
 
-    private DSWorkbenchMainFrame mParent = null;
     private Village mVillage = null;
     private ColorChooser mTribeColorChooser = new ColorChooser();
     private ColorChooser mAllyColorChooser = new ColorChooser();
 
     /** Creates new form MarkerAddFrame */
-    public MarkerAddFrame(DSWorkbenchMainFrame pParent) {
+    public MarkerAddFrame() {
         initComponents();
         getContentPane().setBackground(Constants.DS_BACK);
-        mParent = pParent;
         mTribeColorChooser.setColor(Color.WHITE);
         mAllyColorChooser.setColor(Color.WHITE);
         jTribeColorPanel.add(mTribeColorChooser);
@@ -146,19 +144,19 @@ public class MarkerAddFrame extends javax.swing.JFrame {
     public void setVillage(Village pVillage) {
         mVillage = pVillage;
 
-        Marker m = GlobalOptions.getMarkerByValue(mVillage.getTribe().getName());
+        Marker m = MarkerManager.getSingleton().getMarkerByValue(mVillage.getTribe().getName());
         if (m != null) {
             mTribeColorChooser.setColor(m.getMarkerColor());
-        }else{
+        } else {
             mTribeColorChooser.setColor(Color.WHITE);
         }
         jTribeName.setText("(" + mVillage.getTribe().getName() + ")");
         try {
             jAllyName.setText("(" + mVillage.getTribe().getAlly().getTag() + ")");
-            m = GlobalOptions.getMarkerByValue(mVillage.getTribe().getAlly().getName());
-            if(m != null){
+            m = MarkerManager.getSingleton().getMarkerByValue(mVillage.getTribe().getAlly().getName());
+            if (m != null) {
                 mAllyColorChooser.setColor(m.getMarkerColor());
-            }else{
+            } else {
                 mAllyColorChooser.setColor(Color.WHITE);
             }
             jMarkAlly.setEnabled(true);
@@ -169,7 +167,7 @@ public class MarkerAddFrame extends javax.swing.JFrame {
         }
     }
 
-    public void setAllyOnly(){
+    public void setAllyOnly() {
         jMarkTribe.setSelected(false);
         jMarkTribe.setEnabled(false);
         jTribeColorPanel.setEnabled(false);
@@ -178,8 +176,8 @@ public class MarkerAddFrame extends javax.swing.JFrame {
         jTribeName.setText("------");
         jMarkAlly.setSelected(true);
     }
-    
-    public void setTribeOnly(){
+
+    public void setTribeOnly() {
         jMarkAlly.setSelected(false);
         jMarkAlly.setEnabled(false);
         jAllyColorPanel.setEnabled(false);
@@ -188,10 +186,20 @@ public class MarkerAddFrame extends javax.swing.JFrame {
         jAllyName.setText("------");
         jMarkTribe.setSelected(true);
     }
-    
+
 private void fireAddMarkEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireAddMarkEvent
     setVisible(false);
-    mParent.updateMarkerPanel(mVillage, jMarkTribe.isSelected(), jMarkAlly.isSelected(), mTribeColorChooser.getColor(), mAllyColorChooser.getColor());
+    try {
+        if (jMarkTribe.isSelected() && !jMarkAlly.isSelected()) {
+            MarkerManager.getSingleton().addMarker(mVillage.getTribe(), mTribeColorChooser.getColor());
+        } else if (!jMarkTribe.isSelected() && jMarkAlly.isSelected()) {
+            MarkerManager.getSingleton().addMarker(mVillage.getTribe().getAlly(), mAllyColorChooser.getColor());
+        } else {
+            MarkerManager.getSingleton().addMarker(mVillage.getTribe(), mTribeColorChooser.getColor(), mVillage.getTribe().getAlly(), mAllyColorChooser.getColor());
+        }
+    } catch (NullPointerException npe) {
+        //ignore
+    }
 }//GEN-LAST:event_fireAddMarkEvent
 
 private void jCancelButtonfireAbortMarkEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jCancelButtonfireAbortMarkEvent

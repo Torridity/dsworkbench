@@ -12,7 +12,6 @@ import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.DataHolderListener;
 import de.tor.tribes.io.WorldDecorationHolder;
 import de.tor.tribes.types.Attack;
-import de.tor.tribes.types.Marker;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.ImageManager;
 import de.tor.tribes.util.mark.MarkerManager;
@@ -22,7 +21,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
-import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
@@ -43,8 +41,6 @@ public class GlobalOptions {
     /**Active skin used by the MapPanel*/
     private static Skin mSkin;
     /**DataHolder which holds and manages the WorldData*/
-    private static DataHolder mDataHolder = null;
-    private static List<Marker> mMarkers = null;
     private static WorldDecorationHolder mDecorationHolder = null;
     private static String SELECTED_SERVER = "de26";
     private static Properties GLOBAL_PROPERTIES = null;
@@ -80,10 +76,8 @@ public class GlobalOptions {
     }
 
     public static void addDataHolderListener(DataHolderListener pListener) {
-        if (mDataHolder == null) {
-            mDataHolder = new DataHolder();
-        }
-        mDataHolder.addListener(pListener);
+        
+        DataHolder.getSingleton().addListener(pListener);
     }
 
     /**Tells if a network connection is established or not*/
@@ -143,36 +137,36 @@ public class GlobalOptions {
      * @throws Exception If an exception occurs while loading the data
      */
     public static void loadData(boolean pDownload) throws Exception {
-        if (mDataHolder == null) {
-            mDataHolder = new DataHolder();
-            mDataHolder.initialize();
-            if (!mDataHolder.serverSupported()) {
-                mDataHolder.fireDataLoadedEvents();
+      /*  if (DataHolder.getSingleton() == null) {
+            
+            DataHolder.getSingleton().initialize();
+            if (!DataHolder.getSingleton().serverSupported()) {
+                DataHolder.getSingleton().fireDataLoadedEvents();
                 throw new Exception("Daten konnten nicht geladen werden");
-            } else if (!mDataHolder.loadData(pDownload)) {
+            } else if (!DataHolder.getSingleton().loadData(pDownload)) {
                 throw new Exception("Daten konnten nicht geladen werden");
             }
-        } else {
-            if (!mDataHolder.loadData(pDownload)) {
-                if (!mDataHolder.serverSupported()) {
-                    mDataHolder.fireDataLoadedEvents();
+       } else {*/
+            if (!DataHolder.getSingleton().loadData(pDownload)) {
+                if (!DataHolder.getSingleton().serverSupported()) {
+                    DataHolder.getSingleton().fireDataLoadedEvents();
                     throw new Exception("Failed to validate server settings");
                 } else {
                     logger.error("Failed to obtain data from server. Loading local backup");
                     if (pDownload) {
-                        mDataHolder.fireDataHolderEvents("Download fehlgeschlagen. Suche nach lokaler Kopie.");
+                        DataHolder.getSingleton().fireDataHolderEvents("Download fehlgeschlagen. Suche nach lokaler Kopie.");
                     } else {
-                        mDataHolder.fireDataHolderEvents("Lokale Daten unvollständig. Starte Korrekturversuch.");
+                        DataHolder.getSingleton().fireDataHolderEvents("Lokale Daten unvollständig. Starte Korrekturversuch.");
                     }
-                    if (!mDataHolder.loadData(false)) {
+                    if (!DataHolder.getSingleton().loadData(false)) {
                         logger.error("Failed to load server data from local backup");
-                        mDataHolder.fireDataHolderEvents("Lokale Kopie fehlerhaft oder nicht vorhanden.");
-                        mDataHolder.fireDataLoadedEvents();
+                        DataHolder.getSingleton().fireDataHolderEvents("Lokale Kopie fehlerhaft oder nicht vorhanden.");
+                        DataHolder.getSingleton().fireDataLoadedEvents();
                         throw new Exception("Daten konnten nicht geladen werden");
                     }
                 }
             }
-        }
+      //  }
     }
 
     /**Load user data (attacks, markers...)*/
@@ -248,7 +242,7 @@ public class GlobalOptions {
 */
     private static void loadAttacks() {
         mAttacks = new LinkedList<Attack>();
-        String path = mDataHolder.getDataDirectory() + "/attacks.xml";
+        String path = DataHolder.getSingleton().getDataDirectory() + "/attacks.xml";
 
         if (new File(path).exists()) {
             try {
@@ -264,8 +258,8 @@ public class GlobalOptions {
         }
 
         for (Attack a : mAttacks) {
-            a.setSource(mDataHolder.getVillages()[a.getSource().getX()][a.getSource().getY()]);
-            a.setTarget(mDataHolder.getVillages()[a.getTarget().getX()][a.getTarget().getY()]);
+            a.setSource(DataHolder.getSingleton().getVillages()[a.getSource().getX()][a.getSource().getY()]);
+            a.setTarget(DataHolder.getSingleton().getVillages()[a.getTarget().getX()][a.getTarget().getY()]);
         }
 
     }
@@ -275,7 +269,7 @@ public class GlobalOptions {
     }
 
     public static void storeAttacks() {
-        String path = mDataHolder.getDataDirectory() + "/attacks.xml";
+        String path = DataHolder.getSingleton().getDataDirectory() + "/attacks.xml";
         try {
             FileWriter w = new FileWriter(path);
             w.write("<attacks>\n");
@@ -302,9 +296,9 @@ public class GlobalOptions {
     /**Get the DataHolder
      * @return DataHolder Object which contains the WorldData
      */
-    public static DataHolder getDataHolder() {
+ /*   public static DataHolder getDataHolder() {
         return mDataHolder;
-    }
+    }*/
 
     /**Get the skin
      * @return Skin Object which contains the skin

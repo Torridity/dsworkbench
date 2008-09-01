@@ -18,20 +18,16 @@ import javax.swing.JFrame;
  */
 public class ToolBoxFrame extends javax.swing.JFrame {
 
-    private MapPanel mMap = null;
-    private MinimapPanel mMiniMap = null;
     private HideThread hThread = null;
     private int dx = 0;
     private int dy = 0;
 
     /** Creates new form ToolBoxFrame */
-    public ToolBoxFrame(MapPanel pMap, MinimapPanel pMinimap) {
+    public ToolBoxFrame() {
         initComponents();
         buildButtons();
         initListeners();
         pack();
-        mMap = pMap;
-        mMiniMap = pMinimap;
         hThread = new HideThread(this);
         hThread.start();
     }
@@ -383,39 +379,39 @@ public class ToolBoxFrame extends javax.swing.JFrame {
 
 private void fireToolClickedEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireToolClickedEvent
     if (evt.getSource() == jMeasureButton) {
-        mMap.setCurrentCursor(ImageManager.CURSOR_MEASURE);
+        MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_MEASURE);
     } else if (evt.getSource() == jMarkButton) {
-        mMap.setCurrentCursor(ImageManager.CURSOR_MARK);
+        MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_MARK);
     }else if (evt.getSource() == jTagButton) {
-        mMap.setCurrentCursor(ImageManager.CURSOR_TAG);
+        MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_TAG);
     } else if (evt.getSource() == jSendTroopsIngameButton) {
-        mMap.setCurrentCursor(ImageManager.CURSOR_ATTACK_INGAME);
+        MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_INGAME);
     } else if (evt.getSource() == jSendResIngameButton) {
-        mMap.setCurrentCursor(ImageManager.CURSOR_SEND_RES_INGAME);
+        MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_SEND_RES_INGAME);
     } else if (evt.getSource() == jAttackAxeButton) {
-        mMap.setCurrentCursor(ImageManager.CURSOR_ATTACK_AXE);
+        MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_AXE);
     } else if (evt.getSource() == jAttackRamButton) {
-        mMap.setCurrentCursor(ImageManager.CURSOR_ATTACK_RAM);
+        MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_RAM);
     } else if (evt.getSource() == jAttackSnobButton) {
-        mMap.setCurrentCursor(ImageManager.CURSOR_ATTACK_SNOB);
+        MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_SNOB);
     } else if (evt.getSource() == jAttackSpyButton) {
-        mMap.setCurrentCursor(ImageManager.CURSOR_ATTACK_SPY);
+        MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_SPY);
     } else if (evt.getSource() == jAttackLightButton) {
-        mMap.setCurrentCursor(ImageManager.CURSOR_ATTACK_LIGHT);
+        MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_LIGHT);
     } else if (evt.getSource() == jAttackHeavyButton) {
-        mMap.setCurrentCursor(ImageManager.CURSOR_ATTACK_HEAVY);
+        MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_HEAVY);
     } else if (evt.getSource() == jAttackSwordButton) {
-        mMap.setCurrentCursor(ImageManager.CURSOR_ATTACK_SWORD);
+        MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_SWORD);
     } else if (evt.getSource() == jMoveButton) {
-        mMiniMap.setCurrentCursor(ImageManager.CURSOR_MOVE);
+        MinimapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_MOVE);
     } else if (evt.getSource() == jZoomButton) {
-        mMiniMap.setCurrentCursor(ImageManager.CURSOR_ZOOM);
+        MinimapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ZOOM);
     } else if (evt.getSource() == jSearchButton) {
-        SearchFrame.getGlobalSearchFrame().setVisible(true);
+        SearchFrame.getSingleton().setVisible(true);
     } else if (evt.getSource() == jSettingsButton) {
-        DSWorkbenchSettingsDialog.getGlobalSettingsFrame().setVisible(true);
+        DSWorkbenchSettingsDialog.getSingleton().setVisible(true);
     } else if (evt.getSource() == jClockButton) {
-        ClockFrame.getGlobalClockFrame().setVisible(true);
+        ClockFrame.getSingleton().setVisible(true);
     }
 }//GEN-LAST:event_fireToolClickedEvent
 
@@ -426,7 +422,7 @@ private void fireToolClickedEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
         java.awt.EventQueue.invokeLater(new Runnable() {
 
             public void run() {
-                new ToolBoxFrame(null, null).setVisible(true);
+                new ToolBoxFrame().setVisible(true);
             }
         });
     }

@@ -5,6 +5,7 @@
  */
 package de.tor.tribes.ui;
 
+import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Ally;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
@@ -27,22 +28,20 @@ public class SearchFrame extends javax.swing.JFrame implements SearchListener {
 
     private String sLastPlayerValue = null;
     private SearchThread mSearchThread = null;
-    private DSWorkbenchMainFrame mParent = null;
-    private static SearchFrame SEARCH_FRAME = null;
     private DSRealStatsFrame mStatsFrame = new DSRealStatsFrame();
+    private static SearchFrame SINGLETON = null;
 
-    public static SearchFrame getGlobalSearchFrame() {
-        return SEARCH_FRAME;
-    }
-
-    public static void createSearchFrame(DSWorkbenchMainFrame pParent) {
-        SEARCH_FRAME = new SearchFrame(pParent);
+    public static SearchFrame getSingleton() {
+        if (SINGLETON == null) {
+            SINGLETON = new SearchFrame();
+        }
+        return SINGLETON;
     }
 
     /** Creates new form SearchFrame */
-    SearchFrame(DSWorkbenchMainFrame pParent) {
+    SearchFrame() {
         initComponents();
-        mParent = pParent;
+        
         getContentPane().setBackground(Constants.DS_BACK);
         // frameControlPanel1.setupPanel(this, true, true);
         jCenterInGameButton.setIcon(new ImageIcon("./graphics/icons/center.png"));
@@ -381,7 +380,7 @@ private void fireAllySelectionChangedEvent(java.awt.event.ItemEvent evt) {//GEN-
 
 private void fireAddMarkerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireAddMarkerEvent
     if (evt.getSource() == jMarkAllyButton) {
-        MarkerAddFrame f = new MarkerAddFrame(mParent);
+        MarkerAddFrame f = new MarkerAddFrame();
         Object selection = jAllyList.getSelectedItem();
         if (selection instanceof String) {
             //no ally selected
@@ -391,7 +390,7 @@ private void fireAddMarkerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:even
             f.setVisible(true);
         }
     } else {
-        MarkerAddFrame f = new MarkerAddFrame(mParent);
+        MarkerAddFrame f = new MarkerAddFrame();
         Object selection = jTribesList.getSelectedItem();
         if (selection instanceof String) {
             //no tribe selected
@@ -405,7 +404,7 @@ private void fireAddMarkerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:even
 }//GEN-LAST:event_fireAddMarkerEvent
 
 private void fireCenterMapEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCenterMapEvent
-    mParent.centerVillage(((Village) jVillageList.getSelectedItem()));
+    DSWorkbenchMainFrame.getSingleton().centerVillage(((Village) jVillageList.getSelectedItem()));
 }//GEN-LAST:event_fireCenterMapEvent
 
 private void fireCenterMapInGameEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCenterMapInGameEvent
@@ -417,7 +416,7 @@ private void fireCenterMapInGameEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
 
 private void fireSendDefEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSendDefEvent
     Village target = (Village) jVillageList.getSelectedItem();
-    Village source = mParent.getCurrentUserVillage();
+    Village source = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage();
     if ((source != null) && (target != null)) {
         BrowserCommandSender.sendTroops(source, target);
     }
@@ -425,7 +424,7 @@ private void fireSendDefEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
 
 private void fireSendResEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSendResEvent
     Village target = (Village) jVillageList.getSelectedItem();
-    Village source = mParent.getCurrentUserVillage();
+    Village source = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage();
     if ((source != null) && (target != null)) {
         BrowserCommandSender.sendRes(source, target);
     }
@@ -466,7 +465,7 @@ private void fireShowDSRealStatsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
 
             @Override
             public void run() {
-                new SearchFrame(null).setVisible(true);
+                new SearchFrame().setVisible(true);
             }
         });
 
@@ -566,9 +565,9 @@ class SearchThread extends Thread {
                 if (sSearchTerm.length() >= 1) {
                     List<Tribe> tribeList = new LinkedList<Tribe>();
                     List<Ally> allyList = new LinkedList<Ally>();
-                    Enumeration<Integer> tribes = GlobalOptions.getDataHolder().getTribes().keys();
+                    Enumeration<Integer> tribes = DataHolder.getSingleton().getTribes().keys();
                     while (tribes.hasMoreElements()) {
-                        Tribe t = GlobalOptions.getDataHolder().getTribes().get(tribes.nextElement());
+                        Tribe t = DataHolder.getSingleton().getTribes().get(tribes.nextElement());
                         if (t.getName().toLowerCase().startsWith(sSearchTerm.toLowerCase())) {
                             if (!tribeList.contains(t)) {
                                 tribeList.add(t);

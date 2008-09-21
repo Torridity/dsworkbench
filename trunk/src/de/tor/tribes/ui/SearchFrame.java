@@ -117,6 +117,7 @@ public class SearchFrame extends javax.swing.JFrame implements SearchListener {
 
         jMarkAllyButton.setBackground(new java.awt.Color(239, 235, 223));
         jMarkAllyButton.setText(bundle.getString("SearchFrame.jMarkAllyButton.text")); // NOI18N
+        jMarkAllyButton.setToolTipText(bundle.getString("SearchFrame.jMarkAllyButton.toolTipText")); // NOI18N
         jMarkAllyButton.setMaximumSize(new java.awt.Dimension(100, 23));
         jMarkAllyButton.setMinimumSize(new java.awt.Dimension(100, 23));
         jMarkAllyButton.setPreferredSize(new java.awt.Dimension(100, 23));
@@ -139,6 +140,7 @@ public class SearchFrame extends javax.swing.JFrame implements SearchListener {
 
         jMarkTribeButton.setBackground(new java.awt.Color(239, 235, 223));
         jMarkTribeButton.setText(bundle.getString("SearchFrame.jMarkTribeButton.text")); // NOI18N
+        jMarkTribeButton.setToolTipText(bundle.getString("SearchFrame.jMarkTribeButton.toolTipText")); // NOI18N
         jMarkTribeButton.setMaximumSize(new java.awt.Dimension(100, 23));
         jMarkTribeButton.setMinimumSize(new java.awt.Dimension(100, 23));
         jMarkTribeButton.setPreferredSize(new java.awt.Dimension(100, 23));
@@ -152,6 +154,7 @@ public class SearchFrame extends javax.swing.JFrame implements SearchListener {
 
         jCenterButton.setBackground(new java.awt.Color(239, 235, 223));
         jCenterButton.setText(bundle.getString("SearchFrame.jCenterButton.text")); // NOI18N
+        jCenterButton.setToolTipText(bundle.getString("SearchFrame.jCenterButton.toolTipText")); // NOI18N
         jCenterButton.setMaximumSize(new java.awt.Dimension(100, 23));
         jCenterButton.setMinimumSize(new java.awt.Dimension(100, 23));
         jCenterButton.setPreferredSize(new java.awt.Dimension(100, 23));
@@ -218,6 +221,7 @@ public class SearchFrame extends javax.swing.JFrame implements SearchListener {
         jShowBashDef.setOpaque(false);
 
         jButton1.setText(bundle.getString("SearchFrame.jButton1.text")); // NOI18N
+        jButton1.setToolTipText(bundle.getString("SearchFrame.jButton1.toolTipText")); // NOI18N
         jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireShowDSRealStatsEvent(evt);
@@ -275,10 +279,10 @@ public class SearchFrame extends javax.swing.JFrame implements SearchListener {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPlayerSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jAllyList, 0, 328, Short.MAX_VALUE)
+                    .addComponent(jAllyList, 0, 330, Short.MAX_VALUE)
                     .addComponent(jTribesList, 0, 0, Short.MAX_VALUE)
-                    .addComponent(jSearchTerm, javax.swing.GroupLayout.DEFAULT_SIZE, 328, Short.MAX_VALUE)
-                    .addComponent(jVillageList, javax.swing.GroupLayout.Alignment.TRAILING, 0, 328, Short.MAX_VALUE)
+                    .addComponent(jSearchTerm, javax.swing.GroupLayout.DEFAULT_SIZE, 330, Short.MAX_VALUE)
+                    .addComponent(jVillageList, javax.swing.GroupLayout.Alignment.TRAILING, 0, 330, Short.MAX_VALUE)
                     .addGroup(jPlayerSearchLayout.createSequentialGroup()
                         .addComponent(jCenterInGameButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -454,8 +458,8 @@ private void fireShowDSRealStatsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
     public static void main(String args[]) {
         try {
             GlobalOptions.setSelectedServer("de26");
-            GlobalOptions.loadData(false);
             GlobalOptions.initialize();
+            DataHolder.getSingleton().loadData(false);
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(1);
@@ -505,11 +509,9 @@ private void fireShowDSRealStatsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
         //remove villages
         jVillageList.setModel(new DefaultComboBoxModel());
         try {
-            //jAllyList.setSelectedIndex(-1);
             String result = t.length + " Spieler gefunden";
             ((DefaultComboBoxModel) jTribesList.getModel()).insertElementAt(result, 0);
             jTribesList.setSelectedIndex(0);
-        //  jTribesList.updateUI();
         } catch (Exception e) {
         }
     }

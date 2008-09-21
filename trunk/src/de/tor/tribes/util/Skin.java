@@ -25,9 +25,7 @@ import org.apache.log4j.Logger;
  */
 public class Skin {
 
-    private static Logger logger = Logger.getLogger(Skin.class);
-
-    //init with default skin dimensions
+    private static Logger logger = Logger.getLogger(Skin.class);    //init with default skin dimensions
     private int iFieldWidth = 0;
     private int iFieldHeight = 0;
     /**Texture IDs*/
@@ -173,26 +171,25 @@ public class Skin {
 
     }
 
-    public Image getImage(
-            int pID, double pScaling) {
+    public Image getImage(int pID, double pScaling) {
         if (pScaling == 1) {
             return mTextures.get(pID);
         }
-
+        /*
         Hashtable<Integer, Image> cache = mCache.get(pScaling);
         if (cache != null) {
-            if (cache.get(pID) == null) {
-                cache.put(pID, mTextures.get(pID).getScaledInstance((int) (iFieldWidth / pScaling), (int) (iFieldHeight / pScaling), BufferedImage.SCALE_FAST));
-            }
-
-        } else {
-            cache = new Hashtable<Integer, Image>();
-            cache.put(pID, mTextures.get(pID).getScaledInstance((int) (iFieldWidth / pScaling), (int) (iFieldHeight / pScaling), BufferedImage.SCALE_FAST));
-            mCache.put(pScaling, cache);
+        if (cache.get(pID) == null) {
+        cache.put(pID, mTextures.get(pID).getScaledInstance((int) (iFieldWidth / pScaling), (int) (iFieldHeight / pScaling), BufferedImage.SCALE_FAST));
         }
-
-        return cache.get(pID);
-    //return mTextures.get(pID).getScaledInstance((int) (iFieldWidth / pScaling), (int) (iFieldHeight / pScaling), BufferedImage.SCALE_FAST);
+        
+        } else {
+        cache = new Hashtable<Integer, Image>();
+        cache.put(pID, mTextures.get(pID).getScaledInstance((int) (iFieldWidth / pScaling), (int) (iFieldHeight / pScaling), BufferedImage.SCALE_FAST));
+        mCache.put(pScaling, cache);
+        }
+        
+        return cache.get(pID);*/
+        return mTextures.get(pID).getScaledInstance((int) (iFieldWidth / pScaling), (int) (iFieldHeight / pScaling), BufferedImage.SCALE_FAST);
     }
 
     public int getFieldWidth() {

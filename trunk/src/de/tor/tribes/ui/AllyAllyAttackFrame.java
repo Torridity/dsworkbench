@@ -11,6 +11,7 @@ import de.tor.tribes.types.Ally;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.util.DSCalculator;
+import de.tor.tribes.util.attack.AttackManager;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 import java.text.SimpleDateFormat;
@@ -579,7 +580,6 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
         }
 
         //search all tribes and villages for targets
-        //System.out.println("Count: " + tribes.size());
         for (Tribe t : tribes) {
             for (Village v : t.getVillageList()) {
                 double time = DSCalculator.calculateMoveTimeInSeconds(vSource, v, uSource.getSpeed());
@@ -744,7 +744,7 @@ private void fireTransferToAttackPlanningEvent(java.awt.event.MouseEvent evt) {/
         UnitHolder unit = (UnitHolder) resultModel.getValueAt(i, 2);
         Village target = (Village) resultModel.getValueAt(i, 3);
 
-        DSWorkbenchMainFrame.getSingleton().addAttack(source, target, unit, (Date) jArriveTime.getValue());
+        AttackManager.getSingleton().addAttack(source, target, unit, (Date) jArriveTime.getValue());
     }
 
 }//GEN-LAST:event_fireTransferToAttackPlanningEvent

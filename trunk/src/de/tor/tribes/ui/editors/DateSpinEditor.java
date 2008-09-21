@@ -5,18 +5,13 @@
 package de.tor.tribes.ui.editors;
 
 import java.awt.Component;
-import java.awt.event.ActionListener;
-import java.awt.event.ComponentListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.util.Date;
 import javax.swing.AbstractCellEditor;
 import javax.swing.JSpinner;
 import javax.swing.JSpinner.DateEditor;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
+
 import javax.swing.table.TableCellEditor;
 
 /**

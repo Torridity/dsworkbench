@@ -14,21 +14,17 @@ import de.tor.tribes.io.WorldDecorationHolder;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.ImageManager;
+import de.tor.tribes.util.attack.AttackManager;
 import de.tor.tribes.util.mark.MarkerManager;
 import de.tor.tribes.util.tag.TagManager;
-import de.tor.tribes.util.xml.JaxenUtils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.util.Hashtable;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 import javax.swing.UIManager;
 import org.apache.log4j.Logger;
-import org.jdom.Document;
-import org.jdom.Element;
 
 /**Global settings used by almost all components. e.g. WorldData or UI specific objects
  * @author Charon
@@ -76,7 +72,7 @@ public class GlobalOptions {
     }
 
     public static void addDataHolderListener(DataHolderListener pListener) {
-        
+
         DataHolder.getSingleton().addListener(pListener);
     }
 
@@ -100,7 +96,9 @@ public class GlobalOptions {
         GLOBAL_PROPERTIES = new Properties();
         if (new File("global.properties").exists()) {
             logger.debug("Loading existing properties file");
-            GLOBAL_PROPERTIES.load(new FileInputStream("global.properties"));
+            FileInputStream fin = new FileInputStream("global.properties");
+            GLOBAL_PROPERTIES.load(fin);
+            fin.close();
         } else {
             logger.debug("Creating empty properties file");
             saveProperties();
@@ -110,8 +108,12 @@ public class GlobalOptions {
     /**Store the global properties*/
     public static void saveProperties() {
         try {
-            GLOBAL_PROPERTIES.store(new FileOutputStream("global.properties"), "Automatically generated. Please do not modify!");
+            FileOutputStream fout = new FileOutputStream("global.properties");
+            GLOBAL_PROPERTIES.store(fout, "Automatically generated. Please do not modify!");
+            fout.flush();
+            fout.close();
         } catch (Exception e) {
+            logger.error("Failed to write properties", e);
         }
     }
 
@@ -132,159 +134,18 @@ public class GlobalOptions {
         mSkin = new Skin(GLOBAL_PROPERTIES.getProperty("default.skin"));
     }
 
-    /**Load the WorldData either from the server or from the local harddisk
-     * @param pDownload TRUE = download the data from the server
-     * @throws Exception If an exception occurs while loading the data
-     */
-    public static void loadData(boolean pDownload) throws Exception {
-      /*  if (DataHolder.getSingleton() == null) {
-            
-            DataHolder.getSingleton().initialize();
-            if (!DataHolder.getSingleton().serverSupported()) {
-                DataHolder.getSingleton().fireDataLoadedEvents();
-                throw new Exception("Daten konnten nicht geladen werden");
-            } else if (!DataHolder.getSingleton().loadData(pDownload)) {
-                throw new Exception("Daten konnten nicht geladen werden");
-            }
-       } else {*/
-            if (!DataHolder.getSingleton().loadData(pDownload)) {
-                if (!DataHolder.getSingleton().serverSupported()) {
-                    DataHolder.getSingleton().fireDataLoadedEvents();
-                    throw new Exception("Failed to validate server settings");
-                } else {
-                    logger.error("Failed to obtain data from server. Loading local backup");
-                    if (pDownload) {
-                        DataHolder.getSingleton().fireDataHolderEvents("Download fehlgeschlagen. Suche nach lokaler Kopie.");
-                    } else {
-                        DataHolder.getSingleton().fireDataHolderEvents("Lokale Daten unvollständig. Starte Korrekturversuch.");
-                    }
-                    if (!DataHolder.getSingleton().loadData(false)) {
-                        logger.error("Failed to load server data from local backup");
-                        DataHolder.getSingleton().fireDataHolderEvents("Lokale Kopie fehlerhaft oder nicht vorhanden.");
-                        DataHolder.getSingleton().fireDataLoadedEvents();
-                        throw new Exception("Daten konnten nicht geladen werden");
-                    }
-                }
-            }
-      //  }
-    }
-
     /**Load user data (attacks, markers...)*/
     public static void loadUserData() {
         if (getSelectedServer() != null) {
             logger.debug("Loading markers");
             MarkerManager.getSingleton().loadMarkersFromFile(DataHolder.getSingleton().getDataDirectory() + "/markers.xml");
             logger.debug("Loading attacks");
-            loadAttacks();
+            AttackManager.getSingleton().loadAttacksFromFile(DataHolder.getSingleton().getDataDirectory() + "/attacks.xml");
             logger.debug("Loading tags");
             TagManager.getSingleton().loadTagsFromFile(DataHolder.getSingleton().getDataDirectory() + "/tags.xml");
         }
     }
 
-    /**Load the PlayerMarkers from the harddisk
-     */
- /*   private static void loadMarkers() {
-        mMarkers = new LinkedList<Marker>();
-        String path = mDataHolder.getDataDirectory() + "/markers.xml";
-        if (new File(path).exists()) {
-            try {
-                Document d = JaxenUtils.getDocument(new File(path));
-                for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//markers/marker")) {
-                    try {
-                        mMarkers.add(new Marker(e));
-                    } catch (Exception inner) {
-                        //ignored, marker invalid
-                    }
-                }
-            } catch (Exception e) {
-                logger.error("Failed to read markers");
-                e.printStackTrace();
-            }
-        } else {
-            logger.info("No markers available for selected server");
-        }
-    }
-*/
-    /**Get the list of markers
-     * @return Hashtable<String, Color> List of MapMarkers
-     */
-/*    public static List<Marker> getMarkers() {
-        return mMarkers;
-    }
-*/
- /*   public static Marker getMarkerByValue(String pValue) {
-        for (Marker m : mMarkers) {
-            if (m.getMarkerValue().equals(pValue)) {
-                return m;
-            }
-        }
-        return null;
-    }
-*/
-/*    public static void storeMarkers() {
-        String path = mDataHolder.getDataDirectory() + "/markers.xml";
-        try {
-            FileWriter w = new FileWriter(path);
-            w.write("<markers>\n");
-            for (Marker m : mMarkers) {
-                String xml = m.toXml();
-                if (xml != null) {
-                    w.write(m.toXml() + "\n");
-                }
-            }
-            w.write("</markers>");
-            w.flush();
-            w.close();
-        } catch (Exception e) {
-            logger.error("Failed to store markers");
-        }
-    }
-*/
-    private static void loadAttacks() {
-        mAttacks = new LinkedList<Attack>();
-        String path = DataHolder.getSingleton().getDataDirectory() + "/attacks.xml";
-
-        if (new File(path).exists()) {
-            try {
-                Document d = JaxenUtils.getDocument(new File(path));
-                for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//attacks/attack")) {
-                    mAttacks.add(new Attack(e));
-                }
-            } catch (Exception e) {
-                logger.error("Failed to read attacks", e);
-            }
-        } else {
-            logger.info("No attacks available for selected server");
-        }
-
-        for (Attack a : mAttacks) {
-            a.setSource(DataHolder.getSingleton().getVillages()[a.getSource().getX()][a.getSource().getY()]);
-            a.setTarget(DataHolder.getSingleton().getVillages()[a.getTarget().getX()][a.getTarget().getY()]);
-        }
-
-    }
-
-    public static synchronized List<Attack> getAttacks() {
-        return mAttacks;
-    }
-
-    public static void storeAttacks() {
-        String path = DataHolder.getSingleton().getDataDirectory() + "/attacks.xml";
-        try {
-            FileWriter w = new FileWriter(path);
-            w.write("<attacks>\n");
-            for (Attack a : mAttacks) {
-                w.write(a.toXml() + "\n");
-            }
-            w.write("</attacks>\n");
-            w.flush();
-            w.close();
-        } catch (Exception e) {
-            logger.error("Failed to store attacks", e);
-        }
-    }
-
-   
     public static void setLoggedInAs(String pAccount) {
         loggedInAs = pAccount;
     }
@@ -296,10 +157,9 @@ public class GlobalOptions {
     /**Get the DataHolder
      * @return DataHolder Object which contains the WorldData
      */
- /*   public static DataHolder getDataHolder() {
-        return mDataHolder;
+    /*   public static DataHolder getDataHolder() {
+    return mDataHolder;
     }*/
-
     /**Get the skin
      * @return Skin Object which contains the skin
      */

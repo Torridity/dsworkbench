@@ -186,7 +186,7 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jOKButton" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <Component id="jTabbedPane1" alignment="1" pref="484" max="32767" attributes="0"/>
+                  <Component id="jTabbedPane1" alignment="1" pref="490" max="32767" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -248,11 +248,11 @@
                       </Group>
                       <EmptySpace min="-2" pref="21" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="1" attributes="0">
-                          <Component id="jAccountName" alignment="0" pref="215" max="32767" attributes="1"/>
-                          <Component id="jAccountPassword" alignment="0" pref="215" max="32767" attributes="1"/>
+                          <Component id="jAccountName" alignment="0" pref="218" max="32767" attributes="1"/>
+                          <Component id="jAccountPassword" alignment="0" pref="218" max="32767" attributes="1"/>
                           <Component id="jCheckAccountButton" alignment="1" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="189" max="32767" attributes="0"/>
+                      <EmptySpace pref="192" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -271,7 +271,7 @@
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jCheckAccountButton" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="163" max="32767" attributes="0"/>
+                      <EmptySpace pref="166" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -293,6 +293,9 @@
             </Component>
             <Component class="javax.swing.JPasswordField" name="jAccountPassword">
               <Properties>
+                <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchSettingsDialog.jAccountPassword.toolTipText" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                </Property>
                 <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                   <Dimension value="[200, 20]"/>
                 </Property>
@@ -306,6 +309,9 @@
             </Component>
             <Component class="javax.swing.JTextField" name="jAccountName">
               <Properties>
+                <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchSettingsDialog.jAccountName.toolTipText" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                </Property>
                 <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                   <Dimension value="[200, 20]"/>
                 </Property>
@@ -324,6 +330,9 @@
                 </Property>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
                   <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchSettingsDialog.jCheckAccountButton.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                </Property>
+                <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchSettingsDialog.jCheckAccountButton.toolTipText" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
                 </Property>
               </Properties>
               <Events>
@@ -357,7 +366,7 @@
                   <Group type="102" alignment="1" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="1" attributes="0">
-                          <Component id="jScrollPane1" alignment="0" pref="459" max="32767" attributes="0"/>
+                          <Component id="jScrollPane1" alignment="0" pref="465" max="32767" attributes="0"/>
                           <Group type="102" alignment="1" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
@@ -370,8 +379,8 @@
                               </Group>
                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="1" attributes="0">
-                                  <Component id="jDownloadDataButton" pref="151" max="32767" attributes="0"/>
-                                  <Component id="jSelectServerButton" alignment="0" pref="151" max="32767" attributes="0"/>
+                                  <Component id="jDownloadDataButton" pref="157" max="32767" attributes="0"/>
+                                  <Component id="jSelectServerButton" alignment="0" pref="157" max="32767" attributes="0"/>
                               </Group>
                           </Group>
                       </Group>
@@ -395,7 +404,7 @@
                           <Component id="jDownloadDataButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="jScrollPane1" pref="164" max="32767" attributes="0"/>
+                      <Component id="jScrollPane1" pref="167" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -414,6 +423,9 @@
                 <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
                   <StringArray count="0"/>
                 </Property>
+                <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchSettingsDialog.jServerList.toolTipText" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                </Property>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel2">
@@ -427,6 +439,9 @@
               <Properties>
                 <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
                   <StringArray count="0"/>
+                </Property>
+                <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchSettingsDialog.jTribeNames.toolTipText" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
                 </Property>
               </Properties>
             </Component>
@@ -502,7 +517,7 @@
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="jSkinPackLabel" min="-2" max="-2" attributes="0"/>
                               <EmptySpace min="-2" pref="89" max="-2" attributes="0"/>
-                              <Component id="jGraphicPacks" pref="224" max="32767" attributes="1"/>
+                              <Component id="jGraphicPacks" pref="228" max="32767" attributes="1"/>
                               <EmptySpace min="-2" max="-2" attributes="0"/>
                           </Group>
                           <Group type="102" alignment="0" attributes="0">
@@ -513,9 +528,9 @@
                               </Group>
                               <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="jShowAttackMovementBox" alignment="1" pref="224" max="32767" attributes="0"/>
-                                  <Component id="jContinentsOnMinimap" alignment="0" pref="224" max="32767" attributes="1"/>
-                                  <Component id="jShowDistanceBox" alignment="0" pref="224" max="32767" attributes="1"/>
+                                  <Component id="jShowAttackMovementBox" alignment="1" pref="228" max="32767" attributes="0"/>
+                                  <Component id="jContinentsOnMinimap" alignment="0" pref="228" max="32767" attributes="1"/>
+                                  <Component id="jShowDistanceBox" alignment="0" pref="228" max="32767" attributes="1"/>
                               </Group>
                               <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
                           </Group>
@@ -557,7 +572,7 @@
                           </Group>
                           <Component id="jPreviewSkinButton" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="132" max="32767" attributes="0"/>
+                      <EmptySpace pref="135" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -594,6 +609,9 @@
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
                   <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchSettingsDialog.jSelectSkinButton.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
                 </Property>
+                <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchSettingsDialog.jSelectSkinButton.toolTipText" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                </Property>
               </Properties>
               <Events>
                 <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fireSelectGraphicPackEvent"/>
@@ -608,6 +626,9 @@
             </Component>
             <Component class="javax.swing.JCheckBox" name="jContinentsOnMinimap">
               <Properties>
+                <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchSettingsDialog.jContinentsOnMinimap.toolTipText" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                </Property>
                 <Property name="contentAreaFilled" type="boolean" value="false"/>
                 <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
                   <Insets value="[0, 0, 0, 0]"/>
@@ -626,6 +647,9 @@
             </Component>
             <Component class="javax.swing.JCheckBox" name="jShowDistanceBox">
               <Properties>
+                <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchSettingsDialog.jShowDistanceBox.toolTipText" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                </Property>
                 <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
                   <Insets value="[0, 0, 0, 0]"/>
                 </Property>
@@ -637,6 +661,9 @@
             </Component>
             <Component class="javax.swing.JCheckBox" name="jShowAttackMovementBox">
               <Properties>
+                <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchSettingsDialog.jShowAttackMovementBox.toolTipText" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                </Property>
                 <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
                   <Insets value="[0, 0, 0, 0]"/>
                 </Property>
@@ -655,8 +682,14 @@
             </Component>
             <Component class="javax.swing.JButton" name="jPreviewSkinButton">
               <Properties>
+                <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                  <Color blue="df" green="eb" red="ef" type="rgb"/>
+                </Property>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
                   <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchSettingsDialog.jPreviewSkinButton.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                </Property>
+                <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchSettingsDialog.jPreviewSkinButton.toolTipText" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
                 </Property>
               </Properties>
               <Events>
@@ -697,7 +730,7 @@
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="jProxyHost" pref="385" max="32767" attributes="0"/>
+                                  <Component id="jProxyHost" pref="391" max="32767" attributes="0"/>
                                   <Component id="jProxyPort" min="-2" max="-2" attributes="0"/>
                               </Group>
                           </Group>
@@ -728,7 +761,7 @@
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jRefeshNetworkButton" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="107" max="32767" attributes="0"/>
+                      <EmptySpace pref="110" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -810,6 +843,9 @@
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
                   <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchSettingsDialog.jRefeshNetworkButton.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
                 </Property>
+                <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchSettingsDialog.jRefeshNetworkButton.toolTipText" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                </Property>
               </Properties>
               <Events>
                 <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fireUpdateProxySettingsEvent"/>
@@ -852,6 +888,9 @@
         </Property>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
           <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchSettingsDialog.jCreateAccountButton.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+        </Property>
+        <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+          <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchSettingsDialog.jCreateAccountButton.toolTipText" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
       <Events>

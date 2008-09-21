@@ -28,11 +28,11 @@ public class WorldDecorationHolder {
     private static byte[] decoration = new byte[1000000];
     private static List<BufferedImage> mTextures = null;
 
-    public static void initialize() throws FileNotFoundException, FileFormatException {
+    public static void initialize() throws FileNotFoundException, Exception {
         loadWorld();
     }
 
-    private static void loadWorld() throws FileNotFoundException, FileFormatException {
+    private static void loadWorld() throws FileNotFoundException, Exception {
         try {
             GZIPInputStream fin = new GZIPInputStream(new FileInputStream("world.dat.gz"));
             // FileInputStream fin = new FileInputStream("world.dat");
@@ -43,14 +43,15 @@ public class WorldDecorationHolder {
                 bb.put(d, 0, c);
             }
             decoration = bb.array();
+            fin.close();
         } catch (Exception e) {
             logger.error("Failed to read world.dat.gz");
-            throw new FileFormatException("world.dat.gz hat ein ungültiges Format. (" + e.getMessage() + ")");
+            throw new Exception("Unable to read world.dat.gz", e);
         }
         loadTextures();
     }
 
-    private static void loadTextures() throws FileNotFoundException {
+    private static void loadTextures() throws Exception {
         mTextures = new LinkedList<BufferedImage>();
         try {
             mTextures.add(ImageIO.read(new File("graphics/world/gras1.png")));
@@ -89,30 +90,11 @@ public class WorldDecorationHolder {
             mTextures.add(ImageIO.read(new File("graphics/world/forest1110.png")));
             mTextures.add(ImageIO.read(new File("graphics/world/forest1111.png")));
         } catch (Exception e) {
-            throw new FileNotFoundException("Not all world textures where found");
+            throw new Exception("Failed to load world textures", e);
         }
     }
 
     public static Image getTexture(int pX, int pY, double pScale) {
         return mTextures.get(decoration[pY * 1000 + pX]).getScaledInstance((int) Math.rint(mTextures.get(0).getWidth() / pScale), (int) Math.rint(mTextures.get(0).getHeight() / pScale), BufferedImage.SCALE_FAST);
     }
-
-    /* public static void main(String[] args) {
-    try {
-    FileInputStream r = new FileInputStream("world.dat");
-    GZIPOutputStream o = new GZIPOutputStream(new FileOutputStream("world.dat.gz"));
-    int b = 0;
-    byte[] v = new byte[1024];
-    while ((b = r.read(v)) != -1) {
-    o.write(v, 0, b);
-    }
-    o.finish();
-    o.close();
-    
-    WorldDecorationHolder h = new WorldDecorationHolder();
-    h.loadWorld();
-    } catch (Exception e) {
-    e.printStackTrace();
-    }
-    }*/
 }

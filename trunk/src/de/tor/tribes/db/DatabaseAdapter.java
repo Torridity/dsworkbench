@@ -32,6 +32,7 @@ public class DatabaseAdapter {
     public static final int ID_WRONG_PASSWORD = -5;
     public static final int ID_VERSION_NOT_ALLOWED = -6;
     public static final int ID_UPDATE_NEVER = -666;
+    public static final int ID_UPDATE_NOT_ALLOWED = -666;
     private static Connection DB_CONNECTION = null;
     private static boolean DRIVER_AVAILABLE = false;
     private static boolean INITIALIZED = false;
@@ -43,7 +44,7 @@ public class DatabaseAdapter {
             logger.info("Database driver loaded");
             DRIVER_AVAILABLE = true;
         } catch (Exception ex) {
-            logger.error("Database driver not found");
+            logger.error("Database driver not found", ex);
             DRIVER_AVAILABLE = false;
         }
         INITIALIZED = true;
@@ -275,7 +276,6 @@ public class DatabaseAdapter {
                 retVal = rs.getInt("dataVersion");
             }
         } catch (Exception e) {
-            e.printStackTrace();
             logger.error("Failed to update data version for server '" + pServerID + "'", e);
             retVal = ID_UNKNOWN_ERROR;
         }
@@ -323,7 +323,6 @@ public class DatabaseAdapter {
                 retVal = ID_UPDATE_NEVER;
             }
         } catch (Exception e) {
-            e.printStackTrace();
             logger.error("Failed to get dataVersion for user '" + pUsername + "' and server '" + pServer + "'", e);
             retVal = ID_UNKNOWN_ERROR;
         }
@@ -357,7 +356,6 @@ public class DatabaseAdapter {
                 logger.warn("User '" + pUsername + "' does not exist");
             }
         } catch (Exception e) {
-            e.printStackTrace();
             logger.error("Failed to get dataVersion for user '" + pUsername + "' and server '" + pServer + "'", e);
             retVal = false;
         }
@@ -421,11 +419,13 @@ public class DatabaseAdapter {
             if (min_version != null) {
                 try {
                     double v = Double.parseDouble(min_version);
-                    if (GlobalOptions.VERSION < v) {
+                    if(v<0){
+                        retVal = ID_UPDATE_NOT_ALLOWED;
+                    }else if (GlobalOptions.VERSION < v) {
                         retVal = ID_VERSION_NOT_ALLOWED;
                     }
-
                 } catch (Exception e) {
+                    logger.error("Unknown min_version from server (" + min_version + ")");
                     retVal = ID_UNKNOWN_ERROR;
                 }
 
@@ -435,8 +435,7 @@ public class DatabaseAdapter {
 
         } catch (Exception e) {
             logger.error("Failed to check min version", e);
-            retVal =
-                    ID_UNKNOWN_ERROR;
+            retVal = ID_UNKNOWN_ERROR;
         }
 
         closeConnection();

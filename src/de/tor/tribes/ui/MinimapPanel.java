@@ -25,8 +25,14 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
+import javax.imageio.ImageIO;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileFilter;
+import org.apache.log4j.Logger;
 
 /**
  *
@@ -34,6 +40,7 @@ import java.util.List;
  */
 public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerListener {
 
+    private static Logger logger = Logger.getLogger(MinimapPanel.class);
     private Image mBuffer = null;
     private MinimapRepaintThread mPaintThread = null;
     private int iX = 0;
@@ -43,7 +50,7 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
     private MinimapZoomFrame mZoomFrame = null;
     private int iCurrentCursor = ImageManager.CURSOR_DEFAULT;
     private static MinimapPanel SINGLETON = null;
-    //private ScreenshotPanel mScreenshotPanel = null;
+    private ScreenshotPanel mScreenshotPanel = null;
     private List<MinimapListener> mListeners = null;
     private boolean doRedraw = false;
 
@@ -53,16 +60,18 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
         }
         return SINGLETON;
     }
+    private int iXDown = 0;
+    private int iYDown = 0;
+    private Rectangle2D rDrag = null;
 
     /** Creates new form MinimapPanel */
     MinimapPanel() {
         initComponents();
         setSize(270, 233);
         mListeners = new LinkedList<MinimapListener>();
-        //mParent = pParent;
         setCursor(ImageManager.getCursor(iCurrentCursor));
-        /* mScreenshotPanel = new ScreenshotPanel();
-        jPanel1.add(mScreenshotPanel);*/
+        mScreenshotPanel = new ScreenshotPanel();
+        jPanel1.add(mScreenshotPanel);
         MarkerManager.getSingleton().addMarkerManagerListener(this);
         mPaintThread = new MinimapRepaintThread(this);
         mPaintThread.start();
@@ -79,10 +88,38 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
 
             @Override
             public void mousePressed(MouseEvent e) {
+                if (iCurrentCursor == ImageManager.CURSOR_SHOT) {
+                    iXDown = e.getX();
+                    iYDown = e.getY();
+                }
             }
 
             @Override
             public void mouseReleased(MouseEvent e) {
+                if (iCurrentCursor == ImageManager.CURSOR_SHOT) {
+                    try {
+                        BufferedImage i = mPaintThread.getBuffer();
+                        int x = (int) Math.rint((double) 1000 / (double) getWidth() * (double) rDrag.getX());
+                        int y = (int) Math.rint((double) 1000 / (double) getHeight() * (double) rDrag.getY());
+                        int w = (int) Math.rint((double) 1000 / (double) getWidth() * (double) (rDrag.getWidth() - rDrag.getX()));
+                        int h = (int) Math.rint((double) 1000 / (double) getWidth() * (double) (rDrag.getHeight() - rDrag.getY()));
+                        BufferedImage sub = i.getSubimage(x, y, w, h);
+                        mScreenshotPanel.setBuffer(sub);
+                        jPanel1.setSize(mScreenshotPanel.getSize());
+                        jPanel1.setPreferredSize(mScreenshotPanel.getSize());
+                        jPanel1.setMinimumSize(mScreenshotPanel.getSize());
+                        jPanel1.setMaximumSize(mScreenshotPanel.getSize());
+                        jScreenshotPreview.pack();
+                        jScreenshotControl.pack();
+                        jScreenshotPreview.setVisible(true);
+                        jScreenshotControl.setVisible(true);
+                    } catch (Exception ie) {
+                        logger.error("Failed to initialize mapshot", ie);
+                    }
+                }
+                iXDown = 0;
+                iYDown = 0;
+                rDrag = null;
             }
 
             @Override
@@ -99,6 +136,9 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
                 if (mZoomFrame.isVisible()) {
                     mZoomFrame.setVisible(false);
                 }
+                iXDown = 0;
+                iYDown = 0;
+                rDrag = null;
             }
         });
 
@@ -107,9 +147,17 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
             @Override
             public void mouseDragged(MouseEvent e) {
                 switch (iCurrentCursor) {
-                    case ImageManager.CURSOR_MOVE:
+                    case ImageManager.CURSOR_MOVE: {
                         fireUpdateLocationByMinimapEvents(e.getX(), e.getY());
+                        rDrag = null;
+                        break;
+                    }
+                    case ImageManager.CURSOR_SHOT: {
+                        rDrag = new Rectangle2D.Double(iXDown, iYDown, e.getX(), e.getY());
+                        break;
+                    }
                 }
+
             }
 
             @Override
@@ -141,13 +189,13 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
                 iCurrentCursor += e.getWheelRotation();
                 if (iCurrentCursor == ImageManager.CURSOR_DEFAULT + e.getWheelRotation()) {
                     if (e.getWheelRotation() < 0) {
-                        iCurrentCursor = ImageManager.CURSOR_ZOOM;
+                        iCurrentCursor = ImageManager.CURSOR_SHOT;
                     } else {
                         iCurrentCursor = ImageManager.CURSOR_MOVE;
                     }
                 } else if (iCurrentCursor < ImageManager.CURSOR_MOVE) {
                     iCurrentCursor = ImageManager.CURSOR_DEFAULT;
-                } else if (iCurrentCursor > ImageManager.CURSOR_ZOOM) {
+                } else if (iCurrentCursor > ImageManager.CURSOR_SHOT) {
                     iCurrentCursor = ImageManager.CURSOR_DEFAULT;
                 }
                 if (iCurrentCursor != ImageManager.CURSOR_ZOOM) {
@@ -194,7 +242,14 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
         double posY = ((double) getHeight() / 1000 * (double) iY) - h / 2;
 
         g2d.drawRect((int) Math.rint(posX), (int) Math.rint(posY), w, h);
+        if (iCurrentCursor == ImageManager.CURSOR_SHOT) {
+            if (rDrag != null) {
+                g2d.setColor(Color.YELLOW);
+                g2d.drawRect((int) rDrag.getMinX(), (int) rDrag.getMinY(), (int) (rDrag.getWidth() - rDrag.getX()), (int) (rDrag.getHeight() - rDrag.getY()));
+            }
+        }
         g2d.setColor(Color.BLACK);
+        g2d.dispose();
     }
 
     public void makeScreenshot() {
@@ -211,7 +266,6 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
             mZoomFrame.setSize(300, 300);
             mZoomFrame.setLocation(0, 0);
         }
-        // mScreenshotPanel.setBuffer(pBuffer);
         if (mBuffer == null) {
             mBuffer = pBuffer;
             mBuffer = mBuffer.getScaledInstance(getWidth(), getHeight(), BufferedImage.SCALE_SMOOTH);
@@ -250,12 +304,109 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jScreenshotPreview = new javax.swing.JFrame();
+        jScreenshotControl = new javax.swing.JFrame();
+        jScalingSlider = new javax.swing.JSlider();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jFileTypeChooser = new javax.swing.JComboBox();
+        jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
+        jScreenshotPreview = new javax.swing.JDialog();
         jPanel1 = new javax.swing.JPanel();
 
-        jPanel1.setMaximumSize(new java.awt.Dimension(1000, 1000));
-        jPanel1.setMinimumSize(new java.awt.Dimension(1000, 1000));
-        jPanel1.setPreferredSize(new java.awt.Dimension(1000, 1000));
+        jScreenshotControl.setTitle("Einstellungen");
+        jScreenshotControl.addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                fireScreenshotControlClosingEvent(evt);
+            }
+        });
+
+        jScalingSlider.setMajorTickSpacing(1);
+        jScalingSlider.setMaximum(10);
+        jScalingSlider.setMinimum(1);
+        jScalingSlider.setPaintLabels(true);
+        jScalingSlider.setPaintTicks(true);
+        jScalingSlider.setSnapToTicks(true);
+        jScalingSlider.setValue(1);
+        jScalingSlider.setOpaque(false);
+        jScalingSlider.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                fireChangeScreenshotScalingEvent(evt);
+            }
+        });
+
+        jLabel1.setText("Zoom");
+
+        jLabel2.setText("Dateityp");
+
+        jFileTypeChooser.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "png", "gif", "jpg", "bmp" }));
+
+        jButton1.setText("Schließen");
+        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireCloseScreenshotEvent(evt);
+            }
+        });
+
+        jButton2.setText("Speichern");
+        jButton2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireSaveScreenshotEvent(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jScreenshotControlLayout = new javax.swing.GroupLayout(jScreenshotControl.getContentPane());
+        jScreenshotControl.getContentPane().setLayout(jScreenshotControlLayout);
+        jScreenshotControlLayout.setHorizontalGroup(
+            jScreenshotControlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jScreenshotControlLayout.createSequentialGroup()
+                .addGroup(jScreenshotControlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jScreenshotControlLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(jScreenshotControlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(jScreenshotControlLayout.createSequentialGroup()
+                                .addComponent(jLabel1)
+                                .addGap(18, 18, 18)
+                                .addComponent(jScalingSlider, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jScreenshotControlLayout.createSequentialGroup()
+                                .addComponent(jLabel2)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jFileTypeChooser, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jScreenshotControlLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jButton1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jButton2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jScreenshotControlLayout.setVerticalGroup(
+            jScreenshotControlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jScreenshotControlLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jScreenshotControlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 46, Short.MAX_VALUE)
+                    .addComponent(jScalingSlider, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jScreenshotControlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(jFileTypeChooser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jScreenshotControlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton2)
+                    .addComponent(jButton1))
+                .addContainerGap())
+        );
+
+        jScreenshotPreview.addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                fireMapPreviewClosingEvent(evt);
+            }
+        });
+
+        jPanel1.setBackground(new java.awt.Color(102, 255, 102));
+        jPanel1.setOpaque(false);
+        jPanel1.setPreferredSize(new java.awt.Dimension(0, 0));
         jPanel1.setLayout(new java.awt.BorderLayout());
 
         javax.swing.GroupLayout jScreenshotPreviewLayout = new javax.swing.GroupLayout(jScreenshotPreview.getContentPane());
@@ -264,15 +415,15 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
             jScreenshotPreviewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jScreenshotPreviewLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 321, Short.MAX_VALUE)
+                .addContainerGap())
         );
         jScreenshotPreviewLayout.setVerticalGroup(
             jScreenshotPreviewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jScreenshotPreviewLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 248, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -287,9 +438,86 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
         );
     }// </editor-fold>//GEN-END:initComponents
 
+private void fireChangeScreenshotScalingEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireChangeScreenshotScalingEvent
+    mScreenshotPanel.setScaling(jScalingSlider.getValue());
+    jPanel1.setSize(mScreenshotPanel.getSize());
+    jPanel1.setPreferredSize(mScreenshotPanel.getSize());
+    jPanel1.setMinimumSize(mScreenshotPanel.getSize());
+    jPanel1.setMaximumSize(mScreenshotPanel.getSize());
+    jScreenshotPreview.pack();
+}//GEN-LAST:event_fireChangeScreenshotScalingEvent
+
+private void fireCloseScreenshotEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCloseScreenshotEvent
+    jScreenshotPreview.setVisible(false);
+    jScreenshotControl.setVisible(false);
+}//GEN-LAST:event_fireCloseScreenshotEvent
+
+private void fireSaveScreenshotEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSaveScreenshotEvent
+    String dir = GlobalOptions.getProperty("screen.dir");
+    if (dir == null) {
+        dir = ".";
+    }
+    JFileChooser chooser = new JFileChooser(dir);
+    chooser.setDialogTitle("Speichern unter...");
+    chooser.setSelectedFile(new File("map"));
+
+
+    final String type = (String) jFileTypeChooser.getSelectedItem();
+    chooser.setFileFilter(new FileFilter() {
+
+        @Override
+        public boolean accept(File f) {
+            if (f.getName().endsWith(type)) {
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        public String getDescription() {
+            return "*." + type;
+        }
+    });
+    int ret = chooser.showSaveDialog(jScreenshotControl);
+    if (ret == JFileChooser.APPROVE_OPTION) {
+        try {
+            File f = chooser.getSelectedFile();
+            String file = f.getCanonicalPath();
+            if (!file.endsWith(type)) {
+                file += "." + type;
+            }
+            File target = new File(file);
+            if (target.exists()) {
+                //ask if overwrite
+                if (JOptionPane.showConfirmDialog(jScreenshotControl, "Existierende Datei überschreiben?", "Überschreiben", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) != JOptionPane.YES_OPTION) {
+                    return;
+                }
+            }
+            ImageIO.write(mScreenshotPanel.getResult(), type, target);
+            GlobalOptions.addProperty("screen.dir", target.getParent());
+        } catch (Exception e) {
+            logger.error("Failed to write map image", e);
+        }
+    }
+}//GEN-LAST:event_fireSaveScreenshotEvent
+
+private void fireMapPreviewClosingEvent(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_fireMapPreviewClosingEvent
+    jScreenshotControl.setVisible(false);
+}//GEN-LAST:event_fireMapPreviewClosingEvent
+
+private void fireScreenshotControlClosingEvent(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_fireScreenshotControlClosingEvent
+    jScreenshotPreview.setVisible(false);
+}//GEN-LAST:event_fireScreenshotControlClosingEvent
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
+    private javax.swing.JComboBox jFileTypeChooser;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JFrame jScreenshotPreview;
+    private javax.swing.JSlider jScalingSlider;
+    private javax.swing.JFrame jScreenshotControl;
+    private javax.swing.JDialog jScreenshotPreview;
     // End of variables declaration//GEN-END:variables
 }
 
@@ -308,12 +536,15 @@ class MinimapRepaintThread extends Thread {
         drawn = false;
     }
 
+    protected BufferedImage getBuffer() {
+        return mBuffer;
+    }
+
     @Override
     public void run() {
         while (true) {
             if (!drawn) {
-                redraw();
-                drawn = true;
+                drawn = redraw();
             }
             mParent.updateComplete(mBuffer);
 
@@ -324,17 +555,16 @@ class MinimapRepaintThread extends Thread {
         }
     }
 
-    private void redraw() {
-        long s = System.currentTimeMillis();
-        int x = 0;
-        int y = 0;
+    private boolean redraw() {
         Graphics2D g2d = (Graphics2D) mBuffer.getGraphics();
-
         g2d.setColor(new Color(35, 125, 0));
         g2d.fillRect(0, 0, mBuffer.getWidth(null), mBuffer.getHeight(null));
-        int cx = 0;
-        int cy = 0;
+
         Village[][] mVisibleVillages = DataHolder.getSingleton().getVillages();
+        
+        if (mVisibleVillages == null) {
+            return false;
+        }
 
         for (int i = 0; i < 1000; i++) {
             for (int j = 0; j < 1000; j++) {
@@ -408,6 +638,7 @@ class MinimapRepaintThread extends Thread {
         } catch (Exception e) {
         }
         g2d.dispose();
+        return true;
     }
 }
 

@@ -5,11 +5,11 @@
  */
 package de.tor.tribes.ui;
 
+import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.util.GlobalOptions;
 import javax.swing.JOptionPane;
 import org.apache.log4j.Logger;
 import de.tor.tribes.io.DataHolderListener;
-import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 import javax.swing.ImageIcon;
@@ -77,6 +77,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
 
     protected void hideSplash() {
         try {
+            //load properties, cursors, skins, world decoration
             GlobalOptions.initialize();
             GlobalOptions.addDataHolderListener(this);
             GlobalOptions.addDataHolderListener(DSWorkbenchSettingsDialog.getSingleton());
@@ -92,22 +93,20 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
         }
 
         try {
-            GlobalOptions.loadData(false);
-            GlobalOptions.loadUserData();
+            DataHolder.getSingleton().loadData(false);
         } catch (Exception e) {
             logger.error("Failed to load server data", e);
             System.exit(1);
         }
 
         try {
-             DSWorkbenchMainFrame.getSingleton().init();
-            //SearchFrame.createSearchFrame();
+            DSWorkbenchMainFrame.getSingleton().init();
             DSWorkbenchMainFrame.getSingleton().setVisible(true);
             t.stopRunning();
             setVisible(false);
-        } catch (Exception e) {
-            logger.error("Failed to start initialize MainFrame", e);
-            JOptionPane.showMessageDialog(self, "Fehler bei der Initialisierung.\nMöglicherweise ist deine DS Workbench Installation defekt.", "Fehler", JOptionPane.ERROR_MESSAGE);
+        } catch (Throwable t) {
+            logger.fatal("Fatal error while running DS Workbench", t);
+            JOptionPane.showMessageDialog(self, "Ein schwerwiegender Fehler ist aufgetreten.\nMöglicherweise ist deine DS Workbench Installation defekt. Bitte kontaktiere den Entwickler.", "Fehler", JOptionPane.ERROR_MESSAGE);
             System.exit(1);
         }
     }
@@ -150,8 +149,12 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
     }
 
     @Override
-    public void fireDataLoadedEvent() {
+    public void fireDataLoadedEvent(boolean pSuccess) {
+        if(pSuccess){
         jStatusOutput.setText("Daten geladen");
+        }else{
+            jStatusOutput.setText("Download fehlgeschlagen");
+        }
     }
 }
 

@@ -19,15 +19,15 @@ public class DSCalculator {
         return Math.sqrt(Math.pow(pTarget.getX() - pSource.getX(), 2) + Math.pow(pTarget.getY() - pSource.getY(), 2));
     }
 
-    public static double calculateMoveTimeInMinutes(Village pSource, Village pTarget, int pMinPerField) {
+    public static double calculateMoveTimeInMinutes(Village pSource, Village pTarget, double pMinPerField) {
         return calculateDistance(pSource, pTarget) * pMinPerField;
     }
 
-    public static double calculateMoveTimeInSeconds(Village pSource, Village pTarget, int pMinPerField) {
+    public static double calculateMoveTimeInSeconds(Village pSource, Village pTarget, double pMinPerField) {
         return calculateDistance(pSource, pTarget) * pMinPerField * 60.0;
     }
 
-    public static double calculateMoveTimeInHours(Village pSource, Village pTarget, int pMinPerField) {
+    public static double calculateMoveTimeInHours(Village pSource, Village pTarget, double pMinPerField) {
         return calculateDistance(pSource, pTarget) * pMinPerField / 60.0;
     }
 

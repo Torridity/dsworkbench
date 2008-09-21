@@ -24,6 +24,8 @@ import de.tor.tribes.util.BrowserCommandSender;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.GlobalOptions;
+import de.tor.tribes.util.attack.AttackManager;
+import de.tor.tribes.util.attack.AttackManagerListener;
 import de.tor.tribes.util.mark.MarkerManager;
 import de.tor.tribes.util.mark.MarkerManagerListener;
 import de.tor.tribes.util.tag.TagManager;
@@ -63,6 +65,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         DataHolderListener,
         MarkerManagerListener,
         MapPanelListener,
+        AttackManagerListener,
         MinimapListener {
 
     private static Logger logger = Logger.getLogger(DSWorkbenchMainFrame.class);
@@ -87,6 +90,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
     /** Creates new form MapFrame */
     DSWorkbenchMainFrame() {
         initComponents();
+        jMassAttackItem.setVisible(false);
         Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
 
             @Override
@@ -94,7 +98,8 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                 logger.info("Performing ShutdownHook");
                 TagManager.getSingleton().saveTagsToFile(DataHolder.getSingleton().getDataDirectory() + "/tags.xml");
                 MarkerManager.getSingleton().saveMarkersToFile(DataHolder.getSingleton().getDataDirectory() + "/markers.xml");
-
+                AttackManager.getSingleton().saveAttacksToFile(DataHolder.getSingleton().getDataDirectory() + "/attacks.xml");
+                GlobalOptions.saveProperties();
             }
         }));
         getContentPane().setBackground(Constants.DS_BACK);
@@ -107,14 +112,16 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             @Override
             public void eventDispatched(AWTEvent event) {
                 if (((KeyEvent) event).getID() == KeyEvent.KEY_PRESSED) {
-                    if (((KeyEvent) event).getKeyCode() == KeyEvent.VK_DOWN) {
-                        scroll(0, 2);
-                    } else if (((KeyEvent) event).getKeyCode() == KeyEvent.VK_UP) {
-                        scroll(0, -2);
-                    } else if (((KeyEvent) event).getKeyCode() == KeyEvent.VK_LEFT) {
-                        scroll(-2, 0);
-                    } else if (((KeyEvent) event).getKeyCode() == KeyEvent.VK_RIGHT) {
-                        scroll(2, 0);
+                    if (DSWorkbenchMainFrame.getSingleton().isActive()) {
+                        if (((KeyEvent) event).getKeyCode() == KeyEvent.VK_DOWN) {
+                            scroll(0, 2);
+                        } else if (((KeyEvent) event).getKeyCode() == KeyEvent.VK_UP) {
+                            scroll(0, -2);
+                        } else if (((KeyEvent) event).getKeyCode() == KeyEvent.VK_LEFT) {
+                            scroll(-2, 0);
+                        } else if (((KeyEvent) event).getKeyCode() == KeyEvent.VK_RIGHT) {
+                            scroll(2, 0);
+                        }
                     }
                 }
             }
@@ -122,7 +129,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
 
         try {
             jOnlineLabel.setIcon(new ImageIcon("./graphics/icons/online.png"));
-            jUpdateButton.setIcon(new ImageIcon("./graphics/icons/update.png"));
             jCenterIngameButton.setIcon(new ImageIcon("./graphics/icons/center.png"));
             jRefreshButton.setIcon(new ImageIcon("./graphics/icons/refresh.png"));
             jCenterCoordinateIngame.setIcon(new ImageIcon("./graphics/icons/center.png"));
@@ -130,7 +136,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             logger.error("Failed to load status icon(s)", e);
         }
         onlineStateChanged();
-        jUpdateButton.setEnabled(false);
     }
 
     public void serverSettingsChangedEvent() {
@@ -166,10 +171,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         } else {
             jOnlineLabel.setToolTipText("Online");
         }
-    }
-
-    public void updateAvailable() {
-        jUpdateButton.setEnabled(true);
     }
 
     protected void init() {
@@ -216,7 +217,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         mTribeTribeAttackFrame.pack();
         mAbout = new AboutDialog(this, true);
         initialized = true;
-        serverSettingsChangedEvent();
     }
 
     public boolean isInitialized() {
@@ -236,16 +236,12 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
     private void setupMarkerPanel() {
         jMarkerTable.setModel(MarkerManager.getSingleton().getTableModel());
         MarkerManager.getSingleton().addMarkerManagerListener(this);
-        jMarkerTable.getColumnModel().getColumn(1).setMaxWidth(75);
+        //setup renderer and general view
         jMarkerTable.setDefaultRenderer(Color.class, new ColorCellRenderer());
         jMarkerTable.setDefaultRenderer(MarkerCell.class, new MarkerPanelCellRenderer());
-        ColorChooserCellEditor editor = new ColorChooserCellEditor(new  
+        ColorChooserCellEditor editor = new ColorChooserCellEditor(new ActionListener() {
 
-              ActionListener( ) {
-
-
-                 
-                         @Override
+            @Override
             public void actionPerformed(ActionEvent e) {
                 //update markers as soon as the colorchooser cell editor has closed
                 try {
@@ -264,23 +260,8 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
 
         jMarkerTable.setDefaultEditor(Color.class, editor);
         jScrollPane1.getViewport().setBackground(Constants.DS_BACK_LIGHT);
-
-        DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
-
-            @Override
-            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-                Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
-                String t = ((DefaultTableCellRenderer) c).getText();
-                ((DefaultTableCellRenderer) c).setText("<html><b>" + t + "</b></html>");
-                c.setBackground(Constants.DS_BACK);
-                return c;
-            }
-        };
-
-        for (int i = 0; i < jMarkerTable.getColumnCount(); i++) {
-            jMarkerTable.getColumn(jMarkerTable.getColumnName(i)).setHeaderRenderer(headerRenderer);
-        }
-        jMarkerTable.getColumn("Markierung").setHeaderRenderer(headerRenderer);
+        //update view
+        MarkerManager.getSingleton().markerUpdatedExternally();
     }
 
     private void setupDetailsPanel() {
@@ -304,49 +285,33 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
     }
 
     private void setupAttackPanel() {
-        DefaultTableModel model = new javax.swing   .table.DefaultTableModel(
-                new Object[][]{},
-                new String[]{
-                    "Herkunft", "Ziel", "Einheit", "Ankunftszeit", "Einzeichnen"}) {
-
-            Class[] types = new Class[]{
-                Village.class, Village.class, UnitHolder.class, Date.class, Boolean.class
-            };
-
-            @Override
-            public Class getColumnClass(int columnIndex) {
-                return types[columnIndex];
-            }
-        };
-
-        jAttackTable.setModel(model);
-
+        AttackManager.getSingleton().addAttackManagerListener(this);
+        jAttackTable.setModel(AttackManager.getSingleton().getTableModel());
+        //setup renderer and general view
         jAttackTable.setDefaultRenderer(Date.class, new DateCellRenderer());
         jAttackTable.setDefaultEditor(Date.class, new DateSpinEditor());
         jAttackTable.setDefaultEditor(UnitHolder.class, new UnitCellEditor());
         jAttackTable.setDefaultEditor(Village.class, new VillageCellEditor());
-        jScrollPane2.getViewport().setBackground(Constants.DS_BACK_LIGHT);
-        jAttackTable.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
+
+        // jAttackTable.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
 
         CellEditorListener attackChangedListener = new CellEditorListener() {
 
             @Override
             public void editingStopped(ChangeEvent e) {
-                //"attack shown" value changed. redraw map panel
-
-
-
-
-
-
-
-
-
-
-
                 try {
-                    updateAttacks();
-                } catch (NumberFormatException nfe) {
+                    for (int i = 0; i < jAttackTable.getRowCount(); i++) {
+                        List<Attack> attacks = AttackManager.getSingleton().getAttackPlan(null);
+                        Attack a = attacks.get(i);
+                        a.setSource((Village) jAttackTable.getValueAt(i, 0));
+                        a.setTarget((Village) jAttackTable.getValueAt(i, 1));
+                        a.setUnit((UnitHolder) jAttackTable.getValueAt(i, 2));
+                        a.setArriveTime((Date) jAttackTable.getValueAt(i, 3));
+                        a.setShowOnMap((Boolean) jAttackTable.getValueAt(i, 4));
+                    }
+                    AttackManager.getSingleton().attacksUpdatedExternally(null);
+                } catch (Exception ee) {
+                    //ignored
                 }
             }
 
@@ -354,30 +319,15 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             public void editingCanceled(ChangeEvent e) {
             }
         };
+
+
+
         jAttackTable.getDefaultEditor(Boolean.class).addCellEditorListener(attackChangedListener);
         jAttackTable.getDefaultEditor(Date.class).addCellEditorListener(attackChangedListener);
         jAttackTable.getDefaultEditor(UnitHolder.class).addCellEditorListener(attackChangedListener);
         jAttackTable.getDefaultEditor(Village.class).addCellEditorListener(attackChangedListener);
 
-        DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
-
-            @Override
-            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-                Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
-                String t = ((DefaultTableCellRenderer) c).getText();
-                ((DefaultTableCellRenderer) c).setText("<html><b>" + t + "</b></html>");
-                c.setBackground(Constants.DS_BACK);
-                return c;
-            }
-        };
-
-        for (int i = 0; i < jAttackTable.getColumnCount(); i++) {
-            jAttackTable.getColumn(jAttackTable.getColumnName(i)).setHeaderRenderer(headerRenderer);
-        }
-
-        for (Attack a : GlobalOptions.getAttacks()) {
-            ((DefaultTableModel) jAttackTable.getModel()).addRow(new Object[]{a.getSource(), a.getTarget(), a.getUnit(), a.getArriveTime(), a.isShowOnMap()});
-        }
+        AttackManager.getSingleton().attacksUpdatedExternally(null);
     }
 
     private void setupDynFrame() {
@@ -502,7 +452,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jCurrentServer = new javax.swing.JLabel();
         jCenterIngameButton = new javax.swing.JButton();
         jOnlineLabel = new javax.swing.JLabel();
-        jUpdateButton = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
@@ -516,7 +465,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jShowToolboxItem = new javax.swing.JCheckBoxMenuItem();
         jShowDynFrameItem = new javax.swing.JCheckBoxMenuItem();
         jMenu4 = new javax.swing.JMenu();
-        jHelpIcon = new javax.swing.JMenuItem();
         jAboutItem = new javax.swing.JMenuItem();
 
         jDetailedInfoPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
@@ -1277,6 +1225,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
 
         jCurrentVillageListLabel.setText(bundle.getString("DSWorkbenchMainFrame.jCurrentVillageListLabel.text")); // NOI18N
 
+        jCurrentPlayerVillages.setToolTipText(bundle.getString("DSWorkbenchMainFrame.jCurrentPlayerVillages.toolTipText")); // NOI18N
         jCurrentPlayerVillages.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 fireChangeCurrentPlayerVillageEvent(evt);
@@ -1304,17 +1253,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jOnlineLabel.setMinimumSize(new java.awt.Dimension(30, 30));
         jOnlineLabel.setPreferredSize(new java.awt.Dimension(30, 30));
 
-        jUpdateButton.setBackground(new java.awt.Color(239, 235, 223));
-        jUpdateButton.setToolTipText(bundle.getString("DSWorkbenchMainFrame.jUpdateButton.toolTipText")); // NOI18N
-        jUpdateButton.setMaximumSize(new java.awt.Dimension(30, 30));
-        jUpdateButton.setMinimumSize(new java.awt.Dimension(30, 30));
-        jUpdateButton.setPreferredSize(new java.awt.Dimension(30, 30));
-        jUpdateButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireUpdateClickedEvent(evt);
-            }
-        });
-
         javax.swing.GroupLayout jInformationPanelLayout = new javax.swing.GroupLayout(jInformationPanel);
         jInformationPanel.setLayout(jInformationPanelLayout);
         jInformationPanelLayout.setHorizontalGroup(
@@ -1332,8 +1270,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                     .addComponent(jCurrentServer, javax.swing.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jInformationPanelLayout.createSequentialGroup()
                         .addComponent(jCenterIngameButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jUpdateButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jOnlineLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
@@ -1356,7 +1292,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jCenterIngameButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jUpdateButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jOnlineLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(57, Short.MAX_VALUE))
         );
@@ -1461,15 +1396,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jMenu4.setBackground(new java.awt.Color(225, 213, 190));
         jMenu4.setText(bundle.getString("DSWorkbenchMainFrame.jMenu4.text")); // NOI18N
 
-        jHelpIcon.setBackground(new java.awt.Color(239, 235, 223));
-        jHelpIcon.setText(bundle.getString("DSWorkbenchMainFrame.jHelpIcon.text")); // NOI18N
-        jHelpIcon.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fireShowHelpEvent(evt);
-            }
-        });
-        jMenu4.add(jHelpIcon);
-
         jAboutItem.setBackground(new java.awt.Color(239, 235, 223));
         jAboutItem.setText(bundle.getString("DSWorkbenchMainFrame.jAboutItem.text")); // NOI18N
         jAboutItem.addActionListener(new java.awt.event.ActionListener() {
@@ -1494,9 +1420,9 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                         .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 531, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jInformationPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jMinimapPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 286, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jNavigationPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jMinimapPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 284, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(jInformationPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addComponent(jInfoPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 823, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -1511,7 +1437,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                         .addComponent(jNavigationPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jInformationPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 608, Short.MAX_VALUE))
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 610, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jInfoPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -1538,8 +1464,6 @@ private void fireRefreshMapEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:eve
     double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
     MinimapPanel.getSingleton().setSelection(cx, cy, (int) Math.rint(w), (int) Math.rint(h));
     MapPanel.getSingleton().updateMap(iCenterX, iCenterY);
-// jPanel1.updateUI();
-// jNavigationPanel.updateUI();
 }//GEN-LAST:event_fireRefreshMapEvent
 
 private void fireMoveMapEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireMoveMapEvent
@@ -1584,14 +1508,13 @@ private void fireMoveMapEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
     double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
     MinimapPanel.getSingleton().setSelection(cx, cy, (int) Math.rint(w), (int) Math.rint(h));
-/* jPanel1.updateUI();
-jNavigationPanel.updateUI();*/
 }//GEN-LAST:event_fireMoveMapEvent
 
 private void fireFrameResizedEvent(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_fireFrameResizedEvent
     try {
         MapPanel.getSingleton().updateMap(iCenterX, iCenterY);
     } catch (Exception e) {
+        logger.error("Failed to resize map for (" + iCenterX + ", " + iCenterY + ")", e);
     }
 }//GEN-LAST:event_fireFrameResizedEvent
 
@@ -1695,11 +1618,8 @@ private void fireRemoveAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
     if (res != JOptionPane.YES_OPTION) {
         return;
     }
-    for (int i = rows.length - 1; i >= 0; i--) {
-        int row = rows[i];
-        ((DefaultTableModel) jAttackTable.getModel()).removeRow(row);
-    }
-    updateAttacks();
+
+    AttackManager.getSingleton().removeAttack(rows);
 }//GEN-LAST:event_fireRemoveAttackEvent
 
 private void fireChangeCurrentPlayerVillageEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireChangeCurrentPlayerVillageEvent
@@ -1715,8 +1635,6 @@ private void fireShowSettingsEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:
 
 private void fireExitEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireExitEvent
     GlobalOptions.saveProperties();
-    GlobalOptions.storeAttacks();
-    MarkerManager.getSingleton().saveMarkersToFile(DataHolder.getSingleton().getDataDirectory() + "/markers.xml");
     System.exit(0);
 }//GEN-LAST:event_fireExitEvent
 
@@ -1767,40 +1685,13 @@ private void fireToolsActionEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:e
     } else if (evt.getSource() == jTribeTribeAttackItem) {
         mTribeTribeAttackFrame.setVisible(true);
     } else if (evt.getSource() == jMassAttackItem) {
-        mAllyAllyAttackFrame.setVisible(true);
+       // mAllyAllyAttackFrame.setVisible(true);
     }
 }//GEN-LAST:event_fireToolsActionEvent
-
-private void fireUpdateClickedEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireUpdateClickedEvent
-    if (!jUpdateButton.isEnabled()) {
-        return;
-    }
-    new Thread(new  
-
-          Runnable() {
-
-
-             
-                @Override
-        public void run() {
-            try {
-                DataHolder.getSingleton().loadData(true);
-            } catch (Exception e) {
-                logger.error("Failed to execute auto update", e);
-                fireDataLoadedEvent();
-            }
-        }
-    }).start();
-    jUpdateButton.setEnabled(false);
-}//GEN-LAST:event_fireUpdateClickedEvent
 
 private void fireShowAboutEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireShowAboutEvent
     mAbout.setVisible(true);
 }//GEN-LAST:event_fireShowAboutEvent
-
-private void fireShowHelpEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireShowHelpEvent
-// TODO add your handling code here:
-}//GEN-LAST:event_fireShowHelpEvent
 
     private void changeTool(int pTool) {
         switch (pTool) {
@@ -1828,28 +1719,6 @@ private void fireShowHelpEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:even
         }
     }
 
-    /**Update the globally stored list of attacks with the contents of the  attack table
-     */
-    private void updateAttacks() {
-        DefaultTableModel model = (DefaultTableModel) jAttackTable.getModel();
-        GlobalOptions.getAttacks().clear();
-        for (int i = 0; i < model.getRowCount(); i++) {
-            Village source = (Village) model.getValueAt(i, 0);
-            Village target = (Village) model.getValueAt(i, 1);
-            UnitHolder unit = (UnitHolder) model.getValueAt(i, 2);
-            Date arriveTime = (Date) model.getValueAt(i, 3);
-            Boolean showOnMap = (Boolean) model.getValueAt(i, 4);
-            Attack a = new Attack();
-            a.setSource(source);
-            a.setTarget(target);
-            a.setUnit(unit);
-            a.setArriveTime(arriveTime);
-            a.setShowOnMap(showOnMap.booleanValue());
-            GlobalOptions.getAttacks().add(a);
-        }
-        GlobalOptions.storeAttacks();
-    }
-
     /**Update the MapPanel when dragging the ROI at the MiniMap
      */
     private void updateLocationByMinimap(int pX, int pY) {
@@ -1867,8 +1736,6 @@ private void fireShowHelpEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:even
         double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
         double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
         MinimapPanel.getSingleton().setSelection(x, y, (int) Math.rint(w), (int) Math.rint(h));
-    /*jPanel1.updateUI();
-    jNavigationPanel.updateUI();*/
     }
 
     public void scroll(int pXDir, int pYDir) {
@@ -2018,11 +1885,6 @@ private void fireShowHelpEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:even
 
     }
 
-    public void addAttack(Village pSource, Village pTarget, UnitHolder pUnit, Date pArriveTime) {
-        ((DefaultTableModel) jAttackTable.getModel()).addRow(new Object[]{pSource, pTarget, pUnit, pArriveTime, false});
-        updateAttacks();
-    }
-
     public Village getCurrentUserVillage() {
         return (Village) jCurrentPlayerVillages.getSelectedItem();
     }
@@ -2033,13 +1895,34 @@ private void fireShowHelpEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:even
     }
 
     @Override
-    public void fireDataLoadedEvent() {
-        jUpdateButton.setEnabled(false);
+    public void fireDataLoadedEvent(boolean pSuccess) {
     }
 
     @Override
     public void fireMarkersChangedEvent() {
+        jMarkerTable.invalidate();
         jMarkerTable.setModel(MarkerManager.getSingleton().getTableModel());
+
+        //setup marker table view
+        jMarkerTable.getColumnModel().getColumn(1).setMaxWidth(75);
+
+        DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
+
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
+                String t = ((DefaultTableCellRenderer) c).getText();
+                ((DefaultTableCellRenderer) c).setText("<html><b>" + t + "</b></html>");
+                c.setBackground(Constants.DS_BACK);
+                return c;
+            }
+        };
+
+        for (int i = 0; i < jMarkerTable.getColumnCount(); i++) {
+            jMarkerTable.getColumn(jMarkerTable.getColumnName(i)).setHeaderRenderer(headerRenderer);
+        }
+
+        jMarkerTable.revalidate();
     }
 
     @Override
@@ -2062,8 +1945,33 @@ private void fireShowHelpEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:even
         scroll(pX, pY);
     }
 
+    @Override
     public void fireUpdateLocationByMinimap(int pX, int pY) {
         updateLocationByMinimap(pX, pY);
+    }
+
+    @Override
+    public void fireAttacksChangedEvent(String pPlan) {
+        jAttackTable.invalidate();
+        jAttackTable.setModel(AttackManager.getSingleton().getTableModel());
+        jScrollPane2.getViewport().setBackground(Constants.DS_BACK_LIGHT);
+
+        DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
+
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
+                String t = ((DefaultTableCellRenderer) c).getText();
+                ((DefaultTableCellRenderer) c).setText("<html><b>" + t + "</b></html>");
+                c.setBackground(Constants.DS_BACK);
+                return c;
+            }
+        };
+
+        for (int i = 0; i < jAttackTable.getColumnCount(); i++) {
+            jAttackTable.getColumn(jAttackTable.getColumnName(i)).setHeaderRenderer(headerRenderer);
+        }
+        jAttackTable.revalidate();
     }
 
     /**
@@ -2111,7 +2019,6 @@ private void fireShowHelpEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:even
     private javax.swing.JFrame jDynFrame;
     private javax.swing.JCheckBox jDynFrameAlwaysOnTopSelection;
     private javax.swing.JTextField jHeavyTime;
-    private javax.swing.JMenuItem jHelpIcon;
     private javax.swing.JPanel jInfoPanel;
     private javax.swing.JPanel jInformationPanel;
     private javax.swing.JTextField jKnightTime;
@@ -2171,10 +2078,10 @@ private void fireShowHelpEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:even
     private javax.swing.JTextField jSwordTime;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JMenuItem jTribeTribeAttackItem;
-    private javax.swing.JButton jUpdateButton;
     private javax.swing.JLabel jVillageInfo;
     private javax.swing.JButton jZoomInButton;
     private javax.swing.JButton jZoomOutButton;
     // End of variables declaration//GEN-END:variables
+
 //</editor-fold>
 }

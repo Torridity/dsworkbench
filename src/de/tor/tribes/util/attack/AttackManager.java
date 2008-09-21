@@ -13,7 +13,9 @@ import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.io.File;
+import java.io.FileWriter;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.LinkedList;
 import javax.swing.table.DefaultTableModel;
 import org.jdom.Document;
@@ -40,6 +42,7 @@ public class AttackManager {
 
     AttackManager() {
         mAttackPlans = new Hashtable<String, List<Attack>>();
+        mAttackPlans.put(DEFAULT_PLAN_ID, new LinkedList<Attack>());
         mManagerListeners = new LinkedList<AttackManagerListener>();
     }
 
@@ -53,6 +56,7 @@ public class AttackManager {
 
     public void loadAttacksFromFile(String pFile) {
         mAttackPlans.clear();
+        mAttackPlans.put(DEFAULT_PLAN_ID, new LinkedList<Attack>());
         if (pFile == null) {
             logger.error("File argument is 'null'");
             return;
@@ -64,7 +68,7 @@ public class AttackManager {
                 logger.info("Loading attacks from '" + pFile + "'");
             }
             try {
-                Document d = JaxenUtils.getDocument(pFile);
+                Document d = JaxenUtils.getDocument(attackFile);
                 for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//plans/plan")) {
                     String planKey = e.getAttributeValue("key");
                     if (logger.isDebugEnabled()) {
@@ -72,7 +76,7 @@ public class AttackManager {
                     }
                     List<Attack> planAttacks = new LinkedList<Attack>();
                     for (Element e1 : (List<Element>) JaxenUtils.getNodes(e, "attacks/attack")) {
-                        Attack a = new Attack(e);
+                        Attack a = new Attack(e1);
                         if (a != null) {
                             planAttacks.add(a);
                         }
@@ -91,6 +95,34 @@ public class AttackManager {
             }
         } else {
             logger.info("No attacks found under '" + pFile + "'");
+        }
+    }
+
+    public void saveAttacksToDatabase(String pUrl) {
+        //not implemented yet
+    }
+
+    public void saveAttacksToFile(String pFile) {
+        try {
+            FileWriter w = new FileWriter(pFile);
+            w.write("<plans>\n");
+            Enumeration<String> plans = mAttackPlans.keys();
+            while (plans.hasMoreElements()) {
+                String key = plans.nextElement();
+                w.write("<plan key=\"" + key + "\">\n");
+                List<Attack> attacks = mAttackPlans.get(key);
+                w.write("<attacks>\n");
+                for (Attack a : attacks) {
+                    w.write(a.toXml() + "\n");
+                }
+                w.write("</attacks>\n");
+                w.write("</plan>\n");
+            }
+            w.write("</plans>\n");
+            w.flush();
+            w.close();
+        } catch (Exception e) {
+            logger.error("Failed to store attacks", e);
         }
     }
 
@@ -116,11 +148,11 @@ public class AttackManager {
         a.setTarget(pTarget);
         a.setUnit(pUnit);
         a.setArriveTime(pArriveTime);
-        List<Attack> attackPlan = mAttackPlans.get(pPlan);
+        List<Attack> attackPlan = mAttackPlans.get(plan);
         if (attackPlan == null) {
             attackPlan = new LinkedList<Attack>();
             attackPlan.add(a);
-            mAttackPlans.put(pPlan, attackPlan);
+            mAttackPlans.put(plan, attackPlan);
         } else {
             attackPlan.add(a);
         }
@@ -161,13 +193,14 @@ public class AttackManager {
             plan = DEFAULT_PLAN_ID;
         }
 
-        List<Attack> planAttacks = mAttackPlans.get(pPlan);
+        List<Attack> planAttacks = mAttackPlans.get(plan);
+        Attack[] attacks = planAttacks.toArray(new Attack[]{});
         if (planAttacks != null) {
             for (int i : pIDs) {
                 if (logger.isDebugEnabled()) {
                     logger.debug("Removing attack " + i + " from plan '" + plan + "'");
                 }
-                planAttacks.remove(i);
+                planAttacks.remove(attacks[i]);
             }
         }
         fireAttacksChangedEvents(plan);
@@ -179,6 +212,14 @@ public class AttackManager {
             plan = DEFAULT_PLAN_ID;
         }
         return mAttackPlans.get(plan);
+    }
+
+    public Enumeration<String> getPlans() {
+        return mAttackPlans.keys();
+    }
+
+    public void attacksUpdatedExternally(String pPlan) {
+        fireAttacksChangedEvents(pPlan);
     }
 
     /**Get the table model for the default plan*/
@@ -209,14 +250,11 @@ public class AttackManager {
             }
         };
 
-        List<Attack> planAttacks = mAttackPlans.get(pPlan);
+        List<Attack> planAttacks = mAttackPlans.get(plan);
+
         if (planAttacks != null) {
             for (int i = 0; i < planAttacks.size(); i++) {
-                model.setValueAt(planAttacks.get(i).getSource(), i, 0);
-                model.setValueAt(planAttacks.get(i).getTarget(), i, 0);
-                model.setValueAt(planAttacks.get(i).getUnit(), i, 0);
-                model.setValueAt(planAttacks.get(i).getArriveTime(), i, 0);
-                model.setValueAt(Boolean.TRUE, i, 0);
+                model.addRow(new Object[]{planAttacks.get(i).getSource(), planAttacks.get(i).getTarget(), planAttacks.get(i).getUnit(), planAttacks.get(i).getArriveTime(), planAttacks.get(i).isShowOnMap()});
             }
         }
 
@@ -236,7 +274,9 @@ public class AttackManager {
     }
 
     public static void main(String[] args) {
-        String xml = "<plans><plan key=\"default\"><attacks><attack></attack></attacks></plan><plan key=\"master\"><attacks><attack></attack></attacks></plan></plans>";
+        String xml = "H:/Software/DSWorkbench/servers/de26/a.xml";
         AttackManager.getSingleton().loadAttacksFromFile(xml);
+        System.out.println(AttackManager.getSingleton().getPlans().nextElement());
+
     }
 }

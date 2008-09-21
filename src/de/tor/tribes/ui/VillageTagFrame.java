@@ -77,6 +77,7 @@ public class VillageTagFrame extends javax.swing.JFrame {
 
         jLabel3.setText(bundle.getString("VillageTagFrame.jLabel3.text")); // NOI18N
 
+        jPlayerName.setBackground(new java.awt.Color(239, 235, 223));
         jPlayerName.setEditable(false);
 
         jTagsChooser.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Off", "Def", "Aufbau", "Truppenaufbau", "Voll", "Eigene" }));

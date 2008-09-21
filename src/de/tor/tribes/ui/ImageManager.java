@@ -50,6 +50,7 @@ public class ImageManager {
     //minimap
     public final static int CURSOR_MOVE = 13;
     public final static int CURSOR_ZOOM = 14;
+    public final static int CURSOR_SHOT = 15;
     private static final List<Cursor> CURSORS = new LinkedList<Cursor>();
     private static final List<ImageIcon> UNIT_ICONS = new LinkedList<ImageIcon>();
 
@@ -74,6 +75,7 @@ public class ImageManager {
             //minimap cursors
             CURSORS.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/move.png"), new Point(0, 0), "move"));
             CURSORS.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/zoom.png"), new Point(0, 0), "zoom"));
+            CURSORS.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/camera.png"), new Point(0, 0), "shot"));
         } catch (Exception e) {
             logger.error("Failed to load cursor images", e);
             throw new Exception("Failed to load cursors");

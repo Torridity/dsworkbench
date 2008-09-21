@@ -7,8 +7,8 @@ package de.tor.tribes.ui.editors;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import java.awt.Component;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import javax.swing.AbstractCellEditor;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
@@ -29,12 +29,32 @@ public class UnitCellEditor extends AbstractCellEditor implements TableCellEdito
             model.addElement(unit);
         }
         comboComponent.setModel(model);
-        comboComponent.addItemListener(new ItemListener() {
+        /*comboComponent.addItemListener(new ItemListener() {
+        
+        @Override
+        public void itemStateChanged(ItemEvent e) {
+        if (e.getStateChange() == ItemEvent.SELECTED) {
+        fireEditingStopped();
+        }
+        }
+        });*/
+
+        comboComponent.addKeyListener(new KeyListener() {
 
             @Override
-            public void itemStateChanged(ItemEvent e) {
-                if (e.getStateChange() == ItemEvent.SELECTED) {
+            public void keyTyped(KeyEvent e) {
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                     fireEditingStopped();
+                } else if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                    fireEditingCanceled();
                 }
             }
         });

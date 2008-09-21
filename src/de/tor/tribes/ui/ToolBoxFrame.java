@@ -5,7 +5,6 @@
  */
 package de.tor.tribes.ui;
 
-import de.tor.tribes.util.GlobalOptions;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -48,6 +47,7 @@ public class ToolBoxFrame extends javax.swing.JFrame {
             jAttackSwordButton.setIcon(new ImageIcon("./graphics/icons/attack_sword.png"));
             jMoveButton.setIcon(new ImageIcon("./graphics/icons/move.png"));
             jZoomButton.setIcon(new ImageIcon("./graphics/icons/zoom.png"));
+            jShotButton.setIcon(new ImageIcon("./graphics/icons/camera.png"));
             jSearchButton.setIcon(new ImageIcon("./graphics/icons/search.png"));
             jSettingsButton.setIcon(new ImageIcon("./graphics/icons/settings.png"));
             jClockButton.setIcon(new ImageIcon("./graphics/icons/clock.png"));
@@ -128,6 +128,7 @@ public class ToolBoxFrame extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jMoveButton = new javax.swing.JButton();
         jZoomButton = new javax.swing.JButton();
+        jShotButton = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
         jSearchButton = new javax.swing.JButton();
         jClockButton = new javax.swing.JButton();
@@ -313,6 +314,17 @@ public class ToolBoxFrame extends javax.swing.JFrame {
         });
         jPanel1.add(jZoomButton);
 
+        jShotButton.setToolTipText(bundle.getString("ToolBoxFrame.jShotButton.toolTipText")); // NOI18N
+        jShotButton.setMaximumSize(new java.awt.Dimension(30, 30));
+        jShotButton.setMinimumSize(new java.awt.Dimension(30, 30));
+        jShotButton.setPreferredSize(new java.awt.Dimension(30, 30));
+        jShotButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireToolClickedEvent(evt);
+            }
+        });
+        jPanel1.add(jShotButton);
+
         jLabel3.setBackground(new java.awt.Color(102, 102, 102));
         jLabel3.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jLabel3.setMaximumSize(new java.awt.Dimension(40, 4));
@@ -406,6 +418,8 @@ private void fireToolClickedEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
         MinimapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_MOVE);
     } else if (evt.getSource() == jZoomButton) {
         MinimapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ZOOM);
+    }else if (evt.getSource() == jShotButton) {
+        MinimapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_SHOT);
     } else if (evt.getSource() == jSearchButton) {
         SearchFrame.getSingleton().setVisible(true);
     } else if (evt.getSource() == jSettingsButton) {
@@ -448,6 +462,7 @@ private void fireToolClickedEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
     private javax.swing.JButton jSendResIngameButton;
     private javax.swing.JButton jSendTroopsIngameButton;
     private javax.swing.JButton jSettingsButton;
+    private javax.swing.JButton jShotButton;
     private javax.swing.JButton jTagButton;
     private javax.swing.JButton jZoomButton;
     // End of variables declaration//GEN-END:variables
@@ -479,8 +494,8 @@ class HideThread extends Thread {
                     mParent.setSize(mParent.getWidth(), mParent.getHeight() - 10);
                 }
             } else {
-                if (mParent.getHeight() < 570) {
-                    if (mParent.getHeight() != 570) {
+                if (mParent.getHeight() < 610) {
+                    if (mParent.getHeight() != 610) {
                         mParent.setSize(mParent.getWidth(), mParent.getHeight() + 10);
                     }
                 }

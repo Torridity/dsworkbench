@@ -11,6 +11,7 @@ import de.tor.tribes.types.Village;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.GlobalOptions;
+import de.tor.tribes.util.attack.AttackManager;
 import java.awt.Color;
 import java.awt.event.ItemEvent;
 import java.text.NumberFormat;
@@ -65,7 +66,7 @@ public class AttackAddFrame extends javax.swing.JFrame {
     private boolean validateTime() {
         long sendMillis = ((Date) jTimeSpinner.getValue()).getTime();
         //check time depending selected unit
-        int speed = ((UnitHolder) jUnitBox.getSelectedItem()).getSpeed();
+        double speed = ((UnitHolder) jUnitBox.getSelectedItem()).getSpeed();
         double minTime = DSCalculator.calculateMoveTimeInMinutes(mSource, mTarget, speed);
         long moveTime = (long) minTime * 60000;
         return (sendMillis > System.currentTimeMillis() + moveTime);
@@ -310,8 +311,7 @@ private void fireAddAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:even
         return;
     }
 
-    DSWorkbenchMainFrame.getSingleton().addAttack(mSource, mTarget, getSelectedUnit(), getTime());
-
+    AttackManager.getSingleton().addAttack(mSource, mTarget, getSelectedUnit(), getTime());
     setVisible(false);
 }//GEN-LAST:event_fireAddAttackEvent
 
@@ -323,7 +323,7 @@ private void fireAddAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:even
             GlobalOptions.initialize();
             GlobalOptions.setSelectedServer("de26");
 
-            GlobalOptions.loadData(false);
+            DataHolder.getSingleton().loadData(false);
         } catch (Exception e) {
         }
         Village source = DataHolder.getSingleton().getVillages()[452][467];

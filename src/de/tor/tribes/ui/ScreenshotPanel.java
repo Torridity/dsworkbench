@@ -5,8 +5,10 @@
  */
 package de.tor.tribes.ui;
 
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 
 /**
@@ -16,6 +18,7 @@ import java.awt.image.BufferedImage;
 public class ScreenshotPanel extends javax.swing.JPanel {
 
     private BufferedImage mBuffer = null;
+    private int iScaling = 1;
 
     /** Creates new form ScreenshotPanel */
     public ScreenshotPanel() {
@@ -23,7 +26,28 @@ public class ScreenshotPanel extends javax.swing.JPanel {
     }
 
     public void setBuffer(BufferedImage pBuffer) {
+        if (pBuffer == null) {
+            return;
+        }
         mBuffer = pBuffer;
+        setScaling(1);
+        updateUI();
+    }
+
+    public BufferedImage getResult() {
+        BufferedImage b = new BufferedImage(mBuffer.getWidth() * iScaling, mBuffer.getHeight() * iScaling, BufferedImage.TYPE_INT_RGB);
+        b.getGraphics().drawImage(mBuffer.getScaledInstance(mBuffer.getWidth() * iScaling, mBuffer.getHeight() * iScaling, BufferedImage.SCALE_DEFAULT), 0, 0, null);
+        return b;
+    }
+
+    public void setScaling(int pValue) {
+        iScaling = pValue;
+        Dimension dim = new Dimension(mBuffer.getWidth() * iScaling, mBuffer.getHeight() * iScaling);
+        setSize(dim);
+        setPreferredSize(dim);
+        setMaximumSize(dim);
+        setMinimumSize(dim);
+        repaint();
     }
 
     /** This method is called from within the constructor to
@@ -47,12 +71,12 @@ public class ScreenshotPanel extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    
     public void paint(Graphics g) {
+        super.paint(g);
         Graphics2D g2d = (Graphics2D) g;
-        g2d.drawImage(mBuffer,null, 0, 0);
+        g2d.drawImage(mBuffer.getScaledInstance(mBuffer.getWidth() * iScaling, mBuffer.getHeight() * iScaling, BufferedImage.SCALE_DEFAULT), 0, 0, null);
+        g2d.dispose();
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
-
 }

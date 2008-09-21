@@ -16,16 +16,16 @@ public class UnitHolder implements Serializable {
     private static final long serialVersionUID = 10L;
     private String plainName = null;
     private String name = null;
-    private int wood = 0;
-    private int stone = 0;
-    private int iron = 0;
-    private int pop = 0;
-    private int speed = 0;
-    private int attack = 0;
-    private int defense = 0;
-    private int defenseCavalry = 0;
-    private int defenseArcher = 0;
-    private int carry = 0;
+    private double wood = 0;
+    private double stone = 0;
+    private double iron = 0;
+    private double pop = 0;
+    private double speed = 0;
+    private double attack = 0;
+    private double defense = 0;
+    private double defenseCavalry = 0;
+    private double defenseArcher = 0;
+    private double carry = 0;
     private double buildTime = 0;
 
     public UnitHolder(Element pElement) throws Exception {
@@ -59,19 +59,19 @@ public class UnitHolder implements Serializable {
                 setName("Unbekannt (" + pElement.getName() + ")");
             }
 
-            setWood(Integer.parseInt(pElement.getChild("wood").getText()));
-            setStone(Integer.parseInt(pElement.getChild("stone").getText()));
-            setIron(Integer.parseInt(pElement.getChild("iron").getText()));
-            setPop(Integer.parseInt(pElement.getChild("pop").getText()));
-            setSpeed(Integer.parseInt(pElement.getChild("speed").getText()));
-            setAttack(Integer.parseInt(pElement.getChild("attack").getText()));
-            setDefense(Integer.parseInt(pElement.getChild("defense").getText()));
-            setDefenseCavalry(Integer.parseInt(pElement.getChild("defense_cavalry").getText()));
-            setDefenseArcher(Integer.parseInt(pElement.getChild("defense_archer").getText()));
-            setCarry(Integer.parseInt(pElement.getChild("carry").getText()));
+            setWood(Double.parseDouble(pElement.getChild("wood").getText()));
+            setStone(Double.parseDouble(pElement.getChild("stone").getText()));
+            setIron(Double.parseDouble(pElement.getChild("iron").getText()));
+            setPop(Double.parseDouble(pElement.getChild("pop").getText()));
+            setSpeed(Double.parseDouble(pElement.getChild("speed").getText()));
+            setAttack(Double.parseDouble(pElement.getChild("attack").getText()));
+            setDefense(Double.parseDouble(pElement.getChild("defense").getText()));
+            setDefenseCavalry(Double.parseDouble(pElement.getChild("defense_cavalry").getText()));
+            setDefenseArcher(Double.parseDouble(pElement.getChild("defense_archer").getText()));
+            setCarry(Double.parseDouble(pElement.getChild("carry").getText()));
             setBuildTime(Double.parseDouble(pElement.getChild("build_time").getText()));
         } catch (Exception e) {
-            throw new Exception("Fehler beim laden von Einheit '" + pElement.getName() + "'");
+            throw new Exception("Fehler beim laden von Einheit '" + pElement.getName() + "'", e);
         }
     }
 
@@ -91,83 +91,83 @@ public class UnitHolder implements Serializable {
         this.name = name;
     }
 
-    public int getWood() {
+    public double getWood() {
         return wood;
     }
 
-    public void setWood(int wood) {
+    public void setWood(double wood) {
         this.wood = wood;
     }
 
-    public int getStone() {
+    public double getStone() {
         return stone;
     }
 
-    public void setStone(int stone) {
+    public void setStone(double stone) {
         this.stone = stone;
     }
 
-    public int getIron() {
+    public double getIron() {
         return iron;
     }
 
-    public void setIron(int iron) {
+    public void setIron(double iron) {
         this.iron = iron;
     }
 
-    public int getPop() {
+    public double getPop() {
         return pop;
     }
 
-    public void setPop(int pop) {
+    public void setPop(double pop) {
         this.pop = pop;
     }
 
-    public int getSpeed() {
+    public double getSpeed() {
         return speed;
     }
 
-    public void setSpeed(int speed) {
+    public void setSpeed(double speed) {
         this.speed = speed;
     }
 
-    public int getAttack() {
+    public double getAttack() {
         return attack;
     }
 
-    public void setAttack(int attack) {
+    public void setAttack(double attack) {
         this.attack = attack;
     }
 
-    public int getDefense() {
+    public double getDefense() {
         return defense;
     }
 
-    public void setDefense(int defense) {
+    public void setDefense(double defense) {
         this.defense = defense;
     }
 
-    public int getDefenseCavalry() {
+    public double getDefenseCavalry() {
         return defenseCavalry;
     }
 
-    public void setDefenseCavalry(int defenseCavalry) {
+    public void setDefenseCavalry(double defenseCavalry) {
         this.defenseCavalry = defenseCavalry;
     }
 
-    public int getDefenseArcher() {
+    public double getDefenseArcher() {
         return defenseArcher;
     }
 
-    public void setDefenseArcher(int defenseArcher) {
+    public void setDefenseArcher(double defenseArcher) {
         this.defenseArcher = defenseArcher;
     }
 
-    public int getCarry() {
+    public double getCarry() {
         return carry;
     }
 
-    public void setCarry(int carry) {
+    public void setCarry(double carry) {
         this.carry = carry;
     }
 

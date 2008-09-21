@@ -19,7 +19,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -70,6 +69,15 @@ public class DataHolder {
 
     /**Clear all data an re-initialize the structures*/
     public void initialize() {
+        mVillages = null;
+        mVillagesTable = null;
+        mAllies = null;
+        mTribes = null;
+        mBuildings = null;
+        mUnits = null;
+        System.gc();
+        System.gc();
+
         mVillages = new Village[1000][1000];
 
         mVillagesTable = new Hashtable<Integer, Village>();
@@ -82,7 +90,7 @@ public class DataHolder {
         if (!serverDir.exists()) {
             serverDir.mkdir();
         }
-        System.gc();
+
     }
 
     public synchronized void addListener(DataHolderListener pListener) {
@@ -111,13 +119,6 @@ public class DataHolder {
 
     /**Check if all needed files are located in the data directory of the selected server*/
     private boolean isDataAvailable() {
-        /* File villages = new File(getDataDirectory() + "/" + "village.txt.gz");
-        File tribes = new File(getDataDirectory() + "/" + "tribe.txt.gz");
-        File allys = new File(getDataDirectory() + "/" + "ally.txt.gz");*/
-        /*File villages = new File(getDataDirectory() + "/" + "village.bin");
-        File tribes = new File(getDataDirectory() + "/" + "tribe.bin");
-        File allys = new File(getDataDirectory() + "/" + "ally.bin");
-         */
         File data = new File(getDataDirectory() + "/" + "serverdata.bin");
         File units = new File(getDataDirectory() + "/" + "units.xml");
         File buildings = new File(getDataDirectory() + "/" + "buildings.xml");
@@ -164,7 +165,6 @@ public class DataHolder {
             logger.error("Failed to check server settings", e);
             return false;
         }
-
         return true;
     }
 
@@ -174,14 +174,17 @@ public class DataHolder {
         logger.info("Calling 'loadData()' for server " + serverID);
         try {
             boolean recreateLocal = false;
+            //check if download was requested
             if (pReload) {
                 //completely reload data
                 fireDataHolderEvents("Daten werden heruntergeladen...");
                 //try to download
                 if (!downloadData()) {
                     fireDataHolderEvents("Download abgebrochen/fehlgeschlagen!");
+                    fireDataLoadedEvents(false);
                     return false;
                 } else {
+                    //rebuild local data
                     recreateLocal = true;
                 }
             } else {
@@ -192,12 +195,14 @@ public class DataHolder {
                     if (!downloadData()) {
                         logger.fatal("Download failed. No data available at the moment");
                         fireDataHolderEvents("Download abgebrochen/fehlgeschlagen");
+                        fireDataLoadedEvents(false);
                         return false;
                     } else {
                         recreateLocal = true;
                     }
                 } else if (!serverSupported()) {
                     logger.error("Local data available but server not supported");
+                    fireDataLoadedEvents(false);
                     return false;
                 } else {
                     //load data from local copy
@@ -260,19 +265,18 @@ public class DataHolder {
             fireDataHolderEvents("Fehler beim Lesen der Daten.");
             logger.error("Failed to read server data", e);
             if (bAborted) {
-                fireDataLoadedEvents();
+                fireDataLoadedEvents(false);
                 return false;
             }
         }
 
-        fireDataLoadedEvents();
+        fireDataLoadedEvents(true);
         return true;
     }
 
     private boolean createLocalDataCopy(String pServerDir) {
 
         try {
-//            FileWriter w = new FileWriter(pServerDir + "/serverdata.bin");
             BufferedWriter bout = new BufferedWriter(new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(pServerDir + "/serverdata.bin"))));
 
             logger.info("Writing villages to " + pServerDir + "/serverdata.bin");
@@ -318,10 +322,7 @@ public class DataHolder {
             int ac = 0;
             int vc = 0;
             int tc = 0;
-            mVillages = new Village[1000][1000];
-            mTribes.clear();
-            mAllies.clear();
-            mVillagesTable.clear();
+            initialize();
             while ((line = r.readLine()) != null) {
                 if (line.equals("<villages>")) {
                     logger.info("Reading villages");
@@ -404,10 +405,20 @@ public class DataHolder {
             //</editor-fold>
 
             // <editor-fold defaultstate="collapsed" desc="DS Workbench Version check">
-            if (DatabaseAdapter.isVersionAllowed() != DatabaseAdapter.ID_SUCCESS) {
-                logger.error("Current version is not allowed any longer");
-                fireDataHolderEvents("Deine DS Workbench Version ist zu alt. Bitte lade dir die aktuelle Version herunter.");
+            int ret = DatabaseAdapter.isVersionAllowed();
+            if (ret != DatabaseAdapter.ID_SUCCESS) {
+                if (ret != DatabaseAdapter.ID_UPDATE_NOT_ALLOWED) {
+                    logger.error("Current version is not allowed any longer");
+                    fireDataHolderEvents("Deine DS Workbench Version ist zu alt. Bitte lade dir die aktuelle Version herunter.");
+                } else {
+                    String error = DatabaseAdapter.getPropertyValue("data_error_message");
+                    logger.error("Update currently not allowed by server (Message: '" + error + "'");
+                    fireDataHolderEvents("Momentan sind leider keine Updates möglich.");
+                    fireDataHolderEvents("Folgender Grund wurde vom Systemadministrator angegeben: '" + error + "'");
+                }
+
                 return false;
+
             }
             //</editor-fold>
 
@@ -434,15 +445,13 @@ public class DataHolder {
             String downloadURL = DatabaseAdapter.getServerDownloadURL(serverID);
             if ((userDataVersion == dataVersion) && isDataAvailable()) {
                 //no update needed
+                logger.info("No update needed");
                 return true;
             } else if ((userDataVersion == -666) || (dataVersion - userDataVersion > maxDiff) || !isDataAvailable()) {
                 //full download if no download made yet or diff too large
                 //load villages
                 logger.info("Downloading data from " + downloadURL);
-                mVillages = new Village[1000][1000];
-                mTribes.clear();
-                mAllies.clear();
-                mVillagesTable.clear();
+                initialize();
                 fireDataHolderEvents("Lade Dörferliste");
                 URL u = new URL(downloadURL + "/village.txt.gz");
 
@@ -712,18 +721,18 @@ public class DataHolder {
 
     /**Parse the list of units*/
     private void parseUnits() {
-        String buildingsFile = sServerBaseDir + "/" + GlobalOptions.getSelectedServer();
-        buildingsFile +=
-                "/units.xml";
+        String unitFile = getDataDirectory() + "/units.xml";
+        //buildingsFile += "/units.xml";
+        logger.debug("Loading units");
         try {
-            Document d = JaxenUtils.getDocument(new File(buildingsFile));
-            d =
-                    JaxenUtils.getDocument(new File(buildingsFile));
+            Document d = JaxenUtils.getDocument(new File(unitFile));
+            d = JaxenUtils.getDocument(new File(unitFile));
             List<Element> l = JaxenUtils.getNodes(d, "/config/*");
             for (Element e : l) {
                 try {
                     mUnits.add(new UnitHolder(e));
                 } catch (Exception inner) {
+                    logger.error("Failed loading unit", inner);
                 }
             }
         } catch (Exception outer) {
@@ -841,10 +850,10 @@ public class DataHolder {
         }
     }
 
-    public synchronized void fireDataLoadedEvents() {
+    public synchronized void fireDataLoadedEvents(boolean pSuccess) {
         DataHolderListener[] listeners = mListeners.toArray(new DataHolderListener[]{});
         for (DataHolderListener listener : listeners) {
-            listener.fireDataLoadedEvent();
+            listener.fireDataLoadedEvent(pSuccess);
         }
     }
 //    "javascript:function load2() {document.location='javascript:var A;if (frames.length>=1){A=main}else{A=this;};A.insertUnit(A.document.forms[\'units\'].elements[\'spy\'],200);A.insertUnit(A.document.forms[\'units\'].elements[\'x\'],496);A.insertUnit(A.document.forms[\'units\'].elements[\'y\'],464);A.insertUnit(A.document.forms[\'units\'].elements[\'attack\'].click());'}load();"

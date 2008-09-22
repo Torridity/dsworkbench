@@ -8,8 +8,14 @@ package de.tor.tribes.ui;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.image.BufferedImage;
+import de.tor.tribes.util.mark.MarkerManager;
+import java.awt.geom.Rectangle2D;
+import de.tor.tribes.util.Constants;
+import java.awt.AlphaComposite;
+import java.awt.Color;
+import java.awt.Composite;
+import java.awt.Font;
 
 /**
  *
@@ -34,9 +40,51 @@ public class ScreenshotPanel extends javax.swing.JPanel {
         updateUI();
     }
 
-    public BufferedImage getResult() {
-        BufferedImage b = new BufferedImage(mBuffer.getWidth() * iScaling, mBuffer.getHeight() * iScaling, BufferedImage.TYPE_INT_RGB);
-        b.getGraphics().drawImage(mBuffer.getScaledInstance(mBuffer.getWidth() * iScaling, mBuffer.getHeight() * iScaling, BufferedImage.SCALE_DEFAULT), 0, 0, null);
+    public BufferedImage getResult(int pTransparency) {
+        int width = mBuffer.getWidth() * iScaling;
+        int height = mBuffer.getHeight() * iScaling;
+        BufferedImage b = new BufferedImage(width, height * iScaling, BufferedImage.TYPE_INT_RGB);
+
+        b.getGraphics().drawImage(mBuffer.getScaledInstance(width, height, BufferedImage.SCALE_DEFAULT), 0, 0, null);
+        if (pTransparency < 10) {
+            Graphics2D g2d = (Graphics2D) b.getGraphics();
+            float transFac = 1.0f - ((float) pTransparency / 10.0f);
+            Composite a = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, transFac);
+
+            Font t = new Font("Serif", Font.BOLD, 16);
+            g2d.setComposite(a);
+            //draw legend
+            int count = MarkerManager.getSingleton().getMarkers().length;
+            int legendW = 0;
+            //get legend height plus 2 times spacing
+            int legendH = count * b.getGraphics().getFontMetrics().getHeight() + 10;
+            int heightF = b.getGraphics().getFontMetrics().getHeight();
+            for (int i = 0; i < count; i++) {
+                Rectangle2D bounds = b.getGraphics().getFontMetrics().getStringBounds(MarkerManager.getSingleton().getMarkers()[i].getMarkerValue(), b.getGraphics());
+                if (bounds.getWidth() > legendW) {
+                    legendW = (int) Math.rint(bounds.getWidth());
+                }
+            }
+            //add left and right spacing
+            //left/right border of 5px each, spacing of 5px between font and color and color field width
+            legendW += 10 + 5 + heightF;
+            //add line spacing of 2px
+            //legendH += count * 2;
+            g2d.setColor(Constants.DS_BACK);
+            g2d.fillRect(width - legendW - 5, height - legendH - 5, legendW, legendH);
+            g2d.setColor(Color.BLACK);
+            for (int i = 0; i < count; i++) {
+                g2d.setColor(Color.BLACK);
+                String value = MarkerManager.getSingleton().getMarkers()[i].getMarkerValue();
+                Color c = MarkerManager.getSingleton().getMarkers()[i].getMarkerColor();
+                g2d.drawString(value, width - legendW, (height - legendH + 5 + (int) (heightF / 2) + heightF * i));
+                g2d.setColor(c);
+                g2d.fillRect(width - legendW + (legendW - 10 - heightF), height - legendH + i * heightF, heightF, heightF);
+            }
+            g2d.dispose();
+        }
+
+
         return b;
     }
 

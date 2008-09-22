@@ -194,7 +194,7 @@ public class BuildingHolder {
         return getName();
     }
 
-    public static void main(String[] args) throws Exception {
+ /*   public static void main(String[] args) throws Exception {
         List<BuildingHolder> mBuildings = new LinkedList<BuildingHolder>();
         try {
             Document d = JaxenUtils.getDocument(new File("D:/GRID/src/DSWorkbench/servers/de14/buildings.xml"));
@@ -213,5 +213,5 @@ public class BuildingHolder {
         System.out.println(mBuildings.get(0).getBuildTimeFactor());
         System.out.println(mBuildings.get(0).getName());
         System.out.println(mBuildings.get(0).getBuildTime());
-    }
+    }*/
 }

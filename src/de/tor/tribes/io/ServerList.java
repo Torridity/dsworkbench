@@ -50,7 +50,7 @@ public class ServerList {
         return null;
     }
 
-    public static void main(String[] args) throws Exception {
+   /* public static void main(String[] args) throws Exception {
         ServerList.loadServerList();
-    }
+    }*/
 }

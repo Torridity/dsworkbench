@@ -15,7 +15,7 @@ import java.util.LinkedList;
 import java.util.List;
 import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
-
+import de.tor.tribes.util.Constants;
 /**
  *
  * @author Jejkal
@@ -72,7 +72,10 @@ public class DatabaseAdapter {
             return false;
         }
         try {
-            DB_CONNECTION = DriverManager.getConnection("jdbc:mysql://www.torridity.de/dsworkbench?" + "user=dsworkbench&password=DSwb'08");
+    
+            String p = SecurityAdapter.descryptString("U2FsdGVkX1+wXUCUKS9H1LGgDZ1Ihd/E", Constants.ENC);
+                    
+            DB_CONNECTION = DriverManager.getConnection("jdbc:mysql://www.torridity.de/dsworkbench?" + "user=dsworkbench&password=" + p);
             return true;
         } catch (SQLException se) {
             logger.error("Failed to establish database connection", se);
@@ -522,7 +525,7 @@ public class DatabaseAdapter {
         System.setProperty("proxyPort", "8000");
         //System.out.println(DatabaseAdapter.checkUser("Torridity", "realstyx13"));
         //System.out.println(DatabaseAdapter.getPropertyValue("update_base_dir"));
-        System.out.println(DatabaseAdapter.getUserDataVersion("Torridity", "de14"));
+       // System.out.println(DatabaseAdapter.getUserDataVersion("Torridity", "de14"));
     //System.out.println(DatabaseAdapter.registerUserForServer("Torridity", "de14"));
     //System.out.println(DatabaseAdapter.getDataVersion("de14"));
     //System.out.println(DatabaseAdapter.setDataVersion("de14", 3));
@@ -540,6 +543,6 @@ public class DatabaseAdapter {
     System.out.println("Check: " + DatabaseAdapter.checkLastUpdate("Torridity", "de26"));*/
 
     // System.out.println("Du " + (System.currentTimeMillis() - s));
-
+   System.out.println(SecurityAdapter.encryptString("DSwb'08", "enrcypted"));
     }
 }

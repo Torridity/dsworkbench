@@ -114,8 +114,8 @@ public class IRCOutputPanel extends javax.swing.JPanel {
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
 
-    public static void main(String[] args) {
+  /*  public static void main(String[] args) {
         String test = "3,1\\1,3\\9,3\\3,9\\0,9\\9,0\\0,0-15,0\\0,15\\14,15\\15,14\\1,14";
         System.out.println(new String("\u000f"));
-    }
+    }*/
 }

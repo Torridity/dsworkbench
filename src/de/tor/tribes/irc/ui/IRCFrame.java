@@ -236,7 +236,7 @@ private void fireChangeTabEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
+  /*  public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
 
             public void run() {
@@ -244,7 +244,7 @@ private void fireChangeTabEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:
             }
         });
 
-    }
+    }*/
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;

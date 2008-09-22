@@ -102,7 +102,7 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
                         int x = (int) Math.rint((double) 1000 / (double) getWidth() * (double) rDrag.getX());
                         int y = (int) Math.rint((double) 1000 / (double) getHeight() * (double) rDrag.getY());
                         int w = (int) Math.rint((double) 1000 / (double) getWidth() * (double) (rDrag.getWidth() - rDrag.getX()));
-                        int h = (int) Math.rint((double) 1000 / (double) getWidth() * (double) (rDrag.getHeight() - rDrag.getY()));
+                        int h = (int) Math.rint((double) 1000 / (double) getHeight() * (double) (rDrag.getHeight() - rDrag.getY()));
                         BufferedImage sub = i.getSubimage(x, y, w, h);
                         mScreenshotPanel.setBuffer(sub);
                         jPanel1.setSize(mScreenshotPanel.getSize());
@@ -311,6 +311,8 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
         jFileTypeChooser = new javax.swing.JComboBox();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
+        jLabel3 = new javax.swing.JLabel();
+        jTransparancySlider = new javax.swing.JSlider();
         jScreenshotPreview = new javax.swing.JDialog();
         jPanel1 = new javax.swing.JPanel();
 
@@ -355,43 +357,61 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
             }
         });
 
+        jLabel3.setText("Legendentransparenz");
+
+        jTransparancySlider.setMajorTickSpacing(1);
+        jTransparancySlider.setMaximum(10);
+        jTransparancySlider.setPaintLabels(true);
+        jTransparancySlider.setPaintTicks(true);
+        jTransparancySlider.setSnapToTicks(true);
+        jTransparancySlider.setToolTipText("Transparenz der Legende (10 = keine Legende)");
+        jTransparancySlider.setValue(4);
+        jTransparancySlider.setOpaque(false);
+        jTransparancySlider.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                jTransparancySliderfireChangeScreenshotScalingEvent(evt);
+            }
+        });
+
         javax.swing.GroupLayout jScreenshotControlLayout = new javax.swing.GroupLayout(jScreenshotControl.getContentPane());
         jScreenshotControl.getContentPane().setLayout(jScreenshotControlLayout);
         jScreenshotControlLayout.setHorizontalGroup(
             jScreenshotControlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jScreenshotControlLayout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(jScreenshotControlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jScreenshotControlLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(jScreenshotControlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(jScreenshotControlLayout.createSequentialGroup()
-                                .addComponent(jLabel1)
-                                .addGap(18, 18, 18)
-                                .addComponent(jScalingSlider, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jScreenshotControlLayout.createSequentialGroup()
-                                .addComponent(jLabel2)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jFileTypeChooser, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jScreenshotControlLayout.createSequentialGroup()
-                        .addContainerGap()
                         .addComponent(jButton1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton2))
+                    .addGroup(jScreenshotControlLayout.createSequentialGroup()
+                        .addGroup(jScreenshotControlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jScreenshotControlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jTransparancySlider, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 236, Short.MAX_VALUE)
+                            .addComponent(jScalingSlider, javax.swing.GroupLayout.DEFAULT_SIZE, 236, Short.MAX_VALUE)
+                            .addComponent(jFileTypeChooser, 0, 236, Short.MAX_VALUE))))
+                .addContainerGap())
         );
         jScreenshotControlLayout.setVerticalGroup(
             jScreenshotControlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jScreenshotControlLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jScreenshotControlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 46, Short.MAX_VALUE)
-                    .addComponent(jScalingSlider, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScalingSlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jScreenshotControlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jTransparancySlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jScreenshotControlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(jFileTypeChooser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addComponent(jFileTypeChooser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 36, Short.MAX_VALUE)
                 .addGroup(jScreenshotControlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton2)
                     .addComponent(jButton1))
@@ -461,7 +481,6 @@ private void fireSaveScreenshotEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST
     chooser.setDialogTitle("Speichern unter...");
     chooser.setSelectedFile(new File("map"));
 
-
     final String type = (String) jFileTypeChooser.getSelectedItem();
     chooser.setFileFilter(new FileFilter() {
 
@@ -493,7 +512,7 @@ private void fireSaveScreenshotEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST
                     return;
                 }
             }
-            ImageIO.write(mScreenshotPanel.getResult(), type, target);
+            ImageIO.write(mScreenshotPanel.getResult(jTransparancySlider.getValue()), type, target);
             GlobalOptions.addProperty("screen.dir", target.getParent());
         } catch (Exception e) {
             logger.error("Failed to write map image", e);
@@ -508,16 +527,23 @@ private void fireMapPreviewClosingEvent(java.awt.event.WindowEvent evt) {//GEN-F
 private void fireScreenshotControlClosingEvent(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_fireScreenshotControlClosingEvent
     jScreenshotPreview.setVisible(false);
 }//GEN-LAST:event_fireScreenshotControlClosingEvent
+
+private void jTransparancySliderfireChangeScreenshotScalingEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jTransparancySliderfireChangeScreenshotScalingEvent
+// TODO add your handling code here:
+}//GEN-LAST:event_jTransparancySliderfireChangeScreenshotScalingEvent
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JComboBox jFileTypeChooser;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JSlider jScalingSlider;
     private javax.swing.JFrame jScreenshotControl;
     private javax.swing.JDialog jScreenshotPreview;
+    private javax.swing.JSlider jTransparancySlider;
     // End of variables declaration//GEN-END:variables
 }
 

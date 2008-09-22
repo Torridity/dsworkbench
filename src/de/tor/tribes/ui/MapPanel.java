@@ -16,8 +16,10 @@ import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.Skin;
 import de.tor.tribes.util.attack.AttackManager;
 import de.tor.tribes.util.mark.MarkerManager;
+import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Composite;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -30,7 +32,6 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.geom.Line2D;
-import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -600,7 +601,7 @@ class RepaintThread extends Thread {
 
         Village[][] villages = DataHolder.getSingleton().getVillages();
 
-        if(villages == null){
+        if (villages == null) {
             //probably reloading data
             return;
         }
@@ -677,12 +678,15 @@ class RepaintThread extends Thread {
         int yPos = pYStart;
         //disable decoration if field size is not equal the decoration texture size
         boolean useDecoration = true;
-        
+
         if ((WorldDecorationHolder.getTexture(0, 0, 1).getWidth(null) != GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, 1).getWidth(null)) || (WorldDecorationHolder.getTexture(0, 0, 1).getHeight(null) != GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, 1).getHeight(null))) {
             useDecoration = false;
         }
 
         Line2D.Double dragLine = new Line2D.Double(-1, -1, xe, ye);
+        int xC = 0;
+        int yC = 0;
+
         for (int i = 0; i < iVillagesX; i++) {
             for (int j = 0; j < iVillagesY; j++) {
                 Village v = mVisibleVillages[i][j];
@@ -801,6 +805,10 @@ class RepaintThread extends Thread {
                             }
                         }
                     } else if (v.getPoints() < 11000) {
+                        if (xC == 0) {
+                            xC = x;
+                            yC = y;
+                        }
                         if (!isLeft) {
                             Image img = GlobalOptions.getSkin().getImage(Skin.ID_V5, dScaling);
                             if (v.getType() != 0) {
@@ -981,6 +989,11 @@ class RepaintThread extends Thread {
             }
         }
         //</editor-fold>
+
+        /*g2d.setColor(Color.GREEN);
+        Composite a = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.2f);
+        g2d.setComposite(a);
+        g2d.fillOval(xC, yC, width, height);*/
         g2d.dispose();
     }
 }

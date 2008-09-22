@@ -669,10 +669,10 @@ private void fireAttacksToClipboardEvent(java.awt.event.MouseEvent evt) {//GEN-F
     DefaultTableModel resultModel = (DefaultTableModel) jResultsTable.getModel();
     String data = "";
     for (int i = 0; i < resultModel.getRowCount(); i++) {
-        Village sVillage = (Village) resultModel.getValueAt(i, 1);
-        UnitHolder sUnit = (UnitHolder) resultModel.getValueAt(i, 2);
-        Village tVillage = (Village) resultModel.getValueAt(i, 3);
-        String time = (String) resultModel.getValueAt(i, 4);
+        Village sVillage = (Village) resultModel.getValueAt(i, 0);
+        UnitHolder sUnit = (UnitHolder) resultModel.getValueAt(i, 1);
+        Village tVillage = (Village) resultModel.getValueAt(i, 2);
+        String time = (String) resultModel.getValueAt(i, 3);
         data += "Angriff aus " + sVillage.toBBCode() + " mit " + sUnit + " auf " + tVillage.getTribe().toBBCode() + " in " + tVillage.toBBCode() + " um " + time + " an\n";
     }
     try {
@@ -690,10 +690,10 @@ private void fireUnformattedAttacksToClipboardEvent(java.awt.event.MouseEvent ev
     DefaultTableModel resultModel = (DefaultTableModel) jResultsTable.getModel();
     String data = "";
     for (int i = 0; i < resultModel.getRowCount(); i++) {
-        Village sVillage = (Village) resultModel.getValueAt(i, 1);
-        UnitHolder sUnit = (UnitHolder) resultModel.getValueAt(i, 2);
-        Village tVillage = (Village) resultModel.getValueAt(i, 3);
-        String time = (String) resultModel.getValueAt(i, 4);
+        Village sVillage = (Village) resultModel.getValueAt(i, 0);
+        UnitHolder sUnit = (UnitHolder) resultModel.getValueAt(i, 1);
+        Village tVillage = (Village) resultModel.getValueAt(i, 2);
+        String time = (String) resultModel.getValueAt(i, 3);
         data += sVillage + "\t" + sUnit + "\t" + tVillage.getTribe() + "\t" + tVillage + "\t" + time + "\n";
     }
     try {

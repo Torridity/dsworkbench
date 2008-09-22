@@ -43,7 +43,7 @@ public class ScreenshotPanel extends javax.swing.JPanel {
     public BufferedImage getResult(int pTransparency) {
         int width = mBuffer.getWidth() * iScaling;
         int height = mBuffer.getHeight() * iScaling;
-        BufferedImage b = new BufferedImage(width, height * iScaling, BufferedImage.TYPE_INT_RGB);
+        BufferedImage b = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 
         b.getGraphics().drawImage(mBuffer.getScaledInstance(width, height, BufferedImage.SCALE_DEFAULT), 0, 0, null);
         if (pTransparency < 10) {

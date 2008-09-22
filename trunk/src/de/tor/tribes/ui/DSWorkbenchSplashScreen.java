@@ -10,6 +10,8 @@ import de.tor.tribes.util.GlobalOptions;
 import javax.swing.JOptionPane;
 import org.apache.log4j.Logger;
 import de.tor.tribes.io.DataHolderListener;
+import java.awt.Font;
+import java.awt.Toolkit;
 import java.util.Timer;
 import java.util.TimerTask;
 import javax.swing.ImageIcon;
@@ -120,9 +122,15 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
        // Locale.setDefault(Locale.US);
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+          //  UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
         } catch (Exception e) {
         }
-
+/*String[] f = Toolkit.getDefaultToolkit().getFontList();
+for(String ff : f){
+    System.out.println(ff);
+}*/
+       // UIManager.put("Label.font", new Font("SansSerif",Font.PLAIN,5));
+//SwingUtilities.updateComponentTreeUI(splash);
         java.awt.EventQueue.invokeLater(new Runnable() {
 
             @Override

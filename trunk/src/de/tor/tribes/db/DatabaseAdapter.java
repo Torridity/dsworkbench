@@ -71,11 +71,8 @@ public class DatabaseAdapter {
             logger.warn("Not connecting, driver not available");
             return false;
         }
-        try {
-    
-            String p = SecurityAdapter.descryptString("U2FsdGVkX1+wXUCUKS9H1LGgDZ1Ihd/E", Constants.ENC);
-                    
-            DB_CONNECTION = DriverManager.getConnection("jdbc:mysql://www.torridity.de/dsworkbench?" + "user=dsworkbench&password=" + p);
+        try {                    
+            DB_CONNECTION = DriverManager.getConnection("jdbc:mysql://www.torridity.de/dsworkbench?" + "user=dsworkbench&password=DSwb'08");
             return true;
         } catch (SQLException se) {
             logger.error("Failed to establish database connection", se);

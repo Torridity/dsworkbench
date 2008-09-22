@@ -201,24 +201,21 @@ public class SearchFrame extends javax.swing.JFrame implements SearchListener {
 
         jLabel5.setText(bundle.getString("SearchFrame.jLabel5.text")); // NOI18N
 
+        jPanel1.setOpaque(false);
+
         buttonGroup1.add(jTribeStats);
         jTribeStats.setSelected(true);
         jTribeStats.setText(bundle.getString("SearchFrame.jTribeStats.text")); // NOI18N
-        jTribeStats.setOpaque(false);
 
         buttonGroup1.add(jAllyStats);
         jAllyStats.setText(bundle.getString("SearchFrame.jAllyStats.text")); // NOI18N
-        jAllyStats.setOpaque(false);
 
         jShowPoints.setSelected(true);
         jShowPoints.setText(bundle.getString("SearchFrame.jShowPoints.text")); // NOI18N
-        jShowPoints.setOpaque(false);
 
         jShowBashOff.setText(bundle.getString("SearchFrame.jShowBashOff.text")); // NOI18N
-        jShowBashOff.setOpaque(false);
 
         jShowBashDef.setText(bundle.getString("SearchFrame.jShowBashDef.text")); // NOI18N
-        jShowBashDef.setOpaque(false);
 
         jButton1.setText(bundle.getString("SearchFrame.jButton1.text")); // NOI18N
         jButton1.setToolTipText(bundle.getString("SearchFrame.jButton1.toolTipText")); // NOI18N
@@ -279,10 +276,10 @@ public class SearchFrame extends javax.swing.JFrame implements SearchListener {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPlayerSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jAllyList, 0, 330, Short.MAX_VALUE)
+                    .addComponent(jAllyList, 0, 387, Short.MAX_VALUE)
                     .addComponent(jTribesList, 0, 0, Short.MAX_VALUE)
-                    .addComponent(jSearchTerm, javax.swing.GroupLayout.DEFAULT_SIZE, 330, Short.MAX_VALUE)
-                    .addComponent(jVillageList, javax.swing.GroupLayout.Alignment.TRAILING, 0, 330, Short.MAX_VALUE)
+                    .addComponent(jSearchTerm, javax.swing.GroupLayout.DEFAULT_SIZE, 387, Short.MAX_VALUE)
+                    .addComponent(jVillageList, javax.swing.GroupLayout.Alignment.TRAILING, 0, 387, Short.MAX_VALUE)
                     .addGroup(jPlayerSearchLayout.createSequentialGroup()
                         .addComponent(jCenterInGameButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)

@@ -789,6 +789,10 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
         }
 
         GlobalOptions.saveProperties();
+        System.out.println(System.getProperties().get("proxySet"));
+        System.out.println(System.getProperties().get("proxyHost"));
+        System.out.println(System.getProperties().get("proxyPort"));
+        
         if (!updateServerList(false)) {
             //remote update failed and no local servers found
             String message = "Serverliste konnte nicht geladen werden.\n";

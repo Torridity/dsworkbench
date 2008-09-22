@@ -450,7 +450,7 @@ public class DataHolder {
             } else if ((userDataVersion == -666) || (dataVersion - userDataVersion > maxDiff) || !isDataAvailable()) {
                 //full download if no download made yet or diff too large
                 //load villages
-                logger.info("Downloading data from " + downloadURL);
+                logger.info("Local data is too old. Downloading full data from " + downloadURL);
                 initialize();
                 fireDataHolderEvents("Lade Dörferliste");
                 URL u = new URL(downloadURL + "/village.txt.gz");
@@ -520,8 +520,10 @@ public class DataHolder {
                     DatabaseAdapter.registerUserForServer(accountName, serverID);
                 }
             } else {
+                logger.info("Loading differential updates");
                 //normal update of all diffs
                 for (int i = userDataVersion + 1; i <= dataVersion; i++) {
+                    logger.debug("Loading part #" + i);
                     //download every diff between user version and server version
                     fireDataHolderEvents("Lade Update #" + i);
                     URL u = new URL(downloadURL + "/village" + i + ".txt.gz");
@@ -604,6 +606,7 @@ public class DataHolder {
                     r.close();
                 }
 
+                logger.debug("Loading conquered units");
                 //finally update the bash points
                 //load conquers off
                 //load conquers off
@@ -624,10 +627,12 @@ public class DataHolder {
                 }
             }
 
+            
             // <editor-fold defaultstate="collapsed" desc="Direct download from DS-Servers">
             //download unit information, but only once
             target = new File(serverDir + "/units.xml");
             if (!target.exists()) {
+                logger.debug("Loading unit config file from server");
                 fireDataHolderEvents("Lade Information über Einheiten");
                 file = new URL(sURL + "/interface.php?func=get_unit_info");
                 downloadDataFile(file, "units_tmp.xml");
@@ -638,6 +643,7 @@ public class DataHolder {
             //download building information, but only once
             target = new File(serverDir + "/buildings.xml");
             if (!target.exists()) {
+                logger.debug("Loading building config file from server");
                 fireDataHolderEvents("Lade Information über Gebäude");
                 file = new URL(sURL + "/interface.php?func=get_building_info");
                 downloadDataFile(file, "buildings_tmp.xml");

@@ -19,8 +19,8 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Component id="jVillageInfo" alignment="0" pref="785" max="32767" attributes="0"/>
-                      <Component id="jPlayerInfo" alignment="1" pref="785" max="32767" attributes="0"/>
                       <Component id="jAllyInfo" alignment="0" pref="785" max="32767" attributes="0"/>
+                      <Component id="jPlayerInfo" alignment="0" pref="785" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -58,9 +58,11 @@
         </Component>
         <Component class="javax.swing.JLabel" name="jPlayerInfo">
           <Properties>
+            <Property name="horizontalAlignment" type="int" value="2"/>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
               <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchMainFrame.jPlayerInfo.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
             </Property>
+            <Property name="horizontalTextPosition" type="int" value="2"/>
             <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
               <Dimension value="[54, 20]"/>
             </Property>
@@ -767,7 +769,6 @@
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
               <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchMainFrame.jDynFrameAlwaysOnTopSelection.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
             </Property>
-            <Property name="opaque" type="boolean" value="false"/>
           </Properties>
           <Events>
             <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="fireAlwaysInFrontChangeEvent"/>
@@ -1111,21 +1112,21 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Group type="102" attributes="0">
+          <Group type="102" alignment="1" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" attributes="0">
-                      <Component id="jPanel1" pref="531" max="32767" attributes="0"/>
+              <Group type="103" groupAlignment="1" attributes="0">
+                  <Component id="jInfoPanel" alignment="0" pref="827" max="32767" attributes="0"/>
+                  <Group type="102" alignment="1" attributes="0">
+                      <Component id="jPanel1" pref="535" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jMinimapPanel" alignment="0" min="-2" pref="286" max="-2" attributes="1"/>
-                          <Component id="jNavigationPanel" alignment="0" min="-2" max="-2" attributes="1"/>
-                          <Component id="jInformationPanel" alignment="0" min="-2" max="-2" attributes="1"/>
+                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                          <Component id="jInformationPanel" min="0" max="32767" attributes="1"/>
+                          <Component id="jNavigationPanel" alignment="0" max="32767" attributes="1"/>
+                          <Component id="jMinimapPanel" alignment="0" pref="286" max="32767" attributes="1"/>
                       </Group>
                   </Group>
-                  <Component id="jInfoPanel" alignment="0" pref="823" max="32767" attributes="0"/>
               </Group>
-              <EmptySpace max="-2" attributes="0"/>
+              <EmptySpace min="-2" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -1141,11 +1142,11 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jInformationPanel" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <Component id="jPanel1" pref="610" max="32767" attributes="1"/>
+                  <Component id="jPanel1" pref="616" max="32767" attributes="1"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="jInfoPanel" min="-2" pref="102" max="-2" attributes="0"/>
-              <EmptySpace min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -1223,7 +1224,7 @@
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="jZoomOutButton" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="jCenterCoordinateIngame" max="32767" attributes="1"/>
+                          <Component id="jCenterCoordinateIngame" pref="35" max="32767" attributes="1"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="jRefreshButton" min="-2" max="-2" attributes="1"/>
                       </Group>
@@ -1237,7 +1238,7 @@
                           <Component id="jCenterY" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
-                  <EmptySpace min="-2" pref="45" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="32" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -1282,7 +1283,7 @@
                           </Group>
                       </Group>
                   </Group>
-                  <EmptySpace pref="74" max="32767" attributes="0"/>
+                  <EmptySpace pref="65" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -1678,23 +1679,16 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" attributes="0">
+              <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="jCurrentTribeLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="jCurrentServerLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="jCurrentVillageListLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                  </Group>
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="1" attributes="0">
-                      <Component id="jCurrentPlayer" alignment="0" pref="171" max="32767" attributes="0"/>
-                      <Component id="jCurrentPlayerVillages" alignment="0" pref="171" max="32767" attributes="0"/>
-                      <Component id="jCurrentServer" alignment="1" pref="171" max="32767" attributes="0"/>
-                      <Group type="102" alignment="0" attributes="0">
+                      <Component id="jCurrentPlayer" alignment="0" pref="250" max="32767" attributes="0"/>
+                      <Group type="102" alignment="1" attributes="0">
                           <Component id="jCenterIngameButton" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="jOnlineLabel" min="-2" max="-2" attributes="0"/>
                       </Group>
+                      <Component id="jCurrentPlayerVillages" alignment="0" pref="250" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -1704,52 +1698,20 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="jCurrentTribeLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="jCurrentPlayer" alignment="3" min="-2" pref="14" max="-2" attributes="0"/>
-                  </Group>
+                  <Component id="jCurrentPlayer" min="-2" pref="20" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="1" attributes="0">
-                      <Component id="jCurrentServerLabel" min="-2" max="-2" attributes="0"/>
-                      <Component id="jCurrentServer" min="-2" pref="14" max="-2" attributes="0"/>
-                  </Group>
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="jCurrentVillageListLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="jCurrentPlayerVillages" alignment="3" min="-2" max="-2" attributes="0"/>
-                  </Group>
+                  <Component id="jCurrentPlayerVillages" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="jCenterIngameButton" min="-2" max="-2" attributes="0"/>
                       <Component id="jOnlineLabel" min="-2" max="-2" attributes="0"/>
+                      <Component id="jCenterIngameButton" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="57" max="32767" attributes="0"/>
+                  <EmptySpace pref="82" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
       </Layout>
       <SubComponents>
-        <Component class="javax.swing.JLabel" name="jCurrentTribeLabel">
-          <Properties>
-            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchMainFrame.jCurrentTribeLabel.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
-            </Property>
-          </Properties>
-        </Component>
-        <Component class="javax.swing.JLabel" name="jCurrentServerLabel">
-          <Properties>
-            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchMainFrame.jCurrentServerLabel.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
-            </Property>
-          </Properties>
-        </Component>
-        <Component class="javax.swing.JLabel" name="jCurrentVillageListLabel">
-          <Properties>
-            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchMainFrame.jCurrentVillageListLabel.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
-            </Property>
-          </Properties>
-        </Component>
         <Component class="javax.swing.JComboBox" name="jCurrentPlayerVillages">
           <Properties>
             <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
@@ -1775,8 +1737,6 @@
               <Dimension value="[155, 14]"/>
             </Property>
           </Properties>
-        </Component>
-        <Component class="javax.swing.JLabel" name="jCurrentServer">
         </Component>
         <Component class="javax.swing.JButton" name="jCenterIngameButton">
           <Properties>

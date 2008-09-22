@@ -1,0 +1,1925 @@
+2008-09-09 18:48:26,286 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:62) - Loading properties
+2008-09-09 18:48:26,292 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:102) - Loading existing properties file
+2008-09-09 18:48:26,305 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:64) - Loading cursors
+2008-09-09 18:48:26,856 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:66) - Loading unit icons
+2008-09-09 18:48:26,925 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:68) - Loading graphic pack
+2008-09-09 18:48:27,760 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:70) - Loading world.dat
+2008-09-09 18:48:29,706 [StartupTimer] DEBUG de.tor.tribes.ui.DSWorkbenchSettingsDialog (DSWorkbenchSettingsDialog.java:126) - Checking settings
+2008-09-09 18:48:29,761 [StartupTimer] INFO  de.tor.tribes.db.DatabaseAdapter (DatabaseAdapter.java:43) - Database driver loaded
+2008-09-09 18:48:30,677 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:174) - Calling 'loadData()' for server de26
+2008-09-09 18:48:30,677 [StartupTimer] ERROR de.tor.tribes.io.DataHolder (DataHolder.java:190) - Local data not available. Try to download data
+2008-09-09 18:48:30,701 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:388) - Using server dir './servers/de26'
+2008-09-09 18:48:32,116 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:441) - Downloading data from http://www.torridity.de/DSWorkbench/servers/de26/
+2008-09-09 18:48:38,253 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:221) - Reading conquered units
+2008-09-09 18:48:38,800 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:278) - Writing villages to ./servers/de26/serverdata.bin
+2008-09-09 18:48:41,728 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:289) - Writing tribes
+2008-09-09 18:48:42,046 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:297) - Writing allies
+2008-09-09 18:48:46,503 [AWT-EventQueue-0] INFO  de.tor.tribes.ui.MapPanel (MapPanel.java:82) - Creating MapPanel
+2008-09-09 18:48:46,517 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:175) - Loading markers
+2008-09-09 18:48:46,531 [StartupTimer] INFO  de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:84) - Marker file not found under './servers/de26/markers.xml'
+2008-09-09 18:48:46,531 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:177) - Loading attacks
+2008-09-09 18:48:46,531 [StartupTimer] INFO  de.tor.tribes.util.GlobalOptions (GlobalOptions.java:257) - No attacks available for selected server
+2008-09-09 18:48:46,531 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:179) - Loading tags
+2008-09-09 18:48:46,537 [StartupTimer] INFO  de.tor.tribes.util.tag.TagManager (TagManager.java:77) - No tags found under './servers/de26/tags.xml'
+2008-09-09 18:48:46,537 [StartupTimer] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:82) - Associating tags with villages
+2008-09-09 18:48:46,546 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:175) - Loading markers
+2008-09-09 18:48:46,546 [StartupTimer] INFO  de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:84) - Marker file not found under './servers/de26/markers.xml'
+2008-09-09 18:48:46,546 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:177) - Loading attacks
+2008-09-09 18:48:46,546 [StartupTimer] INFO  de.tor.tribes.util.GlobalOptions (GlobalOptions.java:257) - No attacks available for selected server
+2008-09-09 18:48:46,547 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:179) - Loading tags
+2008-09-09 18:48:46,547 [StartupTimer] INFO  de.tor.tribes.util.tag.TagManager (TagManager.java:77) - No tags found under './servers/de26/tags.xml'
+2008-09-09 18:48:46,547 [StartupTimer] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:82) - Associating tags with villages
+2008-09-09 18:48:47,943 [StartupTimer] INFO  de.tor.tribes.ui.DSWorkbenchMainFrame (DSWorkbenchMainFrame.java:227) - Initializing maps
+2008-09-09 18:48:48,494 [AWT-EventQueue-0] INFO  de.tor.tribes.ui.MapPanel (MapPanel.java:471) - Creating MapPaintThread
+2008-09-09 18:56:51,076 [Thread-4] INFO  de.tor.tribes.ui.DSWorkbenchMainFrame$1 (DSWorkbenchMainFrame.java:94) - Performing ShutdownHook
+2008-09-09 18:56:51,107 [Thread-4] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:102) - Writing tags to './servers/de26/tags.xml'
+2008-09-09 18:56:51,108 [Thread-4] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:125) - Tags successfully saved
+2008-09-09 18:56:51,108 [Thread-4] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:104) - Writing markers to './servers/de26/markers.xml'
+2008-09-09 18:56:51,108 [Thread-4] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:119) - Markers successfully saved
+2008-09-22 23:24:44,836 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:58) - Loading properties
+2008-09-22 23:24:44,914 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:98) - Loading existing properties file
+2008-09-22 23:24:44,919 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:60) - Loading cursors
+2008-09-22 23:24:45,814 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:62) - Loading unit icons
+2008-09-22 23:24:46,002 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:64) - Loading graphic pack
+2008-09-22 23:24:47,194 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:66) - Loading world.dat
+2008-09-22 23:24:50,098 [StartupTimer] DEBUG de.tor.tribes.ui.DSWorkbenchSettingsDialog (DSWorkbenchSettingsDialog.java:129) - Checking settings
+2008-09-22 23:24:50,194 [StartupTimer] INFO  de.tor.tribes.db.DatabaseAdapter (DatabaseAdapter.java:44) - Database driver loaded
+2008-09-22 23:24:57,606 [StartupTimer] ERROR de.tor.tribes.db.DatabaseAdapter (DatabaseAdapter.java:81) - Failed to establish database connection
+java.sql.SQLException: Access denied for user 'dsworkbench'@'HSI-KBW-078-042-098-204.hsi3.kabel-badenwuerttemberg.de' (using password: NO)
+	at com.mysql.jdbc.SQLError.createSQLException(SQLError.java:946)
+	at com.mysql.jdbc.MysqlIO.checkErrorPacket(MysqlIO.java:2934)
+	at com.mysql.jdbc.MysqlIO.checkErrorPacket(MysqlIO.java:870)
+	at com.mysql.jdbc.MysqlIO.secureAuth411(MysqlIO.java:3333)
+	at com.mysql.jdbc.MysqlIO.doHandshake(MysqlIO.java:1232)
+	at com.mysql.jdbc.Connection.createNewIO(Connection.java:2749)
+	at com.mysql.jdbc.Connection.<init>(Connection.java:1553)
+	at com.mysql.jdbc.NonRegisteringDriver.connect(NonRegisteringDriver.java:285)
+	at java.sql.DriverManager.getConnection(DriverManager.java:582)
+	at java.sql.DriverManager.getConnection(DriverManager.java:207)
+	at de.tor.tribes.db.DatabaseAdapter.openConnection(DatabaseAdapter.java:78)
+	at de.tor.tribes.db.DatabaseAdapter.getServerList(DatabaseAdapter.java:217)
+	at de.tor.tribes.io.ServerList.loadServerList(ServerList.java:31)
+	at de.tor.tribes.ui.DSWorkbenchSettingsDialog.updateServerList(DSWorkbenchSettingsDialog.java:1089)
+	at de.tor.tribes.ui.DSWorkbenchSettingsDialog.checkSettings(DSWorkbenchSettingsDialog.java:134)
+	at de.tor.tribes.ui.DSWorkbenchSplashScreen.hideSplash(DSWorkbenchSplashScreen.java:90)
+	at de.tor.tribes.ui.HideSplashTask.run(DSWorkbenchSplashScreen.java:170)
+	at java.util.TimerThread.mainLoop(Timer.java:512)
+	at java.util.TimerThread.run(Timer.java:462)
+2008-09-22 23:24:57,636 [StartupTimer] ERROR de.tor.tribes.ui.DSWorkbenchSettingsDialog (DSWorkbenchSettingsDialog.java:1093) - Failed to load server list
+java.lang.NullPointerException
+	at de.tor.tribes.io.ServerList.getServerIDs(ServerList.java:36)
+	at de.tor.tribes.ui.DSWorkbenchSettingsDialog.updateServerList(DSWorkbenchSettingsDialog.java:1090)
+	at de.tor.tribes.ui.DSWorkbenchSettingsDialog.checkSettings(DSWorkbenchSettingsDialog.java:134)
+	at de.tor.tribes.ui.DSWorkbenchSplashScreen.hideSplash(DSWorkbenchSplashScreen.java:90)
+	at de.tor.tribes.ui.HideSplashTask.run(DSWorkbenchSplashScreen.java:170)
+	at java.util.TimerThread.mainLoop(Timer.java:512)
+	at java.util.TimerThread.run(Timer.java:462)
+2008-09-22 23:25:02,249 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:174) - Calling 'loadData()' for server de26
+2008-09-22 23:25:03,117 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:328) - Reading villages
+2008-09-22 23:25:07,601 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:331) - Reading tribes
+2008-09-22 23:25:08,290 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:334) - Reading allies
+2008-09-22 23:25:08,419 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:373) - Read 210298 villages
+2008-09-22 23:25:08,699 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:374) - Read 2607 allies
+2008-09-22 23:25:08,701 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:375) - Read 31202 tribes
+2008-09-22 23:25:08,701 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:226) - Reading conquered units
+2008-09-22 23:25:09,275 [StartupTimer] DEBUG de.tor.tribes.io.DataHolder (DataHolder.java:726) - Loading units
+2008-09-22 23:25:21,064 [AWT-EventQueue-0] INFO  de.tor.tribes.ui.MapPanel (MapPanel.java:85) - Creating MapPanel
+2008-09-22 23:25:21,822 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:140) - Loading markers
+2008-09-22 23:25:21,822 [StartupTimer] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:67) - Reading markers from './servers/de26/markers.xml'
+2008-09-22 23:25:22,025 [StartupTimer] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:78) - Markers successfully loaded
+2008-09-22 23:25:22,025 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:142) - Loading attacks
+2008-09-22 23:25:22,237 [StartupTimer] INFO  de.tor.tribes.util.attack.AttackManager (AttackManager.java:97) - No attacks found under './servers/de26/attacks.xml'
+2008-09-22 23:25:22,237 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:144) - Loading tags
+2008-09-22 23:25:22,554 [StartupTimer] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:52) - Loading tags from './servers/de26/tags.xml'
+2008-09-22 23:25:22,625 [StartupTimer] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:71) - Tags loaded successfully
+2008-09-22 23:25:22,626 [StartupTimer] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:82) - Associating tags with villages
+2008-09-22 23:25:24,709 [StartupTimer] INFO  de.tor.tribes.ui.DSWorkbenchMainFrame (DSWorkbenchMainFrame.java:227) - Initializing maps
+2008-09-22 23:25:26,036 [AWT-EventQueue-0] INFO  de.tor.tribes.ui.MapPanel (MapPanel.java:473) - Creating MapPaintThread
+2008-09-22 23:25:54,885 [AWT-EventQueue-0] DEBUG de.tor.tribes.ui.DSWorkbenchSettingsDialog (DSWorkbenchSettingsDialog.java:890) - Setting default player for server 'de26' to Torridity
+2008-09-22 23:25:54,896 [AWT-EventQueue-0] DEBUG de.tor.tribes.ui.DSWorkbenchSettingsDialog (DSWorkbenchSettingsDialog.java:129) - Checking settings
+2008-09-22 23:25:55,149 [AWT-EventQueue-0] ERROR de.tor.tribes.db.DatabaseAdapter (DatabaseAdapter.java:81) - Failed to establish database connection
+java.sql.SQLException: Access denied for user 'dsworkbench'@'HSI-KBW-078-042-098-204.hsi3.kabel-badenwuerttemberg.de' (using password: NO)
+	at com.mysql.jdbc.SQLError.createSQLException(SQLError.java:946)
+	at com.mysql.jdbc.MysqlIO.checkErrorPacket(MysqlIO.java:2934)
+	at com.mysql.jdbc.MysqlIO.checkErrorPacket(MysqlIO.java:870)
+	at com.mysql.jdbc.MysqlIO.secureAuth411(MysqlIO.java:3333)
+	at com.mysql.jdbc.MysqlIO.doHandshake(MysqlIO.java:1232)
+	at com.mysql.jdbc.Connection.createNewIO(Connection.java:2749)
+	at com.mysql.jdbc.Connection.<init>(Connection.java:1553)
+	at com.mysql.jdbc.NonRegisteringDriver.connect(NonRegisteringDriver.java:285)
+	at java.sql.DriverManager.getConnection(DriverManager.java:582)
+	at java.sql.DriverManager.getConnection(DriverManager.java:207)
+	at de.tor.tribes.db.DatabaseAdapter.openConnection(DatabaseAdapter.java:78)
+	at de.tor.tribes.db.DatabaseAdapter.getServerList(DatabaseAdapter.java:217)
+	at de.tor.tribes.io.ServerList.loadServerList(ServerList.java:31)
+	at de.tor.tribes.ui.DSWorkbenchSettingsDialog.updateServerList(DSWorkbenchSettingsDialog.java:1089)
+	at de.tor.tribes.ui.DSWorkbenchSettingsDialog.checkSettings(DSWorkbenchSettingsDialog.java:134)
+	at de.tor.tribes.ui.DSWorkbenchSettingsDialog.fireOkEvent(DSWorkbenchSettingsDialog.java:895)
+	at de.tor.tribes.ui.DSWorkbenchSettingsDialog.access$1300(DSWorkbenchSettingsDialog.java:35)
+	at de.tor.tribes.ui.DSWorkbenchSettingsDialog$15.mouseClicked(DSWorkbenchSettingsDialog.java:722)
+	at java.awt.AWTEventMulticaster.mouseClicked(AWTEventMulticaster.java:253)
+	at java.awt.Component.processMouseEvent(Component.java:6044)
+	at javax.swing.JComponent.processMouseEvent(JComponent.java:3265)
+	at java.awt.Component.processEvent(Component.java:5806)
+	at java.awt.Container.processEvent(Container.java:2058)
+	at java.awt.Component.dispatchEventImpl(Component.java:4413)
+	at java.awt.Container.dispatchEventImpl(Container.java:2116)
+	at java.awt.Component.dispatchEvent(Component.java:4243)
+	at java.awt.LightweightDispatcher.retargetMouseEvent(Container.java:4322)
+	at java.awt.LightweightDispatcher.processMouseEvent(Container.java:3995)
+	at java.awt.LightweightDispatcher.dispatchEvent(Container.java:3916)
+	at java.awt.Container.dispatchEventImpl(Container.java:2102)
+	at java.awt.Window.dispatchEventImpl(Window.java:2440)
+	at java.awt.Component.dispatchEvent(Component.java:4243)
+	at java.awt.EventQueue.dispatchEvent(EventQueue.java:599)
+	at java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:273)
+	at java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:183)
+	at java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:177)
+	at java.awt.Dialog$1.run(Dialog.java:1045)
+	at java.awt.Dialog$3.run(Dialog.java:1097)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.awt.Dialog.show(Dialog.java:1095)
+	at java.awt.Component.show(Component.java:1422)
+	at java.awt.Component.setVisible(Component.java:1375)
+	at java.awt.Window.setVisible(Window.java:806)
+	at java.awt.Dialog.setVisible(Dialog.java:985)
+	at de.tor.tribes.ui.DSWorkbenchMainFrame.fireShowSettingsEvent(DSWorkbenchMainFrame.java:1633)
+	at de.tor.tribes.ui.DSWorkbenchMainFrame.access$1700(DSWorkbenchMainFrame.java:64)
+	at de.tor.tribes.ui.DSWorkbenchMainFrame$29.actionPerformed(DSWorkbenchMainFrame.java:1310)
+	at javax.swing.AbstractButton.fireActionPerformed(AbstractButton.java:1995)
+	at javax.swing.AbstractButton$Handler.actionPerformed(AbstractButton.java:2318)
+	at javax.swing.DefaultButtonModel.fireActionPerformed(DefaultButtonModel.java:387)
+	at javax.swing.DefaultButtonModel.setPressed(DefaultButtonModel.java:242)
+	at javax.swing.AbstractButton.doClick(AbstractButton.java:357)
+	at javax.swing.plaf.basic.BasicMenuItemUI.doClick(BasicMenuItemUI.java:1220)
+	at javax.swing.plaf.basic.BasicMenuItemUI$Handler.mouseReleased(BasicMenuItemUI.java:1261)
+	at java.awt.Component.processMouseEvent(Component.java:6041)
+	at javax.swing.JComponent.processMouseEvent(JComponent.java:3265)
+	at java.awt.Component.processEvent(Component.java:5806)
+	at java.awt.Container.processEvent(Container.java:2058)
+	at java.awt.Component.dispatchEventImpl(Component.java:4413)
+	at java.awt.Container.dispatchEventImpl(Container.java:2116)
+	at java.awt.Component.dispatchEvent(Component.java:4243)
+	at java.awt.LightweightDispatcher.retargetMouseEvent(Container.java:4322)
+	at java.awt.LightweightDispatcher.processMouseEvent(Container.java:3986)
+	at java.awt.LightweightDispatcher.dispatchEvent(Container.java:3916)
+	at java.awt.Container.dispatchEventImpl(Container.java:2102)
+	at java.awt.Window.dispatchEventImpl(Window.java:2440)
+	at java.awt.Component.dispatchEvent(Component.java:4243)
+	at java.awt.EventQueue.dispatchEvent(EventQueue.java:599)
+	at java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:273)
+	at java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:183)
+	at java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:173)
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:168)
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:160)
+	at java.awt.EventDispatchThread.run(EventDispatchThread.java:121)
+2008-09-22 23:25:55,151 [AWT-EventQueue-0] ERROR de.tor.tribes.ui.DSWorkbenchSettingsDialog (DSWorkbenchSettingsDialog.java:1093) - Failed to load server list
+java.lang.NullPointerException
+	at de.tor.tribes.io.ServerList.getServerIDs(ServerList.java:36)
+	at de.tor.tribes.ui.DSWorkbenchSettingsDialog.updateServerList(DSWorkbenchSettingsDialog.java:1090)
+	at de.tor.tribes.ui.DSWorkbenchSettingsDialog.checkSettings(DSWorkbenchSettingsDialog.java:134)
+	at de.tor.tribes.ui.DSWorkbenchSettingsDialog.fireOkEvent(DSWorkbenchSettingsDialog.java:895)
+	at de.tor.tribes.ui.DSWorkbenchSettingsDialog.access$1300(DSWorkbenchSettingsDialog.java:35)
+	at de.tor.tribes.ui.DSWorkbenchSettingsDialog$15.mouseClicked(DSWorkbenchSettingsDialog.java:722)
+	at java.awt.AWTEventMulticaster.mouseClicked(AWTEventMulticaster.java:253)
+	at java.awt.Component.processMouseEvent(Component.java:6044)
+	at javax.swing.JComponent.processMouseEvent(JComponent.java:3265)
+	at java.awt.Component.processEvent(Component.java:5806)
+	at java.awt.Container.processEvent(Container.java:2058)
+	at java.awt.Component.dispatchEventImpl(Component.java:4413)
+	at java.awt.Container.dispatchEventImpl(Container.java:2116)
+	at java.awt.Component.dispatchEvent(Component.java:4243)
+	at java.awt.LightweightDispatcher.retargetMouseEvent(Container.java:4322)
+	at java.awt.LightweightDispatcher.processMouseEvent(Container.java:3995)
+	at java.awt.LightweightDispatcher.dispatchEvent(Container.java:3916)
+	at java.awt.Container.dispatchEventImpl(Container.java:2102)
+	at java.awt.Window.dispatchEventImpl(Window.java:2440)
+	at java.awt.Component.dispatchEvent(Component.java:4243)
+	at java.awt.EventQueue.dispatchEvent(EventQueue.java:599)
+	at java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:273)
+	at java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:183)
+	at java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:177)
+	at java.awt.Dialog$1.run(Dialog.java:1045)
+	at java.awt.Dialog$3.run(Dialog.java:1097)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.awt.Dialog.show(Dialog.java:1095)
+	at java.awt.Component.show(Component.java:1422)
+	at java.awt.Component.setVisible(Component.java:1375)
+	at java.awt.Window.setVisible(Window.java:806)
+	at java.awt.Dialog.setVisible(Dialog.java:985)
+	at de.tor.tribes.ui.DSWorkbenchMainFrame.fireShowSettingsEvent(DSWorkbenchMainFrame.java:1633)
+	at de.tor.tribes.ui.DSWorkbenchMainFrame.access$1700(DSWorkbenchMainFrame.java:64)
+	at de.tor.tribes.ui.DSWorkbenchMainFrame$29.actionPerformed(DSWorkbenchMainFrame.java:1310)
+	at javax.swing.AbstractButton.fireActionPerformed(AbstractButton.java:1995)
+	at javax.swing.AbstractButton$Handler.actionPerformed(AbstractButton.java:2318)
+	at javax.swing.DefaultButtonModel.fireActionPerformed(DefaultButtonModel.java:387)
+	at javax.swing.DefaultButtonModel.setPressed(DefaultButtonModel.java:242)
+	at javax.swing.AbstractButton.doClick(AbstractButton.java:357)
+	at javax.swing.plaf.basic.BasicMenuItemUI.doClick(BasicMenuItemUI.java:1220)
+	at javax.swing.plaf.basic.BasicMenuItemUI$Handler.mouseReleased(BasicMenuItemUI.java:1261)
+	at java.awt.Component.processMouseEvent(Component.java:6041)
+	at javax.swing.JComponent.processMouseEvent(JComponent.java:3265)
+	at java.awt.Component.processEvent(Component.java:5806)
+	at java.awt.Container.processEvent(Container.java:2058)
+	at java.awt.Component.dispatchEventImpl(Component.java:4413)
+	at java.awt.Container.dispatchEventImpl(Container.java:2116)
+	at java.awt.Component.dispatchEvent(Component.java:4243)
+	at java.awt.LightweightDispatcher.retargetMouseEvent(Container.java:4322)
+	at java.awt.LightweightDispatcher.processMouseEvent(Container.java:3986)
+	at java.awt.LightweightDispatcher.dispatchEvent(Container.java:3916)
+	at java.awt.Container.dispatchEventImpl(Container.java:2102)
+	at java.awt.Window.dispatchEventImpl(Window.java:2440)
+	at java.awt.Component.dispatchEvent(Component.java:4243)
+	at java.awt.EventQueue.dispatchEvent(EventQueue.java:599)
+	at java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:273)
+	at java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:183)
+	at java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:173)
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:168)
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:160)
+	at java.awt.EventDispatchThread.run(EventDispatchThread.java:121)
+2008-09-22 23:26:03,789 [AWT-EventQueue-0] ERROR de.tor.tribes.db.DatabaseAdapter (DatabaseAdapter.java:81) - Failed to establish database connection
+java.sql.SQLException: Access denied for user 'dsworkbench'@'HSI-KBW-078-042-098-204.hsi3.kabel-badenwuerttemberg.de' (using password: NO)
+	at com.mysql.jdbc.SQLError.createSQLException(SQLError.java:946)
+	at com.mysql.jdbc.MysqlIO.checkErrorPacket(MysqlIO.java:2934)
+	at com.mysql.jdbc.MysqlIO.checkErrorPacket(MysqlIO.java:870)
+	at com.mysql.jdbc.MysqlIO.secureAuth411(MysqlIO.java:3333)
+	at com.mysql.jdbc.MysqlIO.doHandshake(MysqlIO.java:1232)
+	at com.mysql.jdbc.Connection.createNewIO(Connection.java:2749)
+	at com.mysql.jdbc.Connection.<init>(Connection.java:1553)
+	at com.mysql.jdbc.NonRegisteringDriver.connect(NonRegisteringDriver.java:285)
+	at java.sql.DriverManager.getConnection(DriverManager.java:582)
+	at java.sql.DriverManager.getConnection(DriverManager.java:207)
+	at de.tor.tribes.db.DatabaseAdapter.openConnection(DatabaseAdapter.java:78)
+	at de.tor.tribes.db.DatabaseAdapter.getServerList(DatabaseAdapter.java:217)
+	at de.tor.tribes.io.ServerList.loadServerList(ServerList.java:31)
+	at de.tor.tribes.ui.DSWorkbenchSettingsDialog.updateServerList(DSWorkbenchSettingsDialog.java:1089)
+	at de.tor.tribes.ui.DSWorkbenchSettingsDialog.fireUpdateProxySettingsEvent(DSWorkbenchSettingsDialog.java:792)
+	at de.tor.tribes.ui.DSWorkbenchSettingsDialog.access$1200(DSWorkbenchSettingsDialog.java:35)
+	at de.tor.tribes.ui.DSWorkbenchSettingsDialog$14.mouseClicked(DSWorkbenchSettingsDialog.java:672)
+	at java.awt.AWTEventMulticaster.mouseClicked(AWTEventMulticaster.java:253)
+	at java.awt.Component.processMouseEvent(Component.java:6044)
+	at javax.swing.JComponent.processMouseEvent(JComponent.java:3265)
+	at java.awt.Component.processEvent(Component.java:5806)
+	at java.awt.Container.processEvent(Container.java:2058)
+	at java.awt.Component.dispatchEventImpl(Component.java:4413)
+	at java.awt.Container.dispatchEventImpl(Container.java:2116)
+	at java.awt.Component.dispatchEvent(Component.java:4243)
+	at java.awt.LightweightDispatcher.retargetMouseEvent(Container.java:4322)
+	at java.awt.LightweightDispatcher.processMouseEvent(Container.java:3995)
+	at java.awt.LightweightDispatcher.dispatchEvent(Container.java:3916)
+	at java.awt.Container.dispatchEventImpl(Container.java:2102)
+	at java.awt.Window.dispatchEventImpl(Window.java:2440)
+	at java.awt.Component.dispatchEvent(Component.java:4243)
+	at java.awt.EventQueue.dispatchEvent(EventQueue.java:599)
+	at java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:273)
+	at java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:183)
+	at java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:177)
+	at java.awt.Dialog$1.run(Dialog.java:1045)
+	at java.awt.Dialog$3.run(Dialog.java:1097)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.awt.Dialog.show(Dialog.java:1095)
+	at java.awt.Component.show(Component.java:1422)
+	at java.awt.Component.setVisible(Component.java:1375)
+	at java.awt.Window.setVisible(Window.java:806)
+	at java.awt.Dialog.setVisible(Dialog.java:985)
+	at de.tor.tribes.ui.DSWorkbenchMainFrame.fireShowSettingsEvent(DSWorkbenchMainFrame.java:1633)
+	at de.tor.tribes.ui.DSWorkbenchMainFrame.access$1700(DSWorkbenchMainFrame.java:64)
+	at de.tor.tribes.ui.DSWorkbenchMainFrame$29.actionPerformed(DSWorkbenchMainFrame.java:1310)
+	at javax.swing.AbstractButton.fireActionPerformed(AbstractButton.java:1995)
+	at javax.swing.AbstractButton$Handler.actionPerformed(AbstractButton.java:2318)
+	at javax.swing.DefaultButtonModel.fireActionPerformed(DefaultButtonModel.java:387)
+	at javax.swing.DefaultButtonModel.setPressed(DefaultButtonModel.java:242)
+	at javax.swing.AbstractButton.doClick(AbstractButton.java:357)
+	at javax.swing.plaf.basic.BasicMenuItemUI.doClick(BasicMenuItemUI.java:1220)
+	at javax.swing.plaf.basic.BasicMenuItemUI$Handler.mouseReleased(BasicMenuItemUI.java:1261)
+	at java.awt.Component.processMouseEvent(Component.java:6041)
+	at javax.swing.JComponent.processMouseEvent(JComponent.java:3265)
+	at java.awt.Component.processEvent(Component.java:5806)
+	at java.awt.Container.processEvent(Container.java:2058)
+	at java.awt.Component.dispatchEventImpl(Component.java:4413)
+	at java.awt.Container.dispatchEventImpl(Container.java:2116)
+	at java.awt.Component.dispatchEvent(Component.java:4243)
+	at java.awt.LightweightDispatcher.retargetMouseEvent(Container.java:4322)
+	at java.awt.LightweightDispatcher.processMouseEvent(Container.java:3986)
+	at java.awt.LightweightDispatcher.dispatchEvent(Container.java:3916)
+	at java.awt.Container.dispatchEventImpl(Container.java:2102)
+	at java.awt.Window.dispatchEventImpl(Window.java:2440)
+	at java.awt.Component.dispatchEvent(Component.java:4243)
+	at java.awt.EventQueue.dispatchEvent(EventQueue.java:599)
+	at java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:273)
+	at java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:183)
+	at java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:173)
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:168)
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:160)
+	at java.awt.EventDispatchThread.run(EventDispatchThread.java:121)
+2008-09-22 23:26:03,790 [AWT-EventQueue-0] ERROR de.tor.tribes.ui.DSWorkbenchSettingsDialog (DSWorkbenchSettingsDialog.java:1093) - Failed to load server list
+java.lang.NullPointerException
+	at de.tor.tribes.io.ServerList.getServerIDs(ServerList.java:36)
+	at de.tor.tribes.ui.DSWorkbenchSettingsDialog.updateServerList(DSWorkbenchSettingsDialog.java:1090)
+	at de.tor.tribes.ui.DSWorkbenchSettingsDialog.fireUpdateProxySettingsEvent(DSWorkbenchSettingsDialog.java:792)
+	at de.tor.tribes.ui.DSWorkbenchSettingsDialog.access$1200(DSWorkbenchSettingsDialog.java:35)
+	at de.tor.tribes.ui.DSWorkbenchSettingsDialog$14.mouseClicked(DSWorkbenchSettingsDialog.java:672)
+	at java.awt.AWTEventMulticaster.mouseClicked(AWTEventMulticaster.java:253)
+	at java.awt.Component.processMouseEvent(Component.java:6044)
+	at javax.swing.JComponent.processMouseEvent(JComponent.java:3265)
+	at java.awt.Component.processEvent(Component.java:5806)
+	at java.awt.Container.processEvent(Container.java:2058)
+	at java.awt.Component.dispatchEventImpl(Component.java:4413)
+	at java.awt.Container.dispatchEventImpl(Container.java:2116)
+	at java.awt.Component.dispatchEvent(Component.java:4243)
+	at java.awt.LightweightDispatcher.retargetMouseEvent(Container.java:4322)
+	at java.awt.LightweightDispatcher.processMouseEvent(Container.java:3995)
+	at java.awt.LightweightDispatcher.dispatchEvent(Container.java:3916)
+	at java.awt.Container.dispatchEventImpl(Container.java:2102)
+	at java.awt.Window.dispatchEventImpl(Window.java:2440)
+	at java.awt.Component.dispatchEvent(Component.java:4243)
+	at java.awt.EventQueue.dispatchEvent(EventQueue.java:599)
+	at java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:273)
+	at java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:183)
+	at java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:177)
+	at java.awt.Dialog$1.run(Dialog.java:1045)
+	at java.awt.Dialog$3.run(Dialog.java:1097)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.awt.Dialog.show(Dialog.java:1095)
+	at java.awt.Component.show(Component.java:1422)
+	at java.awt.Component.setVisible(Component.java:1375)
+	at java.awt.Window.setVisible(Window.java:806)
+	at java.awt.Dialog.setVisible(Dialog.java:985)
+	at de.tor.tribes.ui.DSWorkbenchMainFrame.fireShowSettingsEvent(DSWorkbenchMainFrame.java:1633)
+	at de.tor.tribes.ui.DSWorkbenchMainFrame.access$1700(DSWorkbenchMainFrame.java:64)
+	at de.tor.tribes.ui.DSWorkbenchMainFrame$29.actionPerformed(DSWorkbenchMainFrame.java:1310)
+	at javax.swing.AbstractButton.fireActionPerformed(AbstractButton.java:1995)
+	at javax.swing.AbstractButton$Handler.actionPerformed(AbstractButton.java:2318)
+	at javax.swing.DefaultButtonModel.fireActionPerformed(DefaultButtonModel.java:387)
+	at javax.swing.DefaultButtonModel.setPressed(DefaultButtonModel.java:242)
+	at javax.swing.AbstractButton.doClick(AbstractButton.java:357)
+	at javax.swing.plaf.basic.BasicMenuItemUI.doClick(BasicMenuItemUI.java:1220)
+	at javax.swing.plaf.basic.BasicMenuItemUI$Handler.mouseReleased(BasicMenuItemUI.java:1261)
+	at java.awt.Component.processMouseEvent(Component.java:6041)
+	at javax.swing.JComponent.processMouseEvent(JComponent.java:3265)
+	at java.awt.Component.processEvent(Component.java:5806)
+	at java.awt.Container.processEvent(Container.java:2058)
+	at java.awt.Component.dispatchEventImpl(Component.java:4413)
+	at java.awt.Container.dispatchEventImpl(Container.java:2116)
+	at java.awt.Component.dispatchEvent(Component.java:4243)
+	at java.awt.LightweightDispatcher.retargetMouseEvent(Container.java:4322)
+	at java.awt.LightweightDispatcher.processMouseEvent(Container.java:3986)
+	at java.awt.LightweightDispatcher.dispatchEvent(Container.java:3916)
+	at java.awt.Container.dispatchEventImpl(Container.java:2102)
+	at java.awt.Window.dispatchEventImpl(Window.java:2440)
+	at java.awt.Component.dispatchEvent(Component.java:4243)
+	at java.awt.EventQueue.dispatchEvent(EventQueue.java:599)
+	at java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:273)
+	at java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:183)
+	at java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:173)
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:168)
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:160)
+	at java.awt.EventDispatchThread.run(EventDispatchThread.java:121)
+2008-09-22 23:26:07,921 [AWT-EventQueue-0] ERROR de.tor.tribes.db.DatabaseAdapter (DatabaseAdapter.java:81) - Failed to establish database connection
+java.sql.SQLException: Access denied for user 'dsworkbench'@'HSI-KBW-078-042-098-204.hsi3.kabel-badenwuerttemberg.de' (using password: NO)
+	at com.mysql.jdbc.SQLError.createSQLException(SQLError.java:946)
+	at com.mysql.jdbc.MysqlIO.checkErrorPacket(MysqlIO.java:2934)
+	at com.mysql.jdbc.MysqlIO.checkErrorPacket(MysqlIO.java:870)
+	at com.mysql.jdbc.MysqlIO.secureAuth411(MysqlIO.java:3333)
+	at com.mysql.jdbc.MysqlIO.doHandshake(MysqlIO.java:1232)
+	at com.mysql.jdbc.Connection.createNewIO(Connection.java:2749)
+	at com.mysql.jdbc.Connection.<init>(Connection.java:1553)
+	at com.mysql.jdbc.NonRegisteringDriver.connect(NonRegisteringDriver.java:285)
+	at java.sql.DriverManager.getConnection(DriverManager.java:582)
+	at java.sql.DriverManager.getConnection(DriverManager.java:207)
+	at de.tor.tribes.db.DatabaseAdapter.openConnection(DatabaseAdapter.java:78)
+	at de.tor.tribes.db.DatabaseAdapter.getServerList(DatabaseAdapter.java:217)
+	at de.tor.tribes.io.ServerList.loadServerList(ServerList.java:31)
+	at de.tor.tribes.ui.DSWorkbenchSettingsDialog.updateServerList(DSWorkbenchSettingsDialog.java:1089)
+	at de.tor.tribes.ui.DSWorkbenchSettingsDialog.fireUpdateProxySettingsEvent(DSWorkbenchSettingsDialog.java:792)
+	at de.tor.tribes.ui.DSWorkbenchSettingsDialog.access$1200(DSWorkbenchSettingsDialog.java:35)
+	at de.tor.tribes.ui.DSWorkbenchSettingsDialog$14.mouseClicked(DSWorkbenchSettingsDialog.java:672)
+	at java.awt.AWTEventMulticaster.mouseClicked(AWTEventMulticaster.java:253)
+	at java.awt.Component.processMouseEvent(Component.java:6044)
+	at javax.swing.JComponent.processMouseEvent(JComponent.java:3265)
+	at java.awt.Component.processEvent(Component.java:5806)
+	at java.awt.Container.processEvent(Container.java:2058)
+	at java.awt.Component.dispatchEventImpl(Component.java:4413)
+	at java.awt.Container.dispatchEventImpl(Container.java:2116)
+	at java.awt.Component.dispatchEvent(Component.java:4243)
+	at java.awt.LightweightDispatcher.retargetMouseEvent(Container.java:4322)
+	at java.awt.LightweightDispatcher.processMouseEvent(Container.java:3995)
+	at java.awt.LightweightDispatcher.dispatchEvent(Container.java:3916)
+	at java.awt.Container.dispatchEventImpl(Container.java:2102)
+	at java.awt.Window.dispatchEventImpl(Window.java:2440)
+	at java.awt.Component.dispatchEvent(Component.java:4243)
+	at java.awt.EventQueue.dispatchEvent(EventQueue.java:599)
+	at java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:273)
+	at java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:183)
+	at java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:177)
+	at java.awt.Dialog$1.run(Dialog.java:1045)
+	at java.awt.Dialog$3.run(Dialog.java:1097)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.awt.Dialog.show(Dialog.java:1095)
+	at java.awt.Component.show(Component.java:1422)
+	at java.awt.Component.setVisible(Component.java:1375)
+	at java.awt.Window.setVisible(Window.java:806)
+	at java.awt.Dialog.setVisible(Dialog.java:985)
+	at de.tor.tribes.ui.DSWorkbenchMainFrame.fireShowSettingsEvent(DSWorkbenchMainFrame.java:1633)
+	at de.tor.tribes.ui.DSWorkbenchMainFrame.access$1700(DSWorkbenchMainFrame.java:64)
+	at de.tor.tribes.ui.DSWorkbenchMainFrame$29.actionPerformed(DSWorkbenchMainFrame.java:1310)
+	at javax.swing.AbstractButton.fireActionPerformed(AbstractButton.java:1995)
+	at javax.swing.AbstractButton$Handler.actionPerformed(AbstractButton.java:2318)
+	at javax.swing.DefaultButtonModel.fireActionPerformed(DefaultButtonModel.java:387)
+	at javax.swing.DefaultButtonModel.setPressed(DefaultButtonModel.java:242)
+	at javax.swing.AbstractButton.doClick(AbstractButton.java:357)
+	at javax.swing.plaf.basic.BasicMenuItemUI.doClick(BasicMenuItemUI.java:1220)
+	at javax.swing.plaf.basic.BasicMenuItemUI$Handler.mouseReleased(BasicMenuItemUI.java:1261)
+	at java.awt.Component.processMouseEvent(Component.java:6041)
+	at javax.swing.JComponent.processMouseEvent(JComponent.java:3265)
+	at java.awt.Component.processEvent(Component.java:5806)
+	at java.awt.Container.processEvent(Container.java:2058)
+	at java.awt.Component.dispatchEventImpl(Component.java:4413)
+	at java.awt.Container.dispatchEventImpl(Container.java:2116)
+	at java.awt.Component.dispatchEvent(Component.java:4243)
+	at java.awt.LightweightDispatcher.retargetMouseEvent(Container.java:4322)
+	at java.awt.LightweightDispatcher.processMouseEvent(Container.java:3986)
+	at java.awt.LightweightDispatcher.dispatchEvent(Container.java:3916)
+	at java.awt.Container.dispatchEventImpl(Container.java:2102)
+	at java.awt.Window.dispatchEventImpl(Window.java:2440)
+	at java.awt.Component.dispatchEvent(Component.java:4243)
+	at java.awt.EventQueue.dispatchEvent(EventQueue.java:599)
+	at java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:273)
+	at java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:183)
+	at java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:173)
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:168)
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:160)
+	at java.awt.EventDispatchThread.run(EventDispatchThread.java:121)
+2008-09-22 23:26:07,923 [AWT-EventQueue-0] ERROR de.tor.tribes.ui.DSWorkbenchSettingsDialog (DSWorkbenchSettingsDialog.java:1093) - Failed to load server list
+java.lang.NullPointerException
+	at de.tor.tribes.io.ServerList.getServerIDs(ServerList.java:36)
+	at de.tor.tribes.ui.DSWorkbenchSettingsDialog.updateServerList(DSWorkbenchSettingsDialog.java:1090)
+	at de.tor.tribes.ui.DSWorkbenchSettingsDialog.fireUpdateProxySettingsEvent(DSWorkbenchSettingsDialog.java:792)
+	at de.tor.tribes.ui.DSWorkbenchSettingsDialog.access$1200(DSWorkbenchSettingsDialog.java:35)
+	at de.tor.tribes.ui.DSWorkbenchSettingsDialog$14.mouseClicked(DSWorkbenchSettingsDialog.java:672)
+	at java.awt.AWTEventMulticaster.mouseClicked(AWTEventMulticaster.java:253)
+	at java.awt.Component.processMouseEvent(Component.java:6044)
+	at javax.swing.JComponent.processMouseEvent(JComponent.java:3265)
+	at java.awt.Component.processEvent(Component.java:5806)
+	at java.awt.Container.processEvent(Container.java:2058)
+	at java.awt.Component.dispatchEventImpl(Component.java:4413)
+	at java.awt.Container.dispatchEventImpl(Container.java:2116)
+	at java.awt.Component.dispatchEvent(Component.java:4243)
+	at java.awt.LightweightDispatcher.retargetMouseEvent(Container.java:4322)
+	at java.awt.LightweightDispatcher.processMouseEvent(Container.java:3995)
+	at java.awt.LightweightDispatcher.dispatchEvent(Container.java:3916)
+	at java.awt.Container.dispatchEventImpl(Container.java:2102)
+	at java.awt.Window.dispatchEventImpl(Window.java:2440)
+	at java.awt.Component.dispatchEvent(Component.java:4243)
+	at java.awt.EventQueue.dispatchEvent(EventQueue.java:599)
+	at java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:273)
+	at java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:183)
+	at java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:177)
+	at java.awt.Dialog$1.run(Dialog.java:1045)
+	at java.awt.Dialog$3.run(Dialog.java:1097)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.awt.Dialog.show(Dialog.java:1095)
+	at java.awt.Component.show(Component.java:1422)
+	at java.awt.Component.setVisible(Component.java:1375)
+	at java.awt.Window.setVisible(Window.java:806)
+	at java.awt.Dialog.setVisible(Dialog.java:985)
+	at de.tor.tribes.ui.DSWorkbenchMainFrame.fireShowSettingsEvent(DSWorkbenchMainFrame.java:1633)
+	at de.tor.tribes.ui.DSWorkbenchMainFrame.access$1700(DSWorkbenchMainFrame.java:64)
+	at de.tor.tribes.ui.DSWorkbenchMainFrame$29.actionPerformed(DSWorkbenchMainFrame.java:1310)
+	at javax.swing.AbstractButton.fireActionPerformed(AbstractButton.java:1995)
+	at javax.swing.AbstractButton$Handler.actionPerformed(AbstractButton.java:2318)
+	at javax.swing.DefaultButtonModel.fireActionPerformed(DefaultButtonModel.java:387)
+	at javax.swing.DefaultButtonModel.setPressed(DefaultButtonModel.java:242)
+	at javax.swing.AbstractButton.doClick(AbstractButton.java:357)
+	at javax.swing.plaf.basic.BasicMenuItemUI.doClick(BasicMenuItemUI.java:1220)
+	at javax.swing.plaf.basic.BasicMenuItemUI$Handler.mouseReleased(BasicMenuItemUI.java:1261)
+	at java.awt.Component.processMouseEvent(Component.java:6041)
+	at javax.swing.JComponent.processMouseEvent(JComponent.java:3265)
+	at java.awt.Component.processEvent(Component.java:5806)
+	at java.awt.Container.processEvent(Container.java:2058)
+	at java.awt.Component.dispatchEventImpl(Component.java:4413)
+	at java.awt.Container.dispatchEventImpl(Container.java:2116)
+	at java.awt.Component.dispatchEvent(Component.java:4243)
+	at java.awt.LightweightDispatcher.retargetMouseEvent(Container.java:4322)
+	at java.awt.LightweightDispatcher.processMouseEvent(Container.java:3986)
+	at java.awt.LightweightDispatcher.dispatchEvent(Container.java:3916)
+	at java.awt.Container.dispatchEventImpl(Container.java:2102)
+	at java.awt.Window.dispatchEventImpl(Window.java:2440)
+	at java.awt.Component.dispatchEvent(Component.java:4243)
+	at java.awt.EventQueue.dispatchEvent(EventQueue.java:599)
+	at java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:273)
+	at java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:183)
+	at java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:173)
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:168)
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:160)
+	at java.awt.EventDispatchThread.run(EventDispatchThread.java:121)
+2008-09-22 23:26:12,992 [AWT-EventQueue-0] DEBUG de.tor.tribes.ui.DSWorkbenchSettingsDialog (DSWorkbenchSettingsDialog.java:890) - Setting default player for server 'de26' to Torridity
+2008-09-22 23:26:12,994 [AWT-EventQueue-0] DEBUG de.tor.tribes.ui.DSWorkbenchSettingsDialog (DSWorkbenchSettingsDialog.java:129) - Checking settings
+2008-09-22 23:26:13,156 [AWT-EventQueue-0] ERROR de.tor.tribes.db.DatabaseAdapter (DatabaseAdapter.java:81) - Failed to establish database connection
+java.sql.SQLException: Access denied for user 'dsworkbench'@'HSI-KBW-078-042-098-204.hsi3.kabel-badenwuerttemberg.de' (using password: NO)
+	at com.mysql.jdbc.SQLError.createSQLException(SQLError.java:946)
+	at com.mysql.jdbc.MysqlIO.checkErrorPacket(MysqlIO.java:2934)
+	at com.mysql.jdbc.MysqlIO.checkErrorPacket(MysqlIO.java:870)
+	at com.mysql.jdbc.MysqlIO.secureAuth411(MysqlIO.java:3333)
+	at com.mysql.jdbc.MysqlIO.doHandshake(MysqlIO.java:1232)
+	at com.mysql.jdbc.Connection.createNewIO(Connection.java:2749)
+	at com.mysql.jdbc.Connection.<init>(Connection.java:1553)
+	at com.mysql.jdbc.NonRegisteringDriver.connect(NonRegisteringDriver.java:285)
+	at java.sql.DriverManager.getConnection(DriverManager.java:582)
+	at java.sql.DriverManager.getConnection(DriverManager.java:207)
+	at de.tor.tribes.db.DatabaseAdapter.openConnection(DatabaseAdapter.java:78)
+	at de.tor.tribes.db.DatabaseAdapter.getServerList(DatabaseAdapter.java:217)
+	at de.tor.tribes.io.ServerList.loadServerList(ServerList.java:31)
+	at de.tor.tribes.ui.DSWorkbenchSettingsDialog.updateServerList(DSWorkbenchSettingsDialog.java:1089)
+	at de.tor.tribes.ui.DSWorkbenchSettingsDialog.checkSettings(DSWorkbenchSettingsDialog.java:134)
+	at de.tor.tribes.ui.DSWorkbenchSettingsDialog.fireOkEvent(DSWorkbenchSettingsDialog.java:895)
+	at de.tor.tribes.ui.DSWorkbenchSettingsDialog.access$1300(DSWorkbenchSettingsDialog.java:35)
+	at de.tor.tribes.ui.DSWorkbenchSettingsDialog$15.mouseClicked(DSWorkbenchSettingsDialog.java:722)
+	at java.awt.AWTEventMulticaster.mouseClicked(AWTEventMulticaster.java:253)
+	at java.awt.Component.processMouseEvent(Component.java:6044)
+	at javax.swing.JComponent.processMouseEvent(JComponent.java:3265)
+	at java.awt.Component.processEvent(Component.java:5806)
+	at java.awt.Container.processEvent(Container.java:2058)
+	at java.awt.Component.dispatchEventImpl(Component.java:4413)
+	at java.awt.Container.dispatchEventImpl(Container.java:2116)
+	at java.awt.Component.dispatchEvent(Component.java:4243)
+	at java.awt.LightweightDispatcher.retargetMouseEvent(Container.java:4322)
+	at java.awt.LightweightDispatcher.processMouseEvent(Container.java:3995)
+	at java.awt.LightweightDispatcher.dispatchEvent(Container.java:3916)
+	at java.awt.Container.dispatchEventImpl(Container.java:2102)
+	at java.awt.Window.dispatchEventImpl(Window.java:2440)
+	at java.awt.Component.dispatchEvent(Component.java:4243)
+	at java.awt.EventQueue.dispatchEvent(EventQueue.java:599)
+	at java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:273)
+	at java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:183)
+	at java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:177)
+	at java.awt.Dialog$1.run(Dialog.java:1045)
+	at java.awt.Dialog$3.run(Dialog.java:1097)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.awt.Dialog.show(Dialog.java:1095)
+	at java.awt.Component.show(Component.java:1422)
+	at java.awt.Component.setVisible(Component.java:1375)
+	at java.awt.Window.setVisible(Window.java:806)
+	at java.awt.Dialog.setVisible(Dialog.java:985)
+	at de.tor.tribes.ui.DSWorkbenchMainFrame.fireShowSettingsEvent(DSWorkbenchMainFrame.java:1633)
+	at de.tor.tribes.ui.DSWorkbenchMainFrame.access$1700(DSWorkbenchMainFrame.java:64)
+	at de.tor.tribes.ui.DSWorkbenchMainFrame$29.actionPerformed(DSWorkbenchMainFrame.java:1310)
+	at javax.swing.AbstractButton.fireActionPerformed(AbstractButton.java:1995)
+	at javax.swing.AbstractButton$Handler.actionPerformed(AbstractButton.java:2318)
+	at javax.swing.DefaultButtonModel.fireActionPerformed(DefaultButtonModel.java:387)
+	at javax.swing.DefaultButtonModel.setPressed(DefaultButtonModel.java:242)
+	at javax.swing.AbstractButton.doClick(AbstractButton.java:357)
+	at javax.swing.plaf.basic.BasicMenuItemUI.doClick(BasicMenuItemUI.java:1220)
+	at javax.swing.plaf.basic.BasicMenuItemUI$Handler.mouseReleased(BasicMenuItemUI.java:1261)
+	at java.awt.Component.processMouseEvent(Component.java:6041)
+	at javax.swing.JComponent.processMouseEvent(JComponent.java:3265)
+	at java.awt.Component.processEvent(Component.java:5806)
+	at java.awt.Container.processEvent(Container.java:2058)
+	at java.awt.Component.dispatchEventImpl(Component.java:4413)
+	at java.awt.Container.dispatchEventImpl(Container.java:2116)
+	at java.awt.Component.dispatchEvent(Component.java:4243)
+	at java.awt.LightweightDispatcher.retargetMouseEvent(Container.java:4322)
+	at java.awt.LightweightDispatcher.processMouseEvent(Container.java:3986)
+	at java.awt.LightweightDispatcher.dispatchEvent(Container.java:3916)
+	at java.awt.Container.dispatchEventImpl(Container.java:2102)
+	at java.awt.Window.dispatchEventImpl(Window.java:2440)
+	at java.awt.Component.dispatchEvent(Component.java:4243)
+	at java.awt.EventQueue.dispatchEvent(EventQueue.java:599)
+	at java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:273)
+	at java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:183)
+	at java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:173)
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:168)
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:160)
+	at java.awt.EventDispatchThread.run(EventDispatchThread.java:121)
+2008-09-22 23:26:13,158 [AWT-EventQueue-0] ERROR de.tor.tribes.ui.DSWorkbenchSettingsDialog (DSWorkbenchSettingsDialog.java:1093) - Failed to load server list
+java.lang.NullPointerException
+	at de.tor.tribes.io.ServerList.getServerIDs(ServerList.java:36)
+	at de.tor.tribes.ui.DSWorkbenchSettingsDialog.updateServerList(DSWorkbenchSettingsDialog.java:1090)
+	at de.tor.tribes.ui.DSWorkbenchSettingsDialog.checkSettings(DSWorkbenchSettingsDialog.java:134)
+	at de.tor.tribes.ui.DSWorkbenchSettingsDialog.fireOkEvent(DSWorkbenchSettingsDialog.java:895)
+	at de.tor.tribes.ui.DSWorkbenchSettingsDialog.access$1300(DSWorkbenchSettingsDialog.java:35)
+	at de.tor.tribes.ui.DSWorkbenchSettingsDialog$15.mouseClicked(DSWorkbenchSettingsDialog.java:722)
+	at java.awt.AWTEventMulticaster.mouseClicked(AWTEventMulticaster.java:253)
+	at java.awt.Component.processMouseEvent(Component.java:6044)
+	at javax.swing.JComponent.processMouseEvent(JComponent.java:3265)
+	at java.awt.Component.processEvent(Component.java:5806)
+	at java.awt.Container.processEvent(Container.java:2058)
+	at java.awt.Component.dispatchEventImpl(Component.java:4413)
+	at java.awt.Container.dispatchEventImpl(Container.java:2116)
+	at java.awt.Component.dispatchEvent(Component.java:4243)
+	at java.awt.LightweightDispatcher.retargetMouseEvent(Container.java:4322)
+	at java.awt.LightweightDispatcher.processMouseEvent(Container.java:3995)
+	at java.awt.LightweightDispatcher.dispatchEvent(Container.java:3916)
+	at java.awt.Container.dispatchEventImpl(Container.java:2102)
+	at java.awt.Window.dispatchEventImpl(Window.java:2440)
+	at java.awt.Component.dispatchEvent(Component.java:4243)
+	at java.awt.EventQueue.dispatchEvent(EventQueue.java:599)
+	at java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:273)
+	at java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:183)
+	at java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:177)
+	at java.awt.Dialog$1.run(Dialog.java:1045)
+	at java.awt.Dialog$3.run(Dialog.java:1097)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.awt.Dialog.show(Dialog.java:1095)
+	at java.awt.Component.show(Component.java:1422)
+	at java.awt.Component.setVisible(Component.java:1375)
+	at java.awt.Window.setVisible(Window.java:806)
+	at java.awt.Dialog.setVisible(Dialog.java:985)
+	at de.tor.tribes.ui.DSWorkbenchMainFrame.fireShowSettingsEvent(DSWorkbenchMainFrame.java:1633)
+	at de.tor.tribes.ui.DSWorkbenchMainFrame.access$1700(DSWorkbenchMainFrame.java:64)
+	at de.tor.tribes.ui.DSWorkbenchMainFrame$29.actionPerformed(DSWorkbenchMainFrame.java:1310)
+	at javax.swing.AbstractButton.fireActionPerformed(AbstractButton.java:1995)
+	at javax.swing.AbstractButton$Handler.actionPerformed(AbstractButton.java:2318)
+	at javax.swing.DefaultButtonModel.fireActionPerformed(DefaultButtonModel.java:387)
+	at javax.swing.DefaultButtonModel.setPressed(DefaultButtonModel.java:242)
+	at javax.swing.AbstractButton.doClick(AbstractButton.java:357)
+	at javax.swing.plaf.basic.BasicMenuItemUI.doClick(BasicMenuItemUI.java:1220)
+	at javax.swing.plaf.basic.BasicMenuItemUI$Handler.mouseReleased(BasicMenuItemUI.java:1261)
+	at java.awt.Component.processMouseEvent(Component.java:6041)
+	at javax.swing.JComponent.processMouseEvent(JComponent.java:3265)
+	at java.awt.Component.processEvent(Component.java:5806)
+	at java.awt.Container.processEvent(Container.java:2058)
+	at java.awt.Component.dispatchEventImpl(Component.java:4413)
+	at java.awt.Container.dispatchEventImpl(Container.java:2116)
+	at java.awt.Component.dispatchEvent(Component.java:4243)
+	at java.awt.LightweightDispatcher.retargetMouseEvent(Container.java:4322)
+	at java.awt.LightweightDispatcher.processMouseEvent(Container.java:3986)
+	at java.awt.LightweightDispatcher.dispatchEvent(Container.java:3916)
+	at java.awt.Container.dispatchEventImpl(Container.java:2102)
+	at java.awt.Window.dispatchEventImpl(Window.java:2440)
+	at java.awt.Component.dispatchEvent(Component.java:4243)
+	at java.awt.EventQueue.dispatchEvent(EventQueue.java:599)
+	at java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:273)
+	at java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:183)
+	at java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:173)
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:168)
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:160)
+	at java.awt.EventDispatchThread.run(EventDispatchThread.java:121)
+2008-09-22 23:29:01,059 [Thread-6] INFO  de.tor.tribes.ui.DSWorkbenchMainFrame$1 (DSWorkbenchMainFrame.java:98) - Performing ShutdownHook
+2008-09-22 23:29:01,082 [Thread-6] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:102) - Writing tags to './servers/de26/tags.xml'
+2008-09-22 23:29:01,093 [Thread-6] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:125) - Tags successfully saved
+2008-09-22 23:29:01,093 [Thread-6] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:104) - Writing markers to './servers/de26/markers.xml'
+2008-09-22 23:29:01,094 [Thread-6] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:119) - Markers successfully saved
+2008-09-22 23:29:42,373 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:58) - Loading properties
+2008-09-22 23:29:42,391 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:98) - Loading existing properties file
+2008-09-22 23:29:42,397 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:60) - Loading cursors
+2008-09-22 23:29:42,813 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:62) - Loading unit icons
+2008-09-22 23:29:43,010 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:64) - Loading graphic pack
+2008-09-22 23:29:43,656 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:66) - Loading world.dat
+2008-09-22 23:29:45,902 [StartupTimer] DEBUG de.tor.tribes.ui.DSWorkbenchSettingsDialog (DSWorkbenchSettingsDialog.java:129) - Checking settings
+2008-09-22 23:29:45,976 [StartupTimer] INFO  de.tor.tribes.db.DatabaseAdapter (DatabaseAdapter.java:44) - Database driver loaded
+2008-09-22 23:29:49,844 [StartupTimer] ERROR de.tor.tribes.db.DatabaseAdapter (DatabaseAdapter.java:81) - Failed to establish database connection
+java.sql.SQLException: Access denied for user 'dsworkbench'@'HSI-KBW-078-042-098-204.hsi3.kabel-badenwuerttemberg.de' (using password: NO)
+	at com.mysql.jdbc.SQLError.createSQLException(SQLError.java:946)
+	at com.mysql.jdbc.MysqlIO.checkErrorPacket(MysqlIO.java:2934)
+	at com.mysql.jdbc.MysqlIO.checkErrorPacket(MysqlIO.java:870)
+	at com.mysql.jdbc.MysqlIO.secureAuth411(MysqlIO.java:3333)
+	at com.mysql.jdbc.MysqlIO.doHandshake(MysqlIO.java:1232)
+	at com.mysql.jdbc.Connection.createNewIO(Connection.java:2749)
+	at com.mysql.jdbc.Connection.<init>(Connection.java:1553)
+	at com.mysql.jdbc.NonRegisteringDriver.connect(NonRegisteringDriver.java:285)
+	at java.sql.DriverManager.getConnection(DriverManager.java:582)
+	at java.sql.DriverManager.getConnection(DriverManager.java:207)
+	at de.tor.tribes.db.DatabaseAdapter.openConnection(DatabaseAdapter.java:78)
+	at de.tor.tribes.db.DatabaseAdapter.getServerList(DatabaseAdapter.java:217)
+	at de.tor.tribes.io.ServerList.loadServerList(ServerList.java:31)
+	at de.tor.tribes.ui.DSWorkbenchSettingsDialog.updateServerList(DSWorkbenchSettingsDialog.java:1089)
+	at de.tor.tribes.ui.DSWorkbenchSettingsDialog.checkSettings(DSWorkbenchSettingsDialog.java:134)
+	at de.tor.tribes.ui.DSWorkbenchSplashScreen.hideSplash(DSWorkbenchSplashScreen.java:90)
+	at de.tor.tribes.ui.HideSplashTask.run(DSWorkbenchSplashScreen.java:170)
+	at java.util.TimerThread.mainLoop(Timer.java:512)
+	at java.util.TimerThread.run(Timer.java:462)
+2008-09-22 23:29:49,851 [StartupTimer] ERROR de.tor.tribes.ui.DSWorkbenchSettingsDialog (DSWorkbenchSettingsDialog.java:1093) - Failed to load server list
+java.lang.NullPointerException
+	at de.tor.tribes.io.ServerList.getServerIDs(ServerList.java:36)
+	at de.tor.tribes.ui.DSWorkbenchSettingsDialog.updateServerList(DSWorkbenchSettingsDialog.java:1090)
+	at de.tor.tribes.ui.DSWorkbenchSettingsDialog.checkSettings(DSWorkbenchSettingsDialog.java:134)
+	at de.tor.tribes.ui.DSWorkbenchSplashScreen.hideSplash(DSWorkbenchSplashScreen.java:90)
+	at de.tor.tribes.ui.HideSplashTask.run(DSWorkbenchSplashScreen.java:170)
+	at java.util.TimerThread.mainLoop(Timer.java:512)
+	at java.util.TimerThread.run(Timer.java:462)
+2008-09-22 23:29:55,655 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:174) - Calling 'loadData()' for server de26
+2008-09-22 23:29:56,461 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:328) - Reading villages
+2008-09-22 23:30:00,299 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:331) - Reading tribes
+2008-09-22 23:30:00,705 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:334) - Reading allies
+2008-09-22 23:30:00,731 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:373) - Read 210298 villages
+2008-09-22 23:30:00,733 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:374) - Read 2607 allies
+2008-09-22 23:30:00,733 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:375) - Read 31202 tribes
+2008-09-22 23:30:00,733 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:226) - Reading conquered units
+2008-09-22 23:30:01,298 [StartupTimer] DEBUG de.tor.tribes.io.DataHolder (DataHolder.java:726) - Loading units
+2008-09-22 23:30:06,193 [AWT-EventQueue-0] INFO  de.tor.tribes.ui.MapPanel (MapPanel.java:85) - Creating MapPanel
+2008-09-22 23:30:06,349 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:140) - Loading markers
+2008-09-22 23:30:06,349 [StartupTimer] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:67) - Reading markers from './servers/de26/markers.xml'
+2008-09-22 23:30:06,351 [StartupTimer] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:78) - Markers successfully loaded
+2008-09-22 23:30:06,352 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:142) - Loading attacks
+2008-09-22 23:30:06,354 [StartupTimer] INFO  de.tor.tribes.util.attack.AttackManager (AttackManager.java:68) - Loading attacks from './servers/de26/attacks.xml'
+2008-09-22 23:30:06,359 [StartupTimer] DEBUG de.tor.tribes.util.attack.AttackManager (AttackManager.java:75) - Loading plan 'default'
+2008-09-22 23:30:06,360 [StartupTimer] DEBUG de.tor.tribes.util.attack.AttackManager (AttackManager.java:91) - Attacks loaded successfully
+2008-09-22 23:30:06,360 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:144) - Loading tags
+2008-09-22 23:30:06,362 [StartupTimer] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:52) - Loading tags from './servers/de26/tags.xml'
+2008-09-22 23:30:06,365 [StartupTimer] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:71) - Tags loaded successfully
+2008-09-22 23:30:06,365 [StartupTimer] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:82) - Associating tags with villages
+2008-09-22 23:30:06,691 [StartupTimer] INFO  de.tor.tribes.ui.DSWorkbenchMainFrame (DSWorkbenchMainFrame.java:227) - Initializing maps
+2008-09-22 23:30:08,152 [AWT-EventQueue-0] INFO  de.tor.tribes.ui.MapPanel (MapPanel.java:473) - Creating MapPaintThread
+2008-09-22 23:30:46,913 [AWT-EventQueue-0] ERROR de.tor.tribes.db.DatabaseAdapter (DatabaseAdapter.java:81) - Failed to establish database connection
+java.sql.SQLException: Access denied for user 'dsworkbench'@'HSI-KBW-078-042-098-204.hsi3.kabel-badenwuerttemberg.de' (using password: NO)
+	at com.mysql.jdbc.SQLError.createSQLException(SQLError.java:946)
+	at com.mysql.jdbc.MysqlIO.checkErrorPacket(MysqlIO.java:2934)
+	at com.mysql.jdbc.MysqlIO.checkErrorPacket(MysqlIO.java:870)
+	at com.mysql.jdbc.MysqlIO.secureAuth411(MysqlIO.java:3333)
+	at com.mysql.jdbc.MysqlIO.doHandshake(MysqlIO.java:1232)
+	at com.mysql.jdbc.Connection.createNewIO(Connection.java:2749)
+	at com.mysql.jdbc.Connection.<init>(Connection.java:1553)
+	at com.mysql.jdbc.NonRegisteringDriver.connect(NonRegisteringDriver.java:285)
+	at java.sql.DriverManager.getConnection(DriverManager.java:582)
+	at java.sql.DriverManager.getConnection(DriverManager.java:207)
+	at de.tor.tribes.db.DatabaseAdapter.openConnection(DatabaseAdapter.java:78)
+	at de.tor.tribes.db.DatabaseAdapter.getServerList(DatabaseAdapter.java:217)
+	at de.tor.tribes.io.ServerList.loadServerList(ServerList.java:31)
+	at de.tor.tribes.ui.DSWorkbenchSettingsDialog.updateServerList(DSWorkbenchSettingsDialog.java:1089)
+	at de.tor.tribes.ui.DSWorkbenchSettingsDialog.fireUpdateProxySettingsEvent(DSWorkbenchSettingsDialog.java:792)
+	at de.tor.tribes.ui.DSWorkbenchSettingsDialog.access$1200(DSWorkbenchSettingsDialog.java:35)
+	at de.tor.tribes.ui.DSWorkbenchSettingsDialog$14.mouseClicked(DSWorkbenchSettingsDialog.java:672)
+	at java.awt.AWTEventMulticaster.mouseClicked(AWTEventMulticaster.java:253)
+	at java.awt.Component.processMouseEvent(Component.java:6044)
+	at javax.swing.JComponent.processMouseEvent(JComponent.java:3265)
+	at java.awt.Component.processEvent(Component.java:5806)
+	at java.awt.Container.processEvent(Container.java:2058)
+	at java.awt.Component.dispatchEventImpl(Component.java:4413)
+	at java.awt.Container.dispatchEventImpl(Container.java:2116)
+	at java.awt.Component.dispatchEvent(Component.java:4243)
+	at java.awt.LightweightDispatcher.retargetMouseEvent(Container.java:4322)
+	at java.awt.LightweightDispatcher.processMouseEvent(Container.java:3995)
+	at java.awt.LightweightDispatcher.dispatchEvent(Container.java:3916)
+	at java.awt.Container.dispatchEventImpl(Container.java:2102)
+	at java.awt.Window.dispatchEventImpl(Window.java:2440)
+	at java.awt.Component.dispatchEvent(Component.java:4243)
+	at java.awt.EventQueue.dispatchEvent(EventQueue.java:599)
+	at java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:273)
+	at java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:183)
+	at java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:177)
+	at java.awt.Dialog$1.run(Dialog.java:1045)
+	at java.awt.Dialog$3.run(Dialog.java:1097)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.awt.Dialog.show(Dialog.java:1095)
+	at java.awt.Component.show(Component.java:1422)
+	at java.awt.Component.setVisible(Component.java:1375)
+	at java.awt.Window.setVisible(Window.java:806)
+	at java.awt.Dialog.setVisible(Dialog.java:985)
+	at de.tor.tribes.ui.DSWorkbenchMainFrame.fireShowSettingsEvent(DSWorkbenchMainFrame.java:1633)
+	at de.tor.tribes.ui.DSWorkbenchMainFrame.access$1700(DSWorkbenchMainFrame.java:64)
+	at de.tor.tribes.ui.DSWorkbenchMainFrame$29.actionPerformed(DSWorkbenchMainFrame.java:1310)
+	at javax.swing.AbstractButton.fireActionPerformed(AbstractButton.java:1995)
+	at javax.swing.AbstractButton$Handler.actionPerformed(AbstractButton.java:2318)
+	at javax.swing.DefaultButtonModel.fireActionPerformed(DefaultButtonModel.java:387)
+	at javax.swing.DefaultButtonModel.setPressed(DefaultButtonModel.java:242)
+	at javax.swing.AbstractButton.doClick(AbstractButton.java:357)
+	at javax.swing.plaf.basic.BasicMenuItemUI.doClick(BasicMenuItemUI.java:1220)
+	at javax.swing.plaf.basic.BasicMenuItemUI$Handler.mouseReleased(BasicMenuItemUI.java:1261)
+	at java.awt.Component.processMouseEvent(Component.java:6041)
+	at javax.swing.JComponent.processMouseEvent(JComponent.java:3265)
+	at java.awt.Component.processEvent(Component.java:5806)
+	at java.awt.Container.processEvent(Container.java:2058)
+	at java.awt.Component.dispatchEventImpl(Component.java:4413)
+	at java.awt.Container.dispatchEventImpl(Container.java:2116)
+	at java.awt.Component.dispatchEvent(Component.java:4243)
+	at java.awt.LightweightDispatcher.retargetMouseEvent(Container.java:4322)
+	at java.awt.LightweightDispatcher.processMouseEvent(Container.java:3986)
+	at java.awt.LightweightDispatcher.dispatchEvent(Container.java:3916)
+	at java.awt.Container.dispatchEventImpl(Container.java:2102)
+	at java.awt.Window.dispatchEventImpl(Window.java:2440)
+	at java.awt.Component.dispatchEvent(Component.java:4243)
+	at java.awt.EventQueue.dispatchEvent(EventQueue.java:599)
+	at java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:273)
+	at java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:183)
+	at java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:173)
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:168)
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:160)
+	at java.awt.EventDispatchThread.run(EventDispatchThread.java:121)
+2008-09-22 23:30:46,915 [AWT-EventQueue-0] ERROR de.tor.tribes.ui.DSWorkbenchSettingsDialog (DSWorkbenchSettingsDialog.java:1093) - Failed to load server list
+java.lang.NullPointerException
+	at de.tor.tribes.io.ServerList.getServerIDs(ServerList.java:36)
+	at de.tor.tribes.ui.DSWorkbenchSettingsDialog.updateServerList(DSWorkbenchSettingsDialog.java:1090)
+	at de.tor.tribes.ui.DSWorkbenchSettingsDialog.fireUpdateProxySettingsEvent(DSWorkbenchSettingsDialog.java:792)
+	at de.tor.tribes.ui.DSWorkbenchSettingsDialog.access$1200(DSWorkbenchSettingsDialog.java:35)
+	at de.tor.tribes.ui.DSWorkbenchSettingsDialog$14.mouseClicked(DSWorkbenchSettingsDialog.java:672)
+	at java.awt.AWTEventMulticaster.mouseClicked(AWTEventMulticaster.java:253)
+	at java.awt.Component.processMouseEvent(Component.java:6044)
+	at javax.swing.JComponent.processMouseEvent(JComponent.java:3265)
+	at java.awt.Component.processEvent(Component.java:5806)
+	at java.awt.Container.processEvent(Container.java:2058)
+	at java.awt.Component.dispatchEventImpl(Component.java:4413)
+	at java.awt.Container.dispatchEventImpl(Container.java:2116)
+	at java.awt.Component.dispatchEvent(Component.java:4243)
+	at java.awt.LightweightDispatcher.retargetMouseEvent(Container.java:4322)
+	at java.awt.LightweightDispatcher.processMouseEvent(Container.java:3995)
+	at java.awt.LightweightDispatcher.dispatchEvent(Container.java:3916)
+	at java.awt.Container.dispatchEventImpl(Container.java:2102)
+	at java.awt.Window.dispatchEventImpl(Window.java:2440)
+	at java.awt.Component.dispatchEvent(Component.java:4243)
+	at java.awt.EventQueue.dispatchEvent(EventQueue.java:599)
+	at java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:273)
+	at java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:183)
+	at java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:177)
+	at java.awt.Dialog$1.run(Dialog.java:1045)
+	at java.awt.Dialog$3.run(Dialog.java:1097)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.awt.Dialog.show(Dialog.java:1095)
+	at java.awt.Component.show(Component.java:1422)
+	at java.awt.Component.setVisible(Component.java:1375)
+	at java.awt.Window.setVisible(Window.java:806)
+	at java.awt.Dialog.setVisible(Dialog.java:985)
+	at de.tor.tribes.ui.DSWorkbenchMainFrame.fireShowSettingsEvent(DSWorkbenchMainFrame.java:1633)
+	at de.tor.tribes.ui.DSWorkbenchMainFrame.access$1700(DSWorkbenchMainFrame.java:64)
+	at de.tor.tribes.ui.DSWorkbenchMainFrame$29.actionPerformed(DSWorkbenchMainFrame.java:1310)
+	at javax.swing.AbstractButton.fireActionPerformed(AbstractButton.java:1995)
+	at javax.swing.AbstractButton$Handler.actionPerformed(AbstractButton.java:2318)
+	at javax.swing.DefaultButtonModel.fireActionPerformed(DefaultButtonModel.java:387)
+	at javax.swing.DefaultButtonModel.setPressed(DefaultButtonModel.java:242)
+	at javax.swing.AbstractButton.doClick(AbstractButton.java:357)
+	at javax.swing.plaf.basic.BasicMenuItemUI.doClick(BasicMenuItemUI.java:1220)
+	at javax.swing.plaf.basic.BasicMenuItemUI$Handler.mouseReleased(BasicMenuItemUI.java:1261)
+	at java.awt.Component.processMouseEvent(Component.java:6041)
+	at javax.swing.JComponent.processMouseEvent(JComponent.java:3265)
+	at java.awt.Component.processEvent(Component.java:5806)
+	at java.awt.Container.processEvent(Container.java:2058)
+	at java.awt.Component.dispatchEventImpl(Component.java:4413)
+	at java.awt.Container.dispatchEventImpl(Container.java:2116)
+	at java.awt.Component.dispatchEvent(Component.java:4243)
+	at java.awt.LightweightDispatcher.retargetMouseEvent(Container.java:4322)
+	at java.awt.LightweightDispatcher.processMouseEvent(Container.java:3986)
+	at java.awt.LightweightDispatcher.dispatchEvent(Container.java:3916)
+	at java.awt.Container.dispatchEventImpl(Container.java:2102)
+	at java.awt.Window.dispatchEventImpl(Window.java:2440)
+	at java.awt.Component.dispatchEvent(Component.java:4243)
+	at java.awt.EventQueue.dispatchEvent(EventQueue.java:599)
+	at java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:273)
+	at java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:183)
+	at java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:173)
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:168)
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:160)
+	at java.awt.EventDispatchThread.run(EventDispatchThread.java:121)
+2008-09-22 23:30:53,894 [AWT-EventQueue-0] DEBUG de.tor.tribes.ui.DSWorkbenchSettingsDialog (DSWorkbenchSettingsDialog.java:890) - Setting default player for server 'de26' to Torridity
+2008-09-22 23:30:53,895 [AWT-EventQueue-0] DEBUG de.tor.tribes.ui.DSWorkbenchSettingsDialog (DSWorkbenchSettingsDialog.java:129) - Checking settings
+2008-09-22 23:30:53,949 [AWT-EventQueue-0] ERROR de.tor.tribes.db.DatabaseAdapter (DatabaseAdapter.java:81) - Failed to establish database connection
+java.sql.SQLException: Access denied for user 'dsworkbench'@'HSI-KBW-078-042-098-204.hsi3.kabel-badenwuerttemberg.de' (using password: NO)
+	at com.mysql.jdbc.SQLError.createSQLException(SQLError.java:946)
+	at com.mysql.jdbc.MysqlIO.checkErrorPacket(MysqlIO.java:2934)
+	at com.mysql.jdbc.MysqlIO.checkErrorPacket(MysqlIO.java:870)
+	at com.mysql.jdbc.MysqlIO.secureAuth411(MysqlIO.java:3333)
+	at com.mysql.jdbc.MysqlIO.doHandshake(MysqlIO.java:1232)
+	at com.mysql.jdbc.Connection.createNewIO(Connection.java:2749)
+	at com.mysql.jdbc.Connection.<init>(Connection.java:1553)
+	at com.mysql.jdbc.NonRegisteringDriver.connect(NonRegisteringDriver.java:285)
+	at java.sql.DriverManager.getConnection(DriverManager.java:582)
+	at java.sql.DriverManager.getConnection(DriverManager.java:207)
+	at de.tor.tribes.db.DatabaseAdapter.openConnection(DatabaseAdapter.java:78)
+	at de.tor.tribes.db.DatabaseAdapter.getServerList(DatabaseAdapter.java:217)
+	at de.tor.tribes.io.ServerList.loadServerList(ServerList.java:31)
+	at de.tor.tribes.ui.DSWorkbenchSettingsDialog.updateServerList(DSWorkbenchSettingsDialog.java:1089)
+	at de.tor.tribes.ui.DSWorkbenchSettingsDialog.checkSettings(DSWorkbenchSettingsDialog.java:134)
+	at de.tor.tribes.ui.DSWorkbenchSettingsDialog.fireOkEvent(DSWorkbenchSettingsDialog.java:895)
+	at de.tor.tribes.ui.DSWorkbenchSettingsDialog.access$1300(DSWorkbenchSettingsDialog.java:35)
+	at de.tor.tribes.ui.DSWorkbenchSettingsDialog$15.mouseClicked(DSWorkbenchSettingsDialog.java:722)
+	at java.awt.AWTEventMulticaster.mouseClicked(AWTEventMulticaster.java:253)
+	at java.awt.Component.processMouseEvent(Component.java:6044)
+	at javax.swing.JComponent.processMouseEvent(JComponent.java:3265)
+	at java.awt.Component.processEvent(Component.java:5806)
+	at java.awt.Container.processEvent(Container.java:2058)
+	at java.awt.Component.dispatchEventImpl(Component.java:4413)
+	at java.awt.Container.dispatchEventImpl(Container.java:2116)
+	at java.awt.Component.dispatchEvent(Component.java:4243)
+	at java.awt.LightweightDispatcher.retargetMouseEvent(Container.java:4322)
+	at java.awt.LightweightDispatcher.processMouseEvent(Container.java:3995)
+	at java.awt.LightweightDispatcher.dispatchEvent(Container.java:3916)
+	at java.awt.Container.dispatchEventImpl(Container.java:2102)
+	at java.awt.Window.dispatchEventImpl(Window.java:2440)
+	at java.awt.Component.dispatchEvent(Component.java:4243)
+	at java.awt.EventQueue.dispatchEvent(EventQueue.java:599)
+	at java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:273)
+	at java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:183)
+	at java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:177)
+	at java.awt.Dialog$1.run(Dialog.java:1045)
+	at java.awt.Dialog$3.run(Dialog.java:1097)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.awt.Dialog.show(Dialog.java:1095)
+	at java.awt.Component.show(Component.java:1422)
+	at java.awt.Component.setVisible(Component.java:1375)
+	at java.awt.Window.setVisible(Window.java:806)
+	at java.awt.Dialog.setVisible(Dialog.java:985)
+	at de.tor.tribes.ui.DSWorkbenchMainFrame.fireShowSettingsEvent(DSWorkbenchMainFrame.java:1633)
+	at de.tor.tribes.ui.DSWorkbenchMainFrame.access$1700(DSWorkbenchMainFrame.java:64)
+	at de.tor.tribes.ui.DSWorkbenchMainFrame$29.actionPerformed(DSWorkbenchMainFrame.java:1310)
+	at javax.swing.AbstractButton.fireActionPerformed(AbstractButton.java:1995)
+	at javax.swing.AbstractButton$Handler.actionPerformed(AbstractButton.java:2318)
+	at javax.swing.DefaultButtonModel.fireActionPerformed(DefaultButtonModel.java:387)
+	at javax.swing.DefaultButtonModel.setPressed(DefaultButtonModel.java:242)
+	at javax.swing.AbstractButton.doClick(AbstractButton.java:357)
+	at javax.swing.plaf.basic.BasicMenuItemUI.doClick(BasicMenuItemUI.java:1220)
+	at javax.swing.plaf.basic.BasicMenuItemUI$Handler.mouseReleased(BasicMenuItemUI.java:1261)
+	at java.awt.Component.processMouseEvent(Component.java:6041)
+	at javax.swing.JComponent.processMouseEvent(JComponent.java:3265)
+	at java.awt.Component.processEvent(Component.java:5806)
+	at java.awt.Container.processEvent(Container.java:2058)
+	at java.awt.Component.dispatchEventImpl(Component.java:4413)
+	at java.awt.Container.dispatchEventImpl(Container.java:2116)
+	at java.awt.Component.dispatchEvent(Component.java:4243)
+	at java.awt.LightweightDispatcher.retargetMouseEvent(Container.java:4322)
+	at java.awt.LightweightDispatcher.processMouseEvent(Container.java:3986)
+	at java.awt.LightweightDispatcher.dispatchEvent(Container.java:3916)
+	at java.awt.Container.dispatchEventImpl(Container.java:2102)
+	at java.awt.Window.dispatchEventImpl(Window.java:2440)
+	at java.awt.Component.dispatchEvent(Component.java:4243)
+	at java.awt.EventQueue.dispatchEvent(EventQueue.java:599)
+	at java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:273)
+	at java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:183)
+	at java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:173)
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:168)
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:160)
+	at java.awt.EventDispatchThread.run(EventDispatchThread.java:121)
+2008-09-22 23:30:53,951 [AWT-EventQueue-0] ERROR de.tor.tribes.ui.DSWorkbenchSettingsDialog (DSWorkbenchSettingsDialog.java:1093) - Failed to load server list
+java.lang.NullPointerException
+	at de.tor.tribes.io.ServerList.getServerIDs(ServerList.java:36)
+	at de.tor.tribes.ui.DSWorkbenchSettingsDialog.updateServerList(DSWorkbenchSettingsDialog.java:1090)
+	at de.tor.tribes.ui.DSWorkbenchSettingsDialog.checkSettings(DSWorkbenchSettingsDialog.java:134)
+	at de.tor.tribes.ui.DSWorkbenchSettingsDialog.fireOkEvent(DSWorkbenchSettingsDialog.java:895)
+	at de.tor.tribes.ui.DSWorkbenchSettingsDialog.access$1300(DSWorkbenchSettingsDialog.java:35)
+	at de.tor.tribes.ui.DSWorkbenchSettingsDialog$15.mouseClicked(DSWorkbenchSettingsDialog.java:722)
+	at java.awt.AWTEventMulticaster.mouseClicked(AWTEventMulticaster.java:253)
+	at java.awt.Component.processMouseEvent(Component.java:6044)
+	at javax.swing.JComponent.processMouseEvent(JComponent.java:3265)
+	at java.awt.Component.processEvent(Component.java:5806)
+	at java.awt.Container.processEvent(Container.java:2058)
+	at java.awt.Component.dispatchEventImpl(Component.java:4413)
+	at java.awt.Container.dispatchEventImpl(Container.java:2116)
+	at java.awt.Component.dispatchEvent(Component.java:4243)
+	at java.awt.LightweightDispatcher.retargetMouseEvent(Container.java:4322)
+	at java.awt.LightweightDispatcher.processMouseEvent(Container.java:3995)
+	at java.awt.LightweightDispatcher.dispatchEvent(Container.java:3916)
+	at java.awt.Container.dispatchEventImpl(Container.java:2102)
+	at java.awt.Window.dispatchEventImpl(Window.java:2440)
+	at java.awt.Component.dispatchEvent(Component.java:4243)
+	at java.awt.EventQueue.dispatchEvent(EventQueue.java:599)
+	at java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:273)
+	at java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:183)
+	at java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:177)
+	at java.awt.Dialog$1.run(Dialog.java:1045)
+	at java.awt.Dialog$3.run(Dialog.java:1097)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.awt.Dialog.show(Dialog.java:1095)
+	at java.awt.Component.show(Component.java:1422)
+	at java.awt.Component.setVisible(Component.java:1375)
+	at java.awt.Window.setVisible(Window.java:806)
+	at java.awt.Dialog.setVisible(Dialog.java:985)
+	at de.tor.tribes.ui.DSWorkbenchMainFrame.fireShowSettingsEvent(DSWorkbenchMainFrame.java:1633)
+	at de.tor.tribes.ui.DSWorkbenchMainFrame.access$1700(DSWorkbenchMainFrame.java:64)
+	at de.tor.tribes.ui.DSWorkbenchMainFrame$29.actionPerformed(DSWorkbenchMainFrame.java:1310)
+	at javax.swing.AbstractButton.fireActionPerformed(AbstractButton.java:1995)
+	at javax.swing.AbstractButton$Handler.actionPerformed(AbstractButton.java:2318)
+	at javax.swing.DefaultButtonModel.fireActionPerformed(DefaultButtonModel.java:387)
+	at javax.swing.DefaultButtonModel.setPressed(DefaultButtonModel.java:242)
+	at javax.swing.AbstractButton.doClick(AbstractButton.java:357)
+	at javax.swing.plaf.basic.BasicMenuItemUI.doClick(BasicMenuItemUI.java:1220)
+	at javax.swing.plaf.basic.BasicMenuItemUI$Handler.mouseReleased(BasicMenuItemUI.java:1261)
+	at java.awt.Component.processMouseEvent(Component.java:6041)
+	at javax.swing.JComponent.processMouseEvent(JComponent.java:3265)
+	at java.awt.Component.processEvent(Component.java:5806)
+	at java.awt.Container.processEvent(Container.java:2058)
+	at java.awt.Component.dispatchEventImpl(Component.java:4413)
+	at java.awt.Container.dispatchEventImpl(Container.java:2116)
+	at java.awt.Component.dispatchEvent(Component.java:4243)
+	at java.awt.LightweightDispatcher.retargetMouseEvent(Container.java:4322)
+	at java.awt.LightweightDispatcher.processMouseEvent(Container.java:3986)
+	at java.awt.LightweightDispatcher.dispatchEvent(Container.java:3916)
+	at java.awt.Container.dispatchEventImpl(Container.java:2102)
+	at java.awt.Window.dispatchEventImpl(Window.java:2440)
+	at java.awt.Component.dispatchEvent(Component.java:4243)
+	at java.awt.EventQueue.dispatchEvent(EventQueue.java:599)
+	at java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:273)
+	at java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:183)
+	at java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:173)
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:168)
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:160)
+	at java.awt.EventDispatchThread.run(EventDispatchThread.java:121)
+2008-09-22 23:33:56,212 [Thread-6] INFO  de.tor.tribes.ui.DSWorkbenchMainFrame$1 (DSWorkbenchMainFrame.java:98) - Performing ShutdownHook
+2008-09-22 23:33:56,230 [Thread-6] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:102) - Writing tags to './servers/de26/tags.xml'
+2008-09-22 23:33:56,250 [Thread-6] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:125) - Tags successfully saved
+2008-09-22 23:33:56,250 [Thread-6] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:104) - Writing markers to './servers/de26/markers.xml'
+2008-09-22 23:33:56,250 [Thread-6] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:119) - Markers successfully saved
+2008-09-22 23:34:14,319 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:58) - Loading properties
+2008-09-22 23:34:14,326 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:98) - Loading existing properties file
+2008-09-22 23:34:14,337 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:60) - Loading cursors
+2008-09-22 23:34:15,080 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:62) - Loading unit icons
+2008-09-22 23:34:15,381 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:64) - Loading graphic pack
+2008-09-22 23:34:16,383 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:66) - Loading world.dat
+2008-09-22 23:34:19,231 [StartupTimer] DEBUG de.tor.tribes.ui.DSWorkbenchSettingsDialog (DSWorkbenchSettingsDialog.java:129) - Checking settings
+2008-09-22 23:34:19,510 [StartupTimer] INFO  de.tor.tribes.db.DatabaseAdapter (DatabaseAdapter.java:44) - Database driver loaded
+2008-09-22 23:34:21,013 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:174) - Calling 'loadData()' for server de26
+2008-09-22 23:34:22,648 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:328) - Reading villages
+2008-09-22 23:34:27,389 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:331) - Reading tribes
+2008-09-22 23:34:27,718 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:334) - Reading allies
+2008-09-22 23:34:27,750 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:373) - Read 210298 villages
+2008-09-22 23:34:27,751 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:374) - Read 2607 allies
+2008-09-22 23:34:27,751 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:375) - Read 31202 tribes
+2008-09-22 23:34:27,751 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:226) - Reading conquered units
+2008-09-22 23:34:28,253 [StartupTimer] DEBUG de.tor.tribes.io.DataHolder (DataHolder.java:726) - Loading units
+2008-09-22 23:34:32,687 [AWT-EventQueue-0] INFO  de.tor.tribes.ui.MapPanel (MapPanel.java:85) - Creating MapPanel
+2008-09-22 23:34:32,749 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:140) - Loading markers
+2008-09-22 23:34:32,749 [StartupTimer] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:67) - Reading markers from './servers/de26/markers.xml'
+2008-09-22 23:34:32,752 [StartupTimer] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:78) - Markers successfully loaded
+2008-09-22 23:34:32,752 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:142) - Loading attacks
+2008-09-22 23:34:32,754 [StartupTimer] INFO  de.tor.tribes.util.attack.AttackManager (AttackManager.java:68) - Loading attacks from './servers/de26/attacks.xml'
+2008-09-22 23:34:32,768 [StartupTimer] DEBUG de.tor.tribes.util.attack.AttackManager (AttackManager.java:75) - Loading plan 'default'
+2008-09-22 23:34:32,770 [StartupTimer] DEBUG de.tor.tribes.util.attack.AttackManager (AttackManager.java:91) - Attacks loaded successfully
+2008-09-22 23:34:32,770 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:144) - Loading tags
+2008-09-22 23:34:32,772 [StartupTimer] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:52) - Loading tags from './servers/de26/tags.xml'
+2008-09-22 23:34:32,774 [StartupTimer] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:71) - Tags loaded successfully
+2008-09-22 23:34:32,774 [StartupTimer] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:82) - Associating tags with villages
+2008-09-22 23:34:33,105 [StartupTimer] INFO  de.tor.tribes.ui.DSWorkbenchMainFrame (DSWorkbenchMainFrame.java:227) - Initializing maps
+2008-09-22 23:34:33,581 [AWT-EventQueue-0] INFO  de.tor.tribes.ui.MapPanel (MapPanel.java:473) - Creating MapPaintThread
+2008-09-22 23:34:36,051 [StartupTimer] FATAL de.tor.tribes.ui.DSWorkbenchSplashScreen (DSWorkbenchSplashScreen.java:108) - Fatal error while running DS Workbench
+java.lang.IllegalArgumentException: (start <= value <= end) is false
+	at javax.swing.SpinnerDateModel.<init>(SpinnerDateModel.java:167)
+	at de.tor.tribes.ui.AllyAllyAttackFrame.initComponents(AllyAllyAttackFrame.java:266)
+	at de.tor.tribes.ui.AllyAllyAttackFrame.<init>(AllyAllyAttackFrame.java:37)
+	at de.tor.tribes.ui.DSWorkbenchMainFrame.init(DSWorkbenchMainFrame.java:214)
+	at de.tor.tribes.ui.DSWorkbenchSplashScreen.hideSplash(DSWorkbenchSplashScreen.java:103)
+	at de.tor.tribes.ui.HideSplashTask.run(DSWorkbenchSplashScreen.java:170)
+	at java.util.TimerThread.mainLoop(Timer.java:512)
+	at java.util.TimerThread.run(Timer.java:462)
+2008-09-22 23:34:39,365 [Thread-6] INFO  de.tor.tribes.ui.DSWorkbenchMainFrame$1 (DSWorkbenchMainFrame.java:98) - Performing ShutdownHook
+2008-09-22 23:34:39,365 [Thread-6] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:102) - Writing tags to './servers/de26/tags.xml'
+2008-09-22 23:34:39,366 [Thread-6] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:125) - Tags successfully saved
+2008-09-22 23:34:39,366 [Thread-6] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:104) - Writing markers to './servers/de26/markers.xml'
+2008-09-22 23:34:39,366 [Thread-6] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:119) - Markers successfully saved
+2008-09-22 23:38:00,290 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:58) - Loading properties
+2008-09-22 23:38:00,294 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:98) - Loading existing properties file
+2008-09-22 23:38:00,296 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:60) - Loading cursors
+2008-09-22 23:38:00,610 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:62) - Loading unit icons
+2008-09-22 23:38:00,647 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:64) - Loading graphic pack
+2008-09-22 23:38:01,252 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:66) - Loading world.dat
+2008-09-22 23:38:03,417 [StartupTimer] DEBUG de.tor.tribes.ui.DSWorkbenchSettingsDialog (DSWorkbenchSettingsDialog.java:129) - Checking settings
+2008-09-22 23:38:03,451 [StartupTimer] INFO  de.tor.tribes.db.DatabaseAdapter (DatabaseAdapter.java:44) - Database driver loaded
+2008-09-22 23:38:05,097 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:174) - Calling 'loadData()' for server de26
+2008-09-22 23:38:05,631 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:328) - Reading villages
+2008-09-22 23:38:09,537 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:331) - Reading tribes
+2008-09-22 23:38:09,833 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:334) - Reading allies
+2008-09-22 23:38:09,858 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:373) - Read 210298 villages
+2008-09-22 23:38:09,859 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:374) - Read 2607 allies
+2008-09-22 23:38:09,859 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:375) - Read 31202 tribes
+2008-09-22 23:38:09,862 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:226) - Reading conquered units
+2008-09-22 23:38:10,412 [StartupTimer] DEBUG de.tor.tribes.io.DataHolder (DataHolder.java:726) - Loading units
+2008-09-22 23:38:14,507 [AWT-EventQueue-0] INFO  de.tor.tribes.ui.MapPanel (MapPanel.java:85) - Creating MapPanel
+2008-09-22 23:38:14,612 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:140) - Loading markers
+2008-09-22 23:38:14,614 [StartupTimer] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:67) - Reading markers from './servers/de26/markers.xml'
+2008-09-22 23:38:14,616 [StartupTimer] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:78) - Markers successfully loaded
+2008-09-22 23:38:14,617 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:142) - Loading attacks
+2008-09-22 23:38:14,619 [StartupTimer] INFO  de.tor.tribes.util.attack.AttackManager (AttackManager.java:68) - Loading attacks from './servers/de26/attacks.xml'
+2008-09-22 23:38:14,623 [StartupTimer] DEBUG de.tor.tribes.util.attack.AttackManager (AttackManager.java:75) - Loading plan 'default'
+2008-09-22 23:38:14,624 [StartupTimer] DEBUG de.tor.tribes.util.attack.AttackManager (AttackManager.java:91) - Attacks loaded successfully
+2008-09-22 23:38:14,624 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:144) - Loading tags
+2008-09-22 23:38:14,626 [StartupTimer] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:52) - Loading tags from './servers/de26/tags.xml'
+2008-09-22 23:38:14,628 [StartupTimer] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:71) - Tags loaded successfully
+2008-09-22 23:38:14,628 [StartupTimer] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:82) - Associating tags with villages
+2008-09-22 23:38:14,939 [StartupTimer] INFO  de.tor.tribes.ui.DSWorkbenchMainFrame (DSWorkbenchMainFrame.java:227) - Initializing maps
+2008-09-22 23:38:15,424 [AWT-EventQueue-0] INFO  de.tor.tribes.ui.MapPanel (MapPanel.java:473) - Creating MapPaintThread
+2008-09-22 23:38:36,286 [Thread-11] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:174) - Calling 'loadData()' for server de26
+2008-09-22 23:38:36,304 [Thread-11] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:389) - Using server dir './servers/de26'
+2008-09-22 23:38:37,416 [Thread-11] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:453) - Downloading data from http://www.torridity.de/DSWorkbench/servers/de26/
+2008-09-22 23:38:45,091 [Thread-11] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:226) - Reading conquered units
+2008-09-22 23:38:45,729 [Thread-11] DEBUG de.tor.tribes.io.DataHolder (DataHolder.java:726) - Loading units
+2008-09-22 23:38:46,278 [Thread-11] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:282) - Writing villages to ./servers/de26/serverdata.bin
+2008-09-22 23:38:49,828 [Thread-11] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:293) - Writing tribes
+2008-09-22 23:38:50,502 [Thread-11] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:301) - Writing allies
+2008-09-22 23:38:52,126 [Thread-11] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:140) - Loading markers
+2008-09-22 23:38:52,126 [Thread-11] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:67) - Reading markers from './servers/de26/markers.xml'
+2008-09-22 23:38:52,165 [Thread-11] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:78) - Markers successfully loaded
+2008-09-22 23:38:52,165 [Thread-11] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:142) - Loading attacks
+2008-09-22 23:38:52,166 [Thread-11] INFO  de.tor.tribes.util.attack.AttackManager (AttackManager.java:68) - Loading attacks from './servers/de26/attacks.xml'
+2008-09-22 23:38:52,170 [Thread-11] DEBUG de.tor.tribes.util.attack.AttackManager (AttackManager.java:75) - Loading plan 'default'
+2008-09-22 23:38:52,170 [Thread-11] DEBUG de.tor.tribes.util.attack.AttackManager (AttackManager.java:91) - Attacks loaded successfully
+2008-09-22 23:38:52,170 [Thread-11] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:144) - Loading tags
+2008-09-22 23:38:52,170 [Thread-11] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:52) - Loading tags from './servers/de26/tags.xml'
+2008-09-22 23:38:52,217 [Thread-11] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:71) - Tags loaded successfully
+2008-09-22 23:38:52,218 [Thread-11] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:82) - Associating tags with villages
+2008-09-22 23:38:55,898 [AWT-EventQueue-0] DEBUG de.tor.tribes.ui.DSWorkbenchSettingsDialog (DSWorkbenchSettingsDialog.java:894) - Setting default player for server 'de26' to Torridity
+2008-09-22 23:38:55,899 [AWT-EventQueue-0] DEBUG de.tor.tribes.ui.DSWorkbenchSettingsDialog (DSWorkbenchSettingsDialog.java:129) - Checking settings
+2008-09-22 23:45:29,239 [Thread-6] INFO  de.tor.tribes.ui.DSWorkbenchMainFrame$1 (DSWorkbenchMainFrame.java:98) - Performing ShutdownHook
+2008-09-22 23:45:29,239 [Thread-6] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:102) - Writing tags to './servers/de26/tags.xml'
+2008-09-22 23:45:29,269 [Thread-6] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:125) - Tags successfully saved
+2008-09-22 23:45:29,269 [Thread-6] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:104) - Writing markers to './servers/de26/markers.xml'
+2008-09-22 23:45:29,270 [Thread-6] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:119) - Markers successfully saved
+2008-09-22 23:45:50,865 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:58) - Loading properties
+2008-09-22 23:45:50,874 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:98) - Loading existing properties file
+2008-09-22 23:45:50,875 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:60) - Loading cursors
+2008-09-22 23:45:51,233 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:62) - Loading unit icons
+2008-09-22 23:45:51,322 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:64) - Loading graphic pack
+2008-09-22 23:45:52,360 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:66) - Loading world.dat
+2008-09-22 23:45:55,599 [StartupTimer] DEBUG de.tor.tribes.ui.DSWorkbenchSettingsDialog (DSWorkbenchSettingsDialog.java:129) - Checking settings
+2008-09-22 23:45:55,693 [StartupTimer] INFO  de.tor.tribes.db.DatabaseAdapter (DatabaseAdapter.java:44) - Database driver loaded
+2008-09-22 23:45:57,085 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:174) - Calling 'loadData()' for server de26
+2008-09-22 23:45:58,585 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:328) - Reading villages
+2008-09-22 23:46:03,583 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:331) - Reading tribes
+2008-09-22 23:46:03,923 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:334) - Reading allies
+2008-09-22 23:46:03,947 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:373) - Read 228864 villages
+2008-09-22 23:46:03,947 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:374) - Read 2370 allies
+2008-09-22 23:46:03,947 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:375) - Read 28194 tribes
+2008-09-22 23:46:03,948 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:226) - Reading conquered units
+2008-09-22 23:46:05,012 [StartupTimer] DEBUG de.tor.tribes.io.DataHolder (DataHolder.java:732) - Loading units
+2008-09-22 23:46:09,919 [AWT-EventQueue-0] INFO  de.tor.tribes.ui.MapPanel (MapPanel.java:85) - Creating MapPanel
+2008-09-22 23:46:10,038 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:140) - Loading markers
+2008-09-22 23:46:10,038 [StartupTimer] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:67) - Reading markers from './servers/de26/markers.xml'
+2008-09-22 23:46:10,041 [StartupTimer] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:78) - Markers successfully loaded
+2008-09-22 23:46:10,041 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:142) - Loading attacks
+2008-09-22 23:46:10,044 [StartupTimer] INFO  de.tor.tribes.util.attack.AttackManager (AttackManager.java:68) - Loading attacks from './servers/de26/attacks.xml'
+2008-09-22 23:46:10,048 [StartupTimer] DEBUG de.tor.tribes.util.attack.AttackManager (AttackManager.java:75) - Loading plan 'default'
+2008-09-22 23:46:10,051 [StartupTimer] DEBUG de.tor.tribes.util.attack.AttackManager (AttackManager.java:91) - Attacks loaded successfully
+2008-09-22 23:46:10,052 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:144) - Loading tags
+2008-09-22 23:46:10,053 [StartupTimer] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:52) - Loading tags from './servers/de26/tags.xml'
+2008-09-22 23:46:10,063 [StartupTimer] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:71) - Tags loaded successfully
+2008-09-22 23:46:10,063 [StartupTimer] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:82) - Associating tags with villages
+2008-09-22 23:46:10,434 [StartupTimer] INFO  de.tor.tribes.ui.DSWorkbenchMainFrame (DSWorkbenchMainFrame.java:227) - Initializing maps
+2008-09-22 23:46:10,988 [AWT-EventQueue-0] INFO  de.tor.tribes.ui.MapPanel (MapPanel.java:473) - Creating MapPaintThread
+2008-09-22 23:48:48,324 [Thread-6] INFO  de.tor.tribes.ui.DSWorkbenchMainFrame$1 (DSWorkbenchMainFrame.java:98) - Performing ShutdownHook
+2008-09-22 23:48:48,363 [Thread-6] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:102) - Writing tags to './servers/de26/tags.xml'
+2008-09-22 23:48:48,364 [Thread-6] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:125) - Tags successfully saved
+2008-09-22 23:48:48,364 [Thread-6] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:104) - Writing markers to './servers/de26/markers.xml'
+2008-09-22 23:48:48,365 [Thread-6] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:119) - Markers successfully saved
+2008-09-22 23:48:57,405 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:58) - Loading properties
+2008-09-22 23:48:57,411 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:98) - Loading existing properties file
+2008-09-22 23:48:57,414 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:60) - Loading cursors
+2008-09-22 23:48:57,957 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:62) - Loading unit icons
+2008-09-22 23:48:58,015 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:64) - Loading graphic pack
+2008-09-22 23:48:58,631 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:66) - Loading world.dat
+2008-09-22 23:49:00,562 [StartupTimer] DEBUG de.tor.tribes.ui.DSWorkbenchSettingsDialog (DSWorkbenchSettingsDialog.java:129) - Checking settings
+2008-09-22 23:49:00,575 [StartupTimer] INFO  de.tor.tribes.db.DatabaseAdapter (DatabaseAdapter.java:44) - Database driver loaded
+2008-09-22 23:49:01,738 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:174) - Calling 'loadData()' for server de26
+2008-09-22 23:49:02,618 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:328) - Reading villages
+2008-09-22 23:49:06,802 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:331) - Reading tribes
+2008-09-22 23:49:07,122 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:334) - Reading allies
+2008-09-22 23:49:07,184 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:373) - Read 228864 villages
+2008-09-22 23:49:07,185 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:374) - Read 2370 allies
+2008-09-22 23:49:07,185 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:375) - Read 28194 tribes
+2008-09-22 23:49:07,185 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:226) - Reading conquered units
+2008-09-22 23:49:07,622 [StartupTimer] DEBUG de.tor.tribes.io.DataHolder (DataHolder.java:732) - Loading units
+2008-09-22 23:49:11,936 [AWT-EventQueue-0] INFO  de.tor.tribes.ui.MapPanel (MapPanel.java:85) - Creating MapPanel
+2008-09-22 23:49:11,969 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:140) - Loading markers
+2008-09-22 23:49:11,973 [StartupTimer] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:67) - Reading markers from './servers/de26/markers.xml'
+2008-09-22 23:49:11,995 [StartupTimer] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:78) - Markers successfully loaded
+2008-09-22 23:49:11,995 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:142) - Loading attacks
+2008-09-22 23:49:11,997 [StartupTimer] INFO  de.tor.tribes.util.attack.AttackManager (AttackManager.java:68) - Loading attacks from './servers/de26/attacks.xml'
+2008-09-22 23:49:12,001 [StartupTimer] DEBUG de.tor.tribes.util.attack.AttackManager (AttackManager.java:75) - Loading plan 'default'
+2008-09-22 23:49:12,003 [StartupTimer] DEBUG de.tor.tribes.util.attack.AttackManager (AttackManager.java:91) - Attacks loaded successfully
+2008-09-22 23:49:12,003 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:144) - Loading tags
+2008-09-22 23:49:12,022 [StartupTimer] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:52) - Loading tags from './servers/de26/tags.xml'
+2008-09-22 23:49:12,026 [StartupTimer] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:71) - Tags loaded successfully
+2008-09-22 23:49:12,026 [StartupTimer] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:82) - Associating tags with villages
+2008-09-22 23:49:12,367 [StartupTimer] INFO  de.tor.tribes.ui.DSWorkbenchMainFrame (DSWorkbenchMainFrame.java:227) - Initializing maps
+2008-09-22 23:49:12,842 [AWT-EventQueue-0] INFO  de.tor.tribes.ui.MapPanel (MapPanel.java:473) - Creating MapPaintThread
+2008-09-22 23:49:27,271 [Thread-6] INFO  de.tor.tribes.ui.DSWorkbenchMainFrame$1 (DSWorkbenchMainFrame.java:98) - Performing ShutdownHook
+2008-09-22 23:49:27,292 [Thread-6] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:102) - Writing tags to './servers/de26/tags.xml'
+2008-09-22 23:49:27,293 [Thread-6] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:125) - Tags successfully saved
+2008-09-22 23:49:27,294 [Thread-6] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:104) - Writing markers to './servers/de26/markers.xml'
+2008-09-22 23:49:27,294 [Thread-6] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:119) - Markers successfully saved
+2008-09-22 23:53:04,188 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:58) - Loading properties
+2008-09-22 23:53:04,194 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:98) - Loading existing properties file
+2008-09-22 23:53:04,202 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:60) - Loading cursors
+2008-09-22 23:53:04,521 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:62) - Loading unit icons
+2008-09-22 23:53:04,546 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:64) - Loading graphic pack
+2008-09-22 23:53:05,147 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:66) - Loading world.dat
+2008-09-22 23:53:07,053 [StartupTimer] DEBUG de.tor.tribes.ui.DSWorkbenchSettingsDialog (DSWorkbenchSettingsDialog.java:129) - Checking settings
+2008-09-22 23:53:07,090 [StartupTimer] INFO  de.tor.tribes.db.DatabaseAdapter (DatabaseAdapter.java:44) - Database driver loaded
+2008-09-22 23:53:08,192 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:174) - Calling 'loadData()' for server de26
+2008-09-22 23:53:08,636 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:328) - Reading villages
+2008-09-22 23:53:12,564 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:331) - Reading tribes
+2008-09-22 23:53:12,831 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:334) - Reading allies
+2008-09-22 23:53:12,852 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:373) - Read 228864 villages
+2008-09-22 23:53:12,852 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:374) - Read 2370 allies
+2008-09-22 23:53:12,853 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:375) - Read 28194 tribes
+2008-09-22 23:53:12,853 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:226) - Reading conquered units
+2008-09-22 23:53:13,711 [StartupTimer] DEBUG de.tor.tribes.io.DataHolder (DataHolder.java:732) - Loading units
+2008-09-22 23:53:17,407 [AWT-EventQueue-0] INFO  de.tor.tribes.ui.MapPanel (MapPanel.java:85) - Creating MapPanel
+2008-09-22 23:53:17,429 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:140) - Loading markers
+2008-09-22 23:53:17,429 [StartupTimer] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:67) - Reading markers from './servers/de26/markers.xml'
+2008-09-22 23:53:17,451 [StartupTimer] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:78) - Markers successfully loaded
+2008-09-22 23:53:17,451 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:142) - Loading attacks
+2008-09-22 23:53:17,454 [StartupTimer] INFO  de.tor.tribes.util.attack.AttackManager (AttackManager.java:68) - Loading attacks from './servers/de26/attacks.xml'
+2008-09-22 23:53:17,471 [StartupTimer] DEBUG de.tor.tribes.util.attack.AttackManager (AttackManager.java:75) - Loading plan 'default'
+2008-09-22 23:53:17,473 [StartupTimer] DEBUG de.tor.tribes.util.attack.AttackManager (AttackManager.java:91) - Attacks loaded successfully
+2008-09-22 23:53:17,474 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:144) - Loading tags
+2008-09-22 23:53:17,475 [StartupTimer] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:52) - Loading tags from './servers/de26/tags.xml'
+2008-09-22 23:53:17,478 [StartupTimer] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:71) - Tags loaded successfully
+2008-09-22 23:53:17,478 [StartupTimer] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:82) - Associating tags with villages
+2008-09-22 23:53:17,770 [StartupTimer] INFO  de.tor.tribes.ui.DSWorkbenchMainFrame (DSWorkbenchMainFrame.java:227) - Initializing maps
+2008-09-22 23:53:18,230 [AWT-EventQueue-0] INFO  de.tor.tribes.ui.MapPanel (MapPanel.java:473) - Creating MapPaintThread
+2008-09-22 23:53:40,211 [Thread-6] INFO  de.tor.tribes.ui.DSWorkbenchMainFrame$1 (DSWorkbenchMainFrame.java:98) - Performing ShutdownHook
+2008-09-22 23:53:40,258 [Thread-6] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:102) - Writing tags to './servers/de26/tags.xml'
+2008-09-22 23:53:40,264 [Thread-6] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:125) - Tags successfully saved
+2008-09-22 23:53:40,264 [Thread-6] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:104) - Writing markers to './servers/de26/markers.xml'
+2008-09-22 23:53:40,267 [Thread-6] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:119) - Markers successfully saved
+2008-09-22 23:59:27,558 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:58) - Loading properties
+2008-09-22 23:59:27,569 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:98) - Loading existing properties file
+2008-09-22 23:59:27,570 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:60) - Loading cursors
+2008-09-22 23:59:27,886 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:62) - Loading unit icons
+2008-09-22 23:59:27,943 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:64) - Loading graphic pack
+2008-09-22 23:59:28,533 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:66) - Loading world.dat
+2008-09-22 23:59:30,763 [StartupTimer] DEBUG de.tor.tribes.ui.DSWorkbenchSettingsDialog (DSWorkbenchSettingsDialog.java:129) - Checking settings
+2008-09-22 23:59:30,802 [StartupTimer] INFO  de.tor.tribes.db.DatabaseAdapter (DatabaseAdapter.java:44) - Database driver loaded
+2008-09-22 23:59:31,962 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:174) - Calling 'loadData()' for server de26
+2008-09-22 23:59:32,434 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:328) - Reading villages
+2008-09-22 23:59:36,561 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:331) - Reading tribes
+2008-09-22 23:59:36,834 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:334) - Reading allies
+2008-09-22 23:59:36,856 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:373) - Read 228864 villages
+2008-09-22 23:59:36,856 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:374) - Read 2370 allies
+2008-09-22 23:59:36,857 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:375) - Read 28194 tribes
+2008-09-22 23:59:36,857 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:226) - Reading conquered units
+2008-09-22 23:59:37,757 [StartupTimer] DEBUG de.tor.tribes.io.DataHolder (DataHolder.java:732) - Loading units
+2008-09-22 23:59:41,693 [AWT-EventQueue-0] INFO  de.tor.tribes.ui.MapPanel (MapPanel.java:85) - Creating MapPanel
+2008-09-22 23:59:41,732 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:140) - Loading markers
+2008-09-22 23:59:41,732 [StartupTimer] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:67) - Reading markers from './servers/de26/markers.xml'
+2008-09-22 23:59:41,744 [StartupTimer] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:78) - Markers successfully loaded
+2008-09-22 23:59:41,744 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:142) - Loading attacks
+2008-09-22 23:59:41,748 [StartupTimer] INFO  de.tor.tribes.util.attack.AttackManager (AttackManager.java:68) - Loading attacks from './servers/de26/attacks.xml'
+2008-09-22 23:59:41,752 [StartupTimer] DEBUG de.tor.tribes.util.attack.AttackManager (AttackManager.java:75) - Loading plan 'default'
+2008-09-22 23:59:41,754 [StartupTimer] DEBUG de.tor.tribes.util.attack.AttackManager (AttackManager.java:91) - Attacks loaded successfully
+2008-09-22 23:59:41,754 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:144) - Loading tags
+2008-09-22 23:59:41,775 [StartupTimer] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:52) - Loading tags from './servers/de26/tags.xml'
+2008-09-22 23:59:41,778 [StartupTimer] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:71) - Tags loaded successfully
+2008-09-22 23:59:41,779 [StartupTimer] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:82) - Associating tags with villages
+2008-09-22 23:59:42,175 [StartupTimer] INFO  de.tor.tribes.ui.DSWorkbenchMainFrame (DSWorkbenchMainFrame.java:227) - Initializing maps
+2008-09-22 23:59:42,691 [AWT-EventQueue-0] INFO  de.tor.tribes.ui.MapPanel (MapPanel.java:473) - Creating MapPaintThread
+2008-09-23 00:02:20,095 [Thread-6] INFO  de.tor.tribes.ui.DSWorkbenchMainFrame$1 (DSWorkbenchMainFrame.java:98) - Performing ShutdownHook
+2008-09-23 00:02:20,122 [Thread-6] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:102) - Writing tags to './servers/de26/tags.xml'
+2008-09-23 00:02:20,122 [Thread-6] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:125) - Tags successfully saved
+2008-09-23 00:02:20,123 [Thread-6] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:104) - Writing markers to './servers/de26/markers.xml'
+2008-09-23 00:02:20,133 [Thread-6] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:119) - Markers successfully saved
+2008-09-23 00:09:30,667 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:58) - Loading properties
+2008-09-23 00:09:30,671 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:98) - Loading existing properties file
+2008-09-23 00:09:30,679 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:60) - Loading cursors
+2008-09-23 00:09:30,966 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:62) - Loading unit icons
+2008-09-23 00:09:30,997 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:64) - Loading graphic pack
+2008-09-23 00:09:31,578 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:66) - Loading world.dat
+2008-09-23 00:09:33,858 [StartupTimer] DEBUG de.tor.tribes.ui.DSWorkbenchSettingsDialog (DSWorkbenchSettingsDialog.java:129) - Checking settings
+2008-09-23 00:09:33,911 [StartupTimer] INFO  de.tor.tribes.db.DatabaseAdapter (DatabaseAdapter.java:44) - Database driver loaded
+2008-09-23 00:09:35,572 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:174) - Calling 'loadData()' for server de26
+2008-09-23 00:09:36,857 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:328) - Reading villages
+2008-09-23 00:09:41,173 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:331) - Reading tribes
+2008-09-23 00:09:41,484 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:334) - Reading allies
+2008-09-23 00:09:41,507 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:373) - Read 228864 villages
+2008-09-23 00:09:41,508 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:374) - Read 2370 allies
+2008-09-23 00:09:41,508 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:375) - Read 28194 tribes
+2008-09-23 00:09:41,508 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:226) - Reading conquered units
+2008-09-23 00:09:42,811 [StartupTimer] DEBUG de.tor.tribes.io.DataHolder (DataHolder.java:732) - Loading units
+2008-09-23 00:09:46,732 [AWT-EventQueue-0] INFO  de.tor.tribes.ui.MapPanel (MapPanel.java:85) - Creating MapPanel
+2008-09-23 00:09:46,824 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:140) - Loading markers
+2008-09-23 00:09:46,824 [StartupTimer] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:67) - Reading markers from './servers/de26/markers.xml'
+2008-09-23 00:09:46,837 [StartupTimer] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:78) - Markers successfully loaded
+2008-09-23 00:09:46,838 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:142) - Loading attacks
+2008-09-23 00:09:46,840 [StartupTimer] INFO  de.tor.tribes.util.attack.AttackManager (AttackManager.java:68) - Loading attacks from './servers/de26/attacks.xml'
+2008-09-23 00:09:46,846 [StartupTimer] DEBUG de.tor.tribes.util.attack.AttackManager (AttackManager.java:75) - Loading plan 'default'
+2008-09-23 00:09:46,847 [StartupTimer] DEBUG de.tor.tribes.util.attack.AttackManager (AttackManager.java:91) - Attacks loaded successfully
+2008-09-23 00:09:46,847 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:144) - Loading tags
+2008-09-23 00:09:46,849 [StartupTimer] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:52) - Loading tags from './servers/de26/tags.xml'
+2008-09-23 00:09:46,856 [StartupTimer] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:71) - Tags loaded successfully
+2008-09-23 00:09:46,857 [StartupTimer] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:82) - Associating tags with villages
+2008-09-23 00:09:47,139 [StartupTimer] INFO  de.tor.tribes.ui.DSWorkbenchMainFrame (DSWorkbenchMainFrame.java:227) - Initializing maps
+2008-09-23 00:09:47,712 [AWT-EventQueue-0] INFO  de.tor.tribes.ui.MapPanel (MapPanel.java:473) - Creating MapPaintThread
+2008-09-23 00:09:57,934 [Thread-6] INFO  de.tor.tribes.ui.DSWorkbenchMainFrame$1 (DSWorkbenchMainFrame.java:98) - Performing ShutdownHook
+2008-09-23 00:09:57,968 [Thread-6] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:102) - Writing tags to './servers/de26/tags.xml'
+2008-09-23 00:09:57,970 [Thread-6] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:125) - Tags successfully saved
+2008-09-23 00:09:57,970 [Thread-6] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:104) - Writing markers to './servers/de26/markers.xml'
+2008-09-23 00:09:57,971 [Thread-6] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:119) - Markers successfully saved
+2008-09-23 00:10:21,689 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:58) - Loading properties
+2008-09-23 00:10:21,693 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:98) - Loading existing properties file
+2008-09-23 00:10:21,701 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:60) - Loading cursors
+2008-09-23 00:10:22,004 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:62) - Loading unit icons
+2008-09-23 00:10:22,049 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:64) - Loading graphic pack
+2008-09-23 00:10:23,176 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:66) - Loading world.dat
+2008-09-23 00:10:26,020 [StartupTimer] DEBUG de.tor.tribes.ui.DSWorkbenchSettingsDialog (DSWorkbenchSettingsDialog.java:129) - Checking settings
+2008-09-23 00:10:26,078 [StartupTimer] INFO  de.tor.tribes.db.DatabaseAdapter (DatabaseAdapter.java:44) - Database driver loaded
+2008-09-23 00:10:27,542 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:174) - Calling 'loadData()' for server de26
+2008-09-23 00:10:29,405 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:328) - Reading villages
+2008-09-23 00:10:35,567 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:331) - Reading tribes
+2008-09-23 00:10:36,268 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:334) - Reading allies
+2008-09-23 00:10:36,326 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:373) - Read 228864 villages
+2008-09-23 00:10:36,327 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:374) - Read 2370 allies
+2008-09-23 00:10:36,327 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:375) - Read 28194 tribes
+2008-09-23 00:10:36,328 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:226) - Reading conquered units
+2008-09-23 00:10:39,008 [StartupTimer] DEBUG de.tor.tribes.io.DataHolder (DataHolder.java:732) - Loading units
+2008-09-23 00:10:43,942 [AWT-EventQueue-0] INFO  de.tor.tribes.ui.MapPanel (MapPanel.java:85) - Creating MapPanel
+2008-09-23 00:10:43,964 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:140) - Loading markers
+2008-09-23 00:10:43,965 [StartupTimer] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:67) - Reading markers from './servers/de26/markers.xml'
+2008-09-23 00:10:43,997 [StartupTimer] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:78) - Markers successfully loaded
+2008-09-23 00:10:43,997 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:142) - Loading attacks
+2008-09-23 00:10:43,999 [StartupTimer] INFO  de.tor.tribes.util.attack.AttackManager (AttackManager.java:68) - Loading attacks from './servers/de26/attacks.xml'
+2008-09-23 00:10:44,006 [StartupTimer] DEBUG de.tor.tribes.util.attack.AttackManager (AttackManager.java:75) - Loading plan 'default'
+2008-09-23 00:10:44,014 [StartupTimer] DEBUG de.tor.tribes.util.attack.AttackManager (AttackManager.java:91) - Attacks loaded successfully
+2008-09-23 00:10:44,014 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:144) - Loading tags
+2008-09-23 00:10:44,015 [StartupTimer] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:52) - Loading tags from './servers/de26/tags.xml'
+2008-09-23 00:10:44,018 [StartupTimer] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:71) - Tags loaded successfully
+2008-09-23 00:10:44,018 [StartupTimer] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:82) - Associating tags with villages
+2008-09-23 00:10:44,252 [StartupTimer] INFO  de.tor.tribes.ui.DSWorkbenchMainFrame (DSWorkbenchMainFrame.java:227) - Initializing maps
+2008-09-23 00:10:44,684 [AWT-EventQueue-0] INFO  de.tor.tribes.ui.MapPanel (MapPanel.java:473) - Creating MapPaintThread
+2008-09-23 00:11:09,950 [Thread-6] INFO  de.tor.tribes.ui.DSWorkbenchMainFrame$1 (DSWorkbenchMainFrame.java:98) - Performing ShutdownHook
+2008-09-23 00:11:09,951 [Thread-6] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:102) - Writing tags to './servers/de26/tags.xml'
+2008-09-23 00:11:09,951 [Thread-6] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:125) - Tags successfully saved
+2008-09-23 00:11:09,952 [Thread-6] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:104) - Writing markers to './servers/de26/markers.xml'
+2008-09-23 00:11:09,953 [Thread-6] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:119) - Markers successfully saved
+2008-09-23 00:11:35,441 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:58) - Loading properties
+2008-09-23 00:11:35,445 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:98) - Loading existing properties file
+2008-09-23 00:11:35,446 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:60) - Loading cursors
+2008-09-23 00:11:35,801 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:62) - Loading unit icons
+2008-09-23 00:11:35,883 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:64) - Loading graphic pack
+2008-09-23 00:11:36,576 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:66) - Loading world.dat
+2008-09-23 00:11:38,520 [StartupTimer] DEBUG de.tor.tribes.ui.DSWorkbenchSettingsDialog (DSWorkbenchSettingsDialog.java:129) - Checking settings
+2008-09-23 00:11:38,554 [StartupTimer] INFO  de.tor.tribes.db.DatabaseAdapter (DatabaseAdapter.java:44) - Database driver loaded
+2008-09-23 00:11:40,035 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:174) - Calling 'loadData()' for server de26
+2008-09-23 00:11:41,136 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:328) - Reading villages
+2008-09-23 00:11:45,164 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:331) - Reading tribes
+2008-09-23 00:11:45,545 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:334) - Reading allies
+2008-09-23 00:11:45,612 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:373) - Read 228864 villages
+2008-09-23 00:11:45,612 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:374) - Read 2370 allies
+2008-09-23 00:11:45,613 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:375) - Read 28194 tribes
+2008-09-23 00:11:45,613 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:226) - Reading conquered units
+2008-09-23 00:11:47,242 [StartupTimer] DEBUG de.tor.tribes.io.DataHolder (DataHolder.java:732) - Loading units
+2008-09-23 00:11:51,076 [AWT-EventQueue-0] INFO  de.tor.tribes.ui.MapPanel (MapPanel.java:85) - Creating MapPanel
+2008-09-23 00:11:51,131 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:140) - Loading markers
+2008-09-23 00:11:51,131 [StartupTimer] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:67) - Reading markers from './servers/de26/markers.xml'
+2008-09-23 00:11:51,144 [StartupTimer] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:78) - Markers successfully loaded
+2008-09-23 00:11:51,144 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:142) - Loading attacks
+2008-09-23 00:11:51,146 [StartupTimer] INFO  de.tor.tribes.util.attack.AttackManager (AttackManager.java:68) - Loading attacks from './servers/de26/attacks.xml'
+2008-09-23 00:11:51,158 [StartupTimer] DEBUG de.tor.tribes.util.attack.AttackManager (AttackManager.java:75) - Loading plan 'default'
+2008-09-23 00:11:51,159 [StartupTimer] DEBUG de.tor.tribes.util.attack.AttackManager (AttackManager.java:91) - Attacks loaded successfully
+2008-09-23 00:11:51,160 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:144) - Loading tags
+2008-09-23 00:11:51,161 [StartupTimer] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:52) - Loading tags from './servers/de26/tags.xml'
+2008-09-23 00:11:51,163 [StartupTimer] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:71) - Tags loaded successfully
+2008-09-23 00:11:51,196 [StartupTimer] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:82) - Associating tags with villages
+2008-09-23 00:11:51,562 [StartupTimer] INFO  de.tor.tribes.ui.DSWorkbenchMainFrame (DSWorkbenchMainFrame.java:227) - Initializing maps
+2008-09-23 00:11:52,012 [AWT-EventQueue-0] INFO  de.tor.tribes.ui.MapPanel (MapPanel.java:473) - Creating MapPaintThread
+2008-09-23 00:12:06,043 [Thread-6] INFO  de.tor.tribes.ui.DSWorkbenchMainFrame$1 (DSWorkbenchMainFrame.java:98) - Performing ShutdownHook
+2008-09-23 00:12:06,076 [Thread-6] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:102) - Writing tags to './servers/de26/tags.xml'
+2008-09-23 00:12:06,076 [Thread-6] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:125) - Tags successfully saved
+2008-09-23 00:12:06,077 [Thread-6] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:104) - Writing markers to './servers/de26/markers.xml'
+2008-09-23 00:12:06,078 [Thread-6] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:119) - Markers successfully saved
+2008-09-23 00:12:50,663 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:58) - Loading properties
+2008-09-23 00:12:50,672 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:98) - Loading existing properties file
+2008-09-23 00:12:50,674 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:60) - Loading cursors
+2008-09-23 00:12:51,240 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:62) - Loading unit icons
+2008-09-23 00:12:51,290 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:64) - Loading graphic pack
+2008-09-23 00:12:52,031 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:66) - Loading world.dat
+2008-09-23 00:12:53,850 [StartupTimer] DEBUG de.tor.tribes.ui.DSWorkbenchSettingsDialog (DSWorkbenchSettingsDialog.java:129) - Checking settings
+2008-09-23 00:12:53,908 [StartupTimer] INFO  de.tor.tribes.db.DatabaseAdapter (DatabaseAdapter.java:44) - Database driver loaded
+2008-09-23 00:12:55,314 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:174) - Calling 'loadData()' for server de26
+2008-09-23 00:12:56,387 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:328) - Reading villages
+2008-09-23 00:13:00,332 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:331) - Reading tribes
+2008-09-23 00:13:00,644 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:334) - Reading allies
+2008-09-23 00:13:00,669 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:373) - Read 228864 villages
+2008-09-23 00:13:00,669 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:374) - Read 2370 allies
+2008-09-23 00:13:00,669 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:375) - Read 28194 tribes
+2008-09-23 00:13:00,670 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:226) - Reading conquered units
+2008-09-23 00:13:01,571 [StartupTimer] DEBUG de.tor.tribes.io.DataHolder (DataHolder.java:732) - Loading units
+2008-09-23 00:13:04,614 [AWT-EventQueue-0] INFO  de.tor.tribes.ui.MapPanel (MapPanel.java:85) - Creating MapPanel
+2008-09-23 00:13:04,697 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:140) - Loading markers
+2008-09-23 00:13:04,697 [StartupTimer] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:67) - Reading markers from './servers/de26/markers.xml'
+2008-09-23 00:13:04,701 [StartupTimer] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:78) - Markers successfully loaded
+2008-09-23 00:13:04,701 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:142) - Loading attacks
+2008-09-23 00:13:04,703 [StartupTimer] INFO  de.tor.tribes.util.attack.AttackManager (AttackManager.java:68) - Loading attacks from './servers/de26/attacks.xml'
+2008-09-23 00:13:04,707 [StartupTimer] DEBUG de.tor.tribes.util.attack.AttackManager (AttackManager.java:75) - Loading plan 'default'
+2008-09-23 00:13:04,709 [StartupTimer] DEBUG de.tor.tribes.util.attack.AttackManager (AttackManager.java:91) - Attacks loaded successfully
+2008-09-23 00:13:04,709 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:144) - Loading tags
+2008-09-23 00:13:04,711 [StartupTimer] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:52) - Loading tags from './servers/de26/tags.xml'
+2008-09-23 00:13:04,722 [StartupTimer] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:71) - Tags loaded successfully
+2008-09-23 00:13:04,722 [StartupTimer] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:82) - Associating tags with villages
+2008-09-23 00:13:04,953 [StartupTimer] INFO  de.tor.tribes.ui.DSWorkbenchMainFrame (DSWorkbenchMainFrame.java:227) - Initializing maps
+2008-09-23 00:13:05,345 [AWT-EventQueue-0] INFO  de.tor.tribes.ui.MapPanel (MapPanel.java:473) - Creating MapPaintThread
+2008-09-23 00:13:58,843 [AWT-EventQueue-0] DEBUG de.tor.tribes.ui.DSWorkbenchSettingsDialog (DSWorkbenchSettingsDialog.java:894) - Setting default player for server 'de26' to Torridity
+2008-09-23 00:13:58,845 [AWT-EventQueue-0] DEBUG de.tor.tribes.ui.DSWorkbenchSettingsDialog (DSWorkbenchSettingsDialog.java:129) - Checking settings
+2008-09-23 00:14:02,760 [Thread-6] INFO  de.tor.tribes.ui.DSWorkbenchMainFrame$1 (DSWorkbenchMainFrame.java:98) - Performing ShutdownHook
+2008-09-23 00:14:02,785 [Thread-6] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:102) - Writing tags to './servers/de26/tags.xml'
+2008-09-23 00:14:02,793 [Thread-6] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:125) - Tags successfully saved
+2008-09-23 00:14:02,794 [Thread-6] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:104) - Writing markers to './servers/de26/markers.xml'
+2008-09-23 00:14:02,795 [Thread-6] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:119) - Markers successfully saved
+2008-09-23 00:18:31,987 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:58) - Loading properties
+2008-09-23 00:18:31,993 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:98) - Loading existing properties file
+2008-09-23 00:18:31,995 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:60) - Loading cursors
+2008-09-23 00:18:32,573 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:62) - Loading unit icons
+2008-09-23 00:18:32,640 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:64) - Loading graphic pack
+2008-09-23 00:18:33,207 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:66) - Loading world.dat
+2008-09-23 00:18:35,207 [StartupTimer] DEBUG de.tor.tribes.ui.DSWorkbenchSettingsDialog (DSWorkbenchSettingsDialog.java:129) - Checking settings
+2008-09-23 00:18:35,234 [StartupTimer] INFO  de.tor.tribes.db.DatabaseAdapter (DatabaseAdapter.java:44) - Database driver loaded
+2008-09-23 00:18:36,107 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:174) - Calling 'loadData()' for server de26
+2008-09-23 00:18:37,241 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:328) - Reading villages
+2008-09-23 00:18:43,264 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:331) - Reading tribes
+2008-09-23 00:18:43,520 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:334) - Reading allies
+2008-09-23 00:18:43,540 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:373) - Read 228864 villages
+2008-09-23 00:18:43,541 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:374) - Read 2370 allies
+2008-09-23 00:18:43,541 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:375) - Read 28194 tribes
+2008-09-23 00:18:43,541 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:226) - Reading conquered units
+2008-09-23 00:18:44,014 [StartupTimer] DEBUG de.tor.tribes.io.DataHolder (DataHolder.java:732) - Loading units
+2008-09-23 00:18:47,878 [AWT-EventQueue-0] INFO  de.tor.tribes.ui.MapPanel (MapPanel.java:85) - Creating MapPanel
+2008-09-23 00:18:47,901 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:140) - Loading markers
+2008-09-23 00:18:47,903 [StartupTimer] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:67) - Reading markers from './servers/de26/markers.xml'
+2008-09-23 00:18:47,907 [StartupTimer] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:78) - Markers successfully loaded
+2008-09-23 00:18:47,907 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:142) - Loading attacks
+2008-09-23 00:18:47,921 [StartupTimer] INFO  de.tor.tribes.util.attack.AttackManager (AttackManager.java:68) - Loading attacks from './servers/de26/attacks.xml'
+2008-09-23 00:18:47,925 [StartupTimer] DEBUG de.tor.tribes.util.attack.AttackManager (AttackManager.java:75) - Loading plan 'default'
+2008-09-23 00:18:47,926 [StartupTimer] DEBUG de.tor.tribes.util.attack.AttackManager (AttackManager.java:91) - Attacks loaded successfully
+2008-09-23 00:18:47,927 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:144) - Loading tags
+2008-09-23 00:18:47,937 [StartupTimer] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:52) - Loading tags from './servers/de26/tags.xml'
+2008-09-23 00:18:47,940 [StartupTimer] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:71) - Tags loaded successfully
+2008-09-23 00:18:47,940 [StartupTimer] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:82) - Associating tags with villages
+2008-09-23 00:18:48,303 [StartupTimer] INFO  de.tor.tribes.ui.DSWorkbenchMainFrame (DSWorkbenchMainFrame.java:227) - Initializing maps
+2008-09-23 00:18:48,680 [AWT-EventQueue-0] INFO  de.tor.tribes.ui.MapPanel (MapPanel.java:473) - Creating MapPaintThread
+2008-09-23 00:19:05,000 [Thread-4] INFO  de.tor.tribes.ui.DSWorkbenchMainFrame$1 (DSWorkbenchMainFrame.java:98) - Performing ShutdownHook
+2008-09-23 00:19:05,001 [Thread-4] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:102) - Writing tags to './servers/de26/tags.xml'
+2008-09-23 00:19:05,039 [Thread-4] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:125) - Tags successfully saved
+2008-09-23 00:19:05,040 [Thread-4] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:104) - Writing markers to './servers/de26/markers.xml'
+2008-09-23 00:19:05,041 [Thread-4] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:119) - Markers successfully saved
+2008-09-23 00:23:59,839 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:58) - Loading properties
+2008-09-23 00:23:59,846 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:98) - Loading existing properties file
+2008-09-23 00:23:59,848 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:60) - Loading cursors
+2008-09-23 00:24:00,367 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:62) - Loading unit icons
+2008-09-23 00:24:00,438 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:64) - Loading graphic pack
+2008-09-23 00:24:01,402 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:66) - Loading world.dat
+2008-09-23 00:24:03,107 [StartupTimer] DEBUG de.tor.tribes.ui.DSWorkbenchSettingsDialog (DSWorkbenchSettingsDialog.java:129) - Checking settings
+2008-09-23 00:24:03,181 [StartupTimer] INFO  de.tor.tribes.db.DatabaseAdapter (DatabaseAdapter.java:44) - Database driver loaded
+2008-09-23 00:24:03,954 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:174) - Calling 'loadData()' for server de26
+2008-09-23 00:24:04,849 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:328) - Reading villages
+2008-09-23 00:24:09,788 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:331) - Reading tribes
+2008-09-23 00:24:10,060 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:334) - Reading allies
+2008-09-23 00:24:10,080 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:373) - Read 228864 villages
+2008-09-23 00:24:10,081 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:374) - Read 2370 allies
+2008-09-23 00:24:10,081 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:375) - Read 28194 tribes
+2008-09-23 00:24:10,081 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:226) - Reading conquered units
+2008-09-23 00:24:10,586 [StartupTimer] DEBUG de.tor.tribes.io.DataHolder (DataHolder.java:732) - Loading units
+2008-09-23 00:24:14,286 [AWT-EventQueue-0] INFO  de.tor.tribes.ui.MapPanel (MapPanel.java:85) - Creating MapPanel
+2008-09-23 00:24:14,333 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:140) - Loading markers
+2008-09-23 00:24:14,335 [StartupTimer] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:67) - Reading markers from './servers/de26/markers.xml'
+2008-09-23 00:24:14,339 [StartupTimer] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:78) - Markers successfully loaded
+2008-09-23 00:24:14,339 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:142) - Loading attacks
+2008-09-23 00:24:14,360 [StartupTimer] INFO  de.tor.tribes.util.attack.AttackManager (AttackManager.java:68) - Loading attacks from './servers/de26/attacks.xml'
+2008-09-23 00:24:14,384 [StartupTimer] DEBUG de.tor.tribes.util.attack.AttackManager (AttackManager.java:75) - Loading plan 'default'
+2008-09-23 00:24:14,385 [StartupTimer] DEBUG de.tor.tribes.util.attack.AttackManager (AttackManager.java:91) - Attacks loaded successfully
+2008-09-23 00:24:14,386 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:144) - Loading tags
+2008-09-23 00:24:14,388 [StartupTimer] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:52) - Loading tags from './servers/de26/tags.xml'
+2008-09-23 00:24:14,399 [StartupTimer] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:71) - Tags loaded successfully
+2008-09-23 00:24:14,400 [StartupTimer] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:82) - Associating tags with villages
+2008-09-23 00:24:14,838 [StartupTimer] INFO  de.tor.tribes.ui.DSWorkbenchMainFrame (DSWorkbenchMainFrame.java:227) - Initializing maps
+2008-09-23 00:24:15,017 [AWT-EventQueue-0] INFO  de.tor.tribes.ui.MapPanel (MapPanel.java:473) - Creating MapPaintThread
+2008-09-23 00:24:44,818 [Thread-4] INFO  de.tor.tribes.ui.DSWorkbenchMainFrame$1 (DSWorkbenchMainFrame.java:98) - Performing ShutdownHook
+2008-09-23 00:24:44,840 [Thread-4] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:102) - Writing tags to './servers/de26/tags.xml'
+2008-09-23 00:24:44,869 [Thread-4] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:125) - Tags successfully saved
+2008-09-23 00:24:44,870 [Thread-4] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:104) - Writing markers to './servers/de26/markers.xml'
+2008-09-23 00:24:44,871 [Thread-4] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:119) - Markers successfully saved
+2008-09-23 00:29:00,192 [AWT-EventQueue-0] INFO  de.tor.tribes.ui.MapPanel (MapPanel.java:85) - Creating MapPanel
+2008-09-23 00:29:01,559 [AWT-EventQueue-0] ERROR de.tor.tribes.ui.DSWorkbenchMainFrame (DSWorkbenchMainFrame.java:1516) - Failed to resize map for (500, 500)
+java.lang.IndexOutOfBoundsException: Index: 0, Size: 0
+	at java.util.LinkedList.entry(LinkedList.java:365)
+	at java.util.LinkedList.get(LinkedList.java:315)
+	at de.tor.tribes.ui.ImageManager.getCursor(ImageManager.java:87)
+	at de.tor.tribes.ui.MapPanel.<init>(MapPanel.java:90)
+	at de.tor.tribes.ui.MapPanel.getSingleton(MapPanel.java:77)
+	at de.tor.tribes.ui.DSWorkbenchMainFrame.fireFrameResizedEvent(DSWorkbenchMainFrame.java:1514)
+	at de.tor.tribes.ui.DSWorkbenchMainFrame.access$1000(DSWorkbenchMainFrame.java:64)
+	at de.tor.tribes.ui.DSWorkbenchMainFrame$14.componentResized(DSWorkbenchMainFrame.java:966)
+	at java.awt.AWTEventMulticaster.componentResized(AWTEventMulticaster.java:142)
+	at java.awt.Component.processComponentEvent(Component.java:5867)
+	at java.awt.Component.processEvent(Component.java:5821)
+	at java.awt.Container.processEvent(Container.java:2058)
+	at java.awt.Window.processEvent(Window.java:1798)
+	at java.awt.Component.dispatchEventImpl(Component.java:4413)
+	at java.awt.Container.dispatchEventImpl(Container.java:2116)
+	at java.awt.Window.dispatchEventImpl(Window.java:2440)
+	at java.awt.Component.dispatchEvent(Component.java:4243)
+	at java.awt.EventQueue.dispatchEvent(EventQueue.java:599)
+	at java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:273)
+	at java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:183)
+	at java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:173)
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:168)
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:160)
+	at java.awt.EventDispatchThread.run(EventDispatchThread.java:121)
+2008-09-23 00:29:01,659 [Thread-1] INFO  de.tor.tribes.ui.DSWorkbenchMainFrame$1 (DSWorkbenchMainFrame.java:98) - Performing ShutdownHook
+2008-09-23 00:29:01,662 [Thread-1] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:102) - Writing tags to './servers/de26/tags.xml'
+2008-09-23 00:29:01,662 [Thread-1] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:125) - Tags successfully saved
+2008-09-23 00:29:01,719 [Thread-1] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:104) - Writing markers to './servers/de26/markers.xml'
+2008-09-23 00:29:01,720 [Thread-1] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:119) - Markers successfully saved
+2008-09-23 00:29:01,725 [Thread-1] ERROR de.tor.tribes.util.GlobalOptions (GlobalOptions.java:116) - Failed to write properties
+java.lang.NullPointerException
+	at de.tor.tribes.util.GlobalOptions.saveProperties(GlobalOptions.java:112)
+	at de.tor.tribes.ui.DSWorkbenchMainFrame$1.run(DSWorkbenchMainFrame.java:102)
+	at java.lang.Thread.run(Thread.java:619)
+2008-09-23 00:29:28,161 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:58) - Loading properties
+2008-09-23 00:29:28,164 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:98) - Loading existing properties file
+2008-09-23 00:29:28,165 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:60) - Loading cursors
+2008-09-23 00:29:28,476 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:62) - Loading unit icons
+2008-09-23 00:29:28,517 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:64) - Loading graphic pack
+2008-09-23 00:29:29,116 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:66) - Loading world.dat
+2008-09-23 00:29:31,482 [StartupTimer] DEBUG de.tor.tribes.ui.DSWorkbenchSettingsDialog (DSWorkbenchSettingsDialog.java:129) - Checking settings
+2008-09-23 00:29:31,528 [StartupTimer] INFO  de.tor.tribes.db.DatabaseAdapter (DatabaseAdapter.java:44) - Database driver loaded
+2008-09-23 00:29:32,467 [StartupTimer] ERROR de.tor.tribes.db.DatabaseAdapter (DatabaseAdapter.java:146) - Failed to validate user
+java.lang.NullPointerException
+	at de.tor.tribes.sec.SecurityAdapter.hashStringMD5(SecurityAdapter.java:46)
+	at de.tor.tribes.db.DatabaseAdapter.checkUser(DatabaseAdapter.java:122)
+	at de.tor.tribes.ui.DSWorkbenchSettingsDialog.checkSettings(DSWorkbenchSettingsDialog.java:156)
+	at de.tor.tribes.ui.DSWorkbenchSplashScreen.hideSplash(DSWorkbenchSplashScreen.java:92)
+	at de.tor.tribes.ui.HideSplashTask.run(DSWorkbenchSplashScreen.java:174)
+	at java.util.TimerThread.mainLoop(Timer.java:512)
+	at java.util.TimerThread.run(Timer.java:462)
+2008-09-23 00:29:32,468 [StartupTimer] WARN  de.tor.tribes.ui.DSWorkbenchSettingsDialog (DSWorkbenchSettingsDialog.java:216) - Default server is not set
+2008-09-23 00:29:32,469 [StartupTimer] WARN  de.tor.tribes.ui.DSWorkbenchSettingsDialog (DSWorkbenchSettingsDialog.java:226) - Default user is not set
+2008-09-23 00:29:35,616 [StartupTimer] INFO  de.tor.tribes.ui.DSWorkbenchSplashScreen (DSWorkbenchSplashScreen.java:93) - Reading user settings returned error(s)
+2008-09-23 00:29:45,313 [AWT-EventQueue-0] WARN  de.tor.tribes.ui.DSWorkbenchSettingsDialog (DSWorkbenchSettingsDialog.java:226) - Default user is not set
+2008-09-23 00:29:46,461 [AWT-EventQueue-0] ERROR de.tor.tribes.ui.DSWorkbenchSettingsDialog (DSWorkbenchSettingsDialog.java:875) - Player/Server settings incorrect. User requested application to terminate
+2008-09-23 00:30:07,389 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:58) - Loading properties
+2008-09-23 00:30:07,393 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:98) - Loading existing properties file
+2008-09-23 00:30:07,394 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:60) - Loading cursors
+2008-09-23 00:30:07,723 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:62) - Loading unit icons
+2008-09-23 00:30:07,761 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:64) - Loading graphic pack
+2008-09-23 00:30:08,367 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:66) - Loading world.dat
+2008-09-23 00:30:10,109 [StartupTimer] DEBUG de.tor.tribes.ui.DSWorkbenchSettingsDialog (DSWorkbenchSettingsDialog.java:129) - Checking settings
+2008-09-23 00:30:10,142 [StartupTimer] INFO  de.tor.tribes.db.DatabaseAdapter (DatabaseAdapter.java:44) - Database driver loaded
+2008-09-23 00:30:10,877 [StartupTimer] ERROR de.tor.tribes.db.DatabaseAdapter (DatabaseAdapter.java:146) - Failed to validate user
+java.lang.NullPointerException
+	at de.tor.tribes.sec.SecurityAdapter.hashStringMD5(SecurityAdapter.java:46)
+	at de.tor.tribes.db.DatabaseAdapter.checkUser(DatabaseAdapter.java:122)
+	at de.tor.tribes.ui.DSWorkbenchSettingsDialog.checkSettings(DSWorkbenchSettingsDialog.java:156)
+	at de.tor.tribes.ui.DSWorkbenchSplashScreen.hideSplash(DSWorkbenchSplashScreen.java:92)
+	at de.tor.tribes.ui.HideSplashTask.run(DSWorkbenchSplashScreen.java:174)
+	at java.util.TimerThread.mainLoop(Timer.java:512)
+	at java.util.TimerThread.run(Timer.java:462)
+2008-09-23 00:30:10,878 [StartupTimer] WARN  de.tor.tribes.ui.DSWorkbenchSettingsDialog (DSWorkbenchSettingsDialog.java:216) - Default server is not set
+2008-09-23 00:30:10,879 [StartupTimer] WARN  de.tor.tribes.ui.DSWorkbenchSettingsDialog (DSWorkbenchSettingsDialog.java:226) - Default user is not set
+2008-09-23 00:30:13,765 [StartupTimer] ERROR de.tor.tribes.ui.DSWorkbenchSettingsDialog (DSWorkbenchSettingsDialog.java:196) - Player/Server settings incorrect. User requested application to terminate
+2008-09-23 00:30:31,968 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:58) - Loading properties
+2008-09-23 00:30:31,972 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:98) - Loading existing properties file
+2008-09-23 00:30:31,973 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:60) - Loading cursors
+2008-09-23 00:30:32,293 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:62) - Loading unit icons
+2008-09-23 00:30:32,334 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:64) - Loading graphic pack
+2008-09-23 00:30:32,983 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:66) - Loading world.dat
+2008-09-23 00:30:35,037 [StartupTimer] DEBUG de.tor.tribes.ui.DSWorkbenchSettingsDialog (DSWorkbenchSettingsDialog.java:129) - Checking settings
+2008-09-23 00:30:35,076 [StartupTimer] INFO  de.tor.tribes.db.DatabaseAdapter (DatabaseAdapter.java:44) - Database driver loaded
+2008-09-23 00:30:35,821 [StartupTimer] ERROR de.tor.tribes.db.DatabaseAdapter (DatabaseAdapter.java:146) - Failed to validate user
+java.lang.NullPointerException
+	at de.tor.tribes.sec.SecurityAdapter.hashStringMD5(SecurityAdapter.java:46)
+	at de.tor.tribes.db.DatabaseAdapter.checkUser(DatabaseAdapter.java:122)
+	at de.tor.tribes.ui.DSWorkbenchSettingsDialog.checkSettings(DSWorkbenchSettingsDialog.java:156)
+	at de.tor.tribes.ui.DSWorkbenchSplashScreen.hideSplash(DSWorkbenchSplashScreen.java:92)
+	at de.tor.tribes.ui.HideSplashTask.run(DSWorkbenchSplashScreen.java:174)
+	at java.util.TimerThread.mainLoop(Timer.java:512)
+	at java.util.TimerThread.run(Timer.java:462)
+2008-09-23 00:30:35,823 [StartupTimer] WARN  de.tor.tribes.ui.DSWorkbenchSettingsDialog (DSWorkbenchSettingsDialog.java:216) - Default server is not set
+2008-09-23 00:30:35,823 [StartupTimer] WARN  de.tor.tribes.ui.DSWorkbenchSettingsDialog (DSWorkbenchSettingsDialog.java:226) - Default user is not set
+2008-09-23 00:30:37,258 [StartupTimer] INFO  de.tor.tribes.ui.DSWorkbenchSplashScreen (DSWorkbenchSplashScreen.java:93) - Reading user settings returned error(s)
+2008-09-23 00:30:48,214 [AWT-EventQueue-0] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:102) - Writing tags to './servers/de26/tags.xml'
+2008-09-23 00:30:48,216 [AWT-EventQueue-0] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:125) - Tags successfully saved
+2008-09-23 00:30:48,219 [AWT-EventQueue-0] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:104) - Writing markers to './servers/de26/markers.xml'
+2008-09-23 00:30:48,221 [AWT-EventQueue-0] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:119) - Markers successfully saved
+2008-09-23 00:30:48,564 [Thread-4] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:174) - Calling 'loadData()' for server de26
+2008-09-23 00:30:49,133 [Thread-4] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:328) - Reading villages
+2008-09-23 00:30:53,380 [Thread-4] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:331) - Reading tribes
+2008-09-23 00:30:53,635 [Thread-4] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:334) - Reading allies
+2008-09-23 00:30:53,661 [Thread-4] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:373) - Read 228864 villages
+2008-09-23 00:30:53,661 [Thread-4] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:374) - Read 2370 allies
+2008-09-23 00:30:53,661 [Thread-4] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:375) - Read 28194 tribes
+2008-09-23 00:30:53,662 [Thread-4] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:226) - Reading conquered units
+2008-09-23 00:30:54,147 [Thread-4] DEBUG de.tor.tribes.io.DataHolder (DataHolder.java:732) - Loading units
+2008-09-23 00:30:58,780 [AWT-EventQueue-0] INFO  de.tor.tribes.ui.MapPanel (MapPanel.java:85) - Creating MapPanel
+2008-09-23 00:30:58,806 [Thread-4] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:140) - Loading markers
+2008-09-23 00:30:58,806 [Thread-4] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:67) - Reading markers from './servers/de26/markers.xml'
+2008-09-23 00:30:58,833 [Thread-4] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:78) - Markers successfully loaded
+2008-09-23 00:30:58,833 [Thread-4] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:142) - Loading attacks
+2008-09-23 00:30:58,834 [Thread-4] INFO  de.tor.tribes.util.attack.AttackManager (AttackManager.java:68) - Loading attacks from './servers/de26/attacks.xml'
+2008-09-23 00:30:58,841 [Thread-4] DEBUG de.tor.tribes.util.attack.AttackManager (AttackManager.java:75) - Loading plan 'default'
+2008-09-23 00:30:58,842 [Thread-4] DEBUG de.tor.tribes.util.attack.AttackManager (AttackManager.java:91) - Attacks loaded successfully
+2008-09-23 00:30:58,842 [Thread-4] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:144) - Loading tags
+2008-09-23 00:30:58,843 [Thread-4] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:52) - Loading tags from './servers/de26/tags.xml'
+2008-09-23 00:30:58,845 [Thread-4] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:71) - Tags loaded successfully
+2008-09-23 00:30:58,845 [Thread-4] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:82) - Associating tags with villages
+2008-09-23 00:30:59,204 [AWT-EventQueue-0] INFO  de.tor.tribes.ui.MapPanel (MapPanel.java:473) - Creating MapPaintThread
+2008-09-23 00:31:27,550 [AWT-EventQueue-0] DEBUG de.tor.tribes.ui.DSWorkbenchSettingsDialog (DSWorkbenchSettingsDialog.java:894) - Setting default player for server 'de26' to Torridity
+2008-09-23 00:31:27,552 [AWT-EventQueue-0] DEBUG de.tor.tribes.ui.DSWorkbenchSettingsDialog (DSWorkbenchSettingsDialog.java:129) - Checking settings
+2008-09-23 00:31:28,081 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:174) - Calling 'loadData()' for server de26
+2008-09-23 00:31:29,182 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:328) - Reading villages
+2008-09-23 00:31:32,786 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:331) - Reading tribes
+2008-09-23 00:31:32,906 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:334) - Reading allies
+2008-09-23 00:31:32,924 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:373) - Read 228864 villages
+2008-09-23 00:31:32,925 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:374) - Read 2370 allies
+2008-09-23 00:31:32,925 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:375) - Read 28194 tribes
+2008-09-23 00:31:32,926 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:226) - Reading conquered units
+2008-09-23 00:31:34,175 [StartupTimer] DEBUG de.tor.tribes.io.DataHolder (DataHolder.java:732) - Loading units
+2008-09-23 00:31:36,172 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:140) - Loading markers
+2008-09-23 00:31:36,172 [StartupTimer] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:67) - Reading markers from './servers/de26/markers.xml'
+2008-09-23 00:31:36,240 [StartupTimer] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:78) - Markers successfully loaded
+2008-09-23 00:31:36,240 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:142) - Loading attacks
+2008-09-23 00:31:36,241 [StartupTimer] INFO  de.tor.tribes.util.attack.AttackManager (AttackManager.java:68) - Loading attacks from './servers/de26/attacks.xml'
+2008-09-23 00:31:36,243 [StartupTimer] DEBUG de.tor.tribes.util.attack.AttackManager (AttackManager.java:75) - Loading plan 'default'
+2008-09-23 00:31:36,244 [StartupTimer] DEBUG de.tor.tribes.util.attack.AttackManager (AttackManager.java:91) - Attacks loaded successfully
+2008-09-23 00:31:36,244 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:144) - Loading tags
+2008-09-23 00:31:36,244 [StartupTimer] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:52) - Loading tags from './servers/de26/tags.xml'
+2008-09-23 00:31:36,251 [StartupTimer] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:71) - Tags loaded successfully
+2008-09-23 00:31:36,251 [StartupTimer] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:82) - Associating tags with villages
+2008-09-23 00:31:36,302 [StartupTimer] INFO  de.tor.tribes.ui.DSWorkbenchMainFrame (DSWorkbenchMainFrame.java:227) - Initializing maps
+2008-09-23 00:31:45,635 [Thread-5] INFO  de.tor.tribes.ui.DSWorkbenchMainFrame$1 (DSWorkbenchMainFrame.java:98) - Performing ShutdownHook
+2008-09-23 00:31:45,659 [Thread-5] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:102) - Writing tags to './servers/de26/tags.xml'
+2008-09-23 00:31:45,660 [Thread-5] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:125) - Tags successfully saved
+2008-09-23 00:31:45,660 [Thread-5] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:104) - Writing markers to './servers/de26/markers.xml'
+2008-09-23 00:31:45,660 [Thread-5] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:119) - Markers successfully saved
+2008-09-23 00:34:02,362 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:58) - Loading properties
+2008-09-23 00:34:02,368 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:98) - Loading existing properties file
+2008-09-23 00:34:02,370 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:60) - Loading cursors
+2008-09-23 00:34:02,949 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:62) - Loading unit icons
+2008-09-23 00:34:03,000 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:64) - Loading graphic pack
+2008-09-23 00:34:03,566 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:66) - Loading world.dat
+2008-09-23 00:34:05,749 [StartupTimer] DEBUG de.tor.tribes.ui.DSWorkbenchSettingsDialog (DSWorkbenchSettingsDialog.java:129) - Checking settings
+2008-09-23 00:34:05,840 [StartupTimer] INFO  de.tor.tribes.db.DatabaseAdapter (DatabaseAdapter.java:44) - Database driver loaded
+2008-09-23 00:34:06,855 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:174) - Calling 'loadData()' for server de26
+2008-09-23 00:34:07,896 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:328) - Reading villages
+2008-09-23 00:34:12,414 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:331) - Reading tribes
+2008-09-23 00:34:12,679 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:334) - Reading allies
+2008-09-23 00:34:12,715 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:373) - Read 228864 villages
+2008-09-23 00:34:12,715 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:374) - Read 2370 allies
+2008-09-23 00:34:12,716 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:375) - Read 28194 tribes
+2008-09-23 00:34:12,716 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:226) - Reading conquered units
+2008-09-23 00:34:13,182 [StartupTimer] DEBUG de.tor.tribes.io.DataHolder (DataHolder.java:732) - Loading units
+2008-09-23 00:34:16,804 [AWT-EventQueue-0] INFO  de.tor.tribes.ui.MapPanel (MapPanel.java:85) - Creating MapPanel
+2008-09-23 00:34:16,819 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:140) - Loading markers
+2008-09-23 00:34:16,821 [StartupTimer] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:67) - Reading markers from './servers/de26/markers.xml'
+2008-09-23 00:34:16,842 [StartupTimer] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:78) - Markers successfully loaded
+2008-09-23 00:34:16,842 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:142) - Loading attacks
+2008-09-23 00:34:16,846 [StartupTimer] INFO  de.tor.tribes.util.attack.AttackManager (AttackManager.java:68) - Loading attacks from './servers/de26/attacks.xml'
+2008-09-23 00:34:16,855 [StartupTimer] DEBUG de.tor.tribes.util.attack.AttackManager (AttackManager.java:75) - Loading plan 'default'
+2008-09-23 00:34:16,857 [StartupTimer] DEBUG de.tor.tribes.util.attack.AttackManager (AttackManager.java:91) - Attacks loaded successfully
+2008-09-23 00:34:16,857 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:144) - Loading tags
+2008-09-23 00:34:16,858 [StartupTimer] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:52) - Loading tags from './servers/de26/tags.xml'
+2008-09-23 00:34:16,886 [StartupTimer] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:71) - Tags loaded successfully
+2008-09-23 00:34:16,887 [StartupTimer] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:82) - Associating tags with villages
+2008-09-23 00:34:17,344 [StartupTimer] INFO  de.tor.tribes.ui.DSWorkbenchMainFrame (DSWorkbenchMainFrame.java:227) - Initializing maps
+2008-09-23 00:34:17,824 [AWT-EventQueue-0] INFO  de.tor.tribes.ui.MapPanel (MapPanel.java:473) - Creating MapPaintThread
+2008-09-23 00:34:27,155 [Thread-4] INFO  de.tor.tribes.ui.DSWorkbenchMainFrame$1 (DSWorkbenchMainFrame.java:98) - Performing ShutdownHook
+2008-09-23 00:34:27,158 [Thread-4] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:102) - Writing tags to './servers/de26/tags.xml'
+2008-09-23 00:34:27,193 [Thread-4] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:125) - Tags successfully saved
+2008-09-23 00:34:27,193 [Thread-4] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:104) - Writing markers to './servers/de26/markers.xml'
+2008-09-23 00:34:27,194 [Thread-4] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:119) - Markers successfully saved
+2008-09-23 00:34:45,964 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:58) - Loading properties
+2008-09-23 00:34:45,970 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:98) - Loading existing properties file
+2008-09-23 00:34:45,972 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:60) - Loading cursors
+2008-09-23 00:34:46,296 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:62) - Loading unit icons
+2008-09-23 00:34:46,325 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:64) - Loading graphic pack
+2008-09-23 00:34:46,863 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:66) - Loading world.dat
+2008-09-23 00:34:48,924 [StartupTimer] DEBUG de.tor.tribes.ui.DSWorkbenchSettingsDialog (DSWorkbenchSettingsDialog.java:129) - Checking settings
+2008-09-23 00:34:48,942 [StartupTimer] INFO  de.tor.tribes.db.DatabaseAdapter (DatabaseAdapter.java:44) - Database driver loaded
+2008-09-23 00:34:49,734 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:174) - Calling 'loadData()' for server de26
+2008-09-23 00:34:50,940 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:328) - Reading villages
+2008-09-23 00:34:55,589 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:331) - Reading tribes
+2008-09-23 00:34:55,826 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:334) - Reading allies
+2008-09-23 00:34:55,845 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:373) - Read 228864 villages
+2008-09-23 00:34:55,846 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:374) - Read 2370 allies
+2008-09-23 00:34:55,850 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:375) - Read 28194 tribes
+2008-09-23 00:34:55,851 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:226) - Reading conquered units
+2008-09-23 00:34:56,288 [StartupTimer] DEBUG de.tor.tribes.io.DataHolder (DataHolder.java:732) - Loading units
+2008-09-23 00:34:59,696 [AWT-EventQueue-0] INFO  de.tor.tribes.ui.MapPanel (MapPanel.java:85) - Creating MapPanel
+2008-09-23 00:34:59,746 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:140) - Loading markers
+2008-09-23 00:34:59,753 [StartupTimer] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:67) - Reading markers from './servers/de26/markers.xml'
+2008-09-23 00:34:59,765 [StartupTimer] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:78) - Markers successfully loaded
+2008-09-23 00:34:59,766 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:142) - Loading attacks
+2008-09-23 00:34:59,768 [StartupTimer] INFO  de.tor.tribes.util.attack.AttackManager (AttackManager.java:68) - Loading attacks from './servers/de26/attacks.xml'
+2008-09-23 00:34:59,772 [StartupTimer] DEBUG de.tor.tribes.util.attack.AttackManager (AttackManager.java:75) - Loading plan 'default'
+2008-09-23 00:34:59,773 [StartupTimer] DEBUG de.tor.tribes.util.attack.AttackManager (AttackManager.java:91) - Attacks loaded successfully
+2008-09-23 00:34:59,773 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:144) - Loading tags
+2008-09-23 00:34:59,775 [StartupTimer] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:52) - Loading tags from './servers/de26/tags.xml'
+2008-09-23 00:34:59,801 [StartupTimer] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:71) - Tags loaded successfully
+2008-09-23 00:34:59,801 [StartupTimer] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:82) - Associating tags with villages
+2008-09-23 00:35:00,210 [StartupTimer] INFO  de.tor.tribes.ui.DSWorkbenchMainFrame (DSWorkbenchMainFrame.java:227) - Initializing maps
+2008-09-23 00:35:00,404 [AWT-EventQueue-0] INFO  de.tor.tribes.ui.MapPanel (MapPanel.java:473) - Creating MapPaintThread
+2008-09-23 00:35:10,649 [Thread-4] INFO  de.tor.tribes.ui.DSWorkbenchMainFrame$1 (DSWorkbenchMainFrame.java:98) - Performing ShutdownHook
+2008-09-23 00:35:10,729 [Thread-4] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:102) - Writing tags to './servers/de26/tags.xml'
+2008-09-23 00:35:10,738 [Thread-4] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:125) - Tags successfully saved
+2008-09-23 00:35:10,738 [Thread-4] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:104) - Writing markers to './servers/de26/markers.xml'
+2008-09-23 00:35:10,738 [Thread-4] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:119) - Markers successfully saved
+2008-09-23 00:35:23,794 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:58) - Loading properties
+2008-09-23 00:35:23,797 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:98) - Loading existing properties file
+2008-09-23 00:35:23,798 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:60) - Loading cursors
+2008-09-23 00:35:24,076 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:62) - Loading unit icons
+2008-09-23 00:35:24,121 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:64) - Loading graphic pack
+2008-09-23 00:35:24,755 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:66) - Loading world.dat
+2008-09-23 00:35:27,303 [StartupTimer] DEBUG de.tor.tribes.ui.DSWorkbenchSettingsDialog (DSWorkbenchSettingsDialog.java:129) - Checking settings
+2008-09-23 00:35:27,377 [StartupTimer] INFO  de.tor.tribes.db.DatabaseAdapter (DatabaseAdapter.java:44) - Database driver loaded
+2008-09-23 00:35:28,342 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:174) - Calling 'loadData()' for server de26
+2008-09-23 00:35:29,868 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:328) - Reading villages
+2008-09-23 00:35:34,120 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:331) - Reading tribes
+2008-09-23 00:35:34,369 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:334) - Reading allies
+2008-09-23 00:35:34,392 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:373) - Read 228864 villages
+2008-09-23 00:35:34,392 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:374) - Read 2370 allies
+2008-09-23 00:35:34,392 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:375) - Read 28194 tribes
+2008-09-23 00:35:34,394 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:226) - Reading conquered units
+2008-09-23 00:35:34,859 [StartupTimer] DEBUG de.tor.tribes.io.DataHolder (DataHolder.java:732) - Loading units
+2008-09-23 00:35:39,473 [AWT-EventQueue-0] INFO  de.tor.tribes.ui.MapPanel (MapPanel.java:85) - Creating MapPanel
+2008-09-23 00:35:39,488 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:140) - Loading markers
+2008-09-23 00:35:39,490 [StartupTimer] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:67) - Reading markers from './servers/de26/markers.xml'
+2008-09-23 00:35:39,514 [StartupTimer] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:78) - Markers successfully loaded
+2008-09-23 00:35:39,516 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:142) - Loading attacks
+2008-09-23 00:35:39,518 [StartupTimer] INFO  de.tor.tribes.util.attack.AttackManager (AttackManager.java:68) - Loading attacks from './servers/de26/attacks.xml'
+2008-09-23 00:35:39,527 [StartupTimer] DEBUG de.tor.tribes.util.attack.AttackManager (AttackManager.java:75) - Loading plan 'default'
+2008-09-23 00:35:39,528 [StartupTimer] DEBUG de.tor.tribes.util.attack.AttackManager (AttackManager.java:91) - Attacks loaded successfully
+2008-09-23 00:35:39,529 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:144) - Loading tags
+2008-09-23 00:35:39,530 [StartupTimer] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:52) - Loading tags from './servers/de26/tags.xml'
+2008-09-23 00:35:39,532 [StartupTimer] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:71) - Tags loaded successfully
+2008-09-23 00:35:39,533 [StartupTimer] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:82) - Associating tags with villages
+2008-09-23 00:35:39,871 [StartupTimer] INFO  de.tor.tribes.ui.DSWorkbenchMainFrame (DSWorkbenchMainFrame.java:227) - Initializing maps
+2008-09-23 00:35:40,112 [AWT-EventQueue-0] INFO  de.tor.tribes.ui.MapPanel (MapPanel.java:473) - Creating MapPaintThread
+2008-09-23 00:35:48,200 [Thread-4] INFO  de.tor.tribes.ui.DSWorkbenchMainFrame$1 (DSWorkbenchMainFrame.java:98) - Performing ShutdownHook
+2008-09-23 00:35:48,222 [Thread-4] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:102) - Writing tags to './servers/de26/tags.xml'
+2008-09-23 00:35:48,257 [Thread-4] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:125) - Tags successfully saved
+2008-09-23 00:35:48,257 [Thread-4] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:104) - Writing markers to './servers/de26/markers.xml'
+2008-09-23 00:35:48,259 [Thread-4] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:119) - Markers successfully saved
+2008-09-23 00:36:11,763 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:58) - Loading properties
+2008-09-23 00:36:11,770 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:98) - Loading existing properties file
+2008-09-23 00:36:11,771 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:60) - Loading cursors
+2008-09-23 00:36:12,296 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:62) - Loading unit icons
+2008-09-23 00:36:12,350 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:64) - Loading graphic pack
+2008-09-23 00:36:13,149 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:66) - Loading world.dat
+2008-09-23 00:36:14,864 [StartupTimer] DEBUG de.tor.tribes.ui.DSWorkbenchSettingsDialog (DSWorkbenchSettingsDialog.java:129) - Checking settings
+2008-09-23 00:36:14,890 [StartupTimer] INFO  de.tor.tribes.db.DatabaseAdapter (DatabaseAdapter.java:44) - Database driver loaded
+2008-09-23 00:36:15,608 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:174) - Calling 'loadData()' for server de26
+2008-09-23 00:36:16,383 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:328) - Reading villages
+2008-09-23 00:36:20,241 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:331) - Reading tribes
+2008-09-23 00:36:20,529 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:334) - Reading allies
+2008-09-23 00:36:20,554 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:373) - Read 228864 villages
+2008-09-23 00:36:20,554 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:374) - Read 2370 allies
+2008-09-23 00:36:20,555 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:375) - Read 28194 tribes
+2008-09-23 00:36:20,555 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:226) - Reading conquered units
+2008-09-23 00:36:20,979 [StartupTimer] DEBUG de.tor.tribes.io.DataHolder (DataHolder.java:732) - Loading units
+2008-09-23 00:36:23,870 [AWT-EventQueue-0] INFO  de.tor.tribes.ui.MapPanel (MapPanel.java:85) - Creating MapPanel
+2008-09-23 00:36:23,926 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:140) - Loading markers
+2008-09-23 00:36:23,928 [StartupTimer] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:67) - Reading markers from './servers/de26/markers.xml'
+2008-09-23 00:36:23,930 [StartupTimer] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:78) - Markers successfully loaded
+2008-09-23 00:36:23,931 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:142) - Loading attacks
+2008-09-23 00:36:23,934 [StartupTimer] INFO  de.tor.tribes.util.attack.AttackManager (AttackManager.java:68) - Loading attacks from './servers/de26/attacks.xml'
+2008-09-23 00:36:23,938 [StartupTimer] DEBUG de.tor.tribes.util.attack.AttackManager (AttackManager.java:75) - Loading plan 'default'
+2008-09-23 00:36:23,939 [StartupTimer] DEBUG de.tor.tribes.util.attack.AttackManager (AttackManager.java:91) - Attacks loaded successfully
+2008-09-23 00:36:23,939 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:144) - Loading tags
+2008-09-23 00:36:23,941 [StartupTimer] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:52) - Loading tags from './servers/de26/tags.xml'
+2008-09-23 00:36:23,943 [StartupTimer] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:71) - Tags loaded successfully
+2008-09-23 00:36:23,956 [StartupTimer] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:82) - Associating tags with villages
+2008-09-23 00:36:24,541 [StartupTimer] INFO  de.tor.tribes.ui.DSWorkbenchMainFrame (DSWorkbenchMainFrame.java:227) - Initializing maps
+2008-09-23 00:36:24,742 [AWT-EventQueue-0] INFO  de.tor.tribes.ui.MapPanel (MapPanel.java:473) - Creating MapPaintThread
+2008-09-23 00:36:50,831 [Thread-4] INFO  de.tor.tribes.ui.DSWorkbenchMainFrame$1 (DSWorkbenchMainFrame.java:98) - Performing ShutdownHook
+2008-09-23 00:36:50,831 [Thread-4] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:102) - Writing tags to './servers/de26/tags.xml'
+2008-09-23 00:36:50,832 [Thread-4] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:125) - Tags successfully saved
+2008-09-23 00:36:50,832 [Thread-4] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:104) - Writing markers to './servers/de26/markers.xml'
+2008-09-23 00:36:50,833 [Thread-4] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:119) - Markers successfully saved
+2008-09-23 00:42:49,839 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:58) - Loading properties
+2008-09-23 00:42:49,842 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:98) - Loading existing properties file
+2008-09-23 00:42:49,842 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:60) - Loading cursors
+2008-09-23 00:42:50,093 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:62) - Loading unit icons
+2008-09-23 00:42:50,113 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:64) - Loading graphic pack
+2008-09-23 00:42:50,590 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:66) - Loading world.dat
+2008-09-23 00:42:52,298 [StartupTimer] DEBUG de.tor.tribes.ui.DSWorkbenchSettingsDialog (DSWorkbenchSettingsDialog.java:129) - Checking settings
+2008-09-23 00:42:52,336 [StartupTimer] INFO  de.tor.tribes.db.DatabaseAdapter (DatabaseAdapter.java:44) - Database driver loaded
+2008-09-23 00:42:53,143 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:174) - Calling 'loadData()' for server de26
+2008-09-23 00:42:53,940 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:328) - Reading villages
+2008-09-23 00:42:58,134 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:331) - Reading tribes
+2008-09-23 00:42:58,429 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:334) - Reading allies
+2008-09-23 00:42:58,453 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:373) - Read 228864 villages
+2008-09-23 00:42:58,454 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:374) - Read 2370 allies
+2008-09-23 00:42:58,454 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:375) - Read 28194 tribes
+2008-09-23 00:42:58,454 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:226) - Reading conquered units
+2008-09-23 00:42:58,917 [StartupTimer] DEBUG de.tor.tribes.io.DataHolder (DataHolder.java:732) - Loading units
+2008-09-23 00:43:02,405 [AWT-EventQueue-0] INFO  de.tor.tribes.ui.MapPanel (MapPanel.java:85) - Creating MapPanel
+2008-09-23 00:43:03,070 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:140) - Loading markers
+2008-09-23 00:43:03,073 [StartupTimer] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:67) - Reading markers from './servers/de26/markers.xml'
+2008-09-23 00:43:03,075 [StartupTimer] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:78) - Markers successfully loaded
+2008-09-23 00:43:03,086 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:142) - Loading attacks
+2008-09-23 00:43:03,088 [StartupTimer] INFO  de.tor.tribes.util.attack.AttackManager (AttackManager.java:68) - Loading attacks from './servers/de26/attacks.xml'
+2008-09-23 00:43:03,093 [StartupTimer] DEBUG de.tor.tribes.util.attack.AttackManager (AttackManager.java:75) - Loading plan 'default'
+2008-09-23 00:43:03,095 [StartupTimer] DEBUG de.tor.tribes.util.attack.AttackManager (AttackManager.java:91) - Attacks loaded successfully
+2008-09-23 00:43:03,095 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:144) - Loading tags
+2008-09-23 00:43:03,096 [StartupTimer] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:52) - Loading tags from './servers/de26/tags.xml'
+2008-09-23 00:43:03,099 [StartupTimer] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:71) - Tags loaded successfully
+2008-09-23 00:43:03,099 [StartupTimer] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:82) - Associating tags with villages
+2008-09-23 00:43:03,451 [StartupTimer] INFO  de.tor.tribes.ui.DSWorkbenchMainFrame (DSWorkbenchMainFrame.java:227) - Initializing maps
+2008-09-23 00:43:03,732 [AWT-EventQueue-0] INFO  de.tor.tribes.ui.MapPanel (MapPanel.java:473) - Creating MapPaintThread
+2008-09-23 00:43:20,490 [Thread-4] INFO  de.tor.tribes.ui.DSWorkbenchMainFrame$1 (DSWorkbenchMainFrame.java:98) - Performing ShutdownHook
+2008-09-23 00:43:20,490 [Thread-4] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:102) - Writing tags to './servers/de26/tags.xml'
+2008-09-23 00:43:20,513 [Thread-4] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:125) - Tags successfully saved
+2008-09-23 00:43:20,513 [Thread-4] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:104) - Writing markers to './servers/de26/markers.xml'
+2008-09-23 00:43:20,514 [Thread-4] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:119) - Markers successfully saved
+2008-09-23 00:44:50,469 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:58) - Loading properties
+2008-09-23 00:44:50,472 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:98) - Loading existing properties file
+2008-09-23 00:44:50,473 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:60) - Loading cursors
+2008-09-23 00:44:50,794 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:62) - Loading unit icons
+2008-09-23 00:44:50,839 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:64) - Loading graphic pack
+2008-09-23 00:44:51,550 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:66) - Loading world.dat
+2008-09-23 00:44:53,973 [StartupTimer] DEBUG de.tor.tribes.ui.DSWorkbenchSettingsDialog (DSWorkbenchSettingsDialog.java:129) - Checking settings
+2008-09-23 00:44:54,007 [StartupTimer] INFO  de.tor.tribes.db.DatabaseAdapter (DatabaseAdapter.java:44) - Database driver loaded
+2008-09-23 00:44:55,047 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:174) - Calling 'loadData()' for server de26
+2008-09-23 00:44:55,918 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:328) - Reading villages
+2008-09-23 00:45:00,555 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:331) - Reading tribes
+2008-09-23 00:45:00,815 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:334) - Reading allies
+2008-09-23 00:45:00,839 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:373) - Read 228864 villages
+2008-09-23 00:45:00,840 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:374) - Read 2370 allies
+2008-09-23 00:45:00,848 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:375) - Read 28194 tribes
+2008-09-23 00:45:00,848 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:226) - Reading conquered units
+2008-09-23 00:45:01,549 [StartupTimer] DEBUG de.tor.tribes.io.DataHolder (DataHolder.java:732) - Loading units
+2008-09-23 00:45:05,902 [AWT-EventQueue-0] INFO  de.tor.tribes.ui.MapPanel (MapPanel.java:85) - Creating MapPanel
+2008-09-23 00:45:05,943 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:140) - Loading markers
+2008-09-23 00:45:05,971 [StartupTimer] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:67) - Reading markers from './servers/de26/markers.xml'
+2008-09-23 00:45:05,983 [StartupTimer] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:78) - Markers successfully loaded
+2008-09-23 00:45:05,983 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:142) - Loading attacks
+2008-09-23 00:45:05,985 [StartupTimer] INFO  de.tor.tribes.util.attack.AttackManager (AttackManager.java:68) - Loading attacks from './servers/de26/attacks.xml'
+2008-09-23 00:45:05,991 [StartupTimer] DEBUG de.tor.tribes.util.attack.AttackManager (AttackManager.java:75) - Loading plan 'default'
+2008-09-23 00:45:06,002 [StartupTimer] DEBUG de.tor.tribes.util.attack.AttackManager (AttackManager.java:91) - Attacks loaded successfully
+2008-09-23 00:45:06,003 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:144) - Loading tags
+2008-09-23 00:45:06,005 [StartupTimer] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:52) - Loading tags from './servers/de26/tags.xml'
+2008-09-23 00:45:06,007 [StartupTimer] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:71) - Tags loaded successfully
+2008-09-23 00:45:06,008 [StartupTimer] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:82) - Associating tags with villages
+2008-09-23 00:45:06,472 [StartupTimer] INFO  de.tor.tribes.ui.DSWorkbenchMainFrame (DSWorkbenchMainFrame.java:227) - Initializing maps
+2008-09-23 00:45:06,867 [AWT-EventQueue-0] INFO  de.tor.tribes.ui.MapPanel (MapPanel.java:473) - Creating MapPaintThread
+2008-09-23 00:45:32,835 [Thread-4] INFO  de.tor.tribes.ui.DSWorkbenchMainFrame$1 (DSWorkbenchMainFrame.java:98) - Performing ShutdownHook
+2008-09-23 00:45:32,838 [Thread-4] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:102) - Writing tags to './servers/de26/tags.xml'
+2008-09-23 00:45:32,844 [Thread-4] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:125) - Tags successfully saved
+2008-09-23 00:45:32,844 [Thread-4] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:104) - Writing markers to './servers/de26/markers.xml'
+2008-09-23 00:45:32,845 [Thread-4] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:119) - Markers successfully saved
+2008-09-23 00:47:54,332 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:58) - Loading properties
+2008-09-23 00:47:54,338 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:98) - Loading existing properties file
+2008-09-23 00:47:54,341 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:60) - Loading cursors
+2008-09-23 00:47:54,809 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:62) - Loading unit icons
+2008-09-23 00:47:54,846 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:64) - Loading graphic pack
+2008-09-23 00:47:55,348 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:66) - Loading world.dat
+2008-09-23 00:47:57,183 [StartupTimer] DEBUG de.tor.tribes.ui.DSWorkbenchSettingsDialog (DSWorkbenchSettingsDialog.java:129) - Checking settings
+2008-09-23 00:47:57,228 [StartupTimer] INFO  de.tor.tribes.db.DatabaseAdapter (DatabaseAdapter.java:44) - Database driver loaded
+2008-09-23 00:47:58,025 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:174) - Calling 'loadData()' for server de26
+2008-09-23 00:47:58,863 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:328) - Reading villages
+2008-09-23 00:48:03,173 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:331) - Reading tribes
+2008-09-23 00:48:03,421 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:334) - Reading allies
+2008-09-23 00:48:03,441 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:373) - Read 228864 villages
+2008-09-23 00:48:03,442 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:374) - Read 2370 allies
+2008-09-23 00:48:03,442 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:375) - Read 28194 tribes
+2008-09-23 00:48:03,442 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:226) - Reading conquered units
+2008-09-23 00:48:03,890 [StartupTimer] DEBUG de.tor.tribes.io.DataHolder (DataHolder.java:732) - Loading units
+2008-09-23 00:48:07,527 [AWT-EventQueue-0] INFO  de.tor.tribes.ui.MapPanel (MapPanel.java:85) - Creating MapPanel
+2008-09-23 00:48:07,551 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:140) - Loading markers
+2008-09-23 00:48:07,555 [StartupTimer] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:67) - Reading markers from './servers/de26/markers.xml'
+2008-09-23 00:48:07,579 [StartupTimer] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:78) - Markers successfully loaded
+2008-09-23 00:48:07,579 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:142) - Loading attacks
+2008-09-23 00:48:07,582 [StartupTimer] INFO  de.tor.tribes.util.attack.AttackManager (AttackManager.java:68) - Loading attacks from './servers/de26/attacks.xml'
+2008-09-23 00:48:07,590 [StartupTimer] DEBUG de.tor.tribes.util.attack.AttackManager (AttackManager.java:75) - Loading plan 'default'
+2008-09-23 00:48:07,591 [StartupTimer] DEBUG de.tor.tribes.util.attack.AttackManager (AttackManager.java:91) - Attacks loaded successfully
+2008-09-23 00:48:07,591 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:144) - Loading tags
+2008-09-23 00:48:07,599 [StartupTimer] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:52) - Loading tags from './servers/de26/tags.xml'
+2008-09-23 00:48:07,601 [StartupTimer] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:71) - Tags loaded successfully
+2008-09-23 00:48:07,602 [StartupTimer] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:82) - Associating tags with villages
+2008-09-23 00:48:07,980 [StartupTimer] INFO  de.tor.tribes.ui.DSWorkbenchMainFrame (DSWorkbenchMainFrame.java:228) - Initializing maps
+2008-09-23 00:48:08,318 [AWT-EventQueue-0] INFO  de.tor.tribes.ui.MapPanel (MapPanel.java:473) - Creating MapPaintThread
+2008-09-23 00:48:12,249 [StartupTimer] ERROR de.tor.tribes.ui.TribeTribeAttackFrame (TribeTribeAttackFrame.java:117) - Failed to initialize TribeAttackFrame
+java.lang.ClassCastException: java.lang.String cannot be cast to de.tor.tribes.types.Village
+	at de.tor.tribes.ui.DSWorkbenchMainFrame.getCurrentUserVillage(DSWorkbenchMainFrame.java:1867)
+	at de.tor.tribes.ui.TribeTribeAttackFrame.<init>(TribeTribeAttackFrame.java:98)
+	at de.tor.tribes.ui.DSWorkbenchMainFrame.init(DSWorkbenchMainFrame.java:217)
+	at de.tor.tribes.ui.DSWorkbenchSplashScreen.hideSplash(DSWorkbenchSplashScreen.java:105)
+	at de.tor.tribes.ui.HideSplashTask.run(DSWorkbenchSplashScreen.java:178)
+	at java.util.TimerThread.mainLoop(Timer.java:512)
+	at java.util.TimerThread.run(Timer.java:462)
+2008-09-23 00:48:39,877 [Thread-4] INFO  de.tor.tribes.ui.DSWorkbenchMainFrame$1 (DSWorkbenchMainFrame.java:98) - Performing ShutdownHook
+2008-09-23 00:48:39,878 [Thread-4] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:102) - Writing tags to './servers/de26/tags.xml'
+2008-09-23 00:48:39,878 [Thread-4] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:125) - Tags successfully saved
+2008-09-23 00:48:39,879 [Thread-4] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:104) - Writing markers to './servers/de26/markers.xml'
+2008-09-23 00:48:39,879 [Thread-4] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:119) - Markers successfully saved
+2008-09-23 00:49:22,089 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:58) - Loading properties
+2008-09-23 00:49:22,093 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:98) - Loading existing properties file
+2008-09-23 00:49:22,093 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:60) - Loading cursors
+2008-09-23 00:49:22,374 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:62) - Loading unit icons
+2008-09-23 00:49:22,399 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:64) - Loading graphic pack
+2008-09-23 00:49:22,944 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:66) - Loading world.dat
+2008-09-23 00:49:25,076 [StartupTimer] DEBUG de.tor.tribes.ui.DSWorkbenchSettingsDialog (DSWorkbenchSettingsDialog.java:129) - Checking settings
+2008-09-23 00:49:25,114 [StartupTimer] INFO  de.tor.tribes.db.DatabaseAdapter (DatabaseAdapter.java:44) - Database driver loaded
+2008-09-23 00:49:25,864 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:174) - Calling 'loadData()' for server de26
+2008-09-23 00:49:26,768 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:328) - Reading villages
+2008-09-23 00:49:31,763 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:331) - Reading tribes
+2008-09-23 00:49:32,022 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:334) - Reading allies
+2008-09-23 00:49:32,049 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:373) - Read 228864 villages
+2008-09-23 00:49:32,049 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:374) - Read 2370 allies
+2008-09-23 00:49:32,049 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:375) - Read 28194 tribes
+2008-09-23 00:49:32,049 [StartupTimer] INFO  de.tor.tribes.io.DataHolder (DataHolder.java:226) - Reading conquered units
+2008-09-23 00:49:32,604 [StartupTimer] DEBUG de.tor.tribes.io.DataHolder (DataHolder.java:732) - Loading units
+2008-09-23 00:49:36,574 [AWT-EventQueue-0] INFO  de.tor.tribes.ui.MapPanel (MapPanel.java:85) - Creating MapPanel
+2008-09-23 00:49:36,636 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:140) - Loading markers
+2008-09-23 00:49:36,638 [StartupTimer] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:67) - Reading markers from './servers/de26/markers.xml'
+2008-09-23 00:49:36,654 [StartupTimer] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:78) - Markers successfully loaded
+2008-09-23 00:49:36,654 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:142) - Loading attacks
+2008-09-23 00:49:36,656 [StartupTimer] INFO  de.tor.tribes.util.attack.AttackManager (AttackManager.java:68) - Loading attacks from './servers/de26/attacks.xml'
+2008-09-23 00:49:36,668 [StartupTimer] DEBUG de.tor.tribes.util.attack.AttackManager (AttackManager.java:75) - Loading plan 'default'
+2008-09-23 00:49:36,670 [StartupTimer] DEBUG de.tor.tribes.util.attack.AttackManager (AttackManager.java:91) - Attacks loaded successfully
+2008-09-23 00:49:36,670 [StartupTimer] DEBUG de.tor.tribes.util.GlobalOptions (GlobalOptions.java:144) - Loading tags
+2008-09-23 00:49:36,671 [StartupTimer] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:52) - Loading tags from './servers/de26/tags.xml'
+2008-09-23 00:49:36,694 [StartupTimer] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:71) - Tags loaded successfully
+2008-09-23 00:49:36,694 [StartupTimer] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:82) - Associating tags with villages
+2008-09-23 00:49:37,186 [StartupTimer] INFO  de.tor.tribes.ui.DSWorkbenchMainFrame (DSWorkbenchMainFrame.java:228) - Initializing maps
+2008-09-23 00:49:37,416 [AWT-EventQueue-0] INFO  de.tor.tribes.ui.MapPanel (MapPanel.java:473) - Creating MapPaintThread
+2008-09-23 00:50:10,007 [AWT-EventQueue-0] DEBUG de.tor.tribes.ui.DSWorkbenchSettingsDialog (DSWorkbenchSettingsDialog.java:894) - Setting default player for server 'de26' to Torridity
+2008-09-23 00:50:10,015 [AWT-EventQueue-0] DEBUG de.tor.tribes.ui.DSWorkbenchSettingsDialog (DSWorkbenchSettingsDialog.java:129) - Checking settings
+2008-09-23 00:53:28,294 [Thread-4] INFO  de.tor.tribes.ui.DSWorkbenchMainFrame$1 (DSWorkbenchMainFrame.java:98) - Performing ShutdownHook
+2008-09-23 00:53:28,299 [Thread-4] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:102) - Writing tags to './servers/de26/tags.xml'
+2008-09-23 00:53:28,300 [Thread-4] DEBUG de.tor.tribes.util.tag.TagManager (TagManager.java:125) - Tags successfully saved
+2008-09-23 00:53:28,301 [Thread-4] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:104) - Writing markers to './servers/de26/markers.xml'
+2008-09-23 00:53:28,302 [Thread-4] DEBUG de.tor.tribes.util.mark.MarkerManager (MarkerManager.java:119) - Markers successfully saved

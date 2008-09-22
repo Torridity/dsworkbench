@@ -137,7 +137,7 @@ public class DBImporter {
         closeConnection();
     }
 
-    public static void main(String[] args) throws Exception {
+   /* public static void main(String[] args) throws Exception {
         new DBImporter().select();
-    }
+    }*/
 }

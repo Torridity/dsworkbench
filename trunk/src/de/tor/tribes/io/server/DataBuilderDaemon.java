@@ -293,9 +293,9 @@ public class DataBuilderDaemon {
         }
     }
 
-    public static void main(String[] args) throws Exception {
+/*    public static void main(String[] args) throws Exception {
         DOMConfigurator.configure("log4j.xml");
         DataBuilderDaemon d = new DataBuilderDaemon();
         d.downloadData();
-    }
+    }*/
 }

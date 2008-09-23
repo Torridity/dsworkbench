@@ -119,17 +119,45 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
     public static void main(String args[]) {
         DOMConfigurator.configure("log4j.xml");
 
-       // Locale.setDefault(Locale.US);
+        // Locale.setDefault(Locale.US);
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-          //  UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+        //  UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
         } catch (Exception e) {
         }
-/*String[] f = Toolkit.getDefaultToolkit().getFontList();
-for(String ff : f){
-    System.out.println(ff);
-}*/
-       // UIManager.put("Label.font", new Font("SansSerif",Font.PLAIN,5));
+        /*String[] f = Toolkit.getDefaultToolkit().getFontList();
+        for(String ff : f){
+        System.out.println(ff);
+        }*/
+        Font f = new Font("SansSerif", Font.PLAIN, 11);
+        UIManager.put("Label.font", f);
+        UIManager.put("TextField.font", f);
+        UIManager.put("ComboBox.font", f);
+        UIManager.put("EditorPane.font", f);
+        UIManager.put("TextArea.font", f);
+        UIManager.put("List.font", f);
+        UIManager.put("Button.font", f);
+        UIManager.put("CheckBox.font", f);
+        UIManager.put("CheckBoxMenuItem.font", f);
+        UIManager.put("Menu.font", f);
+        UIManager.put("MenuItem.font", f);
+        UIManager.put("OptionPane.font", f);
+        UIManager.put("Panel.font", f);
+        UIManager.put("PasswordField.font", f);
+        UIManager.put("PopupMenu.font", f);
+        UIManager.put("ProgressBar.font", f);
+        UIManager.put("RadioButton.font", f);
+        UIManager.put("ScrollPane.font", f);
+        UIManager.put("Table.font", f);
+        UIManager.put("TableHeader.font", f);
+        UIManager.put("TextField.font", f);
+        UIManager.put("TextPane.font", f);
+        UIManager.put("ToolTip.font", f);
+        UIManager.put("Tree.font", f);
+        UIManager.put("Viewport.font", f);
+
+
+        //System.out.println("CurCol " + );
 //SwingUtilities.updateComponentTreeUI(splash);
         java.awt.EventQueue.invokeLater(new Runnable() {
 
@@ -158,9 +186,9 @@ for(String ff : f){
 
     @Override
     public void fireDataLoadedEvent(boolean pSuccess) {
-        if(pSuccess){
-        jStatusOutput.setText("Daten geladen");
-        }else{
+        if (pSuccess) {
+            jStatusOutput.setText("Daten geladen");
+        } else {
             jStatusOutput.setText("Download fehlgeschlagen");
         }
     }

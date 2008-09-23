@@ -186,7 +186,7 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jOKButton" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <Component id="jTabbedPane1" alignment="1" pref="490" max="32767" attributes="0"/>
+                  <Component id="jTabbedPane1" alignment="1" max="32767" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -248,11 +248,11 @@
                       </Group>
                       <EmptySpace min="-2" pref="21" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="1" attributes="0">
-                          <Component id="jAccountName" alignment="0" pref="209" max="32767" attributes="1"/>
-                          <Component id="jAccountPassword" alignment="0" pref="209" max="32767" attributes="1"/>
+                          <Component id="jAccountName" alignment="0" pref="218" max="32767" attributes="1"/>
+                          <Component id="jAccountPassword" alignment="0" pref="218" max="32767" attributes="1"/>
                           <Component id="jCheckAccountButton" alignment="1" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="183" max="32767" attributes="0"/>
+                      <EmptySpace pref="193" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -271,7 +271,7 @@
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jCheckAccountButton" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="150" max="32767" attributes="0"/>
+                      <EmptySpace pref="163" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -379,8 +379,8 @@
                               </Group>
                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="1" attributes="0">
-                                  <Component id="jDownloadDataButton" max="32767" attributes="0"/>
-                                  <Component id="jSelectServerButton" alignment="0" pref="136" max="32767" attributes="0"/>
+                                  <Component id="jDownloadDataButton" pref="158" max="32767" attributes="0"/>
+                                  <Component id="jSelectServerButton" alignment="0" pref="158" max="32767" attributes="0"/>
                               </Group>
                           </Group>
                       </Group>
@@ -404,7 +404,7 @@
                           <Component id="jDownloadDataButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="jScrollPane1" pref="143" max="32767" attributes="0"/>
+                      <Component id="jScrollPane1" pref="164" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -513,28 +513,20 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" alignment="0" attributes="0">
-                              <Component id="jSkinPackLabel" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace min="-2" pref="89" max="-2" attributes="0"/>
-                              <Component id="jGraphicPacks" pref="210" max="32767" attributes="1"/>
-                              <EmptySpace min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <Group type="102" alignment="0" attributes="0">
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="jAttackMovementLabel" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jShowDistanceLabel" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jShowContinentsLabel" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                              <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="jShowAttackMovementBox" alignment="1" pref="187" max="32767" attributes="0"/>
-                                  <Component id="jContinentsOnMinimap" alignment="0" pref="187" max="32767" attributes="1"/>
-                                  <Component id="jShowDistanceBox" alignment="0" pref="187" max="32767" attributes="1"/>
-                              </Group>
-                              <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
-                          </Group>
+                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                          <Component id="jSkinPackLabel" alignment="0" max="32767" attributes="1"/>
+                          <Component id="jShowContinentsLabel" alignment="0" max="32767" attributes="1"/>
+                          <Component id="jAttackMovementLabel" alignment="0" max="32767" attributes="1"/>
+                          <Component id="jShowDistanceLabel" alignment="0" max="32767" attributes="1"/>
                       </Group>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="1" attributes="0">
+                          <Component id="jShowAttackMovementBox" pref="231" max="32767" attributes="0"/>
+                          <Component id="jShowDistanceBox" alignment="1" pref="231" max="32767" attributes="1"/>
+                          <Component id="jContinentsOnMinimap" alignment="1" pref="231" max="32767" attributes="1"/>
+                          <Component id="jGraphicPacks" alignment="0" pref="231" max="32767" attributes="1"/>
+                      </Group>
+                      <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
                           <Component id="jPreviewSkinButton" alignment="1" max="32767" attributes="1"/>
                           <Component id="jSelectSkinButton" alignment="1" max="32767" attributes="1"/>
@@ -548,31 +540,41 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jSkinPackLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="jSelectSkinButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jSkinPackLabel" alignment="3" min="-2" pref="21" max="-2" attributes="0"/>
                           <Component id="jGraphicPacks" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" attributes="0">
-                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                  <Component id="jShowContinentsLabel" max="32767" attributes="1"/>
-                                  <Component id="jContinentsOnMinimap" alignment="0" min="-2" max="-2" attributes="1"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="102" attributes="0">
+                                      <Component id="jShowContinentsLabel" pref="21" max="32767" attributes="1"/>
+                                      <EmptySpace min="-2" pref="13" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Group type="102" attributes="0">
+                                      <Component id="jContinentsOnMinimap" min="-2" max="-2" attributes="1"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                  </Group>
                               </Group>
-                              <EmptySpace min="-2" pref="13" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                  <Component id="jShowDistanceLabel" max="32767" attributes="1"/>
-                                  <Component id="jShowDistanceBox" alignment="0" min="-2" max="-2" attributes="1"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="102" attributes="0">
+                                      <Component id="jShowDistanceLabel" pref="21" max="32767" attributes="1"/>
+                                      <EmptySpace min="-2" pref="13" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Group type="102" attributes="0">
+                                      <Component id="jShowDistanceBox" min="-2" max="-2" attributes="1"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                  </Group>
                               </Group>
-                              <EmptySpace min="-2" pref="13" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                  <Component id="jAttackMovementLabel" max="32767" attributes="1"/>
-                                  <Component id="jShowAttackMovementBox" alignment="0" min="-2" max="-2" attributes="1"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="jAttackMovementLabel" pref="21" max="32767" attributes="1"/>
+                                  <Component id="jShowAttackMovementBox" min="-2" max="-2" attributes="1"/>
                               </Group>
                           </Group>
                           <Component id="jPreviewSkinButton" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="104" max="32767" attributes="0"/>
+                      <EmptySpace pref="120" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -647,6 +649,7 @@
                 <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
                   <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchSettingsDialog.jShowDistanceBox.toolTipText" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
                 </Property>
+                <Property name="opaque" type="boolean" value="false"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fireChangeDrawDistanceEvent"/>
@@ -657,6 +660,7 @@
                 <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
                   <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchSettingsDialog.jShowAttackMovementBox.toolTipText" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
                 </Property>
+                <Property name="opaque" type="boolean" value="false"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fireChangeShowAttackMovementEvent"/>
@@ -719,7 +723,7 @@
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="jProxyHost" pref="355" max="32767" attributes="0"/>
+                                  <Component id="jProxyHost" pref="392" max="32767" attributes="0"/>
                                   <Component id="jProxyPort" min="-2" max="-2" attributes="0"/>
                               </Group>
                           </Group>
@@ -750,7 +754,7 @@
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jRefeshNetworkButton" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="80" max="32767" attributes="0"/>
+                      <EmptySpace pref="107" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -765,6 +769,7 @@
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
                   <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchSettingsDialog.jDirectConnectOption.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
                 </Property>
+                <Property name="opaque" type="boolean" value="false"/>
               </Properties>
               <Events>
                 <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="fireChangeConnectTypeEvent"/>
@@ -778,6 +783,7 @@
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
                   <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchSettingsDialog.jProxyConnectOption.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
                 </Property>
+                <Property name="opaque" type="boolean" value="false"/>
               </Properties>
               <Events>
                 <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="fireChangeConnectTypeEvent"/>

@@ -31,7 +31,7 @@ public class MinimapZoomFrame extends javax.swing.JFrame {
         mDrawThread.setDaemon(true);
         mDrawThread.start();
         try {
-            mBorder = ImageIO.read(new File("border.png"));
+            mBorder = ImageIO.read(new File("graphics/zoom_border.png"));
         } catch (Exception e) {
         }
     }

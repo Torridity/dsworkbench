@@ -16,16 +16,16 @@ import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.Skin;
 import de.tor.tribes.util.attack.AttackManager;
 import de.tor.tribes.util.mark.MarkerManager;
-import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Composite;
+import java.awt.Desktop;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.RenderingHints;
+import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -167,7 +167,9 @@ public class MapPanel extends javax.swing.JPanel {
                             Village v = getVillageAtMousePos();
                             Village u = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage();
                             if ((u != null) && (v != null)) {
-                                BrowserCommandSender.sendTroops(u, v);
+                                if (Desktop.isDesktopSupported()) {
+                                    BrowserCommandSender.sendTroops(u, v);
+                                }
                             }
                         }
                     }
@@ -176,7 +178,9 @@ public class MapPanel extends javax.swing.JPanel {
                             Village v = getVillageAtMousePos();
                             Village u = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage();
                             if ((u != null) && (v != null)) {
+                                if (Desktop.isDesktopSupported()) {
                                 BrowserCommandSender.sendRes(u, v);
+                                }
                             }
                         }
                     }
@@ -994,6 +998,7 @@ class RepaintThread extends Thread {
         Composite a = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.2f);
         g2d.setComposite(a);
         g2d.fillOval(xC, yC, width, height);*/
+       
         g2d.dispose();
     }
 }

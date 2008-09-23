@@ -15,7 +15,6 @@ import javax.swing.JOptionPane;
  */
 public class BrowserCommandSender {
 
-    private static final Desktop DESKTOP = Desktop.getDesktop();
 
     public static void sendTroops(Village pSource, Village pTarget) {
         try {
@@ -35,7 +34,7 @@ public class BrowserCommandSender {
             A.insertUnit(A.document.forms['units'].elements['attack'].click());    
              */
             
-            DESKTOP.browse(new URI(url));
+            Desktop.getDesktop().browse(new URI(url));
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Fehler beim Öffnen des Browsers", "Fehler", JOptionPane.ERROR_MESSAGE);
         }
@@ -45,7 +44,7 @@ public class BrowserCommandSender {
         try {
             String url = "http://" + GlobalOptions.getSelectedServer() + ".die-staemme.de/game.php?village=";
             url += pSource.getId() + "&screen=map&x=" + pSource.getX() + "&y=" + pSource.getY();
-            DESKTOP.browse(new URI(url));
+            Desktop.getDesktop().browse(new URI(url));
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Fehler beim Öffnen des Browsers", "Fehler", JOptionPane.ERROR_MESSAGE);
         }
@@ -55,7 +54,7 @@ public class BrowserCommandSender {
         try {
             String url = "http://" + GlobalOptions.getSelectedServer() + ".die-staemme.de/game.php?village=";
             url += "&screen=map&x=" + pX + "&y=" + pY;
-            DESKTOP.browse(new URI(url));
+            Desktop.getDesktop().browse(new URI(url));
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Fehler beim Öffnen des Browsers", "Fehler", JOptionPane.ERROR_MESSAGE);
         }
@@ -65,7 +64,7 @@ public class BrowserCommandSender {
         try {
             String url = "http://" + GlobalOptions.getSelectedServer() + ".die-staemme.de/game.php?village=";
             url += pSource.getId() + "&screen=market&mode=send&target=" + pTarget.getId();
-            DESKTOP.browse(new URI(url));
+            Desktop.getDesktop().browse(new URI(url));
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Fehler beim Öffnen des Browsers", "Fehler", JOptionPane.ERROR_MESSAGE);
         }

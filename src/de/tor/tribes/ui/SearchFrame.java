@@ -12,6 +12,7 @@ import de.tor.tribes.types.Village;
 import de.tor.tribes.util.BrowserCommandSender;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
+import java.awt.Desktop;
 import java.awt.event.ItemEvent;
 import java.util.Enumeration;
 import java.util.LinkedList;
@@ -41,12 +42,19 @@ public class SearchFrame extends javax.swing.JFrame implements SearchListener {
     /** Creates new form SearchFrame */
     SearchFrame() {
         initComponents();
-        
+
         getContentPane().setBackground(Constants.DS_BACK);
         // frameControlPanel1.setupPanel(this, true, true);
         jCenterInGameButton.setIcon(new ImageIcon("./graphics/icons/center.png"));
         jSendResButton.setIcon(new ImageIcon("./graphics/icons/booty.png"));
         jSendDefButton.setIcon(new ImageIcon("./graphics/icons/def.png"));
+
+        //check desktop support
+        if (!Desktop.isDesktopSupported()) {
+            jCenterInGameButton.setEnabled(false);
+            jSendDefButton.setEnabled(false);
+            jSendResButton.setEnabled(false);
+        }
         mSearchThread = new SearchThread("", this);
         mSearchThread.setDaemon(true);
         mSearchThread.start();
@@ -206,16 +214,21 @@ public class SearchFrame extends javax.swing.JFrame implements SearchListener {
         buttonGroup1.add(jTribeStats);
         jTribeStats.setSelected(true);
         jTribeStats.setText(bundle.getString("SearchFrame.jTribeStats.text")); // NOI18N
+        jTribeStats.setOpaque(false);
 
         buttonGroup1.add(jAllyStats);
         jAllyStats.setText(bundle.getString("SearchFrame.jAllyStats.text")); // NOI18N
+        jAllyStats.setOpaque(false);
 
         jShowPoints.setSelected(true);
         jShowPoints.setText(bundle.getString("SearchFrame.jShowPoints.text")); // NOI18N
+        jShowPoints.setOpaque(false);
 
         jShowBashOff.setText(bundle.getString("SearchFrame.jShowBashOff.text")); // NOI18N
+        jShowBashOff.setOpaque(false);
 
         jShowBashDef.setText(bundle.getString("SearchFrame.jShowBashDef.text")); // NOI18N
+        jShowBashDef.setOpaque(false);
 
         jButton1.setText(bundle.getString("SearchFrame.jButton1.text")); // NOI18N
         jButton1.setToolTipText(bundle.getString("SearchFrame.jButton1.toolTipText")); // NOI18N
@@ -240,7 +253,7 @@ public class SearchFrame extends javax.swing.JFrame implements SearchListener {
                         .addComponent(jShowBashOff)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jShowBashDef)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 20, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 79, Short.MAX_VALUE)
                         .addComponent(jButton1)))
                 .addContainerGap())
         );
@@ -409,6 +422,9 @@ private void fireCenterMapEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:even
 }//GEN-LAST:event_fireCenterMapEvent
 
 private void fireCenterMapInGameEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCenterMapInGameEvent
+    if (!jCenterInGameButton.isEnabled()) {
+        return;
+    }
     Village v = (Village) jVillageList.getSelectedItem();
     if (v != null) {
         BrowserCommandSender.centerVillage(v);
@@ -416,6 +432,9 @@ private void fireCenterMapInGameEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
 }//GEN-LAST:event_fireCenterMapInGameEvent
 
 private void fireSendDefEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSendDefEvent
+    if (!jSendDefButton.isEnabled()) {
+        return;
+    }
     Village target = (Village) jVillageList.getSelectedItem();
     Village source = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage();
     if ((source != null) && (target != null)) {
@@ -424,6 +443,9 @@ private void fireSendDefEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
 }//GEN-LAST:event_fireSendDefEvent
 
 private void fireSendResEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSendResEvent
+    if (!jSendResButton.isEnabled()) {
+        return;
+    }
     Village target = (Village) jVillageList.getSelectedItem();
     Village source = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage();
     if ((source != null) && (target != null)) {

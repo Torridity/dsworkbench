@@ -9,6 +9,7 @@ import java.awt.Point;
 import java.awt.Toolkit;
 import java.util.LinkedList;
 import java.util.List;
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import org.apache.log4j.Logger;
 
@@ -53,13 +54,19 @@ public class ImageManager {
     public final static int CURSOR_SHOT = 15;
     private static final List<Cursor> CURSORS = new LinkedList<Cursor>();
     private static final List<ImageIcon> UNIT_ICONS = new LinkedList<ImageIcon>();
+    private static boolean cursorSupported = true;
 
     /**Load the list of cursors*/
     public static void loadCursors() throws Exception {
+        if (Toolkit.getDefaultToolkit().getMaximumCursorColors() < 16) {
+            logger.warn("Insufficient color depth for custom cursors on current platform. Setting sytem-cursor mode.");
+            cursorSupported = false;
+            return;
+        }
         try {
             //default map panel cursors 
             CURSORS.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/default.png"), new Point(0, 0), "default"));
-            CURSORS.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/mark.gif"), new Point(0, 0), "mark"));
+            CURSORS.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/pencil.gif"), new Point(0, 0), "mark"));
             CURSORS.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/measure.png"), new Point(0, 0), "measure"));
             CURSORS.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/tag.png"), new Point(0, 0), "tag"));
             CURSORS.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/attack_ingame.png"), new Point(0, 0), "attack_ingame"));
@@ -84,6 +91,9 @@ public class ImageManager {
 
     /**Get the cursor for the provided ID*/
     public static Cursor getCursor(int pID) {
+        if (!cursorSupported) {
+            return Cursor.getDefaultCursor();
+        }
         return CURSORS.get(pID);
     }
 

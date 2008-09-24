@@ -16,6 +16,8 @@ import de.tor.tribes.util.attack.AttackManager;
 import de.tor.tribes.util.mark.MarkerManager;
 import de.tor.tribes.util.tag.TagManager;
 import java.awt.Point;
+import java.net.URL;
+import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -787,7 +789,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
         }
 
         GlobalOptions.saveProperties();
-        
+
         if (!updateServerList(false)) {
             //remote update failed and no local servers found
             String message = "Serverliste konnte nicht geladen werden.\n";
@@ -1084,15 +1086,35 @@ private void fireShowSkinPreviewEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
     private boolean updateServerList(boolean pLocal) {
         String[] servers = null;
         if (!pLocal) {
+
+            logger.debug("Checking general connectivity");
             try {
-                ServerList.loadServerList();
-                servers = ServerList.getServerIDs();
-                GlobalOptions.setOfflineMode(false);
-            } catch (Exception e) {
-                logger.error("Failed to load server list", e);
+                URLConnection c = new URL("http://www.heise.de").openConnection();
+                c.setConnectTimeout(10000);
+                String header = c.getHeaderField(0);
+                if (header != null) {
+                    logger.debug("Connection established");
+                    GlobalOptions.setOfflineMode(false);
+                } else {
+                    logger.warn("Could not establish connection");
+                    GlobalOptions.setOfflineMode(true);
+                }
+            } catch (Exception in) {
+                logger.error("Exception while opening connection", in);
                 GlobalOptions.setOfflineMode(true);
             }
+
+            if (!GlobalOptions.isOfflineMode()) {
+                try {
+                    ServerList.loadServerList();
+                    servers = ServerList.getServerIDs();
+                } catch (Exception e) {
+                    logger.error("Failed to load server list", e);
+                    GlobalOptions.setOfflineMode(true);
+                }
+            }
         }
+        
         if (servers == null) {
             GlobalOptions.setOfflineMode(true);
             servers = DataHolder.getSingleton().getLocalServers();
@@ -1199,6 +1221,7 @@ private void fireShowSkinPreviewEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JComboBox jTribeNames;
     // End of variables declaration//GEN-END:variables
+
     @Override
     public void fireDataHolderEvent(String pMessage) {
         SimpleDateFormat f = new SimpleDateFormat("HH:mm:ss");

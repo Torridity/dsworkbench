@@ -14,6 +14,7 @@ import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import java.awt.Desktop;
 import java.awt.event.ItemEvent;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
@@ -369,7 +370,9 @@ private void fireValueChangedEvent(javax.swing.event.CaretEvent evt) {//GEN-FIRS
 private void fireTribeSelectionChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireTribeSelectionChangedEvent
     try {
         if (evt.getStateChange() == ItemEvent.SELECTED) {
-            DefaultComboBoxModel model = new DefaultComboBoxModel(((Tribe) evt.getItem()).getVillageList().toArray(new Village[0]));
+            Village[] v = ((Tribe) evt.getItem()).getVillageList().toArray(new Village[0]);
+            Arrays.sort(v);
+            DefaultComboBoxModel model = new DefaultComboBoxModel(v);
             jVillageList.setModel(model);
         }
     } catch (Exception e) {
@@ -380,7 +383,9 @@ private void fireTribeSelectionChangedEvent(java.awt.event.ItemEvent evt) {//GEN
 private void fireAllySelectionChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireAllySelectionChangedEvent
     try {
         if (evt.getStateChange() == ItemEvent.SELECTED) {
-            DefaultComboBoxModel model = new DefaultComboBoxModel(((Ally) evt.getItem()).getTribes().toArray(new Tribe[0]));
+            Tribe[] tl = ((Ally) evt.getItem()).getTribes().toArray(new Tribe[0]);
+            Arrays.sort(tl);
+            DefaultComboBoxModel model = new DefaultComboBoxModel(tl);
             jTribesList.setModel(model);
             jTribesList.setSelectedIndex(0);
             Tribe t = (Tribe) jTribesList.getItemAt(0);
@@ -524,6 +529,7 @@ private void fireShowDSRealStatsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
 
     @Override
     public void fireTribesFoundEvent(Tribe[] t) {
+        Arrays.sort(t);
         jTribesList.setModel(new DefaultComboBoxModel(t));
         //remove villages
         jVillageList.setModel(new DefaultComboBoxModel());
@@ -537,6 +543,7 @@ private void fireShowDSRealStatsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
 
     @Override
     public void fireAlliesFoundEvent(Ally[] a) {
+        Arrays.sort(a);
         jAllyList.setModel(new DefaultComboBoxModel(a));
 
         try {

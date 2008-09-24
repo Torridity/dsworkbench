@@ -19,7 +19,7 @@ import java.util.StringTokenizer;
  *
  * @author Charon
  */
-public class Village implements Serializable {
+public class Village implements Serializable, Comparable {
 
     private static final long serialVersionUID = 10L;
     private int id;
@@ -281,5 +281,10 @@ public class Village implements Serializable {
         }
 
         return diff;
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        return toString().compareTo(o.toString());
     }
 }

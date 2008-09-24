@@ -12,10 +12,13 @@ import org.apache.log4j.Logger;
 import de.tor.tribes.io.DataHolderListener;
 import java.awt.Font;
 import java.awt.Toolkit;
+import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 import javax.swing.ImageIcon;
 import javax.swing.UIManager;
+import org.apache.log4j.Level;
+import org.apache.log4j.RollingFileAppender;
 import org.apache.log4j.xml.DOMConfigurator;
 
 /**
@@ -117,12 +120,12 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        DOMConfigurator.configure("log4j.xml");
+        //DOMConfigurator.configure("log4j.xml");
 
         // Locale.setDefault(Locale.US);
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        //  UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+            //  UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
         } catch (Exception e) {
         }
         /*String[] f = Toolkit.getDefaultToolkit().getFontList();
@@ -156,9 +159,42 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
         UIManager.put("Tree.font", f);
         UIManager.put("Viewport.font", f);
 
+        //error mode
+        int mode = -1;
+        if (args != null) {
+            for (String arg : args) {
+                if (arg.equals("-d") || arg.equals("--debug")) {
+                    //debug mode
+                    mode = 1;
+                } else if (arg.equals("-i") || arg.equals("--info")) {
+                    //info mode
+                    mode = 0;
+                }
+            }
+        }
 
-        //System.out.println("CurCol " + );
-//SwingUtilities.updateComponentTreeUI(splash);
+        RollingFileAppender a = new org.apache.log4j.RollingFileAppender();
+        a.setLayout(new org.apache.log4j.PatternLayout("%d [%t] %-5p %C{6} (%F:%L) - %m%n"));
+        try {
+            a.setFile("./log/dsworkbench.log", true, true, 1024);
+            switch (mode) {
+                case 0:
+                    Logger.getLogger("de.tor").setLevel(Level.INFO);
+                    Logger.getLogger("dswb").setLevel(Level.INFO);
+                    break;
+                case 1:
+                    Logger.getLogger("de.tor").setLevel(Level.DEBUG);
+                    Logger.getLogger("dswb").setLevel(Level.DEBUG);
+                    break;
+                default:
+                    Logger.getLogger("de.tor").setLevel(Level.ERROR);
+                    Logger.getLogger("dswb").setLevel(Level.ERROR);
+                    break;
+            }
+            Logger.getLogger("de.tor").addAppender(a);
+            Logger.getLogger("dswb").addAppender(a);
+        } catch (IOException ioe) {
+        }
         java.awt.EventQueue.invokeLater(new Runnable() {
 
             @Override

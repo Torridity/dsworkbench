@@ -118,7 +118,13 @@ public class MarkerManager {
             w.close();
             logger.debug("Markers successfully saved");
         } catch (Exception e) {
-            logger.error("Failed to save markers", e);
+            if (!new File(pFile).getParentFile().exists()) {
+                //server directory obviously does not exist yet
+                //this should only happen at the first start
+                logger.info("Ignoring error, server directory does not exists yet");
+            } else {
+                logger.error("Failed to save markers", e);
+            }
         }
     }
 

@@ -20,7 +20,7 @@ import java.util.StringTokenizer;
  *
  * @author Charon
  */
-public class Tribe implements Serializable {
+public class Tribe implements Serializable, Comparable {
 
     private static final long serialVersionUID = 10L;
     private int id = 0;
@@ -289,5 +289,13 @@ public class Tribe implements Serializable {
 
     public void setRankDeff(int rankDef) {
         this.rankDef = rankDef;
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        if (o instanceof Tribe) {
+            return getName().compareTo(((Tribe) o).getName());
+        }
+        return -1;
     }
 }

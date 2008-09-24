@@ -8,8 +8,6 @@
  */
 package de.tor.tribes.types;
 
-import java.io.FileInputStream;
-import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.net.URLDecoder;
 import java.net.URLEncoder;

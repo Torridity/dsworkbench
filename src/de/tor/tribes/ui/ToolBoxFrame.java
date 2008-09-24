@@ -122,9 +122,9 @@ public class ToolBoxFrame extends javax.swing.JFrame {
         jAttackRamButton = new javax.swing.JButton();
         jAttackSnobButton = new javax.swing.JButton();
         jAttackSpyButton = new javax.swing.JButton();
+        jAttackSwordButton = new javax.swing.JButton();
         jAttackLightButton = new javax.swing.JButton();
         jAttackHeavyButton = new javax.swing.JButton();
-        jAttackSwordButton = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jMoveButton = new javax.swing.JButton();
         jZoomButton = new javax.swing.JButton();
@@ -252,6 +252,17 @@ public class ToolBoxFrame extends javax.swing.JFrame {
         });
         jPanel1.add(jAttackSpyButton);
 
+        jAttackSwordButton.setToolTipText(bundle.getString("ToolBoxFrame.jAttackSwordButton.toolTipText")); // NOI18N
+        jAttackSwordButton.setMaximumSize(new java.awt.Dimension(30, 30));
+        jAttackSwordButton.setMinimumSize(new java.awt.Dimension(30, 30));
+        jAttackSwordButton.setPreferredSize(new java.awt.Dimension(30, 30));
+        jAttackSwordButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireToolClickedEvent(evt);
+            }
+        });
+        jPanel1.add(jAttackSwordButton);
+
         jAttackLightButton.setToolTipText(bundle.getString("ToolBoxFrame.jAttackLightButton.toolTipText")); // NOI18N
         jAttackLightButton.setMaximumSize(new java.awt.Dimension(30, 30));
         jAttackLightButton.setMinimumSize(new java.awt.Dimension(30, 30));
@@ -273,17 +284,6 @@ public class ToolBoxFrame extends javax.swing.JFrame {
             }
         });
         jPanel1.add(jAttackHeavyButton);
-
-        jAttackSwordButton.setToolTipText(bundle.getString("ToolBoxFrame.jAttackSwordButton.toolTipText")); // NOI18N
-        jAttackSwordButton.setMaximumSize(new java.awt.Dimension(30, 30));
-        jAttackSwordButton.setMinimumSize(new java.awt.Dimension(30, 30));
-        jAttackSwordButton.setPreferredSize(new java.awt.Dimension(30, 30));
-        jAttackSwordButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireToolClickedEvent(evt);
-            }
-        });
-        jPanel1.add(jAttackSwordButton);
 
         jLabel1.setBackground(new java.awt.Color(102, 102, 102));
         jLabel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());

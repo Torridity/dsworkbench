@@ -14,6 +14,7 @@ import de.tor.tribes.util.BrowserCommandSender;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.Skin;
+import de.tor.tribes.util.ToolChangeListener;
 import de.tor.tribes.util.attack.AttackManager;
 import de.tor.tribes.util.mark.MarkerManager;
 import java.awt.BasicStroke;
@@ -69,7 +70,8 @@ public class MapPanel extends javax.swing.JPanel {
     private Rectangle2D screenRect = null;
     private Point mousePos = null;
     private static MapPanel SINGLETON = null;
-    private List<MapPanelListener> mListeners = null;
+    private List<MapPanelListener> mMapPanelListeners = null;
+    private List<ToolChangeListener> mToolChangeListeners = null;
     private int xDir = 0;
     private int yDir = 0;
 
@@ -84,7 +86,8 @@ public class MapPanel extends javax.swing.JPanel {
     MapPanel() {
         initComponents();
         logger.info("Creating MapPanel");
-        mListeners = new LinkedList<MapPanelListener>();
+        mMapPanelListeners = new LinkedList<MapPanelListener>();
+        mToolChangeListeners = new LinkedList<ToolChangeListener>();
         mMarkerAddFrame = new MarkerAddFrame();
         mAttackAddFrame = new AttackAddFrame();
         mTagFrame = new VillageTagFrame();
@@ -94,13 +97,21 @@ public class MapPanel extends javax.swing.JPanel {
     }
 
     public synchronized void addMapPanelListener(MapPanelListener pListener) {
-        mListeners.add(pListener);
+        mMapPanelListeners.add(pListener);
     }
 
     public synchronized void removeMapPanelListener(MapPanelListener pListener) {
-        mListeners.remove(pListener);
+        mMapPanelListeners.remove(pListener);
     }
 
+     public synchronized void addToolChangeListener(ToolChangeListener pListener) {
+        mToolChangeListeners.add(pListener);
+    }
+
+    public synchronized void removeMapPanelListener(ToolChangeListener pListener) {
+        mMapPanelListeners.remove(pListener);
+    }
+    
     private void initListeners() {
 
         // <editor-fold defaultstate="collapsed" desc="MouseWheelListener for Tool changes">
@@ -512,25 +523,25 @@ public class MapPanel extends javax.swing.JPanel {
     }
 
     public synchronized void fireToolChangedEvents(int pTool) {
-        for (MapPanelListener listener : mListeners) {
+        for (ToolChangeListener listener : mToolChangeListeners) {
             listener.fireToolChangedEvent(pTool);
         }
     }
 
     public synchronized void fireVillageAtMousePosChangedEvents(Village pVillage) {
-        for (MapPanelListener listener : mListeners) {
+        for (MapPanelListener listener : mMapPanelListeners) {
             listener.fireVillageAtMousePosChangedEvent(pVillage);
         }
     }
 
     public synchronized void fireDistanceEvents(Village pSource, Village pTarget) {
-        for (MapPanelListener listener : mListeners) {
+        for (MapPanelListener listener : mMapPanelListeners) {
             listener.fireDistanceEvent(pSource, pTarget);
         }
     }
 
     public synchronized void fireScrollEvents(int pX, int pY) {
-        for (MapPanelListener listener : mListeners) {
+        for (MapPanelListener listener : mMapPanelListeners) {
             listener.fireScrollEvent(pX, pY);
         }
     }
@@ -564,7 +575,6 @@ class RepaintThread extends Thread {
         try {
             mDistBorder = ImageIO.read(new File("./graphics/dist_border.png"));
             mMarkerImage = Toolkit.getDefaultToolkit().getImage("graphics/icons/marker.png");
-            System.out.println("LOADED");
         } catch (Exception e) {
         }
     }

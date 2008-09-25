@@ -13,7 +13,6 @@ import de.tor.tribes.types.Village;
  */
 public interface MapPanelListener {
 
-    public void fireToolChangedEvent(int pTool);
     public void fireVillageAtMousePosChangedEvent(Village pVillage);
     public void fireDistanceEvent(Village pSource, Village pTarget);
     public void fireScrollEvent(int pX, int pY);

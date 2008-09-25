@@ -24,6 +24,7 @@ import de.tor.tribes.util.BrowserCommandSender;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.GlobalOptions;
+import de.tor.tribes.util.ToolChangeListener;
 import de.tor.tribes.util.attack.AttackManager;
 import de.tor.tribes.util.attack.AttackManagerListener;
 import de.tor.tribes.util.mark.MarkerManager;
@@ -67,7 +68,8 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         MarkerManagerListener,
         MapPanelListener,
         AttackManagerListener,
-        MinimapListener {
+        MinimapListener,
+        ToolChangeListener {
 
     private static Logger logger = Logger.getLogger(DSWorkbenchMainFrame.class);
     private int iCenterX = 500;
@@ -220,6 +222,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             public void windowDeactivated(WindowEvent e) {
             }
         });
+        changeTool(ImageManager.CURSOR_DEFAULT);
         mAllyAllyAttackFrame = new AllyAllyAttackFrame();
         mAllyAllyAttackFrame.pack();
         mTribeTribeAttackFrame = new TribeTribeAttackFrame();
@@ -236,6 +239,8 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         logger.info("Initializing maps");
         //build the mappanel
         MapPanel.getSingleton().addMapPanelListener(this);
+        MapPanel.getSingleton().addToolChangeListener(this);
+        MinimapPanel.getSingleton().addToolChangeListener(this);
         jPanel1.add(MapPanel.getSingleton());
         //build the minimap
         MinimapPanel.getSingleton().addMinimapListener(this);
@@ -457,6 +462,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jCurrentPlayer = new javax.swing.JLabel();
         jCenterIngameButton = new javax.swing.JButton();
         jOnlineLabel = new javax.swing.JLabel();
+        jCurrentToolLabel = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
@@ -859,7 +865,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jTabbedPane1.setOpaque(true);
 
         jDynFrameAlwaysOnTopSelection.setText(bundle.getString("DSWorkbenchMainFrame.jDynFrameAlwaysOnTopSelection.text")); // NOI18N
-        jDynFrameAlwaysOnTopSelection.setOpaque(false);
         jDynFrameAlwaysOnTopSelection.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 fireAlwaysInFrontChangeEvent(evt);
@@ -1168,7 +1173,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                 .addGap(15, 15, 15)
                 .addGroup(jNavigationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 20, Short.MAX_VALUE))
+                    .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jNavigationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jCenterX, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1177,7 +1182,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                 .addGroup(jNavigationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jRefreshButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jCenterCoordinateIngame, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(34, 34, 34))
+                .addContainerGap(18, Short.MAX_VALUE))
         );
         jNavigationPanelLayout.setVerticalGroup(
             jNavigationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1235,6 +1240,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             }
         });
 
+        jCurrentPlayer.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jCurrentPlayer.setMaximumSize(new java.awt.Dimension(155, 14));
         jCurrentPlayer.setMinimumSize(new java.awt.Dimension(155, 14));
         jCurrentPlayer.setPreferredSize(new java.awt.Dimension(155, 14));
@@ -1256,6 +1262,14 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jOnlineLabel.setMinimumSize(new java.awt.Dimension(30, 30));
         jOnlineLabel.setPreferredSize(new java.awt.Dimension(30, 30));
 
+        jCurrentToolLabel.setToolTipText(bundle.getString("DSWorkbenchMainFrame.jCurrentToolLabel.toolTipText")); // NOI18N
+        jCurrentToolLabel.setAlignmentY(0.0F);
+        jCurrentToolLabel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        jCurrentToolLabel.setIconTextGap(0);
+        jCurrentToolLabel.setMaximumSize(new java.awt.Dimension(35, 35));
+        jCurrentToolLabel.setMinimumSize(new java.awt.Dimension(35, 35));
+        jCurrentToolLabel.setPreferredSize(new java.awt.Dimension(35, 35));
+
         javax.swing.GroupLayout jInformationPanelLayout = new javax.swing.GroupLayout(jInformationPanel);
         jInformationPanel.setLayout(jInformationPanelLayout);
         jInformationPanelLayout.setHorizontalGroup(
@@ -1263,12 +1277,13 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             .addGroup(jInformationPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jCurrentPlayer, javax.swing.GroupLayout.DEFAULT_SIZE, 254, Short.MAX_VALUE)
+                    .addComponent(jCurrentPlayer, javax.swing.GroupLayout.DEFAULT_SIZE, 234, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jInformationPanelLayout.createSequentialGroup()
                         .addComponent(jCenterIngameButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jOnlineLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jCurrentPlayerVillages, 0, 254, Short.MAX_VALUE))
+                    .addComponent(jCurrentPlayerVillages, 0, 234, Short.MAX_VALUE)
+                    .addComponent(jCurrentToolLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
         jInformationPanelLayout.setVerticalGroup(
@@ -1280,9 +1295,12 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                 .addComponent(jCurrentPlayerVillages, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jOnlineLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jInformationPanelLayout.createSequentialGroup()
+                        .addComponent(jOnlineLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 93, Short.MAX_VALUE)
+                        .addComponent(jCurrentToolLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jCenterIngameButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(142, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         jMenuBar1.setBackground(new java.awt.Color(225, 213, 190));
@@ -1404,15 +1422,16 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jInfoPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 814, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jInfoPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 734, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 522, Short.MAX_VALUE)
+                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 452, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jInformationPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jNavigationPanel, 0, 286, Short.MAX_VALUE)
-                            .addComponent(jMinimapPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 286, Short.MAX_VALUE))))
+                            .addComponent(jInformationPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jNavigationPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jMinimapPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 270, Short.MAX_VALUE))
+                        .addGap(6, 6, 6)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -1423,10 +1442,10 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jMinimapPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 233, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jNavigationPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jNavigationPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jInformationPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 616, Short.MAX_VALUE))
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 619, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jInfoPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -1705,13 +1724,29 @@ private void fireShowAboutEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:eve
                 //do nothing
                 break;
             }
+            case ImageManager.CURSOR_MOVE: {
+                break;
+            }
+            case ImageManager.CURSOR_SEND_RES_INGAME: {
+                break;
+            }
+            case ImageManager.CURSOR_SHOT: {
+                break;
+            }
+            case ImageManager.CURSOR_TAG: {
+                break;
+            }
+            case ImageManager.CURSOR_ZOOM: {
+                break;
+            }
             default: {
                 //one of the attack tools
                 jTabbedPane1.setSelectedIndex(2);
                 jDynFrame.pack();
                 break;
-            }
+            }            
         }
+         jCurrentToolLabel.setIcon(ImageManager.getCursorImage(pTool));
     }
 
     /**Update the MapPanel when dragging the ROI at the MiniMap
@@ -1999,6 +2034,7 @@ private void fireShowAboutEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:eve
     private javax.swing.JMenuItem jClockItem;
     private javax.swing.JLabel jCurrentPlayer;
     private javax.swing.JComboBox jCurrentPlayerVillages;
+    private javax.swing.JLabel jCurrentToolLabel;
     private javax.swing.JPanel jDetailedInfoPanel;
     private javax.swing.JLabel jDistanceFromLabel;
     private javax.swing.JPanel jDistancePanel;

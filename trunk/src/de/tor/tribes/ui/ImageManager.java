@@ -5,11 +5,11 @@
 package de.tor.tribes.ui;
 
 import java.awt.Cursor;
+import java.awt.Image;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.util.LinkedList;
 import java.util.List;
-import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import org.apache.log4j.Logger;
 
@@ -53,40 +53,49 @@ public class ImageManager {
     public final static int CURSOR_ZOOM = 14;
     public final static int CURSOR_SHOT = 15;
     private static final List<Cursor> CURSORS = new LinkedList<Cursor>();
+    private static final List<ImageIcon> CURSOR_IMAGES = new LinkedList<ImageIcon>();
     private static final List<ImageIcon> UNIT_ICONS = new LinkedList<ImageIcon>();
     private static boolean cursorSupported = true;
 
     /**Load the list of cursors*/
     public static void loadCursors() throws Exception {
+        try {
+            //default map panel cursors 
+            loadCursor("graphics/cursors/default.png", "default");
+            loadCursor("graphics/cursors/mark.png", "mark");
+            loadCursor("graphics/cursors/measure.png", "measure");
+            loadCursor("graphics/cursors/tag.png", "tag");
+            loadCursor("graphics/cursors/attack_ingame.png", "attack_ingame");
+            loadCursor("graphics/cursors/res_ingame.png", "res_ingame");
+            //map panel cursors for attack purposes 
+            loadCursor("graphics/cursors/attack_ram.png", "attack_ram");
+            loadCursor("graphics/cursors/attack_axe.png", "attack_axe");
+            loadCursor("graphics/cursors/attack_snob.png", "attack_snob");
+            loadCursor("graphics/cursors/attack_spy.png", "attack_spy");
+            loadCursor("graphics/cursors/attack_sword.png", "attack_sword");
+            loadCursor("graphics/cursors/attack_light.png", "attack_light");
+            loadCursor("graphics/cursors/attack_heavy.png", "attack_heavy");
+            loadCursor("graphics/cursors/attack_ingame.png", "attack_ingame");
+            //minimap cursors
+            loadCursor("graphics/cursors/move.png", "move");
+            loadCursor("graphics/cursors/zoom.png", "zoom");
+            loadCursor("graphics/cursors/camera.png", "camera");
+        } catch (Exception e) {
+            logger.error("Failed to load cursor images", e);
+            throw new Exception("Failed to load cursors");
+        }
         if (Toolkit.getDefaultToolkit().getMaximumCursorColors() < 16) {
             logger.warn("Insufficient color depth for custom cursors on current platform. Setting sytem-cursor mode.");
             cursorSupported = false;
             return;
         }
-        try {
-            //default map panel cursors 
-            CURSORS.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/default.png"), new Point(0, 0), "default"));
-            CURSORS.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/mark.png"), new Point(0, 0), "mark"));
-            CURSORS.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/measure.png"), new Point(0, 0), "measure"));
-            CURSORS.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/tag.png"), new Point(0, 0), "tag"));
-            CURSORS.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/attack_ingame.png"), new Point(0, 0), "attack_ingame"));
-            CURSORS.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/res_ingame.png"), new Point(0, 0), "res_ingame"));
-            //map panel cursors for attack purposes
-            CURSORS.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/attack_ram.png"), new Point(0, 0), "attack_ram"));
-            CURSORS.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/attack_axe.png"), new Point(0, 0), "attack_axe"));
-            CURSORS.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/attack_snob.png"), new Point(0, 0), "attack_snob"));
-            CURSORS.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/attack_spy.png"), new Point(0, 0), "attack_spy"));
-            CURSORS.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/attack_sword.png"), new Point(0, 0), "attack_sword"));
-            CURSORS.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/attack_light.png"), new Point(0, 0), "attack_light"));
-            CURSORS.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/attack_heavy.png"), new Point(0, 0), "attack_heavy"));
-            //minimap cursors
-            CURSORS.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/move.png"), new Point(0, 0), "move"));
-            CURSORS.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/zoom.png"), new Point(0, 0), "zoom"));
-            CURSORS.add(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage("graphics/cursors/camera.png"), new Point(0, 0), "shot"));
-        } catch (Exception e) {
-            logger.error("Failed to load cursor images", e);
-            throw new Exception("Failed to load cursors");
-        }
+
+    }
+
+    private static void loadCursor(String pImagePath, String pName) {
+        Image im = Toolkit.getDefaultToolkit().getImage(pImagePath);
+        CURSORS.add(Toolkit.getDefaultToolkit().createCustomCursor(im, new Point(0, 0), pName));
+        CURSOR_IMAGES.add(new ImageIcon(im));
     }
 
     /**Get the cursor for the provided ID*/
@@ -95,6 +104,11 @@ public class ImageManager {
             return Cursor.getDefaultCursor();
         }
         return CURSORS.get(pID);
+    }
+
+    /**Get the cursor for the provided ID*/
+    public static ImageIcon getCursorImage(int pID) {
+        return CURSOR_IMAGES.get(pID);
     }
 
     /**Load the icons of the units used for the animated unit movement on the MapPanel*/

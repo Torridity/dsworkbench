@@ -9,6 +9,7 @@ import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Marker;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.util.GlobalOptions;
+import de.tor.tribes.util.ToolChangeListener;
 import de.tor.tribes.util.mark.MarkerManager;
 import de.tor.tribes.util.mark.MarkerManagerListener;
 import java.awt.AlphaComposite;
@@ -51,7 +52,8 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
     private int iCurrentCursor = ImageManager.CURSOR_DEFAULT;
     private static MinimapPanel SINGLETON = null;
     private ScreenshotPanel mScreenshotPanel = null;
-    private List<MinimapListener> mListeners = null;
+    private List<MinimapListener> mMinimapListeners = null;
+    private List<ToolChangeListener> mToolChangeListeners = null;
     private boolean doRedraw = false;
 
     public static MinimapPanel getSingleton() {
@@ -68,7 +70,8 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
     MinimapPanel() {
         initComponents();
         setSize(270, 233);
-        mListeners = new LinkedList<MinimapListener>();
+        mMinimapListeners = new LinkedList<MinimapListener>();
+        mToolChangeListeners = new LinkedList<ToolChangeListener>();
         setCursor(ImageManager.getCursor(iCurrentCursor));
         mScreenshotPanel = new ScreenshotPanel();
         jPanel1.add(mScreenshotPanel);
@@ -211,16 +214,25 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
     }
 
     public synchronized void addMinimapListener(MinimapListener pListener) {
-        mListeners.add(pListener);
+        mMinimapListeners.add(pListener);
     }
 
     public synchronized void removeMinimapListener(MinimapListener pListener) {
-        mListeners.remove(pListener);
+        mMinimapListeners.remove(pListener);
     }
 
+    public synchronized void addToolChangeListener(ToolChangeListener pListener) {
+        mToolChangeListeners.add(pListener);
+    }
+
+    public synchronized void removeToolChangeListener(ToolChangeListener pListener) {
+        mToolChangeListeners.remove(pListener);
+    }
+    
     public void setCurrentCursor(int pCurrentCursor) {
         iCurrentCursor = pCurrentCursor;
         setCursor(ImageManager.getCursor(iCurrentCursor));
+        fireToolChangedEvents(iCurrentCursor);
     }
 
     public void setSelection(int pX, int pY, int pWidth, int pHeight) {
@@ -290,12 +302,18 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
         redraw();
     }
 
-    public void fireUpdateLocationByMinimapEvents(int pX, int pY) {
-        for (MinimapListener l : mListeners) {
+    public synchronized void fireUpdateLocationByMinimapEvents(int pX, int pY) {
+        for (MinimapListener l : mMinimapListeners) {
             l.fireUpdateLocationByMinimap(pX, pY);
         }
     }
 
+    public synchronized void fireToolChangedEvents(int pTool){
+          for (ToolChangeListener l : mToolChangeListeners) {
+            l.fireToolChangedEvent(pTool);
+        }
+    }
+    
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is

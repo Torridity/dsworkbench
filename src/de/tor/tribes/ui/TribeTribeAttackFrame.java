@@ -105,7 +105,6 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame {
             DefaultComboBoxModel targetAllyModel = new DefaultComboBoxModel(aAllies);
             jTargetAllyList.setModel(targetAllyModel);
             jTargetAllyList.setSelectedIndex(0);
-            System.out.println("FIRE ALLY");
             fireTargetAllyChangedEvent(null);
             jArriveTime.setValue(Calendar.getInstance().getTime());
 
@@ -787,9 +786,9 @@ private void fireTargetAllyChangedEvent(java.awt.event.ActionEvent evt) {//GEN-F
             }
         };
 
-        /*for (int i = 0; i < jResultsTable.getColumnCount(); i++) {
+        for (int i = 0; i < jResultsTable.getColumnCount(); i++) {
         jResultsTable.getColumn(jResultsTable.getColumnName(i)).setHeaderRenderer(headerRenderer);
-        }*/
+        }
         jResultFrame.setVisible(true);
     }
 

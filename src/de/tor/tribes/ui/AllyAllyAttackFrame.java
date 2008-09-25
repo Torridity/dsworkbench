@@ -61,7 +61,7 @@ public class AllyAllyAttackFrame extends javax.swing.JFrame {
 
             Ally[] aAllies = allies.toArray(new Ally[]{});
             allies = null;
-            Arrays.sort(aAllies);
+            Arrays.sort(aAllies, Ally.CASE_INSENSITIVE_ORDER);
             DefaultComboBoxModel sourceAllyModel = new DefaultComboBoxModel(aAllies);
             DefaultComboBoxModel targetAllyModel = new DefaultComboBoxModel(aAllies);
             jSourceAllyList.setModel(sourceAllyModel);

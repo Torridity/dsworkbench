@@ -11,11 +11,14 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
-import de.tor.tribes.util.Constants;
+
 /**
  *
  * @author Jejkal
@@ -71,7 +74,7 @@ public class DatabaseAdapter {
             logger.warn("Not connecting, driver not available");
             return false;
         }
-        try {                    
+        try {
             DB_CONNECTION = DriverManager.getConnection("jdbc:mysql://www.torridity.de/dsworkbench?" + "user=dsworkbench&password=DSwb'08");
             return true;
         } catch (SQLException se) {
@@ -419,9 +422,9 @@ public class DatabaseAdapter {
             if (min_version != null) {
                 try {
                     double v = Double.parseDouble(min_version);
-                    if(v<0){
+                    if (v < 0) {
                         retVal = ID_UPDATE_NOT_ALLOWED;
-                    }else if (GlobalOptions.VERSION < v) {
+                    } else if (GlobalOptions.VERSION < v) {
                         retVal = ID_VERSION_NOT_ALLOWED;
                     }
                 } catch (Exception e) {
@@ -522,24 +525,43 @@ public class DatabaseAdapter {
         System.setProperty("proxyPort", "8000");
         //System.out.println(DatabaseAdapter.checkUser("Torridity", "realstyx13"));
         //System.out.println(DatabaseAdapter.getPropertyValue("update_base_dir"));
-       // System.out.println(DatabaseAdapter.getUserDataVersion("Torridity", "de14"));
-    //System.out.println(DatabaseAdapter.registerUserForServer("Torridity", "de14"));
-    //System.out.println(DatabaseAdapter.getDataVersion("de14"));
-    //System.out.println(DatabaseAdapter.setDataVersion("de14", 3));
-    // System.out.println(DatabaseAdapter.getServerDownloadURL("de26"));
+        // System.out.println(DatabaseAdapter.getUserDataVersion("Torridity", "de14"));
+        //System.out.println(DatabaseAdapter.registerUserForServer("Torridity", "de14"));
+        //System.out.println(DatabaseAdapter.getDataVersion("de14"));
+        //System.out.println(DatabaseAdapter.setDataVersion("de14", 3));
+        // System.out.println(DatabaseAdapter.getServerDownloadURL("de26"));
 //System.out.println(DatabaseAdapter.updateUserDataVersion("Torridity", "de14", 0));
 //System.out.println(Integer.parseInt(DatabaseAdapter.getPropertyValue("max_user_diff")));
 
-    /*  System.out.println(DatabaseAdapter.addUser("Torridity", "realstyx13"));
-    long s = System.currentTimeMillis();
-    System.out.println(DatabaseAdapter.checkUser("Torridity", "realstyx13"));*/
+        /*  System.out.println(DatabaseAdapter.addUser("Torridity", "realstyx13"));
+        long s = System.currentTimeMillis();
+        System.out.println(DatabaseAdapter.checkUser("Torridity", "realstyx13"));*/
 
-    //  System.out.println(DatabaseAdapter.isUpdatePossible("Torridity", "de3"));
+        //  System.out.println(DatabaseAdapter.isUpdatePossible("Torridity", "de3"));
     /*System.out.println("Check: " + DatabaseAdapter.checkLastUpdate("Torridity", "de26"));
-    System.out.println("Store: " + DatabaseAdapter.storeLastUpdate("Torridity", "de26"));
-    System.out.println("Check: " + DatabaseAdapter.checkLastUpdate("Torridity", "de26"));*/
+        System.out.println("Store: " + DatabaseAdapter.storeLastUpdate("Torridity", "de26"));
+        System.out.println("Check: " + DatabaseAdapter.checkLastUpdate("Torridity", "de26"));*/
 
-    // System.out.println("Du " + (System.currentTimeMillis() - s));
-   System.out.println(SecurityAdapter.encryptString("DSwb'08", "enrcypted"));
+        // System.out.println("Du " + (System.currentTimeMillis() - s));
+        String[] data = new String[]{"a1","A1", "b1", "b2", "B2", "A2", "B1", "c1", "c2"};
+        List<String> d = new LinkedList<String>();
+        for(String s : data){
+            d.add(s);
+        }
+        /*StringComparator sc = new StringComparator();
+        sc.setup(StringComparator.SORT_DESCENDING);*/
+        Collections.sort(d, String.CASE_INSENSITIVE_ORDER);
+        //Arrays.sort(data, sc);
+        System.out.println(d);
+    /*c2
+    c1
+    b2
+    B2
+    b1
+    B1
+    A2
+    a1
+    A1
+     */
     }
 }

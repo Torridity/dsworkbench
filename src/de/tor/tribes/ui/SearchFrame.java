@@ -384,7 +384,7 @@ private void fireAllySelectionChangedEvent(java.awt.event.ItemEvent evt) {//GEN-
     try {
         if (evt.getStateChange() == ItemEvent.SELECTED) {
             Tribe[] tl = ((Ally) evt.getItem()).getTribes().toArray(new Tribe[0]);
-            Arrays.sort(tl);
+            Arrays.sort(tl, Tribe.CASE_INSENSITIVE_ORDER);
             DefaultComboBoxModel model = new DefaultComboBoxModel(tl);
             jTribesList.setModel(model);
             jTribesList.setSelectedIndex(0);
@@ -529,7 +529,7 @@ private void fireShowDSRealStatsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
 
     @Override
     public void fireTribesFoundEvent(Tribe[] t) {
-        Arrays.sort(t);
+        Arrays.sort(t, Tribe.CASE_INSENSITIVE_ORDER);
         jTribesList.setModel(new DefaultComboBoxModel(t));
         //remove villages
         jVillageList.setModel(new DefaultComboBoxModel());
@@ -543,7 +543,7 @@ private void fireShowDSRealStatsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
 
     @Override
     public void fireAlliesFoundEvent(Ally[] a) {
-        Arrays.sort(a);
+        Arrays.sort(a, Ally.CASE_INSENSITIVE_ORDER);
         jAllyList.setModel(new DefaultComboBoxModel(a));
 
         try {

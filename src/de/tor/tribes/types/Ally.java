@@ -12,6 +12,7 @@ import java.io.Serializable;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.text.NumberFormat;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -43,8 +44,17 @@ public class Ally implements Serializable, Comparable {
 
         try {
             entry.setId(Integer.parseInt(tokenizer.nextToken()));
-            entry.setName(URLDecoder.decode(tokenizer.nextToken(), "UTF-8"));
-            entry.setTag(URLDecoder.decode(tokenizer.nextToken(), "UTF-8"));
+            String name = URLDecoder.decode(tokenizer.nextToken(), "UTF-8");
+           /* if ((name == null) || (name.trim().length() == 0)) {
+                throw new Exception();
+            }*/
+            entry.setName(name);
+            String tag = URLDecoder.decode(tokenizer.nextToken(), "UTF-8");
+           /* if ((tag == null) || (tag.trim().length() == 0)) {
+                throw new Exception();
+            }*/
+
+            entry.setTag(tag);
             entry.setMembers(Short.parseShort(tokenizer.nextToken()));
             entry.setVillages(Integer.parseInt(tokenizer.nextToken()));
             entry.setPoints(Integer.parseInt(tokenizer.nextToken()));
@@ -84,6 +94,7 @@ public class Ally implements Serializable, Comparable {
         b.append(getRank());
         return b.toString();
     }
+
     public void updateFromDiff(String pDiff) {
         StringTokenizer t = new StringTokenizer(pDiff, ",");
         //2340, , , ,8190,80474060,80474060, 
@@ -92,17 +103,17 @@ public class Ally implements Serializable, Comparable {
         t.nextToken();
 
         try {
-            String n = t.nextToken().trim();
+            String n = URLDecoder.decode(t.nextToken(), "UTF-8").trim();
             if (n.length() > 0) {
-                setName(URLDecoder.decode(n, "UTF-8"));
+                setName(n);
             }
         } catch (Exception e) {
         }
 
         try {
-            String n = t.nextToken().trim();
+            String n = URLDecoder.decode(t.nextToken(), "UTF-8").trim();
             if (n.length() > 0) {
-                setTag(URLDecoder.decode(n, "UTF-8"));
+                setTag(n);
             }
         } catch (Exception e) {
         }
@@ -334,5 +345,37 @@ public class Ally implements Serializable, Comparable {
     @Override
     public int compareTo(Object o) {
         return toString().compareTo(o.toString());
+    }
+    public static final Comparator<Ally> CASE_INSENSITIVE_ORDER = new CaseInsensitiveComparator();
+
+    private static class CaseInsensitiveComparator
+            implements Comparator<Ally>, java.io.Serializable {
+        // use serialVersionUID from JDK 1.2.2 for interoperability
+
+        private static final long serialVersionUID = 8575799808933029326L;
+
+        public int compare(Ally s1, Ally s2) {
+
+
+
+
+            int n1 = s1.toString().length(), n2 = s2.toString().length();
+            for (int i1 = 0, i2 = 0; i1 < n1 && i2 < n2; i1++, i2++) {
+                char c1 = s1.toString().charAt(i1);
+                char c2 = s2.toString().charAt(i2);
+                if (c1 != c2) {
+                    c1 = Character.toUpperCase(c1);
+                    c2 = Character.toUpperCase(c2);
+                    if (c1 != c2) {
+                        c1 = Character.toLowerCase(c1);
+                        c2 = Character.toLowerCase(c2);
+                        if (c1 != c2) {
+                            return c1 - c2;
+                        }
+                    }
+                }
+            }
+            return n1 - n2;
+        }
     }
 }

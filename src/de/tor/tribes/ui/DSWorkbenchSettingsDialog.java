@@ -9,6 +9,7 @@ import de.tor.tribes.db.DatabaseAdapter;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.DataHolderListener;
 import de.tor.tribes.io.ServerList;
+import de.tor.tribes.types.Tribe;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.Skin;
@@ -20,6 +21,8 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
 import javax.swing.DefaultComboBoxModel;
@@ -275,13 +278,19 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
         jSkinPackLabel = new javax.swing.JLabel();
         jGraphicPacks = new javax.swing.JComboBox();
         jSelectSkinButton = new javax.swing.JButton();
-        jShowContinentsLabel = new javax.swing.JLabel();
+        jPreviewSkinButton = new javax.swing.JButton();
+        jPanel1 = new javax.swing.JPanel();
         jContinentsOnMinimap = new javax.swing.JCheckBox();
-        jShowDistanceLabel = new javax.swing.JLabel();
         jShowDistanceBox = new javax.swing.JCheckBox();
         jShowAttackMovementBox = new javax.swing.JCheckBox();
+        jMarkOwnVillagesOnMinimapBox = new javax.swing.JCheckBox();
+        jMarkActiveVillageBox = new javax.swing.JCheckBox();
+        jPanel2 = new javax.swing.JPanel();
+        jShowContinentsLabel = new javax.swing.JLabel();
+        jShowDistanceLabel = new javax.swing.JLabel();
         jAttackMovementLabel = new javax.swing.JLabel();
-        jPreviewSkinButton = new javax.swing.JButton();
+        jAttackMovementLabel2 = new javax.swing.JLabel();
+        jAttackMovementLabel1 = new javax.swing.JLabel();
         jNetworkSettings = new javax.swing.JPanel();
         jDirectConnectOption = new javax.swing.JRadioButton();
         jProxyConnectOption = new javax.swing.JRadioButton();
@@ -424,7 +433,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
                     .addComponent(jAccountName, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 218, Short.MAX_VALUE)
                     .addComponent(jAccountPassword, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 218, Short.MAX_VALUE)
                     .addComponent(jCheckAccountButton))
-                .addContainerGap(193, Short.MAX_VALUE))
+                .addContainerGap(268, Short.MAX_VALUE))
         );
         jLoginPanelLayout.setVerticalGroup(
             jLoginPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -482,7 +491,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPlayerServerSettingsLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPlayerServerSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 466, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 541, Short.MAX_VALUE)
                     .addGroup(jPlayerServerSettingsLayout.createSequentialGroup()
                         .addGroup(jPlayerServerSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1)
@@ -493,8 +502,8 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
                             .addComponent(jServerList, 0, 262, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPlayerServerSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jDownloadDataButton, javax.swing.GroupLayout.DEFAULT_SIZE, 158, Short.MAX_VALUE)
-                            .addComponent(jSelectServerButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 158, Short.MAX_VALUE))))
+                            .addComponent(jDownloadDataButton, javax.swing.GroupLayout.DEFAULT_SIZE, 233, Short.MAX_VALUE)
+                            .addComponent(jSelectServerButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 233, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         jPlayerServerSettingsLayout.setVerticalGroup(
@@ -534,36 +543,6 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
             }
         });
 
-        jShowContinentsLabel.setText(bundle.getString("DSWorkbenchSettingsDialog.jShowContinentsLabel.text")); // NOI18N
-
-        jContinentsOnMinimap.setToolTipText(bundle.getString("DSWorkbenchSettingsDialog.jContinentsOnMinimap.toolTipText")); // NOI18N
-        jContinentsOnMinimap.setContentAreaFilled(false);
-        jContinentsOnMinimap.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                fireChangeContinentsOnMinimapEvent(evt);
-            }
-        });
-
-        jShowDistanceLabel.setText(bundle.getString("DSWorkbenchSettingsDialog.jShowDistanceLabel.text")); // NOI18N
-
-        jShowDistanceBox.setToolTipText(bundle.getString("DSWorkbenchSettingsDialog.jShowDistanceBox.toolTipText")); // NOI18N
-        jShowDistanceBox.setOpaque(false);
-        jShowDistanceBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fireChangeDrawDistanceEvent(evt);
-            }
-        });
-
-        jShowAttackMovementBox.setToolTipText(bundle.getString("DSWorkbenchSettingsDialog.jShowAttackMovementBox.toolTipText")); // NOI18N
-        jShowAttackMovementBox.setOpaque(false);
-        jShowAttackMovementBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fireChangeShowAttackMovementEvent(evt);
-            }
-        });
-
-        jAttackMovementLabel.setText(bundle.getString("DSWorkbenchSettingsDialog.jAttackMovementLabel.text")); // NOI18N
-
         jPreviewSkinButton.setBackground(new java.awt.Color(239, 235, 223));
         jPreviewSkinButton.setText(bundle.getString("DSWorkbenchSettingsDialog.jPreviewSkinButton.text")); // NOI18N
         jPreviewSkinButton.setToolTipText(bundle.getString("DSWorkbenchSettingsDialog.jPreviewSkinButton.toolTipText")); // NOI18N
@@ -573,59 +552,120 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
             }
         });
 
+        jPanel1.setOpaque(false);
+        jPanel1.setLayout(new javax.swing.BoxLayout(jPanel1, javax.swing.BoxLayout.Y_AXIS));
+
+        jContinentsOnMinimap.setToolTipText(bundle.getString("DSWorkbenchSettingsDialog.jContinentsOnMinimap.toolTipText")); // NOI18N
+        jContinentsOnMinimap.setContentAreaFilled(false);
+        jContinentsOnMinimap.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                fireChangeContinentsOnMinimapEvent(evt);
+            }
+        });
+        jPanel1.add(jContinentsOnMinimap);
+
+        jShowDistanceBox.setToolTipText(bundle.getString("DSWorkbenchSettingsDialog.jShowDistanceBox.toolTipText")); // NOI18N
+        jShowDistanceBox.setOpaque(false);
+        jShowDistanceBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fireChangeDrawDistanceEvent(evt);
+            }
+        });
+        jPanel1.add(jShowDistanceBox);
+
+        jShowAttackMovementBox.setToolTipText(bundle.getString("DSWorkbenchSettingsDialog.jShowAttackMovementBox.toolTipText")); // NOI18N
+        jShowAttackMovementBox.setOpaque(false);
+        jShowAttackMovementBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fireChangeShowAttackMovementEvent(evt);
+            }
+        });
+        jPanel1.add(jShowAttackMovementBox);
+
+        jMarkOwnVillagesOnMinimapBox.setToolTipText(bundle.getString("DSWorkbenchSettingsDialog.jMarkOwnVillagesOnMinimapBox.toolTipText")); // NOI18N
+        jMarkOwnVillagesOnMinimapBox.setOpaque(false);
+        jMarkOwnVillagesOnMinimapBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fireChangeMarkOwnVillagesOnMinimapEvent(evt);
+            }
+        });
+        jPanel1.add(jMarkOwnVillagesOnMinimapBox);
+
+        jMarkActiveVillageBox.setToolTipText(bundle.getString("DSWorkbenchSettingsDialog.jMarkActiveVillageBox.toolTipText")); // NOI18N
+        jMarkActiveVillageBox.setOpaque(false);
+        jMarkActiveVillageBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fireChangeMarkActiveVillageEvent(evt);
+            }
+        });
+        jPanel1.add(jMarkActiveVillageBox);
+
+        jPanel2.setOpaque(false);
+        jPanel2.setLayout(new javax.swing.BoxLayout(jPanel2, javax.swing.BoxLayout.Y_AXIS));
+
+        jShowContinentsLabel.setText(bundle.getString("DSWorkbenchSettingsDialog.jShowContinentsLabel.text")); // NOI18N
+        jShowContinentsLabel.setMaximumSize(new java.awt.Dimension(150, 21));
+        jShowContinentsLabel.setMinimumSize(new java.awt.Dimension(150, 21));
+        jShowContinentsLabel.setPreferredSize(new java.awt.Dimension(150, 21));
+        jPanel2.add(jShowContinentsLabel);
+
+        jShowDistanceLabel.setText(bundle.getString("DSWorkbenchSettingsDialog.jShowDistanceLabel.text")); // NOI18N
+        jShowDistanceLabel.setMaximumSize(new java.awt.Dimension(150, 21));
+        jShowDistanceLabel.setMinimumSize(new java.awt.Dimension(150, 21));
+        jShowDistanceLabel.setPreferredSize(new java.awt.Dimension(150, 21));
+        jPanel2.add(jShowDistanceLabel);
+
+        jAttackMovementLabel.setText(bundle.getString("DSWorkbenchSettingsDialog.jAttackMovementLabel.text")); // NOI18N
+        jAttackMovementLabel.setMaximumSize(new java.awt.Dimension(150, 21));
+        jAttackMovementLabel.setMinimumSize(new java.awt.Dimension(150, 21));
+        jAttackMovementLabel.setPreferredSize(new java.awt.Dimension(150, 21));
+        jPanel2.add(jAttackMovementLabel);
+
+        jAttackMovementLabel2.setText(bundle.getString("DSWorkbenchSettingsDialog.jAttackMovementLabel2.text")); // NOI18N
+        jAttackMovementLabel2.setMaximumSize(new java.awt.Dimension(150, 21));
+        jAttackMovementLabel2.setMinimumSize(new java.awt.Dimension(150, 21));
+        jAttackMovementLabel2.setPreferredSize(new java.awt.Dimension(150, 21));
+        jPanel2.add(jAttackMovementLabel2);
+
+        jAttackMovementLabel1.setText(bundle.getString("DSWorkbenchSettingsDialog.jAttackMovementLabel1.text")); // NOI18N
+        jAttackMovementLabel1.setMaximumSize(new java.awt.Dimension(150, 21));
+        jAttackMovementLabel1.setMinimumSize(new java.awt.Dimension(150, 21));
+        jAttackMovementLabel1.setPreferredSize(new java.awt.Dimension(150, 21));
+        jPanel2.add(jAttackMovementLabel1);
+
         javax.swing.GroupLayout jGeneralSettingsLayout = new javax.swing.GroupLayout(jGeneralSettings);
         jGeneralSettings.setLayout(jGeneralSettingsLayout);
         jGeneralSettingsLayout.setHorizontalGroup(
             jGeneralSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jGeneralSettingsLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jGeneralSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jSkinPackLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jShowContinentsLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jAttackMovementLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jShowDistanceLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jGeneralSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jShowAttackMovementBox, javax.swing.GroupLayout.DEFAULT_SIZE, 231, Short.MAX_VALUE)
-                    .addComponent(jShowDistanceBox, javax.swing.GroupLayout.DEFAULT_SIZE, 231, Short.MAX_VALUE)
-                    .addComponent(jContinentsOnMinimap, javax.swing.GroupLayout.DEFAULT_SIZE, 231, Short.MAX_VALUE)
-                    .addComponent(jGraphicPacks, javax.swing.GroupLayout.Alignment.LEADING, 0, 231, Short.MAX_VALUE))
-                .addGap(6, 6, 6)
+                .addGroup(jGeneralSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jSkinPackLabel)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jGeneralSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 242, Short.MAX_VALUE)
+                    .addComponent(jGraphicPacks, javax.swing.GroupLayout.Alignment.TRAILING, 0, 242, Short.MAX_VALUE))
+                .addGap(25, 25, 25)
                 .addGroup(jGeneralSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jPreviewSkinButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jSelectSkinButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
+                .addGap(41, 41, 41))
         );
         jGeneralSettingsLayout.setVerticalGroup(
             jGeneralSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jGeneralSettingsLayout.createSequentialGroup()
-                .addContainerGap()
+                .addContainerGap(27, Short.MAX_VALUE)
                 .addGroup(jGeneralSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jSelectSkinButton)
                     .addComponent(jSkinPackLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jGraphicPacks, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jGeneralSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jGeneralSettingsLayout.createSequentialGroup()
-                        .addGroup(jGeneralSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jGeneralSettingsLayout.createSequentialGroup()
-                                .addComponent(jShowContinentsLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 21, Short.MAX_VALUE)
-                                .addGap(13, 13, 13))
-                            .addGroup(jGeneralSettingsLayout.createSequentialGroup()
-                                .addComponent(jContinentsOnMinimap)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
-                        .addGroup(jGeneralSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jGeneralSettingsLayout.createSequentialGroup()
-                                .addComponent(jShowDistanceLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 21, Short.MAX_VALUE)
-                                .addGap(13, 13, 13))
-                            .addGroup(jGeneralSettingsLayout.createSequentialGroup()
-                                .addComponent(jShowDistanceBox)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
-                        .addGroup(jGeneralSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jAttackMovementLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 21, Short.MAX_VALUE)
-                            .addComponent(jShowAttackMovementBox)))
-                    .addComponent(jPreviewSkinButton))
-                .addContainerGap(120, Short.MAX_VALUE))
+                    .addComponent(jPreviewSkinButton)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(88, 88, 88))
         );
 
         jTabbedPane1.addTab(bundle.getString("DSWorkbenchSettingsDialog.jGeneralSettings.TabConstraints.tabTitle"), new javax.swing.ImageIcon(getClass().getResource("/res/settings.png")), jGeneralSettings); // NOI18N
@@ -686,7 +726,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
                             .addComponent(jProxyPortLabel))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jNetworkSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jProxyHost, javax.swing.GroupLayout.DEFAULT_SIZE, 392, Short.MAX_VALUE)
+                            .addComponent(jProxyHost, javax.swing.GroupLayout.DEFAULT_SIZE, 467, Short.MAX_VALUE)
                             .addComponent(jProxyPort, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addComponent(jRefeshNetworkButton, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jDirectConnectOption)
@@ -747,13 +787,13 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                    .addGroup(layout.createSequentialGroup()
                         .addComponent(jCreateAccountButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 204, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 279, Short.MAX_VALUE)
                         .addComponent(jCancelButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jOKButton))
-                    .addComponent(jTabbedPane1, javax.swing.GroupLayout.Alignment.TRAILING))
+                    .addComponent(jTabbedPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 566, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -961,6 +1001,11 @@ private void fireRegisterEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
         return;
     }
 
+    if (user.length() > 20) {
+        JOptionPane.showMessageDialog(jCreateAccountDialog, "Der Accountname darf höchstens 20 Zeichen lang sein.", "Fehler", JOptionPane.INFORMATION_MESSAGE);
+        return;
+    }
+
     if (!password.equals(password2)) {
         JOptionPane.showMessageDialog(jCreateAccountDialog, "Die eingegebenen Passwörter unterscheiden sich.\nBitte überprüfe deine Eingabe.", "Warnung", JOptionPane.WARNING_MESSAGE);
         return;
@@ -1083,6 +1128,18 @@ private void fireShowSkinPreviewEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
     }
 }//GEN-LAST:event_fireShowSkinPreviewEvent
 
+private void fireChangeMarkOwnVillagesOnMinimapEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireChangeMarkOwnVillagesOnMinimapEvent
+    GlobalOptions.addProperty("mark.villages.on.minimap", Boolean.toString(jMarkOwnVillagesOnMinimapBox.isSelected()));
+    GlobalOptions.saveProperties();
+    MinimapPanel.getSingleton().resetBuffer();
+    MinimapPanel.getSingleton().redraw();
+}//GEN-LAST:event_fireChangeMarkOwnVillagesOnMinimapEvent
+
+private void fireChangeMarkActiveVillageEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireChangeMarkActiveVillageEvent
+    GlobalOptions.addProperty("mark.active.village", Boolean.toString(jMarkActiveVillageBox.isSelected()));
+    GlobalOptions.saveProperties();
+}//GEN-LAST:event_fireChangeMarkActiveVillageEvent
+
     private boolean updateServerList(boolean pLocal) {
         String[] servers = null;
         if (!pLocal) {
@@ -1114,7 +1171,7 @@ private void fireShowSkinPreviewEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
                 }
             }
         }
-        
+
         if (servers == null) {
             GlobalOptions.setOfflineMode(true);
             servers = DataHolder.getSingleton().getLocalServers();
@@ -1127,12 +1184,9 @@ private void fireShowSkinPreviewEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
             return false;
         }
 
-        Arrays.sort(servers, null);
-        DefaultComboBoxModel model = new DefaultComboBoxModel();
+        Arrays.sort(servers);
+        DefaultComboBoxModel model = new DefaultComboBoxModel(servers);
 
-        for (String serverID : servers) {
-            model.addElement(serverID);
-        }
         jServerList.setModel(model);
 
         if (GlobalOptions.getProperty("default.server") != null) {
@@ -1178,6 +1232,8 @@ private void fireShowSkinPreviewEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
     private javax.swing.JPasswordField jAccountPassword;
     private javax.swing.JLabel jAccountPasswordLabel;
     private javax.swing.JLabel jAttackMovementLabel;
+    private javax.swing.JLabel jAttackMovementLabel1;
+    private javax.swing.JLabel jAttackMovementLabel2;
     private javax.swing.JButton jCancelButton;
     private javax.swing.JButton jCancelRegistrationButton;
     private javax.swing.JButton jCheckAccountButton;
@@ -1191,8 +1247,12 @@ private void fireShowSkinPreviewEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jLoginPanel;
+    private javax.swing.JCheckBox jMarkActiveVillageBox;
+    private javax.swing.JCheckBox jMarkOwnVillagesOnMinimapBox;
     private javax.swing.JPanel jNetworkSettings;
     private javax.swing.JButton jOKButton;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPlayerServerSettings;
     private javax.swing.JButton jPreviewSkinButton;
     private javax.swing.JLabel jProxyAdressLabel;
@@ -1241,21 +1301,18 @@ private void fireShowSkinPreviewEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
     public void fireDataLoadedEvent(boolean pSuccess) {
         if (pSuccess) {
             fireDataHolderEvent("Erstelle Spielerliste");
-            String[] tribeNames = new String[DataHolder.getSingleton().getTribes().size()];
-            Enumeration<Integer> tribes = DataHolder.getSingleton().getTribes().keys();
-            int cnt = 0;
-            while (tribes.hasMoreElements()) {
-                tribeNames[cnt] = DataHolder.getSingleton().getTribes().get(tribes.nextElement()).getName();
-                cnt++;
-            }
-            Arrays.sort(tribeNames, null);
+            Collection<Tribe> tribes = DataHolder.getSingleton().getTribes().values();
+            Tribe[] ta = tribes.toArray(new Tribe[]{});
+            Arrays.sort(ta, Tribe.CASE_INSENSITIVE_ORDER);
             DefaultComboBoxModel model = new DefaultComboBoxModel();
+
             model.addElement("Bitte wählen");
 
-            for (String tribe : tribeNames) {
-                model.addElement(tribe);
+            for (Tribe tribe : ta) {
+                model.addElement(tribe.toString());
             }
             jTribeNames.setModel(model);
+
             if (GlobalOptions.getProperty("player." + GlobalOptions.getSelectedServer()) != null) {
                 if (model.getIndexOf(GlobalOptions.getProperty("player." + GlobalOptions.getSelectedServer())) != -1) {
                     jTribeNames.setSelectedItem(GlobalOptions.getProperty("player." + GlobalOptions.getSelectedServer()));

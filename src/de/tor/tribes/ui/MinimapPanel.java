@@ -587,9 +587,16 @@ class MinimapRepaintThread extends Thread {
         g2d.fillRect(0, 0, mBuffer.getWidth(null), mBuffer.getHeight(null));
 
         Village[][] mVisibleVillages = DataHolder.getSingleton().getVillages();
-        
+
         if (mVisibleVillages == null) {
             return false;
+        }
+
+        boolean markPlayer = false;
+        try {
+            markPlayer = Boolean.parseBoolean(GlobalOptions.getProperty("mark.villages.on.minimap"));
+        } catch (Exception e) {
+            markPlayer = false;
         }
 
         for (int i = 0; i < 1000; i++) {
@@ -601,18 +608,26 @@ class MinimapRepaintThread extends Thread {
                     if (v.getTribe() == null) {
                         isLeft = true;
                     } else {
-                        try {
-                            Marker m = MarkerManager.getSingleton().getMarkerByValue(v.getTribe().getName());
-                            if (m == null) {
-                                m = MarkerManager.getSingleton().getMarkerByValue(v.getTribe().getAlly().getName());
-                                if (m != null) {
+                        if (v.getTribe().toString().equals(DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage().getTribe().toString())) {
+                            //village is owned by current player. mark it dependent on settings
+                            if (markPlayer) {
+                                mark = Color.YELLOW;
+                            }
+
+                        } else {
+                            try {
+                                Marker m = MarkerManager.getSingleton().getMarkerByValue(v.getTribe().getName());
+                                if (m == null) {
+                                    m = MarkerManager.getSingleton().getMarkerByValue(v.getTribe().getAlly().getName());
+                                    if (m != null) {
+                                        mark = m.getMarkerColor();
+                                    }
+                                } else {
                                     mark = m.getMarkerColor();
                                 }
-                            } else {
-                                mark = m.getMarkerColor();
+                            } catch (Exception e) {
+                                mark = null;
                             }
-                        } catch (Exception e) {
-                            mark = null;
                         }
                     }
 

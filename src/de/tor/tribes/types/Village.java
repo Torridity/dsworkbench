@@ -42,10 +42,10 @@ public class Village implements Serializable, Comparable {
 
         try {
             entry.setId(Integer.parseInt(tokenizer.nextToken()));
-            String name = URLDecoder.decode(tokenizer.nextToken(), "UTF-8");
+            String n = URLDecoder.decode(tokenizer.nextToken(), "UTF-8");
             //replace HTML characters
-            name = name.replaceAll("&gt;", ">").replaceAll("&lt;", "<");
-            entry.setName(name);
+            n = n.replaceAll("&gt;", ">").replaceAll("&lt;", "<");
+            entry.setName(n);
             entry.setX(Short.parseShort(tokenizer.nextToken()));
             entry.setY(Short.parseShort(tokenizer.nextToken()));
             entry.setTribeID(Integer.parseInt(tokenizer.nextToken()));
@@ -85,10 +85,10 @@ public class Village implements Serializable, Comparable {
         //skip id
         t.nextToken();
         try {
-            String name = URLDecoder.decode(t.nextToken().trim(), "UTF-8");
+            String n = URLDecoder.decode(t.nextToken().trim(), "UTF-8");
             //replace HTML characters
-            name = name.replaceAll("&gt;", ">").replaceAll("&lt;", "<");
-            setName(name);
+            n = n.replaceAll("&gt;", ">").replaceAll("&lt;", "<");
+            setName(n);
         } catch (Exception e) {
         }
         //skip x 

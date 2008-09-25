@@ -34,8 +34,8 @@ public class ServerList {
         for (DatabaseServerEntry entry : SERVERS) {
             ids.add(entry.getServerID());
         }
-        String[] s = ids.toArray(new String[0]);
-        Arrays.sort(s);
+        String[] s = ids.toArray(new String[]{});
+        Arrays.sort(s, String.CASE_INSENSITIVE_ORDER);
         return s;
     }
 

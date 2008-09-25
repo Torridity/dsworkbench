@@ -359,10 +359,7 @@
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" alignment="0" attributes="0">
-                                  <Component id="jNoNightLabel" min="-2" pref="19" max="-2" attributes="0"/>
-                                  <EmptySpace min="1" pref="1" max="1" attributes="0"/>
-                              </Group>
+                              <Component id="jNoNightLabel" alignment="0" min="-2" pref="19" max="-2" attributes="0"/>
                               <Component id="jNightForbidden" min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>

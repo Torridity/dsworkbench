@@ -41,6 +41,7 @@ import java.util.LinkedList;
 import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
+import javax.swing.SwingUtilities;
 import org.apache.log4j.Logger;
 
 /**
@@ -88,6 +89,7 @@ public class MapPanel extends javax.swing.JPanel {
         mAttackAddFrame = new AttackAddFrame();
         mTagFrame = new VillageTagFrame();
         setCursor(ImageManager.getCursor(iCurrentCursor));
+
         initListeners();
     }
 
@@ -179,7 +181,7 @@ public class MapPanel extends javax.swing.JPanel {
                             Village u = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage();
                             if ((u != null) && (v != null)) {
                                 if (Desktop.isDesktopSupported()) {
-                                BrowserCommandSender.sendRes(u, v);
+                                    BrowserCommandSender.sendRes(u, v);
                                 }
                             }
                         }
@@ -551,6 +553,7 @@ class RepaintThread extends Thread {
     private int ye = 0;
     private Village mSourceVillage = null;
     private BufferedImage mDistBorder = null;
+    private Image mMarkerImage = null;
     private final NumberFormat nf = NumberFormat.getInstance();
 
     public RepaintThread(int pX, int pY) {
@@ -560,6 +563,8 @@ class RepaintThread extends Thread {
         nf.setMinimumFractionDigits(2);
         try {
             mDistBorder = ImageIO.read(new File("./graphics/dist_border.png"));
+            mMarkerImage = Toolkit.getDefaultToolkit().getImage("graphics/icons/marker.png");
+            System.out.println("LOADED");
         } catch (Exception e) {
         }
     }
@@ -582,7 +587,7 @@ class RepaintThread extends Thread {
                 logger.error("Redrawing map failed", t);
             }
             try {
-                Thread.sleep(80);
+                Thread.sleep(100);
             } catch (Exception e) {
             }
         }
@@ -688,8 +693,15 @@ class RepaintThread extends Thread {
         }
 
         Line2D.Double dragLine = new Line2D.Double(-1, -1, xe, ye);
-        int xC = 0;
-        int yC = 0;
+        /* int xC = 0;
+        int yC = 0;*/
+        int markX = -1;
+        int markY = -1;
+        boolean markActiveVillage = false;
+        try {
+            markActiveVillage = Boolean.parseBoolean(GlobalOptions.getProperty("mark.active.village"));
+        } catch (Exception e) {
+        }
 
         for (int i = 0; i < iVillagesX; i++) {
             for (int j = 0; j < iVillagesY; j++) {
@@ -809,10 +821,10 @@ class RepaintThread extends Thread {
                             }
                         }
                     } else if (v.getPoints() < 11000) {
-                        if (xC == 0) {
-                            xC = x;
-                            yC = y;
-                        }
+                        /* if (xC == 0) {
+                        xC = x;
+                        yC = y;
+                        }*/
                         if (!isLeft) {
                             Image img = GlobalOptions.getSkin().getImage(Skin.ID_V5, dScaling);
                             if (v.getType() != 0) {
@@ -845,7 +857,16 @@ class RepaintThread extends Thread {
                             }
                         }
                     }
+
+                    if (markActiveVillage) {
+                        if (v.compareTo(DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage()) == 0) {
+                            markX = x + (int) Math.round(width / 2);
+                            markY = y + (int) Math.round(height / 2);
+                        }
+                    }
                 }
+
+
                 //</editor-fold>
 
                 y += height;
@@ -994,11 +1015,25 @@ class RepaintThread extends Thread {
         }
         //</editor-fold>
 
-        /*g2d.setColor(Color.GREEN);
+        /*
+        g2d.setColor(Color.GREEN);
         Composite a = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.2f);
         g2d.setComposite(a);
-        g2d.fillOval(xC, yC, width, height);*/
-       
+        g2d.fillOval(xC, yC, width, height);
+         */
+
+
+        //Cursor problem workaround
+        /*Point pos = MapPanel.getSingleton().getMousePosition();
+        if (pos != null) {
+        g2d.drawImage(ImageManager.getUnitIcon(ImageManager.ICON_AXE).getImage(), pos.x, pos.y, null);
+        }
+         */
+        if (markX >= 0 && markY >= 0) {
+            g2d.drawImage(mMarkerImage, markX, markY - mMarkerImage.getHeight(null), null);
+        /*g2d.setColor(Color.YELLOW);
+        g2d.fillRect(markX, markY, 10, 10);*/
+        }
         g2d.dispose();
     }
 }

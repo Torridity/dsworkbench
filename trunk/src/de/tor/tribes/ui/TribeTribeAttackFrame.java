@@ -33,6 +33,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 import org.apache.log4j.Logger;
 
 /**
@@ -62,13 +64,16 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame {
             }
         };
         jAttacksTable.setModel(attackModel);
+        TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(jAttacksTable.getModel());
+        jAttacksTable.setRowSorter(sorter);
+
         DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
 
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
                 Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
                 String t = ((DefaultTableCellRenderer) c).getText();
-                ((DefaultTableCellRenderer) c).setText("<html><b>" + t + "</b></html>");
+                ((DefaultTableCellRenderer) c).setText(t);
                 c.setBackground(Constants.DS_BACK);
                 return c;
             }
@@ -94,24 +99,24 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame {
 
             Ally[] aAllies = allies.toArray(new Ally[]{});
             allies = null;
-            Arrays.sort(aAllies);
+            Arrays.sort(aAllies, Ally.CASE_INSENSITIVE_ORDER);
             Tribe current = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage().getTribe();
             jSourceVillageList.setModel(new DefaultComboBoxModel(current.getVillageList().toArray()));
             DefaultComboBoxModel targetAllyModel = new DefaultComboBoxModel(aAllies);
             jTargetAllyList.setModel(targetAllyModel);
             jTargetAllyList.setSelectedIndex(0);
+            System.out.println("FIRE ALLY");
+            fireTargetAllyChangedEvent(null);
             jArriveTime.setValue(Calendar.getInstance().getTime());
-            DefaultComboBoxModel unitModel = new DefaultComboBoxModel();
-            for (UnitHolder u : DataHolder.getSingleton().getUnits()) {
-                unitModel.addElement(u);
-            }
 
             jAttacksTable.setDefaultRenderer(Date.class, new DateCellRenderer());
             jAttacksTable.setDefaultEditor(Date.class, new DateSpinEditor());
             jAttacksTable.setDefaultEditor(UnitHolder.class, new UnitCellEditor());
             jAttacksTable.setDefaultEditor(Village.class, new VillageCellEditor());
 
+            DefaultComboBoxModel unitModel = new DefaultComboBoxModel(DataHolder.getSingleton().getUnits().toArray(new UnitHolder[]{}));
             jTroopsList.setModel(unitModel);
+
             jResultFrame.pack();
         } catch (Exception e) {
             logger.error("Failed to initialize TribeAttackFrame", e);
@@ -730,8 +735,8 @@ private void fireAddAllPlayerVillages(java.awt.event.MouseEvent evt) {//GEN-FIRS
 
 private void fireTargetAllyChangedEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireTargetAllyChangedEvent
     Ally a = (Ally) jTargetAllyList.getSelectedItem();
-    Object[] tribes = a.getTribes().toArray();
-    Arrays.sort(tribes);
+    Tribe[] tribes = a.getTribes().toArray(new Tribe[]{});
+    Arrays.sort(tribes, Tribe.CASE_INSENSITIVE_ORDER);
     jTargetPlayerList.setModel(new DefaultComboBoxModel(tribes));
 }//GEN-LAST:event_fireTargetAllyChangedEvent
 
@@ -767,21 +772,24 @@ private void fireTargetAllyChangedEvent(java.awt.event.ActionEvent evt) {//GEN-F
             }
         }
         jResultsTable.setModel(resultModel);
+        TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(jResultsTable.getModel());
+        jResultsTable.setRowSorter(sorter);
+
         DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
 
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
                 Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
                 String t = ((DefaultTableCellRenderer) c).getText();
-                ((DefaultTableCellRenderer) c).setText("<html><b>" + t + "</b></html>");
+                ((DefaultTableCellRenderer) c).setText(t);
                 c.setBackground(Constants.DS_BACK);
                 return c;
             }
         };
 
-        for (int i = 0; i < jResultsTable.getColumnCount(); i++) {
-            jResultsTable.getColumn(jResultsTable.getColumnName(i)).setHeaderRenderer(headerRenderer);
-        }
+        /*for (int i = 0; i < jResultsTable.getColumnCount(); i++) {
+        jResultsTable.getColumn(jResultsTable.getColumnName(i)).setHeaderRenderer(headerRenderer);
+        }*/
         jResultFrame.setVisible(true);
     }
 

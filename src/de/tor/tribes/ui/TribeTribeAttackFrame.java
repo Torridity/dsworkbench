@@ -48,6 +48,10 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame {
     /** Creates new form AllyAllyAttackFrame */
     public TribeTribeAttackFrame() {
         initComponents();
+        //setup();
+    }
+
+    protected void setup() {
         DefaultTableModel attackModel = new javax.swing.table.DefaultTableModel(
                 new Object[][]{},
                 new String[]{
@@ -675,9 +679,9 @@ private void fireHideResultsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
 private void fireTransferToAttackPlanningEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireTransferToAttackPlanningEvent
     DefaultTableModel resultModel = (DefaultTableModel) jResultsTable.getModel();
     for (int i = 0; i < resultModel.getRowCount(); i++) {
-        Village source = (Village) resultModel.getValueAt(i, 1);
-        UnitHolder unit = (UnitHolder) resultModel.getValueAt(i, 2);
-        Village target = (Village) resultModel.getValueAt(i, 3);
+        Village source = (Village) resultModel.getValueAt(i, 0);
+        UnitHolder unit = (UnitHolder) resultModel.getValueAt(i, 1);
+        Village target = (Village) resultModel.getValueAt(i, 2);
         AttackManager.getSingleton().addAttack(source, target, unit, (Date) jArriveTime.getValue());
     }
 }//GEN-LAST:event_fireTransferToAttackPlanningEvent
@@ -787,7 +791,7 @@ private void fireTargetAllyChangedEvent(java.awt.event.ActionEvent evt) {//GEN-F
         };
 
         for (int i = 0; i < jResultsTable.getColumnCount(); i++) {
-        jResultsTable.getColumn(jResultsTable.getColumnName(i)).setHeaderRenderer(headerRenderer);
+            jResultsTable.getColumn(jResultsTable.getColumnName(i)).setHeaderRenderer(headerRenderer);
         }
         jResultFrame.setVisible(true);
     }

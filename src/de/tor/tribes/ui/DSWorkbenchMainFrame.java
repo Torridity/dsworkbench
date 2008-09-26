@@ -173,6 +173,9 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jMarkerPanel.updateUI();
         setupAttackPanel();
         jAttackPanel.updateUI();
+        if (mTribeTribeAttackFrame != null) {
+            mTribeTribeAttackFrame.setup();
+        }
     }
 
     public void onlineStateChanged() {
@@ -227,6 +230,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         mAllyAllyAttackFrame.pack();
         mTribeTribeAttackFrame = new TribeTribeAttackFrame();
         mTribeTribeAttackFrame.pack();
+        mTribeTribeAttackFrame.setup();
         mAbout = new AboutDialog(this, true);
         initialized = true;
     }
@@ -1744,9 +1748,9 @@ private void fireShowAboutEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:eve
                 jTabbedPane1.setSelectedIndex(2);
                 jDynFrame.pack();
                 break;
-            }            
+            }
         }
-         jCurrentToolLabel.setIcon(ImageManager.getCursorImage(pTool));
+        jCurrentToolLabel.setIcon(ImageManager.getCursorImage(pTool));
     }
 
     /**Update the MapPanel when dragging the ROI at the MiniMap

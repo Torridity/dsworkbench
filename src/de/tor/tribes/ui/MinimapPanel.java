@@ -208,7 +208,7 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
                 } else {
                     mZoomFrame.setVisible(true);
                 }
-                setCursor(ImageManager.getCursor(iCurrentCursor));
+                setCurrentCursor(iCurrentCursor);
             }
         });
     }
@@ -228,7 +228,7 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
     public synchronized void removeToolChangeListener(ToolChangeListener pListener) {
         mToolChangeListeners.remove(pListener);
     }
-    
+
     public void setCurrentCursor(int pCurrentCursor) {
         iCurrentCursor = pCurrentCursor;
         setCursor(ImageManager.getCursor(iCurrentCursor));
@@ -308,12 +308,12 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
         }
     }
 
-    public synchronized void fireToolChangedEvents(int pTool){
-          for (ToolChangeListener l : mToolChangeListeners) {
+    public synchronized void fireToolChangedEvents(int pTool) {
+        for (ToolChangeListener l : mToolChangeListeners) {
             l.fireToolChangedEvent(pTool);
         }
     }
-    
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -500,9 +500,12 @@ private void fireSaveScreenshotEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST
     chooser.setSelectedFile(new File("map"));
 
     final String type = (String) jFileTypeChooser.getSelectedItem();
-    chooser.setFileFilter(new FileFilter() {
+    chooser.setFileFilter(new  
 
-        @Override
+          FileFilter( ) {
+
+              
+                 @Override
         public boolean accept(File f) {
             if (f.getName().endsWith(type)) {
                 return true;

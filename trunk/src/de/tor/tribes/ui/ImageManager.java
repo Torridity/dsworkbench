@@ -75,7 +75,6 @@ public class ImageManager {
             loadCursor("graphics/cursors/attack_sword.png", "attack_sword");
             loadCursor("graphics/cursors/attack_light.png", "attack_light");
             loadCursor("graphics/cursors/attack_heavy.png", "attack_heavy");
-            loadCursor("graphics/cursors/attack_ingame.png", "attack_ingame");
             //minimap cursors
             loadCursor("graphics/cursors/move.png", "move");
             loadCursor("graphics/cursors/zoom.png", "zoom");

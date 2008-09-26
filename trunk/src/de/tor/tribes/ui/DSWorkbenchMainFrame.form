@@ -1139,7 +1139,7 @@
                   <Group type="102" attributes="0">
                       <Component id="jMinimapPanel" min="-2" pref="233" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jNavigationPanel" min="-2" pref="112" max="-2" attributes="1"/>
+                      <Component id="jNavigationPanel" min="-2" max="-2" attributes="1"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jInformationPanel" max="32767" attributes="0"/>
                   </Group>
@@ -1289,7 +1289,7 @@
                           </Group>
                       </Group>
                   </Group>
-                  <EmptySpace max="32767" attributes="0"/>
+                  <EmptySpace pref="13" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -1712,7 +1712,7 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
                           <Component id="jOnlineLabel" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace pref="93" max="32767" attributes="0"/>
+                          <EmptySpace pref="97" max="32767" attributes="0"/>
                           <Component id="jCurrentToolLabel" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <Component id="jCenterIngameButton" min="-2" max="-2" attributes="0"/>

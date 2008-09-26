@@ -16,22 +16,24 @@ import de.tor.tribes.util.Skin;
 import de.tor.tribes.util.attack.AttackManager;
 import de.tor.tribes.util.mark.MarkerManager;
 import de.tor.tribes.util.tag.TagManager;
+import java.awt.Color;
 import java.awt.Point;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
-import java.util.Enumeration;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JViewport;
 import javax.swing.UIManager;
+import javax.swing.table.DefaultTableModel;
 import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
+import de.tor.tribes.ui.renderer.ColorCellRenderer;
+import de.tor.tribes.io.UnitHolder;
 
 /**
  *
@@ -128,6 +130,41 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
             }
         } catch (Exception e) {
         }
+
+        setupAttackColorTable();
+
+    }
+
+    private void setupAttackColorTable() {
+        DefaultTableModel model = new javax.swing.table.DefaultTableModel(
+                new Object[][]{},
+                new String[]{
+                    "Einheit", "Farbe"
+                }) {
+
+            Class[] types = new Class[]{
+                String.class, Color.class
+            };
+            boolean[] canEdit = new boolean[]{
+                false, true
+            };
+
+            @Override
+            public Class getColumnClass(int columnIndex) {
+                return types[columnIndex];
+            }
+
+            @Override
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit[columnIndex];
+            }
+        };
+        jAttackColorTable.setDefaultRenderer(Color.class, new ColorCellRenderer());
+        jAttackColorTable.setModel(model);
+        for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
+            model.addRow(new Object[]{unit, Color.RED});
+        }
+
     }
 
     protected boolean checkSettings() {
@@ -274,7 +311,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
         jScrollPane1 = new javax.swing.JScrollPane();
         jStatusArea = new javax.swing.JTextArea();
         jDownloadDataButton = new javax.swing.JButton();
-        jGeneralSettings = new javax.swing.JPanel();
+        jMapSettings = new javax.swing.JPanel();
         jSkinPackLabel = new javax.swing.JLabel();
         jGraphicPacks = new javax.swing.JComboBox();
         jSelectSkinButton = new javax.swing.JButton();
@@ -282,13 +319,11 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
         jPanel1 = new javax.swing.JPanel();
         jContinentsOnMinimap = new javax.swing.JCheckBox();
         jShowDistanceBox = new javax.swing.JCheckBox();
-        jShowAttackMovementBox = new javax.swing.JCheckBox();
         jMarkOwnVillagesOnMinimapBox = new javax.swing.JCheckBox();
         jMarkActiveVillageBox = new javax.swing.JCheckBox();
         jPanel2 = new javax.swing.JPanel();
         jShowContinentsLabel = new javax.swing.JLabel();
         jShowDistanceLabel = new javax.swing.JLabel();
-        jAttackMovementLabel = new javax.swing.JLabel();
         jAttackMovementLabel2 = new javax.swing.JLabel();
         jAttackMovementLabel1 = new javax.swing.JLabel();
         jNetworkSettings = new javax.swing.JPanel();
@@ -299,6 +334,12 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
         jProxyPortLabel = new javax.swing.JLabel();
         jProxyPort = new javax.swing.JTextField();
         jRefeshNetworkButton = new javax.swing.JButton();
+        jAttackSettings = new javax.swing.JPanel();
+        jAttackMovementLabel = new javax.swing.JLabel();
+        jShowAttackMovementBox = new javax.swing.JCheckBox();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jAttackColorTable = new javax.swing.JTable();
+        jAttackMovementLabel3 = new javax.swing.JLabel();
         jOKButton = new javax.swing.JButton();
         jCancelButton = new javax.swing.JButton();
         jCreateAccountButton = new javax.swing.JButton();
@@ -526,7 +567,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
 
         jTabbedPane1.addTab(bundle.getString("DSWorkbenchSettingsDialog.jPlayerServerSettings.TabConstraints.tabTitle"), new javax.swing.ImageIcon(getClass().getResource("/res/face.png")), jPlayerServerSettings); // NOI18N
 
-        jGeneralSettings.setBackground(new java.awt.Color(239, 235, 223));
+        jMapSettings.setBackground(new java.awt.Color(239, 235, 223));
 
         jSkinPackLabel.setText(bundle.getString("DSWorkbenchSettingsDialog.jSkinPackLabel.text")); // NOI18N
 
@@ -573,15 +614,6 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
         });
         jPanel1.add(jShowDistanceBox);
 
-        jShowAttackMovementBox.setToolTipText(bundle.getString("DSWorkbenchSettingsDialog.jShowAttackMovementBox.toolTipText")); // NOI18N
-        jShowAttackMovementBox.setOpaque(false);
-        jShowAttackMovementBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fireChangeShowAttackMovementEvent(evt);
-            }
-        });
-        jPanel1.add(jShowAttackMovementBox);
-
         jMarkOwnVillagesOnMinimapBox.setToolTipText(bundle.getString("DSWorkbenchSettingsDialog.jMarkOwnVillagesOnMinimapBox.toolTipText")); // NOI18N
         jMarkOwnVillagesOnMinimapBox.setOpaque(false);
         jMarkOwnVillagesOnMinimapBox.addActionListener(new java.awt.event.ActionListener() {
@@ -615,12 +647,6 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
         jShowDistanceLabel.setPreferredSize(new java.awt.Dimension(150, 21));
         jPanel2.add(jShowDistanceLabel);
 
-        jAttackMovementLabel.setText(bundle.getString("DSWorkbenchSettingsDialog.jAttackMovementLabel.text")); // NOI18N
-        jAttackMovementLabel.setMaximumSize(new java.awt.Dimension(150, 21));
-        jAttackMovementLabel.setMinimumSize(new java.awt.Dimension(150, 21));
-        jAttackMovementLabel.setPreferredSize(new java.awt.Dimension(150, 21));
-        jPanel2.add(jAttackMovementLabel);
-
         jAttackMovementLabel2.setText(bundle.getString("DSWorkbenchSettingsDialog.jAttackMovementLabel2.text")); // NOI18N
         jAttackMovementLabel2.setMaximumSize(new java.awt.Dimension(150, 21));
         jAttackMovementLabel2.setMinimumSize(new java.awt.Dimension(150, 21));
@@ -633,42 +659,42 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
         jAttackMovementLabel1.setPreferredSize(new java.awt.Dimension(150, 21));
         jPanel2.add(jAttackMovementLabel1);
 
-        javax.swing.GroupLayout jGeneralSettingsLayout = new javax.swing.GroupLayout(jGeneralSettings);
-        jGeneralSettings.setLayout(jGeneralSettingsLayout);
-        jGeneralSettingsLayout.setHorizontalGroup(
-            jGeneralSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jGeneralSettingsLayout.createSequentialGroup()
+        javax.swing.GroupLayout jMapSettingsLayout = new javax.swing.GroupLayout(jMapSettings);
+        jMapSettings.setLayout(jMapSettingsLayout);
+        jMapSettingsLayout.setHorizontalGroup(
+            jMapSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jMapSettingsLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jGeneralSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jMapSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jSkinPackLabel)
                     .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jGeneralSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jMapSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 242, Short.MAX_VALUE)
                     .addComponent(jGraphicPacks, javax.swing.GroupLayout.Alignment.TRAILING, 0, 242, Short.MAX_VALUE))
                 .addGap(25, 25, 25)
-                .addGroup(jGeneralSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(jMapSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jPreviewSkinButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jSelectSkinButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jSelectSkinButton, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addGap(41, 41, 41))
         );
-        jGeneralSettingsLayout.setVerticalGroup(
-            jGeneralSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jGeneralSettingsLayout.createSequentialGroup()
-                .addContainerGap(27, Short.MAX_VALUE)
-                .addGroup(jGeneralSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+        jMapSettingsLayout.setVerticalGroup(
+            jMapSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jMapSettingsLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jMapSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jSelectSkinButton)
                     .addComponent(jSkinPackLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jGraphicPacks, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jGeneralSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jMapSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPreviewSkinButton)
                     .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(88, 88, 88))
+                .addContainerGap(125, Short.MAX_VALUE))
         );
 
-        jTabbedPane1.addTab(bundle.getString("DSWorkbenchSettingsDialog.jGeneralSettings.TabConstraints.tabTitle"), new javax.swing.ImageIcon(getClass().getResource("/res/settings.png")), jGeneralSettings); // NOI18N
+        jTabbedPane1.addTab(bundle.getString("DSWorkbenchSettingsDialog.jMapSettings.TabConstraints.tabTitle"), new javax.swing.ImageIcon(getClass().getResource("/res/ui/map.gif")), jMapSettings); // NOI18N
 
         jNetworkSettings.setBackground(new java.awt.Color(239, 235, 223));
 
@@ -754,6 +780,67 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements Da
         );
 
         jTabbedPane1.addTab(bundle.getString("DSWorkbenchSettingsDialog.jNetworkSettings.TabConstraints.tabTitle"), new javax.swing.ImageIcon(getClass().getResource("/res/proxy.png")), jNetworkSettings); // NOI18N
+
+        jAttackMovementLabel.setText(bundle.getString("DSWorkbenchSettingsDialog.jAttackMovementLabel.text")); // NOI18N
+        jAttackMovementLabel.setMaximumSize(new java.awt.Dimension(150, 21));
+        jAttackMovementLabel.setMinimumSize(new java.awt.Dimension(150, 21));
+        jAttackMovementLabel.setPreferredSize(new java.awt.Dimension(150, 21));
+
+        jShowAttackMovementBox.setToolTipText(bundle.getString("DSWorkbenchSettingsDialog.jShowAttackMovementBox.toolTipText")); // NOI18N
+        jShowAttackMovementBox.setOpaque(false);
+        jShowAttackMovementBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fireChangeShowAttackMovementEvent(evt);
+            }
+        });
+
+        jScrollPane2.setOpaque(false);
+
+        jAttackColorTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+
+            }
+        ));
+        jScrollPane2.setViewportView(jAttackColorTable);
+
+        jAttackMovementLabel3.setText(bundle.getString("DSWorkbenchSettingsDialog.jAttackMovementLabel3.text")); // NOI18N
+        jAttackMovementLabel3.setMaximumSize(new java.awt.Dimension(150, 21));
+        jAttackMovementLabel3.setMinimumSize(new java.awt.Dimension(150, 21));
+        jAttackMovementLabel3.setPreferredSize(new java.awt.Dimension(150, 21));
+
+        javax.swing.GroupLayout jAttackSettingsLayout = new javax.swing.GroupLayout(jAttackSettings);
+        jAttackSettings.setLayout(jAttackSettingsLayout);
+        jAttackSettingsLayout.setHorizontalGroup(
+            jAttackSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jAttackSettingsLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jAttackSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jAttackMovementLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jAttackMovementLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(12, 12, 12)
+                .addGroup(jAttackSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 379, Short.MAX_VALUE)
+                    .addComponent(jShowAttackMovementBox))
+                .addContainerGap())
+        );
+        jAttackSettingsLayout.setVerticalGroup(
+            jAttackSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jAttackSettingsLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jAttackSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jShowAttackMovementBox)
+                    .addComponent(jAttackMovementLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jAttackSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jAttackMovementLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(114, Short.MAX_VALUE))
+        );
+
+        jTabbedPane1.addTab(bundle.getString("DSWorkbenchSettingsDialog.jAttackSettings.TabConstraints.tabTitle"), new javax.swing.ImageIcon(getClass().getResource("/res/barracks.png")), jAttackSettings); // NOI18N
 
         jOKButton.setBackground(new java.awt.Color(239, 235, 223));
         jOKButton.setText(bundle.getString("DSWorkbenchSettingsDialog.jOKButton.text")); // NOI18N
@@ -1231,9 +1318,12 @@ private void fireChangeMarkActiveVillageEvent(java.awt.event.ActionEvent evt) {/
     private javax.swing.JLabel jAccountNameLabel;
     private javax.swing.JPasswordField jAccountPassword;
     private javax.swing.JLabel jAccountPasswordLabel;
+    private javax.swing.JTable jAttackColorTable;
     private javax.swing.JLabel jAttackMovementLabel;
     private javax.swing.JLabel jAttackMovementLabel1;
     private javax.swing.JLabel jAttackMovementLabel2;
+    private javax.swing.JLabel jAttackMovementLabel3;
+    private javax.swing.JPanel jAttackSettings;
     private javax.swing.JButton jCancelButton;
     private javax.swing.JButton jCancelRegistrationButton;
     private javax.swing.JButton jCheckAccountButton;
@@ -1242,11 +1332,11 @@ private void fireChangeMarkActiveVillageEvent(java.awt.event.ActionEvent evt) {/
     private javax.swing.JDialog jCreateAccountDialog;
     private javax.swing.JRadioButton jDirectConnectOption;
     private javax.swing.JButton jDownloadDataButton;
-    private javax.swing.JPanel jGeneralSettings;
     private javax.swing.JComboBox jGraphicPacks;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jLoginPanel;
+    private javax.swing.JPanel jMapSettings;
     private javax.swing.JCheckBox jMarkActiveVillageBox;
     private javax.swing.JCheckBox jMarkOwnVillagesOnMinimapBox;
     private javax.swing.JPanel jNetworkSettings;
@@ -1269,6 +1359,7 @@ private void fireChangeMarkActiveVillageEvent(java.awt.event.ActionEvent evt) {/
     private javax.swing.JPasswordField jRegistrationPassword2;
     private javax.swing.JLabel jRepeatPasswordLabel;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JButton jSelectServerButton;
     private javax.swing.JButton jSelectSkinButton;
     private javax.swing.JComboBox jServerList;

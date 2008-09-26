@@ -104,14 +104,14 @@ public class MapPanel extends javax.swing.JPanel {
         mMapPanelListeners.remove(pListener);
     }
 
-     public synchronized void addToolChangeListener(ToolChangeListener pListener) {
+    public synchronized void addToolChangeListener(ToolChangeListener pListener) {
         mToolChangeListeners.add(pListener);
     }
 
     public synchronized void removeMapPanelListener(ToolChangeListener pListener) {
         mMapPanelListeners.remove(pListener);
     }
-    
+
     private void initListeners() {
 
         // <editor-fold defaultstate="collapsed" desc="MouseWheelListener for Tool changes">
@@ -518,7 +518,6 @@ public class MapPanel extends javax.swing.JPanel {
     protected void updateComplete(Village[][] pVillages, Image pBuffer) {
         mBuffer = pBuffer;
         mVisibleVillages = pVillages;
-
         updating = false;
     }
 
@@ -583,6 +582,7 @@ class RepaintThread extends Thread {
         iX = pX;
         iY = pY;
     }
+    long last = System.currentTimeMillis();
 
     @Override
     public void run() {
@@ -590,8 +590,12 @@ class RepaintThread extends Thread {
             try {
                 updateMap(iX, iY);
                 if (mBuffer != null) {
-                    MapPanel.getSingleton().updateComplete(mVisibleVillages, mBuffer.getScaledInstance(MapPanel.getSingleton().getWidth(), MapPanel.getSingleton().getHeight(), BufferedImage.SCALE_FAST));
+                    MapPanel.getSingleton().updateComplete(mVisibleVillages, mBuffer);
+                    //.getScaledInstance(MapPanel.getSingleton().getWidth(), MapPanel.getSingleton().getHeight(), BufferedImage.SCALE_FAST)
                     MapPanel.getSingleton().repaint();
+                    long cur = System.currentTimeMillis();
+                    System.out.println("painted " + (cur - last));
+                    last = cur;
                 }
             } catch (Throwable t) {
                 logger.error("Redrawing map failed", t);

@@ -6,6 +6,7 @@
 package de.tor.tribes.ui;
 
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.io.WorldDecorationHolder;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.Marker;
@@ -38,11 +39,11 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.text.NumberFormat;
 import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
-import javax.swing.SwingUtilities;
 import org.apache.log4j.Logger;
 
 /**
@@ -54,7 +55,6 @@ public class MapPanel extends javax.swing.JPanel {
     private static Logger logger = Logger.getLogger(MapPanel.class);
     private Village[][] mVisibleVillages = null;
     private Image mBuffer = null;
-    private double dScaling = 1.0;
     private int mX = 500;
     private int mY = 500;
     private RepaintThread mRepaintThread = null;
@@ -92,7 +92,7 @@ public class MapPanel extends javax.swing.JPanel {
         mAttackAddFrame = new AttackAddFrame();
         mTagFrame = new VillageTagFrame();
         setCursor(ImageManager.getCursor(iCurrentCursor));
-
+//setIgnoreRepaint(true);
         initListeners();
     }
 
@@ -413,11 +413,6 @@ public class MapPanel extends javax.swing.JPanel {
         fireToolChangedEvents(iCurrentCursor);
     }
 
-    public void setZoom(double pZoom) {
-        dScaling = pZoom;
-        mRepaintThread.setZoom(dScaling);
-    }
-
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -441,6 +436,8 @@ public class MapPanel extends javax.swing.JPanel {
     /**Draw buffer into panel*/
     @Override
     public void paint(Graphics g) {
+        // super.paintComponent(g);
+        g.fillRect(0, 0, getWidth(), getHeight());
         if (isOutside) {
             mousePos = MouseInfo.getPointerInfo().getLocation();
             int outcodes = screenRect.outcode(mousePos);
@@ -460,18 +457,18 @@ public class MapPanel extends javax.swing.JPanel {
             //lower scroll speed
             int sx = 0;
             int sy = 0;
-            if (xDir >= 10) {
+            if (xDir >= 1) {
                 sx = 1;
                 xDir = 0;
-            } else if (xDir <= -10) {
+            } else if (xDir <= -1) {
                 sx = -1;
                 xDir = 0;
             }
 
-            if (yDir >= 10) {
+            if (yDir >= 1) {
                 sy = 1;
                 yDir = 0;
-            } else if (yDir <= -10) {
+            } else if (yDir <= -1) {
                 sy = -1;
                 yDir = 0;
             }
@@ -505,8 +502,8 @@ public class MapPanel extends javax.swing.JPanel {
             int x = (int) getMousePosition().getX();
             int y = (int) getMousePosition().getY();
 
-            x /= GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, dScaling).getWidth(null);
-            y /= GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, dScaling).getHeight(null);
+            x /= GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, DSWorkbenchMainFrame.getSingleton().getZoom()).getWidth(null);
+            y /= GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, DSWorkbenchMainFrame.getSingleton().getZoom()).getHeight(null);
 
             return mVisibleVillages[x][y];
         } catch (Exception e) {
@@ -558,7 +555,6 @@ class RepaintThread extends Thread {
     private int iVillagesY = 0;
     private int iX = 500;
     private int iY = 500;
-    private double dScaling = 1.0;
     private int xe = 0;
     private int ye = 0;
     private Village mSourceVillage = null;
@@ -573,7 +569,7 @@ class RepaintThread extends Thread {
         nf.setMinimumFractionDigits(2);
         try {
             mDistBorder = ImageIO.read(new File("./graphics/dist_border.png"));
-            mMarkerImage = Toolkit.getDefaultToolkit().getImage("graphics/icons/marker.png");
+            mMarkerImage = Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("/res/marker.png"));
         } catch (Exception e) {
         }
     }
@@ -593,22 +589,18 @@ class RepaintThread extends Thread {
                     MapPanel.getSingleton().updateComplete(mVisibleVillages, mBuffer);
                     //.getScaledInstance(MapPanel.getSingleton().getWidth(), MapPanel.getSingleton().getHeight(), BufferedImage.SCALE_FAST)
                     MapPanel.getSingleton().repaint();
-                    long cur = System.currentTimeMillis();
-                    System.out.println("painted " + (cur - last));
-                    last = cur;
+                /*  long cur = System.currentTimeMillis();
+                System.out.println("painted " + (cur - last));
+                last = cur;*/
                 }
             } catch (Throwable t) {
                 logger.error("Redrawing map failed", t);
             }
             try {
-                Thread.sleep(100);
+                Thread.sleep(80);
             } catch (Exception e) {
             }
         }
-    }
-
-    public void setZoom(double pZoom) {
-        dScaling = pZoom;
     }
 
     public void setDragLine(int pXS, int pYS, int pXE, int pYE) {
@@ -628,8 +620,8 @@ class RepaintThread extends Thread {
             //probably reloading data
             return;
         }
-        iVillagesX = (int) Math.rint((double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, dScaling).getWidth(null));
-        iVillagesY = (int) Math.rint((double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, dScaling).getHeight(null));
+        iVillagesX = (int) Math.rint((double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, DSWorkbenchMainFrame.getSingleton().getZoom()).getWidth(null));
+        iVillagesY = (int) Math.rint((double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, DSWorkbenchMainFrame.getSingleton().getZoom()).getHeight(null));
 
         if (iVillagesX % 2 == 0) {
             iVillagesX++;
@@ -669,9 +661,24 @@ class RepaintThread extends Thread {
     private void redraw(int pXStart, int pYStart) {
         int x = 0;
         int y = 0;
+
+        //get attack colors
+        Hashtable<String, Color> attackColors = new Hashtable<String, Color>();
+        for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
+            Color unitColor = Color.RED;
+            try {
+                //System.err.println("UNIT " + unit.getName());
+               // System.err.println("COLOR " + GlobalOptions.getProperty(unit.getName() + ".color"));
+                unitColor = Color.decode(GlobalOptions.getProperty(unit.getName() + ".color"));
+            } catch (Exception e) {
+                unitColor = Color.RED;
+            }
+            attackColors.put(unit.getName(), unitColor);
+        }
+
         Graphics2D g2d = null;
-        int width = GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, dScaling).getWidth(null);
-        int height = GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, dScaling).getHeight(null);
+        int width = GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, DSWorkbenchMainFrame.getSingleton().getZoom()).getWidth(null);
+        int height = GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, DSWorkbenchMainFrame.getSingleton().getZoom()).getHeight(null);
 
         if ((mBuffer == null) || ((mBuffer.getWidth(null) * mBuffer.getHeight(null)) != (MapPanel.getSingleton().getWidth() * MapPanel.getSingleton().getHeight()))) {
             int w = MapPanel.getSingleton().getWidth();
@@ -759,9 +766,9 @@ class RepaintThread extends Thread {
                 // <editor-fold defaultstate="collapsed" desc="Village drawing">
                 if (v == null) {
                     if (useDecoration) {
-                        g2d.drawImage(WorldDecorationHolder.getTexture(xPos, yPos, dScaling), x, y, null);
+                        g2d.drawImage(WorldDecorationHolder.getTexture(xPos, yPos, DSWorkbenchMainFrame.getSingleton().getZoom()), x, y, null);
                     } else {
-                        g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, dScaling), x, y, null);
+                        g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, DSWorkbenchMainFrame.getSingleton().getZoom()), x, y, null);
                     }
 
                 } else {
@@ -772,66 +779,66 @@ class RepaintThread extends Thread {
 
                     if (v.getPoints() < 300) {
                         if (!isLeft) {
-                            Image img = GlobalOptions.getSkin().getImage(Skin.ID_V1, dScaling);
+                            Image img = GlobalOptions.getSkin().getImage(Skin.ID_V1, DSWorkbenchMainFrame.getSingleton().getZoom());
                             if (v.getType() != 0) {
-                                img = GlobalOptions.getSkin().getImage(Skin.ID_B1, dScaling);
+                                img = GlobalOptions.getSkin().getImage(Skin.ID_B1, DSWorkbenchMainFrame.getSingleton().getZoom());
                             }
                             g2d.setColor(marker);
                             g2d.fillRect(x, y, img.getWidth(null), img.getHeight(null));
                             g2d.drawImage(img, x, y, null);
                         } else {
                             if (v.getType() == 0) {
-                                g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_V1_LEFT, dScaling), x, y, null);
+                                g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_V1_LEFT, DSWorkbenchMainFrame.getSingleton().getZoom()), x, y, null);
                             } else {
-                                g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_B1_LEFT, dScaling), x, y, null);
+                                g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_B1_LEFT, DSWorkbenchMainFrame.getSingleton().getZoom()), x, y, null);
                             }
                         }
                     } else if (v.getPoints() < 1000) {
                         if (!isLeft) {
-                            Image img = GlobalOptions.getSkin().getImage(Skin.ID_V2, dScaling);
+                            Image img = GlobalOptions.getSkin().getImage(Skin.ID_V2, DSWorkbenchMainFrame.getSingleton().getZoom());
                             if (v.getType() != 0) {
-                                img = GlobalOptions.getSkin().getImage(Skin.ID_B2, dScaling);
+                                img = GlobalOptions.getSkin().getImage(Skin.ID_B2, DSWorkbenchMainFrame.getSingleton().getZoom());
                             }
                             g2d.setColor(marker);
                             g2d.fillRect(x, y, img.getWidth(null), img.getHeight(null));
                             g2d.drawImage(img, x, y, null);
                         } else {
                             if (v.getType() == 0) {
-                                g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_V2_LEFT, dScaling), x, y, null);
+                                g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_V2_LEFT, DSWorkbenchMainFrame.getSingleton().getZoom()), x, y, null);
                             } else {
-                                g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_B2_LEFT, dScaling), x, y, null);
+                                g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_B2_LEFT, DSWorkbenchMainFrame.getSingleton().getZoom()), x, y, null);
                             }
                         }
                     } else if (v.getPoints() < 3000) {
                         if (!isLeft) {
-                            Image img = GlobalOptions.getSkin().getImage(Skin.ID_V3, dScaling);
+                            Image img = GlobalOptions.getSkin().getImage(Skin.ID_V3, DSWorkbenchMainFrame.getSingleton().getZoom());
                             if (v.getType() != 0) {
-                                img = GlobalOptions.getSkin().getImage(Skin.ID_B3, dScaling);
+                                img = GlobalOptions.getSkin().getImage(Skin.ID_B3, DSWorkbenchMainFrame.getSingleton().getZoom());
                             }
                             g2d.setColor(marker);
                             g2d.fillRect(x, y, img.getWidth(null), img.getHeight(null));
                             g2d.drawImage(img, x, y, null);
                         } else {
                             if (v.getType() == 0) {
-                                g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_V3_LEFT, dScaling), x, y, null);
+                                g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_V3_LEFT, DSWorkbenchMainFrame.getSingleton().getZoom()), x, y, null);
                             } else {
-                                g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_B3_LEFT, dScaling), x, y, null);
+                                g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_B3_LEFT, DSWorkbenchMainFrame.getSingleton().getZoom()), x, y, null);
                             }
                         }
                     } else if (v.getPoints() < 9000) {
                         if (!isLeft) {
-                            Image img = GlobalOptions.getSkin().getImage(Skin.ID_V4, dScaling);
+                            Image img = GlobalOptions.getSkin().getImage(Skin.ID_V4, DSWorkbenchMainFrame.getSingleton().getZoom());
                             if (v.getType() != 0) {
-                                img = GlobalOptions.getSkin().getImage(Skin.ID_B4, dScaling);
+                                img = GlobalOptions.getSkin().getImage(Skin.ID_B4, DSWorkbenchMainFrame.getSingleton().getZoom());
                             }
                             g2d.setColor(marker);
                             g2d.fillRect(x, y, img.getWidth(null), img.getHeight(null));
                             g2d.drawImage(img, x, y, null);
                         } else {
                             if (v.getType() == 0) {
-                                g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_V4_LEFT, dScaling), x, y, null);
+                                g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_V4_LEFT, DSWorkbenchMainFrame.getSingleton().getZoom()), x, y, null);
                             } else {
-                                g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_B4_LEFT, dScaling), x, y, null);
+                                g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_B4_LEFT, DSWorkbenchMainFrame.getSingleton().getZoom()), x, y, null);
                             }
                         }
                     } else if (v.getPoints() < 11000) {
@@ -840,42 +847,45 @@ class RepaintThread extends Thread {
                         yC = y;
                         }*/
                         if (!isLeft) {
-                            Image img = GlobalOptions.getSkin().getImage(Skin.ID_V5, dScaling);
+                            Image img = GlobalOptions.getSkin().getImage(Skin.ID_V5, DSWorkbenchMainFrame.getSingleton().getZoom());
                             if (v.getType() != 0) {
-                                img = GlobalOptions.getSkin().getImage(Skin.ID_B5, dScaling);
+                                img = GlobalOptions.getSkin().getImage(Skin.ID_B5, DSWorkbenchMainFrame.getSingleton().getZoom());
                             }
                             g2d.setColor(marker);
                             g2d.fillRect(x, y, img.getWidth(null), img.getHeight(null));
                             g2d.drawImage(img, x, y, null);
                         } else {
                             if (v.getType() == 0) {
-                                g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_V5_LEFT, dScaling), x, y, null);
+                                g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_V5_LEFT, DSWorkbenchMainFrame.getSingleton().getZoom()), x, y, null);
                             } else {
-                                g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_B5_LEFT, dScaling), x, y, null);
+                                g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_B5_LEFT, DSWorkbenchMainFrame.getSingleton().getZoom()), x, y, null);
                             }
                         }
                     } else {
                         if (!isLeft) {
-                            Image img = GlobalOptions.getSkin().getImage(Skin.ID_V6, dScaling);
+                            Image img = GlobalOptions.getSkin().getImage(Skin.ID_V6, DSWorkbenchMainFrame.getSingleton().getZoom());
                             if (v.getType() != 0) {
-                                img = GlobalOptions.getSkin().getImage(Skin.ID_B6, dScaling);
+                                img = GlobalOptions.getSkin().getImage(Skin.ID_B6, DSWorkbenchMainFrame.getSingleton().getZoom());
                             }
                             g2d.setColor(marker);
                             g2d.fillRect(x, y, img.getWidth(null), img.getHeight(null));
                             g2d.drawImage(img, x, y, null);
                         } else {
                             if (v.getType() == 0) {
-                                g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_V6_LEFT, dScaling), x, y, null);
+                                g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_V6_LEFT, DSWorkbenchMainFrame.getSingleton().getZoom()), x, y, null);
                             } else {
-                                g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_B6_LEFT, dScaling), x, y, null);
+                                g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_B6_LEFT, DSWorkbenchMainFrame.getSingleton().getZoom()), x, y, null);
                             }
                         }
                     }
 
                     if (markActiveVillage) {
-                        if (v.compareTo(DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage()) == 0) {
-                            markX = x + (int) Math.round(width / 2);
-                            markY = y + (int) Math.round(height / 2);
+                        Village current = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage();
+                        if (current != null) {
+                            if (v.compareTo(current) == 0) {
+                                markX = x + (int) Math.round(width / 2);
+                                markY = y + (int) Math.round(height / 2);
+                            }
                         }
                     }
                 }
@@ -1011,7 +1021,9 @@ class RepaintThread extends Thread {
                             unitYPos = (int) yEnd - unitIcon.getIconHeight() / 2;
                         }
                     }
-                    g2d.setColor(Color.RED);
+
+                    //System.err.println("get " + attack.getUnit() + " " + attackColors.get(attack.getUnit()));
+                    g2d.setColor(attackColors.get(attack.getUnit().getName()));
                     g2d.drawLine(xStart, yStart, xEnd, yEnd);
                     g2d.setColor(Color.YELLOW);
                     if (bounds.contains(attackLine.getP1())) {

@@ -273,23 +273,27 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
     }
 
     protected void updateComplete(BufferedImage pBuffer) {
-        if (mZoomFrame == null) {
-            mZoomFrame = new MinimapZoomFrame(pBuffer);
-            mZoomFrame.setSize(300, 300);
-            mZoomFrame.setLocation(0, 0);
+        try {
+            if (mZoomFrame == null) {
+                mZoomFrame = new MinimapZoomFrame(pBuffer);
+                mZoomFrame.setSize(300, 300);
+                mZoomFrame.setLocation(0, 0);
+            }
+            if (mBuffer == null) {
+                mBuffer = pBuffer;
+                mBuffer = mBuffer.getScaledInstance(getWidth(), getHeight(), BufferedImage.SCALE_SMOOTH);
+            } else if ((mBuffer.getWidth(null) != getWidth()) || (mBuffer.getHeight(null) != getHeight())) {
+                mBuffer = pBuffer;
+                mBuffer = mBuffer.getScaledInstance(getWidth(), getHeight(), BufferedImage.SCALE_SMOOTH);
+            } else if (doRedraw) {
+                mBuffer = pBuffer;
+                mBuffer = mBuffer.getScaledInstance(getWidth(), getHeight(), BufferedImage.SCALE_SMOOTH);
+            }
+            doRedraw = false;
+            repaint();
+        } catch (Exception e) {
+            //ignore
         }
-        if (mBuffer == null) {
-            mBuffer = pBuffer;
-            mBuffer = mBuffer.getScaledInstance(getWidth(), getHeight(), BufferedImage.SCALE_SMOOTH);
-        } else if ((mBuffer.getWidth(null) != getWidth()) || (mBuffer.getHeight(null) != getHeight())) {
-            mBuffer = pBuffer;
-            mBuffer = mBuffer.getScaledInstance(getWidth(), getHeight(), BufferedImage.SCALE_SMOOTH);
-        } else if (doRedraw) {
-            mBuffer = pBuffer;
-            mBuffer = mBuffer.getScaledInstance(getWidth(), getHeight(), BufferedImage.SCALE_SMOOTH);
-        }
-        doRedraw = false;
-        repaint();
     }
 
     public void redraw() {
@@ -500,12 +504,9 @@ private void fireSaveScreenshotEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST
     chooser.setSelectedFile(new File("map"));
 
     final String type = (String) jFileTypeChooser.getSelectedItem();
-    chooser.setFileFilter(new  
+    chooser.setFileFilter(new FileFilter() {
 
-          FileFilter( ) {
-
-              
-                 @Override
+        @Override
         public boolean accept(File f) {
             if (f.getName().endsWith(type)) {
                 return true;
@@ -552,7 +553,6 @@ private void fireScreenshotControlClosingEvent(java.awt.event.WindowEvent evt) {
 private void jTransparancySliderfireChangeScreenshotScalingEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jTransparancySliderfireChangeScreenshotScalingEvent
 // TODO add your handling code here:
 }//GEN-LAST:event_jTransparancySliderfireChangeScreenshotScalingEvent
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
@@ -629,7 +629,8 @@ class MinimapRepaintThread extends Thread {
                     if (v.getTribe() == null) {
                         isLeft = true;
                     } else {
-                        if (v.getTribe().toString().equals(DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage().getTribe().toString())) {
+                        Village currentUserVillage = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage();
+                        if ((currentUserVillage != null) && (v.getTribe().toString().equals(currentUserVillage.getTribe().toString()))) {
                             //village is owned by current player. mark it dependent on settings
                             if (markPlayer) {
                                 mark = Color.YELLOW;

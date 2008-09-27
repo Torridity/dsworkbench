@@ -170,7 +170,6 @@ public class MarkerManager {
             m.setMarkerColor(pColor);
             lMarkers.add(m);
         }
-
     }
 
     /**And both, a tribe marker and an ally marker*/

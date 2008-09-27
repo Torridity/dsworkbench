@@ -57,6 +57,8 @@ import javax.swing.event.CellEditorListener;
 import javax.swing.event.ChangeEvent;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 import org.apache.log4j.Logger;
 
 /**
@@ -102,6 +104,9 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                 TagManager.getSingleton().saveTagsToFile(DataHolder.getSingleton().getDataDirectory() + "/tags.xml");
                 MarkerManager.getSingleton().saveMarkersToFile(DataHolder.getSingleton().getDataDirectory() + "/markers.xml");
                 AttackManager.getSingleton().saveAttacksToFile(DataHolder.getSingleton().getDataDirectory() + "/attacks.xml");
+                GlobalOptions.addProperty("zoom.factor", Double.toString(dZoomFactor));
+                GlobalOptions.addProperty("last.x", jCenterX.getText());
+                GlobalOptions.addProperty("last.y", jCenterY.getText());
                 GlobalOptions.saveProperties();
             }
         }));
@@ -145,6 +150,20 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             jCenterCoordinateIngame.setEnabled(false);
         }
 
+        try {
+            String x = GlobalOptions.getProperty("last.x");
+            String y = GlobalOptions.getProperty("last.y");
+            iCenterX = Integer.parseInt(x);
+            iCenterY = Integer.parseInt(y);
+            jCenterX.setText(x);
+            jCenterY.setText(y);
+        } catch (Exception e) {
+            iCenterX = 500;
+            iCenterY = 500;
+            jCenterX.setText("500");
+            jCenterY.setText("500");
+        }
+
         onlineStateChanged();
     }
 
@@ -156,14 +175,14 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         if (t != null) {
             DefaultComboBoxModel model = new DefaultComboBoxModel(t.getVillageList().toArray());
             jCurrentPlayerVillages.setModel(model);
-            if (isVisible()) {
+            /*if (isVisible()) {
                 centerVillage(t.getVillageList().get(0));
             } else {
                 iCenterX = t.getVillageList().get(0).getX();
                 iCenterY = t.getVillageList().get(0).getY();
                 jCenterX.setText("" + iCenterX);
                 jCenterY.setText("" + iCenterY);
-            }
+            }*/
         } else {
             DefaultComboBoxModel model = new DefaultComboBoxModel(new Object[]{"Keine Dörfer"});
             jCurrentPlayerVillages.setModel(model);
@@ -185,6 +204,10 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         } else {
             jOnlineLabel.setToolTipText("Online");
         }
+    }
+
+    public double getZoom() {
+        return dZoomFactor;
     }
 
     protected void init() {
@@ -241,6 +264,12 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
 
     private void setupMaps() {
         logger.info("Initializing maps");
+        try {
+            dZoomFactor = Double.parseDouble(GlobalOptions.getProperty("zoom.factor"));
+            checkZoomRange();
+        } catch (Exception e) {
+            dZoomFactor = 1.0;
+        }
         //build the mappanel
         MapPanel.getSingleton().addMapPanelListener(this);
         MapPanel.getSingleton().addToolChangeListener(this);
@@ -257,6 +286,9 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         //setup renderer and general view
         jMarkerTable.setDefaultRenderer(Color.class, new ColorCellRenderer());
         jMarkerTable.setDefaultRenderer(MarkerCell.class, new MarkerPanelCellRenderer());
+        TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(jMarkerTable.getModel());
+        jMarkerTable.setRowSorter(sorter);
+
         ColorChooserCellEditor editor = new ColorChooserCellEditor(new ActionListener() {
 
             @Override
@@ -324,8 +356,9 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                         a.setSource((Village) jAttackTable.getValueAt(i, 0));
                         a.setTarget((Village) jAttackTable.getValueAt(i, 1));
                         a.setUnit((UnitHolder) jAttackTable.getValueAt(i, 2));
-                        a.setArriveTime((Date) jAttackTable.getValueAt(i, 3));
-                        a.setShowOnMap((Boolean) jAttackTable.getValueAt(i, 4));
+                        //3 is only sendTime
+                        a.setArriveTime((Date) jAttackTable.getValueAt(i, 4));
+                        a.setShowOnMap((Boolean) jAttackTable.getValueAt(i, 5));
                     }
                     AttackManager.getSingleton().attacksUpdatedExternally(null);
                 } catch (Exception ee) {
@@ -337,8 +370,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             public void editingCanceled(ChangeEvent e) {
             }
         };
-
-
 
         jAttackTable.getDefaultEditor(Boolean.class).addCellEditorListener(attackChangedListener);
         jAttackTable.getDefaultEditor(Date.class).addCellEditorListener(attackChangedListener);
@@ -384,6 +415,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             }
         } catch (Exception e) {
         }
+        fireRefreshMapEvent(null);
     }
 
     /** This method is called from within the constructor to
@@ -869,6 +901,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jTabbedPane1.setOpaque(true);
 
         jDynFrameAlwaysOnTopSelection.setText(bundle.getString("DSWorkbenchMainFrame.jDynFrameAlwaysOnTopSelection.text")); // NOI18N
+        jDynFrameAlwaysOnTopSelection.setOpaque(false);
         jDynFrameAlwaysOnTopSelection.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 fireAlwaysInFrontChangeEvent(evt);
@@ -890,7 +923,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             jDynFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jDynFrameLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 308, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 308, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jDynFrameAlwaysOnTopSelection)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -1186,7 +1219,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                 .addGroup(jNavigationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jRefreshButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jCenterCoordinateIngame, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(18, Short.MAX_VALUE))
+                .addContainerGap(32, Short.MAX_VALUE))
         );
         jNavigationPanelLayout.setVerticalGroup(
             jNavigationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1224,7 +1257,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                             .addComponent(jZoomInButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                             .addComponent(jZoomOutButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(13, Short.MAX_VALUE))
         );
 
         jMinimapPanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(128, 64, 0), 2));
@@ -1281,12 +1314,12 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             .addGroup(jInformationPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jCurrentPlayer, javax.swing.GroupLayout.DEFAULT_SIZE, 234, Short.MAX_VALUE)
+                    .addComponent(jCurrentPlayer, javax.swing.GroupLayout.DEFAULT_SIZE, 238, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jInformationPanelLayout.createSequentialGroup()
                         .addComponent(jCenterIngameButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jOnlineLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jCurrentPlayerVillages, 0, 234, Short.MAX_VALUE)
+                    .addComponent(jCurrentPlayerVillages, 0, 238, Short.MAX_VALUE)
                     .addComponent(jCurrentToolLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
@@ -1301,7 +1334,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                 .addGroup(jInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jInformationPanelLayout.createSequentialGroup()
                         .addComponent(jOnlineLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 93, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 97, Short.MAX_VALUE)
                         .addComponent(jCurrentToolLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jCenterIngameButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
@@ -1424,18 +1457,17 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jInfoPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 734, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jInfoPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 728, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 452, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jInformationPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jNavigationPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jMinimapPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 270, Short.MAX_VALUE))
-                        .addGap(6, 6, 6)))
+                            .addComponent(jMinimapPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 270, Short.MAX_VALUE)
+                            .addComponent(jNavigationPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jInformationPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -1446,10 +1478,10 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jMinimapPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 233, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jNavigationPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jNavigationPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jInformationPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 619, Short.MAX_VALUE))
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 621, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jInfoPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -1538,26 +1570,28 @@ private void fireZoomEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fir
         dZoomFactor -= 1.0 / 10;
     }
 
-    if (dZoomFactor < 0.1) {
-        dZoomFactor = 0.1;
-        jZoomOutButton.setEnabled(false);
-    } else if (dZoomFactor > 2.5) {
-        dZoomFactor = 2.5;
-        jZoomInButton.setEnabled(false);
-    } else {
-        jZoomInButton.setEnabled(true);
-        jZoomOutButton.setEnabled(true);
-    }
+    checkZoomRange();
 
     dZoomFactor = Double.parseDouble(NumberFormat.getInstance().format(dZoomFactor).replaceAll(",", "."));
 
-    MapPanel.getSingleton().setZoom(dZoomFactor);
     double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
     double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
     MinimapPanel.getSingleton().setSelection(Integer.parseInt(jCenterX.getText()), Integer.parseInt(jCenterY.getText()), (int) Math.rint(w), (int) Math.rint(h));
     MapPanel.getSingleton().repaint();
 }//GEN-LAST:event_fireZoomEvent
 
+    private void checkZoomRange() {
+        if (dZoomFactor <= 0.1) {
+            dZoomFactor = 0.1;
+            jZoomOutButton.setEnabled(false);
+        } else if (dZoomFactor >= 2.5) {
+            dZoomFactor = 2.5;
+            jZoomInButton.setEnabled(false);
+        } else {
+            jZoomInButton.setEnabled(true);
+            jZoomOutButton.setEnabled(true);
+        }
+    }
 private void fireRemoveMarkerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireRemoveMarkerEvent
     int[] rows = jMarkerTable.getSelectedRows();
     if (rows.length == 0) {
@@ -1584,15 +1618,16 @@ private void fireValidateAttacksEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
 
     Hashtable<Integer, String> errors = new Hashtable<Integer, String>();
     for (int i = 0; i < model.getRowCount(); i++) {
-        Village source = (Village) model.getValueAt(i, 0);
+        /* Village source = (Village) model.getValueAt(i, 0);
         Village target = (Village) model.getValueAt(i, 1);
-        UnitHolder unit = (UnitHolder) model.getValueAt(i, 2);
-        Date arriveTime = (Date) model.getValueAt(i, 3);
-        long time = (long) DSCalculator.calculateMoveTimeInMinutes(source, target, unit.getSpeed()) * 60000;
+        UnitHolder unit = (UnitHolder) model.getValueAt(i, 2);*/
+        Date sendTime = (Date) model.getValueAt(i, 3);
+        Date arriveTime = (Date) model.getValueAt(i, 4);
+        //long time = (long) DSCalculator.calculateMoveTimeInMinutes(source, target, unit.getSpeed()) * 60000;
         if (arriveTime.getTime() < System.currentTimeMillis()) {
             errors.put(i, "Ankunftszeit liegt in der Vergangenheit");
-        } else if (arriveTime.getTime() - time < System.currentTimeMillis()) {
-            errors.put(i, "Notwendige Abschickzeit liegt in der Vergangenheit");
+        } else if (sendTime.getTime() < System.currentTimeMillis()) {
+            errors.put(i, "Abschickzeit liegt in der Vergangenheit");
         }
     }
 
@@ -1624,7 +1659,7 @@ private void fireRemoveAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
     if (rows.length == 0) {
         return;
     }
-
+    
     String message = ((rows.length == 1) ? "Angriff " : (rows.length + " Angriffe ")) + "wirklich löschen?";
     int res = JOptionPane.showConfirmDialog(jDynFrame, message, "Angriff entfernen", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
     if (res != JOptionPane.YES_OPTION) {
@@ -1782,7 +1817,7 @@ private void fireShowAboutEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:eve
         double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
         MinimapPanel.getSingleton().setSelection(iCenterX, iCenterY, (int) Math.rint(w), (int) Math.rint(h));
         MapPanel.getSingleton().updateMap(iCenterX, iCenterY);
-        MapPanel.getSingleton().repaint();
+    //MapPanel.getSingleton().repaint();
     }
 
     public void centerVillage(Village pVillage) {
@@ -1920,7 +1955,12 @@ private void fireShowAboutEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:eve
     }
 
     public Village getCurrentUserVillage() {
+        try{
         return (Village) jCurrentPlayerVillages.getSelectedItem();
+        }catch(Exception e){
+            logger.warn("Could not get current user village. Probably no active player was selected.");
+            return null;
+        }
     }
 
     @Override
@@ -1946,7 +1986,7 @@ private void fireShowAboutEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:eve
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
                 Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
                 String t = ((DefaultTableCellRenderer) c).getText();
-                ((DefaultTableCellRenderer) c).setText("<html><b>" + t + "</b></html>");
+                ((DefaultTableCellRenderer) c).setText(t);
                 c.setBackground(Constants.DS_BACK);
                 return c;
             }
@@ -1955,6 +1995,9 @@ private void fireShowAboutEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:eve
         for (int i = 0; i < jMarkerTable.getColumnCount(); i++) {
             jMarkerTable.getColumn(jMarkerTable.getColumnName(i)).setHeaderRenderer(headerRenderer);
         }
+
+        TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(MarkerManager.getSingleton().getTableModel());
+        jMarkerTable.setRowSorter(sorter);
 
         jMarkerTable.revalidate();
     }
@@ -1996,7 +2039,7 @@ private void fireShowAboutEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:eve
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
                 Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
                 String t = ((DefaultTableCellRenderer) c).getText();
-                ((DefaultTableCellRenderer) c).setText("<html><b>" + t + "</b></html>");
+                ((DefaultTableCellRenderer) c).setText(t);
                 c.setBackground(Constants.DS_BACK);
                 return c;
             }
@@ -2005,6 +2048,10 @@ private void fireShowAboutEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:eve
         for (int i = 0; i < jAttackTable.getColumnCount(); i++) {
             jAttackTable.getColumn(jAttackTable.getColumnName(i)).setHeaderRenderer(headerRenderer);
         }
+
+        TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(AttackManager.getSingleton().getTableModel());
+        jAttackTable.setRowSorter(sorter);
+
         jAttackTable.revalidate();
     }
 

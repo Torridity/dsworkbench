@@ -4,9 +4,7 @@
  */
 package de.tor.tribes.util.parser;
 
-import java.awt.Toolkit;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
+import java.awt.Color;
 import java.util.StringTokenizer;
 
 /**
@@ -31,37 +29,75 @@ public class TroopsParser {
         StringTokenizer lineTok = new StringTokenizer(pTroopsString, "\n\r");
         int villageLines = -1;
         boolean haveVillage = false;
+        
         while (lineTok.hasMoreElements()) {
+            //parse single line for village
             String line = lineTok.nextToken();
+            //tokenize line by tab and space
             StringTokenizer elemTok = new StringTokenizer(line, " \t");
-            //  System.out.println("Line " + line);
-            while (elemTok.hasMoreElements()) {
-                String currentToken = elemTok.nextToken();
-                //search village
-                if (villageLines == 0) {
-                    haveVillage = false;
-                }
-                if (haveVillage) {  
-                    //next 4 lines are for village
-                } else if (currentToken.startsWith("(") && currentToken.endsWith(")")) {
-                    //got village
-                    System.out.println("Village " + currentToken);
-                    haveVillage = true;
-                    //next 4 lines are village, the fifth is the current one
-                    villageLines = 5;
-                    break;
-                }
-            }
+            //parse single line for village
             if (haveVillage) {
-                System.out.println("VillageLine " + line);
+                // System.out.println("VillageLine " + line);
+                //parse 4 village lines!
+                line = line.trim();
+                if (line.startsWith("eigene")) {
+                    System.out.println("EIGENE");
+                    for (int i : parseUnits(line.replaceAll("eigene", "").trim())) {
+                        System.out.println(i);
+                    }
+                } else if (line.startsWith("im Dorf")) {
+                    System.out.println("IM D");
+                    for (int i : parseUnits(line.replaceAll("im Dorf", "").trim())) {
+                        System.out.println(i);
+                    }
+                } else if (line.startsWith("auswärts")) {
+                    System.out.println("AUSW");
+                    for (int i : parseUnits(line.replaceAll("auswärts", "").trim())) {
+                        System.out.println(i);
+                    }
+                } else if (line.startsWith("unterwegs")) {
+                    System.out.println("UNTER");
+                    for (int i : parseUnits(line.replaceAll("unterwegs", "").trim())) {
+                        System.out.println(i);
+                    }
+                }
                 villageLines--;
+            } else {
+                while (elemTok.hasMoreElements()) {
+                    String currentToken = elemTok.nextToken();
+                    //search village
+                    if (currentToken.startsWith("(") && currentToken.endsWith(")")) {
+                        //got village
+                        System.out.println("Village " + currentToken);
+                        haveVillage = true;
+                        //next 4 lines are village
+                        villageLines = 4;
+                        break;
+                    }
+                }
             }
-
+            if (villageLines == 0) {
+                haveVillage = false;
+            }
         }
-        System.out.println("\n");
+    }
+
+    private static int[] parseUnits(String pLine) {
+        String line = pLine.replaceAll("eigene", "").replaceAll("Befehle", "").replaceAll("Truppen", "");
+        StringTokenizer t = new StringTokenizer(line, " \t");
+        int uCount = t.countTokens();
+        int[] units = new int[uCount];
+        int cnt = 0;
+        while (t.hasMoreTokens()) {
+            units[cnt] = Integer.parseInt(t.nextToken());
+            cnt++;
+        }
+        return units;
     }
 
     public static void main(String[] args) {
+        System.out.println(Color.decode("#1905ff"));
+        /*
         Transferable t = (Transferable) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
         try {
             String s = " 003 | Spitfire (471|482) K44\n" +
@@ -76,11 +112,13 @@ public class TroopsParser {
                     "unterwegs	0	0	0	0	0	0	0	0	0	0	0	0	Befehle\n";
 
 
-            //String data = (String) t.getTransferData(DataFlavor.stringFlavor);
-            TroopsParser.parse(s);
+            String data = (String) t.getTransferData(DataFlavor.stringFlavor);
+            TroopsParser.parse(data);
         } catch (Exception e) {
             e.printStackTrace();
         }
+         * 
+         * */
     //TroopsParser.parse(pTroopsString);
     }
 }

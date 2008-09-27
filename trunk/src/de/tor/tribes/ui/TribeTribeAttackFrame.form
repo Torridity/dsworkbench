@@ -148,7 +148,7 @@
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="jPanel1" alignment="0" max="32767" attributes="1"/>
-                  <Component id="jScrollPane1" alignment="0" pref="710" max="32767" attributes="1"/>
+                  <Component id="jScrollPane1" alignment="0" pref="712" max="32767" attributes="1"/>
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="jSourceVillageLabel" min="-2" max="-2" attributes="1"/>
                       <EmptySpace max="-2" attributes="0"/>
@@ -161,7 +161,7 @@
                               <Component id="jButton3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <Group type="102" alignment="0" attributes="0">
-                              <Component id="jSourceVillageList" pref="268" max="32767" attributes="1"/>
+                              <Component id="jSourceVillageList" pref="270" max="32767" attributes="1"/>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Component id="jSourceUnitLabel" min="-2" max="-2" attributes="1"/>
                               <EmptySpace max="-2" attributes="0"/>
@@ -294,29 +294,29 @@
               <Group type="102" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="jRandomizeLabel" pref="122" max="32767" attributes="1"/>
-                      <Component id="jTargetAllyLabel" alignment="0" pref="122" max="32767" attributes="1"/>
-                      <Component id="jStartTimeLabel" alignment="1" pref="122" max="32767" attributes="1"/>
-                      <Component id="jMaxAttacksPerVillageLabel" alignment="1" pref="122" max="32767" attributes="1"/>
+                      <Component id="jRandomizeLabel" pref="123" max="32767" attributes="1"/>
+                      <Component id="jTargetAllyLabel" alignment="0" pref="123" max="32767" attributes="1"/>
+                      <Component id="jStartTimeLabel" alignment="1" pref="123" max="32767" attributes="1"/>
+                      <Component id="jMaxAttacksPerVillageLabel" alignment="1" pref="123" max="32767" attributes="1"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="1" attributes="0">
-                      <Component id="jMaxAttacksPerVillage" pref="157" max="32767" attributes="1"/>
-                      <Component id="jSendTime" pref="157" max="32767" attributes="1"/>
+                      <Component id="jMaxAttacksPerVillage" pref="158" max="32767" attributes="1"/>
+                      <Component id="jSendTime" pref="158" max="32767" attributes="1"/>
                       <Component id="jTargetAllyList" alignment="1" min="0" pref="0" max="32767" attributes="1"/>
-                      <Component id="jRandomizeTribes" alignment="0" pref="157" max="32767" attributes="1"/>
+                      <Component id="jRandomizeTribes" alignment="0" pref="158" max="32767" attributes="1"/>
                   </Group>
                   <EmptySpace min="-2" pref="109" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="jTargetTribeLabel" pref="122" max="32767" attributes="0"/>
-                      <Component id="jNoNightLabel" alignment="0" pref="122" max="32767" attributes="1"/>
-                      <Component id="jArriveTimeLabel" pref="122" max="32767" attributes="1"/>
+                      <Component id="jTargetTribeLabel" pref="125" max="32767" attributes="0"/>
+                      <Component id="jNoNightLabel" alignment="0" pref="125" max="32767" attributes="1"/>
+                      <Component id="jArriveTimeLabel" pref="125" max="32767" attributes="1"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="jNightForbidden" pref="156" max="32767" attributes="1"/>
-                      <Component id="jArriveTime" pref="156" max="32767" attributes="1"/>
-                      <Component id="jTargetPlayerList" pref="156" max="32767" attributes="1"/>
+                      <Component id="jNightForbidden" pref="157" max="32767" attributes="1"/>
+                      <Component id="jArriveTime" pref="157" max="32767" attributes="1"/>
+                      <Component id="jTargetPlayerList" pref="157" max="32767" attributes="1"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>

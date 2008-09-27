@@ -48,7 +48,7 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame {
     /** Creates new form AllyAllyAttackFrame */
     public TribeTribeAttackFrame() {
         initComponents();
-        //setup();
+    //setup();
     }
 
     protected void setup() {
@@ -105,6 +105,10 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame {
             allies = null;
             Arrays.sort(aAllies, Ally.CASE_INSENSITIVE_ORDER);
             Tribe current = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage().getTribe();
+            if (current == null) {
+                logger.warn("Could not get current user village. Probably no active user is selected.");
+                return;
+            }
             jSourceVillageList.setModel(new DefaultComboBoxModel(current.getVillageList().toArray()));
             DefaultComboBoxModel targetAllyModel = new DefaultComboBoxModel(aAllies);
             jTargetAllyList.setModel(targetAllyModel);
@@ -124,6 +128,8 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame {
         } catch (Exception e) {
             logger.error("Failed to initialize TribeAttackFrame", e);
         }
+
+        jResultsTable.setDefaultRenderer(Date.class, new DateCellRenderer());
     }
 
     /** This method is called from within the constructor to
@@ -682,21 +688,25 @@ private void fireTransferToAttackPlanningEvent(java.awt.event.MouseEvent evt) {/
         Village source = (Village) resultModel.getValueAt(i, 0);
         UnitHolder unit = (UnitHolder) resultModel.getValueAt(i, 1);
         Village target = (Village) resultModel.getValueAt(i, 2);
-        AttackManager.getSingleton().addAttack(source, target, unit, (Date) jArriveTime.getValue());
+        Date sendTime = (Date) resultModel.getValueAt(i, 3);
+        long arriveTime = sendTime.getTime() + (long) (DSCalculator.calculateMoveTimeInSeconds(source, target, unit.getSpeed()) * 1000);
+        AttackManager.getSingleton().addAttack(source, target, unit, new Date(arriveTime));
     }
 }//GEN-LAST:event_fireTransferToAttackPlanningEvent
 
 private void fireAttacksToClipboardEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireAttacksToClipboardEvent
-    DefaultTableModel resultModel = (DefaultTableModel) jResultsTable.getModel();
-    String data = "";
-    for (int i = 0; i < resultModel.getRowCount(); i++) {
-        Village sVillage = (Village) resultModel.getValueAt(i, 0);
-        UnitHolder sUnit = (UnitHolder) resultModel.getValueAt(i, 1);
-        Village tVillage = (Village) resultModel.getValueAt(i, 2);
-        String time = (String) resultModel.getValueAt(i, 3);
-        data += "Angriff aus " + sVillage.toBBCode() + " mit " + sUnit + " auf " + tVillage.getTribe().toBBCode() + " in " + tVillage.toBBCode() + " um " + time + " an\n";
-    }
     try {
+        DefaultTableModel resultModel = (DefaultTableModel) jResultsTable.getModel();
+        String data = "";
+        for (int i = 0; i < resultModel.getRowCount(); i++) {
+            Village sVillage = (Village) resultModel.getValueAt(i, 0);
+            UnitHolder sUnit = (UnitHolder) resultModel.getValueAt(i, 1);
+            Village tVillage = (Village) resultModel.getValueAt(i, 2);
+            Date dTime = (Date) resultModel.getValueAt(i, 3);
+            String time = new SimpleDateFormat("dd.MM.yy HH:mm:ss").format(dTime);
+            data += "Angriff aus " + sVillage.toBBCode() + " mit " + sUnit + " auf " + tVillage.getTribe().toBBCode() + " in " + tVillage.toBBCode() + " um " + time + "\n";
+        }
+
         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(data), null);
         String result = "Daten in Zwischenablage kopiert.";
         JOptionPane.showMessageDialog(jResultFrame, result, "Information", JOptionPane.INFORMATION_MESSAGE);
@@ -708,16 +718,18 @@ private void fireAttacksToClipboardEvent(java.awt.event.MouseEvent evt) {//GEN-F
 }//GEN-LAST:event_fireAttacksToClipboardEvent
 
 private void fireUnformattedAttacksToClipboardEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireUnformattedAttacksToClipboardEvent
-    DefaultTableModel resultModel = (DefaultTableModel) jResultsTable.getModel();
-    String data = "";
-    for (int i = 0; i < resultModel.getRowCount(); i++) {
-        Village sVillage = (Village) resultModel.getValueAt(i, 0);
-        UnitHolder sUnit = (UnitHolder) resultModel.getValueAt(i, 1);
-        Village tVillage = (Village) resultModel.getValueAt(i, 2);
-        String time = (String) resultModel.getValueAt(i, 3);
-        data += sVillage + "\t" + sUnit + "\t" + tVillage.getTribe() + "\t" + tVillage + "\t" + time + "\n";
-    }
     try {
+        DefaultTableModel resultModel = (DefaultTableModel) jResultsTable.getModel();
+        String data = "";
+        for (int i = 0; i < resultModel.getRowCount(); i++) {
+            Village sVillage = (Village) resultModel.getValueAt(i, 0);
+            UnitHolder sUnit = (UnitHolder) resultModel.getValueAt(i, 1);
+            Village tVillage = (Village) resultModel.getValueAt(i, 2);
+            Date dTime = (Date) resultModel.getValueAt(i, 3);
+            String time = new SimpleDateFormat("dd.MM.yy HH:mm:ss").format(dTime);
+            data += sVillage + "\t" + sUnit + "\t" + tVillage.getTribe() + "\t" + tVillage + "\t" + time + "\n";
+        }
+
         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(data), null);
         String result = "Daten in Zwischenablage kopiert.";
         JOptionPane.showMessageDialog(jResultFrame, result, "Information", JOptionPane.INFORMATION_MESSAGE);
@@ -751,7 +763,7 @@ private void fireTargetAllyChangedEvent(java.awt.event.ActionEvent evt) {//GEN-F
                 }) {
 
             Class[] types = new Class[]{
-                Village.class, UnitHolder.class, Village.class, String.class
+                Village.class, UnitHolder.class, Village.class, Date.class
             };
 
             @Override
@@ -770,8 +782,7 @@ private void fireTargetAllyChangedEvent(java.awt.event.ActionEvent evt) {//GEN-F
                 UnitHolder unit = sources.get(source);
                 long targetTime = ((Date) jArriveTime.getValue()).getTime();
                 long startTime = targetTime - (long) DSCalculator.calculateMoveTimeInSeconds(source, target, unit.getSpeed()) * 1000;
-                String tStart = new SimpleDateFormat("dd.MM.yy HH:mm:ss").format(new Date(startTime));
-                resultModel.addRow(new Object[]{source, unit, target, tStart});
+                resultModel.addRow(new Object[]{source, unit, target, new Date(startTime)});
             }
         }
         jResultsTable.setModel(resultModel);

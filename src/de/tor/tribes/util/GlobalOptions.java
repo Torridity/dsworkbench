@@ -32,7 +32,7 @@ import org.apache.log4j.Logger;
 public class GlobalOptions {
 
     private static Logger logger = Logger.getLogger(GlobalOptions.class);
-    public final static double VERSION = 0.9;
+    public final static double VERSION = 0.91;
     private static boolean INITIALIZED = false;
     /**Active skin used by the MapPanel*/
     private static Skin mSkin;

@@ -396,6 +396,7 @@ public class DataHolder {
             String accountPassword = GlobalOptions.getProperty("account.password");
             if ((accountName == null) || (accountPassword == null)) {
                 logger.error("No account name or password set");
+                fireDataHolderEvents("Account Name oder Passwort sind nicht gesetzt oder ungültig. Bitte überprüfe deine Accounteinstellungen.");
                 return false;
             }
             if (DatabaseAdapter.checkUser(accountName, accountPassword) != DatabaseAdapter.ID_SUCCESS) {
@@ -627,7 +628,7 @@ public class DataHolder {
                 }
             }
 
-            
+
             // <editor-fold defaultstate="collapsed" desc="Direct download from DS-Servers">
             //download unit information, but only once
             target = new File(serverDir + "/units.xml");

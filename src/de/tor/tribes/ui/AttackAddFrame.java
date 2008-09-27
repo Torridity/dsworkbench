@@ -310,7 +310,8 @@ private void fireAddAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:even
         ((DateEditor) jTimeSpinner.getEditor()).getTextField().setForeground(Color.RED);
         return;
     }
-
+    UnitHolder u = (UnitHolder) jUnitBox.getSelectedItem();
+    //long sendTime = getTime().getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(mSource, mTarget, u.getSpeed()) * 1000);
     AttackManager.getSingleton().addAttack(mSource, mTarget, getSelectedUnit(), getTime());
     setVisible(false);
 }//GEN-LAST:event_fireAddAttackEvent

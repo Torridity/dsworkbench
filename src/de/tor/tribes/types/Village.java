@@ -285,6 +285,9 @@ public class Village implements Serializable, Comparable {
 
     @Override
     public int compareTo(Object o) {
+        if (o == null) {
+            return -1;
+        }
         return toString().compareTo(o.toString());
     }
 }

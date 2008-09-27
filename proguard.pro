@@ -1,7 +1,7 @@
 -injars dist\DSWorkbench.jar
 -outjars Release\DSWorkbench.jar
 
--libraryjars 'C:\Programme\Java\jre1.6.0_01\lib\rt.jar'
+-libraryjars 'E:\Java\jre1.6.0_06\lib\rt.jar'
 -libraryjars lib\colorchooser.jar
 -libraryjars lib\jaxen-1.1-beta-8.jar
 -libraryjars lib\jdom.jar
@@ -15,10 +15,6 @@
 -overloadaggressively
 -flattenpackagehierarchy dswb
 
-
--keepclasseswithmembers class de.tor.tribes.util.Contants {
-    <fields>;
-}
 
 # Keep - Applications. Keep all application classes, along with their 'main'
 # methods.

@@ -11,6 +11,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.Village;
+import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.io.File;
 import java.io.FileWriter;
@@ -237,11 +238,11 @@ public class AttackManager {
         DefaultTableModel model = new javax.swing.table.DefaultTableModel(
                 new Object[][]{},
                 new String[]{
-                    "Herkunft", "Ziel", "Einheit", "Ankunftszeit", "Einzeichnen"
+                    "Herkunft", "Ziel", "Einheit", "Abschickzeit", "Ankunftzeit", "Einzeichnen"
                 }) {
 
             Class[] types = new Class[]{
-                Village.class, Village.class, UnitHolder.class, Date.class, Boolean.class
+                Village.class, Village.class, UnitHolder.class, Date.class, Date.class, Boolean.class
             };
 
             @Override
@@ -254,7 +255,13 @@ public class AttackManager {
 
         if (planAttacks != null) {
             for (int i = 0; i < planAttacks.size(); i++) {
-                model.addRow(new Object[]{planAttacks.get(i).getSource(), planAttacks.get(i).getTarget(), planAttacks.get(i).getUnit(), planAttacks.get(i).getArriveTime(), planAttacks.get(i).isShowOnMap()});
+                UnitHolder unit = planAttacks.get(i).getUnit();
+                Date arriveTime = planAttacks.get(i).getArriveTime();
+
+                Village source = planAttacks.get(i).getSource();
+                Village target = planAttacks.get(i).getTarget();
+                Date sendTime = new Date(arriveTime.getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(source, target, unit.getSpeed()) * 1000));
+                model.addRow(new Object[]{source, target, unit, sendTime, arriveTime, planAttacks.get(i).isShowOnMap()});
             }
         }
 

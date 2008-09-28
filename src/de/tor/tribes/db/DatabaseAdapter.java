@@ -5,15 +5,13 @@
 package de.tor.tribes.db;
 
 import de.tor.tribes.sec.SecurityAdapter;
-import de.tor.tribes.util.GlobalOptions;
+import de.tor.tribes.util.Constants;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
+import java.sql.Timestamp;
 import java.util.LinkedList;
 import java.util.List;
 import org.apache.log4j.Logger;
@@ -75,7 +73,7 @@ public class DatabaseAdapter {
             return false;
         }
         try {
-            DB_CONNECTION = DriverManager.getConnection("jdbc:mysql://www.torridity.de/dsworkbench?" + "user=dsworkbench&password=DSwb'08");
+            DB_CONNECTION = DriverManager.getConnection("jdbc:mysql://www.dsworkbench.de/dsworkbench?" + "user=dsworkbench&password=DSwb'08");
             return true;
         } catch (SQLException se) {
             logger.error("Failed to establish database connection", se);
@@ -241,45 +239,21 @@ public class DatabaseAdapter {
         return retVal;
     }
 
-    public static boolean setDataVersion(String pServerID, int pVersion) {
-        if (!openConnection()) {
-            return false;
-        }
-        boolean retVal = false;
-        try {
-            Statement s = DB_CONNECTION.createStatement();
-            String update = "UPDATE update_daemon SET dataVersion = " + pVersion + " WHERE CONVERT( serverID USING utf8 ) = '" + pServerID + "';";
-            logger.info("Setting data version for server '" + pServerID + "' to " + pVersion);
-            int changed = s.executeUpdate(update);
-            if (changed != 0) {
-                retVal = true;
-            } else {
-                logger.warn("No rows changed");
-                retVal = false;
-            }
-        } catch (Exception e) {
-            logger.error("Failed to update data version for server '" + pServerID + "'", e);
-            retVal = false;
-        }
-        closeConnection();
-        return retVal;
-    }
-
-    public static int getDataVersion(String pServerID) {
+    public static long getDataVersion(String pServerID) {
         if (!openConnection()) {
             return ID_CONNECTION_FAILED;
         }
-        int retVal = ID_UNKNOWN_ERROR;
+        long retVal = ID_UNKNOWN_ERROR;
         try {
             Statement s = DB_CONNECTION.createStatement();
             String update = "SELECT * FROM update_daemon WHERE serverID = '" + pServerID + "';";
             ResultSet rs = s.executeQuery(update);
 
             while (rs.next()) {
-                retVal = rs.getInt("dataVersion");
+                retVal = rs.getTimestamp("dataVersion").getTime();
             }
         } catch (Exception e) {
-            logger.error("Failed to update data version for server '" + pServerID + "'", e);
+            logger.error("Failed to get data version for server '" + pServerID + "'", e);
             retVal = ID_UNKNOWN_ERROR;
         }
         closeConnection();
@@ -307,11 +281,11 @@ public class DatabaseAdapter {
         return retVal;
     }
 
-    public static int getUserDataVersion(String pUsername, String pServer) {
+    public static long getUserDataVersion(String pUsername, String pServer) {
         if (!openConnection()) {
             return ID_CONNECTION_FAILED;
         }
-        int retVal = -1;
+        long retVal = -1;
         try {
             Statement s = DB_CONNECTION.createStatement();
             String query = "SELECT dataVersion FROM updates LEFT JOIN users ON (updates.userID=users.id) WHERE (users.name='" + pUsername + "' AND updates.serverID ='" + pServer + "');";
@@ -319,7 +293,7 @@ public class DatabaseAdapter {
             rs = s.executeQuery(query);
             boolean userRegistered = false;
             while (rs.next()) {
-                retVal = rs.getInt("dataVersion");
+                retVal = rs.getTimestamp("dataVersion").getTime();
                 userRegistered = true;
             }
             if (!userRegistered) {
@@ -367,13 +341,13 @@ public class DatabaseAdapter {
 
     }
 
-    public static boolean updateUserDataVersion(String pUsername, String pServer, int pVersion) {
+    public static boolean updateUserDataVersion(String pUsername, String pServer, long pVersion) {
         if (!openConnection()) {
             return false;
         }
+        logger.debug("Updating user data version to " + pVersion);
         boolean retVal = false;
         try {
-
             Statement s = DB_CONNECTION.createStatement();
             String query = "SELECT id FROM users WHERE name='" + pUsername + "';";
             ResultSet rs = s.executeQuery(query);
@@ -383,8 +357,9 @@ public class DatabaseAdapter {
             }
 
             if (id != ID_USER_NOT_EXIST) {
+
                 s = DB_CONNECTION.createStatement();
-                String update = "UPDATE updates SET dataVersion = " + pVersion + " WHERE serverID = '" + pServer + "' AND userID = " + id + ";";
+                String update = "UPDATE updates SET dataVersion = '" + new Timestamp(pVersion).toString() + "' WHERE serverID = '" + pServer + "' AND userID = " + id + ";";
                 int changed = s.executeUpdate(update);
                 if (changed != 0) {
                     retVal = true;
@@ -424,7 +399,7 @@ public class DatabaseAdapter {
                     double v = Double.parseDouble(min_version);
                     if (v < 0) {
                         retVal = ID_UPDATE_NOT_ALLOWED;
-                    } else if (GlobalOptions.VERSION < v) {
+                    } else if (Constants.VERSION < v) {
                         retVal = ID_VERSION_NOT_ALLOWED;
                     }
                 } catch (Exception e) {
@@ -439,54 +414,6 @@ public class DatabaseAdapter {
         } catch (Exception e) {
             logger.error("Failed to check min version", e);
             retVal = ID_UNKNOWN_ERROR;
-        }
-
-        closeConnection();
-        return retVal;
-    }
-
-    /**Store an update of server data in the database
-     * @param pUsername User who performed the update
-     * @param pServer Server on which the update was performed
-     * @return int Success=0
-     */
-    public static int storeLastUpdate(String pUsername, String pServer) {
-        if (!openConnection()) {
-            return ID_CONNECTION_FAILED;
-        }
-
-        int retVal = ID_SUCCESS;
-
-        try {
-            //get user id
-            Statement s = DB_CONNECTION.createStatement();
-            String query = "SELECT id FROM users WHERE name='" + pUsername + "';";
-            ResultSet rs = s.executeQuery(query);
-            int id = -1;
-            while (rs.next()) {
-                id = rs.getInt(1);
-            }
-
-            if (id == -1) {
-                throw new Exception("ID for user " + pUsername + " not found");
-            }
-            //check last update
-            //s = DB_CONNECTION.createStatement();
-            query = "DELETE FROM updates WHERE UserID=" + id + " AND ServerID='" + pServer + "';";
-            int changed = s.executeUpdate(query);
-
-            //s = DB_CONNECTION.createStatement();
-            query = "INSERT INTO updates(UserID, ServerID, timestamp) VALUES(" + id + ",'" + pServer + "', CURRENT_TIMESTAMP);";
-            changed = s.executeUpdate(query);
-
-            if (changed != 1) {
-                throw new Exception("Failed to update timestamp");
-            }
-
-        } catch (Exception e) {
-            logger.error("Failed to check for last update", e);
-            retVal =
-                    ID_UNKNOWN_ERROR;
         }
 
         closeConnection();
@@ -523,36 +450,39 @@ public class DatabaseAdapter {
         System.setProperty("proxyUse", "true");
         System.setProperty("proxyHost", "proxy.fzk.de");
         System.setProperty("proxyPort", "8000");
-        //System.out.println(DatabaseAdapter.checkUser("Torridity", "realstyx13"));
-        //System.out.println(DatabaseAdapter.getPropertyValue("update_base_dir"));
-        // System.out.println(DatabaseAdapter.getUserDataVersion("Torridity", "de14"));
-        //System.out.println(DatabaseAdapter.registerUserForServer("Torridity", "de14"));
-        //System.out.println(DatabaseAdapter.getDataVersion("de14"));
-        //System.out.println(DatabaseAdapter.setDataVersion("de14", 3));
-        // System.out.println(DatabaseAdapter.getServerDownloadURL("de26"));
+
+        System.out.println(getUserDataVersion("Torridity", "de26"));
+
+    //System.out.println(DatabaseAdapter.checkUser("Torridity", "realstyx13"));
+    //System.out.println(DatabaseAdapter.getPropertyValue("update_base_dir"));
+    // System.out.println(DatabaseAdapter.getUserDataVersion("Torridity", "de14"));
+    //System.out.println(DatabaseAdapter.registerUserForServer("Torridity", "de14"));
+    //System.out.println(DatabaseAdapter.getDataVersion("de14"));
+    //System.out.println(DatabaseAdapter.setDataVersion("de14", 3));
+    // System.out.println(DatabaseAdapter.getServerDownloadURL("de26"));
 //System.out.println(DatabaseAdapter.updateUserDataVersion("Torridity", "de14", 0));
 //System.out.println(Integer.parseInt(DatabaseAdapter.getPropertyValue("max_user_diff")));
 
-        /*  System.out.println(DatabaseAdapter.addUser("Torridity", "realstyx13"));
-        long s = System.currentTimeMillis();
-        System.out.println(DatabaseAdapter.checkUser("Torridity", "realstyx13"));*/
+    /*  System.out.println(DatabaseAdapter.addUser("Torridity", "realstyx13"));
+    long s = System.currentTimeMillis();
+    System.out.println(DatabaseAdapter.checkUser("Torridity", "realstyx13"));*/
 
-        //  System.out.println(DatabaseAdapter.isUpdatePossible("Torridity", "de3"));
+    //  System.out.println(DatabaseAdapter.isUpdatePossible("Torridity", "de3"));
     /*System.out.println("Check: " + DatabaseAdapter.checkLastUpdate("Torridity", "de26"));
-        System.out.println("Store: " + DatabaseAdapter.storeLastUpdate("Torridity", "de26"));
-        System.out.println("Check: " + DatabaseAdapter.checkLastUpdate("Torridity", "de26"));*/
+    System.out.println("Store: " + DatabaseAdapter.storeLastUpdate("Torridity", "de26"));
+    System.out.println("Check: " + DatabaseAdapter.checkLastUpdate("Torridity", "de26"));*/
 
-        // System.out.println("Du " + (System.currentTimeMillis() - s));
-        String[] data = new String[]{"a1","A1", "b1", "b2", "B2", "A2", "B1", "c1", "c2"};
-        List<String> d = new LinkedList<String>();
-        for(String s : data){
-            d.add(s);
-        }
-        /*StringComparator sc = new StringComparator();
-        sc.setup(StringComparator.SORT_DESCENDING);*/
-        Collections.sort(d, String.CASE_INSENSITIVE_ORDER);
-        //Arrays.sort(data, sc);
-        System.out.println(d);
+    // System.out.println("Du " + (System.currentTimeMillis() - s));
+       /* String[] data = new String[]{"a1","A1", "b1", "b2", "B2", "A2", "B1", "c1", "c2"};
+    List<String> d = new LinkedList<String>();
+    for(String s : data){
+    d.add(s);
+    }
+    /*StringComparator sc = new StringComparator();
+    sc.setup(StringComparator.SORT_DESCENDING);*/
+    //Collections.sort(d, String.CASE_INSENSITIVE_ORDER);
+    //Arrays.sort(data, sc);
+    // System.out.println(d);
     /*c2
     c1
     b2

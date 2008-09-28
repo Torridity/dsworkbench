@@ -11,8 +11,6 @@ package de.tor.tribes.util;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.DataHolderListener;
 import de.tor.tribes.io.WorldDecorationHolder;
-import de.tor.tribes.types.Attack;
-import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.ImageManager;
 import de.tor.tribes.util.attack.AttackManager;
 import de.tor.tribes.util.mark.MarkerManager;
@@ -20,8 +18,6 @@ import de.tor.tribes.util.tag.TagManager;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.util.Hashtable;
-import java.util.List;
 import java.util.Properties;
 import javax.swing.UIManager;
 import org.apache.log4j.Logger;
@@ -32,7 +28,7 @@ import org.apache.log4j.Logger;
 public class GlobalOptions {
 
     private static Logger logger = Logger.getLogger(GlobalOptions.class);
-    public final static double VERSION = 0.91;
+
     private static boolean INITIALIZED = false;
     /**Active skin used by the MapPanel*/
     private static Skin mSkin;
@@ -40,10 +36,7 @@ public class GlobalOptions {
     private static WorldDecorationHolder mDecorationHolder = null;
     private static String SELECTED_SERVER = "de26";
     private static Properties GLOBAL_PROPERTIES = null;
-    private static List<Attack> mAttacks = null;
-    private static Hashtable<Village, List<String>> mTags = null;
-    //flag which is set if the user is logged in with hin account name
-    private static String loggedInAs = null;
+    //flag for online/offline mode
     private static boolean isOfflineMode = false;
 
     /**Init all managed objects
@@ -69,11 +62,6 @@ public class GlobalOptions {
         UIManager.put("OptionPane.background", Constants.DS_BACK);
         UIManager.put("Panel.background", Constants.DS_BACK);
         UIManager.put("Button.background", Constants.DS_BACK_LIGHT);
-    }
-
-    public static void addDataHolderListener(DataHolderListener pListener) {
-
-        DataHolder.getSingleton().addListener(pListener);
     }
 
     /**Tells if a network connection is established or not*/
@@ -146,23 +134,7 @@ public class GlobalOptions {
         }
     }
 
-    public static void setLoggedInAs(String pAccount) {
-        loggedInAs = pAccount;
-    }
-
-    public static String isLoggedInAs() {
-        return loggedInAs;
-    }
-
-    /**Get the DataHolder
-     * @return DataHolder Object which contains the WorldData
-     */
-    /*   public static DataHolder getDataHolder() {
-    return mDataHolder;
-    }*/
-    /**Get the skin
-     * @return Skin Object which contains the skin
-     */
+  
     public static Skin getSkin() {
         return mSkin;
     }

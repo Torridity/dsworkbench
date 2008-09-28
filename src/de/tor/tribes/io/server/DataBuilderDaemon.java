@@ -17,7 +17,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.Calendar;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
@@ -115,9 +114,12 @@ public class DataBuilderDaemon {
                 new File(serverDir + "/ally" + idToDelete + ".txt.gz").delete();
             }
 
-            if (!DatabaseAdapter.setDataVersion(sId, version)) {
+   /*         if (!DatabaseAdapter.setDataVersion(sId, version)) {
                 logger.warn("Failed to update data for server with ID '" + sId + "'");
-            }
+            }*/
+            
+            
+            
         }
 
         logger.info("Update finished");
@@ -293,9 +295,9 @@ public class DataBuilderDaemon {
         }
     }
 
-/*    public static void main(String[] args) throws Exception {
+  public static void main(String[] args) throws Exception {
         DOMConfigurator.configure("log4j.xml");
         DataBuilderDaemon d = new DataBuilderDaemon();
         d.downloadData();
-    }*/
+    }
 }

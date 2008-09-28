@@ -76,8 +76,8 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
                 Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
-                String t = ((DefaultTableCellRenderer) c).getText();
-                ((DefaultTableCellRenderer) c).setText(t);
+                DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
+                r.setText("<html><b>" + r.getText() + "</b></html>");
                 c.setBackground(Constants.DS_BACK);
                 return c;
             }
@@ -104,12 +104,16 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame {
             Ally[] aAllies = allies.toArray(new Ally[]{});
             allies = null;
             Arrays.sort(aAllies, Ally.CASE_INSENSITIVE_ORDER);
-            Tribe current = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage().getTribe();
-            if (current == null) {
-                logger.warn("Could not get current user village. Probably no active user is selected.");
-                return;
+            Village vCurrent = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage();
+            if (vCurrent != null) {
+                Tribe tCurrent = vCurrent.getTribe();
+                if (tCurrent == null) {
+                    logger.warn("Could not get current user village. Probably no active user is selected.");
+                    return;
+                }else{
+                     jSourceVillageList.setModel(new DefaultComboBoxModel(tCurrent.getVillageList().toArray()));
+                }
             }
-            jSourceVillageList.setModel(new DefaultComboBoxModel(current.getVillageList().toArray()));
             DefaultComboBoxModel targetAllyModel = new DefaultComboBoxModel(aAllies);
             jTargetAllyList.setModel(targetAllyModel);
             jTargetAllyList.setSelectedIndex(0);
@@ -797,6 +801,8 @@ private void fireTargetAllyChangedEvent(java.awt.event.ActionEvent evt) {//GEN-F
                 String t = ((DefaultTableCellRenderer) c).getText();
                 ((DefaultTableCellRenderer) c).setText(t);
                 c.setBackground(Constants.DS_BACK);
+                 DefaultTableCellRenderer r = ((DefaultTableCellRenderer)c);
+                r.setText("<html><b>" + r.getText() + "</b></html>");
                 return c;
             }
         };

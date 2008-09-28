@@ -11,7 +11,6 @@ import javax.swing.JOptionPane;
 import org.apache.log4j.Logger;
 import de.tor.tribes.io.DataHolderListener;
 import java.awt.Font;
-import java.awt.Toolkit;
 import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -19,7 +18,6 @@ import javax.swing.ImageIcon;
 import javax.swing.UIManager;
 import org.apache.log4j.Level;
 import org.apache.log4j.RollingFileAppender;
-import org.apache.log4j.xml.DOMConfigurator;
 
 /**
  *
@@ -35,7 +33,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
     public DSWorkbenchSplashScreen() {
         initComponents();
         jLabel1.setIcon(new ImageIcon("./graphics/splash_beta.png"));
-        new Timer("StartupTimer", true).schedule(new HideSplashTask(this), 3000);
+        new Timer("StartupTimer", true).schedule(new HideSplashTask(this), 1000);
         t = new SplashRepaintThread(this);
         t.setDaemon(true);
         t.start();
@@ -84,19 +82,17 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
         try {
             //load properties, cursors, skins, world decoration
             GlobalOptions.initialize();
-            GlobalOptions.addDataHolderListener(this);
-            GlobalOptions.addDataHolderListener(DSWorkbenchSettingsDialog.getSingleton());
+            DataHolder.getSingleton().addDataHolderListener(this);
+            DataHolder.getSingleton().addDataHolderListener(DSWorkbenchSettingsDialog.getSingleton());
         } catch (Exception e) {
             logger.error("Failed to initialize global options", e);
             JOptionPane.showMessageDialog(self, "Fehler bei der Initialisierung.\nMöglicherweise ist deine DS Workbench Installation defekt.", "Fehler", JOptionPane.ERROR_MESSAGE);
             System.exit(1);
         }
-
         if (!DSWorkbenchSettingsDialog.getSingleton().checkSettings()) {
             logger.info("Reading user settings returned error(s)");
             DSWorkbenchSettingsDialog.getSingleton().setVisible(true);
         }
-
         try {
             DataHolder.getSingleton().loadData(false);
         } catch (Exception e) {
@@ -109,8 +105,8 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
             DSWorkbenchMainFrame.getSingleton().setVisible(true);
             t.stopRunning();
             setVisible(false);
-        } catch (Throwable t) {
-            logger.fatal("Fatal error while running DS Workbench", t);
+        } catch (Throwable th) {
+            logger.fatal("Fatal error while running DS Workbench", th);
             JOptionPane.showMessageDialog(self, "Ein schwerwiegender Fehler ist aufgetreten.\nMöglicherweise ist deine DS Workbench Installation defekt. Bitte kontaktiere den Entwickler.", "Fehler", JOptionPane.ERROR_MESSAGE);
             System.exit(1);
         }
@@ -120,18 +116,12 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        //DOMConfigurator.configure("log4j.xml");
-
         // Locale.setDefault(Locale.US);
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            //  UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
         } catch (Exception e) {
         }
-        /*String[] f = Toolkit.getDefaultToolkit().getFontList();
-        for(String ff : f){
-        System.out.println(ff);
-        }*/
+
         Font f = new Font("SansSerif", Font.PLAIN, 11);
         UIManager.put("Label.font", f);
         UIManager.put("TextField.font", f);

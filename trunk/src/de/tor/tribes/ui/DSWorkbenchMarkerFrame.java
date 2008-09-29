@@ -25,6 +25,7 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
+import org.apache.log4j.Logger;
 
 /**
  *
@@ -32,6 +33,7 @@ import javax.swing.table.DefaultTableCellRenderer;
  */
 public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements MarkerManagerListener {
 
+    private static Logger logger = Logger.getLogger(DSWorkbenchMarkerFrame.class);
     private static DSWorkbenchMarkerFrame SINGLETON = null;
     // private List<DSWorkbenchFrameListener> mFrameListeners = null;
     /** Creates new form DSWorkbenchMarkerFrame */
@@ -55,14 +57,6 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
         return SINGLETON;
     }
 
-    /*  public synchronized void addFrameListener(DSWorkbenchFrameListener pListener) {
-    mFrameListeners.add(pListener);
-    }
-    
-    public synchronized void removeFrameListener(DSWorkbenchFrameListener pListener) {
-    mFrameListeners.remove(pListener);
-    }
-     */
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is

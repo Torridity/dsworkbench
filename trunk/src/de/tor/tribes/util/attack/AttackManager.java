@@ -276,7 +276,6 @@ public class AttackManager {
         }
         AttackManagerListener[] listeners = mManagerListeners.toArray(new AttackManagerListener[]{});
         for (AttackManagerListener listener : listeners) {
-            System.out.println("FIRE EV");
             listener.fireAttacksChangedEvent(plan);
         }
     }

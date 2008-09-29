@@ -7,6 +7,7 @@ package de.tor.tribes.ui;
 
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Attack;
+import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import java.util.Date;
 import java.util.Enumeration;
@@ -28,11 +29,16 @@ import de.tor.tribes.ui.editors.VillageCellEditor;
 import de.tor.tribes.ui.renderer.DateCellRenderer;
 import de.tor.tribes.util.DSWorkbenchFrameListener;
 import java.awt.Component;
+import java.awt.Toolkit;
+import java.awt.datatransfer.StringSelection;
+import java.text.SimpleDateFormat;
 import java.util.LinkedList;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
+import org.apache.log4j.Logger;
 
 /**
  *
@@ -40,6 +46,7 @@ import javax.swing.table.TableRowSorter;
  */
 public class DSWorkbenchAttackFrame extends javax.swing.JFrame implements AttackManagerListener {
 
+    private static Logger logger = Logger.getLogger(DSWorkbenchAttackFrame.class);
     private static DSWorkbenchAttackFrame SINGLETON = null;
     private List<DSWorkbenchFrameListener> mFrameListeners = null;
 
@@ -55,6 +62,12 @@ public class DSWorkbenchAttackFrame extends javax.swing.JFrame implements Attack
         } catch (Exception e) {
             //setting not available
         }
+
+        //color scrollpanes of selection dialog
+        jScrollPane1.getViewport().setBackground(Constants.DS_BACK_LIGHT);
+        jScrollPane3.getViewport().setBackground(Constants.DS_BACK_LIGHT);
+
+        jSelectionFilterDialog.pack();
         pack();
     }
 
@@ -82,6 +95,23 @@ public class DSWorkbenchAttackFrame extends javax.swing.JFrame implements Attack
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jSelectionFilterDialog = new javax.swing.JDialog();
+        jPanel1 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jSourceTribeBox = new javax.swing.JComboBox();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jSourceVillageTable = new javax.swing.JTable();
+        jSelectAllSourceButton = new javax.swing.JButton();
+        jPanel2 = new javax.swing.JPanel();
+        jLabel3 = new javax.swing.JLabel();
+        jTargetTribeBox = new javax.swing.JComboBox();
+        jLabel4 = new javax.swing.JLabel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        jTargetVillageTable = new javax.swing.JTable();
+        jSelectAllTargetButton = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
         jAttackPanel = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jAttackTable = new javax.swing.JTable();
@@ -96,7 +126,192 @@ public class DSWorkbenchAttackFrame extends javax.swing.JFrame implements Attack
         jDrawMarkedButton = new javax.swing.JButton();
         jAttackFrameAlwaysOnTop = new javax.swing.JCheckBox();
 
-        setTitle(null);
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("de/tor/tribes/ui/Bundle"); // NOI18N
+        jSelectionFilterDialog.setTitle(bundle.getString("DSWorkbenchAttackFrame.jSelectionFilterDialog.title")); // NOI18N
+        jSelectionFilterDialog.setAlwaysOnTop(true);
+        jSelectionFilterDialog.setModal(true);
+
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(bundle.getString("DSWorkbenchAttackFrame.jPanel1.border.title"))); // NOI18N
+
+        jLabel1.setText(bundle.getString("DSWorkbenchAttackFrame.jLabel1.text")); // NOI18N
+
+        jLabel2.setText(bundle.getString("DSWorkbenchAttackFrame.jLabel2.text")); // NOI18N
+        jLabel2.setMaximumSize(new java.awt.Dimension(32, 14));
+        jLabel2.setMinimumSize(new java.awt.Dimension(32, 14));
+        jLabel2.setPreferredSize(new java.awt.Dimension(32, 14));
+
+        jSourceTribeBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fireSourcePlayerChangedEvent(evt);
+            }
+        });
+
+        jSourceVillageTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Dorf", "Auswählen"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Object.class, java.lang.Boolean.class
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+        });
+        jScrollPane1.setViewportView(jSourceVillageTable);
+
+        jSelectAllSourceButton.setText(bundle.getString("DSWorkbenchAttackFrame.jSelectAllSourceButton.text")); // NOI18N
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 375, Short.MAX_VALUE)
+                            .addComponent(jSourceTribeBox, javax.swing.GroupLayout.Alignment.LEADING, 0, 375, Short.MAX_VALUE)))
+                    .addComponent(jSelectAllSourceButton, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addContainerGap())
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jSourceTribeBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jSelectAllSourceButton))
+                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(bundle.getString("DSWorkbenchAttackFrame.jPanel2.border.title"))); // NOI18N
+
+        jLabel3.setText(bundle.getString("DSWorkbenchAttackFrame.jLabel3.text")); // NOI18N
+
+        jTargetTribeBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fireTargetPlayerChangedEvent(evt);
+            }
+        });
+
+        jLabel4.setText(bundle.getString("DSWorkbenchAttackFrame.jLabel4.text")); // NOI18N
+
+        jTargetVillageTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Dorf", "Auswählen"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Object.class, java.lang.Boolean.class
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+        });
+        jScrollPane3.setViewportView(jTargetVillageTable);
+
+        jSelectAllTargetButton.setText(bundle.getString("DSWorkbenchAttackFrame.jSelectAllTargetButton.text")); // NOI18N
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel4))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 375, Short.MAX_VALUE)
+                            .addComponent(jTargetTribeBox, 0, 375, Short.MAX_VALUE)))
+                    .addComponent(jSelectAllTargetButton, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addContainerGap())
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jTargetTribeBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jSelectAllTargetButton))
+                    .addComponent(jLabel4))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        jButton1.setText(bundle.getString("DSWorkbenchAttackFrame.jButton1.text_1")); // NOI18N
+        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireMarkFilterEvent(evt);
+            }
+        });
+
+        jButton2.setText(bundle.getString("DSWorkbenchAttackFrame.jButton2.text_1")); // NOI18N
+        jButton2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireCancelFilterEvent(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jSelectionFilterDialogLayout = new javax.swing.GroupLayout(jSelectionFilterDialog.getContentPane());
+        jSelectionFilterDialog.getContentPane().setLayout(jSelectionFilterDialogLayout);
+        jSelectionFilterDialogLayout.setHorizontalGroup(
+            jSelectionFilterDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jSelectionFilterDialogLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jSelectionFilterDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jSelectionFilterDialogLayout.createSequentialGroup()
+                        .addComponent(jButton2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton1)))
+                .addContainerGap())
+        );
+        jSelectionFilterDialogLayout.setVerticalGroup(
+            jSelectionFilterDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jSelectionFilterDialogLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 11, Short.MAX_VALUE)
+                .addGroup(jSelectionFilterDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton2)
+                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
+        );
+
+        setTitle(bundle.getString("DSWorkbenchAttackFrame.title")); // NOI18N
 
         jAttackPanel.setBackground(new java.awt.Color(239, 235, 223));
         jAttackPanel.setMaximumSize(new java.awt.Dimension(750, 377));
@@ -125,7 +340,6 @@ public class DSWorkbenchAttackFrame extends javax.swing.JFrame implements Attack
         jScrollPane2.setViewportView(jAttackTable);
 
         jRemoveAttackButton.setBackground(new java.awt.Color(239, 235, 223));
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("de/tor/tribes/ui/Bundle"); // NOI18N
         jRemoveAttackButton.setText(bundle.getString("DSWorkbenchAttackFrame.jRemoveAttackButton.text")); // NOI18N
         jRemoveAttackButton.setToolTipText(bundle.getString("DSWorkbenchAttackFrame.jRemoveAttackButton.toolTipText")); // NOI18N
         jRemoveAttackButton.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -155,16 +369,31 @@ public class DSWorkbenchAttackFrame extends javax.swing.JFrame implements Attack
         jMarkFilteredButton.setBackground(new java.awt.Color(239, 235, 223));
         jMarkFilteredButton.setText(bundle.getString("DSWorkbenchAttackFrame.jMarkAllButton.text")); // NOI18N
         jMarkFilteredButton.setToolTipText(bundle.getString("DSWorkbenchAttackFrame.jMarkAllButton.toolTipText")); // NOI18N
+        jMarkFilteredButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireSelectFilteredEvent(evt);
+            }
+        });
 
         jCopyUnformattedToClipboardButton.setBackground(new java.awt.Color(239, 235, 223));
         jCopyUnformattedToClipboardButton.setText(bundle.getString("DSWorkbenchAttackFrame.jCopyUnformattedToClipboardButton.text")); // NOI18N
         jCopyUnformattedToClipboardButton.setToolTipText(bundle.getString("DSWorkbenchAttackFrame.jCopyUnformattedToClipboardButton.toolTipText")); // NOI18N
         jCopyUnformattedToClipboardButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jCopyUnformattedToClipboardButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireCopyUnformatedToClipboardEvent(evt);
+            }
+        });
 
         jCopyBBCodeToClipboardButton.setBackground(new java.awt.Color(239, 235, 223));
         jCopyBBCodeToClipboardButton.setText(bundle.getString("DSWorkbenchAttackFrame.jCopyBBCodeToClipboardButton.text")); // NOI18N
         jCopyBBCodeToClipboardButton.setToolTipText(bundle.getString("DSWorkbenchAttackFrame.jCopyBBCodeToClipboardButton.toolTipText")); // NOI18N
         jCopyBBCodeToClipboardButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jCopyBBCodeToClipboardButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireCopyAsBBCodeToClipboardEvent(evt);
+            }
+        });
 
         jChangeArrivalButton.setBackground(new java.awt.Color(239, 235, 223));
         jChangeArrivalButton.setText(bundle.getString("DSWorkbenchAttackFrame.jChangeArrivalButton.text")); // NOI18N
@@ -330,29 +559,243 @@ private void fireAttackFrameOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN
 private void fireMarkAllEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireMarkAllEvent
     int[] rows = jAttackTable.getSelectedRows();
     if ((rows == null) || (rows.length == 0)) {
-        jAttackTable.getSelectionModel().setSelectionInterval(0, jAttackTable.getRowCount());
+        jAttackTable.getSelectionModel().setSelectionInterval(0, jAttackTable.getRowCount() - 1);
     } else {
-        jAttackTable.getSelectionModel().removeSelectionInterval(0, jAttackTable.getRowCount());
+        jAttackTable.getSelectionModel().removeSelectionInterval(0, jAttackTable.getRowCount() - 1);
     }
 }//GEN-LAST:event_fireMarkAllEvent
 
 private void fireDrawSelectedEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireDrawSelectedEvent
-int[] rows = jAttackTable.getSelectionModel().getSelectedRows();
-    System.out.println("l " + rows.length);
-    System.out.println(jAttackTable.getRowCount());
+    int[] rows = jAttackTable.getSelectedRows();
     if ((rows != null) && (rows.length > 0)) {
-        for(int r : rows){
-            System.out.println("SELECT " + r);
+        for (int r : rows) {
             AttackManager.getSingleton().getAttackPlan(null).get(r).setShowOnMap(Boolean.TRUE);
         }
-        
+
         AttackManager.getSingleton().attacksUpdatedExternally(null);
     }
 }//GEN-LAST:event_fireDrawSelectedEvent
 
+private void fireCopyUnformatedToClipboardEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCopyUnformatedToClipboardEvent
+    try {
+        DefaultTableModel resultModel = (DefaultTableModel) jAttackTable.getModel();
+        String data = "";
+        for (int i = 0; i < resultModel.getRowCount(); i++) {
+            Village sVillage = (Village) resultModel.getValueAt(i, 0);
+            Village tVillage = (Village) resultModel.getValueAt(i, 1);
+            UnitHolder sUnit = (UnitHolder) resultModel.getValueAt(i, 2);
+            Date sTime = (Date) resultModel.getValueAt(i, 3);
+            Date aTime = (Date) resultModel.getValueAt(i, 4);
+            String sendtime = new SimpleDateFormat("dd.MM.yy HH:mm:ss").format(sTime);
+            String arrivetime = new SimpleDateFormat("dd.MM.yy HH:mm:ss").format(aTime);
+            data += sVillage.getTribe() + "\t" + sVillage + "\t" + sUnit + "\t" + tVillage.getTribe() + "\t" + tVillage + "\t" + sendtime + "\n" + arrivetime + "\n";
+        }
+
+        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(data), null);
+        String result = "Daten in Zwischenablage kopiert.";
+        JOptionPane.showMessageDialog(this, result, "Information", JOptionPane.INFORMATION_MESSAGE);
+    } catch (Exception e) {
+        logger.error("Failed to copy data to clipboard", e);
+        String result = "Fehler beim Kopieren in die Zwischenablage.";
+        JOptionPane.showMessageDialog(this, result, "Fehler", JOptionPane.ERROR_MESSAGE);
+    }
+}//GEN-LAST:event_fireCopyUnformatedToClipboardEvent
+
+private void fireCopyAsBBCodeToClipboardEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCopyAsBBCodeToClipboardEvent
+    try {
+        DefaultTableModel resultModel = (DefaultTableModel) jAttackTable.getModel();
+        String data = "";
+        for (int i = 0; i < resultModel.getRowCount(); i++) {
+            Village sVillage = (Village) resultModel.getValueAt(i, 0);
+            Village tVillage = (Village) resultModel.getValueAt(i, 1);
+            UnitHolder sUnit = (UnitHolder) resultModel.getValueAt(i, 2);
+            Date sTime = (Date) resultModel.getValueAt(i, 3);
+            Date aTime = (Date) resultModel.getValueAt(i, 4);
+            String sendtime = new SimpleDateFormat("dd.MM.yy HH:mm:ss").format(sTime);
+            String arrivetime = new SimpleDateFormat("dd.MM.yy HH:mm:ss").format(aTime);
+            data += "Angriff von " + sVillage.getTribe() + " aus " + sVillage.toBBCode() + " mit " + sUnit + " auf " + tVillage.getTribe().toBBCode() + " in " + tVillage.toBBCode() + " startet um " + sendtime + " und kommt um " + arrivetime + " an\n";
+        }
+
+        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(data), null);
+        String result = "Daten in Zwischenablage kopiert.";
+        JOptionPane.showMessageDialog(this, result, "Information", JOptionPane.INFORMATION_MESSAGE);
+    } catch (Exception e) {
+        logger.error("Failed to copy data to clipboard", e);
+        String result = "Fehler beim Kopieren in die Zwischenablage.";
+        JOptionPane.showMessageDialog(this, result, "Fehler", JOptionPane.ERROR_MESSAGE);
+    }
+}//GEN-LAST:event_fireCopyAsBBCodeToClipboardEvent
+
+private void fireMarkFilterEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireMarkFilterEvent
+
+    //get selected source villages
+    List<Village> source = new LinkedList<Village>();
+    for (int i = 0; i < jSourceVillageTable.getRowCount(); i++) {
+        Village v = (Village) jSourceVillageTable.getValueAt(i, 0);
+        Boolean b = (Boolean) jSourceVillageTable.getValueAt(i, 1);
+        if (b.booleanValue()) {
+            source.add(v);
+        }
+    }
+    //get selected target villages
+    List<Village> target = new LinkedList<Village>();
+    for (int i = 0; i < jTargetVillageTable.getRowCount(); i++) {
+        Village v = (Village) jTargetVillageTable.getValueAt(i, 0);
+        Boolean b = (Boolean) jTargetVillageTable.getValueAt(i, 1);
+        if (b.booleanValue()) {
+            target.add(v);
+        }
+    }
+
+    //select villages in attack manager and update externally
+    for (Attack a : AttackManager.getSingleton().getAttackPlan(null)) {
+        if (source.contains(a.getSource())) {
+            a.setShowOnMap(true);
+        }
+        if (target.contains(a.getTarget())) {
+            a.setShowOnMap(true);
+        }
+    }
+    AttackManager.getSingleton().attacksUpdatedExternally(null);
+    jSelectionFilterDialog.setVisible(false);
+}//GEN-LAST:event_fireMarkFilterEvent
+
+private void fireCancelFilterEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCancelFilterEvent
+    jSelectionFilterDialog.setVisible(false);
+}//GEN-LAST:event_fireCancelFilterEvent
+
+private void fireSourcePlayerChangedEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireSourcePlayerChangedEvent
+    try {
+        Tribe source = (Tribe) jSourceTribeBox.getSelectedItem();
+        List<Attack> attacks = AttackManager.getSingleton().getAttackPlan(null);
+        Hashtable<Village, Boolean> villageMarks = new Hashtable<Village, Boolean>();
+        //check attacks for the selected player
+        for (Attack a : attacks) {
+            Village v = a.getSource();
+            if ((v != null) && (v.getTribe() == source)) {
+                villageMarks.put(v, a.isShowOnMap());
+            }
+        }
+        //create model with player villages in attack plan
+        setTableModel(jSourceVillageTable, villageMarks);
+    } catch (Exception e) {
+        //"please select" selected    
+        setTableModel(jSourceVillageTable, new Hashtable<Village, Boolean>());
+    }
+}//GEN-LAST:event_fireSourcePlayerChangedEvent
+
+private void fireTargetPlayerChangedEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireTargetPlayerChangedEvent
+    try {
+        Tribe target = (Tribe) jTargetTribeBox.getSelectedItem();
+        List<Attack> attacks = AttackManager.getSingleton().getAttackPlan(null);
+        Hashtable<Village, Boolean> villageMarks = new Hashtable<Village, Boolean>();
+        //check attacks for the selected player
+        for (Attack a : attacks) {
+            Village v = a.getTarget();
+            if ((v != null) && (v.getTribe() == target)) {
+                villageMarks.put(v, a.isShowOnMap());
+            }
+        }
+        //create model with player villages in attack plan
+        setTableModel(jTargetVillageTable, villageMarks);
+    } catch (Exception e) {
+        //"please select" selected    
+        setTableModel(jTargetVillageTable, new Hashtable<Village, Boolean>());
+    }
+}//GEN-LAST:event_fireTargetPlayerChangedEvent
+
+private void fireSelectFilteredEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSelectFilteredEvent
+    List<Attack> attacks = AttackManager.getSingleton().getAttackPlan(null);
+    List<Tribe> sourceTribes = new LinkedList<Tribe>();
+    List<Tribe> targetTribes = new LinkedList<Tribe>();
+    //search attacks for source and target tribes
+    for (Attack a : attacks) {
+        Tribe s = a.getSource().getTribe();
+        if (!sourceTribes.contains(s)) {
+            sourceTribes.add(s);
+        }
+        Tribe t = a.getTarget().getTribe();
+        if (!targetTribes.contains(t)) {
+            targetTribes.add(t);
+        }
+    }
+    //build source and target selection and select default value
+    DefaultComboBoxModel sModel = new DefaultComboBoxModel(sourceTribes.toArray(new Tribe[]{}));
+    sModel.insertElementAt("Bitte wählen", 0);
+    jSourceTribeBox.setModel(sModel);
+    sModel.setSelectedItem("Bitte wählen");
+    DefaultComboBoxModel tModel = new DefaultComboBoxModel(targetTribes.toArray(new Tribe[]{}));
+    tModel.insertElementAt("Bitte wählen", 0);
+    jTargetTribeBox.setModel(tModel);
+    tModel.setSelectedItem("Bitte wählen");
+    //initialize tables and scroll panes
+    setTableModel(jSourceVillageTable, new Hashtable<Village, Boolean>());
+    setTableModel(jTargetVillageTable, new Hashtable<Village, Boolean>());
+
+    jSelectionFilterDialog.setVisible(true);
+}//GEN-LAST:event_fireSelectFilteredEvent
+
     public void setVisible(boolean v) {
         super.setVisible(v);
         fireVisibilityChangedEvents(v);
+    }
+
+    private void setTableModel(JTable pTable, Hashtable<Village, Boolean> pVillages) {
+        //create default table model
+        DefaultTableModel model = new javax.swing.table.DefaultTableModel(
+                new Object[][]{},
+                new String[]{
+                    "Dorf", "Markieren"
+                }) {
+
+            Class[] types = new Class[]{
+                Village.class, Boolean.class
+            };
+
+            @Override
+            public Class getColumnClass(int columnIndex) {
+                return types[columnIndex];
+            }
+
+            public boolean isCellEditable(int row, int col) {
+                if (col == 1) {
+                    return true;
+                }
+                return false;
+            }
+        };
+
+        //walk villages for row values
+        if (pVillages.size() != 0) {
+            Enumeration<Village> villages = pVillages.keys();
+            while (villages.hasMoreElements()) {
+                Village v = villages.nextElement();
+                model.addRow(new Object[]{v, pVillages.get(v)});
+            }
+        }
+
+        //set model and header renders
+        pTable.setModel(model);
+        DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
+
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
+                c.setBackground(Constants.DS_BACK);
+                DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
+                r.setText("<html><b>" + r.getText() + "</b></html>");
+                return c;
+            }
+        };
+
+        for (int i = 0; i < pTable.getColumnCount(); i++) {
+            pTable.getColumn(pTable.getColumnName(i)).setHeaderRenderer(headerRenderer);
+        }
+        //set max width
+        pTable.getColumnModel().getColumn(1).setMaxWidth(75);
+        //set sorter
+        TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(model);
+        pTable.setRowSorter(sorter);
     }
 
     protected void setupAttackPanel() {
@@ -440,15 +883,32 @@ int[] rows = jAttackTable.getSelectionModel().getSelectedRows();
     private javax.swing.JCheckBox jAttackFrameAlwaysOnTop;
     private javax.swing.JPanel jAttackPanel;
     private javax.swing.JTable jAttackTable;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JButton jChangeArrivalButton;
     private javax.swing.JButton jCheckAttacksButton;
     private javax.swing.JButton jCopyBBCodeToClipboardButton;
     private javax.swing.JButton jCopyUnformattedToClipboardButton;
     private javax.swing.JButton jDrawMarkedButton;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JButton jMarkAllButton;
     private javax.swing.JButton jMarkFilteredButton;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JButton jRemoveAttackButton;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JButton jSelectAllSourceButton;
+    private javax.swing.JButton jSelectAllTargetButton;
+    private javax.swing.JDialog jSelectionFilterDialog;
     private javax.swing.JButton jSendAttackButton;
+    private javax.swing.JComboBox jSourceTribeBox;
+    private javax.swing.JTable jSourceVillageTable;
+    private javax.swing.JComboBox jTargetTribeBox;
+    private javax.swing.JTable jTargetVillageTable;
     // End of variables declaration//GEN-END:variables
 }

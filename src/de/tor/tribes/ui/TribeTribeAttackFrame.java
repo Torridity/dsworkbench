@@ -756,7 +756,7 @@ private void fireTargetAllyChangedEvent(java.awt.event.ActionEvent evt) {//GEN-F
     Ally a = (Ally) jTargetAllyList.getSelectedItem();
     Tribe[] tribes = a.getTribes().toArray(new Tribe[]{});
     Arrays.sort(tribes, Tribe.CASE_INSENSITIVE_ORDER);
-    jTargetPlayerList.setModel(new DefaultComboBoxModel(tribes));
+    jTargetPlayerList.setModel(new DefaultComboBoxModel(tribes));           
 }//GEN-LAST:event_fireTargetAllyChangedEvent
 
     private void showResults(Hashtable<Village, Hashtable<Village, UnitHolder>> pAttacks) {

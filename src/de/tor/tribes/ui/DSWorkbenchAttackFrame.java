@@ -14,8 +14,8 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.TableColumnModelEvent;
+import javax.swing.event.RowSorterEvent;
+import javax.swing.event.TableModelEvent;
 import javax.swing.table.DefaultTableModel;
 import de.tor.tribes.util.BrowserCommandSender;
 import de.tor.tribes.util.Constants;
@@ -30,12 +30,15 @@ import de.tor.tribes.ui.editors.UnitCellEditor;
 import de.tor.tribes.ui.editors.VillageCellEditor;
 import de.tor.tribes.ui.renderer.DateCellRenderer;
 import de.tor.tribes.util.DSWorkbenchFrameListener;
+import de.tor.tribes.util.DSCalculator;
 import java.awt.Component;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 import java.util.LinkedList;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JTable;
+import javax.swing.event.RowSorterListener;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
@@ -74,6 +77,9 @@ public class DSWorkbenchAttackFrame extends javax.swing.JFrame implements Attack
         //color scrollpanes of selection dialog
         jScrollPane1.getViewport().setBackground(Constants.DS_BACK_LIGHT);
         jScrollPane3.getViewport().setBackground(Constants.DS_BACK_LIGHT);
+        TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>();
+        jAttackTable.setRowSorter(sorter);
+        sorter.setModel(AttackManager.getSingleton().getTableModel());
 
         jSelectionFilterDialog.pack();
         jTimeChangeDialog.pack();
@@ -117,10 +123,16 @@ public class DSWorkbenchAttackFrame extends javax.swing.JFrame implements Attack
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jTimeChangeDialog = new javax.swing.JDialog();
-        jDiffSpinner = new javax.swing.JSpinner();
+        jMinuteField = new javax.swing.JSpinner();
         jLabel5 = new javax.swing.JLabel();
         jOKButton = new javax.swing.JButton();
         jCancelButton = new javax.swing.JButton();
+        jLabel6 = new javax.swing.JLabel();
+        jHourField = new javax.swing.JSpinner();
+        jLabel7 = new javax.swing.JLabel();
+        jDayField = new javax.swing.JSpinner();
+        jDirectionBox = new javax.swing.JComboBox();
+        jLabel8 = new javax.swing.JLabel();
         jAttackPanel = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jAttackTable = new javax.swing.JTable();
@@ -134,6 +146,7 @@ public class DSWorkbenchAttackFrame extends javax.swing.JFrame implements Attack
         jMarkAllButton = new javax.swing.JButton();
         jDrawMarkedButton = new javax.swing.JButton();
         jFlipMarkButton = new javax.swing.JButton();
+        jNotDrawMarkedButton = new javax.swing.JButton();
         jAttackFrameAlwaysOnTop = new javax.swing.JCheckBox();
 
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("de/tor/tribes/ui/Bundle"); // NOI18N
@@ -355,7 +368,7 @@ public class DSWorkbenchAttackFrame extends javax.swing.JFrame implements Attack
                 .addContainerGap())
         );
 
-        jDiffSpinner.setModel(new javax.swing.SpinnerDateModel(new java.util.Date(), null, null, java.util.Calendar.MINUTE));
+        jMinuteField.setModel(new javax.swing.SpinnerNumberModel(0, 0, 59, 1));
 
         jLabel5.setText(bundle.getString("DSWorkbenchAttackFrame.jLabel5.text")); // NOI18N
 
@@ -373,6 +386,18 @@ public class DSWorkbenchAttackFrame extends javax.swing.JFrame implements Attack
             }
         });
 
+        jLabel6.setText(bundle.getString("DSWorkbenchAttackFrame.jLabel6.text")); // NOI18N
+
+        jHourField.setModel(new javax.swing.SpinnerNumberModel(0, 0, 59, 1));
+
+        jLabel7.setText(bundle.getString("DSWorkbenchAttackFrame.jLabel7.text")); // NOI18N
+
+        jDayField.setModel(new javax.swing.SpinnerNumberModel(0, 0, 31, 1));
+
+        jDirectionBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "später", "eher" }));
+
+        jLabel8.setText(bundle.getString("DSWorkbenchAttackFrame.jLabel8.text")); // NOI18N
+
         javax.swing.GroupLayout jTimeChangeDialogLayout = new javax.swing.GroupLayout(jTimeChangeDialog.getContentPane());
         jTimeChangeDialog.getContentPane().setLayout(jTimeChangeDialogLayout);
         jTimeChangeDialogLayout.setHorizontalGroup(
@@ -380,23 +405,46 @@ public class DSWorkbenchAttackFrame extends javax.swing.JFrame implements Attack
             .addGroup(jTimeChangeDialogLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jTimeChangeDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel7, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 42, Short.MAX_VALUE)
+                    .addComponent(jLabel8, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 42, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jTimeChangeDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jTimeChangeDialogLayout.createSequentialGroup()
-                        .addComponent(jCancelButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jOKButton))
-                    .addGroup(jTimeChangeDialogLayout.createSequentialGroup()
-                        .addComponent(jLabel5)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jDiffSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(jDayField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jTimeChangeDialogLayout.createSequentialGroup()
+                        .addGroup(jTimeChangeDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(jTimeChangeDialogLayout.createSequentialGroup()
+                                .addComponent(jMinuteField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
+                                .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(10, 10, 10)
+                                .addComponent(jHourField, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jTimeChangeDialogLayout.createSequentialGroup()
+                                .addComponent(jCancelButton, javax.swing.GroupLayout.DEFAULT_SIZE, 87, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jOKButton))
+                            .addComponent(jDirectionBox, javax.swing.GroupLayout.Alignment.LEADING, 0, 142, Short.MAX_VALUE))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         jTimeChangeDialogLayout.setVerticalGroup(
             jTimeChangeDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jTimeChangeDialogLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jTimeChangeDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jDiffSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jMinuteField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jHourField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jTimeChangeDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jDayField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jTimeChangeDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel8)
+                    .addComponent(jDirectionBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jTimeChangeDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jOKButton)
@@ -515,10 +563,21 @@ public class DSWorkbenchAttackFrame extends javax.swing.JFrame implements Attack
             }
         });
 
+        jFlipMarkButton.setBackground(new java.awt.Color(239, 235, 223));
         jFlipMarkButton.setText(bundle.getString("DSWorkbenchAttackFrame.jFlipMarkButton.text")); // NOI18N
+        jFlipMarkButton.setToolTipText(bundle.getString("DSWorkbenchAttackFrame.jFlipMarkButton.toolTipText")); // NOI18N
         jFlipMarkButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireFlipMarkEvent(evt);
+            }
+        });
+
+        jNotDrawMarkedButton.setBackground(new java.awt.Color(239, 235, 223));
+        jNotDrawMarkedButton.setText(bundle.getString("DSWorkbenchAttackFrame.jNotDrawMarkedButton.text")); // NOI18N
+        jNotDrawMarkedButton.setToolTipText(bundle.getString("DSWorkbenchAttackFrame.jNotDrawMarkedButton.toolTipText")); // NOI18N
+        jNotDrawMarkedButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireDrawSelectedEvent(evt);
             }
         });
 
@@ -528,10 +587,10 @@ public class DSWorkbenchAttackFrame extends javax.swing.JFrame implements Attack
             jAttackPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jAttackPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 518, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 510, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jAttackPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jCopyBBCodeToClipboardButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jNotDrawMarkedButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jCheckAttacksButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jRemoveAttackButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jSendAttackButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -540,7 +599,8 @@ public class DSWorkbenchAttackFrame extends javax.swing.JFrame implements Attack
                     .addComponent(jFlipMarkButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jDrawMarkedButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jChangeArrivalButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jCopyUnformattedToClipboardButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jCopyUnformattedToClipboardButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jCopyBBCodeToClipboardButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jAttackPanelLayout.setVerticalGroup(
@@ -548,7 +608,7 @@ public class DSWorkbenchAttackFrame extends javax.swing.JFrame implements Attack
             .addGroup(jAttackPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jAttackPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 428, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 444, Short.MAX_VALUE)
                     .addGroup(jAttackPanelLayout.createSequentialGroup()
                         .addComponent(jCheckAttacksButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -565,6 +625,8 @@ public class DSWorkbenchAttackFrame extends javax.swing.JFrame implements Attack
                         .addComponent(jChangeArrivalButton)
                         .addGap(30, 30, 30)
                         .addComponent(jDrawMarkedButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jNotDrawMarkedButton)
                         .addGap(30, 30, 30)
                         .addComponent(jCopyUnformattedToClipboardButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -584,11 +646,11 @@ public class DSWorkbenchAttackFrame extends javax.swing.JFrame implements Attack
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jAttackFrameAlwaysOnTop, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jAttackPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 685, Short.MAX_VALUE))
+                    .addComponent(jAttackFrameAlwaysOnTop)
+                    .addComponent(jAttackPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 691, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -596,8 +658,8 @@ public class DSWorkbenchAttackFrame extends javax.swing.JFrame implements Attack
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jAttackPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jAttackFrameAlwaysOnTop)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jAttackFrameAlwaysOnTop, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -615,8 +677,24 @@ private void fireRemoveAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
     if (res != JOptionPane.YES_OPTION) {
         return;
     }
+    
+    /*for (int i = 0; i < rows.length; i++) {
+      rows[i] = jAttackTable.convertRowIndexToModel(rows[i]);
+    }*/
+ 
+    //jAttackTable.invalidate();
+    for (int r = rows.length - 1; r >= 0; r--) {
 
-    AttackManager.getSingleton().removeAttack(rows);
+        int row = jAttackTable.convertRowIndexToModel(rows[r]);
+        System.out.println("Remove Table " + row);
+        System.out.println("Table_Source " + jAttackTable.getModel().getValueAt(row, 0));
+        System.out.println("Table_Target " + jAttackTable.getModel().getValueAt(row, 1));
+        
+        ((DefaultTableModel) jAttackTable.getModel()).removeRow(rows[r]);
+        System.out.println("----");
+
+    }
+    //jAttackTable.revalidate();
 }//GEN-LAST:event_fireRemoveAttackEvent
 
 private void fireValidateAttacksEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireValidateAttacksEvent
@@ -675,35 +753,39 @@ private void fireMarkAllEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
 
 private void fireDrawSelectedEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireDrawSelectedEvent
 
+    boolean draw = (evt.getSource() == jDrawMarkedButton);
+
     int[] rows = jAttackTable.getSelectedRows();
     if ((rows != null) && (rows.length > 0)) {
         for (int r : rows) {
-            AttackManager.getSingleton().getAttackPlan(null).get(r).setShowOnMap(Boolean.TRUE);
+            jAttackTable.setValueAt(new Boolean(draw), r, 5);
         }
-
-        AttackManager.getSingleton().attacksUpdatedExternally(null);
     }
 }//GEN-LAST:event_fireDrawSelectedEvent
 
 private void fireCopyUnformatedToClipboardEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCopyUnformatedToClipboardEvent
     try {
-        DefaultTableModel resultModel = (DefaultTableModel) jAttackTable.getModel();
-        String data = "";
-        for (int i = 0; i < resultModel.getRowCount(); i++) {
-            Village sVillage = (Village) resultModel.getValueAt(i, 0);
-            Village tVillage = (Village) resultModel.getValueAt(i, 1);
-            UnitHolder sUnit = (UnitHolder) resultModel.getValueAt(i, 2);
-            Date sTime = (Date) resultModel.getValueAt(i, 3);
-            Date aTime = (Date) resultModel.getValueAt(i, 4);
+        int[] rows = jAttackTable.getSelectedRows();
+        if ((rows != null) && (rows.length > 0)) {
+            String data = "";
+            List<Attack> attacks = AttackManager.getSingleton().getAttackPlan(null);
+            for (int i : rows) {
+                Village sVillage = attacks.get(i).getSource();
+                Village tVillage = attacks.get(i).getTarget();
+                UnitHolder sUnit = attacks.get(i).getUnit();
+                Date aTime = attacks.get(i).getArriveTime();
+                Date sTime = new Date(aTime.getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(sVillage, tVillage, sUnit.getSpeed()) * 1000));
 
-            String sendtime = Constants.DATE_FORMAT.format(sTime);
-            String arrivetime = Constants.DATE_FORMAT.format(aTime);
-            data += sVillage.getTribe() + "\t" + sVillage + "\t" + sUnit + "\t" + tVillage.getTribe() + "\t" + tVillage + "\t" + sendtime + "\n" + arrivetime + "\n";
+                String sendtime = Constants.DATE_FORMAT.format(sTime);
+                String arrivetime = Constants.DATE_FORMAT.format(aTime);
+                data += sVillage.getTribe() + "\t" + sVillage + "\t" + sUnit + "\t" + tVillage.getTribe() + "\t" + tVillage + "\t" + sendtime + "\n" + arrivetime + "\n";
+            }
+
+            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(data), null);
+            String result = "Daten in Zwischenablage kopiert.";
+            JOptionPane.showMessageDialog(this, result, "Information", JOptionPane.INFORMATION_MESSAGE);
+        } else {
         }
-
-        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(data), null);
-        String result = "Daten in Zwischenablage kopiert.";
-        JOptionPane.showMessageDialog(this, result, "Information", JOptionPane.INFORMATION_MESSAGE);
     } catch (Exception e) {
         logger.error("Failed to copy data to clipboard", e);
         String result = "Fehler beim Kopieren in die Zwischenablage.";
@@ -713,22 +795,27 @@ private void fireCopyUnformatedToClipboardEvent(java.awt.event.MouseEvent evt) {
 
 private void fireCopyAsBBCodeToClipboardEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCopyAsBBCodeToClipboardEvent
     try {
-        DefaultTableModel resultModel = (DefaultTableModel) jAttackTable.getModel();
-        String data = "";
-        for (int i = 0; i < resultModel.getRowCount(); i++) {
-            Village sVillage = (Village) resultModel.getValueAt(i, 0);
-            Village tVillage = (Village) resultModel.getValueAt(i, 1);
-            UnitHolder sUnit = (UnitHolder) resultModel.getValueAt(i, 2);
-            Date sTime = (Date) resultModel.getValueAt(i, 3);
-            Date aTime = (Date) resultModel.getValueAt(i, 4);
-            String sendtime = Constants.DATE_FORMAT.format(sTime);
-            String arrivetime = Constants.DATE_FORMAT.format(aTime);
-            data += "Angriff von " + sVillage.getTribe() + " aus " + sVillage.toBBCode() + " mit " + sUnit + " auf " + tVillage.getTribe().toBBCode() + " in " + tVillage.toBBCode() + " startet um " + sendtime + " und kommt um " + arrivetime + " an\n";
-        }
+        int[] rows = jAttackTable.getSelectedRows();
+        if ((rows != null) && (rows.length > 0)) {
+            String data = "";
+            List<Attack> attacks = AttackManager.getSingleton().getAttackPlan(null);
+            for (int i : rows) {
+                Village sVillage = attacks.get(i).getSource();
+                Village tVillage = attacks.get(i).getTarget();
+                UnitHolder sUnit = attacks.get(i).getUnit();
+                Date aTime = attacks.get(i).getArriveTime();
+                Date sTime = new Date(aTime.getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(sVillage, tVillage, sUnit.getSpeed()) * 1000));
 
-        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(data), null);
-        String result = "Daten in Zwischenablage kopiert.";
-        JOptionPane.showMessageDialog(this, result, "Information", JOptionPane.INFORMATION_MESSAGE);
+                String sendtime = Constants.DATE_FORMAT.format(sTime);
+                String arrivetime = Constants.DATE_FORMAT.format(aTime);
+                data += "Angriff von " + sVillage.getTribe() + " aus " + sVillage.toBBCode() + " mit " + sUnit + " auf " + tVillage.getTribe().toBBCode() + " in " + tVillage.toBBCode() + " startet um " + sendtime + " und kommt um " + arrivetime + " an\n";
+            }
+
+            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(data), null);
+            String result = "Daten in Zwischenablage kopiert.";
+            JOptionPane.showMessageDialog(this, result, "Information", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+        }
     } catch (Exception e) {
         logger.error("Failed to copy data to clipboard", e);
         String result = "Fehler beim Kopieren in die Zwischenablage.";
@@ -949,17 +1036,33 @@ private void fireSelectNoneAllEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
 
 private void fireCloseTimeChangeDialogEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCloseTimeChangeDialogEvent
     if (evt.getSource() == jOKButton) {
-        Date value = (Date) jDiffSpinner.getValue();
-        System.out.println(value);
+        int[] rows = jAttackTable.getSelectedRows();
+        if ((rows != null) || (rows.length > 0)) {
+            Integer min = (Integer) jMinuteField.getValue();
+            Integer hour = (Integer) jHourField.getValue();
+            Integer day = (Integer) jDayField.getValue();
+            List<Attack> attacks = AttackManager.getSingleton().getAttackPlan(null);
+            for (int i : rows) {
+                long arrive = attacks.get(i).getArriveTime().getTime();
+                long diff = min * 60000 + hour * 3600000 + day * 86400000;
+                //later if first index is selected
+                boolean later = (jDirectionBox.getSelectedIndex() == 0);
+                //if later, add diff to arrival, else remove diff from arrival
+                arrive = arrive + ((later) ? diff : (-1 * diff));
+                jAttackTable.setValueAt(new Date(arrive), i, 4);
+            }
+        }
     }
 
     jTimeChangeDialog.setVisible(false);
 }//GEN-LAST:event_fireCloseTimeChangeDialogEvent
 
 private void fireChangeTimesEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireChangeTimesEvent
-    Date d = new Date();
-    d.setTime(1000 * 60 * 60);
-    jDiffSpinner.setValue(d);
+    int[] rows = jAttackTable.getSelectedRows();
+    if ((rows == null) || (rows.length <= 0)) {
+        JOptionPane.showMessageDialog(this, "Keine Angriffe markiert", "Information", JOptionPane.INFORMATION_MESSAGE);
+        return;
+    }
     jTimeChangeDialog.setVisible(true);
 }//GEN-LAST:event_fireChangeTimesEvent
 
@@ -968,6 +1071,7 @@ private void fireChangeTimesEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
         fireVisibilityChangedEvents(v);
     }
 
+    /**set table model for filteres selection*/
     private void setTableModel(JTable pTable, Hashtable<Village, Boolean> pVillages) {
         //create default table model
         DefaultTableModel model = new javax.swing.table.DefaultTableModel(
@@ -1004,6 +1108,7 @@ private void fireChangeTimesEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
 
         //set model and header renders
         pTable.setModel(model);
+
         DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
 
             @Override
@@ -1017,10 +1122,10 @@ private void fireChangeTimesEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
             }
         };
 
-        for (int i = 0; i <
-                pTable.getColumnCount(); i++) {
+        for (int i = 0; i < pTable.getColumnCount(); i++) {
             pTable.getColumn(pTable.getColumnName(i)).setHeaderRenderer(headerRenderer);
         }
+
 //set max width
 
         pTable.getColumnModel().getColumn(1).setMaxWidth(75);
@@ -1033,51 +1138,117 @@ private void fireChangeTimesEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
         AttackManager.getSingleton().addAttackManagerListener(this);
         jAttackTable.setModel(AttackManager.getSingleton().getTableModel());
         //setup renderer and general view
-        jAttackTable.setDefaultRenderer(Date.class,
-                new DateCellRenderer());
+        jAttackTable.setDefaultRenderer(Date.class, new DateCellRenderer());
         jAttackTable.setDefaultEditor(Date.class, new DateSpinEditor());
         jAttackTable.setDefaultEditor(UnitHolder.class, new UnitCellEditor());
         jAttackTable.setDefaultEditor(Village.class, new VillageCellEditor());
-
         // jAttackTable.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
 
         // <editor-fold defaultstate="collapsed" desc=" Add CellEditorListener for changes ">
 
-        CellEditorListener attackChangedListener = new CellEditorListener() {
-
-            @Override
-            public void editingStopped(ChangeEvent e) {
-                try {
-                    for (int i = 0; i < jAttackTable.getRowCount(); i++) {
-                        List<Attack> attacks = AttackManager.getSingleton().getAttackPlan(null);
-                        Attack a = attacks.get(i);
-                        a.setSource((Village) jAttackTable.getValueAt(i, 0));
-                        a.setTarget((Village) jAttackTable.getValueAt(i, 1));
-                        a.setUnit((UnitHolder) jAttackTable.getValueAt(i, 2));
-                        //3 is only sendTime
-                        a.setArriveTime((Date) jAttackTable.getValueAt(i, 4));
-                        a.setShowOnMap((Boolean) jAttackTable.getValueAt(i, 5));
-                    }
-                    AttackManager.getSingleton().attacksUpdatedExternally(null);
-                } catch (Exception ee) {
-                    //ignored
-                }
-            }
-
-            @Override
-            public void editingCanceled(ChangeEvent e) {
-            }
-        };
+        /*       CellEditorListener attackChangedListener = new CellEditorListener() {
+        
+        @Override
+        public void editingStopped(ChangeEvent e) {
+        try {
+        
+        for (int i = 0; i < jAttackTable.getRowCount(); i++) {
+        List<Attack> attacks = AttackManager.getSingleton().getAttackPlan(null);
+        Attack a = attacks.get(i);
+        a.setSource((Village) jAttackTable.getValueAt(i, 0));
+        a.setTarget((Village) jAttackTable.getValueAt(i, 1));
+        a.setUnit((UnitHolder) jAttackTable.getValueAt(i, 2));
+        //3 is only sendTime
+        a.setArriveTime((Date) jAttackTable.getValueAt(i, 4));
+        a.setShowOnMap((Boolean) jAttackTable.getValueAt(i, 5));
+        }
+        AttackManager.getSingleton().attacksUpdatedExternally(null);
+        } catch (Exception ee) {
+        //ignored
+        }
+        }
+        
+        @Override
+        public void editingCanceled(ChangeEvent e) {
+        }
+        };*/
         // </editor-fold>
 
-        jAttackTable.getDefaultEditor(Boolean.class).addCellEditorListener(attackChangedListener);
+        //jAttackTable.getDefaultEditor(Boolean.class).addCellEditorListener(attackChangedListener);
+        jAttackTable.getModel().addTableModelListener(new TableModelListener() {
 
+            @Override
+            public void tableChanged(TableModelEvent e) {
+                switch (e.getType()) {
+                    case TableModelEvent.INSERT: {
+                        System.out.println("INSERT");
+                        break;
+                    }
+                    case TableModelEvent.UPDATE: {
+                        int first = e.getFirstRow();
+                        int last = e.getLastRow();
+                        for (int i = first; i <= last; i++) {
+                            Attack a = AttackManager.getSingleton().getAttackPlan(null).get(i);
+                            switch (e.getColumn()) {
+                                case 0: {
+                                    //source village
+                                    a.setSource((Village) jAttackTable.getValueAt(i, 0));
+                                    break;
+                                }
+                                case 1: {
+                                    //target
+                                    a.setTarget((Village) jAttackTable.getValueAt(i, 1));
+                                    break;
+                                }
+                                case 2: {
+                                    //target
+                                    a.setUnit((UnitHolder) jAttackTable.getValueAt(i, 2));
+                                    break;
+                                }
+                                case 3: {
+                                    //send
+                                    Date send = (Date) jAttackTable.getValueAt(i, 3);
+                                    long arrive = send.getTime() + (long) (DSCalculator.calculateMoveTimeInMinutes(a.getSource(), a.getTarget(), a.getUnit().getSpeed()) * 1000);
+                                    a.setArriveTime(new Date(arrive));
+                                    break;
+                                }
+                                case 4: {
+                                    //arrive
+                                    Date arrive = (Date) jAttackTable.getValueAt(i, 4);
+                                    a.setArriveTime(arrive);
+                                    break;
+                                }
+                                case 5: {
+                                    //draw
+                                    Boolean draw = (Boolean) jAttackTable.getValueAt(i, 5);
+                                    a.setShowOnMap(draw.booleanValue());
+                                }
+                            }
+                        }
+                        break;
+                    }
+                    case TableModelEvent.DELETE: {
+                        int first = e.getFirstRow();
+                        int last = e.getLastRow();
 
+                        for (int i = last; i >= first; i--) {
+                            //int f = jAttackTable.convertRowIndexToModel(i);
+                            System.out.println("Remove Plan " + i);
+                            Attack a = AttackManager.getSingleton().getAttackPlan(null).get(i);
+                            System.out.println("Plan_Source " + a.getSource());
+                            System.out.println("Plan_Target " + a.getTarget());
+                            
+                            AttackManager.getSingleton().getAttackPlan(null).remove(i);
+                        }
+                        break;
+                    }
+                }
+            }
+        });
+        //jAttackTable.getDefaultEditor(Date.class).addCellEditorListener(attackChangedListener);
+        // jAttackTable.getDefaultEditor(UnitHolder.class).addCellEditorListener(attackChangedListener);
+        //  jAttackTable.getDefaultEditor(Village.class).addCellEditorListener(attackChangedListener);
 
-        jAttackTable.getDefaultEditor(Date.class).addCellEditorListener(
-                attackChangedListener);
-        jAttackTable.getDefaultEditor(UnitHolder.class).addCellEditorListener(attackChangedListener);
-        jAttackTable.getDefaultEditor(Village.class).addCellEditorListener(attackChangedListener);
 
         AttackManager.getSingleton().attacksUpdatedExternally(null);
     }
@@ -1086,6 +1257,7 @@ private void fireChangeTimesEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
         for (DSWorkbenchFrameListener listener : mFrameListeners) {
             listener.fireVisibilityChangedEvent(this, v);
         }
+
     }
     List<DefaultTableCellRenderer> renderers = new LinkedList<DefaultTableCellRenderer>();
 
@@ -1095,15 +1267,17 @@ private void fireChangeTimesEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
             jAttackTable.invalidate();
 
 
-            jAttackTable.setModel(AttackManager.getSingleton().getTableModel());
-            jScrollPane2.getViewport().setBackground(Constants.DS_BACK_LIGHT);
+            // jAttackTable.setModel(AttackManager.getSingleton().getTableModel());
+            //  jScrollPane2.getViewport().setBackground(Constants.DS_BACK_LIGHT);
 
             if (renderers.isEmpty()) {
-                for (int i = 0; i < jAttackTable.getColumnCount(); i++) {
+                for (int i = 0; i <
+                        jAttackTable.getColumnCount(); i++) {
                     DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
 
                         @Override
-                        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                        public Component getTableCellRendererComponent(
+                                JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
                             Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
                             c.setBackground(Constants.DS_BACK);
                             DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
@@ -1113,19 +1287,18 @@ private void fireChangeTimesEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                     };
                     jAttackTable.getColumn(jAttackTable.getColumnName(i)).setHeaderRenderer(headerRenderer);
                 }
+
             } else {
                 for (int i = 0; i < jAttackTable.getColumnCount(); i++) {
                     jAttackTable.getColumn(jAttackTable.getColumnName(i)).setHeaderRenderer(renderers.get(i));
                 }
+
             }
-
-            TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(AttackManager.getSingleton().getTableModel());
-            jAttackTable.setRowSorter(sorter);
-
             jAttackTable.revalidate();
         } catch (Exception e) {
             logger.error("Failed to update attacks table", e);
         }
+
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jAllSourceVillageButton;
@@ -1140,18 +1313,25 @@ private void fireChangeTimesEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
     private javax.swing.JButton jCheckAttacksButton;
     private javax.swing.JButton jCopyBBCodeToClipboardButton;
     private javax.swing.JButton jCopyUnformattedToClipboardButton;
-    private javax.swing.JSpinner jDiffSpinner;
+    private javax.swing.JSpinner jDayField;
+    private javax.swing.JComboBox jDirectionBox;
     private javax.swing.JButton jDrawMarkedButton;
     private javax.swing.JButton jFlipMarkButton;
+    private javax.swing.JSpinner jHourField;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JButton jMarkAllButton;
     private javax.swing.JButton jMarkFilteredButton;
+    private javax.swing.JSpinner jMinuteField;
     private javax.swing.JButton jNoSourceVillageButton;
     private javax.swing.JButton jNoTargetVillageButton;
+    private javax.swing.JButton jNotDrawMarkedButton;
     private javax.swing.JButton jOKButton;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;

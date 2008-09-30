@@ -5,6 +5,7 @@
 package de.tor.tribes.util;
 
 import java.awt.Color;
+import java.text.SimpleDateFormat;
 
 /**
  *
@@ -16,4 +17,5 @@ public class Constants {
     public final static Color DS_BACK = new Color(225, 213, 190);
     public final static Color DS_BACK_LIGHT = new Color(239, 235, 223);
     public final static String SERVER_DIR = "./servers";
+    public final static SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
 }

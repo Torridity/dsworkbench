@@ -33,6 +33,7 @@ public class AttackManager {
     private Hashtable<String, List<Attack>> mAttackPlans = null;
     private static final String DEFAULT_PLAN_ID = "default";
     private List<AttackManagerListener> mManagerListeners = null;
+    private DefaultTableModel model = null;
 
     public static synchronized AttackManager getSingleton() {
         if (SINGLETON == null) {
@@ -45,6 +46,22 @@ public class AttackManager {
         mAttackPlans = new Hashtable<String, List<Attack>>();
         mAttackPlans.put(DEFAULT_PLAN_ID, new LinkedList<Attack>());
         mManagerListeners = new LinkedList<AttackManagerListener>();
+        model = new javax.swing.table.DefaultTableModel(
+                new Object[][]{},
+                new String[]{
+                    "Herkunft", "Ziel", "Einheit", "Abschickzeit", "Ankunftzeit", "Einzeichnen"
+                }) {
+
+            Class[] types = new Class[]{
+                Village.class, Village.class, UnitHolder.class, Date.class, Date.class, Boolean.class
+            };
+
+            @Override
+            public Class getColumnClass(int columnIndex) {
+                return types[columnIndex];
+            }
+        };
+
     }
 
     public synchronized void addAttackManagerListener(AttackManagerListener pListener) {
@@ -235,21 +252,10 @@ public class AttackManager {
             plan = DEFAULT_PLAN_ID;
         }
 
-        DefaultTableModel model = new javax.swing.table.DefaultTableModel(
-                new Object[][]{},
-                new String[]{
-                    "Herkunft", "Ziel", "Einheit", "Abschickzeit", "Ankunftzeit", "Einzeichnen"
-                }) {
-
-            Class[] types = new Class[]{
-                Village.class, Village.class, UnitHolder.class, Date.class, Date.class, Boolean.class
-            };
-
-            @Override
-            public Class getColumnClass(int columnIndex) {
-                return types[columnIndex];
-            }
-        };
+        //clear model
+        while (model.getRowCount() > 0) {
+            model.removeRow(0);
+        }
 
         List<Attack> planAttacks = mAttackPlans.get(plan);
 

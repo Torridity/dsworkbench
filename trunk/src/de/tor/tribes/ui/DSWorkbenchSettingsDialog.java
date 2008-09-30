@@ -56,7 +56,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
     // private boolean gotServerList = false;
     private boolean INITIALIZED = false;
 
-    public static DSWorkbenchSettingsDialog getSingleton() {
+    public static synchronized DSWorkbenchSettingsDialog getSingleton() {
         if (SINGLETON == null) {
             SINGLETON = new DSWorkbenchSettingsDialog();
         }

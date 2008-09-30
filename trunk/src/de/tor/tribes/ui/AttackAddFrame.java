@@ -316,39 +316,7 @@ private void fireAddAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:even
     setVisible(false);
 }//GEN-LAST:event_fireAddAttackEvent
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        try {
-            GlobalOptions.initialize();
-            GlobalOptions.setSelectedServer("de26");
-
-            DataHolder.getSingleton().loadData(false);
-        } catch (Exception e) {
-        }
-        Village source = DataHolder.getSingleton().getVillages()[452][467];
-        Village target = DataHolder.getSingleton().getVillages()[449][466];
-        /* for (int i = 0; i < 1000; i++) {
-        for (int j = 0; j < 1000; j++) {
-        Village v = DataHolder.getSingleton().getVillages()[i][j];
-        if (v != null) {
-        if (source == null) {
-        source = v;
-        } else if (target == null) {
-        target = v;
-        } else {
-        break;
-        }
-        }
-        }
-        
-        }*/
-
-        new AttackAddFrame().setupAttack(source, target);
-
-    }
-
+   
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private de.tor.tribes.ui.FrameControlPanel frameControlPanel1;
     private javax.swing.JLabel jArriveTimeLabel;

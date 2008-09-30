@@ -57,7 +57,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
     private static DSWorkbenchMainFrame SINGLETON = null;
     private boolean initialized = false;
 
-    public static DSWorkbenchMainFrame getSingleton() {
+    public static synchronized DSWorkbenchMainFrame getSingleton() {
         if (SINGLETON == null) {
             SINGLETON = new DSWorkbenchMainFrame();
         }
@@ -97,9 +97,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         // <editor-fold defaultstate="collapsed" desc=" General UI setup ">
 
         getContentPane().setBackground(Constants.DS_BACK);
-        // jMarkerFrame.getContentPane().setBackground(Constants.DS_BACK);
-        //       jAttackFrame.getContentPane().setBackground(Constants.DS_BACK);
-        // jDistanceFrame.getContentPane().setBackground(Constants.DS_BACK);
         pack();
 
         // </editor-fold>        
@@ -165,7 +162,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
 
         // </editor-fold>
 
-
         // <editor-fold defaultstate="collapsed" desc=" Setup WindowListeners ">
 
         WindowListener frameListener = new WindowListener() {
@@ -215,6 +211,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
 
     /**Update on server change*/
     public void serverSettingsChangedEvent() {
+        logger.info("Updating server settings");
         String playerID = GlobalOptions.getProperty("player." + GlobalOptions.getSelectedServer()) + "@" + GlobalOptions.getSelectedServer();
         jCurrentPlayer.setText(playerID);
 
@@ -234,8 +231,9 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         if (mTribeTribeAttackFrame != null) {
             mTribeTribeAttackFrame.setup();
         }
-        
+
         DSWorkbenchSettingsDialog.getSingleton().setupAttackColorTable();
+        logger.info("Server settings updated");
     }
 
     /**Update UI depending on online state*/
@@ -257,11 +255,14 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
     protected void init() {
         //setup everything
         serverSettingsChangedEvent();
+        logger.info("Setup maps");
         setupMaps();
+        logger.info("Setup details panel");
         setupDetailsPanel();
-
+        logger.info("Setup tool frames");
         setupFrames();
 
+        logger.info("Setup toolbox");
         //setup toolbox
         mToolbox = new ToolBoxFrame();
         mToolbox.addWindowListener(new WindowListener() {
@@ -296,12 +297,13 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             }
         });
         fireToolChangedEvent(ImageManager.CURSOR_DEFAULT);
+        logger.debug("Setup attack planner");
         //setup frames
         mAllyAllyAttackFrame = new AllyAllyAttackFrame();
         mAllyAllyAttackFrame.pack();
         mTribeTribeAttackFrame = new TribeTribeAttackFrame();
         mTribeTribeAttackFrame.pack();
-        mTribeTribeAttackFrame.setup();
+        logger.info("Initialization finished");
         mAbout = new AboutDialog(this, true);
         initialized = true;
     }
@@ -319,7 +321,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
 
     /**Setup main map and mini map*/
     private void setupMaps() {
-        logger.info("Initializing maps");
         try {
             dZoomFactor = Double.parseDouble(GlobalOptions.getProperty("zoom.factor"));
             checkZoomRange();
@@ -327,12 +328,16 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             dZoomFactor = 1.0;
         }
         //build the map panel
+        logger.info("Adding MapListener");
         MapPanel.getSingleton().addMapPanelListener(this);
         MapPanel.getSingleton().addToolChangeListener(this);
         MinimapPanel.getSingleton().addToolChangeListener(this);
+        logger.info("Adding MapPanel");
         jPanel1.add(MapPanel.getSingleton());
         //build the minimap
+
         MinimapPanel.getSingleton().addMinimapListener(this);
+        logger.info("Adding MinimapPanel");
         jMinimapPanel.add(MinimapPanel.getSingleton());
     }
 
@@ -359,6 +364,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
 
     @Override
     public void setVisible(boolean v) {
+        logger.info("Setting MainWindow visible");
         super.setVisible(v);
         if (v) {
             //only if set to visible
@@ -372,14 +378,18 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             try {
                 if (Boolean.parseBoolean(GlobalOptions.getProperty("attack.frame.visible"))) {
                     jShowAttackFrame.setSelected(true);
+                    logger.info("Restoring attack frame");
                     DSWorkbenchAttackFrame.getSingleton().setVisible(true);
                 }
             } catch (Exception e) {
+                logger.error("Failed to show main screen", e);
+                System.exit(-1);
             }
 
             try {
                 if (Boolean.parseBoolean(GlobalOptions.getProperty("distance.frame.visible"))) {
                     jShowDistanceFrame.setSelected(true);
+                    logger.info("Restoring distance frame");
                     DSWorkbenchDistanceFrame.getSingleton().setVisible(true);
                 }
             } catch (Exception e) {
@@ -388,6 +398,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             try {
                 if (Boolean.parseBoolean(GlobalOptions.getProperty("marker.frame.visible"))) {
                     jShowMarkerFrame.setSelected(true);
+                    logger.info("Restoring marker frame");
                     DSWorkbenchMarkerFrame.getSingleton().setVisible(true);
                 }
             } catch (Exception e) {
@@ -396,6 +407,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             try {
                 if (Boolean.parseBoolean(GlobalOptions.getProperty("toolbar.visible"))) {
                     jShowToolboxItem.setSelected(true);
+                    logger.info("Restoring toolbar frame");
                     fireShowToolbarEvent(null);
                 }
             } catch (Exception e) {
@@ -833,7 +845,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                 .addGroup(jInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jInformationPanelLayout.createSequentialGroup()
                         .addComponent(jOnlineLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 97, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 62, Short.MAX_VALUE)
                         .addComponent(jCurrentToolLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jCenterIngameButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
@@ -981,7 +993,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                         .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 452, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jMinimapPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 270, Short.MAX_VALUE)
+                            .addComponent(jMinimapPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jNavigationPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jInformationPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap())
@@ -992,7 +1004,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jMinimapPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 233, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jMinimapPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jNavigationPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -1158,6 +1170,7 @@ private void fireToolsActionEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:e
     } else if (evt.getSource() == jClockItem) {
         ClockFrame.getSingleton().setVisible(true);
     } else if (evt.getSource() == jTribeTribeAttackItem) {
+        mTribeTribeAttackFrame.setup();
         mTribeTribeAttackFrame.setVisible(true);
     } else if (evt.getSource() == jMassAttackItem) {
         // mAllyAllyAttackFrame.setVisible(true);
@@ -1286,6 +1299,7 @@ private void fireShowMarkerFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIR
         }
     }
     // <editor-fold defaultstate="collapsed" desc=" Listener EventHandlers ">
+
     @Override
     public void fireToolChangedEvent(int pTool) {
         jCurrentToolLabel.setIcon(ImageManager.getCursorImage(pTool));
@@ -1322,7 +1336,6 @@ private void fireShowMarkerFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIR
         }
     }
     // </editor-fold>
-    
     // <editor-fold defaultstate="collapsed" desc="Generated Variables">
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

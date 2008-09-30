@@ -47,7 +47,7 @@ public class DSWorkbenchDistanceFrame extends javax.swing.JFrame {
         mFrameListeners.remove(pListener);
     }
 
-    public static DSWorkbenchDistanceFrame getSingleton() {
+    public static synchronized DSWorkbenchDistanceFrame getSingleton() {
         if (SINGLETON == null) {
             SINGLETON = new DSWorkbenchDistanceFrame();
         }

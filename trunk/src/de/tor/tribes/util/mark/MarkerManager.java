@@ -31,6 +31,7 @@ public class MarkerManager {
     private static MarkerManager SINGLETON = null;
     private List<Marker> lMarkers = null;
     private List<MarkerManagerListener> mManagerListeners = null;
+    private DefaultTableModel model = null;
 
     public static synchronized MarkerManager getSingleton() {
         if (SINGLETON == null) {
@@ -43,6 +44,29 @@ public class MarkerManager {
     MarkerManager() {
         lMarkers = new LinkedList<Marker>();
         mManagerListeners = new LinkedList<MarkerManagerListener>();
+        model = new javax.swing.table.DefaultTableModel(
+                new Object[][]{},
+                new String[]{
+                    "Name", "Markierung"
+                }) {
+
+            Class[] types = new Class[]{
+                MarkerCell.class, Color.class
+            };
+            boolean[] canEdit = new boolean[]{
+                false, true
+            };
+
+            @Override
+            public Class getColumnClass(int columnIndex) {
+                return types[columnIndex];
+            }
+
+            @Override
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit[columnIndex];
+            }
+        };
     }
 
     public synchronized void addMarkerManagerListener(MarkerManagerListener pListener) {
@@ -235,29 +259,12 @@ public class MarkerManager {
 
     /**Get the table model which contains all markers*/
     public DefaultTableModel getTableModel() {
-        DefaultTableModel model = new javax.swing.table.DefaultTableModel(
-                new Object[][]{},
-                new String[]{
-                    "Name", "Markierung"
-                }) {
 
-            Class[] types = new Class[]{
-                MarkerCell.class, Color.class
-            };
-            boolean[] canEdit = new boolean[]{
-                false, true
-            };
-
-            @Override
-            public Class getColumnClass(int columnIndex) {
-                return types[columnIndex];
-            }
-
-            @Override
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit[columnIndex];
-            }
-        };
+        //remove former rows
+        while (model.getRowCount() > 0) {
+            model.removeRow(0);
+        }
+        
         Marker[] markers = getMarkers();
         if (markers.length > 0) {
             for (int i = 0; i < markers.length; i++) {

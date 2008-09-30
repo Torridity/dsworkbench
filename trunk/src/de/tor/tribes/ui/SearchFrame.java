@@ -33,7 +33,7 @@ public class SearchFrame extends javax.swing.JFrame implements SearchListener {
     private DSRealStatsFrame mStatsFrame = new DSRealStatsFrame();
     private static SearchFrame SINGLETON = null;
 
-    public static SearchFrame getSingleton() {
+    public static synchronized SearchFrame getSingleton() {
         if (SINGLETON == null) {
             SINGLETON = new SearchFrame();
         }
@@ -475,29 +475,6 @@ private void fireShowDSRealStatsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
         mStatsFrame.showStats((Tribe) jTribesList.getSelectedItem(), jShowPoints.isSelected(), jShowBashOff.isSelected(), jShowBashDef.isSelected());
     }
 }//GEN-LAST:event_fireShowDSRealStatsEvent
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        try {
-            GlobalOptions.setSelectedServer("de26");
-            GlobalOptions.initialize();
-            DataHolder.getSingleton().loadData(false);
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
-
-        java.awt.EventQueue.invokeLater(new Runnable() {
-
-            @Override
-            public void run() {
-                new SearchFrame().setVisible(true);
-            }
-        });
-
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;

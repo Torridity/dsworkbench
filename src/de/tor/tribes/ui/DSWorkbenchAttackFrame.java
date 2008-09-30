@@ -14,6 +14,8 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.TableColumnModelEvent;
 import javax.swing.table.DefaultTableModel;
 import de.tor.tribes.util.BrowserCommandSender;
 import de.tor.tribes.util.Constants;
@@ -31,7 +33,6 @@ import de.tor.tribes.util.DSWorkbenchFrameListener;
 import java.awt.Component;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
-import java.text.SimpleDateFormat;
 import java.util.LinkedList;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JTable;
@@ -50,6 +51,13 @@ public class DSWorkbenchAttackFrame extends javax.swing.JFrame implements Attack
     private static DSWorkbenchAttackFrame SINGLETON = null;
     private List<DSWorkbenchFrameListener> mFrameListeners = null;
 
+    public static synchronized DSWorkbenchAttackFrame getSingleton() {
+        if (SINGLETON == null) {
+            SINGLETON = new DSWorkbenchAttackFrame();
+        }
+        return SINGLETON;
+    }
+
     /** Creates new form DSWorkbenchAttackFrame */
     DSWorkbenchAttackFrame() {
         mFrameListeners = new LinkedList<DSWorkbenchFrameListener>();
@@ -57,7 +65,7 @@ public class DSWorkbenchAttackFrame extends javax.swing.JFrame implements Attack
         getContentPane().setBackground(Constants.DS_BACK);
 
         try {
-            jAttackFrameAlwaysOnTop.setSelected(Boolean.parseBoolean(GlobalOptions.getProperty(java.util.ResourceBundle.getBundle("de/tor/tribes/ui/Bundle").getString("attack.frame.alwaysOnTop"))));
+            jAttackFrameAlwaysOnTop.setSelected(Boolean.parseBoolean(GlobalOptions.getProperty("attack.frame.alwaysOnTop")));
             setAlwaysOnTop(jAttackFrameAlwaysOnTop.isSelected());
         } catch (Exception e) {
             //setting not available
@@ -68,14 +76,8 @@ public class DSWorkbenchAttackFrame extends javax.swing.JFrame implements Attack
         jScrollPane3.getViewport().setBackground(Constants.DS_BACK_LIGHT);
 
         jSelectionFilterDialog.pack();
+        jTimeChangeDialog.pack();
         pack();
-    }
-
-    public static DSWorkbenchAttackFrame getSingleton() {
-        if (SINGLETON == null) {
-            SINGLETON = new DSWorkbenchAttackFrame();
-        }
-        return SINGLETON;
     }
 
     public synchronized void addFrameListener(DSWorkbenchFrameListener pListener) {
@@ -102,16 +104,23 @@ public class DSWorkbenchAttackFrame extends javax.swing.JFrame implements Attack
         jSourceTribeBox = new javax.swing.JComboBox();
         jScrollPane1 = new javax.swing.JScrollPane();
         jSourceVillageTable = new javax.swing.JTable();
-        jSelectAllSourceButton = new javax.swing.JButton();
+        jAllSourceVillageButton = new javax.swing.JButton();
+        jNoSourceVillageButton = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         jTargetTribeBox = new javax.swing.JComboBox();
         jLabel4 = new javax.swing.JLabel();
         jScrollPane3 = new javax.swing.JScrollPane();
         jTargetVillageTable = new javax.swing.JTable();
-        jSelectAllTargetButton = new javax.swing.JButton();
+        jAllTargetVillageButton = new javax.swing.JButton();
+        jNoTargetVillageButton = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
+        jTimeChangeDialog = new javax.swing.JDialog();
+        jDiffSpinner = new javax.swing.JSpinner();
+        jLabel5 = new javax.swing.JLabel();
+        jOKButton = new javax.swing.JButton();
+        jCancelButton = new javax.swing.JButton();
         jAttackPanel = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jAttackTable = new javax.swing.JTable();
@@ -124,6 +133,7 @@ public class DSWorkbenchAttackFrame extends javax.swing.JFrame implements Attack
         jChangeArrivalButton = new javax.swing.JButton();
         jMarkAllButton = new javax.swing.JButton();
         jDrawMarkedButton = new javax.swing.JButton();
+        jFlipMarkButton = new javax.swing.JButton();
         jAttackFrameAlwaysOnTop = new javax.swing.JCheckBox();
 
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("de/tor/tribes/ui/Bundle"); // NOI18N
@@ -164,7 +174,19 @@ public class DSWorkbenchAttackFrame extends javax.swing.JFrame implements Attack
         });
         jScrollPane1.setViewportView(jSourceVillageTable);
 
-        jSelectAllSourceButton.setText(bundle.getString("DSWorkbenchAttackFrame.jSelectAllSourceButton.text")); // NOI18N
+        jAllSourceVillageButton.setText(bundle.getString("DSWorkbenchAttackFrame.jAllSourceVillageButton.text")); // NOI18N
+        jAllSourceVillageButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireSelectNoneAllEvent(evt);
+            }
+        });
+
+        jNoSourceVillageButton.setText(bundle.getString("DSWorkbenchAttackFrame.jNoSourceVillageButton.text")); // NOI18N
+        jNoSourceVillageButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireSelectNoneAllEvent(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -181,7 +203,10 @@ public class DSWorkbenchAttackFrame extends javax.swing.JFrame implements Attack
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 375, Short.MAX_VALUE)
                             .addComponent(jSourceTribeBox, javax.swing.GroupLayout.Alignment.LEADING, 0, 375, Short.MAX_VALUE)))
-                    .addComponent(jSelectAllSourceButton, javax.swing.GroupLayout.Alignment.TRAILING))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(jNoSourceVillageButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jAllSourceVillageButton)))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -196,7 +221,9 @@ public class DSWorkbenchAttackFrame extends javax.swing.JFrame implements Attack
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jSelectAllSourceButton))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jAllSourceVillageButton)
+                            .addComponent(jNoSourceVillageButton)))
                     .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -231,7 +258,19 @@ public class DSWorkbenchAttackFrame extends javax.swing.JFrame implements Attack
         });
         jScrollPane3.setViewportView(jTargetVillageTable);
 
-        jSelectAllTargetButton.setText(bundle.getString("DSWorkbenchAttackFrame.jSelectAllTargetButton.text")); // NOI18N
+        jAllTargetVillageButton.setText(bundle.getString("DSWorkbenchAttackFrame.jAllTargetVillageButton.text")); // NOI18N
+        jAllTargetVillageButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireSelectNoneAllEvent(evt);
+            }
+        });
+
+        jNoTargetVillageButton.setText(bundle.getString("DSWorkbenchAttackFrame.jNoTargetVillageButton.text")); // NOI18N
+        jNoTargetVillageButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireSelectNoneAllEvent(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -248,7 +287,10 @@ public class DSWorkbenchAttackFrame extends javax.swing.JFrame implements Attack
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 375, Short.MAX_VALUE)
                             .addComponent(jTargetTribeBox, 0, 375, Short.MAX_VALUE)))
-                    .addComponent(jSelectAllTargetButton, javax.swing.GroupLayout.Alignment.TRAILING))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                        .addComponent(jNoTargetVillageButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jAllTargetVillageButton)))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -263,7 +305,9 @@ public class DSWorkbenchAttackFrame extends javax.swing.JFrame implements Attack
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jSelectAllTargetButton))
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jAllTargetVillageButton)
+                            .addComponent(jNoTargetVillageButton)))
                     .addComponent(jLabel4))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -309,6 +353,55 @@ public class DSWorkbenchAttackFrame extends javax.swing.JFrame implements Attack
                     .addComponent(jButton2)
                     .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
+        );
+
+        jDiffSpinner.setModel(new javax.swing.SpinnerDateModel(new java.util.Date(), null, null, java.util.Calendar.MINUTE));
+
+        jLabel5.setText(bundle.getString("DSWorkbenchAttackFrame.jLabel5.text")); // NOI18N
+
+        jOKButton.setText(bundle.getString("DSWorkbenchAttackFrame.jOKButton.text")); // NOI18N
+        jOKButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireCloseTimeChangeDialogEvent(evt);
+            }
+        });
+
+        jCancelButton.setText(bundle.getString("DSWorkbenchAttackFrame.jCancelButton.text")); // NOI18N
+        jCancelButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireCloseTimeChangeDialogEvent(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jTimeChangeDialogLayout = new javax.swing.GroupLayout(jTimeChangeDialog.getContentPane());
+        jTimeChangeDialog.getContentPane().setLayout(jTimeChangeDialogLayout);
+        jTimeChangeDialogLayout.setHorizontalGroup(
+            jTimeChangeDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jTimeChangeDialogLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jTimeChangeDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jTimeChangeDialogLayout.createSequentialGroup()
+                        .addComponent(jCancelButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jOKButton))
+                    .addGroup(jTimeChangeDialogLayout.createSequentialGroup()
+                        .addComponent(jLabel5)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jDiffSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jTimeChangeDialogLayout.setVerticalGroup(
+            jTimeChangeDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jTimeChangeDialogLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jTimeChangeDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jDiffSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jTimeChangeDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jOKButton)
+                    .addComponent(jCancelButton))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         setTitle(bundle.getString("DSWorkbenchAttackFrame.title")); // NOI18N
@@ -398,6 +491,11 @@ public class DSWorkbenchAttackFrame extends javax.swing.JFrame implements Attack
         jChangeArrivalButton.setBackground(new java.awt.Color(239, 235, 223));
         jChangeArrivalButton.setText(bundle.getString("DSWorkbenchAttackFrame.jChangeArrivalButton.text")); // NOI18N
         jChangeArrivalButton.setToolTipText(bundle.getString("DSWorkbenchAttackFrame.jChangeArrivalButton.toolTipText")); // NOI18N
+        jChangeArrivalButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireChangeTimesEvent(evt);
+            }
+        });
 
         jMarkAllButton.setBackground(new java.awt.Color(239, 235, 223));
         jMarkAllButton.setText(bundle.getString("DSWorkbenchAttackFrame.jButton1.text")); // NOI18N
@@ -417,23 +515,31 @@ public class DSWorkbenchAttackFrame extends javax.swing.JFrame implements Attack
             }
         });
 
+        jFlipMarkButton.setText(bundle.getString("DSWorkbenchAttackFrame.jFlipMarkButton.text")); // NOI18N
+        jFlipMarkButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireFlipMarkEvent(evt);
+            }
+        });
+
         javax.swing.GroupLayout jAttackPanelLayout = new javax.swing.GroupLayout(jAttackPanel);
         jAttackPanel.setLayout(jAttackPanelLayout);
         jAttackPanelLayout.setHorizontalGroup(
             jAttackPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jAttackPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 470, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 518, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jAttackPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(jCopyBBCodeToClipboardButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jCheckAttacksButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jRemoveAttackButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jSendAttackButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jMarkAllButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jMarkFilteredButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jChangeArrivalButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jCopyBBCodeToClipboardButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jMarkFilteredButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jFlipMarkButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jDrawMarkedButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jChangeArrivalButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jCopyUnformattedToClipboardButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -454,13 +560,15 @@ public class DSWorkbenchAttackFrame extends javax.swing.JFrame implements Attack
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jMarkFilteredButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jFlipMarkButton)
+                        .addGap(30, 30, 30)
                         .addComponent(jChangeArrivalButton)
+                        .addGap(30, 30, 30)
+                        .addComponent(jDrawMarkedButton)
                         .addGap(30, 30, 30)
                         .addComponent(jCopyUnformattedToClipboardButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jCopyBBCodeToClipboardButton)
-                        .addGap(38, 38, 38)
-                        .addComponent(jDrawMarkedButton)))
+                        .addComponent(jCopyBBCodeToClipboardButton)))
                 .addContainerGap())
         );
 
@@ -566,6 +674,7 @@ private void fireMarkAllEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
 }//GEN-LAST:event_fireMarkAllEvent
 
 private void fireDrawSelectedEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireDrawSelectedEvent
+
     int[] rows = jAttackTable.getSelectedRows();
     if ((rows != null) && (rows.length > 0)) {
         for (int r : rows) {
@@ -586,8 +695,9 @@ private void fireCopyUnformatedToClipboardEvent(java.awt.event.MouseEvent evt) {
             UnitHolder sUnit = (UnitHolder) resultModel.getValueAt(i, 2);
             Date sTime = (Date) resultModel.getValueAt(i, 3);
             Date aTime = (Date) resultModel.getValueAt(i, 4);
-            String sendtime = new SimpleDateFormat("dd.MM.yy HH:mm:ss").format(sTime);
-            String arrivetime = new SimpleDateFormat("dd.MM.yy HH:mm:ss").format(aTime);
+
+            String sendtime = Constants.DATE_FORMAT.format(sTime);
+            String arrivetime = Constants.DATE_FORMAT.format(aTime);
             data += sVillage.getTribe() + "\t" + sVillage + "\t" + sUnit + "\t" + tVillage.getTribe() + "\t" + tVillage + "\t" + sendtime + "\n" + arrivetime + "\n";
         }
 
@@ -611,8 +721,8 @@ private void fireCopyAsBBCodeToClipboardEvent(java.awt.event.MouseEvent evt) {//
             UnitHolder sUnit = (UnitHolder) resultModel.getValueAt(i, 2);
             Date sTime = (Date) resultModel.getValueAt(i, 3);
             Date aTime = (Date) resultModel.getValueAt(i, 4);
-            String sendtime = new SimpleDateFormat("dd.MM.yy HH:mm:ss").format(sTime);
-            String arrivetime = new SimpleDateFormat("dd.MM.yy HH:mm:ss").format(aTime);
+            String sendtime = Constants.DATE_FORMAT.format(sTime);
+            String arrivetime = Constants.DATE_FORMAT.format(aTime);
             data += "Angriff von " + sVillage.getTribe() + " aus " + sVillage.toBBCode() + " mit " + sUnit + " auf " + tVillage.getTribe().toBBCode() + " in " + tVillage.toBBCode() + " startet um " + sendtime + " und kommt um " + arrivetime + " an\n";
         }
 
@@ -647,16 +757,30 @@ private void fireMarkFilterEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:eve
         }
     }
 
-    //select villages in attack manager and update externally
+    //get the line numbers of attacks which should be selected
+    List<Integer> selection = new LinkedList<Integer>();
+    int cnt = 0;
     for (Attack a : AttackManager.getSingleton().getAttackPlan(null)) {
         if (source.contains(a.getSource())) {
-            a.setShowOnMap(true);
+            if (!selection.contains(new Integer(cnt))) {
+                selection.add(new Integer(cnt));
+            }
         }
         if (target.contains(a.getTarget())) {
-            a.setShowOnMap(true);
+            if (!selection.contains(new Integer(cnt))) {
+                selection.add(new Integer(cnt));
+            }
         }
+        cnt++;
     }
-    AttackManager.getSingleton().attacksUpdatedExternally(null);
+    //remove current selection
+    jAttackTable.getSelectionModel().removeIndexInterval(0, jAttackTable.getRowCount() - 1);
+    jAttackTable.getSelectionModel().setValueIsAdjusting(true);
+    for (Integer i : selection) {
+        jAttackTable.getSelectionModel().addSelectionInterval(i, i);
+    }
+    jAttackTable.getSelectionModel().setValueIsAdjusting(false);
+
     jSelectionFilterDialog.setVisible(false);
 }//GEN-LAST:event_fireMarkFilterEvent
 
@@ -670,14 +794,21 @@ private void fireSourcePlayerChangedEvent(java.awt.event.ActionEvent evt) {//GEN
         List<Attack> attacks = AttackManager.getSingleton().getAttackPlan(null);
         Hashtable<Village, Boolean> villageMarks = new Hashtable<Village, Boolean>();
         //check attacks for the selected player
+        int row = 0;
         for (Attack a : attacks) {
             Village v = a.getSource();
             if ((v != null) && (v.getTribe() == source)) {
-                villageMarks.put(v, a.isShowOnMap());
+                if (jAttackTable.getSelectionModel().isSelectedIndex(row)) {
+                    //village is selected in the attack table, so select it here too
+                    villageMarks.put(v, Boolean.TRUE);
+                } else {
+                    villageMarks.put(v, Boolean.FALSE);
+                }
+                row++;
             }
+            //create model with player villages in attack plan
+            setTableModel(jSourceVillageTable, villageMarks);
         }
-        //create model with player villages in attack plan
-        setTableModel(jSourceVillageTable, villageMarks);
     } catch (Exception e) {
         //"please select" selected    
         setTableModel(jSourceVillageTable, new Hashtable<Village, Boolean>());
@@ -690,11 +821,20 @@ private void fireTargetPlayerChangedEvent(java.awt.event.ActionEvent evt) {//GEN
         List<Attack> attacks = AttackManager.getSingleton().getAttackPlan(null);
         Hashtable<Village, Boolean> villageMarks = new Hashtable<Village, Boolean>();
         //check attacks for the selected player
+        int row = 0;
+
         for (Attack a : attacks) {
             Village v = a.getTarget();
             if ((v != null) && (v.getTribe() == target)) {
-                villageMarks.put(v, a.isShowOnMap());
+                if (jAttackTable.getSelectionModel().isSelectedIndex(row)) {
+                    //village is selected in the attack table, so select it here too
+                    villageMarks.put(v, Boolean.TRUE);
+                } else {
+                    villageMarks.put(v, Boolean.FALSE);
+
+                }
             }
+            row++;
         }
         //create model with player villages in attack plan
         setTableModel(jTargetVillageTable, villageMarks);
@@ -714,10 +854,12 @@ private void fireSelectFilteredEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST
         if (!sourceTribes.contains(s)) {
             sourceTribes.add(s);
         }
+
         Tribe t = a.getTarget().getTribe();
         if (!targetTribes.contains(t)) {
             targetTribes.add(t);
         }
+
     }
     //build source and target selection and select default value
     DefaultComboBoxModel sModel = new DefaultComboBoxModel(sourceTribes.toArray(new Tribe[]{}));
@@ -734,6 +876,92 @@ private void fireSelectFilteredEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST
 
     jSelectionFilterDialog.setVisible(true);
 }//GEN-LAST:event_fireSelectFilteredEvent
+
+private void fireFlipMarkEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireFlipMarkEvent
+
+    int rows[] = jAttackTable.getSelectedRows();
+    List<Integer> selected = new LinkedList<Integer>();
+    //add currently selected rows to a list
+    for (int row : rows) {
+        selected.add(new Integer(row));
+    }
+
+    int cnt = jAttackTable.getRowCount();
+    //look for all rows wether the index is selected or not.
+    //selected indices are removed from the existing list, unselected are added
+    for (int i = 0; i <
+            cnt; i++) {
+        Integer iV = new Integer(i);
+        if (selected.contains(iV)) {
+            selected.remove(iV);
+        } else {
+            selected.add(iV);
+        }
+
+    }
+
+    //assign the values of the selected list to the table
+    jAttackTable.getSelectionModel().setValueIsAdjusting(true);
+    for (int i = 0; i <
+            cnt; i++) {
+        Integer iV = new Integer(i);
+        if (selected.contains(iV)) {
+            jAttackTable.getSelectionModel().addSelectionInterval(i, i);
+        } else {
+            jAttackTable.getSelectionModel().removeSelectionInterval(i, i);
+        }
+
+    }
+    jAttackTable.getSelectionModel().setValueIsAdjusting(false);
+}//GEN-LAST:event_fireFlipMarkEvent
+
+private void fireSelectNoneAllEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSelectNoneAllEvent
+    if (evt.getSource() == jAllSourceVillageButton) {
+        if (jSourceVillageTable.getRowCount() > 0) {
+            jSourceVillageTable.invalidate();
+            for (int i = 0; i < jSourceVillageTable.getRowCount(); i++) {
+                jSourceVillageTable.getModel().setValueAt(Boolean.TRUE, i, 1);
+            }
+            jSourceVillageTable.revalidate();
+        }
+    } else if (evt.getSource() == jNoSourceVillageButton) {
+        jSourceVillageTable.invalidate();
+        for (int i = 0; i < jSourceVillageTable.getRowCount(); i++) {
+            jSourceVillageTable.getModel().setValueAt(Boolean.FALSE, i, 1);
+        }
+        jSourceVillageTable.revalidate();
+    } else if (evt.getSource() == jAllTargetVillageButton) {
+        if (jTargetVillageTable.getRowCount() > 0) {
+            jTargetVillageTable.invalidate();
+            for (int i = 0; i < jSourceVillageTable.getRowCount(); i++) {
+                jTargetVillageTable.getModel().setValueAt(Boolean.TRUE, i, 1);
+            }
+            jTargetVillageTable.revalidate();
+        }
+    } else if (evt.getSource() == jNoTargetVillageButton) {
+        jTargetVillageTable.invalidate();
+        for (int i = 0; i < jSourceVillageTable.getRowCount(); i++) {
+            jTargetVillageTable.getModel().setValueAt(Boolean.FALSE, i, 1);
+        }
+        jTargetVillageTable.revalidate();
+    }
+}//GEN-LAST:event_fireSelectNoneAllEvent
+
+private void fireCloseTimeChangeDialogEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCloseTimeChangeDialogEvent
+    if (evt.getSource() == jOKButton) {
+        Date value = (Date) jDiffSpinner.getValue();
+        System.out.println(value);
+    }
+
+    jTimeChangeDialog.setVisible(false);
+}//GEN-LAST:event_fireCloseTimeChangeDialogEvent
+
+private void fireChangeTimesEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireChangeTimesEvent
+    Date d = new Date();
+    d.setTime(1000 * 60 * 60);
+    jDiffSpinner.setValue(d);
+    jTimeChangeDialog.setVisible(true);
+}//GEN-LAST:event_fireChangeTimesEvent
 
     public void setVisible(boolean v) {
         super.setVisible(v);
@@ -779,7 +1007,8 @@ private void fireSelectFilteredEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST
         DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
 
             @Override
-            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            public Component getTableCellRendererComponent(
+                    JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
                 Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
                 c.setBackground(Constants.DS_BACK);
                 DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
@@ -788,10 +1017,12 @@ private void fireSelectFilteredEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST
             }
         };
 
-        for (int i = 0; i < pTable.getColumnCount(); i++) {
+        for (int i = 0; i <
+                pTable.getColumnCount(); i++) {
             pTable.getColumn(pTable.getColumnName(i)).setHeaderRenderer(headerRenderer);
         }
-        //set max width
+//set max width
+
         pTable.getColumnModel().getColumn(1).setMaxWidth(75);
         //set sorter
         TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(model);
@@ -802,7 +1033,8 @@ private void fireSelectFilteredEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST
         AttackManager.getSingleton().addAttackManagerListener(this);
         jAttackTable.setModel(AttackManager.getSingleton().getTableModel());
         //setup renderer and general view
-        jAttackTable.setDefaultRenderer(Date.class, new DateCellRenderer());
+        jAttackTable.setDefaultRenderer(Date.class,
+                new DateCellRenderer());
         jAttackTable.setDefaultEditor(Date.class, new DateSpinEditor());
         jAttackTable.setDefaultEditor(UnitHolder.class, new UnitCellEditor());
         jAttackTable.setDefaultEditor(Village.class, new VillageCellEditor());
@@ -839,7 +1071,11 @@ private void fireSelectFilteredEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST
         // </editor-fold>
 
         jAttackTable.getDefaultEditor(Boolean.class).addCellEditorListener(attackChangedListener);
-        jAttackTable.getDefaultEditor(Date.class).addCellEditorListener(attackChangedListener);
+
+
+
+        jAttackTable.getDefaultEditor(Date.class).addCellEditorListener(
+                attackChangedListener);
         jAttackTable.getDefaultEditor(UnitHolder.class).addCellEditorListener(attackChangedListener);
         jAttackTable.getDefaultEditor(Village.class).addCellEditorListener(attackChangedListener);
 
@@ -851,64 +1087,84 @@ private void fireSelectFilteredEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST
             listener.fireVisibilityChangedEvent(this, v);
         }
     }
+    List<DefaultTableCellRenderer> renderers = new LinkedList<DefaultTableCellRenderer>();
 
     @Override
     public void fireAttacksChangedEvent(String pPlan) {
-        jAttackTable.invalidate();
-        jAttackTable.setModel(AttackManager.getSingleton().getTableModel());
-        jScrollPane2.getViewport().setBackground(Constants.DS_BACK_LIGHT);
+        try {
+            jAttackTable.invalidate();
 
-        DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
 
-            @Override
-            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-                Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
-                c.setBackground(Constants.DS_BACK);
-                DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
-                r.setText("<html><b>" + r.getText() + "</b></html>");
-                return c;
+            jAttackTable.setModel(AttackManager.getSingleton().getTableModel());
+            jScrollPane2.getViewport().setBackground(Constants.DS_BACK_LIGHT);
+
+            if (renderers.isEmpty()) {
+                for (int i = 0; i < jAttackTable.getColumnCount(); i++) {
+                    DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
+
+                        @Override
+                        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                            Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
+                            c.setBackground(Constants.DS_BACK);
+                            DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
+                            r.setText("<html><b>" + r.getText() + "</b></html>");
+                            return c;
+                        }
+                    };
+                    jAttackTable.getColumn(jAttackTable.getColumnName(i)).setHeaderRenderer(headerRenderer);
+                }
+            } else {
+                for (int i = 0; i < jAttackTable.getColumnCount(); i++) {
+                    jAttackTable.getColumn(jAttackTable.getColumnName(i)).setHeaderRenderer(renderers.get(i));
+                }
             }
-        };
 
-        for (int i = 0; i < jAttackTable.getColumnCount(); i++) {
-            jAttackTable.getColumn(jAttackTable.getColumnName(i)).setHeaderRenderer(headerRenderer);
+            TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(AttackManager.getSingleton().getTableModel());
+            jAttackTable.setRowSorter(sorter);
+
+            jAttackTable.revalidate();
+        } catch (Exception e) {
+            logger.error("Failed to update attacks table", e);
         }
-
-        TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(AttackManager.getSingleton().getTableModel());
-        jAttackTable.setRowSorter(sorter);
-
-        jAttackTable.revalidate();
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jAllSourceVillageButton;
+    private javax.swing.JButton jAllTargetVillageButton;
     private javax.swing.JCheckBox jAttackFrameAlwaysOnTop;
     private javax.swing.JPanel jAttackPanel;
     private javax.swing.JTable jAttackTable;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
+    private javax.swing.JButton jCancelButton;
     private javax.swing.JButton jChangeArrivalButton;
     private javax.swing.JButton jCheckAttacksButton;
     private javax.swing.JButton jCopyBBCodeToClipboardButton;
     private javax.swing.JButton jCopyUnformattedToClipboardButton;
+    private javax.swing.JSpinner jDiffSpinner;
     private javax.swing.JButton jDrawMarkedButton;
+    private javax.swing.JButton jFlipMarkButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JButton jMarkAllButton;
     private javax.swing.JButton jMarkFilteredButton;
+    private javax.swing.JButton jNoSourceVillageButton;
+    private javax.swing.JButton jNoTargetVillageButton;
+    private javax.swing.JButton jOKButton;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JButton jRemoveAttackButton;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JButton jSelectAllSourceButton;
-    private javax.swing.JButton jSelectAllTargetButton;
     private javax.swing.JDialog jSelectionFilterDialog;
     private javax.swing.JButton jSendAttackButton;
     private javax.swing.JComboBox jSourceTribeBox;
     private javax.swing.JTable jSourceVillageTable;
     private javax.swing.JComboBox jTargetTribeBox;
     private javax.swing.JTable jTargetVillageTable;
+    private javax.swing.JDialog jTimeChangeDialog;
     // End of variables declaration//GEN-END:variables
-}
+    }

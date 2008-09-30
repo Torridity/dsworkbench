@@ -56,7 +56,7 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
     private List<ToolChangeListener> mToolChangeListeners = null;
     private boolean doRedraw = false;
 
-    public static MinimapPanel getSingleton() {
+    public static synchronized MinimapPanel getSingleton() {
         if (SINGLETON == null) {
             SINGLETON = new MinimapPanel();
         }
@@ -69,14 +69,14 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
     /** Creates new form MinimapPanel */
     MinimapPanel() {
         initComponents();
-        setSize(270, 233);
+        setSize(270, 270);
         mMinimapListeners = new LinkedList<MinimapListener>();
         mToolChangeListeners = new LinkedList<ToolChangeListener>();
         setCursor(ImageManager.getCursor(iCurrentCursor));
         mScreenshotPanel = new ScreenshotPanel();
         jPanel1.add(mScreenshotPanel);
         MarkerManager.getSingleton().addMarkerManagerListener(this);
-        mPaintThread = new MinimapRepaintThread(this);
+        mPaintThread = new MinimapRepaintThread();
         mPaintThread.start();
 
         addMouseListener(new MouseListener() {
@@ -244,24 +244,27 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
 
     @Override
     public void paint(Graphics g) {
-        Graphics2D g2d = (Graphics2D) g;
-        g2d.drawImage(mBuffer, 0, 0, null);
-        g2d.setColor(Color.YELLOW);
-        int w = (int) Math.rint(((double) getWidth() / 1000) * (double) iWidth);
-        int h = (int) Math.rint(((double) getHeight() / 1000) * (double) iHeight);
+        try {
+            Graphics2D g2d = (Graphics2D) g;
+            g2d.drawImage(mBuffer, 0, 0, null);
+            g2d.setColor(Color.YELLOW);
+            int w = (int) Math.rint(((double) getWidth() / 1000) * (double) iWidth);
+            int h = (int) Math.rint(((double) getHeight() / 1000) * (double) iHeight);
 
-        double posX = ((double) getWidth() / 1000 * (double) iX) - w / 2;
-        double posY = ((double) getHeight() / 1000 * (double) iY) - h / 2;
+            double posX = ((double) getWidth() / 1000 * (double) iX) - w / 2;
+            double posY = ((double) getHeight() / 1000 * (double) iY) - h / 2;
 
-        g2d.drawRect((int) Math.rint(posX), (int) Math.rint(posY), w, h);
-        if (iCurrentCursor == ImageManager.CURSOR_SHOT) {
-            if (rDrag != null) {
-                g2d.setColor(Color.YELLOW);
-                g2d.drawRect((int) rDrag.getMinX(), (int) rDrag.getMinY(), (int) (rDrag.getWidth() - rDrag.getX()), (int) (rDrag.getHeight() - rDrag.getY()));
+            g2d.drawRect((int) Math.rint(posX), (int) Math.rint(posY), w, h);
+            if (iCurrentCursor == ImageManager.CURSOR_SHOT) {
+                if (rDrag != null) {
+                    g2d.setColor(Color.YELLOW);
+                    g2d.drawRect((int) rDrag.getMinX(), (int) rDrag.getMinY(), (int) (rDrag.getWidth() - rDrag.getX()), (int) (rDrag.getHeight() - rDrag.getY()));
+                }
             }
+            g2d.dispose();
+        } catch (Exception e) {
+            logger.error("Failed painting Minimap", e);
         }
-        g2d.setColor(Color.BLACK);
-        g2d.dispose();
     }
 
     public void makeScreenshot() {
@@ -292,7 +295,8 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
             doRedraw = false;
             repaint();
         } catch (Exception e) {
-            //ignore
+            logger.error("Exception while updating Minimap", e);
+        //ignore
         }
     }
 
@@ -537,7 +541,7 @@ private void fireSaveScreenshotEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST
             ImageIO.write(mScreenshotPanel.getResult(jTransparancySlider.getValue()), type, target);
             GlobalOptions.addProperty("screen.dir", target.getParent());
         } catch (Exception e) {
-            logger.error("Failed to write map image", e);
+            logger.error("Failed to write map shot", e);
         }
     }
 }//GEN-LAST:event_fireSaveScreenshotEvent
@@ -570,12 +574,11 @@ private void jTransparancySliderfireChangeScreenshotScalingEvent(javax.swing.eve
 
 class MinimapRepaintThread extends Thread {
 
+    private static Logger logger = Logger.getLogger(MinimapRepaintThread.class);
     private BufferedImage mBuffer = null;
-    private MinimapPanel mParent = null;
     private boolean drawn = false;
 
-    public MinimapRepaintThread(MinimapPanel pParent) {
-        mParent = pParent;
+    public MinimapRepaintThread() {
         mBuffer = new BufferedImage(1000, 1000, BufferedImage.TYPE_INT_RGB);
     }
 
@@ -590,14 +593,17 @@ class MinimapRepaintThread extends Thread {
     @Override
     public void run() {
         while (true) {
-            if (!drawn) {
-                drawn = redraw();
-            }
-            mParent.updateComplete(mBuffer);
-
             try {
-                Thread.sleep(100);
-            } catch (Exception e) {
+                if (!drawn) {
+                    drawn = redraw();
+                }
+                MinimapPanel.getSingleton().updateComplete(mBuffer);
+                try {
+                    Thread.sleep(100);
+                } catch (Exception e) {
+                }
+            } catch (Exception oe) {
+                logger.error("Failed to re-render minimap", oe);
             }
         }
     }
@@ -699,6 +705,7 @@ class MinimapRepaintThread extends Thread {
                 g2d.setFont(f);
             }
         } catch (Exception e) {
+            logger.error("Creation of Minimap failed", e);
         }
         g2d.dispose();
         return true;

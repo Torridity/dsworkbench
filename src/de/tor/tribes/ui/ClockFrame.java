@@ -21,7 +21,7 @@ public class ClockFrame extends javax.swing.JFrame {
     private TimerThread tThread = null;
     private static ClockFrame SINGLETON = null;
 
-    public static ClockFrame getSingleton() {
+    public static synchronized ClockFrame getSingleton() {
         if (SINGLETON == null) {
             SINGLETON = new ClockFrame();
         }

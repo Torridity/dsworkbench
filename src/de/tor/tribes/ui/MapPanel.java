@@ -90,7 +90,6 @@ public class MapPanel extends javax.swing.JPanel {
         mMarkerAddFrame = new MarkerAddFrame();
         mTagFrame = new VillageTagFrame();
         setCursor(ImageManager.getCursor(iCurrentCursor));
-//setIgnoreRepaint(true);
         initListeners();
     }
 
@@ -436,48 +435,51 @@ public class MapPanel extends javax.swing.JPanel {
     /**Draw buffer into panel*/
     @Override
     public void paint(Graphics g) {
-        // super.paintComponent(g);
-        g.fillRect(0, 0, getWidth(), getHeight());
-        if (isOutside) {
-            mousePos = MouseInfo.getPointerInfo().getLocation();
-            int outcodes = screenRect.outcode(mousePos);
+        try {
+            g.fillRect(0, 0, getWidth(), getHeight());
+            if (isOutside) {
+                mousePos = MouseInfo.getPointerInfo().getLocation();
+                int outcodes = screenRect.outcode(mousePos);
 
-            if ((outcodes & Rectangle2D.OUT_LEFT) != 0) {
-                xDir += -1;
-            } else if ((outcodes & Rectangle2D.OUT_RIGHT) != 0) {
-                xDir += 1;
+                if ((outcodes & Rectangle2D.OUT_LEFT) != 0) {
+                    xDir += -1;
+                } else if ((outcodes & Rectangle2D.OUT_RIGHT) != 0) {
+                    xDir += 1;
+                }
+
+                if ((outcodes & Rectangle2D.OUT_TOP) != 0) {
+                    yDir += -1;
+                } else if ((outcodes & Rectangle2D.OUT_BOTTOM) != 0) {
+                    yDir += 1;
+                }
+
+                //lower scroll speed
+                int sx = 0;
+                int sy = 0;
+                if (xDir >= 1) {
+                    sx = 1;
+                    xDir = 0;
+                } else if (xDir <= -1) {
+                    sx = -1;
+                    xDir = 0;
+                }
+
+                if (yDir >= 1) {
+                    sy = 1;
+                    yDir = 0;
+                } else if (yDir <= -1) {
+                    sy = -1;
+                    yDir = 0;
+                }
+
+                fireScrollEvents(sx, sy);
             }
-
-            if ((outcodes & Rectangle2D.OUT_TOP) != 0) {
-                yDir += -1;
-            } else if ((outcodes & Rectangle2D.OUT_BOTTOM) != 0) {
-                yDir += 1;
-            }
-
-            //lower scroll speed
-            int sx = 0;
-            int sy = 0;
-            if (xDir >= 1) {
-                sx = 1;
-                xDir = 0;
-            } else if (xDir <= -1) {
-                sx = -1;
-                xDir = 0;
-            }
-
-            if (yDir >= 1) {
-                sy = 1;
-                yDir = 0;
-            } else if (yDir <= -1) {
-                sy = -1;
-                yDir = 0;
-            }
-
-            fireScrollEvents(sx, sy);
+            Graphics2D g2d = (Graphics2D) g;
+            g2d.drawImage(mBuffer, 0, 0, null);
+            g2d.dispose();
+        } catch (Exception e) {
+            logger.error("Failed to paint", e);
         }
-        Graphics2D g2d = (Graphics2D) g;
-        g2d.drawImage(mBuffer, 0, 0, null);
-        g2d.dispose();
     }
 
     /**Update map to new position*/
@@ -507,6 +509,7 @@ public class MapPanel extends javax.swing.JPanel {
 
             return mVisibleVillages[x][y];
         } catch (Exception e) {
+            logger.error("Failed getting village at mouse pos", e);
         }
         return null;
     }
@@ -541,7 +544,6 @@ public class MapPanel extends javax.swing.JPanel {
             listener.fireScrollEvent(pX, pY);
         }
     }
-    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
 }
@@ -572,6 +574,7 @@ class RepaintThread extends Thread {
             mDistBorder = ImageIO.read(new File("./graphics/dist_border.png"));
             mMarkerImage = Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("/res/marker.png"));
         } catch (Exception e) {
+            logger.error("Failed to load border images", e);
         }
     }
 
@@ -588,13 +591,13 @@ class RepaintThread extends Thread {
                 if (mBuffer != null) {
                     MapPanel.getSingleton().updateComplete(mVisibleVillages, mBuffer);
                     MapPanel.getSingleton().repaint();
-                 }
+                }
             } catch (Throwable t) {
                 logger.error("Redrawing map failed", t);
             }
             try {
                 Thread.sleep(80);
-            } catch (Exception e) {
+            } catch (InterruptedException ie) {
             }
         }
     }
@@ -714,6 +717,7 @@ class RepaintThread extends Thread {
         try {
             markActiveVillage = Boolean.parseBoolean(GlobalOptions.getProperty("mark.active.village"));
         } catch (Exception e) {
+            markActiveVillage = false;
         }
 
         for (int i = 0; i < iVillagesX; i++) {
@@ -894,6 +898,8 @@ class RepaintThread extends Thread {
             xPos++;
         }
 
+        // <editor-fold defaultstate="collapsed" desc=" Draw Drag line">
+
         if (mSourceVillage != null) {
             //draw dragging line for distance and attack
             g2d.setColor(Color.YELLOW);
@@ -934,6 +940,8 @@ class RepaintThread extends Thread {
                 }
             }
         }
+
+        //</editor-fold>
 
         // <editor-fold defaultstate="collapsed" desc="Attack-line drawing">
 
@@ -1045,7 +1053,7 @@ class RepaintThread extends Thread {
         g2d.drawImage(ImageManager.getUnitIcon(ImageManager.ICON_AXE).getImage(), pos.x, pos.y, null);
         }
          */
-        
+
         //mark current player village
         if (markX >= 0 && markY >= 0) {
             g2d.drawImage(mMarkerImage, markX, markY - mMarkerImage.getHeight(null), null);

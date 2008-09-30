@@ -55,7 +55,7 @@ public class DataHolder {
     private boolean bAborted = false;
     private static DataHolder SINGLETON = null;
 
-    public static DataHolder getSingleton() {
+    public static synchronized DataHolder getSingleton() {
         if (SINGLETON == null) {
             SINGLETON = new DataHolder();
         }

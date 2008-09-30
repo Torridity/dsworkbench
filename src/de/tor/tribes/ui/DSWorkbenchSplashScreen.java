@@ -102,6 +102,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
 
         try {
             DSWorkbenchMainFrame.getSingleton().init();
+            logger.info("Showing application window");
             DSWorkbenchMainFrame.getSingleton().setVisible(true);
             t.stopRunning();
             setVisible(false);

@@ -93,17 +93,21 @@ public class AttackManager {
                         logger.debug("Loading plan '" + planKey + "'");
                     }
                     List<Attack> planAttacks = new LinkedList<Attack>();
+                    mAttackPlans.put(planKey, planAttacks);
                     for (Element e1 : (List<Element>) JaxenUtils.getNodes(e, "attacks/attack")) {
                         Attack a = new Attack(e1);
                         if (a != null) {
-                            planAttacks.add(a);
+                            //planAttacks.add(a);
+                            Village source = DataHolder.getSingleton().getVillages()[a.getSource().getX()][a.getSource().getY()];
+                            Village target = DataHolder.getSingleton().getVillages()[a.getTarget().getX()][a.getTarget().getY()];
+                            addAttack(source, target, a.getUnit(), a.getArriveTime(), planKey);
                         }
                     }
-                    for (Attack a : planAttacks) {
-                        a.setSource(DataHolder.getSingleton().getVillages()[a.getSource().getX()][a.getSource().getY()]);
-                        a.setTarget(DataHolder.getSingleton().getVillages()[a.getTarget().getX()][a.getTarget().getY()]);
-                    }
-                    mAttackPlans.put(planKey, planAttacks);
+                /*for (Attack a : planAttacks) {
+                a.setSource(DataHolder.getSingleton().getVillages()[a.getSource().getX()][a.getSource().getY()]);
+                a.setTarget(DataHolder.getSingleton().getVillages()[a.getTarget().getX()][a.getTarget().getY()]);
+                }*/
+
                 }
                 if (logger.isDebugEnabled()) {
                     logger.debug("Attacks loaded successfully");
@@ -174,6 +178,8 @@ public class AttackManager {
         } else {
             attackPlan.add(a);
         }
+        Date sendTime = new Date(a.getArriveTime().getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(a.getSource(), a.getTarget(), a.getUnit().getSpeed()) * 1000));
+        model.addRow(new Object[]{a.getSource(), a.getTarget(), a.getUnit(), sendTime, a.getArriveTime(), Boolean.FALSE});
         fireAttacksChangedEvents(plan);
     }
 
@@ -253,24 +259,25 @@ public class AttackManager {
         }
 
         //clear model
-        while (model.getRowCount() > 0) {
-            model.removeRow(0);
-        }
+      /*  while (model.getRowCount() > 0) {
+        model.removeRow(0);
+        }*/
 
-        List<Attack> planAttacks = mAttackPlans.get(plan);
+        /*if (model.getRowCount() <= 0) {
+            List<Attack> planAttacks = mAttackPlans.get(plan);
 
-        if (planAttacks != null) {
-            for (int i = 0; i < planAttacks.size(); i++) {
-                UnitHolder unit = planAttacks.get(i).getUnit();
-                Date arriveTime = planAttacks.get(i).getArriveTime();
+            if (planAttacks != null) {
+                for (int i = 0; i < planAttacks.size(); i++) {
+                    UnitHolder unit = planAttacks.get(i).getUnit();
+                    Date arriveTime = planAttacks.get(i).getArriveTime();
 
-                Village source = planAttacks.get(i).getSource();
-                Village target = planAttacks.get(i).getTarget();
-                Date sendTime = new Date(arriveTime.getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(source, target, unit.getSpeed()) * 1000));
-                model.addRow(new Object[]{source, target, unit, sendTime, arriveTime, planAttacks.get(i).isShowOnMap()});
+                    Village source = planAttacks.get(i).getSource();
+                    Village target = planAttacks.get(i).getTarget();
+                    Date sendTime = new Date(arriveTime.getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(source, target, unit.getSpeed()) * 1000));
+                    model.addRow(new Object[]{source, target, unit, sendTime, arriveTime, planAttacks.get(i).isShowOnMap()});
+                }
             }
-        }
-
+        }*/
         return model;
     }
 
@@ -284,12 +291,5 @@ public class AttackManager {
         for (AttackManagerListener listener : listeners) {
             listener.fireAttacksChangedEvent(plan);
         }
-    }
-
-    public static void main(String[] args) {
-        String xml = "H:/Software/DSWorkbench/servers/de26/a.xml";
-        AttackManager.getSingleton().loadAttacksFromFile(xml);
-        System.out.println(AttackManager.getSingleton().getPlans().nextElement());
-
     }
 }

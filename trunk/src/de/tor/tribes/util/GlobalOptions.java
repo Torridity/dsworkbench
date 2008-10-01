@@ -9,12 +9,12 @@
 package de.tor.tribes.util;
 
 import de.tor.tribes.io.DataHolder;
-import de.tor.tribes.io.DataHolderListener;
 import de.tor.tribes.io.WorldDecorationHolder;
 import de.tor.tribes.ui.ImageManager;
 import de.tor.tribes.util.attack.AttackManager;
 import de.tor.tribes.util.mark.MarkerManager;
 import de.tor.tribes.util.tag.TagManager;
+import de.tor.tribes.util.troops.TroopsManager;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -131,6 +131,8 @@ public class GlobalOptions {
             AttackManager.getSingleton().loadAttacksFromFile(DataHolder.getSingleton().getDataDirectory() + "/attacks.xml");
             logger.debug("Loading tags");
             TagManager.getSingleton().loadTagsFromFile(DataHolder.getSingleton().getDataDirectory() + "/tags.xml");
+            logger.debug("Loading troops");
+            TroopsManager.getSingleton().loadTroopsFromFile(DataHolder.getSingleton().getDataDirectory() + "/troops.xml");
         }
     }
 

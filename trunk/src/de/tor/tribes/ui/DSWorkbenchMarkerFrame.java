@@ -25,6 +25,7 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableCellRenderer;
 import org.apache.log4j.Logger;
 
 /**
@@ -35,6 +36,7 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
 
     private static Logger logger = Logger.getLogger(DSWorkbenchMarkerFrame.class);
     private static DSWorkbenchMarkerFrame SINGLETON = null;
+    private List<TableCellRenderer> mHeaderRenderers = null;
     // private List<DSWorkbenchFrameListener> mFrameListeners = null;
     /** Creates new form DSWorkbenchMarkerFrame */
     DSWorkbenchMarkerFrame() {
@@ -46,6 +48,29 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
             setAlwaysOnTop(jMarkerFrameAlwaysOnTop.isSelected());
         } catch (Exception e) {
             //setting not available
+        }
+        mHeaderRenderers = new LinkedList<TableCellRenderer>();
+
+        DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
+
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
+                c.setBackground(Constants.DS_BACK);
+                DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
+                r.setText("<html><b>" + r.getText() + "</b></html>");
+                return c;
+            }
+        };
+
+        for (int i = 0; i < 2; i++) {
+            mHeaderRenderers.add(headerRenderer);
+        }
+
+        //set marked only button
+        try {
+            jToggleDrawFilterButton.setSelected(Boolean.parseBoolean(GlobalOptions.getProperty("draw.marked.only")));
+        } catch (Exception e) {
         }
         pack();
     }
@@ -70,6 +95,7 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
         jScrollPane1 = new javax.swing.JScrollPane();
         jMarkerTable = new javax.swing.JTable();
         jRemoveMarkerButton = new javax.swing.JButton();
+        jToggleDrawFilterButton = new javax.swing.JToggleButton();
         jMarkerFrameAlwaysOnTop = new javax.swing.JCheckBox();
 
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("de/tor/tribes/ui/Bundle"); // NOI18N
@@ -120,16 +146,28 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
             }
         });
 
+        jToggleDrawFilterButton.setBackground(new java.awt.Color(239, 235, 223));
+        jToggleDrawFilterButton.setToolTipText(bundle.getString("DSWorkbenchMarkerFrame.jToggleDrawFilterButton.toolTipText")); // NOI18N
+        jToggleDrawFilterButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jToggleDrawFilterButton.setLabel(bundle.getString("DSWorkbenchMarkerFrame.jToggleDrawFilterButton.label")); // NOI18N
+        jToggleDrawFilterButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireDrawMarkedOnlyChangedEvent(evt);
+            }
+        });
+
         javax.swing.GroupLayout jMarkerPanelLayout = new javax.swing.GroupLayout(jMarkerPanel);
         jMarkerPanel.setLayout(jMarkerPanelLayout);
         jMarkerPanelLayout.setHorizontalGroup(
             jMarkerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jMarkerPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jRemoveMarkerButton)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 442, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jMarkerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jToggleDrawFilterButton, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jRemoveMarkerButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
         );
         jMarkerPanelLayout.setVerticalGroup(
             jMarkerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -137,7 +175,10 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
                 .addContainerGap()
                 .addGroup(jMarkerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 283, Short.MAX_VALUE)
-                    .addComponent(jRemoveMarkerButton))
+                    .addGroup(jMarkerPanelLayout.createSequentialGroup()
+                        .addComponent(jRemoveMarkerButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jToggleDrawFilterButton)))
                 .addContainerGap())
         );
 
@@ -157,14 +198,14 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jMarkerFrameAlwaysOnTop)
-                    .addComponent(jMarkerPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 563, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jMarkerPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 563, Short.MAX_VALUE))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jMarkerPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jMarkerPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jMarkerFrameAlwaysOnTop)
                 .addContainerGap())
@@ -185,9 +226,11 @@ private void fireRemoveMarkerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
         //get markers to remove
         List<String> toRemove = new LinkedList<String>();
         for (int i = rows.length - 1; i >= 0; i--) {
-            int row = rows[i];
+            jMarkerTable.invalidate();
+            int row = jMarkerTable.convertRowIndexToModel(rows[i]);
             String value = ((MarkerCell) ((DefaultTableModel) jMarkerTable.getModel()).getValueAt(row, 0)).getMarkerName();
             toRemove.add(value);
+            jMarkerTable.revalidate();
         }
         //remove all selected markers and update the view once
         MarkerManager.getSingleton().removeMarkers(toRemove.toArray(new String[]{}));
@@ -198,6 +241,11 @@ private void fireMarkerFrameOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN
     setAlwaysOnTop(!isAlwaysOnTop());
 }//GEN-LAST:event_fireMarkerFrameOnTopEvent
 
+private void fireDrawMarkedOnlyChangedEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireDrawMarkedOnlyChangedEvent
+    GlobalOptions.addProperty("draw.marked.only", Boolean.toString(jToggleDrawFilterButton.isSelected()));
+    MinimapPanel.getSingleton().redraw();
+}//GEN-LAST:event_fireDrawMarkedOnlyChangedEvent
+ 
   /**Setup marker panel*/
     protected void setupMarkerPanel() {
         jMarkerTable.setModel(MarkerManager.getSingleton().getTableModel());
@@ -236,17 +284,6 @@ private void fireMarkerFrameOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN
         MarkerManager.getSingleton().markerUpdatedExternally();
     }
     
-  /*  public void setVisible(boolean v){
-    super.setVisible(v);
-    fireVisibilityChangedEvents(v);
-}
-    
-     private synchronized void fireVisibilityChangedEvents(boolean v){
-     for(DSWorkbenchFrameListener listener : mFrameListeners){
-         listener.fireVisibilityChangedEvent(this, v);
-     }
-     }
-   */  
        @Override
     public void fireMarkersChangedEvent() {
         jMarkerTable.invalidate();
@@ -255,20 +292,8 @@ private void fireMarkerFrameOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN
         //setup marker table view
         jMarkerTable.getColumnModel().getColumn(1).setMaxWidth(75);
 
-        DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
-
-            @Override
-            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-                Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
-                c.setBackground(Constants.DS_BACK);
-                DefaultTableCellRenderer r = ((DefaultTableCellRenderer)c);
-                r.setText("<html><b>" + r.getText() + "</b></html>");
-                return c;
-            }
-        };
-
         for (int i = 0; i < jMarkerTable.getColumnCount(); i++) {
-            jMarkerTable.getColumn(jMarkerTable.getColumnName(i)).setHeaderRenderer(headerRenderer);
+            jMarkerTable.getColumn(jMarkerTable.getColumnName(i)).setHeaderRenderer(mHeaderRenderers.get(i));
         }
 
         TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(MarkerManager.getSingleton().getTableModel());
@@ -283,6 +308,7 @@ private void fireMarkerFrameOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN
     private javax.swing.JTable jMarkerTable;
     private javax.swing.JButton jRemoveMarkerButton;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JToggleButton jToggleDrawFilterButton;
     // End of variables declaration//GEN-END:variables
 
 }

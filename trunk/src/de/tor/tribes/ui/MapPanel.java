@@ -719,7 +719,12 @@ class RepaintThread extends Thread {
         } catch (Exception e) {
             markActiveVillage = false;
         }
-
+        boolean markedOnly = false;
+        try {
+            markedOnly = Boolean.parseBoolean(GlobalOptions.getProperty("draw.marked.only"));
+        } catch (Exception e) {
+            markedOnly = false;
+        }
         for (int i = 0; i < iVillagesX; i++) {
             for (int j = 0; j < iVillagesY; j++) {
                 Village v = mVisibleVillages[i][j];
@@ -747,6 +752,9 @@ class RepaintThread extends Thread {
                                 }
                             } catch (Throwable t) {
                                 marker = Color.WHITE;
+                                if (markedOnly) {
+                                    marker = null;
+                                }
                             }
                         }
                     }
@@ -768,124 +776,127 @@ class RepaintThread extends Thread {
                     }
 
                 } else {
-                    boolean isLeft = false;
-                    if (v.getTribe() == null) {
-                        isLeft = true;
-                    }
+                    if (marker != null) {
+                        boolean isLeft = false;
+                        if (v.getTribe() == null) {
+                            isLeft = true;
+                        }
 
-                    if (v.getPoints() < 300) {
-                        if (!isLeft) {
-                            Image img = GlobalOptions.getSkin().getImage(Skin.ID_V1, DSWorkbenchMainFrame.getSingleton().getZoom());
-                            if (v.getType() != 0) {
-                                img = GlobalOptions.getSkin().getImage(Skin.ID_B1, DSWorkbenchMainFrame.getSingleton().getZoom());
-                            }
-                            g2d.setColor(marker);
-                            g2d.fillRect(x, y, img.getWidth(null), img.getHeight(null));
-                            g2d.drawImage(img, x, y, null);
-                        } else {
-                            if (v.getType() == 0) {
-                                g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_V1_LEFT, DSWorkbenchMainFrame.getSingleton().getZoom()), x, y, null);
+                        if (v.getPoints() < 300) {
+                            if (!isLeft) {
+                                Image img = GlobalOptions.getSkin().getImage(Skin.ID_V1, DSWorkbenchMainFrame.getSingleton().getZoom());
+                                if (v.getType() != 0) {
+                                    img = GlobalOptions.getSkin().getImage(Skin.ID_B1, DSWorkbenchMainFrame.getSingleton().getZoom());
+                                }
+                                g2d.setColor(marker);
+                                g2d.fillRect(x, y, img.getWidth(null), img.getHeight(null));
+                                g2d.drawImage(img, x, y, null);
                             } else {
-                                g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_B1_LEFT, DSWorkbenchMainFrame.getSingleton().getZoom()), x, y, null);
+                                if (v.getType() == 0) {
+                                    g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_V1_LEFT, DSWorkbenchMainFrame.getSingleton().getZoom()), x, y, null);
+                                } else {
+                                    g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_B1_LEFT, DSWorkbenchMainFrame.getSingleton().getZoom()), x, y, null);
+                                }
+                            }
+                        } else if (v.getPoints() < 1000) {
+                            if (!isLeft) {
+                                Image img = GlobalOptions.getSkin().getImage(Skin.ID_V2, DSWorkbenchMainFrame.getSingleton().getZoom());
+                                if (v.getType() != 0) {
+                                    img = GlobalOptions.getSkin().getImage(Skin.ID_B2, DSWorkbenchMainFrame.getSingleton().getZoom());
+                                }
+                                g2d.setColor(marker);
+                                g2d.fillRect(x, y, img.getWidth(null), img.getHeight(null));
+                                g2d.drawImage(img, x, y, null);
+                            } else {
+                                if (v.getType() == 0) {
+                                    g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_V2_LEFT, DSWorkbenchMainFrame.getSingleton().getZoom()), x, y, null);
+                                } else {
+                                    g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_B2_LEFT, DSWorkbenchMainFrame.getSingleton().getZoom()), x, y, null);
+                                }
+                            }
+                        } else if (v.getPoints() < 3000) {
+                            if (!isLeft) {
+                                Image img = GlobalOptions.getSkin().getImage(Skin.ID_V3, DSWorkbenchMainFrame.getSingleton().getZoom());
+                                if (v.getType() != 0) {
+                                    img = GlobalOptions.getSkin().getImage(Skin.ID_B3, DSWorkbenchMainFrame.getSingleton().getZoom());
+                                }
+                                g2d.setColor(marker);
+                                g2d.fillRect(x, y, img.getWidth(null), img.getHeight(null));
+                                g2d.drawImage(img, x, y, null);
+                            } else {
+                                if (v.getType() == 0) {
+                                    g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_V3_LEFT, DSWorkbenchMainFrame.getSingleton().getZoom()), x, y, null);
+                                } else {
+                                    g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_B3_LEFT, DSWorkbenchMainFrame.getSingleton().getZoom()), x, y, null);
+                                }
+                            }
+                        } else if (v.getPoints() < 9000) {
+                            if (!isLeft) {
+                                Image img = GlobalOptions.getSkin().getImage(Skin.ID_V4, DSWorkbenchMainFrame.getSingleton().getZoom());
+                                if (v.getType() != 0) {
+                                    img = GlobalOptions.getSkin().getImage(Skin.ID_B4, DSWorkbenchMainFrame.getSingleton().getZoom());
+                                }
+                                g2d.setColor(marker);
+                                g2d.fillRect(x, y, img.getWidth(null), img.getHeight(null));
+                                g2d.drawImage(img, x, y, null);
+                            } else {
+                                if (v.getType() == 0) {
+                                    g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_V4_LEFT, DSWorkbenchMainFrame.getSingleton().getZoom()), x, y, null);
+                                } else {
+                                    g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_B4_LEFT, DSWorkbenchMainFrame.getSingleton().getZoom()), x, y, null);
+                                }
+                            }
+                        } else if (v.getPoints() < 11000) {
+                            /* if (xC == 0) {
+                            xC = x;
+                            yC = y;
+                            }*/
+                            if (!isLeft) {
+                                Image img = GlobalOptions.getSkin().getImage(Skin.ID_V5, DSWorkbenchMainFrame.getSingleton().getZoom());
+                                if (v.getType() != 0) {
+                                    img = GlobalOptions.getSkin().getImage(Skin.ID_B5, DSWorkbenchMainFrame.getSingleton().getZoom());
+                                }
+                                g2d.setColor(marker);
+                                g2d.fillRect(x, y, img.getWidth(null), img.getHeight(null));
+                                g2d.drawImage(img, x, y, null);
+                            } else {
+                                if (v.getType() == 0) {
+                                    g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_V5_LEFT, DSWorkbenchMainFrame.getSingleton().getZoom()), x, y, null);
+                                } else {
+                                    g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_B5_LEFT, DSWorkbenchMainFrame.getSingleton().getZoom()), x, y, null);
+                                }
+                            }
+                        } else {
+                            if (!isLeft) {
+                                Image img = GlobalOptions.getSkin().getImage(Skin.ID_V6, DSWorkbenchMainFrame.getSingleton().getZoom());
+                                if (v.getType() != 0) {
+                                    img = GlobalOptions.getSkin().getImage(Skin.ID_B6, DSWorkbenchMainFrame.getSingleton().getZoom());
+                                }
+                                g2d.setColor(marker);
+                                g2d.fillRect(x, y, img.getWidth(null), img.getHeight(null));
+                                g2d.drawImage(img, x, y, null);
+                            } else {
+                                if (v.getType() == 0) {
+                                    g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_V6_LEFT, DSWorkbenchMainFrame.getSingleton().getZoom()), x, y, null);
+                                } else {
+                                    g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_B6_LEFT, DSWorkbenchMainFrame.getSingleton().getZoom()), x, y, null);
+                                }
                             }
                         }
-                    } else if (v.getPoints() < 1000) {
-                        if (!isLeft) {
-                            Image img = GlobalOptions.getSkin().getImage(Skin.ID_V2, DSWorkbenchMainFrame.getSingleton().getZoom());
-                            if (v.getType() != 0) {
-                                img = GlobalOptions.getSkin().getImage(Skin.ID_B2, DSWorkbenchMainFrame.getSingleton().getZoom());
-                            }
-                            g2d.setColor(marker);
-                            g2d.fillRect(x, y, img.getWidth(null), img.getHeight(null));
-                            g2d.drawImage(img, x, y, null);
-                        } else {
-                            if (v.getType() == 0) {
-                                g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_V2_LEFT, DSWorkbenchMainFrame.getSingleton().getZoom()), x, y, null);
-                            } else {
-                                g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_B2_LEFT, DSWorkbenchMainFrame.getSingleton().getZoom()), x, y, null);
-                            }
-                        }
-                    } else if (v.getPoints() < 3000) {
-                        if (!isLeft) {
-                            Image img = GlobalOptions.getSkin().getImage(Skin.ID_V3, DSWorkbenchMainFrame.getSingleton().getZoom());
-                            if (v.getType() != 0) {
-                                img = GlobalOptions.getSkin().getImage(Skin.ID_B3, DSWorkbenchMainFrame.getSingleton().getZoom());
-                            }
-                            g2d.setColor(marker);
-                            g2d.fillRect(x, y, img.getWidth(null), img.getHeight(null));
-                            g2d.drawImage(img, x, y, null);
-                        } else {
-                            if (v.getType() == 0) {
-                                g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_V3_LEFT, DSWorkbenchMainFrame.getSingleton().getZoom()), x, y, null);
-                            } else {
-                                g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_B3_LEFT, DSWorkbenchMainFrame.getSingleton().getZoom()), x, y, null);
-                            }
-                        }
-                    } else if (v.getPoints() < 9000) {
-                        if (!isLeft) {
-                            Image img = GlobalOptions.getSkin().getImage(Skin.ID_V4, DSWorkbenchMainFrame.getSingleton().getZoom());
-                            if (v.getType() != 0) {
-                                img = GlobalOptions.getSkin().getImage(Skin.ID_B4, DSWorkbenchMainFrame.getSingleton().getZoom());
-                            }
-                            g2d.setColor(marker);
-                            g2d.fillRect(x, y, img.getWidth(null), img.getHeight(null));
-                            g2d.drawImage(img, x, y, null);
-                        } else {
-                            if (v.getType() == 0) {
-                                g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_V4_LEFT, DSWorkbenchMainFrame.getSingleton().getZoom()), x, y, null);
-                            } else {
-                                g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_B4_LEFT, DSWorkbenchMainFrame.getSingleton().getZoom()), x, y, null);
-                            }
-                        }
-                    } else if (v.getPoints() < 11000) {
-                        /* if (xC == 0) {
-                        xC = x;
-                        yC = y;
-                        }*/
-                        if (!isLeft) {
-                            Image img = GlobalOptions.getSkin().getImage(Skin.ID_V5, DSWorkbenchMainFrame.getSingleton().getZoom());
-                            if (v.getType() != 0) {
-                                img = GlobalOptions.getSkin().getImage(Skin.ID_B5, DSWorkbenchMainFrame.getSingleton().getZoom());
-                            }
-                            g2d.setColor(marker);
-                            g2d.fillRect(x, y, img.getWidth(null), img.getHeight(null));
-                            g2d.drawImage(img, x, y, null);
-                        } else {
-                            if (v.getType() == 0) {
-                                g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_V5_LEFT, DSWorkbenchMainFrame.getSingleton().getZoom()), x, y, null);
-                            } else {
-                                g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_B5_LEFT, DSWorkbenchMainFrame.getSingleton().getZoom()), x, y, null);
+
+                        if (markActiveVillage) {
+                            Village current = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage();
+                            if (current != null) {
+                                if (v.compareTo(current) == 0) {
+                                    markX = x + (int) Math.round(width / 2);
+                                    markY = y + (int) Math.round(height / 2);
+                                }
                             }
                         }
                     } else {
-                        if (!isLeft) {
-                            Image img = GlobalOptions.getSkin().getImage(Skin.ID_V6, DSWorkbenchMainFrame.getSingleton().getZoom());
-                            if (v.getType() != 0) {
-                                img = GlobalOptions.getSkin().getImage(Skin.ID_B6, DSWorkbenchMainFrame.getSingleton().getZoom());
-                            }
-                            g2d.setColor(marker);
-                            g2d.fillRect(x, y, img.getWidth(null), img.getHeight(null));
-                            g2d.drawImage(img, x, y, null);
-                        } else {
-                            if (v.getType() == 0) {
-                                g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_V6_LEFT, DSWorkbenchMainFrame.getSingleton().getZoom()), x, y, null);
-                            } else {
-                                g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_B6_LEFT, DSWorkbenchMainFrame.getSingleton().getZoom()), x, y, null);
-                            }
-                        }
-                    }
-
-                    if (markActiveVillage) {
-                        Village current = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage();
-                        if (current != null) {
-                            if (v.compareTo(current) == 0) {
-                                markX = x + (int) Math.round(width / 2);
-                                markY = y + (int) Math.round(height / 2);
-                            }
-                        }
+                        g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, DSWorkbenchMainFrame.getSingleton().getZoom()), x, y, null);
                     }
                 }
-
 
                 //</editor-fold>
 

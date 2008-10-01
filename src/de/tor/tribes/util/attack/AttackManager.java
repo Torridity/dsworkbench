@@ -11,6 +11,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.Village;
+import de.tor.tribes.ui.editors.AttackManagerTableModel;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.io.File;
@@ -33,7 +34,6 @@ public class AttackManager {
     private Hashtable<String, List<Attack>> mAttackPlans = null;
     private static final String DEFAULT_PLAN_ID = "default";
     private List<AttackManagerListener> mManagerListeners = null;
-    private DefaultTableModel model = null;
 
     public static synchronized AttackManager getSingleton() {
         if (SINGLETON == null) {
@@ -46,22 +46,6 @@ public class AttackManager {
         mAttackPlans = new Hashtable<String, List<Attack>>();
         mAttackPlans.put(DEFAULT_PLAN_ID, new LinkedList<Attack>());
         mManagerListeners = new LinkedList<AttackManagerListener>();
-        model = new javax.swing.table.DefaultTableModel(
-                new Object[][]{},
-                new String[]{
-                    "Herkunft", "Ziel", "Einheit", "Abschickzeit", "Ankunftzeit", "Einzeichnen"
-                }) {
-
-            Class[] types = new Class[]{
-                Village.class, Village.class, UnitHolder.class, Date.class, Date.class, Boolean.class
-            };
-
-            @Override
-            public Class getColumnClass(int columnIndex) {
-                return types[columnIndex];
-            }
-        };
-
     }
 
     public synchronized void addAttackManagerListener(AttackManagerListener pListener) {
@@ -100,18 +84,13 @@ public class AttackManager {
                             //planAttacks.add(a);
                             Village source = DataHolder.getSingleton().getVillages()[a.getSource().getX()][a.getSource().getY()];
                             Village target = DataHolder.getSingleton().getVillages()[a.getTarget().getX()][a.getTarget().getY()];
-                            addAttack(source, target, a.getUnit(), a.getArriveTime(), planKey);
+                            //addAttack(source, target, a.getUnit(), a.getArriveTime(), planKey);
+                            Date sendTime = new Date(a.getArriveTime().getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(source, target, a.getUnit().getSpeed()) * 1000));
+                            AttackManagerTableModel.getSingleton().addRow(new Object[]{source, target, a.getUnit(), sendTime, a.getArriveTime(), a.isShowOnMap()});
                         }
                     }
-                /*for (Attack a : planAttacks) {
-                a.setSource(DataHolder.getSingleton().getVillages()[a.getSource().getX()][a.getSource().getY()]);
-                a.setTarget(DataHolder.getSingleton().getVillages()[a.getTarget().getX()][a.getTarget().getY()]);
-                }*/
-
                 }
-                if (logger.isDebugEnabled()) {
                     logger.debug("Attacks loaded successfully");
-                }
             } catch (Exception e) {
                 logger.error("Failed to load attacks", e);
             }
@@ -178,8 +157,6 @@ public class AttackManager {
         } else {
             attackPlan.add(a);
         }
-        Date sendTime = new Date(a.getArriveTime().getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(a.getSource(), a.getTarget(), a.getUnit().getSpeed()) * 1000));
-        model.addRow(new Object[]{a.getSource(), a.getTarget(), a.getUnit(), sendTime, a.getArriveTime(), Boolean.FALSE});
         fireAttacksChangedEvents(plan);
     }
 
@@ -244,41 +221,6 @@ public class AttackManager {
 
     public void attacksUpdatedExternally(String pPlan) {
         fireAttacksChangedEvents(pPlan);
-    }
-
-    /**Get the table model for the default plan*/
-    public synchronized DefaultTableModel getTableModel() {
-        return getTableModel(null);
-    }
-
-    /**Get the table model for any plan*/
-    public synchronized DefaultTableModel getTableModel(String pPlan) {
-        String plan = pPlan;
-        if (plan == null) {
-            plan = DEFAULT_PLAN_ID;
-        }
-
-        //clear model
-      /*  while (model.getRowCount() > 0) {
-        model.removeRow(0);
-        }*/
-
-        /*if (model.getRowCount() <= 0) {
-            List<Attack> planAttacks = mAttackPlans.get(plan);
-
-            if (planAttacks != null) {
-                for (int i = 0; i < planAttacks.size(); i++) {
-                    UnitHolder unit = planAttacks.get(i).getUnit();
-                    Date arriveTime = planAttacks.get(i).getArriveTime();
-
-                    Village source = planAttacks.get(i).getSource();
-                    Village target = planAttacks.get(i).getTarget();
-                    Date sendTime = new Date(arriveTime.getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(source, target, unit.getSpeed()) * 1000));
-                    model.addRow(new Object[]{source, target, unit, sendTime, arriveTime, planAttacks.get(i).isShowOnMap()});
-                }
-            }
-        }*/
-        return model;
     }
 
     /**Notify attack manager listeners about changes*/

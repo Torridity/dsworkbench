@@ -5,6 +5,7 @@
  */
 package de.tor.tribes.ui;
 
+import java.awt.Dimension;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -17,9 +18,13 @@ import javax.swing.JFrame;
  */
 public class ToolBoxFrame extends javax.swing.JFrame {
 
-    private HideThread hThread = null;
     private int dx = 0;
     private int dy = 0;
+    private int layout = javax.swing.BoxLayout.Y_AXIS;
+    private final int iWidth = 30;
+    private final int iHeight = 600;
+    private final int iLabelHeight = 4;
+    private final int iLabelWidth = 30;
 
     /** Creates new form ToolBoxFrame */
     public ToolBoxFrame() {
@@ -27,8 +32,6 @@ public class ToolBoxFrame extends javax.swing.JFrame {
         buildButtons();
         initListeners();
         pack();
-        hThread = new HideThread(this);
-        hThread.start();
     }
 
     private void buildButtons() {
@@ -56,6 +59,40 @@ public class ToolBoxFrame extends javax.swing.JFrame {
         }
     }
 
+    private int getCurrentLayout() {
+        return layout;
+    }
+
+    private void setCurrentLayout(int pLayout) {
+        layout = pLayout;
+        getContentPane().setLayout(new javax.swing.BoxLayout(getContentPane(), layout));
+        if (layout == javax.swing.BoxLayout.Y_AXIS) {
+            setSize(iWidth, iHeight);
+            Dimension dim = new Dimension(iLabelWidth, iLabelHeight);
+            jLabel1.setMaximumSize(dim);
+            jLabel1.setMinimumSize(dim);
+            jLabel1.setPreferredSize(dim);
+            jLabel2.setMaximumSize(dim);
+            jLabel2.setMinimumSize(dim);
+            jLabel2.setPreferredSize(dim);
+            jLabel3.setMaximumSize(dim);
+            jLabel3.setMinimumSize(dim);
+            jLabel3.setPreferredSize(dim);
+        } else {
+            setSize(iHeight, iWidth);
+            Dimension dim = new Dimension(iLabelHeight, iLabelWidth);
+            jLabel1.setMaximumSize(dim);
+            jLabel1.setMinimumSize(dim);
+            jLabel1.setPreferredSize(dim);
+            jLabel2.setMaximumSize(dim);
+            jLabel2.setMinimumSize(dim);
+            jLabel2.setPreferredSize(dim);
+            jLabel3.setMaximumSize(dim);
+            jLabel3.setMinimumSize(dim);
+            jLabel3.setPreferredSize(dim);
+        }
+    }
+
     private void initListeners() {
         jDragLabel.addMouseListener(new MouseListener() {
 
@@ -63,7 +100,11 @@ public class ToolBoxFrame extends javax.swing.JFrame {
             public void mouseClicked(MouseEvent e) {
                 if (e.getButton() == MouseEvent.BUTTON1) {
                     if (e.getClickCount() == 2) {
-                        hThread.setHidden(!hThread.isHidden());
+                        if (getCurrentLayout() == javax.swing.BoxLayout.X_AXIS) {
+                            setCurrentLayout(javax.swing.BoxLayout.Y_AXIS);
+                        } else {
+                            setCurrentLayout(javax.swing.BoxLayout.X_AXIS);
+                        }
                     }
                 }
             }
@@ -111,7 +152,7 @@ public class ToolBoxFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel1 = new javax.swing.JPanel();
+        jDragLabel = new javax.swing.JLabel();
         jMeasureButton = new javax.swing.JButton();
         jMarkButton = new javax.swing.JButton();
         jTagButton = new javax.swing.JButton();
@@ -133,18 +174,19 @@ public class ToolBoxFrame extends javax.swing.JFrame {
         jSearchButton = new javax.swing.JButton();
         jClockButton = new javax.swing.JButton();
         jSettingsButton = new javax.swing.JButton();
-        jDragLabel = new javax.swing.JLabel();
 
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("de/tor/tribes/ui/Bundle"); // NOI18N
         setTitle(bundle.getString("ToolBoxFrame.title")); // NOI18N
         setAlwaysOnTop(true);
-        setResizable(false);
+        setMinimumSize(new java.awt.Dimension(30, 30));
         setUndecorated(true);
+        getContentPane().setLayout(new javax.swing.BoxLayout(getContentPane(), javax.swing.BoxLayout.Y_AXIS));
 
-        jPanel1.setMaximumSize(new java.awt.Dimension(30, 330));
-        jPanel1.setMinimumSize(new java.awt.Dimension(30, 330));
-        jPanel1.setPreferredSize(new java.awt.Dimension(30, 330));
-        jPanel1.setLayout(new javax.swing.BoxLayout(jPanel1, javax.swing.BoxLayout.Y_AXIS));
+        jDragLabel.setBackground(new java.awt.Color(153, 153, 153));
+        jDragLabel.setMaximumSize(new java.awt.Dimension(30, 30));
+        jDragLabel.setMinimumSize(new java.awt.Dimension(30, 30));
+        jDragLabel.setPreferredSize(new java.awt.Dimension(30, 30));
+        getContentPane().add(jDragLabel);
 
         jMeasureButton.setToolTipText(bundle.getString("ToolBoxFrame.jMeasureButton.toolTipText")); // NOI18N
         jMeasureButton.setMaximumSize(new java.awt.Dimension(30, 30));
@@ -155,7 +197,7 @@ public class ToolBoxFrame extends javax.swing.JFrame {
                 fireToolClickedEvent(evt);
             }
         });
-        jPanel1.add(jMeasureButton);
+        getContentPane().add(jMeasureButton);
 
         jMarkButton.setToolTipText(bundle.getString("ToolBoxFrame.jMarkButton.toolTipText")); // NOI18N
         jMarkButton.setMaximumSize(new java.awt.Dimension(30, 30));
@@ -166,7 +208,7 @@ public class ToolBoxFrame extends javax.swing.JFrame {
                 fireToolClickedEvent(evt);
             }
         });
-        jPanel1.add(jMarkButton);
+        getContentPane().add(jMarkButton);
 
         jTagButton.setToolTipText(bundle.getString("ToolBoxFrame.jTagButton.toolTipText")); // NOI18N
         jTagButton.setMaximumSize(new java.awt.Dimension(30, 30));
@@ -177,7 +219,7 @@ public class ToolBoxFrame extends javax.swing.JFrame {
                 fireToolClickedEvent(evt);
             }
         });
-        jPanel1.add(jTagButton);
+        getContentPane().add(jTagButton);
 
         jSendTroopsIngameButton.setToolTipText(bundle.getString("ToolBoxFrame.jSendTroopsIngameButton.toolTipText")); // NOI18N
         jSendTroopsIngameButton.setMaximumSize(new java.awt.Dimension(30, 30));
@@ -188,7 +230,7 @@ public class ToolBoxFrame extends javax.swing.JFrame {
                 fireToolClickedEvent(evt);
             }
         });
-        jPanel1.add(jSendTroopsIngameButton);
+        getContentPane().add(jSendTroopsIngameButton);
 
         jSendResIngameButton.setToolTipText(bundle.getString("ToolBoxFrame.jSendResIngameButton.toolTipText")); // NOI18N
         jSendResIngameButton.setMaximumSize(new java.awt.Dimension(30, 30));
@@ -199,14 +241,14 @@ public class ToolBoxFrame extends javax.swing.JFrame {
                 fireToolClickedEvent(evt);
             }
         });
-        jPanel1.add(jSendResIngameButton);
+        getContentPane().add(jSendResIngameButton);
 
         jLabel2.setBackground(new java.awt.Color(102, 102, 102));
         jLabel2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        jLabel2.setMaximumSize(new java.awt.Dimension(40, 4));
-        jLabel2.setMinimumSize(new java.awt.Dimension(40, 4));
-        jLabel2.setPreferredSize(new java.awt.Dimension(40, 4));
-        jPanel1.add(jLabel2);
+        jLabel2.setMaximumSize(new java.awt.Dimension(30, 4));
+        jLabel2.setMinimumSize(new java.awt.Dimension(30, 4));
+        jLabel2.setPreferredSize(new java.awt.Dimension(30, 4));
+        getContentPane().add(jLabel2);
 
         jAttackAxeButton.setToolTipText(bundle.getString("ToolBoxFrame.jAttackAxeButton.toolTipText")); // NOI18N
         jAttackAxeButton.setMaximumSize(new java.awt.Dimension(30, 30));
@@ -217,7 +259,7 @@ public class ToolBoxFrame extends javax.swing.JFrame {
                 fireToolClickedEvent(evt);
             }
         });
-        jPanel1.add(jAttackAxeButton);
+        getContentPane().add(jAttackAxeButton);
 
         jAttackRamButton.setToolTipText(bundle.getString("ToolBoxFrame.jAttackRamButton.toolTipText")); // NOI18N
         jAttackRamButton.setMaximumSize(new java.awt.Dimension(30, 30));
@@ -228,7 +270,7 @@ public class ToolBoxFrame extends javax.swing.JFrame {
                 fireToolClickedEvent(evt);
             }
         });
-        jPanel1.add(jAttackRamButton);
+        getContentPane().add(jAttackRamButton);
 
         jAttackSnobButton.setToolTipText(bundle.getString("ToolBoxFrame.jAttackSnobButton.toolTipText")); // NOI18N
         jAttackSnobButton.setMaximumSize(new java.awt.Dimension(30, 30));
@@ -239,7 +281,7 @@ public class ToolBoxFrame extends javax.swing.JFrame {
                 fireToolClickedEvent(evt);
             }
         });
-        jPanel1.add(jAttackSnobButton);
+        getContentPane().add(jAttackSnobButton);
 
         jAttackSpyButton.setToolTipText(bundle.getString("ToolBoxFrame.jAttackSpyButton.toolTipText")); // NOI18N
         jAttackSpyButton.setMaximumSize(new java.awt.Dimension(30, 30));
@@ -250,7 +292,7 @@ public class ToolBoxFrame extends javax.swing.JFrame {
                 fireToolClickedEvent(evt);
             }
         });
-        jPanel1.add(jAttackSpyButton);
+        getContentPane().add(jAttackSpyButton);
 
         jAttackSwordButton.setToolTipText(bundle.getString("ToolBoxFrame.jAttackSwordButton.toolTipText")); // NOI18N
         jAttackSwordButton.setMaximumSize(new java.awt.Dimension(30, 30));
@@ -261,7 +303,7 @@ public class ToolBoxFrame extends javax.swing.JFrame {
                 fireToolClickedEvent(evt);
             }
         });
-        jPanel1.add(jAttackSwordButton);
+        getContentPane().add(jAttackSwordButton);
 
         jAttackLightButton.setToolTipText(bundle.getString("ToolBoxFrame.jAttackLightButton.toolTipText")); // NOI18N
         jAttackLightButton.setMaximumSize(new java.awt.Dimension(30, 30));
@@ -272,7 +314,7 @@ public class ToolBoxFrame extends javax.swing.JFrame {
                 fireToolClickedEvent(evt);
             }
         });
-        jPanel1.add(jAttackLightButton);
+        getContentPane().add(jAttackLightButton);
 
         jAttackHeavyButton.setToolTipText(bundle.getString("ToolBoxFrame.jAttackHeavyButton.toolTipText")); // NOI18N
         jAttackHeavyButton.setMaximumSize(new java.awt.Dimension(30, 30));
@@ -283,14 +325,14 @@ public class ToolBoxFrame extends javax.swing.JFrame {
                 fireToolClickedEvent(evt);
             }
         });
-        jPanel1.add(jAttackHeavyButton);
+        getContentPane().add(jAttackHeavyButton);
 
         jLabel1.setBackground(new java.awt.Color(102, 102, 102));
         jLabel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        jLabel1.setMaximumSize(new java.awt.Dimension(40, 4));
-        jLabel1.setMinimumSize(new java.awt.Dimension(40, 4));
-        jLabel1.setPreferredSize(new java.awt.Dimension(40, 4));
-        jPanel1.add(jLabel1);
+        jLabel1.setMaximumSize(new java.awt.Dimension(30, 4));
+        jLabel1.setMinimumSize(new java.awt.Dimension(30, 4));
+        jLabel1.setPreferredSize(new java.awt.Dimension(30, 4));
+        getContentPane().add(jLabel1);
 
         jMoveButton.setToolTipText(bundle.getString("ToolBoxFrame.jMoveButton.toolTipText")); // NOI18N
         jMoveButton.setMaximumSize(new java.awt.Dimension(30, 30));
@@ -301,7 +343,7 @@ public class ToolBoxFrame extends javax.swing.JFrame {
                 fireToolClickedEvent(evt);
             }
         });
-        jPanel1.add(jMoveButton);
+        getContentPane().add(jMoveButton);
 
         jZoomButton.setToolTipText(bundle.getString("ToolBoxFrame.jZoomButton.toolTipText")); // NOI18N
         jZoomButton.setMaximumSize(new java.awt.Dimension(30, 30));
@@ -312,7 +354,7 @@ public class ToolBoxFrame extends javax.swing.JFrame {
                 fireToolClickedEvent(evt);
             }
         });
-        jPanel1.add(jZoomButton);
+        getContentPane().add(jZoomButton);
 
         jShotButton.setToolTipText(bundle.getString("ToolBoxFrame.jShotButton.toolTipText")); // NOI18N
         jShotButton.setMaximumSize(new java.awt.Dimension(30, 30));
@@ -323,14 +365,14 @@ public class ToolBoxFrame extends javax.swing.JFrame {
                 fireToolClickedEvent(evt);
             }
         });
-        jPanel1.add(jShotButton);
+        getContentPane().add(jShotButton);
 
         jLabel3.setBackground(new java.awt.Color(102, 102, 102));
         jLabel3.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        jLabel3.setMaximumSize(new java.awt.Dimension(40, 4));
-        jLabel3.setMinimumSize(new java.awt.Dimension(40, 4));
-        jLabel3.setPreferredSize(new java.awt.Dimension(40, 4));
-        jPanel1.add(jLabel3);
+        jLabel3.setMaximumSize(new java.awt.Dimension(30, 4));
+        jLabel3.setMinimumSize(new java.awt.Dimension(30, 4));
+        jLabel3.setPreferredSize(new java.awt.Dimension(30, 4));
+        getContentPane().add(jLabel3);
 
         jSearchButton.setToolTipText(bundle.getString("ToolBoxFrame.jSearchButton.toolTipText")); // NOI18N
         jSearchButton.setMaximumSize(new java.awt.Dimension(30, 30));
@@ -341,7 +383,7 @@ public class ToolBoxFrame extends javax.swing.JFrame {
                 fireToolClickedEvent(evt);
             }
         });
-        jPanel1.add(jSearchButton);
+        getContentPane().add(jSearchButton);
 
         jClockButton.setToolTipText(bundle.getString("ToolBoxFrame.jClockButton.toolTipText")); // NOI18N
         jClockButton.setMaximumSize(new java.awt.Dimension(30, 30));
@@ -352,7 +394,7 @@ public class ToolBoxFrame extends javax.swing.JFrame {
                 fireToolClickedEvent(evt);
             }
         });
-        jPanel1.add(jClockButton);
+        getContentPane().add(jClockButton);
 
         jSettingsButton.setToolTipText(bundle.getString("ToolBoxFrame.jSettingsButton.toolTipText")); // NOI18N
         jSettingsButton.setMaximumSize(new java.awt.Dimension(30, 30));
@@ -363,28 +405,7 @@ public class ToolBoxFrame extends javax.swing.JFrame {
                 fireToolClickedEvent(evt);
             }
         });
-        jPanel1.add(jSettingsButton);
-
-        jDragLabel.setBackground(new java.awt.Color(153, 153, 153));
-        jDragLabel.setMaximumSize(new java.awt.Dimension(30, 30));
-        jDragLabel.setMinimumSize(new java.awt.Dimension(30, 30));
-        jDragLabel.setPreferredSize(new java.awt.Dimension(30, 30));
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jDragLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jDragLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 525, Short.MAX_VALUE)
-                .addContainerGap())
-        );
+        getContentPane().add(jSettingsButton);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -394,7 +415,7 @@ private void fireToolClickedEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
         MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_MEASURE);
     } else if (evt.getSource() == jMarkButton) {
         MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_MARK);
-    }else if (evt.getSource() == jTagButton) {
+    } else if (evt.getSource() == jTagButton) {
         MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_TAG);
     } else if (evt.getSource() == jSendTroopsIngameButton) {
         MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_INGAME);
@@ -418,7 +439,7 @@ private void fireToolClickedEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
         MinimapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_MOVE);
     } else if (evt.getSource() == jZoomButton) {
         MinimapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ZOOM);
-    }else if (evt.getSource() == jShotButton) {
+    } else if (evt.getSource() == jShotButton) {
         MinimapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_SHOT);
     } else if (evt.getSource() == jSearchButton) {
         SearchFrame.getSingleton().setVisible(true);
@@ -428,18 +449,6 @@ private void fireToolClickedEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
         ClockFrame.getSingleton().setVisible(true);
     }
 }//GEN-LAST:event_fireToolClickedEvent
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        java.awt.EventQueue.invokeLater(new Runnable() {
-
-            public void run() {
-                new ToolBoxFrame().setVisible(true);
-            }
-        });
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jAttackAxeButton;
@@ -457,7 +466,6 @@ private void fireToolClickedEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
     private javax.swing.JButton jMarkButton;
     private javax.swing.JButton jMeasureButton;
     private javax.swing.JButton jMoveButton;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JButton jSearchButton;
     private javax.swing.JButton jSendResIngameButton;
     private javax.swing.JButton jSendTroopsIngameButton;
@@ -468,42 +476,3 @@ private void fireToolClickedEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
     // End of variables declaration//GEN-END:variables
 }
 
-class HideThread extends Thread {
-
-    JFrame mParent;
-    boolean hidden = false;
-
-    public HideThread(JFrame pParent) {
-        mParent = pParent;
-        setDaemon(true);
-    }
-
-    public void setHidden(boolean v) {
-        hidden = v;
-    }
-
-    public boolean isHidden() {
-        return hidden;
-    }
-
-    @Override
-    public void run() {
-        while (true) {
-            if (hidden) {
-                if (mParent.getHeight() > 40) {
-                    mParent.setSize(mParent.getWidth(), mParent.getHeight() - 10);
-                }
-            } else {
-                if (mParent.getHeight() < 610) {
-                    if (mParent.getHeight() != 610) {
-                        mParent.setSize(mParent.getWidth(), mParent.getHeight() + 10);
-                    }
-                }
-            }
-            try {
-                Thread.sleep(10);
-            } catch (Exception e) {
-            }
-        }
-    }
-}

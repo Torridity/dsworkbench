@@ -31,6 +31,7 @@ import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
+import javax.swing.plaf.OptionPaneUI;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
@@ -110,8 +111,8 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame {
                 if (tCurrent == null) {
                     logger.warn("Could not get current user village. Probably no active user is selected.");
                     return;
-                }else{
-                     jSourceVillageList.setModel(new DefaultComboBoxModel(tCurrent.getVillageList().toArray()));
+                } else {
+                    jSourceVillageList.setModel(new DefaultComboBoxModel(tCurrent.getVillageList().toArray()));
                 }
             }
             DefaultComboBoxModel targetAllyModel = new DefaultComboBoxModel(aAllies);
@@ -528,14 +529,30 @@ private void fireAddAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:even
 private void fireRemoveAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireRemoveAttackEvent
     int[] rows = jAttacksTable.getSelectedRows();
     if ((rows != null) && (rows.length > 0)) {
+        String message = "Angriff entfernen?";
+        if (rows.length > 1) {
+            message = rows.length + " Angriffe entfernen?";
+        }
+        int res = JOptionPane.showConfirmDialog(this, message, "Angriff entfernen", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        if (res != JOptionPane.YES_OPTION) {
+            return;
+        }
         for (int i = rows.length - 1; i >= 0; i--) {
-            int row = rows[i];
+            jAttacksTable.invalidate();
+            int row = jAttacksTable.convertRowIndexToModel(rows[i]);
             ((DefaultTableModel) jAttacksTable.getModel()).removeRow(row);
+            jAttacksTable.revalidate();
         }
     }
 }//GEN-LAST:event_fireRemoveAttackEvent
 
 private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCalculateAttackEvent
+
+    Tribe target = (Tribe) jTargetPlayerList.getSelectedItem();
+    if (target == null) {
+        JOptionPane.showMessageDialog(this, "Kein Ziel-Spieler ausgewählt", "Fehler", JOptionPane.ERROR_MESSAGE);
+        return;
+    }
 
     Hashtable<Village, Hashtable<Village, UnitHolder>> attacks = new Hashtable<Village, Hashtable<Village, UnitHolder>>();
     List<Village> notAssigned = new LinkedList<Village>();
@@ -555,7 +572,6 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
 
         Village vTarget = null;
 
-        Tribe target = (Tribe) jTargetPlayerList.getSelectedItem();
         //search all tribes and villages for targets
         for (Village v : target.getVillageList()) {
             double time = DSCalculator.calculateMoveTimeInSeconds(vSource, v, uSource.getSpeed());
@@ -756,7 +772,7 @@ private void fireTargetAllyChangedEvent(java.awt.event.ActionEvent evt) {//GEN-F
     Ally a = (Ally) jTargetAllyList.getSelectedItem();
     Tribe[] tribes = a.getTribes().toArray(new Tribe[]{});
     Arrays.sort(tribes, Tribe.CASE_INSENSITIVE_ORDER);
-    jTargetPlayerList.setModel(new DefaultComboBoxModel(tribes));           
+    jTargetPlayerList.setModel(new DefaultComboBoxModel(tribes));
 }//GEN-LAST:event_fireTargetAllyChangedEvent
 
     private void showResults(Hashtable<Village, Hashtable<Village, UnitHolder>> pAttacks) {
@@ -801,7 +817,7 @@ private void fireTargetAllyChangedEvent(java.awt.event.ActionEvent evt) {//GEN-F
                 String t = ((DefaultTableCellRenderer) c).getText();
                 ((DefaultTableCellRenderer) c).setText(t);
                 c.setBackground(Constants.DS_BACK);
-                 DefaultTableCellRenderer r = ((DefaultTableCellRenderer)c);
+                DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
                 r.setText("<html><b>" + r.getText() + "</b></html>");
                 return c;
             }

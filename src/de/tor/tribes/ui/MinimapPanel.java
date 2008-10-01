@@ -55,6 +55,9 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
     private List<MinimapListener> mMinimapListeners = null;
     private List<ToolChangeListener> mToolChangeListeners = null;
     private boolean doRedraw = false;
+    private int iXDown = 0;
+    private int iYDown = 0;
+    private Rectangle2D rDrag = null;
 
     public static synchronized MinimapPanel getSingleton() {
         if (SINGLETON == null) {
@@ -62,9 +65,6 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
         }
         return SINGLETON;
     }
-    private int iXDown = 0;
-    private int iYDown = 0;
-    private Rectangle2D rDrag = null;
 
     /** Creates new form MinimapPanel */
     MinimapPanel() {

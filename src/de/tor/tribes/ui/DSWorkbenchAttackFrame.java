@@ -9,21 +9,18 @@ import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
+import de.tor.tribes.ui.editors.AttackManagerTableModel;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
-import javax.swing.event.RowSorterEvent;
-import javax.swing.event.TableModelEvent;
 import javax.swing.table.DefaultTableModel;
 import de.tor.tribes.util.BrowserCommandSender;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.attack.AttackManager;
 import java.util.List;
-import javax.swing.event.CellEditorListener;
-import javax.swing.event.ChangeEvent;
 import de.tor.tribes.util.attack.AttackManagerListener;
 import de.tor.tribes.ui.editors.DateSpinEditor;
 import de.tor.tribes.ui.editors.UnitCellEditor;
@@ -37,8 +34,7 @@ import java.awt.datatransfer.StringSelection;
 import java.util.LinkedList;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JTable;
-import javax.swing.event.RowSorterListener;
-import javax.swing.event.TableModelListener;
+import javax.swing.event.ChangeEvent;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
@@ -53,6 +49,7 @@ public class DSWorkbenchAttackFrame extends javax.swing.JFrame implements Attack
     private static Logger logger = Logger.getLogger(DSWorkbenchAttackFrame.class);
     private static DSWorkbenchAttackFrame SINGLETON = null;
     private List<DSWorkbenchFrameListener> mFrameListeners = null;
+    private List<DefaultTableCellRenderer> renderers = new LinkedList<DefaultTableCellRenderer>();
 
     public static synchronized DSWorkbenchAttackFrame getSingleton() {
         if (SINGLETON == null) {
@@ -79,7 +76,25 @@ public class DSWorkbenchAttackFrame extends javax.swing.JFrame implements Attack
         jScrollPane3.getViewport().setBackground(Constants.DS_BACK_LIGHT);
         TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>();
         jAttackTable.setRowSorter(sorter);
-        sorter.setModel(AttackManager.getSingleton().getTableModel());
+        jAttackTable.setColumnSelectionAllowed(false);
+        sorter.setModel(AttackManagerTableModel.getSingleton());
+        jAttackTable.setModel(AttackManagerTableModel.getSingleton());
+
+        //instantiate the column renderers
+        for (int i = 0; i < jAttackTable.getColumnCount(); i++) {
+            DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
+
+                @Override
+                public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                    Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
+                    c.setBackground(Constants.DS_BACK);
+                    DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
+                    r.setText("<html><b>" + r.getText() + "</b></html>");
+                    return c;
+                }
+            };
+            jAttackTable.getColumn(jAttackTable.getColumnName(i)).setHeaderRenderer(headerRenderer);
+        }
 
         jSelectionFilterDialog.pack();
         jTimeChangeDialog.pack();
@@ -417,16 +432,16 @@ public class DSWorkbenchAttackFrame extends javax.swing.JFrame implements Attack
                         .addGroup(jTimeChangeDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(jTimeChangeDialogLayout.createSequentialGroup()
                                 .addComponent(jMinuteField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 11, Short.MAX_VALUE)
                                 .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(10, 10, 10)
                                 .addComponent(jHourField, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(jTimeChangeDialogLayout.createSequentialGroup()
-                                .addComponent(jCancelButton, javax.swing.GroupLayout.DEFAULT_SIZE, 87, Short.MAX_VALUE)
+                                .addComponent(jCancelButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jOKButton))
-                            .addComponent(jDirectionBox, javax.swing.GroupLayout.Alignment.LEADING, 0, 142, Short.MAX_VALUE))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                            .addComponent(jDirectionBox, javax.swing.GroupLayout.Alignment.LEADING, 0, 138, Short.MAX_VALUE))
+                        .addContainerGap(17, Short.MAX_VALUE))))
         );
         jTimeChangeDialogLayout.setVerticalGroup(
             jTimeChangeDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -587,7 +602,7 @@ public class DSWorkbenchAttackFrame extends javax.swing.JFrame implements Attack
             jAttackPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jAttackPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 510, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 512, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jAttackPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addComponent(jNotDrawMarkedButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -677,24 +692,16 @@ private void fireRemoveAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
     if (res != JOptionPane.YES_OPTION) {
         return;
     }
-    
-    /*for (int i = 0; i < rows.length; i++) {
-      rows[i] = jAttackTable.convertRowIndexToModel(rows[i]);
-    }*/
- 
-    //jAttackTable.invalidate();
+
+    jAttackTable.editingCanceled(new ChangeEvent(this));
+
     for (int r = rows.length - 1; r >= 0; r--) {
-
+        jAttackTable.invalidate();
         int row = jAttackTable.convertRowIndexToModel(rows[r]);
-        System.out.println("Remove Table " + row);
-        System.out.println("Table_Source " + jAttackTable.getModel().getValueAt(row, 0));
-        System.out.println("Table_Target " + jAttackTable.getModel().getValueAt(row, 1));
-        
-        ((DefaultTableModel) jAttackTable.getModel()).removeRow(rows[r]);
-        System.out.println("----");
-
+        AttackManagerTableModel.getSingleton().removeRow(row);
+        jAttackTable.revalidate();
     }
-    //jAttackTable.revalidate();
+    jAttackTable.updateUI();
 }//GEN-LAST:event_fireRemoveAttackEvent
 
 private void fireValidateAttacksEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireValidateAttacksEvent
@@ -758,9 +765,13 @@ private void fireDrawSelectedEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
     int[] rows = jAttackTable.getSelectedRows();
     if ((rows != null) && (rows.length > 0)) {
         for (int r : rows) {
-            jAttackTable.setValueAt(new Boolean(draw), r, 5);
+            jAttackTable.invalidate();
+            int row = jAttackTable.convertRowIndexToModel(r);
+            AttackManagerTableModel.getSingleton().setValueAt(new Boolean(draw), row, 5);
+            jAttackTable.revalidate();
         }
     }
+    jAttackTable.updateUI();
 }//GEN-LAST:event_fireDrawSelectedEvent
 
 private void fireCopyUnformatedToClipboardEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCopyUnformatedToClipboardEvent
@@ -770,15 +781,18 @@ private void fireCopyUnformatedToClipboardEvent(java.awt.event.MouseEvent evt) {
             String data = "";
             List<Attack> attacks = AttackManager.getSingleton().getAttackPlan(null);
             for (int i : rows) {
-                Village sVillage = attacks.get(i).getSource();
-                Village tVillage = attacks.get(i).getTarget();
-                UnitHolder sUnit = attacks.get(i).getUnit();
-                Date aTime = attacks.get(i).getArriveTime();
+                jAttackTable.invalidate();
+                int row = jAttackTable.convertRowIndexToModel(i);
+                Village sVillage = attacks.get(row).getSource();
+                Village tVillage = attacks.get(row).getTarget();
+                UnitHolder sUnit = attacks.get(row).getUnit();
+                Date aTime = attacks.get(row).getArriveTime();
                 Date sTime = new Date(aTime.getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(sVillage, tVillage, sUnit.getSpeed()) * 1000));
 
                 String sendtime = Constants.DATE_FORMAT.format(sTime);
                 String arrivetime = Constants.DATE_FORMAT.format(aTime);
                 data += sVillage.getTribe() + "\t" + sVillage + "\t" + sUnit + "\t" + tVillage.getTribe() + "\t" + tVillage + "\t" + sendtime + "\n" + arrivetime + "\n";
+                jAttackTable.revalidate();
             }
 
             Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(data), null);
@@ -800,15 +814,17 @@ private void fireCopyAsBBCodeToClipboardEvent(java.awt.event.MouseEvent evt) {//
             String data = "";
             List<Attack> attacks = AttackManager.getSingleton().getAttackPlan(null);
             for (int i : rows) {
-                Village sVillage = attacks.get(i).getSource();
-                Village tVillage = attacks.get(i).getTarget();
-                UnitHolder sUnit = attacks.get(i).getUnit();
-                Date aTime = attacks.get(i).getArriveTime();
+                jAttackTable.invalidate();
+                int row = jAttackTable.convertRowIndexToModel(i);
+                Village sVillage = attacks.get(row).getSource();
+                Village tVillage = attacks.get(row).getTarget();
+                UnitHolder sUnit = attacks.get(row).getUnit();
+                Date aTime = attacks.get(row).getArriveTime();
                 Date sTime = new Date(aTime.getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(sVillage, tVillage, sUnit.getSpeed()) * 1000));
-
                 String sendtime = Constants.DATE_FORMAT.format(sTime);
                 String arrivetime = Constants.DATE_FORMAT.format(aTime);
                 data += "Angriff von " + sVillage.getTribe() + " aus " + sVillage.toBBCode() + " mit " + sUnit + " auf " + tVillage.getTribe().toBBCode() + " in " + tVillage.toBBCode() + " startet um " + sendtime + " und kommt um " + arrivetime + " an\n";
+                jAttackTable.revalidate();
             }
 
             Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(data), null);
@@ -848,14 +864,15 @@ private void fireMarkFilterEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:eve
     List<Integer> selection = new LinkedList<Integer>();
     int cnt = 0;
     for (Attack a : AttackManager.getSingleton().getAttackPlan(null)) {
+        int row = jAttackTable.convertRowIndexToView(cnt);
         if (source.contains(a.getSource())) {
-            if (!selection.contains(new Integer(cnt))) {
-                selection.add(new Integer(cnt));
+            if (!selection.contains(new Integer(row))) {
+                selection.add(new Integer(row));
             }
         }
         if (target.contains(a.getTarget())) {
-            if (!selection.contains(new Integer(cnt))) {
-                selection.add(new Integer(cnt));
+            if (!selection.contains(new Integer(row))) {
+                selection.add(new Integer(row));
             }
         }
         cnt++;
@@ -881,8 +898,11 @@ private void fireSourcePlayerChangedEvent(java.awt.event.ActionEvent evt) {//GEN
         List<Attack> attacks = AttackManager.getSingleton().getAttackPlan(null);
         Hashtable<Village, Boolean> villageMarks = new Hashtable<Village, Boolean>();
         //check attacks for the selected player
-        int row = 0;
+        int cnt = 0;
+
+        jSourceVillageTable.invalidate();
         for (Attack a : attacks) {
+            int row = jAttackTable.convertRowIndexToView(cnt);
             Village v = a.getSource();
             if ((v != null) && (v.getTribe() == source)) {
                 if (jAttackTable.getSelectionModel().isSelectedIndex(row)) {
@@ -891,10 +911,12 @@ private void fireSourcePlayerChangedEvent(java.awt.event.ActionEvent evt) {//GEN
                 } else {
                     villageMarks.put(v, Boolean.FALSE);
                 }
-                row++;
             }
+            cnt++;
             //create model with player villages in attack plan
             setTableModel(jSourceVillageTable, villageMarks);
+            jSourceVillageTable.revalidate();
+            jSourceVillageTable.updateUI();
         }
     } catch (Exception e) {
         //"please select" selected    
@@ -908,9 +930,11 @@ private void fireTargetPlayerChangedEvent(java.awt.event.ActionEvent evt) {//GEN
         List<Attack> attacks = AttackManager.getSingleton().getAttackPlan(null);
         Hashtable<Village, Boolean> villageMarks = new Hashtable<Village, Boolean>();
         //check attacks for the selected player
-        int row = 0;
+        int cnt = 0;
 
+        jTargetVillageTable.invalidate();
         for (Attack a : attacks) {
+            int row = jAttackTable.convertRowIndexToView(cnt);
             Village v = a.getTarget();
             if ((v != null) && (v.getTribe() == target)) {
                 if (jAttackTable.getSelectionModel().isSelectedIndex(row)) {
@@ -918,13 +942,15 @@ private void fireTargetPlayerChangedEvent(java.awt.event.ActionEvent evt) {//GEN
                     villageMarks.put(v, Boolean.TRUE);
                 } else {
                     villageMarks.put(v, Boolean.FALSE);
-
                 }
             }
-            row++;
+            cnt++;
         }
+
         //create model with player villages in attack plan
         setTableModel(jTargetVillageTable, villageMarks);
+        jTargetVillageTable.revalidate();
+        jTargetVillageTable.updateUI();
     } catch (Exception e) {
         //"please select" selected    
         setTableModel(jTargetVillageTable, new Hashtable<Village, Boolean>());
@@ -976,21 +1002,19 @@ private void fireFlipMarkEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
     int cnt = jAttackTable.getRowCount();
     //look for all rows wether the index is selected or not.
     //selected indices are removed from the existing list, unselected are added
-    for (int i = 0; i <
-            cnt; i++) {
-        Integer iV = new Integer(i);
+    for (int i = 0; i < cnt; i++) {
+        int row = jAttackTable.convertRowIndexToModel(i);
+        Integer iV = new Integer(row);
         if (selected.contains(iV)) {
             selected.remove(iV);
         } else {
             selected.add(iV);
         }
-
     }
 
     //assign the values of the selected list to the table
     jAttackTable.getSelectionModel().setValueIsAdjusting(true);
-    for (int i = 0; i <
-            cnt; i++) {
+    for (int i = 0; i < cnt; i++) {
         Integer iV = new Integer(i);
         if (selected.contains(iV)) {
             jAttackTable.getSelectionModel().addSelectionInterval(i, i);
@@ -1005,32 +1029,40 @@ private void fireFlipMarkEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
 private void fireSelectNoneAllEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSelectNoneAllEvent
     if (evt.getSource() == jAllSourceVillageButton) {
         if (jSourceVillageTable.getRowCount() > 0) {
+            //update source table values that all villages are selected
             jSourceVillageTable.invalidate();
             for (int i = 0; i < jSourceVillageTable.getRowCount(); i++) {
                 jSourceVillageTable.getModel().setValueAt(Boolean.TRUE, i, 1);
             }
             jSourceVillageTable.revalidate();
+            jSourceVillageTable.updateUI();
         }
     } else if (evt.getSource() == jNoSourceVillageButton) {
+        //update source table values that all villages are unselected
         jSourceVillageTable.invalidate();
         for (int i = 0; i < jSourceVillageTable.getRowCount(); i++) {
             jSourceVillageTable.getModel().setValueAt(Boolean.FALSE, i, 1);
         }
         jSourceVillageTable.revalidate();
+        jSourceVillageTable.updateUI();
     } else if (evt.getSource() == jAllTargetVillageButton) {
+        //update target table values that all villages are selected
         if (jTargetVillageTable.getRowCount() > 0) {
             jTargetVillageTable.invalidate();
-            for (int i = 0; i < jSourceVillageTable.getRowCount(); i++) {
+            for (int i = 0; i < jTargetVillageTable.getRowCount(); i++) {
                 jTargetVillageTable.getModel().setValueAt(Boolean.TRUE, i, 1);
             }
             jTargetVillageTable.revalidate();
+            jTargetVillageTable.updateUI();
         }
     } else if (evt.getSource() == jNoTargetVillageButton) {
+        //update target table values that all villages are unselected
         jTargetVillageTable.invalidate();
-        for (int i = 0; i < jSourceVillageTable.getRowCount(); i++) {
+        for (int i = 0; i < jTargetVillageTable.getRowCount(); i++) {
             jTargetVillageTable.getModel().setValueAt(Boolean.FALSE, i, 1);
         }
         jTargetVillageTable.revalidate();
+        jTargetVillageTable.updateUI();
     }
 }//GEN-LAST:event_fireSelectNoneAllEvent
 
@@ -1042,15 +1074,19 @@ private void fireCloseTimeChangeDialogEvent(java.awt.event.MouseEvent evt) {//GE
             Integer hour = (Integer) jHourField.getValue();
             Integer day = (Integer) jDayField.getValue();
             List<Attack> attacks = AttackManager.getSingleton().getAttackPlan(null);
+            jAttackTable.invalidate();
             for (int i : rows) {
-                long arrive = attacks.get(i).getArriveTime().getTime();
+                int row = jAttackTable.convertRowIndexToModel(i);
+                long arrive = attacks.get(row).getArriveTime().getTime();
                 long diff = min * 60000 + hour * 3600000 + day * 86400000;
                 //later if first index is selected
                 boolean later = (jDirectionBox.getSelectedIndex() == 0);
                 //if later, add diff to arrival, else remove diff from arrival
                 arrive = arrive + ((later) ? diff : (-1 * diff));
-                jAttackTable.setValueAt(new Date(arrive), i, 4);
+                AttackManager.getSingleton().getAttackPlan(null).get(row).setArriveTime(new Date(arrive));
             }
+            jAttackTable.revalidate();
+            jAttackTable.updateUI();
         }
     }
 
@@ -1071,7 +1107,7 @@ private void fireChangeTimesEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
         fireVisibilityChangedEvents(v);
     }
 
-    /**set table model for filteres selection*/
+    /**Set table model for filteres selection*/
     private void setTableModel(JTable pTable, Hashtable<Village, Boolean> pVillages) {
         //create default table model
         DefaultTableModel model = new javax.swing.table.DefaultTableModel(
@@ -1126,8 +1162,7 @@ private void fireChangeTimesEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
             pTable.getColumn(pTable.getColumnName(i)).setHeaderRenderer(headerRenderer);
         }
 
-//set max width
-
+        //set max width
         pTable.getColumnModel().getColumn(1).setMaxWidth(75);
         //set sorter
         TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(model);
@@ -1136,7 +1171,8 @@ private void fireChangeTimesEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
 
     protected void setupAttackPanel() {
         AttackManager.getSingleton().addAttackManagerListener(this);
-        jAttackTable.setModel(AttackManager.getSingleton().getTableModel());
+        // jAttackTable.setModel(model);
+        //jAttackTable.setModel(AttackManager.getSingleton().getTableModel());
         //setup renderer and general view
         jAttackTable.setDefaultRenderer(Date.class, new DateCellRenderer());
         jAttackTable.setDefaultEditor(Date.class, new DateSpinEditor());
@@ -1146,7 +1182,7 @@ private void fireChangeTimesEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
 
         // <editor-fold defaultstate="collapsed" desc=" Add CellEditorListener for changes ">
 
-        /*       CellEditorListener attackChangedListener = new CellEditorListener() {
+        /*  CellEditorListener attackChangedListener = new CellEditorListener() {
         
         @Override
         public void editingStopped(ChangeEvent e) {
@@ -1166,6 +1202,7 @@ private void fireChangeTimesEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
         } catch (Exception ee) {
         //ignored
         }
+        //jAttackTable.revalidate();
         }
         
         @Override
@@ -1175,76 +1212,79 @@ private void fireChangeTimesEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
         // </editor-fold>
 
         //jAttackTable.getDefaultEditor(Boolean.class).addCellEditorListener(attackChangedListener);
-        jAttackTable.getModel().addTableModelListener(new TableModelListener() {
 
-            @Override
-            public void tableChanged(TableModelEvent e) {
-                switch (e.getType()) {
-                    case TableModelEvent.INSERT: {
-                        System.out.println("INSERT");
-                        break;
-                    }
-                    case TableModelEvent.UPDATE: {
-                        int first = e.getFirstRow();
-                        int last = e.getLastRow();
-                        for (int i = first; i <= last; i++) {
-                            Attack a = AttackManager.getSingleton().getAttackPlan(null).get(i);
-                            switch (e.getColumn()) {
-                                case 0: {
-                                    //source village
-                                    a.setSource((Village) jAttackTable.getValueAt(i, 0));
-                                    break;
-                                }
-                                case 1: {
-                                    //target
-                                    a.setTarget((Village) jAttackTable.getValueAt(i, 1));
-                                    break;
-                                }
-                                case 2: {
-                                    //target
-                                    a.setUnit((UnitHolder) jAttackTable.getValueAt(i, 2));
-                                    break;
-                                }
-                                case 3: {
-                                    //send
-                                    Date send = (Date) jAttackTable.getValueAt(i, 3);
-                                    long arrive = send.getTime() + (long) (DSCalculator.calculateMoveTimeInMinutes(a.getSource(), a.getTarget(), a.getUnit().getSpeed()) * 1000);
-                                    a.setArriveTime(new Date(arrive));
-                                    break;
-                                }
-                                case 4: {
-                                    //arrive
-                                    Date arrive = (Date) jAttackTable.getValueAt(i, 4);
-                                    a.setArriveTime(arrive);
-                                    break;
-                                }
-                                case 5: {
-                                    //draw
-                                    Boolean draw = (Boolean) jAttackTable.getValueAt(i, 5);
-                                    a.setShowOnMap(draw.booleanValue());
-                                }
-                            }
-                        }
-                        break;
-                    }
-                    case TableModelEvent.DELETE: {
-                        int first = e.getFirstRow();
-                        int last = e.getLastRow();
-
-                        for (int i = last; i >= first; i--) {
-                            //int f = jAttackTable.convertRowIndexToModel(i);
-                            System.out.println("Remove Plan " + i);
-                            Attack a = AttackManager.getSingleton().getAttackPlan(null).get(i);
-                            System.out.println("Plan_Source " + a.getSource());
-                            System.out.println("Plan_Target " + a.getTarget());
-                            
-                            AttackManager.getSingleton().getAttackPlan(null).remove(i);
-                        }
-                        break;
-                    }
-                }
-            }
+        /*     jAttackTable.getModel().addTableModelListener(new TableModelListener() {
+        
+        @Override
+        public void tableChanged(TableModelEvent e) {
+        switch (e.getType()) {
+        case TableModelEvent.INSERT: {
+        System.out.println("INSERT");
+        break;
+        }
+        case TableModelEvent.UPDATE: {
+        int first = e.getFirstRow();
+        int last = e.getLastRow();
+        for (int i = first; i <= last; i++) {
+        Attack a = AttackManager.getSingleton().getAttackPlan(null).get(i);
+        switch (e.getColumn()) {
+        case 0: {
+        //source village
+        a.setSource((Village) jAttackTable.getValueAt(i, 0));
+        break;
+        }
+        case 1: {
+        //target
+        a.setTarget((Village) jAttackTable.getValueAt(i, 1));
+        break;
+        }
+        case 2: {
+        //target
+        a.setUnit((UnitHolder) jAttackTable.getValueAt(i, 2));
+        break;
+        }
+        case 3: {
+        //send
+        Date send = (Date) jAttackTable.getValueAt(i, 3);
+        long arrive = send.getTime() + (long) (DSCalculator.calculateMoveTimeInMinutes(a.getSource(), a.getTarget(), a.getUnit().getSpeed()) * 1000);
+        a.setArriveTime(new Date(arrive));
+        break;
+        }
+        case 4: {
+        //arrive
+        Date arrive = (Date) jAttackTable.getValueAt(i, 4);
+        a.setArriveTime(arrive);
+        break;
+        }
+        case 5: {
+        //draw
+        Boolean draw = (Boolean) jAttackTable.getValueAt(i, 5);
+        a.setShowOnMap(draw.booleanValue());
+        }
+        }
+        }
+        break;
+        }
+        case TableModelEvent.DELETE: {
+        int first = e.getFirstRow();
+        int last = e.getLastRow();
+        
+        for (int i = last; i >= first; i--) {
+        //int f = jAttackTable.convertRowIndexToModel(i);
+        System.out.println("Remove Plan " + i);
+        Attack a = AttackManager.getSingleton().getAttackPlan(null).get(i);
+        System.out.println("Plan_Source " + a.getSource());
+        System.out.println("Plan_Target " + a.getTarget());
+        
+        AttackManager.getSingleton().getAttackPlan(null).remove(i);
+        }
+        break;
+        }
+        }
+        }
         });
+        
+         */
         //jAttackTable.getDefaultEditor(Date.class).addCellEditorListener(attackChangedListener);
         // jAttackTable.getDefaultEditor(UnitHolder.class).addCellEditorListener(attackChangedListener);
         //  jAttackTable.getDefaultEditor(Village.class).addCellEditorListener(attackChangedListener);
@@ -1259,46 +1299,21 @@ private void fireChangeTimesEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
         }
 
     }
-    List<DefaultTableCellRenderer> renderers = new LinkedList<DefaultTableCellRenderer>();
 
     @Override
     public void fireAttacksChangedEvent(String pPlan) {
         try {
             jAttackTable.invalidate();
+            //only called once
 
-
-            // jAttackTable.setModel(AttackManager.getSingleton().getTableModel());
-            //  jScrollPane2.getViewport().setBackground(Constants.DS_BACK_LIGHT);
-
-            if (renderers.isEmpty()) {
-                for (int i = 0; i <
-                        jAttackTable.getColumnCount(); i++) {
-                    DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
-
-                        @Override
-                        public Component getTableCellRendererComponent(
-                                JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-                            Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
-                            c.setBackground(Constants.DS_BACK);
-                            DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
-                            r.setText("<html><b>" + r.getText() + "</b></html>");
-                            return c;
-                        }
-                    };
-                    jAttackTable.getColumn(jAttackTable.getColumnName(i)).setHeaderRenderer(headerRenderer);
-                }
-
-            } else {
-                for (int i = 0; i < jAttackTable.getColumnCount(); i++) {
-                    jAttackTable.getColumn(jAttackTable.getColumnName(i)).setHeaderRenderer(renderers.get(i));
-                }
-
+            for (int i = 0; i < jAttackTable.getColumnCount(); i++) {
+                jAttackTable.getColumn(jAttackTable.getColumnName(i)).setHeaderRenderer(renderers.get(i));
             }
             jAttackTable.revalidate();
+            jAttackTable.updateUI();
         } catch (Exception e) {
             logger.error("Failed to update attacks table", e);
         }
-
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jAllSourceVillageButton;

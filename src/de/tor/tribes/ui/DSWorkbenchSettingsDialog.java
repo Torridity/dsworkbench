@@ -32,11 +32,11 @@ import javax.swing.JViewport;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
 import org.apache.log4j.Logger;
-import org.apache.log4j.xml.DOMConfigurator;
 import de.tor.tribes.ui.renderer.ColorCellRenderer;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.ui.editors.ColorChooserCellEditor;
 import de.tor.tribes.util.ServerChangeListener;
+import de.tor.tribes.util.troops.TroopsManager;
 import java.awt.Component;
 import java.awt.event.ActionListener;
 import javax.swing.JTable;
@@ -1006,7 +1006,8 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         TagManager.getSingleton().saveTagsToFile(DataHolder.getSingleton().getDataDirectory() + "/tags.xml");
         MarkerManager.getSingleton().saveMarkersToFile(DataHolder.getSingleton().getDataDirectory() + "/markers.xml");
         AttackManager.getSingleton().saveAttacksToFile(DataHolder.getSingleton().getDataDirectory() + "/attacks.xml");
-
+        TroopsManager.getSingleton().saveTroopsToFile(DataHolder.getSingleton().getDataDirectory() + "/troops.xml");
+        
         String selectedServer = (String) jServerList.getSelectedItem();
         GlobalOptions.addProperty("default.server", selectedServer);
         GlobalOptions.saveProperties();

@@ -56,6 +56,10 @@ public class AttackManager {
         mManagerListeners.remove(pListener);
     }
 
+    public void loadAttacksFromDatabase(String pUrl) {
+        //not yet implemented
+    }
+    
     public void loadAttacksFromFile(String pFile) {
         mAttackPlans.clear();
         mAttackPlans.put(DEFAULT_PLAN_ID, new LinkedList<Attack>());

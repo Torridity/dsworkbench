@@ -626,6 +626,13 @@ class MinimapRepaintThread extends Thread {
             markPlayer = false;
         }
 
+        boolean markedOnly = false;
+        try {
+            markedOnly = Boolean.parseBoolean(GlobalOptions.getProperty("draw.marked.only"));
+        } catch (Exception e) {
+            markedOnly = false;
+        }
+
         for (int i = 0; i < 1000; i++) {
             for (int j = 0; j < 1000; j++) {
                 Village v = mVisibleVillages[i][j];
@@ -638,7 +645,7 @@ class MinimapRepaintThread extends Thread {
                         Village currentUserVillage = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage();
                         if ((currentUserVillage != null) && (v.getTribe().toString().equals(currentUserVillage.getTribe().toString()))) {
                             //village is owned by current player. mark it dependent on settings
-                            if (markPlayer) {
+                            if ((markPlayer) || (markedOnly)) {
                                 mark = Color.YELLOW;
                             }
 
@@ -663,7 +670,11 @@ class MinimapRepaintThread extends Thread {
                         if (mark != null) {
                             g2d.setColor(mark);
                         } else {
-                            g2d.setColor(Color.RED);
+                            if (!markedOnly) {
+                                g2d.setColor(Color.RED);
+                            } else {
+                                g2d.setColor(new Color(35, 125, 0));
+                            }
                         }
                         g2d.fillRect(i, j, 1, 1);
                     } else {

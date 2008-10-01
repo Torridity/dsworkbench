@@ -1171,14 +1171,11 @@ private void fireChangeTimesEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
 
     protected void setupAttackPanel() {
         AttackManager.getSingleton().addAttackManagerListener(this);
-        // jAttackTable.setModel(model);
-        //jAttackTable.setModel(AttackManager.getSingleton().getTableModel());
         //setup renderer and general view
         jAttackTable.setDefaultRenderer(Date.class, new DateCellRenderer());
         jAttackTable.setDefaultEditor(Date.class, new DateSpinEditor());
         jAttackTable.setDefaultEditor(UnitHolder.class, new UnitCellEditor());
         jAttackTable.setDefaultEditor(Village.class, new VillageCellEditor());
-        // jAttackTable.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
 
         // <editor-fold defaultstate="collapsed" desc=" Add CellEditorListener for changes ">
 
@@ -1211,85 +1208,6 @@ private void fireChangeTimesEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
         };*/
         // </editor-fold>
 
-        //jAttackTable.getDefaultEditor(Boolean.class).addCellEditorListener(attackChangedListener);
-
-        /*     jAttackTable.getModel().addTableModelListener(new TableModelListener() {
-        
-        @Override
-        public void tableChanged(TableModelEvent e) {
-        switch (e.getType()) {
-        case TableModelEvent.INSERT: {
-        System.out.println("INSERT");
-        break;
-        }
-        case TableModelEvent.UPDATE: {
-        int first = e.getFirstRow();
-        int last = e.getLastRow();
-        for (int i = first; i <= last; i++) {
-        Attack a = AttackManager.getSingleton().getAttackPlan(null).get(i);
-        switch (e.getColumn()) {
-        case 0: {
-        //source village
-        a.setSource((Village) jAttackTable.getValueAt(i, 0));
-        break;
-        }
-        case 1: {
-        //target
-        a.setTarget((Village) jAttackTable.getValueAt(i, 1));
-        break;
-        }
-        case 2: {
-        //target
-        a.setUnit((UnitHolder) jAttackTable.getValueAt(i, 2));
-        break;
-        }
-        case 3: {
-        //send
-        Date send = (Date) jAttackTable.getValueAt(i, 3);
-        long arrive = send.getTime() + (long) (DSCalculator.calculateMoveTimeInMinutes(a.getSource(), a.getTarget(), a.getUnit().getSpeed()) * 1000);
-        a.setArriveTime(new Date(arrive));
-        break;
-        }
-        case 4: {
-        //arrive
-        Date arrive = (Date) jAttackTable.getValueAt(i, 4);
-        a.setArriveTime(arrive);
-        break;
-        }
-        case 5: {
-        //draw
-        Boolean draw = (Boolean) jAttackTable.getValueAt(i, 5);
-        a.setShowOnMap(draw.booleanValue());
-        }
-        }
-        }
-        break;
-        }
-        case TableModelEvent.DELETE: {
-        int first = e.getFirstRow();
-        int last = e.getLastRow();
-        
-        for (int i = last; i >= first; i--) {
-        //int f = jAttackTable.convertRowIndexToModel(i);
-        System.out.println("Remove Plan " + i);
-        Attack a = AttackManager.getSingleton().getAttackPlan(null).get(i);
-        System.out.println("Plan_Source " + a.getSource());
-        System.out.println("Plan_Target " + a.getTarget());
-        
-        AttackManager.getSingleton().getAttackPlan(null).remove(i);
-        }
-        break;
-        }
-        }
-        }
-        });
-        
-         */
-        //jAttackTable.getDefaultEditor(Date.class).addCellEditorListener(attackChangedListener);
-        // jAttackTable.getDefaultEditor(UnitHolder.class).addCellEditorListener(attackChangedListener);
-        //  jAttackTable.getDefaultEditor(Village.class).addCellEditorListener(attackChangedListener);
-
-
         AttackManager.getSingleton().attacksUpdatedExternally(null);
     }
 
@@ -1297,15 +1215,13 @@ private void fireChangeTimesEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
         for (DSWorkbenchFrameListener listener : mFrameListeners) {
             listener.fireVisibilityChangedEvent(this, v);
         }
-
     }
 
     @Override
     public void fireAttacksChangedEvent(String pPlan) {
         try {
             jAttackTable.invalidate();
-            //only called once
-
+            
             for (int i = 0; i < jAttackTable.getColumnCount(); i++) {
                 jAttackTable.getColumn(jAttackTable.getColumnName(i)).setHeaderRenderer(renderers.get(i));
             }

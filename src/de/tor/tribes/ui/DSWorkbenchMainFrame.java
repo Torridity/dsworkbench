@@ -10,6 +10,7 @@ import de.tor.tribes.types.Ally;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.util.BrowserCommandSender;
+import de.tor.tribes.util.ClipboardWatch;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.DSWorkbenchFrameListener;
 import de.tor.tribes.util.GlobalOptions;
@@ -17,6 +18,7 @@ import de.tor.tribes.util.ToolChangeListener;
 import de.tor.tribes.util.attack.AttackManager;
 import de.tor.tribes.util.mark.MarkerManager;
 import de.tor.tribes.util.tag.TagManager;
+import de.tor.tribes.util.troops.TroopsManager;
 import java.awt.AWTEvent;
 import java.awt.Desktop;
 import java.awt.Toolkit;
@@ -77,6 +79,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                 TagManager.getSingleton().saveTagsToFile(DataHolder.getSingleton().getDataDirectory() + "/tags.xml");
                 MarkerManager.getSingleton().saveMarkersToFile(DataHolder.getSingleton().getDataDirectory() + "/markers.xml");
                 AttackManager.getSingleton().saveAttacksToFile(DataHolder.getSingleton().getDataDirectory() + "/attacks.xml");
+                TroopsManager.getSingleton().saveTroopsToFile(DataHolder.getSingleton().getDataDirectory() + "/troops.xml");
                 GlobalOptions.addProperty("attack.frame.visible", Boolean.toString(DSWorkbenchAttackFrame.getSingleton().isVisible()));
                 GlobalOptions.addProperty("marker.frame.visible", Boolean.toString(DSWorkbenchMarkerFrame.getSingleton().isVisible()));
                 GlobalOptions.addProperty("distance.frame.visible", Boolean.toString(DSWorkbenchDistanceFrame.getSingleton().isVisible()));
@@ -357,6 +360,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jVillageInfo.setText("");
         jVillageInfo.setIcon(null);
         jAllyInfo.setText("");
+        jTroopsInfo.setText("");
         jInfoPanel.add(jDetailedInfoPanel);
     }
 
@@ -412,6 +416,8 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             }
             // </editor-fold>
 
+            //start ClipboardWatch
+            ClipboardWatch.getSingleton();
             //draw map the first time
             fireRefreshMapEvent(null);
         }
@@ -429,6 +435,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jVillageInfo = new javax.swing.JLabel();
         jPlayerInfo = new javax.swing.JLabel();
         jAllyInfo = new javax.swing.JLabel();
+        jTroopsInfo = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         jNavigationPanel = new javax.swing.JPanel();
         jMoveE = new javax.swing.JButton();
@@ -495,6 +502,11 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jAllyInfo.setMinimumSize(new java.awt.Dimension(54, 20));
         jAllyInfo.setPreferredSize(new java.awt.Dimension(54, 20));
 
+        jTroopsInfo.setText(bundle.getString("DSWorkbenchMainFrame.jTroopsInfo.text")); // NOI18N
+        jTroopsInfo.setMaximumSize(new java.awt.Dimension(54, 20));
+        jTroopsInfo.setMinimumSize(new java.awt.Dimension(54, 20));
+        jTroopsInfo.setPreferredSize(new java.awt.Dimension(54, 20));
+
         javax.swing.GroupLayout jDetailedInfoPanelLayout = new javax.swing.GroupLayout(jDetailedInfoPanel);
         jDetailedInfoPanel.setLayout(jDetailedInfoPanelLayout);
         jDetailedInfoPanelLayout.setHorizontalGroup(
@@ -504,7 +516,8 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                 .addGroup(jDetailedInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jVillageInfo, javax.swing.GroupLayout.DEFAULT_SIZE, 785, Short.MAX_VALUE)
                     .addComponent(jAllyInfo, javax.swing.GroupLayout.DEFAULT_SIZE, 785, Short.MAX_VALUE)
-                    .addComponent(jPlayerInfo, javax.swing.GroupLayout.DEFAULT_SIZE, 785, Short.MAX_VALUE))
+                    .addComponent(jPlayerInfo, javax.swing.GroupLayout.DEFAULT_SIZE, 785, Short.MAX_VALUE)
+                    .addComponent(jTroopsInfo, javax.swing.GroupLayout.DEFAULT_SIZE, 785, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jDetailedInfoPanelLayout.setVerticalGroup(
@@ -514,7 +527,10 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                 .addGap(4, 4, 4)
                 .addComponent(jPlayerInfo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jAllyInfo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(jAllyInfo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jTroopsInfo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -843,7 +859,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                 .addGroup(jInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jInformationPanelLayout.createSequentialGroup()
                         .addComponent(jOnlineLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 62, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 68, Short.MAX_VALUE)
                         .addComponent(jCurrentToolLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jCenterIngameButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
@@ -1007,9 +1023,9 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                         .addComponent(jNavigationPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jInformationPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 621, Short.MAX_VALUE))
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 629, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jInfoPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jInfoPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -1254,6 +1270,7 @@ private void fireShowMarkerFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIR
             jPlayerInfo.setText("");
             jVillageInfo.setText("");
             jAllyInfo.setText("");
+            jTroopsInfo.setText("");
             jVillageInfo.setIcon(null);
             return;
         }
@@ -1261,6 +1278,20 @@ private void fireShowMarkerFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIR
         jVillageInfo.setText(pVillage.getHTMLInfo());
         jVillageInfo.setIcon(mIcons.get(pVillage.getType()));
 
+        List<Integer> troops = TroopsManager.getSingleton().getTroopsForVillage(pVillage);
+        System.out.println(troops);
+        int cnt = 0;
+        String text = "-keine Informationen-";
+        if (troops != null) {
+            text = "<html>";
+            for (Integer i : troops) {
+                String name = DataHolder.getSingleton().getUnits().get(cnt).getName();
+                text += "<b>" + name + ":</b>" + i + " ";
+                cnt++;
+            }
+            text += "</html>";
+        }
+        jTroopsInfo.setText(text);
         try {
             Tribe tribe = pVillage.getTribe();
             jPlayerInfo.setText(tribe.getHTMLInfo());
@@ -1271,7 +1302,6 @@ private void fireShowMarkerFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIR
             } else {
                 jAllyInfo.setText(ally.getHTMLInfo());
             }
-
         } catch (NullPointerException e) {
             jPlayerInfo.setText("kein Besitzer");
             jAllyInfo.setText("kein Stamm");
@@ -1289,7 +1319,6 @@ private void fireShowMarkerFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIR
         }
     }
     // <editor-fold defaultstate="collapsed" desc=" Listener EventHandlers ">
-
     @Override
     public void fireToolChangedEvent(int pTool) {
         jCurrentToolLabel.setIcon(ImageManager.getCursorImage(pTool));
@@ -1373,6 +1402,7 @@ private void fireShowMarkerFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIR
     private javax.swing.JCheckBoxMenuItem jShowMarkerFrame;
     private javax.swing.JCheckBoxMenuItem jShowToolboxItem;
     private javax.swing.JMenuItem jTribeTribeAttackItem;
+    private javax.swing.JLabel jTroopsInfo;
     private javax.swing.JLabel jVillageInfo;
     private javax.swing.JButton jZoomInButton;
     private javax.swing.JButton jZoomOutButton;

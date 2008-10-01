@@ -38,9 +38,7 @@ import org.apache.log4j.Logger;
  * @author  Charon
  */
 public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
-        // MarkerManagerListener,
         MapPanelListener,
-        //AttackManagerListener,
         MinimapListener,
         ToolChangeListener,
         DSWorkbenchFrameListener {
@@ -1111,10 +1109,6 @@ private void fireZoomEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fir
     MapPanel.getSingleton().repaint();
 }//GEN-LAST:event_fireZoomEvent
 
-    /**Remove a marker*/
-    /**Check if all attacks are valid*/
-    /**Switch AlwaysOnTop behavior of toolbox*/
-    /**Remove attacks*/
     /**Change active player village*/
 private void fireChangeCurrentPlayerVillageEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireChangeCurrentPlayerVillageEvent
     if (evt.getStateChange() == ItemEvent.SELECTED) {
@@ -1141,9 +1135,6 @@ private void fireShowToolbarEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:e
     GlobalOptions.saveProperties();
 }//GEN-LAST:event_fireShowToolbarEvent
 
-    /**Send an attack*/
-    /**Show toolbox*/
-    /**Handle toolbox closing event*/
     /**Center village Ingame*/
 private void fireCenterVillageIngameEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCenterVillageIngameEvent
     if (!jCenterIngameButton.isEnabled()) {
@@ -1240,7 +1231,6 @@ private void fireShowMarkerFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIR
         double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
         MinimapPanel.getSingleton().setSelection(iCenterX, iCenterY, (int) Math.rint(w), (int) Math.rint(h));
         MapPanel.getSingleton().updateMap(iCenterX, iCenterY);
-    //MapPanel.getSingleton().repaint();
     }
 
     /**Center a village*/

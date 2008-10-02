@@ -12,15 +12,19 @@ import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.Marker;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.util.BrowserCommandSender;
+import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.Skin;
 import de.tor.tribes.util.ToolChangeListener;
 import de.tor.tribes.util.attack.AttackManager;
 import de.tor.tribes.util.mark.MarkerManager;
+import de.tor.tribes.util.troops.TroopsManager;
+import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Desktop;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -33,11 +37,13 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;
@@ -509,7 +515,7 @@ public class MapPanel extends javax.swing.JPanel {
 
             return mVisibleVillages[x][y];
         } catch (Exception e) {
-            logger.error("Failed getting village at mouse pos", e);
+            //failed getting village (probably getting mousepos failed)
         }
         return null;
     }
@@ -714,6 +720,7 @@ class RepaintThread extends Thread {
         int markX = -1;
         int markY = -1;
         boolean markActiveVillage = false;
+        Village mouseVillage = MapPanel.getSingleton().getVillageAtMousePos();
         try {
             markActiveVillage = Boolean.parseBoolean(GlobalOptions.getProperty("mark.active.village"));
         } catch (Exception e) {
@@ -939,9 +946,8 @@ class RepaintThread extends Thread {
                 }
                 if (drawDistance) {
 
-                    Village t = MapPanel.getSingleton().getVillageAtMousePos();
-                    if (t != null) {
-                        double d = DSCalculator.calculateDistance(mSourceVillage, t);
+                    if (mouseVillage != null) {
+                        double d = DSCalculator.calculateDistance(mSourceVillage, mouseVillage);
                         String dist = nf.format(d);
 
                         Rectangle2D b = g2d.getFontMetrics().getStringBounds(dist, g2d);
@@ -1069,6 +1075,71 @@ class RepaintThread extends Thread {
         if (markX >= 0 && markY >= 0) {
             g2d.drawImage(mMarkerImage, markX, markY - mMarkerImage.getHeight(null), null);
         }
+
+        if (mouseVillage != null) {
+            VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(mouseVillage);
+            if ((holder != null) && (!holder.getTroops().isEmpty())) {
+                //get half the units for the current server
+                int unitCount = DataHolder.getSingleton().getUnits().size();
+                FontMetrics metrics = g2d.getFontMetrics(g2d.getFont());
+                // int fontHeight = metrics.getHeight();
+                Point pos = MapPanel.getSingleton().getMousePosition();
+                //number format without fraction digits 
+                NumberFormat numFormat = NumberFormat.getInstance();
+                numFormat.setMaximumFractionDigits(0);
+                numFormat.setMinimumFractionDigits(0);
+                //default width for unit number
+                int unitWidth = metrics.stringWidth("1.234.567");
+                //get largest unit value
+                for (Integer i : holder.getTroops()) {
+                    int w = metrics.stringWidth(numFormat.format(i));
+                    if (w > unitWidth) {
+                        unitWidth = w;
+                    }
+                }
+
+                int textHeight = metrics.getHeight();
+                int unitHeight = ImageManager.getUnitIcon(0).getImage().getHeight(null);
+
+                g2d.setColor(Constants.DS_BACK_LIGHT);
+                int popupWidth = 12 + unitWidth + unitHeight;
+                int popupHeight = unitCount * unitHeight + 10 + textHeight + 2;
+                g2d.fill3DRect(pos.x - popupWidth, pos.y, popupWidth, popupHeight, true);
+
+                g2d.setColor(Color.BLACK);
+
+                //draw state
+                String state = "(" + new SimpleDateFormat("dd.MM.yyyy").format(holder.getState()) + ")";
+                double dY = metrics.getStringBounds(state, g2d).getY();
+                g2d.drawString(state, pos.x - popupWidth + 5, pos.y - (int) Math.rint(dY) + 5);
+
+                double sx = textHeight / (double) ImageManager.getUnitIcon(0).getImage().getHeight(null);
+                for (int i = 0; i < unitCount; i++) {
+                    //draw unit with a border of 5px
+                    AffineTransform xform = AffineTransform.getTranslateInstance(pos.x - popupWidth + 5, pos.y + i * unitHeight + 5 + textHeight + 2);
+                    xform.scale(sx, sx);
+                    g2d.drawImage(ImageManager.getUnitIcon(i).getImage(), xform, null);
+                    //draw the unit count
+                    dY = metrics.getStringBounds(numFormat.format(holder.getTroops().get(i)), g2d).getY();
+                    g2d.drawString(numFormat.format(holder.getTroops().get(i)), pos.x - popupWidth + 5 + unitHeight + 2, pos.y + i * unitHeight - (int) Math.rint(dY) + 5 + textHeight + 2);
+                }
+            } else {
+                Point pos = MapPanel.getSingleton().getMousePosition();
+                String noInfo = "keine Informationen";
+                FontMetrics metrics = g2d.getFontMetrics(g2d.getFont());
+                int textWidth = metrics.stringWidth(noInfo);
+                int popupX = pos.x - textWidth - 10;
+                int popupY = pos.y;
+                Rectangle2D bounds = metrics.getStringBounds(noInfo, g2d);
+
+                g2d.setColor(Constants.DS_BACK_LIGHT);
+                g2d.fill3DRect(popupX, popupY, 10 + textWidth, metrics.getHeight() + 4, true);
+                g2d.setColor(Color.BLACK);
+                g2d.drawString(noInfo, popupX + 5, popupY - (int) Math.rint(bounds.getY()) + 2);
+            }
+        }
+
+
         g2d.dispose();
     }
 }

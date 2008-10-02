@@ -11,7 +11,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.Village;
-import de.tor.tribes.ui.editors.AttackManagerTableModel;
+import de.tor.tribes.ui.models.AttackManagerTableModel;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.io.File;
@@ -19,7 +19,6 @@ import java.io.FileWriter;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.LinkedList;
-import javax.swing.table.DefaultTableModel;
 import org.jdom.Document;
 import org.jdom.Element;
 

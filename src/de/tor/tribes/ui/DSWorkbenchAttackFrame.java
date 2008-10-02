@@ -9,7 +9,7 @@ import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
-import de.tor.tribes.ui.editors.AttackManagerTableModel;
+import de.tor.tribes.ui.models.AttackManagerTableModel;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -26,7 +26,6 @@ import de.tor.tribes.ui.editors.DateSpinEditor;
 import de.tor.tribes.ui.editors.UnitCellEditor;
 import de.tor.tribes.ui.editors.VillageCellEditor;
 import de.tor.tribes.ui.renderer.DateCellRenderer;
-import de.tor.tribes.util.DSWorkbenchFrameListener;
 import de.tor.tribes.util.DSCalculator;
 import java.awt.Component;
 import java.awt.Toolkit;
@@ -44,11 +43,10 @@ import org.apache.log4j.Logger;
  *
  * @author  Charon
  */
-public class DSWorkbenchAttackFrame extends javax.swing.JFrame implements AttackManagerListener {
+public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements AttackManagerListener {
 
     private static Logger logger = Logger.getLogger(DSWorkbenchAttackFrame.class);
     private static DSWorkbenchAttackFrame SINGLETON = null;
-    private List<DSWorkbenchFrameListener> mFrameListeners = null;
     private List<DefaultTableCellRenderer> renderers = new LinkedList<DefaultTableCellRenderer>();
 
     public static synchronized DSWorkbenchAttackFrame getSingleton() {
@@ -60,7 +58,6 @@ public class DSWorkbenchAttackFrame extends javax.swing.JFrame implements Attack
 
     /** Creates new form DSWorkbenchAttackFrame */
     DSWorkbenchAttackFrame() {
-        mFrameListeners = new LinkedList<DSWorkbenchFrameListener>();
         initComponents();
         getContentPane().setBackground(Constants.DS_BACK);
 
@@ -77,6 +74,7 @@ public class DSWorkbenchAttackFrame extends javax.swing.JFrame implements Attack
         TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>();
         jAttackTable.setRowSorter(sorter);
         jAttackTable.setColumnSelectionAllowed(false);
+        jAttackTable.getTableHeader().setReorderingAllowed(false);
         sorter.setModel(AttackManagerTableModel.getSingleton());
         jAttackTable.setModel(AttackManagerTableModel.getSingleton());
 
@@ -94,19 +92,12 @@ public class DSWorkbenchAttackFrame extends javax.swing.JFrame implements Attack
                 }
             };
             jAttackTable.getColumn(jAttackTable.getColumnName(i)).setHeaderRenderer(headerRenderer);
+            renderers.add(headerRenderer);
         }
 
         jSelectionFilterDialog.pack();
         jTimeChangeDialog.pack();
         pack();
-    }
-
-    public synchronized void addFrameListener(DSWorkbenchFrameListener pListener) {
-        mFrameListeners.add(pListener);
-    }
-
-    public synchronized void removeFrameListener(DSWorkbenchFrameListener pListener) {
-        mFrameListeners.remove(pListener);
     }
 
     /** This method is called from within the constructor to
@@ -1102,11 +1093,6 @@ private void fireChangeTimesEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
     jTimeChangeDialog.setVisible(true);
 }//GEN-LAST:event_fireChangeTimesEvent
 
-    public void setVisible(boolean v) {
-        super.setVisible(v);
-        fireVisibilityChangedEvents(v);
-    }
-
     /**Set table model for filteres selection*/
     private void setTableModel(JTable pTable, Hashtable<Village, Boolean> pVillages) {
         //create default table model
@@ -1125,6 +1111,7 @@ private void fireChangeTimesEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                 return types[columnIndex];
             }
 
+            @Override
             public boolean isCellEditable(int row, int col) {
                 if (col == 1) {
                     return true;
@@ -1177,51 +1164,14 @@ private void fireChangeTimesEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
         jAttackTable.setDefaultEditor(UnitHolder.class, new UnitCellEditor());
         jAttackTable.setDefaultEditor(Village.class, new VillageCellEditor());
 
-        // <editor-fold defaultstate="collapsed" desc=" Add CellEditorListener for changes ">
-
-        /*  CellEditorListener attackChangedListener = new CellEditorListener() {
-        
-        @Override
-        public void editingStopped(ChangeEvent e) {
-        try {
-        
-        for (int i = 0; i < jAttackTable.getRowCount(); i++) {
-        List<Attack> attacks = AttackManager.getSingleton().getAttackPlan(null);
-        Attack a = attacks.get(i);
-        a.setSource((Village) jAttackTable.getValueAt(i, 0));
-        a.setTarget((Village) jAttackTable.getValueAt(i, 1));
-        a.setUnit((UnitHolder) jAttackTable.getValueAt(i, 2));
-        //3 is only sendTime
-        a.setArriveTime((Date) jAttackTable.getValueAt(i, 4));
-        a.setShowOnMap((Boolean) jAttackTable.getValueAt(i, 5));
-        }
         AttackManager.getSingleton().attacksUpdatedExternally(null);
-        } catch (Exception ee) {
-        //ignored
-        }
-        //jAttackTable.revalidate();
-        }
-        
-        @Override
-        public void editingCanceled(ChangeEvent e) {
-        }
-        };*/
-        // </editor-fold>
-
-        AttackManager.getSingleton().attacksUpdatedExternally(null);
-    }
-
-    private synchronized void fireVisibilityChangedEvents(boolean v) {
-        for (DSWorkbenchFrameListener listener : mFrameListeners) {
-            listener.fireVisibilityChangedEvent(this, v);
-        }
     }
 
     @Override
     public void fireAttacksChangedEvent(String pPlan) {
         try {
             jAttackTable.invalidate();
-            
+
             for (int i = 0; i < jAttackTable.getColumnCount(); i++) {
                 jAttackTable.getColumn(jAttackTable.getColumnName(i)).setHeaderRenderer(renderers.get(i));
             }

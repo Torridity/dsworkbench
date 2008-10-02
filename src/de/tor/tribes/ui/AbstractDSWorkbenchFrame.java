@@ -31,12 +31,13 @@ public abstract class AbstractDSWorkbenchFrame extends JFrame {
         mFrameListeners.remove(pListener);
     }
 
+    @Override
     public void setVisible(boolean v) {
         super.setVisible(v);
         fireVisibilityChangedEvents(v);
     }
 
-    private synchronized void fireVisibilityChangedEvents(boolean v) {
+    public synchronized void fireVisibilityChangedEvents(boolean v) {
         for (DSWorkbenchFrameListener listener : mFrameListeners) {
             listener.fireVisibilityChangedEvent(this, v);
         }

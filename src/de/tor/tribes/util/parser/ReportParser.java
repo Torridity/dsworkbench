@@ -7,23 +7,33 @@ package de.tor.tribes.util.parser;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.util.troops.TroopsManager;
+import java.awt.Toolkit;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
 
 /**
  *
- * @author Charon
+ * @author Jejkal
  */
-public class TroopsParser {
-
+public class ReportParser {
     /*
-    003 | Spitfire (471|482) K44  
-    eigene	2500	1500	0	1964	500	0	0	1396	0	0	0	0	Befehle
-    im Dorf	2500	1500	0	1964	500	0	0	1396	0	0	0	0	Truppen
-    auswärts	0	0	0	0	0	0	0	0	0	0	0	0
-    unterwegs	0	0	0	0	0	0	0	0	0	0	0	0	Befehle
+    Angreifer:	Ken Follett
+    Dorf:	092 Werl (442|458) K44
+    
+    Anzahl:	0	0	0	0	222	0	0	0	0	0	0	0
+    Verluste:	0	0	0	0	17	0	0	0	0	0	0	0
+    
+    
+    Verteidiger:	king bushido 95
+    Dorf:	KönigsPalast [001] (440|450) K44
+    
+    Anzahl:	0	555	18887	0	79	0	0	0	0	61	0	1
+    Verluste:	0	0	0	0	0	0	0	0	0	0	0	0
      */
+
     public static boolean parse(String pTroopsString) {
         StringTokenizer lineTok = new StringTokenizer(pTroopsString, "\n\r");
         int villageLines = -1;
@@ -36,33 +46,7 @@ public class TroopsParser {
             String line = lineTok.nextToken();
             //tokenize line by tab and space
             StringTokenizer elemTok = new StringTokenizer(line, " \t");
-            //parse single line for village
-            if (v != null) {
-                //parse 4 village lines!
-                line = line.trim();
-                if (line.startsWith("eigene")) {
-                    for (int i : parseUnits(line.replaceAll("eigene", "").trim())) {
-                        //own units in village
-                        troops.add(i);
-                    }
-                } else if (line.startsWith("im Dorf")) {
-                    for (int i : parseUnits(line.replaceAll("im Dorf", "").trim())) {
-                        //all units in village
-                        //ignored for now
-                    }
-                } else if (line.startsWith("auswärts")) {
-                    for (int i : parseUnits(line.replaceAll("auswärts", "").trim())) {
-                        //own units in other village
-                        //ignore for now
-                    }
-                } else if (line.startsWith("unterwegs")) {
-                    for (int i : parseUnits(line.replaceAll("unterwegs", "").trim())) {
-                        //own units on the way
-                        //ignore for now
-                    }
-                }
-                villageLines--;
-            } else {
+            if (line.startsWith("Dorf:")) {
                 while (elemTok.hasMoreElements()) {
                     String currentToken = elemTok.nextToken();
                     //search village
@@ -73,15 +57,36 @@ public class TroopsParser {
                             String[] split = currentToken.trim().split("[(\\|)]");
                             v = DataHolder.getSingleton().getVillages()[Integer.parseInt(split[1])][Integer.parseInt(split[2])];
                             //next 4 lines are village
-                            villageLines = 4;
+                            villageLines = 2;
                             break;
                         }
                     }
                 }
+            } else {
+                //parse single line for village
+                if (v != null) {
+                    //parse 2 village lines!
+                    line = line.trim();
+                    if (line.startsWith("Anzahl:")) {
+                        for (int i : parseUnits(line.replaceAll("Anzahl:", "").trim())) {
+                            //own units in village
+                            troops.add(i);
+                        }
+                        villageLines--;
+                    } else if (line.startsWith("Verluste:")) {
+                        int cnt = 0;
+                        for (int i : parseUnits(line.replaceAll("Verluste:", "").trim())) {
+                            //lost troops
+                            troops.set(cnt, troops.get(cnt) - i);
+                            cnt++;
+                        }
+                        villageLines--;
+                    }
+                }
             }
             if (villageLines == 0) {
+                //add troops to manager
                 if ((v != null) && (troops.size() == DataHolder.getSingleton().getUnits().size())) {
-                    //add troops to manager
                     TroopsManager.getSingleton().addTroopsForVillage(v, new LinkedList<Integer>(troops));
                     troops.clear();
                     v = null;
@@ -107,29 +112,12 @@ public class TroopsParser {
     }
 
     public static void main(String[] args) {
-
-        /* Transferable t = (Transferable) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
+        Transferable t = (Transferable) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
         try {
-        String s = " 003 | Spitfire (471|482) K44\n" +
-        "eigene	2500	1500	0	1964	500	0	0	1396	0	0	0	0	Befehle\n" +
-        "im Dorf	2500	1500	0	1964	500	0	0	1396	0	0	0	0	Truppen\n" +
-        "auswärts	0	0	0	0	0	0	0	0	0	0	0	0\n" +
-        "unterwegs	0	0	0	0	0	0	0	0	0	0	0	0	Befehle\n" +
-        "2Fast4You (475|480) K44\n" +
-        "eigene	600	500	0	0	134	0	0	354	0	0	0	1	Befehle\n" +
-        "im Dorf	600	500	0	0	134	0	0	354	0	0	0	1	Truppen\n" +
-        "auswärts	4400	3000	0	3000	66	0	0	1046	0	0	0	0\n" +
-        "unterwegs	0	0	0	0	0	0	0	0	0	0	0	0	Befehle\n";
-        
-        
-        String data = (String) t.getTransferData(DataFlavor.stringFlavor);
-        TroopsParser.parse(data);
+            String data = (String) t.getTransferData(DataFlavor.stringFlavor);
+            ReportParser.parse(data);
         } catch (Exception e) {
-        e.printStackTrace();
-        }*/
-        String token = "(120|192)";
-        System.out.println(token.matches("\\([0-9]+\\|[0-9]+\\)"));
-
-    //TroopsParser.parse(pTroopsString);
+            e.printStackTrace();
+        }
     }
 }

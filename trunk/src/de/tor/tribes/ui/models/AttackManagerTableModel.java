@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package de.tor.tribes.ui.editors;
+package de.tor.tribes.ui.models;
 
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Attack;
@@ -11,7 +11,6 @@ import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.attack.AttackManager;
 import de.tor.tribes.util.attack.AttackManagerListener;
 import java.util.Date;
-import javax.swing.event.TableModelEvent;
 import javax.swing.table.AbstractTableModel;
 
 /**
@@ -54,6 +53,7 @@ public class AttackManagerTableModel extends AbstractTableModel {
         AttackManager.getSingleton().removeAttack(null, pRow);
     }
 
+    @Override
     public String getColumnName(int col) {
         return colNames[col];
     }
@@ -63,6 +63,7 @@ public class AttackManagerTableModel extends AbstractTableModel {
         return types[columnIndex];
     }
 
+    @Override
     public boolean isCellEditable(int row, int col) {
         return true;
     }

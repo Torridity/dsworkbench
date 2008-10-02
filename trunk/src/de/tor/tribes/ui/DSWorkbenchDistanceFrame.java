@@ -19,14 +19,12 @@ import de.tor.tribes.util.DSCalculator;
  *
  * @author  Charon
  */
-public class DSWorkbenchDistanceFrame extends javax.swing.JFrame {
+public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame {
 
     private static DSWorkbenchDistanceFrame SINGLETON = null;
-    private List<DSWorkbenchFrameListener> mFrameListeners = null;
 
     /** Creates new form DSWorkbenchMarkerFrame */
     DSWorkbenchDistanceFrame() {
-        mFrameListeners = new LinkedList<DSWorkbenchFrameListener>();
         initComponents();
         getContentPane().setBackground(Constants.DS_BACK);
 
@@ -37,14 +35,6 @@ public class DSWorkbenchDistanceFrame extends javax.swing.JFrame {
             //setting not available
         }
         pack();
-    }
-
-    public synchronized void addFrameListener(DSWorkbenchFrameListener pListener) {
-        mFrameListeners.add(pListener);
-    }
-
-    public synchronized void removeFrameListener(DSWorkbenchFrameListener pListener) {
-        mFrameListeners.remove(pListener);
     }
 
     public static synchronized DSWorkbenchDistanceFrame getSingleton() {
@@ -397,16 +387,6 @@ private void fireDistanceFrameOnTopEvent(javax.swing.event.ChangeEvent evt) {//G
     setAlwaysOnTop(!isAlwaysOnTop());
 }//GEN-LAST:event_fireDistanceFrameOnTopEvent
 
-public void setVisible(boolean v){
-    super.setVisible(v);
-    fireVisibilityChangedEvents(v);
-}
-
-    private synchronized void fireVisibilityChangedEvents(boolean v){
-     for(DSWorkbenchFrameListener listener : mFrameListeners){
-         listener.fireVisibilityChangedEvent(this, v);
-     }
-    }
       /**Update the distance panel if it is visible
      */
     public void updateDistances(Village pSource, Village pTarget) {

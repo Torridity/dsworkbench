@@ -9,6 +9,7 @@ import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Ally;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
+import de.tor.tribes.ui.models.TroopsManagerTableModel;
 import de.tor.tribes.util.BrowserCommandSender;
 import de.tor.tribes.util.ClipboardWatch;
 import de.tor.tribes.util.Constants;
@@ -82,10 +83,12 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                 TroopsManager.getSingleton().saveTroopsToFile(DataHolder.getSingleton().getDataDirectory() + "/troops.xml");
                 GlobalOptions.addProperty("attack.frame.visible", Boolean.toString(DSWorkbenchAttackFrame.getSingleton().isVisible()));
                 GlobalOptions.addProperty("marker.frame.visible", Boolean.toString(DSWorkbenchMarkerFrame.getSingleton().isVisible()));
+                GlobalOptions.addProperty("troops.frame.visible", Boolean.toString(DSWorkbenchTroopsFrame.getSingleton().isVisible()));
                 GlobalOptions.addProperty("distance.frame.visible", Boolean.toString(DSWorkbenchDistanceFrame.getSingleton().isVisible()));
                 GlobalOptions.addProperty("distance.frame.alwaysOnTop", Boolean.toString(DSWorkbenchDistanceFrame.getSingleton().isAlwaysOnTop()));
                 GlobalOptions.addProperty("attack.frame.alwaysOnTop", Boolean.toString(DSWorkbenchAttackFrame.getSingleton().isAlwaysOnTop()));
                 GlobalOptions.addProperty("marker.frame.alwaysOnTop", Boolean.toString(DSWorkbenchMarkerFrame.getSingleton().isAlwaysOnTop()));
+                GlobalOptions.addProperty("troops.frame.alwaysOnTop", Boolean.toString(DSWorkbenchTroopsFrame.getSingleton().isAlwaysOnTop()));
                 GlobalOptions.addProperty("zoom.factor", Double.toString(dZoomFactor));
                 GlobalOptions.addProperty("last.x", jCenterX.getText());
                 GlobalOptions.addProperty("last.y", jCenterY.getText());
@@ -179,6 +182,8 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                     fireShowMarkerFrameEvent(null);
                 } else if (e.getSource() == DSWorkbenchDistanceFrame.getSingleton()) {
                     fireShowDistanceFrameEvent(null);
+                }else if (e.getSource() == DSWorkbenchTroopsFrame.getSingleton()) {
+                    fireShowTroopsFrameEvent(null);
                 }
             }
 
@@ -229,6 +234,9 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         //jMarkerPanel.updateUI();
         DSWorkbenchAttackFrame.getSingleton().setupAttackPanel();
         // jAttackPanel.updateUI();
+        TroopsManagerTableModel.getSingleton().setup();
+        DSWorkbenchTroopsFrame.getSingleton().setupTroopsPanel();
+
         if (mTribeTribeAttackFrame != null) {
             mTribeTribeAttackFrame.setup();
         }
@@ -318,6 +326,8 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         DSWorkbenchAttackFrame.getSingleton().addFrameListener(this);
         DSWorkbenchMarkerFrame.getSingleton().addFrameListener(this);
         DSWorkbenchDistanceFrame.getSingleton().addFrameListener(this);
+        TroopsManagerTableModel.getSingleton().setup();
+        DSWorkbenchTroopsFrame.getSingleton().addFrameListener(this);
     }
 
     /**Setup main map and mini map*/
@@ -360,7 +370,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jVillageInfo.setText("");
         jVillageInfo.setIcon(null);
         jAllyInfo.setText("");
-        jTroopsInfo.setText("");
         jInfoPanel.add(jDetailedInfoPanel);
     }
 
@@ -405,6 +414,15 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                 }
             } catch (Exception e) {
             }
+            
+            try {
+                if (Boolean.parseBoolean(GlobalOptions.getProperty("troops.frame.visible"))) {
+                    jShowTroopsFrame.setSelected(true);
+                    logger.info("Restoring troops frame");
+                    DSWorkbenchTroopsFrame.getSingleton().setVisible(true);
+                }
+            } catch (Exception e) {
+            }
 
             try {
                 if (Boolean.parseBoolean(GlobalOptions.getProperty("toolbar.visible"))) {
@@ -435,7 +453,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jVillageInfo = new javax.swing.JLabel();
         jPlayerInfo = new javax.swing.JLabel();
         jAllyInfo = new javax.swing.JLabel();
-        jTroopsInfo = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         jNavigationPanel = new javax.swing.JPanel();
         jMoveE = new javax.swing.JButton();
@@ -477,6 +494,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jShowAttackFrame = new javax.swing.JCheckBoxMenuItem();
         jShowDistanceFrame = new javax.swing.JCheckBoxMenuItem();
         jShowMarkerFrame = new javax.swing.JCheckBoxMenuItem();
+        jShowTroopsFrame = new javax.swing.JCheckBoxMenuItem();
         jMenu4 = new javax.swing.JMenu();
         jAboutItem = new javax.swing.JMenuItem();
 
@@ -502,11 +520,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jAllyInfo.setMinimumSize(new java.awt.Dimension(54, 20));
         jAllyInfo.setPreferredSize(new java.awt.Dimension(54, 20));
 
-        jTroopsInfo.setText(bundle.getString("DSWorkbenchMainFrame.jTroopsInfo.text")); // NOI18N
-        jTroopsInfo.setMaximumSize(new java.awt.Dimension(54, 20));
-        jTroopsInfo.setMinimumSize(new java.awt.Dimension(54, 20));
-        jTroopsInfo.setPreferredSize(new java.awt.Dimension(54, 20));
-
         javax.swing.GroupLayout jDetailedInfoPanelLayout = new javax.swing.GroupLayout(jDetailedInfoPanel);
         jDetailedInfoPanel.setLayout(jDetailedInfoPanelLayout);
         jDetailedInfoPanelLayout.setHorizontalGroup(
@@ -516,8 +529,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                 .addGroup(jDetailedInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jVillageInfo, javax.swing.GroupLayout.DEFAULT_SIZE, 785, Short.MAX_VALUE)
                     .addComponent(jAllyInfo, javax.swing.GroupLayout.DEFAULT_SIZE, 785, Short.MAX_VALUE)
-                    .addComponent(jPlayerInfo, javax.swing.GroupLayout.DEFAULT_SIZE, 785, Short.MAX_VALUE)
-                    .addComponent(jTroopsInfo, javax.swing.GroupLayout.DEFAULT_SIZE, 785, Short.MAX_VALUE))
+                    .addComponent(jPlayerInfo, javax.swing.GroupLayout.DEFAULT_SIZE, 785, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jDetailedInfoPanelLayout.setVerticalGroup(
@@ -527,10 +539,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                 .addGap(4, 4, 4)
                 .addComponent(jPlayerInfo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jAllyInfo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTroopsInfo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jAllyInfo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -859,7 +868,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                 .addGroup(jInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jInformationPanelLayout.createSequentialGroup()
                         .addComponent(jOnlineLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 68, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 87, Short.MAX_VALUE)
                         .addComponent(jCurrentToolLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jCenterIngameButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
@@ -977,6 +986,15 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         });
         jMenu2.add(jShowMarkerFrame);
 
+        jShowTroopsFrame.setBackground(new java.awt.Color(239, 235, 223));
+        jShowTroopsFrame.setText(bundle.getString("DSWorkbenchMainFrame.jShowTroopsFrame.text")); // NOI18N
+        jShowTroopsFrame.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fireShowTroopsFrameEvent(evt);
+            }
+        });
+        jMenu2.add(jShowTroopsFrame);
+
         jMenuBar1.add(jMenu2);
 
         jMenu4.setBackground(new java.awt.Color(225, 213, 190));
@@ -1023,9 +1041,9 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                         .addComponent(jNavigationPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jInformationPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 629, Short.MAX_VALUE))
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 646, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jInfoPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jInfoPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -1203,6 +1221,11 @@ private void fireShowMarkerFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIR
     jShowMarkerFrame.setSelected(DSWorkbenchMarkerFrame.getSingleton().isVisible());
 }//GEN-LAST:event_fireShowMarkerFrameEvent
 
+private void fireShowTroopsFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireShowTroopsFrameEvent
+    DSWorkbenchTroopsFrame.getSingleton().setVisible(!DSWorkbenchTroopsFrame.getSingleton().isVisible());
+    jShowTroopsFrame.setSelected(DSWorkbenchTroopsFrame.getSingleton().isVisible());
+}//GEN-LAST:event_fireShowTroopsFrameEvent
+
     /**Check if zoom factor is valid and correct if needed*/
     private void checkZoomRange() {
         if (dZoomFactor <= 0.1) {
@@ -1270,7 +1293,6 @@ private void fireShowMarkerFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIR
             jPlayerInfo.setText("");
             jVillageInfo.setText("");
             jAllyInfo.setText("");
-            jTroopsInfo.setText("");
             jVillageInfo.setIcon(null);
             return;
         }
@@ -1278,20 +1300,23 @@ private void fireShowMarkerFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIR
         jVillageInfo.setText(pVillage.getHTMLInfo());
         jVillageInfo.setIcon(mIcons.get(pVillage.getType()));
 
-        List<Integer> troops = TroopsManager.getSingleton().getTroopsForVillage(pVillage);
-        System.out.println(troops);
+        /*  List<Integer> troops = TroopsManager.getSingleton().getTroopsForVillage(pVillage);
         int cnt = 0;
-        String text = "-keine Informationen-";
+        String text = "- keine Informationen -";
         if (troops != null) {
-            text = "<html>";
-            for (Integer i : troops) {
-                String name = DataHolder.getSingleton().getUnits().get(cnt).getName();
-                text += "<b>" + name + ":</b>" + i + " ";
-                cnt++;
-            }
-            text += "</html>";
+        text = "<html>";
+        int half = (int) Math.rint((double) troops.size() / 2);
+        for (Integer i : troops) {
+        String name = DataHolder.getSingleton().getUnits().get(cnt).getName();
+        text += "<b>" + name + ":</b>" + i + " ";
+        if (cnt == half) {
+        text += "<BR/>";
         }
-        jTroopsInfo.setText(text);
+        cnt++;
+        }
+        text += "</html>";
+        }
+        jTroopsInfo.setText(text);*/
         try {
             Tribe tribe = pVillage.getTribe();
             jPlayerInfo.setText(tribe.getHTMLInfo());
@@ -1319,6 +1344,7 @@ private void fireShowMarkerFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIR
         }
     }
     // <editor-fold defaultstate="collapsed" desc=" Listener EventHandlers ">
+
     @Override
     public void fireToolChangedEvent(int pTool) {
         jCurrentToolLabel.setIcon(ImageManager.getCursorImage(pTool));
@@ -1352,6 +1378,8 @@ private void fireShowMarkerFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIR
             jShowMarkerFrame.setSelected(DSWorkbenchMarkerFrame.getSingleton().isVisible());
         } else if (pSource == DSWorkbenchDistanceFrame.getSingleton()) {
             jShowDistanceFrame.setSelected(DSWorkbenchDistanceFrame.getSingleton().isVisible());
+        }else if(pSource == DSWorkbenchTroopsFrame.getSingleton()) {
+            jShowTroopsFrame.setSelected(DSWorkbenchTroopsFrame.getSingleton().isVisible());
         }
     }
     // </editor-fold>
@@ -1401,8 +1429,8 @@ private void fireShowMarkerFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIR
     private javax.swing.JCheckBoxMenuItem jShowDistanceFrame;
     private javax.swing.JCheckBoxMenuItem jShowMarkerFrame;
     private javax.swing.JCheckBoxMenuItem jShowToolboxItem;
+    private javax.swing.JCheckBoxMenuItem jShowTroopsFrame;
     private javax.swing.JMenuItem jTribeTribeAttackItem;
-    private javax.swing.JLabel jTroopsInfo;
     private javax.swing.JLabel jVillageInfo;
     private javax.swing.JButton jZoomInButton;
     private javax.swing.JButton jZoomOutButton;

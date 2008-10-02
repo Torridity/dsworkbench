@@ -4,9 +4,11 @@
  */
 package de.tor.tribes.util;
 
+import de.tor.tribes.util.parser.ReportParser;
 import de.tor.tribes.util.parser.TroopsParser;
 import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import org.apache.log4j.Logger;
 
@@ -39,7 +41,15 @@ public class ClipboardWatch extends Thread {
             try {
                 Transferable t = (Transferable) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
                 String data = (String) t.getTransferData(DataFlavor.stringFlavor);
-                TroopsParser.parse(data);
+                if (data.length() > 10) {
+                    if (ReportParser.parse(data)) {
+                        //report parsed, clean clipboard
+                        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(""), null);
+                    } else if (TroopsParser.parse(data)) {
+                        //at least one village was found, so clean the clipboard
+                        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(""), null);
+                    }
+                }
             } catch (Exception e) {
                 //no usable data
             }

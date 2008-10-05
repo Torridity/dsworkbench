@@ -5,11 +5,8 @@
  */
 package de.tor.tribes.ui;
 
-import de.tor.tribes.io.UnitHolder;
-import de.tor.tribes.types.Village;
+import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.ui.editors.DateSpinEditor;
-import de.tor.tribes.ui.editors.UnitCellEditor;
-import de.tor.tribes.ui.editors.VillageCellEditor;
 import de.tor.tribes.ui.models.TroopsManagerTableModel;
 import de.tor.tribes.ui.renderer.DateCellRenderer;
 import de.tor.tribes.util.Constants;
@@ -25,6 +22,7 @@ import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.event.ChangeEvent;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
@@ -64,25 +62,6 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
         jTroopsTable.setColumnSelectionAllowed(false);
         sorter.setModel(TroopsManagerTableModel.getSingleton());
         jTroopsTable.setModel(TroopsManagerTableModel.getSingleton());
-
-        for (int i = 0; i < jTroopsTable.getColumnCount(); i++) {
-            DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
-
-                @Override
-                public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-                    Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
-                    c.setBackground(Constants.DS_BACK);
-                    DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
-                    if (r.getText().length() > 0) {
-                        r.setText("<html><b>" + r.getText() + "</b></html>");
-                    } else {
-                        r.setIcon(ImageManager.getUnitIcon(column - 2));
-                    }
-                    return c;
-                }
-            };
-            jTroopsTable.getColumnModel().getColumn(i).setHeaderRenderer(headerRenderer);
-        }
 
         pack();
     }
@@ -208,12 +187,39 @@ private void fireRemoveTroopsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
 }//GEN-LAST:event_fireRemoveTroopsEvent
 
     protected void setupTroopsPanel() {
+        jTroopsTable.invalidate();
+        jTroopsTable.setModel(new DefaultTableModel());
+        jTroopsTable.revalidate();
+
+        jTroopsTable.setModel(TroopsManagerTableModel.getSingleton());
         TroopsManager.getSingleton().addTroopsManagerListener(this);
         //setup renderer and general view
-        jTroopsTable.setDefaultRenderer(Date.class, new DateCellRenderer("dd:MM:yyyy"));
+        jTroopsTable.setDefaultRenderer(Date.class, new DateCellRenderer("dd.MM.yyyy"));
         jTroopsTable.setDefaultEditor(Date.class, new DateSpinEditor());
         jTroopsTable.getTableHeader().setReorderingAllowed(false);
+        for (int i = 0; i < jTroopsTable.getColumnCount(); i++) {
+            DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
 
+                @Override
+                public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                    Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
+                    c.setBackground(Constants.DS_BACK);
+                    DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
+                    if (r.getText().length() > 0) {
+                        r.setText("<html><b>" + r.getText() + "</b></html>");
+                    } else {
+                        try {
+                            r.setIcon(ImageManager.getUnitIcon(column - 2));
+                        } catch (Exception e) {
+                        }
+                    }
+                    return c;
+                }
+            };
+            jTroopsTable.getColumnModel().getColumn(i).setHeaderRenderer(headerRenderer);
+            renderers.add(headerRenderer);
+        }
+        jTroopsTable.revalidate();
         TroopsManager.getSingleton().forceUpdate();
     }
 

@@ -6,6 +6,8 @@
 
 package de.tor.tribes.ui;
 
+import de.tor.tribes.util.Constants;
+
 /**
  *
  * @author  Jejkal
@@ -16,6 +18,7 @@ public class AboutDialog extends javax.swing.JDialog {
     public AboutDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        jAppLabel.setText("DS Workbench " + Constants.VERSION + Constants.VERSION_ADDITION);
     }
 
     /** This method is called from within the constructor to
@@ -27,7 +30,7 @@ public class AboutDialog extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
+        jAppLabel = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
@@ -38,9 +41,9 @@ public class AboutDialog extends javax.swing.JDialog {
         setTitle("About");
         setAlwaysOnTop(true);
 
-        jLabel1.setFont(new java.awt.Font("Arial", 0, 18));
-        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("DS-Workbench 0.91b");
+        jAppLabel.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        jAppLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jAppLabel.setText("DS-Workbench 0.92b");
 
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel2.setText("<html><u><b>Web:</b></u></html>");
@@ -64,7 +67,7 @@ public class AboutDialog extends javax.swing.JDialog {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, 230, Short.MAX_VALUE)
                         .addGap(150, 150, 150))
-                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE)
+                    .addComponent(jAppLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -79,7 +82,7 @@ public class AboutDialog extends javax.swing.JDialog {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1)
+                .addComponent(jAppLabel)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
@@ -116,7 +119,7 @@ public class AboutDialog extends javax.swing.JDialog {
     }*/
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jAppLabel;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;

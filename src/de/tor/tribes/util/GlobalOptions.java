@@ -18,6 +18,8 @@ import de.tor.tribes.util.troops.TroopsManager;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Properties;
 import javax.swing.UIManager;
 import org.apache.log4j.Logger;
@@ -28,7 +30,6 @@ import org.apache.log4j.Logger;
 public class GlobalOptions {
 
     private static Logger logger = Logger.getLogger(GlobalOptions.class);
-
     private static boolean INITIALIZED = false;
     /**Active skin used by the MapPanel*/
     private static Skin mSkin;
@@ -38,6 +39,8 @@ public class GlobalOptions {
     private static Properties GLOBAL_PROPERTIES = null;
     //flag for online/offline mode
     private static boolean isOfflineMode = false;
+    //used to store last attack time of AttackAddFrame
+    private static Date lastArriveTime = null;
 
     /**Init all managed objects
      * @param pDownloadData TRUE=download the WorldData from the tribes server
@@ -136,7 +139,6 @@ public class GlobalOptions {
         }
     }
 
-  
     public static Skin getSkin() {
         return mSkin;
     }
@@ -167,5 +169,13 @@ public class GlobalOptions {
             logger.info("Setting selected server to " + pServer);
             SELECTED_SERVER = pServer;
         }
+    }
+    
+    public static void setLastArriveTime(Date pTime){
+        lastArriveTime = pTime;
+    }
+    
+    public static Date getLastArriveTime(){
+        return lastArriveTime;
     }
 }

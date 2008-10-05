@@ -356,7 +356,6 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
         jScalingSlider.setPaintTicks(true);
         jScalingSlider.setSnapToTicks(true);
         jScalingSlider.setValue(1);
-        jScalingSlider.setOpaque(false);
         jScalingSlider.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 fireChangeScreenshotScalingEvent(evt);
@@ -392,12 +391,6 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
         jTransparancySlider.setSnapToTicks(true);
         jTransparancySlider.setToolTipText("Transparenz der Legende (10 = keine Legende)");
         jTransparancySlider.setValue(4);
-        jTransparancySlider.setOpaque(false);
-        jTransparancySlider.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                jTransparancySliderfireChangeScreenshotScalingEvent(evt);
-            }
-        });
 
         javax.swing.GroupLayout jScreenshotControlLayout = new javax.swing.GroupLayout(jScreenshotControl.getContentPane());
         jScreenshotControl.getContentPane().setLayout(jScreenshotControlLayout);
@@ -554,9 +547,6 @@ private void fireScreenshotControlClosingEvent(java.awt.event.WindowEvent evt) {
     jScreenshotPreview.setVisible(false);
 }//GEN-LAST:event_fireScreenshotControlClosingEvent
 
-private void jTransparancySliderfireChangeScreenshotScalingEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jTransparancySliderfireChangeScreenshotScalingEvent
-// TODO add your handling code here:
-}//GEN-LAST:event_jTransparancySliderfireChangeScreenshotScalingEvent
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;

@@ -46,7 +46,7 @@ public class AttackManagerTableModel extends AbstractTableModel {
     }
 
     public void addRow(Object[] row) {
-        AttackManager.getSingleton().addAttack((Village) row[0], (Village) row[1], (UnitHolder) row[2], (Date) row[3]);
+        AttackManager.getSingleton().addAttack((Village) row[0], (Village) row[1], (UnitHolder) row[2], (Date) row[4]);
     }
 
     public void removeRow(int pRow) {
@@ -112,8 +112,9 @@ public class AttackManagerTableModel extends AbstractTableModel {
                 break;
             }
             case 3: {
-                long sendTime = a.getArriveTime().getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(a.getSource(), a.getTarget(), a.getUnit().getSpeed()) * 1000);
-                a.setArriveTime(new Date(sendTime));
+                Date sendTime = (Date) pValue;
+                long arriveTime = sendTime.getTime() + (long) (DSCalculator.calculateMoveTimeInSeconds(a.getSource(), a.getTarget(), a.getUnit().getSpeed()) * 1000);
+                a.setArriveTime(new Date(arriveTime));
                 break;
             }
             case 4: {
@@ -129,4 +130,11 @@ public class AttackManagerTableModel extends AbstractTableModel {
     public int getColumnCount() {
         return types.length;
     }
+    
+    /*
+     kirscheye3	435|447 FaNtAsY wOrLd ... <3	Schwere Kavallerie	Torridity	436|444 FaNtAsY wOrLd ... 12	02.10.08 23:37:15 03.10.08 00:12:02
+Torridity	437|445 FaNtAsY wOrLd ... 10	Schwere Kavallerie	Torridity	436|444 FaNtAsY wOrLd ... 12	02.10.08 23:56:29 03.10.08 00:12:02
+Torridity	438|445 Barbarendorf (12)	Schwere Kavallerie	Torridity	436|444 FaNtAsY wOrLd ... 12	02.10.08 23:47:26 03.10.08 00:12:02
+
+     */
 }

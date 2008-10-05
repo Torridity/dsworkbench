@@ -282,6 +282,7 @@ private void fireDrawMarkedOnlyChangedEvent(java.awt.event.MouseEvent evt) {//GE
         jScrollPane1.getViewport().setBackground(Constants.DS_BACK_LIGHT);
         //update view
         MarkerManager.getSingleton().markerUpdatedExternally();
+        jMarkerTable.updateUI();
     }
     
        @Override

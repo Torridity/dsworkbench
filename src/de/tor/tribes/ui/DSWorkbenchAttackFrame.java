@@ -70,6 +70,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
 
         //color scrollpanes of selection dialog
         jScrollPane1.getViewport().setBackground(Constants.DS_BACK_LIGHT);
+        jScrollPane2.getViewport().setBackground(Constants.DS_BACK_LIGHT);
         jScrollPane3.getViewport().setBackground(Constants.DS_BACK_LIGHT);
         TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>();
         jAttackTable.setRowSorter(sorter);
@@ -137,8 +138,6 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         jHourField = new javax.swing.JSpinner();
         jLabel7 = new javax.swing.JLabel();
         jDayField = new javax.swing.JSpinner();
-        jDirectionBox = new javax.swing.JComboBox();
-        jLabel8 = new javax.swing.JLabel();
         jAttackPanel = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jAttackTable = new javax.swing.JTable();
@@ -374,7 +373,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
                 .addContainerGap())
         );
 
-        jMinuteField.setModel(new javax.swing.SpinnerNumberModel(0, 0, 59, 1));
+        jMinuteField.setModel(new javax.swing.SpinnerNumberModel(0, -59, 59, 1));
 
         jLabel5.setText(bundle.getString("DSWorkbenchAttackFrame.jLabel5.text")); // NOI18N
 
@@ -394,68 +393,54 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
 
         jLabel6.setText(bundle.getString("DSWorkbenchAttackFrame.jLabel6.text")); // NOI18N
 
-        jHourField.setModel(new javax.swing.SpinnerNumberModel(0, 0, 59, 1));
+        jHourField.setModel(new javax.swing.SpinnerNumberModel(0, -59, 59, 1));
 
         jLabel7.setText(bundle.getString("DSWorkbenchAttackFrame.jLabel7.text")); // NOI18N
 
-        jDayField.setModel(new javax.swing.SpinnerNumberModel(0, 0, 31, 1));
-
-        jDirectionBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "später", "eher" }));
-
-        jLabel8.setText(bundle.getString("DSWorkbenchAttackFrame.jLabel8.text")); // NOI18N
+        jDayField.setModel(new javax.swing.SpinnerNumberModel(0, -31, 31, 1));
 
         javax.swing.GroupLayout jTimeChangeDialogLayout = new javax.swing.GroupLayout(jTimeChangeDialog.getContentPane());
         jTimeChangeDialog.getContentPane().setLayout(jTimeChangeDialogLayout);
         jTimeChangeDialogLayout.setHorizontalGroup(
             jTimeChangeDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jTimeChangeDialogLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jTimeChangeDialogLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jTimeChangeDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel7, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 42, Short.MAX_VALUE)
-                    .addComponent(jLabel8, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 42, Short.MAX_VALUE))
+                    .addComponent(jLabel7, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 38, Short.MAX_VALUE)
+                    .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jTimeChangeDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jTimeChangeDialogLayout.createSequentialGroup()
-                        .addComponent(jDayField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap())
+                        .addComponent(jCancelButton, javax.swing.GroupLayout.DEFAULT_SIZE, 93, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jOKButton))
+                    .addComponent(jDayField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jTimeChangeDialogLayout.createSequentialGroup()
-                        .addGroup(jTimeChangeDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(jTimeChangeDialogLayout.createSequentialGroup()
-                                .addComponent(jMinuteField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 11, Short.MAX_VALUE)
-                                .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(10, 10, 10)
-                                .addComponent(jHourField, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jTimeChangeDialogLayout.createSequentialGroup()
-                                .addComponent(jCancelButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jOKButton))
-                            .addComponent(jDirectionBox, javax.swing.GroupLayout.Alignment.LEADING, 0, 138, Short.MAX_VALUE))
-                        .addContainerGap(17, Short.MAX_VALUE))))
+                        .addComponent(jMinuteField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jHourField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
         );
         jTimeChangeDialogLayout.setVerticalGroup(
             jTimeChangeDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jTimeChangeDialogLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jTimeChangeDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jMinuteField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jHourField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jHourField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jTimeChangeDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jDayField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jTimeChangeDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel8)
-                    .addComponent(jDirectionBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jTimeChangeDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jOKButton)
                     .addComponent(jCancelButton))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         setTitle(bundle.getString("DSWorkbenchAttackFrame.title")); // NOI18N
@@ -593,7 +578,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
             jAttackPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jAttackPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 512, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 510, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jAttackPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addComponent(jNotDrawMarkedButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -731,8 +716,9 @@ private void fireSendAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:eve
     if (selectedRow < 0) {
         return;
     }
-    Village source = (Village) ((DefaultTableModel) jAttackTable.getModel()).getValueAt(selectedRow, 0);
-    Village target = (Village) ((DefaultTableModel) jAttackTable.getModel()).getValueAt(selectedRow, 1);
+    selectedRow = jAttackTable.convertRowIndexToModel(selectedRow);
+    Village source = (Village) AttackManagerTableModel.getSingleton().getValueAt(selectedRow, 0);
+    Village target = (Village) AttackManagerTableModel.getSingleton().getValueAt(selectedRow, 1);
     BrowserCommandSender.sendTroops(source, target);
 }//GEN-LAST:event_fireSendAttackEvent
 
@@ -782,7 +768,7 @@ private void fireCopyUnformatedToClipboardEvent(java.awt.event.MouseEvent evt) {
 
                 String sendtime = Constants.DATE_FORMAT.format(sTime);
                 String arrivetime = Constants.DATE_FORMAT.format(aTime);
-                data += sVillage.getTribe() + "\t" + sVillage + "\t" + sUnit + "\t" + tVillage.getTribe() + "\t" + tVillage + "\t" + sendtime + "\n" + arrivetime + "\n";
+                data += sVillage.getTribe() + "\t" + sVillage + "\t" + sUnit + "\t" + tVillage.getTribe() + "\t" + tVillage + "\t" + sendtime + "\t" + arrivetime + "\n";
                 jAttackTable.revalidate();
             }
 
@@ -814,14 +800,28 @@ private void fireCopyAsBBCodeToClipboardEvent(java.awt.event.MouseEvent evt) {//
                 Date sTime = new Date(aTime.getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(sVillage, tVillage, sUnit.getSpeed()) * 1000));
                 String sendtime = Constants.DATE_FORMAT.format(sTime);
                 String arrivetime = Constants.DATE_FORMAT.format(aTime);
-                data += "Angriff von " + sVillage.getTribe() + " aus " + sVillage.toBBCode() + " mit " + sUnit + " auf " + tVillage.getTribe().toBBCode() + " in " + tVillage.toBBCode() + " startet um " + sendtime + " und kommt um " + arrivetime + " an\n";
+                data = "Angriff von ";
+                if (sVillage.getTribe() != null) {
+                    data += sVillage.getTribe().toBBCode() + " aus ";
+                } else {
+                    data = " Barbaren aus ";
+                }
+
+                data += sVillage.toBBCode() + " mit " + sUnit + " auf ";
+
+                if (tVillage.getTribe() != null) {
+                    data += tVillage.getTribe().toBBCode() + " in ";
+                } else {
+                    data = " Barbaren in ";
+                }
+
+                data += tVillage.toBBCode() + " startet um " + sendtime + " und kommt um " + arrivetime + " an\n";
                 jAttackTable.revalidate();
             }
 
             Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(data), null);
             String result = "Daten in Zwischenablage kopiert.";
             JOptionPane.showMessageDialog(this, result, "Information", JOptionPane.INFORMATION_MESSAGE);
-        } else {
         }
     } catch (Exception e) {
         logger.error("Failed to copy data to clipboard", e);
@@ -1071,9 +1071,8 @@ private void fireCloseTimeChangeDialogEvent(java.awt.event.MouseEvent evt) {//GE
                 long arrive = attacks.get(row).getArriveTime().getTime();
                 long diff = min * 60000 + hour * 3600000 + day * 86400000;
                 //later if first index is selected
-                boolean later = (jDirectionBox.getSelectedIndex() == 0);
                 //if later, add diff to arrival, else remove diff from arrival
-                arrive = arrive + ((later) ? diff : (-1 * diff));
+                arrive += diff;
                 AttackManager.getSingleton().getAttackPlan(null).get(row).setArriveTime(new Date(arrive));
             }
             jAttackTable.revalidate();
@@ -1153,6 +1152,7 @@ private void fireChangeTimesEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
         pTable.getColumnModel().getColumn(1).setMaxWidth(75);
         //set sorter
         TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(model);
+
         pTable.setRowSorter(sorter);
     }
 
@@ -1195,7 +1195,6 @@ private void fireChangeTimesEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
     private javax.swing.JButton jCopyBBCodeToClipboardButton;
     private javax.swing.JButton jCopyUnformattedToClipboardButton;
     private javax.swing.JSpinner jDayField;
-    private javax.swing.JComboBox jDirectionBox;
     private javax.swing.JButton jDrawMarkedButton;
     private javax.swing.JButton jFlipMarkButton;
     private javax.swing.JSpinner jHourField;
@@ -1206,7 +1205,6 @@ private void fireChangeTimesEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
     private javax.swing.JButton jMarkAllButton;
     private javax.swing.JButton jMarkFilteredButton;
     private javax.swing.JSpinner jMinuteField;

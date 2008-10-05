@@ -17,6 +17,7 @@ import java.awt.event.ItemEvent;
 import java.text.NumberFormat;
 import java.util.Date;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JOptionPane;
 import javax.swing.JSpinner.DateEditor;
 import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
@@ -159,6 +160,7 @@ public class AttackAddFrame extends javax.swing.JFrame {
         jTargetVillage = new javax.swing.JLabel();
         jArriveTimeLabel = new javax.swing.JLabel();
         frameControlPanel1 = new de.tor.tribes.ui.FrameControlPanel();
+        jButton1 = new javax.swing.JButton();
 
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("de/tor/tribes/ui/Bundle"); // NOI18N
         setTitle(bundle.getString("AttackAddFrame.title")); // NOI18N
@@ -228,6 +230,15 @@ public class AttackAddFrame extends javax.swing.JFrame {
         jArriveTimeLabel.setMinimumSize(new java.awt.Dimension(120, 14));
         jArriveTimeLabel.setPreferredSize(new java.awt.Dimension(120, 14));
 
+        jButton1.setBackground(new java.awt.Color(239, 235, 223));
+        jButton1.setText(bundle.getString("AttackAddFrame.jButton1.text")); // NOI18N
+        jButton1.setToolTipText(bundle.getString("AttackAddFrame.jButton1.toolTipText")); // NOI18N
+        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireSetLastArrivalEvent(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -242,7 +253,6 @@ public class AttackAddFrame extends javax.swing.JFrame {
                     .addComponent(jArriveTimeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jTimeSpinner, javax.swing.GroupLayout.DEFAULT_SIZE, 306, Short.MAX_VALUE)
                     .addComponent(jTargetVillage, javax.swing.GroupLayout.DEFAULT_SIZE, 306, Short.MAX_VALUE)
                     .addComponent(jSourceVillage, javax.swing.GroupLayout.DEFAULT_SIZE, 306, Short.MAX_VALUE)
                     .addComponent(jDistance, javax.swing.GroupLayout.DEFAULT_SIZE, 306, Short.MAX_VALUE)
@@ -250,7 +260,11 @@ public class AttackAddFrame extends javax.swing.JFrame {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(jCancelButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jOKButton)))
+                        .addComponent(jOKButton))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(jTimeSpinner, javax.swing.GroupLayout.DEFAULT_SIZE, 205, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton1)))
                 .addContainerGap())
             .addComponent(frameControlPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 452, Short.MAX_VALUE)
         );
@@ -278,8 +292,9 @@ public class AttackAddFrame extends javax.swing.JFrame {
                     .addComponent(jUnitLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTimeSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jArriveTimeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jArriveTimeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton1)
+                    .addComponent(jTimeSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jOKButton)
@@ -313,13 +328,22 @@ private void fireAddAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:even
     UnitHolder u = (UnitHolder) jUnitBox.getSelectedItem();
     //long sendTime = getTime().getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(mSource, mTarget, u.getSpeed()) * 1000);
     AttackManager.getSingleton().addAttack(mSource, mTarget, getSelectedUnit(), getTime());
+    GlobalOptions.setLastArriveTime(getTime());
     setVisible(false);
 }//GEN-LAST:event_fireAddAttackEvent
 
-   
+private void fireSetLastArrivalEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSetLastArrivalEvent
+    Date last = GlobalOptions.getLastArriveTime();
+    if (last != null) {
+        jTimeSpinner.setValue(last);
+    } else {
+        JOptionPane.showMessageDialog(this, "Noch kein Wert gespeichert", "Warnung", JOptionPane.WARNING_MESSAGE);
+    }
+}//GEN-LAST:event_fireSetLastArrivalEvent
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private de.tor.tribes.ui.FrameControlPanel frameControlPanel1;
     private javax.swing.JLabel jArriveTimeLabel;
+    private javax.swing.JButton jButton1;
     private javax.swing.JButton jCancelButton;
     private javax.swing.JLabel jDistance;
     private javax.swing.JLabel jDistanceLabel;

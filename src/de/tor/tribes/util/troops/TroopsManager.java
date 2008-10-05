@@ -43,7 +43,9 @@ public class TroopsManager {
     }
 
     public synchronized void addTroopsManagerListener(TroopsManagerListener pListener) {
-        mManagerListeners.add(pListener);
+        if (!mManagerListeners.contains(pListener)) {
+            mManagerListeners.add(pListener);
+        }
     }
 
     public synchronized void removeTroopsManagerListener(TroopsManagerListener pListener) {
@@ -154,10 +156,10 @@ public class TroopsManager {
         }
     }
 
-    public void forceUpdate(){
+    public void forceUpdate() {
         fireTroopsChangedEvents();
     }
-    
+
     /**Notify attack manager listeners about changes*/
     private void fireTroopsChangedEvents() {
         TroopsManagerListener[] listeners = mManagerListeners.toArray(new TroopsManagerListener[]{});

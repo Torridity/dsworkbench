@@ -376,7 +376,7 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jInformationPanel" max="32767" attributes="0"/>
                   </Group>
-                  <Component id="jPanel1" pref="646" max="32767" attributes="1"/>
+                  <Component id="jPanel1" pref="648" max="32767" attributes="1"/>
               </Group>
               <EmptySpace min="-2" max="-2" attributes="0"/>
               <Component id="jInfoPanel" min="-2" pref="110" max="-2" attributes="0"/>

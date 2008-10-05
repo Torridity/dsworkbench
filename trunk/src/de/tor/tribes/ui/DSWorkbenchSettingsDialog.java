@@ -39,11 +39,11 @@ import de.tor.tribes.util.ServerChangeListener;
 import de.tor.tribes.util.troops.TroopsManager;
 import java.awt.Component;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
 /**
- *
  * @author  Jejkal
  */
 public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
@@ -167,6 +167,18 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 jMarkActiveVillageBox.setSelected(true);
             }
         } catch (Exception e) {
+        }
+        try {
+            if (Boolean.parseBoolean(GlobalOptions.getProperty("show.troop.info"))) {
+                jShowTroopInfoBox.setSelected(true);
+            }
+        } catch (Exception e) {
+        }
+        try {
+            int sel = Integer.parseInt(GlobalOptions.getProperty("default.mark"));
+            jDefaultMarkBox.setSelectedIndex(sel);
+        } catch (Exception e) {
+            jDefaultMarkBox.setSelectedIndex(0);
         }
     // </editor-fold>
     }
@@ -360,11 +372,15 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jShowDistanceBox = new javax.swing.JCheckBox();
         jMarkOwnVillagesOnMinimapBox = new javax.swing.JCheckBox();
         jMarkActiveVillageBox = new javax.swing.JCheckBox();
+        jShowTroopInfoBox = new javax.swing.JCheckBox();
         jPanel2 = new javax.swing.JPanel();
         jShowContinentsLabel = new javax.swing.JLabel();
         jShowDistanceLabel = new javax.swing.JLabel();
         jAttackMovementLabel2 = new javax.swing.JLabel();
         jAttackMovementLabel1 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        jDefaultMarkBox = new javax.swing.JComboBox();
         jAttackSettings = new javax.swing.JPanel();
         jAttackMovementLabel = new javax.swing.JLabel();
         jShowAttackMovementBox = new javax.swing.JCheckBox();
@@ -671,6 +687,15 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         });
         jPanel1.add(jMarkActiveVillageBox);
 
+        jShowTroopInfoBox.setToolTipText(bundle.getString("DSWorkbenchSettingsDialog.jShowTroopInfoBox.toolTipText")); // NOI18N
+        jShowTroopInfoBox.setOpaque(false);
+        jShowTroopInfoBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                showTroopInfoEvent(evt);
+            }
+        });
+        jPanel1.add(jShowTroopInfoBox);
+
         jPanel2.setOpaque(false);
         jPanel2.setLayout(new javax.swing.BoxLayout(jPanel2, javax.swing.BoxLayout.Y_AXIS));
 
@@ -698,6 +723,19 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jAttackMovementLabel1.setPreferredSize(new java.awt.Dimension(150, 21));
         jPanel2.add(jAttackMovementLabel1);
 
+        jLabel3.setText(bundle.getString("DSWorkbenchSettingsDialog.jLabel3.text")); // NOI18N
+        jPanel2.add(jLabel3);
+
+        jLabel4.setText(bundle.getString("DSWorkbenchSettingsDialog.jLabel4.text")); // NOI18N
+
+        jDefaultMarkBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Weiß", "Rot" }));
+        jDefaultMarkBox.setToolTipText(bundle.getString("DSWorkbenchSettingsDialog.jDefaultMarkBox.toolTipText")); // NOI18N
+        jDefaultMarkBox.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                fireStandardMarkChangedEvent(evt);
+            }
+        });
+
         javax.swing.GroupLayout jMapSettingsLayout = new javax.swing.GroupLayout(jMapSettings);
         jMapSettings.setLayout(jMapSettingsLayout);
         jMapSettingsLayout.setHorizontalGroup(
@@ -706,16 +744,22 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 .addContainerGap()
                 .addGroup(jMapSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jSkinPackLabel)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel4))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 8, Short.MAX_VALUE)
                 .addGroup(jMapSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 244, Short.MAX_VALUE)
-                    .addComponent(jGraphicPacks, javax.swing.GroupLayout.Alignment.TRAILING, 0, 244, Short.MAX_VALUE))
-                .addGap(25, 25, 25)
-                .addGroup(jMapSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jPreviewSkinButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jSelectSkinButton, javax.swing.GroupLayout.Alignment.TRAILING))
-                .addGap(41, 41, 41))
+                    .addGroup(jMapSettingsLayout.createSequentialGroup()
+                        .addGroup(jMapSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 244, Short.MAX_VALUE)
+                            .addComponent(jGraphicPacks, javax.swing.GroupLayout.Alignment.TRAILING, 0, 244, Short.MAX_VALUE))
+                        .addGap(25, 25, 25)
+                        .addGroup(jMapSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jPreviewSkinButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jSelectSkinButton, javax.swing.GroupLayout.Alignment.TRAILING))
+                        .addGap(41, 41, 41))
+                    .addGroup(jMapSettingsLayout.createSequentialGroup()
+                        .addComponent(jDefaultMarkBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(347, Short.MAX_VALUE))))
         );
         jMapSettingsLayout.setVerticalGroup(
             jMapSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -730,7 +774,11 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                     .addComponent(jPreviewSkinButton)
                     .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(128, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addGroup(jMapSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel4)
+                    .addComponent(jDefaultMarkBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(67, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab(bundle.getString("DSWorkbenchSettingsDialog.jMapSettings.TabConstraints.tabTitle"), new javax.swing.ImageIcon(getClass().getResource("/res/ui/map.gif")), jMapSettings); // NOI18N
@@ -1007,7 +1055,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         MarkerManager.getSingleton().saveMarkersToFile(DataHolder.getSingleton().getDataDirectory() + "/markers.xml");
         AttackManager.getSingleton().saveAttacksToFile(DataHolder.getSingleton().getDataDirectory() + "/attacks.xml");
         TroopsManager.getSingleton().saveTroopsToFile(DataHolder.getSingleton().getDataDirectory() + "/troops.xml");
-        
+
         String selectedServer = (String) jServerList.getSelectedItem();
         GlobalOptions.addProperty("default.server", selectedServer);
         GlobalOptions.saveProperties();
@@ -1191,7 +1239,6 @@ private void fireCancelRegistrationEvent(java.awt.event.MouseEvent evt) {//GEN-F
     // </editor-fold>
 private void fireChangeContinentsOnMinimapEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireChangeContinentsOnMinimapEvent
             GlobalOptions.addProperty("minimap.showcontinents", Boolean.toString(jContinentsOnMinimap.isSelected()));
-            GlobalOptions.saveProperties();
             MinimapPanel.getSingleton().resetBuffer();
             MinimapPanel.getSingleton().redraw();
 }//GEN-LAST:event_fireChangeContinentsOnMinimapEvent
@@ -1279,12 +1326,10 @@ private void fireDownloadDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
     // <editor-fold defaultstate="collapsed" desc=" EventListeners for settings ">
 private void fireChangeDrawDistanceEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireChangeDrawDistanceEvent
             GlobalOptions.addProperty("draw.distance", Boolean.toString(jShowDistanceBox.isSelected()));
-            GlobalOptions.saveProperties();
 }//GEN-LAST:event_fireChangeDrawDistanceEvent
 
 private void fireChangeShowAttackMovementEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireChangeShowAttackMovementEvent
     GlobalOptions.addProperty("attack.movement", Boolean.toString(jShowAttackMovementBox.isSelected()));
-    GlobalOptions.saveProperties();
 }//GEN-LAST:event_fireChangeShowAttackMovementEvent
 
 private void fireShowSkinPreviewEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireShowSkinPreviewEvent
@@ -1300,15 +1345,27 @@ private void fireShowSkinPreviewEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
 
 private void fireChangeMarkOwnVillagesOnMinimapEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireChangeMarkOwnVillagesOnMinimapEvent
     GlobalOptions.addProperty("mark.villages.on.minimap", Boolean.toString(jMarkOwnVillagesOnMinimapBox.isSelected()));
-    GlobalOptions.saveProperties();
     MinimapPanel.getSingleton().resetBuffer();
     MinimapPanel.getSingleton().redraw();
 }//GEN-LAST:event_fireChangeMarkOwnVillagesOnMinimapEvent
 
 private void fireChangeMarkActiveVillageEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireChangeMarkActiveVillageEvent
     GlobalOptions.addProperty("mark.active.village", Boolean.toString(jMarkActiveVillageBox.isSelected()));
-    GlobalOptions.saveProperties();
 }//GEN-LAST:event_fireChangeMarkActiveVillageEvent
+
+private void showTroopInfoEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showTroopInfoEvent
+    GlobalOptions.addProperty("show.troop.info", Boolean.toString(jShowTroopInfoBox.isSelected()));
+}//GEN-LAST:event_showTroopInfoEvent
+
+private void fireStandardMarkChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireStandardMarkChangedEvent
+    if (evt.getStateChange() == ItemEvent.SELECTED) {
+        int idx = jDefaultMarkBox.getSelectedIndex();
+        if (idx < 0) {
+            idx = 0;
+        }
+        GlobalOptions.addProperty("default.mark", Integer.toString(idx));
+    }
+}//GEN-LAST:event_fireStandardMarkChangedEvent
 
     // </editor-fold>
 
@@ -1544,11 +1601,14 @@ private void fireChangeMarkActiveVillageEvent(java.awt.event.ActionEvent evt) {/
     private javax.swing.JCheckBox jContinentsOnMinimap;
     private javax.swing.JButton jCreateAccountButton;
     private javax.swing.JDialog jCreateAccountDialog;
+    private javax.swing.JComboBox jDefaultMarkBox;
     private javax.swing.JRadioButton jDirectConnectOption;
     private javax.swing.JButton jDownloadDataButton;
     private javax.swing.JComboBox jGraphicPacks;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jLoginPanel;
     private javax.swing.JPanel jMapSettings;
     private javax.swing.JCheckBox jMarkActiveVillageBox;
@@ -1581,13 +1641,13 @@ private void fireChangeMarkActiveVillageEvent(java.awt.event.ActionEvent evt) {/
     private javax.swing.JLabel jShowContinentsLabel;
     private javax.swing.JCheckBox jShowDistanceBox;
     private javax.swing.JLabel jShowDistanceLabel;
+    private javax.swing.JCheckBox jShowTroopInfoBox;
     private javax.swing.JLabel jSkinPackLabel;
     private javax.swing.JTextArea jStatusArea;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JComboBox jTribeNames;
     // End of variables declaration//GEN-END:variables
-    
-   
+
 }
 
 

@@ -29,6 +29,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.text.NumberFormat;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.DefaultComboBoxModel;
@@ -68,6 +69,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
     /** Creates new form MapFrame */
     DSWorkbenchMainFrame() {
         initComponents();
+        setTitle("DS Workbench " + Constants.VERSION + Constants.VERSION_ADDITION);
         jMassAttackItem.setVisible(false);
 
         // <editor-fold defaultstate="collapsed" desc=" Register ShutdownHook ">
@@ -182,7 +184,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                     fireShowMarkerFrameEvent(null);
                 } else if (e.getSource() == DSWorkbenchDistanceFrame.getSingleton()) {
                     fireShowDistanceFrameEvent(null);
-                }else if (e.getSource() == DSWorkbenchTroopsFrame.getSingleton()) {
+                } else if (e.getSource() == DSWorkbenchTroopsFrame.getSingleton()) {
                     fireShowTroopsFrameEvent(null);
                 }
             }
@@ -223,8 +225,9 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
 
         Tribe t = DataHolder.getSingleton().getTribeByName(GlobalOptions.getProperty("player." + GlobalOptions.getSelectedServer()));
         if (t != null) {
-            DefaultComboBoxModel model = new DefaultComboBoxModel(t.getVillageList().toArray());
-            jCurrentPlayerVillages.setModel(model);
+            Village[] villages = t.getVillageList().toArray(new Village[]{});
+            Arrays.sort(villages);
+            jCurrentPlayerVillages.setModel(new DefaultComboBoxModel(villages));
         } else {
             DefaultComboBoxModel model = new DefaultComboBoxModel(new Object[]{"Keine Dörfer"});
             jCurrentPlayerVillages.setModel(model);
@@ -274,11 +277,14 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         logger.info("Setup toolbox");
         //setup toolbox
         mToolbox = new ToolBoxFrame();
-        mToolbox.addWindowListener(new WindowListener() {
+        mToolbox.addWindowListener(new  
+
+              WindowListener( ) {
+            
 
             @Override
-            public void windowOpened(WindowEvent e) {
-            }
+            public  void windowOpened(WindowEvent e) {
+                }
 
             @Override
             public void windowClosing(WindowEvent e) {
@@ -414,7 +420,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                 }
             } catch (Exception e) {
             }
-            
+
             try {
                 if (Boolean.parseBoolean(GlobalOptions.getProperty("troops.frame.visible"))) {
                     jShowTroopsFrame.setSelected(true);
@@ -1041,7 +1047,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                         .addComponent(jNavigationPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jInformationPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 646, Short.MAX_VALUE))
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 648, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jInfoPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -1344,7 +1350,6 @@ private void fireShowTroopsFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIR
         }
     }
     // <editor-fold defaultstate="collapsed" desc=" Listener EventHandlers ">
-
     @Override
     public void fireToolChangedEvent(int pTool) {
         jCurrentToolLabel.setIcon(ImageManager.getCursorImage(pTool));
@@ -1378,7 +1383,7 @@ private void fireShowTroopsFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIR
             jShowMarkerFrame.setSelected(DSWorkbenchMarkerFrame.getSingleton().isVisible());
         } else if (pSource == DSWorkbenchDistanceFrame.getSingleton()) {
             jShowDistanceFrame.setSelected(DSWorkbenchDistanceFrame.getSingleton().isVisible());
-        }else if(pSource == DSWorkbenchTroopsFrame.getSingleton()) {
+        } else if (pSource == DSWorkbenchTroopsFrame.getSingleton()) {
             jShowTroopsFrame.setSelected(DSWorkbenchTroopsFrame.getSingleton().isVisible());
         }
     }

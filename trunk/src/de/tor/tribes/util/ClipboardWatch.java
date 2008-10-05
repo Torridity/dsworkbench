@@ -51,6 +51,7 @@ public class ClipboardWatch extends Thread {
                     }
                 }
             } catch (Exception e) {
+                //e.printStackTrace();
                 //no usable data
             }
             try {

@@ -7,6 +7,9 @@ package de.tor.tribes.util.parser;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.util.troops.TroopsManager;
+import java.awt.Toolkit;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -108,7 +111,7 @@ public class TroopsParser {
 
     public static void main(String[] args) {
 
-        /* Transferable t = (Transferable) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
+        /*   Transferable t = (Transferable) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
         try {
         String s = " 003 | Spitfire (471|482) K44\n" +
         "eigene	2500	1500	0	1964	500	0	0	1396	0	0	0	0	Befehle\n" +
@@ -127,9 +130,27 @@ public class TroopsParser {
         } catch (Exception e) {
         e.printStackTrace();
         }*/
-        String token = "(120|192)";
+        /* String token = "(120|192)";
         System.out.println(token.matches("\\([0-9]+\\|[0-9]+\\)"));
-
-    //TroopsParser.parse(pTroopsString);
+         */
+        // TroopsParser.parse(pTroopsString);
     }
+    /*
+    kirscheye3	435|447 FaNtAsY wOrLd ... <3	Schwere Kavallerie	Torridity	436|444 FaNtAsY wOrLd ... 12	02.10.08 23:06:46
+    02.10.08 23:41:33
+    Torridity	437|445 FaNtAsY wOrLd ... 10	Schwere Kavallerie	Torridity	436|444 FaNtAsY wOrLd ... 12	02.10.08 23:26:00
+    02.10.08 23:41:33
+    Torridity	438|445 Barbarendorf (12)	Schwere Kavallerie	Torridity	436|444 FaNtAsY wOrLd ... 12	02.10.08 23:16:57
+    02.10.08 23:41:33
+    Torridity	439|445 Barbarendorf (13)	Schwere Kavallerie	Torridity	436|444 FaNtAsY wOrLd ... 12	02.10.08 23:06:46
+    02.10.08 23:41:33
+    
+     */
+    /*
+    LGK88 (1) (458|465) K44  
+    eigene	0	0	6000	0	2300	0	300	50	0	Befehle
+    im Dorf	0	0	6000	0	2300	0	300	50	0	0	Truppen
+    auswärts	0	0	0	0	0	0	0	0	0	0	0	0
+    unterwegs	0	0	0	0	0	0	0	0	0	0	0	0	Befehle 
+     */
 }

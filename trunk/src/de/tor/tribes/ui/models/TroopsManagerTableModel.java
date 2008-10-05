@@ -110,8 +110,12 @@ public class TroopsManagerTableModel extends AbstractTableModel {
                 return TroopsManager.getSingleton().getTroopsForVillage(row).getState();
             }
             default: {
-                int troopIndex = columnIndex - 2;
-                return TroopsManager.getSingleton().getTroopsForVillage(row).getTroops().get(troopIndex);
+                try {
+                    int troopIndex = columnIndex - 2;
+                    return TroopsManager.getSingleton().getTroopsForVillage(row).getTroops().get(troopIndex);
+                } catch (Exception e) {
+                    return 0;
+                }
             }
         }
     }

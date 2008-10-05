@@ -7,7 +7,6 @@ package de.tor.tribes.ui;
 
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Village;
-import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.tag.TagManager;
 import java.util.List;
 import javax.swing.DefaultComboBoxModel;
@@ -80,7 +79,7 @@ public class VillageTagFrame extends javax.swing.JFrame {
         jPlayerName.setBackground(new java.awt.Color(239, 235, 223));
         jPlayerName.setEditable(false);
 
-        jTagsChooser.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Off", "Def", "Aufbau", "Truppenaufbau", "Voll", "Eigene" }));
+        jTagsChooser.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Off", "Def", "Aufbau", "Truppenaufbau", "Voll", "AG", "Eigene" }));
 
         jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/add.gif"))); // NOI18N
         jButton1.setMaximumSize(new java.awt.Dimension(25, 25));

@@ -30,7 +30,7 @@ public class Village implements Serializable, Comparable {
     private transient Tribe tribe = null;
     private int points;
     private byte type;
-
+    
     //$id, $name, $x, $y, $tribe, $points, $type
     public static Village parseFromPlainData(String pLine) {
         StringTokenizer tokenizer = new StringTokenizer(pLine, ",");
@@ -170,7 +170,7 @@ public class Village implements Serializable, Comparable {
     }
 
     public String getHTMLInfo() {
-        String villageInfo = "<html><b>Name (X|Y):</b> " + getName() + " (" + getX() + "|" + getY() + "), <b>Punkte:</b> " + getPoints() + ",";
+        String villageInfo = "<html><b>Name (X|Y):</b> " + getName().replaceAll("<", "&lt;").replaceAll(">", "&gt;") + " (" + getX() + "|" + getY() + "), <b>Punkte:</b> " + getPoints() + ",";
         List<String> tags = TagManager.getSingleton().getTags(this);
         villageInfo += "<b>Tags:</b> ";
         if (tags == null) {
@@ -222,11 +222,11 @@ public class Village implements Serializable, Comparable {
 
     @Override
     public String toString() {
-        return getX() + "|" + getY() + " " + getName();
+        return getName() + " (" + getX() + "|" + getY() + ")";
     }
 
     public String toBBCode() {
-        return "[village](" + getX() + "|" + getY() + ")[/village]";
+        return "[village]" + getX() + "|" + getY() + "[/village]";
     }
 
     /**Create diff between upto-date village and an older version of this village*/
@@ -288,6 +288,6 @@ public class Village implements Serializable, Comparable {
         if (o == null) {
             return -1;
         }
-        return toString().compareTo(o.toString());
+        return toString().toLowerCase().compareTo(o.toString().toLowerCase());
     }
 }

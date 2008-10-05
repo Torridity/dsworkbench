@@ -135,9 +135,6 @@
             <Property name="toolTipText" type="java.lang.String" value="Transparenz der Legende (10 = keine Legende)"/>
             <Property name="value" type="int" value="4"/>
           </Properties>
-          <Events>
-            <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="jTransparancySliderfireChangeScreenshotScalingEvent"/>
-          </Events>
         </Component>
       </SubComponents>
     </Container>

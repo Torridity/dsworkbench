@@ -8,6 +8,7 @@ import jerklib.events.AwayEvent;
 import jerklib.events.ChannelListEvent;
 import jerklib.events.ConnectionCompleteEvent;
 import jerklib.events.ConnectionLostEvent;
+import jerklib.events.CtcpEvent;
 import jerklib.events.IRCEvent;
 import jerklib.events.InviteEvent;
 import jerklib.events.JoinCompleteEvent;
@@ -83,5 +84,7 @@ public interface IRCHandlerListener {
 
     public void fireWhoEvent(WhoEvent event);
 
+    public void fireCTCPEvent(CtcpEvent event);
+    
     public void fireIRCEvent(IRCEvent event);
 }

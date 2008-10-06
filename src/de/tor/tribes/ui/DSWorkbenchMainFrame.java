@@ -232,14 +232,14 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             DefaultComboBoxModel model = new DefaultComboBoxModel(new Object[]{"Keine Dörfer"});
             jCurrentPlayerVillages.setModel(model);
         }
+        //update views
         MinimapPanel.getSingleton().redraw();
         DSWorkbenchMarkerFrame.getSingleton().setupMarkerPanel();
-        //jMarkerPanel.updateUI();
         DSWorkbenchAttackFrame.getSingleton().setupAttackPanel();
-        // jAttackPanel.updateUI();
+        //update troops table and troops view
         TroopsManagerTableModel.getSingleton().setup();
         DSWorkbenchTroopsFrame.getSingleton().setupTroopsPanel();
-
+        //update attack planner
         if (mTribeTribeAttackFrame != null) {
             mTribeTribeAttackFrame.setup();
         }
@@ -259,32 +259,29 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
     }
 
     /**Get current zoom factor*/
-    public double getZoom() {
+    public double getZoomFactor() {
         return dZoomFactor;
     }
 
     /**Called at startup*/
     protected void init() {
+        logger.info("Starting initialization");
         //setup everything
         serverSettingsChangedEvent();
-        logger.info("Setup maps");
+        logger.info(" * Setting up maps");
         setupMaps();
-        logger.info("Setup details panel");
+        logger.info(" * Setting up details panel");
         setupDetailsPanel();
-        logger.info("Setup tool frames");
+        logger.info(" * Setting up views");
         setupFrames();
-
-        logger.info("Setup toolbox");
         //setup toolbox
+        logger.info(" * Setup toolbox");
         mToolbox = new ToolBoxFrame();
-        mToolbox.addWindowListener(new  
-
-              WindowListener( ) {
-            
+        mToolbox.addWindowListener(new WindowListener() {
 
             @Override
-            public  void windowOpened(WindowEvent e) {
-                }
+            public void windowOpened(WindowEvent e) {
+            }
 
             @Override
             public void windowClosing(WindowEvent e) {
@@ -312,14 +309,15 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             }
         });
         fireToolChangedEvent(ImageManager.CURSOR_DEFAULT);
-        logger.debug("Setup attack planner");
+
+        logger.info(" * Setting up attack planner");
         //setup frames
         mAllyAllyAttackFrame = new AllyAllyAttackFrame();
         mAllyAllyAttackFrame.pack();
         mTribeTribeAttackFrame = new TribeTribeAttackFrame();
         mTribeTribeAttackFrame.pack();
-        logger.info("Initialization finished");
         mAbout = new AboutDialog(this, true);
+        logger.info("Initialization finished");
         initialized = true;
     }
 
@@ -1350,6 +1348,7 @@ private void fireShowTroopsFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIR
         }
     }
     // <editor-fold defaultstate="collapsed" desc=" Listener EventHandlers ">
+
     @Override
     public void fireToolChangedEvent(int pTool) {
         jCurrentToolLabel.setIcon(ImageManager.getCursorImage(pTool));

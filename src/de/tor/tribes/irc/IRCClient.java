@@ -23,7 +23,7 @@ public class IRCClient implements IRCEventListener {
         /*
          * ConnectionManager takes a Profile to use for new connections.
          */
-        manager = new ConnectionManager(new Profile("Torri123"));
+        manager = new ConnectionManager(new Profile("Torridity"));
 
         /*
          * One instance of ConnectionManager can connect to many IRC networks.
@@ -31,7 +31,7 @@ public class IRCClient implements IRCEventListener {
          * The Session is the main way users will interact with this library and IRC
          * networks
          */
-        Session session = manager.requestConnection("irc.freenode.net");
+        Session session = manager.requestConnection("dsworkbench.de");
 
         /*
          * JerkLib fires IRCEvents to notify users of the lib of incoming events
@@ -49,7 +49,7 @@ public class IRCClient implements IRCEventListener {
      */
     public void receiveEvent(IRCEvent e) {
         if (e.getType() == Type.CONNECT_COMPLETE) {
-            e.getSession().join("#jerklib");
+            e.getSession().join("#dsworkbench");
         } else if (e.getType() == Type.CHANNEL_MESSAGE) {
             MessageEvent me = (MessageEvent) e;
             System.out.println(me.getNick() + ":" + me.getMessage());
@@ -62,7 +62,7 @@ public class IRCClient implements IRCEventListener {
         }
     }
 
-   /* public static void main(String[] args) {
+   public static void main(String[] args) {
         new IRCClient();
-    }*/
+    }
 }

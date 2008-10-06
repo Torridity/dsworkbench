@@ -26,6 +26,7 @@ import org.apache.log4j.Logger;
 public class Skin {
 
     private static Logger logger = Logger.getLogger(Skin.class);    //init with default skin dimensions
+
     private int iFieldWidth = 0;
     private int iFieldHeight = 0;
     /**Texture IDs*/
@@ -82,7 +83,7 @@ public class Skin {
     private final String DEFAULT_UNDERGROUND = "default_underground.png";
     private final int TEXTURE_COUNT = 25;
     private static String BASE_PATH = "graphics/skins";
-    private Hashtable<Integer, Image> mTextures = null;
+    private Hashtable<Integer, BufferedImage> mTextures = null;
     private Hashtable<Double, Hashtable<Integer, Image>> mCache = null;
     private String sSkinID = null;
 
@@ -116,8 +117,7 @@ public class Skin {
 
         sSkinID = pSkinID;
         String path = BASE_PATH + "/" + pSkinID;
-        mTextures =
-                new Hashtable<Integer, Image>();
+        mTextures = new Hashtable<Integer, BufferedImage>();
         try {
             mTextures.put(ID_DEFAULT_UNDERGROUND, ImageIO.read(new File(path + "/" + DEFAULT_UNDERGROUND)));
             iFieldWidth = mTextures.get(0).getWidth(null);
@@ -160,8 +160,8 @@ public class Skin {
                 }
 
             }
-            mCache = new Hashtable<Double, Hashtable<Integer, Image>>();
-            mCache.put(1.0, mTextures);
+        //  mCache = new Hashtable<Double, Hashtable<Integer, Image>>();
+        //  mCache.put(1.0, mTextures);
         //try loading units, ignore exceptions due to not all skins have all units
         } catch (IOException ioe) {
             throw new Exception("Fehler beim laden des Grafikpaketes");

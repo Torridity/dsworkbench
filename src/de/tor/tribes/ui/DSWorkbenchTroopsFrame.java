@@ -5,7 +5,6 @@
  */
 package de.tor.tribes.ui;
 
-import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.ui.editors.DateSpinEditor;
 import de.tor.tribes.ui.models.TroopsManagerTableModel;
 import de.tor.tribes.ui.renderer.DateCellRenderer;

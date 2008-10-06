@@ -11,6 +11,7 @@ import jerklib.events.AwayEvent;
 import jerklib.events.ChannelListEvent;
 import jerklib.events.ConnectionCompleteEvent;
 import jerklib.events.ConnectionLostEvent;
+import jerklib.events.CtcpEvent;
 import jerklib.events.IRCEvent;
 import jerklib.events.IRCEvent.Type;
 import jerklib.events.InviteEvent;
@@ -94,7 +95,7 @@ public class IRCHandler implements IRCEventListener {
 
     @Override
     public void receiveEvent(IRCEvent e) {
-
+        System.out.println(e.getRawEventData());
         if (e.getType() == Type.CONNECT_COMPLETE) {
             mCurrentSession = ((ConnectionCompleteEvent) e).getSession();
             mListener.fireConnectedEvent(((ConnectionCompleteEvent) e));
@@ -146,9 +147,10 @@ public class IRCHandler implements IRCEventListener {
             mListener.fireWhowasEvent((WhowasEvent) e);
         } else if (e.getType() == Type.WHO_EVENT) {
             mListener.fireWhoEvent((WhoEvent) e);
+        } else if (e.getType() == Type.CTCP_EVENT) {
+            mListener.fireCTCPEvent((CtcpEvent) e);
         } else {
             mListener.fireIRCEvent(e);
-
         }
     }
 }

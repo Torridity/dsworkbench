@@ -5,7 +5,6 @@
  */
 package de.tor.tribes.irc.ui;
 
-import de.tor.tribes.ui.*;
 import de.tor.tribes.irc.ui.IRCOutputPanel;
 import de.tor.tribes.irc.util.IRCHandler;
 import de.tor.tribes.irc.util.IRCHandlerListener;
@@ -21,6 +20,7 @@ import jerklib.events.AwayEvent;
 import jerklib.events.ChannelListEvent;
 import jerklib.events.ConnectionCompleteEvent;
 import jerklib.events.ConnectionLostEvent;
+import jerklib.events.CtcpEvent;
 import jerklib.events.IRCEvent;
 import jerklib.events.InviteEvent;
 import jerklib.events.JoinCompleteEvent;
@@ -54,13 +54,21 @@ public class IRCFrame extends javax.swing.JFrame implements IRCHandlerListener {
     private IRCHandler mHandler = null;
     private IRCOutputPanel mSystemPanel = null;
     private Profile mProfile = null;
+    private static IRCFrame SINGLETON = null;
 
-    public IRCFrame() {
+    public static IRCFrame getSingleton() {
+        if (SINGLETON == null) {
+            SINGLETON = new IRCFrame();
+        }
+        return SINGLETON;
+    }
+
+    IRCFrame() {
         this(null);
     }
 
     /** Creates new form IRCFrame */
-    public IRCFrame(Profile pProfile) {
+    IRCFrame(Profile pProfile) {
         initComponents();
         mSystemPanel = new IRCOutputPanel(null);
         jOutputTabs.add(mSystemPanel, 0);
@@ -68,7 +76,7 @@ public class IRCFrame extends javax.swing.JFrame implements IRCHandlerListener {
         mTabs = new Hashtable<String, Integer>();
         mTabs.put("System", 0);
         if (pProfile == null) {
-            mProfile = new Profile("Torri123");
+            mProfile = new Profile("Torridity");
         } else {
             mProfile = pProfile;
         }
@@ -99,6 +107,9 @@ public class IRCFrame extends javax.swing.JFrame implements IRCHandlerListener {
     }
 
     public IRCOutputPanel getPanel(String pName) {
+        if (pName == null) {
+            return null;
+        }
         Integer idx = mTabs.get(pName);
         if (idx == -1) {
             //drop message
@@ -197,8 +208,8 @@ public class IRCFrame extends javax.swing.JFrame implements IRCHandlerListener {
     }// </editor-fold>//GEN-END:initComponents
 
 private void fireConnectEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireConnectEvent
-    mHandler.connect("irc.quakenet.org");
-    System.out.println(mHandler.isConnected());
+    mHandler.connect("dsworkbench.de");
+//System.out.println(mHandler.isConnected());
 }//GEN-LAST:event_fireConnectEvent
 
 private void fireSendInputEvent(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_fireSendInputEvent
@@ -236,7 +247,8 @@ private void fireChangeTabEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:
     /**
      * @param args the command line arguments
      */
-  /*  public static void main(String args[]) {
+    public static void main(String args[]) {
+
         java.awt.EventQueue.invokeLater(new Runnable() {
 
             public void run() {
@@ -244,7 +256,10 @@ private void fireChangeTabEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:
             }
         });
 
+    /*       for(byte v  : new String("").getBytes()){
+    System.out.println(v);
     }*/
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
@@ -286,10 +301,10 @@ private void fireChangeTabEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:
 
     @Override
     public void fireAwayEvent(AwayEvent event) {
-       // IRCOutputPanel panel = getPanel(event.getChannelName());
+        // IRCOutputPanel panel = getPanel(event.getChannelName());
         //event.
       /*  if (panel != null) {
-            panel.insertText(event.getNick() + " meldet sich ab (" + event.getAwayMessage() + ")", IRCOutputPanel.INFO_ATTRIBUTES);
+        panel.insertText(event.getNick() + " meldet sich ab (" + event.getAwayMessage() + ")", IRCOutputPanel.INFO_ATTRIBUTES);
         }
         fireChangeTabEvent(null);*/
     }
@@ -348,6 +363,9 @@ private void fireChangeTabEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:
     @Override
     public void fireNickChangeEvent(NickChangeEvent event) {
         mSystemPanel.insertText(event.getOldNick() + " heisst jetzt " + event.getNewNick(), IRCOutputPanel.INFO_ATTRIBUTES);
+        if (mProfile.getActualNick().equals(event.getOldNick())) {
+            mProfile = new Profile(event.getNewNick());
+        }
     }
 
     @Override
@@ -377,7 +395,15 @@ private void fireChangeTabEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:
 
     @Override
     public void firePartEvent(PartEvent event) {
-        if (event.getUserName().equals("~" + mProfile.getActualNick())) {
+        if (event.getWho().equals(mProfile.getActualNick())) {
+            System.out.println("Parting " + event.getUserName());
+            System.out.println("Actu " + mProfile.getActualNick());
+            System.out.println("Fi " + mProfile.getFirstNick());
+            System.out.println("Se " + mProfile.getSecondNick());
+            System.out.println("Fi " + mProfile.getThirdNick());
+            System.out.println("Na " + mProfile.getName());
+            System.out.println("Who " + event.getWho());
+            System.out.println("Rtaw " + event.getRawEventData());
             removeChannel(event.getChannelName());
         } else {
             getPanel(event.getChannelName()).insertText(event.getUserName() + " verlässt den Channel (" + event.getPartMessage() + ")", IRCOutputPanel.ERROR_ATTRIBUTES);
@@ -388,6 +414,7 @@ private void fireChangeTabEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:
     @Override
     public void firePrivateMessageEvent(MessageEvent event) {
         System.out.println("msg");
+    //event.g
     }
 
     @Override
@@ -415,7 +442,11 @@ private void fireChangeTabEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:
         message += "ChannelPrefixes: " + Arrays.asList(event.getServerInformation().getChannelPrefixes()) + "\n";
         message += "NickPrefixes: " + Arrays.asList(event.getServerInformation().getNickPrefixes()) + "\n";
         message += "ChannelPrefixes: " + Arrays.asList(event.getServerInformation().getChannelPrefixes()) + "\n";
-        message += "StatusPrefixes: " + Arrays.asList(event.getServerInformation().getStatusPrefixes()) + "\n";
+        try {
+            message += "StatusPrefixes: " + Arrays.asList(event.getServerInformation().getStatusPrefixes()) + "\n";
+        } catch (Exception e) {
+            //no server information
+        }
         message += "SupportedChannelModes: " + Arrays.asList(event.getServerInformation().getSupportedChannelModes());
         mSystemPanel.insertText(message, IRCOutputPanel.INFO_ATTRIBUTES);
     }
@@ -481,6 +512,15 @@ private void fireChangeTabEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:
         } else {
             panel.insertText(message, IRCOutputPanel.INFO_ATTRIBUTES);
         }
+    }
+
+    @Override
+    public void fireCTCPEvent(CtcpEvent event) {
+        System.out.println("Nick " + event.getNick());
+        System.out.println("User " + event.getUserName());
+        System.out.println("Msg " + event.getMessage());
+        System.out.println("String " + event.getCtcpString());
+        System.out.println("raw " + event.getRawEventData());
     }
 
     @Override

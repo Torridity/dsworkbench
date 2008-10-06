@@ -7,6 +7,7 @@ package de.tor.tribes.ui;
 
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Village;
+import de.tor.tribes.util.tag.Tag;
 import de.tor.tribes.util.tag.TagManager;
 import java.util.List;
 import javax.swing.DefaultComboBoxModel;
@@ -19,9 +20,23 @@ import javax.swing.JOptionPane;
  */
 public class VillageTagFrame extends javax.swing.JFrame {
 
+    private static VillageTagFrame SINGLETON = null;
+
+    public static synchronized VillageTagFrame getSingleton() {
+        if (SINGLETON == null) {
+            SINGLETON = new VillageTagFrame();
+        }
+        return SINGLETON;
+    }
+
     /** Creates new form VillageTagFrame */
-    public VillageTagFrame() {
+    VillageTagFrame() {
         initComponents();
+    }
+
+    public void updateUserTags() {
+        jTagsChooser.setModel(new DefaultComboBoxModel(TagManager.getSingleton().getUserTags().toArray(new Tag[]{})));
+        jTagsChooser.updateUI();
     }
 
     public void showTagsFrame(Village pVillage) {
@@ -34,10 +49,17 @@ public class VillageTagFrame extends javax.swing.JFrame {
         jVillageList.setSelectedItem(pVillage);
 
         List<String> tags = TagManager.getSingleton().getTags(pVillage);
+
         DefaultListModel lModel = new DefaultListModel();
         if (tags != null) {
             for (String tag : tags) {
-                lModel.addElement(tag);
+                if (TagManager.getSingleton().getUserTagIcon(tag) != null) {
+                    //add only if tag is still valid
+                    lModel.addElement(tag);
+                } else {
+                    //remove tag for village if tag does not exist
+                    TagManager.getSingleton().removeUserTag(tag);
+                }
             }
         }
         jTagsList.setModel(lModel);

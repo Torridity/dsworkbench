@@ -79,6 +79,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             @Override
             public void run() {
                 logger.info("Performing ShutdownHook");
+                TagManager.getSingleton().saveUserTags();
                 TagManager.getSingleton().saveTagsToFile(DataHolder.getSingleton().getDataDirectory() + "/tags.xml");
                 MarkerManager.getSingleton().saveMarkersToFile(DataHolder.getSingleton().getDataDirectory() + "/markers.xml");
                 AttackManager.getSingleton().saveAttacksToFile(DataHolder.getSingleton().getDataDirectory() + "/attacks.xml");
@@ -1348,7 +1349,6 @@ private void fireShowTroopsFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIR
         }
     }
     // <editor-fold defaultstate="collapsed" desc=" Listener EventHandlers ">
-
     @Override
     public void fireToolChangedEvent(int pTool) {
         jCurrentToolLabel.setIcon(ImageManager.getCursorImage(pTool));

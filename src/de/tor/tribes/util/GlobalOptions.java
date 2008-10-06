@@ -128,10 +128,13 @@ public class GlobalOptions {
     /**Load user data (attacks, markers...)*/
     public static void loadUserData() {
         if (getSelectedServer() != null) {
+
             logger.debug("Loading markers");
             MarkerManager.getSingleton().loadMarkersFromFile(DataHolder.getSingleton().getDataDirectory() + "/markers.xml");
             logger.debug("Loading attacks");
             AttackManager.getSingleton().loadAttacksFromFile(DataHolder.getSingleton().getDataDirectory() + "/attacks.xml");
+            logger.debug("Loading user tags");
+            TagManager.getSingleton().loadUserTags();
             logger.debug("Loading tags");
             TagManager.getSingleton().loadTagsFromFile(DataHolder.getSingleton().getDataDirectory() + "/tags.xml");
             logger.debug("Loading troops");
@@ -170,12 +173,12 @@ public class GlobalOptions {
             SELECTED_SERVER = pServer;
         }
     }
-    
-    public static void setLastArriveTime(Date pTime){
+
+    public static void setLastArriveTime(Date pTime) {
         lastArriveTime = pTime;
     }
-    
-    public static Date getLastArriveTime(){
+
+    public static Date getLastArriveTime() {
         return lastArriveTime;
     }
 }

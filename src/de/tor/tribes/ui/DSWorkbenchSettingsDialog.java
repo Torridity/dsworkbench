@@ -180,6 +180,8 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         } catch (Exception e) {
             jDefaultMarkBox.setSelectedIndex(0);
         }
+
+        setupTagsPanel();
     // </editor-fold>
     }
 
@@ -255,6 +257,9 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         for (int i = 0; i < jAttackColorTable.getColumnCount(); i++) {
             jAttackColorTable.getColumn(jAttackColorTable.getColumnName(i)).setHeaderRenderer(headerRenderer);
         }
+    }
+
+    private void setupTagsPanel() {
     }
 
     @Override
@@ -395,6 +400,12 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jProxyPortLabel = new javax.swing.JLabel();
         jProxyPort = new javax.swing.JTextField();
         jRefeshNetworkButton = new javax.swing.JButton();
+        jTagsSettings = new javax.swing.JPanel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        jTagsTable = new javax.swing.JTable();
+        jLabel5 = new javax.swing.JLabel();
+        jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
         jOKButton = new javax.swing.JButton();
         jCancelButton = new javax.swing.JButton();
         jCreateAccountButton = new javax.swing.JButton();
@@ -933,6 +944,67 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
 
         jTabbedPane1.addTab(bundle.getString("DSWorkbenchSettingsDialog.jNetworkSettings.TabConstraints.tabTitle"), new javax.swing.ImageIcon(getClass().getResource("/res/proxy.png")), jNetworkSettings); // NOI18N
 
+        jTagsSettings.setBackground(new java.awt.Color(239, 235, 223));
+
+        jTagsTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+
+            }
+        ));
+        jScrollPane3.setViewportView(jTagsTable);
+
+        jLabel5.setText(bundle.getString("DSWorkbenchSettingsDialog.jLabel5.text")); // NOI18N
+
+        jButton1.setBackground(new java.awt.Color(239, 235, 223));
+        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/remove.gif"))); // NOI18N
+        jButton1.setText(bundle.getString("DSWorkbenchSettingsDialog.jButton1.text")); // NOI18N
+        jButton1.setMaximumSize(new java.awt.Dimension(20, 25));
+        jButton1.setMinimumSize(new java.awt.Dimension(20, 25));
+        jButton1.setPreferredSize(new java.awt.Dimension(20, 25));
+
+        jButton2.setBackground(new java.awt.Color(239, 235, 223));
+        jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/add.gif"))); // NOI18N
+        jButton2.setText(bundle.getString("DSWorkbenchSettingsDialog.jButton2.text")); // NOI18N
+        jButton2.setMaximumSize(new java.awt.Dimension(20, 25));
+        jButton2.setMinimumSize(new java.awt.Dimension(20, 25));
+        jButton2.setPreferredSize(new java.awt.Dimension(20, 25));
+
+        javax.swing.GroupLayout jTagsSettingsLayout = new javax.swing.GroupLayout(jTagsSettings);
+        jTagsSettings.setLayout(jTagsSettingsLayout);
+        jTagsSettingsLayout.setHorizontalGroup(
+            jTagsSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jTagsSettingsLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jTagsSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jTagsSettingsLayout.createSequentialGroup()
+                        .addComponent(jLabel5)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 13, Short.MAX_VALUE)
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 454, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jTagsSettingsLayout.createSequentialGroup()
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
+        );
+        jTagsSettingsLayout.setVerticalGroup(
+            jTagsSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jTagsSettingsLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jTagsSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel5)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 199, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jTagsSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
+        );
+
+        jTabbedPane1.addTab(bundle.getString("DSWorkbenchSettingsDialog.jTagsSettings.TabConstraints.tabTitle"), new javax.swing.ImageIcon(getClass().getResource("/res/tag.png")), jTagsSettings); // NOI18N
+
         jOKButton.setBackground(new java.awt.Color(239, 235, 223));
         jOKButton.setText(bundle.getString("DSWorkbenchSettingsDialog.jOKButton.text")); // NOI18N
         jOKButton.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -978,13 +1050,13 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 281, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 281, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jOKButton)
                     .addComponent(jCancelButton)
                     .addComponent(jCreateAccountButton))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         pack();
@@ -1595,6 +1667,8 @@ private void fireStandardMarkChangedEvent(java.awt.event.ItemEvent evt) {//GEN-F
     private javax.swing.JLabel jAttackMovementLabel2;
     private javax.swing.JLabel jAttackMovementLabel3;
     private javax.swing.JPanel jAttackSettings;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JButton jCancelButton;
     private javax.swing.JButton jCancelRegistrationButton;
     private javax.swing.JButton jCheckAccountButton;
@@ -1609,6 +1683,7 @@ private void fireStandardMarkChangedEvent(java.awt.event.ItemEvent evt) {//GEN-F
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jLoginPanel;
     private javax.swing.JPanel jMapSettings;
     private javax.swing.JCheckBox jMarkActiveVillageBox;
@@ -1634,6 +1709,7 @@ private void fireStandardMarkChangedEvent(java.awt.event.ItemEvent evt) {//GEN-F
     private javax.swing.JLabel jRepeatPasswordLabel;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JButton jSelectServerButton;
     private javax.swing.JButton jSelectSkinButton;
     private javax.swing.JComboBox jServerList;
@@ -1645,6 +1721,8 @@ private void fireStandardMarkChangedEvent(java.awt.event.ItemEvent evt) {//GEN-F
     private javax.swing.JLabel jSkinPackLabel;
     private javax.swing.JTextArea jStatusArea;
     private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JPanel jTagsSettings;
+    private javax.swing.JTable jTagsTable;
     private javax.swing.JComboBox jTribeNames;
     // End of variables declaration//GEN-END:variables
 

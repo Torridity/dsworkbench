@@ -9,8 +9,8 @@ import java.util.Hashtable;
 import java.util.List;
 import org.apache.log4j.Logger;
 import de.tor.tribes.types.Village;
-import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.xml.JaxenUtils;
+import java.awt.Image;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.Enumeration;
@@ -25,7 +25,8 @@ public class TagManager {
 
     private static Logger logger = Logger.getLogger(TagManager.class);
     private static TagManager SINGLETON = null;
-    private static Hashtable<Village, List<String>> mTags = null;
+    private static Hashtable<Village, List<String>> mVillageTags = null;
+    private static List<Tag> mTags = null;
 
     public static synchronized TagManager getSingleton() {
         if (SINGLETON == null) {
@@ -35,12 +36,13 @@ public class TagManager {
     }
 
     TagManager() {
-        mTags = new Hashtable<Village, List<String>>();
+        mVillageTags = new Hashtable<Village, List<String>>();
+        loadUserTags();
     }
 
     /**Load tags from a file*/
     public void loadTagsFromFile(String pFile) {
-        mTags.clear();
+        mVillageTags.clear();
         if (pFile == null) {
             logger.error("File argument is 'null'");
             return;
@@ -61,9 +63,13 @@ public class TagManager {
                             List<Element> tags = (List<Element>) JaxenUtils.getNodes(e, "tags/tag");
                             List<String> tagList = new LinkedList<String>();
                             for (Element tag : tags) {
-                                tagList.add(tag.getText());
+                                String t = tag.getText();
+                                if ((t != null) && (getUserTag(t) != null)) {
+                                    //tag is valid
+                                    tagList.add(tag.getText());
+                                }
                             }
-                            mTags.put(v, tagList);
+                            mVillageTags.put(v, tagList);
                         }
                     } catch (Exception inner) {
                     }
@@ -81,11 +87,11 @@ public class TagManager {
 
         logger.debug("Associating tags with villages");
         //set the tags for the tagged villages
-        Enumeration<Village> keys = mTags.keys();
+        Enumeration<Village> keys = mVillageTags.keys();
         while (keys.hasMoreElements()) {
             Village next = keys.nextElement();
-            List<String> tags = mTags.remove(next);
-            mTags.put(DataHolder.getSingleton().getVillages()[next.getX()][next.getY()], tags);
+            List<String> tags = mVillageTags.remove(next);
+            mVillageTags.put(DataHolder.getSingleton().getVillages()[next.getX()][next.getY()], tags);
         }
     }
 
@@ -102,21 +108,33 @@ public class TagManager {
             logger.debug("Writing tags to '" + pFile + "'");
             FileWriter w = new FileWriter(pFile);
             w.write("<villageTags>\n");
-            Enumeration<Village> e = mTags.keys();
+            Enumeration<Village> e = mVillageTags.keys();
             while (e.hasMoreElements()) {
+                //walk all villag tag lists
                 Village current = e.nextElement();
                 if (current != null) {
-                    w.write("<villageTagList>\n");
-                    w.write("<id>" + current.getId() + "</id>\n");
-                    List<String> tags = mTags.get(current);
+                    String villageTagList = "<villageTagList>\n";
+                    villageTagList += "<id>" + current.getId() + "</id>\n";
+                    List<String> tags = mVillageTags.get(current);
+                    //walk tags
                     if (tags.size() > 0) {
-                        w.write("<tags>\n");
+                        String villageTags = "<tags>\n";
+                        boolean haveTag = false;
                         for (String tag : tags) {
-                            w.write("<tag>" + tag + "</tag>\n");
+                            if (getUserTag(tag) != null) {
+                                //tag is valid, so add it to the prepared xml
+                                villageTags += "<tag>" + tag + "</tag>\n";
+                            }
                         }
-                        w.write("</tags>\n");
+                        if (haveTag) {
+                            //at least one tag was still valid, so add the village information to the xml
+                            villageTags += "</tags>\n";
+                            villageTagList += villageTags;
+                        }
                     }
-                    w.write("</villageTagList>\n");
+                    //close the xml structure and write it to disk
+                    villageTagList += "</villageTagList>\n";
+                    w.write(villageTagList);
                 }
             }
             w.write("</villageTags>\n");
@@ -129,7 +147,7 @@ public class TagManager {
     }
 
     /**Save tags to a database (not implemented yet)*/
-    public  void saveTagsToDatabase(String pUrl) {
+    public void saveTagsToDatabase(String pUrl) {
     }
 
     /**Get all tags for a village*/
@@ -137,12 +155,12 @@ public class TagManager {
         if (pVillage == null) {
             return null;
         }
-        return mTags.get(pVillage);
+        return mVillageTags.get(pVillage);
     }
 
     /**Add a tag to a village*/
     public synchronized void addTag(Village pVillage, String pTag) {
-        List<String> tags = mTags.get(pVillage);
+        List<String> tags = mVillageTags.get(pVillage);
         if (logger.isDebugEnabled()) {
             logger.debug("Adding tag '" + pTag + "' to village " + pVillage);
         }
@@ -150,7 +168,7 @@ public class TagManager {
         if (tags == null) {
             tags = new LinkedList<String>();
             tags.add(pTag);
-            mTags.put(pVillage, tags);
+            mVillageTags.put(pVillage, tags);
         } else {
             tags.add(pTag);
         }
@@ -158,7 +176,7 @@ public class TagManager {
 
     /**Remove a tag from a village*/
     public synchronized void removeTag(Village pVillage, String pTag) {
-        List<String> tags = mTags.get(pVillage);
+        List<String> tags = mVillageTags.get(pVillage);
         if (tags == null) {
             return;
         }
@@ -180,5 +198,102 @@ public class TagManager {
             logger.debug("Removing all tags for village " + pVillage);
         }
         mTags.remove(pVillage);
+    }
+
+    public Tag getUserTag(String pName) {
+        Tag[] tags = mTags.toArray(new Tag[]{});
+        for (Tag t : tags) {
+            if (t.getName().equals(pName)) {
+                return t;
+            }
+        }
+        return null;
+    }
+
+    public List<Tag> getUserTags() {
+        return new LinkedList<Tag>();
+    }
+
+    public synchronized void addUserTag(String pTag, String pResourcePath) {
+        mTags.add(new Tag(pTag, pResourcePath));
+    }
+
+    public synchronized void removeUserTag(String pTag) {
+        Tag[] tags = mTags.toArray(new Tag[]{});
+        for (Tag t : tags) {
+            if (t.getName().equals(pTag)) {
+                mTags.remove(t);
+                break;
+            }
+        }
+    }
+
+    public Image getUserTagIcon(String pTag) {
+        for (Tag t : mTags) {
+            if (t.getName().equals(pTag)) {
+                return t.getTagIcon();
+            }
+        }
+        return null;
+    }
+
+    public void setUserTagIcon(String pTag, String pIconPath) {
+        for (Tag t : mTags) {
+            if (t.getName().equals(pTag)) {
+                t.setIconPath(pIconPath);
+                break;
+            }
+        }
+    }
+
+    public void removeUserTagIcon(String pTag) {
+        for (Tag t : mTags) {
+            if (t.getName().equals(pTag)) {
+                t.setIconPath(null);
+                break;
+            }
+        }
+    }
+
+    public void saveUserTags() {
+        try {
+            FileWriter w = new FileWriter("user_tags.xml");
+            w.write("<tags>\n");
+            for (Tag t : mTags) {
+                w.write(t.toXml());
+            }
+            w.write("</tags>\n");
+            w.flush();
+            w.close();
+        } catch (Exception e) {
+            logger.error("Failed to write  user tags", e);
+        }
+    }
+
+    public void loadUserTags() {
+        mTags = new LinkedList<Tag>();
+        File tagFile = new File("user_tags.xml");
+        if (!tagFile.exists()) {
+            mTags.add(new Tag("Off", "graphics/attack_axe.png"));
+            mTags.add(new Tag("Def", "graphics/attack_sword.png"));
+            mTags.add(new Tag("AG", "graphics/attack_snob.png"));
+            mTags.add(new Tag("Aufbau", "graphics/build.png"));
+            mTags.add(new Tag("Truppenaufbau", "graphics/troops.png"));
+            mTags.add(new Tag("Fertig", "graphics/att.png"));
+        } else {
+            //try loading tags from file
+            try {
+                Document d = JaxenUtils.getDocument(tagFile);
+                for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//tags/tag")) {
+                    try {
+                        mTags.add(Tag.fromXml(e));
+                    } catch (Exception inner) {
+                        //failed loading one tag
+                    }
+                }
+            } catch (Exception e) {
+                logger.error("Failed to read user tags", e);
+            }
+        }
     }
 }

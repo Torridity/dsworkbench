@@ -71,7 +71,6 @@ public class MapPanel extends javax.swing.JPanel {
     private Village mSourceVillage = null;
     private Village mTargetVillage = null;
     private MarkerAddFrame mMarkerAddFrame = null;
-    private VillageTagFrame mTagFrame = null;
     boolean mouseDown = false;
     private boolean isOutside = false;
     private Rectangle2D screenRect = null;
@@ -96,7 +95,6 @@ public class MapPanel extends javax.swing.JPanel {
         mMapPanelListeners = new LinkedList<MapPanelListener>();
         mToolChangeListeners = new LinkedList<ToolChangeListener>();
         mMarkerAddFrame = new MarkerAddFrame();
-        mTagFrame = new VillageTagFrame();
         setCursor(ImageManager.getCursor(iCurrentCursor));
         initListeners();
     }
@@ -176,8 +174,8 @@ public class MapPanel extends javax.swing.JPanel {
                                 return;
                             }
                         }
-                        mTagFrame.setLocation(e.getPoint());
-                        mTagFrame.showTagsFrame(current);
+                        VillageTagFrame.getSingleton().setLocation(e.getPoint());
+                        VillageTagFrame.getSingleton().showTagsFrame(current);
                         break;
                     }
                     case ImageManager.CURSOR_ATTACK_INGAME: {

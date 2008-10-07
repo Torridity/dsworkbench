@@ -6,6 +6,8 @@ package de.tor.tribes.db;
 
 import de.tor.tribes.sec.SecurityAdapter;
 import de.tor.tribes.util.Constants;
+import java.net.Authenticator;
+import java.net.Proxy;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -14,6 +16,7 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Properties;
 import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
 
@@ -74,6 +77,11 @@ public class DatabaseAdapter {
         }
         try {
             DB_CONNECTION = DriverManager.getConnection("jdbc:mysql://www.dsworkbench.de/dsworkbench?" + "user=dsworkbench&password=DSwb'08");
+            
+           /*new Proxy(Proxy.Type.SOCKS, null);
+           Authenticator.setDefault(new Authenticator() {
+           protected 
+           });*/
             return true;
         } catch (SQLException se) {
             logger.error("Failed to establish database connection", se);

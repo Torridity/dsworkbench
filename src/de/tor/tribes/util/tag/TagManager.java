@@ -20,6 +20,7 @@ import org.jdom.Element;
 
 /**Manager for village tags. Tags can be stored in files or in a database (not implemented yet)
  * @author Jejkal
+ *  @TODO: graphics/icons/build.png and troops.png to Release!!
  */
 public class TagManager {
 
@@ -112,6 +113,7 @@ public class TagManager {
             while (e.hasMoreElements()) {
                 //walk all villag tag lists
                 Village current = e.nextElement();
+                boolean haveTag = false;
                 if (current != null) {
                     String villageTagList = "<villageTagList>\n";
                     villageTagList += "<id>" + current.getId() + "</id>\n";
@@ -119,11 +121,11 @@ public class TagManager {
                     //walk tags
                     if (tags.size() > 0) {
                         String villageTags = "<tags>\n";
-                        boolean haveTag = false;
                         for (String tag : tags) {
                             if (getUserTag(tag) != null) {
                                 //tag is valid, so add it to the prepared xml
                                 villageTags += "<tag>" + tag + "</tag>\n";
+                                haveTag = true;
                             }
                         }
                         if (haveTag) {
@@ -132,9 +134,11 @@ public class TagManager {
                             villageTagList += villageTags;
                         }
                     }
-                    //close the xml structure and write it to disk
-                    villageTagList += "</villageTagList>\n";
-                    w.write(villageTagList);
+                    if (haveTag) {
+                        //close the xml structure and write it to disk
+                        villageTagList += "</villageTagList>\n";
+                        w.write(villageTagList);
+                    }
                 }
             }
             w.write("</villageTags>\n");
@@ -211,7 +215,7 @@ public class TagManager {
     }
 
     public List<Tag> getUserTags() {
-        return new LinkedList<Tag>();
+        return mTags;
     }
 
     public synchronized void addUserTag(String pTag, String pResourcePath) {
@@ -274,12 +278,12 @@ public class TagManager {
         mTags = new LinkedList<Tag>();
         File tagFile = new File("user_tags.xml");
         if (!tagFile.exists()) {
-            mTags.add(new Tag("Off", "graphics/attack_axe.png"));
-            mTags.add(new Tag("Def", "graphics/attack_sword.png"));
-            mTags.add(new Tag("AG", "graphics/attack_snob.png"));
-            mTags.add(new Tag("Aufbau", "graphics/build.png"));
-            mTags.add(new Tag("Truppenaufbau", "graphics/troops.png"));
-            mTags.add(new Tag("Fertig", "graphics/att.png"));
+            mTags.add(new Tag("Off", "graphics/icons/axe.png"));
+            mTags.add(new Tag("Def", "graphics/icons/sword.png"));
+            mTags.add(new Tag("AG", "graphics/icons/snob.png"));
+            mTags.add(new Tag("Aufbau", "graphics/icons/build.png"));
+            mTags.add(new Tag("Truppenaufbau", "graphics/icons/troops.png"));
+            mTags.add(new Tag("Fertig", "graphics/icons/att.png"));
         } else {
             //try loading tags from file
             try {

@@ -373,6 +373,8 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
                 .addContainerGap())
         );
 
+        jTimeChangeDialog.setTitle(bundle.getString("DSWorkbenchAttackFrame.jTimeChangeDialog.title")); // NOI18N
+
         jMinuteField.setModel(new javax.swing.SpinnerNumberModel(0, -59, 59, 1));
 
         jLabel5.setText(bundle.getString("DSWorkbenchAttackFrame.jLabel5.text")); // NOI18N
@@ -411,7 +413,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jTimeChangeDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jTimeChangeDialogLayout.createSequentialGroup()
-                        .addComponent(jCancelButton, javax.swing.GroupLayout.DEFAULT_SIZE, 93, Short.MAX_VALUE)
+                        .addComponent(jCancelButton, javax.swing.GroupLayout.DEFAULT_SIZE, 101, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jOKButton))
                     .addComponent(jDayField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -578,7 +580,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
             jAttackPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jAttackPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 510, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 512, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jAttackPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addComponent(jNotDrawMarkedButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)

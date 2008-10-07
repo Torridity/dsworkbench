@@ -101,8 +101,6 @@ public class VillageTagFrame extends javax.swing.JFrame {
         jPlayerName.setBackground(new java.awt.Color(239, 235, 223));
         jPlayerName.setEditable(false);
 
-        jTagsChooser.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Off", "Def", "Aufbau", "Truppenaufbau", "Voll", "AG", "Eigene" }));
-
         jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/add.gif"))); // NOI18N
         jButton1.setMaximumSize(new java.awt.Dimension(25, 25));
         jButton1.setMinimumSize(new java.awt.Dimension(25, 25));
@@ -207,15 +205,12 @@ private void fireAddTagEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_f
     if (selection == null) {
         return;
     }
-    String tag = (String) jTagsChooser.getSelectedItem();
-    if (tag.equals("Eigene")) {
-        tag = JOptionPane.showInputDialog(this, "Bitte eigenen Tag angeben", "Eigener Tag", JOptionPane.QUESTION_MESSAGE);
-    }
+    Tag tag = (Tag) jTagsChooser.getSelectedItem();
 
     DefaultListModel model = (DefaultListModel) jTagsList.getModel();
     if (!model.contains(tag)) {
         model.addElement(tag);
-        TagManager.getSingleton().addTag(selection, tag);
+        TagManager.getSingleton().addTag(selection, tag.getName());
     }
 }//GEN-LAST:event_fireAddTagEvent
 

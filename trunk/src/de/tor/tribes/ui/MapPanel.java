@@ -19,6 +19,8 @@ import de.tor.tribes.util.Skin;
 import de.tor.tribes.util.ToolChangeListener;
 import de.tor.tribes.util.attack.AttackManager;
 import de.tor.tribes.util.mark.MarkerManager;
+import de.tor.tribes.util.tag.Tag;
+import de.tor.tribes.util.tag.TagManager;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.awt.BasicStroke;
@@ -41,8 +43,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.awt.image.BufferedImageOp;
-import java.awt.image.RescaleOp;
 import java.io.File;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -738,6 +738,9 @@ class RepaintThread extends Thread {
         } catch (Exception e) {
             markedOnly = false;
         }
+
+        Hashtable<Village, Point> tagIconPoints = new Hashtable<Village, Point>();
+
         for (int i = 0; i < iVillagesX; i++) {
             for (int j = 0; j < iVillagesY; j++) {
                 Village v = mVisibleVillages[i][j];
@@ -788,6 +791,8 @@ class RepaintThread extends Thread {
                         dragLine.setLine(x + width / 2, y + height / 2, dragLine.getX2(), dragLine.getY2());
                     }
                 }
+
+
 
                 // <editor-fold defaultstate="collapsed" desc="Village drawing">
                 if (v == null) {
@@ -905,6 +910,11 @@ class RepaintThread extends Thread {
                             }
                         }
 
+                        if ((TagManager.getSingleton().getTags(v) != null) &&
+                                (!TagManager.getSingleton().getTags(v).isEmpty())) {
+                            tagIconPoints.put(v, new Point(x, y));
+                        }
+
                         if (markActiveVillage) {
                             Village current = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage();
                             if (current != null) {
@@ -929,52 +939,74 @@ class RepaintThread extends Thread {
             xPos++;
         }
 
-        // <editor-fold defaultstate="collapsed" desc=" Draw Drag line">
+        // <editor-fold defaultstate="collapsed" desc=" Tag Icon drawing ">
 
-        if (mSourceVillage != null) {
-            //draw dragging line for distance and attack
-            g2d.setColor(Color.YELLOW);
-            g2d.setStroke(new BasicStroke(5.0F, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
-            if (dragLine.getX1() == -1) {
-                int xx = pXStart + xe / width;
-                int yy = pYStart + ye / height;
-                int tx = xx - mSourceVillage.getX();
-                int ty = yy - mSourceVillage.getY();
-
-                tx = xe - width * tx;
-                ty = ye - height * ty;
-                dragLine.setLine(tx, ty, xe, ye);
-            }
-
-            if ((dragLine.getX2() != 0) && (dragLine.getY2() != 0)) {
-                int x1 = (int) dragLine.getX1();
-                int y1 = (int) dragLine.getY1();
-                int x2 = (int) dragLine.getX2();
-                int y2 = (int) dragLine.getY2();
-                g2d.drawLine(x1, y1, x2, y2);
-                boolean drawDistance = false;
-                try {
-                    drawDistance = Boolean.parseBoolean(GlobalOptions.getProperty("draw.distance"));
-                } catch (Exception e) {
-                }
-                if (drawDistance) {
-
-                    if (mouseVillage != null) {
-                        double d = DSCalculator.calculateDistance(mSourceVillage, mouseVillage);
-                        String dist = nf.format(d);
-
-                        Rectangle2D b = g2d.getFontMetrics().getStringBounds(dist, g2d);
-                        g2d.drawImage(mDistBorder, null, x2 - 6, y2 - (int) Math.rint(b.getHeight()));
-                        g2d.drawString(dist, x2, y2);
+        if (!tagIconPoints.isEmpty()) {
+            Enumeration<Village> villages = tagIconPoints.keys();
+            while (villages.hasMoreElements()) {
+                Village current = villages.nextElement();
+                List<String> tags = TagManager.getSingleton().getTags(current);
+                int tdx = 0;
+                int tdy = 0;
+                for (String tag : tags) {
+                    Tag t = TagManager.getSingleton().getUserTag(tag);
+                    Image tagImage = t.getTagIcon();
+                    if (tagImage != null) {
+                        g2d.drawImage(tagImage, tagIconPoints.get(current).x + tdy, tagIconPoints.get(current).y + tdy, null);
+                        tdx += (int) Math.rint((double) tagImage.getWidth(null) / 2);
+                        tdy += (int) Math.rint((double) tagImage.getHeight(null) / 2);
                     }
                 }
             }
         }
 
         //</editor-fold>
+        // <editor-fold defaultstate="collapsed" desc=" Draw Drag line">
+        {
+            if (mSourceVillage != null) {
+                //draw dragging line for distance and attack
+                g2d.setColor(Color.YELLOW);
+                g2d.setStroke(new BasicStroke(5.0F, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
+                if (dragLine.getX1() == -1) {
+                    int xx = pXStart + xe / width;
+                    int yy = pYStart + ye / height;
+                    int tx = xx - mSourceVillage.getX();
+                    int ty = yy - mSourceVillage.getY();
+
+                    tx = xe - width * tx;
+                    ty = ye - height * ty;
+                    dragLine.setLine(tx, ty, xe, ye);
+                }
+
+                if ((dragLine.getX2() != 0) && (dragLine.getY2() != 0)) {
+                    int x1 = (int) dragLine.getX1();
+                    int y1 = (int) dragLine.getY1();
+                    int x2 = (int) dragLine.getX2();
+                    int y2 = (int) dragLine.getY2();
+                    g2d.drawLine(x1, y1, x2, y2);
+                    boolean drawDistance = false;
+                    try {
+                        drawDistance = Boolean.parseBoolean(GlobalOptions.getProperty("draw.distance"));
+                    } catch (Exception e) {
+                    }
+                    if (drawDistance) {
+
+                        if (mouseVillage != null) {
+                            double d = DSCalculator.calculateDistance(mSourceVillage, mouseVillage);
+                            String dist = nf.format(d);
+
+                            Rectangle2D b = g2d.getFontMetrics().getStringBounds(dist, g2d);
+                            g2d.drawImage(mDistBorder, null, x2 - 6, y2 - (int) Math.rint(b.getHeight()));
+                            g2d.drawString(dist, x2, y2);
+                        }
+                    }
+                }
+            }
+
+        //</editor-fold>
 
         // <editor-fold defaultstate="collapsed" desc="Attack-line drawing">
-
+        }
         g2d.setStroke(new BasicStroke(2.0F, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
 
         Enumeration<String> keys = AttackManager.getSingleton().getPlans();
@@ -1044,6 +1076,8 @@ class RepaintThread extends Thread {
             }
         }
         //</editor-fold>
+
+        //"paint.tag.icons"
 
         /*
         g2d.setColor(Color.GREEN);

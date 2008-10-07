@@ -19,12 +19,13 @@ import de.tor.tribes.util.Skin;
 import de.tor.tribes.util.ToolChangeListener;
 import de.tor.tribes.util.attack.AttackManager;
 import de.tor.tribes.util.mark.MarkerManager;
-import de.tor.tribes.util.tag.Tag;
 import de.tor.tribes.util.tag.TagManager;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
+import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Composite;
 import java.awt.Desktop;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
@@ -912,7 +913,9 @@ class RepaintThread extends Thread {
 
                         if ((TagManager.getSingleton().getTags(v) != null) &&
                                 (!TagManager.getSingleton().getTags(v).isEmpty())) {
-                            tagIconPoints.put(v, new Point(x, y));
+                            int xc = x + (int) Math.round(width / 2);
+                            int yc = y + (int) Math.round(height / 2);
+                            tagIconPoints.put(v, new Point(xc - 10, yc - 10));
                         }
 
                         if (markActiveVillage) {
@@ -941,26 +944,51 @@ class RepaintThread extends Thread {
 
         // <editor-fold defaultstate="collapsed" desc=" Tag Icon drawing ">
 
+        Composite old = g2d.getComposite();
+
+        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.8f));
         if (!tagIconPoints.isEmpty()) {
             Enumeration<Village> villages = tagIconPoints.keys();
+
             while (villages.hasMoreElements()) {
                 Village current = villages.nextElement();
-                List<String> tags = TagManager.getSingleton().getTags(current);
-                int tdx = 0;
-                int tdy = 0;
-                for (String tag : tags) {
-                    Tag t = TagManager.getSingleton().getUserTag(tag);
-                    Image tagImage = t.getTagIcon();
+                if (!mAnimators.containsKey(current)) {
+                    //don't draw icon if animation is running
+                    List<String> tags = TagManager.getSingleton().getTags(current);
+                    //for (String tag : tags) {
+                    //show only one tag
+                    Image tagImage = null;
+                    for (String t : TagManager.getSingleton().getTags(current)) {
+                        tagImage = TagManager.getSingleton().getUserTagIcon(t);
+                        if (tagImage != null) {
+                            break;
+                        }
+                    }
                     if (tagImage != null) {
-                        g2d.drawImage(tagImage, tagIconPoints.get(current).x + tdy, tagIconPoints.get(current).y + tdy, null);
-                        tdx += (int) Math.rint((double) tagImage.getWidth(null) / 2);
-                        tdy += (int) Math.rint((double) tagImage.getHeight(null) / 2);
+                        g2d.drawImage(tagImage, tagIconPoints.get(current).x, tagIconPoints.get(current).y, null);
+                    /*tdx += (int) Math.rint((double) tagImage.getWidth(null) / 2);
+                    tdy += (int) Math.rint((double) tagImage.getHeight(null) / 2);*/
+                    // }
                     }
                 }
             }
         }
 
+        try {
+            Village v = MapPanel.getSingleton().getVillageAtMousePos();
+            if ((v != null) && (tagIconPoints.get(v) != null)) {
+                if (!mAnimators.containsKey(v)) {
+                    mAnimators.put(v, new TagAnimator(v, tagIconPoints.get(v).x, tagIconPoints.get(v).y));
+                }
+            }
+        } catch (Exception e) {
+        }
+
+        updateTagMovement(g2d);
+
+        g2d.setComposite(old);
         //</editor-fold>
+
         // <editor-fold defaultstate="collapsed" desc=" Draw Drag line">
         {
             if (mSourceVillage != null) {
@@ -1098,6 +1126,8 @@ class RepaintThread extends Thread {
             g2d.drawImage(mMarkerImage, markX, markY - mMarkerImage.getHeight(null), null);
         }
 
+        // <editor-fold defaultstate="collapsed" desc=" Troop movement ">
+
         boolean showTroopInfo = false;
         try {
             showTroopInfo = Boolean.parseBoolean(GlobalOptions.getProperty("show.troop.info"));
@@ -1170,6 +1200,99 @@ class RepaintThread extends Thread {
                 }
             }
         }
+        // </editor-fold>
+
         g2d.dispose();
     }
+    private Hashtable<Village, TagAnimator> mAnimators = new Hashtable<Village, TagAnimator>();
+
+    private void updateTagMovement(Graphics2D pG2d) {
+        Village current = MapPanel.getSingleton().getVillageAtMousePos();
+        Enumeration<Village> keys = mAnimators.keys();
+        while (keys.hasMoreElements()) {
+            //for (TagAnimator t : mAnimators) {
+            TagAnimator t = mAnimators.get(keys.nextElement());
+            if ((current == null) || (!t.getVillage().equals(current))) {
+                t.setRise(false);
+            } else {
+                if (t.getVillage().equals(current)) {
+                    t.setRise(true);
+                }
+            }
+            t.update(pG2d);
+        }
+
+        //cleanup
+        keys = mAnimators.keys();
+        while (keys.hasMoreElements()) {
+            current = keys.nextElement();
+            if (mAnimators.get(current).isFinished()) {
+                mAnimators.remove(current);
+            }
+        }
+    }
+
+    class TagAnimator {
+
+        private Village mVillage = null;
+        private int iX = 0;
+        private int iY = 0;
+        private int iDistance = 0;
+        private boolean pRise = false;
+        private boolean bFinished = false;
+
+        public TagAnimator(Village pVillage, int pVillageX, int pVillageY) {
+            mVillage = pVillage;
+            iX = pVillageX;
+            iY = pVillageY;
+            iDistance = 1;
+            pRise = true;
+        }
+
+        public Village getVillage() {
+            return mVillage;
+        }
+
+        public void setRise(boolean pValue) {
+            pRise = pValue;
+        }
+
+        public boolean isFinished() {
+            return bFinished;
+        }
+
+        public void update(Graphics2D g2d) {
+            if (pRise) {
+                if (iDistance < 51) {
+                    iDistance += 25;
+                }
+            } else {
+                iDistance -= 25;
+                if (iDistance <= 0) {
+                    bFinished = true;
+                    iDistance = 0;
+                }
+            }
+
+            //degree for every village to get a circle
+            double deg = 360 / TagManager.getSingleton().getTags(mVillage).size();
+            int cnt = 0;
+            for (String tag : TagManager.getSingleton().getTags(mVillage)) {
+                Image tagImage = TagManager.getSingleton().getUserTagIcon(tag);
+                //take next degree
+                double cd = cnt * deg;
+                int xv = (int) Math.rint(iX + iDistance * Math.cos(2 * Math.PI * cd / 360));
+                int yv = (int) Math.rint(iY + iDistance * Math.sin(2 * Math.PI * cd / 360));
+                int width = (int) Math.rint(tagImage.getWidth(null) * iDistance * 0.05);
+                int height = (int) Math.rint(tagImage.getHeight(null) * iDistance * 0.05);
+                if (width < tagImage.getWidth(null) || height < tagImage.getHeight(null)) {
+                    width = tagImage.getWidth(null);
+                    height = tagImage.getHeight(null);
+                }
+                g2d.drawImage(tagImage.getScaledInstance(width, height, Image.SCALE_FAST), xv, yv, null);
+                cnt++;
+            }
+        }
+    }
 }
+

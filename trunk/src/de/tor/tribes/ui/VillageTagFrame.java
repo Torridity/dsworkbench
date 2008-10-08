@@ -12,7 +12,6 @@ import de.tor.tribes.util.tag.TagManager;
 import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
-import javax.swing.JOptionPane;
 
 /**
  *

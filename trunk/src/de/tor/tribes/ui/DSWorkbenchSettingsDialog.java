@@ -276,7 +276,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         }
     }
 
-    private void setupTagsPanel() {
+    protected void setupTagsPanel() {
         jTagsList.setCellRenderer(new TagCellRenderer());
         DefaultListModel model = new DefaultListModel();
         for (Tag t : TagManager.getSingleton().getUserTags()) {

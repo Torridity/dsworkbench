@@ -111,29 +111,29 @@ public class TroopsParser {
 
     public static void main(String[] args) {
 
-        /*   Transferable t = (Transferable) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
+        Transferable t = (Transferable) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
         try {
-        String s = " 003 | Spitfire (471|482) K44\n" +
-        "eigene	2500	1500	0	1964	500	0	0	1396	0	0	0	0	Befehle\n" +
-        "im Dorf	2500	1500	0	1964	500	0	0	1396	0	0	0	0	Truppen\n" +
-        "auswärts	0	0	0	0	0	0	0	0	0	0	0	0\n" +
-        "unterwegs	0	0	0	0	0	0	0	0	0	0	0	0	Befehle\n" +
-        "2Fast4You (475|480) K44\n" +
-        "eigene	600	500	0	0	134	0	0	354	0	0	0	1	Befehle\n" +
-        "im Dorf	600	500	0	0	134	0	0	354	0	0	0	1	Truppen\n" +
-        "auswärts	4400	3000	0	3000	66	0	0	1046	0	0	0	0\n" +
-        "unterwegs	0	0	0	0	0	0	0	0	0	0	0	0	Befehle\n";
-        
-        
-        String data = (String) t.getTransferData(DataFlavor.stringFlavor);
-        TroopsParser.parse(data);
+            String s = " 003 | Spitfire (471|482) K44\n" +
+                    "eigene	2500	1500	0	1964	500	0	0	1396	0	0	0	0	Befehle\n" +
+                    "im Dorf	2500	1500	0	1964	500	0	0	1396	0	0	0	0	Truppen\n" +
+                    "auswärts	0	0	0	0	0	0	0	0	0	0	0	0\n" +
+                    "unterwegs	0	0	0	0	0	0	0	0	0	0	0	0	Befehle\n" +
+                    "2Fast4You (475|480) K44\n" +
+                    "eigene	600	500	0	0	134	0	0	354	0	0	0	1	Befehle\n" +
+                    "im Dorf	600	500	0	0	134	0	0	354	0	0	0	1	Truppen\n" +
+                    "auswärts	4400	3000	0	3000	66	0	0	1046	0	0	0	0\n" +
+                    "unterwegs	0	0	0	0	0	0	0	0	0	0	0	0	Befehle\n";
+
+
+            String data = (String) t.getTransferData(DataFlavor.stringFlavor);
+            TroopsParser.parse(data);
         } catch (Exception e) {
-        e.printStackTrace();
-        }*/
-        /* String token = "(120|192)";
-        System.out.println(token.matches("\\([0-9]+\\|[0-9]+\\)"));
-         */
-        // TroopsParser.parse(pTroopsString);
+            e.printStackTrace();
+        }
+    /* String token = "(120|192)";
+    System.out.println(token.matches("\\([0-9]+\\|[0-9]+\\)"));
+     */
+    // TroopsParser.parse(pTroopsString);
     }
     /*
     kirscheye3	435|447 FaNtAsY wOrLd ... <3	Schwere Kavallerie	Torridity	436|444 FaNtAsY wOrLd ... 12	02.10.08 23:06:46

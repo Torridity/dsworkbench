@@ -31,7 +31,7 @@ public class TagCellRenderer implements ListCellRenderer {
             defaultRenderer.setIcon(new ImageIcon(t.getTagIcon()));
         } catch (Exception e) {
             defaultRenderer.setText(value.toString());
-            defaultRenderer.setIcon(new ImageIcon(this.getClass().getResource("/res/forbidden.gif")));
+           // defaultRenderer.setIcon(new ImageIcon(this.getClass().getResource("/res/forbidden.gif")));
         }
         if (isSelected) {
             defaultRenderer.setBackground(de.tor.tribes.util.Constants.DS_BACK);

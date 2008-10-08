@@ -6,6 +6,8 @@ package de.tor.tribes.util.tag;
 
 import java.awt.Image;
 import java.io.File;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import javax.imageio.ImageIO;
 import org.jdom.Element;
 
@@ -19,13 +21,18 @@ public class Tag {
     private String sIcon = null;
     private Image mIcon = null;
 
-    public static Tag fromXml(Element pElement) {
-        return new Tag(pElement.getChild("name").getText(), pElement.getChild("resource").getText());
+    public static Tag fromXml(Element pElement) throws Exception {
+        String name = URLDecoder.decode(pElement.getChild("name").getText(), "UTF-8");
+        String iconPath = pElement.getChild("resource").getText();
+        if (iconPath != null) {
+            iconPath = URLDecoder.decode(iconPath, "UTF-8");
+        }
+        return new Tag(name, iconPath);
     }
 
     public Tag(String pName, String pIconPath) {
         setName(pName);
-        setIconPath(pIconPath);
+        setIconPath(sIcon);
     }
 
     public String getName() {
@@ -62,10 +69,14 @@ public class Tag {
         return getName();
     }
 
-    public String toXml() {
+    public String toXml() throws Exception {
         String ret = "<tag>\n";
-        ret += "<name>" + getName() + "</name>\n";
-        ret += "<resource>" + getIconPath() + "</resource>\n";
+        ret += "<name>" + URLEncoder.encode(getName(), "UTF-8") + "</name>\n";
+        if (getIconPath() != null) {
+            ret += "<resource>" + URLEncoder.encode(getIconPath(), "UTF-8") + "</resource>\n";
+        } else {
+            ret += "<resource/>\n";
+        }
         ret += "</tag>\n";
         return ret;
     }

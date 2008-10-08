@@ -13,6 +13,8 @@ import de.tor.tribes.util.xml.JaxenUtils;
 import java.awt.Image;
 import java.io.File;
 import java.io.FileWriter;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import org.jdom.Document;
@@ -38,6 +40,7 @@ public class TagManager {
 
     TagManager() {
         mVillageTags = new Hashtable<Village, List<String>>();
+        System.out.println("loading user tags");
         loadUserTags();
     }
 
@@ -64,10 +67,10 @@ public class TagManager {
                             List<Element> tags = (List<Element>) JaxenUtils.getNodes(e, "tags/tag");
                             List<String> tagList = new LinkedList<String>();
                             for (Element tag : tags) {
-                                String t = tag.getText();
+                                String t = URLDecoder.decode(tag.getText(), "UTF-8");
                                 if ((t != null) && (getUserTag(t) != null)) {
                                     //tag is valid
-                                    tagList.add(tag.getText());
+                                    tagList.add(t);
                                 }
                             }
                             mVillageTags.put(v, tagList);
@@ -124,7 +127,7 @@ public class TagManager {
                         for (String tag : tags) {
                             if (getUserTag(tag) != null) {
                                 //tag is valid, so add it to the prepared xml
-                                villageTags += "<tag>" + tag + "</tag>\n";
+                                villageTags += "<tag>" + URLEncoder.encode(tag, "UTF-8") + "</tag>\n";
                                 haveTag = true;
                             }
                         }
@@ -219,7 +222,15 @@ public class TagManager {
     }
 
     public synchronized void addUserTag(String pTag, String pResourcePath) {
-        mTags.add(new Tag(pTag, pResourcePath));
+        if (pTag == null) {
+            //null tag not supported
+            return;
+        }
+        if (getUserTag(pTag) == null) {
+            System.out.println("adding tag " + pTag);
+            //add only if it not exists yet
+            mTags.add(new Tag(pTag, pResourcePath));
+        }
     }
 
     public synchronized void removeUserTag(String pTag) {
@@ -264,6 +275,7 @@ public class TagManager {
             FileWriter w = new FileWriter("user_tags.xml");
             w.write("<tags>\n");
             for (Tag t : mTags) {
+                System.out.println("saving tag " + t);
                 w.write(t.toXml());
             }
             w.write("</tags>\n");

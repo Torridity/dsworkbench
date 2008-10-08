@@ -8,8 +8,10 @@ package de.tor.tribes.ui;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.io.WorldDecorationHolder;
+import de.tor.tribes.types.Ally;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.Marker;
+import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.util.BrowserCommandSender;
 import de.tor.tribes.util.Constants;
@@ -22,10 +24,8 @@ import de.tor.tribes.util.mark.MarkerManager;
 import de.tor.tribes.util.tag.TagManager;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
-import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Composite;
 import java.awt.Desktop;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
@@ -53,6 +53,7 @@ import java.util.LinkedList;
 import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
+import javax.swing.SwingUtilities;
 import org.apache.log4j.Logger;
 
 /**
@@ -696,8 +697,9 @@ class RepaintThread extends Thread {
                 //both are 0 if map was not drawn yet
                 return;
             }
-            mBuffer = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+            mBuffer = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
             g2d = (Graphics2D) mBuffer.getGraphics();
+            g2d.fillRect(0, 0, mBuffer.getWidth(null), mBuffer.getHeight(null));
         } else {
             g2d = (Graphics2D) mBuffer.getGraphics();
             g2d.fillRect(0, 0, mBuffer.getWidth(null), mBuffer.getHeight(null));
@@ -715,7 +717,7 @@ class RepaintThread extends Thread {
 
         int xPos = pXStart;
         int yPos = pYStart;
-
+        // g2d.fillRect(0, 0, width, height);
         //disable decoration if field size is not equal the decoration texture size
         boolean useDecoration = true;
 
@@ -740,7 +742,7 @@ class RepaintThread extends Thread {
             markedOnly = false;
         }
 
-        Hashtable<Village, Point> tagIconPoints = new Hashtable<Village, Point>();
+//       Hashtable<Village, Point> tagIconPoints = new Hashtable<Village, Point>();
 
         for (int i = 0; i < iVillagesX; i++) {
             for (int j = 0; j < iVillagesY; j++) {
@@ -792,8 +794,6 @@ class RepaintThread extends Thread {
                         dragLine.setLine(x + width / 2, y + height / 2, dragLine.getX2(), dragLine.getY2());
                     }
                 }
-
-
 
                 // <editor-fold defaultstate="collapsed" desc="Village drawing">
                 if (v == null) {
@@ -911,12 +911,13 @@ class RepaintThread extends Thread {
                             }
                         }
 
-                        if ((TagManager.getSingleton().getTags(v) != null) &&
-                                (!TagManager.getSingleton().getTags(v).isEmpty())) {
-                            int xc = x + (int) Math.round(width / 2);
-                            int yc = y + (int) Math.round(height / 2);
-                            tagIconPoints.put(v, new Point(xc - 10, yc - 10));
+                        /*                        if ((TagManager.getSingleton().getTags(v) != null) &&
+                        (!TagManager.getSingleton().getTags(v).isEmpty())) {
+                        int xc = x + (int) Math.round(width / 2);
+                        int yc = y + (int) Math.round(height / 2);
+                        tagIconPoints.put(v, new Point(xc - 10, yc - 10));
                         }
+                         */
 
                         if (markActiveVillage) {
                             Village current = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage();
@@ -942,99 +943,102 @@ class RepaintThread extends Thread {
             xPos++;
         }
 
+        //       showVillageInfo(g2d);
+
         // <editor-fold defaultstate="collapsed" desc=" Tag Icon drawing ">
 
-        Composite old = g2d.getComposite();
-
+        /*        Composite old = g2d.getComposite();
+        
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.8f));
         if (!tagIconPoints.isEmpty()) {
-            Enumeration<Village> villages = tagIconPoints.keys();
-
-            while (villages.hasMoreElements()) {
-                Village current = villages.nextElement();
-                if (!mAnimators.containsKey(current)) {
-                    //don't draw icon if animation is running
-                    List<String> tags = TagManager.getSingleton().getTags(current);
-                    //for (String tag : tags) {
-                    //show only one tag
-                    Image tagImage = null;
-                    for (String t : TagManager.getSingleton().getTags(current)) {
-                        tagImage = TagManager.getSingleton().getUserTagIcon(t);
-                        if (tagImage != null) {
-                            break;
-                        }
-                    }
-                    if (tagImage != null) {
-                        g2d.drawImage(tagImage, tagIconPoints.get(current).x, tagIconPoints.get(current).y, null);
-                    /*tdx += (int) Math.rint((double) tagImage.getWidth(null) / 2);
-                    tdy += (int) Math.rint((double) tagImage.getHeight(null) / 2);*/
-                    // }
-                    }
-                }
-            }
+        Enumeration<Village> villages = tagIconPoints.keys();
+        
+        while (villages.hasMoreElements()) {
+        Village current = villages.nextElement();
+        if (!mAnimators.containsKey(current)) {
+        //don't draw icon if animation is running
+        List<String> tags = TagManager.getSingleton().getTags(current);
+        //for (String tag : tags) {
+        //show only one tag
+        Image tagImage = null;
+        for (String t : TagManager.getSingleton().getTags(current)) {
+        tagImage = TagManager.getSingleton().getUserTagIcon(t);
+        if (tagImage != null) {
+        break;
         }
-
+        }
+        if (tagImage != null) {
+        g2d.drawImage(tagImage, tagIconPoints.get(current).x, tagIconPoints.get(current).y, null);
+        
+        }
+        }
+        }
+        }
+        
         try {
-            Village v = MapPanel.getSingleton().getVillageAtMousePos();
-            if ((v != null) && (tagIconPoints.get(v) != null)) {
-                if (!mAnimators.containsKey(v)) {
-                    mAnimators.put(v, new TagAnimator(v, tagIconPoints.get(v).x, tagIconPoints.get(v).y));
-                }
-            }
+        Village v = MapPanel.getSingleton().getVillageAtMousePos();
+        if ((v != null) && (tagIconPoints.get(v) != null)) {
+        if (!mAnimators.containsKey(v)) {
+        mAnimators.put(v, new TagAnimator(v, tagIconPoints.get(v).x, tagIconPoints.get(v).y));
+        }
+        }
         } catch (Exception e) {
         }
-
+        
         updateTagMovement(g2d);
-
+        
         g2d.setComposite(old);
+        
+         */
         //</editor-fold>
 
         // <editor-fold defaultstate="collapsed" desc=" Draw Drag line">
-        {
-            if (mSourceVillage != null) {
-                //draw dragging line for distance and attack
-                g2d.setColor(Color.YELLOW);
-                g2d.setStroke(new BasicStroke(5.0F, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
-                if (dragLine.getX1() == -1) {
-                    int xx = pXStart + xe / width;
-                    int yy = pYStart + ye / height;
-                    int tx = xx - mSourceVillage.getX();
-                    int ty = yy - mSourceVillage.getY();
 
-                    tx = xe - width * tx;
-                    ty = ye - height * ty;
-                    dragLine.setLine(tx, ty, xe, ye);
+        if (mSourceVillage != null) {
+            //draw dragging line for distance and attack
+            g2d.setColor(Color.YELLOW);
+            g2d.setStroke(new BasicStroke(5.0F, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
+            if (dragLine.getX1() == -1) {
+                int xx = pXStart + xe / width;
+                int yy = pYStart + ye / height;
+                int tx = xx - mSourceVillage.getX();
+                int ty = yy - mSourceVillage.getY();
+
+                tx = xe - width * tx;
+                ty = ye - height * ty;
+                dragLine.setLine(tx, ty, xe, ye);
+            }
+
+            if ((dragLine.getX2() != 0) && (dragLine.getY2() != 0)) {
+                int x1 = (int) dragLine.getX1();
+                int y1 = (int) dragLine.getY1();
+                int x2 = (int) dragLine.getX2();
+                int y2 = (int) dragLine.getY2();
+                g2d.drawLine(x1, y1, x2, y2);
+                boolean drawDistance = false;
+                try {
+                    drawDistance = Boolean.parseBoolean(GlobalOptions.getProperty("draw.distance"));
+                } catch (Exception e) {
                 }
+                if (drawDistance) {
 
-                if ((dragLine.getX2() != 0) && (dragLine.getY2() != 0)) {
-                    int x1 = (int) dragLine.getX1();
-                    int y1 = (int) dragLine.getY1();
-                    int x2 = (int) dragLine.getX2();
-                    int y2 = (int) dragLine.getY2();
-                    g2d.drawLine(x1, y1, x2, y2);
-                    boolean drawDistance = false;
-                    try {
-                        drawDistance = Boolean.parseBoolean(GlobalOptions.getProperty("draw.distance"));
-                    } catch (Exception e) {
-                    }
-                    if (drawDistance) {
+                    if (mouseVillage != null) {
+                        double d = DSCalculator.calculateDistance(mSourceVillage, mouseVillage);
+                        String dist = nf.format(d);
 
-                        if (mouseVillage != null) {
-                            double d = DSCalculator.calculateDistance(mSourceVillage, mouseVillage);
-                            String dist = nf.format(d);
-
-                            Rectangle2D b = g2d.getFontMetrics().getStringBounds(dist, g2d);
-                            g2d.drawImage(mDistBorder, null, x2 - 6, y2 - (int) Math.rint(b.getHeight()));
-                            g2d.drawString(dist, x2, y2);
-                        }
+                        Rectangle2D b = g2d.getFontMetrics().getStringBounds(dist, g2d);
+                        g2d.drawImage(mDistBorder, null, x2 - 6, y2 - (int) Math.rint(b.getHeight()));
+                        g2d.drawString(dist, x2, y2);
                     }
                 }
             }
+        }
 
         //</editor-fold>
 
+
         // <editor-fold defaultstate="collapsed" desc="Attack-line drawing">
-        }
+
         g2d.setStroke(new BasicStroke(2.0F, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
 
         Enumeration<String> keys = AttackManager.getSingleton().getPlans();
@@ -1204,95 +1208,129 @@ class RepaintThread extends Thread {
 
         g2d.dispose();
     }
+    /*
+    private void showVillageInfo(Graphics g2d) {
+    Village v = MapPanel.getSingleton().getVillageAtMousePos();
+    if (v == null) {
+    return;
+    }
+    String aInfo = "-kein Stamm-";
+    String tInfo = "Barbaren";
+    String vInfo = v.getHTMLInfo();
+    Tribe t = v.getTribe();
+    if (t != null) {
+    tInfo = v.getTribe().getHTMLInfo();
+    Ally a = t.getAlly();
+    if (a != null) {
+    aInfo = v.getTribe().getAlly().getHTMLInfo();
+    }
+    }
+    
+    int wV = SwingUtilities.computeStringWidth(g2d.getFontMetrics(), vInfo);
+    int wT = SwingUtilities.computeStringWidth(g2d.getFontMetrics(), tInfo);
+    int wA = SwingUtilities.computeStringWidth(g2d.getFontMetrics(), aInfo);
+    int width = (wV > wT) ? ((wV > wA) ? wV : wA) : ((wT > wA) ? wT : wA);
+    int height = g2d.getFontMetrics().getHeight();
+    g2d.setColor(Constants.DS_BACK_LIGHT);
+    try {
+    Point p = MouseInfo.getPointerInfo().getLocation();
+    SwingUtilities.convertPointFromScreen(p, MapPanel.getSingleton());
+    g2d.fillRect(p.x, p.y, width + 10, 3 * height + 6 + 10);
+    
+    } catch (Exception e) {
+    //point outside
+    }
+    }
+    
     private Hashtable<Village, TagAnimator> mAnimators = new Hashtable<Village, TagAnimator>();
-
+    
     private void updateTagMovement(Graphics2D pG2d) {
-        Village current = MapPanel.getSingleton().getVillageAtMousePos();
-        Enumeration<Village> keys = mAnimators.keys();
-        while (keys.hasMoreElements()) {
-            //for (TagAnimator t : mAnimators) {
-            TagAnimator t = mAnimators.get(keys.nextElement());
-            if ((current == null) || (!t.getVillage().equals(current))) {
-                t.setRise(false);
-            } else {
-                if (t.getVillage().equals(current)) {
-                    t.setRise(true);
-                }
-            }
-            t.update(pG2d);
-        }
-
-        //cleanup
-        keys = mAnimators.keys();
-        while (keys.hasMoreElements()) {
-            current = keys.nextElement();
-            if (mAnimators.get(current).isFinished()) {
-                mAnimators.remove(current);
-            }
-        }
+    Village current = MapPanel.getSingleton().getVillageAtMousePos();
+    Enumeration<Village> keys = mAnimators.keys();
+    while (keys.hasMoreElements()) {
+    //for (TagAnimator t : mAnimators) {
+    TagAnimator t = mAnimators.get(keys.nextElement());
+    if ((current == null) || (!t.getVillage().equals(current))) {
+    t.setRise(false);
+    } else {
+    if (t.getVillage().equals(current)) {
+    t.setRise(true);
     }
-
-    class TagAnimator {
-
-        private Village mVillage = null;
-        private int iX = 0;
-        private int iY = 0;
-        private int iDistance = 0;
-        private boolean pRise = false;
-        private boolean bFinished = false;
-
-        public TagAnimator(Village pVillage, int pVillageX, int pVillageY) {
-            mVillage = pVillage;
-            iX = pVillageX;
-            iY = pVillageY;
-            iDistance = 1;
-            pRise = true;
-        }
-
-        public Village getVillage() {
-            return mVillage;
-        }
-
-        public void setRise(boolean pValue) {
-            pRise = pValue;
-        }
-
-        public boolean isFinished() {
-            return bFinished;
-        }
-
-        public void update(Graphics2D g2d) {
-            if (pRise) {
-                if (iDistance < 51) {
-                    iDistance += 25;
-                }
-            } else {
-                iDistance -= 25;
-                if (iDistance <= 0) {
-                    bFinished = true;
-                    iDistance = 0;
-                }
-            }
-
-            //degree for every village to get a circle
-            double deg = 360 / TagManager.getSingleton().getTags(mVillage).size();
-            int cnt = 0;
-            for (String tag : TagManager.getSingleton().getTags(mVillage)) {
-                Image tagImage = TagManager.getSingleton().getUserTagIcon(tag);
-                //take next degree
-                double cd = cnt * deg;
-                int xv = (int) Math.rint(iX + iDistance * Math.cos(2 * Math.PI * cd / 360));
-                int yv = (int) Math.rint(iY + iDistance * Math.sin(2 * Math.PI * cd / 360));
-                int width = (int) Math.rint(tagImage.getWidth(null) * iDistance * 0.05);
-                int height = (int) Math.rint(tagImage.getHeight(null) * iDistance * 0.05);
-                if (width < tagImage.getWidth(null) || height < tagImage.getHeight(null)) {
-                    width = tagImage.getWidth(null);
-                    height = tagImage.getHeight(null);
-                }
-                g2d.drawImage(tagImage.getScaledInstance(width, height, Image.SCALE_FAST), xv, yv, null);
-                cnt++;
-            }
-        }
     }
+    t.update(pG2d);
+    }
+    
+    //cleanup
+    keys = mAnimators.keys();
+    while (keys.hasMoreElements()) {
+    current = keys.nextElement();
+    if (mAnimators.get(current).isFinished()) {
+    mAnimators.remove(current);
+    }
+    }*/
+}
+/*    
+class TagAnimator {
+
+private Village mVillage = null;
+private int iX = 0;
+private int iY = 0;
+private int iDistance = 0;
+private boolean pRise = false;
+private boolean bFinished = false;
+
+public TagAnimator(Village pVillage, int pVillageX, int pVillageY) {
+mVillage = pVillage;
+iX = pVillageX;
+iY = pVillageY;
+iDistance = 1;
+pRise = true;
 }
 
+public Village getVillage() {
+return mVillage;
+}
+
+public void setRise(boolean pValue) {
+pRise = pValue;
+}
+
+public boolean isFinished() {
+return bFinished;
+}
+
+public void update(Graphics2D g2d) {
+if (pRise) {
+if (iDistance < 51) {
+iDistance += 25;
+}
+} else {
+iDistance -= 25;
+if (iDistance <= 0) {
+bFinished = true;
+iDistance = 0;
+}
+}
+
+//degree for every village to get a circle
+double deg = 360 / TagManager.getSingleton().getTags(mVillage).size();
+int cnt = 0;
+for (String tag : TagManager.getSingleton().getTags(mVillage)) {
+Image tagImage = TagManager.getSingleton().getUserTagIcon(tag);
+//take next degree
+double cd = cnt * deg;
+int xv = (int) Math.rint(iX + iDistance * Math.cos(2 * Math.PI * cd / 360));
+int yv = (int) Math.rint(iY + iDistance * Math.sin(2 * Math.PI * cd / 360));
+int width = (int) Math.rint(tagImage.getWidth(null) * iDistance * 0.05);
+int height = (int) Math.rint(tagImage.getHeight(null) * iDistance * 0.05);
+if (width < tagImage.getWidth(null) || height < tagImage.getHeight(null)) {
+width = tagImage.getWidth(null);
+height = tagImage.getHeight(null);
+}
+g2d.drawImage(tagImage.getScaledInstance(width, height, Image.SCALE_FAST), xv, yv, null);
+cnt++;
+}
+}
+}
+}
+ */

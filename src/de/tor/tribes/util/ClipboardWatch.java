@@ -4,6 +4,7 @@
  */
 package de.tor.tribes.util;
 
+import de.tor.tribes.util.parser.GroupParser;
 import de.tor.tribes.util.parser.ReportParser;
 import de.tor.tribes.util.parser.TroopsParser;
 import java.awt.Toolkit;
@@ -44,11 +45,17 @@ public class ClipboardWatch extends Thread {
                 if (data.length() > 10) {
                     if (ReportParser.parse(data)) {
                         //report parsed, clean clipboard
+                        logger.info("Report successfully parsed. Cleaning up clipboard");
                         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(""), null);
                     } else if (TroopsParser.parse(data)) {
+                        logger.info("Troops successfully parsed. Cleaning up clipboard");
                         //at least one village was found, so clean the clipboard
                         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(""), null);
+                    } else if (GroupParser.parse(data)) {
+                        logger.info("Groups successfully parsed. Cleaning up clipboard");
+                        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(""), null);
                     }
+
                 }
             } catch (Exception e) {
                 //e.printStackTrace();

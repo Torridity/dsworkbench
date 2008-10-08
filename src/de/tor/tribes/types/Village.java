@@ -170,7 +170,7 @@ public class Village implements Serializable, Comparable {
     }
 
     public String getHTMLInfo() {
-        String villageInfo = "<html><b>Name (X|Y):</b> " + getName().replaceAll("<", "&lt;").replaceAll(">", "&gt;") + " (" + getX() + "|" + getY() + "), <b>Punkte:</b> " + getPoints() + ",";
+        String villageInfo = "<html><p><b>Name (X|Y):</b> " + getName().replaceAll("<", "&lt;").replaceAll(">", "&gt;") + " (" + getX() + "|" + getY() + "), <b>Punkte:</b> " + getPoints() + ",";
         List<String> tags = TagManager.getSingleton().getTags(this);
         villageInfo += "<b>Tags:</b> ";
         if (tags == null) {
@@ -185,7 +185,7 @@ public class Village implements Serializable, Comparable {
         villageInfo += "<b>Bonus:</b> ";
         switch (getType()) {
             case 1:
-                villageInfo += "+ 10% </html>";
+                villageInfo += "+ 10% </p></html>";
                 break;
 
             case 2:
@@ -193,27 +193,27 @@ public class Village implements Serializable, Comparable {
                 break;
 
             case 3:
-                villageInfo += "+ 10% </html>";
+                villageInfo += "+ 10% </p></html>";
                 break;
 
             case 4:
-                villageInfo += "+ 10% </html>";
+                villageInfo += "+ 10% </p></html>";
                 break;
 
             case 5:
-                villageInfo += "+ 10% </html>";
+                villageInfo += "+ 10% </p></html>";
                 break;
 
             case 6:
-                villageInfo += "+ 10% </html>";
+                villageInfo += "+ 10% </p></html>";
                 break;
 
             case 7:
-                villageInfo += "+ 10% </html>";
+                villageInfo += "+ 10% </p></html>";
                 break;
 
             case 8:
-                villageInfo += "+ 3% </html>";
+                villageInfo += "+ 3% </p></html>";
                 break;
 
         }

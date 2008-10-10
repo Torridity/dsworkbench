@@ -7,7 +7,7 @@ package de.tor.tribes.ui;
 
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Village;
-import de.tor.tribes.util.tag.Tag;
+import de.tor.tribes.types.Tag;
 import de.tor.tribes.util.tag.TagManager;
 import java.util.List;
 import javax.swing.DefaultComboBoxModel;

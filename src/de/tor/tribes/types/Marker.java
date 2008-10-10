@@ -4,10 +4,9 @@
  */
 package de.tor.tribes.types;
 
+import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.ui.MarkerCell;
 import java.awt.Color;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
 import org.jdom.Element;
 
 /**
@@ -19,7 +18,7 @@ public class Marker {
     public final static int TRIBE_MARKER_TYPE = 0;
     public final static int ALLY_MARKER_TYPE = 1;
     private int markerType = 0;
-    private String markerValue = null;
+    private int markerID = 0;
     private Color markerColor = null;
     private transient MarkerCell mView = null;
 
@@ -28,8 +27,28 @@ public class Marker {
 
     public Marker(Element pElement) throws Exception {
         setMarkerType(Integer.parseInt(pElement.getChild("type").getText()));
-        setMarkerValue(URLDecoder.decode(pElement.getChild("value").getText(), "UTF-8"));
-        setMarkerColor(Color.decode(pElement.getChild("color").getText()));
+        try {
+            setMarkerID(Integer.parseInt(pElement.getChild("id").getText()));
+        } catch (Exception e) {
+            //try to read old marker version with plain text value
+            String value = pElement.getChild("value").getText();
+            if (getMarkerType() == Marker.TRIBE_MARKER_TYPE) {
+                setMarkerID(DataHolder.getSingleton().getTribeByName(value).getId());
+            } else {
+                setMarkerID(DataHolder.getSingleton().getAllyByName(value).getId());
+            }
+        }
+        try {
+            Element e = pElement.getChild("color");
+            int red = e.getAttribute("r").getIntValue();
+            int green = e.getAttribute("g").getIntValue();
+            int blue = e.getAttribute("b").getIntValue();
+            int alpha = e.getAttribute("a").getIntValue();
+            setMarkerColor(new Color(red, green, blue, alpha));
+        } catch (Exception e) {
+            //try to read old color value
+            setMarkerColor(Color.decode(pElement.getChild("color").getText()));
+        }
     }
 
     public int getMarkerType() {
@@ -41,12 +60,12 @@ public class Marker {
         mView = null;
     }
 
-    public String getMarkerValue() {
-        return markerValue;
+    public int getMarkerID() {
+        return markerID;
     }
 
-    public void setMarkerValue(String markerValue) {
-        this.markerValue = markerValue;
+    public void setMarkerID(int pMarkerID) {
+        this.markerID = pMarkerID;
         mView = null;
     }
 
@@ -60,7 +79,11 @@ public class Marker {
 
     public MarkerCell getView() {
         if (mView == null) {
-            mView = MarkerCell.factoryMarkerCell(this);
+            try {
+                mView = MarkerCell.factoryMarkerCell(this);
+            } catch (Exception e) {
+                mView = null;
+            }
         }
         return mView;
     }
@@ -73,10 +96,14 @@ public class Marker {
         try {
             String xml = "<marker>\n";
             xml += "<type>" + getMarkerType() + "</type>\n";
-            xml += "<value>" + URLEncoder.encode(getMarkerValue(), "UTF-8") + "</value>\n";
-            String hexCol = Integer.toHexString(getMarkerColor().getRGB());
-            hexCol = "#" + hexCol.substring(2, hexCol.length());
-            xml += "<color>" + hexCol + "</color>\n";
+            xml += "<id>" + getMarkerID() + "</id>\n";
+            /*String hexCol = Integer.toHexString(getMarkerColor().getRGB());
+            hexCol = "#" + hexCol.substring(2, hexCol.length());*/
+            int red = getMarkerColor().getRed();
+            int green = getMarkerColor().getGreen();
+            int blue = getMarkerColor().getBlue();
+            int alpha = getMarkerColor().getAlpha();
+            xml += "<color r=\"" + red + "\" g=\"" + green + "\" b=\"" + blue + "\" a=\"" + alpha + "\"/>\n";
             xml += "</marker>";
             return xml;
         } catch (Exception e) {

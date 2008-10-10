@@ -4,6 +4,7 @@
  */
 package de.tor.tribes.util.mark;
 
+import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Ally;
 import de.tor.tribes.types.Marker;
 import de.tor.tribes.types.Tribe;
@@ -169,7 +170,7 @@ public class MarkerManager {
             return;
         }
 
-        addMarkerInternal(Marker.ALLY_MARKER_TYPE, pAlly.getName(), pColor);
+        addMarkerInternal(Marker.ALLY_MARKER_TYPE, pAlly.getId(), pColor);
         fireMarkerChangedEvents();
     }
 
@@ -178,19 +179,30 @@ public class MarkerManager {
         if (pTribe == null) {
             return;
         }
-        addMarkerInternal(Marker.TRIBE_MARKER_TYPE, pTribe.getName(), pColor);
+        addMarkerInternal(Marker.TRIBE_MARKER_TYPE, pTribe.getId(), pColor);
         fireMarkerChangedEvents();
     }
 
     /**Add a marker by value (for internal use only)*/
-    private void addMarkerInternal(int pType, String pValue, Color pColor) {
-        Marker m = getMarkerByValue(pValue);
+    private void addMarkerInternal(int pType, int pId, Color pColor) {
+        Marker m = null;
+        switch (pType) {
+            case Marker.TRIBE_MARKER_TYPE: {
+                m = getMarker(DataHolder.getSingleton().getTribes().get(pId));
+                break;
+            }
+            default: {
+                m = getMarker(DataHolder.getSingleton().getAllies().get(pId));
+            }
+        }
+
+        //getMarkerByValue(pType, pId);
         if (m != null) {
             m.setMarkerColor(pColor);
         } else {
             m = new Marker();
             m.setMarkerType((pType == 0) ? Marker.TRIBE_MARKER_TYPE : Marker.ALLY_MARKER_TYPE);
-            m.setMarkerValue(pValue);
+            m.setMarkerID(pId);
             m.setMarkerColor(pColor);
             lMarkers.add(m);
         }
@@ -198,17 +210,17 @@ public class MarkerManager {
 
     /**And both, a tribe marker and an ally marker*/
     public void addMarker(Tribe pTribe, Color pTribeColor, Ally pAlly, Color pAllyColor) {
-        addMarkerInternal(Marker.TRIBE_MARKER_TYPE, pTribe.getName(), pTribeColor);
-        addMarkerInternal(Marker.ALLY_MARKER_TYPE, pAlly.getName(), pAllyColor);
+        addMarkerInternal(Marker.TRIBE_MARKER_TYPE, pTribe.getId(), pTribeColor);
+        addMarkerInternal(Marker.ALLY_MARKER_TYPE, pAlly.getId(), pAllyColor);
         fireMarkerChangedEvents();
     }
 
-    public void removeMarkers(String[] pValues) {
+    public void removeMarkers(Marker[] pValues) {
         removeMarkersInternal(pValues);
     }
 
     /**Remove a marker by its value*/
-    public void removeMarker(String pValue) {
+    public void removeMarker(Marker pValue) {
         if (pValue == null) {
             return;
         }
@@ -220,7 +232,7 @@ public class MarkerManager {
         if (pAlly == null) {
             return;
         }
-        removeMarker(pAlly.getName());
+        removeMarkerInternal(getMarker(pAlly));
     }
 
     /**Remove a tribe marker (internally removeMarker() is used)*/
@@ -228,27 +240,25 @@ public class MarkerManager {
         if (pTribe == null) {
             return;
         }
-        removeMarker(pTribe.getName());
+        removeMarkerInternal(getMarker(pTribe));
     }
 
     /**Remove a marker by its value (for internal use only)*/
-    private void removeMarkerInternal(String pValue) {
+    private void removeMarkerInternal(Marker pValue) {
         if (pValue == null) {
             return;
         }
-        Marker toRemove = getMarkerByValue(pValue);
-        lMarkers.remove(toRemove);
+        lMarkers.remove(pValue);
         fireMarkerChangedEvents();
     }
 
     /**Remove a marker by its value (for internal use only)*/
-    private void removeMarkersInternal(String[] pValues) {
+    private void removeMarkersInternal(Marker[] pValues) {
         if (pValues == null) {
             return;
         }
-        for (String v : pValues) {
-            Marker toRemove = getMarkerByValue(v);
-            lMarkers.remove(toRemove);
+        for (Marker v : pValues) {
+            lMarkers.remove(v);
         }
         fireMarkerChangedEvents();
     }
@@ -264,7 +274,7 @@ public class MarkerManager {
         while (model.getRowCount() > 0) {
             model.removeRow(0);
         }
-        
+
         Marker[] markers = getMarkers();
         if (markers.length > 0) {
             for (int i = 0; i < markers.length; i++) {
@@ -274,14 +284,31 @@ public class MarkerManager {
         return model;
     }
 
-    /**Get markers by their value*/
-    public Marker getMarkerByValue(String pValue) {
-        Marker[] markers = getMarkers();
-        for (Marker m : markers) {
-            if (m.getMarkerValue().equals(pValue)) {
+    public Marker getMarker(Tribe pTribe) {
+        if (pTribe == null) {
+            return null;
+        }
+
+        for (Marker m : lMarkers) {
+            if ((m.getMarkerType() == Marker.TRIBE_MARKER_TYPE) && (m.getMarkerID() == pTribe.getId())) {
                 return m;
             }
         }
+        //no marker found
+        return null;
+    }
+
+    public Marker getMarker(Ally pAlly) {
+        if (pAlly == null) {
+            return null;
+        }
+
+        for (Marker m : lMarkers) {
+            if ((m.getMarkerType() == Marker.ALLY_MARKER_TYPE) && (m.getMarkerID() == pAlly.getId())) {
+                return m;
+            }
+        }
+        //no marker found
         return null;
     }
 

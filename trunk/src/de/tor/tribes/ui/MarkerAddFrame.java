@@ -144,7 +144,7 @@ public class MarkerAddFrame extends javax.swing.JFrame {
     public void setVillage(Village pVillage) {
         mVillage = pVillage;
 
-        Marker m = MarkerManager.getSingleton().getMarkerByValue(mVillage.getTribe().getName());
+        Marker m = MarkerManager.getSingleton().getMarker(mVillage.getTribe());
         if (m != null) {
             mTribeColorChooser.setColor(m.getMarkerColor());
         } else {
@@ -153,7 +153,7 @@ public class MarkerAddFrame extends javax.swing.JFrame {
         jTribeName.setText("(" + mVillage.getTribe().getName() + ")");
         try {
             jAllyName.setText("(" + mVillage.getTribe().getAlly().getTag() + ")");
-            m = MarkerManager.getSingleton().getMarkerByValue(mVillage.getTribe().getAlly().getName());
+            m = MarkerManager.getSingleton().getMarker(mVillage.getTribe().getAlly());
             if (m != null) {
                 mAllyColorChooser.setColor(m.getMarkerColor());
             } else {

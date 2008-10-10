@@ -5,7 +5,10 @@
  */
 package de.tor.tribes.ui;
 
+import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.types.Ally;
 import de.tor.tribes.types.Marker;
+import de.tor.tribes.types.Tribe;
 import javax.swing.ImageIcon;
 
 /**
@@ -17,6 +20,8 @@ public class MarkerCell extends javax.swing.JPanel {
     private static ImageIcon PLAYER_ICON = null;
     private static ImageIcon ALLY_ICON = null;
     private int type = Marker.TRIBE_MARKER_TYPE;
+    private Tribe mTribe = null;
+    private Ally mAlly = null;
     
 
     static {
@@ -27,38 +32,56 @@ public class MarkerCell extends javax.swing.JPanel {
         }
     }
 
-    public static MarkerCell factoryPlayerMarker(String pPlayerName) {
-        return new MarkerCell(pPlayerName, Marker.TRIBE_MARKER_TYPE);
+    /*   public static MarkerCell factoryPlayerMarker(Tribe pTribe) throws Exception {
+    return new MarkerCell(pTribe);
     }
-
-    public static MarkerCell factoryAllyMarker(String pAllyName) {
-        return new MarkerCell(pAllyName, Marker.ALLY_MARKER_TYPE);
+    
+    public static MarkerCell factoryAllyMarker(Ally pAlly) throws Exception {
+    return new MarkerCell(pAlly);
     }
-
-    public static MarkerCell factoryMarkerCell(Marker pMarker) {
+     */
+    public static MarkerCell factoryMarkerCell(Marker pMarker) throws Exception {
         if (pMarker == null) {
             return null;
         } else {
             if (pMarker.getMarkerType() == Marker.TRIBE_MARKER_TYPE) {
-                return new MarkerCell(pMarker.getMarkerValue(), Marker.TRIBE_MARKER_TYPE);
+                return new MarkerCell(DataHolder.getSingleton().getTribes().get(pMarker.getMarkerID()));
             } else if (pMarker.getMarkerType() == Marker.ALLY_MARKER_TYPE) {
-                return new MarkerCell(pMarker.getMarkerValue(), Marker.ALLY_MARKER_TYPE);
+                return new MarkerCell(DataHolder.getSingleton().getAllies().get(pMarker.getMarkerID()));
             }
         }
         return null;
     }
 
     /** Creates new form MarkerPanel */
-    MarkerCell(String pName, int pType) {
-        initComponents();
-        jMarkerLabel.setText(pName);
-        if (pType == Marker.TRIBE_MARKER_TYPE) {
-            jMarkerLabel.setIcon(PLAYER_ICON);
-            type = pType;
-        } else {
-            jMarkerLabel.setIcon(ALLY_ICON);
-            type = pType;
+    MarkerCell(Tribe pTribe) throws Exception {
+        if (pTribe == null) {
+            throw new InstantiationException("Tribe argument must not be null");
         }
+        initComponents();
+        mTribe = pTribe;
+        jMarkerLabel.setText(mTribe.getName());
+        jMarkerLabel.setIcon(PLAYER_ICON);
+        type = Marker.TRIBE_MARKER_TYPE;
+    }
+
+    MarkerCell(Ally pAlly) throws Exception {
+        if (pAlly == null) {
+            throw new InstantiationException("Ally argument must not be null");
+        }
+        initComponents();
+        mAlly = pAlly;
+        jMarkerLabel.setText(mAlly.getName());
+        jMarkerLabel.setIcon(ALLY_ICON);
+        type = Marker.ALLY_MARKER_TYPE;
+    }
+
+    public Tribe getTribe() {
+        return mTribe;
+    }
+
+    public Ally getAlly() {
+        return mAlly;
     }
 
     public int getType() {

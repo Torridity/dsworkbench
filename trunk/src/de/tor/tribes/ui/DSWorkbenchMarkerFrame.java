@@ -38,6 +38,7 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
     private static DSWorkbenchMarkerFrame SINGLETON = null;
     private List<TableCellRenderer> mHeaderRenderers = null;
     // private List<DSWorkbenchFrameListener> mFrameListeners = null;
+
     /** Creates new form DSWorkbenchMarkerFrame */
     DSWorkbenchMarkerFrame() {
         //mFrameListeners = new LinkedList<DSWorkbenchFrameListener>();
@@ -224,16 +225,21 @@ private void fireRemoveMarkerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
     int ret = JOptionPane.showConfirmDialog(this, message, "Löschen", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
     if (ret == JOptionPane.YES_OPTION) {
         //get markers to remove
-        List<String> toRemove = new LinkedList<String>();
+        List<Marker> toRemove = new LinkedList<Marker>();
         for (int i = rows.length - 1; i >= 0; i--) {
             jMarkerTable.invalidate();
             int row = jMarkerTable.convertRowIndexToModel(rows[i]);
-            String value = ((MarkerCell) ((DefaultTableModel) jMarkerTable.getModel()).getValueAt(row, 0)).getMarkerName();
-            toRemove.add(value);
+            MarkerCell cell = ((MarkerCell) ((DefaultTableModel) jMarkerTable.getModel()).getValueAt(row, 0));
+            if (cell.getType() == Marker.TRIBE_MARKER_TYPE) {
+                toRemove.add(MarkerManager.getSingleton().getMarker(cell.getTribe()));
+            } else {
+                toRemove.add(MarkerManager.getSingleton().getMarker(cell.getAlly()));
+            }
+
             jMarkerTable.revalidate();
         }
         //remove all selected markers and update the view once
-        MarkerManager.getSingleton().removeMarkers(toRemove.toArray(new String[]{}));
+        MarkerManager.getSingleton().removeMarkers(toRemove.toArray(new Marker[]{}));
     }
 }//GEN-LAST:event_fireRemoveMarkerEvent
 
@@ -245,8 +251,8 @@ private void fireDrawMarkedOnlyChangedEvent(java.awt.event.MouseEvent evt) {//GE
     GlobalOptions.addProperty("draw.marked.only", Boolean.toString(jToggleDrawFilterButton.isSelected()));
     MinimapPanel.getSingleton().redraw();
 }//GEN-LAST:event_fireDrawMarkedOnlyChangedEvent
- 
-  /**Setup marker panel*/
+
+    /**Setup marker panel*/
     protected void setupMarkerPanel() {
         jMarkerTable.setModel(MarkerManager.getSingleton().getTableModel());
         MarkerManager.getSingleton().addMarkerManagerListener(this);
@@ -264,10 +270,17 @@ private void fireDrawMarkedOnlyChangedEvent(java.awt.event.MouseEvent evt) {//GE
             public void actionPerformed(ActionEvent e) {
                 //update markers as soon as the colorchooser cell editor has closed
                 try {
-                    String value = ((MarkerCell) jMarkerTable.getModel().getValueAt(jMarkerTable.getSelectedRow(), 0)).getMarkerName();
+                    MarkerCell cell = ((MarkerCell) jMarkerTable.getModel().getValueAt(jMarkerTable.getSelectedRow(), 0));
+                    Marker m = null;
+                    if (cell.getType() == Marker.TRIBE_MARKER_TYPE) {
+                        m = MarkerManager.getSingleton().getMarker(cell.getTribe());
+                    } else {
+                        m = MarkerManager.getSingleton().getMarker(cell.getAlly());
+                    }
+
                     Color color = (Color) jMarkerTable.getModel().getValueAt(jMarkerTable.getSelectedRow(), 1);
-                    if (value != null && color != null) {
-                        Marker m = MarkerManager.getSingleton().getMarkerByValue(value);
+                    if (m != null && color != null) {
+
                         m.setMarkerColor(color);
                         MarkerManager.getSingleton().markerUpdatedExternally();
                     }
@@ -284,8 +297,8 @@ private void fireDrawMarkedOnlyChangedEvent(java.awt.event.MouseEvent evt) {//GE
         MarkerManager.getSingleton().markerUpdatedExternally();
         jMarkerTable.updateUI();
     }
-    
-       @Override
+
+    @Override
     public void fireMarkersChangedEvent() {
         jMarkerTable.invalidate();
         jMarkerTable.setModel(MarkerManager.getSingleton().getTableModel());
@@ -301,8 +314,6 @@ private void fireDrawMarkedOnlyChangedEvent(java.awt.event.MouseEvent evt) {//GE
         jMarkerTable.setRowSorter(sorter);
         jMarkerTable.revalidate();
     }
- 
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBox jMarkerFrameAlwaysOnTop;
     private javax.swing.JPanel jMarkerPanel;
@@ -311,5 +322,4 @@ private void fireDrawMarkedOnlyChangedEvent(java.awt.event.MouseEvent evt) {//GE
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JToggleButton jToggleDrawFilterButton;
     // End of variables declaration//GEN-END:variables
-
 }

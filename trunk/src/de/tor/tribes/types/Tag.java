@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package de.tor.tribes.util.tag;
+package de.tor.tribes.types;
 
 import java.awt.Image;
 import java.io.File;
@@ -10,6 +10,7 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import javax.imageio.ImageIO;
 import org.jdom.Element;
+import de.tor.tribes.util.xml.JaxenUtils;
 
 /**
  *
@@ -20,6 +21,7 @@ public class Tag {
     private String sName = null;
     private String sIcon = null;
     private Image mIcon = null;
+    private boolean showOnMap = true;
 
     public static Tag fromXml(Element pElement) throws Exception {
         String name = URLDecoder.decode(pElement.getChild("name").getText(), "UTF-8");
@@ -27,12 +29,18 @@ public class Tag {
         if (iconPath != null) {
             iconPath = URLDecoder.decode(iconPath, "UTF-8");
         }
-        return new Tag(name, iconPath);
+        boolean showOnMap = true;
+        try {
+            showOnMap = Boolean.parseBoolean(JaxenUtils.getNodeValue(pElement, "extensions/showOnMap"));
+        } catch (Exception e) {
+        }
+        return new Tag(name, iconPath, showOnMap);
     }
 
-    public Tag(String pName, String pIconPath) {
+    public Tag(String pName, String pIconPath, boolean pShowOnMap) {
         setName(pName);
         setIconPath(sIcon);
+        setShowOnMap(pShowOnMap);
     }
 
     public String getName() {
@@ -64,6 +72,14 @@ public class Tag {
         return mIcon;
     }
 
+    public void setShowOnMap(boolean pValue) {
+        showOnMap = pValue;
+    }
+
+    public boolean isShowOnMap() {
+        return showOnMap;
+    }
+
     @Override
     public String toString() {
         return getName();
@@ -77,6 +93,9 @@ public class Tag {
         } else {
             ret += "<resource/>\n";
         }
+        ret += "<extensions>\n";
+        ret += "<showOnMap>" + isShowOnMap() + "</showOnMap>\n";
+        ret += "</extensions>\n";
         ret += "</tag>\n";
         return ret;
     }

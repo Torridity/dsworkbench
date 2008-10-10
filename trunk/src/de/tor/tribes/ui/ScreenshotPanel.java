@@ -5,6 +5,8 @@
  */
 package de.tor.tribes.ui;
 
+import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.types.Marker;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -60,7 +62,20 @@ public class ScreenshotPanel extends javax.swing.JPanel {
             int legendH = count * b.getGraphics().getFontMetrics().getHeight() + 10;
             int heightF = b.getGraphics().getFontMetrics().getHeight();
             for (int i = 0; i < count; i++) {
-                Rectangle2D bounds = b.getGraphics().getFontMetrics().getStringBounds(MarkerManager.getSingleton().getMarkers()[i].getMarkerValue(), b.getGraphics());
+
+                Marker m = MarkerManager.getSingleton().getMarkers()[i];
+                String value = "";
+                switch (m.getMarkerType()) {
+                    case Marker.TRIBE_MARKER_TYPE: {
+                        value = DataHolder.getSingleton().getTribes().get(m.getMarkerID()).getName();
+                        break;
+                    }
+                    default: {
+                        value = DataHolder.getSingleton().getAllies().get(m.getMarkerID()).getName();
+                    }
+                }
+
+                Rectangle2D bounds = b.getGraphics().getFontMetrics().getStringBounds(value, b.getGraphics());
                 if (bounds.getWidth() > legendW) {
                     legendW = (int) Math.rint(bounds.getWidth());
                 }
@@ -75,7 +90,18 @@ public class ScreenshotPanel extends javax.swing.JPanel {
             g2d.setColor(Color.BLACK);
             for (int i = 0; i < count; i++) {
                 g2d.setColor(Color.BLACK);
-                String value = MarkerManager.getSingleton().getMarkers()[i].getMarkerValue();
+                Marker m = MarkerManager.getSingleton().getMarkers()[i];
+                String value = "";
+                switch (m.getMarkerType()) {
+                    case Marker.TRIBE_MARKER_TYPE: {
+                        value = DataHolder.getSingleton().getTribes().get(m.getMarkerID()).getName();
+                        break;
+                    }
+                    default: {
+                        value = DataHolder.getSingleton().getAllies().get(m.getMarkerID()).getName();
+                    }
+                }
+
                 Color c = MarkerManager.getSingleton().getMarkers()[i].getMarkerColor();
                 g2d.drawString(value, width - legendW, (height - legendH + 5 + (int) (heightF / 2) + heightF * i));
                 g2d.setColor(c);

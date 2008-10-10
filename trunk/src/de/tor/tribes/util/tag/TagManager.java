@@ -4,6 +4,7 @@
  */
 package de.tor.tribes.util.tag;
 
+import de.tor.tribes.types.Tag;
 import de.tor.tribes.io.DataHolder;
 import java.util.Hashtable;
 import java.util.List;
@@ -40,7 +41,6 @@ public class TagManager {
 
     TagManager() {
         mVillageTags = new Hashtable<Village, List<String>>();
-        System.out.println("loading user tags");
         loadUserTags();
     }
 
@@ -227,9 +227,8 @@ public class TagManager {
             return;
         }
         if (getUserTag(pTag) == null) {
-            System.out.println("adding tag " + pTag);
             //add only if it not exists yet
-            mTags.add(new Tag(pTag, pResourcePath));
+            mTags.add(new Tag(pTag, pResourcePath, true));
         }
     }
 
@@ -275,7 +274,6 @@ public class TagManager {
             FileWriter w = new FileWriter("user_tags.xml");
             w.write("<tags>\n");
             for (Tag t : mTags) {
-                System.out.println("saving tag " + t);
                 w.write(t.toXml());
             }
             w.write("</tags>\n");
@@ -290,12 +288,12 @@ public class TagManager {
         mTags = new LinkedList<Tag>();
         File tagFile = new File("user_tags.xml");
         if (!tagFile.exists()) {
-            mTags.add(new Tag("Off", "graphics/icons/axe.png"));
-            mTags.add(new Tag("Def", "graphics/icons/sword.png"));
-            mTags.add(new Tag("AG", "graphics/icons/snob.png"));
-            mTags.add(new Tag("Aufbau", "graphics/icons/build.png"));
-            mTags.add(new Tag("Truppenaufbau", "graphics/icons/troops.png"));
-            mTags.add(new Tag("Fertig", "graphics/icons/att.png"));
+            mTags.add(new Tag("Off", "graphics/icons/axe.png", true));
+            mTags.add(new Tag("Def", "graphics/icons/sword.png", true));
+            mTags.add(new Tag("AG", "graphics/icons/snob.png", true));
+            mTags.add(new Tag("Aufbau", "graphics/icons/build.png", true));
+            mTags.add(new Tag("Truppenaufbau", "graphics/icons/troops.png", true));
+            mTags.add(new Tag("Fertig", "graphics/icons/att.png", true));
         } else {
             //try loading tags from file
             try {

@@ -766,9 +766,9 @@ class RepaintThread extends Thread {
                             marker = Color.YELLOW;
                         } else {
                             try {
-                                Marker m = MarkerManager.getSingleton().getMarkerByValue(v.getTribe().getName());
+                                Marker m = MarkerManager.getSingleton().getMarker(v.getTribe());
                                 if (m == null) {
-                                    m = MarkerManager.getSingleton().getMarkerByValue(v.getTribe().getAlly().getName());
+                                    m = MarkerManager.getSingleton().getMarker(v.getTribe().getAlly());
                                     if (m != null) {
                                         marker = m.getMarkerColor();
                                     } else {

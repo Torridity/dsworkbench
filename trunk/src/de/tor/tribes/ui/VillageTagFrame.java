@@ -52,7 +52,7 @@ public class VillageTagFrame extends javax.swing.JFrame {
         DefaultListModel lModel = new DefaultListModel();
         if (tags != null) {
             for (String tag : tags) {
-                if (TagManager.getSingleton().getUserTagIcon(tag) != null) {
+                if (TagManager.getSingleton().getUserTag(tag) != null) {
                     //add only if tag is still valid
                     lModel.addElement(tag);
                 } else {

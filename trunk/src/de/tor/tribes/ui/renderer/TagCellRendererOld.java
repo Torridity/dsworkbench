@@ -28,7 +28,7 @@ public class TagCellRendererOld implements ListCellRenderer {
         try {
             Tag t = (Tag) value;
             defaultRenderer.setText(t.getName());
-            defaultRenderer.setIcon(new ImageIcon(t.getTagIcon()));
+         //   defaultRenderer.setIcon(new ImageIcon(t.getTagIcon()));
         } catch (Exception e) {
             defaultRenderer.setText(value.toString());
            // defaultRenderer.setIcon(new ImageIcon(this.getClass().getResource("/res/forbidden.gif")));

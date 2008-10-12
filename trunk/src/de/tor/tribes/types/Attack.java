@@ -10,6 +10,7 @@ import de.tor.tribes.util.xml.JaxenUtils;
 import java.io.Serializable;
 import java.util.Date;
 import org.jdom.Element;
+import de.tor.tribes.util.GlobalOptions;
 
 /**
  *
@@ -25,6 +26,10 @@ public class Attack implements Serializable {
     private boolean showOnMap = false;
 
     public Attack() {
+        try {
+            showOnMap = Boolean.parseBoolean(GlobalOptions.getProperty("draw.attacks.by.default"));
+        } catch (Exception e) {
+        }
     }
 
     public Attack(Element pElement) {

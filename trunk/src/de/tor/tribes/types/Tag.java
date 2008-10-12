@@ -19,27 +19,31 @@ import de.tor.tribes.util.xml.JaxenUtils;
 public class Tag {
 
     private String sName = null;
-    private String sIcon = null;
-    private Image mIcon = null;
+    /*  private String sIcon = null;
+    private Image mIcon = null;*/
     private boolean showOnMap = true;
 
     public static Tag fromXml(Element pElement) throws Exception {
         String name = URLDecoder.decode(pElement.getChild("name").getText(), "UTF-8");
+        /*
         String iconPath = pElement.getChild("resource").getText();
         if (iconPath != null) {
-            iconPath = URLDecoder.decode(iconPath, "UTF-8");
+        iconPath = URLDecoder.decode(iconPath, "UTF-8");
         }
+         */
         boolean showOnMap = true;
         try {
             showOnMap = Boolean.parseBoolean(JaxenUtils.getNodeValue(pElement, "extensions/showOnMap"));
         } catch (Exception e) {
         }
-        return new Tag(name, iconPath, showOnMap);
+        //return new Tag(name, iconPath, showOnMap);
+        return new Tag(name, showOnMap);
     }
 
-    public Tag(String pName, String pIconPath, boolean pShowOnMap) {
+    //public Tag(String pName, String pIconPath, boolean pShowOnMap) {
+    public Tag(String pName, boolean pShowOnMap) {
         setName(pName);
-        setIconPath(sIcon);
+        //   setIconPath(sIcon);
         setShowOnMap(pShowOnMap);
     }
 
@@ -51,27 +55,27 @@ public class Tag {
         this.sName = pName;
     }
 
-    public String getIconPath() {
-        return sIcon;
+    /*  public String getIconPath() {
+    return sIcon;
     }
-
+    
     public void setIconPath(String pIcon) {
-        this.sIcon = pIcon;
-        loadTagIcon(pIcon);
+    this.sIcon = pIcon;
+    loadTagIcon(pIcon);
     }
-
+    
     private void loadTagIcon(String pFile) {
-        try {
-            mIcon = ImageIO.read(new File(pFile));
-        } catch (Exception e) {
-            mIcon = null;
-        }
+    try {
+    mIcon = ImageIO.read(new File(pFile));
+    } catch (Exception e) {
+    mIcon = null;
     }
-
+    }
+    
     public Image getTagIcon() {
-        return mIcon;
+    return mIcon;
     }
-
+     */
     public void setShowOnMap(boolean pValue) {
         showOnMap = pValue;
     }
@@ -88,11 +92,11 @@ public class Tag {
     public String toXml() throws Exception {
         String ret = "<tag>\n";
         ret += "<name>" + URLEncoder.encode(getName(), "UTF-8") + "</name>\n";
-        if (getIconPath() != null) {
-            ret += "<resource>" + URLEncoder.encode(getIconPath(), "UTF-8") + "</resource>\n";
+        /* if (getIconPath() != null) {
+        ret += "<resource>" + URLEncoder.encode(getIconPath(), "UTF-8") + "</resource>\n";
         } else {
-            ret += "<resource/>\n";
-        }
+        ret += "<resource/>\n";
+        }*/
         ret += "<extensions>\n";
         ret += "<showOnMap>" + isShowOnMap() + "</showOnMap>\n";
         ret += "</extensions>\n";

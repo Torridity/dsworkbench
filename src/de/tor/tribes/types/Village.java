@@ -12,6 +12,7 @@ import de.tor.tribes.util.tag.TagManager;
 import java.io.Serializable;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.util.Comparator;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -30,7 +31,6 @@ public class Village implements Serializable, Comparable {
     private transient Tribe tribe = null;
     private int points;
     private byte type;
-    
     //$id, $name, $x, $y, $tribe, $points, $type
     public static Village parseFromPlainData(String pLine) {
         StringTokenizer tokenizer = new StringTokenizer(pLine, ",");
@@ -173,7 +173,7 @@ public class Village implements Serializable, Comparable {
         String villageInfo = "<html><p><b>Name (X|Y):</b> " + getName().replaceAll("<", "&lt;").replaceAll(">", "&gt;") + " (" + getX() + "|" + getY() + "), <b>Punkte:</b> " + getPoints() + ",";
         List<String> tags = TagManager.getSingleton().getTags(this);
         villageInfo += "<b>Tags:</b> ";
-        if (tags == null) {
+        if ((tags == null) || (tags.size() == 0)) {
             villageInfo += "keine, ";
         } else {
             for (String tag : tags) {
@@ -289,5 +289,31 @@ public class Village implements Serializable, Comparable {
             return -1;
         }
         return toString().toLowerCase().compareTo(o.toString().toLowerCase());
+    }
+    public static final Comparator<Village> CASE_INSENSITIVE_ORDER = new CaseInsensitiveComparator();
+
+    private static class CaseInsensitiveComparator implements Comparator<Village>, java.io.Serializable {
+        // use serialVersionUID from JDK 1.2.2 for interoperability
+        private static final long serialVersionUID = 8575799808933029326L;
+
+        public int compare(Village s1, Village s2) {
+            int n1 = s1.toString().length(), n2 = s2.toString().length();
+            for (int i1 = 0,  i2 = 0; i1 < n1 && i2 < n2; i1++, i2++) {
+                char c1 = s1.toString().charAt(i1);
+                char c2 = s2.toString().charAt(i2);
+                if (c1 != c2) {
+                    c1 = Character.toUpperCase(c1);
+                    c2 = Character.toUpperCase(c2);
+                    if (c1 != c2) {
+                        c1 = Character.toLowerCase(c1);
+                        c2 = Character.toLowerCase(c2);
+                        if (c1 != c2) {
+                            return c1 - c2;
+                        }
+                    }
+                }
+            }
+            return n1 - n2;
+        }
     }
 }

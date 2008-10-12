@@ -27,12 +27,12 @@ public class TagCellRenderer extends javax.swing.JPanel implements TableCellRend
 
     public void setValue(Tag pTag) {
         mCurrentTag = pTag;
-        jTextField1.setText(pTag.getName());
+        jLabel1.setText(pTag.getName());
         jCheckBox1.setSelected(pTag.isShowOnMap());
     }
 
     public Tag getValue() {
-        mCurrentTag.setName(jTextField1.getText());
+        mCurrentTag.setName(jLabel1.getText());
         mCurrentTag.setShowOnMap(jCheckBox1.isSelected());
         return mCurrentTag;
     }
@@ -58,17 +58,17 @@ public class TagCellRenderer extends javax.swing.JPanel implements TableCellRend
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         try {
             Tag t = (Tag) value;
-            jTextField1.setText(t.getName());
+            jLabel1.setText(t.getName());
             //jTextField1.setIcon(new ImageIcon(t.getTagIcon()));
             jCheckBox1.setSelected(t.isShowOnMap());
         } catch (Exception e) {
-            jTextField1.setText(value.toString());
+            jLabel1.setText(value.toString());
             // defaultRenderer.setIcon(new ImageIcon(this.getClass().getResource("/res/forbidden.gif")));
         }
         if (isSelected) {
-            jTextField1.setBackground(de.tor.tribes.util.Constants.DS_BACK);
+            setBackground(de.tor.tribes.util.Constants.DS_BACK_LIGHT);
         } else {
-            jTextField1.setBackground(de.tor.tribes.util.Constants.DS_BACK_LIGHT);
+            setBackground(de.tor.tribes.util.Constants.DS_BACK);
         }
         return this;
     }
@@ -83,30 +83,27 @@ public class TagCellRenderer extends javax.swing.JPanel implements TableCellRend
     private void initComponents() {
 
         jCheckBox1 = new javax.swing.JCheckBox();
-        jTextField1 = new javax.swing.JTextField();
+        jLabel1 = new javax.swing.JLabel();
 
         jCheckBox1.setOpaque(false);
-
-        jTextField1.setBorder(null);
-        jTextField1.setOpaque(false);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 70, Short.MAX_VALUE)
+                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 72, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jCheckBox1))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jCheckBox1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 21, Short.MAX_VALUE)
+            .addComponent(jCheckBox1, javax.swing.GroupLayout.DEFAULT_SIZE, 25, Short.MAX_VALUE)
+            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 25, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBox jCheckBox1;
-    private javax.swing.JTextField jTextField1;
+    private javax.swing.JLabel jLabel1;
     // End of variables declaration//GEN-END:variables
 }

@@ -4,7 +4,6 @@
  */
 package de.tor.tribes.ui.renderer;
 
-import de.tor.tribes.util.Constants;
 import java.text.SimpleDateFormat;
 import javax.swing.table.DefaultTableCellRenderer;
 
@@ -14,7 +13,7 @@ import javax.swing.table.DefaultTableCellRenderer;
  */
 public class DateCellRenderer extends DefaultTableCellRenderer {
 
-    private SimpleDateFormat specialFormat = null;
+    private SimpleDateFormat specialFormat = new SimpleDateFormat("dd.MM.yy HH:mm:ss.SSS");
 
     public DateCellRenderer() {
         super();
@@ -27,6 +26,6 @@ public class DateCellRenderer extends DefaultTableCellRenderer {
 
     @Override
     public void setValue(Object value) {
-        setText((value == null) ? "" : ((specialFormat != null) ? specialFormat.format(value) : Constants.DATE_FORMAT.format(value)));
+        setText((value == null) ? "" : specialFormat.format(value));
     }
 }

@@ -160,7 +160,7 @@ public class TagManager {
     /**Get all tags for a village*/
     public synchronized List<String> getTags(Village pVillage) {
         if (pVillage == null) {
-            return null;
+            return new LinkedList<String>();
         }
         return mVillageTags.get(pVillage);
     }
@@ -221,14 +221,16 @@ public class TagManager {
         return mTags;
     }
 
-    public synchronized void addUserTag(String pTag, String pResourcePath) {
+    //public synchronized void addUserTag(String pTag, String pResourcePath) {
+    public synchronized void addUserTag(String pTag) {
         if (pTag == null) {
             //null tag not supported
             return;
         }
         if (getUserTag(pTag) == null) {
             //add only if it not exists yet
-            mTags.add(new Tag(pTag, pResourcePath, true));
+            //mTags.add(new Tag(pTag, pResourcePath, true));
+            mTags.add(new Tag(pTag, true));
         }
     }
 
@@ -242,7 +244,7 @@ public class TagManager {
         }
     }
 
-    public Image getUserTagIcon(String pTag) {
+   /* public Image getUserTagIcon(String pTag) {
         for (Tag t : mTags) {
             if (t.getName().equals(pTag)) {
                 return t.getTagIcon();
@@ -268,7 +270,8 @@ public class TagManager {
             }
         }
     }
-
+*/
+    
     public void saveUserTags() {
         try {
             FileWriter w = new FileWriter("user_tags.xml");
@@ -288,12 +291,18 @@ public class TagManager {
         mTags = new LinkedList<Tag>();
         File tagFile = new File("user_tags.xml");
         if (!tagFile.exists()) {
-            mTags.add(new Tag("Off", "graphics/icons/axe.png", true));
+            /*mTags.add(new Tag("Off", "graphics/icons/axe.png", true));
             mTags.add(new Tag("Def", "graphics/icons/sword.png", true));
             mTags.add(new Tag("AG", "graphics/icons/snob.png", true));
             mTags.add(new Tag("Aufbau", "graphics/icons/build.png", true));
             mTags.add(new Tag("Truppenaufbau", "graphics/icons/troops.png", true));
-            mTags.add(new Tag("Fertig", "graphics/icons/att.png", true));
+            mTags.add(new Tag("Fertig", "graphics/icons/att.png", true));*/
+            mTags.add(new Tag("Off", true));
+            mTags.add(new Tag("Def", true));
+            mTags.add(new Tag("AG", true));
+            mTags.add(new Tag("Aufbau", true));
+            mTags.add(new Tag("Truppenaufbau", true));
+            mTags.add(new Tag("Fertig", true));
         } else {
             //try loading tags from file
             try {

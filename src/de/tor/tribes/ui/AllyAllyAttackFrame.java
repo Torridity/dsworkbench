@@ -10,11 +10,11 @@ import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Ally;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
-import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.attack.AttackManager;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -31,6 +31,8 @@ import javax.swing.table.DefaultTableModel;
  * @author  Jejkal
  */
 public class AllyAllyAttackFrame extends javax.swing.JFrame {
+
+    SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yy HH:mm:ss.SSS");
 
     /** Creates new form AllyAllyAttackFrame */
     public AllyAllyAttackFrame() {
@@ -833,7 +835,7 @@ private void fireAddAllPlayerVillages(java.awt.event.MouseEvent evt) {//GEN-FIRS
                 UnitHolder unit = sources.get(source);
                 long targetTime = ((Date) jArriveTime.getValue()).getTime();
                 long startTime = targetTime - (long) DSCalculator.calculateMoveTimeInSeconds(source, target, unit.getSpeed()) * 1000;
-                String tStart = Constants.DATE_FORMAT.format(new Date(startTime));
+                String tStart = DATE_FORMAT.format(new Date(startTime));
                 resultModel.addRow(new Object[]{source.getTribe(), source, unit, target, tStart});
             }
         }

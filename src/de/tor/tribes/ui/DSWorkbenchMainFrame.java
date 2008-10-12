@@ -1439,7 +1439,7 @@ private void fireShowTroopsFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIR
         UIManager.put("OptionPane.yesButtonText", "Übernehmen");
         if (JOptionPane.showConfirmDialog(this, message, "Gruppeninformationen gefunden", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION) {
             for (String group : groups) {
-                TagManager.getSingleton().addUserTag(group, null);
+                TagManager.getSingleton().addUserTag(group);
                 List<Village> villagesForGroup = pParserResult.get(group);
                 if (villagesForGroup != null) {
                     for (Village v : villagesForGroup) {

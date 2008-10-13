@@ -6,8 +6,9 @@ package de.tor.tribes.db;
 
 import de.tor.tribes.sec.SecurityAdapter;
 import de.tor.tribes.util.Constants;
-import java.net.Authenticator;
-import java.net.Proxy;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -16,7 +17,6 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Properties;
 import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
 
@@ -77,11 +77,11 @@ public class DatabaseAdapter {
         }
         try {
             DB_CONNECTION = DriverManager.getConnection("jdbc:mysql://www.dsworkbench.de/dsworkbench?" + "user=dsworkbench&password=DSwb'08");
-            
-           /*new Proxy(Proxy.Type.SOCKS, null);
-           Authenticator.setDefault(new Authenticator() {
-           protected 
-           });*/
+
+            /*new Proxy(Proxy.Type.SOCKS, null);
+            Authenticator.setDefault(new Authenticator() {
+            protected 
+            });*/
             return true;
         } catch (SQLException se) {
             logger.error("Failed to establish database connection", se);
@@ -226,17 +226,17 @@ public class DatabaseAdapter {
         List<DatabaseServerEntry> retVal = new LinkedList<DatabaseServerEntry>();
         try {
             Statement s = DB_CONNECTION.createStatement();
-            String query = "SELECT * FROM update_daemon;";
+            String query = "SELECT serverID, serverURL FROM update_daemon;";
             ResultSet rs = s.executeQuery(query);
             rs = s.executeQuery(query);
             while (rs.next()) {
                 String id = rs.getString("serverID");
                 String url = rs.getString("serverURL");
-                int ver = rs.getInt("dataVersion");
+                //int ver = rs.getInt("dataVersion");
                 DatabaseServerEntry de = new DatabaseServerEntry();
                 de.setServerID(id);
                 de.setServerURL(url);
-                de.setDataVersion(ver);
+                //de.setDataVersion(ver);
                 retVal.add(de);
             }
         } catch (Exception e) {
@@ -453,14 +453,29 @@ public class DatabaseAdapter {
         return t;
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception{
         DOMConfigurator.configure("log4j.xml");
         System.setProperty("proxyUse", "true");
         System.setProperty("proxyHost", "proxy.fzk.de");
         System.setProperty("proxyPort", "8000");
 
-        System.out.println(getUserDataVersion("Torridity", "de26"));
-
+//        System.out.println(getUserDataVersion("Torridity", "de26"));
+        long s = System.currentTimeMillis();
+        System.out.println(DatabaseAdapter.getServerList());
+        System.out.println("d = " + (System.currentTimeMillis() - s));
+        
+        
+         s = System.currentTimeMillis();
+        URL u = new URL("http://www.dsworkbench.de/interface.php");
+        BufferedReader r  = new BufferedReader(new InputStreamReader(u.openConnection().getInputStream()));
+        String line = "";
+        
+        while((line = r.readLine()) != null){
+            System.out.println("L " + line);
+        }
+        
+        r.close();
+        System.out.println("d = " + (System.currentTimeMillis() - s));
     //System.out.println(DatabaseAdapter.checkUser("Torridity", "realstyx13"));
     //System.out.println(DatabaseAdapter.getPropertyValue("update_base_dir"));
     // System.out.println(DatabaseAdapter.getUserDataVersion("Torridity", "de14"));

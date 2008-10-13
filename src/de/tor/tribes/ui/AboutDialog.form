@@ -93,12 +93,12 @@
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel4">
       <Properties>
-        <Property name="text" type="java.lang.String" value="ds-workbench@torridity.de"/>
+        <Property name="text" type="java.lang.String" value="dsworkbench@torridity.de"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel5">
       <Properties>
-        <Property name="text" type="java.lang.String" value="http://www.torridity.de"/>
+        <Property name="text" type="java.lang.String" value="http://www.dsworkbench.de"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel6">

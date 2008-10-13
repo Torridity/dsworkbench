@@ -162,7 +162,12 @@ public class TagManager {
         if (pVillage == null) {
             return new LinkedList<String>();
         }
-        return mVillageTags.get(pVillage);
+        List<String> tags = mVillageTags.get(pVillage);
+
+        if (tags == null) {
+            return new LinkedList<String>();
+        }
+        return tags;
     }
 
     /**Add a tag to a village*/
@@ -244,34 +249,33 @@ public class TagManager {
         }
     }
 
-   /* public Image getUserTagIcon(String pTag) {
-        for (Tag t : mTags) {
-            if (t.getName().equals(pTag)) {
-                return t.getTagIcon();
-            }
-        }
-        return null;
+    /* public Image getUserTagIcon(String pTag) {
+    for (Tag t : mTags) {
+    if (t.getName().equals(pTag)) {
+    return t.getTagIcon();
     }
-
-    public void setUserTagIcon(String pTag, String pIconPath) {
-        for (Tag t : mTags) {
-            if (t.getName().equals(pTag)) {
-                t.setIconPath(pIconPath);
-                break;
-            }
-        }
     }
-
-    public void removeUserTagIcon(String pTag) {
-        for (Tag t : mTags) {
-            if (t.getName().equals(pTag)) {
-                t.setIconPath(null);
-                break;
-            }
-        }
+    return null;
     }
-*/
     
+    public void setUserTagIcon(String pTag, String pIconPath) {
+    for (Tag t : mTags) {
+    if (t.getName().equals(pTag)) {
+    t.setIconPath(pIconPath);
+    break;
+    }
+    }
+    }
+    
+    public void removeUserTagIcon(String pTag) {
+    for (Tag t : mTags) {
+    if (t.getName().equals(pTag)) {
+    t.setIconPath(null);
+    break;
+    }
+    }
+    }
+     */
     public void saveUserTags() {
         try {
             FileWriter w = new FileWriter("user_tags.xml");

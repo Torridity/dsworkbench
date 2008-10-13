@@ -8,10 +8,8 @@ package de.tor.tribes.ui;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.io.WorldDecorationHolder;
-import de.tor.tribes.types.Ally;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.Marker;
-import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.util.BrowserCommandSender;
 import de.tor.tribes.util.Constants;
@@ -21,7 +19,6 @@ import de.tor.tribes.util.Skin;
 import de.tor.tribes.util.ToolChangeListener;
 import de.tor.tribes.util.attack.AttackManager;
 import de.tor.tribes.util.mark.MarkerManager;
-import de.tor.tribes.util.tag.TagManager;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.awt.BasicStroke;
@@ -53,8 +50,8 @@ import java.util.LinkedList;
 import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
-import javax.swing.SwingUtilities;
 import org.apache.log4j.Logger;
+import de.tor.tribes.util.tag.TagManager;
 
 /**
  *
@@ -742,11 +739,12 @@ class RepaintThread extends Thread {
             markedOnly = false;
         }
 
-//       Hashtable<Village, Point> tagIconPoints = new Hashtable<Village, Point>();
+        //       Hashtable<Village, Point> tagIconPoints = new Hashtable<Village, Point>();
 
         for (int i = 0; i < iVillagesX; i++) {
             for (int j = 0; j < iVillagesY; j++) {
                 Village v = mVisibleVillages[i][j];
+                boolean drawVillage = true;
 
                 // <editor-fold defaultstate="collapsed" desc="Marker settings">
 
@@ -764,6 +762,19 @@ class RepaintThread extends Thread {
                     if (v.getTribe() != null) {
                         if (v.getTribe().getName().equals(GlobalOptions.getProperty("player." + GlobalOptions.getProperty("default.server")))) {
                             marker = Color.YELLOW;
+
+                            // <editor-fold defaultstate="collapsed" desc=" Tag filtering ">
+                            //user villages are not drawn by default but with accepted tags
+                            drawVillage = false;
+                            for (String tag : TagManager.getSingleton().getTags(v)) {
+                                if (TagManager.getSingleton().getUserTag(tag).isShowOnMap()) {
+                                    //at least one of the tags for the village are visible
+                                    drawVillage = true;
+                                    break;
+                                }
+                            }
+                        //</editor-fold>
+
                         } else {
                             try {
                                 Marker m = MarkerManager.getSingleton().getMarker(v.getTribe());
@@ -804,7 +815,7 @@ class RepaintThread extends Thread {
                     }
 
                 } else {
-                    if (marker != null) {
+                    if ((marker != null) && (drawVillage)) {
                         boolean isLeft = false;
                         if (v.getTribe() == null) {
                             isLeft = true;
@@ -930,6 +941,7 @@ class RepaintThread extends Thread {
                         }
                     } else {
                         g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, DSWorkbenchMainFrame.getSingleton().getZoomFactor()), x, y, null);
+                        mVisibleVillages[i][j] = null;
                     }
                 }
                 //</editor-fold>

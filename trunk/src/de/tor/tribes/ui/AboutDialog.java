@@ -41,7 +41,7 @@ public class AboutDialog extends javax.swing.JDialog {
         setTitle("About");
         setAlwaysOnTop(true);
 
-        jAppLabel.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        jAppLabel.setFont(new java.awt.Font("Arial", 0, 18));
         jAppLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jAppLabel.setText("DS-Workbench 0.92b");
 
@@ -51,9 +51,9 @@ public class AboutDialog extends javax.swing.JDialog {
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel3.setText("<html><u><b>eMail:</b></u></html>");
 
-        jLabel4.setText("ds-workbench@torridity.de");
+        jLabel4.setText("dsworkbench@torridity.de");
 
-        jLabel5.setText("http://www.torridity.de");
+        jLabel5.setText("http://www.dsworkbench.de");
 
         jLabel6.setText("<html>&copy; Torridity (2008)</html>");
 

@@ -31,6 +31,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JViewport;
 import javax.swing.UIManager;
+import javax.swing.event.TableModelEvent;
 import javax.swing.table.DefaultTableModel;
 import org.apache.log4j.Logger;
 import de.tor.tribes.ui.renderer.ColorCellRenderer;
@@ -50,6 +51,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JTable;
+import javax.swing.event.TableModelListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableCellRenderer;
 
@@ -312,7 +314,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jTagTable.setDefaultRenderer(Tag.class, new TagCellRenderer());
         jTagTable.setDefaultEditor(Tag.class, new TagTableCellEditor());
         jTagTable.setModel(tagModel);
-
+        jTagTable.putClientProperty("terminateEditOnFocusLost", true);
         DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
 
             @Override
@@ -352,9 +354,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
 
     protected boolean checkSettings() {
         logger.debug("Checking settings");
-
         checkConnectivity();
-
         if (!updateServerList()) {
             //remote update failed and no local servers found
             String message = "Serverliste konnte nicht geladen werden.\n" +
@@ -364,10 +364,11 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             JOptionPane.showMessageDialog(this, message, "Warnung", JOptionPane.WARNING_MESSAGE);
             return false;
         }
+
+
         if (!checkAccountSettings()) {
             return false;
         }
-
         return checkTribesAccountSettings();
     }
 
@@ -1399,7 +1400,6 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         }
 
         GlobalOptions.saveProperties();
-
         if (!checkSettings()) {
             return;
         }
@@ -1580,9 +1580,13 @@ private void fireDownloadDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
             //clear tribes model due to data is cleared at reload
             jTribeNames.setModel(new DefaultComboBoxModel());
 
-            Thread t = new Thread(new Runnable() {
+            Thread t = new Thread(new  
 
-                @Override
+                  Runnable() {
+
+
+                     
+                        @Override
                 public void run() {
                     try {
                         logger.debug("Start downloading data");

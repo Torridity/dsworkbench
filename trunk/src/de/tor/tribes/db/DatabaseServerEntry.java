@@ -30,13 +30,17 @@ public class DatabaseServerEntry {
         this.serverURL = serverURL;
     }
 
+    /**
+     *@DEPRECATED
+     */
     public int getDataVersion() {
         return dataVersion;
     }
 
+    /**
+     *@DEPRECATED
+     */
     public void setDataVersion(int dataVersion) {
         this.dataVersion = dataVersion;
     }
-    
-    
 }

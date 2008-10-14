@@ -5,9 +5,11 @@
 package de.tor.tribes.ui.models;
 
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.TroopsManagerListener;
+import java.text.NumberFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
@@ -23,6 +25,7 @@ public class TroopsManagerTableModel extends AbstractTableModel {
     Class[] types = null;
     String[] colNames = null;
     private static TroopsManagerTableModel SINGLETON = null;
+    private NumberFormat nf = null;
 
     public static synchronized TroopsManagerTableModel getSingleton() {
         if (SINGLETON == null) {
@@ -35,6 +38,8 @@ public class TroopsManagerTableModel extends AbstractTableModel {
     public void setup() {
         List<Class> typesList = new LinkedList<Class>();
         List<String> namesList = new LinkedList<String>();
+        typesList.add(Tribe.class);
+        namesList.add("Spieler");
         typesList.add(Village.class);
         namesList.add("Dorf");
         typesList.add(Date.class);
@@ -43,8 +48,21 @@ public class TroopsManagerTableModel extends AbstractTableModel {
             typesList.add(Integer.class);
             namesList.add("");
         }
+
+        //fight power cols
+        namesList.add("");
+        typesList.add(Double.class);
+        namesList.add("");
+        typesList.add(Double.class);
+        namesList.add("");
+        typesList.add(Double.class);
+        namesList.add("");
+        typesList.add(Double.class);
         types = typesList.toArray(new Class[]{});
         colNames = namesList.toArray(new String[]{});
+        nf = NumberFormat.getInstance();
+        nf.setMaximumFractionDigits(0);
+        nf.setMinimumFractionDigits(0);
     }
 
     TroopsManagerTableModel() {
@@ -93,7 +111,7 @@ public class TroopsManagerTableModel extends AbstractTableModel {
 
     @Override
     public boolean isCellEditable(int row, int col) {
-        if (col > 1) {
+        if ((col > 1) && (col < 2 + DataHolder.getSingleton().getUnits().size())) {
             return true;
         }
         return false;
@@ -104,17 +122,34 @@ public class TroopsManagerTableModel extends AbstractTableModel {
         Village row = TroopsManager.getSingleton().getVillages()[rowIndex];
         switch (columnIndex) {
             case 0: {
-                return row;
+                return row.getTribe();
             }
             case 1: {
+                return row;
+            }
+            case 2: {
                 return TroopsManager.getSingleton().getTroopsForVillage(row).getState();
             }
             default: {
-                try {
-                    int troopIndex = columnIndex - 2;
-                    return TroopsManager.getSingleton().getTroopsForVillage(row).getTroops().get(troopIndex);
-                } catch (Exception e) {
-                    return 0;
+                int unitCount = DataHolder.getSingleton().getUnits().size();
+                if (columnIndex < 3 + unitCount) {
+                    try {
+                        int troopIndex = columnIndex - 3;
+                        return TroopsManager.getSingleton().getTroopsForVillage(row).getTroops().get(troopIndex);
+                    } catch (Exception e) {
+                        return 0;
+                    }
+                } else {
+                    //troop power columns
+                    if (columnIndex == unitCount + 3) {
+                        return TroopsManager.getSingleton().getTroopsForVillage(row).getOffValue();
+                    } else if (columnIndex == unitCount + 4) {
+                        return TroopsManager.getSingleton().getTroopsForVillage(row).getDefValue();
+                    } else if (columnIndex == unitCount + 5) {
+                        return TroopsManager.getSingleton().getTroopsForVillage(row).getDefCavalryValue();
+                    } else {
+                        return TroopsManager.getSingleton().getTroopsForVillage(row).getDefArcherValue();
+                    }
                 }
             }
         }

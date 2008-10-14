@@ -7,14 +7,17 @@ package de.tor.tribes.util.troops;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.util.xml.JaxenUtils;
+import java.awt.Image;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
+import javax.imageio.ImageIO;
 import org.apache.log4j.Logger;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -29,6 +32,7 @@ public class TroopsManager {
     private static TroopsManager SINGLETON = null;
     private Hashtable<Village, VillageTroopsHolder> mTroops = null;
     private List<TroopsManagerListener> mManagerListeners = null;
+    private List<Image> mTroopMarkImages = new LinkedList<Image>();
 
     public static synchronized TroopsManager getSingleton() {
         if (SINGLETON == null) {
@@ -40,6 +44,14 @@ public class TroopsManager {
     TroopsManager() {
         mTroops = new Hashtable<Village, VillageTroopsHolder>();
         mManagerListeners = new LinkedList<TroopsManagerListener>();
+        try {
+            mTroopMarkImages.add(ImageIO.read(new File("graphics/icons/off_marker.png")));
+            mTroopMarkImages.add(ImageIO.read(new File("graphics/icons/def_marker.png")));
+            mTroopMarkImages.add(ImageIO.read(new File("graphics/icons/def_cav_marker.png")));
+            mTroopMarkImages.add(ImageIO.read(new File("graphics/icons/def_arch_marker.png")));
+        } catch (Exception e) {
+            logger.error("Failed to read troops markers", e);
+        }
     }
 
     public synchronized void addTroopsManagerListener(TroopsManagerListener pListener) {
@@ -73,6 +85,31 @@ public class TroopsManager {
     public void removeTroopsForVillage(Village pVillage) {
         mTroops.remove(pVillage);
         fireTroopsChangedEvents();
+    }
+
+    public Image getTroopsMarkerForVillage(Village pVillage) {
+        VillageTroopsHolder holder = getTroopsForVillage(pVillage);
+        if (holder == null) {
+            return null;
+        }
+        List<Double> l = new LinkedList<Double>();
+        l.add(new Double(holder.getOffValue()));
+        l.add(new Double(holder.getDefValue()));
+        l.add(new Double(holder.getDefCavalryValue()));
+        l.add(new Double(holder.getDefArcherValue()));
+
+        Collections.sort(l);
+        
+        double max = l.get(3);
+        if (max == holder.getOffValue()) {
+            return mTroopMarkImages.get(0);
+        } else if (max == holder.getDefValue()) {
+            return mTroopMarkImages.get(1);
+        } else if (max == holder.getDefCavalryValue()) {
+            return mTroopMarkImages.get(2);
+        }
+        //archer def must be max.
+        return mTroopMarkImages.get(3);
     }
 
     public int getEntryCount() {

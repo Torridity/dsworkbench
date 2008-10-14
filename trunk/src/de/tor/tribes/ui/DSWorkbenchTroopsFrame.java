@@ -5,9 +5,11 @@
  */
 package de.tor.tribes.ui;
 
+import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.ui.editors.DateSpinEditor;
 import de.tor.tribes.ui.models.TroopsManagerTableModel;
 import de.tor.tribes.ui.renderer.DateCellRenderer;
+import de.tor.tribes.ui.renderer.NumberFormatCellRenderer;
 import de.tor.tribes.util.Constants;
 import javax.swing.table.DefaultTableCellRenderer;
 import org.apache.log4j.Logger;
@@ -18,12 +20,16 @@ import java.awt.Component;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.event.ChangeEvent;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
+import de.tor.tribes.ui.renderer.NumberFormatCellRenderer;
 
 /**
  *
@@ -34,6 +40,7 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
     private static Logger logger = Logger.getLogger(DSWorkbenchTroopsFrame.class);
     private static DSWorkbenchTroopsFrame SINGLETON = null;
     private List<DefaultTableCellRenderer> renderers = new LinkedList<DefaultTableCellRenderer>();
+    private List<ImageIcon> mPowerIcons = new LinkedList<ImageIcon>();
 
     public static synchronized DSWorkbenchTroopsFrame getSingleton() {
         if (SINGLETON == null) {
@@ -56,12 +63,21 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
         }
         //color scrollpanes of selection dialog
         jScrollPane1.getViewport().setBackground(Constants.DS_BACK_LIGHT);
-        TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>();
-        jTroopsTable.setRowSorter(sorter);
         jTroopsTable.setColumnSelectionAllowed(false);
-        sorter.setModel(TroopsManagerTableModel.getSingleton());
         jTroopsTable.setModel(TroopsManagerTableModel.getSingleton());
+        TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(TroopsManagerTableModel.getSingleton());
+        jTroopsTable.setRowSorter(sorter);
+        jTroopsTable.setDefaultRenderer(Integer.class, new NumberFormatCellRenderer());
+        jTroopsTable.setDefaultRenderer(Double.class, new NumberFormatCellRenderer());
 
+        try {
+            mPowerIcons.add(new ImageIcon("graphics/icons/att.png"));
+            mPowerIcons.add(new ImageIcon("graphics/icons/def.png"));
+            mPowerIcons.add(new ImageIcon("graphics/icons/def_cav.png"));
+            mPowerIcons.add(new ImageIcon("graphics/icons/def_archer.png"));
+        } catch (Exception e) {
+            logger.error("Failed to read table header icons", e);
+        }
         pack();
     }
 
@@ -196,26 +212,51 @@ private void fireRemoveTroopsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
         jTroopsTable.setDefaultRenderer(Date.class, new DateCellRenderer("dd.MM.yyyy"));
         jTroopsTable.setDefaultEditor(Date.class, new DateSpinEditor());
         jTroopsTable.getTableHeader().setReorderingAllowed(false);
-        for (int i = 0; i < jTroopsTable.getColumnCount(); i++) {
-            DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
 
-                @Override
-                public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-                    Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
-                    c.setBackground(Constants.DS_BACK);
-                    DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
-                    if (r.getText().length() > 0) {
-                        r.setText("<html><b>" + r.getText() + "</b></html>");
-                    } else {
-                        try {
-                            r.setIcon(ImageManager.getUnitIcon(column - 2));
-                        } catch (Exception e) {
-                        }
+        DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
+
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
+                c.setBackground(Constants.DS_BACK);
+                DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
+                int unitCount = DataHolder.getSingleton().getUnits().size();
+                r.setHorizontalAlignment(JLabel.CENTER);
+                if (column < 3) {
+                    r.setText("<html><b>" + r.getText() + "</b></html>");
+                } else if (column < 3 + unitCount) {
+                    try {
+                        r.setIcon(ImageManager.getUnitIcon(column - 3));
+                    } catch (Exception e) {
+                        r.setText(DataHolder.getSingleton().getUnits().get(column - 3).getName());
                     }
-                    return c;
+                } else {
+                    if (column == unitCount + 3) {
+                        //off col
+                        r.setIcon(mPowerIcons.get(0));
+                    } else if (column == unitCount + 4) {
+                        //def col
+                        r.setIcon(mPowerIcons.get(1));
+                    } else if (column == unitCount + 5) {
+                        //def cav col
+                        r.setIcon(mPowerIcons.get(2));
+                    } else {
+                        //def archer col
+                        r.setIcon(mPowerIcons.get(3));
+                    }
                 }
-            };
-            jTroopsTable.getColumnModel().getColumn(i).setHeaderRenderer(headerRenderer);
+                return r;
+            }
+        };
+
+        for (int i = 0; i < jTroopsTable.getColumnCount(); i++) {
+            TableColumn column = jTroopsTable.getColumnModel().getColumn(i);
+            column.setHeaderRenderer(headerRenderer);
+            if ((i > 2 && i < DataHolder.getSingleton().getUnits().size() + 3)) {
+                column.setWidth(60);
+                column.setPreferredWidth(60);
+                column.setResizable(false);
+            }
             renderers.add(headerRenderer);
         }
         jTroopsTable.revalidate();

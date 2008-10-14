@@ -151,8 +151,8 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame {
 
             // <editor-fold defaultstate="collapsed" desc=" Build user village list ">
 
-            Tag[] userTags = TagManager.getSingleton().getUserTags().toArray(new Tag[]{});
-            DefaultComboBoxModel tagModel = new DefaultComboBoxModel(userTags);
+            Tag[] tags = TagManager.getSingleton().getTags().toArray(new Tag[]{});
+            DefaultComboBoxModel tagModel = new DefaultComboBoxModel(tags);
             tagModel.insertElementAt("Alle", 0);
             jVillageGroupChooser.setModel(tagModel);
             jVillageGroupChooser.setSelectedIndex(0);
@@ -891,7 +891,7 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
 
     List<Village> victimVillages = new LinkedList<Village>();
     for (int i = 0; i < victimModel.getRowCount(); i++) {
-        victimVillages.add((Village)victimModel.getValueAt(i, 1));
+        victimVillages.add((Village) victimModel.getValueAt(i, 1));
     }
 
 
@@ -1186,8 +1186,8 @@ private void fireVillageGroupChangedEvent(java.awt.event.ActionEvent evt) {//GEN
     Tribe current = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage().getTribe();
     List<Village> selectedVillages = new LinkedList<Village>();
     for (Village v : current.getVillageList()) {
-        for (String ts : TagManager.getSingleton().getTags(v)) {
-            if (t.getName().equals(ts)) {
+        for (Tag ts : TagManager.getSingleton().getTags(v)) {
+            if (t.getName().equals(ts.getName())) {
                 if (!selectedVillages.contains(v)) {
                     selectedVillages.add(v);
                 }

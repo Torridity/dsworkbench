@@ -204,11 +204,10 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         }
 
         try {
-            if (Boolean.parseBoolean(GlobalOptions.getProperty("paint.tag.icons"))) {
-                jPaintTagIconsBox.setSelected(true);
+            if (Boolean.parseBoolean(GlobalOptions.getProperty("paint.troops.type"))) {
+                jTroopsTypeBox.setSelected(true);
             }
         } catch (Exception e) {
-            jDefaultMarkBox.setSelectedIndex(0);
         }
 
         setupTagsPanel();
@@ -331,7 +330,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
 
         DefaultListModel model = new DefaultListModel();
 
-        for (Tag t : TagManager.getSingleton().getUserTags()) {
+        for (Tag t : TagManager.getSingleton().getTags()) {
             tagModel.addRow(new Object[]{t});
         }
         jTagTable.updateUI();
@@ -458,7 +457,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jMarkOwnVillagesOnMinimapBox = new javax.swing.JCheckBox();
         jMarkActiveVillageBox = new javax.swing.JCheckBox();
         jShowTroopInfoBox = new javax.swing.JCheckBox();
-        jPaintTagIconsBox = new javax.swing.JCheckBox();
+        jTroopsTypeBox = new javax.swing.JCheckBox();
         jPanel2 = new javax.swing.JPanel();
         jShowContinentsLabel = new javax.swing.JLabel();
         jShowDistanceLabel = new javax.swing.JLabel();
@@ -692,7 +691,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                     .addComponent(jAccountPasswordLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jCheckAccountButton)
-                .addContainerGap(237, Short.MAX_VALUE))
+                .addContainerGap(234, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab(bundle.getString("DSWorkbenchSettingsDialog.jLoginPanel.TabConstraints.tabTitle"), new javax.swing.ImageIcon(getClass().getResource("/res/login.png")), jLoginPanel); // NOI18N
@@ -764,7 +763,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                     .addComponent(jTribeNames, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jDownloadDataButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 238, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 235, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -844,14 +843,14 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         });
         jPanel1.add(jShowTroopInfoBox);
 
-        jPaintTagIconsBox.setToolTipText(bundle.getString("DSWorkbenchSettingsDialog.jPaintTagIconsBox.toolTipText")); // NOI18N
-        jPaintTagIconsBox.setOpaque(false);
-        jPaintTagIconsBox.addActionListener(new java.awt.event.ActionListener() {
+        jTroopsTypeBox.setToolTipText(bundle.getString("DSWorkbenchSettingsDialog.jTroopsTypeBox.toolTipText")); // NOI18N
+        jTroopsTypeBox.setOpaque(false);
+        jTroopsTypeBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                firePaintTagIconsEvent(evt);
+                fireShowTroopsTypeEvent(evt);
             }
         });
-        jPanel1.add(jPaintTagIconsBox);
+        jPanel1.add(jTroopsTypeBox);
 
         jPanel2.setOpaque(false);
         jPanel2.setLayout(new javax.swing.BoxLayout(jPanel2, javax.swing.BoxLayout.Y_AXIS));
@@ -912,12 +911,12 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                     .addComponent(jSkinPackLabel)
                     .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel4))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 7, Short.MAX_VALUE)
                 .addGroup(jMapSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jMapSettingsLayout.createSequentialGroup()
                         .addGroup(jMapSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 215, Short.MAX_VALUE)
-                            .addComponent(jGraphicPacks, javax.swing.GroupLayout.Alignment.TRAILING, 0, 215, Short.MAX_VALUE))
+                            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 216, Short.MAX_VALUE)
+                            .addComponent(jGraphicPacks, javax.swing.GroupLayout.Alignment.TRAILING, 0, 216, Short.MAX_VALUE))
                         .addGap(25, 25, 25)
                         .addGroup(jMapSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jPreviewSkinButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -944,7 +943,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 .addGroup(jMapSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
                     .addComponent(jDefaultMarkBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(112, Short.MAX_VALUE))
+                .addContainerGap(111, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab(bundle.getString("DSWorkbenchSettingsDialog.jMapSettings.TabConstraints.tabTitle"), new javax.swing.ImageIcon(getClass().getResource("/res/ui/map.gif")), jMapSettings); // NOI18N
@@ -1117,7 +1116,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                     .addComponent(jProxyPort, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jRefeshNetworkButton)
-                .addContainerGap(181, Short.MAX_VALUE))
+                .addContainerGap(178, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab(bundle.getString("DSWorkbenchSettingsDialog.jNetworkSettings.TabConstraints.tabTitle"), new javax.swing.ImageIcon(getClass().getResource("/res/proxy.png")), jNetworkSettings); // NOI18N
@@ -1200,7 +1199,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                     .addGroup(jAttackSettingsLayout.createSequentialGroup()
                         .addComponent(jDrawAttacksByDefaultBox)
                         .addGap(9, 9, 9)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 244, Short.MAX_VALUE))
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 241, Short.MAX_VALUE))
                     .addGroup(jAttackSettingsLayout.createSequentialGroup()
                         .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(15, 15, 15)
@@ -1245,7 +1244,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                     .addComponent(jTabbedPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 541, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jCreateAccountButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 248, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 252, Short.MAX_VALUE)
                         .addComponent(jCancelButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jOKButton, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -1353,7 +1352,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             @Override
             public void run() {
                 try {
-                    logger.debug("Start downloading from harddisk");
+                    logger.debug("Start loading from harddisk");
                     boolean ret = DataHolder.getSingleton().loadData(false);
                     logger.debug("Update finished " + ((ret) ? "successfully" : "with errors"));
                 } catch (Exception e) {
@@ -1580,13 +1579,9 @@ private void fireDownloadDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
             //clear tribes model due to data is cleared at reload
             jTribeNames.setModel(new DefaultComboBoxModel());
 
-            Thread t = new Thread(new  
+            Thread t = new Thread(new Runnable() {
 
-                  Runnable() {
-
-
-                     
-                        @Override
+                @Override
                 public void run() {
                     try {
                         logger.debug("Start downloading data");
@@ -1664,7 +1659,7 @@ private void fireRemoveTagEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:even
         }
         try {
             Tag t = (Tag) ((DefaultTableModel) jTagTable.getModel()).getValueAt(row, 0);
-            TagManager.getSingleton().removeUserTag(t.getName());
+            TagManager.getSingleton().removeTag(t);
         } catch (Exception e) {
             logger.error("Failed to remove tag", e);
         }
@@ -1674,15 +1669,15 @@ private void fireRemoveTagEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:even
 
 private void fireAddNewTagEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireAddNewTagEvent
     String name = jTagName.getText();
-    if (TagManager.getSingleton().getUserTag(name) != null) {
+    if (TagManager.getSingleton().getTagByName(name) != null) {
         if (JOptionPane.showConfirmDialog(jTagAddDialog, "Ein Tag mit dem angegebenen Namen existiert bereits.\n" +
                 "Willst du den bestehenden Eintrag überschreiben?", "Überschreiben", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
-            TagManager.getSingleton().removeUserTag(name);
+            TagManager.getSingleton().removeTagByName(name);
         } else {
             return;
         }
     }
-    TagManager.getSingleton().addUserTag(name);
+    TagManager.getSingleton().addTag(name);
     jTagAddDialog.setVisible(false);
     setupTagsPanel();
 }//GEN-LAST:event_fireAddNewTagEvent
@@ -1691,9 +1686,9 @@ private void fireCancelAddNewTagEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
     jTagAddDialog.setVisible(false);
 }//GEN-LAST:event_fireCancelAddNewTagEvent
 
-private void firePaintTagIconsEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_firePaintTagIconsEvent
-    GlobalOptions.addProperty("paint.tag.icons", Boolean.toString(jPaintTagIconsBox.isSelected()));
-}//GEN-LAST:event_firePaintTagIconsEvent
+private void fireShowTroopsTypeEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireShowTroopsTypeEvent
+    GlobalOptions.addProperty("paint.troops.type", Boolean.toString(jTroopsTypeBox.isSelected()));
+}//GEN-LAST:event_fireShowTroopsTypeEvent
 
 private void fireDrawAttacksByDefaultChangedEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireDrawAttacksByDefaultChangedEvent
     GlobalOptions.addProperty("draw.attacks.by.default", Boolean.toString(jDrawAttacksByDefaultBox.isSelected()));
@@ -1965,7 +1960,6 @@ private void fireRefreshTagsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
     private javax.swing.JCheckBox jMarkOwnVillagesOnMinimapBox;
     private javax.swing.JPanel jNetworkSettings;
     private javax.swing.JButton jOKButton;
-    private javax.swing.JCheckBox jPaintTagIconsBox;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPlayerServerSettings;
@@ -2002,6 +1996,7 @@ private void fireRefreshTagsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
     private javax.swing.JTable jTagTable;
     private javax.swing.JPanel jTagsSettings;
     private javax.swing.JComboBox jTribeNames;
+    private javax.swing.JCheckBox jTroopsTypeBox;
     // End of variables declaration//GEN-END:variables
 }
 

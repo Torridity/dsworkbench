@@ -5,7 +5,6 @@
 package de.tor.tribes.util;
 
 import java.awt.Color;
-import java.text.SimpleDateFormat;
 
 /**
  *

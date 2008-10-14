@@ -34,7 +34,7 @@ public class VillageTagFrame extends javax.swing.JFrame {
     }
 
     public void updateUserTags() {
-        jTagsChooser.setModel(new DefaultComboBoxModel(TagManager.getSingleton().getUserTags().toArray(new Tag[]{})));
+        jTagsChooser.setModel(new DefaultComboBoxModel(TagManager.getSingleton().getTags().toArray(new Tag[]{})));
         jTagsChooser.updateUI();
     }
 
@@ -47,20 +47,14 @@ public class VillageTagFrame extends javax.swing.JFrame {
         jVillageList.setModel(model);
         jVillageList.setSelectedItem(pVillage);
 
-        List<String> tags = TagManager.getSingleton().getTags(pVillage);
+        List<Tag> tags = TagManager.getSingleton().getTags(pVillage);
 
         DefaultListModel lModel = new DefaultListModel();
-        if (tags != null) {
-            for (String tag : tags) {
-                if (TagManager.getSingleton().getUserTag(tag) != null) {
-                    //add only if tag is still valid
-                    lModel.addElement(tag);
-                } else {
-                    //remove tag for village if tag does not exist
-                    TagManager.getSingleton().removeUserTag(tag);
-                }
-            }
+
+        for (Tag tag : tags) {
+            lModel.addElement(tag);
         }
+
         jTagsList.setModel(lModel);
 
         setVisible(true);
@@ -218,11 +212,11 @@ private void fireRemoveTagEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:even
     if (selection == null) {
         return;
     }
-    String selectedTag = (String) jTagsList.getSelectedValue();
+    Tag selectedTag = (Tag) jTagsList.getSelectedValue();
     if (selectedTag == null) {
         return;
     }
-    TagManager.getSingleton().removeTag(selection, selectedTag);
+    TagManager.getSingleton().removeTag(selection, selectedTag.getName());
 
     DefaultListModel model = (DefaultListModel) jTagsList.getModel();
     model.removeElement(selectedTag);
@@ -241,11 +235,9 @@ private void fireVillageSelectionChangedEvent(java.awt.event.ItemEvent evt) {//G
     if (evt.getStateChange() == java.awt.event.ItemEvent.SELECTED) {
         DefaultListModel model = new DefaultListModel();
         Village selection = (Village) jVillageList.getSelectedItem();
-        List<String> tags = TagManager.getSingleton().getTags(selection);
-        if (tags != null) {
-            for (String tag : tags) {
-                model.addElement(tag);
-            }
+        List<Tag> tags = TagManager.getSingleton().getTags(selection);
+        for (Tag tag : tags) {
+            model.addElement(tag);
         }
         jTagsList.setModel(model);
     }

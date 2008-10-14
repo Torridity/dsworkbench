@@ -267,7 +267,7 @@ public class DataHolder {
             bout.write("<villages>\n");
             for (int i = 0; i < 1000; i++) {
                 for (int j = 0; j < 1000; j++) {
-                    Village v = mVillages[i][j];
+                    Village v = getVillages()[i][j];
                     if (v != null) {
                         bout.write(v.toPlainData() + "\n");
                     }
@@ -295,6 +295,7 @@ public class DataHolder {
             logger.error("Failed to store local data", e);
             return false;
         }
+        logger.debug("Local data successfully written");
         return true;
     }
 
@@ -434,12 +435,12 @@ public class DataHolder {
             } else if ((userDataVersion == -666) || (serverDataVersion != userDataVersion) || !isDataAvailable()) {
                 //full download if no download made yet or diff too large
                 //load villages
-                logger.info("Local data is too old. Downloading full data from " + downloadURL);
+                logger.info("Downloading new data version from " + downloadURL);
                 //clear all data structures
                 initialize();
-                
+
                 // <editor-fold defaultstate="collapsed" desc=" Load villages ">
-                
+
                 fireDataHolderEvents("Lade Dörferliste");
                 URL u = new URL(downloadURL + "/village.txt.gz");
 
@@ -455,11 +456,11 @@ public class DataHolder {
                     }
                 }
                 r.close();
-                
+
                 // </editor-fold>
-                
+
                 // <editor-fold defaultstate="collapsed" desc=" Load tribes ">
-                
+
                 fireDataHolderEvents("Lade Spielerliste");
                 u = new URL(downloadURL + "/tribe.txt.gz");
                 r = new BufferedReader(new InputStreamReader(new GZIPInputStream(u.openConnection().getInputStream())));
@@ -474,11 +475,11 @@ public class DataHolder {
                     }
                 }
                 r.close();
-                
+
                 // </editor-fold>
-                
+
                 // <editor-fold defaultstate="collapsed" desc=" Load allies ">
-                
+
                 fireDataHolderEvents("Lade Stämmeliste");
                 u = new URL(downloadURL + "/ally.txt.gz");
                 r = new BufferedReader(new InputStreamReader(new GZIPInputStream(u.openConnection().getInputStream())));
@@ -493,9 +494,9 @@ public class DataHolder {
                     }
                 }
                 r.close();
-                
+
                 // </editor-fold>
-                
+
                 // <editor-fold defaultstate="collapsed" desc=" Load conquers off ">
                 fireDataHolderEvents("Lese besiegte Gegner (Angriff)...");
                 target = new File(serverDir + "/kill_att.txt.gz");
@@ -505,7 +506,7 @@ public class DataHolder {
                     new File("kill_att.tmp").renameTo(target);
                 }
                 // </editor-fold>
-                
+
                 // <editor-fold defaultstate="collapsed" desc=" Load conquers def ">
                 fireDataHolderEvents("Lese besiegte Gegner (Verteidigung)...");
                 target = new File(serverDir + "/kill_def.txt.gz");
@@ -668,7 +669,7 @@ public class DataHolder {
     private void mergeData() {
         for (int i = 0; i < 1000; i++) {
             for (int j = 0; j < 1000; j++) {
-                Village current = mVillages[i][j];
+                Village current = getVillages()[i][j];
                 if (current != null) {
                     //set tribe of village
                     Tribe t = mTribes.get(current.getTribeID());
@@ -773,7 +774,7 @@ public class DataHolder {
     }
 
     /**Get all villages*/
-    public Village[][] getVillages() {
+    public synchronized Village[][] getVillages() {
         return mVillages;
     }
 

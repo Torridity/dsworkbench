@@ -59,7 +59,7 @@ public class AttackManager {
     public void loadAttacksFromDatabase(String pUrl) {
         //not yet implemented
     }
-    
+
     public void loadAttacksFromFile(String pFile) {
         mAttackPlans.clear();
         mAttackPlans.put(DEFAULT_PLAN_ID, new LinkedList<Attack>());
@@ -94,7 +94,7 @@ public class AttackManager {
                         }
                     }
                 }
-                    logger.debug("Attacks loaded successfully");
+                logger.debug("Attacks loaded successfully");
             } catch (Exception e) {
                 logger.error("Failed to load attacks", e);
             }

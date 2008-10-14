@@ -41,9 +41,9 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import org.apache.log4j.Logger;
+import de.tor.tribes.types.Tag;
 
 /**
- *@TODO Map drawing > 995|995 (Decoration problem!?)
  * @author  Charon
  */
 public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
@@ -84,7 +84,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             @Override
             public void run() {
                 logger.info("Performing ShutdownHook");
-                TagManager.getSingleton().saveUserTags();
                 TagManager.getSingleton().saveTagsToFile(DataHolder.getSingleton().getDataDirectory() + "/tags.xml");
                 MarkerManager.getSingleton().saveMarkersToFile(DataHolder.getSingleton().getDataDirectory() + "/markers.xml");
                 AttackManager.getSingleton().saveAttacksToFile(DataHolder.getSingleton().getDataDirectory() + "/attacks.xml");
@@ -1389,7 +1388,6 @@ private void fireShowTroopsFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIR
         }
     }
     // <editor-fold defaultstate="collapsed" desc=" Listener EventHandlers ">
-
     @Override
     public void fireToolChangedEvent(int pTool) {
         jCurrentToolLabel.setIcon(ImageManager.getCursorImage(pTool));
@@ -1439,11 +1437,12 @@ private void fireShowTroopsFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIR
         UIManager.put("OptionPane.yesButtonText", "Übernehmen");
         if (JOptionPane.showConfirmDialog(this, message, "Gruppeninformationen gefunden", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION) {
             for (String group : groups) {
-                TagManager.getSingleton().addUserTag(group);
+                TagManager.getSingleton().addTag(group);
+                Tag t = TagManager.getSingleton().getTagByName(group);
                 List<Village> villagesForGroup = pParserResult.get(group);
                 if (villagesForGroup != null) {
                     for (Village v : villagesForGroup) {
-                        TagManager.getSingleton().addTag(v, group);
+                        t.tagVillage(v.getId());
                     }
                 }
             }

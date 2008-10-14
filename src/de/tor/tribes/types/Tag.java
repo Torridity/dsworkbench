@@ -34,7 +34,7 @@ public class Tag {
         boolean showOnMap = Boolean.parseBoolean(pElement.getAttributeValue("shownOnMap"));
         Tag t = new Tag(name, showOnMap);
         for (Element e : (List<Element>) JaxenUtils.getNodes(pElement, "villages/village")) {
-            t.addVillage(Integer.parseInt(e.getValue()));
+            t.tagVillage(Integer.parseInt(e.getValue()));
         }
         return t;
     }
@@ -83,7 +83,7 @@ public class Tag {
 
     public String toXml() throws Exception {
         String ret = "<tag shownOnMap=\"" + isShowOnMap() + "\">\n";
-        ret += "<name><![CDATA[\"" + getName() + "\"]]></name>\n";
+        ret += "<name><![CDATA[" + getName() + "]]></name>\n";
         ret += "<villages>\n";
         for (Integer i : mVillageIDs) {
             ret += "<village>" + i + "</village>\n";

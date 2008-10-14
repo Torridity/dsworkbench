@@ -5,6 +5,7 @@
  */
 package de.tor.tribes.ui;
 
+import de.tor.tribes.db.DatabaseAdapter;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.util.GlobalOptions;
 import javax.swing.JOptionPane;
@@ -20,7 +21,6 @@ import org.apache.log4j.Level;
 import org.apache.log4j.RollingFileAppender;
 
 /**
- *@TODO: UpdateCheck, AutoDataUpdate
  * @author  Jejkal
  */
 public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataHolderListener {
@@ -93,13 +93,42 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
             logger.info("Reading user settings returned error(s)");
             DSWorkbenchSettingsDialog.getSingleton().setVisible(true);
         }
+        // <editor-fold defaultstate="collapsed" desc=" Check for data updates ">
+        boolean checkForUpdates = false;
+        try{
+            checkForUpdates = Boolean.parseBoolean(GlobalOptions.getProperty("check.updates.on.startup"));
+        }catch(Exception e){
+            checkForUpdates = false;
+        }
+        if(checkForUpdates){
+            String selectedServer = GlobalOptions.getProperty("default.server");
+            String name = GlobalOptions.getProperty("account.name");
+            String password = GlobalOptions.getProperty("account.password");
+            if (DatabaseAdapter.checkUser(name, password) != DatabaseAdapter.ID_SUCCESS) {
+                JOptionPane.showMessageDialog(this, "Die Accountvalidierung ist fehlgeschlagen.\n" +
+                        "Bitte überprüfe deine Account- und Netzwerkeinstellungen und versuches es erneut.",
+                        "Fehler", JOptionPane.ERROR_MESSAGE);
+                checkForUpdates = false;
+            } else {
+                long serverDataVersion = DatabaseAdapter.getDataVersion(selectedServer);
+                long userDataVersion = DatabaseAdapter.getUserDataVersion(name, selectedServer);
+                logger.debug("User data version is " + userDataVersion);
+                logger.debug("Server data version is " + serverDataVersion);
+                if (userDataVersion == serverDataVersion) {
+                    logger.debug("Skip downloading updates");
+                checkForUpdates = false;    
+                }
+            }
+        }
+        
         try {
-            DataHolder.getSingleton().loadData(false);
+            DataHolder.getSingleton().loadData(checkForUpdates);
         } catch (Exception e) {
             logger.error("Failed to load server data", e);
             System.exit(1);
         }
-
+        // </editor-fold>
+        
         try {
             DSWorkbenchMainFrame.getSingleton().init();
             logger.info("Showing application window");

@@ -8,6 +8,7 @@ import de.tor.tribes.types.Tag;
 import java.util.List;
 import org.apache.log4j.Logger;
 import de.tor.tribes.types.Village;
+import de.tor.tribes.ui.VillageTagFrame;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.io.File;
 import java.io.FileWriter;
@@ -23,7 +24,8 @@ public class TagManager {
 
     private static Logger logger = Logger.getLogger(TagManager.class);
     private static TagManager SINGLETON = null;
-    private static List<Tag> mTags = null;
+    private final static List<Tag> mTags = new LinkedList<Tag>();
+    private final List<TagManagerListener> mManagerListeners = new LinkedList<TagManagerListener>();
 
     public static synchronized TagManager getSingleton() {
         if (SINGLETON == null) {
@@ -33,6 +35,14 @@ public class TagManager {
     }
 
     TagManager() {
+    }
+
+    public synchronized void addTagManagerListener(TagManagerListener pListener) {
+        mManagerListeners.add(pListener);
+    }
+
+    public synchronized void removeTagManagerListener(TagManagerListener pListener) {
+        mManagerListeners.remove(pListener);
     }
 
     /**Load tags from a file*/
@@ -64,6 +74,7 @@ public class TagManager {
                 logger.info("No tags found under '" + pFile + "'");
             }
         }
+        VillageTagFrame.getSingleton().updateUserTags();
     }
 
     /**Load tags from a database (not implemented yet*/
@@ -133,6 +144,7 @@ public class TagManager {
         if (toRemove != null) {
             removeTag(toRemove);
         }
+        fireTagsChangedEvents();
     }
 
     /**Add a tag to a village*/
@@ -165,6 +177,7 @@ public class TagManager {
             }
             mTags.add(nt);
         }
+        fireTagsChangedEvents();
     }
 
     /**Add a tag without villages*/
@@ -204,6 +217,15 @@ public class TagManager {
 
     public synchronized void removeTag(Tag pTag) {
         mTags.remove(pTag);
+        fireTagsChangedEvents();
+    }
 
+    /**Notify attack manager listeners about changes*/
+    private void fireTagsChangedEvents() {
+        TagManagerListener[] listeners = mManagerListeners.toArray(new TagManagerListener[]{});
+        for (TagManagerListener listener : listeners) {
+            listener.fireTagsChangedEvent();
+        }
+        VillageTagFrame.getSingleton().updateUserTags();
     }
 }

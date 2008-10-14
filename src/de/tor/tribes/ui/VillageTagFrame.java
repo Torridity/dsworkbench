@@ -83,6 +83,8 @@ public class VillageTagFrame extends javax.swing.JFrame {
         jVillageList = new javax.swing.JComboBox();
 
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("de/tor/tribes/ui/Bundle"); // NOI18N
+        setTitle(bundle.getString("VillageTagFrame.title")); // NOI18N
+
         jTribeLabel.setText(bundle.getString("VillageTagFrame.jTribeLabel.text")); // NOI18N
 
         jVillageLabel.setText(bundle.getString("VillageTagFrame.jVillageLabel.text")); // NOI18N

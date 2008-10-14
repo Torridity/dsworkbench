@@ -16,7 +16,6 @@ import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.io.File;
 import java.io.FileWriter;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.LinkedList;
@@ -33,7 +32,7 @@ public class AttackManager {
     private static AttackManager SINGLETON = null;
     private Hashtable<String, List<Attack>> mAttackPlans = null;
     private static final String DEFAULT_PLAN_ID = "default";
-    private List<AttackManagerListener> mManagerListeners = null;
+    private final List<AttackManagerListener> mManagerListeners = new LinkedList<AttackManagerListener>();
 
     public static synchronized AttackManager getSingleton() {
         if (SINGLETON == null) {
@@ -45,7 +44,6 @@ public class AttackManager {
     AttackManager() {
         mAttackPlans = new Hashtable<String, List<Attack>>();
         mAttackPlans.put(DEFAULT_PLAN_ID, new LinkedList<Attack>());
-        mManagerListeners = new LinkedList<AttackManagerListener>();
     }
 
     public synchronized void addAttackManagerListener(AttackManagerListener pListener) {

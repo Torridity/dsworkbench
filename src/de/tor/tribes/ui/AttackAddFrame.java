@@ -40,6 +40,7 @@ public class AttackAddFrame extends javax.swing.JFrame {
         nf.setMaximumFractionDigits(2);
         nf.setMinimumFractionDigits(2);
         frameControlPanel1.setupPanel(this, true, false);
+        frameControlPanel1.setTitle("Angriff hinzufügen");
         getContentPane().setBackground(Constants.DS_BACK);
 
         ((DateEditor) jTimeSpinner.getEditor()).getTextField().setHorizontalAlignment(JTextField.CENTER);

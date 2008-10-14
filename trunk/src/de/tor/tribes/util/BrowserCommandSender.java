@@ -8,6 +8,7 @@ import de.tor.tribes.types.Village;
 import java.awt.Desktop;
 import java.net.URI;
 import javax.swing.JOptionPane;
+import org.apache.log4j.Logger;
 
 /**
  *
@@ -15,6 +16,7 @@ import javax.swing.JOptionPane;
  */
 public class BrowserCommandSender {
 
+    private static Logger logger = Logger.getLogger(BrowserCommandSender.class);
 
     public static void sendTroops(Village pSource, Village pTarget) {
         try {
@@ -33,10 +35,18 @@ public class BrowserCommandSender {
             A.insertUnit(A.document.forms['units'].elements['y'],472);
             A.insertUnit(A.document.forms['units'].elements['attack'].click());    
              */
-            
+
             Desktop.getDesktop().browse(new URI(url));
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Fehler beim Öffnen des Browsers", "Fehler", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    public static void openPage(String pUrl) {
+        try {
+            Desktop.getDesktop().browse(new URI(pUrl));
+        } catch (Exception e) {
+            logger.error("Failed opening URL " + pUrl);
         }
     }
 

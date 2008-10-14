@@ -15,7 +15,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
-import java.util.Collections;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import org.apache.log4j.Logger;
@@ -36,6 +37,7 @@ public class DatabaseAdapter {
     public static final int ID_USER_NOT_EXIST = -4;
     public static final int ID_WRONG_PASSWORD = -5;
     public static final int ID_VERSION_NOT_ALLOWED = -6;
+    public static final int ID_UNKNOWN_SERVER = -7;
     public static final int ID_UPDATE_NEVER = -666;
     public static final int ID_UPDATE_NOT_ALLOWED = -666;
     private static Connection DB_CONNECTION = null;
@@ -456,10 +458,10 @@ public class DatabaseAdapter {
 
     public static void main(String[] args) throws Exception {
         DOMConfigurator.configure("log4j.xml");
-        System.setProperty("proxyUse", "true");
+       /* System.setProperty("proxyUse", "true");
         System.setProperty("proxyHost", "proxy.fzk.de");
         System.setProperty("proxyPort", "8000");
-
+*/
       
 //        System.out.println(getUserDataVersion("Torridity", "de26"));
         long s = System.currentTimeMillis();
@@ -468,7 +470,7 @@ public class DatabaseAdapter {
 
 
         s = System.currentTimeMillis();
-        URL u = new URL("http://www.dsworkbench.de/interface.php");
+        URL u = new URL("http://www.dsworkbench.de/interface.php?function=ls");
         BufferedReader r = new BufferedReader(new InputStreamReader(u.openConnection().getInputStream()));
         String line = "";
 
@@ -478,6 +480,8 @@ public class DatabaseAdapter {
 
         r.close();
         System.out.println("d = " + (System.currentTimeMillis() - s));
+        
+        System.out.println(new SimpleDateFormat("dd.MM.yyyy HH.mm.ss").format(new Date(1223848823000l)));
     //System.out.println(DatabaseAdapter.checkUser("Torridity", "realstyx13"));
     //System.out.println(DatabaseAdapter.getPropertyValue("update_base_dir"));
     // System.out.println(DatabaseAdapter.getUserDataVersion("Torridity", "de14"));

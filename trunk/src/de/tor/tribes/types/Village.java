@@ -171,12 +171,12 @@ public class Village implements Serializable, Comparable {
 
     public String getHTMLInfo() {
         String villageInfo = "<html><p><b>Name (X|Y):</b> " + getName().replaceAll("<", "&lt;").replaceAll(">", "&gt;") + " (" + getX() + "|" + getY() + "), <b>Punkte:</b> " + getPoints() + ",";
-        List<String> tags = TagManager.getSingleton().getTags(this);
+        List<Tag> tags = TagManager.getSingleton().getTags(this);
         villageInfo += "<b>Tags:</b> ";
         if ((tags == null) || (tags.size() == 0)) {
             villageInfo += "keine, ";
         } else {
-            for (String tag : tags) {
+            for (Tag tag : tags) {
                 villageInfo += tag + "|";
             }
             villageInfo = villageInfo.substring(0, villageInfo.length() - 1);

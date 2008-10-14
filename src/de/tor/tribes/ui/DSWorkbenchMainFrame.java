@@ -43,7 +43,7 @@ import javax.swing.UIManager;
 import org.apache.log4j.Logger;
 
 /**
- *
+ *@TODO Map drawing > 995|995 (Decoration problem!?)
  * @author  Charon
  */
 public class DSWorkbenchMainFrame extends javax.swing.JFrame implements

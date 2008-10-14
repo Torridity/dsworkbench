@@ -10,6 +10,7 @@ import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.io.WorldDecorationHolder;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.Marker;
+import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.util.BrowserCommandSender;
 import de.tor.tribes.util.Constants;
@@ -594,7 +595,12 @@ class RepaintThread extends Thread {
             try {
                 updateMap(iX, iY);
                 if (mBuffer != null) {
-                    MapPanel.getSingleton().updateComplete(mVisibleVillages, mBuffer);
+                    Image iBuffer = MapPanel.getSingleton().createImage(mBuffer.getWidth(), mBuffer.getHeight());
+                    Graphics2D g2d = (Graphics2D) iBuffer.getGraphics();
+                    g2d.drawImage(mBuffer, null, 0, 0);
+                    g2d.dispose();
+                    mBuffer = null;
+                    MapPanel.getSingleton().updateComplete(mVisibleVillages, iBuffer);
                     MapPanel.getSingleton().repaint();
                 }
             } catch (Throwable t) {
@@ -687,20 +693,20 @@ class RepaintThread extends Thread {
         int width = GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, DSWorkbenchMainFrame.getSingleton().getZoomFactor()).getWidth(null);
         int height = GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, DSWorkbenchMainFrame.getSingleton().getZoomFactor()).getHeight(null);
 
-        if ((mBuffer == null) || ((mBuffer.getWidth(null) * mBuffer.getHeight(null)) != (MapPanel.getSingleton().getWidth() * MapPanel.getSingleton().getHeight()))) {
-            int w = MapPanel.getSingleton().getWidth();
-            int h = MapPanel.getSingleton().getHeight();
-            if (w == 0 || h == 0) {
-                //both are 0 if map was not drawn yet
-                return;
-            }
-            mBuffer = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
-            g2d = (Graphics2D) mBuffer.getGraphics();
-            g2d.fillRect(0, 0, mBuffer.getWidth(null), mBuffer.getHeight(null));
-        } else {
-            g2d = (Graphics2D) mBuffer.getGraphics();
-            g2d.fillRect(0, 0, mBuffer.getWidth(null), mBuffer.getHeight(null));
+        //  if ((mBuffer == null) || ((mBuffer.getWidth(null) * mBuffer.getHeight(null)) != (MapPanel.getSingleton().getWidth() * MapPanel.getSingleton().getHeight()))) {
+        int wb = MapPanel.getSingleton().getWidth();
+        int hb = MapPanel.getSingleton().getHeight();
+        if (wb == 0 || hb == 0) {
+            //both are 0 if map was not drawn yet
+            return;
         }
+        mBuffer = new BufferedImage(wb, hb, BufferedImage.TYPE_INT_RGB);
+        g2d = (Graphics2D) mBuffer.getGraphics();
+        g2d.fillRect(0, 0, mBuffer.getWidth(null), mBuffer.getHeight(null));
+        /*    } else {
+        g2d = (Graphics2D) mBuffer.getGraphics();
+        g2d.fillRect(0, 0, mBuffer.getWidth(null), mBuffer.getHeight(null));
+        }*/
         g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
         // Speed
@@ -726,6 +732,7 @@ class RepaintThread extends Thread {
         int markX = -1;
         int markY = -1;
         boolean markActiveVillage = false;
+
         Village mouseVillage = MapPanel.getSingleton().getVillageAtMousePos();
         try {
             markActiveVillage = Boolean.parseBoolean(GlobalOptions.getProperty("mark.active.village"));
@@ -739,8 +746,15 @@ class RepaintThread extends Thread {
             markedOnly = false;
         }
 
-        //       Hashtable<Village, Point> tagIconPoints = new Hashtable<Village, Point>();
+        boolean markTroopTypes = false;
+        try {
+            markTroopTypes = Boolean.parseBoolean(GlobalOptions.getProperty("paint.troops.type"));
+        } catch (Exception e) {
+            markTroopTypes = false;
+        }
 
+        //       Hashtable<Village, Point> tagIconPoints = new Hashtable<Village, Point>();
+        Hashtable<Point, Image> troopMarkPoints = new Hashtable<Point, Image>();
         for (int i = 0; i < iVillagesX; i++) {
             for (int j = 0; j < iVillagesY; j++) {
                 Village v = mVisibleVillages[i][j];
@@ -766,8 +780,8 @@ class RepaintThread extends Thread {
                             // <editor-fold defaultstate="collapsed" desc=" Tag filtering ">
                             //user villages are not drawn by default but with accepted tags
                             drawVillage = false;
-                            for (String tag : TagManager.getSingleton().getTags(v)) {
-                                if (TagManager.getSingleton().getUserTag(tag).isShowOnMap()) {
+                            for (Tag tag : TagManager.getSingleton().getTags(v)) {
+                                if (tag.isShowOnMap()) {
                                     //at least one of the tags for the village are visible
                                     drawVillage = true;
                                     break;
@@ -808,11 +822,15 @@ class RepaintThread extends Thread {
 
                 // <editor-fold defaultstate="collapsed" desc="Village drawing">
                 if (v == null) {
+                    Image underground = null;
                     if (useDecoration) {
-                        g2d.drawImage(WorldDecorationHolder.getTexture(xPos, yPos, DSWorkbenchMainFrame.getSingleton().getZoomFactor()), x, y, null);
-                    } else {
-                        g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, DSWorkbenchMainFrame.getSingleton().getZoomFactor()), x, y, null);
+                        underground = WorldDecorationHolder.getTexture(xPos, yPos, DSWorkbenchMainFrame.getSingleton().getZoomFactor());
                     }
+                    if (underground == null) {
+                        //either no decoration used or map part is outside map bounds
+                        underground = GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, DSWorkbenchMainFrame.getSingleton().getZoomFactor());
+                    }
+                    g2d.drawImage(underground, x, y, null);
 
                 } else {
                     if ((marker != null) && (drawVillage)) {
@@ -929,6 +947,14 @@ class RepaintThread extends Thread {
                         tagIconPoints.put(v, new Point(xc - 10, yc - 10));
                         }
                          */
+
+                        if (markTroopTypes) {
+                            Image troopMark = TroopsManager.getSingleton().getTroopsMarkerForVillage(v);
+                            if (troopMark != null) {
+                                Point center = new Point(x + (int) Math.round(width / 2), y + (int) Math.round(height / 2));
+                                troopMarkPoints.put(center, troopMark);
+                            }
+                        }
 
                         if (markActiveVillage) {
                             Village current = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage();
@@ -1048,7 +1074,6 @@ class RepaintThread extends Thread {
 
         //</editor-fold>
 
-
         // <editor-fold defaultstate="collapsed" desc="Attack-line drawing">
 
         g2d.setStroke(new BasicStroke(2.0F, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
@@ -1141,6 +1166,15 @@ class RepaintThread extends Thread {
         if (markX >= 0 && markY >= 0) {
             g2d.drawImage(mMarkerImage, markX, markY - mMarkerImage.getHeight(null), null);
         }
+
+        Enumeration<Point> troopMarkKeys = troopMarkPoints.keys();
+        while (troopMarkKeys.hasMoreElements()) {
+            Point next = troopMarkKeys.nextElement();
+            Image mark = troopMarkPoints.get(next);
+            mark = mark.getScaledInstance((int) Math.rint(mark.getWidth(null) / DSWorkbenchMainFrame.getSingleton().getZoomFactor()), (int) Math.rint(mark.getHeight(null) / DSWorkbenchMainFrame.getSingleton().getZoomFactor()), width);
+            g2d.drawImage(mark, next.x - mark.getWidth(null) / 2, next.y - mark.getHeight(null), null);
+        }
+
 
         // <editor-fold defaultstate="collapsed" desc=" Troop movement ">
 

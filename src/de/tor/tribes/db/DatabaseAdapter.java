@@ -15,6 +15,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import org.apache.log4j.Logger;
@@ -453,27 +454,28 @@ public class DatabaseAdapter {
         return t;
     }
 
-    public static void main(String[] args) throws Exception{
+    public static void main(String[] args) throws Exception {
         DOMConfigurator.configure("log4j.xml");
         System.setProperty("proxyUse", "true");
         System.setProperty("proxyHost", "proxy.fzk.de");
         System.setProperty("proxyPort", "8000");
 
+      
 //        System.out.println(getUserDataVersion("Torridity", "de26"));
         long s = System.currentTimeMillis();
         System.out.println(DatabaseAdapter.getServerList());
         System.out.println("d = " + (System.currentTimeMillis() - s));
-        
-        
-         s = System.currentTimeMillis();
+
+
+        s = System.currentTimeMillis();
         URL u = new URL("http://www.dsworkbench.de/interface.php");
-        BufferedReader r  = new BufferedReader(new InputStreamReader(u.openConnection().getInputStream()));
+        BufferedReader r = new BufferedReader(new InputStreamReader(u.openConnection().getInputStream()));
         String line = "";
-        
-        while((line = r.readLine()) != null){
+
+        while ((line = r.readLine()) != null) {
             System.out.println("L " + line);
         }
-        
+
         r.close();
         System.out.println("d = " + (System.currentTimeMillis() - s));
     //System.out.println(DatabaseAdapter.checkUser("Torridity", "realstyx13"));

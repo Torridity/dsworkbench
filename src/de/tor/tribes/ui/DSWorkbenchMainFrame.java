@@ -84,10 +84,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             @Override
             public void run() {
                 logger.info("Performing ShutdownHook");
-                TagManager.getSingleton().saveTagsToFile(DataHolder.getSingleton().getDataDirectory() + "/tags.xml");
-                MarkerManager.getSingleton().saveMarkersToFile(DataHolder.getSingleton().getDataDirectory() + "/markers.xml");
-                AttackManager.getSingleton().saveAttacksToFile(DataHolder.getSingleton().getDataDirectory() + "/attacks.xml");
-                TroopsManager.getSingleton().saveTroopsToFile(DataHolder.getSingleton().getDataDirectory() + "/troops.xml");
+                GlobalOptions.saveUserData();
                 GlobalOptions.addProperty("attack.frame.visible", Boolean.toString(DSWorkbenchAttackFrame.getSingleton().isVisible()));
                 GlobalOptions.addProperty("marker.frame.visible", Boolean.toString(DSWorkbenchMarkerFrame.getSingleton().isVisible()));
                 GlobalOptions.addProperty("troops.frame.visible", Boolean.toString(DSWorkbenchTroopsFrame.getSingleton().isVisible()));
@@ -282,11 +279,14 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         //setup toolbox
         logger.info(" * Setup toolbox");
         mToolbox = new ToolBoxFrame();
-        mToolbox.addWindowListener(new WindowListener() {
+        mToolbox.addWindowListener(new  
+
+              WindowListener( ) {
+            
 
             @Override
-            public void windowOpened(WindowEvent e) {
-            }
+            public  void windowOpened(WindowEvent e) {
+                }
 
             @Override
             public void windowClosing(WindowEvent e) {
@@ -1388,6 +1388,7 @@ private void fireShowTroopsFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIR
         }
     }
     // <editor-fold defaultstate="collapsed" desc=" Listener EventHandlers ">
+
     @Override
     public void fireToolChangedEvent(int pTool) {
         jCurrentToolLabel.setIcon(ImageManager.getCursorImage(pTool));

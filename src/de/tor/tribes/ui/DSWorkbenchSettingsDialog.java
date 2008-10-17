@@ -209,10 +209,11 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
     }
 
     protected void setupAttackColorTable() {
-        DefaultTableModel model = new  javax  .swing.table.DefaultTableModel(
+        DefaultTableModel model = new javax.swing.table.DefaultTableModel(
                 new Object[][]{},
                 new String[]{
-                    "Einheit", "Farbe"}) {
+                    "Einheit", "Farbe"
+                }) {
 
             Class[] types = new Class[]{
                 String.class, Color.class
@@ -232,13 +233,9 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             }
         };
         jAttackColorTable.setDefaultRenderer(Color.class, new ColorCellRenderer());
-        jAttackColorTable.setDefaultEditor(Color.class, new ColorChooserCellEditor(new  
+        jAttackColorTable.setDefaultEditor(Color.class, new ColorChooserCellEditor(new ActionListener() {
 
-              ActionListener( ) {
-            
-        
-        
-        @Override
+            @Override
             public void actionPerformed(ActionEvent e) {
                 //not needed
             }
@@ -268,13 +265,9 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             }
         }
 
-        DefaultTableCellRenderer headerRenderer = new  
+        DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
 
-             DefaultTableCellRenderer (           ) {
-
-                         
-                    
-                @Override
+            @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
                 Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
                 DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
@@ -293,13 +286,9 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jTagTable.setRowHeight(20);
         jTagTable.setModel(TagTableModel.getSingleton());
         jTagTable.putClientProperty("terminateEditOnFocusLost", true);
-        DefaultTableCellRenderer headerRenderer = new  
+        DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
 
-             DefaultTableCellRenderer (           ) {
-
-                         
-                    
-                @Override
+            @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
                 Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
                 DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
@@ -1299,12 +1288,8 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             return;
         }
 
-        //store current managers
-        TagManager.getSingleton().saveTagsToFile(DataHolder.getSingleton().getDataDirectory() + "/tags.xml");
-        MarkerManager.getSingleton().saveMarkersToFile(DataHolder.getSingleton().getDataDirectory() + "/markers.xml");
-        AttackManager.getSingleton().saveAttacksToFile(DataHolder.getSingleton().getDataDirectory() + "/attacks.xml");
-        TroopsManager.getSingleton().saveTroopsToFile(DataHolder.getSingleton().getDataDirectory() + "/troops.xml");
-
+        //save user data for current server
+        GlobalOptions.saveUserData();
         String selectedServer = (String) jServerList.getSelectedItem();
         GlobalOptions.addProperty("default.server", selectedServer);
         GlobalOptions.saveProperties();
@@ -1320,12 +1305,9 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jStatusArea.setText("");
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
-        Thread t = new Thread(new  
+        Thread t = new Thread(new Runnable() {
 
-              Runnable() {
-
-                 
-                    @Override
+            @Override
             public void run() {
                 try {
                     logger.debug("Start loading from harddisk");
@@ -1538,6 +1520,8 @@ private void fireDownloadDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
 
             // </editor-fold>
 
+            //save current user data for current server
+            GlobalOptions.saveUserData();
             GlobalOptions.setSelectedServer((String) jServerList.getSelectedItem());
             GlobalOptions.addProperty("default.server", GlobalOptions.getSelectedServer());
             GlobalOptions.saveProperties();

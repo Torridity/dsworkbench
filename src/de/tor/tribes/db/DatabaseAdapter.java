@@ -4,11 +4,13 @@
  */
 package de.tor.tribes.db;
 
+import de.tor.tribes.php.DatabaseInterface;
 import de.tor.tribes.sec.SecurityAdapter;
 import de.tor.tribes.util.Constants;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.net.URLConnection;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -124,43 +126,44 @@ public class DatabaseAdapter {
      * @return int Success=0
      */
     public static int checkUser(String pUsername, String pPassword) {
-        if (!openConnection()) {
-            return ID_CONNECTION_FAILED;
+        /* if (!openConnection()) {
+        return ID_CONNECTION_FAILED;
         }
-
+        
         int retVal = ID_SUCCESS;
         try {
-            Statement s = DB_CONNECTION.createStatement();
-            String query = "SELECT COUNT(*) FROM users WHERE name='" + pUsername + "' AND password='" + SecurityAdapter.hashStringMD5(pPassword) + "';";
-            ResultSet rs = s.executeQuery(query);
-            int count = 0;
-            while (rs.next()) {
-                count = rs.getInt(1);
-            }
-
-            if (count != 1) {
-                if (count == 0) {
-                    query = "SELECT COUNT(*) FROM users WHERE name='" + pUsername + "';";
-                    rs = s.executeQuery(query);
-                    while (rs.next()) {
-                        count = rs.getInt(1);
-                    }
-                    if (count == 0) {
-                        retVal = ID_USER_NOT_EXIST;
-                    } else {
-                        retVal = ID_WRONG_PASSWORD;
-                    }
-                } else {
-                    throw new Exception("There are " + count + " users with name '" + pUsername + "' inside the database");
-                }
-            }
-        } catch (Exception e) {
-            logger.error("Failed to validate user", e);
-            retVal = ID_UNKNOWN_ERROR;
+        Statement s = DB_CONNECTION.createStatement();
+        String query = "SELECT COUNT(*) FROM users WHERE name='" + pUsername + "' AND password='" + SecurityAdapter.hashStringMD5(pPassword) + "';";
+        ResultSet rs = s.executeQuery(query);
+        int count = 0;
+        while (rs.next()) {
+        count = rs.getInt(1);
         }
-
+        
+        if (count != 1) {
+        if (count == 0) {
+        query = "SELECT COUNT(*) FROM users WHERE name='" + pUsername + "';";
+        rs = s.executeQuery(query);
+        while (rs.next()) {
+        count = rs.getInt(1);
+        }
+        if (count == 0) {
+        retVal = ID_USER_NOT_EXIST;
+        } else {
+        retVal = ID_WRONG_PASSWORD;
+        }
+        } else {
+        throw new Exception("There are " + count + " users with name '" + pUsername + "' inside the database");
+        }
+        }
+        } catch (Exception e) {
+        logger.error("Failed to validate user", e);
+        retVal = ID_UNKNOWN_ERROR;
+        }
+        
         closeConnection();
-        return retVal;
+        return retVal;*/
+        return DatabaseInterface.checkUser(pUsername, SecurityAdapter.hashStringMD5(pPassword));
     }
 
     /**Add a user to the database
@@ -169,320 +172,345 @@ public class DatabaseAdapter {
      * @return int Success=0
      */
     public static int addUser(String pUsername, String pPassword) {
-        if (!openConnection()) {
-            return ID_CONNECTION_FAILED;
+        /* if (!openConnection()) {
+        return ID_CONNECTION_FAILED;
         }
-
+        
         int retVal = ID_SUCCESS;
         try {
-            Statement s = DB_CONNECTION.createStatement();
-            String query = "SELECT COUNT(*) FROM users WHERE name='" + pUsername + "';";
-            ResultSet rs = s.executeQuery(query);
-            int count = 0;
-            while (rs.next()) {
-                count = rs.getInt(1);
-            }
-
-            if (count != 0) {
-                retVal = ID_USER_ALREADY_EXIST;
-            } else {
-                s = DB_CONNECTION.createStatement();
-                String update = "INSERT INTO users(name, password) VALUES ('" + pUsername + "', '" + SecurityAdapter.hashStringMD5(pPassword) + "');";
-                if (s.executeUpdate(update) != 1) {
-                    throw new Exception("Unknown error while adding user to database");
-                }
-            }
-        } catch (Exception e) {
-            logger.error("Failed to add user", e);
-            e.printStackTrace();
-            retVal = ID_UNKNOWN_ERROR;
+        Statement s = DB_CONNECTION.createStatement();
+        String query = "SELECT COUNT(*) FROM users WHERE name='" + pUsername + "';";
+        ResultSet rs = s.executeQuery(query);
+        int count = 0;
+        while (rs.next()) {
+        count = rs.getInt(1);
         }
-
+        
+        if (count != 0) {
+        retVal = ID_USER_ALREADY_EXIST;
+        } else {
+        s = DB_CONNECTION.createStatement();
+        String update = "INSERT INTO users(name, password) VALUES ('" + pUsername + "', '" + SecurityAdapter.hashStringMD5(pPassword) + "');";
+        if (s.executeUpdate(update) != 1) {
+        throw new Exception("Unknown error while adding user to database");
+        }
+        }
+        } catch (Exception e) {
+        logger.error("Failed to add user", e);
+        e.printStackTrace();
+        retVal = ID_UNKNOWN_ERROR;
+        }
+        
         closeConnection();
-        return retVal;
+        return retVal;*/
+        return DatabaseInterface.addUser(pUsername, SecurityAdapter.hashStringMD5(pPassword));
     }
 
     public static String getPropertyValue(String pKey) {
-        if (!openConnection()) {
-            return null;
+        /*if (!openConnection()) {
+        return null;
         }
         String retVal = null;
         try {
-            Statement s = DB_CONNECTION.createStatement();
-            String query = "SELECT value FROM settings WHERE variable='" + pKey + "';";
-            ResultSet rs = s.executeQuery(query);
-            rs = s.executeQuery(query);
-            while (rs.next()) {
-                retVal = rs.getString("value");
-            }
-        } catch (Exception e) {
-            logger.error("Failed to get property '" + pKey + "'", e);
-            retVal = null;
+        Statement s = DB_CONNECTION.createStatement();
+        String query = "SELECT value FROM settings WHERE variable='" + pKey + "';";
+        ResultSet rs = s.executeQuery(query);
+        rs = s.executeQuery(query);
+        while (rs.next()) {
+        retVal = rs.getString("value");
         }
-        return retVal;
+        } catch (Exception e) {
+        logger.error("Failed to get property '" + pKey + "'", e);
+        retVal = null;
+        }
+        return retVal;*/
+        return DatabaseInterface.getProperty(pKey);
     }
 
     public static List<DatabaseServerEntry> getServerList() {
-        if (!openConnection()) {
-            return null;
+        /*if (!openConnection()) {
+        return null;
         }
         List<DatabaseServerEntry> retVal = new LinkedList<DatabaseServerEntry>();
         try {
-            Statement s = DB_CONNECTION.createStatement();
-            String query = "SELECT serverID, serverURL FROM update_daemon;";
-            ResultSet rs = s.executeQuery(query);
-            rs = s.executeQuery(query);
-            while (rs.next()) {
-                String id = rs.getString("serverID");
-                String url = rs.getString("serverURL");
-                //int ver = rs.getInt("dataVersion");
-                DatabaseServerEntry de = new DatabaseServerEntry();
-                de.setServerID(id);
-                de.setServerURL(url);
-                //de.setDataVersion(ver);
-                retVal.add(de);
-            }
+        Statement s = DB_CONNECTION.createStatement();
+        String query = "SELECT serverID, serverURL FROM update_daemon;";
+        ResultSet rs = s.executeQuery(query);
+        rs = s.executeQuery(query);
+        while (rs.next()) {
+        String id = rs.getString("serverID");
+        String url = rs.getString("serverURL");
+        //int ver = rs.getInt("dataVersion");
+        DatabaseServerEntry de = new DatabaseServerEntry();
+        de.setServerID(id);
+        de.setServerURL(url);
+        //de.setDataVersion(ver);
+        retVal.add(de);
+        }
         } catch (Exception e) {
-            logger.error("Failed to obtain serverlist from database", e);
-            retVal = null;
+        logger.error("Failed to obtain serverlist from database", e);
+        retVal = null;
         }
         closeConnection();
-        return retVal;
+        return retVal;*/
+        return DatabaseInterface.listServers();
     }
 
     public static long getDataVersion(String pServerID) {
-        if (!openConnection()) {
-            return ID_CONNECTION_FAILED;
+        /*if (!openConnection()) {
+        return ID_CONNECTION_FAILED;
         }
         long retVal = ID_UNKNOWN_ERROR;
         try {
-            Statement s = DB_CONNECTION.createStatement();
-            String update = "SELECT * FROM update_daemon WHERE serverID = '" + pServerID + "';";
-            ResultSet rs = s.executeQuery(update);
-
-            while (rs.next()) {
-                retVal = rs.getTimestamp("dataVersion").getTime();
-            }
+        Statement s = DB_CONNECTION.createStatement();
+        String update = "SELECT * FROM update_daemon WHERE serverID = '" + pServerID + "';";
+        ResultSet rs = s.executeQuery(update);
+        
+        while (rs.next()) {
+        retVal = rs.getTimestamp("dataVersion").getTime();
+        }
         } catch (Exception e) {
-            logger.error("Failed to get data version for server '" + pServerID + "'", e);
-            retVal = ID_UNKNOWN_ERROR;
+        logger.error("Failed to get data version for server '" + pServerID + "'", e);
+        retVal = ID_UNKNOWN_ERROR;
         }
         closeConnection();
-        return retVal;
+        return retVal;*/
+        return DatabaseInterface.getServerDataVersion(pServerID);
     }
 
     public static String getServerDownloadURL(String pServerID) {
-        if (!openConnection()) {
-            return null;
+        /*  if (!openConnection()) {
+        return null;
         }
         String retVal = null;
         try {
-            Statement s = DB_CONNECTION.createStatement();
-            String query = "SELECT downloadURL FROM update_daemon WHERE ServerID='" + pServerID + "';";
-            ResultSet rs = s.executeQuery(query);
-            rs = s.executeQuery(query);
-            while (rs.next()) {
-                retVal = rs.getString("downloadURL");
-            }
+        Statement s = DB_CONNECTION.createStatement();
+        String query = "SELECT downloadURL FROM update_daemon WHERE ServerID='" + pServerID + "';";
+        ResultSet rs = s.executeQuery(query);
+        rs = s.executeQuery(query);
+        while (rs.next()) {
+        retVal = rs.getString("downloadURL");
+        }
         } catch (Exception e) {
-            logger.error("Failed to get downloadURL for server '" + pServerID + "'", e);
-            retVal = null;
+        logger.error("Failed to get downloadURL for server '" + pServerID + "'", e);
+        retVal = null;
         }
         closeConnection();
-        return retVal;
+        return retVal;*/
+        return DatabaseInterface.getDownloadURL(pServerID);
     }
 
     public static long getUserDataVersion(String pUsername, String pServer) {
-        if (!openConnection()) {
-            return ID_CONNECTION_FAILED;
+        /*  if (!openConnection()) {
+        return ID_CONNECTION_FAILED;
         }
         long retVal = -1;
         try {
-            Statement s = DB_CONNECTION.createStatement();
-            String query = "SELECT dataVersion FROM updates LEFT JOIN users ON (updates.userID=users.id) WHERE (users.name='" + pUsername + "' AND updates.serverID ='" + pServer + "');";
-            ResultSet rs = s.executeQuery(query);
-            rs = s.executeQuery(query);
-            boolean userRegistered = false;
-            while (rs.next()) {
-                retVal = rs.getTimestamp("dataVersion").getTime();
-                userRegistered = true;
-            }
-            if (!userRegistered) {
-                retVal = ID_UPDATE_NEVER;
-            }
+        Statement s = DB_CONNECTION.createStatement();
+        String query = "SELECT dataVersion FROM updates LEFT JOIN users ON (updates.userID=users.id) WHERE (users.name='" + pUsername + "' AND updates.serverID ='" + pServer + "');";
+        ResultSet rs = s.executeQuery(query);
+        rs = s.executeQuery(query);
+        boolean userRegistered = false;
+        while (rs.next()) {
+        retVal = rs.getTimestamp("dataVersion").getTime();
+        userRegistered = true;
+        }
+        if (!userRegistered) {
+        retVal = ID_UPDATE_NEVER;
+        }
         } catch (Exception e) {
-            logger.error("Failed to get dataVersion for user '" + pUsername + "' and server '" + pServer + "'", e);
-            retVal = ID_UNKNOWN_ERROR;
+        logger.error("Failed to get dataVersion for user '" + pUsername + "' and server '" + pServer + "'", e);
+        retVal = ID_UNKNOWN_ERROR;
         }
         closeConnection();
-        return retVal;
+        return retVal;*/
+        return DatabaseInterface.getUserDataVersion(pUsername, pServer);
     }
 
     public static boolean registerUserForServer(String pUsername, String pServer) {
-        if (!openConnection()) {
-            return false;
+        /*if (!openConnection()) {
+        return false;
         }
         boolean retVal = false;
         try {
-            Statement s = DB_CONNECTION.createStatement();
-            String query = "SELECT id FROM users WHERE name='" + pUsername + "';";
-            ResultSet rs = s.executeQuery(query);
-            int id = ID_USER_NOT_EXIST;
-            while (rs.next()) {
-                id = rs.getInt("id");
-            }
-
-            if (id != ID_USER_NOT_EXIST) {
-                String update = "INSERT INTO updates(userID, serverID, dataVersion) VALUES (" + id + ",'" + pServer + "',0);";
-                int changed = s.executeUpdate(update);
-                if (changed != 0) {
-                    retVal = true;
-                } else {
-                    logger.warn("Failed to register user '" + pUsername + "' for server '" + pServer + "'");
-                }
-            } else {
-                logger.warn("User '" + pUsername + "' does not exist");
-            }
+        Statement s = DB_CONNECTION.createStatement();
+        String query = "SELECT id FROM users WHERE name='" + pUsername + "';";
+        ResultSet rs = s.executeQuery(query);
+        int id = ID_USER_NOT_EXIST;
+        while (rs.next()) {
+        id = rs.getInt("id");
+        }
+        
+        if (id != ID_USER_NOT_EXIST) {
+        String update = "INSERT INTO updates(userID, serverID, dataVersion) VALUES (" + id + ",'" + pServer + "',0);";
+        int changed = s.executeUpdate(update);
+        if (changed != 0) {
+        retVal = true;
+        } else {
+        logger.warn("Failed to register user '" + pUsername + "' for server '" + pServer + "'");
+        }
+        } else {
+        logger.warn("User '" + pUsername + "' does not exist");
+        }
         } catch (Exception e) {
-            logger.error("Failed to get dataVersion for user '" + pUsername + "' and server '" + pServer + "'", e);
-            retVal = false;
+        logger.error("Failed to get dataVersion for user '" + pUsername + "' and server '" + pServer + "'", e);
+        retVal = false;
         }
         closeConnection();
-        return retVal;
-
+        return retVal;*/
+        if (DatabaseInterface.registerUserForServer(pUsername, pServer) == 0) {
+            return true;
+        }
+        return false;
     }
 
     public static boolean updateUserDataVersion(String pUsername, String pServer, long pVersion) {
-        if (!openConnection()) {
-            return false;
+        /*if (!openConnection()) {
+        return false;
         }
         logger.debug("Updating user data version to " + pVersion);
         boolean retVal = false;
         try {
-            Statement s = DB_CONNECTION.createStatement();
-            String query = "SELECT id FROM users WHERE name='" + pUsername + "';";
-            ResultSet rs = s.executeQuery(query);
-            int id = ID_USER_NOT_EXIST;
-            while (rs.next()) {
-                id = rs.getInt("id");
-            }
-
-            if (id != ID_USER_NOT_EXIST) {
-
-                s = DB_CONNECTION.createStatement();
-                String update = "UPDATE updates SET dataVersion = '" + new Timestamp(pVersion).toString() + "' WHERE serverID = '" + pServer + "' AND userID = " + id + ";";
-                int changed = s.executeUpdate(update);
-                if (changed != 0) {
-                    retVal = true;
-                } else {
-                    logger.warn("No rows changed");
-                    retVal = false;
-                }
-            } else {
-                logger.warn("User '" + pUsername + "' does not exist");
-            }
+        Statement s = DB_CONNECTION.createStatement();
+        String query = "SELECT id FROM users WHERE name='" + pUsername + "';";
+        ResultSet rs = s.executeQuery(query);
+        int id = ID_USER_NOT_EXIST;
+        while (rs.next()) {
+        id = rs.getInt("id");
+        }
+        
+        if (id != ID_USER_NOT_EXIST) {
+        
+        s = DB_CONNECTION.createStatement();
+        String update = "UPDATE updates SET dataVersion = '" + new Timestamp(pVersion).toString() + "' WHERE serverID = '" + pServer + "' AND userID = " + id + ";";
+        int changed = s.executeUpdate(update);
+        if (changed != 0) {
+        retVal = true;
+        } else {
+        logger.warn("No rows changed");
+        retVal = false;
+        }
+        } else {
+        logger.warn("User '" + pUsername + "' does not exist");
+        }
         } catch (Exception e) {
-            logger.error("Failed to update data version for user '" + pUsername + "' and server '" + pServer + "'", e);
-            retVal = false;
+        logger.error("Failed to update data version for user '" + pUsername + "' and server '" + pServer + "'", e);
+        retVal = false;
         }
         closeConnection();
-        return retVal;
+        return retVal;*/
+        if (DatabaseInterface.updateDataVersion(pUsername, pServer) == 0) {
+            return true;
+        }
+        return false;
     }
 
     public static int isVersionAllowed() {
-        if (!openConnection()) {
-            return ID_CONNECTION_FAILED;
+        /* if (!openConnection()) {
+        return ID_CONNECTION_FAILED;
         }
-
+        
         int retVal = ID_SUCCESS;
         try {
-            //get user id
-            Statement s = DB_CONNECTION.createStatement();
-            String query = "SELECT value FROM settings WHERE variable='min_version';";
-            ResultSet rs = s.executeQuery(query);
-            String min_version = null;
-            while (rs.next()) {
-                min_version = rs.getString("value");
-            }
-
-            if (min_version != null) {
-                try {
-                    double v = Double.parseDouble(min_version);
-                    if (v < 0) {
-                        retVal = ID_UPDATE_NOT_ALLOWED;
-                    } else if (Constants.VERSION < v) {
-                        retVal = ID_VERSION_NOT_ALLOWED;
-                    }
-                } catch (Exception e) {
-                    logger.error("Unknown min_version from server (" + min_version + ")");
-                    retVal = ID_UNKNOWN_ERROR;
-                }
-
-            } else {
-                retVal = ID_UNKNOWN_ERROR;
-            }
-
-        } catch (Exception e) {
-            logger.error("Failed to check min version", e);
-            retVal = ID_UNKNOWN_ERROR;
+        //get user id
+        Statement s = DB_CONNECTION.createStatement();
+        String query = "SELECT value FROM settings WHERE variable='min_version';";
+        ResultSet rs = s.executeQuery(query);
+        String min_version = null;
+        while (rs.next()) {
+        min_version = rs.getString("value");
         }
-
+        
+        if (min_version != null) {
+        try {
+        double v = Double.parseDouble(min_version);
+        if (v < 0) {
+        retVal = ID_UPDATE_NOT_ALLOWED;
+        } else if (Constants.VERSION < v) {
+        retVal = ID_VERSION_NOT_ALLOWED;
+        }
+        } catch (Exception e) {
+        logger.error("Unknown min_version from server (" + min_version + ")");
+        retVal = ID_UNKNOWN_ERROR;
+        }
+        
+        } else {
+        retVal = ID_UNKNOWN_ERROR;
+        }
+        
+        } catch (Exception e) {
+        logger.error("Failed to check min version", e);
+        retVal = ID_UNKNOWN_ERROR;
+        }
+        
         closeConnection();
-        return retVal;
+        return retVal;*/
+
+        double min = Double.parseDouble(DatabaseInterface.getProperty("min_version"));
+        if (min < 0) {
+            return (int) min;
+        } else if (Constants.VERSION < min) {
+            return ID_VERSION_NOT_ALLOWED;
+        }
+        return ID_SUCCESS;
     }
 
     /**Returns the current server time in milliseconds
      * @return long The current server time
      */
     public static long getCurrentServerTime() {
-        if (!openConnection()) {
-            return ID_CONNECTION_FAILED;
+        /* if (!openConnection()) {
+        return ID_CONNECTION_FAILED;
         }
-
+        
         long t = 0;
         try {
-            Statement s = DB_CONNECTION.createStatement();
-            String query = "SELECT NOW();";
-            ResultSet rs = s.executeQuery(query);
-            while (rs.next()) {
-                t = rs.getTimestamp(1).getTime();
-            }
-
-        } catch (Exception e) {
-            logger.error("Failed to obtain the current server time", e);
+        Statement s = DB_CONNECTION.createStatement();
+        String query = "SELECT NOW();";
+        ResultSet rs = s.executeQuery(query);
+        while (rs.next()) {
+        t = rs.getTimestamp(1).getTime();
         }
-
+        
+        } catch (Exception e) {
+        logger.error("Failed to obtain the current server time", e);
+        }
+        
         closeConnection();
-        return t;
+        return t;*/
+        return DatabaseInterface.getServerTime();
     }
 
     public static void main(String[] args) throws Exception {
         DOMConfigurator.configure("log4j.xml");
-       /* System.setProperty("proxyUse", "true");
+        System.setProperty("proxyUse", "true");
         System.setProperty("proxyHost", "proxy.fzk.de");
         System.setProperty("proxyPort", "8000");
-*/
-      
+
+
 //        System.out.println(getUserDataVersion("Torridity", "de26"));
         long s = System.currentTimeMillis();
-        System.out.println(DatabaseAdapter.getServerList());
-        System.out.println("d = " + (System.currentTimeMillis() - s));
-
-
-        s = System.currentTimeMillis();
-        URL u = new URL("http://www.dsworkbench.de/interface.php?function=ls");
-        BufferedReader r = new BufferedReader(new InputStreamReader(u.openConnection().getInputStream()));
-        String line = "";
-
-        while ((line = r.readLine()) != null) {
-            System.out.println("L " + line);
-        }
-
-        r.close();
+        /* System.out.println(DatabaseAdapter.getServerList());
         System.out.println("d = " + (System.currentTimeMillis() - s));
         
-        System.out.println(new SimpleDateFormat("dd.MM.yyyy HH.mm.ss").format(new Date(1223848823000l)));
-    //System.out.println(DatabaseAdapter.checkUser("Torridity", "realstyx13"));
+        
+        s = System.currentTimeMillis();*/
+        /* URL u = new URL("http://www.support.dsworkbench.de/interface.php?function=cu&user=Torridity&pass=cfcaef487fc66a6d8295e8e3f68b4db9");
+        URLConnection c = u.openConnection();
+        BufferedReader r = new BufferedReader(new InputStreamReader(c.getInputStream()));
+        System.out.println(c.getHeaderField(0));
+        String line = "";
+        
+        while ((line = r.readLine()) != null) {
+        System.out.println("L " + line);
+        }
+        
+        r.close();
+        System.out.println("d = " + (System.currentTimeMillis() - s));*/
+
+
+        //  System.out.println(new SimpleDateFormat("dd.MM.yyyy HH.mm.ss").format(new Date(1223848823000l)));
+        System.out.println(DatabaseAdapter.checkUser("Torridity", "realstyx13"));
     //System.out.println(DatabaseAdapter.getPropertyValue("update_base_dir"));
     // System.out.println(DatabaseAdapter.getUserDataVersion("Torridity", "de14"));
     //System.out.println(DatabaseAdapter.registerUserForServer("Torridity", "de14"));

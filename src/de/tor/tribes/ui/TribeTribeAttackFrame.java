@@ -1110,11 +1110,18 @@ private void fireAddAllPlayerVillages(java.awt.event.MouseEvent evt) {//GEN-FIRS
 
 private void fireTargetAllyChangedEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireTargetAllyChangedEvent
     Ally a = (Ally) jTargetAllyList.getSelectedItem();
-    Tribe[] tribes = a.getTribes().toArray(new Tribe[]{});
-    Arrays.sort(tribes, Tribe.CASE_INSENSITIVE_ORDER);
-    jTargetTribeList.setModel(new DefaultComboBoxModel(tribes));
-    jTargetTribeList.setSelectedIndex(0);
-    fireTargetTribeChangedEvent(null);
+    if (a != null) {
+        Tribe[] tribes = a.getTribes().toArray(new Tribe[]{});
+        if ((tribes != null) && (tribes.length != 0)) {
+            Arrays.sort(tribes, Tribe.CASE_INSENSITIVE_ORDER);
+            jTargetTribeList.setModel(new DefaultComboBoxModel(tribes));
+            jTargetTribeList.setSelectedIndex(0);
+            fireTargetTribeChangedEvent(null);
+        } else {
+            jTargetTribeList.setModel(new DefaultComboBoxModel());
+            fireTargetTribeChangedEvent(null);
+        }
+    }
 }//GEN-LAST:event_fireTargetAllyChangedEvent
 
 private void fireRemoveTargetVillageEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireRemoveTargetVillageEvent
@@ -1164,10 +1171,18 @@ private void fireAddAllTargetVillagesEvent(java.awt.event.MouseEvent evt) {//GEN
 }//GEN-LAST:event_fireAddAllTargetVillagesEvent
 
 private void fireTargetTribeChangedEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireTargetTribeChangedEvent
-    Tribe t = (Tribe) jTargetTribeList.getSelectedItem();
-    Village[] villages = t.getVillageList().toArray(new Village[]{});
-    Arrays.sort(villages, Village.CASE_INSENSITIVE_ORDER);
-    jTargetVillageBox.setModel(new DefaultComboBoxModel(villages));
+    try {
+        Tribe t = (Tribe) jTargetTribeList.getSelectedItem();
+        if (t != null) {
+            Village[] villages = t.getVillageList().toArray(new Village[]{});
+            Arrays.sort(villages, Village.CASE_INSENSITIVE_ORDER);
+            jTargetVillageBox.setModel(new DefaultComboBoxModel(villages));
+        } else {
+            jTargetVillageBox.setModel(new DefaultComboBoxModel());
+        }
+    } catch (Exception e) {
+        jTargetVillageBox.setModel(new DefaultComboBoxModel());
+    }
 }//GEN-LAST:event_fireTargetTribeChangedEvent
 
 private void fireVillageGroupChangedEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireVillageGroupChangedEvent

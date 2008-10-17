@@ -152,8 +152,13 @@ public class TagManager {
         if (pTag == null) {
             return;
         }
+
         if (logger.isDebugEnabled()) {
-            logger.debug("Adding tag '" + pTag + "' to village " + pVillage);
+            if (pVillage == null) {
+                logger.debug("Adding tag '" + pTag + "'");
+            } else {
+                logger.debug("Adding tag '" + pTag + "' to village " + pVillage);
+            }
         }
         boolean added = false;
         for (Tag t : mTags) {

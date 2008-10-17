@@ -4,7 +4,6 @@
  */
 package de.tor.tribes.types;
 
-import java.net.URLEncoder;
 import org.jdom.Element;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.util.LinkedList;

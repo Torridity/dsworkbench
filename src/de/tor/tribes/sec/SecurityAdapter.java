@@ -53,6 +53,20 @@ public class SecurityAdapter {
         return hashed;
     }
 
+    public static String hashStringSHA1(String pData) {
+        String hashed = null;
+        try {
+            MessageDigest md5 = MessageDigest.getInstance("SHA1");
+            md5.update(pData.getBytes());
+            BigInteger hash = new BigInteger(1, md5.digest());
+            hashed = hash.toString(16);
+        } catch (NoSuchAlgorithmException nsae) {
+            // ignore
+            logger.warn("Unknown error while hashing string (ignored)", nsae);
+        }
+        return hashed;
+    }
+
     public static String getUniqueID() {
         String result = "";
         try {
@@ -77,5 +91,9 @@ public class SecurityAdapter {
             result = null;
         }
         return result;
+    }
+    //SELECT * FROM `users` WHERE SHA1(CONCAT(`name`,`password`))<>'dfe312c89cce6e72e06124a22dea1ffbd2515d6';
+    public static void main(String[] args) {
+        System.out.println(SecurityAdapter.hashStringSHA1("Test123"));
     }
 }

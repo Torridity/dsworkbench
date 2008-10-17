@@ -83,10 +83,13 @@ public class AttackManager {
                     for (Element e1 : (List<Element>) JaxenUtils.getNodes(e, "attacks/attack")) {
                         Attack a = new Attack(e1);
                         if (a != null) {
-                            //planAttacks.add(a);
+                            System.out.println(a);
+                            System.out.println(a.getSource());
+                            System.out.println(a.getTarget());
+                            System.out.println("---");
                             Village source = DataHolder.getSingleton().getVillages()[a.getSource().getX()][a.getSource().getY()];
                             Village target = DataHolder.getSingleton().getVillages()[a.getTarget().getX()][a.getTarget().getY()];
-                            //addAttack(source, target, a.getUnit(), a.getArriveTime(), planKey);
+
                             Date sendTime = new Date(a.getArriveTime().getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(source, target, a.getUnit().getSpeed()) * 1000));
                             AttackManagerTableModel.getSingleton().addRow(new Object[]{source, target, a.getUnit(), sendTime, a.getArriveTime(), a.isShowOnMap()});
                         }

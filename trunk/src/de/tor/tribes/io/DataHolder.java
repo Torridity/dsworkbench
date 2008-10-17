@@ -54,6 +54,7 @@ public class DataHolder {
     private List<DataHolderListener> mListeners = null;
     private boolean bAborted = false;
     private static DataHolder SINGLETON = null;
+    private boolean loading = false;
 
     public static synchronized DataHolder getSingleton() {
         if (SINGLETON == null) {
@@ -154,112 +155,128 @@ public class DataHolder {
 
     /**Update the data, optionally by downloading*/
     public boolean loadData(boolean pReload) {
-        String serverID = GlobalOptions.getSelectedServer();
-        logger.info("Calling 'loadData()' for server " + serverID);
+        loading = true;
         try {
-            boolean recreateLocal = false;
-            //check if download was requested
-            if (pReload) {
-                //completely reload data
-                fireDataHolderEvents("Daten werden heruntergeladen...");
-                //try to download
-                if (!downloadData()) {
-                    fireDataHolderEvents("Download abgebrochen/fehlgeschlagen!");
-                    fireDataLoadedEvents(false);
-                    return false;
-                } else {
-                    //rebuild local data
-                    recreateLocal = true;
-                }
-            } else {
-                //check if local loading possible
-                if (!isDataAvailable()) {
-                    logger.error("Local data not available. Try to download data");
-                    fireDataHolderEvents("Lokale Kopie nicht gefunden. Lade Daten vom Server");
+            String serverID = GlobalOptions.getSelectedServer();
+            logger.info("Calling 'loadData()' for server " + serverID);
+            try {
+                boolean recreateLocal = false;
+                //check if download was requested
+                if (pReload) {
+                    //completely reload data
+                    fireDataHolderEvents("Daten werden heruntergeladen...");
+                    //try to download
                     if (!downloadData()) {
-                        logger.fatal("Download failed. No data available at the moment");
-                        fireDataHolderEvents("Download abgebrochen/fehlgeschlagen");
+                        fireDataHolderEvents("Download abgebrochen/fehlgeschlagen!");
                         fireDataLoadedEvents(false);
+                        loading = false;
                         return false;
                     } else {
+                        //rebuild local data
                         recreateLocal = true;
                     }
-                } else if (!serverSupported()) {
-                    logger.error("Local data available but server not supported");
-                    fireDataLoadedEvents(false);
-                    return false;
                 } else {
-                    //load data from local copy
-                    fireDataHolderEvents("Lade lokale Kopie");
-                    if (!readLocalDataCopy(getDataDirectory())) {
-                        //local copy invalid, download data
-                        new File(getDataDirectory() + "/" + "serverdata.bin").delete();
-                        logger.error("Failed to read local copy from " + getDataDirectory() + ". Try to download data");
+                    //check if local loading possible
+                    if (!isDataAvailable()) {
+                        logger.error("Local data not available. Try to download data");
                         fireDataHolderEvents("Lokale Kopie nicht gefunden. Lade Daten vom Server");
                         if (!downloadData()) {
                             logger.fatal("Download failed. No data available at the moment");
                             fireDataHolderEvents("Download abgebrochen/fehlgeschlagen");
+                            fireDataLoadedEvents(false);
+                            loading = false;
                             return false;
                         } else {
                             recreateLocal = true;
                         }
+                    } else if (!serverSupported()) {
+                        logger.error("Local data available but server not supported");
+                        fireDataLoadedEvents(false);
+                        loading = false;
+                        return false;
+                    } else {
+                        //load data from local copy
+                        fireDataHolderEvents("Lade lokale Kopie");
+                        if (!readLocalDataCopy(getDataDirectory())) {
+                            //local copy invalid, download data
+                            new File(getDataDirectory() + "/" + "serverdata.bin").delete();
+                            logger.error("Failed to read local copy from " + getDataDirectory() + ". Try to download data");
+                            fireDataHolderEvents("Lokale Kopie nicht gefunden. Lade Daten vom Server");
+                            if (!downloadData()) {
+                                logger.fatal("Download failed. No data available at the moment");
+                                fireDataHolderEvents("Download abgebrochen/fehlgeschlagen");
+                                loading = false;
+                                return false;
+                            } else {
+                                recreateLocal = true;
+                            }
+                        }
                     }
+                }
+
+                logger.info("Reading conquered units");
+
+                BufferedReader r = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(getDataDirectory() + "/kill_att.txt.gz"))));
+                String line = "";
+                while ((line = r.readLine()) != null) {
+                    try {
+                        parseConqueredLine(line, ID_ATT);
+                    } catch (Exception e) {
+                        //ignored (should only occur on single lines)
+                    }
+                }
+                r.close();
+
+                r = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(getDataDirectory() + "/kill_def.txt.gz"))));
+                line = "";
+                while ((line = r.readLine()) != null) {
+                    try {
+                        parseConqueredLine(line, ID_DEF);
+                    } catch (Exception e) {
+                        //ignored (should only occur on single lines)
+                    }
+                }
+                r.close();
+
+                fireDataHolderEvents("Kombiniere Daten...");
+                mergeData();
+                fireDataHolderEvents("Lese Servereinstellungen...");
+                parseUnits();
+                parseBuildings();
+                fireDataHolderEvents("Daten erfolgreich gelesen");
+                if (!isDataAvailable() || recreateLocal) {
+                    fireDataHolderEvents("Erstelle lokale Kopie");
+                    if (createLocalDataCopy(getDataDirectory())) {
+                        fireDataHolderEvents("Daten erfolgreich geladen");
+                    } else {
+                        fireDataHolderEvents("Fehler beim Erstellen der lokale Kopie");
+                    }
+                }
+            } catch (Exception e) {
+                fireDataHolderEvents("Fehler beim Lesen der Daten.");
+                logger.error("Failed to read server data", e);
+                if (bAborted) {
+                    fireDataLoadedEvents(false);
+                    loading = false;
+                    return false;
                 }
             }
 
-            logger.info("Reading conquered units");
-
-            BufferedReader r = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(getDataDirectory() + "/kill_att.txt.gz"))));
-            String line = "";
-            while ((line = r.readLine()) != null) {
-                try {
-                    parseConqueredLine(line, ID_ATT);
-                } catch (Exception e) {
-                    //ignored (should only occur on single lines)
-                    }
-            }
-            r.close();
-
-            r = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(getDataDirectory() + "/kill_def.txt.gz"))));
-            line = "";
-            while ((line = r.readLine()) != null) {
-                try {
-                    parseConqueredLine(line, ID_DEF);
-                } catch (Exception e) {
-                    //ignored (should only occur on single lines)
-                    }
-            }
-            r.close();
-
-            fireDataHolderEvents("Kombiniere Daten...");
-            mergeData();
-            fireDataHolderEvents("Lese Servereinstellungen...");
-            parseUnits();
-            parseBuildings();
-            fireDataHolderEvents("Daten erfolgreich gelesen");
-            if (!isDataAvailable() || recreateLocal) {
-                fireDataHolderEvents("Erstelle lokale Kopie");
-                if (createLocalDataCopy(getDataDirectory())) {
-                    fireDataHolderEvents("Daten erfolgreich geladen");
-                } else {
-                    fireDataHolderEvents("Fehler beim Erstellen der lokale Kopie");
-                }
-            }
+            fireDataLoadedEvents(true);
+            loading = false;
         } catch (Exception e) {
-            fireDataHolderEvents("Fehler beim Lesen der Daten.");
-            logger.error("Failed to read server data", e);
-            if (bAborted) {
-                fireDataLoadedEvents(false);
-                return false;
-            }
+            logger.error("Global exception while loading data", e);
+            loading = false;
+            return false;
         }
-
-        fireDataLoadedEvents(true);
         return true;
     }
 
-    private boolean createLocalDataCopy(String pServerDir) {
+    public boolean isLoading() {
+        return loading;
+    }
 
+    private boolean createLocalDataCopy(String pServerDir) {
         try {
             BufferedWriter bout = new BufferedWriter(new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(pServerDir + "/serverdata.bin"))));
 
@@ -267,7 +284,7 @@ public class DataHolder {
             bout.write("<villages>\n");
             for (int i = 0; i < 1000; i++) {
                 for (int j = 0; j < 1000; j++) {
-                    Village v = getVillages()[i][j];
+                    Village v = mVillages[i][j];
                     if (v != null) {
                         bout.write(v.toPlainData() + "\n");
                     }
@@ -451,6 +468,7 @@ public class DataHolder {
                     Village v = Village.parseFromPlainData(line);
                     try {
                         mVillages[v.getX()][v.getY()] = v;
+                        mVillagesTable.put(v.getId(), v);
                     } catch (Exception e) {
                         //ignore invalid village
                     }
@@ -523,115 +541,6 @@ public class DataHolder {
                 }
             }
 
-            // <editor-fold defaultstate="collapsed" desc=" DEPRECATED DIFF ">
-            /*else {
-            logger.info("Loading differential updates");
-            //normal update of all diffs
-            for (int i = userDataVersion + 1; i <= serverDataVersion; i++) {
-            logger.debug("Loading part #" + i);
-            //download every diff between user version and server version
-            fireDataHolderEvents("Lade Update #" + i);
-            URL u = new URL(downloadURL + "/village" + i + ".txt.gz");
-            BufferedReader r = new BufferedReader(new InputStreamReader(new GZIPInputStream(u.openConnection().getInputStream())));
-            String line = "";
-            while ((line = r.readLine()) != null) {
-            line = line.replaceAll(",,", ", ,");
-            try {
-            int id = Integer.parseInt(line.substring(0, line.indexOf(",")));
-            Village v = mVillagesTable.get(id);
-            if (v == null) {
-            //new village
-            Village vnew = Village.parseFromPlainData(line);
-            mVillages[vnew.getX()][vnew.getY()] = vnew;
-            mVillagesTable.put(id, vnew);
-            } else {
-            v.updateFromDiff(line);
-            }
-            
-            } catch (Exception e) {
-            //ignore invalid ally
-            }
-            }
-            r.close();
-            
-            u = new URL(downloadURL + "/tribe" + i + ".txt.gz");
-            r = new BufferedReader(new InputStreamReader(new GZIPInputStream(u.openConnection().getInputStream())));
-            line = "";
-            
-            while ((line = r.readLine()) != null) {
-            line = line.replaceAll(",,", ", ,");
-            try {
-            if (line.indexOf(",") < 0) {
-            //tribe to remove
-            int id = Integer.parseInt(line.trim());
-            mTribes.remove(id);
-            } else {
-            int id = Integer.parseInt(line.substring(0, line.indexOf(",")));
-            Tribe t = mTribes.get(id);
-            if (t == null) {
-            //new tribe
-            mTribes.put(id, Tribe.parseFromPlainData(line));
-            } else {
-            t.updateFromDiff(line);
-            }
-            }
-            } catch (Exception e) {
-            //ignore invalid ally
-            }
-            }
-            r.close();
-            
-            u = new URL(downloadURL + "/ally" + i + ".txt.gz");
-            r = new BufferedReader(new InputStreamReader(new GZIPInputStream(u.openConnection().getInputStream())));
-            line = "";
-            while ((line = r.readLine()) != null) {
-            line = line.replaceAll(",,", ", ,");
-            try {
-            if (line.indexOf(",") < 0) {
-            //ally to remove
-            int id = Integer.parseInt(line.trim());
-            mAllies.remove(id);
-            } else {
-            int id = Integer.parseInt(line.substring(0, line.indexOf(",")));
-            Ally a = mAllies.get(id);
-            if (a == null) {
-            //new ally 
-            a = Ally.parseFromPlainData(line);
-            if (a != null) {
-            mAllies.put(a.getId(), a);
-            }
-            } else {
-            a.updateFromDiff(line);
-            }
-            }
-            } catch (Exception e) {
-            //ignore invalid ally
-            }
-            }
-            r.close();
-            }
-            
-            logger.debug("Loading conquered units");
-            //finally update the bash points
-            //load conquers off
-            fireDataHolderEvents("Lese besiegte Gegner (Angriff)...");
-            target = new File(serverDir + "/kill_att.txt.gz");
-            if (!target.exists()) {
-            file = new URL(downloadURL + "/kill_att.txt.gz");
-            downloadDataFile(file, "kill_att.tmp");
-            new File("kill_att.tmp").renameTo(target);
-            }
-            
-            fireDataHolderEvents("Lese besiegte Gegner (Verteidigung)...");
-            target = new File(serverDir + "/kill_def.txt.gz");
-            if (!target.exists()) {
-            file = new URL(downloadURL + "/kill_def.txt.gz");
-            downloadDataFile(file, "kill_def.tmp");
-            new File("kill_def.tmp").renameTo(target);
-            }
-            }*/
-// </editor-fold>
-
             // <editor-fold defaultstate="collapsed" desc="Direct download from DS-Servers">
             //download unit information, but only once
             target = new File(serverDir + "/units.xml");
@@ -669,7 +578,7 @@ public class DataHolder {
     private void mergeData() {
         for (int i = 0; i < 1000; i++) {
             for (int j = 0; j < 1000; j++) {
-                Village current = getVillages()[i][j];
+                Village current = mVillages[i][j];
                 if (current != null) {
                     //set tribe of village
                     Tribe t = mTribes.get(current.getTribeID());
@@ -773,13 +682,29 @@ public class DataHolder {
         }
     }
 
-    /**Get all villages*/
+    /**Get all villages<BR>
+     * !!Attention!!<B>This call blocks while loading data. It is only intended to be used externally</B> !!Attention!! 
+     */
     public synchronized Village[][] getVillages() {
+        if (isLoading()) {
+            //block getting villages while loading to avoid nullpointer exceptions
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException ie) {
+            }
+        }
         return mVillages;
     }
 
     /**Get villages as a hashtable ordered by IDs*/
-    public Hashtable<Integer, Village> getVillagesById() {
+    public synchronized Hashtable<Integer, Village> getVillagesById() {
+        if (isLoading()) {
+            //block getting villages while loading to avoid nullpointer exceptions
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException ie) {
+            }
+        }
         return mVillagesTable;
     }
 

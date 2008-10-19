@@ -141,6 +141,9 @@ public class MapPanel extends javax.swing.JPanel {
 
             @Override
             public void mouseClicked(MouseEvent e) {
+                if (e.getButton() != MouseEvent.BUTTON1) {
+                    return;
+                }
                 int unit = -1;
                 boolean isAttack = false;
                 if ((iCurrentCursor == ImageManager.CURSOR_ATTACK_AXE) ||
@@ -153,6 +156,14 @@ public class MapPanel extends javax.swing.JPanel {
                     isAttack = true;
                 }
                 switch (iCurrentCursor) {
+                    case ImageManager.CURSOR_DEFAULT: {
+                        //center village on click with default cursor
+                        Village current = getVillageAtMousePos();
+                        if (current != null) {
+                            DSWorkbenchMainFrame.getSingleton().centerVillage(current);
+                        }
+                        break;
+                    }
                     case ImageManager.CURSOR_MARK: {
                         Village current = getVillageAtMousePos();
                         if (current != null) {
@@ -231,6 +242,7 @@ public class MapPanel extends javax.swing.JPanel {
                 }
 
                 if (e.getClickCount() == 2) {
+                    //create attack on double clicking a village
                     if (isAttack) {
                         AttackAddFrame aAdd = new AttackAddFrame();
                         aAdd.setLocation(e.getLocationOnScreen());
@@ -574,6 +586,7 @@ class RepaintThread extends Thread {
     public RepaintThread(int pX, int pY) {
         mVisibleVillages = new Village[iVillagesX][iVillagesY];
         setCoordinates(pX, pY);
+        setDaemon(true);
         nf.setMaximumFractionDigits(2);
         nf.setMinimumFractionDigits(2);
         try {
@@ -623,8 +636,6 @@ class RepaintThread extends Thread {
     private void updateMap(int pX, int pY) {
         iX = pX;
         iY = pY;
-
-        //Village[][] villages = ;
 
         if (DataHolder.getSingleton().getVillages() == null) {
             //probably reloading data
@@ -753,6 +764,24 @@ class RepaintThread extends Thread {
             markTroopTypes = false;
         }
 
+        boolean showSectors = false;
+        try {
+            showSectors = Boolean.parseBoolean(GlobalOptions.getProperty("show.sectors"));
+        } catch (Exception e) {
+            showSectors = false;
+        }
+
+        boolean showContinents = false;
+        try {
+            showContinents = Boolean.parseBoolean(GlobalOptions.getProperty("map.showcontinents"));
+        } catch (Exception e) {
+            showContinents = false;
+        }
+
+        List<Integer> xSectors = new LinkedList<Integer>();
+        List<Integer> ySectors = new LinkedList<Integer>();
+        List<Integer> xContinents = new LinkedList<Integer>();
+        List<Integer> yContinents = new LinkedList<Integer>();
         //       Hashtable<Village, Point> tagIconPoints = new Hashtable<Village, Point>();
         Hashtable<Point, Image> troopMarkPoints = new Hashtable<Point, Image>();
         for (int i = 0; i < iVillagesX; i++) {
@@ -780,15 +809,21 @@ class RepaintThread extends Thread {
                             // <editor-fold defaultstate="collapsed" desc=" Tag filtering ">
                             //user villages are not drawn by default but with accepted tags
                             drawVillage = false;
-                            for (Tag tag : TagManager.getSingleton().getTags(v)) {
-                                if (tag.isShowOnMap()) {
-                                    //at least one of the tags for the village are visible
-                                    drawVillage = true;
-                                    break;
+
+                            List<Tag> villageTags = TagManager.getSingleton().getTags(v);
+                            if ((villageTags == null) || (villageTags.size() == 0)) {
+                                //if no tag found draw village
+                                drawVillage = true;
+                            } else {
+                                for (Tag tag : TagManager.getSingleton().getTags(v)) {
+                                    if (tag.isShowOnMap()) {
+                                        //at least one of the tags for the village are visible
+                                        drawVillage = true;
+                                        break;
+                                    }
                                 }
                             }
                         //</editor-fold>
-
                         } else {
                             try {
                                 Marker m = MarkerManager.getSingleton().getMarker(v.getTribe());
@@ -974,16 +1009,33 @@ class RepaintThread extends Thread {
 
                 y += height;
                 yPos++;
+
+                if ((showSectors) && (yPos % 5 == 0)) {
+                    int pos = (yPos - pYStart) * height;
+                    ySectors.add(pos);
+                }
+                if ((showContinents) && (yPos % 100 == 0)) {
+                    int pos = (yPos - pYStart) * height;
+                    yContinents.add(pos);
+                }
             }
             y = 0;
             x += width;
             yPos = pYStart;
             xPos++;
+            if ((showSectors) && (xPos % 5 == 0)) {
+                int pos = (xPos - pXStart) * width;
+                xSectors.add(pos);
+            }
+            if ((showContinents) && (xPos % 100 == 0)) {
+                int pos = (xPos - pXStart) * width;
+                xContinents.add(pos);
+            }
         }
 
-        //       showVillageInfo(g2d);
+        // showVillageInfo(g2d);
 
-        // <editor-fold defaultstate="collapsed" desc=" Tag Icon drawing ">
+        // <editor-fold defaultstate="collapsed" desc=" Tag Icon drawing (NOT USED) ">
 
         /*        Composite old = g2d.getComposite();
         
@@ -1082,7 +1134,7 @@ class RepaintThread extends Thread {
 
         while (keys.hasMoreElements()) {
             String plan = keys.nextElement();
-            List<Attack> attacks = AttackManager.getSingleton().getAttackPlan(plan);
+            Attack[] attacks = AttackManager.getSingleton().getAttackPlan(plan).toArray(new Attack[]{});
             for (Attack attack : attacks) {
                 //go through all attacks
                 if (attack.isShowOnMap()) {
@@ -1143,9 +1195,28 @@ class RepaintThread extends Thread {
                     }
                 }
             }
+            attacks = null;
         }
         //</editor-fold>
 
+        if (showSectors) {
+            g2d.setColor(Color.BLACK);
+            for (Integer xs : xSectors) {
+                g2d.drawLine(xs, 0, xs, hb);
+            }
+            for (Integer ys : ySectors) {
+                g2d.drawLine(0, ys, wb, ys);
+            }
+        }
+        if (showContinents) {
+            g2d.setColor(Color.YELLOW);
+            for (Integer xs : xContinents) {
+                g2d.drawLine(xs, 0, xs, hb);
+            }
+            for (Integer ys : yContinents) {
+                g2d.drawLine(0, ys, wb, ys);
+            }
+        }
         //"paint.tag.icons"
 
         /*

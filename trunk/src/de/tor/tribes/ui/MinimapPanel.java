@@ -676,7 +676,7 @@ class MinimapRepaintThread extends Thread {
         }
 
         try {
-            if (Boolean.parseBoolean(GlobalOptions.getProperty("minimap.showcontinents"))) {
+            if (Boolean.parseBoolean(GlobalOptions.getProperty("map.showcontinents"))) {
                 g2d.setColor(Color.BLACK);
                 Composite c = g2d.getComposite();
                 Composite a = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f);

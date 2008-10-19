@@ -49,6 +49,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
     private static DSWorkbenchAttackFrame SINGLETON = null;
     private List<DefaultTableCellRenderer> renderers = new LinkedList<DefaultTableCellRenderer>();
     SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yy HH:mm:ss.SSS");
+    private NotifyThread mNotifyThread = null;
 
     public static synchronized DSWorkbenchAttackFrame getSingleton() {
         if (SINGLETON == null) {
@@ -99,6 +100,8 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
 
         jSelectionFilterDialog.pack();
         jTimeChangeDialog.pack();
+        mNotifyThread = new NotifyThread();
+        mNotifyThread.start();
         pack();
     }
 
@@ -160,6 +163,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         jDrawMarkedButton = new javax.swing.JButton();
         jFlipMarkButton = new javax.swing.JButton();
         jNotDrawMarkedButton = new javax.swing.JButton();
+        jNotifyButton = new javax.swing.JToggleButton();
         jAttackFrameAlwaysOnTop = new javax.swing.JCheckBox();
 
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("de/tor/tribes/ui/Bundle"); // NOI18N
@@ -662,6 +666,15 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
             }
         });
 
+        jNotifyButton.setBackground(new java.awt.Color(239, 235, 223));
+        jNotifyButton.setText(bundle.getString("DSWorkbenchAttackFrame.jNotifyButton.text")); // NOI18N
+        jNotifyButton.setToolTipText(bundle.getString("DSWorkbenchAttackFrame.jNotifyButton.toolTipText")); // NOI18N
+        jNotifyButton.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                fireChangeNotifyEvent(evt);
+            }
+        });
+
         javax.swing.GroupLayout jAttackPanelLayout = new javax.swing.GroupLayout(jAttackPanel);
         jAttackPanel.setLayout(jAttackPanelLayout);
         jAttackPanelLayout.setHorizontalGroup(
@@ -670,18 +683,19 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
                 .addContainerGap()
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 510, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jAttackPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jNotDrawMarkedButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jCheckAttacksButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jRemoveAttackButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jSendAttackButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jMarkAllButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jMarkFilteredButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jFlipMarkButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jDrawMarkedButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jChangeArrivalButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jCopyUnformattedToClipboardButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jCopyBBCodeToClipboardButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(jAttackPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jNotifyButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jNotDrawMarkedButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jCheckAttacksButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jRemoveAttackButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jSendAttackButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jMarkAllButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jMarkFilteredButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jFlipMarkButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jDrawMarkedButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jChangeArrivalButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jCopyUnformattedToClipboardButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jCopyBBCodeToClipboardButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jAttackPanelLayout.setVerticalGroup(
@@ -689,7 +703,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
             .addGroup(jAttackPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jAttackPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 444, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 523, Short.MAX_VALUE)
                     .addGroup(jAttackPanelLayout.createSequentialGroup()
                         .addComponent(jCheckAttacksButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -711,7 +725,9 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
                         .addGap(30, 30, 30)
                         .addComponent(jCopyUnformattedToClipboardButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jCopyBBCodeToClipboardButton)))
+                        .addComponent(jCopyBBCodeToClipboardButton)
+                        .addGap(30, 30, 30)
+                        .addComponent(jNotifyButton)))
                 .addContainerGap())
         );
 
@@ -1212,6 +1228,10 @@ private void fireModifyTimeChangedEvent(javax.swing.event.ChangeEvent evt) {//GE
     jArriveDateField.setEnabled(!moveMode);
 }//GEN-LAST:event_fireModifyTimeChangedEvent
 
+private void fireChangeNotifyEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireChangeNotifyEvent
+    mNotifyThread.setActive(jNotifyButton.isSelected());
+}//GEN-LAST:event_fireChangeNotifyEvent
+
     /**Set table model for filteres selection*/
     private void setTableModel(JTable pTable, Hashtable<Village, Boolean> pVillages) {
         //create default table model
@@ -1336,6 +1356,7 @@ private void fireModifyTimeChangedEvent(javax.swing.event.ChangeEvent evt) {//GE
     private javax.swing.JButton jNoSourceVillageButton;
     private javax.swing.JButton jNoTargetVillageButton;
     private javax.swing.JButton jNotDrawMarkedButton;
+    private javax.swing.JToggleButton jNotifyButton;
     private javax.swing.JButton jOKButton;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
@@ -1354,3 +1375,60 @@ private void fireModifyTimeChangedEvent(javax.swing.event.ChangeEvent evt) {//GE
     private javax.swing.JDialog jTimeChangeDialog;
     // End of variables declaration//GEN-END:variables
     }
+
+class NotifyThread extends Thread {
+
+    private boolean active = false;
+    private long maxNotifyTime = 0;
+    private long minNotifyTime = 0;
+    private final int TEN_MINUTES = 10 * 60 * 1000;
+
+    public NotifyThread() {
+        setDaemon(true);
+        setPriority(MIN_PRIORITY);
+    }
+
+    public void setActive(boolean pValue) {
+        active = pValue;
+        if (active) {
+            minNotifyTime = System.currentTimeMillis();
+            maxNotifyTime = minNotifyTime + TEN_MINUTES;
+        }
+    }
+
+    public void run() {
+        while (true) {
+            if (active) {
+                Attack[] attacks = AttackManager.getSingleton().getAttackPlan(null).toArray(new Attack[]{});
+                //now + 10 minutes
+                Hashtable<Attack, Date> notifyOn = new Hashtable<Attack, Date>();
+                long now = System.currentTimeMillis();
+                for (Attack a : attacks) {
+                    long sendTime = a.getArriveTime().getTime() - (long) DSCalculator.calculateMoveTimeInSeconds(a.getSource(), a.getTarget(), a.getUnit().getSpeed()) * 1000;
+                    if ((now > minNotifyTime) && (sendTime - TEN_MINUTES < maxNotifyTime)) {
+                        notifyOn.put(a, new Date(sendTime));
+                    }
+                }
+                if (notifyOn.size() > 0) {
+                    //set notify time to future to avoid multiple warnings
+                    minNotifyTime = minNotifyTime + TEN_MINUTES;
+                    maxNotifyTime = maxNotifyTime + TEN_MINUTES;
+                    String message = "Folgende Angriffe warten auf ihre Bearbeitung:\n";
+                    SimpleDateFormat f = new SimpleDateFormat("HH:mm:ss.SSS");
+                    Enumeration<Attack> keys = notifyOn.keys();
+                    while (keys.hasMoreElements()) {
+                        Attack key = keys.nextElement();
+                        Date sendTime = notifyOn.get(key);
+                        message += key.getSource() + " -> " + key.getTarget() + "(" + f.format(sendTime) + ")\n";
+                    }
+                    JOptionPane.showMessageDialog(DSWorkbenchMainFrame.getSingleton(), message, "Benachrichtigung", JOptionPane.INFORMATION_MESSAGE);
+                    attacks = null;
+                }
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException ie) {
+                }
+            }
+        }
+    }
+}

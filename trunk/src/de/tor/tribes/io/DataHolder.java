@@ -168,8 +168,8 @@ public class DataHolder {
                     //try to download
                     if (!downloadData()) {
                         fireDataHolderEvents("Download abgebrochen/fehlgeschlagen!");
-                        fireDataLoadedEvents(false);
                         loading = false;
+                        fireDataLoadedEvents(false);
                         return false;
                     } else {
                         //rebuild local data
@@ -183,16 +183,16 @@ public class DataHolder {
                         if (!downloadData()) {
                             logger.fatal("Download failed. No data available at the moment");
                             fireDataHolderEvents("Download abgebrochen/fehlgeschlagen");
-                            fireDataLoadedEvents(false);
                             loading = false;
+                            fireDataLoadedEvents(false);
                             return false;
                         } else {
                             recreateLocal = true;
                         }
                     } else if (!serverSupported()) {
                         logger.error("Local data available but server not supported");
-                        fireDataLoadedEvents(false);
                         loading = false;
+                        fireDataLoadedEvents(false);
                         return false;
                     } else {
                         //load data from local copy
@@ -206,6 +206,7 @@ public class DataHolder {
                                 logger.fatal("Download failed. No data available at the moment");
                                 fireDataHolderEvents("Download abgebrochen/fehlgeschlagen");
                                 loading = false;
+                                System.out.println("FALSE");
                                 return false;
                             } else {
                                 recreateLocal = true;
@@ -215,7 +216,6 @@ public class DataHolder {
                 }
 
                 logger.info("Reading conquered units");
-
                 BufferedReader r = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(getDataDirectory() + "/kill_att.txt.gz"))));
                 String line = "";
                 while ((line = r.readLine()) != null) {
@@ -237,7 +237,6 @@ public class DataHolder {
                     }
                 }
                 r.close();
-
                 fireDataHolderEvents("Kombiniere Daten...");
                 mergeData();
                 fireDataHolderEvents("Lese Servereinstellungen...");
@@ -252,27 +251,28 @@ public class DataHolder {
                         fireDataHolderEvents("Fehler beim Erstellen der lokale Kopie");
                     }
                 }
+                logger.info("Loading finished");
             } catch (Exception e) {
                 fireDataHolderEvents("Fehler beim Lesen der Daten.");
                 logger.error("Failed to read server data", e);
                 if (bAborted) {
-                    fireDataLoadedEvents(false);
                     loading = false;
+                    fireDataLoadedEvents(false);
                     return false;
                 }
             }
-
-            fireDataLoadedEvents(true);
             loading = false;
+            fireDataLoadedEvents(true);
         } catch (Exception e) {
             logger.error("Global exception while loading data", e);
             loading = false;
+            fireDataLoadedEvents(false);
             return false;
         }
         return true;
     }
 
-    public boolean isLoading() {
+    public synchronized boolean isLoading() {
         return loading;
     }
 
@@ -688,6 +688,7 @@ public class DataHolder {
     public synchronized Village[][] getVillages() {
         if (isLoading()) {
             //block getting villages while loading to avoid nullpointer exceptions
+            System.out.println("Load");
             try {
                 Thread.sleep(50);
             } catch (InterruptedException ie) {

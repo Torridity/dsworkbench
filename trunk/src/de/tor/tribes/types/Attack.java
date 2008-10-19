@@ -33,8 +33,6 @@ public class Attack implements Serializable {
     }
 
     public Attack(Element pElement) {
-        System.out.println("Source " + Integer.parseInt(pElement.getChild("source").getText()));
-        System.out.println("Target " + Integer.parseInt(pElement.getChild("target").getText()));
         setSource(DataHolder.getSingleton().getVillagesById().get(Integer.parseInt(pElement.getChild("source").getText())));
         setTarget(DataHolder.getSingleton().getVillagesById().get(Integer.parseInt(pElement.getChild("target").getText())));
         setArriveTime(new Date(Long.parseLong(pElement.getChild("arrive").getText())));

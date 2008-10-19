@@ -6,12 +6,12 @@ package de.tor.tribes.util.attack;
 
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
+import de.tor.tribes.util.GlobalOptions;
 import java.util.Hashtable;
 import java.util.List;
 import org.apache.log4j.Logger;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.Village;
-import de.tor.tribes.ui.models.AttackManagerTableModel;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.io.File;
@@ -83,15 +83,11 @@ public class AttackManager {
                     for (Element e1 : (List<Element>) JaxenUtils.getNodes(e, "attacks/attack")) {
                         Attack a = new Attack(e1);
                         if (a != null) {
-                            System.out.println(a);
-                            System.out.println(a.getSource());
-                            System.out.println(a.getTarget());
-                            System.out.println("---");
                             Village source = DataHolder.getSingleton().getVillages()[a.getSource().getX()][a.getSource().getY()];
                             Village target = DataHolder.getSingleton().getVillages()[a.getTarget().getX()][a.getTarget().getY()];
-
                             Date sendTime = new Date(a.getArriveTime().getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(source, target, a.getUnit().getSpeed()) * 1000));
-                            AttackManagerTableModel.getSingleton().addRow(new Object[]{source, target, a.getUnit(), sendTime, a.getArriveTime(), a.isShowOnMap()});
+                            addAttack(source, target, a.getUnit(), a.getArriveTime(), a.isShowOnMap(), planKey);
+                        //AttackManagerTableModel.getSingleton().addRow(new Object[]{source, target, a.getUnit(), sendTime, a.getArriveTime(), a.isShowOnMap()});
                         }
                     }
                 }
@@ -132,14 +128,32 @@ public class AttackManager {
         }
     }
 
-    /**Add an attack to the default plan*/
     public synchronized void addAttack(Village pSource, Village pTarget, UnitHolder pUnit, Date pArriveTime) {
+        boolean showOnMap = false;
+        try {
+            showOnMap = Boolean.parseBoolean(GlobalOptions.getProperty("draw.attacks.by.default"));
+        } catch (Exception e) {
+        }
+        addAttack(pSource, pTarget, pUnit, pArriveTime, showOnMap, null);
+    }
+
+    public synchronized void addAttack(Village pSource, Village pTarget, UnitHolder pUnit, Date pArriveTime, String pPlan) {
+        boolean showOnMap = false;
+        try {
+            showOnMap = Boolean.parseBoolean(GlobalOptions.getProperty("draw.attacks.by.default"));
+        } catch (Exception e) {
+        }
+        addAttack(pSource, pTarget, pUnit, pArriveTime, showOnMap, pPlan);
+    }
+
+    /**Add an attack to the default plan*/
+    public synchronized void addAttack(Village pSource, Village pTarget, UnitHolder pUnit, Date pArriveTime, boolean pShowOnMap) {
         //System.out.println("Attack " + pSource + ", " + pTarget+ ", " + de.tor.tribes.util.Constants.DATE_FORMAT.format(pArriveTime));
-        addAttack(pSource, pTarget, pUnit, pArriveTime, null);
+        addAttack(pSource, pTarget, pUnit, pArriveTime, pShowOnMap, null);
     }
 
     /**Add an attack to a plan*/
-    public synchronized void addAttack(Village pSource, Village pTarget, UnitHolder pUnit, Date pArriveTime, String pPlan) {
+    public synchronized void addAttack(Village pSource, Village pTarget, UnitHolder pUnit, Date pArriveTime, boolean pShowOnMap, String pPlan) {
         String plan = pPlan;
         if (plan == null) {
             plan = DEFAULT_PLAN_ID;
@@ -155,6 +169,7 @@ public class AttackManager {
         a.setTarget(pTarget);
         a.setUnit(pUnit);
         a.setArriveTime(pArriveTime);
+        a.setShowOnMap(pShowOnMap);
         List<Attack> attackPlan = mAttackPlans.get(plan);
         if (attackPlan == null) {
             attackPlan = new LinkedList<Attack>();

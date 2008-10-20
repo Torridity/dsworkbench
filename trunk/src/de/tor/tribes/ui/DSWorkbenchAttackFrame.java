@@ -669,8 +669,8 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         jNotifyButton.setBackground(new java.awt.Color(239, 235, 223));
         jNotifyButton.setText(bundle.getString("DSWorkbenchAttackFrame.jNotifyButton.text")); // NOI18N
         jNotifyButton.setToolTipText(bundle.getString("DSWorkbenchAttackFrame.jNotifyButton.toolTipText")); // NOI18N
-        jNotifyButton.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+        jNotifyButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireChangeNotifyEvent(evt);
             }
         });
@@ -681,7 +681,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
             jAttackPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jAttackPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 510, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 512, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jAttackPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jNotifyButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -1228,7 +1228,7 @@ private void fireModifyTimeChangedEvent(javax.swing.event.ChangeEvent evt) {//GE
     jArriveDateField.setEnabled(!moveMode);
 }//GEN-LAST:event_fireModifyTimeChangedEvent
 
-private void fireChangeNotifyEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireChangeNotifyEvent
+private void fireChangeNotifyEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireChangeNotifyEvent
     mNotifyThread.setActive(jNotifyButton.isSelected());
 }//GEN-LAST:event_fireChangeNotifyEvent
 
@@ -1378,9 +1378,9 @@ private void fireChangeNotifyEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIR
 
 class NotifyThread extends Thread {
 
+    private static Logger logger = Logger.getLogger(NotifyThread.class);
     private boolean active = false;
-    private long maxNotifyTime = 0;
-    private long minNotifyTime = 0;
+    private long nextCheck = 0;
     private final int TEN_MINUTES = 10 * 60 * 1000;
 
     public NotifyThread() {
@@ -1391,43 +1391,50 @@ class NotifyThread extends Thread {
     public void setActive(boolean pValue) {
         active = pValue;
         if (active) {
-            minNotifyTime = System.currentTimeMillis();
-            maxNotifyTime = minNotifyTime + TEN_MINUTES;
+            logger.debug("Starting notification cycle");
+            nextCheck = System.currentTimeMillis();
         }
     }
 
     public void run() {
         while (true) {
             if (active) {
-                Attack[] attacks = AttackManager.getSingleton().getAttackPlan(null).toArray(new Attack[]{});
-                //now + 10 minutes
-                Hashtable<Attack, Date> notifyOn = new Hashtable<Attack, Date>();
                 long now = System.currentTimeMillis();
-                for (Attack a : attacks) {
-                    long sendTime = a.getArriveTime().getTime() - (long) DSCalculator.calculateMoveTimeInSeconds(a.getSource(), a.getTarget(), a.getUnit().getSpeed()) * 1000;
-                    if ((now > minNotifyTime) && (sendTime - TEN_MINUTES < maxNotifyTime)) {
-                        notifyOn.put(a, new Date(sendTime));
+                if (now > nextCheck) {
+                    logger.debug("Checking attacks");
+                    //do next check
+                    Attack[] attacks = AttackManager.getSingleton().getAttackPlan(null).toArray(new Attack[]{});
+                    //now + 10 minutes
+                    Hashtable<Attack, Date> notifyOn = new Hashtable<Attack, Date>();
+                    for (Attack a : attacks) {
+                        long sendTime = a.getArriveTime().getTime() - (long) DSCalculator.calculateMoveTimeInSeconds(a.getSource(), a.getTarget(), a.getUnit().getSpeed()) * 1000;
+                        //find send times between now and in 10 minutes
+                        if ((sendTime >= nextCheck) && (sendTime <= nextCheck + TEN_MINUTES)) {
+                            notifyOn.put(a, new Date(sendTime));
+                        }
                     }
-                }
-                if (notifyOn.size() > 0) {
-                    //set notify time to future to avoid multiple warnings
-                    minNotifyTime = minNotifyTime + TEN_MINUTES;
-                    maxNotifyTime = maxNotifyTime + TEN_MINUTES;
-                    String message = "Folgende Angriffe warten auf ihre Bearbeitung:\n";
-                    SimpleDateFormat f = new SimpleDateFormat("HH:mm:ss.SSS");
-                    Enumeration<Attack> keys = notifyOn.keys();
-                    while (keys.hasMoreElements()) {
-                        Attack key = keys.nextElement();
-                        Date sendTime = notifyOn.get(key);
-                        message += key.getSource() + " -> " + key.getTarget() + "(" + f.format(sendTime) + ")\n";
+                    if (notifyOn.size() > 0) {
+                        //set notify time to future to avoid multiple warnings
+                        String message = "Folgende Angriffe warten auf ihre Bearbeitung:\n";
+                        SimpleDateFormat f = new SimpleDateFormat("HH:mm:ss.SSS");
+                        Enumeration<Attack> keys = notifyOn.keys();
+                        while (keys.hasMoreElements()) {
+                            Attack key = keys.nextElement();
+                            Date sendTime = notifyOn.get(key);
+                            message += key.getSource() + " -> " + key.getTarget() + "(" + f.format(sendTime) + ")\n";
+                        }
+                        JOptionPane.showMessageDialog(DSWorkbenchMainFrame.getSingleton(), message, "Benachrichtigung", JOptionPane.INFORMATION_MESSAGE);
+                        attacks = null;
+                        nextCheck = now + TEN_MINUTES;
                     }
-                    JOptionPane.showMessageDialog(DSWorkbenchMainFrame.getSingleton(), message, "Benachrichtigung", JOptionPane.INFORMATION_MESSAGE);
-                    attacks = null;
-                }
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException ie) {
-                }
+
+                    logger.debug("Scheduling next check in 10 minutes");
+                }//wait for next check
+
+            }
+            try {
+                Thread.sleep(10000);
+            } catch (InterruptedException ie) {
             }
         }
     }

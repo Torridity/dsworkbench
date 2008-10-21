@@ -1787,12 +1787,18 @@ private void fireRemoveTagEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:even
 private void fireAddNewTagEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireAddNewTagEvent
     String name = jTagName.getText();
     if (TagManager.getSingleton().getTagByName(name) != null) {
+        UIManager.put("OptionPane.noButtonText", "Nein");
+        UIManager.put("OptionPane.yesButtonText", "Ja");
         if (JOptionPane.showConfirmDialog(jTagAddDialog, "Ein Tag mit dem angegebenen Namen existiert bereits.\n" +
                 "Willst du den bestehenden Eintrag überschreiben?", "Überschreiben", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
             TagManager.getSingleton().removeTagByName(name);
         } else {
+            UIManager.put("OptionPane.noButtonText", "No");
+            UIManager.put("OptionPane.yesButtonText", "Yes");
             return;
         }
+        UIManager.put("OptionPane.noButtonText", "No");
+        UIManager.put("OptionPane.yesButtonText", "Yes");
     }
     TagManager.getSingleton().addTag(name);
     jTagAddDialog.setVisible(false);
@@ -1906,6 +1912,7 @@ private void fireChangeDrawDistanceEvent(javax.swing.event.ChangeEvent evt) {//G
             message += "Diese Einstellungen sind für einen korrekten Ablauf zwingend notwendig.";
             UIManager.put("OptionPane.noButtonText", "Beenden");
             UIManager.put("OptionPane.yesButtonText", "Korrigieren");
+            
             if (JOptionPane.showConfirmDialog(this, message, "Warnung", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.NO_OPTION) {
                 logger.error("Player/Server settings incorrect. User requested application to terminate");
                 System.exit(1);

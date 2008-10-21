@@ -9,7 +9,6 @@ import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.ui.editors.DateSpinEditor;
 import de.tor.tribes.ui.models.TroopsManagerTableModel;
 import de.tor.tribes.ui.renderer.DateCellRenderer;
-import de.tor.tribes.ui.renderer.NumberFormatCellRenderer;
 import de.tor.tribes.util.Constants;
 import javax.swing.table.DefaultTableCellRenderer;
 import org.apache.log4j.Logger;
@@ -30,6 +29,7 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import de.tor.tribes.ui.renderer.NumberFormatCellRenderer;
+import javax.swing.UIManager;
 
 /**
  *
@@ -185,7 +185,11 @@ private void fireRemoveTroopsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
     }
 
     String message = ((rows.length == 1) ? "Eintrag " : (rows.length + " Einträge ")) + "wirklich löschen?";
+    UIManager.put("OptionPane.noButtonText", "Nein");
+    UIManager.put("OptionPane.yesButtonText", "Ja");
     int res = JOptionPane.showConfirmDialog(this, message, "Truppeninformationen entfernen", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+    UIManager.put("OptionPane.noButtonText", "No");
+    UIManager.put("OptionPane.yesButtonText", "Yes");
     if (res != JOptionPane.YES_OPTION) {
         return;
     }

@@ -24,6 +24,7 @@ import de.tor.tribes.util.GlobalOptions;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import javax.swing.JTable;
+import javax.swing.UIManager;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import org.apache.log4j.Logger;
@@ -222,7 +223,11 @@ private void fireRemoveMarkerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
     }
     String message = ((rows.length == 1) ? "Markierung " : (rows.length + " Markierungen ")) + "wirklich löschen?";
 
+    UIManager.put("OptionPane.noButtonText", "Nein");
+    UIManager.put("OptionPane.yesButtonText", "Ja");
     int ret = JOptionPane.showConfirmDialog(this, message, "Löschen", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+    UIManager.put("OptionPane.noButtonText", "No");
+    UIManager.put("OptionPane.yesButtonText", "Yes");
     if (ret == JOptionPane.YES_OPTION) {
         //get markers to remove
         List<Marker> toRemove = new LinkedList<Marker>();

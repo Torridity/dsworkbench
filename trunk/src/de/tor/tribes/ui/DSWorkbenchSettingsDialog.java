@@ -13,8 +13,6 @@ import de.tor.tribes.types.Tribe;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.Skin;
-import de.tor.tribes.util.attack.AttackManager;
-import de.tor.tribes.util.mark.MarkerManager;
 import de.tor.tribes.util.tag.TagManager;
 import java.awt.Color;
 import java.awt.Point;
@@ -38,11 +36,15 @@ import de.tor.tribes.ui.editors.ColorChooserCellEditor;
 import de.tor.tribes.util.ServerChangeListener;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.ui.models.TagTableModel;
-import de.tor.tribes.util.troops.TroopsManager;
 import java.awt.Component;
 import java.awt.MouseInfo;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
+import java.net.Authenticator;
+import java.net.InetSocketAddress;
+import java.net.PasswordAuthentication;
+import java.net.Proxy;
+import java.net.SocketAddress;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
@@ -56,9 +58,8 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
     private static Logger logger = Logger.getLogger(DSWorkbenchSettingsDialog.class);
     private static DSWorkbenchSettingsDialog SINGLETON = null;
     private boolean updating = false;
-    // private boolean gotServerList = false;
+    private Proxy webProxy;
     private boolean INITIALIZED = false;
-    private String sResource = null;
 
     public static synchronized DSWorkbenchSettingsDialog getSingleton() {
         if (SINGLETON == null) {
@@ -98,28 +99,66 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         //</editor-fold>
 
         // <editor-fold defaultstate="collapsed" desc="Network Setup">
-        if (GlobalOptions.getProperty("proxySet") != null) {
-            System.setProperty("proxySet", GlobalOptions.getProperty("proxySet"));
-            String proxySet = GlobalOptions.getProperty("proxySet");
-            boolean useProxy = false;
-            if (proxySet != null) {
-                try {
-                    useProxy = Boolean.parseBoolean(proxySet);
-                } catch (Exception e) {
-                }
-            }
+        boolean useProxy = false;
 
-            jDirectConnectOption.setSelected(!useProxy);
-            jProxyConnectOption.setSelected(useProxy);
+        try {
+            useProxy = Boolean.parseBoolean(GlobalOptions.getProperty("proxySet"));
+        } catch (Exception e) {
+            useProxy = false;
         }
 
+        jDirectConnectOption.setSelected(!useProxy);
+        jProxyConnectOption.setSelected(useProxy);
+
         if (GlobalOptions.getProperty("proxyHost") != null) {
-            System.setProperty("proxyHost", GlobalOptions.getProperty("proxyHost"));
+            //System.setProperty("proxyHost", GlobalOptions.getProperty("proxyHost"));
             jProxyHost.setText(GlobalOptions.getProperty("proxyHost"));
         }
         if (GlobalOptions.getProperty("proxyPort") != null) {
-            System.setProperty("proxyPort", GlobalOptions.getProperty("proxyPort"));
+            //System.setProperty("proxyPort", GlobalOptions.getProperty("proxyPort"));
             jProxyPort.setText(GlobalOptions.getProperty("proxyPort"));
+        }
+        if (GlobalOptions.getProperty("proxyType") != null) {
+            // System.setProperty("proxyHost", GlobalOptions.getProperty("proxyHost"));
+            try {
+                jProxyTypeChooser.setSelectedIndex(Integer.parseInt(GlobalOptions.getProperty("proxyType")));
+            } catch (Exception e) {
+                jProxyTypeChooser.setSelectedIndex(0);
+            }
+        }
+
+        if (GlobalOptions.getProperty("proxyUser") != null) {
+            //System.setProperty("proxyPort", GlobalOptions.getProperty("proxyPort"));
+            jProxyUser.setText(GlobalOptions.getProperty("proxyUser"));
+        }
+
+        if (GlobalOptions.getProperty("proxyPassword") != null) {
+            //System.setProperty("proxyPort", GlobalOptions.getProperty("proxyPort"));
+            jProxyPassword.setText(GlobalOptions.getProperty("proxyPassword"));
+        }
+        if (jProxyConnectOption.isSelected()) {
+            SocketAddress addr = new InetSocketAddress(jProxyHost.getText(), Integer.parseInt(jProxyPort.getText()));
+            switch (jProxyTypeChooser.getSelectedIndex()) {
+                case 1: {
+                    webProxy = new Proxy(Proxy.Type.SOCKS, addr);
+                    break;
+                }
+                default: {
+                    webProxy = new Proxy(Proxy.Type.HTTP, addr);
+                    break;
+                }
+            }
+            if ((jProxyUser.getText().length() >= 1) && (jProxyPassword.getPassword().length > 1)) {
+                Authenticator.setDefault(new Authenticator() {
+
+                    @Override
+                    protected PasswordAuthentication getPasswordAuthentication() {
+                        return new PasswordAuthentication(jProxyUser.getText(), jProxyPassword.getPassword());
+                    }
+                });
+            }
+        } else {
+            webProxy = Proxy.NO_PROXY;
         }
 
         //</editor-fold>
@@ -215,11 +254,16 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
     // </editor-fold>
     }
 
+    public Proxy getWebProxy() {
+        return webProxy;
+    }
+
     protected void setupAttackColorTable() {
-        DefaultTableModel model = new  javax  .swing.table.DefaultTableModel(
+        DefaultTableModel model = new javax.swing.table.DefaultTableModel(
                 new Object[][]{},
                 new String[]{
-                    "Einheit", "Farbe"}) {
+                    "Einheit", "Farbe"
+                }) {
 
             Class[] types = new Class[]{
                 String.class, Color.class
@@ -239,13 +283,9 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             }
         };
         jAttackColorTable.setDefaultRenderer(Color.class, new ColorCellRenderer());
-        jAttackColorTable.setDefaultEditor(Color.class, new ColorChooserCellEditor(new  
+        jAttackColorTable.setDefaultEditor(Color.class, new ColorChooserCellEditor(new ActionListener() {
 
-              ActionListener( ) {
-            
-        
-        
-        @Override
+            @Override
             public void actionPerformed(ActionEvent e) {
                 //not needed
             }
@@ -275,13 +315,9 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             }
         }
 
-        DefaultTableCellRenderer headerRenderer = new  
+        DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
 
-             DefaultTableCellRenderer (           ) {
-
-                         
-                    
-                @Override
+            @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
                 Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
                 DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
@@ -300,13 +336,9 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jTagTable.setRowHeight(20);
         jTagTable.setModel(TagTableModel.getSingleton());
         jTagTable.putClientProperty("terminateEditOnFocusLost", true);
-        DefaultTableCellRenderer headerRenderer = new  
+        DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
 
-             DefaultTableCellRenderer (           ) {
-
-                         
-                    
-                @Override
+            @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
                 Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
                 DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
@@ -477,6 +509,12 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jProxyPortLabel = new javax.swing.JLabel();
         jProxyPort = new javax.swing.JTextField();
         jRefeshNetworkButton = new javax.swing.JButton();
+        jLabel10 = new javax.swing.JLabel();
+        jProxyTypeChooser = new javax.swing.JComboBox();
+        jLabel11 = new javax.swing.JLabel();
+        jProxyUser = new javax.swing.JTextField();
+        jLabel12 = new javax.swing.JLabel();
+        jProxyPassword = new javax.swing.JPasswordField();
         jOKButton = new javax.swing.JButton();
         jCancelButton = new javax.swing.JButton();
         jCreateAccountButton = new javax.swing.JButton();
@@ -663,7 +701,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                     .addComponent(jAccountName, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 228, Short.MAX_VALUE)
                     .addComponent(jAccountPassword, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 228, Short.MAX_VALUE)
                     .addComponent(jCheckAccountButton))
-                .addContainerGap(241, Short.MAX_VALUE))
+                .addContainerGap(257, Short.MAX_VALUE))
         );
         jLoginPanelLayout.setVerticalGroup(
             jLoginPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -678,7 +716,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                     .addComponent(jAccountPasswordLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jCheckAccountButton)
-                .addContainerGap(304, Short.MAX_VALUE))
+                .addContainerGap(301, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab(bundle.getString("DSWorkbenchSettingsDialog.jLoginPanel.TabConstraints.tabTitle"), new javax.swing.ImageIcon(getClass().getResource("/res/login.png")), jLoginPanel); // NOI18N
@@ -731,7 +769,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 .addContainerGap()
                 .addGroup(jPlayerServerSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jCheckForUpdatesBox)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 524, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 540, Short.MAX_VALUE)
                     .addGroup(jPlayerServerSettingsLayout.createSequentialGroup()
                         .addGroup(jPlayerServerSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1)
@@ -742,8 +780,8 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                             .addComponent(jServerList, 0, 262, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPlayerServerSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jDownloadDataButton, javax.swing.GroupLayout.DEFAULT_SIZE, 216, Short.MAX_VALUE)
-                            .addComponent(jSelectServerButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 216, Short.MAX_VALUE))))
+                            .addComponent(jDownloadDataButton, javax.swing.GroupLayout.DEFAULT_SIZE, 232, Short.MAX_VALUE)
+                            .addComponent(jSelectServerButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 232, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         jPlayerServerSettingsLayout.setVerticalGroup(
@@ -763,7 +801,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 274, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jCheckForUpdatesBox)
-                .addContainerGap(12, Short.MAX_VALUE))
+                .addContainerGap(9, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab(bundle.getString("DSWorkbenchSettingsDialog.jPlayerServerSettings.TabConstraints.tabTitle"), new javax.swing.ImageIcon(getClass().getResource("/res/face.png")), jPlayerServerSettings); // NOI18N
@@ -925,12 +963,12 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                     .addComponent(jSkinPackLabel)
                     .addComponent(jLabel4)
                     .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 10, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27, Short.MAX_VALUE)
                 .addGroup(jMapSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jMapSettingsLayout.createSequentialGroup()
                         .addGroup(jMapSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 219, Short.MAX_VALUE)
-                            .addComponent(jGraphicPacks, javax.swing.GroupLayout.Alignment.TRAILING, 0, 219, Short.MAX_VALUE))
+                            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 220, Short.MAX_VALUE)
+                            .addComponent(jGraphicPacks, javax.swing.GroupLayout.Alignment.TRAILING, 0, 220, Short.MAX_VALUE))
                         .addGap(25, 25, 25)
                         .addGroup(jMapSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jPreviewSkinButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -957,7 +995,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 .addGroup(jMapSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
                     .addComponent(jDefaultMarkBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(170, Short.MAX_VALUE))
+                .addContainerGap(169, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab(bundle.getString("DSWorkbenchSettingsDialog.jMapSettings.TabConstraints.tabTitle"), new javax.swing.ImageIcon(getClass().getResource("/res/ui/map.gif")), jMapSettings); // NOI18N
@@ -1016,7 +1054,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                         .addComponent(jLabel5)
                         .addGap(18, 18, 18)
                         .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 231, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(205, Short.MAX_VALUE))
+                .addContainerGap(221, Short.MAX_VALUE))
         );
         jTagsSettingsLayout.setVerticalGroup(
             jTagsSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1029,7 +1067,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 .addGroup(jTagsSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(96, Short.MAX_VALUE))
+                .addContainerGap(93, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab(bundle.getString("DSWorkbenchSettingsDialog.jTagsSettings.TabConstraints.tabTitle"), new javax.swing.ImageIcon(getClass().getResource("/res/tag.png")), jTagsSettings); // NOI18N
@@ -1089,16 +1127,16 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                     .addGroup(jAttackSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                         .addComponent(jAttackMovementLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(jAttackMovementLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 235, Short.MAX_VALUE))
+                    .addComponent(jAttackMovementLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 244, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jAttackSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jAttackSettingsLayout.createSequentialGroup()
                         .addGroup(jAttackSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jShowAttackMovementBox, javax.swing.GroupLayout.DEFAULT_SIZE, 282, Short.MAX_VALUE)
+                            .addComponent(jShowAttackMovementBox, javax.swing.GroupLayout.DEFAULT_SIZE, 289, Short.MAX_VALUE)
                             .addComponent(jScrollPane2, 0, 0, Short.MAX_VALUE))
                         .addGap(13, 13, 13))
                     .addGroup(jAttackSettingsLayout.createSequentialGroup()
-                        .addComponent(jDrawAttacksByDefaultBox, javax.swing.GroupLayout.DEFAULT_SIZE, 289, Short.MAX_VALUE)
+                        .addComponent(jDrawAttacksByDefaultBox, javax.swing.GroupLayout.DEFAULT_SIZE, 296, Short.MAX_VALUE)
                         .addContainerGap())))
         );
         jAttackSettingsLayout.setVerticalGroup(
@@ -1115,7 +1153,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 .addGap(9, 9, 9)
                 .addGroup(jAttackSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jAttackMovementLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 311, Short.MAX_VALUE))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 308, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -1144,12 +1182,10 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
 
         jProxyAdressLabel.setText(bundle.getString("DSWorkbenchSettingsDialog.jProxyAdressLabel.text")); // NOI18N
 
-        jProxyHost.setBackground(new java.awt.Color(239, 235, 223));
         jProxyHost.setEnabled(false);
 
         jProxyPortLabel.setText(bundle.getString("DSWorkbenchSettingsDialog.jProxyPortLabel.text")); // NOI18N
 
-        jProxyPort.setBackground(new java.awt.Color(239, 235, 223));
         jProxyPort.setEnabled(false);
         jProxyPort.setMaximumSize(new java.awt.Dimension(40, 20));
         jProxyPort.setMinimumSize(new java.awt.Dimension(40, 20));
@@ -1164,6 +1200,27 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             }
         });
 
+        jLabel10.setText(bundle.getString("DSWorkbenchSettingsDialog.jLabel10.text")); // NOI18N
+
+        jProxyTypeChooser.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "HTTP", "SOCKS" }));
+        jProxyTypeChooser.setEnabled(false);
+
+        jLabel11.setText(bundle.getString("DSWorkbenchSettingsDialog.jLabel11.text")); // NOI18N
+
+        jProxyUser.setText(bundle.getString("DSWorkbenchSettingsDialog.jProxyUser.text")); // NOI18N
+        jProxyUser.setEnabled(false);
+        jProxyUser.setMaximumSize(new java.awt.Dimension(150, 20));
+        jProxyUser.setMinimumSize(new java.awt.Dimension(150, 20));
+        jProxyUser.setPreferredSize(new java.awt.Dimension(150, 20));
+
+        jLabel12.setText(bundle.getString("DSWorkbenchSettingsDialog.jLabel12.text")); // NOI18N
+
+        jProxyPassword.setText(bundle.getString("DSWorkbenchSettingsDialog.jProxyPassword.text")); // NOI18N
+        jProxyPassword.setEnabled(false);
+        jProxyPassword.setMaximumSize(new java.awt.Dimension(150, 20));
+        jProxyPassword.setMinimumSize(new java.awt.Dimension(150, 20));
+        jProxyPassword.setPreferredSize(new java.awt.Dimension(150, 20));
+
         javax.swing.GroupLayout jNetworkSettingsLayout = new javax.swing.GroupLayout(jNetworkSettings);
         jNetworkSettings.setLayout(jNetworkSettingsLayout);
         jNetworkSettingsLayout.setHorizontalGroup(
@@ -1171,18 +1228,27 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             .addGroup(jNetworkSettingsLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jNetworkSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jNetworkSettingsLayout.createSequentialGroup()
-                        .addGroup(jNetworkSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jProxyAdressLabel)
-                            .addComponent(jProxyPortLabel))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jNetworkSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jProxyHost, javax.swing.GroupLayout.DEFAULT_SIZE, 450, Short.MAX_VALUE)
-                            .addComponent(jProxyPort, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(jRefeshNetworkButton, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jDirectConnectOption)
-                    .addComponent(jProxyConnectOption))
-                .addContainerGap())
+                    .addComponent(jProxyConnectOption)
+                    .addGroup(jNetworkSettingsLayout.createSequentialGroup()
+                        .addGroup(jNetworkSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jProxyAdressLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(20, 20, 20)
+                        .addGroup(jNetworkSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jProxyPassword, javax.swing.GroupLayout.DEFAULT_SIZE, 185, Short.MAX_VALUE)
+                            .addComponent(jProxyUser, javax.swing.GroupLayout.DEFAULT_SIZE, 185, Short.MAX_VALUE)
+                            .addComponent(jProxyTypeChooser, 0, 185, Short.MAX_VALUE)
+                            .addComponent(jProxyHost, javax.swing.GroupLayout.DEFAULT_SIZE, 185, Short.MAX_VALUE)
+                            .addComponent(jRefeshNetworkButton, javax.swing.GroupLayout.Alignment.TRAILING))
+                        .addGap(18, 18, 18)
+                        .addComponent(jProxyPortLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jProxyPort, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(156, 156, 156)))
+                .addGap(0, 0, 0))
         );
         jNetworkSettingsLayout.setVerticalGroup(
             jNetworkSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1191,17 +1257,27 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 .addComponent(jDirectConnectOption)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jProxyConnectOption)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jNetworkSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jProxyAdressLabel)
-                    .addComponent(jProxyHost, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jNetworkSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jProxyHost, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jProxyPortLabel)
                     .addComponent(jProxyPort, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jNetworkSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel10)
+                    .addComponent(jProxyTypeChooser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jNetworkSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jProxyUser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel11))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jNetworkSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jProxyPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel12))
+                .addGap(18, 18, 18)
                 .addComponent(jRefeshNetworkButton)
-                .addContainerGap(248, Short.MAX_VALUE))
+                .addContainerGap(161, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab(bundle.getString("DSWorkbenchSettingsDialog.jNetworkSettings.TabConstraints.tabTitle"), new javax.swing.ImageIcon(getClass().getResource("/res/proxy.png")), jNetworkSettings); // NOI18N
@@ -1238,10 +1314,10 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jTabbedPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 549, Short.MAX_VALUE)
+                    .addComponent(jTabbedPane1, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jCreateAccountButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 256, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 276, Short.MAX_VALUE)
                         .addComponent(jCancelButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jOKButton, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -1263,22 +1339,63 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         pack();
     }// </editor-fold>//GEN-END:initComponents
     private void fireUpdateProxySettingsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireUpdateProxySettingsEvent
-        if (jDirectConnectOption.isSelected()) {
-            System.getProperties().put("proxySet", "false");
-            System.getProperties().put("proxyHost", "");
-            System.getProperties().put("proxyPort", "");
-            GlobalOptions.addProperty("proxySet", Boolean.toString(false));
-            GlobalOptions.addProperty("proxyHost", "");
-            GlobalOptions.addProperty("proxyPort", "");
-        } else {
-            System.getProperties().put("proxySet", "true");
-            System.getProperties().put("proxyHost", jProxyHost.getText());
-            System.getProperties().put("proxyPort", jProxyPort.getText());
+
+        if (jProxyConnectOption.isSelected()) {
+            //store properties
             GlobalOptions.addProperty("proxySet", Boolean.toString(true));
             GlobalOptions.addProperty("proxyHost", jProxyHost.getText());
             GlobalOptions.addProperty("proxyPort", jProxyPort.getText());
-        }
+            GlobalOptions.addProperty("proxyType", Integer.toBinaryString(jProxyTypeChooser.getSelectedIndex()));
+            GlobalOptions.addProperty("proxyUser", jProxyUser.getText());
+            GlobalOptions.addProperty("proxyPassword", new String(jProxyPassword.getPassword()));
+            //create proxy object
+            SocketAddress addr = new InetSocketAddress(jProxyHost.getText(), Integer.parseInt(jProxyPort.getText()));
+            switch (jProxyTypeChooser.getSelectedIndex()) {
+                case 1: {
+                    webProxy = new Proxy(Proxy.Type.SOCKS, addr);
+                    break;
+                }
+                default: {
+                    webProxy = new Proxy(Proxy.Type.HTTP, addr);
+                    break;
+                }
+            }
+            if ((jProxyUser.getText().length() >= 1) && (jProxyPassword.getPassword().length > 1)) {
+                Authenticator.setDefault(new Authenticator() {
 
+                    protected PasswordAuthentication getPasswordAuthentication() {
+                        return new PasswordAuthentication(jProxyUser.getText(), jProxyPassword.getPassword());
+                    }
+                });
+            }
+        } else {
+            //store properties
+            GlobalOptions.addProperty("proxySet", Boolean.toString(false));
+            GlobalOptions.addProperty("proxyHost", "");
+            GlobalOptions.addProperty("proxyPort", "");
+            GlobalOptions.addProperty("proxyType", "");
+            GlobalOptions.addProperty("proxyUser", "");
+            GlobalOptions.addProperty("proxyPassword", "");
+            //set no proxy and no authentification
+            Authenticator.setDefault(null);
+            webProxy = Proxy.NO_PROXY;
+        }
+        /*      if (jDirectConnectOption.isSelected()) {
+        System.getProperties().put("proxySet", "false");
+        System.getProperties().put("proxyHost", "");
+        System.getProperties().put("proxyPort", "");
+        GlobalOptions.addProperty("proxySet", Boolean.toString(false));
+        GlobalOptions.addProperty("proxyHost", "");
+        GlobalOptions.addProperty("proxyPort", "");
+        } else {
+        System.getProperties().put("proxySet", "true");
+        System.getProperties().put("proxyHost", jProxyHost.getText());
+        System.getProperties().put("proxyPort", jProxyPort.getText());
+        GlobalOptions.addProperty("proxySet", Boolean.toString(true));
+        GlobalOptions.addProperty("proxyHost", jProxyHost.getText());
+        GlobalOptions.addProperty("proxyPort", jProxyPort.getText());
+        }
+         */
         GlobalOptions.saveProperties();
 
         checkConnectivity();
@@ -1312,6 +1429,9 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
     private void fireChangeConnectTypeEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireChangeConnectTypeEvent
         jProxyHost.setEnabled(jProxyConnectOption.isSelected());
         jProxyPort.setEnabled(jProxyConnectOption.isSelected());
+        jProxyUser.setEnabled(jProxyConnectOption.isSelected());
+        jProxyPassword.setEnabled(jProxyConnectOption.isSelected());
+        jProxyTypeChooser.setEnabled(jProxyConnectOption.isSelected());
     }//GEN-LAST:event_fireChangeConnectTypeEvent
 
     private void fireSelectServerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSelectServerEvent
@@ -1340,12 +1460,9 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jStatusArea.setText("");
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
-        Thread t = new Thread(new  
+        Thread t = new Thread(new Runnable() {
 
-              Runnable() {
-
-                 
-                    @Override
+            @Override
             public void run() {
                 try {
                     logger.debug("Start loading from harddisk");
@@ -1577,12 +1694,9 @@ private void fireDownloadDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
             //clear tribes model due to data is cleared at reload
             jTribeNames.setModel(new DefaultComboBoxModel());
 
-            Thread t = new Thread(new  
+            Thread t = new Thread(new Runnable() {
 
-                  Runnable() {
-
-                     
-                        @Override
+                @Override
                 public void run() {
                     try {
                         logger.debug("Start downloading data");
@@ -1651,9 +1765,15 @@ private void fireRemoveTagEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:even
 
     int row = jTagTable.getSelectedRow();
     if (row != -1) {
+        UIManager.put("OptionPane.noButtonText", "Nein");
+        UIManager.put("OptionPane.yesButtonText", "Ja");
         if (JOptionPane.showConfirmDialog(this, "Tag wirklich löschen?", "Tags löschen", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) != JOptionPane.YES_OPTION) {
+            UIManager.put("OptionPane.noButtonText", "No");
+            UIManager.put("OptionPane.yesButtonText", "Yes");
             return;
         }
+        UIManager.put("OptionPane.noButtonText", "No");
+        UIManager.put("OptionPane.yesButtonText", "Yes");
         try {
             Tag t = (Tag) ((DefaultTableModel) jTagTable.getModel()).getValueAt(row, 0);
             TagManager.getSingleton().removeTag(t);
@@ -1762,7 +1882,7 @@ private void fireChangeDrawDistanceEvent(javax.swing.event.ChangeEvent evt) {//G
     private void checkConnectivity() {
         logger.debug("Checking general connectivity");
         try {
-            URLConnection c = new URL("http://www.dsworkbench.de").openConnection();
+            URLConnection c = new URL("http://www.dsworkbench.de").openConnection(getWebProxy());
             c.setConnectTimeout(10000);
             String header = c.getHeaderField(0);
             if (header != null) {
@@ -1800,6 +1920,9 @@ private void fireChangeDrawDistanceEvent(javax.swing.event.ChangeEvent evt) {//G
 
     /**Check the DS Workbench account*/
     private boolean checkAccountSettings() {
+        UIManager.put("OptionPane.noButtonText", "Fortfahren");
+        UIManager.put("OptionPane.yesButtonText", "Einstellungen überprüfen");
+
         if (!GlobalOptions.isOfflineMode()) {
             String name = GlobalOptions.getProperty("account.name");
             String password = GlobalOptions.getProperty("account.password");
@@ -1812,8 +1935,7 @@ private void fireChangeDrawDistanceEvent(javax.swing.event.ChangeEvent evt) {//G
             }
 
             int result = DatabaseAdapter.checkUser(name, password);
-            UIManager.put("OptionPane.noButtonText", "Fortfahren");
-            UIManager.put("OptionPane.yesButtonText", "Einstellungen überprüfen");
+
             if ((result == DatabaseAdapter.ID_USER_NOT_EXIST) || (result == DatabaseAdapter.ID_WRONG_PASSWORD)) {
                 logger.info("Account check failed (account error)");
                 String message = "Die Accountvalidierung ist fehlgeschlagen.\n";
@@ -1852,9 +1974,13 @@ private void fireChangeDrawDistanceEvent(javax.swing.event.ChangeEvent evt) {//G
                     "stehen dir Online-Funktionen nicht zur Verfügung.\n" +
                     "Willst du trotzdem fortfahren?", "Warnung", JOptionPane.INFORMATION_MESSAGE, JOptionPane.YES_NO_OPTION);
             if (result != JOptionPane.OK_OPTION) {
+                UIManager.put("OptionPane.noButtonText", "No");
+                UIManager.put("OptionPane.yesButtonText", "Yes");
                 return false;
             }
         }
+        UIManager.put("OptionPane.noButtonText", "No");
+        UIManager.put("OptionPane.yesButtonText", "Yes");
         return true;
     }
 
@@ -1945,6 +2071,9 @@ private void fireChangeDrawDistanceEvent(javax.swing.event.ChangeEvent evt) {//G
     private javax.swing.JCheckBox jDrawAttacksByDefaultBox;
     private javax.swing.JComboBox jGraphicPacks;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -1966,8 +2095,11 @@ private void fireChangeDrawDistanceEvent(javax.swing.event.ChangeEvent evt) {//G
     private javax.swing.JLabel jProxyAdressLabel;
     private javax.swing.JRadioButton jProxyConnectOption;
     private javax.swing.JTextField jProxyHost;
+    private javax.swing.JPasswordField jProxyPassword;
     private javax.swing.JTextField jProxyPort;
     private javax.swing.JLabel jProxyPortLabel;
+    private javax.swing.JComboBox jProxyTypeChooser;
+    private javax.swing.JTextField jProxyUser;
     private javax.swing.JButton jRefeshNetworkButton;
     private javax.swing.JButton jRegisterButton;
     private javax.swing.JLabel jRegisterNameLabel;

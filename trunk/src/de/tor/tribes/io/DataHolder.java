@@ -12,6 +12,7 @@ import de.tor.tribes.db.DatabaseAdapter;
 import de.tor.tribes.types.Ally;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
+import de.tor.tribes.ui.DSWorkbenchSettingsDialog;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.xml.JaxenUtils;
@@ -461,7 +462,7 @@ public class DataHolder {
                 fireDataHolderEvents("Lade Dörferliste");
                 URL u = new URL(downloadURL + "/village.txt.gz");
 
-                BufferedReader r = new BufferedReader(new InputStreamReader(new GZIPInputStream(u.openConnection().getInputStream())));
+                BufferedReader r = new BufferedReader(new InputStreamReader(new GZIPInputStream(u.openConnection(DSWorkbenchSettingsDialog.getSingleton().getWebProxy()).getInputStream())));
                 String line = "";
                 while ((line = r.readLine()) != null) {
                     line = line.replaceAll(",,", ", ,");
@@ -481,7 +482,7 @@ public class DataHolder {
 
                 fireDataHolderEvents("Lade Spielerliste");
                 u = new URL(downloadURL + "/tribe.txt.gz");
-                r = new BufferedReader(new InputStreamReader(new GZIPInputStream(u.openConnection().getInputStream())));
+                r = new BufferedReader(new InputStreamReader(new GZIPInputStream(u.openConnection(DSWorkbenchSettingsDialog.getSingleton().getWebProxy()).getInputStream())));
                 line = "";
                 while ((line = r.readLine()) != null) {
                     line = line.replaceAll(",,", ", ,");
@@ -500,7 +501,7 @@ public class DataHolder {
 
                 fireDataHolderEvents("Lade Stämmeliste");
                 u = new URL(downloadURL + "/ally.txt.gz");
-                r = new BufferedReader(new InputStreamReader(new GZIPInputStream(u.openConnection().getInputStream())));
+                r = new BufferedReader(new InputStreamReader(new GZIPInputStream(u.openConnection(DSWorkbenchSettingsDialog.getSingleton().getWebProxy()).getInputStream())));
                 line = "";
                 while ((line = r.readLine()) != null) {
                     line = line.replaceAll(",,", ", ,");
@@ -602,7 +603,7 @@ public class DataHolder {
 
     /**Download one single file from a URL*/
     private void downloadDataFile(URL pSource, String pLocalName) throws Exception {
-        URLConnection ucon = pSource.openConnection();
+        URLConnection ucon = pSource.openConnection(DSWorkbenchSettingsDialog.getSingleton().getWebProxy());
         FileOutputStream tempWriter = new FileOutputStream(pLocalName);
         InputStream isr = ucon.getInputStream();
         int bytes = 0;
@@ -688,7 +689,6 @@ public class DataHolder {
     public synchronized Village[][] getVillages() {
         if (isLoading()) {
             //block getting villages while loading to avoid nullpointer exceptions
-            System.out.println("Load");
             try {
                 Thread.sleep(50);
             } catch (InterruptedException ie) {

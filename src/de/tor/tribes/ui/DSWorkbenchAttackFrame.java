@@ -34,6 +34,7 @@ import java.text.SimpleDateFormat;
 import java.util.LinkedList;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JTable;
+import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableModel;

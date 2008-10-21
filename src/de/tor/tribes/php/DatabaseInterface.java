@@ -6,14 +6,13 @@ package de.tor.tribes.php;
 
 import de.tor.tribes.db.DatabaseServerEntry;
 import de.tor.tribes.sec.SecurityAdapter;
+import de.tor.tribes.ui.DSWorkbenchSettingsDialog;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;
@@ -63,7 +62,7 @@ public class DatabaseInterface {
             // URL of CGI-Bin script.
             url = new URL(INTERFACE_URL);
             // URL connection channel.
-            urlConn = url.openConnection();
+            urlConn = url.openConnection(DSWorkbenchSettingsDialog.getSingleton().getWebProxy());
             // Let the run-time system (RTS) know that we want input.
             urlConn.setDoInput(true);
 

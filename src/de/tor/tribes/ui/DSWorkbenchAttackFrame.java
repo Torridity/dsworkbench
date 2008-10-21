@@ -770,7 +770,11 @@ private void fireRemoveAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
     }
 
     String message = ((rows.length == 1) ? "Angriff " : (rows.length + " Angriffe ")) + "wirklich löschen?";
+    UIManager.put("OptionPane.noButtonText", "Nein");
+    UIManager.put("OptionPane.yesButtonText", "Ja");
     int res = JOptionPane.showConfirmDialog(this, message, "Angriff entfernen", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+    UIManager.put("OptionPane.noButtonText", "No");
+    UIManager.put("OptionPane.yesButtonText", "Yes");
     if (res != JOptionPane.YES_OPTION) {
         return;
     }

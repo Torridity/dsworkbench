@@ -32,6 +32,7 @@ import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.UIManager;
 import javax.swing.filechooser.FileFilter;
 import org.apache.log4j.Logger;
 
@@ -527,9 +528,15 @@ private void fireSaveScreenshotEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST
             File target = new File(file);
             if (target.exists()) {
                 //ask if overwrite
+                UIManager.put("OptionPane.noButtonText", "Nein");
+                UIManager.put("OptionPane.yesButtonText", "Ja");
                 if (JOptionPane.showConfirmDialog(jScreenshotControl, "Existierende Datei überschreiben?", "Überschreiben", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) != JOptionPane.YES_OPTION) {
+                    UIManager.put("OptionPane.noButtonText", "No");
+                    UIManager.put("OptionPane.yesButtonText", "Yes");
                     return;
                 }
+                UIManager.put("OptionPane.noButtonText", "No");
+                UIManager.put("OptionPane.yesButtonText", "Yes");
             }
             ImageIO.write(mScreenshotPanel.getResult(jTransparancySlider.getValue()), type, target);
             GlobalOptions.addProperty("screen.dir", target.getParent());

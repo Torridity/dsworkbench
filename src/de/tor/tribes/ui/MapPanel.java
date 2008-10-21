@@ -53,6 +53,8 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import org.apache.log4j.Logger;
 import de.tor.tribes.util.tag.TagManager;
+import java.awt.AWTEvent;
+import java.awt.event.AWTEventListener;
 
 /**
  *
@@ -253,6 +255,10 @@ public class MapPanel extends javax.swing.JPanel {
 
             @Override
             public void mousePressed(MouseEvent e) {
+                if (e.getButton() != MouseEvent.BUTTON1) {
+                    return;
+                }
+
                 boolean isAttack = false;
                 mouseDown = true;
                 if ((iCurrentCursor == ImageManager.CURSOR_ATTACK_AXE) ||
@@ -364,6 +370,8 @@ public class MapPanel extends javax.swing.JPanel {
                 }
             }
         });
+
+        //Toolkit.getDefaultToolkit().addAWTEventListener(listener, WIDTH);
         //</editor-fold>
 
         // <editor-fold defaultstate="collapsed" desc="MouseMotionListener for dragging operations">
@@ -413,7 +421,7 @@ public class MapPanel extends javax.swing.JPanel {
                 }
             }
         });
-    //</editor-fold>
+    //<editor-fold>
     }
 
     protected boolean isOutside() {
@@ -455,7 +463,7 @@ public class MapPanel extends javax.swing.JPanel {
     public void paint(Graphics g) {
         try {
             g.fillRect(0, 0, getWidth(), getHeight());
-            if (isOutside) {
+            if ((isOutside) && (mouseDown)) {
                 mousePos = MouseInfo.getPointerInfo().getLocation();
                 int outcodes = screenRect.outcode(mousePos);
 
@@ -582,6 +590,7 @@ class RepaintThread extends Thread {
     private BufferedImage mDistBorder = null;
     private Image mMarkerImage = null;
     private final NumberFormat nf = NumberFormat.getInstance();
+    private boolean moving = false;
 
     public RepaintThread(int pX, int pY) {
         mVisibleVillages = new Village[iVillagesX][iVillagesY];

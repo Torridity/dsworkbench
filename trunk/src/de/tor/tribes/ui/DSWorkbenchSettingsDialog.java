@@ -447,7 +447,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jTagName = new javax.swing.JTextField();
         jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
-        jTabbedPane1 = new javax.swing.JTabbedPane();
+        jSettingsTabbedPane = new javax.swing.JTabbedPane();
         jLoginPanel = new javax.swing.JPanel();
         jAccountNameLabel = new javax.swing.JLabel();
         jAccountPasswordLabel = new javax.swing.JLabel();
@@ -515,6 +515,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jProxyUser = new javax.swing.JTextField();
         jLabel12 = new javax.swing.JLabel();
         jProxyPassword = new javax.swing.JPasswordField();
+        jMiscSettings = new javax.swing.JPanel();
         jOKButton = new javax.swing.JButton();
         jCancelButton = new javax.swing.JButton();
         jCreateAccountButton = new javax.swing.JButton();
@@ -660,7 +661,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             }
         });
 
-        jTabbedPane1.setBackground(new java.awt.Color(239, 235, 223));
+        jSettingsTabbedPane.setBackground(new java.awt.Color(239, 235, 223));
 
         jLoginPanel.setBackground(new java.awt.Color(239, 235, 223));
 
@@ -719,7 +720,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 .addContainerGap(301, Short.MAX_VALUE))
         );
 
-        jTabbedPane1.addTab(bundle.getString("DSWorkbenchSettingsDialog.jLoginPanel.TabConstraints.tabTitle"), new javax.swing.ImageIcon(getClass().getResource("/res/login.png")), jLoginPanel); // NOI18N
+        jSettingsTabbedPane.addTab(bundle.getString("DSWorkbenchSettingsDialog.jLoginPanel.TabConstraints.tabTitle"), new javax.swing.ImageIcon(getClass().getResource("/res/login.png")), jLoginPanel); // NOI18N
 
         jPlayerServerSettings.setBackground(new java.awt.Color(239, 235, 223));
 
@@ -804,7 +805,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 .addContainerGap(9, Short.MAX_VALUE))
         );
 
-        jTabbedPane1.addTab(bundle.getString("DSWorkbenchSettingsDialog.jPlayerServerSettings.TabConstraints.tabTitle"), new javax.swing.ImageIcon(getClass().getResource("/res/face.png")), jPlayerServerSettings); // NOI18N
+        jSettingsTabbedPane.addTab(bundle.getString("DSWorkbenchSettingsDialog.jPlayerServerSettings.TabConstraints.tabTitle"), new javax.swing.ImageIcon(getClass().getResource("/res/face.png")), jPlayerServerSettings); // NOI18N
 
         jMapSettings.setBackground(new java.awt.Color(239, 235, 223));
 
@@ -998,7 +999,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 .addContainerGap(169, Short.MAX_VALUE))
         );
 
-        jTabbedPane1.addTab(bundle.getString("DSWorkbenchSettingsDialog.jMapSettings.TabConstraints.tabTitle"), new javax.swing.ImageIcon(getClass().getResource("/res/ui/map.gif")), jMapSettings); // NOI18N
+        jSettingsTabbedPane.addTab(bundle.getString("DSWorkbenchSettingsDialog.jMapSettings.TabConstraints.tabTitle"), new javax.swing.ImageIcon(getClass().getResource("/res/ui/map.gif")), jMapSettings); // NOI18N
 
         jTagsSettings.setBackground(new java.awt.Color(239, 235, 223));
 
@@ -1070,7 +1071,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 .addContainerGap(93, Short.MAX_VALUE))
         );
 
-        jTabbedPane1.addTab(bundle.getString("DSWorkbenchSettingsDialog.jTagsSettings.TabConstraints.tabTitle"), new javax.swing.ImageIcon(getClass().getResource("/res/tag.png")), jTagsSettings); // NOI18N
+        jSettingsTabbedPane.addTab(bundle.getString("DSWorkbenchSettingsDialog.jTagsSettings.TabConstraints.tabTitle"), new javax.swing.ImageIcon(getClass().getResource("/res/tag.png")), jTagsSettings); // NOI18N
 
         jAttackSettings.setBackground(new java.awt.Color(239, 235, 223));
 
@@ -1157,7 +1158,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 .addContainerGap())
         );
 
-        jTabbedPane1.addTab(bundle.getString("DSWorkbenchSettingsDialog.jAttackSettings.TabConstraints.tabTitle"), new javax.swing.ImageIcon(getClass().getResource("/res/barracks.png")), jAttackSettings); // NOI18N
+        jSettingsTabbedPane.addTab(bundle.getString("DSWorkbenchSettingsDialog.jAttackSettings.TabConstraints.tabTitle"), new javax.swing.ImageIcon(getClass().getResource("/res/barracks.png")), jAttackSettings); // NOI18N
 
         jNetworkSettings.setBackground(new java.awt.Color(239, 235, 223));
 
@@ -1280,7 +1281,20 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 .addContainerGap(161, Short.MAX_VALUE))
         );
 
-        jTabbedPane1.addTab(bundle.getString("DSWorkbenchSettingsDialog.jNetworkSettings.TabConstraints.tabTitle"), new javax.swing.ImageIcon(getClass().getResource("/res/proxy.png")), jNetworkSettings); // NOI18N
+        jSettingsTabbedPane.addTab(bundle.getString("DSWorkbenchSettingsDialog.jNetworkSettings.TabConstraints.tabTitle"), new javax.swing.ImageIcon(getClass().getResource("/res/proxy.png")), jNetworkSettings); // NOI18N
+
+        javax.swing.GroupLayout jMiscSettingsLayout = new javax.swing.GroupLayout(jMiscSettings);
+        jMiscSettings.setLayout(jMiscSettingsLayout);
+        jMiscSettingsLayout.setHorizontalGroup(
+            jMiscSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 560, Short.MAX_VALUE)
+        );
+        jMiscSettingsLayout.setVerticalGroup(
+            jMiscSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 387, Short.MAX_VALUE)
+        );
+
+        jSettingsTabbedPane.addTab(bundle.getString("DSWorkbenchSettingsDialog.jMiscSettings.TabConstraints.tabTitle"), new javax.swing.ImageIcon(getClass().getResource("/res/checkbox.png")), jMiscSettings); // NOI18N
 
         jOKButton.setBackground(new java.awt.Color(239, 235, 223));
         jOKButton.setText(bundle.getString("DSWorkbenchSettingsDialog.jOKButton.text")); // NOI18N
@@ -1314,7 +1328,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jTabbedPane1, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jSettingsTabbedPane, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jCreateAccountButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 276, Short.MAX_VALUE)
@@ -1327,7 +1341,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 419, Short.MAX_VALUE)
+                .addComponent(jSettingsTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 419, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jCreateAccountButton)
@@ -2093,6 +2107,7 @@ private void fireChangeDrawDistanceEvent(javax.swing.event.ChangeEvent evt) {//G
     private javax.swing.JPanel jMapSettings;
     private javax.swing.JCheckBox jMarkActiveVillageBox;
     private javax.swing.JCheckBox jMarkOwnVillagesOnMinimapBox;
+    private javax.swing.JPanel jMiscSettings;
     private javax.swing.JPanel jNetworkSettings;
     private javax.swing.JButton jOKButton;
     private javax.swing.JPanel jPanel1;
@@ -2121,6 +2136,7 @@ private void fireChangeDrawDistanceEvent(javax.swing.event.ChangeEvent evt) {//G
     private javax.swing.JButton jSelectServerButton;
     private javax.swing.JButton jSelectSkinButton;
     private javax.swing.JComboBox jServerList;
+    private javax.swing.JTabbedPane jSettingsTabbedPane;
     private javax.swing.JCheckBox jShowAttackMovementBox;
     private javax.swing.JCheckBox jShowContinents;
     private javax.swing.JLabel jShowContinentsLabel;
@@ -2130,7 +2146,6 @@ private void fireChangeDrawDistanceEvent(javax.swing.event.ChangeEvent evt) {//G
     private javax.swing.JCheckBox jShowTroopInfoBox;
     private javax.swing.JLabel jSkinPackLabel;
     private javax.swing.JTextArea jStatusArea;
-    private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JDialog jTagAddDialog;
     private javax.swing.JTextField jTagName;
     private javax.swing.JTable jTagTable;

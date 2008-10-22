@@ -189,13 +189,29 @@ public class Tribe implements Serializable, Comparable {
     }
 
     public String getHTMLInfo() {
+        StringBuffer b = new StringBuffer();
         NumberFormat nf = NumberFormat.getInstance();
-        String tribeInfo = "<html><b>Spieler:</b> " + getName();
-        tribeInfo += " <b>Punkte (Rang):</b> " + nf.format(getPoints()) + " (" + nf.format(getRank()) + ")";
-        tribeInfo += " <b>Dörfer:</b> " + nf.format(getVillages());
-        tribeInfo += " <b>Kills Off (Rang):</b> " + nf.format(getKillsAtt()) + " (" + nf.format(getRankAtt()) + ") ";
-        tribeInfo += " <b>Kills Def (Rang):</b> " + nf.format(getKillsDef()) + " (" + nf.format(getRankDef()) + ") " + "</html>";
-        return tribeInfo;
+        b.append("<html><b>Spieler:</b> ");
+        b.append(getName());
+        b.append(" <b>Punkte (Rang):</b> ");
+        b.append(nf.format(getPoints()));
+        b.append(" (");
+        b.append(nf.format(getRank()));
+        b.append(")");
+        b.append(" <b>Dörfer:</b> ");
+        b.append(nf.format(getVillages()));
+        b.append(" <b>Kills Off (Rang):</b> ");
+        b.append(nf.format(getKillsAtt()));
+        b.append(" (");
+        b.append(nf.format(getRankAtt()));
+        b.append(") ");
+        b.append(" <b>Kills Def (Rang):</b> ");
+        b.append(nf.format(getKillsDef()));
+        b.append(" (");
+        b.append(nf.format(getRankDef()));
+        b.append(") ");
+        b.append("</html>");
+        return b.toString();
     }
 
     @Override

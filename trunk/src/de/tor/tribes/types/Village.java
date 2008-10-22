@@ -8,6 +8,7 @@
  */
 package de.tor.tribes.types;
 
+import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.tag.TagManager;
 import java.io.Serializable;
 import java.net.URLDecoder;
@@ -22,7 +23,10 @@ import java.util.StringTokenizer;
  */
 public class Village implements Serializable, Comparable {
 
+    public final static int ORDER_ALPHABETICALLY = 0;
+    public final static int ORDER_BY_COORDINATES = 1;
     private static final long serialVersionUID = 10L;
+    private static int orderType = ORDER_ALPHABETICALLY;
     private int id;
     private String name = null;
     private short x;
@@ -31,7 +35,9 @@ public class Village implements Serializable, Comparable {
     private transient Tribe tribe = null;
     private int points;
     private byte type;
+    private String stringRepresentation = null;
     //$id, $name, $x, $y, $tribe, $points, $type
+
     public static Village parseFromPlainData(String pLine) {
         StringTokenizer tokenizer = new StringTokenizer(pLine, ",");
 
@@ -80,6 +86,18 @@ public class Village implements Serializable, Comparable {
         return b.toString();
     }
 
+    public static void setOrderType(int pOrderType) {
+        if (pOrderType == ORDER_BY_COORDINATES) {
+            orderType = ORDER_BY_COORDINATES;
+        } else {
+            orderType = ORDER_ALPHABETICALLY;
+        }
+    }
+
+    public static int getOrderType() {
+        return orderType;
+    }
+
     public void updateFromDiff(String pDiff) {
         StringTokenizer t = new StringTokenizer(pDiff, ",");
         //skip id
@@ -119,6 +137,7 @@ public class Village implements Serializable, Comparable {
 
     public void setName(String name) {
         this.name = name;
+        stringRepresentation = null;
     }
 
     public short getX() {
@@ -170,59 +189,74 @@ public class Village implements Serializable, Comparable {
     }
 
     public String getHTMLInfo() {
-        String villageInfo = "<html><p><b>Name (X|Y):</b> " + getName().replaceAll("<", "&lt;").replaceAll(">", "&gt;") + " (" + getX() + "|" + getY() + "), <b>Punkte:</b> " + getPoints() + ",";
+        StringBuffer b = new StringBuffer();
+        b.append("<html><p><b>Name (X|Y):</b> ");
+        b.append(getName().replaceAll("<", "&lt;").replaceAll(">", "&gt;"));
+        b.append(" (");
+        b.append(getX());
+        b.append("|");
+        b.append(getY());
+        b.append("), <b>Punkte:</b> ");
+        b.append(getPoints());
+        b.append(",");
         List<Tag> tags = TagManager.getSingleton().getTags(this);
-        villageInfo += "<b>Tags:</b> ";
+        b.append("<b>Tags:</b> ");
         if ((tags == null) || (tags.size() == 0)) {
-            villageInfo += "keine, ";
+            b.append("keine, ");
         } else {
-            for (Tag tag : tags) {
-                villageInfo += tag + "|";
+            for (int i = 0; i < tags.size(); i++) {
+                b.append(tags.get(i));
+                if (i < tags.size() - 1) {
+                    b.append("|");
+                } else {
+                    b.append(",");
+                }
             }
-            villageInfo = villageInfo.substring(0, villageInfo.length() - 1);
-            villageInfo += ", ";
         }
-        villageInfo += "<b>Bonus:</b> ";
+        b.append("<b>Bonus:</b> ");
         switch (getType()) {
             case 1:
-                villageInfo += "+ 10% </p></html>";
+                b.append("+ 10% </p></html>");
                 break;
 
             case 2:
-                villageInfo += "+ 10% </html>";
+                b.append("+ 10% </html>");
                 break;
 
             case 3:
-                villageInfo += "+ 10% </p></html>";
+                b.append("+ 10% </p></html>");
                 break;
 
             case 4:
-                villageInfo += "+ 10% </p></html>";
+                b.append("+ 10% </p></html>");
                 break;
 
             case 5:
-                villageInfo += "+ 10% </p></html>";
+                b.append("+ 10% </p></html>");
                 break;
 
             case 6:
-                villageInfo += "+ 10% </p></html>";
+                b.append("+ 10% </p></html>");
                 break;
 
             case 7:
-                villageInfo += "+ 10% </p></html>";
+                b.append("+ 10% </p></html>");
                 break;
 
             case 8:
-                villageInfo += "+ 3% </p></html>";
+                b.append("+ 3% </p></html>");
                 break;
 
         }
-        return villageInfo;
+        return b.toString();
     }
 
     @Override
     public String toString() {
-        return getName() + " (" + getX() + "|" + getY() + ")";
+        if (stringRepresentation == null) {
+            stringRepresentation = getName() + " (" + getX() + "|" + getY() + ")";
+        }
+        return stringRepresentation;
     }
 
     public String toBBCode() {
@@ -288,32 +322,61 @@ public class Village implements Serializable, Comparable {
         if (o == null) {
             return -1;
         }
-        return toString().toLowerCase().compareTo(o.toString().toLowerCase());
+        //switch order type
+        if (orderType == ORDER_ALPHABETICALLY) {
+            return toString().toLowerCase().compareTo(o.toString().toLowerCase());
+        } else {
+            try {
+                Village v = (Village) o;
+
+                if (getX() > v.getX()) {
+                    return -1;
+                } else if (getX() < v.getX()) {
+                    return 1;
+                } else {
+                    if (getY() > v.getY()) {
+                        return -1;
+                    } else if (getY() < v.getY()) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                }
+            } catch (Exception e) {
+                //left hand side is no village, compare strings
+                return toString().toLowerCase().compareTo(o.toString().toLowerCase());
+            }
+        }
     }
     public static final Comparator<Village> CASE_INSENSITIVE_ORDER = new CaseInsensitiveComparator();
 
     private static class CaseInsensitiveComparator implements Comparator<Village>, java.io.Serializable {
         // use serialVersionUID from JDK 1.2.2 for interoperability
+
         private static final long serialVersionUID = 8575799808933029326L;
 
         public int compare(Village s1, Village s2) {
-            int n1 = s1.toString().length(), n2 = s2.toString().length();
-            for (int i1 = 0,  i2 = 0; i1 < n1 && i2 < n2; i1++, i2++) {
-                char c1 = s1.toString().charAt(i1);
-                char c2 = s2.toString().charAt(i2);
-                if (c1 != c2) {
-                    c1 = Character.toUpperCase(c1);
-                    c2 = Character.toUpperCase(c2);
+            if (Village.getOrderType() == ORDER_ALPHABETICALLY) {
+                int n1 = s1.toString().length(), n2 = s2.toString().length();
+                for (int i1 = 0, i2 = 0; i1 < n1 && i2 < n2; i1++, i2++) {
+                    char c1 = s1.toString().charAt(i1);
+                    char c2 = s2.toString().charAt(i2);
                     if (c1 != c2) {
-                        c1 = Character.toLowerCase(c1);
-                        c2 = Character.toLowerCase(c2);
+                        c1 = Character.toUpperCase(c1);
+                        c2 = Character.toUpperCase(c2);
                         if (c1 != c2) {
-                            return c1 - c2;
+                            c1 = Character.toLowerCase(c1);
+                            c2 = Character.toLowerCase(c2);
+                            if (c1 != c2) {
+                                return c1 - c2;
+                            }
                         }
                     }
                 }
+                return n1 - n2;
+            } else {
+                return s1.compareTo(s2);
             }
-            return n1 - n2;
         }
     }
 }

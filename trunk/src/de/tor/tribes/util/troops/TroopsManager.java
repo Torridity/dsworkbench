@@ -78,7 +78,6 @@ public class TroopsManager {
     }
 
     public VillageTroopsHolder getTroopsForVillage(Village pVillage) {
-        // System.out.println("Getting troops for " + pVillage + "(" + mTroopsTable.get(pVillage) + ")");
         return mTroops.get(pVillage);
     }
 
@@ -99,7 +98,7 @@ public class TroopsManager {
         l.add(new Double(holder.getDefArcherValue()));
 
         Collections.sort(l);
-        
+
         double max = l.get(3);
         if (max == holder.getOffValue()) {
             return mTroopMarkImages.get(0);

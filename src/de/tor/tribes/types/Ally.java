@@ -33,8 +33,9 @@ public class Ally implements Serializable, Comparable {
     private int all_points = 0;
     private int rank = 0;
     private transient List<Tribe> tribes = null;
-
+    private String stringRepresentation = null;
     //$id, $name, $tag, $members, $villages, $points, $all_points, $rank
+
     public static Ally parseFromPlainData(String pLine) {
         StringTokenizer tokenizer = new StringTokenizer(pLine, ",");
         Ally entry = new Ally();
@@ -45,13 +46,13 @@ public class Ally implements Serializable, Comparable {
         try {
             entry.setId(Integer.parseInt(tokenizer.nextToken()));
             String name = URLDecoder.decode(tokenizer.nextToken(), "UTF-8");
-           /* if ((name == null) || (name.trim().length() == 0)) {
-                throw new Exception();
+            /* if ((name == null) || (name.trim().length() == 0)) {
+            throw new Exception();
             }*/
             entry.setName(name);
             String tag = URLDecoder.decode(tokenizer.nextToken(), "UTF-8");
-           /* if ((tag == null) || (tag.trim().length() == 0)) {
-                throw new Exception();
+            /* if ((tag == null) || (tag.trim().length() == 0)) {
+            throw new Exception();
             }*/
 
             entry.setTag(tag);
@@ -162,6 +163,7 @@ public class Ally implements Serializable, Comparable {
 
     public void setName(String name) {
         this.name = name;
+        stringRepresentation = null;
     }
 
     public String getTag() {
@@ -170,6 +172,7 @@ public class Ally implements Serializable, Comparable {
 
     public void setTag(String tag) {
         this.tag = tag;
+        stringRepresentation = null;
     }
 
     public short getMembers() {
@@ -229,16 +232,33 @@ public class Ally implements Serializable, Comparable {
     }
 
     public String getHTMLInfo() {
+        StringBuffer b = new StringBuffer();
+
         NumberFormat nf = NumberFormat.getInstance();
-        String allyInfo = "<html><b>Stamm (Tag):</b> " + getName() + " (" + getTag() + ")";
-        allyInfo += " <b>Punkte (Rang):</b> " + nf.format(getPoints()) + " (" + nf.format(getRank()) + ")";
-        allyInfo += " <b>Member (Dörfer):</b> " + nf.format(getMembers()) + " (" + nf.format(getVillages()) + ")</html>";
-        return allyInfo;
+        b.append("<html><b>Stamm (Tag):</b> ");
+        b.append(getName());
+        b.append(" (");
+        b.append(getTag());
+        b.append(")");
+        b.append(" <b>Punkte (Rang):</b> ");
+        b.append(nf.format(getPoints()));
+        b.append(" (");
+        b.append(nf.format(getRank()));
+        b.append(")");
+        b.append(" <b>Member (Dörfer):</b> ");
+        b.append(nf.format(getMembers()));
+        b.append(" (");
+        b.append(nf.format(getVillages()));
+        b.append(")</html>");
+        return b.toString();
     }
 
     @Override
     public String toString() {
-        return getName() + " (" + getTag() + ")";
+        if (stringRepresentation == null) {
+            stringRepresentation = getName() + " (" + getTag() + ")";
+        }
+        return stringRepresentation;
     }
 
     public String toBBCode() {
@@ -359,8 +379,8 @@ public class Ally implements Serializable, Comparable {
 
 
 
-            int n1 = s1.toString().length(), n2 = s2.toString().length();
-            for (int i1 = 0, i2 = 0; i1 < n1 && i2 < n2; i1++, i2++) {
+            int n1 = s1.toString().length(),     n2 = s2.toString().length();
+            for (int i1 = 0,     i2 = 0; i1 < n1 && i2 < n2; i1++, i2++) {
                 char c1 = s1.toString().charAt(i1);
                 char c2 = s2.toString().charAt(i2);
                 if (c1 != c2) {

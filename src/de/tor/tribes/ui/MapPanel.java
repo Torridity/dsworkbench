@@ -519,7 +519,7 @@ public class MapPanel extends javax.swing.JPanel {
             mX = pX;
             mY = pY;
             mRepaintThread.setCoordinates(mX, mY);
-            //mRepaintThread.setMustDrawBackground();
+        //mRepaintThread.setMustDrawBackground();
         }
     }
 
@@ -579,7 +579,7 @@ class RepaintThread extends Thread {
     private static Logger logger = Logger.getLogger(RepaintThread.class);
     private Village[][] mVisibleVillages = null;
     private BufferedImage mBuffer = null;
-  //  private BufferedImage mBackground = null;
+    //  private BufferedImage mBackground = null;
     private int iVillagesX = 0;
     private int iVillagesY = 0;
     private int iX = 500;
@@ -590,8 +590,7 @@ class RepaintThread extends Thread {
     private BufferedImage mDistBorder = null;
     private Image mMarkerImage = null;
     private final NumberFormat nf = NumberFormat.getInstance();
-  //  private boolean mustDrawBackground = true;
-
+    //  private boolean mustDrawBackground = true;
     public RepaintThread(int pX, int pY) {
         mVisibleVillages = new Village[iVillagesX][iVillagesY];
         setCoordinates(pX, pY);
@@ -612,21 +611,20 @@ class RepaintThread extends Thread {
     }
 
     /*public void setMustDrawBackground() {
-        mustDrawBackground = true;
+    mustDrawBackground = true;
     }*/
-
     @Override
     public void run() {
         while (true) {
             try {
-              //  long s = System.currentTimeMillis();
+                //  long s = System.currentTimeMillis();
                 updateMap(iX, iY);
-              //  mustDrawBackground = false;
-              //  System.out.println("Dur " + (System.currentTimeMillis() - s));
+                //  mustDrawBackground = false;
+                //  System.out.println("Dur " + (System.currentTimeMillis() - s));
                 if (mBuffer != null) {
                     Image iBuffer = MapPanel.getSingleton().createImage(mBuffer.getWidth(), mBuffer.getHeight());
                     Graphics2D g2d = (Graphics2D) iBuffer.getGraphics();
-                   // g2d.drawImage(mBackground, null, 0, 0);
+                    // g2d.drawImage(mBackground, null, 0, 0);
                     g2d.drawImage(mBuffer, null, 0, 0);
                     g2d.dispose();
                     //mBuffer = null;
@@ -635,7 +633,7 @@ class RepaintThread extends Thread {
                 }
             } catch (Throwable t) {
                 logger.error("Redrawing map failed", t);
-              //  mustDrawBackground = true;
+            //  mustDrawBackground = true;
             }
             try {
                 Thread.sleep(80);
@@ -732,7 +730,7 @@ class RepaintThread extends Thread {
         }
         mBuffer = new BufferedImage(wb, hb, BufferedImage.TYPE_INT_ARGB);
         /*if (mBackground == null) {
-            mBackground = new BufferedImage(wb, hb, BufferedImage.TYPE_INT_RGB);
+        mBackground = new BufferedImage(wb, hb, BufferedImage.TYPE_INT_RGB);
         }*/
         g2d = (Graphics2D) mBuffer.getGraphics();
         //g2d = (Graphics2D) mBackground.getGraphics();
@@ -881,157 +879,157 @@ class RepaintThread extends Thread {
 
                 // <editor-fold defaultstate="collapsed" desc="Village drawing">
 
-              //  if (mustDrawBackground) {
-                    if (v == null) {
-                        Image underground = null;
-                        if (useDecoration) {
-                            underground = WorldDecorationHolder.getTexture(xPos, yPos, DSWorkbenchMainFrame.getSingleton().getZoomFactor());
+                //  if (mustDrawBackground) {
+                if (v == null) {
+                    Image underground = null;
+                    if (useDecoration) {
+                        underground = WorldDecorationHolder.getTexture(xPos, yPos, DSWorkbenchMainFrame.getSingleton().getZoomFactor());
+                    }
+                    if (underground == null) {
+                        //either no decoration used or map part is outside map bounds
+                        underground = GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, DSWorkbenchMainFrame.getSingleton().getZoomFactor());
+                    }
+                    g2d.drawImage(underground, x, y, null);
+
+                } else {
+                    if ((marker != null) && (drawVillage)) {
+                        boolean isLeft = false;
+                        if (v.getTribe() == null) {
+                            isLeft = true;
                         }
-                        if (underground == null) {
-                            //either no decoration used or map part is outside map bounds
-                            underground = GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, DSWorkbenchMainFrame.getSingleton().getZoomFactor());
-                        }
-                        g2d.drawImage(underground, x, y, null);
 
-                    } else {
-                        if ((marker != null) && (drawVillage)) {
-                            boolean isLeft = false;
-                            if (v.getTribe() == null) {
-                                isLeft = true;
-                            }
+                        if (v.getPoints() < 300) {
+                            if (!isLeft) {
+                                //changed
+                                Image img = GlobalOptions.getSkin().getImage(Skin.ID_V1, DSWorkbenchMainFrame.getSingleton().getZoomFactor());
 
-                            if (v.getPoints() < 300) {
-                                if (!isLeft) {
-                                    //changed
-                                    Image img = GlobalOptions.getSkin().getImage(Skin.ID_V1, DSWorkbenchMainFrame.getSingleton().getZoomFactor());
+                                if (v.getType() != 0) {
+                                    img = GlobalOptions.getSkin().getImage(Skin.ID_B1, DSWorkbenchMainFrame.getSingleton().getZoomFactor());
 
-                                    if (v.getType() != 0) {
-                                        img = GlobalOptions.getSkin().getImage(Skin.ID_B1, DSWorkbenchMainFrame.getSingleton().getZoomFactor());
-
-                                    }
-                                    g2d.setColor(marker);
-                                    g2d.fillRect(x, y, img.getWidth(null), img.getHeight(null));
-                                    g2d.drawImage(img, x, y, null);
-                                } else {
-                                    if (v.getType() == 0) {
-                                        g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_V1_LEFT, DSWorkbenchMainFrame.getSingleton().getZoomFactor()), x, y, null);
-                                    } else {
-                                        g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_B1_LEFT, DSWorkbenchMainFrame.getSingleton().getZoomFactor()), x, y, null);
-                                    }
                                 }
-                            } else if (v.getPoints() < 1000) {
-                                if (!isLeft) {
-                                    Image img = GlobalOptions.getSkin().getImage(Skin.ID_V2, DSWorkbenchMainFrame.getSingleton().getZoomFactor());
-                                    if (v.getType() != 0) {
-                                        img = GlobalOptions.getSkin().getImage(Skin.ID_B2, DSWorkbenchMainFrame.getSingleton().getZoomFactor());
-                                    }
-                                    g2d.setColor(marker);
-                                    g2d.fillRect(x, y, img.getWidth(null), img.getHeight(null));
-                                    g2d.drawImage(img, x, y, null);
-                                } else {
-                                    if (v.getType() == 0) {
-                                        g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_V2_LEFT, DSWorkbenchMainFrame.getSingleton().getZoomFactor()), x, y, null);
-                                    } else {
-                                        g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_B2_LEFT, DSWorkbenchMainFrame.getSingleton().getZoomFactor()), x, y, null);
-                                    }
-                                }
-                            } else if (v.getPoints() < 3000) {
-                                if (!isLeft) {
-                                    Image img = GlobalOptions.getSkin().getImage(Skin.ID_V3, DSWorkbenchMainFrame.getSingleton().getZoomFactor());
-                                    if (v.getType() != 0) {
-                                        img = GlobalOptions.getSkin().getImage(Skin.ID_B3, DSWorkbenchMainFrame.getSingleton().getZoomFactor());
-                                    }
-                                    g2d.setColor(marker);
-                                    g2d.fillRect(x, y, img.getWidth(null), img.getHeight(null));
-                                    g2d.drawImage(img, x, y, null);
-                                } else {
-                                    if (v.getType() == 0) {
-                                        g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_V3_LEFT, DSWorkbenchMainFrame.getSingleton().getZoomFactor()), x, y, null);
-                                    } else {
-                                        g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_B3_LEFT, DSWorkbenchMainFrame.getSingleton().getZoomFactor()), x, y, null);
-                                    }
-                                }
-                            } else if (v.getPoints() < 9000) {
-                                if (!isLeft) {
-                                    Image img = GlobalOptions.getSkin().getImage(Skin.ID_V4, DSWorkbenchMainFrame.getSingleton().getZoomFactor());
-                                    if (v.getType() != 0) {
-                                        img = GlobalOptions.getSkin().getImage(Skin.ID_B4, DSWorkbenchMainFrame.getSingleton().getZoomFactor());
-                                    }
-                                    g2d.setColor(marker);
-                                    g2d.fillRect(x, y, img.getWidth(null), img.getHeight(null));
-                                    g2d.drawImage(img, x, y, null);
-                                } else {
-                                    if (v.getType() == 0) {
-                                        g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_V4_LEFT, DSWorkbenchMainFrame.getSingleton().getZoomFactor()), x, y, null);
-                                    } else {
-                                        g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_B4_LEFT, DSWorkbenchMainFrame.getSingleton().getZoomFactor()), x, y, null);
-                                    }
-                                }
-                            } else if (v.getPoints() < 11000) {
-                                if (!isLeft) {
-                                    Image img = GlobalOptions.getSkin().getImage(Skin.ID_V5, DSWorkbenchMainFrame.getSingleton().getZoomFactor());
-                                    if (v.getType() != 0) {
-                                        img = GlobalOptions.getSkin().getImage(Skin.ID_B5, DSWorkbenchMainFrame.getSingleton().getZoomFactor());
-                                    }
-                                    g2d.setColor(marker);
-                                    g2d.fillRect(x, y, img.getWidth(null), img.getHeight(null));
-                                    g2d.drawImage(img, x, y, null);
-                                } else {
-                                    if (v.getType() == 0) {
-                                        g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_V5_LEFT, DSWorkbenchMainFrame.getSingleton().getZoomFactor()), x, y, null);
-                                    } else {
-                                        g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_B5_LEFT, DSWorkbenchMainFrame.getSingleton().getZoomFactor()), x, y, null);
-                                    }
-                                }
+                                g2d.setColor(marker);
+                                g2d.fillRect(x, y, img.getWidth(null), img.getHeight(null));
+                                g2d.drawImage(img, x, y, null);
                             } else {
-                                if (!isLeft) {
-                                    Image img = GlobalOptions.getSkin().getImage(Skin.ID_V6, DSWorkbenchMainFrame.getSingleton().getZoomFactor());
-                                    if (v.getType() != 0) {
-                                        img = GlobalOptions.getSkin().getImage(Skin.ID_B6, DSWorkbenchMainFrame.getSingleton().getZoomFactor());
-                                    }
-                                    g2d.setColor(marker);
-                                    g2d.fillRect(x, y, img.getWidth(null), img.getHeight(null));
-                                    g2d.drawImage(img, x, y, null);
+                                if (v.getType() == 0) {
+                                    g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_V1_LEFT, DSWorkbenchMainFrame.getSingleton().getZoomFactor()), x, y, null);
                                 } else {
-                                    if (v.getType() == 0) {
-                                        g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_V6_LEFT, DSWorkbenchMainFrame.getSingleton().getZoomFactor()), x, y, null);
-                                    } else {
-                                        g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_B6_LEFT, DSWorkbenchMainFrame.getSingleton().getZoomFactor()), x, y, null);
-                                    }
+                                    g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_B1_LEFT, DSWorkbenchMainFrame.getSingleton().getZoomFactor()), x, y, null);
                                 }
                             }
-
-                            /*                        if ((TagManager.getSingleton().getTags(v) != null) &&
-                            (!TagManager.getSingleton().getTags(v).isEmpty())) {
-                            int xc = x + (int) Math.round(width / 2);
-                            int yc = y + (int) Math.round(height / 2);
-                            tagIconPoints.put(v, new Point(xc - 10, yc - 10));
-                            }
-                             */
-
-                            if (markTroopTypes) {
-                                Image troopMark = TroopsManager.getSingleton().getTroopsMarkerForVillage(v);
-                                if (troopMark != null) {
-                                    Point center = new Point(x + (int) Math.round(width / 2), y + (int) Math.round(height / 2));
-                                    troopMarkPoints.put(center, troopMark);
+                        } else if (v.getPoints() < 1000) {
+                            if (!isLeft) {
+                                Image img = GlobalOptions.getSkin().getImage(Skin.ID_V2, DSWorkbenchMainFrame.getSingleton().getZoomFactor());
+                                if (v.getType() != 0) {
+                                    img = GlobalOptions.getSkin().getImage(Skin.ID_B2, DSWorkbenchMainFrame.getSingleton().getZoomFactor());
+                                }
+                                g2d.setColor(marker);
+                                g2d.fillRect(x, y, img.getWidth(null), img.getHeight(null));
+                                g2d.drawImage(img, x, y, null);
+                            } else {
+                                if (v.getType() == 0) {
+                                    g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_V2_LEFT, DSWorkbenchMainFrame.getSingleton().getZoomFactor()), x, y, null);
+                                } else {
+                                    g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_B2_LEFT, DSWorkbenchMainFrame.getSingleton().getZoomFactor()), x, y, null);
                                 }
                             }
-
-                            if (markActiveVillage) {
-                                Village current = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage();
-                                if (current != null) {
-                                    if (v.compareTo(current) == 0) {
-                                        markX = x + (int) Math.round(width / 2);
-                                        markY = y + (int) Math.round(height / 2);
-                                    }
+                        } else if (v.getPoints() < 3000) {
+                            if (!isLeft) {
+                                Image img = GlobalOptions.getSkin().getImage(Skin.ID_V3, DSWorkbenchMainFrame.getSingleton().getZoomFactor());
+                                if (v.getType() != 0) {
+                                    img = GlobalOptions.getSkin().getImage(Skin.ID_B3, DSWorkbenchMainFrame.getSingleton().getZoomFactor());
+                                }
+                                g2d.setColor(marker);
+                                g2d.fillRect(x, y, img.getWidth(null), img.getHeight(null));
+                                g2d.drawImage(img, x, y, null);
+                            } else {
+                                if (v.getType() == 0) {
+                                    g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_V3_LEFT, DSWorkbenchMainFrame.getSingleton().getZoomFactor()), x, y, null);
+                                } else {
+                                    g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_B3_LEFT, DSWorkbenchMainFrame.getSingleton().getZoomFactor()), x, y, null);
+                                }
+                            }
+                        } else if (v.getPoints() < 9000) {
+                            if (!isLeft) {
+                                Image img = GlobalOptions.getSkin().getImage(Skin.ID_V4, DSWorkbenchMainFrame.getSingleton().getZoomFactor());
+                                if (v.getType() != 0) {
+                                    img = GlobalOptions.getSkin().getImage(Skin.ID_B4, DSWorkbenchMainFrame.getSingleton().getZoomFactor());
+                                }
+                                g2d.setColor(marker);
+                                g2d.fillRect(x, y, img.getWidth(null), img.getHeight(null));
+                                g2d.drawImage(img, x, y, null);
+                            } else {
+                                if (v.getType() == 0) {
+                                    g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_V4_LEFT, DSWorkbenchMainFrame.getSingleton().getZoomFactor()), x, y, null);
+                                } else {
+                                    g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_B4_LEFT, DSWorkbenchMainFrame.getSingleton().getZoomFactor()), x, y, null);
+                                }
+                            }
+                        } else if (v.getPoints() < 11000) {
+                            if (!isLeft) {
+                                Image img = GlobalOptions.getSkin().getImage(Skin.ID_V5, DSWorkbenchMainFrame.getSingleton().getZoomFactor());
+                                if (v.getType() != 0) {
+                                    img = GlobalOptions.getSkin().getImage(Skin.ID_B5, DSWorkbenchMainFrame.getSingleton().getZoomFactor());
+                                }
+                                g2d.setColor(marker);
+                                g2d.fillRect(x, y, img.getWidth(null), img.getHeight(null));
+                                g2d.drawImage(img, x, y, null);
+                            } else {
+                                if (v.getType() == 0) {
+                                    g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_V5_LEFT, DSWorkbenchMainFrame.getSingleton().getZoomFactor()), x, y, null);
+                                } else {
+                                    g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_B5_LEFT, DSWorkbenchMainFrame.getSingleton().getZoomFactor()), x, y, null);
                                 }
                             }
                         } else {
-                            g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, DSWorkbenchMainFrame.getSingleton().getZoomFactor()), x, y, null);
-                            mVisibleVillages[i][j] = null;
+                            if (!isLeft) {
+                                Image img = GlobalOptions.getSkin().getImage(Skin.ID_V6, DSWorkbenchMainFrame.getSingleton().getZoomFactor());
+                                if (v.getType() != 0) {
+                                    img = GlobalOptions.getSkin().getImage(Skin.ID_B6, DSWorkbenchMainFrame.getSingleton().getZoomFactor());
+                                }
+                                g2d.setColor(marker);
+                                g2d.fillRect(x, y, img.getWidth(null), img.getHeight(null));
+                                g2d.drawImage(img, x, y, null);
+                            } else {
+                                if (v.getType() == 0) {
+                                    g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_V6_LEFT, DSWorkbenchMainFrame.getSingleton().getZoomFactor()), x, y, null);
+                                } else {
+                                    g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_B6_LEFT, DSWorkbenchMainFrame.getSingleton().getZoomFactor()), x, y, null);
+                                }
+                            }
                         }
+
+                        /*                        if ((TagManager.getSingleton().getTags(v) != null) &&
+                        (!TagManager.getSingleton().getTags(v).isEmpty())) {
+                        int xc = x + (int) Math.round(width / 2);
+                        int yc = y + (int) Math.round(height / 2);
+                        tagIconPoints.put(v, new Point(xc - 10, yc - 10));
+                        }
+                         */
+
+                        if (markTroopTypes) {
+                            Image troopMark = TroopsManager.getSingleton().getTroopsMarkerForVillage(v);
+                            if (troopMark != null) {
+                                Point center = new Point(x + (int) Math.round(width / 2), y + (int) Math.round(height / 2));
+                                troopMarkPoints.put(center, troopMark);
+                            }
+                        }
+
+                        if (markActiveVillage) {
+                            Village current = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage();
+                            if (current != null) {
+                                if (v.compareTo(current) == 0) {
+                                    markX = x + (int) Math.round(width / 2);
+                                    markY = y + (int) Math.round(height / 2);
+                                }
+                            }
+                        }
+                    } else {
+                        g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, DSWorkbenchMainFrame.getSingleton().getZoomFactor()), x, y, null);
+                        mVisibleVillages[i][j] = null;
                     }
-             //   }
+                }
+                //   }
                 //</editor-fold>
 
                 y += height;
@@ -1358,7 +1356,7 @@ class RepaintThread extends Thread {
         // </editor-fold>
 
         g2d.dispose();
-        //g2df.dispose();
+    //g2df.dispose();
     }
     /*
     private void showVillageInfo(Graphics g2d) {

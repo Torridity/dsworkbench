@@ -5,13 +5,12 @@
  */
 package de.tor.tribes.ui;
 
-import java.awt.geom.Line2D;
-import java.awt.geom.Point2D;
+import de.tor.tribes.util.SystrayManager;
+import java.awt.SystemTray;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
-import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
 /**
@@ -23,7 +22,7 @@ public class TestFrame extends javax.swing.JFrame {
     /** Creates new form TestFrame */
     public TestFrame() {
         initComponents();
-        System.getProperties().put("proxySet", "true");
+        /*System.getProperties().put("proxySet", "true");
         System.getProperties().put("proxyHost", "proxy.fzk.de");
         System.getProperties().put("proxyPort", "8000");
         jEditorPane1.setContentType("text/html");
@@ -33,9 +32,12 @@ public class TestFrame extends javax.swing.JFrame {
             jEditorPane1.setPage(url);
         } catch (Exception e) {
             e.printStackTrace();
-        }
+        }*/
         frameControlPanel1.setupPanel(this, true, true);
         frameControlPanel1.setTitle("Test Frame with title and laberzeug und so weiet damit es lang");
+
+        SystrayManager.notifyOnAttacks(5);
+      SystrayManager.notifyOnAttacks(5);
     }
 
     /** This method is called from within the constructor to
@@ -109,46 +111,16 @@ public class TestFrame extends javax.swing.JFrame {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
         }
-        /*java.awt.EventQueue.invokeLater(new Runnable() {
+        java.awt.EventQueue.invokeLater(new Runnable() {
         
         public void run() {
         new TestFrame().setVisible(true);
         }
-        });*/
+        });
 
-        Line2D.Double l1 = new Line2D.Double(0, 0, 0, -100);
-        Line2D.Double l2 = new Line2D.Double(-20, -30, 10, -20);
-        Point2D.Double p1 = new Point2D.Double();
-        long s = System.currentTimeMillis();
-        System.out.println(getLineLineIntersection(l1, l2, p1));
-        System.out.println(p1);
-        System.out.println("T " + (System.currentTimeMillis() - s));
+        
     }
 
-    static boolean getLineLineIntersection(Line2D.Double l1,
-            Line2D.Double l2,
-            Point2D.Double intersection) {
-        if (!l1.intersectsLine(l2)) {
-            return false;
-        }
-        double x1 = l1.getX1(), y1 = l1.getY1(),
-                x2 = l1.getX2(), y2 = l1.getY2(),
-                x3 = l2.getX1(), y3 = l2.getY1(),
-                x4 = l2.getX2(), y4 = l2.getY2();
-
-        intersection.x = det(det(x1, y1, x2, y2), x1 - x2,
-                det(x3, y3, x4, y4), x3 - x4) /
-                det(x1 - x2, y1 - y2, x3 - x4, y3 - y4);
-        intersection.y = det(det(x1, y1, x2, y2), y1 - y2,
-                det(x3, y3, x4, y4), y3 - y4) /
-                det(x1 - x2, y1 - y2, x3 - x4, y3 - y4);
-
-        return true;
-    }
-
-    static double det(double a, double b, double c, double d) {
-        return a * d - b * c;
-    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private de.tor.tribes.ui.FrameControlPanel frameControlPanel1;
     private javax.swing.JEditorPane jEditorPane1;

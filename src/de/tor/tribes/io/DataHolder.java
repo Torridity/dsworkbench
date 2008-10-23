@@ -163,7 +163,7 @@ public class DataHolder {
             try {
                 boolean recreateLocal = false;
                 //check if download was requested
-                if (pReload) {
+                if (pReload && !GlobalOptions.isOfflineMode()) {
                     //completely reload data
                     fireDataHolderEvents("Daten werden heruntergeladen...");
                     //try to download

@@ -108,7 +108,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
         } catch (Exception e) {
             checkForUpdates = false;
         }
-        if (checkForUpdates) {
+        if (checkForUpdates && !GlobalOptions.isOfflineMode()) {
             String selectedServer = GlobalOptions.getProperty("default.server");
             String name = GlobalOptions.getProperty("account.name");
             String password = GlobalOptions.getProperty("account.password");
@@ -149,8 +149,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
             if (version > 0 && version > Constants.VERSION) {
                 SystrayManager.notifyOnUpdate(version);
             }
-            
-                SystrayManager.notifyOnAttacks(5);
+              //  SystrayManager.notifyOnAttacks(5);
         } catch (Throwable th) {
             logger.fatal("Fatal error while running DS Workbench", th);
             JOptionPane.showMessageDialog(self, "Ein schwerwiegender Fehler ist aufgetreten.\nMöglicherweise ist deine DS Workbench Installation defekt. Bitte kontaktiere den Entwickler.", "Fehler", JOptionPane.ERROR_MESSAGE);

@@ -220,6 +220,13 @@ public class DatabaseInterface {
         } catch (Exception e) {
             //typecast or connection failed 
             logger.error("Failed checking user. Result is " + result);
+            try {
+                if ((Integer) result == -1) {
+                    return ID_WEB_CONNECTION_FAILED;
+                }
+            } catch (Exception cc) {
+                //result is no integer
+            }
         }
         return ID_UNKNOWN_ERROR;
     }

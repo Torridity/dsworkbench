@@ -32,6 +32,7 @@ import javax.swing.table.DefaultTableModel;
 import org.apache.log4j.Logger;
 import de.tor.tribes.ui.renderer.ColorCellRenderer;
 import de.tor.tribes.io.UnitHolder;
+import de.tor.tribes.php.DatabaseInterface;
 import de.tor.tribes.ui.editors.ColorChooserCellEditor;
 import de.tor.tribes.util.ServerChangeListener;
 import de.tor.tribes.types.Tag;
@@ -1419,6 +1420,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             if ((jProxyUser.getText().length() >= 1) && (jProxyPassword.getPassword().length > 1)) {
                 Authenticator.setDefault(new Authenticator() {
 
+                    @Override
                     protected PasswordAuthentication getPasswordAuthentication() {
                         return new PasswordAuthentication(jProxyUser.getText(), jProxyPassword.getPassword());
                     }
@@ -1436,47 +1438,41 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             Authenticator.setDefault(null);
             webProxy = Proxy.NO_PROXY;
         }
-        /*      if (jDirectConnectOption.isSelected()) {
-        System.getProperties().put("proxySet", "false");
-        System.getProperties().put("proxyHost", "");
-        System.getProperties().put("proxyPort", "");
-        GlobalOptions.addProperty("proxySet", Boolean.toString(false));
-        GlobalOptions.addProperty("proxyHost", "");
-        GlobalOptions.addProperty("proxyPort", "");
-        } else {
-        System.getProperties().put("proxySet", "true");
-        System.getProperties().put("proxyHost", jProxyHost.getText());
-        System.getProperties().put("proxyPort", jProxyPort.getText());
-        GlobalOptions.addProperty("proxySet", Boolean.toString(true));
-        GlobalOptions.addProperty("proxyHost", jProxyHost.getText());
-        GlobalOptions.addProperty("proxyPort", jProxyPort.getText());
-        }
-         */
+
         GlobalOptions.saveProperties();
 
         checkConnectivity();
 
-        if (GlobalOptions.isOfflineMode()) {
-            JOptionPane.showMessageDialog(this, "Verbindung zur Webseite konnte nicht hergestellt werden.\n" +
-                    "Bitte überprüfe deine Netzwerkeinstellungen und deiner Verbindung zum Internet.\n" +
-                    "Sollte beides korrekt und funktionsfähig sein, dann gibt es momentan Probleme mit der Webseite.\n" +
-                    "Versuch es in diesem Fall bitte später noch einmal", "Fehler", JOptionPane.ERROR_MESSAGE);
-        }
+        boolean offlineBefore = GlobalOptions.isOfflineMode();
 
         if (!updateServerList()) {
-            //remote update failed and no local servers found
+            //fully failed --> remote update failed and no local servers found
             String message = "Serverliste konnte nicht geladen werden.\n" +
                     "Mögliche Ursachen sind fehlerhafte Netzwerkeinstellungen oder keine Verbindung zum Internet.\n" +
                     "Da noch kein Datenabgleich mit dem Server stattgefunden hat " +
                     "korrigiere bitte deine Netzwerkeinstellungen um diesen einmalig durchzuführen.";
             JOptionPane.showMessageDialog(this, message, "Warnung", JOptionPane.WARNING_MESSAGE);
-        } else if (GlobalOptions.isOfflineMode()) {
-            //remote update failed but local servers found
-            String message = "Serverliste konnte nicht geladen werden.\n" +
-                    "Mögliche Ursachen sind fehlerhafte Netzwerkeinstellungen oder keine Verbindung zum Internet.\n" +
-                    "Da bereits Serverdaten auf deiner Festplatte existieren, wechselt DS Workbench in den Offline-Modus.\n" +
-                    "Um Online-Funktionen zu nutzen korrigieren bitte später deine Netzwerkeinstellungen oder verbinde dich mit dem Internet.";
-            JOptionPane.showMessageDialog(this, message, "Warnung", JOptionPane.WARNING_MESSAGE);
+        } else {
+            String message = null;
+            String title = "Fehler";
+            int type = JOptionPane.ERROR_MESSAGE;
+            if (offlineBefore) {
+                //was offline before checking serverlist
+                message = "Die Prüfung der Verbindung zum Internet ist fehlgeschlagen.\n" +
+                        "Da du bereits Serverdaten besitzt werden diese verwendet. Für ein Update\n" +
+                        "prüfe bitte erneut deine Verbindung zum Internet und deine Netzwerkeinstellungen.";
+            } else if (GlobalOptions.isOfflineMode()) {
+                //get offline while checking serverlist
+                message = "Die Prüfung der Verbindung zum Internet war erfolgreich,\n" +
+                        "es konnte dennoch keine aktuelle Serverliste heruntergeladen werden.\n" +
+                        "Bitte versuch es später noch einmal.";
+            } else {
+                //success
+                message = "Verbindung erfolgreich hergestellt.";
+                title = "Information";
+                type = JOptionPane.INFORMATION_MESSAGE;
+            }
+            JOptionPane.showMessageDialog(this, message, title, type);
         }
 
         DSWorkbenchMainFrame.getSingleton().onlineStateChanged();
@@ -1608,9 +1604,13 @@ private void fireCreateAccountEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
 }//GEN-LAST:event_fireCreateAccountEvent
 
 private void fireLoginIntoAccountEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireLoginIntoAccountEvent
+    if (GlobalOptions.isOfflineMode()) {
+        JOptionPane.showMessageDialog(this, "Du befindest dich im Offline Modus.\n" +
+                "Bitte korrigiere deine Netzwerkeinstellungen und versuche es erneut.", "Offline Modus", JOptionPane.INFORMATION_MESSAGE);
+        return;
+    }
     String name = jAccountName.getText();
     String password = new String(jAccountPassword.getPassword());
-
     if ((name != null) && (password != null)) {
         int ret = DatabaseAdapter.checkUser(name, password);
         if (ret == DatabaseAdapter.ID_SUCCESS) {
@@ -1619,11 +1619,13 @@ private void fireLoginIntoAccountEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
             GlobalOptions.saveProperties();
             JOptionPane.showMessageDialog(this, "Account erfolgreich überprüft.", "Information", JOptionPane.INFORMATION_MESSAGE);
         } else if (ret == DatabaseAdapter.ID_CONNECTION_FAILED) {
-            JOptionPane.showMessageDialog(this, "Keine Verbindung zur Datenbank.\nBitte überprüfe deine Netzwerkeinstellungen.", "Fehler", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Keine Verbindung zur Datenbank.", "Fehler", JOptionPane.ERROR_MESSAGE);
         } else if (ret == DatabaseAdapter.ID_USER_NOT_EXIST) {
             JOptionPane.showMessageDialog(this, "Der Benutzer '" + name + "' existiert nicht.\nBitte erstelle zuerst einen Account.", "Information", JOptionPane.INFORMATION_MESSAGE);
         } else if (ret == DatabaseAdapter.ID_WRONG_PASSWORD) {
             JOptionPane.showMessageDialog(this, "Das eingegebene Passwort ist falsch.\nBitte überprüfe die Eingaben.", "Fehler", JOptionPane.ERROR_MESSAGE);
+        } else if (ret == DatabaseInterface.ID_WEB_CONNECTION_FAILED) {
+            JOptionPane.showMessageDialog(this, "Es konnte keine Verbindung mit dem Server hergestellt werden.\nBitte überprüfe deine Netzwerkeinstellungen.", "Fehler", JOptionPane.ERROR_MESSAGE);
         } else if (ret == DatabaseAdapter.ID_UNKNOWN_ERROR) {
             JOptionPane.showMessageDialog(this, "Ein unbekannter Fehler ist aufgetreten.", "Fehler", JOptionPane.ERROR_MESSAGE);
         }
@@ -1715,7 +1717,6 @@ private void fireDownloadDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
             // </editor-fold>
 
             // <editor-fold defaultstate="collapsed" desc=" Account valid, data outdated ? ">
-
             String selectedServer = (String) jServerList.getSelectedItem();
             String name = GlobalOptions.getProperty("account.name");
             String password = GlobalOptions.getProperty("account.password");
@@ -2040,10 +2041,11 @@ private void fireChangeDrawDistanceEvent(javax.swing.event.ChangeEvent evt) {//G
         } else {
             logger.warn("DS Workbench is in offline mode. Account checking not possible.");
             int result = JOptionPane.showConfirmDialog(this, "Du befindest dich im Offline-Modus.\n" +
-                    "Eine Accountüberprüfung ist daher nicht möglich. Solange dein Account nicht überprüft ist," +
+                    "Eine Accountüberprüfung ist daher nicht möglich. Solange dein Account nicht überprüft ist, " +
                     "stehen dir Online-Funktionen nicht zur Verfügung.\n" +
-                    "Willst du trotzdem fortfahren?", "Warnung", JOptionPane.INFORMATION_MESSAGE, JOptionPane.YES_NO_OPTION);
-            if (result != JOptionPane.OK_OPTION) {
+                    "Willst du trotzdem fortfahren?", "Warnung", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE);
+            if (result == JOptionPane.YES_OPTION) {
+                //"check settings" pressed
                 UIManager.put("OptionPane.noButtonText", "No");
                 UIManager.put("OptionPane.yesButtonText", "Yes");
                 return false;

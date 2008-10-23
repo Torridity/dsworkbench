@@ -7,6 +7,7 @@ package de.tor.tribes.util;
 import de.tor.tribes.ui.DSWorkbenchAttackFrame;
 import java.awt.AWTException;
 import java.awt.SystemTray;
+import java.awt.Toolkit;
 import java.awt.TrayIcon;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -32,7 +33,7 @@ public class SystrayManager {
     static {
         if (SystemTray.isSupported()) {
             try {
-                ATTACK = new TrayIcon(ImageIO.read(new File("graphics/icons/att.png")));
+                ATTACK = new TrayIcon(Toolkit.getDefaultToolkit().getImage("graphics/icons/att.png"), "Tooltip OK");
                 ATTACK.addMouseListener(new MouseListener() {
 
                     @Override
@@ -100,6 +101,7 @@ public class SystrayManager {
                 });
             } catch (Exception e) {
                 logger.error("Failed to initialize systray manager");
+                e.printStackTrace();
             }
         }
     }
@@ -134,26 +136,35 @@ public class SystrayManager {
             return true;
         } catch (IllegalArgumentException iae) {
             //icon already available
+            iae.printStackTrace();
             return true;
         } catch (AWTException awte) {
             logger.error("Failed to add systray icon. Tray is not visible?");
+            awte.printStackTrace();
         } catch (Exception e) {
             logger.error("Failed to add systray icon", e);
+            e.printStackTrace();
         }
         return false;
     }
 
     public static void notifyOnAttacks(int pCount) {
         if (showIcon(ATTACK)) {
+            //ATTACK.displayMessage("Anstehende Angriffe", "In den kommenden 10 Minuten " + ((pCount == 1) ? "muss 1 Angriff " : "müssen " + pCount + " Angriffe ") + "abgeschickt werden.\n" +
+            //      "Klicke doppelt auf dieses Icon, um die Angriffsübersicht zu öffnen.", TrayIcon.MessageType.WARNING);
+            ATTACK.displayMessage("Test", "test123", TrayIcon.MessageType.NONE);
         }
-        ATTACK.displayMessage("Anstehende Angriffe", "In den kommenden 10 Minuten " + ((pCount == 1) ? "muss 1 Angriff " : "müssen " + pCount + " Angriffe ") + "abgeschickt werden.\n" +
-                "Klicke doppelt auf dieses Icon, um die Angriffsübersicht zu öffnen.", TrayIcon.MessageType.WARNING);
+
     }
 
     public static void notifyOnUpdate(double pVersion) {
         if (showIcon(UPDATE)) {
+            try {
+                UPDATE.displayMessage("Update verfügbar", "Eine neue Version (" + pVersion + ") von DS Workbench ist verfügbar.\nKlicke doppelt auf dieses Icon, um die Webseite zu öffnen.", TrayIcon.MessageType.INFO);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
-        UPDATE.displayMessage("Update verfügbar", "Eine neue Version (" + pVersion + ") von DS Workbench ist verfügbar.\nKlicke doppelt auf dieses Icon, um die Webseite zu öffnen.", TrayIcon.MessageType.INFO);
     }
 
     public static TrayIcon getCurrentIcon() {

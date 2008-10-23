@@ -11,10 +11,17 @@ import de.tor.tribes.util.GlobalOptions;
 import javax.swing.JOptionPane;
 import org.apache.log4j.Logger;
 import de.tor.tribes.io.DataHolderListener;
+import de.tor.tribes.util.BrowserCommandSender;
+import de.tor.tribes.util.Constants;
+import de.tor.tribes.util.SystrayManager;
 import java.awt.Font;
+import java.awt.SystemTray;
+import java.awt.TrayIcon;
+import java.io.File;
 import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.UIManager;
 import org.apache.log4j.Level;
@@ -93,14 +100,15 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
             logger.info("Reading user settings returned error(s)");
             DSWorkbenchSettingsDialog.getSingleton().setVisible(true);
         }
+
         // <editor-fold defaultstate="collapsed" desc=" Check for data updates ">
         boolean checkForUpdates = false;
-        try{
+        try {
             checkForUpdates = Boolean.parseBoolean(GlobalOptions.getProperty("check.updates.on.startup"));
-        }catch(Exception e){
+        } catch (Exception e) {
             checkForUpdates = false;
         }
-        if(checkForUpdates){
+        if (checkForUpdates) {
             String selectedServer = GlobalOptions.getProperty("default.server");
             String name = GlobalOptions.getProperty("account.name");
             String password = GlobalOptions.getProperty("account.password");
@@ -116,11 +124,11 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
                 logger.debug("Server data version is " + serverDataVersion);
                 if (userDataVersion == serverDataVersion) {
                     logger.debug("Skip downloading updates");
-                checkForUpdates = false;    
+                    checkForUpdates = false;
                 }
             }
         }
-        
+
         try {
             DataHolder.getSingleton().loadData(checkForUpdates);
         } catch (Exception e) {
@@ -128,13 +136,21 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
             System.exit(1);
         }
         // </editor-fold>
-        
+
         try {
             DSWorkbenchMainFrame.getSingleton().init();
             logger.info("Showing application window");
             DSWorkbenchMainFrame.getSingleton().setVisible(true);
             t.stopRunning();
             setVisible(false);
+            //check version
+            double version = DatabaseAdapter.getCurrentVersion();
+
+            if (version > 0 && version > Constants.VERSION) {
+                SystrayManager.notifyOnUpdate(version);
+            }
+            
+                SystrayManager.notifyOnAttacks(5);
         } catch (Throwable th) {
             logger.fatal("Fatal error while running DS Workbench", th);
             JOptionPane.showMessageDialog(self, "Ein schwerwiegender Fehler ist aufgetreten.\nMöglicherweise ist deine DS Workbench Installation defekt. Bitte kontaktiere den Entwickler.", "Fehler", JOptionPane.ERROR_MESSAGE);

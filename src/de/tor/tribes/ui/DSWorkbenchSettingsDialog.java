@@ -35,7 +35,9 @@ import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.ui.editors.ColorChooserCellEditor;
 import de.tor.tribes.util.ServerChangeListener;
 import de.tor.tribes.types.Tag;
+import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.models.TagTableModel;
+import de.tor.tribes.util.SystrayManager;
 import java.awt.Component;
 import java.awt.MouseInfo;
 import java.awt.event.ActionListener;
@@ -175,7 +177,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         }
         //</editor-fold>
 
-        // <editor-fold defaultstate="collapsed" desc=" Set setting properties ">
+        // <editor-fold defaultstate="collapsed" desc=" Set properties ">
         //show distances
         try {
             if (Boolean.parseBoolean(GlobalOptions.getProperty("draw.distance"))) {
@@ -249,6 +251,13 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             if (Boolean.parseBoolean(GlobalOptions.getProperty("check.updates.on.startup"))) {
                 jCheckForUpdatesBox.setSelected(true);
             }
+        } catch (Exception e) {
+        }
+        try {
+            int villageOrder = Integer.parseInt(GlobalOptions.getProperty("village.order"));
+            villageOrder = (villageOrder == 0 || villageOrder == 1) ? villageOrder : 0;
+            Village.setOrderType(villageOrder);
+            jVillageSortTypeChooser.setSelectedIndex(villageOrder);
         } catch (Exception e) {
         }
     // </editor-fold>
@@ -516,6 +525,10 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jLabel12 = new javax.swing.JLabel();
         jProxyPassword = new javax.swing.JPasswordField();
         jMiscSettings = new javax.swing.JPanel();
+        jVillageSortTypeChooser = new javax.swing.JComboBox();
+        jLabel13 = new javax.swing.JLabel();
+        jLabel14 = new javax.swing.JLabel();
+        jInfoDuration = new javax.swing.JSpinner();
         jOKButton = new javax.swing.JButton();
         jCancelButton = new javax.swing.JButton();
         jCreateAccountButton = new javax.swing.JButton();
@@ -1283,15 +1296,44 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
 
         jSettingsTabbedPane.addTab(bundle.getString("DSWorkbenchSettingsDialog.jNetworkSettings.TabConstraints.tabTitle"), new javax.swing.ImageIcon(getClass().getResource("/res/proxy.png")), jNetworkSettings); // NOI18N
 
+        jVillageSortTypeChooser.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Alphabetisch", "Nach Koordinaten" }));
+
+        jLabel13.setText(bundle.getString("DSWorkbenchSettingsDialog.jLabel13.text")); // NOI18N
+
+        jLabel14.setText(bundle.getString("DSWorkbenchSettingsDialog.jLabel14.text")); // NOI18N
+
+        jInfoDuration.setModel(new javax.swing.SpinnerNumberModel(10, 5, 60, 1));
+        jInfoDuration.setToolTipText(bundle.getString("DSWorkbenchSettingsDialog.jInfoDuration.toolTipText")); // NOI18N
+
         javax.swing.GroupLayout jMiscSettingsLayout = new javax.swing.GroupLayout(jMiscSettings);
         jMiscSettings.setLayout(jMiscSettingsLayout);
         jMiscSettingsLayout.setHorizontalGroup(
             jMiscSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 560, Short.MAX_VALUE)
+            .addGroup(jMiscSettingsLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jMiscSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(jMiscSettingsLayout.createSequentialGroup()
+                        .addComponent(jLabel13)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jVillageSortTypeChooser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jMiscSettingsLayout.createSequentialGroup()
+                        .addComponent(jLabel14)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jInfoDuration)))
+                .addContainerGap(360, Short.MAX_VALUE))
         );
         jMiscSettingsLayout.setVerticalGroup(
             jMiscSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 387, Short.MAX_VALUE)
+            .addGroup(jMiscSettingsLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jMiscSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel13)
+                    .addComponent(jVillageSortTypeChooser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(17, 17, 17)
+                .addGroup(jMiscSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel14)
+                    .addComponent(jInfoDuration, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(311, Short.MAX_VALUE))
         );
 
         jSettingsTabbedPane.addTab(bundle.getString("DSWorkbenchSettingsDialog.jMiscSettings.TabConstraints.tabTitle"), new javax.swing.ImageIcon(getClass().getResource("/res/checkbox.png")), jMiscSettings); // NOI18N
@@ -1328,7 +1370,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jSettingsTabbedPane, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jSettingsTabbedPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 565, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jCreateAccountButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 276, Short.MAX_VALUE)
@@ -1510,12 +1552,14 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             return;
         }
 
+        /**Validate player settings*/
         String selection = (String) jTribeNames.getSelectedItem();
         if ((selection != null) && (!selection.equals("Bitte wählen"))) {
             logger.debug("Setting default player for server '" + GlobalOptions.getSelectedServer() + "' to " + jTribeNames.getSelectedItem());
             GlobalOptions.addProperty("player." + GlobalOptions.getSelectedServer(), selection);
         }
 
+        /**Update attack vector colors*/
         DefaultTableModel model = ((DefaultTableModel) jAttackColorTable.getModel());
         for (int i = 0; i < model.getRowCount(); i++) {
             String unit = ((UnitHolder) model.getValueAt(i, 0)).getName();
@@ -1525,6 +1569,11 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             GlobalOptions.addProperty(unit + ".color", hexCol);
         }
 
+        /**Validate misc properties*/
+        int sortType = jVillageSortTypeChooser.getSelectedIndex();
+        Village.setOrderType(sortType);
+        GlobalOptions.addProperty("village.order", Integer.toString(sortType));
+        GlobalOptions.addProperty("info.duration", Integer.toString((Integer) jInfoDuration.getValue()));
         GlobalOptions.saveProperties();
         if (!checkSettings()) {
             return;
@@ -1926,7 +1975,7 @@ private void fireChangeDrawDistanceEvent(javax.swing.event.ChangeEvent evt) {//G
             message += "Diese Einstellungen sind für einen korrekten Ablauf zwingend notwendig.";
             UIManager.put("OptionPane.noButtonText", "Beenden");
             UIManager.put("OptionPane.yesButtonText", "Korrigieren");
-            
+
             if (JOptionPane.showConfirmDialog(this, message, "Warnung", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.NO_OPTION) {
                 logger.error("Player/Server settings incorrect. User requested application to terminate");
                 System.exit(1);
@@ -2091,10 +2140,13 @@ private void fireChangeDrawDistanceEvent(javax.swing.event.ChangeEvent evt) {//G
     private javax.swing.JButton jDownloadDataButton;
     private javax.swing.JCheckBox jDrawAttacksByDefaultBox;
     private javax.swing.JComboBox jGraphicPacks;
+    private javax.swing.JSpinner jInfoDuration;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -2152,6 +2204,7 @@ private void fireChangeDrawDistanceEvent(javax.swing.event.ChangeEvent evt) {//G
     private javax.swing.JPanel jTagsSettings;
     private javax.swing.JComboBox jTribeNames;
     private javax.swing.JCheckBox jTroopsTypeBox;
+    private javax.swing.JComboBox jVillageSortTypeChooser;
     // End of variables declaration//GEN-END:variables
 }
 

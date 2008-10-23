@@ -7,19 +7,9 @@ package de.tor.tribes.db;
 import de.tor.tribes.php.DatabaseInterface;
 import de.tor.tribes.sec.SecurityAdapter;
 import de.tor.tribes.util.Constants;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
@@ -453,6 +443,14 @@ public class DatabaseAdapter {
             return ID_VERSION_NOT_ALLOWED;
         }
         return ID_SUCCESS;
+    }
+
+    public static double getCurrentVersion() {
+        try {
+            return Double.parseDouble(DatabaseInterface.getProperty("current_version"));
+        } catch (Exception e) {
+            return ID_UNKNOWN_ERROR;
+        }
     }
 
     /**Returns the current server time in milliseconds

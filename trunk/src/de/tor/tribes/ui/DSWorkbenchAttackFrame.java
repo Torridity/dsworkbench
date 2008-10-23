@@ -27,8 +27,12 @@ import de.tor.tribes.ui.editors.UnitCellEditor;
 import de.tor.tribes.ui.editors.VillageCellEditor;
 import de.tor.tribes.ui.renderer.DateCellRenderer;
 import de.tor.tribes.util.DSCalculator;
+import de.tor.tribes.util.SystrayManager;
 import java.awt.Component;
+import java.awt.Desktop;
+import java.awt.SystemTray;
 import java.awt.Toolkit;
+import java.awt.TrayIcon;
 import java.awt.datatransfer.StringSelection;
 import java.text.SimpleDateFormat;
 import java.util.LinkedList;
@@ -1402,6 +1406,7 @@ class NotifyThread extends Thread {
     }
 
     public void run() {
+
         while (true) {
             if (active) {
                 long now = System.currentTimeMillis();
@@ -1409,31 +1414,24 @@ class NotifyThread extends Thread {
                     logger.debug("Checking attacks");
                     //do next check
                     Attack[] attacks = AttackManager.getSingleton().getAttackPlan(null).toArray(new Attack[]{});
-                    //now + 10 minutes
-                    Hashtable<Attack, Date> notifyOn = new Hashtable<Attack, Date>();
+                    int attackCount = 0;
                     for (Attack a : attacks) {
                         long sendTime = a.getArriveTime().getTime() - (long) DSCalculator.calculateMoveTimeInSeconds(a.getSource(), a.getTarget(), a.getUnit().getSpeed()) * 1000;
                         //find send times between now and in 10 minutes
-                        if ((sendTime >= nextCheck) && (sendTime <= nextCheck + TEN_MINUTES)) {
-                            notifyOn.put(a, new Date(sendTime));
+                        if ((sendTime >= now) && (sendTime <= now + TEN_MINUTES)) {
+                            attackCount++;
                         }
                     }
-                    if (notifyOn.size() > 0) {
-                        //set notify time to future to avoid multiple warnings
-                        String message = "Folgende Angriffe warten auf ihre Bearbeitung:\n";
-                        SimpleDateFormat f = new SimpleDateFormat("HH:mm:ss.SSS");
-                        Enumeration<Attack> keys = notifyOn.keys();
-                        while (keys.hasMoreElements()) {
-                            Attack key = keys.nextElement();
-                            Date sendTime = notifyOn.get(key);
-                            message += key.getSource() + " -> " + key.getTarget() + "(" + f.format(sendTime) + ")\n";
-                        }
-                        JOptionPane.showMessageDialog(DSWorkbenchMainFrame.getSingleton(), message, "Benachrichtigung", JOptionPane.INFORMATION_MESSAGE);
+                    if (attackCount > 0) {
+                        SystrayManager.notifyOnAttacks(attackCount);
                         attacks = null;
+                        logger.debug("Scheduling next check in 10 minutes");
                         nextCheck = now + TEN_MINUTES;
+                    } else {
+                        //no attacks in next 10 minutes
+                        logger.debug("Scheduling next check in 1 minute");
+                        nextCheck = now + TEN_MINUTES / 10;
                     }
-
-                    logger.debug("Scheduling next check in 10 minutes");
                 }//wait for next check
 
             }

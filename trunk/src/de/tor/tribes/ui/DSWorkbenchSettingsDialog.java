@@ -261,6 +261,20 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             jVillageSortTypeChooser.setSelectedIndex(villageOrder);
         } catch (Exception e) {
         }
+
+        try {
+            int notifyDuration = Integer.parseInt(GlobalOptions.getProperty("notify.duration"));
+            jNotifyDurationBox.setSelectedIndex(notifyDuration);
+        } catch (Exception e) {
+        }
+
+        try {
+            String val = GlobalOptions.getProperty("inform.on.updates");
+            if (val != null) {
+                jInformOnUpdates.setSelected(Boolean.parseBoolean(val));
+            }
+        } catch (Exception e) {
+        }
     // </editor-fold>
     }
 
@@ -529,7 +543,9 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jVillageSortTypeChooser = new javax.swing.JComboBox();
         jLabel13 = new javax.swing.JLabel();
         jLabel14 = new javax.swing.JLabel();
-        jInfoDuration = new javax.swing.JSpinner();
+        jNotifyDurationBox = new javax.swing.JComboBox();
+        jInformOnUpdates = new javax.swing.JCheckBox();
+        jLabel15 = new javax.swing.JLabel();
         jOKButton = new javax.swing.JButton();
         jCancelButton = new javax.swing.JButton();
         jCreateAccountButton = new javax.swing.JButton();
@@ -713,10 +729,10 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                     .addComponent(jAccountNameLabel))
                 .addGap(21, 21, 21)
                 .addGroup(jLoginPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jAccountName, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 228, Short.MAX_VALUE)
-                    .addComponent(jAccountPassword, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 228, Short.MAX_VALUE)
+                    .addComponent(jAccountName, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 230, Short.MAX_VALUE)
+                    .addComponent(jAccountPassword, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 230, Short.MAX_VALUE)
                     .addComponent(jCheckAccountButton))
-                .addContainerGap(257, Short.MAX_VALUE))
+                .addContainerGap(259, Short.MAX_VALUE))
         );
         jLoginPanelLayout.setVerticalGroup(
             jLoginPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -784,7 +800,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 .addContainerGap()
                 .addGroup(jPlayerServerSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jCheckForUpdatesBox)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 540, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 544, Short.MAX_VALUE)
                     .addGroup(jPlayerServerSettingsLayout.createSequentialGroup()
                         .addGroup(jPlayerServerSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1)
@@ -795,8 +811,8 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                             .addComponent(jServerList, 0, 262, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPlayerServerSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jDownloadDataButton, javax.swing.GroupLayout.DEFAULT_SIZE, 232, Short.MAX_VALUE)
-                            .addComponent(jSelectServerButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 232, Short.MAX_VALUE))))
+                            .addComponent(jDownloadDataButton, javax.swing.GroupLayout.DEFAULT_SIZE, 236, Short.MAX_VALUE)
+                            .addComponent(jSelectServerButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 236, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         jPlayerServerSettingsLayout.setVerticalGroup(
@@ -978,12 +994,12 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                     .addComponent(jSkinPackLabel)
                     .addComponent(jLabel4)
                     .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE)
                 .addGroup(jMapSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jMapSettingsLayout.createSequentialGroup()
                         .addGroup(jMapSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 220, Short.MAX_VALUE)
-                            .addComponent(jGraphicPacks, javax.swing.GroupLayout.Alignment.TRAILING, 0, 220, Short.MAX_VALUE))
+                            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 222, Short.MAX_VALUE)
+                            .addComponent(jGraphicPacks, javax.swing.GroupLayout.Alignment.TRAILING, 0, 222, Short.MAX_VALUE))
                         .addGap(25, 25, 25)
                         .addGroup(jMapSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jPreviewSkinButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -1069,7 +1085,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                         .addComponent(jLabel5)
                         .addGap(18, 18, 18)
                         .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 231, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(221, Short.MAX_VALUE))
+                .addContainerGap(225, Short.MAX_VALUE))
         );
         jTagsSettingsLayout.setVerticalGroup(
             jTagsSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1142,16 +1158,16 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                     .addGroup(jAttackSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                         .addComponent(jAttackMovementLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(jAttackMovementLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 244, Short.MAX_VALUE))
+                    .addComponent(jAttackMovementLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 246, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jAttackSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jAttackSettingsLayout.createSequentialGroup()
                         .addGroup(jAttackSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jShowAttackMovementBox, javax.swing.GroupLayout.DEFAULT_SIZE, 289, Short.MAX_VALUE)
+                            .addComponent(jShowAttackMovementBox, javax.swing.GroupLayout.DEFAULT_SIZE, 291, Short.MAX_VALUE)
                             .addComponent(jScrollPane2, 0, 0, Short.MAX_VALUE))
                         .addGap(13, 13, 13))
                     .addGroup(jAttackSettingsLayout.createSequentialGroup()
-                        .addComponent(jDrawAttacksByDefaultBox, javax.swing.GroupLayout.DEFAULT_SIZE, 296, Short.MAX_VALUE)
+                        .addComponent(jDrawAttacksByDefaultBox, javax.swing.GroupLayout.DEFAULT_SIZE, 298, Short.MAX_VALUE)
                         .addContainerGap())))
         );
         jAttackSettingsLayout.setVerticalGroup(
@@ -1253,10 +1269,10 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                             .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(20, 20, 20)
                         .addGroup(jNetworkSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jProxyPassword, javax.swing.GroupLayout.DEFAULT_SIZE, 185, Short.MAX_VALUE)
-                            .addComponent(jProxyUser, javax.swing.GroupLayout.DEFAULT_SIZE, 185, Short.MAX_VALUE)
-                            .addComponent(jProxyTypeChooser, 0, 185, Short.MAX_VALUE)
-                            .addComponent(jProxyHost, javax.swing.GroupLayout.DEFAULT_SIZE, 185, Short.MAX_VALUE)
+                            .addComponent(jProxyPassword, javax.swing.GroupLayout.DEFAULT_SIZE, 189, Short.MAX_VALUE)
+                            .addComponent(jProxyUser, javax.swing.GroupLayout.DEFAULT_SIZE, 189, Short.MAX_VALUE)
+                            .addComponent(jProxyTypeChooser, 0, 189, Short.MAX_VALUE)
+                            .addComponent(jProxyHost, javax.swing.GroupLayout.DEFAULT_SIZE, 189, Short.MAX_VALUE)
                             .addComponent(jRefeshNetworkButton, javax.swing.GroupLayout.Alignment.TRAILING))
                         .addGap(18, 18, 18)
                         .addComponent(jProxyPortLabel)
@@ -1298,13 +1314,35 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jSettingsTabbedPane.addTab(bundle.getString("DSWorkbenchSettingsDialog.jNetworkSettings.TabConstraints.tabTitle"), new javax.swing.ImageIcon(getClass().getResource("/res/proxy.png")), jNetworkSettings); // NOI18N
 
         jVillageSortTypeChooser.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Alphabetisch", "Nach Koordinaten" }));
+        jVillageSortTypeChooser.setMaximumSize(new java.awt.Dimension(105, 18));
+        jVillageSortTypeChooser.setPreferredSize(new java.awt.Dimension(105, 18));
 
         jLabel13.setText(bundle.getString("DSWorkbenchSettingsDialog.jLabel13.text")); // NOI18N
+        jLabel13.setMaximumSize(new java.awt.Dimension(138, 18));
+        jLabel13.setMinimumSize(new java.awt.Dimension(138, 18));
+        jLabel13.setPreferredSize(new java.awt.Dimension(138, 18));
 
         jLabel14.setText(bundle.getString("DSWorkbenchSettingsDialog.jLabel14.text")); // NOI18N
+        jLabel14.setMaximumSize(new java.awt.Dimension(138, 18));
+        jLabel14.setMinimumSize(new java.awt.Dimension(138, 18));
+        jLabel14.setPreferredSize(new java.awt.Dimension(138, 18));
 
-        jInfoDuration.setModel(new javax.swing.SpinnerNumberModel(10, 5, 60, 1));
-        jInfoDuration.setToolTipText(bundle.getString("DSWorkbenchSettingsDialog.jInfoDuration.toolTipText")); // NOI18N
+        jNotifyDurationBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Unbegrenzt", "10 Sekunden", "20 Sekunden", "30 Sekunden" }));
+        jNotifyDurationBox.setSelectedIndex(1);
+        jNotifyDurationBox.setMaximumSize(new java.awt.Dimension(105, 18));
+        jNotifyDurationBox.setMinimumSize(new java.awt.Dimension(105, 18));
+        jNotifyDurationBox.setPreferredSize(new java.awt.Dimension(105, 18));
+
+        jInformOnUpdates.setSelected(true);
+        jInformOnUpdates.setText(bundle.getString("DSWorkbenchSettingsDialog.jInformOnUpdates.text")); // NOI18N
+        jInformOnUpdates.setMaximumSize(new java.awt.Dimension(105, 18));
+        jInformOnUpdates.setMinimumSize(new java.awt.Dimension(105, 18));
+        jInformOnUpdates.setPreferredSize(new java.awt.Dimension(105, 18));
+
+        jLabel15.setText(bundle.getString("DSWorkbenchSettingsDialog.jLabel15.text")); // NOI18N
+        jLabel15.setMaximumSize(new java.awt.Dimension(138, 18));
+        jLabel15.setMinimumSize(new java.awt.Dimension(138, 18));
+        jLabel15.setPreferredSize(new java.awt.Dimension(138, 18));
 
         javax.swing.GroupLayout jMiscSettingsLayout = new javax.swing.GroupLayout(jMiscSettings);
         jMiscSettings.setLayout(jMiscSettingsLayout);
@@ -1312,29 +1350,33 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             jMiscSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jMiscSettingsLayout.createSequentialGroup()
                 .addContainerGap()
+                .addGroup(jMiscSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel13, javax.swing.GroupLayout.DEFAULT_SIZE, 145, Short.MAX_VALUE)
+                    .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, 145, Short.MAX_VALUE)
+                    .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jMiscSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(jMiscSettingsLayout.createSequentialGroup()
-                        .addComponent(jLabel13)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jVillageSortTypeChooser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jMiscSettingsLayout.createSequentialGroup()
-                        .addComponent(jLabel14)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jInfoDuration)))
-                .addContainerGap(360, Short.MAX_VALUE))
+                    .addComponent(jInformOnUpdates, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jNotifyDurationBox, 0, 109, Short.MAX_VALUE)
+                    .addComponent(jVillageSortTypeChooser, 0, 109, Short.MAX_VALUE))
+                .addContainerGap(296, Short.MAX_VALUE))
         );
         jMiscSettingsLayout.setVerticalGroup(
             jMiscSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jMiscSettingsLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jMiscSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel13)
-                    .addComponent(jVillageSortTypeChooser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(17, 17, 17)
-                .addGroup(jMiscSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel14)
-                    .addComponent(jInfoDuration, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(311, Short.MAX_VALUE))
+                    .addComponent(jVillageSortTypeChooser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jMiscSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jNotifyDurationBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jMiscSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jInformOnUpdates, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(300, Short.MAX_VALUE))
         );
 
         jSettingsTabbedPane.addTab(bundle.getString("DSWorkbenchSettingsDialog.jMiscSettings.TabConstraints.tabTitle"), new javax.swing.ImageIcon(getClass().getResource("/res/checkbox.png")), jMiscSettings); // NOI18N
@@ -1371,10 +1413,10 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jSettingsTabbedPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 565, Short.MAX_VALUE)
+                    .addComponent(jSettingsTabbedPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 569, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jCreateAccountButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 276, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 280, Short.MAX_VALUE)
                         .addComponent(jCancelButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jOKButton, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -1569,7 +1611,8 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         int sortType = jVillageSortTypeChooser.getSelectedIndex();
         Village.setOrderType(sortType);
         GlobalOptions.addProperty("village.order", Integer.toString(sortType));
-        GlobalOptions.addProperty("info.duration", Integer.toString((Integer) jInfoDuration.getValue()));
+        GlobalOptions.addProperty("notify.duration", Integer.toString(jNotifyDurationBox.getSelectedIndex()));
+        GlobalOptions.addProperty("inform.on.updates", Boolean.toString(jInformOnUpdates.isSelected()));
         GlobalOptions.saveProperties();
         if (!checkSettings()) {
             return;
@@ -2142,13 +2185,14 @@ private void fireChangeDrawDistanceEvent(javax.swing.event.ChangeEvent evt) {//G
     private javax.swing.JButton jDownloadDataButton;
     private javax.swing.JCheckBox jDrawAttacksByDefaultBox;
     private javax.swing.JComboBox jGraphicPacks;
-    private javax.swing.JSpinner jInfoDuration;
+    private javax.swing.JCheckBox jInformOnUpdates;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
+    private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -2163,6 +2207,7 @@ private void fireChangeDrawDistanceEvent(javax.swing.event.ChangeEvent evt) {//G
     private javax.swing.JCheckBox jMarkOwnVillagesOnMinimapBox;
     private javax.swing.JPanel jMiscSettings;
     private javax.swing.JPanel jNetworkSettings;
+    private javax.swing.JComboBox jNotifyDurationBox;
     private javax.swing.JButton jOKButton;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;

@@ -27,17 +27,41 @@ public class TestFrame extends javax.swing.JFrame {
         System.getProperties().put("proxyPort", "8000");
         jEditorPane1.setContentType("text/html");
         try {
-            URL url = new URL("http://www.heise.de");
-
-            jEditorPane1.setPage(url);
+        URL url = new URL("http://www.heise.de");
+        
+        jEditorPane1.setPage(url);
         } catch (Exception e) {
-            e.printStackTrace();
+        e.printStackTrace();
         }*/
-        frameControlPanel1.setupPanel(this, true, true);
-        frameControlPanel1.setTitle("Test Frame with title and laberzeug und so weiet damit es lang");
+        /* frameControlPanel1.setupPanel(this, true, true);
+        frameControlPanel1.setTitle("Test Frame with title and laberzeug und so weiet damit es lang");*/
+        setLocation(200,500);
+        new Thread(new Runnable() {
 
-        SystrayManager.notifyOnAttacks(5);
-      SystrayManager.notifyOnAttacks(5);
+            public void run() {
+                int heigth = 10;
+                boolean inv = false;
+                int y = getLocation().y ;
+                while (true) {
+                    try {
+                        setSize(getWidth(), heigth);
+                        setLocation(getLocation().x, y - heigth);
+                        Thread.sleep(50);
+
+                        heigth += (inv) ? -10 : 10;
+                        if (heigth >= 75) {
+                            Thread.sleep(5000);
+                            inv = true;
+                        } else if (heigth <= 0) {
+                            dispose();
+                            return;
+                        }
+
+                    } catch (Exception e) {
+                    }
+                }
+            }
+        }).start();
     }
 
     /** This method is called from within the constructor to
@@ -49,81 +73,59 @@ public class TestFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        frameControlPanel1 = new de.tor.tribes.ui.FrameControlPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jEditorPane1 = new javax.swing.JEditorPane();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jTextPane1 = new javax.swing.JTextPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setUndecorated(true);
 
-        jScrollPane1.setViewportView(jEditorPane1);
+        jScrollPane2.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        jScrollPane2.setAutoscrolls(true);
+
+        jTextPane1.setEditable(false);
+        jTextPane1.setText("Blabal asd werwer wersdf asdf naskdljfn asdf asdf nsadjfnk kasdf askjfnsad asdnkfj wwre kjnweknr nkawkenr klawnerwn ern wanernewrjnwe rwer wer ");
+        jScrollPane2.setViewportView(jTextPane1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(frameControlPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 420, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
-                .addGap(10, 10, 10)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
-                .addContainerGap())
+                .addGap(11, 11, 11)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 361, Short.MAX_VALUE)
+                .addGap(11, 11, 11))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(frameControlPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 261, Short.MAX_VALUE)
-                .addContainerGap())
+                .addGap(12, 12, 12)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 276, Short.MAX_VALUE)
+                .addGap(12, 12, 12))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    /**Download one single file from a URL*/
-    private void downloadDataFile(URL pSource, String pLocalName) throws Exception {
-        URLConnection ucon = pSource.openConnection();
-        FileOutputStream tempWriter = new FileOutputStream(pLocalName);
-        //BufferedReader reader = new BufferedReader(new InputStreamReader(ucon.getInputStream()));
-        InputStream isr = ucon.getInputStream();
-        int bytes = 0;
-        while (bytes != -1) {
-            byte[] data = new byte[1024];
-            bytes = isr.read(data);
-            if (bytes != -1) {
-                tempWriter.write(data, 0, bytes);
-            }
-
-        }
-        try {
-            isr.close();
-            tempWriter.close();
-        } catch (Exception e) {
-        }
-    }
-
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) throws Exception {
-        
-         try {
+
+        try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
         }
-        java.awt.EventQueue.invokeLater(new Runnable() {
-        
-        public void run() {
-        new TestFrame().setVisible(true);
-        }
-        });
+       /* java.awt.EventQueue.invokeLater(new Runnable() {
 
-        
+            public void run() {
+                new TestFrame().setVisible(true);
+            }
+        });*/
+
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private de.tor.tribes.ui.FrameControlPanel frameControlPanel1;
-    private javax.swing.JEditorPane jEditorPane1;
-    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JTextPane jTextPane1;
     // End of variables declaration//GEN-END:variables
 }

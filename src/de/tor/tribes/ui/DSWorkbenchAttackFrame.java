@@ -1423,7 +1423,7 @@ class NotifyThread extends Thread {
                         }
                     }
                     if (attackCount > 0) {
-                        SystrayManager.notifyOnAttacks(attackCount);
+                        NotifierFrame.doNotification("In den kommenden 10 Minuten " + ((attackCount == 1) ? "muss 1 Angriff " : "müssen " + attackCount + " Angriffe ") + "abgeschickt werden.\n", NotifierFrame.NOTIFY_ATTACK);
                         attacks = null;
                         logger.debug("Scheduling next check in 10 minutes");
                         nextCheck = now + TEN_MINUTES;

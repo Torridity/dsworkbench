@@ -143,13 +143,25 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
             DSWorkbenchMainFrame.getSingleton().setVisible(true);
             t.stopRunning();
             setVisible(false);
-            //check version
-            double version = DatabaseAdapter.getCurrentVersion();
+            boolean informOnUpdate = true;
 
-            if (version > 0 && version > Constants.VERSION) {
-                SystrayManager.notifyOnUpdate(version);
+            try {
+                String val = GlobalOptions.getProperty("inform.on.updates");
+                if (val != null) {
+                    informOnUpdate = Boolean.parseBoolean(val);
+                }
+            } catch (Exception e) {
+                //value not found, inform by default
             }
-              //  SystrayManager.notifyOnAttacks(5);
+            if (informOnUpdate) {
+                //check version           
+                double version = DatabaseAdapter.getCurrentVersion();
+
+                if (version > 0 && version > Constants.VERSION) {
+                    NotifierFrame.doNotification("Eine neue Version (" + version + ") von DS Workbench ist verfügbar.\n" +
+                            "Klickt auf das Update Icon um \'http://www.dsworkbench.de\' im Browser zu öffnen.", NotifierFrame.NOTIFY_UPDATE);
+                }
+            }
         } catch (Throwable th) {
             logger.fatal("Fatal error while running DS Workbench", th);
             JOptionPane.showMessageDialog(self, "Ein schwerwiegender Fehler ist aufgetreten.\nMöglicherweise ist deine DS Workbench Installation defekt. Bitte kontaktiere den Entwickler.", "Fehler", JOptionPane.ERROR_MESSAGE);

@@ -102,6 +102,9 @@ public class DSRealStatsFrame extends javax.swing.JFrame {
         }
         String mode = "player";
         String server = GlobalOptions.getSelectedServer();
+        if(pTribe == null){
+            return;
+        }
         int id = pTribe.getId();
 
 

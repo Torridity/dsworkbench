@@ -35,6 +35,7 @@ public class TroopsParser {
         Village v = null;
         List<Integer> troops = new LinkedList<Integer>();
         while (lineTok.hasMoreElements()) {
+
             //parse single line for village
             String line = lineTok.nextToken();
             //tokenize line by tab and space
@@ -90,6 +91,9 @@ public class TroopsParser {
                     v = null;
                     //found at least one village, so retValue is true    
                     retValue = true;
+                }else{
+                    v = null;
+                    troops.clear();
                 }
             }
         }

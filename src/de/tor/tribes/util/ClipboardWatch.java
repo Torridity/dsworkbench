@@ -21,6 +21,7 @@ public class ClipboardWatch extends Thread {
 
     private static Logger logger = Logger.getLogger(ClipboardWatch.class);
     private static ClipboardWatch SINGLETON = null;
+    private int lastDataLength = 0;
 
     public static synchronized ClipboardWatch getSingleton() {
         if (SINGLETON == null) {
@@ -42,7 +43,8 @@ public class ClipboardWatch extends Thread {
             try {
                 Transferable t = (Transferable) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
                 String data = (String) t.getTransferData(DataFlavor.stringFlavor);
-                if (data.length() > 10) {
+
+                if ((data.length() > 10) && (data.length() != lastDataLength)) {
                     if (ReportParser.parse(data)) {
                         //report parsed, clean clipboard
                         logger.info("Report successfully parsed. Cleaning up clipboard");
@@ -54,11 +56,12 @@ public class ClipboardWatch extends Thread {
                     } else if (GroupParser.parse(data)) {
                         logger.info("Groups successfully parsed. Cleaning up clipboard");
                         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(""), null);
+                    } else {
+                        //store last length to avoid parsing the same data more than once
+                        lastDataLength = data.length();
                     }
-
                 }
             } catch (Exception e) {
-                //e.printStackTrace();
                 //no usable data
             }
             try {

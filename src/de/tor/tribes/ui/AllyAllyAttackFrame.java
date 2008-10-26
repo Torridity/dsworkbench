@@ -712,7 +712,6 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
                 break;
             }
         }
-        //  System.out.println("C " + c2);
         if (vTarget == null) {
             notAssigned.add(vSource);
         }

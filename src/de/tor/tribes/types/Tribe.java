@@ -54,10 +54,7 @@ public class Tribe implements Serializable, Comparable {
             entry.setId(Integer.parseInt(tokenizer.nextToken()));
             String nn = tokenizer.nextToken();
             String n = URLDecoder.decode(nn, "UTF-8");
-            /*if (n.length() == 0) {
-                System.out.println("EX " + nn);
-                throw new Exception();
-            }*/
+          
             entry.setName(n);
             entry.setAllyID(Integer.parseInt(tokenizer.nextToken()));
             entry.setVillages(Short.parseShort(tokenizer.nextToken()));

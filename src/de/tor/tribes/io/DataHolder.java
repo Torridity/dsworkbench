@@ -207,7 +207,6 @@ public class DataHolder {
                                 logger.fatal("Download failed. No data available at the moment");
                                 fireDataHolderEvents("Download abgebrochen/fehlgeschlagen");
                                 loading = false;
-                                System.out.println("FALSE");
                                 return false;
                             } else {
                                 recreateLocal = true;

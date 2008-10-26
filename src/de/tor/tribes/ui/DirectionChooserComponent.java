@@ -120,7 +120,6 @@ public class DirectionChooserComponent extends javax.swing.JPanel {
         g2d.setPaint(def);
        // Polygon p = new Polygon(new int[]{(int) m.x, (int) x1, (int) x2}, new int[]{(int) m.y, (int) y1, (int) y2}, 3);
         //g2d.fillPolygon(p);
-        System.out.println(d1);
         int start = (int)d1 - 15;
         int end = (int)d1 + 15;
         if(start > 360){
@@ -134,7 +133,6 @@ public class DirectionChooserComponent extends javax.swing.JPanel {
         }else if(end < 0){
             end *= -1;
         }
-        System.out.println(start + " - " + end);
         g2d.fillArc(0, 0, getWidth(),getWidth(), start, end);
     }
 

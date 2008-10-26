@@ -230,6 +230,9 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             Village[] villages = t.getVillageList().toArray(new Village[]{});
             Arrays.sort(villages);
             jCurrentPlayerVillages.setModel(new DefaultComboBoxModel(villages));
+            if ((villages != null && villages.length > 0)) {
+                centerVillage(villages[0]);
+            }
         } else {
             DefaultComboBoxModel model = new DefaultComboBoxModel(new Object[]{"Keine Dörfer"});
             jCurrentPlayerVillages.setModel(model);
@@ -279,14 +282,11 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         //setup toolbox
         logger.info(" * Setup toolbox");
         mToolbox = new ToolBoxFrame();
-        mToolbox.addWindowListener(new  
-
-              WindowListener( ) {
-            
+        mToolbox.addWindowListener(new WindowListener() {
 
             @Override
-            public  void windowOpened(WindowEvent e) {
-                }
+            public void windowOpened(WindowEvent e) {
+            }
 
             @Override
             public void windowClosing(WindowEvent e) {
@@ -1101,7 +1101,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                         .addComponent(jNavigationPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jInformationPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 648, Short.MAX_VALUE))
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 650, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jInfoPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -1186,12 +1186,12 @@ private void fireFrameResizedEvent(java.awt.event.ComponentEvent evt) {//GEN-FIR
 
     /**Zoom main map*/
 private void fireZoomEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireZoomEvent
-if(Village.getOrderType() == Village.ORDER_ALPHABETICALLY){
-    Village.setOrderType(Village.ORDER_BY_COORDINATES);
-}else{
-    Village.setOrderType(Village.ORDER_ALPHABETICALLY);
-    
-}
+    if (Village.getOrderType() == Village.ORDER_ALPHABETICALLY) {
+        Village.setOrderType(Village.ORDER_BY_COORDINATES);
+    } else {
+        Village.setOrderType(Village.ORDER_ALPHABETICALLY);
+
+    }
     if (evt.getSource() == jZoomInButton) {
         dZoomFactor += 1.0 / 10.0;
     } else {
@@ -1386,6 +1386,9 @@ private void fireShowTroopsFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIR
     /**Get active user village*/
     public Village getCurrentUserVillage() {
         try {
+            if (jCurrentPlayerVillages.getSelectedIndex() < 0) {
+                jCurrentPlayerVillages.setSelectedIndex(0);
+            }
             return (Village) jCurrentPlayerVillages.getSelectedItem();
         } catch (Exception e) {
             logger.warn("Could not get current user village. Probably no active player was selected.");

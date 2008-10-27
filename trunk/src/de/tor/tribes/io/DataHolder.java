@@ -91,7 +91,12 @@ public class DataHolder {
     }
 
     public synchronized void addDataHolderListener(DataHolderListener pListener) {
-        mListeners.add(pListener);
+        if (pListener == null) {
+            return;
+        }
+        if (!mListeners.contains(pListener)) {
+            mListeners.add(pListener);
+        }
     }
 
     public synchronized void removeDataHolderListener(DataHolderListener pListener) {

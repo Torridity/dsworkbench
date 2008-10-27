@@ -71,7 +71,12 @@ public class MarkerManager {
     }
 
     public synchronized void addMarkerManagerListener(MarkerManagerListener pListener) {
-        mManagerListeners.add(pListener);
+        if (pListener == null) {
+            return;
+        }
+        if (!mManagerListeners.contains(pListener)) {
+            mManagerListeners.add(pListener);
+        }
     }
 
     public synchronized void removeMarkerManagerListener(MarkerManagerListener pListener) {

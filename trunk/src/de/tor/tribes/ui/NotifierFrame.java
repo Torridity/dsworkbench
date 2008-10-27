@@ -18,8 +18,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Stack;
 import javax.imageio.ImageIO;
 import javax.swing.JScrollPane;
@@ -51,6 +49,7 @@ public class NotifierFrame extends javax.swing.JDialog {
 
         java.awt.EventQueue.invokeLater(new Runnable() {
 
+            @Override
             public void run() {
                 NotifierFrame frame = new NotifierFrame(message, type);
                 frame.setVisible(true);

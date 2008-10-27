@@ -1032,7 +1032,7 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
                           <Component id="jOnlineLabel" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace pref="89" max="32767" attributes="0"/>
+                          <EmptySpace pref="91" max="32767" attributes="0"/>
                           <Component id="jCurrentToolLabel" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <Component id="jCenterIngameButton" min="-2" max="-2" attributes="0"/>

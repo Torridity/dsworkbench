@@ -248,9 +248,14 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         } catch (Exception e) {
         }
         try {
-            if (Boolean.parseBoolean(GlobalOptions.getProperty("check.updates.on.startup"))) {
-                jCheckForUpdatesBox.setSelected(true);
+            String value = GlobalOptions.getProperty("check.updates.on.startup");
+            boolean check = false;
+            if (value == null) {
+                check = true;
+            } else {
+                check = Boolean.parseBoolean(value);
             }
+            jCheckForUpdatesBox.setSelected(check);
         } catch (Exception e) {
         }
         try {
@@ -282,6 +287,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
     }
 
     protected void setupAttackColorTable() {
+        jAttackColorTable.invalidate();
         DefaultTableModel model = new javax.swing.table.DefaultTableModel(
                 new Object[][]{},
                 new String[]{
@@ -353,6 +359,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         for (int i = 0; i < jAttackColorTable.getColumnCount(); i++) {
             jAttackColorTable.getColumn(jAttackColorTable.getColumnName(i)).setHeaderRenderer(headerRenderer);
         }
+        jAttackColorTable.revalidate();
     }
 
     protected void setupTagsPanel() {
@@ -746,7 +753,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                     .addComponent(jAccountPasswordLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jCheckAccountButton)
-                .addContainerGap(304, Short.MAX_VALUE))
+                .addContainerGap(301, Short.MAX_VALUE))
         );
 
         jSettingsTabbedPane.addTab(bundle.getString("DSWorkbenchSettingsDialog.jLoginPanel.TabConstraints.tabTitle"), new javax.swing.ImageIcon(getClass().getResource("/res/login.png")), jLoginPanel); // NOI18N
@@ -831,7 +838,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 274, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jCheckForUpdatesBox)
-                .addContainerGap(12, Short.MAX_VALUE))
+                .addContainerGap(9, Short.MAX_VALUE))
         );
 
         jSettingsTabbedPane.addTab(bundle.getString("DSWorkbenchSettingsDialog.jPlayerServerSettings.TabConstraints.tabTitle"), new javax.swing.ImageIcon(getClass().getResource("/res/face.png")), jPlayerServerSettings); // NOI18N
@@ -993,12 +1000,12 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                     .addComponent(jSkinPackLabel)
                     .addComponent(jLabel4)
                     .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 30, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 31, Short.MAX_VALUE)
                 .addGroup(jMapSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jMapSettingsLayout.createSequentialGroup()
                         .addGroup(jMapSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 223, Short.MAX_VALUE)
-                            .addComponent(jGraphicPacks, javax.swing.GroupLayout.Alignment.TRAILING, 0, 223, Short.MAX_VALUE))
+                            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 224, Short.MAX_VALUE)
+                            .addComponent(jGraphicPacks, javax.swing.GroupLayout.Alignment.TRAILING, 0, 224, Short.MAX_VALUE))
                         .addGap(25, 25, 25)
                         .addGroup(jMapSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jPreviewSkinButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -1025,7 +1032,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 .addGroup(jMapSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
                     .addComponent(jDefaultMarkBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(170, Short.MAX_VALUE))
+                .addContainerGap(169, Short.MAX_VALUE))
         );
 
         jSettingsTabbedPane.addTab(bundle.getString("DSWorkbenchSettingsDialog.jMapSettings.TabConstraints.tabTitle"), new javax.swing.ImageIcon(getClass().getResource("/res/ui/map.gif")), jMapSettings); // NOI18N
@@ -1037,6 +1044,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jButton1.setBackground(new java.awt.Color(239, 235, 223));
         jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/remove.gif"))); // NOI18N
         jButton1.setText(bundle.getString("DSWorkbenchSettingsDialog.jButton1.text")); // NOI18N
+        jButton1.setToolTipText(bundle.getString("DSWorkbenchSettingsDialog.jButton1.toolTipText")); // NOI18N
         jButton1.setMaximumSize(new java.awt.Dimension(20, 25));
         jButton1.setMinimumSize(new java.awt.Dimension(20, 25));
         jButton1.setPreferredSize(new java.awt.Dimension(20, 25));
@@ -1049,6 +1057,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jButton2.setBackground(new java.awt.Color(239, 235, 223));
         jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/add.gif"))); // NOI18N
         jButton2.setText(bundle.getString("DSWorkbenchSettingsDialog.jButton2.text")); // NOI18N
+        jButton2.setToolTipText(bundle.getString("DSWorkbenchSettingsDialog.jButton2.toolTipText")); // NOI18N
         jButton2.setMaximumSize(new java.awt.Dimension(20, 25));
         jButton2.setMinimumSize(new java.awt.Dimension(20, 25));
         jButton2.setPreferredSize(new java.awt.Dimension(20, 25));
@@ -1097,7 +1106,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 .addGroup(jTagsSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(96, Short.MAX_VALUE))
+                .addContainerGap(93, Short.MAX_VALUE))
         );
 
         jSettingsTabbedPane.addTab(bundle.getString("DSWorkbenchSettingsDialog.jTagsSettings.TabConstraints.tabTitle"), new javax.swing.ImageIcon(getClass().getResource("/res/tag.png")), jTagsSettings); // NOI18N
@@ -1183,7 +1192,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 .addGap(9, 9, 9)
                 .addGroup(jAttackSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jAttackMovementLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 311, Short.MAX_VALUE))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 308, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -1212,10 +1221,12 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
 
         jProxyAdressLabel.setText(bundle.getString("DSWorkbenchSettingsDialog.jProxyAdressLabel.text")); // NOI18N
 
+        jProxyHost.setToolTipText(bundle.getString("DSWorkbenchSettingsDialog.jProxyHost.toolTipText")); // NOI18N
         jProxyHost.setEnabled(false);
 
         jProxyPortLabel.setText(bundle.getString("DSWorkbenchSettingsDialog.jProxyPortLabel.text")); // NOI18N
 
+        jProxyPort.setToolTipText(bundle.getString("DSWorkbenchSettingsDialog.jProxyPort.toolTipText")); // NOI18N
         jProxyPort.setEnabled(false);
         jProxyPort.setMaximumSize(new java.awt.Dimension(40, 20));
         jProxyPort.setMinimumSize(new java.awt.Dimension(40, 20));
@@ -1233,11 +1244,13 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jLabel10.setText(bundle.getString("DSWorkbenchSettingsDialog.jLabel10.text")); // NOI18N
 
         jProxyTypeChooser.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "HTTP", "SOCKS" }));
+        jProxyTypeChooser.setToolTipText(bundle.getString("DSWorkbenchSettingsDialog.jProxyTypeChooser.toolTipText")); // NOI18N
         jProxyTypeChooser.setEnabled(false);
 
         jLabel11.setText(bundle.getString("DSWorkbenchSettingsDialog.jLabel11.text")); // NOI18N
 
         jProxyUser.setText(bundle.getString("DSWorkbenchSettingsDialog.jProxyUser.text")); // NOI18N
+        jProxyUser.setToolTipText(bundle.getString("DSWorkbenchSettingsDialog.jProxyUser.toolTipText")); // NOI18N
         jProxyUser.setEnabled(false);
         jProxyUser.setMaximumSize(new java.awt.Dimension(150, 20));
         jProxyUser.setMinimumSize(new java.awt.Dimension(150, 20));
@@ -1246,6 +1259,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jLabel12.setText(bundle.getString("DSWorkbenchSettingsDialog.jLabel12.text")); // NOI18N
 
         jProxyPassword.setText(bundle.getString("DSWorkbenchSettingsDialog.jProxyPassword.text")); // NOI18N
+        jProxyPassword.setToolTipText(bundle.getString("DSWorkbenchSettingsDialog.jProxyPassword.toolTipText")); // NOI18N
         jProxyPassword.setEnabled(false);
         jProxyPassword.setMaximumSize(new java.awt.Dimension(150, 20));
         jProxyPassword.setMinimumSize(new java.awt.Dimension(150, 20));
@@ -1307,7 +1321,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                     .addComponent(jLabel12))
                 .addGap(18, 18, 18)
                 .addComponent(jRefeshNetworkButton)
-                .addContainerGap(162, Short.MAX_VALUE))
+                .addContainerGap(161, Short.MAX_VALUE))
         );
 
         jSettingsTabbedPane.addTab(bundle.getString("DSWorkbenchSettingsDialog.jNetworkSettings.TabConstraints.tabTitle"), new javax.swing.ImageIcon(getClass().getResource("/res/proxy.png")), jNetworkSettings); // NOI18N
@@ -1315,6 +1329,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jMiscSettings.setBackground(new java.awt.Color(239, 235, 223));
 
         jVillageSortTypeChooser.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Alphabetisch", "Nach Koordinaten" }));
+        jVillageSortTypeChooser.setToolTipText(bundle.getString("DSWorkbenchSettingsDialog.jVillageSortTypeChooser.toolTipText")); // NOI18N
         jVillageSortTypeChooser.setMaximumSize(new java.awt.Dimension(105, 18));
         jVillageSortTypeChooser.setPreferredSize(new java.awt.Dimension(105, 18));
 
@@ -1330,12 +1345,14 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
 
         jNotifyDurationBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Unbegrenzt", "10 Sekunden", "20 Sekunden", "30 Sekunden" }));
         jNotifyDurationBox.setSelectedIndex(1);
+        jNotifyDurationBox.setToolTipText(bundle.getString("DSWorkbenchSettingsDialog.jNotifyDurationBox.toolTipText")); // NOI18N
         jNotifyDurationBox.setMaximumSize(new java.awt.Dimension(105, 18));
         jNotifyDurationBox.setMinimumSize(new java.awt.Dimension(105, 18));
         jNotifyDurationBox.setPreferredSize(new java.awt.Dimension(105, 18));
 
         jInformOnUpdates.setSelected(true);
         jInformOnUpdates.setText(bundle.getString("DSWorkbenchSettingsDialog.jInformOnUpdates.text")); // NOI18N
+        jInformOnUpdates.setToolTipText(bundle.getString("DSWorkbenchSettingsDialog.jInformOnUpdates.toolTipText")); // NOI18N
         jInformOnUpdates.setMaximumSize(new java.awt.Dimension(105, 18));
         jInformOnUpdates.setMinimumSize(new java.awt.Dimension(105, 18));
         jInformOnUpdates.setOpaque(false);
@@ -1378,13 +1395,16 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 .addGroup(jMiscSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jInformOnUpdates, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(303, Short.MAX_VALUE))
+                .addContainerGap(300, Short.MAX_VALUE))
         );
 
         jSettingsTabbedPane.addTab(bundle.getString("DSWorkbenchSettingsDialog.jMiscSettings.TabConstraints.tabTitle"), new javax.swing.ImageIcon(getClass().getResource("/res/checkbox.png")), jMiscSettings); // NOI18N
 
         jOKButton.setBackground(new java.awt.Color(239, 235, 223));
         jOKButton.setText(bundle.getString("DSWorkbenchSettingsDialog.jOKButton.text")); // NOI18N
+        jOKButton.setMaximumSize(new java.awt.Dimension(85, 23));
+        jOKButton.setMinimumSize(new java.awt.Dimension(85, 23));
+        jOKButton.setPreferredSize(new java.awt.Dimension(85, 23));
         jOKButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireOkEvent(evt);
@@ -1418,10 +1438,10 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                     .addComponent(jSettingsTabbedPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 573, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jCreateAccountButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 280, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 248, Short.MAX_VALUE)
                         .addComponent(jCancelButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jOKButton, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jOKButton, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -1433,7 +1453,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jCreateAccountButton)
                     .addComponent(jCancelButton)
-                    .addComponent(jOKButton))
+                    .addComponent(jOKButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 

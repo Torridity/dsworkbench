@@ -11,7 +11,6 @@ import de.tor.tribes.types.Village;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.DSWorkbenchFrameListener;
 import de.tor.tribes.util.GlobalOptions;
-import java.util.LinkedList;
 import java.util.List;
 import de.tor.tribes.util.DSCalculator;
 
@@ -27,7 +26,7 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame {
     DSWorkbenchDistanceFrame() {
         initComponents();
         getContentPane().setBackground(Constants.DS_BACK);
-
+        //System.out.println(jSnobTime.getFont());
         try {
             jDistanceFrameAlwaysOnTop.setSelected(Boolean.parseBoolean(GlobalOptions.getProperty("distance.frame.alwaysOnTop")));
             setAlwaysOnTop(jDistanceFrameAlwaysOnTop.isSelected());

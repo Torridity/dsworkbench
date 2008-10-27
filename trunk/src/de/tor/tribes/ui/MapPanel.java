@@ -591,6 +591,7 @@ class RepaintThread extends Thread {
     private Image mMarkerImage = null;
     private final NumberFormat nf = NumberFormat.getInstance();
     //  private boolean mustDrawBackground = true;
+
     public RepaintThread(int pX, int pY) {
         mVisibleVillages = new Village[iVillagesX][iVillagesY];
         setCoordinates(pX, pY);
@@ -1226,6 +1227,7 @@ class RepaintThread extends Thread {
 
         // <editor-fold defaultstate="collapsed" desc=" Sector/Continent drawing (Foreground)">
 
+        g2d.setStroke(new BasicStroke(0.5f));
         if (showSectors) {
             g2d.setColor(Color.BLACK);
             for (Integer xs : xSectors) {
@@ -1235,6 +1237,7 @@ class RepaintThread extends Thread {
                 g2d.drawLine(0, ys, wb, ys);
             }
         }
+        g2d.setStroke(new BasicStroke(1.0f));
         if (showContinents) {
             g2d.setColor(Color.YELLOW);
             for (Integer xs : xContinents) {

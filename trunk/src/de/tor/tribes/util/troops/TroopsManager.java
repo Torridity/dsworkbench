@@ -23,7 +23,7 @@ import org.jdom.Document;
 import org.jdom.Element;
 
 /**
- *
+ * @TODO: add graphics/icons/*_marker.png to release
  * @author Charon
  */
 public class TroopsManager {
@@ -55,6 +55,9 @@ public class TroopsManager {
     }
 
     public synchronized void addTroopsManagerListener(TroopsManagerListener pListener) {
+        if (pListener == null) {
+            return;
+        }
         if (!mManagerListeners.contains(pListener)) {
             mManagerListeners.add(pListener);
         }

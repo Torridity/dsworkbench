@@ -24,7 +24,12 @@ public abstract class AbstractDSWorkbenchFrame extends JFrame {
     }
 
     public synchronized void addFrameListener(DSWorkbenchFrameListener pListener) {
-        mFrameListeners.add(pListener);
+        if (pListener == null) {
+            return;
+        }
+        if (!mFrameListeners.contains(pListener)) {
+            mFrameListeners.add(pListener);
+        }
     }
 
     public synchronized void removeFrameListener(DSWorkbenchFrameListener pListener) {

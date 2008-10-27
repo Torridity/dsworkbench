@@ -87,34 +87,6 @@ public class Tribe implements Serializable, Comparable {
         return b.toString();
     }
 
-    public void updateFromDiff(String pDiff) {
-        StringTokenizer t = new StringTokenizer(pDiff, ",");
-        //skip id
-        t.nextToken();
-        //skip name
-        t.nextToken();
-
-        try {
-            setAllyID(Integer.parseInt(t.nextToken().trim()));
-        } catch (Exception e) {
-        }
-
-        try {
-            setVillages(Short.parseShort(t.nextToken().trim()));
-        } catch (Exception e) {
-        }
-
-        try {
-            setPoints(Integer.parseInt(t.nextToken().trim()));
-        } catch (Exception e) {
-        }
-
-        try {
-            setRank(Integer.parseInt(t.nextToken().trim()));
-        } catch (Exception e) {
-        }
-    }
-
     public int getId() {
         return id;
     }
@@ -220,65 +192,6 @@ public class Tribe implements Serializable, Comparable {
         return "[player]" + getName() + "[/player]";
     }
 
-    public String createDiff(Tribe old) {
-        String diff = null;
-        if (old == null) {
-            diff = getId() + "," + getName() + "," + getAllyID() + "," + getVillages() + "," + getPoints() + "," + getRank() + "\n";
-            return diff;
-        }
-
-        boolean allyChange = false;
-        boolean villagesChange = false;
-        boolean pointsChange = false;
-        boolean rankChange = false;
-
-        if (getAllyID() != old.getAllyID()) {
-            allyChange = true;
-        }
-
-        if (getVillages() != old.getVillages()) {
-            villagesChange = true;
-        }
-
-        if (getPoints() != old.getPoints()) {
-            pointsChange = true;
-        }
-
-        if (getRank() != old.getRank()) {
-            rankChange = true;
-        }
-
-        if (allyChange || villagesChange || pointsChange || rankChange) {
-            diff = Integer.toString(getId()) + ", ,";
-
-            if (allyChange) {
-                diff += getAllyID() + ",";
-            } else {
-                diff += " ,";
-            }
-
-            if (villagesChange) {
-                diff += getVillages() + ",";
-            } else {
-                diff += " ,";
-            }
-
-            if (pointsChange) {
-                diff += getPoints() + ",";
-            } else {
-                diff += " ,";
-            }
-
-            if (rankChange) {
-                diff += getRank() + "\n";
-            } else {
-                diff += " \n";
-            }
-        }
-
-        return diff;
-    }
-
     public int getKillsAtt() {
         return killsAtt;
     }
@@ -326,6 +239,7 @@ public class Tribe implements Serializable, Comparable {
 
         private static final long serialVersionUID = 8575799808933029326L;
 
+        @Override
         public int compare(Tribe s1, Tribe s2) {
             int n1 = s1.toString().length(), n2 = s2.toString().length();
             for (int i1 = 0, i2 = 0; i1 < n1 && i2 < n2; i1++, i2++) {

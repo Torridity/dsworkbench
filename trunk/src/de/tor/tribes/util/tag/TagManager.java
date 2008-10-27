@@ -52,6 +52,7 @@ public class TagManager {
 
     /**Load tags from a file*/
     public void loadTagsFromFile(String pFile) {
+        mTags.clear();
         if (pFile == null) {
             logger.error("File argument is 'null'");
             return;
@@ -59,18 +60,25 @@ public class TagManager {
 
         File tagFile = new File(pFile);
         if (tagFile.exists()) {
+
             if (logger.isDebugEnabled()) {
                 logger.debug("Loading tags from '" + pFile + "'");
             }
             try {
                 Document d = JaxenUtils.getDocument(tagFile);
+                int cnt = 0;
                 for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//tags/tag")) {
                     try {
                         mTags.add(Tag.fromXml(e));
                     } catch (Exception inner) {
+                        cnt++;
                     }
                 }
-                logger.debug("Tags loaded successfully");
+                if(cnt == 0){
+                    logger.debug("Tags loaded successfully");
+                }else{
+                    logger.warn(cnt + " errors while loading tags");
+                }
             } catch (Exception e) {
                 logger.error("Failed to load tags", e);
             }

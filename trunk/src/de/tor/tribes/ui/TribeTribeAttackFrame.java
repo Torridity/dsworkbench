@@ -386,6 +386,7 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame {
 
         jSourceVillageLabel1.setText(bundle.getString("TribeTribeAttackFrame.jSourceVillageLabel1.text")); // NOI18N
 
+        jVillageGroupChooser.setToolTipText(bundle.getString("TribeTribeAttackFrame.jVillageGroupChooser.toolTipText")); // NOI18N
         jVillageGroupChooser.setMaximumSize(new java.awt.Dimension(150, 20));
         jVillageGroupChooser.setMinimumSize(new java.awt.Dimension(150, 20));
         jVillageGroupChooser.setPreferredSize(new java.awt.Dimension(150, 20));
@@ -507,7 +508,7 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 170, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 166, Short.MAX_VALUE)
                 .addGap(11, 11, 11)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -557,6 +558,7 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame {
 
         jLabel1.setText(bundle.getString("TribeTribeAttackFrame.jLabel1.text")); // NOI18N
 
+        jTargetVillageBox.setToolTipText(bundle.getString("TribeTribeAttackFrame.jTargetVillageBox.toolTipText")); // NOI18N
         jTargetVillageBox.setMaximumSize(new java.awt.Dimension(150, 20));
         jTargetVillageBox.setMinimumSize(new java.awt.Dimension(150, 20));
         jTargetVillageBox.setPreferredSize(new java.awt.Dimension(150, 20));

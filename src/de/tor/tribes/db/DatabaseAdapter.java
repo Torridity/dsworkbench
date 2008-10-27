@@ -487,7 +487,7 @@ public class DatabaseAdapter {
 
 
 //        System.out.println(getUserDataVersion("Torridity", "de26"));
-        long s = System.currentTimeMillis();
+      //  long s = System.currentTimeMillis();
         /* System.out.println(DatabaseAdapter.getServerList());
         System.out.println("d = " + (System.currentTimeMillis() - s));
         
@@ -508,7 +508,6 @@ public class DatabaseAdapter {
 
 
         //  System.out.println(new SimpleDateFormat("dd.MM.yyyy HH.mm.ss").format(new Date(1223848823000l)));
-        System.out.println(DatabaseAdapter.checkUser("Torridity", "realstyx13"));
     //System.out.println(DatabaseAdapter.getPropertyValue("update_base_dir"));
     // System.out.println(DatabaseAdapter.getUserDataVersion("Torridity", "de14"));
     //System.out.println(DatabaseAdapter.registerUserForServer("Torridity", "de14"));

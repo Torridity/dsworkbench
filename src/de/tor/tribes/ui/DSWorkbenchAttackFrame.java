@@ -792,14 +792,12 @@ private void fireRemoveAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
 }//GEN-LAST:event_fireRemoveAttackEvent
 
 private void fireValidateAttacksEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireValidateAttacksEvent
-    DefaultTableModel model = (DefaultTableModel) jAttackTable.getModel();
-
     Hashtable<Integer, String> errors = new Hashtable<Integer, String>();
-    for (int i = 0; i < model.getRowCount(); i++) {
-        Date sendTime = (Date) model.getValueAt(i, 3);
-        Date arriveTime = (Date) model.getValueAt(i, 4);
+    for (int i = 0; i < AttackManagerTableModel.getSingleton().getRowCount(); i++) {
+        Date sendTime = (Date) AttackManagerTableModel.getSingleton().getValueAt(i, 3);
+        Date arriveTime = (Date) AttackManagerTableModel.getSingleton().getValueAt(i, 4);
         if (arriveTime.getTime() < System.currentTimeMillis()) {
-            errors.put(i, "Ankunftszeit liegt in der Vergangenheit");
+            errors.put(i, "Ankunftzeit liegt in der Vergangenheit");
         } else if (sendTime.getTime() < System.currentTimeMillis()) {
             errors.put(i, "Abschickzeit liegt in der Vergangenheit");
         }

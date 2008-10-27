@@ -96,55 +96,6 @@ public class Ally implements Serializable, Comparable {
         return b.toString();
     }
 
-    public void updateFromDiff(String pDiff) {
-        StringTokenizer t = new StringTokenizer(pDiff, ",");
-        //2340, , , ,8190,80474060,80474060, 
-
-        //skip id
-        t.nextToken();
-
-        try {
-            String n = URLDecoder.decode(t.nextToken(), "UTF-8").trim();
-            if (n.length() > 0) {
-                setName(n);
-            }
-        } catch (Exception e) {
-        }
-
-        try {
-            String n = URLDecoder.decode(t.nextToken(), "UTF-8").trim();
-            if (n.length() > 0) {
-                setTag(n);
-            }
-        } catch (Exception e) {
-        }
-
-        try {
-            setMembers(Short.parseShort(t.nextToken().trim()));
-        } catch (Exception e) {
-        }
-
-        try {
-            setVillages(Integer.parseInt(t.nextToken().trim()));
-        } catch (Exception e) {
-        }
-
-        try {
-            setPoints(Integer.parseInt(t.nextToken().trim()));
-        } catch (Exception e) {
-        }
-
-        try {
-            setAll_points(Integer.parseInt(t.nextToken().trim()));
-        } catch (Exception e) {
-        }
-
-        try {
-            setRank(Integer.parseInt(t.nextToken().trim()));
-        } catch (Exception e) {
-        }
-    }
-
     public Ally() {
         tribes = new LinkedList<Tribe>();
     }
@@ -265,103 +216,6 @@ public class Ally implements Serializable, Comparable {
         return "[ally]" + getTag() + "[/ally]";
     }
 
-    public String createDiff(Ally old) {
-        String diff = null;
-        if (old == null) {
-            diff = getId() + "," + getName() + "," + getTag() + "," + getMembers() + "," + getVillages() + "," + getPoints() + "," + getAll_points() + "," + getRank() + "\n";
-            return diff;
-        }
-
-        boolean nameChange = false;
-        boolean tagChange = false;
-        boolean membersChange = false;
-        boolean villagesChange = false;
-        boolean pointsChange = false;
-        boolean allPointsChange = false;
-        boolean rankChange = false;
-
-        if (!getName().equals(old.getName())) {
-            nameChange = true;
-        }
-
-        if (!getTag().equals(old.getTag())) {
-            tagChange = true;
-        }
-
-        if (getMembers() != old.getMembers()) {
-            membersChange = true;
-        }
-
-        if (getVillages() != old.getVillages()) {
-            villagesChange = true;
-        }
-
-        if (getPoints() != old.getPoints()) {
-            pointsChange = true;
-        }
-
-        if (getAll_points() != old.getAll_points()) {
-            allPointsChange = true;
-        }
-
-        if (getRank() != old.getRank()) {
-            rankChange = true;
-        }
-
-
-        if (nameChange || tagChange || membersChange || villagesChange || pointsChange || allPointsChange || rankChange) {
-            diff = Integer.toString(getId()) + ",";
-        }
-
-        if (nameChange) {
-            try {
-                diff += URLEncoder.encode(getName(), "UTF-8") + ",";
-            } catch (Exception e) {
-            }
-        } else {
-            diff += " ,";
-        }
-
-        if (tagChange) {
-            try {
-                diff += URLEncoder.encode(getTag(), "UTF-8") + ",";
-            } catch (Exception e) {
-            }
-        } else {
-            diff += " ,";
-        }
-
-        if (membersChange) {
-            diff += getMembers() + ",";
-        } else {
-            diff += " ,";
-        }
-
-        if (villagesChange) {
-            diff += getVillages() + ",";
-        } else {
-            diff += " ,";
-        }
-
-        if (pointsChange) {
-            diff += getPoints() + ",";
-        } else {
-            diff += " ,";
-        }
-        if (allPointsChange) {
-            diff += getAll_points() + ",";
-        } else {
-            diff += " ,";
-        }
-        if (rankChange) {
-            diff += getRank() + "\n";
-        } else {
-            diff += " \n";
-        }
-
-        return diff;
-    }
-
     @Override
     public int compareTo(Object o) {
         return toString().compareTo(o.toString());
@@ -374,11 +228,8 @@ public class Ally implements Serializable, Comparable {
 
         private static final long serialVersionUID = 8575799808933029326L;
 
+        @Override
         public int compare(Ally s1, Ally s2) {
-
-
-
-
             int n1 = s1.toString().length(),     n2 = s2.toString().length();
             for (int i1 = 0,     i2 = 0; i1 < n1 && i2 < n2; i1++, i2++) {
                 char c1 = s1.toString().charAt(i1);

@@ -98,31 +98,6 @@ public class Village implements Serializable, Comparable {
         return orderType;
     }
 
-    public void updateFromDiff(String pDiff) {
-        StringTokenizer t = new StringTokenizer(pDiff, ",");
-        //skip id
-        t.nextToken();
-        try {
-            String n = URLDecoder.decode(t.nextToken().trim(), "UTF-8");
-            //replace HTML characters
-            n = n.replaceAll("&gt;", ">").replaceAll("&lt;", "<");
-            setName(n);
-        } catch (Exception e) {
-        }
-        //skip x 
-        t.nextToken();
-        //skip y
-        t.nextToken();
-        try {
-            setTribeID(Integer.parseInt(t.nextToken().trim()));
-        } catch (Exception e) {
-        }
-        try {
-            setPoints(Integer.parseInt(t.nextToken().trim()));
-        } catch (Exception e) {
-        }
-    }
-
     public int getId() {
         return id;
     }
@@ -263,60 +238,6 @@ public class Village implements Serializable, Comparable {
         return "[village]" + getX() + "|" + getY() + "[/village]";
     }
 
-    /**Create diff between upto-date village and an older version of this village*/
-    public String createDiff(Village old) {
-        String diff = null;
-        if (old == null) {
-            diff = getId() + "," + getName() + "," + getX() + "," + getY() + "," + getTribeID() + "," + getPoints() + "," + getType() + "\n";
-            return diff;
-        }
-        boolean nameChange = false;
-        boolean tribeChange = false;
-        boolean pointsChange = false;
-
-        if (!getName().equals(old.getName())) {
-            nameChange = true;
-        }
-
-        if (getTribeID() != old.getTribeID()) {
-            tribeChange = true;
-        }
-
-        if (getPoints() != old.getPoints()) {
-            pointsChange = true;
-        }
-
-        if (nameChange || tribeChange || pointsChange) {
-            diff = Integer.toString(getId()) + ",";
-            if (nameChange) {
-                try {
-                    diff += URLEncoder.encode(getName(), "UTF-8") + ",";
-                } catch (Exception e) {
-                }
-            } else {
-                diff += " ,";
-            }
-            //add coord placeholders
-            diff += " , ,";
-
-            if (tribeChange) {
-                diff += getTribeID() + ",";
-            } else {
-                diff += " ,";
-            }
-
-            if (pointsChange) {
-                diff += getPoints() + ",";
-            } else {
-                diff += " ,";
-            }
-            //add type placeholder
-            diff += " \n";
-        }
-
-        return diff;
-    }
-
     @Override
     public int compareTo(Object o) {
         if (o == null) {
@@ -355,6 +276,7 @@ public class Village implements Serializable, Comparable {
 
         private static final long serialVersionUID = 8575799808933029326L;
 
+        @Override
         public int compare(Village s1, Village s2) {
             if (Village.getOrderType() == ORDER_ALPHABETICALLY) {
                 int n1 = s1.toString().length(), n2 = s2.toString().length();

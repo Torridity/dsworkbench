@@ -463,7 +463,7 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jInformationPanel" max="32767" attributes="0"/>
                   </Group>
-                  <Component id="jPanel1" pref="650" max="32767" attributes="1"/>
+                  <Component id="jPanel1" pref="652" max="32767" attributes="1"/>
               </Group>
               <EmptySpace min="-2" max="-2" attributes="0"/>
               <Component id="jInfoPanel" min="-2" pref="110" max="-2" attributes="0"/>
@@ -1053,7 +1053,7 @@
             </Property>
           </Properties>
           <Events>
-            <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="fireChangeCurrentPlayerVillageEvent"/>
+            <EventHandler event="popupMenuWillBecomeInvisible" listener="javax.swing.event.PopupMenuListener" parameters="javax.swing.event.PopupMenuEvent" handler="fireCurrentPlayerVillagePopupEvent"/>
           </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="jCurrentPlayer">

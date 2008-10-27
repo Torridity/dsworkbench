@@ -166,9 +166,9 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
                 .addContainerGap()
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 442, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jMarkerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jToggleDrawFilterButton, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jRemoveMarkerButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jMarkerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jToggleDrawFilterButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jRemoveMarkerButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jMarkerPanelLayout.setVerticalGroup(
@@ -259,6 +259,7 @@ private void fireDrawMarkedOnlyChangedEvent(java.awt.event.MouseEvent evt) {//GE
 
     /**Setup marker panel*/
     protected void setupMarkerPanel() {
+        jMarkerTable.invalidate();
         jMarkerTable.setModel(MarkerManager.getSingleton().getTableModel());
         MarkerManager.getSingleton().addMarkerManagerListener(this);
         //setup renderer and general view
@@ -300,6 +301,7 @@ private void fireDrawMarkedOnlyChangedEvent(java.awt.event.MouseEvent evt) {//GE
         jScrollPane1.getViewport().setBackground(Constants.DS_BACK_LIGHT);
         //update view
         MarkerManager.getSingleton().markerUpdatedExternally();
+        jMarkerTable.revalidate();
         jMarkerTable.updateUI();
     }
 

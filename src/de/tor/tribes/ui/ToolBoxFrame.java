@@ -10,10 +10,9 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import javax.swing.ImageIcon;
-import javax.swing.JFrame;
 
 /**
- *
+ * @TODO: add graphics/icons/notool.png to release
  * @author  Jejkal
  */
 public class ToolBoxFrame extends javax.swing.JFrame {
@@ -22,7 +21,7 @@ public class ToolBoxFrame extends javax.swing.JFrame {
     private int dy = 0;
     private int layout = javax.swing.BoxLayout.Y_AXIS;
     private final int iWidth = 30;
-    private final int iHeight = 600;
+    private final int iHeight = 630;
     private final int iLabelHeight = 4;
     private final int iLabelWidth = 30;
 
@@ -37,6 +36,7 @@ public class ToolBoxFrame extends javax.swing.JFrame {
     private void buildButtons() {
         try {
             jDragLabel.setIcon(new ImageIcon("./graphics/icons/tools.png"));
+            jNoToolButton.setIcon(new ImageIcon("./graphics/icons/notool.png"));
             jMeasureButton.setIcon(new ImageIcon("./graphics/icons/measure.png"));
             jMarkButton.setIcon(new ImageIcon("./graphics/icons/mark.png"));
             jSendTroopsIngameButton.setIcon(new ImageIcon("./graphics/icons/def.png"));
@@ -153,6 +153,7 @@ public class ToolBoxFrame extends javax.swing.JFrame {
     private void initComponents() {
 
         jDragLabel = new javax.swing.JLabel();
+        jNoToolButton = new javax.swing.JButton();
         jMeasureButton = new javax.swing.JButton();
         jMarkButton = new javax.swing.JButton();
         jTagButton = new javax.swing.JButton();
@@ -187,6 +188,17 @@ public class ToolBoxFrame extends javax.swing.JFrame {
         jDragLabel.setMinimumSize(new java.awt.Dimension(30, 30));
         jDragLabel.setPreferredSize(new java.awt.Dimension(30, 30));
         getContentPane().add(jDragLabel);
+
+        jNoToolButton.setToolTipText(bundle.getString("ToolBoxFrame.jNoToolButton.toolTipText")); // NOI18N
+        jNoToolButton.setMaximumSize(new java.awt.Dimension(30, 30));
+        jNoToolButton.setMinimumSize(new java.awt.Dimension(30, 30));
+        jNoToolButton.setPreferredSize(new java.awt.Dimension(30, 30));
+        jNoToolButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireToolClickedEvent(evt);
+            }
+        });
+        getContentPane().add(jNoToolButton);
 
         jMeasureButton.setToolTipText(bundle.getString("ToolBoxFrame.jMeasureButton.toolTipText")); // NOI18N
         jMeasureButton.setMaximumSize(new java.awt.Dimension(30, 30));
@@ -411,7 +423,9 @@ public class ToolBoxFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
 private void fireToolClickedEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireToolClickedEvent
-    if (evt.getSource() == jMeasureButton) {
+    if (evt.getSource() == jNoToolButton) {
+        MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_DEFAULT);
+    } else if (evt.getSource() == jMeasureButton) {
         MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_MEASURE);
     } else if (evt.getSource() == jMarkButton) {
         MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_MARK);
@@ -466,6 +480,7 @@ private void fireToolClickedEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
     private javax.swing.JButton jMarkButton;
     private javax.swing.JButton jMeasureButton;
     private javax.swing.JButton jMoveButton;
+    private javax.swing.JButton jNoToolButton;
     private javax.swing.JButton jSearchButton;
     private javax.swing.JButton jSendResIngameButton;
     private javax.swing.JButton jSendTroopsIngameButton;

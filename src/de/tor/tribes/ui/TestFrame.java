@@ -5,12 +5,7 @@
  */
 package de.tor.tribes.ui;
 
-import de.tor.tribes.util.SystrayManager;
-import java.awt.SystemTray;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.net.URL;
-import java.net.URLConnection;
+
 import javax.swing.UIManager;
 
 /**

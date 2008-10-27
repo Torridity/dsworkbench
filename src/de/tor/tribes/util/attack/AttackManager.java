@@ -47,7 +47,12 @@ public class AttackManager {
     }
 
     public synchronized void addAttackManagerListener(AttackManagerListener pListener) {
-        mManagerListeners.add(pListener);
+        if (pListener == null) {
+            return;
+        }
+        if (!mManagerListeners.contains(pListener)) {
+            mManagerListeners.add(pListener);
+        }
     }
 
     public synchronized void removeAttackManagerListener(AttackManagerListener pListener) {

@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 import javax.swing.ImageIcon;
+import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
 import org.apache.log4j.Level;
 import org.apache.log4j.RollingFileAppender;
@@ -168,11 +169,12 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
      */
     public static void main(String args[]) {
         // Locale.setDefault(Locale.US);
+
+
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
         }
-
         Font f = new Font("SansSerif", Font.PLAIN, 11);
         UIManager.put("Label.font", f);
         UIManager.put("TextField.font", f);
@@ -181,6 +183,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
         UIManager.put("TextArea.font", f);
         UIManager.put("List.font", f);
         UIManager.put("Button.font", f);
+        UIManager.put("ToggleButton.font", f);
         UIManager.put("CheckBox.font", f);
         UIManager.put("CheckBoxMenuItem.font", f);
         UIManager.put("Menu.font", f);

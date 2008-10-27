@@ -38,7 +38,12 @@ public class TagManager {
     }
 
     public synchronized void addTagManagerListener(TagManagerListener pListener) {
-        mManagerListeners.add(pListener);
+        if (pListener == null) {
+            return;
+        }
+        if (!mManagerListeners.contains(pListener)) {
+            mManagerListeners.add(pListener);
+        }
     }
 
     public synchronized void removeTagManagerListener(TagManagerListener pListener) {

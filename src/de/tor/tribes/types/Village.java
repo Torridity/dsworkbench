@@ -329,14 +329,14 @@ public class Village implements Serializable, Comparable {
             try {
                 Village v = (Village) o;
 
-                if (getX() > v.getX()) {
+                if (getX() < v.getX()) {
                     return -1;
-                } else if (getX() < v.getX()) {
+                } else if (getX() > v.getX()) {
                     return 1;
                 } else {
-                    if (getY() > v.getY()) {
+                      if (getY() < v.getY()) {
                         return -1;
-                    } else if (getY() < v.getY()) {
+                    } else if (getY() > v.getY()) {
                         return 1;
                     } else {
                         return 0;

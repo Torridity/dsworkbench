@@ -154,7 +154,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
 
                 if (version > 0 && version > Constants.VERSION) {
                     NotifierFrame.doNotification("Eine neue Version (" + version + ") von DS Workbench ist verfügbar.\n" +
-                            "Klickt auf das Update Icon um \'http://www.dsworkbench.de\' im Browser zu öffnen.", NotifierFrame.NOTIFY_UPDATE);
+                            "Klicke auf das Update Icon um \'http://www.dsworkbench.de\' im Browser zu öffnen.", NotifierFrame.NOTIFY_UPDATE);
                 }
             }
         } catch (Throwable th) {

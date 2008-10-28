@@ -1,9 +1,8 @@
 /*
- * MapPanel.java
- *
- * Created on 4. September 2007, 18:05
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
  */
-package de.tor.tribes.ui;
+package de.tor.tribes.ui.renderer;
 
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
@@ -12,32 +11,26 @@ import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.Marker;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.Village;
-import de.tor.tribes.util.BrowserCommandSender;
+import de.tor.tribes.ui.DSWorkbenchMainFrame;
+import de.tor.tribes.ui.ImageManager;
+import de.tor.tribes.ui.MapPanel;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.Skin;
-import de.tor.tribes.util.ToolChangeListener;
 import de.tor.tribes.util.attack.AttackManager;
 import de.tor.tribes.util.mark.MarkerManager;
+import de.tor.tribes.util.tag.TagManager;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Desktop;
 import java.awt.FontMetrics;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
@@ -52,536 +45,31 @@ import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import org.apache.log4j.Logger;
-import de.tor.tribes.util.tag.TagManager;
 
-/**
- *
- * @author  Charon
+/**Map Renderer which supports "dirty layers" defining which layer has to be redrawn.<BR/>
+ * Layer order with z-ID:<BR/>
+ * 0: Marker Layer -> redraw after marker changes (triggered by MarkerManager)
+ * 1: Village Layer: Redraw on global events (e.g. init or resize) or after changes on scaling or skin
+ * 2: Misc. Basic Map Decoration: e.g. Sector or continent drawing on demand (triggered by SettingsDialog)
+ * 3: Attack Vector Layer: Redraw after attack changes (triggered by AttackManager)
+ * 4: Misc. Extended Map Decoration: e.g. troop qualification or active village marker
+ * 5: Live Layer: Redraw in every drawing cycle e.g. Drag line, tool popup(?), (troop movement?)
+ * 6-16: Free assignable
+ * @author Charon
  */
-public class MapPanel extends javax.swing.JPanel {
-
-    // <editor-fold defaultstate="collapsed" desc=" Member variables ">
-    private static Logger logger = Logger.getLogger(MapPanel.class);
-    private Village[][] mVisibleVillages = null;
-    private Image mBuffer = null;
-    private int iCenterX = 500;
-    private int iCenterY = 500;
-    private RepaintThread mRepaintThread = null;
-    private int iCurrentCursor = ImageManager.CURSOR_DEFAULT;
-    private Village mSourceVillage = null;
-    private Village mTargetVillage = null;
-    private MarkerAddFrame mMarkerAddFrame = null;
-    boolean mouseDown = false;
-    private boolean isOutside = false;
-    private Rectangle2D mapBounds = null;
-    private Point mousePos = null;
-    private List<MapPanelListener> mMapPanelListeners = null;
-    private List<ToolChangeListener> mToolChangeListeners = null;
-    private int xDir = 0;
-    private int yDir = 0;
-    
-    private static MapPanel SINGLETON = null;
-    // </editor-fold>
-    
-    public static synchronized MapPanel getSingleton() {
-        if (SINGLETON == null) {
-            SINGLETON = new MapPanel();
-        }
-        return SINGLETON;
-    }
-
-    /** Creates new form MapPanel */
-    MapPanel() {
-        initComponents();
-        logger.info("Creating MapPanel");
-        mMapPanelListeners = new LinkedList<MapPanelListener>();
-        mToolChangeListeners = new LinkedList<ToolChangeListener>();
-        mMarkerAddFrame = new MarkerAddFrame();
-        setCursor(ImageManager.getCursor(iCurrentCursor));
-        initListeners();
-    }
-
-    public synchronized void addMapPanelListener(MapPanelListener pListener) {
-        mMapPanelListeners.add(pListener);
-    }
-
-    public synchronized void removeMapPanelListener(MapPanelListener pListener) {
-        mMapPanelListeners.remove(pListener);
-    }
-
-    public synchronized void addToolChangeListener(ToolChangeListener pListener) {
-        mToolChangeListeners.add(pListener);
-    }
-
-    public synchronized void removeMapPanelListener(ToolChangeListener pListener) {
-        mMapPanelListeners.remove(pListener);
-    }
-
-    private void initListeners() {
-
-        // <editor-fold defaultstate="collapsed" desc="MouseWheelListener for Tool changes">
-        addMouseWheelListener(new MouseWheelListener() {
-
-            @Override
-            public void mouseWheelMoved(MouseWheelEvent e) {
-
-                iCurrentCursor += e.getWheelRotation();
-                if (iCurrentCursor < 0) {
-                    iCurrentCursor = ImageManager.CURSOR_ATTACK_HEAVY;
-                } else if (iCurrentCursor > ImageManager.CURSOR_ATTACK_HEAVY) {
-                    iCurrentCursor = ImageManager.CURSOR_DEFAULT;
-
-                }
-                setCursor(ImageManager.getCursor(iCurrentCursor));
-                fireToolChangedEvents(iCurrentCursor);
-            }
-        });
-        //</editor-fold>
-
-        // <editor-fold defaultstate="collapsed" desc="MouseListener for cursor events">
-        addMouseListener(new MouseListener() {
-
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if (e.getButton() != MouseEvent.BUTTON1) {
-                    return;
-                }
-                int unit = -1;
-                boolean isAttack = false;
-                if ((iCurrentCursor == ImageManager.CURSOR_ATTACK_AXE) ||
-                        (iCurrentCursor == ImageManager.CURSOR_ATTACK_SWORD) ||
-                        (iCurrentCursor == ImageManager.CURSOR_ATTACK_SPY) ||
-                        (iCurrentCursor == ImageManager.CURSOR_ATTACK_LIGHT) ||
-                        (iCurrentCursor == ImageManager.CURSOR_ATTACK_HEAVY) ||
-                        (iCurrentCursor == ImageManager.CURSOR_ATTACK_RAM) ||
-                        (iCurrentCursor == ImageManager.CURSOR_ATTACK_SNOB)) {
-                    isAttack = true;
-                }
-                switch (iCurrentCursor) {
-                    case ImageManager.CURSOR_DEFAULT: {
-                        //center village on click with default cursor
-                        Village current = getVillageAtMousePos();
-                        if (current != null) {
-                            DSWorkbenchMainFrame.getSingleton().centerVillage(current);
-                        }
-                        break;
-                    }
-                    case ImageManager.CURSOR_MARK: {
-                        Village current = getVillageAtMousePos();
-                        if (current != null) {
-                            if (current.getTribe() == null) {
-                                //empty village
-                                return;
-                            }
-                            mMarkerAddFrame.setLocation(e.getPoint());
-                            mMarkerAddFrame.setVillage(current);
-                            mMarkerAddFrame.setVisible(true);
-                        }
-                        break;
-                    }
-                    case ImageManager.CURSOR_TAG: {
-                        Village current = getVillageAtMousePos();
-                        if (current != null) {
-                            if (current.getTribe() == null) {
-                                //empty village
-                                return;
-                            }
-                        }
-                        VillageTagFrame.getSingleton().setLocation(e.getPoint());
-                        VillageTagFrame.getSingleton().showTagsFrame(current);
-                        break;
-                    }
-                    case ImageManager.CURSOR_ATTACK_INGAME: {
-                        if (e.getClickCount() == 2) {
-                            Village v = getVillageAtMousePos();
-                            Village u = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage();
-                            if ((u != null) && (v != null)) {
-                                if (Desktop.isDesktopSupported()) {
-                                    BrowserCommandSender.sendTroops(u, v);
-                                }
-                            }
-                        }
-                    }
-                    case ImageManager.CURSOR_SEND_RES_INGAME: {
-                        if (e.getClickCount() == 2) {
-                            Village v = getVillageAtMousePos();
-                            Village u = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage();
-                            if ((u != null) && (v != null)) {
-                                if (Desktop.isDesktopSupported()) {
-                                    BrowserCommandSender.sendRes(u, v);
-                                }
-                            }
-                        }
-                    }
-                    case ImageManager.CURSOR_ATTACK_AXE: {
-                        unit = DataHolder.getSingleton().getUnitID("Axtkämpfer");
-                        break;
-                    }
-                    case ImageManager.CURSOR_ATTACK_SWORD: {
-                        unit = DataHolder.getSingleton().getUnitID("Schwertkämpfer");
-                        break;
-                    }
-                    case ImageManager.CURSOR_ATTACK_SPY: {
-                        unit = DataHolder.getSingleton().getUnitID("Späher");
-                        break;
-                    }
-                    case ImageManager.CURSOR_ATTACK_LIGHT: {
-                        unit = DataHolder.getSingleton().getUnitID("Leichte Kavallerie");
-                        break;
-                    }
-                    case ImageManager.CURSOR_ATTACK_HEAVY: {
-                        unit = DataHolder.getSingleton().getUnitID("Schwere Kavallerie");
-                        break;
-                    }
-                    case ImageManager.CURSOR_ATTACK_RAM: {
-                        unit = DataHolder.getSingleton().getUnitID("Ramme");
-                        break;
-                    }
-                    case ImageManager.CURSOR_ATTACK_SNOB: {
-                        unit = DataHolder.getSingleton().getUnitID("Adelsgeschlecht");
-                        break;
-                    }
-                }
-
-                if (e.getClickCount() == 2) {
-                    //create attack on double clicking a village
-                    if (isAttack) {
-                        AttackAddFrame aAdd = new AttackAddFrame();
-                        aAdd.setLocation(e.getLocationOnScreen());
-                        aAdd.setupAttack(DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage(), getVillageAtMousePos(), unit);
-                    }
-                }
-            }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-                if (e.getButton() != MouseEvent.BUTTON1) {
-                    return;
-                }
-
-                boolean isAttack = false;
-                mouseDown = true;
-                if ((iCurrentCursor == ImageManager.CURSOR_ATTACK_AXE) ||
-                        (iCurrentCursor == ImageManager.CURSOR_ATTACK_SWORD) ||
-                        (iCurrentCursor == ImageManager.CURSOR_ATTACK_SPY) ||
-                        (iCurrentCursor == ImageManager.CURSOR_ATTACK_LIGHT) ||
-                        (iCurrentCursor == ImageManager.CURSOR_ATTACK_HEAVY) ||
-                        (iCurrentCursor == ImageManager.CURSOR_ATTACK_RAM) ||
-                        (iCurrentCursor == ImageManager.CURSOR_ATTACK_SNOB)) {
-                    isAttack = true;
-                }
-
-                switch (iCurrentCursor) {
-                    case ImageManager.CURSOR_MEASURE: {
-                        //start drag if attack tool is active
-                        mSourceVillage = getVillageAtMousePos();
-                        if (mSourceVillage != null) {
-                            mRepaintThread.setDragLine(mSourceVillage.getX(), mSourceVillage.getY(), e.getX(), e.getY());
-                        }
-                        break;
-                    }
-                    default: {
-                        if (isAttack) {
-                            mSourceVillage = getVillageAtMousePos();
-                            if (mSourceVillage != null) {
-                                mRepaintThread.setDragLine(mSourceVillage.getX(), mSourceVillage.getY(), e.getX(), e.getY());
-                            }
-                        }
-                    }
-                }
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                int unit = -1;
-                xDir = 0;
-                yDir = 0;
-                boolean isAttack = false;
-                if ((iCurrentCursor == ImageManager.CURSOR_ATTACK_AXE) ||
-                        (iCurrentCursor == ImageManager.CURSOR_ATTACK_SWORD) ||
-                        (iCurrentCursor == ImageManager.CURSOR_ATTACK_SPY) ||
-                        (iCurrentCursor == ImageManager.CURSOR_ATTACK_LIGHT) ||
-                        (iCurrentCursor == ImageManager.CURSOR_ATTACK_HEAVY) ||
-                        (iCurrentCursor == ImageManager.CURSOR_ATTACK_RAM) ||
-                        (iCurrentCursor == ImageManager.CURSOR_ATTACK_SNOB)) {
-                    isAttack = true;
-                }
-
-                switch (iCurrentCursor) {
-                    case ImageManager.CURSOR_MEASURE: {
-                        break;
-                    }
-                    case ImageManager.CURSOR_ATTACK_AXE: {
-                        unit = DataHolder.getSingleton().getUnitID("Axtkämpfer");
-                        break;
-                    }
-                    case ImageManager.CURSOR_ATTACK_SWORD: {
-                        unit = DataHolder.getSingleton().getUnitID("Schwertkämpfer");
-                        break;
-                    }
-                    case ImageManager.CURSOR_ATTACK_SPY: {
-                        unit = DataHolder.getSingleton().getUnitID("Späher");
-                        break;
-                    }
-                    case ImageManager.CURSOR_ATTACK_LIGHT: {
-                        unit = DataHolder.getSingleton().getUnitID("Leichte Kavallerie");
-                        break;
-                    }
-                    case ImageManager.CURSOR_ATTACK_HEAVY: {
-                        unit = DataHolder.getSingleton().getUnitID("Schwere Kavallerie");
-                        break;
-                    }
-                    case ImageManager.CURSOR_ATTACK_RAM: {
-                        unit = DataHolder.getSingleton().getUnitID("Ramme");
-                        break;
-                    }
-                    case ImageManager.CURSOR_ATTACK_SNOB: {
-                        unit = DataHolder.getSingleton().getUnitID("Adelsgeschlecht");
-                        break;
-                    }
-                }
-
-                mouseDown = false;
-                if (isAttack) {
-                    AttackAddFrame aAdd = new AttackAddFrame();
-                    aAdd.setLocation(e.getLocationOnScreen());
-                    aAdd.setupAttack(mSourceVillage, mTargetVillage, unit);
-                }
-                mSourceVillage = null;
-                mTargetVillage = null;
-                mRepaintThread.setDragLine(0, 0, 0, 0);
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                isOutside = false;
-                mapBounds = null;
-                mousePos = null;
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                if (mouseDown) {
-                    isOutside = true;
-                    //handle drag-outside-panel events
-                    mousePos = e.getLocationOnScreen();
-                    Point panelPos = getLocationOnScreen();
-                    mapBounds = new Rectangle2D.Double(panelPos.getX(), panelPos.getY(), getWidth(), getHeight());
-                }
-            }
-        });
-
-        //</editor-fold>
-
-        // <editor-fold defaultstate="collapsed" desc=" MouseMotionListener for dragging operations ">
-         addMouseMotionListener(new MouseMotionListener() {
-
-            @Override
-            public void mouseDragged(MouseEvent e) {
-                fireVillageAtMousePosChangedEvents(getVillageAtMousePos());
-                boolean isAttack = false;
-                if ((iCurrentCursor == ImageManager.CURSOR_ATTACK_AXE) ||
-                        (iCurrentCursor == ImageManager.CURSOR_ATTACK_SWORD) ||
-                        (iCurrentCursor == ImageManager.CURSOR_ATTACK_SPY) ||
-                        (iCurrentCursor == ImageManager.CURSOR_ATTACK_LIGHT) ||
-                        (iCurrentCursor == ImageManager.CURSOR_ATTACK_HEAVY) ||
-                        (iCurrentCursor == ImageManager.CURSOR_ATTACK_RAM) ||
-                        (iCurrentCursor == ImageManager.CURSOR_ATTACK_SNOB)) {
-                    isAttack = true;
-                }
-
-                switch (iCurrentCursor) {
-                    case ImageManager.CURSOR_MEASURE: {
-                        //update drag if attack tool is active
-                        if (mSourceVillage != null) {
-                            mRepaintThread.setDragLine(mSourceVillage.getX(), mSourceVillage.getY(), e.getX(), e.getY());
-                        }
-                        mTargetVillage = getVillageAtMousePos();
-
-                        fireDistanceEvents(mSourceVillage, mTargetVillage);
-                        break;
-                    }
-                    default: {
-                        if (isAttack) {
-                            if (mSourceVillage != null) {
-                                mRepaintThread.setDragLine((int) mSourceVillage.getX(), (int) mSourceVillage.getY(), e.getX(), e.getY());
-                                mTargetVillage = getVillageAtMousePos();
-                            }
-                        }
-                    }
-                }
-            }
-
-            @Override
-            public void mouseMoved(MouseEvent e) {
-                fireVillageAtMousePosChangedEvents(getVillageAtMousePos());
-                if (isOutside) {
-                    mousePos = e.getLocationOnScreen();
-                }
-            }
-        });
-         //<editor-fold>
-    }
-
-    /**Returns true as long as the mouse is outside the mappanel*/
-    protected boolean isOutside() {
-        return isOutside;
-    }
-
-    /**Get start village of drag operation*/
-    public Village getSourceVillage() {
-        return mSourceVillage;
-    }
-
-    public void setCurrentCursor(int pCurrentCursor) {
-        iCurrentCursor = pCurrentCursor;
-        setCursor(ImageManager.getCursor(iCurrentCursor));
-        fireToolChangedEvents(iCurrentCursor);
-    }
-
-    /** This method is called from within the constructor to
-     * initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is
-     * always regenerated by the Form Editor.
-     */
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents() {
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 207, Short.MAX_VALUE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 89, Short.MAX_VALUE)
-        );
-    }// </editor-fold>//GEN-END:initComponents
-
-    /**Draw buffer into panel*/
-    @Override
-    public void paint(Graphics g) {
-        try {
-            //clean map
-            g.fillRect(0, 0, getWidth(), getHeight());
-            //calculate move direction if mouse is dragged outside the map
-            if ((isOutside) && (mouseDown)) {
-                mousePos = MouseInfo.getPointerInfo().getLocation();
-                int outcodes = mapBounds.outcode(mousePos);
-
-                if ((outcodes & Rectangle2D.OUT_LEFT) != 0) {
-                    xDir += -1;
-                } else if ((outcodes & Rectangle2D.OUT_RIGHT) != 0) {
-                    xDir += 1;
-                }
-
-                if ((outcodes & Rectangle2D.OUT_TOP) != 0) {
-                    yDir += -1;
-                } else if ((outcodes & Rectangle2D.OUT_BOTTOM) != 0) {
-                    yDir += 1;
-                }
-
-                //lower scroll speed
-                int sx = 0;
-                int sy = 0;
-                if (xDir >= 1) {
-                    sx = 1;
-                    xDir = 0;
-                } else if (xDir <= -1) {
-                    sx = -1;
-                    xDir = 0;
-                }
-
-                if (yDir >= 1) {
-                    sy = 1;
-                    yDir = 0;
-                } else if (yDir <= -1) {
-                    sy = -1;
-                    yDir = 0;
-                }
-
-                fireScrollEvents(sx, sy);
-            }
-            //draw off-screen image of map
-            Graphics2D g2d = (Graphics2D) g;
-            g2d.drawImage(mBuffer, 0, 0, null);
-            g2d.dispose();
-        } catch (Exception e) {
-            logger.error("Failed to paint", e);
-        }
-    }
-
-    /**Update map to new position -> needs fully update*/
-    protected synchronized void updateMap(int pX, int pY) {
-        if (mRepaintThread == null) {
-            logger.info("Creating MapPaintThread");
-            iCenterX = pX;
-            iCenterY = pY;
-            mRepaintThread = new RepaintThread(iCenterX, iCenterY);
-            mRepaintThread.start();
-        } else {
-            iCenterX = pX;
-            iCenterY = pY;
-            mRepaintThread.setCoordinates(iCenterX, iCenterY);
-        }
-    }
-
-    /**Get village at current mouse position, null if there is no village*/
-    public Village getVillageAtMousePos() {
-        try {
-            int x = (int) getMousePosition().getX();
-            int y = (int) getMousePosition().getY();
-
-            x /= GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, DSWorkbenchMainFrame.getSingleton().getZoomFactor()).getWidth(null);
-            y /= GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, DSWorkbenchMainFrame.getSingleton().getZoomFactor()).getHeight(null);
-
-            return mVisibleVillages[x][y];
-        } catch (Exception e) {
-            //failed getting village (probably getting mousepos failed)
-        }
-        return null;
-    }
-
-    /**Update operation perfomed by the RepaintThread was completed*/
-    public void updateComplete(Village[][] pVillages, Image pBuffer) {
-        mBuffer = pBuffer;
-        mVisibleVillages = pVillages;
-    }
-
-    public synchronized void fireToolChangedEvents(int pTool) {
-        for (ToolChangeListener listener : mToolChangeListeners) {
-            listener.fireToolChangedEvent(pTool);
-        }
-    }
-
-    public synchronized void fireVillageAtMousePosChangedEvents(Village pVillage) {
-        for (MapPanelListener listener : mMapPanelListeners) {
-            listener.fireVillageAtMousePosChangedEvent(pVillage);
-        }
-    }
-
-    public synchronized void fireDistanceEvents(Village pSource, Village pTarget) {
-        for (MapPanelListener listener : mMapPanelListeners) {
-            listener.fireDistanceEvent(pSource, pTarget);
-        }
-    }
-
-    public synchronized void fireScrollEvents(int pX, int pY) {
-        for (MapPanelListener listener : mMapPanelListeners) {
-            listener.fireScrollEvent(pX, pY);
-        }
-    }
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    // End of variables declaration//GEN-END:variables
-}
-
 /**Thread for updating after scroll operations*/
-class RepaintThread extends Thread {
+class MapRenderer extends Thread {
 
-    private static Logger logger = Logger.getLogger(RepaintThread.class);
+    private static Logger logger = Logger.getLogger(MapRenderer.class);
+    public static final int ID_FULL_REDRAW = 0;
+    public static final int ID_MAP_REDRAW = 1;
+    public static final int ID_MARKER_REDRAW = 2;
+    public static final int ID_BASIC_DECORATION_REDRAW = 3;
+    public static final int ID_ATTACK_REDRAW = 4;
+    public static final int ID_EXTENDED_DECORATION_REDRAW = 5;
     private Village[][] mVisibleVillages = null;
     private BufferedImage mBuffer = null;
+    private BufferedImage[] mLayers = null;
     //  private BufferedImage mBackground = null;
     private int iVillagesX = 0;
     private int iVillagesY = 0;
@@ -593,9 +81,10 @@ class RepaintThread extends Thread {
     private BufferedImage mDistBorder = null;
     private Image mMarkerImage = null;
     private final NumberFormat nf = NumberFormat.getInstance();
+    private int iDirtLevel = -1;
     //  private boolean mustDrawBackground = true;
 
-    public RepaintThread(int pX, int pY) {
+    public MapRenderer(int pX, int pY) {
         mVisibleVillages = new Village[iVillagesX][iVillagesY];
         setCoordinates(pX, pY);
         setDaemon(true);
@@ -622,18 +111,22 @@ class RepaintThread extends Thread {
         while (true) {
             try {
                 //  long s = System.currentTimeMillis();
-                updateMap(iCenterX, iCenterY);
-                //  mustDrawBackground = false;
-                //  System.out.println("Dur " + (System.currentTimeMillis() - s));
-                if (mBuffer != null) {
-                    Image iBuffer = MapPanel.getSingleton().createImage(mBuffer.getWidth(), mBuffer.getHeight());
-                    Graphics2D g2d = (Graphics2D) iBuffer.getGraphics();
-                    // g2d.drawImage(mBackground, null, 0, 0);
-                    g2d.drawImage(mBuffer, null, 0, 0);
-                    g2d.dispose();
-                    //mBuffer = null;
-                    MapPanel.getSingleton().updateComplete(mVisibleVillages, iBuffer);
-                    MapPanel.getSingleton().repaint();
+                Point startPoint = calculateVisibleVillages(iCenterX, iCenterY);
+                if (startPoint != null) {
+                    render(startPoint.x, startPoint.y);
+
+                    //  mustDrawBackground = false;
+                    //  System.out.println("Dur " + (System.currentTimeMillis() - s));
+                    if (mBuffer != null) {
+                        Image iBuffer = MapPanel.getSingleton().createImage(mBuffer.getWidth(), mBuffer.getHeight());
+                        Graphics2D g2d = (Graphics2D) iBuffer.getGraphics();
+                        // g2d.drawImage(mBackground, null, 0, 0);
+                        g2d.drawImage(mBuffer, null, 0, 0);
+                        g2d.dispose();
+                        //mBuffer = null;
+                        MapPanel.getSingleton().updateComplete(mVisibleVillages, iBuffer);
+                        MapPanel.getSingleton().repaint();
+                    }
                 }
             } catch (Throwable t) {
                 logger.error("Redrawing map failed", t);
@@ -652,14 +145,14 @@ class RepaintThread extends Thread {
         ye = pYE;
     }
 
-    /**Extract the visible villages*/
-    private void updateMap(int pX, int pY) {
+    /**Extract the visible villages (only needed on full repaint)*/
+    private Point calculateVisibleVillages(int pX, int pY) {
         iCenterX = pX;
         iCenterY = pY;
 
         if (DataHolder.getSingleton().getVillages() == null) {
             //probably reloading data
-            return;
+            return null;
         }
         //get number of drawn villages
         iVillagesX = (int) Math.rint((double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, DSWorkbenchMainFrame.getSingleton().getZoomFactor()).getWidth(null));
@@ -701,11 +194,11 @@ class RepaintThread extends Thread {
             x++;
             y = 0;
         }
-        redraw(xStart, yStart);
+        return new Point(xStart, yStart);
     }
 
     /**Redraw the buffer*/
-    private void redraw(int pXStart, int pYStart) {
+    private void render(int pXStart, int pYStart) {
         int x = 0;
         int y = 0;
         //get attack colors
@@ -808,7 +301,7 @@ class RepaintThread extends Thread {
         //       Hashtable<Village, Point> tagIconPoints = new Hashtable<Village, Point>();
         Hashtable<Point, Image> troopMarkPoints = new Hashtable<Point, Image>();
 
-        //</editor-fold> 
+        //</editor-fold>
 
         for (int i = 0; i < iVillagesX; i++) {
             for (int j = 0; j < iVillagesY; j++) {
@@ -1067,11 +560,11 @@ class RepaintThread extends Thread {
         // <editor-fold defaultstate="collapsed" desc=" Tag Icon drawing (NOT USED) ">
 
         /*        Composite old = g2d.getComposite();
-        
+
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.8f));
         if (!tagIconPoints.isEmpty()) {
         Enumeration<Village> villages = tagIconPoints.keys();
-        
+
         while (villages.hasMoreElements()) {
         Village current = villages.nextElement();
         if (!mAnimators.containsKey(current)) {
@@ -1088,12 +581,12 @@ class RepaintThread extends Thread {
         }
         if (tagImage != null) {
         g2d.drawImage(tagImage, tagIconPoints.get(current).x, tagIconPoints.get(current).y, null);
-        
+
         }
         }
         }
         }
-        
+
         try {
         Village v = MapPanel.getSingleton().getVillageAtMousePos();
         if ((v != null) && (tagIconPoints.get(v) != null)) {
@@ -1103,11 +596,11 @@ class RepaintThread extends Thread {
         }
         } catch (Exception e) {
         }
-        
+
         updateTagMovement(g2d);
-        
+
         g2d.setComposite(old);
-        
+
          */
         //</editor-fold>
 
@@ -1302,7 +795,7 @@ class RepaintThread extends Thread {
                     FontMetrics metrics = g2d.getFontMetrics(g2d.getFont());
                     // int fontHeight = metrics.getHeight();
                     Point pos = MapPanel.getSingleton().getMousePosition();
-                    //number format without fraction digits 
+                    //number format without fraction digits
                     NumberFormat numFormat = NumberFormat.getInstance();
                     numFormat.setMaximumFractionDigits(0);
                     numFormat.setMinimumFractionDigits(0);
@@ -1381,7 +874,7 @@ class RepaintThread extends Thread {
     aInfo = v.getTribe().getAlly().getHTMLInfo();
     }
     }
-    
+
     int wV = SwingUtilities.computeStringWidth(g2d.getFontMetrics(), vInfo);
     int wT = SwingUtilities.computeStringWidth(g2d.getFontMetrics(), tInfo);
     int wA = SwingUtilities.computeStringWidth(g2d.getFontMetrics(), aInfo);
@@ -1392,14 +885,14 @@ class RepaintThread extends Thread {
     Point p = MouseInfo.getPointerInfo().getLocation();
     SwingUtilities.convertPointFromScreen(p, MapPanel.getSingleton());
     g2d.fillRect(p.x, p.y, width + 10, 3 * height + 6 + 10);
-    
+
     } catch (Exception e) {
     //point outside
     }
     }
-    
+
     private Hashtable<Village, TagAnimator> mAnimators = new Hashtable<Village, TagAnimator>();
-    
+
     private void updateTagMovement(Graphics2D pG2d) {
     Village current = MapPanel.getSingleton().getVillageAtMousePos();
     Enumeration<Village> keys = mAnimators.keys();
@@ -1415,7 +908,7 @@ class RepaintThread extends Thread {
     }
     t.update(pG2d);
     }
-    
+
     //cleanup
     keys = mAnimators.keys();
     while (keys.hasMoreElements()) {
@@ -1424,8 +917,23 @@ class RepaintThread extends Thread {
     mAnimators.remove(current);
     }
     }*/
+
+    public static void main(String[] args) {
+        int level = 0;
+        int ID_MAP_REDRAW = 1;
+        int ID_MARKER_REDRAW = 2;
+        int ID_BASIC_DECORATION_REDRAW = 4;
+        int ID_ATTACK_REDRAW = 8;
+        int ID_EXTENDED_DECORATION_REDRAW = 16;
+        System.out.println((level | ID_MAP_REDRAW | ID_MARKER_REDRAW|ID_BASIC_DECORATION_REDRAW ));
+        System.out.println((level | ID_MARKER_REDRAW));
+        System.out.println((level | ID_BASIC_DECORATION_REDRAW));
+        System.out.println((level |ID_ATTACK_REDRAW));
+        System.out.println((level | ID_EXTENDED_DECORATION_REDRAW));
+    }
 }
-/*    
+
+/*
 class TagAnimator {
 
 private Village mVillage = null;
@@ -1490,3 +998,4 @@ cnt++;
 }
 }
  */
+

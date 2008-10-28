@@ -1,7 +1,7 @@
 -injars dist\DSWorkbench.jar
--outjars Release\DSWorkbench.jar
+-outjars Release\core.jar
 
--libraryjars 'E:\Java\jre1.6.0_06\lib\rt.jar'
+-libraryjars 'C:\Programme\Java\jre1.6.0_07\lib\rt.jar'
 -libraryjars lib\colorchooser.jar
 -libraryjars lib\jaxen-1.1-beta-8.jar
 -libraryjars lib\jdom.jar

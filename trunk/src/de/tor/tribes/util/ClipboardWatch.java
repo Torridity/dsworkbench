@@ -65,7 +65,7 @@ public class ClipboardWatch extends Thread {
                 //no usable data
             }
             try {
-                Thread.sleep(500);
+                Thread.sleep(1000);
             } catch (Exception e) {
             }
         }

@@ -22,7 +22,6 @@ import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.AWTEventListener;
-import java.awt.event.ItemEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
@@ -39,6 +38,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import org.apache.log4j.Logger;
 import de.tor.tribes.types.Tag;
+import de.tor.tribes.ui.renderer.MapRenderer;
 
 /**
  * @author  Charon
@@ -236,6 +236,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         }
         //update views
         MinimapPanel.getSingleton().redraw();
+        MapPanel.getSingleton().updateMapPosition(iCenterX, iCenterY);
         DSWorkbenchMarkerFrame.getSingleton().setupMarkerPanel();
         DSWorkbenchAttackFrame.getSingleton().setupAttackPanel();
         //update troops table and troops view
@@ -385,7 +386,8 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         super.setVisible(v);
         if (v) {
             //only if set to visible
-            MapPanel.getSingleton().updateMap(iCenterX, iCenterY);
+            MapPanel.getSingleton().updateMapPosition(iCenterX, iCenterY);
+
             double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
             double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
             MinimapPanel.getSingleton().setSelection(iCenterX, iCenterY, (int) Math.rint(w), (int) Math.rint(h));
@@ -1128,7 +1130,7 @@ private void fireRefreshMapEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:eve
     double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
     double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
     MinimapPanel.getSingleton().setSelection(cx, cy, (int) Math.rint(w), (int) Math.rint(h));
-    MapPanel.getSingleton().updateMap(iCenterX, iCenterY);
+    MapPanel.getSingleton().updateMapPosition(iCenterX, iCenterY);
 }//GEN-LAST:event_fireRefreshMapEvent
 
     /**Update map movement*/
@@ -1169,8 +1171,7 @@ private void fireMoveMapEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     jCenterY.setText(Integer.toString(cy));
     iCenterX = cx;
     iCenterY = cy;
-    MapPanel.getSingleton().updateMap(iCenterX, iCenterY);
-
+    MapPanel.getSingleton().updateMapPosition(iCenterX, iCenterY);
     double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
     double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
     MinimapPanel.getSingleton().setSelection(cx, cy, (int) Math.rint(w), (int) Math.rint(h));
@@ -1179,7 +1180,7 @@ private void fireMoveMapEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     /**React on resize events*/
 private void fireFrameResizedEvent(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_fireFrameResizedEvent
     try {
-        MapPanel.getSingleton().updateMap(iCenterX, iCenterY);
+        MapPanel.getSingleton().updateMapPosition(iCenterX, iCenterY);
     } catch (Exception e) {
         logger.error("Failed to resize map for (" + iCenterX + ", " + iCenterY + ")", e);
     }
@@ -1206,7 +1207,7 @@ private void fireZoomEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fir
     double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
     double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
     MinimapPanel.getSingleton().setSelection(Integer.parseInt(jCenterX.getText()), Integer.parseInt(jCenterY.getText()), (int) Math.rint(w), (int) Math.rint(h));
-    MapPanel.getSingleton().repaint();
+    MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.ALL_LAYERS);
 }//GEN-LAST:event_fireZoomEvent
 
     /**Change active player village*/
@@ -1318,8 +1319,7 @@ private void fireCurrentPlayerVillagePopupEvent(javax.swing.event.PopupMenuEvent
         jCenterY.setText(Integer.toString(y));
         iCenterX = x;
         iCenterY = y;
-        MapPanel.getSingleton().updateMap(iCenterX, iCenterY);
-
+        MapPanel.getSingleton().updateMapPosition(iCenterX, iCenterY);
         double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
         double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
         MinimapPanel.getSingleton().setSelection(x, y, (int) Math.rint(w), (int) Math.rint(h));
@@ -1335,7 +1335,7 @@ private void fireCurrentPlayerVillagePopupEvent(javax.swing.event.PopupMenuEvent
         double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
         double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
         MinimapPanel.getSingleton().setSelection(iCenterX, iCenterY, (int) Math.rint(w), (int) Math.rint(h));
-        MapPanel.getSingleton().updateMap(iCenterX, iCenterY);
+        MapPanel.getSingleton().updateMapPosition(iCenterX, iCenterY);
     }
 
     /**Center a village*/
@@ -1463,6 +1463,7 @@ private void fireCurrentPlayerVillagePopupEvent(javax.swing.event.PopupMenuEvent
         UIManager.put("OptionPane.noButtonText", "No");
         UIManager.put("OptionPane.yesButtonText", "Yes");
     }
+
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="Generated Variables">
 

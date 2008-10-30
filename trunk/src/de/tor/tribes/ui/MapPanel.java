@@ -53,6 +53,7 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import org.apache.log4j.Logger;
 import de.tor.tribes.util.tag.TagManager;
+import de.tor.tribes.ui.renderer.MapRenderer;
 
 /**
  *
@@ -79,10 +80,10 @@ public class MapPanel extends javax.swing.JPanel {
     private List<ToolChangeListener> mToolChangeListeners = null;
     private int xDir = 0;
     private int yDir = 0;
-    
+    private MapRenderer mMapRenderer = null;
     private static MapPanel SINGLETON = null;
     // </editor-fold>
-    
+
     public static synchronized MapPanel getSingleton() {
         if (SINGLETON == null) {
             SINGLETON = new MapPanel();
@@ -276,7 +277,8 @@ public class MapPanel extends javax.swing.JPanel {
                         //start drag if attack tool is active
                         mSourceVillage = getVillageAtMousePos();
                         if (mSourceVillage != null) {
-                            mRepaintThread.setDragLine(mSourceVillage.getX(), mSourceVillage.getY(), e.getX(), e.getY());
+                            //mRepaintThread.setDragLine(mSourceVillage.getX(), mSourceVillage.getY(), e.getX(), e.getY());
+                            mMapRenderer.setDragLine(mSourceVillage.getX(), mSourceVillage.getY(), e.getX(), e.getY());
                         }
                         break;
                     }
@@ -284,7 +286,8 @@ public class MapPanel extends javax.swing.JPanel {
                         if (isAttack) {
                             mSourceVillage = getVillageAtMousePos();
                             if (mSourceVillage != null) {
-                                mRepaintThread.setDragLine(mSourceVillage.getX(), mSourceVillage.getY(), e.getX(), e.getY());
+                               // mRepaintThread.setDragLine(mSourceVillage.getX(), mSourceVillage.getY(), e.getX(), e.getY());
+                                mMapRenderer.setDragLine(mSourceVillage.getX(), mSourceVillage.getY(), e.getX(), e.getY());
                             }
                         }
                     }
@@ -349,7 +352,7 @@ public class MapPanel extends javax.swing.JPanel {
                 }
                 mSourceVillage = null;
                 mTargetVillage = null;
-                mRepaintThread.setDragLine(0, 0, 0, 0);
+                mMapRenderer.setDragLine(0, 0, 0, 0);
             }
 
             @Override
@@ -374,7 +377,7 @@ public class MapPanel extends javax.swing.JPanel {
         //</editor-fold>
 
         // <editor-fold defaultstate="collapsed" desc=" MouseMotionListener for dragging operations ">
-         addMouseMotionListener(new MouseMotionListener() {
+        addMouseMotionListener(new MouseMotionListener() {
 
             @Override
             public void mouseDragged(MouseEvent e) {
@@ -394,7 +397,8 @@ public class MapPanel extends javax.swing.JPanel {
                     case ImageManager.CURSOR_MEASURE: {
                         //update drag if attack tool is active
                         if (mSourceVillage != null) {
-                            mRepaintThread.setDragLine(mSourceVillage.getX(), mSourceVillage.getY(), e.getX(), e.getY());
+                            //mRepaintThread.setDragLine(mSourceVillage.getX(), mSourceVillage.getY(), e.getX(), e.getY());
+                            mMapRenderer.setDragLine(mSourceVillage.getX(), mSourceVillage.getY(), e.getX(), e.getY());
                         }
                         mTargetVillage = getVillageAtMousePos();
 
@@ -404,7 +408,8 @@ public class MapPanel extends javax.swing.JPanel {
                     default: {
                         if (isAttack) {
                             if (mSourceVillage != null) {
-                                mRepaintThread.setDragLine((int) mSourceVillage.getX(), (int) mSourceVillage.getY(), e.getX(), e.getY());
+                                //mRepaintThread.setDragLine((int) mSourceVillage.getX(), (int) mSourceVillage.getY(), e.getX(), e.getY());
+                                mMapRenderer.setDragLine(mSourceVillage.getX(), mSourceVillage.getY(), e.getX(), e.getY());
                                 mTargetVillage = getVillageAtMousePos();
                             }
                         }
@@ -420,7 +425,11 @@ public class MapPanel extends javax.swing.JPanel {
                 }
             }
         });
-         //<editor-fold>
+    //<editor-fold>
+    }
+
+    public MapRenderer getMapRenderer() {
+        return mMapRenderer;
     }
 
     /**Returns true as long as the mouse is outside the mappanel*/
@@ -513,18 +522,24 @@ public class MapPanel extends javax.swing.JPanel {
     }
 
     /**Update map to new position -> needs fully update*/
-    protected synchronized void updateMap(int pX, int pY) {
-        if (mRepaintThread == null) {
-            logger.info("Creating MapPaintThread");
-            iCenterX = pX;
-            iCenterY = pY;
-            mRepaintThread = new RepaintThread(iCenterX, iCenterY);
-            mRepaintThread.start();
-        } else {
-            iCenterX = pX;
-            iCenterY = pY;
-            mRepaintThread.setCoordinates(iCenterX, iCenterY);
+    protected synchronized void updateMapPosition(int pX, int pY) {
+        iCenterX = pX;
+        iCenterY = pY;
+        if (mMapRenderer == null) {
+            logger.info("Creating MapRenderer");
+            mMapRenderer = new MapRenderer();
+            mMapRenderer.start();
+        /*
+        mRepaintThread = new RepaintThread(iCenterX, iCenterY);
+        mRepaintThread.start();*/
         }
+        /*mRepaintThread.setCoordinates(iCenterX, iCenterY);*/
+
+        getMapRenderer().initiateRedraw(MapRenderer.ALL_LAYERS);
+    }
+
+    public Point getCurrentPosition() {
+        return new Point(iCenterX, iCenterY);
     }
 
     /**Get village at current mouse position, null if there is no village*/

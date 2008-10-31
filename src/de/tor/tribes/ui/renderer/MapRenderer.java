@@ -142,8 +142,6 @@ public class MapRenderer extends Thread {
     public void run() {
         while (true) {
             try {
-                //  long s = System.currentTimeMillis();
-
                 if (mapRedrawRequired) {
                     mLayers.remove(MAP_LAYER);
                     calculateVisibleVillages();
@@ -178,11 +176,9 @@ public class MapRenderer extends Thread {
                     Graphics2D g2d = (Graphics2D) iBuffer.getGraphics();
                     g2d.drawImage(mLayers.get(MAP_LAYER), null, 0, 0);
                     g2d.dispose();
-                    //mBuffer = null;
                     MapPanel.getSingleton().updateComplete(mVisibleVillages, iBuffer);
                     MapPanel.getSingleton().repaint();
-
-                } 
+                }
             } catch (Throwable t) {
                 logger.error("Redrawing map failed", t);
             }

@@ -495,18 +495,18 @@ public class MapPanel extends javax.swing.JPanel {
                 int sx = 0;
                 int sy = 0;
                 if (xDir >= 1) {
-                    sx = 1;
+                    sx = 2;
                     xDir = 0;
                 } else if (xDir <= -1) {
-                    sx = -1;
+                    sx = -2;
                     xDir = 0;
                 }
 
                 if (yDir >= 1) {
-                    sy = 1;
+                    sy = 2;
                     yDir = 0;
                 } else if (yDir <= -1) {
-                    sy = -1;
+                    sy = -2;
                     yDir = 0;
                 }
 
@@ -590,6 +590,9 @@ public class MapPanel extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
 }
+
+
+// <editor-fold defaultstate="collapsed" desc=" DEPRECATED RepaintThread ">
 
 /**Thread for updating after scroll operations*/
 class RepaintThread extends Thread {
@@ -1505,3 +1508,4 @@ cnt++;
 }
 }
  */
+// </editor-fold>

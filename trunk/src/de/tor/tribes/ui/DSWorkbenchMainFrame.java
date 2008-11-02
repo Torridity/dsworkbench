@@ -1188,12 +1188,6 @@ private void fireFrameResizedEvent(java.awt.event.ComponentEvent evt) {//GEN-FIR
 
     /**Zoom main map*/
 private void fireZoomEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireZoomEvent
-    if (Village.getOrderType() == Village.ORDER_ALPHABETICALLY) {
-        Village.setOrderType(Village.ORDER_BY_COORDINATES);
-    } else {
-        Village.setOrderType(Village.ORDER_ALPHABETICALLY);
-
-    }
     if (evt.getSource() == jZoomInButton) {
         dZoomFactor += 1.0 / 10.0;
     } else {

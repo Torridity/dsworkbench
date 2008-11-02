@@ -8,7 +8,9 @@ import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Ally;
 import de.tor.tribes.types.Marker;
 import de.tor.tribes.types.Tribe;
+import de.tor.tribes.ui.MapPanel;
 import de.tor.tribes.ui.MarkerCell;
+import de.tor.tribes.ui.renderer.MapRenderer;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.awt.Color;
 import java.io.File;
@@ -335,5 +337,6 @@ public class MarkerManager {
         for (MarkerManagerListener listener : listeners) {
             listener.fireMarkersChangedEvent();
         }
+        MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.MARKER_LAYER);
     }
 }

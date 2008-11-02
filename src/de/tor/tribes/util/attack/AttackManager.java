@@ -12,6 +12,8 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.Village;
+import de.tor.tribes.ui.MapPanel;
+import de.tor.tribes.ui.renderer.MapRenderer;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.io.File;
@@ -196,6 +198,7 @@ public class AttackManager {
             logger.debug("Removing attack plan '" + plan + "'");
         }
         mAttackPlans.remove(plan);
+        fireAttacksChangedEvents(plan);
     }
 
     /**Remove one attack from the default plan*/
@@ -259,5 +262,6 @@ public class AttackManager {
         for (AttackManagerListener listener : listeners) {
             listener.fireAttacksChangedEvent(plan);
         }
+        MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.ATTACK_LAYER);
     }
 }

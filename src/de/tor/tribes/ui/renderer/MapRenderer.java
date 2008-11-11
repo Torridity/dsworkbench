@@ -416,7 +416,7 @@ public class MapRenderer extends Thread {
                                 g2d.drawImage(GlobalOptions.getSkin().getImage(type, DSWorkbenchMainFrame.getSingleton().getZoomFactor()), x, y, null);
                                 copyRegions.put(type, new Point(x, y));
                             } else {
-                                g2d.copyArea(p.x, p.y, width, height, x, y);
+                                g2d.copyArea(p.x, p.y, width, height, x-p.x, y-p.y);
                             }
                             drawTime += (System.currentTimeMillis() - s3);
                         } else if (v.getPoints() < 1000) {
@@ -438,7 +438,7 @@ public class MapRenderer extends Thread {
                                 g2d.drawImage(GlobalOptions.getSkin().getImage(type, DSWorkbenchMainFrame.getSingleton().getZoomFactor()), x, y, null);
                                 copyRegions.put(type, new Point(x, y));
                             } else {
-                                g2d.copyArea(p.x, p.y, width, height, x, y);
+                                g2d.copyArea(p.x, p.y, width, height, x-p.x, y-p.y);
                             }
                             drawTime += (System.currentTimeMillis() - s3);
                         } else if (v.getPoints() < 3000) {
@@ -460,7 +460,7 @@ public class MapRenderer extends Thread {
                                 g2d.drawImage(GlobalOptions.getSkin().getImage(type, DSWorkbenchMainFrame.getSingleton().getZoomFactor()), x, y, null);
                                 copyRegions.put(type, new Point(x, y));
                             } else {
-                                g2d.copyArea(p.x, p.y, width, height, x, y);
+                                g2d.copyArea(p.x, p.y, width, height, x-p.x, y-p.y);
                             }
                             drawTime += (System.currentTimeMillis() - s3);
                         } else if (v.getPoints() < 9000) {
@@ -551,7 +551,6 @@ public class MapRenderer extends Thread {
                 xContinents.add(pos);
             }
         }
-        System.out.println(copyRegions);
         g2d.setStroke(new BasicStroke(0.5f));
         if (showSectors) {
             g2d.setColor(Color.BLACK);
@@ -573,12 +572,12 @@ public class MapRenderer extends Thread {
             }
         }
         //</editor-fold>
-        System.out.println("Village complete: " + (System.currentTimeMillis() - s));
+       /* System.out.println("Village complete: " + (System.currentTimeMillis() - s));
         System.out.println("Preparation: " + (preTime));
         System.out.println("Transform: " + (transTime));
         System.out.println("Drawing: " + (drawTime));
         System.out.println("Count: " + cnt);
-        System.out.println("-------");
+        System.out.println("-------");*/
         g2d.dispose();
         mapRedrawRequired = false;
     }

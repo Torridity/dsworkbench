@@ -286,7 +286,7 @@ public class MapPanel extends javax.swing.JPanel {
                         if (isAttack) {
                             mSourceVillage = getVillageAtMousePos();
                             if (mSourceVillage != null) {
-                               // mRepaintThread.setDragLine(mSourceVillage.getX(), mSourceVillage.getY(), e.getX(), e.getY());
+                                // mRepaintThread.setDragLine(mSourceVillage.getX(), mSourceVillage.getY(), e.getX(), e.getY());
                                 mMapRenderer.setDragLine(mSourceVillage.getX(), mSourceVillage.getY(), e.getX(), e.getY());
                             }
                         }
@@ -470,7 +470,7 @@ public class MapPanel extends javax.swing.JPanel {
 
     /**Draw buffer into panel*/
     @Override
-    public void paint(Graphics g) {
+    public void paintComponent(Graphics g) {
         try {
             //clean map
             g.fillRect(0, 0, getWidth(), getHeight());
@@ -593,7 +593,6 @@ public class MapPanel extends javax.swing.JPanel {
 
 
 // <editor-fold defaultstate="collapsed" desc=" DEPRECATED RepaintThread ">
-
 /**Thread for updating after scroll operations*/
 class RepaintThread extends Thread {
 

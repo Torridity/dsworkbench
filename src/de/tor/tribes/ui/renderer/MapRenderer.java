@@ -161,7 +161,7 @@ public class MapRenderer extends Thread {
                         throw new Exception("View position is 'null', skip redraw");
                     }
                     renderMap();
-                    System.out.println("dur " + (System.currentTimeMillis() - s));
+                    System.out.println("Dur map " + (System.currentTimeMillis() - s));
                 }
                 if (markerRedrawRequired) {
                     renderMarkers();
@@ -194,12 +194,13 @@ public class MapRenderer extends Thread {
                     MapPanel.getSingleton().updateComplete(mVisibleVillages, iBuffer);
                     MapPanel.getSingleton().repaint();
                     g2d.dispose();
+                //   System.out.println("Dur complete " + (System.currentTimeMillis() - s));
                 }
             } catch (Throwable t) {
                 logger.error("Redrawing map failed", t);
             }
             try {
-                Thread.sleep(80);
+                Thread.sleep(40);
             } catch (InterruptedException ie) {
             }
         }
@@ -262,7 +263,6 @@ public class MapRenderer extends Thread {
         }
         viewStartPoint = new Point(xStart, yStart);
     }
-    VolatileImage backLayer = null;
 
     private void renderMap() {
         int wb = MapPanel.getSingleton().getWidth();
@@ -272,9 +272,10 @@ public class MapRenderer extends Thread {
             return;
         }
 
-        BufferedImage layer = graphicConf.createCompatibleImage(wb, hb, Transparency.BITMASK);
+        BufferedImage layer = new BufferedImage(wb, hb, BufferedImage.TYPE_INT_ARGB);
         mLayers.put(MAP_LAYER, layer);
-        Graphics2D g2d = (Graphics2D) layer.getGraphics();
+        //Graphics2D g2d = (Graphics2D)layer.getGraphics();
+        Graphics2D g2d = layer.createGraphics();
         prepareGraphics(g2d);
 
         villagePositions = new Hashtable<Village, Rectangle>();
@@ -390,14 +391,13 @@ public class MapRenderer extends Thread {
                     g2d.drawImage(underground, x, y, null);
                     drawTime += (System.currentTimeMillis() - s3);
                 } else {
+                    int type = Skin.ID_V1;
                     if (drawVillage) {
                         boolean isLeft = false;
                         if (v.getTribe() == null) {
                             isLeft = true;
                         }
-
                         if (v.getPoints() < 300) {
-                            int type = Skin.ID_V1;
                             if (!isLeft) {
                                 //changed
                                 if (v.getType() != 0) {
@@ -410,17 +410,8 @@ public class MapRenderer extends Thread {
                                     type = Skin.ID_B1_LEFT;
                                 }
                             }
-                            long s3 = System.currentTimeMillis();
-                            Point p = copyRegions.get(type);
-                            if (p == null) {
-                                g2d.drawImage(GlobalOptions.getSkin().getImage(type, DSWorkbenchMainFrame.getSingleton().getZoomFactor()), x, y, null);
-                                copyRegions.put(type, new Point(x, y));
-                            } else {
-                                g2d.copyArea(p.x, p.y, width, height, x-p.x, y-p.y);
-                            }
-                            drawTime += (System.currentTimeMillis() - s3);
                         } else if (v.getPoints() < 1000) {
-                            int type = Skin.ID_V2;
+                            type = Skin.ID_V2;
                             if (!isLeft) {
                                 if (v.getType() != 0) {
                                     type = Skin.ID_B2;
@@ -432,17 +423,8 @@ public class MapRenderer extends Thread {
                                     type = Skin.ID_B2_LEFT;
                                 }
                             }
-                            long s3 = System.currentTimeMillis();
-                            Point p = copyRegions.get(type);
-                            if (p == null) {
-                                g2d.drawImage(GlobalOptions.getSkin().getImage(type, DSWorkbenchMainFrame.getSingleton().getZoomFactor()), x, y, null);
-                                copyRegions.put(type, new Point(x, y));
-                            } else {
-                                g2d.copyArea(p.x, p.y, width, height, x-p.x, y-p.y);
-                            }
-                            drawTime += (System.currentTimeMillis() - s3);
                         } else if (v.getPoints() < 3000) {
-                            int type = Skin.ID_V3;
+                            type = Skin.ID_V3;
                             if (!isLeft) {
                                 if (v.getType() != 0) {
                                     type = Skin.ID_B3;
@@ -454,77 +436,62 @@ public class MapRenderer extends Thread {
                                     type = Skin.ID_B3_LEFT;
                                 }
                             }
-                            long s3 = System.currentTimeMillis();
-                            Point p = copyRegions.get(type);
-                            if (p == null) {
-                                g2d.drawImage(GlobalOptions.getSkin().getImage(type, DSWorkbenchMainFrame.getSingleton().getZoomFactor()), x, y, null);
-                                copyRegions.put(type, new Point(x, y));
-                            } else {
-                                g2d.copyArea(p.x, p.y, width, height, x-p.x, y-p.y);
-                            }
-                            drawTime += (System.currentTimeMillis() - s3);
                         } else if (v.getPoints() < 9000) {
+                            type = Skin.ID_V4;
                             if (!isLeft) {
-                                Image img = GlobalOptions.getSkin().getImage(Skin.ID_V4, DSWorkbenchMainFrame.getSingleton().getZoomFactor());
                                 if (v.getType() != 0) {
-                                    img = GlobalOptions.getSkin().getImage(Skin.ID_B4, DSWorkbenchMainFrame.getSingleton().getZoomFactor());
+                                    type = Skin.ID_B4;
                                 }
-                                g2d.drawImage(img, x, y, null);
                             } else {
                                 if (v.getType() == 0) {
-                                    g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_V4_LEFT, DSWorkbenchMainFrame.getSingleton().getZoomFactor()), x, y, null);
+                                    type = Skin.ID_V4_LEFT;
                                 } else {
-                                    g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_B4_LEFT, DSWorkbenchMainFrame.getSingleton().getZoomFactor()), x, y, null);
+                                    type = Skin.ID_B4_LEFT;
                                 }
                             }
                         } else if (v.getPoints() < 11000) {
+                            type = Skin.ID_V5;
                             if (!isLeft) {
-                                Image img = GlobalOptions.getSkin().getImage(Skin.ID_V5, DSWorkbenchMainFrame.getSingleton().getZoomFactor());
                                 if (v.getType() != 0) {
-                                    img = GlobalOptions.getSkin().getImage(Skin.ID_B5, DSWorkbenchMainFrame.getSingleton().getZoomFactor());
+                                    type = Skin.ID_B4;
                                 }
-                                g2d.drawImage(img, x, y, null);
                             } else {
                                 if (v.getType() == 0) {
-                                    g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_V5_LEFT, DSWorkbenchMainFrame.getSingleton().getZoomFactor()), x, y, null);
+                                    type = Skin.ID_V5_LEFT;
                                 } else {
-                                    g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_B5_LEFT, DSWorkbenchMainFrame.getSingleton().getZoomFactor()), x, y, null);
+                                    type = Skin.ID_B5_LEFT;
                                 }
                             }
                         } else {
+                            type = Skin.ID_V6;
                             if (!isLeft) {
-                                Image img = GlobalOptions.getSkin().getImage(Skin.ID_V6, DSWorkbenchMainFrame.getSingleton().getZoomFactor());
                                 if (v.getType() != 0) {
-                                    img = GlobalOptions.getSkin().getImage(Skin.ID_B6, DSWorkbenchMainFrame.getSingleton().getZoomFactor());
+                                    type = Skin.ID_B6;
                                 }
-                                g2d.drawImage(img, x, y, null);
                             } else {
                                 if (v.getType() == 0) {
-                                    g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_V6_LEFT, DSWorkbenchMainFrame.getSingleton().getZoomFactor()), x, y, null);
+                                    type = Skin.ID_V6_LEFT;
                                 } else {
-                                    g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_B6_LEFT, DSWorkbenchMainFrame.getSingleton().getZoomFactor()), x, y, null);
+                                    type = Skin.ID_B6_LEFT;
                                 }
                             }
                         }
                         //store village rectangle
                         villagePositions.put(v, new Rectangle(x, y, width, height));
                     } else {
-
-                        long s2 = System.currentTimeMillis();
-                        Point p = copyRegions.get(Skin.ID_DEFAULT_UNDERGROUND);
-                        if (p == null) {
-                            g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, DSWorkbenchMainFrame.getSingleton().getZoomFactor()), x, y, null);
-                            copyRegions.put(Skin.ID_DEFAULT_UNDERGROUND, new Point(x, y));
-                        } else {
-                            g2d.copyArea(p.x, p.y, width, height, x, y);
-                        }
-                        drawTime += (System.currentTimeMillis() - s2);
-
-                        /*Image im = GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, DSWorkbenchMainFrame.getSingleton().getZoomFactor());
-                        g2d.drawImage(im, x, y, null);
-                        drawTime += (System.currentTimeMillis() - s2);*/
+                        type = Skin.ID_DEFAULT_UNDERGROUND;
                         mVisibleVillages[i][j] = null;
                     }
+                    //drawing
+                    long s2 = System.currentTimeMillis();
+                    Point p = copyRegions.get(type);
+                    if (p == null) {
+                        g2d.drawImage(GlobalOptions.getSkin().getImage(type, DSWorkbenchMainFrame.getSingleton().getZoomFactor()), x, y, null);
+                        copyRegions.put(type, new Point(x, y));
+                    } else {
+                        g2d.copyArea(p.x, p.y, width, height, x - p.x, y - p.y);
+                    }
+                    drawTime += (System.currentTimeMillis() - s2);
                 }
 
                 y += height;
@@ -572,12 +539,15 @@ public class MapRenderer extends Thread {
             }
         }
         //</editor-fold>
-       /* System.out.println("Village complete: " + (System.currentTimeMillis() - s));
+
+        System.out.println("Regions " + copyRegions);
+        System.out.println("Village complete: " + (System.currentTimeMillis() - s));
         System.out.println("Preparation: " + (preTime));
         System.out.println("Transform: " + (transTime));
         System.out.println("Drawing: " + (drawTime));
         System.out.println("Count: " + cnt);
-        System.out.println("-------");*/
+        System.out.println("-------");
+
         g2d.dispose();
         mapRedrawRequired = false;
     }

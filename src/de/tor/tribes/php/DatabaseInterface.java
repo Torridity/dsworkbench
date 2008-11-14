@@ -7,6 +7,7 @@ package de.tor.tribes.php;
 import de.tor.tribes.db.DatabaseServerEntry;
 import de.tor.tribes.sec.SecurityAdapter;
 import de.tor.tribes.ui.DSWorkbenchSettingsDialog;
+import de.tor.tribes.util.GlobalOptions;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.InputStreamReader;
@@ -50,8 +51,8 @@ public class DatabaseInterface {
         List<String> lines = new LinkedList<String>();
         URL url;
         URLConnection urlConn = null;
-        DataOutputStream printout;
-        BufferedReader input;
+        DataOutputStream printout = null;
+        BufferedReader input = null;
         try {
             if (pArguments == null) {
                 pArguments = new Hashtable<String, String>();
@@ -63,6 +64,7 @@ public class DatabaseInterface {
             url = new URL(INTERFACE_URL);
             // URL connection channel.
             urlConn = url.openConnection(DSWorkbenchSettingsDialog.getSingleton().getWebProxy());
+           // urlConn = url.openConnection();
             // Let the run-time system (RTS) know that we want input.
             urlConn.setDoInput(true);
 
@@ -95,14 +97,26 @@ public class DatabaseInterface {
                 lines.add(str);
             }
             input.close();
-
         } catch (Exception e) {
             if (urlConn != null) {
                 logger.error("Failed calling interface. HTTP Status " + urlConn.getHeaderField(0));
             } else {
-                logger.error("Failed calling interface before connect");
+                logger.error("Failed calling interface before connect", e);
             }
             return ID_WEB_CONNECTION_FAILED;
+        } finally {
+            if (printout != null) {
+                try {
+                    printout.close();
+                } catch (Exception e) {
+                }
+            }
+            if (input != null) {
+                try {
+                    input.close();
+                } catch (Exception e) {
+                }
+            }
         }
         //returning read lined
         return lines.toArray(new String[]{});
@@ -114,41 +128,67 @@ public class DatabaseInterface {
                 //do nothing
                 break;
             }
+
             case ID_WEB_CONNECTION_FAILED: {
                 logger.error("Failed to connect to the web interface");
                 break;
+
             }
+
+
             case ID_DATABASE_SERVER_CONNECTION_FAILED: {
                 logger.error("Failed to connect to database server");
                 break;
+
             }
+
+
             case ID_DATABASE_CONNECTION_FAILED: {
                 logger.error("Failed to select database");
                 break;
+
             }
+
+
             case ID_ARGUMENT_ERROR: {
                 logger.error("Argument error");
                 break;
+
             }
+
+
             case ID_UNKNOWN_SERVER: {
                 logger.error("Unknown server");
                 break;
+
             }
+
+
             case ID_QUERY_RETURNED_UNEXPECTED_RESULT: {
                 logger.error("Server-sided failure while '" + pFunction + "'. Query returned an unexpected/no result or an update affected no single line");
                 break;
+
             }
+
+
             case ID_USER_NOT_EXIST: {
                 logger.error("Error in '" + pFunction + "'. User does not exist or password is wrong");
                 break;
+
             }
+
+
             case ID_USER_ALREADY_EXIST: {
                 logger.error("Error in '" + pFunction + "'. User already exists");
                 break;
+
             }
+
+
             default: {
                 logger.error("Unknown status code in '" + pFunction + "': " + pStatus);
             }
+
         }
     }
 
@@ -163,11 +203,13 @@ public class DatabaseInterface {
                 //status code
                 processStatus("get server data version", (int) lResult);
             }
+
             return lResult;
         } catch (Exception e) {
             //typecast or connection failed 
             logger.error("Failed getting server data version. Result is " + result);
         }
+
         return ID_UNKNOWN_ERROR;
     }
 
@@ -189,12 +231,14 @@ public class DatabaseInterface {
                         } catch (Exception noStatus) {
                             throw new Exception("Invalid entry '" + line + "'");
                         }
+
                     }
                     DatabaseServerEntry entry = new DatabaseServerEntry();
                     entry.setServerID(t.nextToken());
                     entry.setServerURL(t.nextToken());
                     entries.add(entry);
                 }
+
             } catch (Exception e) {
                 logger.error("Server entry in invalid format? Dropping.", e);
             }
@@ -204,6 +248,7 @@ public class DatabaseInterface {
             //typecast or connection failed 
             logger.error("Failed getting list of servers. Result is " + result);
         }
+
         return null;
     }
 
@@ -224,6 +269,7 @@ public class DatabaseInterface {
                 if ((Integer) result == -1) {
                     return ID_WEB_CONNECTION_FAILED;
                 }
+
             } catch (Exception cc) {
                 //result is no integer
             }
@@ -245,6 +291,7 @@ public class DatabaseInterface {
             //typecast or connection failed 
             logger.error("Failed adding user. Result is " + result);
         }
+
         return ID_UNKNOWN_ERROR;
     }
 
@@ -261,10 +308,12 @@ public class DatabaseInterface {
             } catch (Exception noStatus) {
                 return lines[0];
             }
+
         } catch (Exception e) {
             //typecast or connection failed 
             logger.error("Failed getting property. Result is " + result);
         }
+
         return null;
     }
 
@@ -281,10 +330,12 @@ public class DatabaseInterface {
             } catch (Exception noStatus) {
                 return lines[0];
             }
+
         } catch (Exception e) {
             //typecast or connection failed 
             logger.error("Failed getting download URL. Result is " + result);
         }
+
         return null;
     }
 
@@ -300,11 +351,13 @@ public class DatabaseInterface {
                 //status code
                 processStatus("get user data version", (int) lResult);
             }
+
             return lResult;
         } catch (Exception e) {
             //typecast or connection failed 
             logger.error("Failed getting user data version. Result is " + result);
         }
+
         return ID_UNKNOWN_ERROR;
     }
 
@@ -322,6 +375,7 @@ public class DatabaseInterface {
             //typecast or connection failed 
             logger.error("Failed registering user for server. Result is " + result);
         }
+
         return ID_UNKNOWN_ERROR;
     }
 
@@ -339,6 +393,7 @@ public class DatabaseInterface {
             //typecast or connection failed 
             logger.error("Failed to update data version. Result is " + result);
         }
+
         return ID_UNKNOWN_ERROR;
     }
 
@@ -351,11 +406,13 @@ public class DatabaseInterface {
                 //status code
                 processStatus("get server time", (int) lResult);
             }
+
             return lResult;
         } catch (Exception e) {
             //typecast or connection failed 
             logger.error("Failed getting server time. Result is " + result);
         }
+
         return ID_UNKNOWN_ERROR;
     }
 
@@ -389,9 +446,11 @@ public class DatabaseInterface {
         if (versionS > 0) {
         System.out.println("Server: " + new SimpleDateFormat("dd.MM.yyyy - HH:mm:ss").format(new Date(versionS)));
         }*/
+        
         try {
-            System.out.println(SecurityAdapter.hashStringMD5("1234"));
-            System.out.println(URLEncoder.encode("Töter&Mörder", "UTF-8"));
+            //System.out.println(DatabaseInterface.registerUserForServer("Torridity", "de34"));
+            System.out.println(DatabaseInterface.updateDataVersion("Torridity", "de34"));
+            //System.out.println(DatabaseInterface.getUserDataVersion("Torridity", "de34"));
         } catch (Exception e) {
         }
     //System.out.println(DatabaseInterface.addUser("Töter&12<>", SecurityAdapter.hashStringMD5("1234")));

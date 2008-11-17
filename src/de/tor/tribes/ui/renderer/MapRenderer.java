@@ -36,12 +36,10 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
-import java.awt.Transparency;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.awt.image.VolatileImage;
 import java.io.File;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -190,7 +188,7 @@ public class MapRenderer extends Thread {
                     g2d.drawImage(mLayers.get(ATTACK_LAYER), null, 0, 0);
                     //g2d.drawImage(mLayers.get(EXTENDED_DECORATION_LAYER), null, 0, 0);
                     g2d.drawImage(mLayers.get(LIVE_LAYER), null, 0, 0);
-                    //   mToolsRenderer.render(g2d);
+                    mToolsRenderer.render(g2d);
                     MapPanel.getSingleton().updateComplete(mVisibleVillages, iBuffer);
                     MapPanel.getSingleton().repaint();
                     g2d.dispose();
@@ -242,8 +240,8 @@ public class MapRenderer extends Thread {
         int xEnd = (int) Math.rint((double) iCenterX + (double) iVillagesX / 2);
         int yEnd = (int) Math.rint((double) iCenterY + (double) iVillagesY / 2);
 
-        xEnd = (xEnd > 999) ? 999 : xEnd;
-        yEnd = (yEnd > 999) ? 999 : yEnd;
+        xEnd = (xEnd > 1000) ? 1000 : xEnd;
+        yEnd = (yEnd > 1000) ? 1000 : yEnd;
 
         //add some villages to have a small drawing buffer in all directions
         iVillagesX += 1;
@@ -343,7 +341,7 @@ public class MapRenderer extends Thread {
                                 if (m == null) {
                                     //tribe is not marked check ally marker
                                     if (v.getTribe().getAlly() != null) {
-                                        m = MarkerManager.getSingleton().getMarker(v.getTribe());
+                                        m = MarkerManager.getSingleton().getMarker(v.getTribe().getAlly());
                                         if (m == null) {
                                             //tribe and ally are not marked
                                             drawVillage = false;
@@ -641,7 +639,7 @@ public class MapRenderer extends Thread {
         BufferedImage layer = mLayers.get(BASIC_DECORATION_LAYER);
         layer = new BufferedImage(wb, hb, BufferedImage.TYPE_INT_ARGB);
         mLayers.put(BASIC_DECORATION_LAYER, layer);
-        Graphics2D g2d = (Graphics2D) layer.getGraphics();
+        Graphics2D g2d = layer.createGraphics();
         prepareGraphics(g2d);
 
         boolean markActiveVillage = false;
@@ -698,7 +696,7 @@ public class MapRenderer extends Thread {
         BufferedImage layer = mLayers.get(ATTACK_LAYER);
         layer = new BufferedImage(wb, hb, BufferedImage.TYPE_INT_ARGB);
         mLayers.put(ATTACK_LAYER, layer);
-        Graphics2D g2d = (Graphics2D) layer.getGraphics();
+        Graphics2D g2d = layer.createGraphics();
         prepareGraphics(g2d);
 
         // <editor-fold defaultstate="collapsed" desc="Attack-line drawing (Foreground)">
@@ -785,7 +783,6 @@ public class MapRenderer extends Thread {
             attacks = null;
         }
         //</editor-fold>
-
 
         g2d.dispose();
         attackRedrawRequired = false;
@@ -1614,19 +1611,6 @@ public class MapRenderer extends Thread {
     }
     }*/
     // </editor-fold>
-    public static void main(String[] args) {
-        int level = 0;
-        int ID_MAP_REDRAW = 1;
-        int ID_MARKER_REDRAW = 2;
-        int ID_BASIC_DECORATION_REDRAW = 4;
-        int ID_ATTACK_REDRAW = 8;
-        int ID_EXTENDED_DECORATION_REDRAW = 16;
-        System.out.println((level | ID_MAP_REDRAW | ID_MARKER_REDRAW | ID_BASIC_DECORATION_REDRAW));
-        System.out.println((level | ID_MARKER_REDRAW));
-        System.out.println((level | ID_BASIC_DECORATION_REDRAW));
-        System.out.println((level | ID_ATTACK_REDRAW));
-        System.out.println((level | ID_EXTENDED_DECORATION_REDRAW));
-    }
 }
 
 /*

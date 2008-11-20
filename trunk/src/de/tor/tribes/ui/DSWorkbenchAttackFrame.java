@@ -864,7 +864,7 @@ private void fireCopyUnformatedToClipboardEvent(java.awt.event.MouseEvent evt) {
     try {
         int[] rows = jAttackTable.getSelectedRows();
         if ((rows != null) && (rows.length > 0)) {
-            String data = "";
+            StringBuffer buffer = new StringBuffer();
             List<Attack> attacks = AttackManager.getSingleton().getAttackPlan(null);
             for (int i : rows) {
                 jAttackTable.invalidate();
@@ -877,11 +877,24 @@ private void fireCopyUnformatedToClipboardEvent(java.awt.event.MouseEvent evt) {
 
                 String sendtime = DATE_FORMAT.format(sTime);
                 String arrivetime = DATE_FORMAT.format(aTime);
-                data += sVillage.getTribe() + "\t" + sVillage + "\t" + sUnit + "\t" + tVillage.getTribe() + "\t" + tVillage + "\t" + sendtime + "\t" + arrivetime + "\n";
+                buffer.append(sVillage.getTribe());
+                buffer.append("\t");
+                buffer.append(sVillage);
+                buffer.append("\t");
+                buffer.append(sUnit);
+                buffer.append("\t");
+                buffer.append(tVillage.getTribe());
+                buffer.append("\t");
+                buffer.append(tVillage);
+                buffer.append("\t");
+                buffer.append(sendtime);
+                buffer.append("\t");
+                buffer.append(arrivetime);
+                buffer.append("\n");
                 jAttackTable.revalidate();
             }
 
-            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(data), null);
+            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(buffer.toString()), null);
             String result = "Daten in Zwischenablage kopiert.";
             JOptionPane.showMessageDialog(this, result, "Information", JOptionPane.INFORMATION_MESSAGE);
         } else {
@@ -897,7 +910,7 @@ private void fireCopyAsBBCodeToClipboardEvent(java.awt.event.MouseEvent evt) {//
     try {
         int[] rows = jAttackTable.getSelectedRows();
         if ((rows != null) && (rows.length > 0)) {
-            String data = "";
+            StringBuffer buffer = new StringBuffer();
             List<Attack> attacks = AttackManager.getSingleton().getAttackPlan(null);
             for (int i : rows) {
                 jAttackTable.invalidate();
@@ -909,26 +922,36 @@ private void fireCopyAsBBCodeToClipboardEvent(java.awt.event.MouseEvent evt) {//
                 Date sTime = new Date(aTime.getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(sVillage, tVillage, sUnit.getSpeed()) * 1000));
                 String sendtime = DATE_FORMAT.format(sTime);
                 String arrivetime = DATE_FORMAT.format(aTime);
-                data = "Angriff von ";
+                buffer.append("Angriff von ");
                 if (sVillage.getTribe() != null) {
-                    data += sVillage.getTribe().toBBCode() + " aus ";
+                    buffer.append(sVillage.getTribe().toBBCode());
+                    buffer.append(" aus ");
                 } else {
-                    data = " Barbaren aus ";
+                    buffer.append(" Barbaren aus ");
                 }
 
-                data += sVillage.toBBCode() + " mit " + sUnit + " auf ";
+                buffer.append(sVillage.toBBCode());
+                buffer.append(" mit ");
+                buffer.append(sUnit);
+                buffer.append(" auf ");
 
                 if (tVillage.getTribe() != null) {
-                    data += tVillage.getTribe().toBBCode() + " in ";
+                    buffer.append(tVillage.getTribe().toBBCode());
+                    buffer.append(" in ");
                 } else {
-                    data = " Barbaren in ";
+                    buffer.append(" Barbaren in ");
                 }
 
-                data += tVillage.toBBCode() + " startet um " + sendtime + " und kommt um " + arrivetime + " an\n";
+                buffer.append(tVillage.toBBCode());
+                buffer.append(" startet um ");
+                buffer.append(sendtime);
+                buffer.append(" und kommt um ");
+                buffer.append(arrivetime);
+                buffer.append(" an\n");
                 jAttackTable.revalidate();
             }
 
-            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(data), null);
+            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(buffer.toString()), null);
             String result = "Daten in Zwischenablage kopiert.";
             JOptionPane.showMessageDialog(this, result, "Information", JOptionPane.INFORMATION_MESSAGE);
         }

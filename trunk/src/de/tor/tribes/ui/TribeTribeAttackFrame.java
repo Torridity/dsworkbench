@@ -1065,17 +1065,27 @@ private void fireTransferToAttackPlanningEvent(java.awt.event.MouseEvent evt) {/
 private void fireAttacksToClipboardEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireAttacksToClipboardEvent
     try {
         DefaultTableModel resultModel = (DefaultTableModel) jResultsTable.getModel();
-        String data = "";
+        StringBuffer buffer = new StringBuffer();
         for (int i = 0; i < resultModel.getRowCount(); i++) {
             Village sVillage = (Village) resultModel.getValueAt(i, 0);
             UnitHolder sUnit = (UnitHolder) resultModel.getValueAt(i, 1);
             Village tVillage = (Village) resultModel.getValueAt(i, 2);
             Date dTime = (Date) resultModel.getValueAt(i, 3);
             String time = DATE_FORMAT.format(dTime);
-            data += "Angriff aus " + sVillage.toBBCode() + " mit " + sUnit + " auf " + tVillage.getTribe().toBBCode() + " in " + tVillage.toBBCode() + " um " + time + "\n";
+            buffer.append("Angriff aus ");
+            buffer.append(sVillage.toBBCode());
+            buffer.append(" mit ");
+            buffer.append(sUnit);
+            buffer.append(" auf ");
+            buffer.append(tVillage.getTribe().toBBCode());
+            buffer.append(" in ");
+            buffer.append(tVillage.toBBCode());
+            buffer.append(" um ");
+            buffer.append(time);
+            buffer.append("\n");
         }
 
-        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(data), null);
+        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(buffer.toString()), null);
         String result = "Daten in Zwischenablage kopiert.";
         JOptionPane.showMessageDialog(jResultFrame, result, "Information", JOptionPane.INFORMATION_MESSAGE);
     } catch (Exception e) {
@@ -1088,17 +1098,26 @@ private void fireAttacksToClipboardEvent(java.awt.event.MouseEvent evt) {//GEN-F
 private void fireUnformattedAttacksToClipboardEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireUnformattedAttacksToClipboardEvent
     try {
         DefaultTableModel resultModel = (DefaultTableModel) jResultsTable.getModel();
-        String data = "";
+        StringBuffer buffer = new StringBuffer();
         for (int i = 0; i < resultModel.getRowCount(); i++) {
             Village sVillage = (Village) resultModel.getValueAt(i, 0);
             UnitHolder sUnit = (UnitHolder) resultModel.getValueAt(i, 1);
             Village tVillage = (Village) resultModel.getValueAt(i, 2);
             Date dTime = (Date) resultModel.getValueAt(i, 3);
             String time = DATE_FORMAT.format(dTime);
-            data += sVillage + "\t" + sUnit + "\t" + tVillage.getTribe() + "\t" + tVillage + "\t" + time + "\n";
+            buffer.append(sVillage);
+            buffer.append("\t");
+            buffer.append(sUnit);
+            buffer.append("\t");
+            buffer.append(tVillage.getTribe());
+            buffer.append("\t");
+            buffer.append(tVillage);
+            buffer.append("\t");
+            buffer.append(time);
+            buffer.append("\n");
         }
 
-        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(data), null);
+        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(buffer.toString()), null);
         String result = "Daten in Zwischenablage kopiert.";
         JOptionPane.showMessageDialog(jResultFrame, result, "Information", JOptionPane.INFORMATION_MESSAGE);
     } catch (Exception e) {

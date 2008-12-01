@@ -46,7 +46,7 @@ import javax.swing.UIManager;
  */
 public class TribeTribeAttackFrame extends javax.swing.JFrame {
 
-    private static Logger logger = Logger.getLogger(TribeTribeAttackFrame.class);
+    private static Logger logger = Logger.getLogger("AttackPlanner");
     SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yy HH:mm:ss.SSS");
 
     /** Creates new form AllyAllyAttackFrame */

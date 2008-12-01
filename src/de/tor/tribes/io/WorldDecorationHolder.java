@@ -22,7 +22,7 @@ import org.apache.log4j.Logger;
  */
 public class WorldDecorationHolder {
 
-    private static Logger logger = Logger.getLogger(WorldDecorationHolder.class);
+    private static Logger logger = Logger.getLogger("WorldDecorationManager");
     private static byte[] decoration = new byte[1000000];
     private static List<BufferedImage> mTextures = null;
 

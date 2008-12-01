@@ -65,7 +65,7 @@ import org.apache.log4j.Logger;
 /**Thread for updating after scroll operations*/
 public class MapRenderer extends Thread {
 
-    private static Logger logger = Logger.getLogger(MapRenderer.class);
+    private static Logger logger = Logger.getLogger("MapRenderer");
     public static final int ALL_LAYERS = 0;
     public static final int MAP_LAYER = 1;
     public static final int MARKER_LAYER = 2;
@@ -94,7 +94,8 @@ public class MapRenderer extends Thread {
     private final NumberFormat nf = NumberFormat.getInstance();
     //  private boolean mustDrawBackground = true;
     private Point viewStartPoint = null;
-    private ToolsRenderer mToolsRenderer;
+    private double currentZoom = 0.0;
+//    private ToolsRenderer mToolsRenderer;
     GraphicsConfiguration graphicConf = null;
 
     public MapRenderer() {
@@ -102,7 +103,7 @@ public class MapRenderer extends Thread {
         setDaemon(true);
         nf.setMaximumFractionDigits(2);
         nf.setMinimumFractionDigits(2);
-        mToolsRenderer = new ToolsRenderer();
+   //     mToolsRenderer = new ToolsRenderer();
         try {
             mDistBorder = ImageIO.read(new File("./graphics/dist_border.png"));
             mMarkerImage = Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("/res/marker.png"));
@@ -153,13 +154,13 @@ public class MapRenderer extends Thread {
         while (true) {
             try {
                 if (mapRedrawRequired) {
-                    long s = System.currentTimeMillis();
+                    //long s = System.currentTimeMillis();
                     calculateVisibleVillages();
                     if (viewStartPoint == null) {
                         throw new Exception("View position is 'null', skip redraw");
                     }
                     renderMap();
-                    System.out.println("Dur map " + (System.currentTimeMillis() - s));
+                   // System.out.println("Dur map " + (System.currentTimeMillis() - s));
                 }
                 if (markerRedrawRequired) {
                     renderMarkers();
@@ -188,7 +189,7 @@ public class MapRenderer extends Thread {
                     g2d.drawImage(mLayers.get(ATTACK_LAYER), null, 0, 0);
                     //g2d.drawImage(mLayers.get(EXTENDED_DECORATION_LAYER), null, 0, 0);
                     g2d.drawImage(mLayers.get(LIVE_LAYER), null, 0, 0);
-                    mToolsRenderer.render(g2d);
+                   // mToolsRenderer.render(g2d);
                     MapPanel.getSingleton().updateComplete(mVisibleVillages, iBuffer);
                     MapPanel.getSingleton().repaint();
                     g2d.dispose();
@@ -220,8 +221,9 @@ public class MapRenderer extends Thread {
             return;
         }
         //get number of drawn villages
-        iVillagesX = (int) Math.rint((double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, DSWorkbenchMainFrame.getSingleton().getZoomFactor()).getWidth(null));
-        iVillagesY = (int) Math.rint((double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, DSWorkbenchMainFrame.getSingleton().getZoomFactor()).getHeight(null));
+        currentZoom = DSWorkbenchMainFrame.getSingleton().getZoomFactor();
+        iVillagesX = (int) Math.rint((double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, currentZoom).getWidth(null));
+        iVillagesY = (int) Math.rint((double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, currentZoom).getHeight(null));
 
         //make number odd to avoid spaces at the borders
         if (iVillagesX % 2 == 0) {
@@ -292,8 +294,8 @@ public class MapRenderer extends Thread {
             markedOnly = false;
         }
 
-        int width = GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, DSWorkbenchMainFrame.getSingleton().getZoomFactor()).getWidth(null);
-        int height = GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, DSWorkbenchMainFrame.getSingleton().getZoomFactor()).getHeight(null);
+        int width = GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, currentZoom).getWidth(null);
+        int height = GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, currentZoom).getHeight(null);
 
         int x = 0;
         int y = 0;
@@ -375,13 +377,13 @@ public class MapRenderer extends Thread {
                     Image underground = null;
                     if (useDecoration) {
                         //long s2 = System.currentTimeMillis();
-                        underground = WorldDecorationHolder.getTexture(xPos, yPos, DSWorkbenchMainFrame.getSingleton().getZoomFactor());
+                        underground = WorldDecorationHolder.getTexture(xPos, yPos, currentZoom);
                     // transTime += (System.currentTimeMillis() - s2);
                     }
                     if (underground == null) {
                         Point p = copyRegions.get(Skin.ID_DEFAULT_UNDERGROUND);
                         if (p == null) {
-                            g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, DSWorkbenchMainFrame.getSingleton().getZoomFactor()), x, y, null);
+                            g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, currentZoom), x, y, null);
                             if (MapPanel.getSingleton().getBounds().contains(new Rectangle(x, y, width, height))) {
                                 copyRegions.put(Skin.ID_DEFAULT_UNDERGROUND, new Point(x, y));
                             }
@@ -492,7 +494,7 @@ public class MapRenderer extends Thread {
                     Point p = copyRegions.get(type);
                     if (p == null) {
                         // long s2 = System.currentTimeMillis();
-                        g2d.drawImage(GlobalOptions.getSkin().getImage(type, DSWorkbenchMainFrame.getSingleton().getZoomFactor()), x, y, null);
+                        g2d.drawImage(GlobalOptions.getSkin().getImage(type, currentZoom), x, y, null);
                         //drawTime += (System.currentTimeMillis() - s2);
                         if (MapPanel.getSingleton().getBounds().contains(new Rectangle(x, y, width, height))) {
                             copyRegions.put(type, new Point(x, y));
@@ -666,7 +668,7 @@ public class MapRenderer extends Thread {
                 if (troopMark != null) {
                     int x = villageRect.x + (int) Math.round(villageRect.width / 2);
                     int y = villageRect.y + (int) Math.round(villageRect.width / 2);
-                    troopMark = troopMark.getScaledInstance((int) Math.rint(troopMark.getWidth(null) / DSWorkbenchMainFrame.getSingleton().getZoomFactor()), (int) Math.rint(troopMark.getHeight(null) / DSWorkbenchMainFrame.getSingleton().getZoomFactor()), BufferedImage.SCALE_FAST);
+                    troopMark = troopMark.getScaledInstance((int) Math.rint(troopMark.getWidth(null) / currentZoom), (int) Math.rint(troopMark.getHeight(null) / currentZoom), BufferedImage.SCALE_FAST);
                     g2d.drawImage(troopMark, x - troopMark.getWidth(null) / 2, y - troopMark.getHeight(null), null);
                 }
             }
@@ -702,8 +704,8 @@ public class MapRenderer extends Thread {
         // <editor-fold defaultstate="collapsed" desc="Attack-line drawing (Foreground)">
 
         g2d.setStroke(new BasicStroke(2.0F, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
-        int width = GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, DSWorkbenchMainFrame.getSingleton().getZoomFactor()).getWidth(null);
-        int height = GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, DSWorkbenchMainFrame.getSingleton().getZoomFactor()).getHeight(null);
+        int width = GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, currentZoom).getWidth(null);
+        int height = GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, currentZoom).getHeight(null);
         //get attack colors
         Hashtable<String, Color> attackColors = new Hashtable<String, Color>();
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
@@ -803,8 +805,6 @@ public class MapRenderer extends Thread {
         g2d.dispose();*/
     }
 
-    /**@TODO Correct Drag line
-     */
     private void renderLiveLayer() {
         int wb = MapPanel.getSingleton().getWidth();
         int hb = MapPanel.getSingleton().getHeight();
@@ -816,8 +816,8 @@ public class MapRenderer extends Thread {
         mLayers.put(LIVE_LAYER, layer);
         Graphics2D g2d = (Graphics2D) layer.getGraphics();
         prepareGraphics(g2d);
-        int width = GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, DSWorkbenchMainFrame.getSingleton().getZoomFactor()).getWidth(null);
-        int height = GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, DSWorkbenchMainFrame.getSingleton().getZoomFactor()).getHeight(null);
+        int width = GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, currentZoom).getWidth(null);
+        int height = GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, currentZoom).getHeight(null);
 
         Village mouseVillage = MapPanel.getSingleton().getVillageAtMousePos();
 
@@ -985,8 +985,8 @@ public class MapRenderer extends Thread {
 
         Graphics2D g2d = null;
         //Graphics2D g2df = null;
-        int width = GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, DSWorkbenchMainFrame.getSingleton().getZoomFactor()).getWidth(null);
-        int height = GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, DSWorkbenchMainFrame.getSingleton().getZoomFactor()).getHeight(null);
+        int width = GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, currentZoom).getWidth(null);
+        int height = GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, currentZoom).getHeight(null);
 
         //if ((mBuffer == null) || ((mBuffer.getWidth(null) * mBuffer.getHeight(null)) != (MapPanel.getSingleton().getWidth() * MapPanel.getSingleton().getHeight()))) {
         int wb = MapPanel.getSingleton().getWidth();
@@ -1145,11 +1145,11 @@ public class MapRenderer extends Thread {
                 if (v == null) {
                     Image underground = null;
                     if (useDecoration) {
-                        underground = WorldDecorationHolder.getTexture(xPos, yPos, DSWorkbenchMainFrame.getSingleton().getZoomFactor());
+                        underground = WorldDecorationHolder.getTexture(xPos, yPos, currentZoom);
                     }
                     if (underground == null) {
                         //either no decoration used or map part is outside map bounds
-                        underground = GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, DSWorkbenchMainFrame.getSingleton().getZoomFactor());
+                        underground = GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, currentZoom);
                     }
                     g2d.drawImage(underground, x, y, null);
 
@@ -1163,10 +1163,10 @@ public class MapRenderer extends Thread {
                         if (v.getPoints() < 300) {
                             if (!isLeft) {
                                 //changed
-                                Image img = GlobalOptions.getSkin().getImage(Skin.ID_V1, DSWorkbenchMainFrame.getSingleton().getZoomFactor());
+                                Image img = GlobalOptions.getSkin().getImage(Skin.ID_V1, currentZoom);
 
                                 if (v.getType() != 0) {
-                                    img = GlobalOptions.getSkin().getImage(Skin.ID_B1, DSWorkbenchMainFrame.getSingleton().getZoomFactor());
+                                    img = GlobalOptions.getSkin().getImage(Skin.ID_B1, currentZoom);
 
                                 }
                                 g2d.setColor(marker);
@@ -1174,89 +1174,89 @@ public class MapRenderer extends Thread {
                                 g2d.drawImage(img, x, y, null);
                             } else {
                                 if (v.getType() == 0) {
-                                    g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_V1_LEFT, DSWorkbenchMainFrame.getSingleton().getZoomFactor()), x, y, null);
+                                    g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_V1_LEFT, currentZoom), x, y, null);
                                 } else {
-                                    g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_B1_LEFT, DSWorkbenchMainFrame.getSingleton().getZoomFactor()), x, y, null);
+                                    g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_B1_LEFT, currentZoom), x, y, null);
                                 }
                             }
                         } else if (v.getPoints() < 1000) {
                             if (!isLeft) {
-                                Image img = GlobalOptions.getSkin().getImage(Skin.ID_V2, DSWorkbenchMainFrame.getSingleton().getZoomFactor());
+                                Image img = GlobalOptions.getSkin().getImage(Skin.ID_V2,currentZoom);
                                 if (v.getType() != 0) {
-                                    img = GlobalOptions.getSkin().getImage(Skin.ID_B2, DSWorkbenchMainFrame.getSingleton().getZoomFactor());
+                                    img = GlobalOptions.getSkin().getImage(Skin.ID_B2, currentZoom);
                                 }
                                 g2d.setColor(marker);
                                 g2d.fillRect(x, y, img.getWidth(null), img.getHeight(null));
                                 g2d.drawImage(img, x, y, null);
                             } else {
                                 if (v.getType() == 0) {
-                                    g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_V2_LEFT, DSWorkbenchMainFrame.getSingleton().getZoomFactor()), x, y, null);
+                                    g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_V2_LEFT, currentZoom), x, y, null);
                                 } else {
-                                    g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_B2_LEFT, DSWorkbenchMainFrame.getSingleton().getZoomFactor()), x, y, null);
+                                    g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_B2_LEFT, currentZoom), x, y, null);
                                 }
                             }
                         } else if (v.getPoints() < 3000) {
                             if (!isLeft) {
-                                Image img = GlobalOptions.getSkin().getImage(Skin.ID_V3, DSWorkbenchMainFrame.getSingleton().getZoomFactor());
+                                Image img = GlobalOptions.getSkin().getImage(Skin.ID_V3, currentZoom);
                                 if (v.getType() != 0) {
-                                    img = GlobalOptions.getSkin().getImage(Skin.ID_B3, DSWorkbenchMainFrame.getSingleton().getZoomFactor());
+                                    img = GlobalOptions.getSkin().getImage(Skin.ID_B3, currentZoom);
                                 }
                                 g2d.setColor(marker);
                                 g2d.fillRect(x, y, img.getWidth(null), img.getHeight(null));
                                 g2d.drawImage(img, x, y, null);
                             } else {
                                 if (v.getType() == 0) {
-                                    g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_V3_LEFT, DSWorkbenchMainFrame.getSingleton().getZoomFactor()), x, y, null);
+                                    g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_V3_LEFT, currentZoom), x, y, null);
                                 } else {
-                                    g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_B3_LEFT, DSWorkbenchMainFrame.getSingleton().getZoomFactor()), x, y, null);
+                                    g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_B3_LEFT, currentZoom), x, y, null);
                                 }
                             }
                         } else if (v.getPoints() < 9000) {
                             if (!isLeft) {
-                                Image img = GlobalOptions.getSkin().getImage(Skin.ID_V4, DSWorkbenchMainFrame.getSingleton().getZoomFactor());
+                                Image img = GlobalOptions.getSkin().getImage(Skin.ID_V4, currentZoom);
                                 if (v.getType() != 0) {
-                                    img = GlobalOptions.getSkin().getImage(Skin.ID_B4, DSWorkbenchMainFrame.getSingleton().getZoomFactor());
+                                    img = GlobalOptions.getSkin().getImage(Skin.ID_B4, currentZoom);
                                 }
                                 g2d.setColor(marker);
                                 g2d.fillRect(x, y, img.getWidth(null), img.getHeight(null));
                                 g2d.drawImage(img, x, y, null);
                             } else {
                                 if (v.getType() == 0) {
-                                    g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_V4_LEFT, DSWorkbenchMainFrame.getSingleton().getZoomFactor()), x, y, null);
+                                    g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_V4_LEFT, currentZoom), x, y, null);
                                 } else {
-                                    g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_B4_LEFT, DSWorkbenchMainFrame.getSingleton().getZoomFactor()), x, y, null);
+                                    g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_B4_LEFT, currentZoom), x, y, null);
                                 }
                             }
                         } else if (v.getPoints() < 11000) {
                             if (!isLeft) {
-                                Image img = GlobalOptions.getSkin().getImage(Skin.ID_V5, DSWorkbenchMainFrame.getSingleton().getZoomFactor());
+                                Image img = GlobalOptions.getSkin().getImage(Skin.ID_V5, currentZoom);
                                 if (v.getType() != 0) {
-                                    img = GlobalOptions.getSkin().getImage(Skin.ID_B5, DSWorkbenchMainFrame.getSingleton().getZoomFactor());
+                                    img = GlobalOptions.getSkin().getImage(Skin.ID_B5, currentZoom);
                                 }
                                 g2d.setColor(marker);
                                 g2d.fillRect(x, y, img.getWidth(null), img.getHeight(null));
                                 g2d.drawImage(img, x, y, null);
                             } else {
                                 if (v.getType() == 0) {
-                                    g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_V5_LEFT, DSWorkbenchMainFrame.getSingleton().getZoomFactor()), x, y, null);
+                                    g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_V5_LEFT, currentZoom), x, y, null);
                                 } else {
-                                    g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_B5_LEFT, DSWorkbenchMainFrame.getSingleton().getZoomFactor()), x, y, null);
+                                    g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_B5_LEFT, currentZoom), x, y, null);
                                 }
                             }
                         } else {
                             if (!isLeft) {
-                                Image img = GlobalOptions.getSkin().getImage(Skin.ID_V6, DSWorkbenchMainFrame.getSingleton().getZoomFactor());
+                                Image img = GlobalOptions.getSkin().getImage(Skin.ID_V6, currentZoom);
                                 if (v.getType() != 0) {
-                                    img = GlobalOptions.getSkin().getImage(Skin.ID_B6, DSWorkbenchMainFrame.getSingleton().getZoomFactor());
+                                    img = GlobalOptions.getSkin().getImage(Skin.ID_B6, currentZoom);
                                 }
                                 g2d.setColor(marker);
                                 g2d.fillRect(x, y, img.getWidth(null), img.getHeight(null));
                                 g2d.drawImage(img, x, y, null);
                             } else {
                                 if (v.getType() == 0) {
-                                    g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_V6_LEFT, DSWorkbenchMainFrame.getSingleton().getZoomFactor()), x, y, null);
+                                    g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_V6_LEFT, currentZoom), x, y, null);
                                 } else {
-                                    g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_B6_LEFT, DSWorkbenchMainFrame.getSingleton().getZoomFactor()), x, y, null);
+                                    g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_B6_LEFT, currentZoom), x, y, null);
                                 }
                             }
                         }
@@ -1280,7 +1280,7 @@ public class MapRenderer extends Thread {
                             }
                         }
                     } else {
-                        g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, DSWorkbenchMainFrame.getSingleton().getZoomFactor()), x, y, null);
+                        g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, currentZoom), x, y, null);
                         mVisibleVillages[i][j] = null;
                     }
                 }
@@ -1466,7 +1466,7 @@ public class MapRenderer extends Thread {
         while (troopMarkKeys.hasMoreElements()) {
             Point next = troopMarkKeys.nextElement();
             Image mark = troopMarkPoints.get(next);
-            mark = mark.getScaledInstance((int) Math.rint(mark.getWidth(null) / DSWorkbenchMainFrame.getSingleton().getZoomFactor()), (int) Math.rint(mark.getHeight(null) / DSWorkbenchMainFrame.getSingleton().getZoomFactor()), width);
+            mark = mark.getScaledInstance((int) Math.rint(mark.getWidth(null) / currentZoom), (int) Math.rint(mark.getHeight(null) / currentZoom), width);
             g2d.drawImage(mark, next.x - mark.getWidth(null) / 2, next.y - mark.getHeight(null), null);
         }
 //</editor-fold>

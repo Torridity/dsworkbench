@@ -30,7 +30,7 @@ import org.jdom.Element;
  */
 public class AttackManager {
 
-    private static Logger logger = Logger.getLogger(AttackManager.class);
+    private static Logger logger = Logger.getLogger("AttackManager");
     private static AttackManager SINGLETON = null;
     private Hashtable<String, List<Attack>> mAttackPlans = null;
     private static final String DEFAULT_PLAN_ID = "default";

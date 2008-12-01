@@ -12,7 +12,6 @@ import java.awt.event.MouseMotionListener;
 import javax.swing.ImageIcon;
 
 /**
- * @TODO: add graphics/icons/notool.png to release
  * @author  Jejkal
  */
 public class ToolBoxFrame extends javax.swing.JFrame {

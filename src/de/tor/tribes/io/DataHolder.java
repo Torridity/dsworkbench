@@ -8,7 +8,7 @@
  */
 package de.tor.tribes.io;
 
-import de.tor.tribes.db.DatabaseAdapter;
+import de.tor.tribes.php.DatabaseInterface;
 import de.tor.tribes.types.Ally;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
@@ -43,7 +43,7 @@ import org.jdom.Element;
  */
 public class DataHolder {
 
-    private static Logger logger = Logger.getLogger(DataHolder.class);
+    private static Logger logger = Logger.getLogger("DataManager");
     private final int ID_ATT = 0;
     private final int ID_DEF = 1;
     private Village[][] mVillages = null;
@@ -406,20 +406,20 @@ public class DataHolder {
                 fireDataHolderEvents("Account Name oder Passwort sind nicht gesetzt oder ungültig. Bitte überprüfe deine Accounteinstellungen.");
                 return false;
             }
-            if (DatabaseAdapter.checkUser(accountName, accountPassword) != DatabaseAdapter.ID_SUCCESS) {
+            if (DatabaseInterface.checkUser(accountName, accountPassword) != DatabaseInterface.ID_SUCCESS) {
                 logger.error("Failed to validate account (Wrong username or password?)");
                 return false;
             }
             //</editor-fold>
 
             // <editor-fold defaultstate="collapsed" desc="DS Workbench Version check">
-            int ret = DatabaseAdapter.isVersionAllowed();
-            if (ret != DatabaseAdapter.ID_SUCCESS) {
-                if (ret != DatabaseAdapter.ID_UPDATE_NOT_ALLOWED) {
+            int ret = DatabaseInterface.isVersionAllowed();
+            if (ret != DatabaseInterface.ID_SUCCESS) {
+                if (ret != DatabaseInterface.ID_VERSION_NOT_ALLOWED) {
                     logger.error("Current version is not allowed any longer");
                     fireDataHolderEvents("Deine DS Workbench Version ist zu alt. Bitte lade dir die aktuelle Version herunter.");
                 } else {
-                    String error = DatabaseAdapter.getPropertyValue("data_error_message");
+                    String error = DatabaseInterface.getProperty("data_error_message");
                     logger.error("Update currently not allowed by server (Message: '" + error + "'");
                     fireDataHolderEvents("Momentan sind leider keine Updates möglich.");
                     fireDataHolderEvents("Folgender Grund wurde vom Systemadministrator angegeben: '" + error + "'");
@@ -447,9 +447,9 @@ public class DataHolder {
             }
             //</editor-fold>
 
-            long serverDataVersion = DatabaseAdapter.getDataVersion(serverID);
-            long userDataVersion = DatabaseAdapter.getUserDataVersion(accountName, serverID);
-            String downloadURL = DatabaseAdapter.getServerDownloadURL(serverID);
+            long serverDataVersion = DatabaseInterface.getServerDataVersion(serverID);
+            long userDataVersion = DatabaseInterface.getUserDataVersion(accountName, serverID);
+            String downloadURL = DatabaseInterface.getDownloadURL(serverID);
             if ((userDataVersion == serverDataVersion) && isDataAvailable()) {
                 //no update needed
                 logger.info("No update needed");
@@ -523,26 +523,28 @@ public class DataHolder {
                 // <editor-fold defaultstate="collapsed" desc=" Load conquers off ">
                 fireDataHolderEvents("Lese besiegte Gegner (Angriff)...");
                 target = new File(serverDir + "/kill_att.txt.gz");
-                if (!target.exists()) {
-                    file = new URL(downloadURL + "/kill_att.txt.gz");
-                    downloadDataFile(file, "kill_att.tmp");
-                    new File("kill_att.tmp").renameTo(target);
+                file = new URL(downloadURL + "/kill_att.txt.gz");
+                downloadDataFile(file, "kill_att.tmp");
+                if (target.exists()) {
+                    target.delete();
                 }
+                new File("kill_att.tmp").renameTo(target);
                 // </editor-fold>
 
                 // <editor-fold defaultstate="collapsed" desc=" Load conquers def ">
                 fireDataHolderEvents("Lese besiegte Gegner (Verteidigung)...");
                 target = new File(serverDir + "/kill_def.txt.gz");
-                if (!target.exists()) {
-                    file = new URL(downloadURL + "/kill_def.txt.gz");
-                    downloadDataFile(file, "kill_def.tmp");
-                    new File("kill_def.tmp").renameTo(target);
+                file = new URL(downloadURL + "/kill_def.txt.gz");
+                downloadDataFile(file, "kill_def.tmp");
+                if (target.exists()) {
+                    target.delete();
                 }
+                new File("kill_def.tmp").renameTo(target);
                 // </editor-fold>
 
                 //finally register user for server if not available yet
                 if (userDataVersion == -666) {
-                    DatabaseAdapter.registerUserForServer(accountName, serverID);
+                    DatabaseInterface.registerUserForServer(accountName, serverID);
                 }
             }
 
@@ -569,7 +571,7 @@ public class DataHolder {
             }
             //</editor-fold>
 
-            DatabaseAdapter.updateUserDataVersion(accountName, serverID, serverDataVersion);
+            DatabaseInterface.updateDataVersion(accountName, serverID);
             fireDataHolderEvents("Download erfolgreich beendet.");
         } catch (Exception e) {
             fireDataHolderEvents("Download fehlgeschlagen.");

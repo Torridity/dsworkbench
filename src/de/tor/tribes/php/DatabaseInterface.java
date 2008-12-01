@@ -7,7 +7,7 @@ package de.tor.tribes.php;
 import de.tor.tribes.db.DatabaseServerEntry;
 import de.tor.tribes.sec.SecurityAdapter;
 import de.tor.tribes.ui.DSWorkbenchSettingsDialog;
-import de.tor.tribes.util.GlobalOptions;
+import de.tor.tribes.util.Constants;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.InputStreamReader;
@@ -28,7 +28,7 @@ import org.apache.log4j.xml.DOMConfigurator;
  */
 public class DatabaseInterface {
 
-    private static Logger logger = Logger.getLogger(DatabaseInterface.class);
+    private static Logger logger = Logger.getLogger("DatebaseInterface");
     //server specific codes
     public static final int ID_UNKNOWN_ERROR = -4711;
     public static final int ID_SUCCESS = 0;
@@ -64,7 +64,7 @@ public class DatabaseInterface {
             url = new URL(INTERFACE_URL);
             // URL connection channel.
             urlConn = url.openConnection(DSWorkbenchSettingsDialog.getSingleton().getWebProxy());
-           // urlConn = url.openConnection();
+            // urlConn = url.openConnection();
             // Let the run-time system (RTS) know that we want input.
             urlConn.setDoInput(true);
 
@@ -128,63 +128,46 @@ public class DatabaseInterface {
                 //do nothing
                 break;
             }
-
             case ID_WEB_CONNECTION_FAILED: {
                 logger.error("Failed to connect to the web interface");
                 break;
 
             }
-
-
             case ID_DATABASE_SERVER_CONNECTION_FAILED: {
                 logger.error("Failed to connect to database server");
                 break;
 
             }
-
-
             case ID_DATABASE_CONNECTION_FAILED: {
                 logger.error("Failed to select database");
                 break;
 
             }
-
-
             case ID_ARGUMENT_ERROR: {
                 logger.error("Argument error");
                 break;
 
             }
-
-
             case ID_UNKNOWN_SERVER: {
                 logger.error("Unknown server");
                 break;
 
             }
-
-
             case ID_QUERY_RETURNED_UNEXPECTED_RESULT: {
                 logger.error("Server-sided failure while '" + pFunction + "'. Query returned an unexpected/no result or an update affected no single line");
                 break;
 
             }
-
-
             case ID_USER_NOT_EXIST: {
                 logger.error("Error in '" + pFunction + "'. User does not exist or password is wrong");
                 break;
 
             }
-
-
             case ID_USER_ALREADY_EXIST: {
                 logger.error("Error in '" + pFunction + "'. User already exists");
                 break;
 
             }
-
-
             default: {
                 logger.error("Unknown status code in '" + pFunction + "': " + pStatus);
             }
@@ -211,6 +194,16 @@ public class DatabaseInterface {
         }
 
         return ID_UNKNOWN_ERROR;
+    }
+
+    public static int isVersionAllowed() {
+        double min = Double.parseDouble(DatabaseInterface.getProperty("min_version"));
+        if (min < 0) {
+            return (int) min;
+        } else if (Constants.VERSION < min) {
+            return ID_VERSION_NOT_ALLOWED;
+        }
+        return ID_SUCCESS;
     }
 
     public static List<DatabaseServerEntry> listServers() {
@@ -255,7 +248,8 @@ public class DatabaseInterface {
     public static int checkUser(String pUser, String pPassword) {
         Hashtable<String, String> arguments = new Hashtable<String, String>();
         arguments.put("user", pUser);
-        arguments.put("pass", pPassword);
+
+        arguments.put("pass", SecurityAdapter.hashStringMD5(pPassword));
         Object result = callWebInterface("checkUser", arguments);
         try {
             String[] lines = (String[]) result;
@@ -361,6 +355,14 @@ public class DatabaseInterface {
         return ID_UNKNOWN_ERROR;
     }
 
+    public static double getCurrentVersion() {
+        try {
+            return Double.parseDouble(DatabaseInterface.getProperty("current_version"));
+        } catch (Exception e) {
+            return ID_UNKNOWN_ERROR;
+        }
+    }
+
     public static int registerUserForServer(String pUser, String pServer) {
         Hashtable<String, String> arguments = new Hashtable<String, String>();
         arguments.put("user", pUser);
@@ -446,11 +448,11 @@ public class DatabaseInterface {
         if (versionS > 0) {
         System.out.println("Server: " + new SimpleDateFormat("dd.MM.yyyy - HH:mm:ss").format(new Date(versionS)));
         }*/
-        
+
         try {
             //System.out.println(DatabaseInterface.registerUserForServer("Torridity", "de34"));
             System.out.println(DatabaseInterface.updateDataVersion("Torridity", "de34"));
-            //System.out.println(DatabaseInterface.getUserDataVersion("Torridity", "de34"));
+        //System.out.println(DatabaseInterface.getUserDataVersion("Torridity", "de34"));
         } catch (Exception e) {
         }
     //System.out.println(DatabaseInterface.addUser("Töter&12<>", SecurityAdapter.hashStringMD5("1234")));

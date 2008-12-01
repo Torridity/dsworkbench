@@ -37,7 +37,7 @@ import javax.swing.UIManager;
  */
 public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements TroopsManagerListener {
 
-    private static Logger logger = Logger.getLogger(DSWorkbenchTroopsFrame.class);
+    private static Logger logger = Logger.getLogger("TroopsDialog");
     private static DSWorkbenchTroopsFrame SINGLETON = null;
     private List<DefaultTableCellRenderer> renderers = new LinkedList<DefaultTableCellRenderer>();
     private List<ImageIcon> mPowerIcons = new LinkedList<ImageIcon>();

@@ -22,7 +22,7 @@ import org.jdom.Element;
  */
 public class TagManager {
 
-    private static Logger logger = Logger.getLogger(TagManager.class);
+    private static Logger logger = Logger.getLogger("TagManager");
     private static TagManager SINGLETON = null;
     private final static List<Tag> mTags = new LinkedList<Tag>();
     private final List<TagManagerListener> mManagerListeners = new LinkedList<TagManagerListener>();

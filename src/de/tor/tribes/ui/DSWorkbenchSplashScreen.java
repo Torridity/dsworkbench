@@ -5,19 +5,18 @@
  */
 package de.tor.tribes.ui;
 
-import de.tor.tribes.db.DatabaseAdapter;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.util.GlobalOptions;
 import javax.swing.JOptionPane;
 import org.apache.log4j.Logger;
 import de.tor.tribes.io.DataHolderListener;
+import de.tor.tribes.php.DatabaseInterface;
 import de.tor.tribes.util.Constants;
 import java.awt.Font;
 import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 import javax.swing.ImageIcon;
-import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
 import org.apache.log4j.Level;
 import org.apache.log4j.RollingFileAppender;
@@ -27,7 +26,7 @@ import org.apache.log4j.RollingFileAppender;
  */
 public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataHolderListener {
 
-    private static Logger logger = Logger.getLogger(DSWorkbenchSplashScreen.class);
+    private static Logger logger = Logger.getLogger("Launcher");
     private final DSWorkbenchSplashScreen self = this;
     private final SplashRepaintThread t;
 
@@ -107,14 +106,14 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
             String selectedServer = GlobalOptions.getProperty("default.server");
             String name = GlobalOptions.getProperty("account.name");
             String password = GlobalOptions.getProperty("account.password");
-            if (DatabaseAdapter.checkUser(name, password) != DatabaseAdapter.ID_SUCCESS) {
+            if (DatabaseInterface.checkUser(name, password) != DatabaseInterface.ID_SUCCESS) {
                 JOptionPane.showMessageDialog(this, "Die Accountvalidierung ist fehlgeschlagen.\n" +
                         "Bitte überprüfe deine Account- und Netzwerkeinstellungen und versuches es erneut.",
                         "Fehler", JOptionPane.ERROR_MESSAGE);
                 checkForUpdates = false;
             } else {
-                long serverDataVersion = DatabaseAdapter.getDataVersion(selectedServer);
-                long userDataVersion = DatabaseAdapter.getUserDataVersion(name, selectedServer);
+                long serverDataVersion = DatabaseInterface.getServerDataVersion(selectedServer);
+                long userDataVersion = DatabaseInterface.getUserDataVersion(name, selectedServer);
                 logger.debug("User data version is " + userDataVersion);
                 logger.debug("Server data version is " + serverDataVersion);
                 if (userDataVersion == serverDataVersion) {
@@ -150,7 +149,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
             }
             if (informOnUpdate) {
                 //check version           
-                double version = DatabaseAdapter.getCurrentVersion();
+                double version = DatabaseInterface.getCurrentVersion();
 
                 if (version > 0 && version > Constants.VERSION) {
                     NotifierFrame.doNotification("Eine neue Version (" + version + ") von DS Workbench ist verfügbar.\n" +
@@ -218,10 +217,11 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
         }
 
         RollingFileAppender a = new org.apache.log4j.RollingFileAppender();
-        a.setLayout(new org.apache.log4j.PatternLayout("%d [%t] %-5p %C{6} (%F:%L) - %m%n"));
+        //a.setLayout(new org.apache.log4j.PatternLayout("%d [%t] %-5p %C{6} (%F:%L) - %m%n"));
+        a.setLayout(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c - %m%n"));
         try {
             a.setFile("./log/dsworkbench.log", true, true, 1024);
-            switch (mode) {
+            /*switch (mode) {
                 case 0:
                     Logger.getLogger("de.tor").setLevel(Level.INFO);
                     Logger.getLogger("dswb").setLevel(Level.INFO);
@@ -234,9 +234,12 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
                     Logger.getLogger("de.tor").setLevel(Level.ERROR);
                     Logger.getLogger("dswb").setLevel(Level.ERROR);
                     break;
-            }
-            Logger.getLogger("de.tor").addAppender(a);
-            Logger.getLogger("dswb").addAppender(a);
+            }*/
+            
+            Logger.getRootLogger().setLevel(Level.DEBUG);
+            Logger.getRootLogger().addAppender(a);
+            /*Logger.getLogger("de.tor").addAppender(a);
+            Logger.getLogger("dswb").addAppender(a);*/
         } catch (IOException ioe) {
         }
         java.awt.EventQueue.invokeLater(new Runnable() {

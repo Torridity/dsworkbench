@@ -19,7 +19,7 @@ import org.w3c.dom.NodeList;
 
 public class JaxenUtils {
 
-    private static Logger logger = Logger.getLogger(JaxenUtils.class);
+    private static Logger logger = Logger.getLogger("XMLUtils");
 
     /** Creates a new instance of JaxenUtil.
      * Never created externally!

@@ -5,7 +5,6 @@
  */
 package de.tor.tribes.ui;
 
-import de.tor.tribes.db.DatabaseAdapter;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.DataHolderListener;
 import de.tor.tribes.io.ServerManager;
@@ -58,7 +57,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         DataHolderListener,
         ServerChangeListener {
 
-    private static Logger logger = Logger.getLogger(DSWorkbenchSettingsDialog.class);
+    private static Logger logger = Logger.getLogger("SettingsDialog");
     private static DSWorkbenchSettingsDialog SINGLETON = null;
     private boolean updating = false;
     private Proxy webProxy;
@@ -1679,22 +1678,22 @@ private void fireLoginIntoAccountEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
     String name = jAccountName.getText();
     String password = new String(jAccountPassword.getPassword());
     if ((name != null) && (password != null)) {
-        int ret = DatabaseAdapter.checkUser(name, password);
-        if (ret == DatabaseAdapter.ID_SUCCESS) {
+        int ret = DatabaseInterface.checkUser(name, password);
+        if (ret == DatabaseInterface.ID_SUCCESS) {
             GlobalOptions.addProperty("account.name", jAccountName.getText());
             GlobalOptions.addProperty("account.password", new String(jAccountPassword.getPassword()));
             GlobalOptions.saveProperties();
             JOptionPane.showMessageDialog(this, "Account erfolgreich überprüft.", "Information", JOptionPane.INFORMATION_MESSAGE);
-        } else if (ret == DatabaseAdapter.ID_CONNECTION_FAILED) {
-            JOptionPane.showMessageDialog(this, "Keine Verbindung zur Datenbank.", "Fehler", JOptionPane.ERROR_MESSAGE);
-        } else if (ret == DatabaseAdapter.ID_USER_NOT_EXIST) {
+        } else if (ret == DatabaseInterface.ID_DATABASE_CONNECTION_FAILED) {
+            JOptionPane.showMessageDialog(this, "Keine Verbindung zur Datenbank.\nBitte versuch es in Kürze noch einmal.", "Fehler", JOptionPane.ERROR_MESSAGE);
+        } else if (ret == DatabaseInterface.ID_USER_NOT_EXIST) {
             JOptionPane.showMessageDialog(this, "Der Benutzer '" + name + "' existiert nicht.\nBitte erstelle zuerst einen Account.", "Information", JOptionPane.INFORMATION_MESSAGE);
-        } else if (ret == DatabaseAdapter.ID_WRONG_PASSWORD) {
-            JOptionPane.showMessageDialog(this, "Das eingegebene Passwort ist falsch.\nBitte überprüfe die Eingaben.", "Fehler", JOptionPane.ERROR_MESSAGE);
         } else if (ret == DatabaseInterface.ID_WEB_CONNECTION_FAILED) {
-            JOptionPane.showMessageDialog(this, "Es konnte keine Verbindung mit dem Server hergestellt werden.\nBitte überprüfe deine Netzwerkeinstellungen.", "Fehler", JOptionPane.ERROR_MESSAGE);
-        } else if (ret == DatabaseAdapter.ID_UNKNOWN_ERROR) {
-            JOptionPane.showMessageDialog(this, "Ein unbekannter Fehler ist aufgetreten.", "Fehler", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Es konnte keine Verbindung mit dem Server hergestellt werden.\nBitte überprüfe deine Netzwerkeinstellungen und versuch es in Kürze noch einmal.", "Fehler", JOptionPane.ERROR_MESSAGE);
+        } else if (ret == DatabaseInterface.ID_QUERY_RETURNED_UNEXPECTED_RESULT) {
+            JOptionPane.showMessageDialog(this, "Das Ergebnis der Nutzerprüfung war nicht eindeutig. Bitte kontaktiere den Entwickler.", "Fehler", JOptionPane.ERROR_MESSAGE);
+        } else if (ret == DatabaseInterface.ID_UNKNOWN_ERROR) {
+            JOptionPane.showMessageDialog(this, "Ein unbekannter Fehler ist aufgetreten.\nBitte kontaktiere den Entwickler.", "Fehler", JOptionPane.ERROR_MESSAGE);
         }
     }
 }//GEN-LAST:event_fireLoginIntoAccountEvent
@@ -1705,51 +1704,56 @@ private void fireClosingEvent(java.awt.event.WindowEvent evt) {//GEN-FIRST:event
 
     // <editor-fold defaultstate="collapsed" desc=" Registration EventListeners ">
 private void fireRegisterEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireRegisterEvent
-        String user = jRegistrationAccountName.getText();
-        String password = new String(jRegistrationPassword.getPassword());
-        String password2 = new String(jRegistrationPassword2.getPassword());
+            String user = jRegistrationAccountName.getText();
+            String password = new String(jRegistrationPassword.getPassword());
+            String password2 = new String(jRegistrationPassword2.getPassword());
 
-        if ((user.length() < 3) || (password.length() < 3)) {
-            JOptionPane.showMessageDialog(jCreateAccountDialog, "Accountname und Passwort müssen mindestens 3 Zeichen lang sein.", "Fehler", JOptionPane.INFORMATION_MESSAGE);
-            return;
-        }
+            if ((user.length() < 3) || (password.length() < 3)) {
+                JOptionPane.showMessageDialog(jCreateAccountDialog, "Accountname und Passwort müssen mindestens 3 Zeichen lang sein.", "Fehler", JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
 
-        if (user.length() > 20) {
-            JOptionPane.showMessageDialog(jCreateAccountDialog, "Der Accountname darf höchstens 20 Zeichen lang sein.", "Fehler", JOptionPane.INFORMATION_MESSAGE);
-            return;
-        }
+            if (user.length() > 20) {
+                JOptionPane.showMessageDialog(jCreateAccountDialog, "Der Accountname darf höchstens 20 Zeichen lang sein.", "Fehler", JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
 
-        if (!password.equals(password2)) {
-            JOptionPane.showMessageDialog(jCreateAccountDialog, "Die eingegebenen Passwörter unterscheiden sich.\nBitte überprüfe deine Eingabe.", "Warnung", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
+            if (!password.equals(password2)) {
+                JOptionPane.showMessageDialog(jCreateAccountDialog, "Die eingegebenen Passwörter unterscheiden sich.\nBitte überprüfe deine Eingabe.", "Warnung", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
 
-        int ret = DatabaseAdapter.addUser(user, password);
-        switch (ret) {
-            case DatabaseAdapter.ID_CONNECTION_FAILED: {
-                JOptionPane.showMessageDialog(jCreateAccountDialog, "Fehler beim Verbinden mit der Datenbank.\nBitte überprüfe die Netzwerkeinstellungen.", "Fehler", JOptionPane.ERROR);
-                break;
+            int ret = DatabaseInterface.addUser(user, password);
+            switch (ret) {
+                case DatabaseInterface.ID_DATABASE_CONNECTION_FAILED: {
+                    JOptionPane.showMessageDialog(jCreateAccountDialog, "Fehler beim Verbinden mit der Datenbank.\nBitte versuch es in Kürze noch einmal.", "Fehler", JOptionPane.ERROR);
+                    break;
 
+                }
+                case DatabaseInterface.ID_WEB_CONNECTION_FAILED: {
+                    JOptionPane.showMessageDialog(jCreateAccountDialog, "Es konnte keine Verbindung mit dem Server hergestellt werden.\nBitte überprüfe die Netzwerkeinstellungen und versuch es in Kürze noch einmal.", "Fehler", JOptionPane.ERROR);
+                    break;
+
+                }
+                case DatabaseInterface.ID_USER_ALREADY_EXIST: {
+                    JOptionPane.showMessageDialog(jCreateAccountDialog, "Es existiert bereits ein Benutzer mit dem angegebenen Namen.\nBitte wähle einen anderen Namen.", "Fehler", JOptionPane.ERROR_MESSAGE);
+                    break;
+                }
+                case DatabaseInterface.ID_QUERY_RETURNED_UNEXPECTED_RESULT: {
+                    JOptionPane.showMessageDialog(jCreateAccountDialog, "Der Benutzer konnte nicht in hinzugefügt werden.\nBitte wende dich an den Entwickler.", "Fehler", JOptionPane.ERROR);
+                    break;
+                }
+                case DatabaseInterface.ID_UNKNOWN_ERROR: {
+                    JOptionPane.showMessageDialog(jCreateAccountDialog, "Ein unbekannter Fehler ist aufgetreten.\nBitte wende dich an den Entwickler.", "Fehler", JOptionPane.ERROR);
+                    break;
+                }
+                default: {
+                    JOptionPane.showMessageDialog(jCreateAccountDialog, "Dein Account wurde erfolgreich angelegt.\nDu kannst nun DS-Serverdaten herunterladen.", "Account angelegt", JOptionPane.INFORMATION_MESSAGE);
+                    jAccountName.setText(jRegistrationAccountName.getText());
+                    jAccountPassword.setText(new String(jRegistrationPassword.getPassword()));
+                    jCreateAccountDialog.setVisible(false);
+                }
             }
-            case DatabaseAdapter.ID_DUAL_ACCOUNT: {
-                JOptionPane.showMessageDialog(jCreateAccountDialog, "Die Überprüfung hat ergeben, dass du bereits einen Account erstellt hast.\nDas Anlegen von mehreren Accounts ist nicht erlaubt!", "Fehler", JOptionPane.ERROR_MESSAGE);
-                break;
-            }
-            case DatabaseAdapter.ID_USER_ALREADY_EXIST: {
-                JOptionPane.showMessageDialog(jCreateAccountDialog, "Es existiert bereits ein Benutzer mit dem angegebenen Namen.\nBitte wähle einen anderen Namen.", "Fehler", JOptionPane.ERROR_MESSAGE);
-                break;
-            }
-            case DatabaseAdapter.ID_UNKNOWN_ERROR: {
-                JOptionPane.showMessageDialog(jCreateAccountDialog, "Ein unbekannter Fehler ist aufgetreten.\nBitte wende dich an den Entwickler.", "Fehler", JOptionPane.ERROR);
-                break;
-            }
-            default: {
-                JOptionPane.showMessageDialog(jCreateAccountDialog, "Dein Account wurde erfolgreich angelegt.\nDu kannst nun DS-Serverdaten herunterladen.", "Account angelegt", JOptionPane.INFORMATION_MESSAGE);
-                jAccountName.setText(jRegistrationAccountName.getText());
-                jAccountPassword.setText(new String(jRegistrationPassword.getPassword()));
-                jCreateAccountDialog.setVisible(false);
-            }
-        }
 }//GEN-LAST:event_fireRegisterEvent
 
 private void fireCancelRegistrationEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCancelRegistrationEvent
@@ -1758,95 +1762,102 @@ private void fireCancelRegistrationEvent(java.awt.event.MouseEvent evt) {//GEN-F
 
     // </editor-fold>
 private void fireChangeContinentsOnMinimapEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireChangeContinentsOnMinimapEvent
-        GlobalOptions.addProperty("map.showcontinents", Boolean.toString(jShowContinents.isSelected()));
-        MinimapPanel.getSingleton().resetBuffer();
-        MinimapPanel.getSingleton().redraw();
+            GlobalOptions.addProperty("map.showcontinents", Boolean.toString(jShowContinents.isSelected()));
+            MinimapPanel.getSingleton().resetBuffer();
+            MinimapPanel.getSingleton().redraw();
 }//GEN-LAST:event_fireChangeContinentsOnMinimapEvent
 
 //Download new version of data
 private void fireDownloadDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireDownloadDataEvent
-        if (!jSelectServerButton.isEnabled()) {
-            return;
-        }
-
-        if (jServerList.getSelectedItem() == null) {
-            return;
-        }
-        // <editor-fold defaultstate="collapsed" desc=" Offline Mode ? ">
-
-        if (GlobalOptions.isOfflineMode()) {
-            JOptionPane.showMessageDialog(this, "Du befindest dich im Offline-Modus." +
-                    "\nBitte korrigiere deine Netzwerkeinstellungen um den Download durchzuführen.",
-                    "Warnung", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-
-        // </editor-fold>
-
-        // <editor-fold defaultstate="collapsed" desc=" Account valid, data outdated ? ">
-        String selectedServer = (String) jServerList.getSelectedItem();
-        String name = GlobalOptions.getProperty("account.name");
-        String password = GlobalOptions.getProperty("account.password");
-        if (DatabaseAdapter.checkUser(name, password) != DatabaseAdapter.ID_SUCCESS) {
-            JOptionPane.showMessageDialog(this, "Die Accountvalidierung ist fehlgeschlagen.\n" +
-                    "Bitte überprüfe deine Account- und Netzwerkeinstellungen und versuches es erneut.",
-                    "Fehler", JOptionPane.ERROR_MESSAGE);
-            return;
-        } else {
-            long serverDataVersion = DatabaseAdapter.getDataVersion(selectedServer);
-            long userDataVersion = DatabaseAdapter.getUserDataVersion(name, selectedServer);
-            logger.debug("User data version is " + userDataVersion);
-            logger.debug("Server data version is " + serverDataVersion);
-            if (userDataVersion == serverDataVersion) {
-                JOptionPane.showMessageDialog(this, "Du besitzt bereits die aktuellsten Daten.",
-                        "Information", JOptionPane.INFORMATION_MESSAGE);
+            if (!jSelectServerButton.isEnabled()) {
                 return;
             }
-        }
 
-        // </editor-fold>
+            if (jServerList.getSelectedItem() == null) {
+                return;
+            }
+            // <editor-fold defaultstate="collapsed" desc=" Offline Mode ? ">
 
-        //save current user data for current server
-        GlobalOptions.saveUserData();
-        GlobalOptions.setSelectedServer((String) jServerList.getSelectedItem());
-        GlobalOptions.addProperty("default.server", GlobalOptions.getSelectedServer());
-        GlobalOptions.saveProperties();
+            if (GlobalOptions.isOfflineMode()) {
+                JOptionPane.showMessageDialog(this, "Du befindest dich im Offline-Modus." +
+                        "\nBitte korrigiere deine Netzwerkeinstellungen um den Download durchzuführen.",
+                        "Warnung", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
 
-        updating = true;
-        jSelectServerButton.setEnabled(false);
-        jDownloadDataButton.setEnabled(false);
-        jOKButton.setEnabled(false);
-        jCreateAccountButton.setEnabled(false);
-        jCancelButton.setEnabled(false);
-        jTribeNames.setModel(new DefaultComboBoxModel());
-        jStatusArea.setText("");
-        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+            // </editor-fold>
 
-        //clear tribes model due to data is cleared at reload
-        jTribeNames.setModel(new DefaultComboBoxModel());
-
-        Thread t = new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                try {
-                    logger.debug("Start downloading data");
-                    boolean ret = DataHolder.getSingleton().loadData(true);
-                    logger.debug("Update finished " + ((ret) ? "successfully" : "with errors"));
-                } catch (Exception e) {
-                    logger.error("Failed to load data", e);
+            // <editor-fold defaultstate="collapsed" desc=" Account valid, data outdated ? ">
+            String selectedServer = (String) jServerList.getSelectedItem();
+            String name = GlobalOptions.getProperty("account.name");
+            String password = GlobalOptions.getProperty("account.password");
+            if (DatabaseInterface.checkUser(name, password) != DatabaseInterface.ID_SUCCESS) {
+                JOptionPane.showMessageDialog(this, "Die Accountvalidierung ist fehlgeschlagen.\n" +
+                        "Bitte überprüfe deine Account- und Netzwerkeinstellungen und versuches es erneut.",
+                        "Fehler", JOptionPane.ERROR_MESSAGE);
+                return;
+            } else {
+                long serverDataVersion = DatabaseInterface.getServerDataVersion(selectedServer);
+                long userDataVersion = DatabaseInterface.getUserDataVersion(name, selectedServer);
+                if (serverDataVersion < 0 || userDataVersion < 0) {
+                    JOptionPane.showMessageDialog(this, "Fehler bei der Überprüfung der Datenversionen.\n" +
+                            "Bitte überprüfe deine Account- und Netzwerkeinstellungen und versuches es erneut.\n" +
+                            "Sollte das Problem weiterhin bestehen, kontaktiere bitte den Entwickler.",
+                            "Fehler", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                logger.debug("User data version is " + userDataVersion);
+                logger.debug("Server data version is " + serverDataVersion);
+                if (userDataVersion == serverDataVersion) {
+                    JOptionPane.showMessageDialog(this, "Du besitzt bereits die aktuellsten Daten.",
+                            "Information", JOptionPane.INFORMATION_MESSAGE);
+                    return;
                 }
             }
-        });
 
-        logger.debug("Starting update thread");
-        t.setDaemon(true);
-        t.start();
+            // </editor-fold>
+
+            //save current user data for current server
+            GlobalOptions.saveUserData();
+            GlobalOptions.setSelectedServer((String) jServerList.getSelectedItem());
+            GlobalOptions.addProperty("default.server", GlobalOptions.getSelectedServer());
+            GlobalOptions.saveProperties();
+
+            updating = true;
+            jSelectServerButton.setEnabled(false);
+            jDownloadDataButton.setEnabled(false);
+            jOKButton.setEnabled(false);
+            jCreateAccountButton.setEnabled(false);
+            jCancelButton.setEnabled(false);
+            jTribeNames.setModel(new DefaultComboBoxModel());
+            jStatusArea.setText("");
+            setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+
+            //clear tribes model due to data is cleared at reload
+            jTribeNames.setModel(new DefaultComboBoxModel());
+
+            Thread t = new Thread(new Runnable() {
+
+                @Override
+                public void run() {
+                    try {
+                        logger.debug("Start downloading data");
+                        boolean ret = DataHolder.getSingleton().loadData(true);
+                        logger.debug("Update finished " + ((ret) ? "successfully" : "with errors"));
+                    } catch (Exception e) {
+                        logger.error("Failed to load data", e);
+                    }
+                }
+            });
+
+            logger.debug("Starting update thread");
+            t.setDaemon(true);
+            t.start();
 }//GEN-LAST:event_fireDownloadDataEvent
 
     // <editor-fold defaultstate="collapsed" desc=" EventListeners for settings ">
 private void fireChangeShowAttackMovementEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireChangeShowAttackMovementEvent
-        GlobalOptions.addProperty("attack.movement", Boolean.toString(jShowAttackMovementBox.isSelected()));
+            GlobalOptions.addProperty("attack.movement", Boolean.toString(jShowAttackMovementBox.isSelected()));
 }//GEN-LAST:event_fireChangeShowAttackMovementEvent
 
 private void fireShowSkinPreviewEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireShowSkinPreviewEvent
@@ -2072,9 +2083,9 @@ private void fireChangeDrawDistanceEvent(javax.swing.event.ChangeEvent evt) {//G
                 password = new String(jAccountPassword.getPassword());
             }
 
-            int result = DatabaseAdapter.checkUser(name, password);
+            int result = DatabaseInterface.checkUser(name, password);
 
-            if ((result == DatabaseAdapter.ID_USER_NOT_EXIST) || (result == DatabaseAdapter.ID_WRONG_PASSWORD)) {
+            if (result == DatabaseInterface.ID_USER_NOT_EXIST) {
                 logger.info("Account check failed (account error)");
                 String message = "Die Accountvalidierung ist fehlgeschlagen.\n";
                 message += "Wenn du noch nicht registriert bist tu dies bitte über den entsprechenden Button.\n";
@@ -2086,10 +2097,26 @@ private void fireChangeDrawDistanceEvent(javax.swing.event.ChangeEvent evt) {//G
                     UIManager.put("OptionPane.yesButtonText", "Yes");
                     return false;
                 }
-            } else if (result == DatabaseAdapter.ID_CONNECTION_FAILED) {
+            } else if (result == DatabaseInterface.ID_WEB_CONNECTION_FAILED) {
                 logger.info("Account check failed (connection error)");
                 String message = "Die Accountvalidierung ist fehlgeschlagen.\n";
                 message += "Bitte überprüfe deine Netzwerkeinstellungen und ob du mit dem Internet verbunden bist.\n";
+                message += "Solange die Accountvalidierung nicht erfolgreich war wird es dir nicht möglich sein, Serverdaten zu aktualisieren.";
+                if (JOptionPane.showConfirmDialog(this, message, "Warnung", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION) {
+                    //NO_OPTION selected, so check settings again
+                    UIManager.put("OptionPane.noButtonText", "No");
+                    UIManager.put("OptionPane.yesButtonText", "Yes");
+                    return false;
+                }
+            } else if (result == DatabaseInterface.ID_SUCCESS) {
+                //success, save name and password
+                GlobalOptions.addProperty("account.name", name);
+                GlobalOptions.addProperty("account.password", password);
+                GlobalOptions.saveProperties();
+            } else {
+                logger.info("Account check failed (other error)");
+                String message = "Die Accountvalidierung ist fehlgeschlagen.\n";
+                message += "Bitte kontaktiere den Entwickler, da es sich um einen internen Fehler handelt.\n";
                 message += "Solange die Accountvalidierung nicht erfolgreich war wird es dir nicht möglich sein, Serverdaten zu aktualisieren.";
                 if (JOptionPane.showConfirmDialog(this, message, "Warnung", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.NO_OPTION) {
                     //NO_OPTION selected, so check settings again
@@ -2097,11 +2124,6 @@ private void fireChangeDrawDistanceEvent(javax.swing.event.ChangeEvent evt) {//G
                     UIManager.put("OptionPane.yesButtonText", "Yes");
                     return false;
                 }
-            } else {
-                //success, save name and password
-                GlobalOptions.addProperty("account.name", name);
-                GlobalOptions.addProperty("account.password", password);
-                GlobalOptions.saveProperties();
             }
             UIManager.put("OptionPane.noButtonText", "No");
             UIManager.put("OptionPane.yesButtonText", "Yes");

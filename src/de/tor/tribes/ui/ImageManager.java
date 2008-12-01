@@ -20,7 +20,7 @@ import org.apache.log4j.Logger;
  */
 public class ImageManager {
 
-    private static Logger logger = Logger.getLogger(ImageManager.class);    //mappanel default
+    private static Logger logger = Logger.getLogger("TextureManager");    //mappanel default
     public final static int CURSOR_DEFAULT = 0;
     public final static int CURSOR_MARK = 1;
     public final static int CURSOR_MEASURE = 2;

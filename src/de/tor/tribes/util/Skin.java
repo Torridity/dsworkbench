@@ -25,7 +25,7 @@ import org.apache.log4j.Logger;
  */
 public class Skin {
 
-    private static Logger logger = Logger.getLogger(Skin.class);    //init with default skin dimensions
+    private static Logger logger = Logger.getLogger("TexturePack");    //init with default skin dimensions
 
     private int iFieldWidth = 0;
     private int iFieldHeight = 0;

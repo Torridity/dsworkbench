@@ -49,7 +49,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         ToolChangeListener,
         DSWorkbenchFrameListener {
 
-    private static Logger logger = Logger.getLogger(DSWorkbenchMainFrame.class);
+    private static Logger logger = Logger.getLogger("MainApp");
     private int iCenterX = 500;
     private int iCenterY = 500;
     private List<ImageIcon> mIcons;
@@ -1189,20 +1189,35 @@ private void fireFrameResizedEvent(java.awt.event.ComponentEvent evt) {//GEN-FIR
     /**Zoom main map*/
 private void fireZoomEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireZoomEvent
     if (evt.getSource() == jZoomInButton) {
-        dZoomFactor += 1.0 / 10.0;
+        zoomIn();
     } else {
-        dZoomFactor -= 1.0 / 10;
+        zoomOut();
+    }
+}//GEN-LAST:event_fireZoomEvent
+
+    protected void zoomIn() {
+        dZoomFactor += 1.0 / 10.0;
+        checkZoomRange();
+
+        dZoomFactor = Double.parseDouble(NumberFormat.getInstance().format(dZoomFactor).replaceAll(",", "."));
+
+        double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
+        double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
+        MinimapPanel.getSingleton().setSelection(Integer.parseInt(jCenterX.getText()), Integer.parseInt(jCenterY.getText()), (int) Math.rint(w), (int) Math.rint(h));
+        MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.ALL_LAYERS);
     }
 
-    checkZoomRange();
+    protected void zoomOut() {
+        dZoomFactor -= 1.0 / 10;
+        checkZoomRange();
 
-    dZoomFactor = Double.parseDouble(NumberFormat.getInstance().format(dZoomFactor).replaceAll(",", "."));
+        dZoomFactor = Double.parseDouble(NumberFormat.getInstance().format(dZoomFactor).replaceAll(",", "."));
 
-    double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
-    double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
-    MinimapPanel.getSingleton().setSelection(Integer.parseInt(jCenterX.getText()), Integer.parseInt(jCenterY.getText()), (int) Math.rint(w), (int) Math.rint(h));
-    MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.ALL_LAYERS);
-}//GEN-LAST:event_fireZoomEvent
+        double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
+        double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
+        MinimapPanel.getSingleton().setSelection(Integer.parseInt(jCenterX.getText()), Integer.parseInt(jCenterY.getText()), (int) Math.rint(w), (int) Math.rint(h));
+        MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.ALL_LAYERS);
+    }
 
     /**Change active player village*/
     /**Show settings dialog*/

@@ -4,8 +4,8 @@
  */
 package de.tor.tribes.io;
 
-import de.tor.tribes.db.DatabaseAdapter;
 import de.tor.tribes.db.DatabaseServerEntry;
+import de.tor.tribes.php.DatabaseInterface;
 import de.tor.tribes.util.Constants;
 import java.io.File;
 import java.util.Arrays;
@@ -31,7 +31,7 @@ public class ServerManager {
     }
 
     public static void loadServerList() throws Exception {
-        SERVERS = DatabaseAdapter.getServerList();
+        SERVERS = DatabaseInterface.listServers();
     }
 
     /**Get the listof locally stored servers*/

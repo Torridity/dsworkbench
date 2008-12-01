@@ -18,7 +18,7 @@ import org.apache.log4j.Logger;
  */
 public class SecurityAdapter {
 
-    private static Logger logger = Logger.getLogger(SecurityAdapter.class);
+    private static Logger logger = Logger.getLogger("SecurityTools");
 
     public static String encryptString(String pData, String pPassword) {
         try {

@@ -45,9 +45,11 @@ public class MarkerCell extends javax.swing.JPanel {
             return null;
         } else {
             if (pMarker.getMarkerType() == Marker.TRIBE_MARKER_TYPE) {
-                return new MarkerCell(DataHolder.getSingleton().getTribes().get(pMarker.getMarkerID()));
+                MarkerCell c = new MarkerCell(DataHolder.getSingleton().getTribes().get(pMarker.getMarkerID()));
+                return c;
             } else if (pMarker.getMarkerType() == Marker.ALLY_MARKER_TYPE) {
-                return new MarkerCell(DataHolder.getSingleton().getAllies().get(pMarker.getMarkerID()));
+                MarkerCell c = new MarkerCell(DataHolder.getSingleton().getAllies().get(pMarker.getMarkerID()));
+                return c;
             }
         }
         return null;

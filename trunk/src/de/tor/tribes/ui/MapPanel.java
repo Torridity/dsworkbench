@@ -62,7 +62,7 @@ import de.tor.tribes.ui.renderer.MapRenderer;
 public class MapPanel extends javax.swing.JPanel {
 
     // <editor-fold defaultstate="collapsed" desc=" Member variables ">
-    private static Logger logger = Logger.getLogger(MapPanel.class);
+    private static Logger logger = Logger.getLogger("MapCanvas");
     private Village[][] mVisibleVillages = null;
     private Image mBuffer = null;
     private int iCenterX = 500;
@@ -125,16 +125,22 @@ public class MapPanel extends javax.swing.JPanel {
 
             @Override
             public void mouseWheelMoved(MouseWheelEvent e) {
-
-                iCurrentCursor += e.getWheelRotation();
-                if (iCurrentCursor < 0) {
-                    iCurrentCursor = ImageManager.CURSOR_ATTACK_HEAVY;
-                } else if (iCurrentCursor > ImageManager.CURSOR_ATTACK_HEAVY) {
-                    iCurrentCursor = ImageManager.CURSOR_DEFAULT;
-
+                if (e.getWheelRotation() < 0) {
+                    DSWorkbenchMainFrame.getSingleton().zoomOut();
+                } else {
+                    DSWorkbenchMainFrame.getSingleton().zoomIn();
                 }
-                setCursor(ImageManager.getCursor(iCurrentCursor));
-                fireToolChangedEvents(iCurrentCursor);
+            /* iCurrentCursor += e.getWheelRotation();
+            if (iCurrentCursor < 0) {
+            iCurrentCursor = ImageManager.CURSOR_ATTACK_HEAVY;
+            } else if (iCurrentCursor > ImageManager.CURSOR_ATTACK_HEAVY) {
+            iCurrentCursor = ImageManager.CURSOR_DEFAULT;
+            
+            }
+            setCursor(ImageManager.getCursor(iCurrentCursor));
+            fireToolChangedEvents(iCurrentCursor);*/
+
+
             }
         });
         //</editor-fold>

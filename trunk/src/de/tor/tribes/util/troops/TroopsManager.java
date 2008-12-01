@@ -23,12 +23,11 @@ import org.jdom.Document;
 import org.jdom.Element;
 
 /**
- * @TODO: add graphics/icons/*_marker.png to release
  * @author Charon
  */
 public class TroopsManager {
 
-    private static Logger logger = Logger.getLogger(TroopsManager.class);
+    private static Logger logger = Logger.getLogger("TroopsManager");
     private static TroopsManager SINGLETON = null;
     private Hashtable<Village, VillageTroopsHolder> mTroops = null;
     private List<TroopsManagerListener> mManagerListeners = null;

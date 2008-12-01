@@ -46,7 +46,7 @@ import org.apache.log4j.Logger;
  */
 public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements AttackManagerListener {
 
-    private static Logger logger = Logger.getLogger(DSWorkbenchAttackFrame.class);
+    private static Logger logger = Logger.getLogger("AttackDialog");
     private static DSWorkbenchAttackFrame SINGLETON = null;
     private List<DefaultTableCellRenderer> renderers = new LinkedList<DefaultTableCellRenderer>();
     SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yy HH:mm:ss.SSS");
@@ -1404,7 +1404,7 @@ private void fireChangeNotifyEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
 
 class NotifyThread extends Thread {
 
-    private static Logger logger = Logger.getLogger(NotifyThread.class);
+    private static Logger logger = Logger.getLogger("AttackNotificationHelper");
     private boolean active = false;
     private long nextCheck = 0;
     private final int TEN_MINUTES = 10 * 60 * 1000;

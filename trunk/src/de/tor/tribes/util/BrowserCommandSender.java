@@ -16,7 +16,7 @@ import org.apache.log4j.Logger;
  */
 public class BrowserCommandSender {
 
-    private static Logger logger = Logger.getLogger(BrowserCommandSender.class);
+    private static Logger logger = Logger.getLogger("BrowserInterface");
 
     public static void sendTroops(Village pSource, Village pTarget) {
         try {

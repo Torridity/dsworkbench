@@ -30,7 +30,7 @@ import org.jdom.Element;
  */
 public class MarkerManager {
 
-    private static Logger logger = Logger.getLogger(MarkerManager.class);
+    private static Logger logger = Logger.getLogger("MarkerManager");
     private static MarkerManager SINGLETON = null;
     private List<Marker> lMarkers = null;
     private List<MarkerManagerListener> mManagerListeners = null;
@@ -102,7 +102,17 @@ public class MarkerManager {
                 Document d = JaxenUtils.getDocument(markerFile);
                 for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//markers/marker")) {
                     try {
-                        lMarkers.add(new Marker(e));
+                        Marker m = new Marker(e);
+                        // check if tribe/ally still exists
+                        if (m.getMarkerType() == Marker.ALLY_MARKER_TYPE) {
+                            if (DataHolder.getSingleton().getAllies().get(m.getMarkerID()) != null) {
+                                lMarkers.add(m);
+                            }
+                        } else if (m.getMarkerType() == Marker.TRIBE_MARKER_TYPE) {
+                            if (DataHolder.getSingleton().getTribes().get(m.getMarkerID()) != null) {
+                                lMarkers.add(m);
+                            }
+                        }
                     } catch (Exception inner) {
                         //ignored, marker invalid
                     }

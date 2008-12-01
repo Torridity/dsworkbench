@@ -42,7 +42,7 @@ import org.apache.log4j.Logger;
  */
 public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerListener {
 
-    private static Logger logger = Logger.getLogger(MinimapPanel.class);
+    private static Logger logger = Logger.getLogger("MinimapCanvas");
     private Image mBuffer = null;
     private MinimapRepaintThread mPaintThread = null;
     private int iX = 0;
@@ -571,7 +571,7 @@ private void fireScreenshotControlClosingEvent(java.awt.event.WindowEvent evt) {
 
 class MinimapRepaintThread extends Thread {
 
-    private static Logger logger = Logger.getLogger(MinimapRepaintThread.class);
+    private static Logger logger = Logger.getLogger("MinimapRenderer");
     private BufferedImage mBuffer = null;
     private boolean drawn = false;
 

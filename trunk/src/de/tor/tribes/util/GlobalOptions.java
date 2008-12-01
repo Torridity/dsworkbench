@@ -29,7 +29,7 @@ import org.apache.log4j.Logger;
  */
 public class GlobalOptions {
 
-    private static Logger logger = Logger.getLogger(GlobalOptions.class);
+    private static Logger logger = Logger.getLogger("GlobalSettings");
     private static boolean INITIALIZED = false;
     /**Active skin used by the MapPanel*/
     private static Skin mSkin;

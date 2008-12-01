@@ -19,7 +19,7 @@ import org.apache.log4j.Logger;
  */
 public class ClipboardWatch extends Thread {
 
-    private static Logger logger = Logger.getLogger(ClipboardWatch.class);
+    private static Logger logger = Logger.getLogger("ClipboardMonitor");
     private static ClipboardWatch SINGLETON = null;
     private int lastDataLength = 0;
 
@@ -38,7 +38,7 @@ public class ClipboardWatch extends Thread {
 
     @Override
     public void run() {
-        logger.info("Starting ClipboardWatch");
+        logger.info("Starting ClipboardMonitor");
         while (true) {
             try {
                 Transferable t = (Transferable) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);

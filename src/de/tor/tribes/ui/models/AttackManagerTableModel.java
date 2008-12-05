@@ -7,6 +7,7 @@ package de.tor.tribes.ui.models;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.Village;
+import de.tor.tribes.ui.DSWorkbenchAttackFrame;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.attack.AttackManager;
 import de.tor.tribes.util.attack.AttackManagerListener;
@@ -25,6 +26,7 @@ public class AttackManagerTableModel extends AbstractTableModel {
     String[] colNames = new String[]{
         "Herkunft", "Ziel", "Einheit", "Abschickzeit", "Ankunftzeit", "Einzeichnen"
     };
+    private String sActiveAttackPlan = null;
     private static AttackManagerTableModel SINGLETON = null;
 
     public static synchronized AttackManagerTableModel getSingleton() {
@@ -45,12 +47,16 @@ public class AttackManagerTableModel extends AbstractTableModel {
         });
     }
 
+    public void setActiveAttackPlan(String pPlan) {
+        sActiveAttackPlan = pPlan;
+    }
+
     public void addRow(Object[] row) {
-        AttackManager.getSingleton().addAttack((Village) row[0], (Village) row[1], (UnitHolder) row[2], (Date) row[4]);
+        AttackManager.getSingleton().addAttack((Village) row[0], (Village) row[1], (UnitHolder) row[2], (Date) row[4], sActiveAttackPlan);
     }
 
     public void removeRow(int pRow) {
-        AttackManager.getSingleton().removeAttack(null, pRow);
+        AttackManager.getSingleton().removeAttack(sActiveAttackPlan, pRow);
     }
 
     @Override
@@ -70,7 +76,7 @@ public class AttackManagerTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int pRow, int pCol) {
-        Attack a = AttackManager.getSingleton().getAttackPlan(null).get(pRow);
+        Attack a = AttackManager.getSingleton().getAttackPlan(sActiveAttackPlan).get(pRow);
         switch (pCol) {
             case 0:
                 return a.getSource();
@@ -92,12 +98,12 @@ public class AttackManagerTableModel extends AbstractTableModel {
 
     @Override
     public int getRowCount() {
-        return AttackManager.getSingleton().getAttackPlan(null).size();
+        return AttackManager.getSingleton().getAttackPlan(sActiveAttackPlan).size();
     }
 
     @Override
     public void setValueAt(Object pValue, int pRow, int pCol) {
-        Attack a = AttackManager.getSingleton().getAttackPlan(null).get(pRow);
+        Attack a = AttackManager.getSingleton().getAttackPlan(sActiveAttackPlan).get(pRow);
         switch (pCol) {
             case 0: {
                 a.setSource((Village) pValue);
@@ -130,11 +136,4 @@ public class AttackManagerTableModel extends AbstractTableModel {
     public int getColumnCount() {
         return types.length;
     }
-    
-    /*
-     kirscheye3	435|447 FaNtAsY wOrLd ... <3	Schwere Kavallerie	Torridity	436|444 FaNtAsY wOrLd ... 12	02.10.08 23:37:15 03.10.08 00:12:02
-Torridity	437|445 FaNtAsY wOrLd ... 10	Schwere Kavallerie	Torridity	436|444 FaNtAsY wOrLd ... 12	02.10.08 23:56:29 03.10.08 00:12:02
-Torridity	438|445 Barbarendorf (12)	Schwere Kavallerie	Torridity	436|444 FaNtAsY wOrLd ... 12	02.10.08 23:47:26 03.10.08 00:12:02
-
-     */
 }

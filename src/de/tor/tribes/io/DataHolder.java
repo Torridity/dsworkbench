@@ -24,6 +24,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Enumeration;
@@ -44,7 +45,7 @@ import org.jdom.Element;
 public class DataHolder {
 
     private static Logger logger = Logger.getLogger("DataManager");
-    private final int ID_ATT = 0;
+    private final int ID_OFF = 0;
     private final int ID_DEF = 1;
     private Village[][] mVillages = null;
     private Hashtable<Integer, Village> mVillagesTable = null;
@@ -225,7 +226,7 @@ public class DataHolder {
                 String line = "";
                 while ((line = r.readLine()) != null) {
                     try {
-                        parseConqueredLine(line, ID_ATT);
+                        parseConqueredLine(line, ID_OFF);
                     } catch (Exception e) {
                         //ignored (should only occur on single lines)
                     }
@@ -466,7 +467,8 @@ public class DataHolder {
                 fireDataHolderEvents("Lade Dörferliste");
                 URL u = new URL(downloadURL + "/village.txt.gz");
 
-                BufferedReader r = new BufferedReader(new InputStreamReader(new GZIPInputStream(u.openConnection(DSWorkbenchSettingsDialog.getSingleton().getWebProxy()).getInputStream())));
+                Proxy p = DSWorkbenchSettingsDialog.getSingleton().getWebProxy();
+                BufferedReader r = new BufferedReader(new InputStreamReader(new GZIPInputStream(u.openConnection(p).getInputStream())));
                 String line = "";
                 while ((line = r.readLine()) != null) {
                     line = line.replaceAll(",,", ", ,");
@@ -486,7 +488,7 @@ public class DataHolder {
 
                 fireDataHolderEvents("Lade Spielerliste");
                 u = new URL(downloadURL + "/tribe.txt.gz");
-                r = new BufferedReader(new InputStreamReader(new GZIPInputStream(u.openConnection(DSWorkbenchSettingsDialog.getSingleton().getWebProxy()).getInputStream())));
+                r = new BufferedReader(new InputStreamReader(new GZIPInputStream(u.openConnection(p).getInputStream())));
                 line = "";
                 while ((line = r.readLine()) != null) {
                     line = line.replaceAll(",,", ", ,");
@@ -505,7 +507,7 @@ public class DataHolder {
 
                 fireDataHolderEvents("Lade Stämmeliste");
                 u = new URL(downloadURL + "/ally.txt.gz");
-                r = new BufferedReader(new InputStreamReader(new GZIPInputStream(u.openConnection(DSWorkbenchSettingsDialog.getSingleton().getWebProxy()).getInputStream())));
+                r = new BufferedReader(new InputStreamReader(new GZIPInputStream(u.openConnection(p).getInputStream())));
                 line = "";
                 while ((line = r.readLine()) != null) {
                     line = line.replaceAll(",,", ", ,");
@@ -635,7 +637,7 @@ public class DataHolder {
             String tribeID = tokenizer.nextToken();
             String kills = tokenizer.nextToken();
             Tribe t = getTribes().get(Integer.parseInt(tribeID));
-            if (pType == ID_ATT) {
+            if (pType == ID_OFF) {
                 t.setKillsAtt(Integer.parseInt(kills));
                 t.setRankAtt(Integer.parseInt(rank));
             } else {

@@ -7,10 +7,17 @@ package de.tor.tribes.db;
 import de.tor.tribes.php.DatabaseInterface;
 import de.tor.tribes.sec.SecurityAdapter;
 import de.tor.tribes.util.Constants;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.InputStreamReader;
+import java.net.URLDecoder;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.zip.GZIPInputStream;
 import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
 
@@ -479,35 +486,35 @@ public class DatabaseAdapter {
         return DatabaseInterface.getServerTime();
     }
 
+    
     public static void main(String[] args) throws Exception {
         DOMConfigurator.configure("log4j.xml");
         System.setProperty("proxyUse", "true");
         System.setProperty("proxyHost", "proxy.fzk.de");
         System.setProperty("proxyPort", "8000");
 
-
 //        System.out.println(getUserDataVersion("Torridity", "de26"));
-      //  long s = System.currentTimeMillis();
-        /* System.out.println(DatabaseAdapter.getServerList());
-        System.out.println("d = " + (System.currentTimeMillis() - s));
-        
-        
-        s = System.currentTimeMillis();*/
-        /* URL u = new URL("http://www.support.dsworkbench.de/interface.php?function=cu&user=Torridity&pass=cfcaef487fc66a6d8295e8e3f68b4db9");
-        URLConnection c = u.openConnection();
-        BufferedReader r = new BufferedReader(new InputStreamReader(c.getInputStream()));
-        System.out.println(c.getHeaderField(0));
-        String line = "";
-        
-        while ((line = r.readLine()) != null) {
-        System.out.println("L " + line);
-        }
-        
-        r.close();
-        System.out.println("d = " + (System.currentTimeMillis() - s));*/
+
+    /* System.out.println(DatabaseAdapter.getServerList());
+    System.out.println("d = " + (System.currentTimeMillis() - s));
+    
+    
+    s = System.currentTimeMillis();*/
+    /* URL u = new URL("http://www.support.dsworkbench.de/interface.php?function=cu&user=Torridity&pass=cfcaef487fc66a6d8295e8e3f68b4db9");
+    URLConnection c = u.openConnection();
+    BufferedReader r = new BufferedReader(new InputStreamReader(c.getInputStream()));
+    System.out.println(c.getHeaderField(0));
+    String line = "";
+    
+    while ((line = r.readLine()) != null) {
+    System.out.println("L " + line);
+    }
+    
+    r.close();
+    System.out.println("d = " + (System.currentTimeMillis() - s));*/
 
 
-        //  System.out.println(new SimpleDateFormat("dd.MM.yyyy HH.mm.ss").format(new Date(1223848823000l)));
+    //  System.out.println(new SimpleDateFormat("dd.MM.yyyy HH.mm.ss").format(new Date(1223848823000l)));
     //System.out.println(DatabaseAdapter.getPropertyValue("update_base_dir"));
     // System.out.println(DatabaseAdapter.getUserDataVersion("Torridity", "de14"));
     //System.out.println(DatabaseAdapter.registerUserForServer("Torridity", "de14"));

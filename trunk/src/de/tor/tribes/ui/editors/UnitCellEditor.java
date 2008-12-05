@@ -25,6 +25,7 @@ public class UnitCellEditor extends AbstractCellEditor implements TableCellEdito
 
     public UnitCellEditor() {
         DefaultComboBoxModel model = new DefaultComboBoxModel();
+        
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
             model.addElement(unit);
         }

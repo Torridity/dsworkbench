@@ -33,8 +33,7 @@ public class DatabaseInterface {
     public static final int ID_UNKNOWN_ERROR = -4711;
     public static final int ID_SUCCESS = 0;
     public static final int ID_WEB_CONNECTION_FAILED = -1;
-    public static final int ID_DATABASE_SERVER_CONNECTION_FAILED = -2;
-    public static final int ID_DATABASE_CONNECTION_FAILED = -3;
+    public static final int ID_DATABASE_CONNECTION_FAILED = -2;
     public static final int ID_ARGUMENT_ERROR = -4;
     public static final int ID_QUERY_RETURNED_UNEXPECTED_RESULT = -5;
     public static final int ID_UNKNOWN_FUNTION = -6;
@@ -42,9 +41,7 @@ public class DatabaseInterface {
     public static final int ID_UNKNOWN_SERVER = -11;
     public static final int ID_USER_ALREADY_EXIST = -13;
     public static final int ID_USER_NOT_EXIST = -14;
-    public static final int ID_WRONG_PASSWORD = -15;
     public static final int ID_VERSION_NOT_ALLOWED = -26;
-    public static final int ID_UPDATE_NEVER = -666;
     public final static String INTERFACE_URL = "http://www.support.dsworkbench.de/interface.php";
 
     private static Object callWebInterface(String pFunction, Hashtable<String, String> pArguments) {
@@ -130,11 +127,6 @@ public class DatabaseInterface {
             }
             case ID_WEB_CONNECTION_FAILED: {
                 logger.error("Failed to connect to the web interface");
-                break;
-
-            }
-            case ID_DATABASE_SERVER_CONNECTION_FAILED: {
-                logger.error("Failed to connect to database server");
                 break;
 
             }

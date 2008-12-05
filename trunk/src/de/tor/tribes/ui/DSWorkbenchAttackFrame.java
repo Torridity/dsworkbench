@@ -30,7 +30,9 @@ import de.tor.tribes.util.DSCalculator;
 import java.awt.Component;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
+import java.awt.event.ItemEvent;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.LinkedList;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JTable;
@@ -75,6 +77,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         jScrollPane1.getViewport().setBackground(Constants.DS_BACK_LIGHT);
         jScrollPane2.getViewport().setBackground(Constants.DS_BACK_LIGHT);
         jScrollPane3.getViewport().setBackground(Constants.DS_BACK_LIGHT);
+
         TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>();
         jAttackTable.setRowSorter(sorter);
         jAttackTable.setColumnSelectionAllowed(false);
@@ -98,7 +101,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
             jAttackTable.getColumn(jAttackTable.getColumnName(i)).setHeaderRenderer(headerRenderer);
             renderers.add(headerRenderer);
         }
-
+        jAddPlanDialog.pack();
         jSelectionFilterDialog.pack();
         jTimeChangeDialog.pack();
         mNotifyThread = new NotifyThread();
@@ -150,6 +153,11 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         jModifyArrivalOption = new javax.swing.JRadioButton();
         jMoveTimeOption = new javax.swing.JRadioButton();
         buttonGroup1 = new javax.swing.ButtonGroup();
+        jAddPlanDialog = new javax.swing.JDialog();
+        jLabel10 = new javax.swing.JLabel();
+        jAttackPlanName = new javax.swing.JTextField();
+        jAddRemoveButton = new javax.swing.JButton();
+        jButton7 = new javax.swing.JButton();
         jAttackPanel = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jAttackTable = new javax.swing.JTable();
@@ -165,6 +173,11 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         jFlipMarkButton = new javax.swing.JButton();
         jNotDrawMarkedButton = new javax.swing.JButton();
         jNotifyButton = new javax.swing.JToggleButton();
+        jActiveAttackPlan = new javax.swing.JComboBox();
+        jLabel9 = new javax.swing.JLabel();
+        jButton3 = new javax.swing.JButton();
+        jButton4 = new javax.swing.JButton();
+        jButton5 = new javax.swing.JButton();
         jAttackFrameAlwaysOnTop = new javax.swing.JCheckBox();
 
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("de/tor/tribes/ui/Bundle"); // NOI18N
@@ -469,7 +482,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
                 .addContainerGap()
                 .addComponent(jLabel8)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jArriveDateField, javax.swing.GroupLayout.DEFAULT_SIZE, 140, Short.MAX_VALUE)
+                .addComponent(jArriveDateField, javax.swing.GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
@@ -536,6 +549,53 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
                     .addComponent(jOKButton)
                     .addComponent(jCancelButton))
                 .addContainerGap())
+        );
+
+        jAddPlanDialog.setTitle(bundle.getString("DSWorkbenchAttackFrame.jAddPlanDialog.title")); // NOI18N
+        jAddPlanDialog.setAlwaysOnTop(true);
+
+        jLabel10.setText(bundle.getString("DSWorkbenchAttackFrame.jLabel10.text")); // NOI18N
+
+        jAttackPlanName.setText(bundle.getString("DSWorkbenchAttackFrame.jAttackPlanName.text")); // NOI18N
+
+        jAddRemoveButton.setText(bundle.getString("DSWorkbenchAttackFrame.jAddRemoveButton.text")); // NOI18N
+        jAddRemoveButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireAddNewAttackPlanEvent(evt);
+            }
+        });
+
+        jButton7.setText(bundle.getString("DSWorkbenchAttackFrame.jButton7.text")); // NOI18N
+
+        javax.swing.GroupLayout jAddPlanDialogLayout = new javax.swing.GroupLayout(jAddPlanDialog.getContentPane());
+        jAddPlanDialog.getContentPane().setLayout(jAddPlanDialogLayout);
+        jAddPlanDialogLayout.setHorizontalGroup(
+            jAddPlanDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jAddPlanDialogLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jAddPlanDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jAddPlanDialogLayout.createSequentialGroup()
+                        .addComponent(jLabel10)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jAttackPlanName, javax.swing.GroupLayout.DEFAULT_SIZE, 343, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jAddPlanDialogLayout.createSequentialGroup()
+                        .addComponent(jButton7)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jAddRemoveButton)))
+                .addContainerGap())
+        );
+        jAddPlanDialogLayout.setVerticalGroup(
+            jAddPlanDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jAddPlanDialogLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jAddPlanDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel10)
+                    .addComponent(jAttackPlanName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jAddPlanDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jAddRemoveButton)
+                    .addComponent(jButton7))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         setTitle(bundle.getString("DSWorkbenchAttackFrame.title")); // NOI18N
@@ -676,14 +736,54 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
             }
         });
 
+        jActiveAttackPlan.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                fireActiveAttackChangedEvent(evt);
+            }
+        });
+
+        jLabel9.setText(bundle.getString("DSWorkbenchAttackFrame.jLabel9.text")); // NOI18N
+
+        jButton3.setText(bundle.getString("DSWorkbenchAttackFrame.jButton3.text")); // NOI18N
+        jButton3.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireAddAttackPlanEvent(evt);
+            }
+        });
+
+        jButton4.setText(bundle.getString("DSWorkbenchAttackFrame.jButton4.text")); // NOI18N
+        jButton4.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireRenameAttackPlanEvent(evt);
+            }
+        });
+
+        jButton5.setText(bundle.getString("DSWorkbenchAttackFrame.jButton5.text")); // NOI18N
+        jButton5.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireRemoveAttackPlanEvent(evt);
+            }
+        });
+
         javax.swing.GroupLayout jAttackPanelLayout = new javax.swing.GroupLayout(jAttackPanel);
         jAttackPanel.setLayout(jAttackPanelLayout);
         jAttackPanelLayout.setHorizontalGroup(
             jAttackPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jAttackPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 512, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jAttackPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 516, Short.MAX_VALUE)
+                    .addGroup(jAttackPanelLayout.createSequentialGroup()
+                        .addComponent(jLabel9)
+                        .addGap(18, 18, 18)
+                        .addComponent(jActiveAttackPlan, 0, 164, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jButton3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton4)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton5)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jAttackPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jNotifyButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jNotDrawMarkedButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -703,11 +803,17 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
             jAttackPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jAttackPanelLayout.createSequentialGroup()
                 .addContainerGap()
+                .addGroup(jAttackPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jCheckAttacksButton)
+                    .addComponent(jLabel9)
+                    .addComponent(jActiveAttackPlan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton5)
+                    .addComponent(jButton4)
+                    .addComponent(jButton3))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jAttackPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 523, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 494, Short.MAX_VALUE)
                     .addGroup(jAttackPanelLayout.createSequentialGroup()
-                        .addComponent(jCheckAttacksButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jRemoveAttackButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jSendAttackButton)
@@ -1258,6 +1364,51 @@ private void fireChangeNotifyEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
     mNotifyThread.setActive(jNotifyButton.isSelected());
 }//GEN-LAST:event_fireChangeNotifyEvent
 
+private void fireAddAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireAddAttackPlanEvent
+    jAddPlanDialog.setLocationRelativeTo(this);
+    jAddPlanDialog.setVisible(true);
+}//GEN-LAST:event_fireAddAttackPlanEvent
+
+private void fireRenameAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireRenameAttackPlanEvent
+}//GEN-LAST:event_fireRenameAttackPlanEvent
+
+private void fireRemoveAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireRemoveAttackPlanEvent
+    String selection = (String) jActiveAttackPlan.getSelectedItem();
+    if (selection == null) {
+        return;
+    }
+
+    if (JOptionPane.showConfirmDialog(this, "Willst du den Angriffsplan '" + selection + "' und alle enthaltenen Angriffe\n" +
+            "wirklich löschen?", "Angriffsplan löschen", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
+        AttackManagerTableModel.getSingleton().setActiveAttackPlan(AttackManager.DEFAULT_PLAN_ID);
+        AttackManager.getSingleton().removePlan(selection);
+    }
+    buildAttackPlanList();
+    jActiveAttackPlan.setSelectedIndex(0);
+}//GEN-LAST:event_fireRemoveAttackPlanEvent
+
+private void fireActiveAttackChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireActiveAttackChangedEvent
+    if (evt.getStateChange() == ItemEvent.SELECTED) {
+        jAttackTable.invalidate();
+        AttackManagerTableModel.getSingleton().setActiveAttackPlan((String) jActiveAttackPlan.getSelectedItem());
+        jAttackTable.updateUI();
+        jAttackTable.revalidate();
+    }
+}//GEN-LAST:event_fireActiveAttackChangedEvent
+
+private void fireAddNewAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireAddNewAttackPlanEvent
+    String name = jAttackPlanName.getText();
+    if (AttackManager.getSingleton().getAttackPlan(name) != null) {
+        JOptionPane.showMessageDialog(this, "Ein Plan mit dem angegebenen Namen existiert bereits.\n" +
+                "Bitte wähle einen anderen Namen oder lösche zuerst den bestehenden Plan.", "Warnung", JOptionPane.WARNING_MESSAGE);
+        return;
+    }
+    AttackManager.getSingleton().addEmptyPlan(name);
+    buildAttackPlanList();
+    jActiveAttackPlan.setSelectedItem(name);
+    jAddPlanDialog.setVisible(false);
+}//GEN-LAST:event_fireAddNewAttackPlanEvent
+
     /**Set table model for filteres selection*/
     private void setTableModel(JTable pTable, Hashtable<Village, Boolean> pVillages) {
         //create default table model
@@ -1329,8 +1480,22 @@ private void fireChangeNotifyEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
         jAttackTable.setDefaultEditor(Date.class, new DateSpinEditor());
         jAttackTable.setDefaultEditor(UnitHolder.class, new UnitCellEditor());
         jAttackTable.setDefaultEditor(Village.class, new VillageCellEditor());
-
         AttackManager.getSingleton().attacksUpdatedExternally(null);
+        buildAttackPlanList();
+        jActiveAttackPlan.setSelectedIndex(0);
+    }
+
+    public void buildAttackPlanList() {
+        Enumeration<String> plans = AttackManager.getSingleton().getPlans();
+        DefaultComboBoxModel model = new DefaultComboBoxModel();
+        while (plans.hasMoreElements()) {
+            model.addElement(plans.nextElement());
+        }
+        jActiveAttackPlan.setModel(model);
+    }
+
+    public String getActiveAttackPlan() {
+        return (String) jActiveAttackPlan.getSelectedItem();
     }
 
     @Override
@@ -1349,14 +1514,22 @@ private void fireChangeNotifyEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.JComboBox jActiveAttackPlan;
+    private javax.swing.JDialog jAddPlanDialog;
+    private javax.swing.JButton jAddRemoveButton;
     private javax.swing.JButton jAllSourceVillageButton;
     private javax.swing.JButton jAllTargetVillageButton;
     private javax.swing.JSpinner jArriveDateField;
     private javax.swing.JCheckBox jAttackFrameAlwaysOnTop;
     private javax.swing.JPanel jAttackPanel;
+    private javax.swing.JTextField jAttackPlanName;
     private javax.swing.JTable jAttackTable;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton4;
+    private javax.swing.JButton jButton5;
+    private javax.swing.JButton jButton7;
     private javax.swing.JButton jCancelButton;
     private javax.swing.JButton jChangeArrivalButton;
     private javax.swing.JButton jCheckAttacksButton;
@@ -1367,6 +1540,7 @@ private void fireChangeNotifyEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
     private javax.swing.JButton jFlipMarkButton;
     private javax.swing.JSpinner jHourField;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -1374,6 +1548,7 @@ private void fireChangeNotifyEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JButton jMarkAllButton;
     private javax.swing.JButton jMarkFilteredButton;
     private javax.swing.JSpinner jMinuteField;
@@ -1402,6 +1577,7 @@ private void fireChangeNotifyEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
     // End of variables declaration//GEN-END:variables
     }
 
+// <editor-fold defaultstate="collapsed" desc=" NOTIFY THREAD ">
 class NotifyThread extends Thread {
 
     private static Logger logger = Logger.getLogger("AttackNotificationHelper");
@@ -1459,3 +1635,5 @@ class NotifyThread extends Thread {
         }
     }
 }
+
+//</editor-fold>

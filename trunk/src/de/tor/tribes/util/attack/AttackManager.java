@@ -33,7 +33,7 @@ public class AttackManager {
     private static Logger logger = Logger.getLogger("AttackManager");
     private static AttackManager SINGLETON = null;
     private Hashtable<String, List<Attack>> mAttackPlans = null;
-    private static final String DEFAULT_PLAN_ID = "default";
+    public static final String DEFAULT_PLAN_ID = "default";
     private final List<AttackManagerListener> mManagerListeners = new LinkedList<AttackManagerListener>();
 
     public static synchronized AttackManager getSingleton() {
@@ -188,6 +188,14 @@ public class AttackManager {
         fireAttacksChangedEvents(plan);
     }
 
+    public synchronized void addEmptyPlan(String pPlan) {
+        if (pPlan == null) {
+            return;
+        }
+        List<Attack> attackPlan = new LinkedList<Attack>();
+        mAttackPlans.put(pPlan, attackPlan);
+    }
+
     /**Remove a complete attack plan*/
     public synchronized void removePlan(String pPlan) {
         String plan = pPlan;
@@ -246,6 +254,10 @@ public class AttackManager {
 
     public Enumeration<String> getPlans() {
         return mAttackPlans.keys();
+    }
+
+    public String[] getPlansAsArray() {
+        return mAttackPlans.keySet().toArray(new String[]{});
     }
 
     public void attacksUpdatedExternally(String pPlan) {

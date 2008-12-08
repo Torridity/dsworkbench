@@ -372,6 +372,8 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         mIcons.add(new ImageIcon(this.getClass().getResource("/res/stable.png")));
         mIcons.add(new ImageIcon(this.getClass().getResource("/res/smith.png")));
         mIcons.add(new ImageIcon(this.getClass().getResource("/res/res.png")));
+        mIcons.add(new ImageIcon(this.getClass().getResource("/res/speicher.png")));//speicher
+        mIcons.add(new ImageIcon(this.getClass().getResource("/res/speed.png")));//händler
 
         jPlayerInfo.setText("");
         jVillageInfo.setText("");

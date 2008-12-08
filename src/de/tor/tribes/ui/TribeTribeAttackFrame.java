@@ -38,7 +38,6 @@ import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import org.apache.log4j.Logger;
 import de.tor.tribes.util.tag.TagManager;
-import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 /**
@@ -55,7 +54,7 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame {
         initComponents();
         getContentPane().setBackground(Constants.DS_BACK);
         jTransferToAttackManagerDialog.pack();
-        
+
     //setup();
     }
 
@@ -147,7 +146,12 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame {
             Ally[] aAllies = allies.toArray(new Ally[]{});
             allies = null;
             Arrays.sort(aAllies, Ally.CASE_INSENSITIVE_ORDER);
-            DefaultComboBoxModel targetAllyModel = new DefaultComboBoxModel(aAllies);
+            DefaultComboBoxModel targetAllyModel = new DefaultComboBoxModel();
+            targetAllyModel.addElement("<Kein Stamm>");
+            for (Ally a : aAllies) {
+                targetAllyModel.addElement(a);
+            }
+
             jTargetAllyList.setModel(targetAllyModel);
             jTargetAllyList.setSelectedIndex(0);
             fireTargetAllyChangedEvent(null);
@@ -1210,7 +1214,12 @@ private void fireAddAllPlayerVillages(java.awt.event.MouseEvent evt) {//GEN-FIRS
 }//GEN-LAST:event_fireAddAllPlayerVillages
 
 private void fireTargetAllyChangedEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireTargetAllyChangedEvent
-    Ally a = (Ally) jTargetAllyList.getSelectedItem();
+    Ally a = null;
+    try {
+        a = (Ally) jTargetAllyList.getSelectedItem();
+    } catch (Exception e) {
+    }
+
     if (a != null) {
         Tribe[] tribes = a.getTribes().toArray(new Tribe[]{});
         if ((tribes != null) && (tribes.length != 0)) {
@@ -1222,6 +1231,17 @@ private void fireTargetAllyChangedEvent(java.awt.event.ActionEvent evt) {//GEN-F
             jTargetTribeList.setModel(new DefaultComboBoxModel());
             fireTargetTribeChangedEvent(null);
         }
+    } else {
+        Enumeration<Integer> tribeIDs = DataHolder.getSingleton().getTribes().keys();
+        List<Tribe> t = new LinkedList<Tribe>();
+        while (tribeIDs.hasMoreElements()) {
+            t.add(DataHolder.getSingleton().getTribes().get(tribeIDs.nextElement()));
+        }
+        Tribe[] tribes = t.toArray(new Tribe[]{});
+        Arrays.sort(tribes, Tribe.CASE_INSENSITIVE_ORDER);
+        jTargetTribeList.setModel(new DefaultComboBoxModel(tribes));
+        jTargetTribeList.setSelectedIndex(0);
+        fireTargetTribeChangedEvent(null);
     }
 }//GEN-LAST:event_fireTargetAllyChangedEvent
 
@@ -1347,11 +1367,10 @@ private void fireCancelTransferEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST
 }//GEN-LAST:event_fireCancelTransferEvent
 
     private void showResults(Hashtable<Village, Hashtable<Village, UnitHolder>> pAttacks) {
-        DefaultTableModel resultModel = new javax.swing.table.DefaultTableModel(
+        DefaultTableModel resultModel = new javax   .swing.table.DefaultTableModel(
                 new Object[][]{},
                 new String[]{
-                    "Herkunft", "Truppen", "Ziel", "Startzeit"
-                }) {
+                    "Herkunft", "Truppen", "Ziel", "Startzeit"}) {
 
             Class[] types = new Class[]{
                 Village.class, UnitHolder.class, Village.class, Date.class
@@ -1380,9 +1399,16 @@ private void fireCancelTransferEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST
         TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(jResultsTable.getModel());
         jResultsTable.setRowSorter(sorter);
 
-        DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
+        DefaultTableCellRenderer headerRenderer = new  
 
-            @Override
+             DefaultTableCellRenderer (           ) {
+
+                         
+                    
+                 
+                
+                    
+                @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
                 Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
                 String t = ((DefaultTableCellRenderer) c).getText();
@@ -1404,9 +1430,11 @@ private void fireCancelTransferEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        java.awt.EventQueue.invokeLater(new Runnable() {
+        java.awt.EventQueue.invokeLater(new  
 
-            public void run() {
+              Runnable() {
+
+                 public void run() {
                 new TribeTribeAttackFrame().setVisible(true);
             }
         });

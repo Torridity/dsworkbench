@@ -8,7 +8,7 @@
  */
 package de.tor.tribes.types;
 
-import de.tor.tribes.util.GlobalOptions;
+import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.util.tag.TagManager;
 import java.io.Serializable;
 import java.net.URLDecoder;
@@ -163,6 +163,8 @@ public class Village implements Serializable, Comparable {
         this.tribe = tribe;
     }
 
+    /**@TODO Introduce bonus_new field
+     */
     public String getHTMLInfo() {
         StringBuffer b = new StringBuffer();
         b.append("<html><p><b>Name (X|Y):</b> ");
@@ -189,40 +191,105 @@ public class Village implements Serializable, Comparable {
             }
         }
         b.append("<b>Bonus:</b> ");
-        switch (getType()) {
-            case 1:
-                b.append("+ 10% </p></html>");
-                break;
-
-            case 2:
-                b.append("+ 10% </html>");
-                break;
-
-            case 3:
-                b.append("+ 10% </p></html>");
-                break;
-
-            case 4:
-                b.append("+ 10% </p></html>");
-                break;
-
-            case 5:
-                b.append("+ 10% </p></html>");
-                break;
-
-            case 6:
-                b.append("+ 10% </p></html>");
-                break;
-
-            case 7:
-                b.append("+ 10% </p></html>");
-                break;
-
-            case 8:
-                b.append("+ 3% </p></html>");
-                break;
-
+        int bonusType = DataHolder.getSingleton().getCurrentBonusType();
+        if (bonusType == 0) {
+            switch (getType()) {
+                case 1: {
+                    //holz
+                    b.append("+ 10% </p></html>");
+                    break;
+                }
+                case 2: {
+                    //lehm
+                    b.append("+ 10% </html>");
+                    break;
+                }
+                case 3: {
+                    //eisen
+                    b.append("+ 10% </p></html>");
+                    break;
+                }
+                case 4: {
+                    //bevölkerung
+                    b.append("+ 10% </p></html>");
+                    break;
+                }
+                case 5: {
+                    //kaserne
+                    b.append("+ 10% </p></html>");
+                    break;
+                }
+                case 6: {
+                    //stall
+                    b.append("+ 10% </p></html>");
+                    break;
+                }
+                case 7: {
+                    //werkstatt
+                    b.append("+ 10% </p></html>");
+                    break;
+                }
+                case 8: {
+                    //alle ressourcen
+                    b.append("+ 3% </p></html>");
+                    break;
+                }
+            }
+        } else {
+            switch (getType()) {
+                case 1: {
+                    //holz
+                    b.append("+ 100% </p></html>");
+                    break;
+                }
+                case 2: {
+                    //lehm
+                    b.append("+ 100% </html>");
+                    break;
+                }
+                case 3: {
+                    //eisem
+                    b.append("+ 100% </p></html>");
+                    break;
+                }
+                case 4: {
+                    //bevölkerung
+                    b.append("+ 10% </p></html>");
+                    break;
+                }
+                case 5: {
+                    //kaserne
+                    b.append("+ 50% </p></html>");
+                    break;
+                }
+                case 6: {
+                    //stall
+                    b.append("+ 50% </p></html>");
+                    break;
+                }
+                case 7: {
+                    //werkstatt
+                    b.append("+ 100% </p></html>");
+                    break;
+                }
+                case 8: {
+                    //alle rohstoffe
+                    b.append("+ 30% </p></html>");
+                    break;
+                }
+                case 9: {
+                    //speicher
+                    b.append("+ Speicher </p></html>");
+                    break;
+                }
+                case 10: {
+                    //markt
+                    b.append("+ Markt </p></html>");
+                    break;
+                }
+            }
         }
+
         return b.toString();
     }
 
@@ -255,7 +322,7 @@ public class Village implements Serializable, Comparable {
                 } else if (getX() > v.getX()) {
                     return 1;
                 } else {
-                      if (getY() < v.getY()) {
+                    if (getY() < v.getY()) {
                         return -1;
                     } else if (getY() > v.getY()) {
                         return 1;

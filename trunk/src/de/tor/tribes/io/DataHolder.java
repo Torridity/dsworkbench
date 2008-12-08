@@ -57,6 +57,7 @@ public class DataHolder {
     private boolean bAborted = false;
     private static DataHolder SINGLETON = null;
     private boolean loading = false;
+    private int currentBonusType = 0;
 
     public static synchronized DataHolder getSingleton() {
         if (SINGLETON == null) {
@@ -109,6 +110,10 @@ public class DataHolder {
         return Constants.SERVER_DIR + "/" + GlobalOptions.getSelectedServer();
     }
 
+    public int getCurrentBonusType() {
+        return currentBonusType;
+    }
+
     /**Check if all needed files are located in the data directory of the selected server*/
     private boolean isDataAvailable() {
         File data = new File(getDataDirectory() + "/" + "serverdata.bin");
@@ -132,6 +137,14 @@ public class DataHolder {
                     fireDataHolderEvents("Der gewählte Sever wird leider (noch) nicht unterstützt");
                     return false;
                 }
+                try {
+                    Integer bonusType = Integer.parseInt(JaxenUtils.getNodeValue(d, "//coord/bonus_new"));
+                    currentBonusType = bonusType;
+                } catch (Exception e) {
+                    //bonus_new field not found. Set to old type
+                    currentBonusType = 0;
+                }
+
             } else {
                 if (GlobalOptions.isOfflineMode()) {
                     fireDataHolderEvents("Servereinstellungen nicht gefunden. Download im Offline-Modus nicht möglich.");
@@ -150,6 +163,13 @@ public class DataHolder {
                         logger.error("Map type '" + mapType + "' is not supported yet");
                         fireDataHolderEvents("Der gewählte Sever wird leider (noch) nicht unterstützt");
                         return false;
+                    }
+                    try {
+                        Integer bonusType = Integer.parseInt(JaxenUtils.getNodeValue(d, "//coord/bonus_new"));
+                        currentBonusType = bonusType;
+                    } catch (Exception e) {
+                        //bonus_new field not found. Set to old type
+                        currentBonusType = 0;
                     }
                 }
             }

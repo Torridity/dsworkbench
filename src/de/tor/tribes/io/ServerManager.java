@@ -20,7 +20,6 @@ public class ServerManager {
 
     // private static Hashtable<String, URL> SERVER_LIST = null;
     private static List<DatabaseServerEntry> SERVERS = null;
-    
 
     static {
         SERVERS = new LinkedList<DatabaseServerEntry>();

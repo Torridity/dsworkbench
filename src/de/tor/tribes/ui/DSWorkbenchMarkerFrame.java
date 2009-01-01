@@ -20,11 +20,14 @@ import javax.swing.table.TableRowSorter;
 import de.tor.tribes.ui.renderer.ColorCellRenderer;
 import de.tor.tribes.ui.renderer.MarkerPanelCellRenderer;
 import de.tor.tribes.ui.editors.ColorChooserCellEditor;
+import de.tor.tribes.ui.renderer.MapRenderer;
 import de.tor.tribes.util.GlobalOptions;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import javax.swing.JTable;
 import javax.swing.UIManager;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import org.apache.log4j.Logger;
@@ -68,6 +71,21 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
         for (int i = 0; i < 2; i++) {
             mHeaderRenderers.add(headerRenderer);
         }
+
+        jMarkerTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                int selected = jMarkerTable.getSelectedRows().length;
+                if (selected == 0) {
+                    setTitle("Markierungen");
+                } else if (selected == 1) {
+                    setTitle("Markierungen (1 Markierung ausgewählt)");
+                } else if (selected > 1) {
+                    setTitle("Markierungen (" + selected + " Markierungen ausgewählt)");
+                }
+            }
+        });
 
         //set marked only button
         try {
@@ -255,6 +273,7 @@ private void fireMarkerFrameOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN
 private void fireDrawMarkedOnlyChangedEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireDrawMarkedOnlyChangedEvent
     GlobalOptions.addProperty("draw.marked.only", Boolean.toString(jToggleDrawFilterButton.isSelected()));
     MinimapPanel.getSingleton().redraw();
+    MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.ALL_LAYERS);
 }//GEN-LAST:event_fireDrawMarkedOnlyChangedEvent
 
     /**Setup marker panel*/

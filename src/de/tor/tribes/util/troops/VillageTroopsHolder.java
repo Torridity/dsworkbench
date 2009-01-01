@@ -5,6 +5,7 @@
 package de.tor.tribes.util.troops;
 
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Village;
 import java.util.Date;
 import java.util.List;
@@ -39,6 +40,17 @@ public class VillageTroopsHolder {
 
     public List<Integer> getTroops() {
         return troops;
+    }
+
+    public int getTroopsOfUnit(UnitHolder pUnit) {
+        int cnt = 0;
+        for (UnitHolder u : DataHolder.getSingleton().getUnits()) {
+            if (u.equals(pUnit)) {
+                return getTroops().get(cnt);
+            }
+            cnt++;
+        }
+        return 0;
     }
 
     public void setTroops(List<Integer> mTroops) {

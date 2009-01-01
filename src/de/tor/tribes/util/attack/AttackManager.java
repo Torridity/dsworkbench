@@ -13,6 +13,7 @@ import org.apache.log4j.Logger;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.MapPanel;
+import de.tor.tribes.ui.models.AttackManagerTableModel;
 import de.tor.tribes.ui.renderer.MapRenderer;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.xml.JaxenUtils;
@@ -207,6 +208,13 @@ public class AttackManager {
         }
         mAttackPlans.remove(plan);
         fireAttacksChangedEvents(plan);
+    }
+
+    public synchronized void renamePlan(String pPlan, String pNewName) {
+        List<Attack> attacks = mAttackPlans.remove(pPlan);
+        mAttackPlans.put(pNewName, attacks);
+        AttackManagerTableModel.getSingleton().setActiveAttackPlan(pNewName);
+        fireAttacksChangedEvents(pNewName);
     }
 
     /**Remove one attack from the default plan*/

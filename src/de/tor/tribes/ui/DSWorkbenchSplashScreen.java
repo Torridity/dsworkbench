@@ -235,7 +235,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
             break;
             }
 
-            Logger.getRootLogger().setLevel(Level.DEBUG);
+            
             Logger.getRootLogger().addAppender(a);
         Logger.getLogger("de.tor").addAppender(a);
         Logger.getLogger("dswb").addAppender(a);

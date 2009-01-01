@@ -29,8 +29,8 @@ public class Ally implements Serializable, Comparable {
     private String tag = null;
     private short members = 0;
     private int villages = 0;
-    private int points = 0;
-    private int all_points = 0;
+    private double points = 0;
+    private double all_points = 0;
     private int rank = 0;
     private transient List<Tribe> tribes = null;
     private String stringRepresentation = null;
@@ -58,8 +58,8 @@ public class Ally implements Serializable, Comparable {
             entry.setTag(tag);
             entry.setMembers(Short.parseShort(tokenizer.nextToken()));
             entry.setVillages(Integer.parseInt(tokenizer.nextToken()));
-            entry.setPoints(Integer.parseInt(tokenizer.nextToken()));
-            entry.setAll_points(Integer.parseInt(tokenizer.nextToken()));
+            entry.setPoints(Double.parseDouble(tokenizer.nextToken()));
+            entry.setAll_points(Double.parseDouble(tokenizer.nextToken()));
             entry.setRank(Integer.parseInt(tokenizer.nextToken()));
             return entry;
         } catch (Exception e) {
@@ -142,19 +142,19 @@ public class Ally implements Serializable, Comparable {
         this.villages = villages;
     }
 
-    public int getPoints() {
+    public double getPoints() {
         return points;
     }
 
-    public void setPoints(int points) {
+    public void setPoints(double points) {
         this.points = points;
     }
 
-    public int getAll_points() {
+    public double getAll_points() {
         return all_points;
     }
 
-    public void setAll_points(int all_points) {
+    public void setAll_points(double all_points) {
         this.all_points = all_points;
     }
 

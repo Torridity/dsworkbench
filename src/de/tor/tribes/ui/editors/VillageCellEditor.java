@@ -4,15 +4,17 @@
  */
 package de.tor.tribes.ui.editors;
 
+import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import java.awt.Component;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.LinkedList;
+import java.util.List;
 import javax.swing.AbstractCellEditor;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JTable;
-import javax.swing.event.CellEditorListener;
 import javax.swing.table.TableCellEditor;
 
 /**
@@ -73,8 +75,16 @@ public class VillageCellEditor extends AbstractCellEditor implements TableCellEd
     @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
         Village current = (Village) value;
-        DefaultComboBoxModel model = new DefaultComboBoxModel(current.getTribe().getVillageList().toArray(new Village[]{}));
-
+        Tribe t = current.getTribe();
+        List<Village> villages = new LinkedList<Village>();
+        if (t != null) {
+            //use tribes villages
+            villages = t.getVillageList();
+        } else {
+            //use single village (barbarian)
+            villages.add(current);
+        }
+        DefaultComboBoxModel model = new DefaultComboBoxModel(villages.toArray(new Village[]{}));
         comboComponent.setModel(model);
         comboComponent.setSelectedItem(value);
         //comboComponent.setSelectedItem(value);

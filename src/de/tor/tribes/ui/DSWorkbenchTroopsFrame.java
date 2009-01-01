@@ -30,6 +30,8 @@ import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import de.tor.tribes.ui.renderer.NumberFormatCellRenderer;
 import javax.swing.UIManager;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 /**
  *
@@ -70,6 +72,21 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
         jTroopsTable.setDefaultRenderer(Integer.class, new NumberFormatCellRenderer());
         jTroopsTable.setDefaultRenderer(Double.class, new NumberFormatCellRenderer());
 
+        jTroopsTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                int selected = jTroopsTable.getSelectedRows().length;
+                if (selected == 0) {
+                    setTitle("Truppen");
+                } else if (selected == 1) {
+                    setTitle("Truppen (1 Dorf ausgewählt)");
+                } else if (selected > 1) {
+                    setTitle("Truppen (" + selected + " Dörfer ausgewählt)");
+                }
+            }
+        });
+
         try {
             mPowerIcons.add(new ImageIcon("graphics/icons/att.png"));
             mPowerIcons.add(new ImageIcon("graphics/icons/def.png"));
@@ -96,7 +113,7 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
         jTroopsTable = new javax.swing.JTable();
         jButton1 = new javax.swing.JButton();
 
-        setTitle("Truppenübersicht");
+        setTitle("Truppen");
 
         jTroopsInformationAlwaysOnTop.setText("Immer im Vordergrund");
         jTroopsInformationAlwaysOnTop.setOpaque(false);

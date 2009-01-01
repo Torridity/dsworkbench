@@ -52,6 +52,7 @@ public class ImageManager {
     public final static int CURSOR_MOVE = 13;
     public final static int CURSOR_ZOOM = 14;
     public final static int CURSOR_SHOT = 15;
+    public final static int CURSOR_SUPPORT = 16;
     private static final List<Cursor> CURSORS = new LinkedList<Cursor>();
     private static final List<ImageIcon> CURSOR_IMAGES = new LinkedList<ImageIcon>();
     private static final List<ImageIcon> UNIT_ICONS = new LinkedList<ImageIcon>();
@@ -79,6 +80,7 @@ public class ImageManager {
             loadCursor("graphics/cursors/move.png", "move");
             loadCursor("graphics/cursors/zoom.png", "zoom");
             loadCursor("graphics/cursors/camera.png", "camera");
+             loadCursor("graphics/cursors/support.png", "support");
         } catch (Exception e) {
             logger.error("Failed to load cursor images", e);
             throw new Exception("Failed to load cursors");
@@ -163,7 +165,7 @@ public class ImageManager {
     }
 
     public static ImageIcon getUnitIcon(UnitHolder pUnit) {
-        if(pUnit == null){
+        if (pUnit == null) {
             return null;
         }
         if (pUnit.getName().equals("Speerträger")) {

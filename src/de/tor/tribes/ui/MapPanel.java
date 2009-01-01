@@ -54,6 +54,7 @@ public class MapPanel extends javax.swing.JPanel {
     private int yDir = 0;
     private MapRenderer mMapRenderer = null;
     private static MapPanel SINGLETON = null;
+    private AttackAddFrame attackAddFrame = null;
     // </editor-fold>
 
     public static synchronized MapPanel getSingleton() {
@@ -72,6 +73,7 @@ public class MapPanel extends javax.swing.JPanel {
         mMarkerAddFrame = new MarkerAddFrame();
         setCursor(ImageManager.getCursor(iCurrentCursor));
         setIgnoreRepaint(true);
+        attackAddFrame = new AttackAddFrame();
         initListeners();
     }
 
@@ -171,6 +173,18 @@ public class MapPanel extends javax.swing.JPanel {
                         VillageTagFrame.getSingleton().showTagsFrame(current);
                         break;
                     }
+                    case ImageManager.CURSOR_SUPPORT: {
+                        Village current = getVillageAtMousePos();
+                        if (current != null) {
+                            if (current.getTribe() == null) {
+                                //empty village
+                                return;
+                            }
+                        }
+                        VillageSupportFrame.getSingleton().setLocation(e.getPoint());
+                        VillageSupportFrame.getSingleton().showSupportFrame(current);
+                        break;
+                    }
                     case ImageManager.CURSOR_ATTACK_INGAME: {
                         if (e.getClickCount() == 2) {
                             Village v = getVillageAtMousePos();
@@ -226,9 +240,8 @@ public class MapPanel extends javax.swing.JPanel {
                 if (e.getClickCount() == 2) {
                     //create attack on double clicking a village
                     if (isAttack) {
-                        AttackAddFrame aAdd = new AttackAddFrame();
-                        aAdd.setLocation(e.getLocationOnScreen());
-                        aAdd.setupAttack(DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage(), getVillageAtMousePos(), unit);
+                        attackAddFrame.setLocation(e.getLocationOnScreen());
+                        attackAddFrame.setupAttack(DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage(), getVillageAtMousePos(), unit);
                     }
                 }
             }
@@ -325,9 +338,8 @@ public class MapPanel extends javax.swing.JPanel {
 
                 mouseDown = false;
                 if (isAttack) {
-                    AttackAddFrame aAdd = new AttackAddFrame();
-                    aAdd.setLocation(e.getLocationOnScreen());
-                    aAdd.setupAttack(mSourceVillage, mTargetVillage, unit);
+                    attackAddFrame.setLocation(e.getLocationOnScreen());
+                    attackAddFrame.setupAttack(mSourceVillage, mTargetVillage, unit);
                 }
                 mSourceVillage = null;
                 mTargetVillage = null;

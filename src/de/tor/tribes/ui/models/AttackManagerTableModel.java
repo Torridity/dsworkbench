@@ -7,12 +7,13 @@ package de.tor.tribes.ui.models;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.Village;
-import de.tor.tribes.ui.DSWorkbenchAttackFrame;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.attack.AttackManager;
 import de.tor.tribes.util.attack.AttackManagerListener;
 import java.util.Date;
+import java.util.List;
 import javax.swing.table.AbstractTableModel;
+import org.apache.log4j.Logger;
 
 /**
  *
@@ -20,13 +21,14 @@ import javax.swing.table.AbstractTableModel;
  */
 public class AttackManagerTableModel extends AbstractTableModel {
 
+    private static Logger logger = Logger.getLogger("AttackTable");
     Class[] types = new Class[]{
         Village.class, Village.class, UnitHolder.class, Date.class, Date.class, Boolean.class
     };
     String[] colNames = new String[]{
         "Herkunft", "Ziel", "Einheit", "Abschickzeit", "Ankunftzeit", "Einzeichnen"
     };
-    private String sActiveAttackPlan = null;
+    private String sActiveAttackPlan = AttackManager.DEFAULT_PLAN_ID;
     private static AttackManagerTableModel SINGLETON = null;
 
     public static synchronized AttackManagerTableModel getSingleton() {
@@ -47,8 +49,13 @@ public class AttackManagerTableModel extends AbstractTableModel {
         });
     }
 
-    public void setActiveAttackPlan(String pPlan) {
+    public synchronized void setActiveAttackPlan(String pPlan) {
+        logger.debug("Setting active attack plan to '" + pPlan + "'");
         sActiveAttackPlan = pPlan;
+    }
+
+    public synchronized String getActiveAttackPlan() {
+        return sActiveAttackPlan;
     }
 
     public void addRow(Object[] row) {
@@ -76,7 +83,14 @@ public class AttackManagerTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int pRow, int pCol) {
-        Attack a = AttackManager.getSingleton().getAttackPlan(sActiveAttackPlan).get(pRow);
+        List<Attack> attacks = AttackManager.getSingleton().getAttackPlan(getActiveAttackPlan());
+        Attack a = null;
+        if (attacks.size() > pRow) {
+            a = attacks.get(pRow);
+        } else {
+            return null;
+        }
+
         switch (pCol) {
             case 0:
                 return a.getSource();
@@ -86,7 +100,6 @@ public class AttackManagerTableModel extends AbstractTableModel {
                 return a.getUnit();
             case 3: {
                 long sendTime = a.getArriveTime().getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(a.getSource(), a.getTarget(), a.getUnit().getSpeed()) * 1000);
-
                 return new Date(sendTime);
             }
             case 4:
@@ -98,12 +111,20 @@ public class AttackManagerTableModel extends AbstractTableModel {
 
     @Override
     public int getRowCount() {
-        return AttackManager.getSingleton().getAttackPlan(sActiveAttackPlan).size();
+        String activePlan = getActiveAttackPlan();
+        List<Attack> active = AttackManager.getSingleton().getAttackPlan(activePlan);
+        if (active != null) {
+            return active.size();
+        } else {
+            sActiveAttackPlan = AttackManager.DEFAULT_PLAN_ID;
+            return AttackManager.getSingleton().getAttackPlan(activePlan).size();
+        }
     }
 
     @Override
     public void setValueAt(Object pValue, int pRow, int pCol) {
-        Attack a = AttackManager.getSingleton().getAttackPlan(sActiveAttackPlan).get(pRow);
+        String activePlan = getActiveAttackPlan();
+        Attack a = AttackManager.getSingleton().getAttackPlan(activePlan).get(pRow);
         switch (pCol) {
             case 0: {
                 a.setSource((Village) pValue);

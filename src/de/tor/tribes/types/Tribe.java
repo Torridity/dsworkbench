@@ -29,12 +29,12 @@ public class Tribe implements Serializable, Comparable {
     private int allyID = 0;
     private transient Ally ally = null;
     private short villages = 0;
-    private int points = 0;
+    private double points = 0;
     private int rank = 0;
     private transient List<Village> villageList = null;
-    private int killsAtt = 0;
+    private double killsAtt = 0;
     private int rankAtt = 0;
-    private int killsDef = 0;
+    private double killsDef = 0;
     private int rankDef = 0;
 
     public Tribe() {
@@ -58,7 +58,7 @@ public class Tribe implements Serializable, Comparable {
             entry.setName(n);
             entry.setAllyID(Integer.parseInt(tokenizer.nextToken()));
             entry.setVillages(Short.parseShort(tokenizer.nextToken()));
-            entry.setPoints(Integer.parseInt(tokenizer.nextToken()));
+            entry.setPoints(Double.parseDouble(tokenizer.nextToken()));
             entry.setRank(Integer.parseInt(tokenizer.nextToken()));
             return entry;
         } catch (Exception e) {
@@ -119,11 +119,11 @@ public class Tribe implements Serializable, Comparable {
         this.villages = villages;
     }
 
-    public int getPoints() {
+    public double getPoints() {
         return points;
     }
 
-    public void setPoints(int points) {
+    public void setPoints(double points) {
         this.points = points;
     }
 
@@ -192,11 +192,11 @@ public class Tribe implements Serializable, Comparable {
         return "[player]" + getName() + "[/player]";
     }
 
-    public int getKillsAtt() {
+    public double getKillsAtt() {
         return killsAtt;
     }
 
-    public void setKillsAtt(int killsAtt) {
+    public void setKillsAtt(double killsAtt) {
         this.killsAtt = killsAtt;
     }
 
@@ -208,11 +208,11 @@ public class Tribe implements Serializable, Comparable {
         this.rankAtt = rankAtt;
     }
 
-    public int getKillsDef() {
+    public double getKillsDef() {
         return killsDef;
     }
 
-    public void setKillsDef(int killsDef) {
+    public void setKillsDef(double killsDef) {
         this.killsDef = killsDef;
     }
 

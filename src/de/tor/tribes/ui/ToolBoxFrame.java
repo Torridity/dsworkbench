@@ -38,6 +38,7 @@ public class ToolBoxFrame extends javax.swing.JFrame {
             jNoToolButton.setIcon(new ImageIcon("./graphics/icons/notool.png"));
             jMeasureButton.setIcon(new ImageIcon("./graphics/icons/measure.png"));
             jMarkButton.setIcon(new ImageIcon("./graphics/icons/mark.png"));
+            jSupportTool.setIcon(new ImageIcon("./graphics/icons/support_tool.png"));
             jSendTroopsIngameButton.setIcon(new ImageIcon("./graphics/icons/def.png"));
             jSendResIngameButton.setIcon(new ImageIcon("./graphics/icons/booty.png"));
             jAttackAxeButton.setIcon(new ImageIcon("./graphics/icons/attack_axe.png"));
@@ -156,6 +157,7 @@ public class ToolBoxFrame extends javax.swing.JFrame {
         jMeasureButton = new javax.swing.JButton();
         jMarkButton = new javax.swing.JButton();
         jTagButton = new javax.swing.JButton();
+        jSupportTool = new javax.swing.JButton();
         jSendTroopsIngameButton = new javax.swing.JButton();
         jSendResIngameButton = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
@@ -231,6 +233,17 @@ public class ToolBoxFrame extends javax.swing.JFrame {
             }
         });
         getContentPane().add(jTagButton);
+
+        jSupportTool.setToolTipText(bundle.getString("ToolBoxFrame.jSupportTool.toolTipText")); // NOI18N
+        jSupportTool.setMaximumSize(new java.awt.Dimension(30, 30));
+        jSupportTool.setMinimumSize(new java.awt.Dimension(30, 30));
+        jSupportTool.setPreferredSize(new java.awt.Dimension(30, 30));
+        jSupportTool.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireToolClickedEvent(evt);
+            }
+        });
+        getContentPane().add(jSupportTool);
 
         jSendTroopsIngameButton.setToolTipText(bundle.getString("ToolBoxFrame.jSendTroopsIngameButton.toolTipText")); // NOI18N
         jSendTroopsIngameButton.setMaximumSize(new java.awt.Dimension(30, 30));
@@ -430,6 +443,8 @@ private void fireToolClickedEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
         MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_MARK);
     } else if (evt.getSource() == jTagButton) {
         MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_TAG);
+    } else if (evt.getSource() == jSupportTool) {
+        MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_SUPPORT);
     } else if (evt.getSource() == jSendTroopsIngameButton) {
         MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_INGAME);
     } else if (evt.getSource() == jSendResIngameButton) {
@@ -485,6 +500,7 @@ private void fireToolClickedEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
     private javax.swing.JButton jSendTroopsIngameButton;
     private javax.swing.JButton jSettingsButton;
     private javax.swing.JButton jShotButton;
+    private javax.swing.JButton jSupportTool;
     private javax.swing.JButton jTagButton;
     private javax.swing.JButton jZoomButton;
     // End of variables declaration//GEN-END:variables

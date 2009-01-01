@@ -357,6 +357,7 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
         jScalingSlider.setPaintTicks(true);
         jScalingSlider.setSnapToTicks(true);
         jScalingSlider.setValue(1);
+        jScalingSlider.setOpaque(false);
         jScalingSlider.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 fireChangeScreenshotScalingEvent(evt);
@@ -392,6 +393,7 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
         jTransparancySlider.setSnapToTicks(true);
         jTransparancySlider.setToolTipText("Transparenz der Legende (10 = keine Legende)");
         jTransparancySlider.setValue(4);
+        jTransparancySlider.setOpaque(false);
 
         javax.swing.GroupLayout jScreenshotControlLayout = new javax.swing.GroupLayout(jScreenshotControl.getContentPane());
         jScreenshotControl.getContentPane().setLayout(jScreenshotControlLayout);

@@ -5,6 +5,7 @@
 package de.tor.tribes.util.parser;
 
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.DSWorkbenchMainFrame;
 import java.awt.Toolkit;
@@ -47,6 +48,7 @@ public class GroupParser {
                 Village v = null;
 //          String v = null;
                 int groupCount = 0;
+                Tribe userTribe = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage().getTribe();
                 while (elemTok.hasMoreTokens()) {
                     try {
                         String currentToken = elemTok.nextToken();
@@ -56,21 +58,22 @@ public class GroupParser {
                                 //System.out.println("got village " + currentToken);
                                 String[] split = currentToken.trim().split("[(\\|)]");
                                 v = DataHolder.getSingleton().getVillages()[Integer.parseInt(split[1])][Integer.parseInt(split[2])];
-                                //v = currentToken;
+                                if ((v != null) && (v.getTribe() != null) && (v.getTribe().equals(userTribe))) {
 
-                                //skip continent token
-                                elemTok.nextToken();
-                                //keep group count
-                                while (true) {
-                                    //f*cking firefox inserts an additional field, so try and error
-                                    try {
-                                        groupCount = Integer.parseInt(elemTok.nextToken());
-                                        //village count found
-                                        break;
-                                    } catch (NoSuchElementException nsee) {
-                                        throw new Exception("End reached");
-                                    } catch (NumberFormatException nfe) {
-                                        //ignore
+                                    //skip continent token
+                                    elemTok.nextToken();
+                                    //keep group count
+                                    while (true) {
+                                        //f*cking firefox inserts an additional field, so try and error
+                                        try {
+                                            groupCount = Integer.parseInt(elemTok.nextToken());
+                                            //village count found
+                                            break;
+                                        } catch (NoSuchElementException nsee) {
+                                            throw new Exception("End reached");
+                                        } catch (NumberFormatException nfe) {
+                                            //ignore
+                                        }
                                     }
                                 }
                             }

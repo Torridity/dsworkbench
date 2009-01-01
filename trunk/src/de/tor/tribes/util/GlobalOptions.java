@@ -18,7 +18,6 @@ import de.tor.tribes.util.troops.TroopsManager;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Properties;
 import javax.swing.UIManager;

@@ -60,22 +60,34 @@ public class TroopsParser {
                         //ignore for now
                     }
                 } else if (line.startsWith("unterwegs")) {
-                    for (int i : parseUnits(line.replaceAll("unterwegs", "").trim())) {
-                        //own units on the way
-                        //ignore for now
+                    int[] underway = parseUnits(line.replaceAll("unterwegs", "").trim());
+                    //own units on the way
+                    for (int i = 0; i < underway.length; i++) {
+                        troops.set(i, troops.get(i) + underway[i]);
                     }
                 }
                 villageLines--;
             } else {
+                String nextToken = null;
                 while (elemTok.hasMoreElements()) {
-                    String currentToken = elemTok.nextToken();
+                    String currentToken = null;
+                    if (nextToken == null) {
+                        currentToken = elemTok.nextToken();
+                    } else {
+                        currentToken = nextToken;
+                    }
+                    if (elemTok.hasMoreTokens()) {
+                        nextToken = elemTok.nextToken();
+                    }
+
                     //search village
                     if (currentToken.startsWith("(") && currentToken.endsWith(")")) {
                         //check if we got a village
-                        if (currentToken.matches("\\([0-9]+\\|[0-9]+\\)")) {
+                        if (currentToken.matches("\\([0-9]+\\|[0-9]+\\)") && (nextToken != null) && (nextToken.startsWith("K"))) {
                             //extract village coordinates
                             String[] split = currentToken.trim().split("[(\\|)]");
                             v = DataHolder.getSingleton().getVillages()[Integer.parseInt(split[1])][Integer.parseInt(split[2])];
+                            // System.out.println("Village " + split[1] + " " + split[2]);
                             //next 4 lines are village
                             villageLines = 4;
                             break;
@@ -91,7 +103,7 @@ public class TroopsParser {
                     v = null;
                     //found at least one village, so retValue is true    
                     retValue = true;
-                }else{
+                } else {
                     v = null;
                     troops.clear();
                 }

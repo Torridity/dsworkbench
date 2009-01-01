@@ -6,6 +6,7 @@
 package de.tor.tribes.ui;
 
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.io.ServerManager;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Ally;
 import de.tor.tribes.types.Tag;
@@ -17,6 +18,7 @@ import de.tor.tribes.ui.renderer.DateCellRenderer;
 import de.tor.tribes.ui.editors.UnitCellEditor;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.DSCalculator;
+import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.attack.AttackManager;
 import java.awt.Component;
 import java.awt.Toolkit;
@@ -38,24 +40,21 @@ import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import org.apache.log4j.Logger;
 import de.tor.tribes.util.tag.TagManager;
+import java.util.StringTokenizer;
 import javax.swing.UIManager;
 
 /**
- *@TODO Add No-Ally players to selection 
  * @author  Jejkal
  */
 public class TribeTribeAttackFrame extends javax.swing.JFrame {
 
     private static Logger logger = Logger.getLogger("AttackPlanner");
-    SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yy HH:mm:ss.SSS");
 
     /** Creates new form AllyAllyAttackFrame */
     public TribeTribeAttackFrame() {
         initComponents();
         getContentPane().setBackground(Constants.DS_BACK);
         jTransferToAttackManagerDialog.pack();
-
-    //setup();
     }
 
     protected void setup() {
@@ -81,7 +80,6 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame {
         TableRowSorter<TableModel> attackSorter = new TableRowSorter<TableModel>(jAttacksTable.getModel());
         jAttacksTable.setRowSorter(attackSorter);
         // </editor-fold>
-
 
         // <editor-fold defaultstate="collapsed" desc=" Victim table setup ">
 
@@ -980,7 +978,6 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
         victimVillages.add((Village) victimModel.getValueAt(i, 1));
     }
 
-
     Hashtable<Village, Hashtable<Village, UnitHolder>> attacks = new Hashtable<Village, Hashtable<Village, UnitHolder>>();
     List<Village> notAssigned = new LinkedList<Village>();
     Hashtable<Tribe, Integer> attacksPerTribe = new Hashtable<Tribe, Integer>();
@@ -1143,28 +1140,81 @@ private void fireTransferToAttackPlanningEvent(java.awt.event.MouseEvent evt) {/
 
 private void fireAttacksToClipboardEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireAttacksToClipboardEvent
     try {
+        UIManager.put("OptionPane.noButtonText", "Nein");
+        UIManager.put("OptionPane.yesButtonText", "Ja");
+        boolean extended = (JOptionPane.showConfirmDialog(this, "Erweiterte BB-Codes verwenden (nur für Forum und Notizen geeignet)?", "Erweiterter BB-Code", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION);
+        UIManager.put("OptionPane.noButtonText", "No");
+        UIManager.put("OptionPane.yesButtonText", "Yes");
+
+        String sUrl = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
+
         DefaultTableModel resultModel = (DefaultTableModel) jResultsTable.getModel();
         StringBuffer buffer = new StringBuffer();
+        if (extended) {
+            buffer.append("[u][size=12]Angriffsplan[/size][/u]\n\n");
+        } else {
+            buffer.append("[u]Angriffsplan[/u]\n\n");
+        }
         for (int i = 0; i < resultModel.getRowCount(); i++) {
             Village sVillage = (Village) resultModel.getValueAt(i, 0);
             UnitHolder sUnit = (UnitHolder) resultModel.getValueAt(i, 1);
             Village tVillage = (Village) resultModel.getValueAt(i, 2);
             Date dTime = (Date) resultModel.getValueAt(i, 3);
-            String time = DATE_FORMAT.format(dTime);
+            String time = null;
+            if (extended) {
+                time = new SimpleDateFormat("'[color=red]'dd.MM.yy 'um' HH:mm:ss.'[size=8]'SSS'[/size][/color]'").format(dTime);
+            } else {
+                time = new SimpleDateFormat("'[color=red]'dd.MM.yy 'um' HH:mm:ss.SSS'[/color]'").format(dTime);
+            }
             buffer.append("Angriff aus ");
             buffer.append(sVillage.toBBCode());
             buffer.append(" mit ");
-            buffer.append(sUnit);
+            if (extended) {
+                buffer.append("[img]" + sUrl + "/graphic/unit/unit_" + sUnit.getPlainName() + ".png[/img]");
+            } else {
+                buffer.append(sUnit.getName());
+            }
             buffer.append(" auf ");
-            buffer.append(tVillage.getTribe().toBBCode());
+            if (tVillage.getTribe() != null) {
+                buffer.append(tVillage.getTribe().toBBCode());
+            } else {
+                buffer.append("Barbaren");
+            }
             buffer.append(" in ");
             buffer.append(tVillage.toBBCode());
-            buffer.append(" um ");
+            buffer.append(" am ");
             buffer.append(time);
             buffer.append("\n");
         }
+        if (extended) {
+            buffer.append("\n[size=8]Erstellt am ");
+            buffer.append(new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss").format(Calendar.getInstance().getTime()));
+            buffer.append(" mit [url=\"http://www.dsworkbench.de/index.php?id=23\"]DS Workbench ");
+            buffer.append(Constants.VERSION + Constants.VERSION_ADDITION + "[/url][/size]\n");
+        } else {
+            buffer.append("\nErstellt am ");
+            buffer.append(new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss").format(Calendar.getInstance().getTime()));
+            buffer.append(" mit [url=\"http://www.dsworkbench.de/index.php?id=23\"]DS Workbench ");
+            buffer.append(Constants.VERSION + Constants.VERSION_ADDITION + "[/url]\n");
+        }
+        String b = buffer.toString();
+        StringTokenizer t = new StringTokenizer(b, "[");
+        int cnt = t.countTokens();
+        if (cnt > 500) {
+            UIManager.put("OptionPane.noButtonText", "Nein");
+            UIManager.put("OptionPane.yesButtonText", "Ja");
+            if (JOptionPane.showConfirmDialog(this, "Die ausgewählten Angriffe benötigen mehr als 500 BB-Codes\n" +
+                    "und können daher im Spiel (Forum/IGM/Notizen) nicht auf einmal dargestellt werden.\nTrotzdem exportieren?", "Zu viele BB-Codes", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.NO_OPTION) {
+                UIManager.put("OptionPane.noButtonText", "No");
+                UIManager.put("OptionPane.yesButtonText", "Yes");
+                return;
+            }
+            UIManager.put("OptionPane.noButtonText", "No");
+            UIManager.put("OptionPane.yesButtonText", "Yes");
+        }
 
-        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(buffer.toString()), null);
+
+        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(b), null);
         String result = "Daten in Zwischenablage kopiert.";
         JOptionPane.showMessageDialog(jResultFrame, result, "Information", JOptionPane.INFORMATION_MESSAGE);
     } catch (Exception e) {
@@ -1183,7 +1233,7 @@ private void fireUnformattedAttacksToClipboardEvent(java.awt.event.MouseEvent ev
             UnitHolder sUnit = (UnitHolder) resultModel.getValueAt(i, 1);
             Village tVillage = (Village) resultModel.getValueAt(i, 2);
             Date dTime = (Date) resultModel.getValueAt(i, 3);
-            String time = DATE_FORMAT.format(dTime);
+            String time = new SimpleDateFormat("dd.MM.yy HH:mm:ss.SSS").format(dTime);
             buffer.append(sVillage);
             buffer.append("\t");
             buffer.append(sUnit);
@@ -1221,6 +1271,7 @@ private void fireTargetAllyChangedEvent(java.awt.event.ActionEvent evt) {//GEN-F
     }
 
     if (a != null) {
+        //ally selected
         Tribe[] tribes = a.getTribes().toArray(new Tribe[]{});
         if ((tribes != null) && (tribes.length != 0)) {
             Arrays.sort(tribes, Tribe.CASE_INSENSITIVE_ORDER);
@@ -1232,14 +1283,18 @@ private void fireTargetAllyChangedEvent(java.awt.event.ActionEvent evt) {//GEN-F
             fireTargetTribeChangedEvent(null);
         }
     } else {
+        //no ally selected, show no-ally tribes
         Enumeration<Integer> tribeIDs = DataHolder.getSingleton().getTribes().keys();
-        List<Tribe> t = new LinkedList<Tribe>();
+        List<Tribe> noAlly = new LinkedList<Tribe>();
         while (tribeIDs.hasMoreElements()) {
-            t.add(DataHolder.getSingleton().getTribes().get(tribeIDs.nextElement()));
+            Tribe t = DataHolder.getSingleton().getTribes().get(tribeIDs.nextElement());
+            if (t.getAlly() == null) {
+                noAlly.add(t);
+            }
         }
-        Tribe[] tribes = t.toArray(new Tribe[]{});
-        Arrays.sort(tribes, Tribe.CASE_INSENSITIVE_ORDER);
-        jTargetTribeList.setModel(new DefaultComboBoxModel(tribes));
+        Tribe[] noAllyTribes = noAlly.toArray(new Tribe[]{});
+        Arrays.sort(noAllyTribes, Tribe.CASE_INSENSITIVE_ORDER);
+        jTargetTribeList.setModel(new DefaultComboBoxModel(noAllyTribes));
         jTargetTribeList.setSelectedIndex(0);
         fireTargetTribeChangedEvent(null);
     }
@@ -1349,6 +1404,14 @@ private void fireTransferAttacksToPlanEvent(java.awt.event.MouseEvent evt) {//GE
             planName = (String) jAttackPlansBox.getSelectedItem();
         }
     }
+    if (AttackManager.getSingleton().getAttackPlan(planName) == null) {
+        AttackManager.getSingleton().addEmptyPlan(planName);
+        DSWorkbenchAttackFrame.getSingleton().buildAttackPlanList();
+    }
+
+    if (logger.isDebugEnabled()) {
+        logger.debug("Adding attacks to plan '" + planName + "'");
+    }
 
     DefaultTableModel resultModel = (DefaultTableModel) jResultsTable.getModel();
     for (int i = 0; i < resultModel.getRowCount(); i++) {
@@ -1367,7 +1430,7 @@ private void fireCancelTransferEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST
 }//GEN-LAST:event_fireCancelTransferEvent
 
     private void showResults(Hashtable<Village, Hashtable<Village, UnitHolder>> pAttacks) {
-        DefaultTableModel resultModel = new javax   .swing.table.DefaultTableModel(
+        DefaultTableModel resultModel = new javax.swing.table.DefaultTableModel(
                 new Object[][]{},
                 new String[]{
                     "Herkunft", "Truppen", "Ziel", "Startzeit"}) {
@@ -1399,16 +1462,9 @@ private void fireCancelTransferEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST
         TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(jResultsTable.getModel());
         jResultsTable.setRowSorter(sorter);
 
-        DefaultTableCellRenderer headerRenderer = new  
+        DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
 
-             DefaultTableCellRenderer (           ) {
-
-                         
-                    
-                 
-                
-                    
-                @Override
+            @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
                 Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
                 String t = ((DefaultTableCellRenderer) c).getText();
@@ -1430,11 +1486,9 @@ private void fireCancelTransferEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        java.awt.EventQueue.invokeLater(new  
+        java.awt.EventQueue.invokeLater(new Runnable() {
 
-              Runnable() {
-
-                 public void run() {
+            public void run() {
                 new TribeTribeAttackFrame().setVisible(true);
             }
         });

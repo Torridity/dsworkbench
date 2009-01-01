@@ -137,7 +137,11 @@ public class AttackAddFrame extends javax.swing.JFrame {
         }
 
         jAttackPlanBox.setModel(model);
-        jAttackPlanBox.setSelectedItem(lastSelection);
+        if (lastSelection != null) {
+            jAttackPlanBox.setSelectedItem(lastSelection);
+        } else {
+            jAttackPlanBox.setSelectedIndex(0);
+        }
         setVisible(true);
         skipValidation = false;
     }
@@ -355,7 +359,8 @@ private void fireAddAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:even
     }
     UnitHolder u = (UnitHolder) jUnitBox.getSelectedItem();
     //long sendTime = getTime().getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(mSource, mTarget, u.getSpeed()) * 1000);
-    AttackManager.getSingleton().addAttack(mSource, mTarget, getSelectedUnit(), getTime());
+    Object plan = jAttackPlanBox.getSelectedItem();
+    AttackManager.getSingleton().addAttack(mSource, mTarget, getSelectedUnit(), getTime(), (String) plan);
     GlobalOptions.setLastArriveTime(getTime());
     setVisible(false);
 }//GEN-LAST:event_fireAddAttackEvent

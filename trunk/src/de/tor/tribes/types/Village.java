@@ -163,8 +163,6 @@ public class Village implements Serializable, Comparable {
         this.tribe = tribe;
     }
 
-    /**@TODO Introduce bonus_new field
-     */
     public String getHTMLInfo() {
         StringBuffer b = new StringBuffer();
         b.append("<html><p><b>Name (X|Y):</b> ");
@@ -278,13 +276,8 @@ public class Village implements Serializable, Comparable {
                     break;
                 }
                 case 9: {
-                    //speicher
-                    b.append("+ Speicher </p></html>");
-                    break;
-                }
-                case 10: {
-                    //markt
-                    b.append("+ Markt </p></html>");
+                    //speicher + markt
+                    b.append("+ 50% </p></html>");
                     break;
                 }
             }

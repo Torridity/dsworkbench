@@ -86,10 +86,12 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                 GlobalOptions.addProperty("marker.frame.visible", Boolean.toString(DSWorkbenchMarkerFrame.getSingleton().isVisible()));
                 GlobalOptions.addProperty("troops.frame.visible", Boolean.toString(DSWorkbenchTroopsFrame.getSingleton().isVisible()));
                 GlobalOptions.addProperty("distance.frame.visible", Boolean.toString(DSWorkbenchDistanceFrame.getSingleton().isVisible()));
+                GlobalOptions.addProperty("rank.frame.visible", Boolean.toString(DSWorkbenchRankFrame.getSingleton().isVisible()));
                 GlobalOptions.addProperty("distance.frame.alwaysOnTop", Boolean.toString(DSWorkbenchDistanceFrame.getSingleton().isAlwaysOnTop()));
                 GlobalOptions.addProperty("attack.frame.alwaysOnTop", Boolean.toString(DSWorkbenchAttackFrame.getSingleton().isAlwaysOnTop()));
                 GlobalOptions.addProperty("marker.frame.alwaysOnTop", Boolean.toString(DSWorkbenchMarkerFrame.getSingleton().isAlwaysOnTop()));
                 GlobalOptions.addProperty("troops.frame.alwaysOnTop", Boolean.toString(DSWorkbenchTroopsFrame.getSingleton().isAlwaysOnTop()));
+                GlobalOptions.addProperty("rank.frame.alwaysOnTop", Boolean.toString(DSWorkbenchRankFrame.getSingleton().isAlwaysOnTop()));
                 GlobalOptions.addProperty("zoom.factor", Double.toString(dZoomFactor));
                 GlobalOptions.addProperty("last.x", jCenterX.getText());
                 GlobalOptions.addProperty("last.y", jCenterY.getText());
@@ -113,16 +115,75 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             @Override
             public void eventDispatched(AWTEvent event) {
                 if (((KeyEvent) event).getID() == KeyEvent.KEY_PRESSED) {
+                    KeyEvent e = (KeyEvent) event;
                     if (DSWorkbenchMainFrame.getSingleton().isActive()) {
-                        if (((KeyEvent) event).getKeyCode() == KeyEvent.VK_DOWN) {
+                        //move shortcuts
+                        if (e.getKeyCode() == KeyEvent.VK_DOWN) {
                             scroll(0, 2);
-                        } else if (((KeyEvent) event).getKeyCode() == KeyEvent.VK_UP) {
+                        } else if (e.getKeyCode() == KeyEvent.VK_UP) {
                             scroll(0, -2);
-                        } else if (((KeyEvent) event).getKeyCode() == KeyEvent.VK_LEFT) {
+                        } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
                             scroll(-2, 0);
-                        } else if (((KeyEvent) event).getKeyCode() == KeyEvent.VK_RIGHT) {
+                        } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
                             scroll(2, 0);
                         }
+                    }
+
+                    //misc shortcuts
+                    if ((e.getKeyCode() == KeyEvent.VK_1) && e.isAltDown()) {
+                        //measure tool shortcut
+                        MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_MEASURE);
+                    } else if ((e.getKeyCode() == KeyEvent.VK_2) && e.isAltDown()) {
+                        //mark tool shortcut
+                        MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_MARK);
+                    } else if ((e.getKeyCode() == KeyEvent.VK_3) && e.isAltDown()) {
+                        //tag tool shortcut
+                        MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_TAG);
+                    } else if ((e.getKeyCode() == KeyEvent.VK_4) && e.isAltDown()) {
+                        //attack ingame tool shortcut
+                        MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_SUPPORT);
+                    } else if ((e.getKeyCode() == KeyEvent.VK_5) && e.isAltDown()) {
+                        //attack ingame tool shortcut
+                        MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_INGAME);
+                    } else if ((e.getKeyCode() == KeyEvent.VK_6) && e.isAltDown()) {
+                        //res ingame tool shortcut
+                        MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_SEND_RES_INGAME);
+                    } else if ((e.getKeyCode() == KeyEvent.VK_1) && e.isControlDown()) {
+                        //move minimap tool shortcut
+                        MinimapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_MOVE);
+                    } else if ((e.getKeyCode() == KeyEvent.VK_2) && e.isControlDown()) {
+                        //zoom minimap tool shortcut
+                        MinimapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ZOOM);
+                    } else if ((e.getKeyCode() == KeyEvent.VK_3) && e.isControlDown()) {
+                        //shot minimap tool shortcut
+                        MinimapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_SHOT);
+                    } else if ((e.getKeyCode() == KeyEvent.VK_1) && e.isShiftDown()) {
+                        //shot minimap tool shortcut
+                        MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_AXE);
+                    } else if ((e.getKeyCode() == KeyEvent.VK_2) && e.isShiftDown()) {
+                        //attack axe tool shortcut
+                        MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_RAM);
+                    } else if ((e.getKeyCode() == KeyEvent.VK_3) && e.isShiftDown()) {
+                        //attack ram tool shortcut
+                        MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_SNOB);
+                    } else if ((e.getKeyCode() == KeyEvent.VK_4) && e.isShiftDown()) {
+                        //attack snob tool shortcut
+                        MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_SPY);
+                    } else if ((e.getKeyCode() == KeyEvent.VK_5) && e.isShiftDown()) {
+                        //attack sword tool shortcut
+                        MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_SWORD);
+                    } else if ((e.getKeyCode() == KeyEvent.VK_6) && e.isShiftDown()) {
+                        //attack light tool shortcut
+                        MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_LIGHT);
+                    } else if ((e.getKeyCode() == KeyEvent.VK_7) && e.isShiftDown()) {
+                        //attack heavy tool shortcut
+                        MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_HEAVY);
+                    } else if ((e.getKeyCode() == KeyEvent.VK_S) && e.isControlDown()) {
+                        //search frame shortcut
+                        SearchFrame.getSingleton().setVisible(true);
+                    } else if ((e.getKeyCode() == KeyEvent.VK_T) && e.isControlDown()) {
+                        //search time shortcut
+                        ClockFrame.getSingleton().setVisible(true);
                     }
                 }
             }
@@ -139,18 +200,16 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         } catch (Exception e) {
             logger.error("Failed to load status icon(s)", e);
         }
-        // </editor-fold>
+// </editor-fold>
 
-        // <editor-fold defaultstate="collapsed" desc=" Check for desktop support ">
-
+// <editor-fold defaultstate="collapsed" desc=" Check for desktop support ">
         if (!Desktop.isDesktopSupported()) {
             jCenterIngameButton.setEnabled(false);
             jCenterCoordinateIngame.setEnabled(false);
         }
-        // </editor-fold>
+// </editor-fold>
 
-        // <editor-fold defaultstate="collapsed" desc=" Restore last map position ">
-
+// <editor-fold defaultstate="collapsed" desc=" Restore last map position ">
         try {
             String x = GlobalOptions.getProperty("last.x");
             String y = GlobalOptions.getProperty("last.y");
@@ -160,15 +219,15 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             jCenterY.setText(y);
         } catch (Exception e) {
             iCenterX = 500;
-            iCenterY = 500;
+            iCenterY =
+                    500;
             jCenterX.setText("500");
             jCenterY.setText("500");
         }
 
-        // </editor-fold>
+// </editor-fold>
 
-        // <editor-fold defaultstate="collapsed" desc=" Setup WindowListeners ">
-
+// <editor-fold defaultstate="collapsed" desc=" Setup WindowListeners ">
         WindowListener frameListener = new WindowListener() {
 
             @Override
@@ -185,7 +244,10 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                     fireShowDistanceFrameEvent(null);
                 } else if (e.getSource() == DSWorkbenchTroopsFrame.getSingleton()) {
                     fireShowTroopsFrameEvent(null);
+                } else if (e.getSource() == DSWorkbenchRankFrame.getSingleton()) {
+                    fireShowRangFrame(null);
                 }
+
             }
 
             @Override
@@ -214,6 +276,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
 
         //update online state
         onlineStateChanged();
+
     }
 
     /**Update on server change*/
@@ -230,11 +293,13 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             if ((villages != null && villages.length > 0)) {
                 centerVillage(villages[0]);
             }
+
         } else {
             DefaultComboBoxModel model = new DefaultComboBoxModel(new Object[]{"Keine Dörfer"});
             jCurrentPlayerVillages.setModel(model);
         }
-        //update views
+//update views
+
         MinimapPanel.getSingleton().redraw();
         MapPanel.getSingleton().updateMapPosition(iCenterX, iCenterY);
         DSWorkbenchMarkerFrame.getSingleton().setupMarkerPanel();
@@ -248,6 +313,8 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         }
 
         DSWorkbenchSettingsDialog.getSingleton().setupAttackColorTable();
+        DSWorkbenchRankFrame.getSingleton().updateAllyList();
+        DSWorkbenchRankFrame.getSingleton().updateRankTable();
         logger.info("Server settings updated");
     }
 
@@ -259,6 +326,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         } else {
             jOnlineLabel.setToolTipText("Online");
         }
+
     }
 
     /**Get current zoom factor*/
@@ -271,13 +339,17 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         logger.info("Starting initialization");
         //setup everything
         serverSettingsChangedEvent();
+
         logger.info(" * Setting up maps");
         setupMaps();
+
         logger.info(" * Setting up details panel");
         setupDetailsPanel();
+
         logger.info(" * Setting up views");
         setupFrames();
         //setup toolbox
+
         logger.info(" * Setup toolbox");
         mToolbox = new ToolBoxFrame();
         mToolbox.addWindowListener(new WindowListener() {
@@ -335,6 +407,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         DSWorkbenchDistanceFrame.getSingleton().addFrameListener(this);
         TroopsManagerTableModel.getSingleton().setup();
         DSWorkbenchTroopsFrame.getSingleton().addFrameListener(this);
+        DSWorkbenchRankFrame.getSingleton().addFrameListener(this);
     }
 
     /**Setup main map and mini map*/
@@ -342,10 +415,12 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         try {
             dZoomFactor = Double.parseDouble(GlobalOptions.getProperty("zoom.factor"));
             checkZoomRange();
+
         } catch (Exception e) {
             dZoomFactor = 1.0;
         }
-        //build the map panel
+//build the map panel
+
         logger.info("Adding MapListener");
         MapPanel.getSingleton().addMapPanelListener(this);
         MapPanel.getSingleton().addToolChangeListener(this);
@@ -372,8 +447,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         mIcons.add(new ImageIcon(this.getClass().getResource("/res/stable.png")));
         mIcons.add(new ImageIcon(this.getClass().getResource("/res/smith.png")));
         mIcons.add(new ImageIcon(this.getClass().getResource("/res/res.png")));
-        mIcons.add(new ImageIcon(this.getClass().getResource("/res/speicher.png")));//speicher
-        mIcons.add(new ImageIcon(this.getClass().getResource("/res/speed.png")));//händler
+        mIcons.add(new ImageIcon(this.getClass().getResource("/res/speicher.png")));
 
         jPlayerInfo.setText("");
         jVillageInfo.setText("");
@@ -402,6 +476,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                     logger.info("Restoring attack frame");
                     DSWorkbenchAttackFrame.getSingleton().setVisible(true);
                 }
+
             } catch (Exception e) {
                 logger.error("Failed to show main screen", e);
                 System.exit(-1);
@@ -413,6 +488,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                     logger.info("Restoring distance frame");
                     DSWorkbenchDistanceFrame.getSingleton().setVisible(true);
                 }
+
             } catch (Exception e) {
             }
 
@@ -422,6 +498,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                     logger.info("Restoring marker frame");
                     DSWorkbenchMarkerFrame.getSingleton().setVisible(true);
                 }
+
             } catch (Exception e) {
             }
 
@@ -431,6 +508,17 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                     logger.info("Restoring troops frame");
                     DSWorkbenchTroopsFrame.getSingleton().setVisible(true);
                 }
+
+            } catch (Exception e) {
+            }
+
+            try {
+                if (Boolean.parseBoolean(GlobalOptions.getProperty("rank.frame.visible"))) {
+                    jShowRankFrame.setSelected(true);
+                    logger.info("Restoring rank frame");
+                    DSWorkbenchRankFrame.getSingleton().setVisible(true);
+                }
+
             } catch (Exception e) {
             }
 
@@ -440,6 +528,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                     logger.info("Restoring toolbar frame");
                     fireShowToolbarEvent(null);
                 }
+
             } catch (Exception e) {
             }
             // </editor-fold>
@@ -449,6 +538,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             //draw map the first time
             fireRefreshMapEvent(null);
         }
+
     }
 
     /** This method is called from within the constructor to
@@ -504,12 +594,14 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jClockItem = new javax.swing.JMenuItem();
         jTribeTribeAttackItem = new javax.swing.JMenuItem();
         jMassAttackItem = new javax.swing.JMenuItem();
+        jUnitOverviewItem = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
         jShowToolboxItem = new javax.swing.JCheckBoxMenuItem();
         jShowAttackFrame = new javax.swing.JCheckBoxMenuItem();
         jShowDistanceFrame = new javax.swing.JCheckBoxMenuItem();
         jShowMarkerFrame = new javax.swing.JCheckBoxMenuItem();
         jShowTroopsFrame = new javax.swing.JCheckBoxMenuItem();
+        jShowRankFrame = new javax.swing.JCheckBoxMenuItem();
         jMenu4 = new javax.swing.JMenu();
         jAboutItem = new javax.swing.JMenuItem();
 
@@ -933,7 +1025,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                 .addGroup(jInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jInformationPanelLayout.createSequentialGroup()
                         .addComponent(jOnlineLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 91, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 93, Short.MAX_VALUE)
                         .addComponent(jCurrentToolLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jCenterIngameButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
@@ -1008,6 +1100,15 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         });
         jMenu3.add(jMassAttackItem);
 
+        jUnitOverviewItem.setBackground(new java.awt.Color(239, 235, 223));
+        jUnitOverviewItem.setText(bundle.getString("DSWorkbenchMainFrame.jUnitOverviewItem.text")); // NOI18N
+        jUnitOverviewItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fireToolsActionEvent(evt);
+            }
+        });
+        jMenu3.add(jUnitOverviewItem);
+
         jMenuBar1.add(jMenu3);
 
         jMenu2.setBackground(new java.awt.Color(225, 213, 190));
@@ -1060,6 +1161,15 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         });
         jMenu2.add(jShowTroopsFrame);
 
+        jShowRankFrame.setBackground(new java.awt.Color(239, 235, 223));
+        jShowRankFrame.setText(bundle.getString("DSWorkbenchMainFrame.jShowRankFrame.text")); // NOI18N
+        jShowRankFrame.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fireShowRangFrame(evt);
+            }
+        });
+        jMenu2.add(jShowRankFrame);
+
         jMenuBar1.add(jMenu2);
 
         jMenu4.setBackground(new java.awt.Color(225, 213, 190));
@@ -1085,9 +1195,9 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jInfoPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 728, Short.MAX_VALUE)
+                    .addComponent(jInfoPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 847, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 452, Short.MAX_VALUE)
+                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 571, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jMinimapPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1106,7 +1216,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                         .addComponent(jNavigationPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jInformationPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 652, Short.MAX_VALUE))
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 654, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jInfoPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -1119,15 +1229,20 @@ private void fireRefreshMapEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:eve
     int cy = iCenterY;
     try {
         cx = Integer.parseInt(jCenterX.getText());
-        cy = Integer.parseInt(jCenterY.getText());
+        cy =
+                Integer.parseInt(jCenterY.getText());
     } catch (Exception e) {
         cx = iCenterX;
-        cy = iCenterY;
+        cy =
+                iCenterY;
     }
+
     jCenterX.setText(Integer.toString(cx));
     jCenterY.setText(Integer.toString(cy));
-    iCenterX = cx;
-    iCenterY = cy;
+    iCenterX =
+            cx;
+    iCenterY =
+            cy;
 
     double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
     double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
@@ -1142,37 +1257,46 @@ private void fireMoveMapEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     int cy = iCenterY;
     try {
         cx = Integer.parseInt(jCenterX.getText());
-        cy = Integer.parseInt(jCenterY.getText());
+        cy =
+                Integer.parseInt(jCenterY.getText());
     } catch (Exception e) {
         cx = iCenterX;
-        cy = iCenterY;
+        cy =
+                iCenterY;
     }
+
     if (evt.getSource() == jMoveN) {
         cy -= MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
     } else if (evt.getSource() == jMoveNE) {
         cx += MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
-        cy -= MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
+        cy -=
+                MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
     } else if (evt.getSource() == jMoveE) {
         cx += MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
     } else if (evt.getSource() == jMoveSE) {
         cx += MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
-        cy += MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
+        cy +=
+                MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
     } else if (evt.getSource() == jMoveS) {
         cy += MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
     } else if (evt.getSource() == jMoveSW) {
         cx -= MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
-        cy += MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
+        cy +=
+                MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
     } else if (evt.getSource() == jMoveW) {
         cx -= MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
     } else if (evt.getSource() == jMoveNW) {
         cx -= MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
-        cy -= MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
+        cy -=
+                MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
     }
 
     jCenterX.setText(Integer.toString(cx));
     jCenterY.setText(Integer.toString(cy));
-    iCenterX = cx;
-    iCenterY = cy;
+    iCenterX =
+            cx;
+    iCenterY =
+            cy;
     MapPanel.getSingleton().updateMapPosition(iCenterX, iCenterY);
     double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
     double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
@@ -1201,7 +1325,8 @@ private void fireZoomEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fir
         dZoomFactor += 1.0 / 10.0;
         checkZoomRange();
 
-        dZoomFactor = Double.parseDouble(NumberFormat.getInstance().format(dZoomFactor).replaceAll(",", "."));
+        dZoomFactor =
+                Double.parseDouble(NumberFormat.getInstance().format(dZoomFactor).replaceAll(",", "."));
 
         double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
         double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
@@ -1213,7 +1338,8 @@ private void fireZoomEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fir
         dZoomFactor -= 1.0 / 10;
         checkZoomRange();
 
-        dZoomFactor = Double.parseDouble(NumberFormat.getInstance().format(dZoomFactor).replaceAll(",", "."));
+        dZoomFactor =
+                Double.parseDouble(NumberFormat.getInstance().format(dZoomFactor).replaceAll(",", "."));
 
         double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
         double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
@@ -1245,6 +1371,7 @@ private void fireCenterVillageIngameEvent(java.awt.event.MouseEvent evt) {//GEN-
     if (!jCenterIngameButton.isEnabled()) {
         return;
     }
+
     Village v = (Village) jCurrentPlayerVillages.getSelectedItem();
     if (v != null) {
         BrowserCommandSender.centerVillage(v);
@@ -1256,6 +1383,7 @@ private void fireCenterCurrentPosInGameEvent(java.awt.event.MouseEvent evt) {//G
     if (!jCenterCoordinateIngame.isEnabled()) {
         return;
     }
+
     BrowserCommandSender.centerCoordinate(Integer.parseInt(jCenterX.getText()), Integer.parseInt(jCenterY.getText()));
 }//GEN-LAST:event_fireCenterCurrentPosInGameEvent
 
@@ -1270,6 +1398,8 @@ private void fireToolsActionEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:e
         mTribeTribeAttackFrame.setVisible(true);
     } else if (evt.getSource() == jMassAttackItem) {
         // mAllyAllyAttackFrame.setVisible(true);
+    } else if (evt.getSource() == jUnitOverviewItem) {
+        UnitOrderBuilder.showUnitOrder(null, null);
     }
 }//GEN-LAST:event_fireToolsActionEvent
 
@@ -1301,8 +1431,14 @@ private void fireCurrentPlayerVillagePopupEvent(javax.swing.event.PopupMenuEvent
     if (jCurrentPlayerVillages.getSelectedIndex() < 0) {
         return;
     }
+
     centerVillage((Village) jCurrentPlayerVillages.getSelectedItem());
 }//GEN-LAST:event_fireCurrentPlayerVillagePopupEvent
+
+private void fireShowRangFrame(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireShowRangFrame
+    DSWorkbenchRankFrame.getSingleton().setVisible(!DSWorkbenchRankFrame.getSingleton().isVisible());
+    jShowRankFrame.setSelected(DSWorkbenchRankFrame.getSingleton().isVisible());
+}//GEN-LAST:event_fireShowRangFrame
 
     /**Check if zoom factor is valid and correct if needed*/
     private void checkZoomRange() {
@@ -1316,6 +1452,7 @@ private void fireCurrentPlayerVillagePopupEvent(javax.swing.event.PopupMenuEvent
             jZoomInButton.setEnabled(true);
             jZoomOutButton.setEnabled(true);
         }
+
     }
 
     /**Update the MapPanel when dragging the ROI at the MiniMap
@@ -1328,8 +1465,10 @@ private void fireCurrentPlayerVillagePopupEvent(javax.swing.event.PopupMenuEvent
         int y = (int) dy;
         jCenterX.setText(Integer.toString(x));
         jCenterY.setText(Integer.toString(y));
-        iCenterX = x;
-        iCenterY = y;
+        iCenterX =
+                x;
+        iCenterY =
+                y;
         MapPanel.getSingleton().updateMapPosition(iCenterX, iCenterY);
         double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
         double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
@@ -1339,7 +1478,8 @@ private void fireCurrentPlayerVillagePopupEvent(javax.swing.event.PopupMenuEvent
     /**Scroll the map*/
     public void scroll(int pXDir, int pYDir) {
         iCenterX = iCenterX + pXDir;
-        iCenterY = iCenterY + pYDir;
+        iCenterY =
+                iCenterY + pYDir;
         jCenterX.setText(Integer.toString(iCenterX));
         jCenterY.setText(Integer.toString(iCenterY));
 
@@ -1354,6 +1494,7 @@ private void fireCurrentPlayerVillagePopupEvent(javax.swing.event.PopupMenuEvent
         if (pVillage == null) {
             return;
         }
+
         jCenterX.setText(Integer.toString(pVillage.getX()));
         jCenterY.setText(Integer.toString(pVillage.getY()));
         fireRefreshMapEvent(null);
@@ -1372,7 +1513,10 @@ private void fireCurrentPlayerVillagePopupEvent(javax.swing.event.PopupMenuEvent
             jAllyInfo.setText("");
             jVillageInfo.setIcon(null);
             return;
+
         }
+
+
 
         jVillageInfo.setText(pVillage.getHTMLInfo());
         jLabel3.setMinimumSize(new Dimension(SwingUtilities.computeStringWidth(jVillageInfo.getGraphics().getFontMetrics(), pVillage.getHTMLInfo()), 20));
@@ -1388,6 +1532,7 @@ private void fireCurrentPlayerVillagePopupEvent(javax.swing.event.PopupMenuEvent
             } else {
                 jAllyInfo.setText(ally.getHTMLInfo());
             }
+
         } catch (NullPointerException e) {
             jPlayerInfo.setText("kein Besitzer");
             jAllyInfo.setText("kein Stamm");
@@ -1401,11 +1546,13 @@ private void fireCurrentPlayerVillagePopupEvent(javax.swing.event.PopupMenuEvent
             if (jCurrentPlayerVillages.getSelectedIndex() < 0) {
                 jCurrentPlayerVillages.setSelectedIndex(0);
             }
+
             return (Village) jCurrentPlayerVillages.getSelectedItem();
         } catch (Exception e) {
             logger.warn("Could not get current user village. Probably no active player was selected.");
             return null;
         }
+
     }
     // <editor-fold defaultstate="collapsed" desc=" Listener EventHandlers ">
 
@@ -1444,6 +1591,8 @@ private void fireCurrentPlayerVillagePopupEvent(javax.swing.event.PopupMenuEvent
             jShowDistanceFrame.setSelected(DSWorkbenchDistanceFrame.getSingleton().isVisible());
         } else if (pSource == DSWorkbenchTroopsFrame.getSingleton()) {
             jShowTroopsFrame.setSelected(DSWorkbenchTroopsFrame.getSingleton().isVisible());
+        } else if (pSource == DSWorkbenchRankFrame.getSingleton()) {
+            jShowRankFrame.setSelected(DSWorkbenchRankFrame.getSingleton().isVisible());
         }
     }
 
@@ -1453,6 +1602,7 @@ private void fireCurrentPlayerVillagePopupEvent(javax.swing.event.PopupMenuEvent
         for (String s : groups) {
             message += "* " + s + " (" + pParserResult.get(s).size() + " Dörfer)\n";
         }
+
         message += "Willst du diese Informationen in DS Workbench übernehmen oder sie verwerfen und aus der Zwischenablage entfernen?";
         UIManager.put("OptionPane.noButtonText", "Verwerfen");
         UIManager.put("OptionPane.yesButtonText", "Übernehmen");
@@ -1465,6 +1615,7 @@ private void fireCurrentPlayerVillagePopupEvent(javax.swing.event.PopupMenuEvent
                     for (Village v : villagesForGroup) {
                         t.tagVillage(v.getId());
                     }
+
                 }
             }
             //update tag panel in settings
@@ -1475,8 +1626,8 @@ private void fireCurrentPlayerVillagePopupEvent(javax.swing.event.PopupMenuEvent
         UIManager.put("OptionPane.yesButtonText", "Yes");
     }
 
-    // </editor-fold>
-    // <editor-fold defaultstate="collapsed" desc="Generated Variables">
+// </editor-fold>
+// <editor-fold defaultstate="collapsed" desc="Generated Variables">
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem jAboutItem;
@@ -1526,9 +1677,11 @@ private void fireCurrentPlayerVillagePopupEvent(javax.swing.event.PopupMenuEvent
     private javax.swing.JCheckBoxMenuItem jShowAttackFrame;
     private javax.swing.JCheckBoxMenuItem jShowDistanceFrame;
     private javax.swing.JCheckBoxMenuItem jShowMarkerFrame;
+    private javax.swing.JCheckBoxMenuItem jShowRankFrame;
     private javax.swing.JCheckBoxMenuItem jShowToolboxItem;
     private javax.swing.JCheckBoxMenuItem jShowTroopsFrame;
     private javax.swing.JMenuItem jTribeTribeAttackItem;
+    private javax.swing.JMenuItem jUnitOverviewItem;
     private javax.swing.JLabel jVillageInfo;
     private javax.swing.JButton jZoomInButton;
     private javax.swing.JButton jZoomOutButton;

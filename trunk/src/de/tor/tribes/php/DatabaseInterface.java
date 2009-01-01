@@ -266,7 +266,7 @@ public class DatabaseInterface {
     public static int addUser(String pUser, String pPassword) {
         Hashtable<String, String> arguments = new Hashtable<String, String>();
         arguments.put("user", pUser);
-        arguments.put("pass", pPassword);
+        arguments.put("pass", SecurityAdapter.hashStringMD5(pPassword));
         Object result = callWebInterface("addUser", arguments);
         try {
             String[] lines = (String[]) result;

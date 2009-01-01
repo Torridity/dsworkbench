@@ -18,7 +18,6 @@ import org.jdom.Element;
 
 /**Manager for village tags. Tags can be stored in files or in a database (not implemented yet)
  * @author Jejkal
- *  @TODO: graphics/icons/build.png and troops.png to Release!!
  */
 public class TagManager {
 

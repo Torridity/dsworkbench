@@ -15,6 +15,7 @@ import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.DSWorkbenchSettingsDialog;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
+import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -130,16 +131,19 @@ public class DataHolder {
         try {
             File settings = new File(getDataDirectory() + "/settings.xml");
             if (settings.exists()) {
-                Document d = JaxenUtils.getDocument(settings);
-                Integer mapType = Integer.parseInt(JaxenUtils.getNodeValue(d, "//coord/sector"));
+                /*Document d = JaxenUtils.getDocument(settings);
+                Integer mapType = Integer.parseInt(JaxenUtils.getNodeValue(d, "//coord/sector"));*/
+                ServerSettings.getSingleton().loadSettings(GlobalOptions.getSelectedServer());
+                Integer mapType = ServerSettings.getSingleton().getCoordType();
                 if (mapType != 2) {
                     logger.error("Map type '" + mapType + "' is not supported yet");
                     fireDataHolderEvents("Der gewählte Sever wird leider (noch) nicht unterstützt");
                     return false;
                 }
                 try {
-                    Integer bonusType = Integer.parseInt(JaxenUtils.getNodeValue(d, "//coord/bonus_new"));
-                    currentBonusType = bonusType;
+                    /* Integer bonusType = Integer.parseInt(JaxenUtils.getNodeValue(d, "//coord/bonus_new"));
+                    currentBonusType = bonusType;*/
+                    currentBonusType = ServerSettings.getSingleton().getNewBonus();
                 } catch (Exception e) {
                     //bonus_new field not found. Set to old type
                     currentBonusType = 0;
@@ -157,16 +161,23 @@ public class DataHolder {
                     URL file = new URL(sURL + "/interface.php?func=get_config");
                     downloadDataFile(file, "settings_tmp.xml");
                     new File("settings_tmp.xml").renameTo(settings);
-                    Document d = JaxenUtils.getDocument(settings);
-                    Integer mapType = Integer.parseInt(JaxenUtils.getNodeValue(d, "//coord/sector"));
+
+                    if (!ServerSettings.getSingleton().loadSettings(GlobalOptions.getSelectedServer())) {
+                        throw new Exception();
+                    }
+
+                    /*Document d = JaxenUtils.getDocument(settings);
+                    Integer mapType = Integer.parseInt(JaxenUtils.getNodeValue(d, "//coord/sector"));*/
+                    Integer mapType = ServerSettings.getSingleton().getCoordType();
                     if (mapType != 2) {
                         logger.error("Map type '" + mapType + "' is not supported yet");
                         fireDataHolderEvents("Der gewählte Sever wird leider (noch) nicht unterstützt");
                         return false;
                     }
                     try {
-                        Integer bonusType = Integer.parseInt(JaxenUtils.getNodeValue(d, "//coord/bonus_new"));
-                        currentBonusType = bonusType;
+                        //Integer bonusType = Integer.parseInt(JaxenUtils.getNodeValue(d, "//coord/bonus_new"));
+                        //  currentBonusType = bonusType;
+                        currentBonusType = ServerSettings.getSingleton().getNewBonus();
                     } catch (Exception e) {
                         //bonus_new field not found. Set to old type
                         currentBonusType = 0;
@@ -454,14 +465,16 @@ public class DataHolder {
             // <editor-fold defaultstate="collapsed" desc="Server settings check">
             //download settings.xml
             String sURL = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
-
+            logger.debug("Download server settings");
             fireDataHolderEvents("Lese Server Einstellungen");
             File target = new File(serverDir + "/settings.xml");
-            if (!target.exists()) {
-                file = new URL(sURL + "/interface.php?func=get_config");
-                downloadDataFile(file, "settings_tmp.xml");
-                new File("settings_tmp.xml").renameTo(target);
+            if (target.exists()) {
+                target.delete();
             }
+
+            file = new URL(sURL + "/interface.php?func=get_config");
+            downloadDataFile(file, "settings_tmp.xml");
+            new File("settings_tmp.xml").renameTo(target);
 
             if (!serverSupported()) {
                 return false;
@@ -658,10 +671,10 @@ public class DataHolder {
             String kills = tokenizer.nextToken();
             Tribe t = getTribes().get(Integer.parseInt(tribeID));
             if (pType == ID_OFF) {
-                t.setKillsAtt(Integer.parseInt(kills));
+                t.setKillsAtt(Double.parseDouble(kills));
                 t.setRankAtt(Integer.parseInt(rank));
             } else {
-                t.setKillsDef(Integer.parseInt(kills));
+                t.setKillsDef(Double.parseDouble(kills));
                 t.setRankDeff(Integer.parseInt(rank));
             }
         } catch (Exception e) {

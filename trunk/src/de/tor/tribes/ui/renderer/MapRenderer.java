@@ -73,10 +73,6 @@ public class MapRenderer extends Thread {
     public static final int EXTENDED_DECORATION_LAYER = 5;
     public static final int LIVE_LAYER = 6;
     private boolean mapRedrawRequired = true;
-    private boolean markerRedrawRequired = false;
-    private boolean basicDecorationRedrawRequired = false;
-    private boolean attackRedrawRequired = false;
-    private boolean extendedDecorationRedrawRequired = false;
     private Village[][] mVisibleVillages = null;
     private Hashtable<Village, Rectangle> villagePositions = null;
     private Hashtable<Integer, BufferedImage> mLayers = null;
@@ -120,29 +116,9 @@ public class MapRenderer extends Thread {
                 mapRedrawRequired = true;
                 break;
             }
-            case BASIC_DECORATION_LAYER: {
-                basicDecorationRedrawRequired = true;
-                break;
-            }
-            case ATTACK_LAYER: {
-                attackRedrawRequired = true;
-                break;
-            }
-            case EXTENDED_DECORATION_LAYER: {
-                extendedDecorationRedrawRequired = true;
-                break;
-            }
-            case MARKER_LAYER: {
-                markerRedrawRequired = true;
-                break;
-            }
             default: {
                 //ALL_LAYERS
                 mapRedrawRequired = true;
-                markerRedrawRequired = true;
-                basicDecorationRedrawRequired = true;
-                attackRedrawRequired = true;
-                extendedDecorationRedrawRequired = true;
             }
         }
     }
@@ -152,8 +128,8 @@ public class MapRenderer extends Thread {
         logger.debug("Entering render loop");
         //long s = System.currentTimeMillis();
         while (true) {
-           // System.out.println("Dur: " + (System.currentTimeMillis() - s));
-          //  s = System.currentTimeMillis();
+            // System.out.println("Dur: " + (System.currentTimeMillis() - s));
+            //  s = System.currentTimeMillis();
             try {
 
                 int w = MapPanel.getSingleton().getWidth();
@@ -171,7 +147,7 @@ public class MapRenderer extends Thread {
                     }
 
                     renderMarkers(g2d);
-                    g2d.drawImage(mLayers.get(MAP_LAYER), null, 0, 0);
+                    g2d.drawImage(mLayers.get(MAP_LAYER), 0, 0, null);
                     renderBasicDecoration(g2d);
                     renderAttacks(g2d);
                     renderExtendedDecoration(g2d);
@@ -308,10 +284,10 @@ public class MapRenderer extends Thread {
         List<Integer> ySectors = new LinkedList<Integer>();
         List<Integer> xContinents = new LinkedList<Integer>();
         List<Integer> yContinents = new LinkedList<Integer>();
-        long s = System.currentTimeMillis();
+     /*   long s = System.currentTimeMillis();
         long drawTime = 0;
         long copyTime = 0;
-
+*/
         Hashtable<Integer, Point> copyRegions = new Hashtable<Integer, Point>();
 
         // <editor-fold defaultstate="collapsed" desc="Village drawing">
@@ -541,12 +517,12 @@ public class MapRenderer extends Thread {
         }
         //</editor-fold>
 
-        Enumeration<Integer> keys = copyRegions.keys();
+       /* Enumeration<Integer> keys = copyRegions.keys();
         g2d.setColor(Color.MAGENTA);
         while (keys.hasMoreElements()) {
             Point p = copyRegions.get(keys.nextElement());
             g2d.drawRect(p.x, p.y, width, height);
-        }
+        }*/
 
         /*  System.out.println("Regions " + copyRegions);
         System.out.println("Village complete: " + (System.currentTimeMillis() - s));
@@ -605,7 +581,6 @@ public class MapRenderer extends Thread {
                 g2d.fillRect(vRect.x, vRect.y, vRect.width, vRect.height);
             }
         }
-        markerRedrawRequired = false;
     }
 
     private void renderBasicDecoration(Graphics2D g2d) {
@@ -656,7 +631,6 @@ public class MapRenderer extends Thread {
                 }
             }
         }
-        basicDecorationRedrawRequired = false;
     }
 
     private void renderAttacks(Graphics2D g2d) {
@@ -751,7 +725,6 @@ public class MapRenderer extends Thread {
         }
         //</editor-fold>
 
-        attackRedrawRequired = false;
     }
 
     private void renderExtendedDecoration(Graphics2D g2d) {

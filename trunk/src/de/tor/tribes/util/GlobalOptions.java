@@ -12,6 +12,7 @@ import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.WorldDecorationHolder;
 import de.tor.tribes.ui.ImageManager;
 import de.tor.tribes.util.attack.AttackManager;
+import de.tor.tribes.util.map.FormManager;
 import de.tor.tribes.util.mark.MarkerManager;
 import de.tor.tribes.util.tag.TagManager;
 import de.tor.tribes.util.troops.TroopsManager;
@@ -136,10 +137,13 @@ public class GlobalOptions {
             TagManager.getSingleton().loadTagsFromFile(DataHolder.getSingleton().getDataDirectory() + "/tags.xml");
             logger.debug("Loading troops");
             TroopsManager.getSingleton().loadTroopsFromFile(DataHolder.getSingleton().getDataDirectory() + "/troops.xml");
+            logger.debug("Loading forms");
+            FormManager.getSingleton().loadFormsFromFile(DataHolder.getSingleton().getDataDirectory() + "/forms.xml");
+
         }
     }
-    
-     /**Load user data (attacks, markers...)*/
+
+    /**Load user data (attacks, markers...)*/
     public static void saveUserData() {
         if (getSelectedServer() != null) {
 
@@ -151,6 +155,9 @@ public class GlobalOptions {
             TagManager.getSingleton().saveTagsToFile(DataHolder.getSingleton().getDataDirectory() + "/tags.xml");
             logger.debug("Saving troops");
             TroopsManager.getSingleton().saveTroopsToFile(DataHolder.getSingleton().getDataDirectory() + "/troops.xml");
+            logger.debug("Saving forms");
+            FormManager.getSingleton().saveFormsToFile(DataHolder.getSingleton().getDataDirectory() + "/forms.xml");
+
         }
     }
 

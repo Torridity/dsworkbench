@@ -7,18 +7,22 @@ package de.tor.tribes.ui.renderer;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.io.WorldDecorationHolder;
+import de.tor.tribes.types.AbstractForm;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.Marker;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.DSWorkbenchMainFrame;
+import de.tor.tribes.ui.FormConfigFrame;
 import de.tor.tribes.ui.ImageManager;
 import de.tor.tribes.ui.MapPanel;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.GlobalOptions;
+import de.tor.tribes.util.PatchFontMetrics;
 import de.tor.tribes.util.Skin;
 import de.tor.tribes.util.attack.AttackManager;
+import de.tor.tribes.util.map.FormManager;
 import de.tor.tribes.util.mark.MarkerManager;
 import de.tor.tribes.util.tag.TagManager;
 import de.tor.tribes.util.troops.TroopsManager;
@@ -86,7 +90,6 @@ public class MapRenderer extends Thread {
     private BufferedImage mDistBorder = null;
     private Image mMarkerImage = null;
     private final NumberFormat nf = NumberFormat.getInstance();
-    //  private boolean mustDrawBackground = true;
     private Point viewStartPoint = null;
     private double currentZoom = 0.0;
 //    private ToolsRenderer mToolsRenderer;
@@ -111,16 +114,7 @@ public class MapRenderer extends Thread {
     }
 
     public void initiateRedraw(int pType) {
-        switch (pType) {
-            case MAP_LAYER: {
-                mapRedrawRequired = true;
-                break;
-            }
-            default: {
-                //ALL_LAYERS
-                mapRedrawRequired = true;
-            }
-        }
+        mapRedrawRequired = true;
     }
 
     @Override
@@ -138,6 +132,7 @@ public class MapRenderer extends Thread {
                     Image iBuffer = MapPanel.getSingleton().createImage(w, h);
                     Graphics2D g2d = (Graphics2D) iBuffer.getGraphics();
                     prepareGraphics(g2d);
+                    Rectangle2D bou = MapPanel.getSingleton().getVirtualBounds();
                     if (mapRedrawRequired) {
                         calculateVisibleVillages();
                         if (viewStartPoint == null) {
@@ -145,7 +140,6 @@ public class MapRenderer extends Thread {
                         }
                         renderMap();
                     }
-
                     renderMarkers(g2d);
                     g2d.drawImage(mLayers.get(MAP_LAYER), 0, 0, null);
                     renderBasicDecoration(g2d);
@@ -154,7 +148,8 @@ public class MapRenderer extends Thread {
 
                     //draw live layer
                     renderLiveLayer(g2d);
-
+                    // MapPanel.getSingleton().getDrawView().paint(g2d);
+                    MenuRenderer.getSingleton().renderMenu(g2d);
                     MapPanel.getSingleton().updateComplete(mVisibleVillages, iBuffer);
                     MapPanel.getSingleton().repaint();
                     g2d.dispose();
@@ -174,9 +169,18 @@ public class MapRenderer extends Thread {
         xe = pXE;
         ye = pYE;
     }
+    private Rectangle2D.Double drawRegion = new Rectangle2D.Double(0, 0, 0, 0);
 
     /**Extract the visible villages (only needed on full repaint)*/
     private void calculateVisibleVillages() {
+        /* Point pv = MapPanel.getSingleton().getCurrentVirtualPosition();
+        int pvx = pv.x;
+        int pvy = pv.y;
+        //calc real map width
+        double wmap = MapPanel.getSingleton().getWidth() / DSWorkbenchMainFrame.getSingleton().getZoomFactor();
+        double hmap = MapPanel.getSingleton().getHeight() / DSWorkbenchMainFrame.getSingleton().getZoomFactor();
+        drawRegion = new Rectangle2D.Double(pvx, pvy, wmap, hmap);
+         */
         iCenterX = MapPanel.getSingleton().getCurrentPosition().x;
         iCenterY = MapPanel.getSingleton().getCurrentPosition().y;
 
@@ -226,6 +230,7 @@ public class MapRenderer extends Thread {
             y = 0;
         }
         viewStartPoint = new Point(xStart, yStart);
+        MapPanel.getSingleton().updateVirtualBounds(viewStartPoint);
     }
 
     private void renderMap() {
@@ -263,7 +268,6 @@ public class MapRenderer extends Thread {
 
         int x = 0;
         int y = 0;
-
         int xPos = viewStartPoint.x;
         int yPos = viewStartPoint.y;
         boolean showSectors = false;
@@ -284,10 +288,10 @@ public class MapRenderer extends Thread {
         List<Integer> ySectors = new LinkedList<Integer>();
         List<Integer> xContinents = new LinkedList<Integer>();
         List<Integer> yContinents = new LinkedList<Integer>();
-     /*   long s = System.currentTimeMillis();
+        /*   long s = System.currentTimeMillis();
         long drawTime = 0;
         long copyTime = 0;
-*/
+         */
         Hashtable<Integer, Point> copyRegions = new Hashtable<Integer, Point>();
 
         // <editor-fold defaultstate="collapsed" desc="Village drawing">
@@ -339,9 +343,11 @@ public class MapRenderer extends Thread {
 
                 if (v == null) {
                     Image underground = null;
+                    //int id = 0;
                     if (useDecoration) {
                         //long s2 = System.currentTimeMillis();
                         underground = WorldDecorationHolder.getTexture(xPos, yPos, currentZoom);
+                    // id = WorldDecorationHolder.getTextureId(xPos, yPos);
                     // transTime += (System.currentTimeMillis() - s2);
                     }
                     if (underground == null) {
@@ -359,6 +365,12 @@ public class MapRenderer extends Thread {
                     } else {
                         // long s3 = System.currentTimeMillis();
                         g2d.drawImage(underground, x, y, null);
+                    //if(id > 0){
+                    //Color cc = g2d.getColor();
+                    //g2d.setColor(Color.MAGENTA);
+                    //g2d.drawString("" + (id-16), x, y);
+                    //g2d.setColor(cc);
+                    //}
                     // drawTime += (System.currentTimeMillis() - s3);
                     }
                 } else {
@@ -495,6 +507,7 @@ public class MapRenderer extends Thread {
                 xContinents.add(pos);
             }
         }
+
         g2d.setStroke(new BasicStroke(0.5f));
         if (showSectors) {
             g2d.setColor(Color.BLACK);
@@ -517,11 +530,11 @@ public class MapRenderer extends Thread {
         }
         //</editor-fold>
 
-       /* Enumeration<Integer> keys = copyRegions.keys();
+        /* Enumeration<Integer> keys = copyRegions.keys();
         g2d.setColor(Color.MAGENTA);
         while (keys.hasMoreElements()) {
-            Point p = copyRegions.get(keys.nextElement());
-            g2d.drawRect(p.x, p.y, width, height);
+        Point p = copyRegions.get(keys.nextElement());
+        g2d.drawRect(p.x, p.y, width, height);
         }*/
 
         /*  System.out.println("Regions " + copyRegions);
@@ -583,6 +596,104 @@ public class MapRenderer extends Thread {
         }
     }
 
+    // <editor-fold defaultstate="collapsed" desc=" Virt Marker Stuff">
+   /*
+    private void renderMarkers(Graphics2D g2d) {
+    int wb = MapPanel.getSingleton().getWidth();
+    int hb = MapPanel.getSingleton().getHeight();
+    if (wb == 0 || hb == 0) {
+    //both are 0 if map was not drawn yet
+    return;
+    }
+    Color DEFAULT = Color.WHITE;
+    try {
+    if (Integer.parseInt(GlobalOptions.getProperty("default.mark")) == 1) {
+    DEFAULT = Color.RED;
+    }
+    } catch (Exception e) {
+    DEFAULT = Color.WHITE;
+    }
+    g2d.setColor(DEFAULT);
+    g2d.fillRect(0, 0, wb, hb);
+    int wskin = GlobalOptions.getSkin().getFieldWidth();
+    int hskin = GlobalOptions.getSkin().getFieldHeight();
+    double zoom = DSWorkbenchMainFrame.getSingleton().getZoomFactor();
+    int vx = MapPanel.getSingleton().getCurrentVirtualPosition().x;
+    int vy = MapPanel.getSingleton().getCurrentVirtualPosition().y;
+
+    int x0 = 0;
+    int y0 = 0;
+    for (double x = drawRegion.getX(); x <= drawRegion.getX() + drawRegion.getWidth();) {
+    for (double y = drawRegion.getY(); y <= drawRegion.getY() + drawRegion.getHeight();) {
+    Village v = MapPanel.getSingleton().virtualPosToVillage(x, y);
+    Point vpos = MapPanel.getSingleton().virtualPosToVillagePos(x, y);
+    System.out.println(vpos);
+    if (v != null) {
+    Color markerColor = null;
+    if (v.getTribe() == DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage().getTribe()) {
+    markerColor = Color.YELLOW;
+    } else {
+    Marker m = null;
+    if (v.getTribe() != null) {
+    m = MarkerManager.getSingleton().getMarker(v.getTribe());
+    if (m == null) {
+    if (v.getTribe().getAlly() != null) {
+    m = MarkerManager.getSingleton().getMarker(v.getTribe().getAlly());
+    }
+    }
+    }
+    if (m != null) {
+    markerColor = m.getMarkerColor();
+    }
+    }
+    if (markerColor != null) {
+    //Rectangle vRect = villagePositions.get(v);
+    g2d.setColor(markerColor);
+    g2d.fillRect((int) x0, (int) y0, (int) (wskin * zoom), (int) (hskin * zoom));
+
+    //System.out.println(x + "," + y + "," + (wskin*zoom) + "," + hskin*zoom);
+    }
+    }
+    g2d.setColor(Color.BLACK);
+    System.out.println((x0) + "," + (y0));
+    g2d.drawString(vpos.x + "|" + vpos.y, (int) x0, (int) y0);
+    y += hskin * zoom;
+    y0 += wskin;
+    }
+    y0 = 0;
+    x0 += hskin;
+    x += wskin * zoom;
+    }
+    /*
+    Enumeration<Village> villages = villagePositions.keys();
+    while (villages.hasMoreElements()) {
+    Village v = villages.nextElement();
+    Color markerColor = null;
+    if (v.getTribe() == DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage().getTribe()) {
+    markerColor = Color.YELLOW;
+    } else {
+    Marker m = null;
+    if (v.getTribe() != null) {
+    m = MarkerManager.getSingleton().getMarker(v.getTribe());
+    if (m == null) {
+    if (v.getTribe().getAlly() != null) {
+    m = MarkerManager.getSingleton().getMarker(v.getTribe().getAlly());
+    }
+    }
+    }
+    if (m != null) {
+    markerColor = m.getMarkerColor();
+    }
+    }
+    if (markerColor != null) {
+    Rectangle vRect = villagePositions.get(v);
+    g2d.setColor(markerColor);
+    g2d.fillRect(vRect.x, vRect.y, vRect.width, vRect.height);
+    }
+    }
+    }
+     */
+    // </editor-fold>
     private void renderBasicDecoration(Graphics2D g2d) {
         int wb = MapPanel.getSingleton().getWidth();
         int hb = MapPanel.getSingleton().getHeight();
@@ -723,23 +834,27 @@ public class MapRenderer extends Thread {
             }
             attacks = null;
         }
-        //</editor-fold>
+    //</editor-fold>
 
     }
 
     private void renderExtendedDecoration(Graphics2D g2d) {
-        /* int wb = MapPanel.getSingleton().getWidth();
+        int wb = MapPanel.getSingleton().getWidth();
         int hb = MapPanel.getSingleton().getHeight();
         if (wb == 0 || hb == 0) {
-        //both are 0 if map was not drawn yet
-        return;
+            //both are 0 if map was not drawn yet
+            return;
         }
-        BufferedImage layer = new BufferedImage(wb, hb, BufferedImage.TYPE_INT_ARGB);
-        mLayers.put(EXTENDED_DECORATION_LAYER, layer);
-        Graphics2D g2d = (Graphics2D) layer.getGraphics();
-        prepareGraphics(g2d);
-        mToolsRenderer.render(g2d);
-        g2d.dispose();*/
+
+        for (AbstractForm form : FormManager.getSingleton().getForms()) {
+            form.renderForm(g2d);
+        }
+
+        AbstractForm f = FormConfigFrame.getSingleton().getCurrentForm();
+
+        if (f != null) {
+            f.renderForm(g2d);
+        }
     }
 
     private void renderLiveLayer(Graphics2D g2d) {
@@ -796,9 +911,10 @@ public class MapRenderer extends Thread {
                         double d = DSCalculator.calculateDistance(mSourceVillage, mouseVillage);
                         String dist = nf.format(d);
 
-                        Rectangle2D b = g2d.getFontMetrics().getStringBounds(dist, g2d);
+                        double hf = PatchFontMetrics.patch(g2d.getFontMetrics()).getStringBounds(dist, g2d).getHeight();
+
                         g2d.drawImage(mDistBorder, null, targetRect.x, targetRect.y);
-                        g2d.drawString(dist, targetRect.x + 6, targetRect.y + (int) Math.rint(b.getHeight()));
+                        g2d.drawString(dist, targetRect.x + 6, targetRect.y + (int) Math.rint(hf));
                     }
                 }
             }
@@ -821,29 +937,30 @@ public class MapRenderer extends Thread {
                     if ((holder != null) && (!holder.getTroops().isEmpty())) {
                         //get half the units for the current server
                         int unitCount = DataHolder.getSingleton().getUnits().size();
-                        FontMetrics metrics = g2d.getFontMetrics(g2d.getFont());
-                        // int fontHeight = metrics.getHeight();
+                        FontMetrics metrics = PatchFontMetrics.patch(g2d.getFontMetrics(g2d.getFont()));
+
+                        float textHeight = g2d.getFontMetrics().getLineMetrics("1.234.567", g2d).getHeight();
                         Point pos = villageRect.getLocation();
                         //number format without fraction digits
                         NumberFormat numFormat = NumberFormat.getInstance();
                         numFormat.setMaximumFractionDigits(0);
                         numFormat.setMinimumFractionDigits(0);
                         //default width for unit number
-                        int unitWidth = metrics.stringWidth("1.234.567");
+                        double maxWidth = metrics.getStringBounds("1.234.567", g2d).getWidth();
+                        //double textHeight = metrics.getStringBounds("1.234.567", g2d).getHeight();
+                        int unitHeight = ImageManager.getUnitIcon(0).getImage().getHeight(null);
+
                         //get largest unit value
                         for (Integer i : holder.getTroops()) {
                             int w = metrics.stringWidth(numFormat.format(i));
-                            if (w > unitWidth) {
-                                unitWidth = w;
+                            if (w > maxWidth) {
+                                maxWidth = w;
                             }
                         }
 
-                        int textHeight = metrics.getHeight();
-                        int unitHeight = ImageManager.getUnitIcon(0).getImage().getHeight(null);
-
                         g2d.setColor(Constants.DS_BACK_LIGHT);
-                        int popupWidth = 12 + unitWidth + unitHeight;
-                        int popupHeight = unitCount * unitHeight + 10 + textHeight + 2;
+                        int popupWidth = 12 + (int) Math.rint(maxWidth) + unitHeight;
+                        int popupHeight = unitCount * unitHeight + 10 + (int) Math.rint(textHeight) + 2;
                         g2d.fill3DRect(pos.x - popupWidth, pos.y, popupWidth, popupHeight, true);
 
                         g2d.setColor(Color.BLACK);
@@ -853,7 +970,7 @@ public class MapRenderer extends Thread {
                         double dY = metrics.getStringBounds(state, g2d).getY();
                         g2d.drawString(state, pos.x - popupWidth + 5, pos.y - (int) Math.rint(dY) + 5);
 
-                        double sx = textHeight / (double) ImageManager.getUnitIcon(0).getImage().getHeight(null);
+                        double sx = (double) textHeight / (double) unitHeight;
                         for (int i = 0; i < unitCount; i++) {
                             //draw unit with a border of 5px
                             AffineTransform xform = AffineTransform.getTranslateInstance(pos.x - popupWidth + 5, pos.y + i * unitHeight + 5 + textHeight + 2);
@@ -861,13 +978,13 @@ public class MapRenderer extends Thread {
                             g2d.drawImage(ImageManager.getUnitIcon(i).getImage(), xform, null);
                             //draw the unit count
                             dY = metrics.getStringBounds(numFormat.format(holder.getTroops().get(i)), g2d).getY();
-                            g2d.drawString(numFormat.format(holder.getTroops().get(i)), pos.x - popupWidth + 5 + unitHeight + 2, pos.y + i * unitHeight - (int) Math.rint(dY) + 5 + textHeight + 2);
+                            g2d.drawString(numFormat.format(holder.getTroops().get(i)), pos.x - popupWidth + 5 + unitHeight + 2, pos.y + i * unitHeight - (int) Math.rint(dY) + 5 + (int) Math.rint(textHeight) + 2);
                         }
                     } else {
                         Point pos = villageRect.getLocation();
                         if (pos != null) {
                             String noInfo = "keine Informationen";
-                            FontMetrics metrics = g2d.getFontMetrics(g2d.getFont());
+                            FontMetrics metrics = PatchFontMetrics.patch(g2d.getFontMetrics(g2d.getFont()));
                             int textWidth = metrics.stringWidth(noInfo);
                             int popupX = pos.x - textWidth - 10;
                             int popupY = pos.y;

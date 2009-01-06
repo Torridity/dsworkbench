@@ -125,7 +125,9 @@ public class DataHolder {
         return (data.exists() && units.exists() && buildings.exists() && settings.exists());
     }
 
-    /**Check if server is supported or not. Currently only 1000x1000 servers are allowed*/
+    /**Check if server is supported or not. Currently only 1000x1000 servers are allowed
+     * @TODO Re-Activate map type check!
+     */
     public boolean serverSupported() {
         fireDataHolderEvents("Prüfe Server Einstellungen");
         try {
@@ -134,9 +136,9 @@ public class DataHolder {
                 /*Document d = JaxenUtils.getDocument(settings);
                 Integer mapType = Integer.parseInt(JaxenUtils.getNodeValue(d, "//coord/sector"));*/
                 ServerSettings.getSingleton().loadSettings(GlobalOptions.getSelectedServer());
-                Integer mapType = ServerSettings.getSingleton().getCoordType();
-                if (mapType != 2) {
-                    logger.error("Map type '" + mapType + "' is not supported yet");
+                //Integer mapType = ServerSettings.getSingleton().getCoordType();
+                if (ServerSettings.getSingleton().getCoordType() != 2) {
+                    logger.error("Map type '" + ServerSettings.getSingleton().getCoordType() + "' is not supported yet");
                     fireDataHolderEvents("Der gewählte Sever wird leider (noch) nicht unterstützt");
                     return false;
                 }

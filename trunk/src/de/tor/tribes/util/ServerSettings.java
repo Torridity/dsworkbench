@@ -5,6 +5,7 @@
 package de.tor.tribes.util;
 
 import de.tor.tribes.util.xml.JaxenUtils;
+import java.awt.Dimension;
 import java.io.File;
 import org.apache.log4j.Logger;
 import org.jdom.Document;
@@ -18,6 +19,7 @@ public class ServerSettings {
     private static Logger logger = Logger.getLogger("ServerSettings");
     private String SERVER_ID = "de26";
     private int COORD = 2;
+    private Dimension mapSize = null;
     private boolean MAP_NEW = true;
     private int BONUS_NEW = 0;
     private int SNOB_RANGE = 70;
@@ -78,10 +80,22 @@ public class ServerSettings {
 
     public void setCoordType(int pCoordType) {
         COORD = pCoordType;
+        switch (COORD) {
+            case 1: {
+                mapSize = new Dimension(500, 500);
+            }
+            default: {
+                mapSize = new Dimension(1000, 1000);
+            }
+        }
     }
 
     public int getCoordType() {
         return COORD;
+    }
+
+    public Dimension getMapDimension() {
+        return mapSize;
     }
 
     public void setNewMap(boolean pNewMap) {

@@ -6,6 +6,8 @@ package de.tor.tribes.types;
 
 import org.jdom.Element;
 import de.tor.tribes.util.xml.JaxenUtils;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.LinkedList;
 import java.util.List;
 import org.jdom.Document;
@@ -29,7 +31,7 @@ public class Tag {
     private boolean showOnMap = true;
 
     public static Tag fromXml(Element pElement) throws Exception {
-        String name = pElement.getChild("name").getText();
+        String name = URLDecoder.decode(pElement.getChild("name").getTextTrim(), "UTF-8");
         boolean showOnMap = Boolean.parseBoolean(pElement.getAttributeValue("shownOnMap"));
         Tag t = new Tag(name, showOnMap);
         for (Element e : (List<Element>) JaxenUtils.getNodes(pElement, "villages/village")) {
@@ -81,15 +83,19 @@ public class Tag {
     }
 
     public String toXml() throws Exception {
-        String ret = "<tag shownOnMap=\"" + isShowOnMap() + "\">\n";
-        ret += "<name><![CDATA[" + getName() + "]]></name>\n";
-        ret += "<villages>\n";
-        for (Integer i : mVillageIDs) {
-            ret += "<village>" + i + "</village>\n";
+        try {
+            String ret = "<tag shownOnMap=\"" + isShowOnMap() + "\">\n";
+            ret += "<name><![CDATA[" + URLEncoder.encode(getName(), "UTF-8") + "]]></name>\n";
+            ret += "<villages>\n";
+            for (Integer i : mVillageIDs) {
+                ret += "<village>" + i + "</village>\n";
+            }
+            ret += "</villages>\n";
+            ret += "</tag>\n";
+            return ret;
+        } catch (Exception e) {
+            return "\n";
         }
-        ret += "</villages>\n";
-        ret += "</tag>\n";
-        return ret;
     }
 
     public static void main(String[] args) throws Exception {

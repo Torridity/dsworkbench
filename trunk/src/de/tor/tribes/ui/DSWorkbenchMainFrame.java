@@ -39,9 +39,11 @@ import javax.swing.UIManager;
 import org.apache.log4j.Logger;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.ui.renderer.MapRenderer;
+import de.tor.tribes.util.ServerSettings;
 
 /**
  * @author  Charon
+ * @Todo Remove form entry for former versions
  */
 public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         MapPanelListener,
@@ -87,11 +89,13 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                 GlobalOptions.addProperty("troops.frame.visible", Boolean.toString(DSWorkbenchTroopsFrame.getSingleton().isVisible()));
                 GlobalOptions.addProperty("distance.frame.visible", Boolean.toString(DSWorkbenchDistanceFrame.getSingleton().isVisible()));
                 GlobalOptions.addProperty("rank.frame.visible", Boolean.toString(DSWorkbenchRankFrame.getSingleton().isVisible()));
+                GlobalOptions.addProperty("form.frame.visible", Boolean.toString(DSWorkbenchFormFrame.getSingleton().isVisible()));
                 GlobalOptions.addProperty("distance.frame.alwaysOnTop", Boolean.toString(DSWorkbenchDistanceFrame.getSingleton().isAlwaysOnTop()));
                 GlobalOptions.addProperty("attack.frame.alwaysOnTop", Boolean.toString(DSWorkbenchAttackFrame.getSingleton().isAlwaysOnTop()));
                 GlobalOptions.addProperty("marker.frame.alwaysOnTop", Boolean.toString(DSWorkbenchMarkerFrame.getSingleton().isAlwaysOnTop()));
                 GlobalOptions.addProperty("troops.frame.alwaysOnTop", Boolean.toString(DSWorkbenchTroopsFrame.getSingleton().isAlwaysOnTop()));
                 GlobalOptions.addProperty("rank.frame.alwaysOnTop", Boolean.toString(DSWorkbenchRankFrame.getSingleton().isAlwaysOnTop()));
+                GlobalOptions.addProperty("form.frame.alwaysOnTop", Boolean.toString(DSWorkbenchFormFrame.getSingleton().isAlwaysOnTop()));
                 GlobalOptions.addProperty("zoom.factor", Double.toString(dZoomFactor));
                 GlobalOptions.addProperty("last.x", jCenterX.getText());
                 GlobalOptions.addProperty("last.y", jCenterY.getText());
@@ -245,7 +249,9 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                 } else if (e.getSource() == DSWorkbenchTroopsFrame.getSingleton()) {
                     fireShowTroopsFrameEvent(null);
                 } else if (e.getSource() == DSWorkbenchRankFrame.getSingleton()) {
-                    fireShowRangFrame(null);
+                    fireShowRangFrameEvent(null);
+                } else if (e.getSource() == DSWorkbenchFormFrame.getSingleton()) {
+                    fireShowFormsFrameEvent(null);
                 }
 
             }
@@ -330,7 +336,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
     }
 
     /**Get current zoom factor*/
-    public double getZoomFactor() {
+    public synchronized double getZoomFactor() {
         return dZoomFactor;
     }
 
@@ -408,6 +414,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         TroopsManagerTableModel.getSingleton().setup();
         DSWorkbenchTroopsFrame.getSingleton().addFrameListener(this);
         DSWorkbenchRankFrame.getSingleton().addFrameListener(this);
+        DSWorkbenchFormFrame.getSingleton().addFrameListener(this);
     }
 
     /**Setup main map and mini map*/
@@ -523,6 +530,16 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             }
 
             try {
+                if (Boolean.parseBoolean(GlobalOptions.getProperty("form.frame.visible"))) {
+                    jShowFormsFrame.setSelected(true);
+                    logger.info("Restoring form frame");
+                    DSWorkbenchFormFrame.getSingleton().setVisible(true);
+                }
+
+            } catch (Exception e) {
+            }
+
+            try {
                 if (Boolean.parseBoolean(GlobalOptions.getProperty("toolbar.visible"))) {
                     jShowToolboxItem.setSelected(true);
                     logger.info("Restoring toolbar frame");
@@ -602,6 +619,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jShowMarkerFrame = new javax.swing.JCheckBoxMenuItem();
         jShowTroopsFrame = new javax.swing.JCheckBoxMenuItem();
         jShowRankFrame = new javax.swing.JCheckBoxMenuItem();
+        jShowFormsFrame = new javax.swing.JCheckBoxMenuItem();
         jMenu4 = new javax.swing.JMenu();
         jAboutItem = new javax.swing.JMenuItem();
 
@@ -1165,10 +1183,19 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jShowRankFrame.setText(bundle.getString("DSWorkbenchMainFrame.jShowRankFrame.text")); // NOI18N
         jShowRankFrame.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fireShowRangFrame(evt);
+                fireShowRangFrameEvent(evt);
             }
         });
         jMenu2.add(jShowRankFrame);
+
+        jShowFormsFrame.setBackground(new java.awt.Color(239, 235, 223));
+        jShowFormsFrame.setText(bundle.getString("DSWorkbenchMainFrame.jShowFormsFrame.text")); // NOI18N
+        jShowFormsFrame.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fireShowFormsFrameEvent(evt);
+            }
+        });
+        jMenu2.add(jShowFormsFrame);
 
         jMenuBar1.add(jMenu2);
 
@@ -1321,12 +1348,11 @@ private void fireZoomEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fir
     }
 }//GEN-LAST:event_fireZoomEvent
 
-    protected void zoomIn() {
+    protected synchronized void zoomIn() {
         dZoomFactor += 1.0 / 10.0;
         checkZoomRange();
 
-        dZoomFactor =
-                Double.parseDouble(NumberFormat.getInstance().format(dZoomFactor).replaceAll(",", "."));
+        dZoomFactor = Double.parseDouble(NumberFormat.getInstance().format(dZoomFactor).replaceAll(",", "."));
 
         double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
         double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
@@ -1334,12 +1360,11 @@ private void fireZoomEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fir
         MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.ALL_LAYERS);
     }
 
-    protected void zoomOut() {
+    protected synchronized void zoomOut() {
         dZoomFactor -= 1.0 / 10;
         checkZoomRange();
 
-        dZoomFactor =
-                Double.parseDouble(NumberFormat.getInstance().format(dZoomFactor).replaceAll(",", "."));
+        dZoomFactor = Double.parseDouble(NumberFormat.getInstance().format(dZoomFactor).replaceAll(",", "."));
 
         double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
         double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
@@ -1435,10 +1460,15 @@ private void fireCurrentPlayerVillagePopupEvent(javax.swing.event.PopupMenuEvent
     centerVillage((Village) jCurrentPlayerVillages.getSelectedItem());
 }//GEN-LAST:event_fireCurrentPlayerVillagePopupEvent
 
-private void fireShowRangFrame(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireShowRangFrame
+private void fireShowRangFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireShowRangFrameEvent
     DSWorkbenchRankFrame.getSingleton().setVisible(!DSWorkbenchRankFrame.getSingleton().isVisible());
     jShowRankFrame.setSelected(DSWorkbenchRankFrame.getSingleton().isVisible());
-}//GEN-LAST:event_fireShowRangFrame
+}//GEN-LAST:event_fireShowRangFrameEvent
+
+private void fireShowFormsFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireShowFormsFrameEvent
+    DSWorkbenchFormFrame.getSingleton().setVisible(!DSWorkbenchFormFrame.getSingleton().isVisible());
+    jShowFormsFrame.setSelected(DSWorkbenchFormFrame.getSingleton().isVisible());
+}//GEN-LAST:event_fireShowFormsFrameEvent
 
     /**Check if zoom factor is valid and correct if needed*/
     private void checkZoomRange() {
@@ -1458,17 +1488,15 @@ private void fireShowRangFrame(java.awt.event.ActionEvent evt) {//GEN-FIRST:even
     /**Update the MapPanel when dragging the ROI at the MiniMap
      */
     private void updateLocationByMinimap(int pX, int pY) {
-        double dx = 1000 / (double) MinimapPanel.getSingleton().getWidth() * (double) pX;
-        double dy = 1000 / (double) MinimapPanel.getSingleton().getHeight() * (double) pY;
+        double dx = ServerSettings.getSingleton().getMapDimension().getWidth() / (double) MinimapPanel.getSingleton().getWidth() * (double) pX;
+        double dy = ServerSettings.getSingleton().getMapDimension().getHeight() / (double) MinimapPanel.getSingleton().getHeight() * (double) pY;
 
         int x = (int) dx;
         int y = (int) dy;
         jCenterX.setText(Integer.toString(x));
         jCenterY.setText(Integer.toString(y));
-        iCenterX =
-                x;
-        iCenterY =
-                y;
+        iCenterX = x;
+        iCenterY = y;
         MapPanel.getSingleton().updateMapPosition(iCenterX, iCenterY);
         double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
         double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
@@ -1593,6 +1621,8 @@ private void fireShowRangFrame(java.awt.event.ActionEvent evt) {//GEN-FIRST:even
             jShowTroopsFrame.setSelected(DSWorkbenchTroopsFrame.getSingleton().isVisible());
         } else if (pSource == DSWorkbenchRankFrame.getSingleton()) {
             jShowRankFrame.setSelected(DSWorkbenchRankFrame.getSingleton().isVisible());
+        } else if (pSource == DSWorkbenchFormFrame.getSingleton()) {
+            jShowFormsFrame.setSelected(DSWorkbenchFormFrame.getSingleton().isVisible());
         }
     }
 
@@ -1676,6 +1706,7 @@ private void fireShowRangFrame(java.awt.event.ActionEvent evt) {//GEN-FIRST:even
     private javax.swing.JMenuItem jSearchItem;
     private javax.swing.JCheckBoxMenuItem jShowAttackFrame;
     private javax.swing.JCheckBoxMenuItem jShowDistanceFrame;
+    private javax.swing.JCheckBoxMenuItem jShowFormsFrame;
     private javax.swing.JCheckBoxMenuItem jShowMarkerFrame;
     private javax.swing.JCheckBoxMenuItem jShowRankFrame;
     private javax.swing.JCheckBoxMenuItem jShowToolboxItem;

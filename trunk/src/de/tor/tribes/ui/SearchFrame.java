@@ -30,7 +30,6 @@ public class SearchFrame extends javax.swing.JFrame implements SearchListener {
 
     private String sLastPlayerValue = null;
     private SearchThread mSearchThread = null;
-    private DSRealStatsFrame mStatsFrame = new DSRealStatsFrame();
     private static SearchFrame SINGLETON = null;
 
     public static synchronized SearchFrame getSingleton() {
@@ -71,14 +70,6 @@ public class SearchFrame extends javax.swing.JFrame implements SearchListener {
     private void initComponents() {
 
         buttonGroup1 = new javax.swing.ButtonGroup();
-        jPanel1 = new javax.swing.JPanel();
-        jTribeStats = new javax.swing.JRadioButton();
-        jAllyStats = new javax.swing.JRadioButton();
-        jShowPoints = new javax.swing.JCheckBox();
-        jShowBashOff = new javax.swing.JCheckBox();
-        jShowBashDef = new javax.swing.JCheckBox();
-        jButton1 = new javax.swing.JButton();
-        jLabel5 = new javax.swing.JLabel();
         jPlayerSearch = new javax.swing.JPanel();
         jSearchTerm = new javax.swing.JTextField();
         jSearchTermLabel = new javax.swing.JLabel();
@@ -96,73 +87,7 @@ public class SearchFrame extends javax.swing.JFrame implements SearchListener {
         jSendDefButton = new javax.swing.JButton();
         jInGameOptionsLabel = new javax.swing.JLabel();
 
-        jPanel1.setOpaque(false);
-
-        buttonGroup1.add(jTribeStats);
-        jTribeStats.setSelected(true);
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("de/tor/tribes/ui/Bundle"); // NOI18N
-        jTribeStats.setText(bundle.getString("SearchFrame.jTribeStats.text")); // NOI18N
-        jTribeStats.setOpaque(false);
-
-        buttonGroup1.add(jAllyStats);
-        jAllyStats.setText(bundle.getString("SearchFrame.jAllyStats.text")); // NOI18N
-        jAllyStats.setOpaque(false);
-
-        jShowPoints.setSelected(true);
-        jShowPoints.setText(bundle.getString("SearchFrame.jShowPoints.text")); // NOI18N
-        jShowPoints.setOpaque(false);
-
-        jShowBashOff.setText(bundle.getString("SearchFrame.jShowBashOff.text")); // NOI18N
-        jShowBashOff.setOpaque(false);
-
-        jShowBashDef.setText(bundle.getString("SearchFrame.jShowBashDef.text")); // NOI18N
-        jShowBashDef.setOpaque(false);
-
-        jButton1.setText(bundle.getString("SearchFrame.jButton1.text")); // NOI18N
-        jButton1.setToolTipText(bundle.getString("SearchFrame.jButton1.toolTipText")); // NOI18N
-        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireShowDSRealStatsEvent(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jTribeStats)
-                    .addComponent(jAllyStats)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jShowPoints)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jShowBashOff)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jShowBashDef)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 79, Short.MAX_VALUE)
-                        .addComponent(jButton1)))
-                .addContainerGap())
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jTribeStats)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jAllyStats)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jShowPoints)
-                    .addComponent(jShowBashOff)
-                    .addComponent(jButton1)
-                    .addComponent(jShowBashDef))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        jLabel5.setText(bundle.getString("SearchFrame.jLabel5.text")); // NOI18N
-
         setTitle(bundle.getString("SearchFrame.title")); // NOI18N
         setAlwaysOnTop(true);
 
@@ -452,46 +377,20 @@ private void fireSendResEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     }
 }//GEN-LAST:event_fireSendResEvent
 
-private void fireShowDSRealStatsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireShowDSRealStatsEvent
-    if (GlobalOptions.isOfflineMode()) {
-        JOptionPane.showMessageDialog(this, "Du musst Online sein um auf die DS-Real Statistik zugreifen zu können", "Fehler", JOptionPane.ERROR_MESSAGE);
-        return;
-    }
-    if (jAllyStats.isSelected()) {
-        if (jAllyList.getSelectedItem() instanceof String) {
-            return;
-        }
-        mStatsFrame.showStats((Ally) jAllyList.getSelectedItem(), jShowPoints.isSelected(), jShowBashOff.isSelected(), jShowBashDef.isSelected());
-    } else {
-        if (jTribesList.getSelectedItem() instanceof String) {
-            return;
-        }
-        mStatsFrame.showStats((Tribe) jTribesList.getSelectedItem(), jShowPoints.isSelected(), jShowBashOff.isSelected(), jShowBashDef.isSelected());
-    }
-}//GEN-LAST:event_fireShowDSRealStatsEvent
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JLabel jAlliesLabel;
     private javax.swing.JComboBox jAllyList;
-    private javax.swing.JRadioButton jAllyStats;
-    private javax.swing.JButton jButton1;
     private javax.swing.JButton jCenterButton;
     private javax.swing.JButton jCenterInGameButton;
     private javax.swing.JLabel jInGameOptionsLabel;
-    private javax.swing.JLabel jLabel5;
     private javax.swing.JButton jMarkAllyButton;
     private javax.swing.JButton jMarkTribeButton;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPlayerSearch;
     private javax.swing.JTextField jSearchTerm;
     private javax.swing.JLabel jSearchTermLabel;
     private javax.swing.JButton jSendDefButton;
     private javax.swing.JButton jSendResButton;
-    private javax.swing.JCheckBox jShowBashDef;
-    private javax.swing.JCheckBox jShowBashOff;
-    private javax.swing.JCheckBox jShowPoints;
-    private javax.swing.JRadioButton jTribeStats;
     private javax.swing.JLabel jTribesLabel;
     private javax.swing.JComboBox jTribesList;
     private javax.swing.JComboBox jVillageList;

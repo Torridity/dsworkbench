@@ -8,9 +8,11 @@
  */
 package de.tor.tribes.util;
 
+import de.tor.tribes.ui.DSWorkbenchMainFrame;
 import de.tor.tribes.ui.SkinPreviewFrame;
 import java.awt.Image;
 import java.awt.Point;
+import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -198,5 +200,19 @@ public class Skin {
 
     public int getFieldHeight() {
         return iFieldHeight;
+    }
+
+     public Point2D.Double getError() {
+        double z = DSWorkbenchMainFrame.getSingleton().getZoomFactor();
+        //get real size of one scaled texture
+        double w = getFieldWidth() / z;
+        double h = getFieldHeight() / z;
+        //get int size of texture
+        int ws = getImage(Skin.ID_DEFAULT_UNDERGROUND, z).getWidth(null);
+        int hs = getImage(Skin.ID_DEFAULT_UNDERGROUND, z).getHeight(null);
+        //calculate error in width and height
+        double errorw = w / ws - 1;
+        double errorh = h / hs - 1;
+        return new Point2D.Double(errorw, errorh);
     }
 }

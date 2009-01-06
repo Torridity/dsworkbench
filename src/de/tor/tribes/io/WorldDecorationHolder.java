@@ -98,4 +98,15 @@ public class WorldDecorationHolder {
         }
         return mTextures.get(decoration[pY * 1000 + pX]).getScaledInstance((int) Math.rint(mTextures.get(0).getWidth() / pScale), (int) Math.rint(mTextures.get(0).getHeight() / pScale), BufferedImage.SCALE_FAST);
     }
+
+    public static byte getTextureId(int pX, int pY) {
+        if ((pX < 0) || (pY < 0) || (pX > 999) || (pY > 999)) {
+            return 0;
+        }
+        byte t = decoration[pY * 1000 + pX];
+        if (t < 16) {
+            return 0;
+        }
+        return t;
+    }
 }

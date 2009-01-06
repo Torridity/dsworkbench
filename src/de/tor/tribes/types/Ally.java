@@ -23,7 +23,6 @@ import java.util.StringTokenizer;
  */
 public class Ally implements Serializable, Comparable {
 
-    private static final long serialVersionUID = 10L;
     private int id = 0;
     private String name = null;
     private String tag = null;
@@ -36,6 +35,7 @@ public class Ally implements Serializable, Comparable {
     private String stringRepresentation = null;
     //$id, $name, $tag, $members, $villages, $points, $all_points, $rank
 
+    /**Read ally from world data*/
     public static Ally parseFromPlainData(String pLine) {
         StringTokenizer tokenizer = new StringTokenizer(pLine, ",");
         Ally entry = new Ally();
@@ -46,15 +46,8 @@ public class Ally implements Serializable, Comparable {
         try {
             entry.setId(Integer.parseInt(tokenizer.nextToken()));
             String name = URLDecoder.decode(tokenizer.nextToken(), "UTF-8");
-            /* if ((name == null) || (name.trim().length() == 0)) {
-            throw new Exception();
-            }*/
             entry.setName(name);
-            String tag = URLDecoder.decode(tokenizer.nextToken(), "UTF-8");
-            /* if ((tag == null) || (tag.trim().length() == 0)) {
-            throw new Exception();
-            }*/
-
+            String tag = URLDecoder.decode(tokenizer.nextToken(), "UTF-8"); 
             entry.setTag(tag);
             entry.setMembers(Short.parseShort(tokenizer.nextToken()));
             entry.setVillages(Integer.parseInt(tokenizer.nextToken()));

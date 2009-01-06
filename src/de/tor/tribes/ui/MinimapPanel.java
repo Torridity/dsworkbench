@@ -9,6 +9,7 @@ import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Marker;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.util.GlobalOptions;
+import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.ToolChangeListener;
 import de.tor.tribes.util.mark.MarkerManager;
 import de.tor.tribes.util.mark.MarkerManagerListener;
@@ -632,8 +633,8 @@ class MinimapRepaintThread extends Thread {
             markedOnly = false;
         }
 
-        for (int i = 0; i < 1000; i++) {
-            for (int j = 0; j < 1000; j++) {
+        for (int i = 0; i < ServerSettings.getSingleton().getMapDimension().getWidth(); i++) {
+            for (int j = 0; j < ServerSettings.getSingleton().getMapDimension().getHeight(); j++) {
                 Village v = mVisibleVillages[i][j];
                 if (v != null) {
                     Color mark = null;

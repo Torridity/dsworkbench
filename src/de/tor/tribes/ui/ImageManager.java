@@ -53,6 +53,10 @@ public class ImageManager {
     public final static int CURSOR_ZOOM = 14;
     public final static int CURSOR_SHOT = 15;
     public final static int CURSOR_SUPPORT = 16;
+    public final static int CURSOR_DRAW_LINE = 17;
+    public final static int CURSOR_DRAW_RECT = 18;
+    public final static int CURSOR_DRAW_CIRCLE = 19;
+    public final static int CURSOR_DRAW_TEXT = 20;
     private static final List<Cursor> CURSORS = new LinkedList<Cursor>();
     private static final List<ImageIcon> CURSOR_IMAGES = new LinkedList<ImageIcon>();
     private static final List<ImageIcon> UNIT_ICONS = new LinkedList<ImageIcon>();
@@ -80,7 +84,12 @@ public class ImageManager {
             loadCursor("graphics/cursors/move.png", "move");
             loadCursor("graphics/cursors/zoom.png", "zoom");
             loadCursor("graphics/cursors/camera.png", "camera");
-             loadCursor("graphics/cursors/support.png", "support");
+            loadCursor("graphics/cursors/support.png", "support");
+            loadCursor("graphics/cursors/draw_line.png", "draw_line");
+            loadCursor("graphics/cursors/draw_rect.png", "draw_rect");
+            loadCursor("graphics/cursors/draw_circle.png", "draw_circle");
+            loadCursor("graphics/cursors/draw_text.png", "draw_text");
+
         } catch (Exception e) {
             logger.error("Failed to load cursor images", e);
             throw new Exception("Failed to load cursors");

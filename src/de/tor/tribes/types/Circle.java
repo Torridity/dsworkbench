@@ -65,12 +65,12 @@ public class Circle extends AbstractForm {
 
     @Override
     public void renderForm(Graphics2D g2d) {
-        Point s = MapPanel.getSingleton().virtualPosToSceenPos(getXPos(), getYPos());
-        Point e = MapPanel.getSingleton().virtualPosToSceenPos(getXPosEnd(), getYPosEnd());
-        int x = (int) ((s.x < e.x) ? s.x : e.x);
-        int y = (int) ((s.y < e.y) ? s.y : e.y);
-        int w = (int) Math.rint(Math.abs(s.x - e.x));
-        int h = (int) Math.rint(Math.abs(s.y - e.y));
+        Point2D.Double s = MapPanel.getSingleton().virtualPosToSceenPosDouble(getXPos(), getYPos());
+        Point.Double e = MapPanel.getSingleton().virtualPosToSceenPosDouble(getXPosEnd(), getYPosEnd());
+        int x = (int) Math.rint((s.getX() < e.getX()) ? s.getX() : e.getX());
+        int y = (int) Math.rint((s.getY() < e.getY()) ? s.getY() : e.getY());
+        int w = (int) Math.rint(Math.abs(s.getX() - e.getX()));
+        int h = (int) Math.rint(Math.abs(s.getY() - e.getY()));
 
         if (new Ellipse2D.Double(x, y, w, h).intersects(MapPanel.getSingleton().getBounds())) {
             setVisibleOnMap(true);

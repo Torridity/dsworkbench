@@ -19,6 +19,8 @@ import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.io.File;
 import java.io.FileWriter;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.LinkedList;
@@ -83,6 +85,7 @@ public class AttackManager {
                 Document d = JaxenUtils.getDocument(attackFile);
                 for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//plans/plan")) {
                     String planKey = e.getAttributeValue("key");
+                    planKey = URLDecoder.decode(planKey, "UTF-8");
                     if (logger.isDebugEnabled()) {
                         logger.debug("Loading plan '" + planKey + "'");
                     }
@@ -93,9 +96,7 @@ public class AttackManager {
                         if (a != null) {
                             Village source = DataHolder.getSingleton().getVillages()[a.getSource().getX()][a.getSource().getY()];
                             Village target = DataHolder.getSingleton().getVillages()[a.getTarget().getX()][a.getTarget().getY()];
-                            Date sendTime = new Date(a.getArriveTime().getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(source, target, a.getUnit().getSpeed()) * 1000));
                             addAttack(source, target, a.getUnit(), a.getArriveTime(), a.isShowOnMap(), planKey);
-                        //AttackManagerTableModel.getSingleton().addRow(new Object[]{source, target, a.getUnit(), sendTime, a.getArriveTime(), a.isShowOnMap()});
                         }
                     }
                 }
@@ -119,7 +120,7 @@ public class AttackManager {
             Enumeration<String> plans = mAttackPlans.keys();
             while (plans.hasMoreElements()) {
                 String key = plans.nextElement();
-                w.write("<plan key=\"" + key + "\">\n");
+                w.write("<plan key=\"" + URLEncoder.encode(key, "UTF-8") + "\">\n");
                 List<Attack> attacks = mAttackPlans.get(key);
                 w.write("<attacks>\n");
                 for (Attack a : attacks) {

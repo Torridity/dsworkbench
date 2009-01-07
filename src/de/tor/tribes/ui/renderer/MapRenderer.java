@@ -148,7 +148,11 @@ public class MapRenderer extends Thread {
 
                     //draw live layer
                     renderLiveLayer(g2d);
-                    // MapPanel.getSingleton().getDrawView().paint(g2d);
+                    de.tor.tribes.types.Rectangle selection = MapPanel.getSingleton().getSelectionRect();
+                    if (selection != null) {
+                        selection.renderForm(g2d);
+                    }
+
                     MenuRenderer.getSingleton().renderMenu(g2d);
                     MapPanel.getSingleton().updateComplete(mVisibleVillages, iBuffer);
                     MapPanel.getSingleton().repaint();
@@ -294,6 +298,8 @@ public class MapRenderer extends Thread {
          */
         Hashtable<Integer, Point> copyRegions = new Hashtable<Integer, Point>();
 
+        de.tor.tribes.types.Rectangle selection = MapPanel.getSingleton().getSelectionRect();
+
         // <editor-fold defaultstate="collapsed" desc="Village drawing">
         for (int i = 0; i < iVillagesX; i++) {
             for (int j = 0; j < iVillagesY; j++) {
@@ -343,12 +349,8 @@ public class MapRenderer extends Thread {
 
                 if (v == null) {
                     Image underground = null;
-                    //int id = 0;
                     if (useDecoration) {
-                        //long s2 = System.currentTimeMillis();
                         underground = WorldDecorationHolder.getTexture(xPos, yPos, currentZoom);
-                    // id = WorldDecorationHolder.getTextureId(xPos, yPos);
-                    // transTime += (System.currentTimeMillis() - s2);
                     }
                     if (underground == null) {
                         Point p = copyRegions.get(Skin.ID_DEFAULT_UNDERGROUND);
@@ -358,20 +360,10 @@ public class MapRenderer extends Thread {
                                 copyRegions.put(Skin.ID_DEFAULT_UNDERGROUND, new Point(x, y));
                             }
                         } else {
-                            //long s2 = System.currentTimeMillis();
                             g2d.copyArea(p.x, p.y, width, height, x - p.x, y - p.y);
-                        //copyTime += (System.currentTimeMillis() - s2);
                         }
                     } else {
-                        // long s3 = System.currentTimeMillis();
                         g2d.drawImage(underground, x, y, null);
-                    //if(id > 0){
-                    //Color cc = g2d.getColor();
-                    //g2d.setColor(Color.MAGENTA);
-                    //g2d.drawString("" + (id-16), x, y);
-                    //g2d.setColor(cc);
-                    //}
-                    // drawTime += (System.currentTimeMillis() - s3);
                     }
                 } else {
                     int type = Skin.ID_V1;
@@ -469,18 +461,18 @@ public class MapRenderer extends Thread {
 
                     Point p = copyRegions.get(type);
                     if (p == null) {
-                        // long s2 = System.currentTimeMillis();
                         g2d.drawImage(GlobalOptions.getSkin().getImage(type, currentZoom), x, y, null);
-                        //drawTime += (System.currentTimeMillis() - s2);
                         if (MapPanel.getSingleton().getBounds().contains(new Rectangle(x, y, width, height))) {
                             copyRegions.put(type, new Point(x, y));
                         }
                     } else {
-                        // long s2 = System.currentTimeMillis();
                         g2d.copyArea(p.x, p.y, width, height, x - p.x, y - p.y);
-                    //  copyTime += (System.currentTimeMillis() - s2);
                     }
-
+                    if (selection != null) {
+                        if (new Rectangle((int) selection.getXPos(), (int) selection.getYPos(), (int) selection.getXPosEnd() - (int) selection.getXPos(), (int) selection.getYPosEnd() - (int) selection.getYPos()).intersects(v.getVirtualBounds())) {
+                            System.out.println("INter");
+                        }
+                    }
                 }
 
                 y += height;
@@ -846,7 +838,8 @@ public class MapRenderer extends Thread {
             return;
         }
 
-        for (AbstractForm form : FormManager.getSingleton().getForms()) {
+        AbstractForm[] forms = FormManager.getSingleton().getForms().toArray(new AbstractForm[]{});
+        for (AbstractForm form : forms) {
             form.renderForm(g2d);
         }
 

@@ -9,7 +9,10 @@
 package de.tor.tribes.types;
 
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.ui.DSWorkbenchMainFrame;
+import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.tag.TagManager;
+import java.awt.geom.Rectangle2D;
 import java.io.Serializable;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -284,6 +287,13 @@ public class Village implements Serializable, Comparable {
         }
 
         return b.toString();
+    }
+
+    public Rectangle2D.Double getVirtualBounds() {
+        int w = GlobalOptions.getSkin().getFieldWidth();
+        int h = GlobalOptions.getSkin().getFieldHeight();
+        double z = DSWorkbenchMainFrame.getSingleton().getZoomFactor();
+        return new Rectangle2D.Double(getX(), getY(), (double) w / z, (double) h / z);
     }
 
     @Override

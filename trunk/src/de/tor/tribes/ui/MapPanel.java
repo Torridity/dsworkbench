@@ -6,7 +6,6 @@
 package de.tor.tribes.ui;
 
 import de.tor.tribes.io.DataHolder;
-import de.tor.tribes.types.AbstractForm;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.util.BrowserCommandSender;
 import de.tor.tribes.util.GlobalOptions;
@@ -29,10 +28,10 @@ import org.apache.log4j.Logger;
 import de.tor.tribes.ui.renderer.MapRenderer;
 import de.tor.tribes.ui.renderer.MenuRenderer;
 import de.tor.tribes.util.Skin;
+import de.tor.tribes.util.VillageSelectionListener;
 import de.tor.tribes.util.map.FormManager;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 
 /**
@@ -47,7 +46,7 @@ public class MapPanel extends javax.swing.JPanel {
     private Image mBuffer = null;
     private int iCenterX = 500;
     private int iCenterY = 500;
-    private Rectangle2D mVirtualBounds = null;
+    private Rectangle2D.Double mVirtualBounds = null;
     private int iCurrentCursor = ImageManager.CURSOR_DEFAULT;
     private Village mSourceVillage = null;
     private Village mTargetVillage = null;
@@ -64,6 +63,8 @@ public class MapPanel extends javax.swing.JPanel {
     private static MapPanel SINGLETON = null;
     private AttackAddFrame attackAddFrame = null;
     private boolean positionUpdate = false;
+    private de.tor.tribes.types.Rectangle selectionRect = null;
+    private VillageSelectionListener mVillageSelectionListener = null;
     // </editor-fold>
 
     public static synchronized MapPanel getSingleton() {
@@ -84,45 +85,10 @@ public class MapPanel extends javax.swing.JPanel {
         setCursor(ImageManager.getCursor(iCurrentCursor));
         setIgnoreRepaint(true);
         attackAddFrame = new AttackAddFrame();
-        mVirtualBounds = new Rectangle(0, 0, 0, 0);
-        /*
-        lf = new DSWorkbenchRectangle();
-        lf.setBounds(new Point2D.Double(40, 40), new Point2D.Double(200, 80));
-        // Add all figures to a drawing
-        drawing = new DSWorkbenchDefaultDrawing();
-        drawing.add(lf);
-
-        view = new DSWorkbenchDrawingView();
-        view.setDrawing(drawing);
-        //view.setBounds(getBounds());
-        view.setBackground(null);
-        editor = new DefaultDrawingEditor();
-        editor.add(view);
-        add(view);
-        // Activate the following line to see the SelectionTool in full
-        // action.
-        //drawing.setCanvasSize(new Dimension2DDouble(1000 * 56, 1000 * 38));
-        t = new DSWorkbenchCreationTool(new DSWorkbenchRectangle());//new SelectionTool();
-        editor.setTool(t);*/
+        mVirtualBounds = new Rectangle2D.Double(0.0, 0.0, 0.0, 0.0);
         initListeners();
     }
-    /* DSWorkbenchRectangle lf;
-    DSWorkbenchDrawingView view;
-    DrawingEditor editor;
-    DSWorkbenchCreationTool t;
-    public Drawing drawing;*/
 
-    /* public DSWorkbenchDrawingView getDrawView() {
-    return view;
-    }
-
-    public DrawingEditor getEditor() {
-    return editor;
-    }
-
-    public Tool getTool() {
-    return t;
-    }*/
     public synchronized void addMapPanelListener(MapPanelListener pListener) {
         mMapPanelListeners.add(pListener);
     }
@@ -139,6 +105,10 @@ public class MapPanel extends javax.swing.JPanel {
         mMapPanelListeners.remove(pListener);
     }
 
+    public de.tor.tribes.types.Rectangle getSelectionRect() {
+        return selectionRect;
+    }
+
     private void initListeners() {
 
         // <editor-fold defaultstate="collapsed" desc="MouseWheelListener for Tool changes">
@@ -151,20 +121,12 @@ public class MapPanel extends javax.swing.JPanel {
                 } else {
                     DSWorkbenchMainFrame.getSingleton().zoomIn();
                 }
-            /* iCurrentCursor += e.getWheelRotation();
-            if (iCurrentCursor < 0) {
-            iCurrentCursor = ImageManager.CURSOR_ATTACK_HEAVY;
-            } else if (iCurrentCursor > ImageManager.CURSOR_ATTACK_HEAVY) {
-            iCurrentCursor = ImageManager.CURSOR_DEFAULT;
-
-            }
-            setCursor(ImageManager.getCursor(iCurrentCursor));
-            fireToolChangedEvents(iCurrentCursor);*/
             }
         });
         //</editor-fold>
 
         // <editor-fold defaultstate="collapsed" desc="MouseListener for cursor events">
+
         addMouseListener(new MouseListener() {
 
             @Override
@@ -300,6 +262,7 @@ public class MapPanel extends javax.swing.JPanel {
 
             @Override
             public void mousePressed(MouseEvent e) {
+
                 if (e.getButton() != MouseEvent.BUTTON1) {
                     return;
                 }
@@ -320,37 +283,52 @@ public class MapPanel extends javax.swing.JPanel {
                 }
 
                 switch (iCurrentCursor) {
+                    case ImageManager.CURSOR_DEFAULT: {
+                        if (mVillageSelectionListener != null) {
+                            selectionRect = new de.tor.tribes.types.Rectangle();
+                            selectionRect.setDrawColor(Color.YELLOW);
+                            selectionRect.setFilled(true);
+                            selectionRect.setDrawAlpha(0.2f);
+                            selectionRect.setDrawName(true);
+                            selectionRect.setTextColor(Color.BLUE);
+                            selectionRect.setTextAlpha(0.7f);
+                            selectionRect.setTextSize(24);
+                            Point2D.Double pos = mouseToVirtualPos(e.getX(), e.getY());
+                            selectionRect.setXPos(pos.x);
+                            selectionRect.setYPos(pos.y);
+                        }
+                        break;
+                    }
                     case ImageManager.CURSOR_MEASURE: {
                         //start drag if attack tool is active
                         mSourceVillage = getVillageAtMousePos();
                         if (mSourceVillage != null) {
-                            //mRepaintThread.setDragLine(mSourceVillage.getX(), mSourceVillage.getY(), e.getX(), e.getY());
                             mMapRenderer.setDragLine(mSourceVillage.getX(), mSourceVillage.getY(), e.getX(), e.getY());
                         }
                         break;
                     }
                     case ImageManager.CURSOR_DRAW_LINE: {
-                        double z = DSWorkbenchMainFrame.getSingleton().getZoomFactor();
-                        FormConfigFrame.getSingleton().getCurrentForm().setXPos(mVirtualBounds.getX() + (double) e.getX() * z);
-                        FormConfigFrame.getSingleton().getCurrentForm().setYPos(mVirtualBounds.getY() + (double) e.getY() * z);
+                        Point2D.Double pos = mouseToVirtualPos(e.getX(), e.getY());
+                        FormConfigFrame.getSingleton().getCurrentForm().setXPos(pos.x);
+                        FormConfigFrame.getSingleton().getCurrentForm().setYPos(pos.y);
                         break;
                     }
                     case ImageManager.CURSOR_DRAW_RECT: {
-                        double z = DSWorkbenchMainFrame.getSingleton().getZoomFactor();
-                        FormConfigFrame.getSingleton().getCurrentForm().setXPos(mVirtualBounds.getX() + (double) e.getX() * z);
-                        FormConfigFrame.getSingleton().getCurrentForm().setYPos(mVirtualBounds.getY() + (double) e.getY() * z);
+                        Point2D.Double pos = mouseToVirtualPos(e.getX(), e.getY());
+                        FormConfigFrame.getSingleton().getCurrentForm().setXPos(pos.x);
+                        FormConfigFrame.getSingleton().getCurrentForm().setYPos(pos.y);
                         break;
                     }
                     case ImageManager.CURSOR_DRAW_CIRCLE: {
-                        double z = DSWorkbenchMainFrame.getSingleton().getZoomFactor();
-                        FormConfigFrame.getSingleton().getCurrentForm().setXPos(mVirtualBounds.getX() + (double) e.getX() * z);
-                        FormConfigFrame.getSingleton().getCurrentForm().setYPos(mVirtualBounds.getY() + (double) e.getY() * z);
+                        Point2D.Double pos = mouseToVirtualPos(e.getX(), e.getY());
+                        FormConfigFrame.getSingleton().getCurrentForm().setXPos(pos.x);
+                        FormConfigFrame.getSingleton().getCurrentForm().setYPos(pos.y);
                         break;
                     }
                     case ImageManager.CURSOR_DRAW_TEXT: {
-                        double z = DSWorkbenchMainFrame.getSingleton().getZoomFactor();
-                        FormConfigFrame.getSingleton().getCurrentForm().setXPos(mVirtualBounds.getX() + (double) e.getX() * z);
-                        FormConfigFrame.getSingleton().getCurrentForm().setYPos(mVirtualBounds.getY() + (double) e.getY() * z);
+                        Point2D.Double pos = mouseToVirtualPos(e.getX(), e.getY());
+                        FormConfigFrame.getSingleton().getCurrentForm().setXPos(pos.x);
+                        FormConfigFrame.getSingleton().getCurrentForm().setYPos(pos.y);
                         break;
                     }
                     default: {
@@ -396,6 +374,18 @@ public class MapPanel extends javax.swing.JPanel {
                     }
 
                     switch (iCurrentCursor) {
+                        case ImageManager.CURSOR_DEFAULT: {
+                            if (mVillageSelectionListener != null) {
+                                int xs = (int) Math.floor(selectionRect.getXPos());
+                                int ys = (int) Math.floor(selectionRect.getYPos());
+                                int xe = (int) Math.floor(selectionRect.getXPosEnd());
+                                int ye = (int) Math.floor(selectionRect.getYPosEnd());
+                                mVillageSelectionListener.fireSelectionFinishedEvent(new Point(xs, ys), new Point(xe, ye));
+                                selectionRect = null;
+                                mVillageSelectionListener = null;
+                            }
+                            break;
+                        }
                         case ImageManager.CURSOR_MEASURE: {
                             break;
                         }
@@ -482,6 +472,20 @@ public class MapPanel extends javax.swing.JPanel {
                 }
 
                 switch (iCurrentCursor) {
+                    case ImageManager.CURSOR_DEFAULT: {
+                        if (mVillageSelectionListener != null) {
+                            Point2D.Double pos = mouseToVirtualPos(e.getX(), e.getY());
+                            int xs = (int) Math.floor(selectionRect.getXPos());
+                            int ys = (int) Math.floor(selectionRect.getYPos());
+                            int xe = (int) Math.floor(selectionRect.getXPosEnd());
+                            int ye = (int) Math.floor(selectionRect.getYPosEnd());
+                            String name = ((xe - xs) * (ye - ys)) + " Felder";
+                            selectionRect.setFormName(name);
+                            selectionRect.setXPosEnd(pos.x);
+                            selectionRect.setYPosEnd(pos.y);
+                        }
+                        break;
+                    }
                     case ImageManager.CURSOR_MEASURE: {
                         //update drag if attack tool is active
                         if (mSourceVillage != null) {
@@ -493,33 +497,33 @@ public class MapPanel extends javax.swing.JPanel {
                         break;
                     }
                     case ImageManager.CURSOR_DRAW_LINE: {
-                        double z = DSWorkbenchMainFrame.getSingleton().getZoomFactor();
-                        ((de.tor.tribes.types.Line) FormConfigFrame.getSingleton().getCurrentForm()).setXPosEnd(mVirtualBounds.getX() + (double) (e.getX()) * z);
-                        ((de.tor.tribes.types.Line) FormConfigFrame.getSingleton().getCurrentForm()).setYPosEnd(mVirtualBounds.getY() + (double) (e.getY()) * z);
+                        Point2D.Double pos = mouseToVirtualPos(e.getX(), e.getY());
+                        ((de.tor.tribes.types.Line) FormConfigFrame.getSingleton().getCurrentForm()).setXPosEnd(pos.x);
+                        ((de.tor.tribes.types.Line) FormConfigFrame.getSingleton().getCurrentForm()).setYPosEnd(pos.y);
+
                         break;
                     }
                     case ImageManager.CURSOR_DRAW_RECT: {
-                        double z = DSWorkbenchMainFrame.getSingleton().getZoomFactor();
-                        ((de.tor.tribes.types.Rectangle) FormConfigFrame.getSingleton().getCurrentForm()).setXPosEnd(mVirtualBounds.getX() + (double) (e.getX()) * z);
-                        ((de.tor.tribes.types.Rectangle) FormConfigFrame.getSingleton().getCurrentForm()).setYPosEnd(mVirtualBounds.getY() + (double) (e.getY()) * z);
+                        Point2D.Double pos = mouseToVirtualPos(e.getX(), e.getY());
+                        ((de.tor.tribes.types.Rectangle) FormConfigFrame.getSingleton().getCurrentForm()).setXPosEnd(pos.x);
+                        ((de.tor.tribes.types.Rectangle) FormConfigFrame.getSingleton().getCurrentForm()).setYPosEnd(pos.y);
                         break;
                     }
                     case ImageManager.CURSOR_DRAW_CIRCLE: {
-                        double z = DSWorkbenchMainFrame.getSingleton().getZoomFactor();
-                        ((de.tor.tribes.types.Circle) FormConfigFrame.getSingleton().getCurrentForm()).setXPosEnd(mVirtualBounds.getX() + (double) (e.getX()) * z);
-                        ((de.tor.tribes.types.Circle) FormConfigFrame.getSingleton().getCurrentForm()).setYPosEnd(mVirtualBounds.getY() + (double) (e.getY()) * z);
+                        Point2D.Double pos = mouseToVirtualPos(e.getX(), e.getY());
+                        ((de.tor.tribes.types.Circle) FormConfigFrame.getSingleton().getCurrentForm()).setXPosEnd(pos.x);
+                        ((de.tor.tribes.types.Circle) FormConfigFrame.getSingleton().getCurrentForm()).setYPosEnd(pos.y);
                         break;
                     }
                     case ImageManager.CURSOR_DRAW_TEXT: {
-                        double z = DSWorkbenchMainFrame.getSingleton().getZoomFactor();
-                        ((de.tor.tribes.types.Text) FormConfigFrame.getSingleton().getCurrentForm()).setXPos(mVirtualBounds.getX() + (double) (e.getX()) * z);
-                        ((de.tor.tribes.types.Text) FormConfigFrame.getSingleton().getCurrentForm()).setYPos(mVirtualBounds.getY() + (double) (e.getY()) * z);
+                        Point2D.Double pos = mouseToVirtualPos(e.getX(), e.getY());
+                        ((de.tor.tribes.types.Text) FormConfigFrame.getSingleton().getCurrentForm()).setXPos(pos.x);
+                        ((de.tor.tribes.types.Text) FormConfigFrame.getSingleton().getCurrentForm()).setYPos(pos.y);
                         break;
                     }
                     default: {
                         if (isAttack) {
                             if (mSourceVillage != null) {
-                                //mRepaintThread.setDragLine((int) mSourceVillage.getX(), (int) mSourceVillage.getY(), e.getX(), e.getY());
                                 mMapRenderer.setDragLine(mSourceVillage.getX(), mSourceVillage.getY(), e.getX(), e.getY());
                                 mTargetVillage = getVillageAtMousePos();
                             }
@@ -531,6 +535,7 @@ public class MapPanel extends javax.swing.JPanel {
             @Override
             public void mouseMoved(MouseEvent e) {
                 fireVillageAtMousePosChangedEvents(getVillageAtMousePos());
+
                 if (isOutside) {
                     mousePos = e.getLocationOnScreen();
                 }
@@ -629,6 +634,7 @@ public class MapPanel extends javax.swing.JPanel {
 
                 fireScrollEvents(sx, sy);
             }
+
             //draw off-screen image of map
             Graphics2D g2d = (Graphics2D) g;
             g2d.drawImage(mBuffer, 0, 0, getWidth(), getHeight(), null);
@@ -636,6 +642,7 @@ public class MapPanel extends javax.swing.JPanel {
         } catch (Exception e) {
             logger.error("Failed to paint", e);
         }
+
     }
 
     /**Update map to new position -> needs fully update*/
@@ -648,22 +655,37 @@ public class MapPanel extends javax.swing.JPanel {
             mMapRenderer = new MapRenderer();
             mMapRenderer.start();
         }
+
         positionUpdate = true;
         getMapRenderer().initiateRedraw(MapRenderer.ALL_LAYERS);
     }
 
     public void updateVirtualBounds(Point pViewStart) {
-        double zoom = DSWorkbenchMainFrame.getSingleton().getZoomFactor();
+        /*double zoom = DSWorkbenchMainFrame.getSingleton().getZoomFactor();
         double xV = pViewStart.x * GlobalOptions.getSkin().getFieldWidth();
         double yV = pViewStart.y * GlobalOptions.getSkin().getFieldHeight();
         double wV = (int) Math.rint(getWidth() * zoom);
         double hV = (int) Math.rint(getHeight() * zoom);
+        mVirtualBounds.setRect(xV, yV, wV, hV);*/
+        double zoom = DSWorkbenchMainFrame.getSingleton().getZoomFactor();
+        double xV = pViewStart.getX();
+        double yV = pViewStart.getY();
+        double wV = (double) getWidth() / ((double) GlobalOptions.getSkin().getFieldWidth() / zoom);
+        double hV = (double) getHeight() / ((double) GlobalOptions.getSkin().getFieldHeight() / zoom);
         mVirtualBounds.setRect(xV, yV, wV, hV);
-    //getDrawView().setBounds(getBounds());
     }
 
     public Point getCurrentPosition() {
         return new Point(iCenterX, iCenterY);
+    }
+
+    public synchronized boolean enableVillageSelectionMode(VillageSelectionListener pListener) {
+        if (mVillageSelectionListener != null) {
+            //another selection still in progress
+            return false;
+        }
+        mVillageSelectionListener = pListener;
+        return true;
     }
 
     public Point.Double getCurrentVirtualPosition() {
@@ -672,26 +694,49 @@ public class MapPanel extends javax.swing.JPanel {
 
     public Point virtualPosToSceenPos(double pXVirt, double pYVirt) {
         double z = DSWorkbenchMainFrame.getSingleton().getZoomFactor();
-        Point2D.Double error = GlobalOptions.getSkin().getError();
         //calculate real pos in current frame
         double xp = (pXVirt - mVirtualBounds.getX());
         double yp = (pYVirt - mVirtualBounds.getY());
-        //correct error and add scaling
-        int x = (int) Math.rint((xp - xp * error.getX()) / z);
-        int y = (int) Math.rint((yp - yp * error.getY()) / z);
-        return new Point(x, y);
+        //calc full villages
+        int xVill = (int) Math.floor(xp);
+        int yVill = (int) Math.floor(yp);
+        double dx = xp - xVill;
+        double dy = yp - yVill;
+        double width = GlobalOptions.getSkin().getFieldWidth() / z;
+        double height = GlobalOptions.getSkin().getFieldHeight() / z;
+        double xpos = xVill * width + dx * width;
+        double ypos = yVill * height + dy * height;
+        return new Point((int) Math.rint(xpos), (int) Math.rint(ypos));
+    }
+
+    public Point2D.Double mouseToVirtualPos(int pX, int pY) {
+        double z = DSWorkbenchMainFrame.getSingleton().getZoomFactor();
+        double x = mVirtualBounds.getX();
+        double y = mVirtualBounds.getY();
+        double mx = (double) pX / (double) GlobalOptions.getSkin().getFieldWidth() * z;
+        double my = (double) pY / (double) GlobalOptions.getSkin().getFieldHeight() * z;
+        double villx = Math.floor(mx);
+        double villy = Math.floor(my);
+        x += villx + (mx - villx);
+        y += villy + (my - villy);
+        return new Point2D.Double(x, y);
     }
 
     public Point2D.Double virtualPosToSceenPosDouble(double pXVirt, double pYVirt) {
         double z = DSWorkbenchMainFrame.getSingleton().getZoomFactor();
-        Point2D.Double error = GlobalOptions.getSkin().getError();
         //calculate real pos in current frame
         double xp = (pXVirt - mVirtualBounds.getX());
         double yp = (pYVirt - mVirtualBounds.getY());
-        //correct error and add scaling
-        double x = (xp - xp * error.getX()) / z;
-        double y = (yp - yp * error.getY()) / z;
-        return new Point2D.Double(x, y);
+        //calc full villages
+        int xVill = (int) Math.floor(xp);
+        int yVill = (int) Math.floor(yp);
+        double dx = xp - xVill;
+        double dy = yp - yVill;
+        double width = GlobalOptions.getSkin().getFieldWidth() / z;
+        double height = GlobalOptions.getSkin().getFieldHeight() / z;
+        double xpos = xVill * width + dx * width;
+        double ypos = yVill * height + dy * height;
+        return new Point2D.Double(xpos, ypos);
     }
 
     public Rectangle2D getVirtualBounds() {
@@ -703,12 +748,15 @@ public class MapPanel extends javax.swing.JPanel {
         if (MenuRenderer.getSingleton().isVisible()) {
             return null;
         }
+
         try {
             int x = (int) getMousePosition().getX();
             int y = (int) getMousePosition().getY();
 
-            x /= GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, DSWorkbenchMainFrame.getSingleton().getZoomFactor()).getWidth(null);
-            y /= GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, DSWorkbenchMainFrame.getSingleton().getZoomFactor()).getHeight(null);
+            x /=
+                    GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, DSWorkbenchMainFrame.getSingleton().getZoomFactor()).getWidth(null);
+            y /=
+                    GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, DSWorkbenchMainFrame.getSingleton().getZoomFactor()).getHeight(null);
 
             return mVisibleVillages[x][y];
         } catch (Exception e) {
@@ -726,43 +774,6 @@ public class MapPanel extends javax.swing.JPanel {
         return null;
     }
 
-    // <editor-fold defaultstate="collapsed" desc=" Virt Stuff ">
-
-    /*
-    public Village virtualPosToVillage(double pX, double pY) {
-    double vWidth = getVirtualMapSize().getWidth();
-    double vHeight = getVirtualMapSize().getHeight();
-    Dimension mapDim = ServerSettings.getSingleton().getMapDimension();
-    double realX = pX / vWidth * mapDim.getWidth();
-    double realY = pY / vHeight * mapDim.getHeight();
-    int xf = (int) Math.round(realX - 0.5);
-    int yf = (int) Math.round(realY - 0.5);
-    System.out.println(xf + "||" + yf);
-    System.out.println(ServerSettings.getSingleton().getMapDimension());
-    if ((xf >= ServerSettings.getSingleton().getMapDimension().getWidth()) || (yf >= ServerSettings.getSingleton().getMapDimension().getHeight())) {
-
-    return null;
-    }
-    return DataHolder.getSingleton().getVillages()[xf][yf];
-    }
-
-    public Point virtualPosToVillagePos(double pX, double pY) {
-    double vWidth = getVirtualMapSize().getWidth();
-    double vHeight = getVirtualMapSize().getHeight();
-    Dimension mapDim = ServerSettings.getSingleton().getMapDimension();
-    double realX = pX / vWidth * mapDim.getWidth();
-    double realY = pY / vHeight * mapDim.getHeight();
-    int xf = (int) Math.round(realX - 0.5);
-    int yf = (int) Math.round(realY - 0.5);
-    return new Point(xf, yf);
-    }
-
-    public Dimension getVirtualMapSize() {
-    Dimension dim = ServerSettings.getSingleton().getMapDimension();
-    return new Dimension((int) dim.getWidth() * GlobalOptions.getSkin().getFieldWidth(), (int) dim.getHeight() * GlobalOptions.getSkin().getFieldHeight());
-    }
-     */
-// </editor-fold>
     /**Update operation perfomed by the RepaintThread was completed*/
     public void updateComplete(Village[][] pVillages, Image pBuffer) {
         mBuffer = pBuffer;
@@ -770,6 +781,7 @@ public class MapPanel extends javax.swing.JPanel {
         if (positionUpdate) {
             DSWorkbenchFormFrame.getSingleton().updateFormList();
         }
+
         positionUpdate = false;
     }
 
@@ -789,12 +801,14 @@ public class MapPanel extends javax.swing.JPanel {
         for (MapPanelListener listener : mMapPanelListeners) {
             listener.fireDistanceEvent(pSource, pTarget);
         }
+
     }
 
     public synchronized void fireScrollEvents(int pX, int pY) {
         for (MapPanelListener listener : mMapPanelListeners) {
             listener.fireScrollEvent(pX, pY);
         }
+
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables

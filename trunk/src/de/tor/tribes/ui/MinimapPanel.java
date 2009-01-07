@@ -609,15 +609,15 @@ class MinimapRepaintThread extends Thread {
     }
 
     private boolean redraw() {
-        Graphics2D g2d = (Graphics2D) mBuffer.getGraphics();
-        g2d.setColor(new Color(35, 125, 0));
-        g2d.fillRect(0, 0, mBuffer.getWidth(null), mBuffer.getHeight(null));
-
         Village[][] mVisibleVillages = DataHolder.getSingleton().getVillages();
 
         if (mVisibleVillages == null) {
             return false;
         }
+        
+        Graphics2D g2d = (Graphics2D) mBuffer.getGraphics();
+        g2d.setColor(new Color(35, 125, 0));
+        g2d.fillRect(0, 0, mBuffer.getWidth(null), mBuffer.getHeight(null));
 
         boolean markPlayer = false;
         try {
@@ -632,6 +632,12 @@ class MinimapRepaintThread extends Thread {
         } catch (Exception e) {
             markedOnly = false;
         }
+
+        if (ServerSettings.getSingleton().getMapDimension() == null) {
+            //could not draw minimap if dimensions are not loaded yet
+            return false;
+        }
+
 
         for (int i = 0; i < ServerSettings.getSingleton().getMapDimension().getWidth(); i++) {
             for (int j = 0; j < ServerSettings.getSingleton().getMapDimension().getHeight(); j++) {

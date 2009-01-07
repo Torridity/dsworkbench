@@ -5,7 +5,6 @@
  */
 package de.tor.tribes.ui;
 
-
 import javax.swing.UIManager;
 
 /**
@@ -13,6 +12,12 @@ import javax.swing.UIManager;
  * @author  Charon
  */
 public class TestFrame extends javax.swing.JFrame {
+
+    public enum Command {
+
+        MDSLIST,
+        TEST
+    };
 
     /** Creates new form TestFrame */
     public TestFrame() {
@@ -30,33 +35,33 @@ public class TestFrame extends javax.swing.JFrame {
         }*/
         /* frameControlPanel1.setupPanel(this, true, true);
         frameControlPanel1.setTitle("Test Frame with title and laberzeug und so weiet damit es lang");*/
-        setLocation(200,500);
-        /*new Thread(new Runnable() {
-
-            public void run() {
-                int heigth = 10;
-                boolean inv = false;
-                int y = getLocation().y ;
-                while (true) {
-                    try {
-                        setSize(getWidth(), heigth);
-                        setLocation(getLocation().x, y - heigth);
-                        Thread.sleep(50);
-
-                        heigth += (inv) ? -10 : 10;
-                        if (heigth >= 75) {
-                            Thread.sleep(5000);
-                            inv = true;
-                        } else if (heigth <= 0) {
-                            dispose();
-                            return;
-                        }
-
-                    } catch (Exception e) {
-                    }
-                }
-            }
-        }).start();*/
+        setLocation(200, 500);
+    /*new Thread(new Runnable() {
+    
+    public void run() {
+    int heigth = 10;
+    boolean inv = false;
+    int y = getLocation().y ;
+    while (true) {
+    try {
+    setSize(getWidth(), heigth);
+    setLocation(getLocation().x, y - heigth);
+    Thread.sleep(50);
+    
+    heigth += (inv) ? -10 : 10;
+    if (heigth >= 75) {
+    Thread.sleep(5000);
+    inv = true;
+    } else if (heigth <= 0) {
+    dispose();
+    return;
+    }
+    
+    } catch (Exception e) {
+    }
+    }
+    }
+    }).start();*/
     }
 
     /** This method is called from within the constructor to
@@ -100,20 +105,19 @@ public class TestFrame extends javax.swing.JFrame {
      * @param args the command line arguments
      */
     public static void main(String args[]) throws Exception {
-
+        /*
         try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
         }
         java.awt.EventQueue.invokeLater(new Runnable() {
-
-            public void run() {
-                new TestFrame().setVisible(true);
-            }
+        
+        public void run() {
+        new TestFrame().setVisible(true);
+        }
         });
-
+         */
     }
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     // End of variables declaration//GEN-END:variables

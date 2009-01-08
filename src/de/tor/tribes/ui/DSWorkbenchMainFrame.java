@@ -1256,20 +1256,16 @@ private void fireRefreshMapEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:eve
     int cy = iCenterY;
     try {
         cx = Integer.parseInt(jCenterX.getText());
-        cy =
-                Integer.parseInt(jCenterY.getText());
+        cy = Integer.parseInt(jCenterY.getText());
     } catch (Exception e) {
         cx = iCenterX;
-        cy =
-                iCenterY;
+        cy = iCenterY;
     }
 
     jCenterX.setText(Integer.toString(cx));
     jCenterY.setText(Integer.toString(cy));
-    iCenterX =
-            cx;
-    iCenterY =
-            cy;
+    iCenterX = cx;
+    iCenterY = cy;
 
     double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
     double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
@@ -1356,8 +1352,10 @@ private void fireZoomEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fir
 
         double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
         double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
-        MinimapPanel.getSingleton().setSelection(Integer.parseInt(jCenterX.getText()), Integer.parseInt(jCenterY.getText()), (int) Math.rint(w), (int) Math.rint(h));
-        MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.ALL_LAYERS);
+        int xPos = Integer.parseInt(jCenterX.getText());
+        int yPos = Integer.parseInt(jCenterY.getText());
+        MinimapPanel.getSingleton().setSelection(xPos, yPos, (int) Math.rint(w), (int) Math.rint(h));
+        MapPanel.getSingleton().updateMapPosition(xPos, yPos);
     }
 
     protected synchronized void zoomOut() {
@@ -1368,8 +1366,10 @@ private void fireZoomEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fir
 
         double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
         double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
-        MinimapPanel.getSingleton().setSelection(Integer.parseInt(jCenterX.getText()), Integer.parseInt(jCenterY.getText()), (int) Math.rint(w), (int) Math.rint(h));
-        MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.ALL_LAYERS);
+        int xPos = Integer.parseInt(jCenterX.getText());
+        int yPos = Integer.parseInt(jCenterY.getText());
+        MinimapPanel.getSingleton().setSelection(xPos, yPos, (int) Math.rint(w), (int) Math.rint(h));
+        MapPanel.getSingleton().updateMapPosition(xPos, yPos);
     }
 
     /**Change active player village*/
@@ -1525,6 +1525,12 @@ private void fireShowFormsFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIRS
 
         jCenterX.setText(Integer.toString(pVillage.getX()));
         jCenterY.setText(Integer.toString(pVillage.getY()));
+        fireRefreshMapEvent(null);
+    }
+
+    public void centerPosition(int xPos, int yPos) {
+        jCenterX.setText(Integer.toString(xPos));
+        jCenterY.setText(Integer.toString(yPos));
         fireRefreshMapEvent(null);
     }
 

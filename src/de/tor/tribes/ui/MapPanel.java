@@ -31,8 +31,11 @@ import de.tor.tribes.util.Skin;
 import de.tor.tribes.util.VillageSelectionListener;
 import de.tor.tribes.util.map.FormManager;
 import java.awt.Color;
-import java.awt.Dimension;
+import java.awt.Toolkit;
+import java.awt.datatransfer.StringSelection;
 import java.awt.geom.Point2D;
+import javax.swing.JOptionPane;
+import javax.swing.UIManager;
 
 /**
  *
@@ -116,6 +119,11 @@ public class MapPanel extends javax.swing.JPanel {
 
             @Override
             public void mouseWheelMoved(MouseWheelEvent e) {
+                if (positionUpdate) {
+                    //already redrawing, ignore wheel
+                    return;
+                }
+
                 if (e.getWheelRotation() < 0) {
                     DSWorkbenchMainFrame.getSingleton().zoomOut();
                 } else {
@@ -283,20 +291,18 @@ public class MapPanel extends javax.swing.JPanel {
                 }
 
                 switch (iCurrentCursor) {
-                    case ImageManager.CURSOR_DEFAULT: {
-                        if (mVillageSelectionListener != null) {
-                            selectionRect = new de.tor.tribes.types.Rectangle();
-                            selectionRect.setDrawColor(Color.YELLOW);
-                            selectionRect.setFilled(true);
-                            selectionRect.setDrawAlpha(0.2f);
-                            selectionRect.setDrawName(true);
-                            selectionRect.setTextColor(Color.BLUE);
-                            selectionRect.setTextAlpha(0.7f);
-                            selectionRect.setTextSize(24);
-                            Point2D.Double pos = mouseToVirtualPos(e.getX(), e.getY());
-                            selectionRect.setXPos(pos.x);
-                            selectionRect.setYPos(pos.y);
-                        }
+                    case ImageManager.CURSOR_SELECTION: {
+                        selectionRect = new de.tor.tribes.types.Rectangle();
+                        selectionRect.setDrawColor(Color.YELLOW);
+                        selectionRect.setFilled(true);
+                        selectionRect.setDrawAlpha(0.2f);
+                        selectionRect.setDrawName(true);
+                        selectionRect.setTextColor(Color.BLUE);
+                        selectionRect.setTextAlpha(0.7f);
+                        selectionRect.setTextSize(24);
+                        Point2D.Double pos = mouseToVirtualPos(e.getX(), e.getY());
+                        selectionRect.setXPos(pos.x);
+                        selectionRect.setYPos(pos.y);
                         break;
                     }
                     case ImageManager.CURSOR_MEASURE: {
@@ -374,16 +380,63 @@ public class MapPanel extends javax.swing.JPanel {
                     }
 
                     switch (iCurrentCursor) {
-                        case ImageManager.CURSOR_DEFAULT: {
+                        case ImageManager.CURSOR_SELECTION: {
+
+                            int xs = (int) Math.floor(selectionRect.getXPos());
+                            int ys = (int) Math.floor(selectionRect.getYPos());
+                            int xe = (int) Math.floor(selectionRect.getXPosEnd());
+                            int ye = (int) Math.floor(selectionRect.getYPosEnd());
                             if (mVillageSelectionListener != null) {
-                                int xs = (int) Math.floor(selectionRect.getXPos());
-                                int ys = (int) Math.floor(selectionRect.getYPos());
-                                int xe = (int) Math.floor(selectionRect.getXPosEnd());
-                                int ye = (int) Math.floor(selectionRect.getYPosEnd());
+                                //if a selectionlistener is registered notify it
                                 mVillageSelectionListener.fireSelectionFinishedEvent(new Point(xs, ys), new Point(xe, ye));
-                                selectionRect = null;
-                                mVillageSelectionListener = null;
+                            } else {
+                                List<Village> selection = getSelectedVillages(new Point(xs, ys), new Point(xe, ye));
+                                if (selection.size() > 0) {
+                                    //do selection handling by ourself
+                                    UIManager.put("OptionPane.cancelButtonText", "Verwerfen");
+                                    UIManager.put("OptionPane.noButtonText", "Unformatiert");
+                                    UIManager.put("OptionPane.yesButtonText", "BB-Code");
+                                    String message = "Es wurden ";
+                                    if (selection.size() == 1) {
+                                        message = "Es wurde 1 Dorf ausgewählt.\n";
+                                    } else {
+                                        message += selection.size() + " Dörfer ausgewählt.\n";
+                                    }
+                                    message += "In welchem Format soll die Auswahl in die Zwischenablage\nkopiert werden?";
+
+                                    int res = JOptionPane.showConfirmDialog(MapPanel.getSingleton(), message, "Dorfauswahl", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+
+                                    switch (res) {
+                                        case JOptionPane.NO_OPTION: {
+                                            //unformatted
+                                            String result = "";
+
+                                            for (Village v : selection) {
+                                                result += v.getX() + "\t" + v.getY() + "\n";
+                                            }
+                                            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(result), null);
+                                            break;
+                                        }
+                                        case JOptionPane.YES_OPTION: {
+                                            //as BB code
+                                            String result = "";
+                                            for (Village v : selection) {
+                                                result += v.toBBCode() + "\n";
+                                            }
+                                            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(result), null);
+                                            break;
+                                        }
+                                        default: {
+                                            //cancel
+                                        }
+                                    }
+                                    UIManager.put("OptionPane.cancelButtonText", "Cancel");
+                                    UIManager.put("OptionPane.noButtonText", "No");
+                                    UIManager.put("OptionPane.yesButtonText", "Yes");
+                                }
                             }
+                            selectionRect = null;
+                            mVillageSelectionListener = null;
                             break;
                         }
                         case ImageManager.CURSOR_MEASURE: {
@@ -472,18 +525,24 @@ public class MapPanel extends javax.swing.JPanel {
                 }
 
                 switch (iCurrentCursor) {
-                    case ImageManager.CURSOR_DEFAULT: {
-                        if (mVillageSelectionListener != null) {
-                            Point2D.Double pos = mouseToVirtualPos(e.getX(), e.getY());
-                            int xs = (int) Math.floor(selectionRect.getXPos());
-                            int ys = (int) Math.floor(selectionRect.getYPos());
-                            int xe = (int) Math.floor(selectionRect.getXPosEnd());
-                            int ye = (int) Math.floor(selectionRect.getYPosEnd());
-                            String name = ((xe - xs) * (ye - ys)) + " Felder";
-                            selectionRect.setFormName(name);
-                            selectionRect.setXPosEnd(pos.x);
-                            selectionRect.setYPosEnd(pos.y);
+                    case ImageManager.CURSOR_SELECTION: {
+                        Point2D.Double pos = mouseToVirtualPos(e.getX(), e.getY());
+                        int xs = (int) Math.floor(selectionRect.getXPos());
+                        int ys = (int) Math.floor(selectionRect.getYPos());
+                        int xe = (int) Math.floor(selectionRect.getXPosEnd());
+                        int ye = (int) Math.floor(selectionRect.getYPosEnd());
+
+                        int cnt = countVillages(new Point(xs, ys), new Point(xe, ye));
+                        String name = "";
+                        if (cnt == 1) {
+                            name = "1 Dorf";
+                        } else {
+                            name = cnt + " Dörfer";
                         }
+
+                        selectionRect.setFormName(name);
+                        selectionRect.setXPosEnd(pos.x);
+                        selectionRect.setYPosEnd(pos.y);
                         break;
                     }
                     case ImageManager.CURSOR_MEASURE: {
@@ -498,9 +557,10 @@ public class MapPanel extends javax.swing.JPanel {
                     }
                     case ImageManager.CURSOR_DRAW_LINE: {
                         Point2D.Double pos = mouseToVirtualPos(e.getX(), e.getY());
-                        ((de.tor.tribes.types.Line) FormConfigFrame.getSingleton().getCurrentForm()).setXPosEnd(pos.x);
+                        /*((de.tor.tribes.types.Line) FormConfigFrame.getSingleton().getCurrentForm()).setXPosEnd(pos.x);
                         ((de.tor.tribes.types.Line) FormConfigFrame.getSingleton().getCurrentForm()).setYPosEnd(pos.y);
-
+                         */
+                        ((de.tor.tribes.types.FreeForm) FormConfigFrame.getSingleton().getCurrentForm()).addPoint(pos);
                         break;
                     }
                     case ImageManager.CURSOR_DRAW_RECT: {
@@ -552,6 +612,48 @@ public class MapPanel extends javax.swing.JPanel {
 
     public MapRenderer getMapRenderer() {
         return mMapRenderer;
+    }
+
+    private int countVillages(Point pStart, Point pEnd) {
+        int cnt = 0;
+        //sort coordinates
+        int xStart = (pStart.x < pEnd.x) ? pStart.x : pEnd.x;
+        int xEnd = (pEnd.x > pStart.x) ? pEnd.x : pStart.x;
+        int yStart = (pStart.y < pEnd.y) ? pStart.y : pEnd.y;
+        int yEnd = (pEnd.y > pStart.y) ? pEnd.y : pStart.y;
+        for (int x = xStart; x <= xEnd; x++) {
+            for (int y = yStart; y <= yEnd; y++) {
+                try {
+                    if (DataHolder.getSingleton().getVillages()[x][y] != null) {
+                        cnt++;
+                    }
+                } catch (Exception e) {
+                    //avoid IndexOutOfBounds if selection is too small
+                }
+            }
+        }
+        return cnt;
+    }
+
+    private List<Village> getSelectedVillages(Point pStart, Point pEnd) {
+        int xStart = (pStart.x < pEnd.x) ? pStart.x : pEnd.x;
+        int xEnd = (pEnd.x > pStart.x) ? pEnd.x : pStart.x;
+        int yStart = (pStart.y < pEnd.y) ? pStart.y : pEnd.y;
+        int yEnd = (pEnd.y > pStart.y) ? pEnd.y : pStart.y;
+        List<Village> villages = new LinkedList<Village>();
+        for (int x = xStart; x <= xEnd; x++) {
+            for (int y = yStart; y <= yEnd; y++) {
+                try {
+                    Village v = DataHolder.getSingleton().getVillages()[x][y];
+                    if (v != null) {
+                        villages.add(v);
+                    }
+                } catch (Exception e) {
+                    //avoid IndexOutOfBounds if selection is too small
+                }
+            }
+        }
+        return villages;
     }
 
     /**Returns true as long as the mouse is outside the mappanel*/
@@ -679,13 +781,8 @@ public class MapPanel extends javax.swing.JPanel {
         return new Point(iCenterX, iCenterY);
     }
 
-    public synchronized boolean enableVillageSelectionMode(VillageSelectionListener pListener) {
-        if (mVillageSelectionListener != null) {
-            //another selection still in progress
-            return false;
-        }
+    public void setVillageSelectionListener(VillageSelectionListener pListener) {
         mVillageSelectionListener = pListener;
-        return true;
     }
 
     public Point.Double getCurrentVirtualPosition() {
@@ -698,12 +795,12 @@ public class MapPanel extends javax.swing.JPanel {
         double xp = (pXVirt - mVirtualBounds.getX());
         double yp = (pYVirt - mVirtualBounds.getY());
         //calc full villages
-        int xVill = (int) Math.floor(xp);
-        int yVill = (int) Math.floor(yp);
+        double xVill = Math.floor(xp);
+        double yVill = Math.floor(yp);
         double dx = xp - xVill;
         double dy = yp - yVill;
-        double width = GlobalOptions.getSkin().getFieldWidth() / z;
-        double height = GlobalOptions.getSkin().getFieldHeight() / z;
+        double width = (double) GlobalOptions.getSkin().getFieldWidth() / z;
+        double height = (double) GlobalOptions.getSkin().getFieldHeight() / z;
         double xpos = xVill * width + dx * width;
         double ypos = yVill * height + dy * height;
         return new Point((int) Math.rint(xpos), (int) Math.rint(ypos));
@@ -728,12 +825,12 @@ public class MapPanel extends javax.swing.JPanel {
         double xp = (pXVirt - mVirtualBounds.getX());
         double yp = (pYVirt - mVirtualBounds.getY());
         //calc full villages
-        int xVill = (int) Math.floor(xp);
-        int yVill = (int) Math.floor(yp);
+        double xVill = Math.floor(xp);
+        double yVill = Math.floor(yp);
         double dx = xp - xVill;
         double dy = yp - yVill;
-        double width = GlobalOptions.getSkin().getFieldWidth() / z;
-        double height = GlobalOptions.getSkin().getFieldHeight() / z;
+        double width = (double) GlobalOptions.getSkin().getFieldWidth() / z;
+        double height = (double) GlobalOptions.getSkin().getFieldHeight() / z;
         double xpos = xVill * width + dx * width;
         double ypos = yVill * height + dy * height;
         return new Point2D.Double(xpos, ypos);
@@ -753,24 +850,14 @@ public class MapPanel extends javax.swing.JPanel {
             int x = (int) getMousePosition().getX();
             int y = (int) getMousePosition().getY();
 
-            x /=
-                    GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, DSWorkbenchMainFrame.getSingleton().getZoomFactor()).getWidth(null);
-            y /=
-                    GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, DSWorkbenchMainFrame.getSingleton().getZoomFactor()).getHeight(null);
+            x /= GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, DSWorkbenchMainFrame.getSingleton().getZoomFactor()).getWidth(null);
+            y /= GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, DSWorkbenchMainFrame.getSingleton().getZoomFactor()).getHeight(null);
 
             return mVisibleVillages[x][y];
         } catch (Exception e) {
             //failed getting village (probably getting mousepos failed)
         }
-        /*try {
-        int x = (int) getMousePosition().getX();
-        int y = (int) getMousePosition().getY();
 
-        double zoom = DSWorkbenchMainFrame.getSingleton().getZoomFactor();
-        return virtualPosToVillage(iVirtualX + x / zoom, iVirtualY + y / zoom);
-        } catch (Exception e) {
-        //failed getting village (probably getting mousepos failed)
-        }*/
         return null;
     }
 
@@ -814,24 +901,11 @@ public class MapPanel extends javax.swing.JPanel {
     // End of variables declaration//GEN-END:variables
 
     public static void main(String[] args) {
-        int vx = 28000;//400,400
-        int vy = 19000;
-        double sx = 53;
-        double sy = 38;
-        //mouse pos
-        int mx = 100;
-        int my = 100;
-        double z = 1.0;
+        int[] xs = new int[]{0, 1, 2};
+        int[] ys = new int[]{0, 1, 0};
+        int tm = 3;
 
-        double pX = vx + mx / z;
-        double pY = vy + my / z;
-        double vWidth = 1000 * 53;
-        double vHeight = 1000 * 38;
-        Dimension mapDim = new Dimension(1000, 1000);
-        double realX = pX / vWidth * mapDim.getWidth();
-        double realY = pY / vHeight * mapDim.getHeight();
-        int xf = (int) Math.round(realX - 0.5);
-        int yf = (int) Math.round(realY - 0.5);
-        System.out.println("POs is " + xf + "," + yf);
+
+
     }
 }

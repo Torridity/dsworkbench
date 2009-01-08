@@ -12,13 +12,13 @@ package de.tor.tribes.ui;
 
 import de.tor.tribes.types.AbstractForm;
 import de.tor.tribes.types.Circle;
+import de.tor.tribes.types.FreeForm;
 import de.tor.tribes.types.Line;
 import de.tor.tribes.types.Rectangle;
 import de.tor.tribes.types.Text;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
 import net.java.dev.colorchooser.ColorChooser;
 
 /**
@@ -75,26 +75,26 @@ public class FormConfigFrame extends javax.swing.JFrame {
         jSamplePanel = new javax.swing.JPanel();
         jDrawName = new javax.swing.JCheckBox();
         jPanel2 = new javax.swing.JPanel();
-        jLabel9 = new javax.swing.JLabel();
+        jTextTransparencyLabel = new javax.swing.JLabel();
         jTextTransparency = new javax.swing.JSpinner();
-        jLabel4 = new javax.swing.JLabel();
+        jDrawTransparencyLabel = new javax.swing.JLabel();
         jDrawTransparency = new javax.swing.JSpinner();
-        jLabel5 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
+        jTextColorLabel = new javax.swing.JLabel();
+        jDrawColorLabel = new javax.swing.JLabel();
         jDrawColorPanel = new javax.swing.JPanel();
         jTextColorPanel = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
-        jLabel3 = new javax.swing.JLabel();
+        jStrokeWidthLabel = new javax.swing.JLabel();
         jStrokeWidth = new javax.swing.JSpinner();
-        jLabel8 = new javax.swing.JLabel();
+        jFillFormLabel = new javax.swing.JLabel();
         jFillForm = new javax.swing.JCheckBox();
         jRoundBorders = new javax.swing.JSpinner();
-        jLabel7 = new javax.swing.JLabel();
+        jRoundBorderLabel = new javax.swing.JLabel();
         jTextHeight = new javax.swing.JSpinner();
-        jLabel10 = new javax.swing.JLabel();
-        jLabel11 = new javax.swing.JLabel();
+        jTextHeightLabel = new javax.swing.JLabel();
+        jStartArrowLabel = new javax.swing.JLabel();
         jDrawStartArrow = new javax.swing.JCheckBox();
-        jLabel12 = new javax.swing.JLabel();
+        jEndArrowLabel = new javax.swing.JLabel();
         jDrawEndArrow = new javax.swing.JCheckBox();
 
         setTitle("Form Einstellungen");
@@ -126,7 +126,7 @@ public class FormConfigFrame extends javax.swing.JFrame {
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Farben"));
         jPanel2.setOpaque(false);
 
-        jLabel9.setText("Texttransparenz");
+        jTextTransparencyLabel.setText("Texttransparenz");
 
         jTextTransparency.setModel(new javax.swing.SpinnerNumberModel(Float.valueOf(0.0f), Float.valueOf(0.0f), Float.valueOf(0.9f), Float.valueOf(0.1f)));
         jTextTransparency.setMaximumSize(new java.awt.Dimension(80, 18));
@@ -138,7 +138,7 @@ public class FormConfigFrame extends javax.swing.JFrame {
             }
         });
 
-        jLabel4.setText("Zeichentransparenz");
+        jDrawTransparencyLabel.setText("Zeichentransparenz");
 
         jDrawTransparency.setModel(new javax.swing.SpinnerNumberModel(Float.valueOf(0.0f), Float.valueOf(0.0f), Float.valueOf(0.9f), Float.valueOf(0.1f)));
         jDrawTransparency.setMaximumSize(new java.awt.Dimension(80, 18));
@@ -150,9 +150,9 @@ public class FormConfigFrame extends javax.swing.JFrame {
             }
         });
 
-        jLabel5.setText("Textfarbe");
+        jTextColorLabel.setText("Textfarbe");
 
-        jLabel2.setText("Zeichenfarbe");
+        jDrawColorLabel.setText("Zeichenfarbe");
 
         jDrawColorPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jDrawColorPanel.setMaximumSize(new java.awt.Dimension(80, 18));
@@ -175,8 +175,8 @@ public class FormConfigFrame extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 94, Short.MAX_VALUE)
-                    .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, 94, Short.MAX_VALUE))
+                    .addComponent(jDrawColorLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 94, Short.MAX_VALUE)
+                    .addComponent(jTextColorLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 94, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jDrawColorPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -184,11 +184,11 @@ public class FormConfigFrame extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel4)
+                        .addComponent(jDrawTransparencyLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jDrawTransparency, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel9)
+                        .addComponent(jTextTransparencyLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jTextTransparency, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
@@ -201,18 +201,18 @@ public class FormConfigFrame extends javax.swing.JFrame {
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jTextTransparency, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel9))
+                            .addComponent(jTextTransparencyLabel))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jDrawTransparency, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(jDrawTransparencyLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jTextColorLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jTextColorPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jDrawColorLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jDrawColorPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap())
         );
@@ -220,7 +220,7 @@ public class FormConfigFrame extends javax.swing.JFrame {
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Sonstiges"));
         jPanel3.setOpaque(false);
 
-        jLabel3.setText("Strichbreite");
+        jStrokeWidthLabel.setText("Strichbreite");
 
         jStrokeWidth.setModel(new javax.swing.SpinnerNumberModel(Float.valueOf(1.0f), Float.valueOf(0.1f), Float.valueOf(15.0f), Float.valueOf(0.1f)));
         jStrokeWidth.setMaximumSize(new java.awt.Dimension(80, 18));
@@ -232,7 +232,7 @@ public class FormConfigFrame extends javax.swing.JFrame {
             }
         });
 
-        jLabel8.setText("Form ausfüllen");
+        jFillFormLabel.setText("Form ausfüllen");
 
         jFillForm.setOpaque(false);
         jFillForm.addChangeListener(new javax.swing.event.ChangeListener() {
@@ -248,7 +248,7 @@ public class FormConfigFrame extends javax.swing.JFrame {
             }
         });
 
-        jLabel7.setText("Kantenrundung");
+        jRoundBorderLabel.setText("Kantenrundung");
 
         jTextHeight.setModel(new javax.swing.SpinnerNumberModel(14, 10, 50, 1));
         jTextHeight.addChangeListener(new javax.swing.event.ChangeListener() {
@@ -257,9 +257,9 @@ public class FormConfigFrame extends javax.swing.JFrame {
             }
         });
 
-        jLabel10.setText("Texthöhe");
+        jTextHeightLabel.setText("Texthöhe");
 
-        jLabel11.setText("Pfeil (Anfang)");
+        jStartArrowLabel.setText("Pfeil (Anfang)");
 
         jDrawStartArrow.setOpaque(false);
         jDrawStartArrow.addChangeListener(new javax.swing.event.ChangeListener() {
@@ -268,7 +268,7 @@ public class FormConfigFrame extends javax.swing.JFrame {
             }
         });
 
-        jLabel12.setText("Pfeil (Ende)");
+        jEndArrowLabel.setText("Pfeil (Ende)");
 
         jDrawEndArrow.setOpaque(false);
         jDrawEndArrow.addChangeListener(new javax.swing.event.ChangeListener() {
@@ -284,24 +284,24 @@ public class FormConfigFrame extends javax.swing.JFrame {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, 93, Short.MAX_VALUE)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 93, Short.MAX_VALUE)
-                    .addComponent(jLabel11)
-                    .addComponent(jLabel12))
+                    .addComponent(jTextHeightLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 93, Short.MAX_VALUE)
+                    .addComponent(jStrokeWidthLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 93, Short.MAX_VALUE)
+                    .addComponent(jStartArrowLabel)
+                    .addComponent(jEndArrowLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jTextHeight, javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jTextHeight, javax.swing.GroupLayout.DEFAULT_SIZE, 80, Short.MAX_VALUE)
                             .addComponent(jStrokeWidth, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(26, 26, 26)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jFillFormLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 74, Short.MAX_VALUE)
+                            .addComponent(jRoundBorderLabel))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jRoundBorders, javax.swing.GroupLayout.DEFAULT_SIZE, 86, Short.MAX_VALUE)
-                            .addComponent(jFillForm, javax.swing.GroupLayout.DEFAULT_SIZE, 86, Short.MAX_VALUE)))
+                            .addComponent(jFillForm, javax.swing.GroupLayout.DEFAULT_SIZE, 86, Short.MAX_VALUE)
+                            .addComponent(jRoundBorders, javax.swing.GroupLayout.DEFAULT_SIZE, 86, Short.MAX_VALUE)))
                     .addComponent(jDrawEndArrow, javax.swing.GroupLayout.DEFAULT_SIZE, 270, Short.MAX_VALUE)
                     .addComponent(jDrawStartArrow, javax.swing.GroupLayout.DEFAULT_SIZE, 270, Short.MAX_VALUE))
                 .addContainerGap())
@@ -313,29 +313,29 @@ public class FormConfigFrame extends javax.swing.JFrame {
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jStrokeWidth, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel3)
-                            .addComponent(jLabel8))
+                            .addComponent(jStrokeWidth, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jStrokeWidthLabel)
+                            .addComponent(jFillFormLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jTextHeight, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel10)))
+                            .addComponent(jTextHeightLabel)))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGap(12, 12, 12)
-                        .addComponent(jFillForm)
+                        .addComponent(jFillForm, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jRoundBorders, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel7))))
+                            .addComponent(jRoundBorderLabel))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jDrawStartArrow, 0, 0, Short.MAX_VALUE)
-                    .addComponent(jLabel11))
+                    .addComponent(jStartArrowLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel12)
+                    .addComponent(jEndArrowLabel)
                     .addComponent(jDrawEndArrow, 0, 0, Short.MAX_VALUE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(13, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -346,7 +346,7 @@ public class FormConfigFrame extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
                         .addGap(96, 96, 96)
-                        .addComponent(jSamplePanel, javax.swing.GroupLayout.DEFAULT_SIZE, 399, Short.MAX_VALUE))
+                        .addComponent(jSamplePanel, javax.swing.GroupLayout.DEFAULT_SIZE, 403, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 82, Short.MAX_VALUE)
@@ -395,41 +395,73 @@ public class FormConfigFrame extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    public void setVisible(boolean v) {
-        if (!v) {
-            mCurrentForm = null;
-        }
-        super.setVisible(v);
-    }
-
     public void setupAndShow(Class pType) {
-        boolean isNoText = true;
+        boolean fillAllowed = false;
+        boolean drawAllowed = false;
+        boolean arrowAllowed = false;
+        boolean roundBorderAllowed = false;
 
         if (pType.equals(Line.class)) {
             mCurrentForm = new Line();
+            fillAllowed = false;
+            roundBorderAllowed = false;
+            drawAllowed = true;
+            arrowAllowed = true;
+            jDrawName.setEnabled(true);
+            jDrawName.setSelected(false);
         } else if (pType.equals(Rectangle.class)) {
             mCurrentForm = new Rectangle();
+            fillAllowed = true;
+            roundBorderAllowed = true;
+            drawAllowed = true;
+            arrowAllowed = false;
+            jDrawName.setEnabled(true);
+            jDrawName.setSelected(false);
         } else if (pType.equals(Circle.class)) {
             mCurrentForm = new Circle();
+            fillAllowed = true;
+            roundBorderAllowed = true;
+            drawAllowed = true;
+            arrowAllowed = false;
+            jDrawName.setEnabled(true);
+            jDrawName.setSelected(false);
         } else if (pType.equals(Text.class)) {
             mCurrentForm = new Text();
-            isNoText = false;
+            fillAllowed = false;
+            roundBorderAllowed = false;
+            drawAllowed = true;
+            arrowAllowed = true;
+            jDrawName.setEnabled(false);
+            jDrawName.setSelected(true);
+        } else if (pType.equals(FreeForm.class)) {
+            mCurrentForm = new FreeForm();
+            fillAllowed = true;
+            roundBorderAllowed = false;
+            drawAllowed = true;
+            arrowAllowed = false;
         }
 
-        jLabel5.setEnabled(isNoText);
-        jLabel2.setEnabled(isNoText);
-        jLabel4.setEnabled(isNoText);
-        jLabel11.setEnabled(isNoText);
-        jLabel7.setEnabled(isNoText);
-        jLabel8.setEnabled(isNoText);
-        mDrawColorChooser.setEnabled(isNoText);
-        jDrawTransparency.setEnabled(isNoText);
-        jRoundBorders.setEnabled(isNoText);
-        jDrawStartArrow.setEnabled(isNoText);
-        jDrawEndArrow.setEnabled(isNoText);
-        jFillForm.setEnabled(isNoText);
-        jDrawName.setEnabled(isNoText);
-        jDrawName.setSelected(!isNoText);
+        //drawable switch
+        jDrawColorLabel.setEnabled(drawAllowed);
+        jDrawColorPanel.setEnabled(drawAllowed);
+        mDrawColorChooser.setEnabled(drawAllowed);
+        jDrawTransparencyLabel.setEnabled(drawAllowed);
+        jDrawTransparency.setEnabled(drawAllowed);
+
+        //arrow switch
+        jStartArrowLabel.setEnabled(arrowAllowed);
+        jDrawStartArrow.setEnabled(arrowAllowed);
+        jEndArrowLabel.setEnabled(arrowAllowed);
+        jDrawEndArrow.setEnabled(arrowAllowed);
+
+        //fill switch
+        jFillFormLabel.setEnabled(fillAllowed);
+        jFillForm.setEnabled(fillAllowed);
+
+        //round corner switch
+        jRoundBorderLabel.setEnabled(roundBorderAllowed);
+        jRoundBorders.setEnabled(roundBorderAllowed);
+
         setVisible(true);
         updateValues();
     }
@@ -527,6 +559,20 @@ public class FormConfigFrame extends javax.swing.JFrame {
                 mSamplePanel.setDrawColor(mDrawColorChooser.getColor());
                 mSamplePanel.setDrawTransparency(1.0f - (Float) jDrawTransparency.getValue());
                 mSamplePanel.setStrokeWidth((Float) jStrokeWidth.getValue());
+            } else if (mCurrentForm instanceof FreeForm) {
+                ((FreeForm) mCurrentForm).setStrokeWidth((Float) jStrokeWidth.getValue());
+                ((FreeForm) mCurrentForm).setDrawColor(mDrawColorChooser.getColor());
+                ((FreeForm) mCurrentForm).setTextColor(mTextColorChooser.getColor());
+                ((FreeForm) mCurrentForm).setTextSize((Integer) jTextHeight.getValue());
+                ((FreeForm) mCurrentForm).setDrawAlpha(1.0f - (Float) jDrawTransparency.getValue());
+                ((FreeForm) mCurrentForm).setTextAlpha(1.0f - (Float) jTextTransparency.getValue());
+                ((FreeForm) mCurrentForm).setDrawName(jDrawName.isSelected());
+                ((FreeForm) mCurrentForm).setFilled(jFillForm.isSelected());
+                mSamplePanel.setType(4);
+                mSamplePanel.setFill(jFillForm.isSelected());
+                mSamplePanel.setDrawColor(mDrawColorChooser.getColor());
+                mSamplePanel.setDrawTransparency(1.0f - (Float) jDrawTransparency.getValue());
+                mSamplePanel.setStrokeWidth((Float) jStrokeWidth.getValue());
             }
 
             mSamplePanel.setText(jFormName.getText());
@@ -555,32 +601,32 @@ public class FormConfigFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel jDrawColorLabel;
     private javax.swing.JPanel jDrawColorPanel;
     private javax.swing.JCheckBox jDrawEndArrow;
     private javax.swing.JCheckBox jDrawName;
     private javax.swing.JCheckBox jDrawStartArrow;
     private javax.swing.JSpinner jDrawTransparency;
+    private javax.swing.JLabel jDrawTransparencyLabel;
+    private javax.swing.JLabel jEndArrowLabel;
     private javax.swing.JCheckBox jFillForm;
+    private javax.swing.JLabel jFillFormLabel;
     private javax.swing.JTextField jFormName;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel11;
-    private javax.swing.JLabel jLabel12;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JLabel jRoundBorderLabel;
     private javax.swing.JSpinner jRoundBorders;
     private javax.swing.JPanel jSamplePanel;
+    private javax.swing.JLabel jStartArrowLabel;
     private javax.swing.JSpinner jStrokeWidth;
+    private javax.swing.JLabel jStrokeWidthLabel;
+    private javax.swing.JLabel jTextColorLabel;
     private javax.swing.JPanel jTextColorPanel;
     private javax.swing.JSpinner jTextHeight;
+    private javax.swing.JLabel jTextHeightLabel;
     private javax.swing.JSpinner jTextTransparency;
+    private javax.swing.JLabel jTextTransparencyLabel;
     // End of variables declaration//GEN-END:variables
 }

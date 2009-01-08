@@ -11,6 +11,7 @@
 package de.tor.tribes.ui;
 
 import de.tor.tribes.types.Circle;
+import de.tor.tribes.types.FreeForm;
 import de.tor.tribes.types.Line;
 import de.tor.tribes.types.Rectangle;
 import de.tor.tribes.types.Text;
@@ -19,6 +20,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Paint;
 import java.awt.TexturePaint;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -43,7 +45,7 @@ public class SamplePanel extends javax.swing.JPanel {
     private boolean drawText = false;
     private String sText = "";
     private BufferedImage sampleTexture = null;
-    //type 0-3: 0=line, 1=rect, 2=circle, 3=text
+    //type 0-4: 0=line, 1=rect, 2=circle, 3=text, 4=freeform
     private int type = 0;
     private int roundBorders = 0;
 
@@ -185,6 +187,25 @@ public class SamplePanel extends javax.swing.JPanel {
                 l.setFormName(sText);
                 l.setXPos(10);
                 l.setYPos(getHeight() - 10);
+                l.renderPreview(g2d);
+                break;
+            }
+            case 4: {
+                FreeForm l = new FreeForm();
+                l.setDrawColor(mDrawColor);
+                l.setDrawAlpha(fDrawTransparency);
+                l.setTextColor(mTextColor);
+                l.setTextAlpha(fTextTransparency);
+                l.setFilled(bFill);
+                l.setTextSize(fTextSize);
+                l.setDrawName(drawText);
+                l.setFormName(sText);
+                l.setStrokeWidth(fStrokeWidth);
+                l.setXPos(10);
+                l.setYPos(10);
+                l.addPoint(new Point2D.Double(getWidth() - 10, 10));
+                l.addPoint(new Point2D.Double(getWidth() - 10, getHeight() - 10));
+                l.addPoint(new Point2D.Double(10, getHeight() - 10));
                 l.renderPreview(g2d);
                 break;
             }

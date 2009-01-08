@@ -4,7 +4,6 @@
  */
 package de.tor.tribes.ui.renderer;
 
-import de.tor.tribes.types.Line;
 import de.tor.tribes.ui.ClockFrame;
 import de.tor.tribes.ui.DSWorkbenchSettingsDialog;
 import de.tor.tribes.ui.FormConfigFrame;
@@ -57,6 +56,7 @@ public class MenuRenderer implements MouseListener, MouseMotionListener {
             mIcons.add(ImageIO.read(new File("./graphics/icons/mark.png")));
             mIcons.add(ImageIO.read(new File("./graphics/icons/tag.png")));
             mIcons.add(ImageIO.read(new File("./graphics/icons/support_tool.png")));
+            mIcons.add(ImageIO.read(new File("./graphics/icons/selection.png")));
             mIcons.add(ImageIO.read(new File("./graphics/icons/def.png")));
             mIcons.add(ImageIO.read(new File("./graphics/icons/booty.png")));
             //7-13 attack related
@@ -107,26 +107,29 @@ public class MenuRenderer implements MouseListener, MouseMotionListener {
         int iconh = 30;
         int iconw = iconh;
         int space = 5;
+        int maxIconsX = 8;
         g2d.setColor(Constants.DS_BACK);
-        g2d.fill3DRect(menuLocation.x, menuLocation.y - 20, 7 * iconw + 8 * space, 5 * iconh + 5 * space + 25, true);
-
-        for (int i = 0; i < 7; i++) {
-            menuRegions.put(i, new Rectangle(menuLocation.x + space + i * iconw + i * space, menuLocation.y + 5, iconw, iconh));
+        g2d.fill3DRect(menuLocation.x, menuLocation.y - 20, maxIconsX * iconw + (maxIconsX + 1) * space, 5 * iconh + 5 * space + 25, true);
+        int pos = 0;
+        int lastPos = 0;
+        for (; pos < 8; pos++) {
+            menuRegions.put(pos, new Rectangle(menuLocation.x + space + pos * iconw + pos * space, menuLocation.y + 5, iconw, iconh));
         }
-
-        for (int i = 7; i < 14; i++) {
-            menuRegions.put(i, new Rectangle(menuLocation.x + space + (i - 7) * iconw + (i - 7) * space, menuLocation.y + space + iconh + space, iconw, iconh));
+        lastPos = pos;
+        for (; pos < 15; pos++) {
+            menuRegions.put(pos, new Rectangle(menuLocation.x + space + (pos - lastPos) * iconw + (pos - lastPos) * space, menuLocation.y + space + iconh + space, iconw, iconh));
         }
-
-        for (int i = 14; i < 17; i++) {
-            menuRegions.put(i, new Rectangle(menuLocation.x + space + (i - 14) * iconw + (i - 14) * space, menuLocation.y + space + iconh + space + iconh + space, iconw, iconh));
+        lastPos = pos;
+        for (; pos < 18; pos++) {
+            menuRegions.put(pos, new Rectangle(menuLocation.x + space + (pos - lastPos) * iconw + (pos - lastPos) * space, menuLocation.y + space + iconh + space + iconh + space, iconw, iconh));
         }
-        for (int i = 17; i < 21; i++) {
-            menuRegions.put(i, new Rectangle(menuLocation.x + space + (i - 17) * iconw + (i - 17) * space, menuLocation.y + space + iconh + space + iconh + space + iconh + space, iconw, iconh));
+        lastPos = pos;
+        for (; pos < 22; pos++) {
+            menuRegions.put(pos, new Rectangle(menuLocation.x + space + (pos - lastPos) * iconw + (pos - lastPos) * space, menuLocation.y + space + iconh + space + iconh + space + iconh + space, iconw, iconh));
         }
-
-        for (int i = 21; i < 24; i++) {
-            menuRegions.put(i, new Rectangle(menuLocation.x + space + (i - 21) * iconw + (i - 21) * space, menuLocation.y + space + iconh + space + iconh + space + iconh + space + iconh + space, iconw, iconh));
+        lastPos = pos;
+        for (; pos < 25; pos++) {
+            menuRegions.put(pos, new Rectangle(menuLocation.x + space + (pos - lastPos) * iconw + (pos - lastPos) * space, menuLocation.y + space + iconh + space + iconh + space + iconh + space + iconh + space, iconw, iconh));
         }
 
         Enumeration<Integer> regions = menuRegions.keys();
@@ -167,60 +170,63 @@ public class MenuRenderer implements MouseListener, MouseMotionListener {
                 return "Unterstützungsrechner";
             }
             case 5: {
-                return "Versammlungsplatz InGame öffnen";
+                return "Dörfer auf der Karte auswählen";
             }
             case 6: {
-                return "Marktplatz InGame öffnen";
+                return "Versammlungsplatz InGame öffnen";
             }
             case 7: {
-                return "Angriff mit Axtkämpfer";
+                return "Marktplatz InGame öffnen";
             }
             case 8: {
-                return "Angriff mit Rammen";
+                return "Angriff mit Axtkämpfer";
             }
             case 9: {
-                return "Angriff mit AG";
+                return "Angriff mit Rammen";
             }
             case 10: {
-                return "Angriff mit Spähern";
+                return "Angriff mit AG";
             }
             case 11: {
-                return "Angriff mit LKav";
+                return "Angriff mit Spähern";
             }
             case 12: {
-                return "Angriff mit SKav";
+                return "Angriff mit LKav";
             }
             case 13: {
-                return "Angriff mit Schwertkämpfern";
+                return "Angriff mit SKav";
             }
             case 14: {
-                return "Ausschnitt der Minimap bewegen";
+                return "Angriff mit Schwertkämpfern";
             }
             case 15: {
-                return "Ausschnitt der Minimap zoomen";
+                return "Ausschnitt der Minimap bewegen";
             }
             case 16: {
-                return "Foto der Minimap erstellen";
+                return "Ausschnitt der Minimap zoomen";
             }
             case 17: {
-                return "Linie zeichnen";
+                return "Foto der Minimap erstellen";
             }
             case 18: {
-                return "Rechteck zeichnen";
+                return "Linie zeichnen";
             }
             case 19: {
-                return "Kreis zeichnen";
+                return "Rechteck zeichnen";
             }
             case 20: {
-                return "Text zeichnen";
+                return "Kreis zeichnen";
             }
             case 21: {
-                return "Suche öffnen";
+                return "Text zeichnen";
             }
             case 22: {
-                return "Einstellungen öffnen";
+                return "Suche öffnen";
             }
             case 23: {
+                return "Einstellungen öffnen";
+            }
+            case 24: {
                 return "Uhr öffnen";
             }
         }
@@ -258,82 +264,87 @@ public class MenuRenderer implements MouseListener, MouseMotionListener {
                                 break;
                             }
                             case 5: {
-                                MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_INGAME);
+                                MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_SELECTION);
                                 break;
                             }
                             case 6: {
-                                MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_SEND_RES_INGAME);
+                                MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_INGAME);
                                 break;
                             }
                             case 7: {
-                                MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_AXE);
+                                MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_SEND_RES_INGAME);
                                 break;
                             }
                             case 8: {
-                                MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_RAM);
+                                MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_AXE);
                                 break;
                             }
                             case 9: {
-                                MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_SNOB);
+                                MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_RAM);
                                 break;
                             }
                             case 10: {
-                                MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_SPY);
+                                MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_SNOB);
                                 break;
                             }
                             case 11: {
-                                MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_LIGHT);
+                                MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_SPY);
                                 break;
                             }
                             case 12: {
-                                MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_HEAVY);
+                                MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_LIGHT);
                                 break;
                             }
                             case 13: {
-                                MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_SWORD);
+                                MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_HEAVY);
                                 break;
                             }
                             case 14: {
-                                MinimapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_MOVE);
+                                MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_SWORD);
                                 break;
                             }
                             case 15: {
-                                MinimapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ZOOM);
+                                MinimapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_MOVE);
                                 break;
                             }
                             case 16: {
-                                MinimapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_SHOT);
+                                MinimapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ZOOM);
                                 break;
                             }
                             case 17: {
-                                MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_DRAW_LINE);
-                                FormConfigFrame.getSingleton().setupAndShow(de.tor.tribes.types.Line.class);
+                                MinimapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_SHOT);
                                 break;
                             }
                             case 18: {
+                                MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_DRAW_LINE);
+                                //FormConfigFrame.getSingleton().setupAndShow(de.tor.tribes.types.Line.class);
+                                FormConfigFrame.getSingleton().setupAndShow(de.tor.tribes.types.FreeForm.class);
+                                break;
+                            }
+                            case 19: {
                                 MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_DRAW_RECT);
                                 FormConfigFrame.getSingleton().setupAndShow(de.tor.tribes.types.Rectangle.class);
                                 break;
                             }
-                            case 19: {
+                            case 20: {
                                 MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_DRAW_CIRCLE);
                                 FormConfigFrame.getSingleton().setupAndShow(de.tor.tribes.types.Circle.class);
                                 break;
                             }
-                            case 20: {
+                            case 21: {
                                 MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_DRAW_TEXT);
                                 FormConfigFrame.getSingleton().setupAndShow(de.tor.tribes.types.Text.class);
                                 break;
                             }
-                            case 21: {
+                            case 22: {
                                 SearchFrame.getSingleton().setVisible(true);
                                 break;
                             }
-                            case 22: {
+                            case 23: {
                                 DSWorkbenchSettingsDialog.getSingleton().setVisible(true);
                                 break;
                             }
-                            case 23: {
+                            case 24: {
                                 ClockFrame.getSingleton().setVisible(true);
                                 break;
                             }

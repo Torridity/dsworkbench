@@ -56,7 +56,7 @@
                   <Group type="103" groupAlignment="1" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace min="-2" pref="96" max="-2" attributes="0"/>
-                          <Component id="jSamplePanel" pref="399" max="32767" attributes="1"/>
+                          <Component id="jSamplePanel" pref="403" max="32767" attributes="1"/>
                       </Group>
                       <Group type="102" alignment="1" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
@@ -142,8 +142,8 @@
                   <Group type="102" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jLabel2" pref="94" max="32767" attributes="1"/>
-                          <Component id="jLabel5" alignment="0" pref="94" max="32767" attributes="1"/>
+                          <Component id="jDrawColorLabel" pref="94" max="32767" attributes="1"/>
+                          <Component id="jTextColorLabel" alignment="0" pref="94" max="32767" attributes="1"/>
                       </Group>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="1" attributes="0">
@@ -153,12 +153,12 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="1" attributes="0">
                           <Group type="102" alignment="1" attributes="0">
-                              <Component id="jLabel4" min="-2" max="-2" attributes="1"/>
+                              <Component id="jDrawTransparencyLabel" min="-2" max="-2" attributes="1"/>
                               <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
                               <Component id="jDrawTransparency" min="-2" max="-2" attributes="1"/>
                           </Group>
                           <Group type="102" alignment="1" attributes="0">
-                              <Component id="jLabel9" min="-2" max="-2" attributes="1"/>
+                              <Component id="jTextTransparencyLabel" min="-2" max="-2" attributes="1"/>
                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
                               <Component id="jTextTransparency" min="-2" pref="81" max="-2" attributes="1"/>
                           </Group>
@@ -175,22 +175,22 @@
                           <Group type="102" alignment="0" attributes="0">
                               <Group type="103" groupAlignment="3" attributes="0">
                                   <Component id="jTextTransparency" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jLabel9" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jTextTransparencyLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="3" attributes="0">
                                   <Component id="jDrawTransparency" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jLabel4" alignment="3" min="-2" pref="16" max="-2" attributes="0"/>
+                                  <Component id="jDrawTransparencyLabel" alignment="3" min="-2" pref="16" max="-2" attributes="0"/>
                               </Group>
                           </Group>
                           <Group type="102" alignment="0" attributes="0">
                               <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                  <Component id="jLabel5" max="32767" attributes="1"/>
+                                  <Component id="jTextColorLabel" max="32767" attributes="1"/>
                                   <Component id="jTextColorPanel" alignment="0" max="32767" attributes="1"/>
                               </Group>
                               <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                  <Component id="jLabel2" max="32767" attributes="1"/>
+                                  <Component id="jDrawColorLabel" max="32767" attributes="1"/>
                                   <Component id="jDrawColorPanel" alignment="0" max="32767" attributes="1"/>
                               </Group>
                           </Group>
@@ -201,7 +201,7 @@
             </DimensionLayout>
           </Layout>
           <SubComponents>
-            <Component class="javax.swing.JLabel" name="jLabel9">
+            <Component class="javax.swing.JLabel" name="jTextTransparencyLabel">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Texttransparenz"/>
               </Properties>
@@ -225,7 +225,7 @@
                 <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="fireTransparencyChangedEvent"/>
               </Events>
             </Component>
-            <Component class="javax.swing.JLabel" name="jLabel4">
+            <Component class="javax.swing.JLabel" name="jDrawTransparencyLabel">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Zeichentransparenz"/>
               </Properties>
@@ -249,12 +249,12 @@
                 <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="fireTransparencyChangedEvent"/>
               </Events>
             </Component>
-            <Component class="javax.swing.JLabel" name="jLabel5">
+            <Component class="javax.swing.JLabel" name="jTextColorLabel">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Textfarbe"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JLabel" name="jLabel2">
+            <Component class="javax.swing.JLabel" name="jDrawColorLabel">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Zeichenfarbe"/>
               </Properties>
@@ -319,27 +319,27 @@
                   <Group type="102" attributes="0">
                       <EmptySpace min="-2" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jLabel10" alignment="0" pref="93" max="32767" attributes="1"/>
-                          <Component id="jLabel3" alignment="0" pref="93" max="32767" attributes="1"/>
-                          <Component id="jLabel11" min="-2" max="-2" attributes="1"/>
-                          <Component id="jLabel12" alignment="0" min="-2" max="-2" attributes="1"/>
+                          <Component id="jTextHeightLabel" alignment="0" pref="93" max="32767" attributes="1"/>
+                          <Component id="jStrokeWidthLabel" alignment="0" pref="93" max="32767" attributes="1"/>
+                          <Component id="jStartArrowLabel" min="-2" max="-2" attributes="1"/>
+                          <Component id="jEndArrowLabel" alignment="0" min="-2" max="-2" attributes="1"/>
                       </Group>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" attributes="0">
-                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                  <Component id="jTextHeight" alignment="1" max="32767" attributes="1"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="jTextHeight" pref="80" max="32767" attributes="1"/>
                                   <Component id="jStrokeWidth" alignment="0" max="32767" attributes="1"/>
                               </Group>
-                              <EmptySpace pref="26" max="32767" attributes="0"/>
-                              <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                                  <Component id="jLabel8" max="32767" attributes="1"/>
-                                  <Component id="jLabel7" alignment="1" max="32767" attributes="1"/>
+                              <EmptySpace min="-2" pref="26" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="1" attributes="0">
+                                  <Component id="jFillFormLabel" pref="74" max="32767" attributes="1"/>
+                                  <Component id="jRoundBorderLabel" alignment="1" min="-2" max="-2" attributes="1"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="jRoundBorders" pref="86" max="32767" attributes="1"/>
-                                  <Component id="jFillForm" alignment="0" pref="86" max="32767" attributes="1"/>
+                                  <Component id="jFillForm" pref="86" max="32767" attributes="1"/>
+                                  <Component id="jRoundBorders" alignment="0" pref="86" max="32767" attributes="1"/>
                               </Group>
                           </Group>
                           <Component id="jDrawEndArrow" pref="270" max="32767" attributes="1"/>
@@ -356,43 +356,43 @@
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="jStrokeWidth" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jLabel8" alignment="3" min="-2" max="-2" attributes="1"/>
+                                  <Component id="jStrokeWidth" alignment="3" min="-2" pref="19" max="-2" attributes="0"/>
+                                  <Component id="jStrokeWidthLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jFillFormLabel" alignment="3" min="-2" pref="20" max="-2" attributes="1"/>
                               </Group>
                               <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="3" attributes="0">
                                   <Component id="jTextHeight" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jLabel10" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jTextHeightLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                           </Group>
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
-                              <Component id="jFillForm" min="-2" max="-2" attributes="1"/>
+                              <Component id="jFillForm" min="-2" pref="21" max="-2" attributes="1"/>
                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="3" attributes="0">
                                   <Component id="jRoundBorders" alignment="3" min="-2" pref="18" max="-2" attributes="0"/>
-                                  <Component id="jLabel7" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jRoundBorderLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                           </Group>
                       </Group>
                       <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="jDrawStartArrow" min="0" pref="0" max="32767" attributes="1"/>
-                          <Component id="jLabel11" alignment="0" min="-2" max="-2" attributes="1"/>
+                          <Component id="jStartArrowLabel" alignment="0" min="-2" max="-2" attributes="1"/>
                       </Group>
                       <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jLabel12" min="-2" max="-2" attributes="1"/>
+                          <Component id="jEndArrowLabel" min="-2" max="-2" attributes="1"/>
                           <Component id="jDrawEndArrow" min="0" pref="0" max="32767" attributes="1"/>
                       </Group>
-                      <EmptySpace max="32767" attributes="0"/>
+                      <EmptySpace pref="13" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
           </Layout>
           <SubComponents>
-            <Component class="javax.swing.JLabel" name="jLabel3">
+            <Component class="javax.swing.JLabel" name="jStrokeWidthLabel">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Strichbreite"/>
               </Properties>
@@ -416,7 +416,7 @@
                 <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="fireStrokeChangedEvent"/>
               </Events>
             </Component>
-            <Component class="javax.swing.JLabel" name="jLabel8">
+            <Component class="javax.swing.JLabel" name="jFillFormLabel">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Form ausf&#xfc;llen"/>
               </Properties>
@@ -439,7 +439,7 @@
                 <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="fireRoundBorderChangedEvent"/>
               </Events>
             </Component>
-            <Component class="javax.swing.JLabel" name="jLabel7">
+            <Component class="javax.swing.JLabel" name="jRoundBorderLabel">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Kantenrundung"/>
               </Properties>
@@ -454,12 +454,12 @@
                 <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="fireTextHeightChangedEvent"/>
               </Events>
             </Component>
-            <Component class="javax.swing.JLabel" name="jLabel10">
+            <Component class="javax.swing.JLabel" name="jTextHeightLabel">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Texth&#xf6;he"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JLabel" name="jLabel11">
+            <Component class="javax.swing.JLabel" name="jStartArrowLabel">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Pfeil (Anfang)"/>
               </Properties>
@@ -472,7 +472,7 @@
                 <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="fireArrowsChanged"/>
               </Events>
             </Component>
-            <Component class="javax.swing.JLabel" name="jLabel12">
+            <Component class="javax.swing.JLabel" name="jEndArrowLabel">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Pfeil (Ende)"/>
               </Properties>

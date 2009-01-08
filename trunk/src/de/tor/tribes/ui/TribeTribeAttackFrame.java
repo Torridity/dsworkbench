@@ -1462,20 +1462,16 @@ private void fireCancelTransferEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST
 }//GEN-LAST:event_fireCancelTransferEvent
 
 private void fireChooseSourceRegionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireChooseSourceRegionEvent
-    if (!MapPanel.getSingleton().enableVillageSelectionMode(this)) {
-        //error
-        return;
-    }
+    MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_SELECTION);
+    MapPanel.getSingleton().setVillageSelectionListener(this);
     DSWorkbenchMainFrame.getSingleton().toFront();
     DSWorkbenchMainFrame.getSingleton().requestFocus();
     bChooseSourceRegionMode = true;
 }//GEN-LAST:event_fireChooseSourceRegionEvent
 
 private void fireChooseTargetRegionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireChooseTargetRegionEvent
-    if (!MapPanel.getSingleton().enableVillageSelectionMode(this)) {
-        //error
-        return;
-    }
+    MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_SELECTION);
+    MapPanel.getSingleton().setVillageSelectionListener(this);
     Tribe victim = null;
     try {
         victim = (Tribe) jTargetTribeList.getSelectedItem();
@@ -1485,6 +1481,9 @@ private void fireChooseTargetRegionEvent(java.awt.event.MouseEvent evt) {//GEN-F
         JOptionPane.showMessageDialog(this, "Kein gültiger Spieler ausgewählt.", "Fehler", JOptionPane.INFORMATION_MESSAGE);
         return;
     }
+    //calculate mass of villages and center to it
+    Point com = DSCalculator.calculateCenterOfMass(victim.getVillageList());
+    DSWorkbenchMainFrame.getSingleton().centerPosition(com.x, com.y);
     DSWorkbenchMainFrame.getSingleton().toFront();
     DSWorkbenchMainFrame.getSingleton().requestFocus();
     bChooseTargetRegionMode = true;

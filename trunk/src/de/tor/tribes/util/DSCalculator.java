@@ -5,6 +5,8 @@
 package de.tor.tribes.util;
 
 import de.tor.tribes.types.Village;
+import java.awt.Point;
+import java.util.List;
 
 /**
  *
@@ -31,6 +33,19 @@ public class DSCalculator {
         return calculateDistance(pSource, pTarget) * pMinPerField / 60.0;
     }
 
+    public static Point calculateCenterOfMass(List<Village> pVillages) {
+        double mass = pVillages.size();
+        double xMass = 0;
+        double yMass = 0;
+        for (Village v : pVillages) {
+            xMass += v.getX();
+            yMass += v.getY();
+        }
+        xMass = Math.rint(xMass / mass);
+        yMass = Math.rint(yMass / mass);
+        return new Point((int) xMass, (int) yMass);
+    }
+
     public static String formatTimeInMinutes(double pTime) {
         double dur = pTime;
         int hour = (int) Math.floor(dur / 60);
@@ -55,5 +70,5 @@ public class DSCalculator {
             result += sec;
         }
         return result;
-    }    
+    }
 }

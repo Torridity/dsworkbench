@@ -57,7 +57,7 @@ public class Line extends AbstractForm {
             l.setXPosEnd(Double.parseDouble(elem.getAttributeValue("x")));
             l.setYPosEnd(Double.parseDouble(elem.getAttributeValue("y")));
             elem = e.getChild("textSize");
-            l.setTextSize(Float.parseFloat(elem.getTextTrim()));
+            l.setTextSize(Integer.parseInt(elem.getTextTrim()));
             return l;
         } catch (Exception ex) {
             return null;
@@ -68,7 +68,7 @@ public class Line extends AbstractForm {
     public void renderForm(Graphics2D g2d) {
         Point2D.Double s = MapPanel.getSingleton().virtualPosToSceenPosDouble(getXPos(), getYPos());
         Point2D.Double e = MapPanel.getSingleton().virtualPosToSceenPosDouble(getXPosEnd(), getYPosEnd());
-        java.awt.Rectangle mapBounds = MapPanel.getSingleton().getBounds();
+        java.awt.Rectangle mapBounds = MapPanel.getSingleton().getCorrectedBounds();
         if (mapBounds.contains(s) || mapBounds.contains(e)) {
             setVisibleOnMap(true);
         } else {

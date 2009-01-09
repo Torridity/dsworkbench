@@ -37,7 +37,7 @@ public class Text extends AbstractForm {
             l.setTextColor(new Color(Integer.parseInt(elem.getAttributeValue("r")), Integer.parseInt(elem.getAttributeValue("g")), Integer.parseInt(elem.getAttributeValue("b"))));
             l.setTextAlpha(Float.parseFloat(elem.getAttributeValue("a")));
             elem = e.getChild("textSize");
-            l.setTextSize(Float.parseFloat(elem.getTextTrim()));
+            l.setTextSize(Integer.parseInt(elem.getTextTrim()));
             return l;
         } catch (Exception ex) {
             return null;
@@ -46,7 +46,7 @@ public class Text extends AbstractForm {
 
     @Override
     public void renderForm(Graphics2D g2d) {
-        java.awt.Rectangle mapBounds = MapPanel.getSingleton().getBounds();
+        java.awt.Rectangle mapBounds = MapPanel.getSingleton().getCorrectedBounds();
         FontMetrics met = PatchFontMetrics.patch(g2d.getFontMetrics());
         Rectangle2D bounds = met.getStringBounds(getFormName(), g2d);
         if (mapBounds.intersects(bounds)) {
@@ -72,7 +72,7 @@ public class Text extends AbstractForm {
     }
 
     public void renderPreview(Graphics2D g2d) {
-        java.awt.Rectangle mapBounds = MapPanel.getSingleton().getBounds();
+        java.awt.Rectangle mapBounds = MapPanel.getSingleton().getCorrectedBounds();
         FontMetrics met = PatchFontMetrics.patch(g2d.getFontMetrics());
         Rectangle2D bounds = met.getStringBounds(getFormName(), g2d);
         if (mapBounds.intersects(bounds)) {

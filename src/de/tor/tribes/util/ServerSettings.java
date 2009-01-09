@@ -83,6 +83,7 @@ public class ServerSettings {
         switch (COORD) {
             case 1: {
                 mapSize = new Dimension(500, 500);
+                break;
             }
             default: {
                 mapSize = new Dimension(1000, 1000);

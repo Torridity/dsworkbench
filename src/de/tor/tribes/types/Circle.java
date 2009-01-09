@@ -56,7 +56,7 @@ public class Circle extends AbstractForm {
             elem = e.getChild("filled");
             l.setFilled(Boolean.parseBoolean(elem.getTextTrim()));
             elem = e.getChild("textSize");
-            l.setTextSize(Float.parseFloat(elem.getTextTrim()));
+            l.setTextSize(Integer.parseInt(elem.getTextTrim()));
             return l;
         } catch (Exception ex) {
             return null;
@@ -72,7 +72,7 @@ public class Circle extends AbstractForm {
         int w = (int) Math.rint(Math.abs(s.getX() - e.getX()));
         int h = (int) Math.rint(Math.abs(s.getY() - e.getY()));
 
-        if (new Ellipse2D.Double(x, y, w, h).intersects(MapPanel.getSingleton().getBounds())) {
+        if (new Ellipse2D.Double(x, y, w, h).intersects(MapPanel.getSingleton().getCorrectedBounds())) {
             setVisibleOnMap(true);
         } else {
             setVisibleOnMap(false);
@@ -117,7 +117,7 @@ public class Circle extends AbstractForm {
         int w = (int) Math.rint(Math.abs(s.x - e.x));
         int h = (int) Math.rint(Math.abs(s.y - e.y));
 
-        if (new Ellipse2D.Double(x, y, w, h).intersects(MapPanel.getSingleton().getBounds())) {
+        if (new Ellipse2D.Double(x, y, w, h).intersects(MapPanel.getSingleton().getCorrectedBounds())) {
             setVisibleOnMap(true);
         } else {
             setVisibleOnMap(false);

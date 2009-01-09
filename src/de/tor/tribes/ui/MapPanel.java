@@ -31,6 +31,7 @@ import de.tor.tribes.util.Skin;
 import de.tor.tribes.util.VillageSelectionListener;
 import de.tor.tribes.util.map.FormManager;
 import java.awt.Color;
+import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 import java.awt.geom.Point2D;
@@ -38,7 +39,7 @@ import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
 /**
- *
+ *@TODO Add flag-marker for single villages/notes? -> notes as forms?
  * @author  Charon
  */
 public class MapPanel extends javax.swing.JPanel {
@@ -613,6 +614,14 @@ public class MapPanel extends javax.swing.JPanel {
         addMouseMotionListener(MenuRenderer.getSingleton());
 
     //<editor-fold>
+    }
+
+    //return bounds without border
+    public Rectangle getCorrectedBounds() {
+        Rectangle b = super.getBounds();
+        int dx = 0 - (int) b.getX();
+        int dy = 0 - (int) b.getY();
+        return new Rectangle(0, 0, (int) b.getWidth() - dx, (int) b.getHeight() - dy);
     }
 
     public MapRenderer getMapRenderer() {

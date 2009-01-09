@@ -14,6 +14,7 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Stroke;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -35,7 +36,7 @@ public class FreeForm extends AbstractForm {
     private boolean drawName = true;
     private Color drawColor = Color.WHITE;
     private float drawAlpha = 1.0f;
-    private double tolerance = 0.5;
+    private float toler = 0.5f;
     private boolean closed = false;
 
     public static AbstractForm fromXml(Element e) {
@@ -57,7 +58,7 @@ public class FreeForm extends AbstractForm {
             elem = e.getChild("filled");
             l.setFilled(Boolean.parseBoolean(elem.getTextTrim()));
             elem = e.getChild("textSize");
-            l.setTextSize(Float.parseFloat(elem.getTextTrim()));
+            l.setTextSize(Integer.parseInt(elem.getTextTrim()));
             elem = e.getChild("points");
             List<Element> pChildren = elem.getChildren("point");
             for (Element child : pChildren) {
@@ -90,10 +91,11 @@ public class FreeForm extends AbstractForm {
         g2d.setStroke(getStroke());
         g2d.setColor(getDrawColor());
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, getDrawAlpha()));
-        GeneralPath p = new GeneralPath();
+
         Point2D.Double pp = MapPanel.getSingleton().virtualPosToSceenPosDouble(points.get(0).getX(), points.get(0).getY());
+        GeneralPath p = new GeneralPath();
         p.moveTo(pp.x, pp.y);
-        for (int i = 0; i <= points.size() - 1; i++) {
+        for (int i = 1; i < points.size(); i++) {
             pp = MapPanel.getSingleton().virtualPosToSceenPosDouble(points.get(i).getX(), points.get(i).getY());
             p.lineTo(pp.x, pp.y);
         }
@@ -103,14 +105,17 @@ public class FreeForm extends AbstractForm {
         } else {
             g2d.draw(p);
         }
+
         if (isDrawName()) {
             g2d.setColor(getTextColor());
             g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, getTextAlpha()));
             g2d.setFont(fBefore.deriveFont(getTextSize()));
+
             Rectangle2D textBounds = g2d.getFontMetrics().getStringBounds(getFormName(), g2d);
             java.awt.Rectangle bounds = p.getBounds();
             g2d.drawString(getFormName(), (int) Math.rint(bounds.getX() + bounds.getWidth() / 2 - textBounds.getWidth() / 2), (int) Math.rint(bounds.getY() + bounds.getHeight() / 2 + textBounds.getHeight() / 2));
         }
+
         //restore properties
         g2d.setStroke(sBefore);
         g2d.setColor(cBefore);
@@ -145,6 +150,7 @@ public class FreeForm extends AbstractForm {
         } else {
             g2d.draw(p);
         }
+
         if (isDrawName()) {
             g2d.setColor(getTextColor());
             g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, getTextAlpha()));
@@ -174,17 +180,18 @@ public class FreeForm extends AbstractForm {
         Point p1 = MapPanel.getSingleton().virtualPosToSceenPos(secondLast.getX(), secondLast.getY());
         Point p2 = MapPanel.getSingleton().virtualPosToSceenPos(pNewPoint.getX(), pNewPoint.getY());
         Point p3 = MapPanel.getSingleton().virtualPosToSceenPos(last.getX(), last.getY());
-        boolean line = lineContainsPoint(p2.x, p2.y, p1.x, p1.y, p3.x, p3.y, getTolerance());
+        boolean line = lineContainsPoint(p2.x, p2.y, p1.x, p1.y, p3.x, p3.y, (double) getTolerance());
         if (line) {
             points.set(points.size() - 1, pNewPoint);
         } else {
-            points.add(pNewPoint);
+            if (!((last.getX() == pNewPoint.getX()) && (last.getY() == pNewPoint.getY()))) {
+                points.add(pNewPoint);
+            }
         }
     }
 
     public boolean lineContainsPoint(int x1, int y1, int x2, int y2, int px, int py, double tolerance) {
         double a, b, x, y;
-
         if (x1 == x2) {
             return (Math.abs(px - x1) <= tolerance);
         }
@@ -202,13 +209,17 @@ public class FreeForm extends AbstractForm {
 
     @Override
     protected String getFormXml() {
-        String result = "<tolerance>" + getTolerance() + "</tolerance>\n";
-        result += "<points>\n";
+        String xml = "<drawColor r=\"" + getDrawColor().getRed() + "\" g=\"" + getDrawColor().getGreen() + "\" b=\"" + getDrawColor().getBlue() + "\" a=\"" + getDrawAlpha() + "\"/>\n";
+        xml += "<filled>" + isFilled() + "</filled>\n";
+        xml += "<stroke width=\"" + getStrokeWidth() + "\"/>\n";
+        xml += "<drawName>" + isDrawName() + "</drawName>\n";
+        xml += "<tolerance>" + getTolerance() + "</tolerance>\n";
+        xml += "<points>\n";
         for (Point2D.Double p : points) {
-            result += "<point x=\"" + p.getX() + "\" y=\"" + p.getY() + "\"/>\n";
+            xml += "<point x=\"" + p.getX() + "\" y=\"" + p.getY() + "\"/>\n";
         }
-        result += "<points>\n";
-        return result;
+        xml += "</points>\n";
+        return xml;
     }
 
     @Override
@@ -363,15 +374,15 @@ public class FreeForm extends AbstractForm {
     /**
      * @return the tolerance
      */
-    public double getTolerance() {
-        return tolerance;
+    public float getTolerance() {
+        return toler;
     }
 
     /**
      * @param tolerance the tolerance to set
      */
-    public void setTolerance(double tolerance) {
-        this.tolerance = tolerance;
+    public void setTolerance(float tolerance) {
+        toler = tolerance;
     }
 
     /**

@@ -98,7 +98,7 @@ public class TroopsParser {
             if (villageLines == 0) {
                 if ((v != null) && (troops.size() == DataHolder.getSingleton().getUnits().size())) {
                     //add troops to manager
-                    TroopsManager.getSingleton().addTroopsForVillage(v, new LinkedList<Integer>(troops));
+                    TroopsManager.getSingleton().addTroopsForVillageFast(v, new LinkedList<Integer>(troops));
                     troops.clear();
                     v = null;
                     //found at least one village, so retValue is true    
@@ -109,6 +109,7 @@ public class TroopsParser {
                 }
             }
         }
+        TroopsManager.getSingleton().forceUpdate();
         return retValue;
     }
 

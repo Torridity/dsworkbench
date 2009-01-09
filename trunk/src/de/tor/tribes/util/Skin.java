@@ -28,7 +28,6 @@ import org.apache.log4j.Logger;
 public class Skin {
 
     private static Logger logger = Logger.getLogger("TexturePack");    //init with default skin dimensions
-
     private int iFieldWidth = 0;
     private int iFieldHeight = 0;
     /**Texture IDs*/
@@ -202,7 +201,7 @@ public class Skin {
         return iFieldHeight;
     }
 
-     public Point2D.Double getError() {
+    public Point2D.Double getError() {
         double z = DSWorkbenchMainFrame.getSingleton().getZoomFactor();
         //get real size of one scaled texture
         double w = getFieldWidth() / z;
@@ -212,7 +211,9 @@ public class Skin {
         int hs = getImage(Skin.ID_DEFAULT_UNDERGROUND, z).getHeight(null);
         //calculate error in width and height
         double errorw = w / ws - 1;
+        errorw *= (ws < w) ? - 1 : 1;
         double errorh = h / hs - 1;
+        errorw *= (hs < h) ? - 1 : 1;
         return new Point2D.Double(errorw, errorh);
     }
 }

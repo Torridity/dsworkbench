@@ -50,7 +50,7 @@ public class MenuRenderer implements MouseListener, MouseMotionListener {
     MenuRenderer() {
         try {
             mIcons = new LinkedList<BufferedImage>();
-            //0-6 map related
+            //0-7 map related
             mIcons.add(ImageIO.read(new File("./graphics/icons/notool.png")));
             mIcons.add(ImageIO.read(new File("./graphics/icons/measure.png")));
             mIcons.add(ImageIO.read(new File("./graphics/icons/mark.png")));
@@ -59,7 +59,7 @@ public class MenuRenderer implements MouseListener, MouseMotionListener {
             mIcons.add(ImageIO.read(new File("./graphics/icons/selection.png")));
             mIcons.add(ImageIO.read(new File("./graphics/icons/def.png")));
             mIcons.add(ImageIO.read(new File("./graphics/icons/booty.png")));
-            //7-13 attack related
+            //8-14 attack related
             mIcons.add(ImageIO.read(new File("./graphics/icons/attack_axe.png")));
             mIcons.add(ImageIO.read(new File("./graphics/icons/attack_ram.png")));
             mIcons.add(ImageIO.read(new File("./graphics/icons/attack_snob.png")));
@@ -67,16 +67,17 @@ public class MenuRenderer implements MouseListener, MouseMotionListener {
             mIcons.add(ImageIO.read(new File("./graphics/icons/attack_light.png")));
             mIcons.add(ImageIO.read(new File("./graphics/icons/attack_heavy.png")));
             mIcons.add(ImageIO.read(new File("./graphics/icons/attack_sword.png")));
-            //14-16 minimap related
+            //15-17 minimap related
             mIcons.add(ImageIO.read(new File("./graphics/icons/move.png")));
             mIcons.add(ImageIO.read(new File("./graphics/icons/zoom.png")));
             mIcons.add(ImageIO.read(new File("./graphics/icons/camera.png")));
-            //17-20 minimap related
+            //18-22 minimap related
             mIcons.add(ImageIO.read(new File("./graphics/icons/draw_line.png")));
+            mIcons.add(ImageIO.read(new File("./graphics/icons/draw_freeform.png")));
             mIcons.add(ImageIO.read(new File("./graphics/icons/draw_rect.png")));
             mIcons.add(ImageIO.read(new File("./graphics/icons/draw_circle.png")));
             mIcons.add(ImageIO.read(new File("./graphics/icons/draw_text.png")));
-            //21-23 misc
+            //24-25 misc
             mIcons.add(ImageIO.read(new File("./graphics/icons/search.png")));
             mIcons.add(ImageIO.read(new File("./graphics/icons/settings.png")));
             mIcons.add(ImageIO.read(new File("./graphics/icons/clock.png")));
@@ -110,25 +111,30 @@ public class MenuRenderer implements MouseListener, MouseMotionListener {
         int maxIconsX = 8;
         g2d.setColor(Constants.DS_BACK);
         g2d.fill3DRect(menuLocation.x, menuLocation.y - 20, maxIconsX * iconw + (maxIconsX + 1) * space, 5 * iconh + 5 * space + 25, true);
+        //map tools
         int pos = 0;
         int lastPos = 0;
         for (; pos < 8; pos++) {
             menuRegions.put(pos, new Rectangle(menuLocation.x + space + pos * iconw + pos * space, menuLocation.y + 5, iconw, iconh));
         }
+        //attack tools
         lastPos = pos;
         for (; pos < 15; pos++) {
             menuRegions.put(pos, new Rectangle(menuLocation.x + space + (pos - lastPos) * iconw + (pos - lastPos) * space, menuLocation.y + space + iconh + space, iconw, iconh));
         }
+        //minimap tools
         lastPos = pos;
         for (; pos < 18; pos++) {
             menuRegions.put(pos, new Rectangle(menuLocation.x + space + (pos - lastPos) * iconw + (pos - lastPos) * space, menuLocation.y + space + iconh + space + iconh + space, iconw, iconh));
         }
+        //draw tools
         lastPos = pos;
-        for (; pos < 22; pos++) {
+        for (; pos < 23; pos++) {
             menuRegions.put(pos, new Rectangle(menuLocation.x + space + (pos - lastPos) * iconw + (pos - lastPos) * space, menuLocation.y + space + iconh + space + iconh + space + iconh + space, iconw, iconh));
         }
+        //misc tools
         lastPos = pos;
-        for (; pos < 25; pos++) {
+        for (; pos < 26; pos++) {
             menuRegions.put(pos, new Rectangle(menuLocation.x + space + (pos - lastPos) * iconw + (pos - lastPos) * space, menuLocation.y + space + iconh + space + iconh + space + iconh + space + iconh + space, iconw, iconh));
         }
 
@@ -212,21 +218,24 @@ public class MenuRenderer implements MouseListener, MouseMotionListener {
                 return "Linie zeichnen";
             }
             case 19: {
-                return "Rechteck zeichnen";
+                return "Freihand zeichnen";
             }
             case 20: {
-                return "Kreis zeichnen";
+                return "Rechteck zeichnen";
             }
             case 21: {
-                return "Text zeichnen";
+                return "Kreis zeichnen";
             }
             case 22: {
-                return "Suche öffnen";
+                return "Text zeichnen";
             }
             case 23: {
-                return "Einstellungen öffnen";
+                return "Suche öffnen";
             }
             case 24: {
+                return "Einstellungen öffnen";
+            }
+            case 25: {
                 return "Uhr öffnen";
             }
         }
@@ -317,34 +326,38 @@ public class MenuRenderer implements MouseListener, MouseMotionListener {
                             }
                             case 18: {
                                 MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_DRAW_LINE);
-                                //FormConfigFrame.getSingleton().setupAndShow(de.tor.tribes.types.Line.class);
-                                FormConfigFrame.getSingleton().setupAndShow(de.tor.tribes.types.FreeForm.class);
+                                FormConfigFrame.getSingleton().setupAndShow(de.tor.tribes.types.Line.class);
                                 break;
                             }
                             case 19: {
+                                MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_DRAW_FREEFORM);
+                                FormConfigFrame.getSingleton().setupAndShow(de.tor.tribes.types.FreeForm.class);
+                                break;
+                            }
+                            case 20: {
                                 MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_DRAW_RECT);
                                 FormConfigFrame.getSingleton().setupAndShow(de.tor.tribes.types.Rectangle.class);
                                 break;
                             }
-                            case 20: {
+                            case 21: {
                                 MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_DRAW_CIRCLE);
                                 FormConfigFrame.getSingleton().setupAndShow(de.tor.tribes.types.Circle.class);
                                 break;
                             }
-                            case 21: {
+                            case 22: {
                                 MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_DRAW_TEXT);
                                 FormConfigFrame.getSingleton().setupAndShow(de.tor.tribes.types.Text.class);
                                 break;
                             }
-                            case 22: {
+                            case 23: {
                                 SearchFrame.getSingleton().setVisible(true);
                                 break;
                             }
-                            case 23: {
+                            case 24: {
                                 DSWorkbenchSettingsDialog.getSingleton().setVisible(true);
                                 break;
                             }
-                            case 24: {
+                            case 25: {
                                 ClockFrame.getSingleton().setVisible(true);
                                 break;
                             }

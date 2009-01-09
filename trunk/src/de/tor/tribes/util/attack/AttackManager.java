@@ -15,7 +15,6 @@ import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.MapPanel;
 import de.tor.tribes.ui.models.AttackManagerTableModel;
 import de.tor.tribes.ui.renderer.MapRenderer;
-import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.io.File;
 import java.io.FileWriter;
@@ -75,7 +74,6 @@ public class AttackManager {
             logger.error("File argument is 'null'");
             return;
         }
-
         File attackFile = new File(pFile);
         if (attackFile.exists()) {
             if (logger.isDebugEnabled()) {
@@ -96,10 +94,11 @@ public class AttackManager {
                         if (a != null) {
                             Village source = DataHolder.getSingleton().getVillages()[a.getSource().getX()][a.getSource().getY()];
                             Village target = DataHolder.getSingleton().getVillages()[a.getTarget().getX()][a.getTarget().getY()];
-                            addAttack(source, target, a.getUnit(), a.getArriveTime(), a.isShowOnMap(), planKey);
+                            addAttackFast(source, target, a.getUnit(), a.getArriveTime(), a.isShowOnMap(), planKey);
                         }
                     }
                 }
+                forceUpdate(DEFAULT_PLAN_ID);
                 logger.debug("Attacks loaded successfully");
             } catch (Exception e) {
                 logger.error("Failed to load attacks", e);
@@ -146,6 +145,15 @@ public class AttackManager {
         addAttack(pSource, pTarget, pUnit, pArriveTime, showOnMap, null);
     }
 
+    public synchronized void addAttackFast(Village pSource, Village pTarget, UnitHolder pUnit, Date pArriveTime) {
+        boolean showOnMap = false;
+        try {
+            showOnMap = Boolean.parseBoolean(GlobalOptions.getProperty("draw.attacks.by.default"));
+        } catch (Exception e) {
+        }
+        addAttackFast(pSource, pTarget, pUnit, pArriveTime, showOnMap, null);
+    }
+
     public synchronized void addAttack(Village pSource, Village pTarget, UnitHolder pUnit, Date pArriveTime, String pPlan) {
         boolean showOnMap = false;
         try {
@@ -155,10 +163,25 @@ public class AttackManager {
         addAttack(pSource, pTarget, pUnit, pArriveTime, showOnMap, pPlan);
     }
 
+    public synchronized void addAttackFast(Village pSource, Village pTarget, UnitHolder pUnit, Date pArriveTime, String pPlan) {
+        boolean showOnMap = false;
+        try {
+            showOnMap = Boolean.parseBoolean(GlobalOptions.getProperty("draw.attacks.by.default"));
+        } catch (Exception e) {
+        }
+        addAttackFast(pSource, pTarget, pUnit, pArriveTime, showOnMap, pPlan);
+    }
+
     /**Add an attack to the default plan*/
     public synchronized void addAttack(Village pSource, Village pTarget, UnitHolder pUnit, Date pArriveTime, boolean pShowOnMap) {
         //System.out.println("Attack " + pSource + ", " + pTarget+ ", " + de.tor.tribes.util.Constants.DATE_FORMAT.format(pArriveTime));
         addAttack(pSource, pTarget, pUnit, pArriveTime, pShowOnMap, null);
+    }
+
+    /**Add an attack to the default plan*/
+    public synchronized void addAttackFast(Village pSource, Village pTarget, UnitHolder pUnit, Date pArriveTime, boolean pShowOnMap) {
+        //System.out.println("Attack " + pSource + ", " + pTarget+ ", " + de.tor.tribes.util.Constants.DATE_FORMAT.format(pArriveTime));
+        addAttackFast(pSource, pTarget, pUnit, pArriveTime, pShowOnMap, null);
     }
 
     /**Add an attack to a plan*/
@@ -188,6 +211,34 @@ public class AttackManager {
             attackPlan.add(a);
         }
         fireAttacksChangedEvents(plan);
+    }
+
+    /**Add an attack to a plan*/
+    public synchronized void addAttackFast(Village pSource, Village pTarget, UnitHolder pUnit, Date pArriveTime, boolean pShowOnMap, String pPlan) {
+        String plan = pPlan;
+        if (plan == null) {
+            plan = DEFAULT_PLAN_ID;
+        }
+
+        if (pSource == null || pTarget == null || pUnit == null || pArriveTime == null) {
+            logger.error("Invalid attack");
+            return;
+        }
+
+        Attack a = new Attack();
+        a.setSource(pSource);
+        a.setTarget(pTarget);
+        a.setUnit(pUnit);
+        a.setArriveTime(pArriveTime);
+        a.setShowOnMap(pShowOnMap);
+        List<Attack> attackPlan = mAttackPlans.get(plan);
+        if (attackPlan == null) {
+            attackPlan = new LinkedList<Attack>();
+            attackPlan.add(a);
+            mAttackPlans.put(plan, attackPlan);
+        } else {
+            attackPlan.add(a);
+        }
     }
 
     public synchronized void addEmptyPlan(String pPlan) {
@@ -269,7 +320,7 @@ public class AttackManager {
         return mAttackPlans.keySet().toArray(new String[]{});
     }
 
-    public void attacksUpdatedExternally(String pPlan) {
+    public void forceUpdate(String pPlan) {
         fireAttacksChangedEvents(pPlan);
     }
 

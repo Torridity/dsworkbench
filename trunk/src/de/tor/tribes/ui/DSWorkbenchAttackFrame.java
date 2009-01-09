@@ -1905,7 +1905,7 @@ private void jDoMoveToPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:even
         jAttackTable.setDefaultEditor(Date.class, new DateSpinEditor());
         jAttackTable.setDefaultEditor(UnitHolder.class, new UnitCellEditor());
         jAttackTable.setDefaultEditor(Village.class, new VillageCellEditor());
-        AttackManager.getSingleton().attacksUpdatedExternally(null);
+        AttackManager.getSingleton().forceUpdate(null);
         buildAttackPlanList();
         jActiveAttackPlan.setSelectedItem(AttackManager.DEFAULT_PLAN_ID);
     }

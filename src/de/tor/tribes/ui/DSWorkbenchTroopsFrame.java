@@ -68,6 +68,8 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
         jTroopsTable.setColumnSelectionAllowed(false);
         jTroopsTable.setModel(TroopsManagerTableModel.getSingleton());
         TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(TroopsManagerTableModel.getSingleton());
+        /*sorter.setSortsOnUpdates(false);
+        sorter.setMaxSortKeys(2);*/
         jTroopsTable.setRowSorter(sorter);
         jTroopsTable.setDefaultRenderer(Integer.class, new NumberFormatCellRenderer());
         jTroopsTable.setDefaultRenderer(Double.class, new NumberFormatCellRenderer());

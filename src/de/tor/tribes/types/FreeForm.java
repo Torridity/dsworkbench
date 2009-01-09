@@ -6,14 +6,17 @@ package de.tor.tribes.types;
 
 import de.tor.tribes.ui.DSWorkbenchMainFrame;
 import de.tor.tribes.ui.MapPanel;
+import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Composite;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Polygon;
 import java.awt.Stroke;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.net.URLDecoder;
 import java.util.LinkedList;
 import java.util.List;
@@ -55,6 +58,13 @@ public class FreeForm extends AbstractForm {
             l.setFilled(Boolean.parseBoolean(elem.getTextTrim()));
             elem = e.getChild("textSize");
             l.setTextSize(Float.parseFloat(elem.getTextTrim()));
+            elem = e.getChild("points");
+            List<Element> pChildren = elem.getChildren("point");
+            for (Element child : pChildren) {
+                double x = Double.parseDouble(child.getAttribute("x").getValue());
+                double y = Double.parseDouble(child.getAttribute("y").getValue());
+                l.addPointWithoutCheck(new Point2D.Double(x, y));
+            }
             return l;
         } catch (Exception ex) {
             return null;
@@ -71,10 +81,15 @@ public class FreeForm extends AbstractForm {
         if (points.size() < 1) {
             return;
         }
+        //store properties
         Stroke sBefore = g2d.getStroke();
         Color cBefore = g2d.getColor();
+        Composite coBefore = g2d.getComposite();
+        Font fBefore = g2d.getFont();
+        //draw
         g2d.setStroke(getStroke());
         g2d.setColor(getDrawColor());
+        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, getDrawAlpha()));
         GeneralPath p = new GeneralPath();
         Point2D.Double pp = MapPanel.getSingleton().virtualPosToSceenPosDouble(points.get(0).getX(), points.get(0).getY());
         p.moveTo(pp.x, pp.y);
@@ -88,18 +103,35 @@ public class FreeForm extends AbstractForm {
         } else {
             g2d.draw(p);
         }
+        if (isDrawName()) {
+            g2d.setColor(getTextColor());
+            g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, getTextAlpha()));
+            g2d.setFont(fBefore.deriveFont(getTextSize()));
+            Rectangle2D textBounds = g2d.getFontMetrics().getStringBounds(getFormName(), g2d);
+            java.awt.Rectangle bounds = p.getBounds();
+            g2d.drawString(getFormName(), (int) Math.rint(bounds.getX() + bounds.getWidth() / 2 - textBounds.getWidth() / 2), (int) Math.rint(bounds.getY() + bounds.getHeight() / 2 + textBounds.getHeight() / 2));
+        }
+        //restore properties
         g2d.setStroke(sBefore);
         g2d.setColor(cBefore);
+        g2d.setComposite(coBefore);
+        g2d.setFont(fBefore);
     }
 
     public void renderPreview(Graphics2D g2d) {
         if (points.size() < 1) {
             return;
         }
+        //store properties
         Stroke sBefore = g2d.getStroke();
         Color cBefore = g2d.getColor();
+        Composite coBefore = g2d.getComposite();
+        Font fBefore = g2d.getFont();
+        //draw
         g2d.setStroke(getStroke());
         g2d.setColor(getDrawColor());
+        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, getDrawAlpha()));
+
         GeneralPath p = new GeneralPath();
         Point2D.Double pp = points.get(0);
         p.moveTo(pp.x, pp.y);
@@ -113,8 +145,23 @@ public class FreeForm extends AbstractForm {
         } else {
             g2d.draw(p);
         }
+        if (isDrawName()) {
+            g2d.setColor(getTextColor());
+            g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, getTextAlpha()));
+            g2d.setFont(fBefore.deriveFont(getTextSize()));
+            Rectangle2D textBounds = g2d.getFontMetrics().getStringBounds(getFormName(), g2d);
+            java.awt.Rectangle bounds = p.getBounds();
+            g2d.drawString(getFormName(), (int) Math.rint(bounds.getX() + bounds.getWidth() / 2 - textBounds.getWidth() / 2), (int) Math.rint(bounds.getY() + bounds.getHeight() / 2 + textBounds.getHeight() / 2));
+        }
         g2d.setStroke(sBefore);
         g2d.setColor(cBefore);
+        g2d.setComposite(coBefore);
+        g2d.setFont(fBefore);
+    }
+
+    /**For reading from XML only*/
+    private void addPointWithoutCheck(Point2D.Double pNewPoint) {
+        points.add(pNewPoint);
     }
 
     public void addPoint(Point2D.Double pNewPoint) {

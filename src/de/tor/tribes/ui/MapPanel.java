@@ -119,11 +119,6 @@ public class MapPanel extends javax.swing.JPanel {
 
             @Override
             public void mouseWheelMoved(MouseWheelEvent e) {
-                if (positionUpdate) {
-                    //already redrawing, ignore wheel
-                    return;
-                }
-
                 if (e.getWheelRotation() < 0) {
                     DSWorkbenchMainFrame.getSingleton().zoomOut();
                 } else {
@@ -313,6 +308,12 @@ public class MapPanel extends javax.swing.JPanel {
                         }
                         break;
                     }
+                    case ImageManager.CURSOR_DRAW_FREEFORM: {
+                        Point2D.Double pos = mouseToVirtualPos(e.getX(), e.getY());
+                        FormConfigFrame.getSingleton().getCurrentForm().setXPos(pos.x);
+                        FormConfigFrame.getSingleton().getCurrentForm().setYPos(pos.y);
+                        break;
+                    }
                     case ImageManager.CURSOR_DRAW_LINE: {
                         Point2D.Double pos = mouseToVirtualPos(e.getX(), e.getY());
                         FormConfigFrame.getSingleton().getCurrentForm().setXPos(pos.x);
@@ -365,7 +366,8 @@ public class MapPanel extends javax.swing.JPanel {
                 if ((iCurrentCursor == ImageManager.CURSOR_DRAW_LINE) ||
                         (iCurrentCursor == ImageManager.CURSOR_DRAW_RECT) ||
                         (iCurrentCursor == ImageManager.CURSOR_DRAW_CIRCLE) ||
-                        (iCurrentCursor == ImageManager.CURSOR_DRAW_TEXT)) {
+                        (iCurrentCursor == ImageManager.CURSOR_DRAW_TEXT) ||
+                        (iCurrentCursor == ImageManager.CURSOR_DRAW_FREEFORM)) {
                     FormManager.getSingleton().addForm(FormConfigFrame.getSingleton().getCurrentForm());
                     FormConfigFrame.getSingleton().setupAndShow(FormConfigFrame.getSingleton().getCurrentForm().getClass());
                 } else {
@@ -557,10 +559,8 @@ public class MapPanel extends javax.swing.JPanel {
                     }
                     case ImageManager.CURSOR_DRAW_LINE: {
                         Point2D.Double pos = mouseToVirtualPos(e.getX(), e.getY());
-                        /*((de.tor.tribes.types.Line) FormConfigFrame.getSingleton().getCurrentForm()).setXPosEnd(pos.x);
+                        ((de.tor.tribes.types.Line) FormConfigFrame.getSingleton().getCurrentForm()).setXPosEnd(pos.x);
                         ((de.tor.tribes.types.Line) FormConfigFrame.getSingleton().getCurrentForm()).setYPosEnd(pos.y);
-                         */
-                        ((de.tor.tribes.types.FreeForm) FormConfigFrame.getSingleton().getCurrentForm()).addPoint(pos);
                         break;
                     }
                     case ImageManager.CURSOR_DRAW_RECT: {
@@ -579,6 +579,11 @@ public class MapPanel extends javax.swing.JPanel {
                         Point2D.Double pos = mouseToVirtualPos(e.getX(), e.getY());
                         ((de.tor.tribes.types.Text) FormConfigFrame.getSingleton().getCurrentForm()).setXPos(pos.x);
                         ((de.tor.tribes.types.Text) FormConfigFrame.getSingleton().getCurrentForm()).setYPos(pos.y);
+                        break;
+                    }
+                    case ImageManager.CURSOR_DRAW_FREEFORM: {
+                        Point2D.Double pos = mouseToVirtualPos(e.getX(), e.getY());
+                        ((de.tor.tribes.types.FreeForm) FormConfigFrame.getSingleton().getCurrentForm()).addPoint(pos);
                         break;
                     }
                     default: {
@@ -763,12 +768,6 @@ public class MapPanel extends javax.swing.JPanel {
     }
 
     public void updateVirtualBounds(Point pViewStart) {
-        /*double zoom = DSWorkbenchMainFrame.getSingleton().getZoomFactor();
-        double xV = pViewStart.x * GlobalOptions.getSkin().getFieldWidth();
-        double yV = pViewStart.y * GlobalOptions.getSkin().getFieldHeight();
-        double wV = (int) Math.rint(getWidth() * zoom);
-        double hV = (int) Math.rint(getHeight() * zoom);
-        mVirtualBounds.setRect(xV, yV, wV, hV);*/
         double zoom = DSWorkbenchMainFrame.getSingleton().getZoomFactor();
         double xV = pViewStart.getX();
         double yV = pViewStart.getY();
@@ -791,49 +790,34 @@ public class MapPanel extends javax.swing.JPanel {
 
     public Point virtualPosToSceenPos(double pXVirt, double pYVirt) {
         double z = DSWorkbenchMainFrame.getSingleton().getZoomFactor();
-        //calculate real pos in current frame
-        double xp = (pXVirt - mVirtualBounds.getX());
-        double yp = (pYVirt - mVirtualBounds.getY());
-        //calc full villages
-        double xVill = Math.floor(xp);
-        double yVill = Math.floor(yp);
-        double dx = xp - xVill;
-        double dy = yp - yVill;
-        double width = (double) GlobalOptions.getSkin().getFieldWidth() / z;
-        double height = (double) GlobalOptions.getSkin().getFieldHeight() / z;
-        double xpos = xVill * width + dx * width;
-        double ypos = yVill * height + dy * height;
-        return new Point((int) Math.rint(xpos), (int) Math.rint(ypos));
+        Image tmp = GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, z);
+        double width = (double) tmp.getWidth(null);
+        double height = (double) tmp.getHeight(null);
+
+        double xp = (pXVirt - mVirtualBounds.getX()) * width;
+        double yp = (pYVirt - mVirtualBounds.getY()) * height;
+        return new Point((int) Math.rint(xp), (int) Math.rint(yp));
     }
 
     public Point2D.Double mouseToVirtualPos(int pX, int pY) {
         double z = DSWorkbenchMainFrame.getSingleton().getZoomFactor();
-        double x = mVirtualBounds.getX();
-        double y = mVirtualBounds.getY();
-        double mx = (double) pX / (double) GlobalOptions.getSkin().getFieldWidth() * z;
-        double my = (double) pY / (double) GlobalOptions.getSkin().getFieldHeight() * z;
-        double villx = Math.floor(mx);
-        double villy = Math.floor(my);
-        x += villx + (mx - villx);
-        y += villy + (my - villy);
+        Image tmp = GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, z);
+        double width = (double) tmp.getWidth(null);
+        double height = (double) tmp.getHeight(null);
+        double x = mVirtualBounds.getX() + ((double) pX / (double) width);
+        double y = mVirtualBounds.getY() + ((double) pY / (double) height);
         return new Point2D.Double(x, y);
     }
 
     public Point2D.Double virtualPosToSceenPosDouble(double pXVirt, double pYVirt) {
         double z = DSWorkbenchMainFrame.getSingleton().getZoomFactor();
         //calculate real pos in current frame
-        double xp = (pXVirt - mVirtualBounds.getX());
-        double yp = (pYVirt - mVirtualBounds.getY());
-        //calc full villages
-        double xVill = Math.floor(xp);
-        double yVill = Math.floor(yp);
-        double dx = xp - xVill;
-        double dy = yp - yVill;
-        double width = (double) GlobalOptions.getSkin().getFieldWidth() / z;
-        double height = (double) GlobalOptions.getSkin().getFieldHeight() / z;
-        double xpos = xVill * width + dx * width;
-        double ypos = yVill * height + dy * height;
-        return new Point2D.Double(xpos, ypos);
+        Image tmp = GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, z);
+        double width = (double) tmp.getWidth(null);
+        double height = (double) tmp.getHeight(null);
+        double xp = (pXVirt - mVirtualBounds.getX()) * width;
+        double yp = (pYVirt - mVirtualBounds.getY()) * height;
+        return new Point2D.Double(xp, yp);
     }
 
     public Rectangle2D getVirtualBounds() {

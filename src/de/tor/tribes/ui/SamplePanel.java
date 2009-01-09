@@ -191,6 +191,7 @@ public class SamplePanel extends javax.swing.JPanel {
                 break;
             }
             case 4: {
+                //preview freeform
                 FreeForm l = new FreeForm();
                 l.setDrawColor(mDrawColor);
                 l.setDrawAlpha(fDrawTransparency);
@@ -201,9 +202,8 @@ public class SamplePanel extends javax.swing.JPanel {
                 l.setDrawName(drawText);
                 l.setFormName(sText);
                 l.setStrokeWidth(fStrokeWidth);
-                l.setXPos(10);
+                l.setXPos(getWidth()/2);
                 l.setYPos(10);
-                l.addPoint(new Point2D.Double(getWidth() - 10, 10));
                 l.addPoint(new Point2D.Double(getWidth() - 10, getHeight() - 10));
                 l.addPoint(new Point2D.Double(10, getHeight() - 10));
                 l.renderPreview(g2d);

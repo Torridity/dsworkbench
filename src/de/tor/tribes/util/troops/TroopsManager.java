@@ -72,11 +72,20 @@ public class TroopsManager {
 
     public void addTroopsForVillage(Village pVillage, List<Integer> pTroops) {
         addTroopsForVillage(pVillage, Calendar.getInstance().getTime(), pTroops);
+        fireTroopsChangedEvents();
+    }
+
+    public void addTroopsForVillageFast(Village pVillage, List<Integer> pTroops) {
+        addTroopsForVillageFast(pVillage, Calendar.getInstance().getTime(), pTroops);
     }
 
     public void addTroopsForVillage(Village pVillage, Date pState, List<Integer> pTroops) {
         mTroops.put(pVillage, new VillageTroopsHolder(pVillage, pTroops, pState));
         fireTroopsChangedEvents();
+    }
+
+    public void addTroopsForVillageFast(Village pVillage, Date pState, List<Integer> pTroops) {
+        mTroops.put(pVillage, new VillageTroopsHolder(pVillage, pTroops, pState));
     }
 
     public VillageTroopsHolder getTroopsForVillage(Village pVillage) {

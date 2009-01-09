@@ -462,7 +462,11 @@ public class MapRenderer extends Thread {
                     Point p = copyRegions.get(type);
                     if (p == null) {
                         g2d.drawImage(GlobalOptions.getSkin().getImage(type, currentZoom), x, y, null);
-                        if (MapPanel.getSingleton().getBounds().contains(new Rectangle(x, y, width, height))) {
+                        //check containment using size tolerance
+                        if (MapPanel.getSingleton().getBounds().contains(new Rectangle(x, y, width+2, height+2))) {
+                           /* System.out.println("Type " + type);
+                            System.out.println("Map " + MapPanel.getSingleton().getBounds());
+                            System.out.println("Reg " + new Rectangle(x, y, width, height));*/
                             copyRegions.put(type, new Point(x, y));
                         }
                     } else {
@@ -470,7 +474,6 @@ public class MapRenderer extends Thread {
                     }
                     if (selection != null) {
                         if (new Rectangle((int) selection.getXPos(), (int) selection.getYPos(), (int) selection.getXPosEnd() - (int) selection.getXPos(), (int) selection.getYPosEnd() - (int) selection.getYPos()).intersects(v.getVirtualBounds())) {
-                            System.out.println("INter");
                         }
                     }
                 }
@@ -522,12 +525,12 @@ public class MapRenderer extends Thread {
         }
         //</editor-fold>
 
-        /* Enumeration<Integer> keys = copyRegions.keys();
+        Enumeration<Integer> keys = copyRegions.keys();
         g2d.setColor(Color.MAGENTA);
         while (keys.hasMoreElements()) {
-        Point p = copyRegions.get(keys.nextElement());
-        g2d.drawRect(p.x, p.y, width, height);
-        }*/
+            Point p = copyRegions.get(keys.nextElement());
+            g2d.drawRect(p.x, p.y, width, height);
+        }
 
         /*  System.out.println("Regions " + copyRegions);
         System.out.println("Village complete: " + (System.currentTimeMillis() - s));
@@ -537,7 +540,7 @@ public class MapRenderer extends Thread {
         System.out.println("Copying: " + (copyTime));
         //System.out.println("Count: " + cnt);
         System.out.println("-------");*/
-
+        System.out.println(copyRegions);
         g2d.dispose();
         mapRedrawRequired = false;
     }
@@ -826,7 +829,7 @@ public class MapRenderer extends Thread {
             }
             attacks = null;
         }
-    //</editor-fold>
+        //</editor-fold>
 
     }
 
@@ -992,7 +995,7 @@ public class MapRenderer extends Thread {
                 }
             }
         }
-    // </editor-fold>
+        // </editor-fold>
     }
 
     private void prepareGraphics(Graphics2D pG2d) {

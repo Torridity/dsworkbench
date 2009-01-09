@@ -16,6 +16,7 @@ import de.tor.tribes.util.mark.MarkerManagerListener;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -101,13 +102,18 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
 
             @Override
             public void mouseReleased(MouseEvent e) {
+                if (rDrag == null) {
+                    return;
+                }
                 if (iCurrentCursor == ImageManager.CURSOR_SHOT) {
                     try {
                         BufferedImage i = mPaintThread.getBuffer();
-                        int x = (int) Math.rint((double) 1000 / (double) getWidth() * (double) rDrag.getX());
-                        int y = (int) Math.rint((double) 1000 / (double) getHeight() * (double) rDrag.getY());
-                        int w = (int) Math.rint((double) 1000 / (double) getWidth() * (double) (rDrag.getWidth() - rDrag.getX()));
-                        int h = (int) Math.rint((double) 1000 / (double) getHeight() * (double) (rDrag.getHeight() - rDrag.getY()));
+                        int mapWidth = (int) ServerSettings.getSingleton().getMapDimension().getWidth();
+                        int mapHeight = (int) ServerSettings.getSingleton().getMapDimension().getHeight();
+                        int x = (int) Math.rint((double) mapWidth / (double) getWidth() * (double) rDrag.getX());
+                        int y = (int) Math.rint((double) mapHeight / (double) getHeight() * (double) rDrag.getY());
+                        int w = (int) Math.rint((double) mapWidth / (double) getWidth() * (double) (rDrag.getWidth() - rDrag.getX()));
+                        int h = (int) Math.rint((double) mapHeight / (double) getHeight() * (double) (rDrag.getHeight() - rDrag.getY()));
                         BufferedImage sub = i.getSubimage(x, y, w, h);
                         mScreenshotPanel.setBuffer(sub);
                         jPanel1.setSize(mScreenshotPanel.getSize());
@@ -172,9 +178,11 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
                         if (!mZoomFrame.isVisible()) {
                             mZoomFrame.setVisible(true);
                         }
+                        int mapWidth = (int) ServerSettings.getSingleton().getMapDimension().getWidth();
+                        int mapHeight = (int) ServerSettings.getSingleton().getMapDimension().getHeight();
 
-                        int x = (int) Math.rint((double) 1000 / (double) getWidth() * (double) e.getX());
-                        int y = (int) Math.rint((double) 1000 / (double) getHeight() * (double) e.getY());
+                        int x = (int) Math.rint((double) mapWidth / (double) getWidth() * (double) e.getX());
+                        int y = (int) Math.rint((double) mapHeight / (double) getHeight() * (double) e.getY());
                         mZoomFrame.updatePosition(x, y);
                         break;
                     }
@@ -250,11 +258,14 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
             Graphics2D g2d = (Graphics2D) g;
             g2d.drawImage(mBuffer, 0, 0, null);
             g2d.setColor(Color.YELLOW);
-            int w = (int) Math.rint(((double) getWidth() / 1000) * (double) iWidth);
-            int h = (int) Math.rint(((double) getHeight() / 1000) * (double) iHeight);
+            int mapWidth = (int) ServerSettings.getSingleton().getMapDimension().getWidth();
+            int mapHeight = (int) ServerSettings.getSingleton().getMapDimension().getHeight();
 
-            double posX = ((double) getWidth() / 1000 * (double) iX) - w / 2;
-            double posY = ((double) getHeight() / 1000 * (double) iY) - h / 2;
+            int w = (int) Math.rint(((double) getWidth() / mapWidth) * (double) iWidth);
+            int h = (int) Math.rint(((double) getHeight() / mapHeight) * (double) iHeight);
+
+            double posX = ((double) getWidth() / mapWidth * (double) iX) - w / 2;
+            double posY = ((double) getHeight() / mapHeight * (double) iY) - h / 2;
 
             g2d.drawRect((int) Math.rint(posX), (int) Math.rint(posY), w, h);
             if (iCurrentCursor == ImageManager.CURSOR_SHOT) {
@@ -304,7 +315,10 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
 
     public void redraw() {
         doRedraw = true;
-        mPaintThread.update();
+        try {
+            mPaintThread.update();
+        } catch (Exception e) {
+        }
     }
 
     @Override
@@ -577,12 +591,19 @@ class MinimapRepaintThread extends Thread {
     private static Logger logger = Logger.getLogger("MinimapRenderer");
     private BufferedImage mBuffer = null;
     private boolean drawn = false;
+    private Dimension mapDim = null;
 
     public MinimapRepaintThread() {
-        mBuffer = new BufferedImage(1000, 1000, BufferedImage.TYPE_INT_RGB);
+        mapDim = ServerSettings.getSingleton().getMapDimension();
+        mBuffer = new BufferedImage(mapDim.width, mapDim.height, BufferedImage.TYPE_INT_RGB);
     }
 
     public void update() {
+        Dimension currentDim = ServerSettings.getSingleton().getMapDimension();
+        if ((mapDim.width != currentDim.width) || (mapDim.height != currentDim.height)) {
+            mapDim.setSize(currentDim);
+            mBuffer = new BufferedImage(mapDim.width, mapDim.height, BufferedImage.TYPE_INT_RGB);
+        }
         drawn = false;
     }
 
@@ -614,7 +635,7 @@ class MinimapRepaintThread extends Thread {
         if (mVisibleVillages == null) {
             return false;
         }
-        
+
         Graphics2D g2d = (Graphics2D) mBuffer.getGraphics();
         g2d.setColor(new Color(35, 125, 0));
         g2d.fillRect(0, 0, mBuffer.getWidth(null), mBuffer.getHeight(null));

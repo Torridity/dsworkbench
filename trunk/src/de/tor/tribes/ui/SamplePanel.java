@@ -15,9 +15,12 @@ import de.tor.tribes.types.FreeForm;
 import de.tor.tribes.types.Line;
 import de.tor.tribes.types.Rectangle;
 import de.tor.tribes.types.Text;
+import de.tor.tribes.util.GlobalOptions;
+import de.tor.tribes.util.Skin;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.Paint;
 import java.awt.TexturePaint;
 import java.awt.geom.Point2D;
@@ -48,6 +51,7 @@ public class SamplePanel extends javax.swing.JPanel {
     //type 0-4: 0=line, 1=rect, 2=circle, 3=text, 4=freeform
     private int type = 0;
     private int roundBorders = 0;
+    private float tolerance = 0.5f;
 
     /** Creates new form SamplePanel */
     public SamplePanel() {
@@ -106,8 +110,33 @@ public class SamplePanel extends javax.swing.JPanel {
         drawEndArrow = v;
     }
 
+    public void setTolerance(float v) {
+        tolerance = v;
+    }
+
+    public float getTolerance() {
+        return tolerance;
+    }
+
     public void setType(int v) {
         type = v;
+    }
+
+    public BufferedImage createSample() {
+        BufferedImage result = new BufferedImage(6 * GlobalOptions.getSkin().getFieldWidth(), 2 * GlobalOptions.getSkin().getFieldHeight(), BufferedImage.TYPE_INT_RGB);
+        Graphics2D g2d = (Graphics2D) result.getGraphics();
+        g2d.setColor(Color.RED);
+        g2d.fillRect(0, 0, result.getWidth(), result.getHeight());
+        for (int i = Skin.ID_V1; i <= Skin.ID_V6; i++) {
+            Image image = GlobalOptions.getSkin().getImage(i, 1.0f);
+            g2d.drawImage(image, (i - Skin.ID_V1) * image.getWidth(null), 0, this);
+        }
+        for (int i = Skin.ID_V1_LEFT; i <= Skin.ID_V6_LEFT; i++) {
+            Image image = GlobalOptions.getSkin().getImage(i, 1.0f);
+            g2d.drawImage(image, (i - Skin.ID_V1_LEFT) * image.getWidth(null), image.getHeight(null), this);
+        }
+        g2d.dispose();
+        return result;
     }
 
     public void paint(Graphics g) {
@@ -116,7 +145,8 @@ public class SamplePanel extends javax.swing.JPanel {
         g2d.fillRect(0, 0, getWidth(), getHeight());
         g2d.setColor(mDrawColor);
         Paint p = g2d.getPaint();
-        g2d.setPaint(new TexturePaint(sampleTexture, new Rectangle2D.Double(0, 0, sampleTexture.getWidth(), sampleTexture.getHeight())));
+        BufferedImage sample = createSample();
+        g2d.setPaint(new TexturePaint(sample, new Rectangle2D.Double(0, 0, sample.getWidth(), sample.getHeight())));
         g2d.fillRect(0, 0, getWidth(), getHeight());
         g2d.setPaint(p);
         switch (type) {
@@ -202,10 +232,11 @@ public class SamplePanel extends javax.swing.JPanel {
                 l.setDrawName(drawText);
                 l.setFormName(sText);
                 l.setStrokeWidth(fStrokeWidth);
-                l.setXPos(getWidth()/2);
+                l.setXPos(getWidth() / 2);
                 l.setYPos(10);
                 l.addPoint(new Point2D.Double(getWidth() - 10, getHeight() - 10));
                 l.addPoint(new Point2D.Double(10, getHeight() - 10));
+                l.setTolerance(getTolerance());
                 l.renderPreview(g2d);
                 break;
             }

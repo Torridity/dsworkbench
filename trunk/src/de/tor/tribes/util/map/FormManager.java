@@ -108,6 +108,16 @@ public class FormManager {
         DSWorkbenchFormFrame.getSingleton().updateFormList();
     }
 
+    public synchronized void removeForms(AbstractForm[] pForms) {
+        if (pForms == null) {
+            return;
+        }
+        for (AbstractForm f : pForms) {
+            forms.remove(f);
+        }
+        DSWorkbenchFormFrame.getSingleton().updateFormList();
+    }
+
     public synchronized List<AbstractForm> getVisibleForms() {
         List<AbstractForm> visible = new LinkedList<AbstractForm>();
         for (AbstractForm f : forms) {

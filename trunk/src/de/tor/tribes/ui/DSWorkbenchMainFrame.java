@@ -134,7 +134,10 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                     }
 
                     //misc shortcuts
-                    if ((e.getKeyCode() == KeyEvent.VK_1) && e.isAltDown()) {
+                    if ((e.getKeyCode() == KeyEvent.VK_0) && e.isAltDown()) {
+                        //measure tool shortcut
+                        MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_DEFAULT);
+                    } else if ((e.getKeyCode() == KeyEvent.VK_1) && e.isAltDown()) {
                         //measure tool shortcut
                         MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_MEASURE);
                     } else if ((e.getKeyCode() == KeyEvent.VK_2) && e.isAltDown()) {
@@ -188,6 +191,22 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                     } else if ((e.getKeyCode() == KeyEvent.VK_T) && e.isControlDown()) {
                         //search time shortcut
                         ClockFrame.getSingleton().setVisible(true);
+                    } else if ((e.getKeyCode() == KeyEvent.VK_F) && e.isAltDown()) {
+                        if (fullscreenFrame == null) {
+                            jPanel1.remove(MapPanel.getSingleton());
+                            fullscreenFrame = new JFrame();
+                            fullscreenFrame.add(MapPanel.getSingleton());
+                            Dimension fullscreen = Toolkit.getDefaultToolkit().getScreenSize();
+                            fullscreenFrame.setSize(fullscreen);
+                            fullscreenFrame.setUndecorated(true);
+                            fullscreenFrame.setVisible(true);
+                        } else {
+                            fullscreenFrame.remove(MapPanel.getSingleton());
+                            jPanel1.add(MapPanel.getSingleton());
+                            fullscreenFrame.dispose();
+                            fullscreenFrame = null;
+                        }
+                        MapPanel.getSingleton().updateMapPosition(Integer.parseInt(jCenterX.getText()), Integer.parseInt(jCenterY.getText()));
                     }
                 }
             }
@@ -284,6 +303,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         onlineStateChanged();
 
     }
+    private JFrame fullscreenFrame = null;
 
     /**Update on server change*/
     public void serverSettingsChangedEvent() {
@@ -304,7 +324,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             DefaultComboBoxModel model = new DefaultComboBoxModel(new Object[]{"Keine Dörfer"});
             jCurrentPlayerVillages.setModel(model);
         }
-//update views
+        //update views
 
         MinimapPanel.getSingleton().redraw();
         MapPanel.getSingleton().updateMapPosition(iCenterX, iCenterY);
@@ -1359,7 +1379,7 @@ private void fireZoomEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fir
     }
 
     protected synchronized void zoomOut() {
-        dZoomFactor -= 1.0 / 10;
+        dZoomFactor -= 1.0 / 10.0;
         checkZoomRange();
 
         dZoomFactor = Double.parseDouble(NumberFormat.getInstance().format(dZoomFactor).replaceAll(",", "."));
@@ -1583,7 +1603,7 @@ private void fireShowFormsFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIRS
 
             return (Village) jCurrentPlayerVillages.getSelectedItem();
         } catch (Exception e) {
-            logger.warn("Could not get current user village. Probably no active player was selected.");
+            logger.warn("Could not get current user village. Probably no active player was selected.", e);
             return null;
         }
 

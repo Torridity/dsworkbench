@@ -23,7 +23,7 @@ public abstract class AbstractForm {
     private float textAlpha = 1.0f;
     private String formName = "";
     private boolean visibleOnMap = false;
-    private float textSize = 14.0f;
+    private int textSize = 14;
 
     public abstract void renderForm(Graphics2D g2d);
 
@@ -41,6 +41,9 @@ public abstract class AbstractForm {
         } else if (formType.equals("text")) {
             logger.debug("Loading 'text'");
             return Text.fromXml(e);
+        } else if (formType.equals("freeform")) {
+            logger.debug("Loading 'freeform'");
+            return FreeForm.fromXml(e);
         } else {
             return null;
         }
@@ -173,14 +176,14 @@ public abstract class AbstractForm {
     /**
      * @return the size
      */
-    public float getTextSize() {
+    public int getTextSize() {
         return textSize;
     }
 
     /**
      * @param size the size to set
      */
-    public void setTextSize(float size) {
+    public void setTextSize(int size) {
         this.textSize = size;
     }
 }

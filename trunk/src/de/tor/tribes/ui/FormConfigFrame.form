@@ -36,7 +36,7 @@
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
-              <EmptySpace max="32767" attributes="0"/>
+              <EmptySpace pref="15" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -326,24 +326,33 @@
                       </Group>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" attributes="0">
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="jTextHeight" pref="80" max="32767" attributes="1"/>
+                          <Component id="jDrawEndArrow" pref="270" max="32767" attributes="1"/>
+                          <Group type="102" alignment="0" attributes="0">
+                              <Group type="103" groupAlignment="1" attributes="0">
+                                  <Component id="jDrawStartArrow" alignment="0" pref="80" max="32767" attributes="1"/>
+                                  <Component id="jTextHeight" alignment="0" pref="80" max="32767" attributes="1"/>
                                   <Component id="jStrokeWidth" alignment="0" max="32767" attributes="1"/>
                               </Group>
-                              <EmptySpace min="-2" pref="26" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="1" attributes="0">
-                                  <Component id="jFillFormLabel" pref="74" max="32767" attributes="1"/>
-                                  <Component id="jRoundBorderLabel" alignment="1" min="-2" max="-2" attributes="1"/>
+                                  <Group type="102" attributes="0">
+                                      <EmptySpace min="-2" pref="26" max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="1" attributes="0">
+                                          <Component id="jFillFormLabel" pref="74" max="32767" attributes="1"/>
+                                          <Component id="jRoundBorderLabel" alignment="1" min="-2" max="-2" attributes="1"/>
+                                      </Group>
+                                  </Group>
+                                  <Group type="102" attributes="0">
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="jToleranceLabel" min="-2" max="-2" attributes="1"/>
+                                  </Group>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="jFillForm" pref="86" max="32767" attributes="1"/>
+                              <Group type="103" groupAlignment="1" attributes="0">
+                                  <Component id="jFillForm" alignment="0" pref="86" max="32767" attributes="1"/>
                                   <Component id="jRoundBorders" alignment="0" pref="86" max="32767" attributes="1"/>
+                                  <Component id="jToleranceSpinner" alignment="1" pref="86" max="32767" attributes="0"/>
                               </Group>
                           </Group>
-                          <Component id="jDrawEndArrow" pref="270" max="32767" attributes="1"/>
-                          <Component id="jDrawStartArrow" alignment="0" pref="270" max="32767" attributes="1"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -376,12 +385,16 @@
                               </Group>
                           </Group>
                       </Group>
-                      <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="jDrawStartArrow" min="0" pref="0" max="32767" attributes="1"/>
                           <Component id="jStartArrowLabel" alignment="0" min="-2" max="-2" attributes="1"/>
+                          <Group type="103" alignment="0" groupAlignment="3" attributes="0">
+                              <Component id="jToleranceLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="jToleranceSpinner" alignment="3" min="-2" max="-2" attributes="0"/>
+                          </Group>
                       </Group>
-                      <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="jEndArrowLabel" min="-2" max="-2" attributes="1"/>
                           <Component id="jDrawEndArrow" min="0" pref="0" max="32767" attributes="1"/>
@@ -400,7 +413,7 @@
             <Component class="javax.swing.JSpinner" name="jStrokeWidth">
               <Properties>
                 <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.editors2.SpinnerModelEditor">
-                  <SpinnerModel initial="1.0" maximum="15.0" minimum="0.1" numberType="java.lang.Float" stepSize="0.1" type="number"/>
+                  <SpinnerModel initial="1.0" maximum="15.0" minimum="0.1" numberType="java.lang.Float" stepSize="1.0" type="number"/>
                 </Property>
                 <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                   <Dimension value="[80, 18]"/>
@@ -483,6 +496,21 @@
               </Properties>
               <Events>
                 <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="fireArrowsChanged"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JLabel" name="jToleranceLabel">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Feinheitsgrad"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JSpinner" name="jToleranceSpinner">
+              <Properties>
+                <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.editors2.SpinnerModelEditor">
+                  <SpinnerModel initial="1.0" maximum="1.0" minimum="0.0" numberType="java.lang.Float" stepSize="0.1" type="number"/>
+                </Property>
+              </Properties>
+              <Events>
+                <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="fireToleranceChangedEvent"/>
               </Events>
             </Component>
           </SubComponents>

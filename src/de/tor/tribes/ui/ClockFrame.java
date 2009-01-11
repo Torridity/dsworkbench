@@ -121,12 +121,13 @@ private void fireActivateTimerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        java.awt.EventQueue.invokeLater(new Runnable() {
+
+        /*java.awt.EventQueue.invokeLater(new Runnable() {
 
             public void run() {
                 new ClockFrame().setVisible(true);
             }
-        });
+        });*/
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

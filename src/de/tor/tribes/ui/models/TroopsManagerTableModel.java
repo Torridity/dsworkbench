@@ -160,9 +160,11 @@ public class TroopsManagerTableModel extends AbstractTableModel {
         switch (pCol) {
             case 0: {
                 //not allowed
+                break;
             }
             case 1: {
                 //not allowed
+                break;
             }
             default: {
                 int troopIndex = pCol - 2;

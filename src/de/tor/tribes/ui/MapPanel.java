@@ -6,6 +6,7 @@
 package de.tor.tribes.ui;
 
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.util.BrowserCommandSender;
 import de.tor.tribes.util.GlobalOptions;
@@ -29,9 +30,7 @@ import de.tor.tribes.ui.renderer.MapRenderer;
 import de.tor.tribes.ui.renderer.MenuRenderer;
 import de.tor.tribes.util.Skin;
 import de.tor.tribes.util.VillageSelectionListener;
-import de.tor.tribes.util.map.FormManager;
 import java.awt.Color;
-import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 import java.awt.geom.Point2D;
@@ -39,7 +38,7 @@ import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
 /**
- *@TODO Add flag-marker for single villages/notes? -> notes as forms?
+ *@TODO Add flag-marker for single villages/notes? -> notes as forms? (Version 2.0)
  * @author  Charon
  */
 public class MapPanel extends javax.swing.JPanel {
@@ -59,6 +58,7 @@ public class MapPanel extends javax.swing.JPanel {
     private boolean isOutside = false;
     private Rectangle2D mapBounds = null;
     private Point mousePos = null;
+    private Point mouseDownPoint = null;
     private List<MapPanelListener> mMapPanelListeners = null;
     private List<ToolChangeListener> mToolChangeListeners = null;
     private int xDir = 0;
@@ -69,8 +69,8 @@ public class MapPanel extends javax.swing.JPanel {
     private boolean positionUpdate = false;
     private de.tor.tribes.types.Rectangle selectionRect = null;
     private VillageSelectionListener mVillageSelectionListener = null;
-    // </editor-fold>
 
+    // </editor-fold>
     public static synchronized MapPanel getSingleton() {
         if (SINGLETON == null) {
             SINGLETON = new MapPanel();
@@ -136,10 +136,8 @@ public class MapPanel extends javax.swing.JPanel {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getButton() != MouseEvent.BUTTON1) {
-                    if (e.getButton() == MouseEvent.BUTTON2) {
-                        MenuRenderer.getSingleton().setMenuLocation(e.getX(), e.getY());
-                        MenuRenderer.getSingleton().switchVisibility();
-                    }
+                    MenuRenderer.getSingleton().setMenuLocation(e.getX(), e.getY());
+                    MenuRenderer.getSingleton().switchVisibility();
                     return;
                 }
 
@@ -162,6 +160,10 @@ public class MapPanel extends javax.swing.JPanel {
                         //center village on click with default cursor
                         Village current = getVillageAtMousePos();
                         if (current != null) {
+                            Tribe t = DSWorkbenchMainFrame.getSingleton().getCurrentUser();
+                            if ((current != null) && (current.getTribe() != null) && (t != null) && (t.equals(current.getTribe()))) {
+                                DSWorkbenchMainFrame.getSingleton().setCurrentUserVillage(current);
+                            }
                             DSWorkbenchMainFrame.getSingleton().centerVillage(current);
                         }
                         break;
@@ -213,6 +215,7 @@ public class MapPanel extends javax.swing.JPanel {
                                 }
                             }
                         }
+                        break;
                     }
                     case ImageManager.CURSOR_SEND_RES_INGAME: {
                         if (e.getClickCount() == 2) {
@@ -224,6 +227,7 @@ public class MapPanel extends javax.swing.JPanel {
                                 }
                             }
                         }
+                        break;
                     }
                     case ImageManager.CURSOR_ATTACK_AXE: {
                         unit = DataHolder.getSingleton().getUnitID("Axtkämpfer");
@@ -266,7 +270,6 @@ public class MapPanel extends javax.swing.JPanel {
 
             @Override
             public void mousePressed(MouseEvent e) {
-
                 if (e.getButton() != MouseEvent.BUTTON1) {
                     return;
                 }
@@ -287,6 +290,10 @@ public class MapPanel extends javax.swing.JPanel {
                 }
 
                 switch (iCurrentCursor) {
+                    case ImageManager.CURSOR_DEFAULT: {
+                        mouseDownPoint = MouseInfo.getPointerInfo().getLocation();
+                        break;
+                    }
                     case ImageManager.CURSOR_SELECTION: {
                         selectionRect = new de.tor.tribes.types.Rectangle();
                         selectionRect.setDrawColor(Color.YELLOW);
@@ -369,8 +376,7 @@ public class MapPanel extends javax.swing.JPanel {
                         (iCurrentCursor == ImageManager.CURSOR_DRAW_CIRCLE) ||
                         (iCurrentCursor == ImageManager.CURSOR_DRAW_TEXT) ||
                         (iCurrentCursor == ImageManager.CURSOR_DRAW_FREEFORM)) {
-                    FormManager.getSingleton().addForm(FormConfigFrame.getSingleton().getCurrentForm());
-                    FormConfigFrame.getSingleton().setupAndShow(FormConfigFrame.getSingleton().getCurrentForm().getClass());
+                    FormConfigFrame.getSingleton().purge();
                 } else {
                     if ((iCurrentCursor == ImageManager.CURSOR_ATTACK_AXE) ||
                             (iCurrentCursor == ImageManager.CURSOR_ATTACK_SWORD) ||
@@ -383,6 +389,10 @@ public class MapPanel extends javax.swing.JPanel {
                     }
 
                     switch (iCurrentCursor) {
+                        case ImageManager.CURSOR_DEFAULT: {
+                            mouseDownPoint = null;
+                            break;
+                        }
                         case ImageManager.CURSOR_SELECTION: {
 
                             int xs = (int) Math.floor(selectionRect.getXPos());
@@ -528,6 +538,19 @@ public class MapPanel extends javax.swing.JPanel {
                 }
 
                 switch (iCurrentCursor) {
+                    case ImageManager.CURSOR_DEFAULT: {
+                        Point location = MouseInfo.getPointerInfo().getLocation();
+                        if ((mouseDownPoint == null) || (location == null)) {
+                            break;
+                        }
+                        double dx = location.getX() - mouseDownPoint.getX();
+                        double dy = location.getY() - mouseDownPoint.getY();
+                        if (Math.abs(dx) > 10 || Math.abs(dy) > 10) {
+                            mouseDownPoint = location;
+                            fireScrollEvents((int) Math.rint(dx / 10), (int) Math.rint(dy / 10));
+                        }
+                        break;
+                    }
                     case ImageManager.CURSOR_SELECTION: {
                         Point2D.Double pos = mouseToVirtualPos(e.getX(), e.getY());
                         int xs = (int) Math.floor(selectionRect.getXPos());
@@ -617,13 +640,12 @@ public class MapPanel extends javax.swing.JPanel {
     }
 
     //return bounds without border
-    public Rectangle getCorrectedBounds() {
-        Rectangle b = super.getBounds();
-        int dx = 0 - (int) b.getX();
-        int dy = 0 - (int) b.getY();
-        return new Rectangle(0, 0, (int) b.getWidth() - dx, (int) b.getHeight() - dy);
-    }
-
+   /* public Rectangle getCorrectedBounds() {
+    Rectangle b = super.getBounds();
+    int dx = 0 - (int) b.getX();
+    int dy = 0 - (int) b.getY();
+    return new Rectangle(0, 0, (int) b.getWidth() - dx, (int) b.getHeight() - dy);
+    }*/
     public MapRenderer getMapRenderer() {
         return mMapRenderer;
     }
@@ -684,6 +706,10 @@ public class MapPanel extends javax.swing.JPanel {
         iCurrentCursor = pCurrentCursor;
         setCursor(ImageManager.getCursor(iCurrentCursor));
         fireToolChangedEvents(iCurrentCursor);
+    }
+
+    public int getCurrentCursor() {
+        return iCurrentCursor;
     }
 
     /** This method is called from within the constructor to

@@ -92,8 +92,8 @@ public class TagTableModel extends AbstractTableModel {
         switch (columnIndex) {
             case 0: {
                 TagManager.getSingleton().getTags().get(rowIndex).setName((String) value);
-            }
-            default: {
+                break;
+            }default: {
                 TagManager.getSingleton().getTags().get(rowIndex).setShowOnMap((Boolean) value);
             }
         }

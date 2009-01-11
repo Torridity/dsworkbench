@@ -24,6 +24,9 @@ public abstract class AbstractForm {
     private String formName = "";
     private boolean visibleOnMap = false;
     private int textSize = 14;
+    private boolean showMode = false;
+    private long t = -1;
+    private long showCount = 0;
 
     public abstract void renderForm(Graphics2D g2d);
 
@@ -65,6 +68,30 @@ public abstract class AbstractForm {
     }
 
     protected abstract String getFormXml();
+
+    public abstract java.awt.Rectangle getBounds();
+
+    public void checkShowMode(Graphics2D g2d, Color pColor) {
+        if (isShowMode()) {
+            if (t == -1) {
+                t = System.currentTimeMillis();
+            }
+            if (System.currentTimeMillis() - t >= 500) {
+                t = System.currentTimeMillis();
+                g2d.setXORMode(Color.BLACK);
+                showCount++;
+            } else {
+                g2d.setColor(pColor);
+            }
+            if (showCount == 5) {
+                setShowMode(false);
+                t = -1;
+                showCount = 0;
+            }
+        } else {
+            g2d.setColor(pColor);
+        }
+    }
 
     /**
      * @return the xPos
@@ -167,6 +194,7 @@ public abstract class AbstractForm {
         this.visibleOnMap = visibleOnMap;
     }
 
+    @Override
     public String toString() {
         String s = getFormName();
         s += " (" + getFormType() + ")";
@@ -185,5 +213,19 @@ public abstract class AbstractForm {
      */
     public void setTextSize(int size) {
         this.textSize = size;
+    }
+
+    /**
+     * @return the showMode
+     */
+    public boolean isShowMode() {
+        return showMode;
+    }
+
+    /**
+     * @param showMode the showMode to set
+     */
+    public void setShowMode(boolean showMode) {
+        this.showMode = showMode;
     }
 }

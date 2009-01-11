@@ -12,12 +12,12 @@ package de.tor.tribes.ui;
 
 import de.tor.tribes.types.AbstractForm;
 import de.tor.tribes.util.map.FormManager;
+import java.awt.Rectangle;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
 /**
- * @TODO allow to center form, implement "show form" by blink?
  * @author Charon
  */
 public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame {
@@ -67,6 +67,7 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame {
         jButton2 = new javax.swing.JButton();
         jToggleVisibleOnlyButton = new javax.swing.JToggleButton();
         jButton3 = new javax.swing.JButton();
+        jButton4 = new javax.swing.JButton();
         jCheckBox1 = new javax.swing.JCheckBox();
 
         setTitle("Formen");
@@ -75,7 +76,6 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame {
 
         jLabel1.setText("Formen");
 
-        jFormsList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane1.setViewportView(jFormsList);
 
         jButton1.setBackground(new java.awt.Color(239, 235, 223));
@@ -125,6 +125,18 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame {
             }
         });
 
+        jButton4.setBackground(new java.awt.Color(239, 235, 223));
+        jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/center.png"))); // NOI18N
+        jButton4.setToolTipText("Form zentrieren");
+        jButton4.setMaximumSize(new java.awt.Dimension(25, 25));
+        jButton4.setMinimumSize(new java.awt.Dimension(25, 25));
+        jButton4.setPreferredSize(new java.awt.Dimension(25, 25));
+        jButton4.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireCenterFormEvent(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -137,16 +149,15 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE)
+                        .addComponent(jToggleVisibleOnlyButton, javax.swing.GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE)
                         .addContainerGap())
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(13, 13, 13))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jToggleVisibleOnlyButton, javax.swing.GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE)
-                        .addContainerGap())))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(jButton4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jButton3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jButton1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jButton2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(13, 13, 13))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -160,7 +171,9 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame {
                         .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 131, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 100, Short.MAX_VALUE)
                         .addComponent(jToggleVisibleOnlyButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jLabel1))
                 .addContainerGap())
@@ -195,7 +208,7 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame {
 
     private void fireRemoveFormEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireRemoveFormEvent
         try {
-            AbstractForm[] forms = (AbstractForm[]) jFormsList.getSelectedValues();
+            Object[] forms = jFormsList.getSelectedValues();
             if ((forms != null) && (forms.length > 0)) {
                 int l = forms.length;
                 String message = "Form wirklich löschen?";
@@ -207,11 +220,9 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame {
                 }
             }
         } catch (Exception e) {
+            e.printStackTrace();
         }
     }//GEN-LAST:event_fireRemoveFormEvent
-
-    private void fireShowFormEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireShowFormEvent
-    }//GEN-LAST:event_fireShowFormEvent
 
     private void fireToggleVisibleOnlyEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireToggleVisibleOnlyEvent
         if (jToggleVisibleOnlyButton.isSelected()) {
@@ -219,6 +230,7 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame {
         } else {
             jToggleVisibleOnlyButton.setIcon(new ImageIcon(this.getClass().getResource("/res/ui/eye.png")));
         }
+        updateFormList();
     }//GEN-LAST:event_fireToggleVisibleOnlyEvent
 
     private void fireEditFormEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireEditFormEvent
@@ -231,10 +243,40 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame {
         }
     }//GEN-LAST:event_fireEditFormEvent
 
+    private void fireCenterFormEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCenterFormEvent
+        try {
+            AbstractForm toCenter = (AbstractForm) jFormsList.getSelectedValue();
+            if (toCenter != null) {
+                Rectangle r = toCenter.getBounds();
+                if (r != null) {
+                    DSWorkbenchMainFrame.getSingleton().centerPosition((int) Math.rint(r.getCenterX()), (int) Math.rint(r.getCenterY()));
+                }
+            }
+        } catch (Exception e) {
+        }
+
+    }//GEN-LAST:event_fireCenterFormEvent
+
+    private void fireShowFormEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireShowFormEvent
+        try {
+            Object[] toShow = (Object[]) jFormsList.getSelectedValues();
+            if (toShow != null) {
+                for (Object o : toShow) {
+                    try {
+                        ((AbstractForm) o).setShowMode(true);
+                    } catch (Exception noForm) {
+                    }
+                }
+            }
+        } catch (Exception e) {
+        }
+    }//GEN-LAST:event_fireShowFormEvent
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton4;
     private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JList jFormsList;
     private javax.swing.JLabel jLabel1;

@@ -38,12 +38,11 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import org.apache.log4j.Logger;
 import de.tor.tribes.types.Tag;
-import de.tor.tribes.ui.renderer.MapRenderer;
 import de.tor.tribes.util.ServerSettings;
 
 /**
  * @author  Charon
- * @Todo Remove form entry for former versions
+ * @TODO Remove form entry for former versions
  */
 public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         MapPanelListener,
@@ -96,6 +95,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                 GlobalOptions.addProperty("troops.frame.alwaysOnTop", Boolean.toString(DSWorkbenchTroopsFrame.getSingleton().isAlwaysOnTop()));
                 GlobalOptions.addProperty("rank.frame.alwaysOnTop", Boolean.toString(DSWorkbenchRankFrame.getSingleton().isAlwaysOnTop()));
                 GlobalOptions.addProperty("form.frame.alwaysOnTop", Boolean.toString(DSWorkbenchFormFrame.getSingleton().isAlwaysOnTop()));
+                GlobalOptions.addProperty("form.config.frame.alwaysOnTop", Boolean.toString(FormConfigFrame.getSingleton().isAlwaysOnTop()));
                 GlobalOptions.addProperty("zoom.factor", Double.toString(dZoomFactor));
                 GlobalOptions.addProperty("last.x", jCenterX.getText());
                 GlobalOptions.addProperty("last.y", jCenterY.getText());
@@ -120,7 +120,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             public void eventDispatched(AWTEvent event) {
                 if (((KeyEvent) event).getID() == KeyEvent.KEY_PRESSED) {
                     KeyEvent e = (KeyEvent) event;
-                    if (DSWorkbenchMainFrame.getSingleton().isActive()) {
+                    if (DSWorkbenchMainFrame.getSingleton().isActive() || fullscreenFrame != null) {
                         //move shortcuts
                         if (e.getKeyCode() == KeyEvent.VK_DOWN) {
                             scroll(0, 2);
@@ -130,12 +130,36 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                             scroll(-2, 0);
                         } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
                             scroll(2, 0);
+                        } else if ((e.getKeyCode() == KeyEvent.VK_1) && e.isShiftDown()) {
+                            //shot minimap tool shortcut
+                            MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_AXE);
+                        } else if ((e.getKeyCode() == KeyEvent.VK_2) && e.isShiftDown()) {
+                            //attack axe tool shortcut
+                            MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_RAM);
+                        } else if ((e.getKeyCode() == KeyEvent.VK_3) && e.isShiftDown()) {
+                            //attack ram tool shortcut
+                            MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_SNOB);
+                        } else if ((e.getKeyCode() == KeyEvent.VK_4) && e.isShiftDown()) {
+                            //attack snob tool shortcut
+                            MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_SPY);
+                        } else if ((e.getKeyCode() == KeyEvent.VK_5) && e.isShiftDown()) {
+                            //attack sword tool shortcut
+                            MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_SWORD);
+                        } else if ((e.getKeyCode() == KeyEvent.VK_6) && e.isShiftDown()) {
+                            //attack light tool shortcut
+                            MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_LIGHT);
+                        } else if ((e.getKeyCode() == KeyEvent.VK_7) && e.isShiftDown()) {
+                            //attack heavy tool shortcut
+                            MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_HEAVY);
+                        } else if ((e.getKeyCode() == KeyEvent.VK_S) && e.isControlDown()) {
+                            //search frame shortcut
+                            SearchFrame.getSingleton().setVisible(!SearchFrame.getSingleton().isVisible());
                         }
                     }
 
                     //misc shortcuts
                     if ((e.getKeyCode() == KeyEvent.VK_0) && e.isAltDown()) {
-                        //measure tool shortcut
+                        //no tool shortcut
                         MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_DEFAULT);
                     } else if ((e.getKeyCode() == KeyEvent.VK_1) && e.isAltDown()) {
                         //measure tool shortcut
@@ -151,8 +175,14 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                         MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_SUPPORT);
                     } else if ((e.getKeyCode() == KeyEvent.VK_5) && e.isAltDown()) {
                         //attack ingame tool shortcut
-                        MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_INGAME);
+                        MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_SELECTION);
                     } else if ((e.getKeyCode() == KeyEvent.VK_6) && e.isAltDown()) {
+                        //attack ingame tool shortcut
+                        MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_RADAR);
+                    } else if ((e.getKeyCode() == KeyEvent.VK_7) && e.isAltDown()) {
+                        //attack ingame tool shortcut
+                        MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_INGAME);
+                    } else if ((e.getKeyCode() == KeyEvent.VK_8) && e.isAltDown()) {
                         //res ingame tool shortcut
                         MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_SEND_RES_INGAME);
                     } else if ((e.getKeyCode() == KeyEvent.VK_1) && e.isControlDown()) {
@@ -164,34 +194,10 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                     } else if ((e.getKeyCode() == KeyEvent.VK_3) && e.isControlDown()) {
                         //shot minimap tool shortcut
                         MinimapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_SHOT);
-                    } else if ((e.getKeyCode() == KeyEvent.VK_1) && e.isShiftDown()) {
-                        //shot minimap tool shortcut
-                        MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_AXE);
-                    } else if ((e.getKeyCode() == KeyEvent.VK_2) && e.isShiftDown()) {
-                        //attack axe tool shortcut
-                        MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_RAM);
-                    } else if ((e.getKeyCode() == KeyEvent.VK_3) && e.isShiftDown()) {
-                        //attack ram tool shortcut
-                        MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_SNOB);
-                    } else if ((e.getKeyCode() == KeyEvent.VK_4) && e.isShiftDown()) {
-                        //attack snob tool shortcut
-                        MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_SPY);
-                    } else if ((e.getKeyCode() == KeyEvent.VK_5) && e.isShiftDown()) {
-                        //attack sword tool shortcut
-                        MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_SWORD);
-                    } else if ((e.getKeyCode() == KeyEvent.VK_6) && e.isShiftDown()) {
-                        //attack light tool shortcut
-                        MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_LIGHT);
-                    } else if ((e.getKeyCode() == KeyEvent.VK_7) && e.isShiftDown()) {
-                        //attack heavy tool shortcut
-                        MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_HEAVY);
-                    } else if ((e.getKeyCode() == KeyEvent.VK_S) && e.isControlDown()) {
-                        //search frame shortcut
-                        SearchFrame.getSingleton().setVisible(true);
                     } else if ((e.getKeyCode() == KeyEvent.VK_T) && e.isControlDown()) {
                         //search time shortcut
-                        ClockFrame.getSingleton().setVisible(true);
-                    } else if ((e.getKeyCode() == KeyEvent.VK_F) && e.isAltDown()) {
+                        ClockFrame.getSingleton().setVisible(!ClockFrame.getSingleton().isVisible());
+                    } else if ((e.getKeyCode() == KeyEvent.VK_F) && e.isControlDown()) {
                         if (fullscreenFrame == null) {
                             jPanel1.remove(MapPanel.getSingleton());
                             fullscreenFrame = new JFrame();
@@ -207,6 +213,22 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                             fullscreenFrame = null;
                         }
                         MapPanel.getSingleton().updateMapPosition(Integer.parseInt(jCenterX.getText()), Integer.parseInt(jCenterY.getText()));
+                    } else if ((e.getKeyCode() == KeyEvent.VK_F) && e.isAltDown()) {
+                        DSWorkbenchMarkerFrame.getSingleton().firePublicDrawMarkedOnlyChangedEvent();
+                    } else if (e.getKeyCode() == KeyEvent.VK_F2) {
+                        DSWorkbenchAttackFrame.getSingleton().setVisible(!DSWorkbenchAttackFrame.getSingleton().isVisible());
+                    } else if (e.getKeyCode() == KeyEvent.VK_F3) {
+                        DSWorkbenchDistanceFrame.getSingleton().setVisible(!DSWorkbenchDistanceFrame.getSingleton().isVisible());
+                    } else if (e.getKeyCode() == KeyEvent.VK_F4) {
+                        DSWorkbenchMarkerFrame.getSingleton().setVisible(!DSWorkbenchMarkerFrame.getSingleton().isVisible());
+                    } else if (e.getKeyCode() == KeyEvent.VK_F5) {
+                        DSWorkbenchTroopsFrame.getSingleton().setVisible(!DSWorkbenchTroopsFrame.getSingleton().isVisible());
+                    } else if (e.getKeyCode() == KeyEvent.VK_F6) {
+                        DSWorkbenchRankFrame.getSingleton().setVisible(!DSWorkbenchRankFrame.getSingleton().isVisible());
+                    } else if (e.getKeyCode() == KeyEvent.VK_F7) {
+                        DSWorkbenchFormFrame.getSingleton().setVisible(!DSWorkbenchFormFrame.getSingleton().isVisible());
+                    } else if (e.getKeyCode() == KeyEvent.VK_F12) {
+                        DSWorkbenchSettingsDialog.getSingleton().setVisible(true);
                     }
                 }
             }
@@ -442,7 +464,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         try {
             dZoomFactor = Double.parseDouble(GlobalOptions.getProperty("zoom.factor"));
             checkZoomRange();
-
         } catch (Exception e) {
             dZoomFactor = 1.0;
         }
@@ -1476,7 +1497,6 @@ private void fireCurrentPlayerVillagePopupEvent(javax.swing.event.PopupMenuEvent
     if (jCurrentPlayerVillages.getSelectedIndex() < 0) {
         return;
     }
-
     centerVillage((Village) jCurrentPlayerVillages.getSelectedItem());
 }//GEN-LAST:event_fireCurrentPlayerVillagePopupEvent
 
@@ -1608,8 +1628,21 @@ private void fireShowFormsFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIRS
         }
 
     }
-    // <editor-fold defaultstate="collapsed" desc=" Listener EventHandlers ">
 
+    public void setCurrentUserVillage(Village pVillage) {
+        jCurrentPlayerVillages.setSelectedItem(pVillage);
+    }
+
+    public Tribe getCurrentUser() {
+        try {
+            Village v = (Village) jCurrentPlayerVillages.getItemAt(0);
+            return v.getTribe();
+        } catch (Exception e) {
+        }
+        return null;
+    }
+
+    // <editor-fold defaultstate="collapsed" desc=" Listener EventHandlers ">
     @Override
     public void fireToolChangedEvent(int pTool) {
         jCurrentToolLabel.setIcon(ImageManager.getCursorImage(pTool));

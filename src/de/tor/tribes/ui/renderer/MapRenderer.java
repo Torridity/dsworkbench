@@ -49,7 +49,6 @@ import java.util.LinkedList;
 import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
-import javax.swing.JPanel;
 import org.apache.log4j.Logger;
 
 /**Map Renderer which supports "dirty layers" defining which layer has to be redrawn.<BR/>
@@ -63,7 +62,9 @@ import org.apache.log4j.Logger;
  * 6-16: Free assignable
  * @author Charon
  */
-/**Thread for updating after scroll operations*/
+/**Thread for updating after scroll operations
+ * @TODO Do tag rendering after village drawing (improve unit image scaling)
+ */
 public class MapRenderer extends Thread {
 
     private static Logger logger = Logger.getLogger("MapRenderer");
@@ -219,7 +220,6 @@ public class MapRenderer extends Thread {
                 y++;
             }
             x++;
-
             y = 0;
         }
 
@@ -237,12 +237,10 @@ public class MapRenderer extends Thread {
 
         BufferedImage layer = new BufferedImage(wb, hb, BufferedImage.TYPE_INT_ARGB);
         mLayers.put(MAP_LAYER, layer);
-        //Graphics2D g2d = (Graphics2D)layer.getGraphics();
         Graphics2D g2d = layer.createGraphics();
         prepareGraphics(g2d);
 
-        villagePositions =
-                new Hashtable<Village, Rectangle>();
+        villagePositions = new Hashtable<Village, Rectangle>();
 
         //disable decoration if field size is not equal the decoration texture size
         boolean useDecoration = true;
@@ -256,6 +254,13 @@ public class MapRenderer extends Thread {
             markedOnly = Boolean.parseBoolean(GlobalOptions.getProperty("draw.marked.only"));
         } catch (Exception e) {
             markedOnly = false;
+        }
+
+        boolean showBarbarian = true;
+        try {
+            showBarbarian = Boolean.parseBoolean(GlobalOptions.getProperty("show.barbarian"));
+        } catch (Exception e) {
+            showBarbarian = true;
         }
 
         int width = GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, currentZoom).getWidth(null);
@@ -283,10 +288,6 @@ public class MapRenderer extends Thread {
         List<Integer> ySectors = new LinkedList<Integer>();
         List<Integer> xContinents = new LinkedList<Integer>();
         List<Integer> yContinents = new LinkedList<Integer>();
-        /*   long s = System.currentTimeMillis();
-        long drawTime = 0;
-        long copyTime = 0;
-         */
         Hashtable<Integer, Point> copyRegions = new Hashtable<Integer, Point>();
 
         de.tor.tribes.types.Rectangle selection = MapPanel.getSingleton().getSelectionRect();
@@ -298,8 +299,15 @@ public class MapRenderer extends Thread {
                     iVillagesY; j++) {
                 Village v = mVisibleVillages[i][j];
                 boolean drawVillage = true;
-                //  long s1 = System.currentTimeMillis();
-                if (markedOnly) {
+
+                //check for barbarian
+                if (!showBarbarian) {
+                    if ((v != null) && (v.getTribe() == null)) {
+                        drawVillage = false;
+                    }
+                }
+
+                if (markedOnly && drawVillage) {
                     if (v != null) {
                         //valid village
                         if (v.getTribe() != null) {
@@ -327,7 +335,7 @@ public class MapRenderer extends Thread {
 
                 //filter tags
                 List<Tag> villageTags = TagManager.getSingleton().getTags(v);
-                if (villageTags.size() != 0) {
+                if ((villageTags.size() != 0) && (drawVillage)) {
                     boolean notShown = true;
                     for (Tag tag : TagManager.getSingleton().getTags(v)) {
                         if (tag.isShowOnMap()) {
@@ -351,7 +359,7 @@ public class MapRenderer extends Thread {
                         Point p = copyRegions.get(Skin.ID_DEFAULT_UNDERGROUND);
                         if (p == null) {
                             g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, currentZoom), x, y, null);
-                            if (MapPanel.getSingleton().getCorrectedBounds().contains(new Rectangle(x, y, width, height))) {
+                            if (MapPanel.getSingleton().getBounds().contains(new Rectangle(x, y, width, height))) {
                                 copyRegions.put(Skin.ID_DEFAULT_UNDERGROUND, new Point(x, y));
                             }
                         } else {
@@ -459,11 +467,33 @@ public class MapRenderer extends Thread {
                     if (p == null) {
                         g2d.drawImage(GlobalOptions.getSkin().getImage(type, currentZoom), x, y, null);
                         //check containment using size tolerance
-                        if (MapPanel.getSingleton().getCorrectedBounds().contains(new Rectangle(x, y, width, height))) {
+                        if (MapPanel.getSingleton().getBounds().contains(new Rectangle(x, y, width + 2, height + 2))) {
                             copyRegions.put(type, new Point(x, y));
                         }
                     } else {
                         g2d.copyArea(p.x, p.y, width, height, x - p.x, y - p.y);
+                    }
+
+                    List<Tag> tags = TagManager.getSingleton().getTags(v);
+                    int cnt = 1;
+                    int tagsize = (int) Math.rint((double) 18 / currentZoom);
+                    for (Tag t : tags) {
+                        int icon = t.getTagIcon();
+                        Color color = t.getTagColor();
+
+                        int tagX = x + width - cnt * tagsize;
+                        int tagY = y + height - cnt * tagsize;
+                        if (color != null) {
+                            Color before = g2d.getColor();
+                            g2d.setColor(color);
+                            g2d.fillRect(tagX, tagY, tagsize, tagsize);
+                            g2d.setColor(before);
+                        }
+                        if (icon != -1) {
+                            Image tagImage = ImageManager.getUnitIcon(icon).getImage().getScaledInstance(tagsize, tagsize, Image.SCALE_FAST);
+                            g2d.drawImage(tagImage, tagX, tagY, null);
+                        }
+                        cnt++;
                     }
 
                     if (selection != null) {
@@ -486,10 +516,8 @@ public class MapRenderer extends Thread {
                 }
             }
             y = 0;
-            x +=
-                    width;
-            yPos =
-                    viewStartPoint.y;
+            x += width;
+            yPos = viewStartPoint.y;
             xPos++;
 
             if ((showSectors) && (xPos % 5 == 0)) {
@@ -527,8 +555,8 @@ public class MapRenderer extends Thread {
         }
         //</editor-fold>
 
-        Enumeration<Integer> keys = copyRegions.keys();
-        /*g2d.setColor(Color.MAGENTA);
+        /* Enumeration<Integer> keys = copyRegions.keys();
+        g2d.setColor(Color.MAGENTA);
         while (keys.hasMoreElements()) {
         Point p = copyRegions.get(keys.nextElement());
         g2d.drawRect(p.x, p.y, width, height);
@@ -582,20 +610,17 @@ public class MapRenderer extends Thread {
                         if (v.getTribe().getAlly() != null) {
                             m = MarkerManager.getSingleton().getMarker(v.getTribe().getAlly());
                         }
-
                     }
                 }
                 if (m != null) {
                     markerColor = m.getMarkerColor();
                 }
-
             }
             if (markerColor != null) {
                 Rectangle vRect = villagePositions.get(v);
                 g2d.setColor(markerColor);
                 g2d.fillRect(vRect.x, vRect.y, vRect.width, vRect.height);
             }
-
         }
     }
 
@@ -725,16 +750,13 @@ public class MapRenderer extends Thread {
             Village v = villages.nextElement();
             Rectangle villageRect = villagePositions.get(v);
             if (markTroopTypes) {
-
                 Image troopMark = TroopsManager.getSingleton().getTroopsMarkerForVillage(v);
                 if (troopMark != null) {
                     int x = villageRect.x + (int) Math.round(villageRect.width / 2);
                     int y = villageRect.y + (int) Math.round(villageRect.width / 2);
-                    troopMark =
-                            troopMark.getScaledInstance((int) Math.rint(troopMark.getWidth(null) / currentZoom), (int) Math.rint(troopMark.getHeight(null) / currentZoom), BufferedImage.SCALE_FAST);
+                    troopMark = troopMark.getScaledInstance((int) Math.rint(troopMark.getWidth(null) / currentZoom), (int) Math.rint(troopMark.getHeight(null) / currentZoom), BufferedImage.SCALE_FAST);
                     g2d.drawImage(troopMark, x - troopMark.getWidth(null) / 2, y - troopMark.getHeight(null), null);
                 }
-
             }
 
             if (markActiveVillage) {
@@ -745,7 +767,6 @@ public class MapRenderer extends Thread {
                         int markY = villageRect.y + (int) Math.round(villageRect.height / 2);
                         g2d.drawImage(mMarkerImage, markX, markY - mMarkerImage.getHeight(null), null);
                     }
-
                 }
             }
         }
@@ -809,26 +830,20 @@ public class MapRenderer extends Thread {
                                 //attack running
                                 long runTime = System.currentTimeMillis() - start;
                                 double perc = 100 * runTime / dur;
-                                perc /=
-                                        100;
+                                perc /= 100;
                                 double xTar = xStart + (xEnd - xStart) * perc;
                                 double yTar = yStart + (yEnd - yStart) * perc;
-                                unitXPos =
-                                        (int) xTar - unitIcon.getIconWidth() / 2;
-                                unitYPos =
-                                        (int) yTar - unitIcon.getIconHeight() / 2;
+                                unitXPos = (int) xTar - unitIcon.getIconWidth() / 2;
+                                unitYPos = (int) yTar - unitIcon.getIconHeight() / 2;
                             } else if ((start > System.currentTimeMillis()) && (arrive > current)) {
                                 //attack not running, draw unit in source village
                                 unitXPos = (int) xStart - unitIcon.getIconWidth() / 2;
-                                unitYPos =
-                                        (int) yStart - unitIcon.getIconHeight() / 2;
+                                unitYPos = (int) yStart - unitIcon.getIconHeight() / 2;
                             } else {
                                 //attack arrived
                                 unitXPos = (int) xEnd - unitIcon.getIconWidth() / 2;
-                                unitYPos =
-                                        (int) yEnd - unitIcon.getIconHeight() / 2;
+                                unitYPos = (int) yEnd - unitIcon.getIconHeight() / 2;
                             }
-
                         }
                     }
 
@@ -867,13 +882,14 @@ public class MapRenderer extends Thread {
         for (AbstractForm form : forms) {
             form.renderForm(g2d);
         }
+        if (!FormConfigFrame.getSingleton().isInEditMode()) {
+            //only render in create mode to avoid multi-drawing
+            AbstractForm f = FormConfigFrame.getSingleton().getCurrentForm();
 
-        AbstractForm f = FormConfigFrame.getSingleton().getCurrentForm();
-
-        if (f != null) {
-            f.renderForm(g2d);
+            if (f != null) {
+                f.renderForm(g2d);
+            }
         }
-
     }
 
     private void renderLiveLayer(Graphics2D g2d) {
@@ -968,7 +984,6 @@ public class MapRenderer extends Thread {
                         numFormat.setMinimumFractionDigits(0);
                         //default width for unit number
                         double maxWidth = metrics.getStringBounds("1.234.567", g2d).getWidth();
-                        //double textHeight = metrics.getStringBounds("1.234.567", g2d).getHeight();
                         int unitHeight = ImageManager.getUnitIcon(0).getImage().getHeight(null);
 
                         //get largest unit value
@@ -977,7 +992,6 @@ public class MapRenderer extends Thread {
                             if (w > maxWidth) {
                                 maxWidth = w;
                             }
-
                         }
 
                         g2d.setColor(Constants.DS_BACK_LIGHT);
@@ -992,16 +1006,15 @@ public class MapRenderer extends Thread {
                         double dY = metrics.getStringBounds(state, g2d).getY();
                         g2d.drawString(state, pos.x - popupWidth + 5, pos.y - (int) Math.rint(dY) + 5);
 
-                        double sx = (double) textHeight / (double) unitHeight;
-                        for (int i = 0; i <
-                                unitCount; i++) {
+                        //fixed value for linux issues
+                        double sx = 0.84;//(double) textHeight / (double) unitHeight;
+                        for (int i = 0; i < unitCount; i++) {
                             //draw unit with a border of 5px
                             AffineTransform xform = AffineTransform.getTranslateInstance(pos.x - popupWidth + 5, pos.y + i * unitHeight + 5 + textHeight + 2);
                             xform.scale(sx, sx);
                             g2d.drawImage(ImageManager.getUnitIcon(i).getImage(), xform, null);
                             //draw the unit count
-                            dY =
-                                    metrics.getStringBounds(numFormat.format(holder.getTroops().get(i)), g2d).getY();
+                            dY = metrics.getStringBounds(numFormat.format(holder.getTroops().get(i)), g2d).getY();
                             g2d.drawString(numFormat.format(holder.getTroops().get(i)), pos.x - popupWidth + 5 + unitHeight + 2, pos.y + i * unitHeight - (int) Math.rint(dY) + 5 + (int) Math.rint(textHeight) + 2);
                         }
 
@@ -1025,7 +1038,45 @@ public class MapRenderer extends Thread {
                 }
             }
         }
-    // </editor-fold>
+        // </editor-fold>
+
+        // <editor-fold defaultstate="collapsed" desc=" Draw radar information ">
+        if (mouseVillage != null) {
+            try {
+                if (MapPanel.getSingleton().getCurrentCursor() == ImageManager.CURSOR_RADAR) {
+                    int cnt = 0;
+                    for (UnitHolder u : DataHolder.getSingleton().getUnits()) {
+                        de.tor.tribes.types.Circle c = new de.tor.tribes.types.Circle();
+                        int r = Integer.parseInt(GlobalOptions.getProperty("radar.size"));
+                        double diam = 2 * (double) r / u.getSpeed();
+                        double xp = mouseVillage.getX() + 0.5 - diam / 2;
+                        double yp = mouseVillage.getY() + 0.5 - diam / 2;
+                        double cx = mouseVillage.getX() + 0.5;
+                        double cy = mouseVillage.getY() + 0.5;
+
+                        double xi = Math.cos(Math.toRadians(270 + cnt * (10))) * diam / 2;
+                        double yi = Math.sin(Math.toRadians(270 + cnt * 10)) * diam / 2;
+                        c.setXPos(xp);
+                        c.setYPos(yp);
+                        c.setXPosEnd(xp + diam);
+                        c.setYPosEnd(yp + diam);
+                        Color co = Color.RED;
+                        try {
+                            co = Color.decode(GlobalOptions.getProperty(u.getName() + ".color"));
+                        } catch (Exception e) {
+                        }
+                        c.setDrawColor(co);
+                        c.renderForm(g2d);
+                        Image unit = ImageManager.getUnitIcon(u).getImage();
+                        Point p = MapPanel.getSingleton().virtualPosToSceenPos((cx + xi), (cy + yi));
+                        g2d.drawImage(unit, p.x - (int) ((double) unit.getWidth(null) / 2), (int) ((double) p.y - unit.getHeight(null) / 2), null);
+                        cnt++;
+                    }
+                }
+            } catch (Exception e) {
+            }
+        }
+// </editor-fold>
     }
 
     private void prepareGraphics(Graphics2D pG2d) {

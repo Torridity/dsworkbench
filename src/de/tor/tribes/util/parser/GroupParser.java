@@ -5,7 +5,6 @@
 package de.tor.tribes.util.parser;
 
 import de.tor.tribes.io.DataHolder;
-import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.DSWorkbenchMainFrame;
 import java.awt.Toolkit;
@@ -14,14 +13,16 @@ import java.awt.datatransfer.Transferable;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
+import org.apache.log4j.Logger;
 
 /**
  *
  * @author Jejkal
  */
 public class GroupParser {
+
+    private static Logger logger = Logger.getLogger("GroupParser");
     /*
     (09) Sunset Beach (459|468) K44  	2	Fertig; Off	» bearbeiten
     )=-g-town-=( (469|476) K44  	2	Fertig; Off	» bearbeiten
@@ -36,68 +37,111 @@ public class GroupParser {
         StringTokenizer lineTok = new StringTokenizer(pGroupsString, "\n\r");
 
         Hashtable<String, List<Village>> groups = new Hashtable<String, List<Village>>();
-//       Hashtable<String, List<String>> groups = new Hashtable<String, List<String>>();
         while (lineTok.hasMoreElements()) {
             //parse single line for village
             String line = lineTok.nextToken();
-            if (line.endsWith("bearbeiten")) {
+            if (line.trim().endsWith("bearbeiten")) {
+                //tokenize line by tab
+                StringTokenizer elemTok = new StringTokenizer(line, "\t");
 
-                //tokenize line by tab, space and group divider
-                StringTokenizer elemTok = new StringTokenizer(line, " ;\t");
-                //boolean gotVillage = false;
+                String villageToken = elemTok.nextToken();
+                String groupCountToken = elemTok.nextToken();
+                String groupsToken = elemTok.nextToken();
+
                 Village v = null;
-//          String v = null;
-                int groupCount = 0;
-                Tribe userTribe = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage().getTribe();
-                while (elemTok.hasMoreTokens()) {
+                try {
+                    String coord = villageToken.substring(villageToken.lastIndexOf("(") + 1, villageToken.lastIndexOf(")"));
+                    String[] split = coord.trim().split("[(\\|)]");
+                    v = DataHolder.getSingleton().getVillages()[Integer.parseInt(split[0])][Integer.parseInt(split[1])];
+                } catch (Exception e) {
+                }
+                if (v != null) {
+                    //valid line found
+                    int groupCount = 0;
                     try {
-                        String currentToken = elemTok.nextToken();
-                        //try to find village coordinates
-                        if (currentToken.startsWith("(") && currentToken.endsWith(")")) {
-                            if (currentToken.matches("\\([0-9]+\\|[0-9]+\\)")) {
-                                //System.out.println("got village " + currentToken);
-                                String[] split = currentToken.trim().split("[(\\|)]");
-                                v = DataHolder.getSingleton().getVillages()[Integer.parseInt(split[1])][Integer.parseInt(split[2])];
-                                if ((v != null) && (v.getTribe() != null) && (v.getTribe().equals(userTribe))) {
-
-                                    //skip continent token
-                                    elemTok.nextToken();
-                                    //keep group count
-                                    while (true) {
-                                        //f*cking firefox inserts an additional field, so try and error
-                                        try {
-                                            groupCount = Integer.parseInt(elemTok.nextToken());
-                                            //village count found
-                                            break;
-                                        } catch (NoSuchElementException nsee) {
-                                            throw new Exception("End reached");
-                                        } catch (NumberFormatException nfe) {
-                                            //ignore
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        if (v != null) {
-                            for (int i = 0; i < groupCount; i++) {
-                                String group = elemTok.nextToken();
+                        groupCount = Integer.parseInt(groupCountToken.trim());
+                    } catch (Exception e) {
+                    }
+                    if (groupCount > 0) {
+                        //group number found
+                        StringTokenizer groupsTokenizer = new StringTokenizer(groupsToken, ";");
+                        if (groupsTokenizer.countTokens() == groupCount) {
+                            //valid group names
+                            while (groupsTokenizer.hasMoreTokens()) {
+                                String group = groupsTokenizer.nextToken().trim();
                                 List<Village> groupVillages = groups.get(group);
-//                            List<String> groupVillages = groups.get(group);
                                 if (groupVillages == null) {
                                     groupVillages = new LinkedList<Village>();
-//                                groupVillages = new LinkedList<String>();
                                     groups.put(group, groupVillages);
                                 }
                                 groupVillages.add(v);
                             }
-
-                            //notify main frame and step out
-                            break;
+                        } else {
+                            logger.error("Group count (" + groupCount + ") is not equal token count (" + groupsTokenizer.countTokens() + ") for token " + groupsToken);
+                            return false;
                         }
-                    } catch (Exception e) {
-                        //invalid line
                     }
                 }
+
+            /* if (false) {
+            //village parsing
+            //Village v = null;
+            int groupCount = 0;
+            Tribe userTribe = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage().getTribe();
+            while (elemTok.hasMoreTokens()) {
+            try {
+            String currentToken = elemTok.nextToken();
+            System.out.println("CU " + currentToken);
+            //try to find village coordinates
+            if (currentToken.startsWith("(") && currentToken.endsWith(")")) {
+            if (currentToken.matches("\\([0-9]+\\|[0-9]+\\)")) {
+            //System.out.println("got village " + currentToken);
+            split = currentToken.trim().split("[(\\|)]");
+            v = DataHolder.getSingleton().getVillages()[Integer.parseInt(split[1])][Integer.parseInt(split[2])];
+            if ((v != null) && (v.getTribe() != null) && (v.getTribe().equals(userTribe))) {
+
+            //skip continent token
+            elemTok.nextToken();
+            //keep group count
+            while (true) {
+            //f*cking firefox inserts an additional field, so try and error
+            try {
+            groupCount = Integer.parseInt(elemTok.nextToken());
+            //village count found
+            break;
+            } catch (NoSuchElementException nsee) {
+            throw new Exception("End reached");
+            } catch (NumberFormatException nfe) {
+            //ignore
+            }
+            }
+            }
+            }
+            }
+            if (v != null) {
+            System.out.println("GRUP " + groupCount);
+            for (int i = 0; i < groupCount; i++) {
+            String group = elemTok.nextToken();
+            System.out.println("TO " + group);
+            List<Village> groupVillages = groups.get(group);
+            if (groupVillages == null) {
+            groupVillages = new LinkedList<Village>();
+            groups.put(group, groupVillages);
+            }
+            groupVillages.add(v);
+            }
+
+            //notify main frame and step out
+            break;
+            }
+            } catch (Exception e) {
+            //invalid line
+            }
+            }
+
+
+            }*/
+
             }
         }
         if (groups.size() != 0) {

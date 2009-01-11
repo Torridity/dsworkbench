@@ -658,7 +658,11 @@ class MinimapRepaintThread extends Thread {
             //could not draw minimap if dimensions are not loaded yet
             return false;
         }
-
+        boolean showBarbarian = true;
+        try {
+            showBarbarian = Boolean.parseBoolean(GlobalOptions.getProperty("show.barbarian"));
+        } catch (Exception e) {
+        }
 
         for (int i = 0; i < ServerSettings.getSingleton().getMapDimension().getWidth(); i++) {
             for (int j = 0; j < ServerSettings.getSingleton().getMapDimension().getHeight(); j++) {
@@ -705,8 +709,10 @@ class MinimapRepaintThread extends Thread {
                         }
                         g2d.fillRect(i, j, 1, 1);
                     } else {
-                        g2d.setColor(Color.BLACK);
-                        g2d.fillRect(i, j, 1, 1);
+                        if (showBarbarian) {
+                            g2d.setColor(Color.BLACK);
+                            g2d.fillRect(i, j, 1, 1);
+                        }
                     }
                 }
             }

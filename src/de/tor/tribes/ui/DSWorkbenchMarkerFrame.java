@@ -276,6 +276,11 @@ private void fireDrawMarkedOnlyChangedEvent(java.awt.event.MouseEvent evt) {//GE
     MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.ALL_LAYERS);
 }//GEN-LAST:event_fireDrawMarkedOnlyChangedEvent
 
+    public void firePublicDrawMarkedOnlyChangedEvent() {
+        jToggleDrawFilterButton.setSelected(!jToggleDrawFilterButton.isSelected());
+        fireDrawMarkedOnlyChangedEvent(null);
+    }
+
     /**Setup marker panel*/
     protected void setupMarkerPanel() {
         jMarkerTable.invalidate();

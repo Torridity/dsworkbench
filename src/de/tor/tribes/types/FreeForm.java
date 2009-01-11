@@ -14,7 +14,6 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Stroke;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -89,7 +88,7 @@ public class FreeForm extends AbstractForm {
         Font fBefore = g2d.getFont();
         //draw
         g2d.setStroke(getStroke());
-        g2d.setColor(getDrawColor());
+         checkShowMode(g2d, getDrawColor());
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, getDrawAlpha()));
 
         Point2D.Double pp = MapPanel.getSingleton().virtualPosToSceenPosDouble(points.get(0).getX(), points.get(0).getY());
@@ -99,7 +98,13 @@ public class FreeForm extends AbstractForm {
             pp = MapPanel.getSingleton().virtualPosToSceenPosDouble(points.get(i).getX(), points.get(i).getY());
             p.lineTo(pp.x, pp.y);
         }
-
+        java.awt.Rectangle mapBounds = MapPanel.getSingleton().getBounds();
+        if (mapBounds.intersects(p.getBounds())) {
+            setVisibleOnMap(true);
+        } else {
+            setVisibleOnMap(false);
+            return;
+        }
         if (isFilled()) {
             g2d.fill(p);
         } else {
@@ -109,8 +114,7 @@ public class FreeForm extends AbstractForm {
         if (isDrawName()) {
             g2d.setColor(getTextColor());
             g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, getTextAlpha()));
-            g2d.setFont(fBefore.deriveFont(getTextSize()));
-
+            g2d.setFont(fBefore.deriveFont((float) getTextSize()));
             Rectangle2D textBounds = g2d.getFontMetrics().getStringBounds(getFormName(), g2d);
             java.awt.Rectangle bounds = p.getBounds();
             g2d.drawString(getFormName(), (int) Math.rint(bounds.getX() + bounds.getWidth() / 2 - textBounds.getWidth() / 2), (int) Math.rint(bounds.getY() + bounds.getHeight() / 2 + textBounds.getHeight() / 2));
@@ -154,7 +158,7 @@ public class FreeForm extends AbstractForm {
         if (isDrawName()) {
             g2d.setColor(getTextColor());
             g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, getTextAlpha()));
-            g2d.setFont(fBefore.deriveFont(getTextSize()));
+            g2d.setFont(fBefore.deriveFont((float) getTextSize()));
             Rectangle2D textBounds = g2d.getFontMetrics().getStringBounds(getFormName(), g2d);
             java.awt.Rectangle bounds = p.getBounds();
             g2d.drawString(getFormName(), (int) Math.rint(bounds.getX() + bounds.getWidth() / 2 - textBounds.getWidth() / 2), (int) Math.rint(bounds.getY() + bounds.getHeight() / 2 + textBounds.getHeight() / 2));
@@ -163,6 +167,16 @@ public class FreeForm extends AbstractForm {
         g2d.setColor(cBefore);
         g2d.setComposite(coBefore);
         g2d.setFont(fBefore);
+    }
+
+    @Override
+    public java.awt.Rectangle getBounds() {
+        GeneralPath p = new GeneralPath();
+        p.moveTo(points.get(0).x, points.get(0).y);
+        for (int i = 1; i < points.size(); i++) {
+            p.lineTo(points.get(i).x, points.get(i).y);
+        }
+        return p.getBounds();
     }
 
     /**For reading from XML only*/

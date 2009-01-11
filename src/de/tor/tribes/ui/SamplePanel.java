@@ -214,10 +214,9 @@ public class SamplePanel extends javax.swing.JPanel {
                 Text l = new Text();
                 l.setTextColor(mTextColor);
                 l.setTextAlpha(fTextTransparency);
+                l.setTextSize(fTextSize);
                 l.setFormName(sText);
-                l.setXPos(10);
-                l.setYPos(getHeight() - 10);
-                l.renderPreview(g2d);
+                l.renderPreview(g2d, getBounds());
                 break;
             }
             case 4: {

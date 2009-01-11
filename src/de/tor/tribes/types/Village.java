@@ -249,7 +249,7 @@ public class Village implements Serializable, Comparable {
                     break;
                 }
                 case 3: {
-                    //eisem
+                    //eisen
                     b.append("+ 100% </p></html>");
                     break;
                 }

@@ -59,6 +59,7 @@ public class ImageManager {
     public final static int CURSOR_DRAW_TEXT = 20;
     public final static int CURSOR_SELECTION = 21;
     public final static int CURSOR_DRAW_FREEFORM = 22;
+    public final static int CURSOR_RADAR = 23;
     private static final List<Cursor> CURSORS = new LinkedList<Cursor>();
     private static final List<ImageIcon> CURSOR_IMAGES = new LinkedList<ImageIcon>();
     private static final List<ImageIcon> UNIT_ICONS = new LinkedList<ImageIcon>();
@@ -93,6 +94,7 @@ public class ImageManager {
             loadCursor("graphics/cursors/draw_text.png", "draw_text");
             loadCursor("graphics/cursors/selection.png", "selection");
             loadCursor("graphics/cursors/draw_freeform.png", "draw_freeform");
+            loadCursor("graphics/cursors/radar.png", "radar");
         } catch (Exception e) {
             logger.error("Failed to load cursor images", e);
             throw new Exception("Failed to load cursors");

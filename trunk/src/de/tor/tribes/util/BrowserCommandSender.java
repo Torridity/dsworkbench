@@ -20,6 +20,7 @@ public class BrowserCommandSender {
 
     public static void sendTroops(Village pSource, Village pTarget) {
         try {
+
             String url = "http://" + GlobalOptions.getSelectedServer() + ".die-staemme.de/game.php?village=";
             url += pSource.getId() + "&screen=place&mode=command&target=" + pTarget.getId();
             /*            
@@ -35,10 +36,10 @@ public class BrowserCommandSender {
             A.insertUnit(A.document.forms['units'].elements['y'],472);
             A.insertUnit(A.document.forms['units'].elements['attack'].click());    
              */
-
             Desktop.getDesktop().browse(new URI(url));
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Fehler beim Öffnen des Browsers", "Fehler", JOptionPane.ERROR_MESSAGE);
+            logger.error("Failed to open browser window", e);
         }
     }
 
@@ -57,6 +58,7 @@ public class BrowserCommandSender {
             Desktop.getDesktop().browse(new URI(url));
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Fehler beim Öffnen des Browsers", "Fehler", JOptionPane.ERROR_MESSAGE);
+            logger.error("Failed to open browser window", e);
         }
     }
 
@@ -67,6 +69,7 @@ public class BrowserCommandSender {
             Desktop.getDesktop().browse(new URI(url));
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Fehler beim Öffnen des Browsers", "Fehler", JOptionPane.ERROR_MESSAGE);
+            logger.error("Failed to open browser window", e);
         }
     }
 
@@ -77,6 +80,7 @@ public class BrowserCommandSender {
             Desktop.getDesktop().browse(new URI(url));
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Fehler beim Öffnen des Browsers", "Fehler", JOptionPane.ERROR_MESSAGE);
+            logger.error("Failed to open browser window", e);
         }
     }
 }

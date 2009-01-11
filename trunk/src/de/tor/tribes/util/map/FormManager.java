@@ -108,12 +108,15 @@ public class FormManager {
         DSWorkbenchFormFrame.getSingleton().updateFormList();
     }
 
-    public synchronized void removeForms(AbstractForm[] pForms) {
+    public synchronized void removeForms(Object[] pForms) {
         if (pForms == null) {
             return;
         }
-        for (AbstractForm f : pForms) {
-            forms.remove(f);
+        for (Object f : pForms) {
+            try {
+                forms.remove((AbstractForm) f);
+            } catch (Exception classcast) {
+            }
         }
         DSWorkbenchFormFrame.getSingleton().updateFormList();
     }

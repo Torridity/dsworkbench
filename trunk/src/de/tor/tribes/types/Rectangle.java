@@ -71,7 +71,7 @@ public class Rectangle extends AbstractForm {
         int y = (int) ((s.y < e.y) ? s.y : e.y);
         int w = (int) Math.rint(Math.abs(s.x - e.x));
         int h = (int) Math.rint(Math.abs(s.y - e.y));
-        java.awt.Rectangle mapBounds = MapPanel.getSingleton().getCorrectedBounds();
+        java.awt.Rectangle mapBounds = MapPanel.getSingleton().getBounds();
         if (mapBounds.intersects(new Rectangle2D.Double(x, y, w, h))) {
             setVisibleOnMap(true);
         } else {
@@ -85,7 +85,7 @@ public class Rectangle extends AbstractForm {
         Font fBefore = g2d.getFont();
         //draw
         g2d.setStroke(getStroke());
-        g2d.setColor(getDrawColor());
+        checkShowMode(g2d, getDrawColor());
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, getDrawAlpha()));
 
         if (isFilled()) {
@@ -97,7 +97,7 @@ public class Rectangle extends AbstractForm {
         if (isDrawName()) {
             g2d.setColor(getTextColor());
             g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, getTextAlpha()));
-            g2d.setFont(fBefore.deriveFont(getTextSize()));
+            g2d.setFont(fBefore.deriveFont((float) getTextSize()));
             Rectangle2D textBounds = g2d.getFontMetrics().getStringBounds(getFormName(), g2d);
             g2d.drawString(getFormName(), (int) Math.rint((double) x + (double) w / 2 - textBounds.getWidth() / 2), (int) Math.rint((double) y + (double) h / 2 + textBounds.getHeight() / 2));
         }
@@ -106,12 +106,6 @@ public class Rectangle extends AbstractForm {
         g2d.setColor(cBefore);
         g2d.setComposite(coBefore);
         g2d.setFont(fBefore);
-
-    /*if (mapBounds.contains(at.transform(new Point(x, y), null)) ||
-    mapBounds.contains(at.transform(new Point(x + w, y), null)) ||
-    mapBounds.contains(at.transform(new Point(x, y + h), null)) ||
-    mapBounds.contains(at.transform(new Point(x + w, y + h), null))) {*/
-
     }
 
     public void renderPreview(Graphics2D g2d) {
@@ -121,13 +115,6 @@ public class Rectangle extends AbstractForm {
         int y = (int) ((s.y < e.y) ? s.y : e.y);
         int w = (int) Math.rint(Math.abs(s.x - e.x));
         int h = (int) Math.rint(Math.abs(s.y - e.y));
-        java.awt.Rectangle mapBounds = MapPanel.getSingleton().getCorrectedBounds();
-        if (mapBounds.intersects(new Rectangle2D.Double(x, y, w, h))) {
-            setVisibleOnMap(true);
-        } else {
-            setVisibleOnMap(false);
-            return;
-        }
         //store properties
         Stroke sBefore = g2d.getStroke();
         Color cBefore = g2d.getColor();
@@ -147,7 +134,7 @@ public class Rectangle extends AbstractForm {
         if (isDrawName()) {
             g2d.setColor(getTextColor());
             g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, getTextAlpha()));
-            g2d.setFont(fBefore.deriveFont(getTextSize()));
+            g2d.setFont(fBefore.deriveFont((float) getTextSize()));
             Rectangle2D textBounds = g2d.getFontMetrics().getStringBounds(getFormName(), g2d);
             g2d.drawString(getFormName(), (int) Math.rint((double) x + (double) w / 2 - textBounds.getWidth() / 2), (int) Math.rint((double) y + (double) h / 2 + textBounds.getHeight() / 2));
         }
@@ -157,6 +144,17 @@ public class Rectangle extends AbstractForm {
         g2d.setComposite(coBefore);
         g2d.setFont(fBefore);
 
+    }
+
+    @Override
+    public java.awt.Rectangle getBounds() {
+        Point2D.Double s = new Point2D.Double(getXPos(), getYPos());
+        Point2D.Double e = new Point2D.Double(getXPosEnd(), getYPosEnd());
+        int x = (int) ((s.x < e.x) ? s.x : e.x);
+        int y = (int) ((s.y < e.y) ? s.y : e.y);
+        int w = (int) Math.rint(Math.abs(s.x - e.x));
+        int h = (int) Math.rint(Math.abs(s.y - e.y));
+        return new java.awt.Rectangle(x, y, w, h);
     }
 
     @Override

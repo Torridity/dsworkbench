@@ -13,10 +13,8 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.net.URLDecoder;
-import java.net.URLEncoder;
 import org.jdom.Element;
 
 /**
@@ -24,6 +22,8 @@ import org.jdom.Element;
  * @author Charon
  */
 public class Text extends AbstractForm {
+
+    private java.awt.Rectangle mBounds = null;
 
     public static AbstractForm fromXml(Element e) {
         try {
@@ -46,10 +46,12 @@ public class Text extends AbstractForm {
 
     @Override
     public void renderForm(Graphics2D g2d) {
-        java.awt.Rectangle mapBounds = MapPanel.getSingleton().getCorrectedBounds();
+        java.awt.Rectangle mapBounds = MapPanel.getSingleton().getBounds();
         FontMetrics met = PatchFontMetrics.patch(g2d.getFontMetrics());
         Rectangle2D bounds = met.getStringBounds(getFormName(), g2d);
-        if (mapBounds.intersects(bounds)) {
+        Point s = MapPanel.getSingleton().virtualPosToSceenPos(getXPos(), getYPos());
+        mBounds = new java.awt.Rectangle((int) (bounds.getX() + s.x), (int) (bounds.getY() + s.y), (int) (bounds.getWidth()), (int) (bounds.getHeight()));
+        if (mapBounds.intersects(mBounds)) {
             setVisibleOnMap(true);
         } else {
             setVisibleOnMap(false);
@@ -60,10 +62,9 @@ public class Text extends AbstractForm {
         Composite coBefore = g2d.getComposite();
         Font fBefore = g2d.getFont();
         //draw
-        g2d.setFont(fBefore.deriveFont(getTextSize()));
+        g2d.setFont(fBefore.deriveFont((float) getTextSize()));
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, getTextAlpha()));
-        g2d.setColor(getTextColor());
-        Point s = MapPanel.getSingleton().virtualPosToSceenPos(getXPos(), getYPos());
+        checkShowMode(g2d, getTextColor());
         g2d.drawString(getFormName(), s.x, s.y);
         //restore properties
         g2d.setColor(cBefore);
@@ -71,30 +72,29 @@ public class Text extends AbstractForm {
         g2d.setFont(fBefore);
     }
 
-    public void renderPreview(Graphics2D g2d) {
-        java.awt.Rectangle mapBounds = MapPanel.getSingleton().getCorrectedBounds();
-        FontMetrics met = PatchFontMetrics.patch(g2d.getFontMetrics());
-        Rectangle2D bounds = met.getStringBounds(getFormName(), g2d);
-        if (mapBounds.intersects(bounds)) {
-            setVisibleOnMap(true);
-        } else {
-            setVisibleOnMap(false);
-            return;
-        }
+    public void renderPreview(Graphics2D g2d, java.awt.Rectangle bounds) {
         //save properties
         Color cBefore = g2d.getColor();
         Composite coBefore = g2d.getComposite();
         Font fBefore = g2d.getFont();
         //draw
-        g2d.setFont(fBefore.deriveFont(getTextSize()));
+        g2d.setFont(fBefore.deriveFont((float) getTextSize()));
+        Rectangle2D rect = g2d.getFontMetrics().getStringBounds(getFormName(), g2d);
+        int x = (int) Math.rint((double) bounds.getWidth() / 2 - (double) rect.getWidth() / 2);
+        int y = (int) Math.rint((double) bounds.getHeight() / 2 + (double) rect.getHeight() / 2);
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, getTextAlpha()));
         g2d.setColor(getTextColor());
-        Point2D.Double s = new Point2D.Double(getXPos(), getYPos());
-        g2d.drawString(getFormName(), (int) s.x, (int) s.y);
+        g2d.drawString(getFormName(), x, y);
         //restore properties
         g2d.setColor(cBefore);
         g2d.setComposite(coBefore);
         g2d.setFont(fBefore);
+
+    }
+
+    @Override
+    public java.awt.Rectangle getBounds() {
+        return mBounds;
     }
 
     @Override

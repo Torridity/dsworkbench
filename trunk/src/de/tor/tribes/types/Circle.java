@@ -72,7 +72,7 @@ public class Circle extends AbstractForm {
         int w = (int) Math.rint(Math.abs(s.getX() - e.getX()));
         int h = (int) Math.rint(Math.abs(s.getY() - e.getY()));
 
-        if (new Ellipse2D.Double(x, y, w, h).intersects(MapPanel.getSingleton().getCorrectedBounds())) {
+        if (new Ellipse2D.Double(x, y, w, h).intersects(MapPanel.getSingleton().getBounds())) {
             setVisibleOnMap(true);
         } else {
             setVisibleOnMap(false);
@@ -86,7 +86,7 @@ public class Circle extends AbstractForm {
         //draw
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, getDrawAlpha()));
         g2d.setStroke(getStroke());
-        g2d.setColor(getDrawColor());
+        checkShowMode(g2d, getDrawColor());
 
         if (isFilled()) {
             g2d.fillOval(x, y, w, h);
@@ -97,7 +97,7 @@ public class Circle extends AbstractForm {
         if (isDrawName()) {
             g2d.setColor(getTextColor());
             g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, getTextAlpha()));
-            g2d.setFont(fBefore.deriveFont(getTextSize()));
+            g2d.setFont(fBefore.deriveFont((float) getTextSize()));
             Rectangle2D textBounds = g2d.getFontMetrics().getStringBounds(getFormName(), g2d);
             g2d.drawString(getFormName(), (int) Math.rint((double) x + (double) w / 2 - textBounds.getWidth() / 2), (int) Math.rint((double) y + (double) h / 2 + textBounds.getHeight() / 2));
         }
@@ -117,7 +117,7 @@ public class Circle extends AbstractForm {
         int w = (int) Math.rint(Math.abs(s.x - e.x));
         int h = (int) Math.rint(Math.abs(s.y - e.y));
 
-        if (new Ellipse2D.Double(x, y, w, h).intersects(MapPanel.getSingleton().getCorrectedBounds())) {
+        if (new Ellipse2D.Double(x, y, w, h).intersects(MapPanel.getSingleton().getBounds())) {
             setVisibleOnMap(true);
         } else {
             setVisibleOnMap(false);
@@ -142,7 +142,7 @@ public class Circle extends AbstractForm {
         if (isDrawName()) {
             g2d.setColor(getTextColor());
             g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, getTextAlpha()));
-            g2d.setFont(fBefore.deriveFont(getTextSize()));
+            g2d.setFont(fBefore.deriveFont((float) getTextSize()));
             Rectangle2D textBounds = g2d.getFontMetrics().getStringBounds(getFormName(), g2d);
             g2d.drawString(getFormName(), (int) Math.rint((double) x + (double) w / 2 - textBounds.getWidth() / 2), (int) Math.rint((double) y + (double) h / 2 + textBounds.getHeight() / 2));
         }
@@ -152,6 +152,17 @@ public class Circle extends AbstractForm {
         g2d.setColor(cBefore);
         g2d.setComposite(coBefore);
         g2d.setFont(fBefore);
+    }
+
+    @Override
+    public java.awt.Rectangle getBounds() {
+        Point2D.Double s = new Point2D.Double(getXPos(), getYPos());
+        Point.Double e = new Point2D.Double(getXPosEnd(), getYPosEnd());
+        int x = (int) Math.rint((s.getX() < e.getX()) ? s.getX() : e.getX());
+        int y = (int) Math.rint((s.getY() < e.getY()) ? s.getY() : e.getY());
+        int w = (int) Math.rint(Math.abs(s.getX() - e.getX()));
+        int h = (int) Math.rint(Math.abs(s.getY() - e.getY()));
+        return new java.awt.Rectangle(x, y, w, h);
     }
 
     @Override

@@ -68,7 +68,7 @@ public class Line extends AbstractForm {
     public void renderForm(Graphics2D g2d) {
         Point2D.Double s = MapPanel.getSingleton().virtualPosToSceenPosDouble(getXPos(), getYPos());
         Point2D.Double e = MapPanel.getSingleton().virtualPosToSceenPosDouble(getXPosEnd(), getYPosEnd());
-        java.awt.Rectangle mapBounds = MapPanel.getSingleton().getCorrectedBounds();
+        java.awt.Rectangle mapBounds = MapPanel.getSingleton().getBounds();
         if (mapBounds.contains(s) || mapBounds.contains(e)) {
             setVisibleOnMap(true);
         } else {
@@ -81,9 +81,9 @@ public class Line extends AbstractForm {
         Composite coBefore = g2d.getComposite();
         Font fBefore = g2d.getFont();
         Color cBefore = g2d.getColor();
-        g2d.setColor(getDrawColor());
+        checkShowMode(g2d, getDrawColor());
         //start draw
-        g2d.setFont(fBefore.deriveFont(getTextSize()));
+        g2d.setFont(fBefore.deriveFont((float) getTextSize()));
         g2d.setStroke(getStroke());
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, getDrawAlpha()));
         g2d.drawLine((int) Math.rint(s.getX()), (int) Math.rint(s.getY()), (int) Math.rint(e.getX()), (int) Math.rint(e.getY()));
@@ -92,7 +92,6 @@ public class Line extends AbstractForm {
         g2d.setStroke(before);
         g2d.setComposite(coBefore);
         g2d.setFont(fBefore);
-
         g2d.setColor(cBefore);
     }
 
@@ -105,12 +104,11 @@ public class Line extends AbstractForm {
         Font fBefore = g2d.getFont();
         AffineTransform tb = g2d.getTransform();
         //start draw
-        g2d.setFont(fBefore.deriveFont(getTextSize()));
+        g2d.setFont(fBefore.deriveFont((float) getTextSize()));
         g2d.setStroke(getStroke());
         g2d.setColor(getDrawColor());
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, getDrawAlpha()));
         g2d.drawLine((int) Math.rint(s.getX()), (int) Math.rint(s.getY()), (int) Math.rint(e.getX()), (int) Math.rint(e.getY()));
-        double theta = Math.atan2(e.y - s.y, e.x - s.x);
         double zoom = 1.0;
         double h = Math.sqrt(3) / 2 * 20 / zoom;
 
@@ -118,8 +116,6 @@ public class Line extends AbstractForm {
             Point2D.Double p1 = new Point2D.Double(s.x, s.y - h / 2);
             Point2D.Double p2 = new Point2D.Double(s.x, s.y + h / 2);
             Point2D.Double p3 = new Point2D.Double(s.x - h, s.y);
-            /* AffineTransform t = AffineTransform.getRotateInstance(theta, s.getX(), s.getY());
-            g2d.setTransform(t);*/
             Polygon poly = new Polygon(new int[]{(int) Math.rint(p1.x), (int) Math.rint(p2.x), (int) Math.rint(p3.x)}, new int[]{(int) Math.rint(p1.y), (int) Math.rint(p2.y), (int) Math.rint(p3.y)}, 3);
             g2d.fillPolygon(poly);
         }
@@ -127,20 +123,11 @@ public class Line extends AbstractForm {
             Point2D.Double p1 = new Point2D.Double(e.x, e.y - h / 2);
             Point2D.Double p2 = new Point2D.Double(e.x, e.y + h / 2);
             Point2D.Double p3 = new Point2D.Double(e.x + h, e.y);
-            /*AffineTransform t = AffineTransform.getRotateInstance(theta, e.getX(), e.getY());
-            g2d.setTransform(t);*/
             Polygon poly = new Polygon(new int[]{(int) Math.rint(p1.x), (int) Math.rint(p2.x), (int) Math.rint(p3.x)}, new int[]{(int) Math.rint(p1.y), (int) Math.rint(p2.y), (int) Math.rint(p3.y)}, 3);
             g2d.fillPolygon(poly);
         }
 
         if (isDrawName()) {
-            /* Point2D.Double center = new Point2D.Double((e.getX() - s.getX()) / 2, (e.getY() - s.getY()) / 2);
-            AffineTransform t = AffineTransform.getRotateInstance(theta, s.x + center.getX(), s.y + center.getY());
-            g2d.setTransform(t);
-            g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_DEFAULT);
-            g2d.drawString(getFormName(), (int) Math.rint(s.x + center.getX()), (int) Math.rint(s.y + center.getY()));
-             */
-
             g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, getTextAlpha()));
             g2d.setColor(getTextColor());
             g2d.drawString(getFormName(), (int) s.x, (int) s.y);
@@ -150,6 +137,17 @@ public class Line extends AbstractForm {
         g2d.setComposite(coBefore);
         g2d.setFont(fBefore);
         g2d.setTransform(tb);
+    }
+
+    @Override
+    public java.awt.Rectangle getBounds() {
+        Point2D.Double s = new Point2D.Double(getXPos(), getYPos());
+        Point2D.Double e = new Point2D.Double(getXPosEnd(), getYPosEnd());
+        int x = (int) ((s.x < e.x) ? s.x : e.x);
+        int y = (int) ((s.y < e.y) ? s.y : e.y);
+        int w = (int) Math.rint(Math.abs(s.x - e.x));
+        int h = (int) Math.rint(Math.abs(s.y - e.y));
+        return new java.awt.Rectangle(x, y, w, h);
     }
 
     private void drawDecoration(Point2D.Double s, Point2D.Double e, Graphics2D g2d) {

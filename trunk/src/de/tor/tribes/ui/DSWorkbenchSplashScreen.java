@@ -221,24 +221,27 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
         try {
             a.setFile("./log/dsworkbench.log", true, true, 1024);
             switch (mode) {
-            case 0:
-            Logger.getLogger("de.tor").setLevel(Level.INFO);
-            Logger.getLogger("dswb").setLevel(Level.INFO);
-            break;
-            case 1:
-            Logger.getLogger("de.tor").setLevel(Level.DEBUG);
-            Logger.getLogger("dswb").setLevel(Level.DEBUG);
-            break;
-            default:
-            Logger.getLogger("de.tor").setLevel(Level.ERROR);
-            Logger.getLogger("dswb").setLevel(Level.ERROR);
-            break;
+                case 0: {
+                    Logger.getLogger("de.tor").setLevel(Level.INFO);
+                    Logger.getLogger("dswb").setLevel(Level.INFO);
+                    break;
+                }
+                case 1: {
+                    Logger.getLogger("de.tor").setLevel(Level.DEBUG);
+                    Logger.getLogger("dswb").setLevel(Level.DEBUG);
+                    break;
+                }
+                default: {
+                    Logger.getLogger("de.tor").setLevel(Level.ERROR);
+                    Logger.getLogger("dswb").setLevel(Level.ERROR);
+                    break;
+                }
             }
 
-            
+
             Logger.getRootLogger().addAppender(a);
-        Logger.getLogger("de.tor").addAppender(a);
-        Logger.getLogger("dswb").addAppender(a);
+            Logger.getLogger("de.tor").addAppender(a);
+            Logger.getLogger("dswb").addAppender(a);
         } catch (IOException ioe) {
         }
         java.awt.EventQueue.invokeLater(new Runnable() {

@@ -1191,13 +1191,21 @@ private void fireCopyUnformatedToClipboardEvent(java.awt.event.MouseEvent evt) {
 
                 String sendtime = new SimpleDateFormat("dd.MM.yy HH:mm:ss.SSS").format(sTime);
                 String arrivetime = new SimpleDateFormat("dd.MM.yy HH:mm:ss.SSS").format(aTime);
-                buffer.append(sVillage.getTribe());
+                if (sVillage.getTribe() == null) {
+                    buffer.append("Barbaren");
+                } else {
+                    buffer.append(sVillage.getTribe());
+                }
                 buffer.append("\t");
                 buffer.append(sVillage);
                 buffer.append("\t");
                 buffer.append(sUnit);
                 buffer.append("\t");
-                buffer.append(tVillage.getTribe());
+                if (tVillage.getTribe() == null) {
+                    buffer.append("Barbaren");
+                } else {
+                    buffer.append(tVillage.getTribe());
+                }
                 buffer.append("\t");
                 buffer.append(tVillage);
                 buffer.append("\t");
@@ -1294,10 +1302,10 @@ private void fireCopyAsBBCodeToClipboardEvent(java.awt.event.MouseEvent evt) {//
                 buffer.append(" mit [url=\"http://www.dsworkbench.de/index.php?id=23\"]DS Workbench ");
                 buffer.append(Constants.VERSION + Constants.VERSION_ADDITION + "[/url][/size]\n");
             } else {
-                    buffer.append("\nErstellt am ");
-                    buffer.append(new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss").format(Calendar.getInstance().getTime()));
-                    buffer.append(" mit [url=\"http://www.dsworkbench.de/index.php?id=23\"]DS Workbench ");
-                    buffer.append(Constants.VERSION + Constants.VERSION_ADDITION + "[/url]\n");
+                buffer.append("\nErstellt am ");
+                buffer.append(new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss").format(Calendar.getInstance().getTime()));
+                buffer.append(" mit [url=\"http://www.dsworkbench.de/index.php?id=23\"]DS Workbench ");
+                buffer.append(Constants.VERSION + Constants.VERSION_ADDITION + "[/url]\n");
             }
 
             String b = buffer.toString();

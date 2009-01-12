@@ -1309,7 +1309,9 @@ private void fireAddAllPlayerVillages(java.awt.event.MouseEvent evt) {//GEN-FIRS
         error = true;
     }
     jAttacksTable.revalidate();
-    JOptionPane.showMessageDialog(this, "Es ist ein Fehler bei der Bestimmung des verwendeten In-Game Accounts aufgetreten.\nBitte überprüfe deine Servereinstellungen.", "Fehler", JOptionPane.ERROR_MESSAGE);
+    if (error) {
+        JOptionPane.showMessageDialog(this, "Es ist ein Fehler bei der Bestimmung des verwendeten In-Game Accounts aufgetreten.\nBitte überprüfe deine Servereinstellungen.", "Fehler", JOptionPane.ERROR_MESSAGE);
+    }
 
 }//GEN-LAST:event_fireAddAllPlayerVillages
 

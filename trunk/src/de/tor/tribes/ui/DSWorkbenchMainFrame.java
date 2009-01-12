@@ -1608,8 +1608,8 @@ private void fireShowFormsFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIRS
             }
 
         } catch (NullPointerException e) {
-            jPlayerInfo.setText("kein Besitzer");
-            jAllyInfo.setText("kein Stamm");
+            jPlayerInfo.setText("Barbaren");
+            jAllyInfo.setText("Barbaren");
         }
 
     }

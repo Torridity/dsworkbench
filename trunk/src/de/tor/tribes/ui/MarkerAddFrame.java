@@ -150,8 +150,9 @@ public class MarkerAddFrame extends javax.swing.JFrame {
         } else {
             mTribeColorChooser.setColor(Color.WHITE);
         }
-        jTribeName.setText("(" + mVillage.getTribe().getName() + ")");
+
         try {
+            jTribeName.setText("(" + mVillage.getTribe() + ")");
             jAllyName.setText("(" + mVillage.getTribe().getAlly().getTag() + ")");
             m = MarkerManager.getSingleton().getMarker(mVillage.getTribe().getAlly());
             if (m != null) {

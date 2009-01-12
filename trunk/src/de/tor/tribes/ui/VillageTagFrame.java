@@ -8,6 +8,7 @@ package de.tor.tribes.ui;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.types.Tag;
+import de.tor.tribes.types.Tribe;
 import de.tor.tribes.util.tag.TagManager;
 import java.util.List;
 import javax.swing.DefaultComboBoxModel;
@@ -39,9 +40,13 @@ public class VillageTagFrame extends javax.swing.JFrame {
     }
 
     public void showTagsFrame(Village pVillage) {
-        jPlayerName.setText(pVillage.getTribe().getName());
+        Tribe t = pVillage.getTribe();
+        if (t == null) {
+            return;
+        }
+        jPlayerName.setText(t.getName());
         DefaultComboBoxModel model = new DefaultComboBoxModel();
-        for (Village v : pVillage.getTribe().getVillageList()) {
+        for (Village v : t.getVillageList()) {
             model.addElement(v);
         }
         jVillageList.setModel(model);

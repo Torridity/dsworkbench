@@ -34,6 +34,9 @@ import java.awt.Color;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 import java.awt.geom.Point2D;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
@@ -91,6 +94,7 @@ public class MapPanel extends javax.swing.JPanel {
         attackAddFrame = new AttackAddFrame();
         mVirtualBounds = new Rectangle2D.Double(0.0, 0.0, 0.0, 0.0);
         initListeners();
+        
     }
 
     public synchronized void addMapPanelListener(MapPanelListener pListener) {
@@ -112,6 +116,8 @@ public class MapPanel extends javax.swing.JPanel {
     public de.tor.tribes.types.Rectangle getSelectionRect() {
         return selectionRect;
     }
+
+  
 
     private void initListeners() {
 

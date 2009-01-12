@@ -7,9 +7,9 @@ package de.tor.tribes.ui;
 
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
+import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.util.Constants;
-import de.tor.tribes.util.DSWorkbenchFrameListener;
 import de.tor.tribes.util.GlobalOptions;
 import java.util.List;
 import de.tor.tribes.util.DSCalculator;
@@ -386,7 +386,7 @@ private void fireDistanceFrameOnTopEvent(javax.swing.event.ChangeEvent evt) {//G
     setAlwaysOnTop(!isAlwaysOnTop());
 }//GEN-LAST:event_fireDistanceFrameOnTopEvent
 
-      /**Update the distance panel if it is visible
+    /**Update the distance panel if it is visible
      */
     public void updateDistances(Village pSource, Village pTarget) {
         if (!jDistancePanel.isVisible()) {
@@ -415,10 +415,11 @@ private void fireDistanceFrameOnTopEvent(javax.swing.event.ChangeEvent evt) {//G
         String text = "";
         if (pSource != null) {
             text = "<html>";
-            if (pSource.getTribe() == null) {
-                text += "kein Besitzer - ";
+            Tribe t = pSource.getTribe();
+            if (t == null) {
+                text += "Barbaren - ";
             } else {
-                text += pSource.getTribe().getName() + " - ";
+                text += t.getName() + " - ";
             }
 
             text += pSource.getName() + " (" + pSource.getX() + "|" + pSource.getY() + ")</html>";
@@ -433,10 +434,11 @@ private void fireDistanceFrameOnTopEvent(javax.swing.event.ChangeEvent evt) {//G
         }
 
         text = "<html>";
-        if (pTarget.getTribe() == null) {
-            text += "kein Besitzer - ";
+        Tribe t = pTarget.getTribe();
+        if (t == null) {
+            text += "Barbaren - ";
         } else {
-            text += pTarget.getTribe().getName() + " - ";
+            text += t.getName() + " - ";
         }
 
         text += pTarget.getName() + " (" + pTarget.getX() + "|" + pTarget.getY() + ")</html>";
@@ -507,5 +509,4 @@ private void fireDistanceFrameOnTopEvent(javax.swing.event.ChangeEvent evt) {//G
     private javax.swing.JTextField jSpyTime;
     private javax.swing.JTextField jSwordTime;
     // End of variables declaration//GEN-END:variables
-
 }

@@ -11,6 +11,7 @@ import de.tor.tribes.types.AbstractForm;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.Marker;
 import de.tor.tribes.types.Tag;
+import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.DSWorkbenchMainFrame;
 import de.tor.tribes.ui.FormConfigFrame;
@@ -104,6 +105,7 @@ public class MapRenderer extends Thread {
             logger.error("Failed to load border images", e);
         }
         mLayers = new Hashtable<Integer, BufferedImage>();
+        loadUnitIcons();
     }
 
     public void initiateRedraw(int pType) {
@@ -131,9 +133,11 @@ public class MapRenderer extends Thread {
                             throw new Exception("View position is 'null', skip redraw");
                         }
                         renderMap();
+                        renderTagMarkers();
                     }
                     renderMarkers(g2d);
                     g2d.drawImage(mLayers.get(MAP_LAYER), 0, 0, null);
+                    g2d.drawImage(mLayers.get(EXTENDED_DECORATION_LAYER), 0, 0, null);
                     renderBasicDecoration(g2d);
                     renderAttacks(g2d);
                     renderExtendedDecoration(g2d);
@@ -293,10 +297,8 @@ public class MapRenderer extends Thread {
         de.tor.tribes.types.Rectangle selection = MapPanel.getSingleton().getSelectionRect();
 
         // <editor-fold defaultstate="collapsed" desc="Village drawing">
-        for (int i = 0; i <
-                iVillagesX; i++) {
-            for (int j = 0; j <
-                    iVillagesY; j++) {
+        for (int i = 0; i < iVillagesX; i++) {
+            for (int j = 0; j < iVillagesY; j++) {
                 Village v = mVisibleVillages[i][j];
                 boolean drawVillage = true;
 
@@ -474,28 +476,6 @@ public class MapRenderer extends Thread {
                         g2d.copyArea(p.x, p.y, width, height, x - p.x, y - p.y);
                     }
 
-                    List<Tag> tags = TagManager.getSingleton().getTags(v);
-                    int cnt = 1;
-                    int tagsize = (int) Math.rint((double) 18 / currentZoom);
-                    for (Tag t : tags) {
-                        int icon = t.getTagIcon();
-                        Color color = t.getTagColor();
-
-                        int tagX = x + width - cnt * tagsize;
-                        int tagY = y + height - cnt * tagsize;
-                        if (color != null) {
-                            Color before = g2d.getColor();
-                            g2d.setColor(color);
-                            g2d.fillRect(tagX, tagY, tagsize, tagsize);
-                            g2d.setColor(before);
-                        }
-                        if (icon != -1) {
-                            Image tagImage = ImageManager.getUnitIcon(icon).getImage().getScaledInstance(tagsize, tagsize, Image.SCALE_FAST);
-                            g2d.drawImage(tagImage, tagX, tagY, null);
-                        }
-                        cnt++;
-                    }
-
                     if (selection != null) {
                         if (new Rectangle((int) selection.getXPos(), (int) selection.getYPos(), (int) selection.getXPosEnd() - (int) selection.getXPos(), (int) selection.getYPosEnd() - (int) selection.getYPos()).intersects(v.getVirtualBounds())) {
                         }
@@ -574,6 +554,120 @@ public class MapRenderer extends Thread {
         g2d.dispose();
         mapRedrawRequired = false;
     }
+    private List<BufferedImage> unitIcons = new LinkedList<BufferedImage>();
+
+    private void loadUnitIcons() {
+        try {
+            unitIcons.add(ImageIO.read(new File("graphics/icons/spear.png")));//0
+            unitIcons.add(ImageIO.read(new File("graphics/icons/sword.png")));//1
+            unitIcons.add(ImageIO.read(new File("graphics/icons/axe.png")));//2
+            unitIcons.add(ImageIO.read(new File("graphics/icons/archer.png")));//3
+            unitIcons.add(ImageIO.read(new File("graphics/icons/spy.png")));//4
+            unitIcons.add(ImageIO.read(new File("graphics/icons/light.png")));//5
+            unitIcons.add(ImageIO.read(new File("graphics/icons/marcher.png")));//6
+            unitIcons.add(ImageIO.read(new File("graphics/icons/heavy.png")));//7
+            unitIcons.add(ImageIO.read(new File("graphics/icons/ram.png")));//8
+            unitIcons.add(ImageIO.read(new File("graphics/icons/cata.png")));//9
+            unitIcons.add(ImageIO.read(new File("graphics/icons/knight.png")));//10
+            unitIcons.add(ImageIO.read(new File("graphics/icons/snob.png")));//11
+        } catch (Exception e) {
+            logger.error("Failed to load unit icons", e);
+        //throw new Exception("Failed to load unit icons");
+        }
+    }
+
+    private void renderTagMarkers() {
+        int wb = MapPanel.getSingleton().getWidth();
+        int hb = MapPanel.getSingleton().getHeight();
+        if (wb == 0 || hb == 0) {
+            //both are 0 if map was not drawn yet
+            return;
+        }
+
+        BufferedImage layer = new BufferedImage(wb, hb, BufferedImage.TYPE_INT_ARGB);
+        mLayers.put(EXTENDED_DECORATION_LAYER, layer);
+        Graphics2D g2d = layer.createGraphics();
+        prepareGraphics(g2d);
+
+        int width = GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, currentZoom).getWidth(null);
+        int height = GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, currentZoom).getHeight(null);
+
+        int x = 0;
+        int y = 0;
+        int xPos = viewStartPoint.x;
+        int yPos = viewStartPoint.y;
+
+        Hashtable<Integer, Point> copyRegions = new Hashtable<Integer, Point>();
+        int tagsize = (int) Math.rint((double) 18 / currentZoom);
+        // <editor-fold defaultstate="collapsed" desc="Graphics drawing">
+        for (int i = 0; i < iVillagesX; i++) {
+            for (int j = 0; j < iVillagesY; j++) {
+                Village v = mVisibleVillages[i][j];
+                if (v != null) {
+                    //filter tags
+                    List<Tag> villageTags = TagManager.getSingleton().getTags(v);
+                    if (villageTags.size() != 0) {
+                        int xcnt = 1;
+                        int ycnt = 2;
+                        int cnt = 0;
+                        for (Tag tag : TagManager.getSingleton().getTags(v)) {
+                            if (tag.isShowOnMap()) {
+                                int iconType = tag.getTagIcon();
+                                Color color = tag.getTagColor();
+                                int tagX = x + width - xcnt * tagsize;
+                                int tagY = y + height - ycnt * tagsize;
+                                if (color != null) {
+                                    Color before = g2d.getColor();
+                                    g2d.setColor(color);
+                                    g2d.fillRect(tagX, tagY, tagsize, tagsize);
+                                    g2d.setColor(before);
+                                }
+                                if (iconType != -1) {
+                                    //drawing
+                                    Point p = copyRegions.get(iconType);
+                                    if (p == null) {
+                                        Image tagImage = unitIcons.get(iconType).getScaledInstance(tagsize, tagsize, Image.SCALE_FAST);
+                                        g2d.drawImage(tagImage, tagX, tagY, null);
+                                        //check containment using size tolerance
+                                        if (MapPanel.getSingleton().getBounds().contains(new Rectangle(tagX, tagY, tagsize + 2, tagsize + 2))) {
+                                            copyRegions.put(iconType, new Point(tagX, tagY));
+                                        }
+                                    } else {
+                                        g2d.copyArea(p.x, p.y, tagsize, tagsize, tagX - p.x, tagY - p.y);
+                                    }
+                                }
+                            }
+                            //calculate positioning
+                            cnt++;
+                            xcnt++;
+                            if (cnt == 2) {
+                                //show only 2 icons in the first line to avoid marker overlay
+                                xcnt = 1;
+                                ycnt--;
+                            }
+                        }
+                    }
+                }
+                y += height;
+                yPos++;
+            }
+            y = 0;
+            x += width;
+            yPos = viewStartPoint.y;
+            xPos++;
+        }
+
+
+        /*Enumeration<Integer> keys = copyRegions.keys();
+        while (keys.hasMoreElements()) {
+        Point p = copyRegions.get(keys.nextElement());
+        g2d.setColor(Color.MAGENTA);
+        g2d.drawRect(p.x, p.y, tagsize, tagsize);
+        }
+         */
+        //</editor-fold>
+        g2d.dispose();
+    }
 
     private void renderMarkers(Graphics2D g2d) {
         int wb = MapPanel.getSingleton().getWidth();
@@ -599,16 +693,17 @@ public class MapRenderer extends Thread {
         Enumeration<Village> villages = villagePositions.keys();
         while (villages.hasMoreElements()) {
             Village v = villages.nextElement();
+            Tribe t = v.getTribe();
             Color markerColor = null;
-            if (v.getTribe() == DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage().getTribe()) {
+            if (t == DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage().getTribe()) {
                 markerColor = Color.YELLOW;
             } else {
                 Marker m = null;
-                if (v.getTribe() != null) {
-                    m = MarkerManager.getSingleton().getMarker(v.getTribe());
+                if (t != null) {
+                    m = MarkerManager.getSingleton().getMarker(t);
                     if (m == null) {
-                        if (v.getTribe().getAlly() != null) {
-                            m = MarkerManager.getSingleton().getMarker(v.getTribe().getAlly());
+                        if (t.getAlly() != null) {
+                            m = MarkerManager.getSingleton().getMarker(t.getAlly());
                         }
                     }
                 }
@@ -624,104 +719,6 @@ public class MapRenderer extends Thread {
         }
     }
 
-    // <editor-fold defaultstate="collapsed" desc=" Virt Marker Stuff">
-   /*
-    private void renderMarkers(Graphics2D g2d) {
-    int wb = MapPanel.getSingleton().getWidth();
-    int hb = MapPanel.getSingleton().getHeight();
-    if (wb == 0 || hb == 0) {
-    //both are 0 if map was not drawn yet
-    return;
-    }
-    Color DEFAULT = Color.WHITE;
-    try {
-    if (Integer.parseInt(GlobalOptions.getProperty("default.mark")) == 1) {
-    DEFAULT = Color.RED;
-    }
-    } catch (Exception e) {
-    DEFAULT = Color.WHITE;
-    }
-    g2d.setColor(DEFAULT);
-    g2d.fillRect(0, 0, wb, hb);
-    int wskin = GlobalOptions.getSkin().getFieldWidth();
-    int hskin = GlobalOptions.getSkin().getFieldHeight();
-    double zoom = DSWorkbenchMainFrame.getSingleton().getZoomFactor();
-    int vx = MapPanel.getSingleton().getCurrentVirtualPosition().x;
-    int vy = MapPanel.getSingleton().getCurrentVirtualPosition().y;
-
-    int x0 = 0;
-    int y0 = 0;
-    for (double x = drawRegion.getX(); x <= drawRegion.getX() + drawRegion.getWidth();) {
-    for (double y = drawRegion.getY(); y <= drawRegion.getY() + drawRegion.getHeight();) {
-    Village v = MapPanel.getSingleton().virtualPosToVillage(x, y);
-    Point vpos = MapPanel.getSingleton().virtualPosToVillagePos(x, y);
-    System.out.println(vpos);
-    if (v != null) {
-    Color markerColor = null;
-    if (v.getTribe() == DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage().getTribe()) {
-    markerColor = Color.YELLOW;
-    } else {
-    Marker m = null;
-    if (v.getTribe() != null) {
-    m = MarkerManager.getSingleton().getMarker(v.getTribe());
-    if (m == null) {
-    if (v.getTribe().getAlly() != null) {
-    m = MarkerManager.getSingleton().getMarker(v.getTribe().getAlly());
-    }
-    }
-    }
-    if (m != null) {
-    markerColor = m.getMarkerColor();
-    }
-    }
-    if (markerColor != null) {
-    //Rectangle vRect = villagePositions.get(v);
-    g2d.setColor(markerColor);
-    g2d.fillRect((int) x0, (int) y0, (int) (wskin * zoom), (int) (hskin * zoom));
-
-    //System.out.println(x + "," + y + "," + (wskin*zoom) + "," + hskin*zoom);
-    }
-    }
-    g2d.setColor(Color.BLACK);
-    System.out.println((x0) + "," + (y0));
-    g2d.drawString(vpos.x + "|" + vpos.y, (int) x0, (int) y0);
-    y += hskin * zoom;
-    y0 += wskin;
-    }
-    y0 = 0;
-    x0 += hskin;
-    x += wskin * zoom;
-    }
-    /*
-    Enumeration<Village> villages = villagePositions.keys();
-    while (villages.hasMoreElements()) {
-    Village v = villages.nextElement();
-    Color markerColor = null;
-    if (v.getTribe() == DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage().getTribe()) {
-    markerColor = Color.YELLOW;
-    } else {
-    Marker m = null;
-    if (v.getTribe() != null) {
-    m = MarkerManager.getSingleton().getMarker(v.getTribe());
-    if (m == null) {
-    if (v.getTribe().getAlly() != null) {
-    m = MarkerManager.getSingleton().getMarker(v.getTribe().getAlly());
-    }
-    }
-    }
-    if (m != null) {
-    markerColor = m.getMarkerColor();
-    }
-    }
-    if (markerColor != null) {
-    Rectangle vRect = villagePositions.get(v);
-    g2d.setColor(markerColor);
-    g2d.fillRect(vRect.x, vRect.y, vRect.width, vRect.height);
-    }
-    }
-    }
-     */
-    // </editor-fold>
     private void renderBasicDecoration(Graphics2D g2d) {
         int wb = MapPanel.getSingleton().getWidth();
         int hb = MapPanel.getSingleton().getHeight();

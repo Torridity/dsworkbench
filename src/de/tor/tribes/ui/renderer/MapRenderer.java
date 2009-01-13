@@ -696,7 +696,11 @@ public class MapRenderer extends Thread {
             Tribe t = v.getTribe();
             Color markerColor = null;
             if (t == DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage().getTribe()) {
-                markerColor = Color.YELLOW;
+                if (v.equals(DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage())) {
+                    markerColor = Color.WHITE;
+                } else {
+                    markerColor = Color.YELLOW;
+                }
             } else {
                 Marker m = null;
                 if (t != null) {

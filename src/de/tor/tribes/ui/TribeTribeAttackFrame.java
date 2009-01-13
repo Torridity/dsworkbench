@@ -47,6 +47,9 @@ import java.util.StringTokenizer;
 import javax.swing.UIManager;
 
 /**
+ * @TODO "attacks per village" configurable
+ * @TODO "time frame" configurable
+ * @TODO reasign timeframe if no attack found
  * @author  Jejkal
  */
 public class TribeTribeAttackFrame extends javax.swing.JFrame implements VillageSelectionListener {

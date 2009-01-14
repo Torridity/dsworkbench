@@ -6,28 +6,118 @@
 
 <mapID target="popup_icon" url="images/tictac_orange.gif "/>
 
+<mapID target="pages.clock_tool" url="pages/clock_tool.html"/>
+
+<mapID target="pages.attack_tools" url="pages/attack_tools.html"/>
+
+<mapID target="pages.map_settings" url="pages/map_settings.html"/>
+
+<mapID target="pages.attack_view" url="pages/attack_view.html"/>
+
+<mapID target="pages.map_tools_marker" url="pages/map_tools.html#marker"/>
+
+<mapID target="pages.settings" url="pages/settings.html"/>
+
+<mapID target="pages.login_settings" url="pages/login_settings.html"/>
+
+<mapID target="pages.terms" url="pages/terms.html"/>
+
+<mapID target="pages.terms_tools" url="pages/terms.html#tools"/>
+
+<mapID target="pages.mapshot_tool" url="pages/mapshot_tool.html"/>
+
+<mapID target="pages.runtime_tool" url="pages/runtime_tool.html"/>
+
+<mapID target="pages.ranking_view" url="pages/ranking_view.html"/>
+
+<mapID target="pages.markers_view" url="pages/markers_view.html"/>
+
+<mapID target="pages.import_ingame" url="pages/import_ingame.html"/>
+
+<mapID target="pages.troops_view" url="pages/troops_view.html"/>
+
+<mapID target="pages.tools" url="pages/tools.html"/>
+
+<mapID target="pages.tag_settings" url="pages/tag_settings.html"/>
+
 <mapID target="index" url="index.html"/>
+
+<mapID target="pages.distance_view" url="pages/distance_view.html"/>
+
+<mapID target="pages.network_settings" url="pages/network_settings.html"/>
+
+<mapID target="pages.draw_tools" url="pages/draw_tools.html"/>
+
+<mapID target="pages.misc_settings" url="pages/misc_settings.html"/>
+
+<mapID target="pages.attack_settings" url="pages/attack_settings.html"/>
+
+<mapID target="pages.map_tools" url="pages/map_tools.html"/>
+
+<mapID target="pages.player_server_settings" url="pages/player_server_settings.html"/>
+
+<mapID target="pages.search_tool" url="pages/search_tool.html"/>
+
+<mapID target="pages.extended_functions" url="pages/extended_functions.html"/>
+
+<mapID target="pages.extended_tools" url="pages/extended_tools.html"/>
+
+<mapID target="pages.attack_planer" url="pages/attack_planer.html"/>
+
+<mapID target="pages.views" url="pages/views.html"/>
+
+<mapID target="pages.template" url="pages/template.html"/>
+
+<mapID target="pages.support_tool" url="pages/support_tool.html"/>
+
+<mapID target="images.measure" url="images/measure.png"/>
+
+<mapID target="images.help" url="images/help.png"/>
+
+<mapID target="images.zoom" url="images/zoom.png"/>
+
+<mapID target="images.ll" url="images/ll.gif"/>
+
+<mapID target="images.camera" url="images/camera.png"/>
+
+<mapID target="images.tictac_grey" url="images/tictac_grey.gif"/>
+
+<mapID target="images.forbidden" url="images/forbidden.png"/>
+
+<mapID target="images.def" url="images/def.png"/>
+
+<mapID target="images.lr" url="images/lr.gif"/>
+
+<mapID target="images.tag" url="images/tag.png"/>
+
+<mapID target="images.help_16" url="images/help_16.png"/>
+
+<mapID target="images.move" url="images/move.png"/>
 
 <mapID target="images.tictac_orange" url="images/tictac_orange.gif"/>
 
+<mapID target="images.booty" url="images/booty.png"/>
+
+<mapID target="images.information" url="images/information.png"/>
+
 <mapID target="images.b" url="images/b.gif"/>
+
+<mapID target="images.radar" url="images/radar.png"/>
+
+<mapID target="images.support_tool" url="images/support_tool.png"/>
+
+<mapID target="images.ul" url="images/ul.gif"/>
+
+<mapID target="images.mark" url="images/mark.png"/>
 
 <mapID target="images.r" url="images/r.gif"/>
 
 <mapID target="images.t" url="images/t.gif"/>
 
-<mapID target="images.top" url="images/top.gif"/>
-
-<mapID target="images.ll" url="images/ll.gif"/>
-
-<mapID target="images.bottom" url="images/bottom.gif"/>
-
 <mapID target="images.ur" url="images/ur.gif"/>
-
-<mapID target="images.ul" url="images/ul.gif"/>
 
 <mapID target="images.l" url="images/l.gif"/>
 
-<mapID target="images.lr" url="images/lr.gif"/>
+<mapID target="images.selection" url="images/selection.png"/>
 
 </map>

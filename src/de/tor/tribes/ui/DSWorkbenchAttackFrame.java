@@ -1244,11 +1244,10 @@ private void fireCopyAsBBCodeToClipboardEvent(java.awt.event.MouseEvent evt) {//
             } else {
                 buffer.append("[u]Angriffsplan[/u]\n\n");
             }
-            String sUrl = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
 
             List<Attack> attacks = AttackManager.getSingleton().getAttackPlan(AttackManagerTableModel.getSingleton().getActiveAttackPlan());
+            jAttackTable.invalidate();
             for (int i : rows) {
-                jAttackTable.invalidate();
                 int row = jAttackTable.convertRowIndexToModel(i);
                 Village sVillage = attacks.get(row).getSource();
                 Village tVillage = attacks.get(row).getTarget();
@@ -1294,8 +1293,8 @@ private void fireCopyAsBBCodeToClipboardEvent(java.awt.event.MouseEvent evt) {//
                 buffer.append(" und kommt am ");
                 buffer.append(arrivetime);
                 buffer.append(" an\n");
-                jAttackTable.revalidate();
             }
+            jAttackTable.revalidate();
             if (extended) {
                 buffer.append("\n[size=8]Erstellt am ");
                 buffer.append(new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss").format(Calendar.getInstance().getTime()));

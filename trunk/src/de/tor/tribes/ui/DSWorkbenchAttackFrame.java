@@ -1244,6 +1244,7 @@ private void fireCopyAsBBCodeToClipboardEvent(java.awt.event.MouseEvent evt) {//
             } else {
                 buffer.append("[u]Angriffsplan[/u]\n\n");
             }
+            String sUrl = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
 
             List<Attack> attacks = AttackManager.getSingleton().getAttackPlan(AttackManagerTableModel.getSingleton().getActiveAttackPlan());
             jAttackTable.invalidate();

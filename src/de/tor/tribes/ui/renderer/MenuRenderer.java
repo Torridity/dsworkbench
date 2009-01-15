@@ -4,6 +4,7 @@
  */
 package de.tor.tribes.ui.renderer;
 
+import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.ui.ClockFrame;
 import de.tor.tribes.ui.DSWorkbenchSettingsDialog;
 import de.tor.tribes.ui.FormConfigFrame;

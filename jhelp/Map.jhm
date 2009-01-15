@@ -14,11 +14,13 @@
 
 <mapID target="pages.attack_view" url="pages/attack_view.html"/>
 
-<mapID target="pages.map_tools_marker" url="pages/map_tools.html#marker"/>
-
 <mapID target="pages.settings" url="pages/settings.html"/>
 
+<mapID target="pages.map_tools_marker" url="pages/map_tools.html#marker"/>
+
 <mapID target="pages.login_settings" url="pages/login_settings.html"/>
+
+<mapID target="pages.form_view" url="pages/form_view.html"/>
 
 <mapID target="pages.terms" url="pages/terms.html"/>
 
@@ -66,58 +68,84 @@
 
 <mapID target="pages.views" url="pages/views.html"/>
 
+<mapID target="pages.form_setup" url="pages/form_setup.html"/>
+
 <mapID target="pages.template" url="pages/template.html"/>
 
 <mapID target="pages.support_tool" url="pages/support_tool.html"/>
 
-<mapID target="images.measure" url="images/measure.png"/>
-
 <mapID target="images.help" url="images/help.png"/>
 
-<mapID target="images.zoom" url="images/zoom.png"/>
+<mapID target="images.tools.mark" url="images/tools/mark.png"/>
 
-<mapID target="images.ll" url="images/ll.gif"/>
+<mapID target="images.tools.draw_line" url="images/tools/draw_line.png"/>
 
-<mapID target="images.camera" url="images/camera.png"/>
+<mapID target="images.tools.draw_freeform" url="images/tools/draw_freeform.png"/>
 
 <mapID target="images.tictac_grey" url="images/tictac_grey.gif"/>
 
+<mapID target="images.ll" url="images/ll.gif"/>
+
 <mapID target="images.forbidden" url="images/forbidden.png"/>
 
-<mapID target="images.def" url="images/def.png"/>
+<mapID target="images.tools.attack_light" url="images/tools/attack_light.png"/>
+
+<mapID target="images.tools.draw_rect" url="images/tools/draw_rect.png"/>
+
+<mapID target="images.tools.attack_ram" url="images/tools/attack_ram.png"/>
 
 <mapID target="images.lr" url="images/lr.gif"/>
 
-<mapID target="images.tag" url="images/tag.png"/>
-
 <mapID target="images.help_16" url="images/help_16.png"/>
 
-<mapID target="images.move" url="images/move.png"/>
+<mapID target="images.tools.camera" url="images/tools/camera.png"/>
 
 <mapID target="images.tictac_orange" url="images/tictac_orange.gif"/>
 
-<mapID target="images.booty" url="images/booty.png"/>
+<mapID target="images.tools.attack_heavy" url="images/tools/attack_heavy.png"/>
+
+<mapID target="images.tools.attack_snob" url="images/tools/attack_snob.png"/>
+
+<mapID target="images.tools.measure" url="images/tools/measure.png"/>
 
 <mapID target="images.information" url="images/information.png"/>
 
+<mapID target="images.tools.draw_circle" url="images/tools/draw_circle.png"/>
+
 <mapID target="images.b" url="images/b.gif"/>
 
-<mapID target="images.radar" url="images/radar.png"/>
-
-<mapID target="images.support_tool" url="images/support_tool.png"/>
+<mapID target="images.tools.attack_spy" url="images/tools/attack_spy.png"/>
 
 <mapID target="images.ul" url="images/ul.gif"/>
 
-<mapID target="images.mark" url="images/mark.png"/>
+<mapID target="images.tools.attack_axe" url="images/tools/attack_axe.png"/>
+
+<mapID target="images.tools.selection" url="images/tools/selection.png"/>
+
+<mapID target="images.tools.attack_sword" url="images/tools/attack_sword.png"/>
 
 <mapID target="images.r" url="images/r.gif"/>
 
 <mapID target="images.t" url="images/t.gif"/>
 
+<mapID target="images.tools.radar" url="images/tools/radar.png"/>
+
+<mapID target="images.tools.tag" url="images/tools/tag.png"/>
+
+<mapID target="images.tools.draw_text" url="images/tools/draw_text.png"/>
+
+<mapID target="images.tools.booty" url="images/tools/booty.png"/>
+
 <mapID target="images.ur" url="images/ur.gif"/>
+
+<mapID target="images.tools.move" url="images/tools/move.png"/>
+
+<mapID target="images.tools.def" url="images/tools/def.png"/>
+
+<mapID target="images.tools.support_tool" url="images/tools/support_tool.png"/>
 
 <mapID target="images.l" url="images/l.gif"/>
 
-<mapID target="images.selection" url="images/selection.png"/>
+<mapID target="images.tools.zoom" url="images/tools/zoom.png"/>
 
 </map>

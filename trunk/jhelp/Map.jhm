@@ -20,15 +20,17 @@
 
 <mapID target="pages.login_settings" url="pages/login_settings.html"/>
 
+<mapID target="pages.map_navigation" url="pages/map_navigation.html"/>
+
 <mapID target="pages.form_view" url="pages/form_view.html"/>
 
-<mapID target="pages.terms" url="pages/terms.html"/>
+<mapID target="pages.map_tools_distance_tool" url="pages/map_tools.html#distance_tool"/>
 
-<mapID target="pages.terms_tools" url="pages/terms.html#tools"/>
+<mapID target="pages.runtime_tool" url="pages/runtime_tool.html"/>
 
 <mapID target="pages.mapshot_tool" url="pages/mapshot_tool.html"/>
 
-<mapID target="pages.runtime_tool" url="pages/runtime_tool.html"/>
+<mapID target="pages.map_tools_tags" url="pages/map_tools.html#tags"/>
 
 <mapID target="pages.ranking_view" url="pages/ranking_view.html"/>
 
@@ -40,17 +42,21 @@
 
 <mapID target="pages.tools" url="pages/tools.html"/>
 
+<mapID target="pages.shortcuts" url="pages/shortcuts.html"/>
+
 <mapID target="pages.tag_settings" url="pages/tag_settings.html"/>
 
 <mapID target="index" url="index.html"/>
 
+<mapID target="pages.network_settings" url="pages/network_settings.html"/>
+
 <mapID target="pages.distance_view" url="pages/distance_view.html"/>
 
-<mapID target="pages.network_settings" url="pages/network_settings.html"/>
+<mapID target="pages.misc_settings" url="pages/misc_settings.html"/>
 
 <mapID target="pages.draw_tools" url="pages/draw_tools.html"/>
 
-<mapID target="pages.misc_settings" url="pages/misc_settings.html"/>
+<mapID target="pages.basics" url="pages/basics.html"/>
 
 <mapID target="pages.attack_settings" url="pages/attack_settings.html"/>
 
@@ -59,6 +65,8 @@
 <mapID target="pages.player_server_settings" url="pages/player_server_settings.html"/>
 
 <mapID target="pages.search_tool" url="pages/search_tool.html"/>
+
+<mapID target="pages.map_tools_radar" url="pages/map_tools.html#radar"/>
 
 <mapID target="pages.extended_functions" url="pages/extended_functions.html"/>
 
@@ -70,6 +78,8 @@
 
 <mapID target="pages.form_setup" url="pages/form_setup.html"/>
 
+<mapID target="pages.data_handling" url="pages/data_handling.html"/>
+
 <mapID target="pages.template" url="pages/template.html"/>
 
 <mapID target="pages.support_tool" url="pages/support_tool.html"/>
@@ -80,25 +90,79 @@
 
 <mapID target="images.tools.draw_line" url="images/tools/draw_line.png"/>
 
+<mapID target="images.ll" url="images/ll.gif"/>
+
+<mapID target="images.tools.attack_light" url="images/tools/attack_light.png"/>
+
+<mapID target="images.lr" url="images/lr.gif"/>
+
+<mapID target="images.b" url="images/b.gif"/>
+
+<mapID target="images.shortcuts.Shift3" url="images/shortcuts/Shift3.gif"/>
+
+<mapID target="images.shortcuts.Shift4" url="images/shortcuts/Shift4.gif"/>
+
+<mapID target="images.shortcuts.Shift5" url="images/shortcuts/Shift5.gif"/>
+
+<mapID target="images.shortcuts.Shift6" url="images/shortcuts/Shift6.gif"/>
+
+<mapID target="images.shortcuts.Shift7" url="images/shortcuts/Shift7.gif"/>
+
+<mapID target="images.shortcuts.Shift8" url="images/shortcuts/Shift8.gif"/>
+
+<mapID target="images.tools.attack_spy" url="images/tools/attack_spy.png"/>
+
+<mapID target="images.shortcuts.Shift1" url="images/shortcuts/Shift1.gif"/>
+
+<mapID target="images.shortcuts.Shift2" url="images/shortcuts/Shift2.gif"/>
+
+<mapID target="images.r" url="images/r.gif"/>
+
+<mapID target="images.shortcuts.F7" url="images/shortcuts/F7.gif"/>
+
+<mapID target="images.t" url="images/t.gif"/>
+
+<mapID target="images.tools.radar" url="images/tools/radar.png"/>
+
+<mapID target="images.tools.tag" url="images/tools/tag.png"/>
+
+<mapID target="images.tools.move" url="images/tools/move.png"/>
+
+<mapID target="images.shortcuts.F2" url="images/shortcuts/F2.gif"/>
+
+<mapID target="images.shortcuts.F1" url="images/shortcuts/F1.gif"/>
+
+<mapID target="images.tools.def" url="images/tools/def.png"/>
+
+<mapID target="images.tools.support_tool" url="images/tools/support_tool.png"/>
+
+<mapID target="images.l" url="images/l.gif"/>
+
+<mapID target="images.shortcuts.F6" url="images/shortcuts/F6.gif"/>
+
+<mapID target="images.shortcuts.F5" url="images/shortcuts/F5.gif"/>
+
+<mapID target="images.shortcuts.F4" url="images/shortcuts/F4.gif"/>
+
+<mapID target="images.shortcuts.F3" url="images/shortcuts/F3.gif"/>
+
+<mapID target="images.shortcuts.F12" url="images/shortcuts/F12.gif"/>
+
 <mapID target="images.tools.draw_freeform" url="images/tools/draw_freeform.png"/>
 
 <mapID target="images.tictac_grey" url="images/tictac_grey.gif"/>
 
-<mapID target="images.ll" url="images/ll.gif"/>
-
 <mapID target="images.forbidden" url="images/forbidden.png"/>
-
-<mapID target="images.tools.attack_light" url="images/tools/attack_light.png"/>
 
 <mapID target="images.tools.draw_rect" url="images/tools/draw_rect.png"/>
 
+<mapID target="images.shortcuts.AltF" url="images/shortcuts/AltF.gif"/>
+
 <mapID target="images.tools.attack_ram" url="images/tools/attack_ram.png"/>
 
-<mapID target="images.lr" url="images/lr.gif"/>
+<mapID target="images.tools.camera" url="images/tools/camera.png"/>
 
 <mapID target="images.help_16" url="images/help_16.png"/>
-
-<mapID target="images.tools.camera" url="images/tools/camera.png"/>
 
 <mapID target="images.tictac_orange" url="images/tictac_orange.gif"/>
 
@@ -108,13 +172,33 @@
 
 <mapID target="images.tools.measure" url="images/tools/measure.png"/>
 
-<mapID target="images.information" url="images/information.png"/>
+<mapID target="images.shortcuts.Alt6" url="images/shortcuts/Alt6.gif"/>
+
+<mapID target="images.shortcuts.Alt7" url="images/shortcuts/Alt7.gif"/>
+
+<mapID target="images.shortcuts.Alt8" url="images/shortcuts/Alt8.gif"/>
+
+<mapID target="images.shortcuts.StrgS" url="images/shortcuts/StrgS.gif"/>
+
+<mapID target="images.shortcuts.StrgT" url="images/shortcuts/StrgT.gif"/>
+
+<mapID target="images.shortcuts.Alt2" url="images/shortcuts/Alt2.gif"/>
+
+<mapID target="images.shortcuts.Alt3" url="images/shortcuts/Alt3.gif"/>
 
 <mapID target="images.tools.draw_circle" url="images/tools/draw_circle.png"/>
 
-<mapID target="images.b" url="images/b.gif"/>
+<mapID target="images.shortcuts.Alt4" url="images/shortcuts/Alt4.gif"/>
 
-<mapID target="images.tools.attack_spy" url="images/tools/attack_spy.png"/>
+<mapID target="images.information" url="images/information.png"/>
+
+<mapID target="images.shortcuts.Alt5" url="images/shortcuts/Alt5.gif"/>
+
+<mapID target="images.shortcuts.Alt1" url="images/shortcuts/Alt1.gif"/>
+
+<mapID target="images.shortcuts.Alt0" url="images/shortcuts/Alt0.gif"/>
+
+<mapID target="images.shortcuts.StrgF" url="images/shortcuts/StrgF.gif"/>
 
 <mapID target="images.ul" url="images/ul.gif"/>
 
@@ -124,27 +208,17 @@
 
 <mapID target="images.tools.attack_sword" url="images/tools/attack_sword.png"/>
 
-<mapID target="images.r" url="images/r.gif"/>
-
-<mapID target="images.t" url="images/t.gif"/>
-
-<mapID target="images.tools.radar" url="images/tools/radar.png"/>
-
-<mapID target="images.tools.tag" url="images/tools/tag.png"/>
-
 <mapID target="images.tools.draw_text" url="images/tools/draw_text.png"/>
 
 <mapID target="images.tools.booty" url="images/tools/booty.png"/>
 
 <mapID target="images.ur" url="images/ur.gif"/>
 
-<mapID target="images.tools.move" url="images/tools/move.png"/>
+<mapID target="images.shortcuts.Strg3" url="images/shortcuts/Strg3.gif"/>
 
-<mapID target="images.tools.def" url="images/tools/def.png"/>
+<mapID target="images.shortcuts.Strg1" url="images/shortcuts/Strg1.gif"/>
 
-<mapID target="images.tools.support_tool" url="images/tools/support_tool.png"/>
-
-<mapID target="images.l" url="images/l.gif"/>
+<mapID target="images.shortcuts.Strg2" url="images/shortcuts/Strg2.gif"/>
 
 <mapID target="images.tools.zoom" url="images/tools/zoom.png"/>
 

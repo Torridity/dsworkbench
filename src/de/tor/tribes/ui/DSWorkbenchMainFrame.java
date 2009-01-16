@@ -1704,7 +1704,6 @@ private void fireShowFormsFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIRS
                     for (Village v : villagesForGroup) {
                         t.tagVillage(v.getId());
                     }
-
                 }
             }
             //update tag panel in settings

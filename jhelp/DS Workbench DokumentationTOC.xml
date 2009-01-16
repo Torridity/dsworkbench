@@ -17,17 +17,25 @@
    <tocitem text="Sonstiges " target="pages.misc_settings" image="images.tictac_grey"/>
 
   </tocitem>
-  <tocitem text="Werkzeuge " target="pages.tools" image="images.tictac_orange">
-   <tocitem text="Kartenwerkzeuge " target="pages.map_tools" image="images.tictac_grey"/>
+  <tocitem text="Grundlagen " target="pages.basics" image="images.tictac_orange">
+   <tocitem text="Navigation auf der Karte " target="pages.map_navigation" image="images.tictac_grey"/>
 
+   <tocitem text="Datenhaltung " target="pages.data_handling" image="images.tictac_grey"/>
+
+  </tocitem>
+  <tocitem text="Werkzeuge " target="pages.tools" image="images.tictac_orange">
+   <tocitem text="Kartenwerkzeuge " target="pages.map_tools" image="images.tictac_orange">
+    <tocitem text="Das Unterst&#252;tzungswerkzeug " target="pages.support_tool" image="images.tictac_grey"/>
+
+    <tocitem text="Erstellen von Fotos der Minimap " target="pages.mapshot_tool" image="images.tictac_grey"/>
+
+   </tocitem>
    <tocitem text="Angriffswerkzeuge " target="pages.attack_tools" image="images.tictac_grey"/>
 
-   <tocitem text="Zeichenwerkzeuge " target="pages.draw_tools" image="images.tictac_grey"/>
+   <tocitem text="Zeichenwerkzeuge " target="pages.draw_tools" image="images.tictac_orange">
+    <tocitem text="Formeinstellungen " target="pages.form_setup" image="images.tictac_grey"/>
 
-   <tocitem text="Das Unterst&#252;tzungswerkzeug " target="pages.support_tool" image="images.tictac_grey"/>
-
-   <tocitem text="Erstellen von Fotos der Minimap " target="pages.mapshot_tool" image="images.tictac_grey"/>
-
+   </tocitem>
    <tocitem text="Erweiterte Werkzeuge " target="pages.extended_tools" image="images.tictac_orange">
     <tocitem text="Suche " target="pages.search_tool" image="images.tictac_grey"/>
 
@@ -55,5 +63,7 @@
    <tocitem text="Import von Spielinformationen " target="pages.import_ingame" image="images.tictac_grey"/>
 
   </tocitem>
+  <tocitem text="Shortcuts " target="pages.shortcuts" image="images.tictac_orange"/>
+
  </tocitem>
 </toc>

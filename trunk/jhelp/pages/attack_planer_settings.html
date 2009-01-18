@@ -1,0 +1,81 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>DS Workbench Dokumentation</title>
+</head>
+
+<body style="background-color:#E1E1E1">
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><img src="../images/ul.gif"></td>
+    <td style="background-image:url(../images/t.gif);background-repeat:repeat" width="100%"/>
+    <td><img src="../images/ur.gif"></td>
+  </tr>
+   <tr valign="top">
+    <td style="background-image:url(../images/l.gif);background-repeat:repeat-y">&nbsp;</td>
+    <td style="background-image:url(../images/c.gif);background-repeat:repeat" width="100%"><table width="100%"  border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td colspan="2"><h2 style="color:#953333">Angriffsplaner - Einstellungen</h2></td>
+        <td>&nbsp;</td>
+      </tr>
+	  <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+	  	  <tr>
+        <td colspan="2"><img src="../images/screens/attack_planer_settings.gif" width="647" height="468"></td>
+      </tr>
+	  	  <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+	   <tr>
+        <td colspan="2">Die <em>Einstellungen</em> des Angriffsplaners befassen sich mit den Rahmenbedingungen aller Angriffe. Hier kann man zum einen die <em>Startzeit</em> festlegen. Dieser Wert stellt den globalen Zeitpunkt dar, zu dem der <em>allererste Angriffe</em> fr&uuml;hestens abgeschickt werden soll. Zum anderen kann man die Ankunftszeit festlegen, zu der <em>alle Truppen</em> gemeinsam ihre Ziele erreichen.<br>
+          Die Option <em>Nacht-Sperre</em> bewirkt, dass man keine Angriffe zwischen 0 und 8 Uhr losschicken muss. Letztendlich gibt es noch die <em>Zufallsstreuung</em>. Ist dieses Feld aktiviert, werden die Angriffe in zuf&auml;lliger Reihenfolge den Zield&ouml;rfern zugewiesen. Diese Option gewinnt an Bedeutung, wenn man sehr viele D&ouml;rfer eines Spielers angreift. Ohne aktivierte <em>Zufallsstreuung</em> w&uuml;rden die Ziele der Reihe nach verwendet werden, bis keine <em>Herkunftsd&ouml;rfer</em> mehr verf&uuml;gbar sind. Je nach Dorfsortierung k&ouml;nnten sich so die Angriffe  auf ein Gebiet des Gegners konzentrieren. Ist die <em>Zufallsstreuung</em> aktiv ist die Wahrscheinlichkeit hoch, dass viele verschiedene D&ouml;rfer des Feindes ber&uuml;cksichtigt werden, so z.B. auch D&ouml;rfer in Save-Gebiet. </td>
+      </tr>
+	   <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+	   <tr>
+        <td colspan="2"><h3 style="color:#953333">Verteilungsverfahren für Abschickzeitpunkte</h3></td>
+      </tr>
+	   <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+	   <tr>
+        <td colspan="2"><img src="../images/attack_plan_schema.gif" width="555" height="113"></td>
+      </tr>
+	   <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+	   <tr>
+        <td colspan="2">Die Grafik gibt ein Beispiel, wie der <em>Angriffsplaner</em> Abschickzeitpunkte bestimmt. Das Beispiel bezieht sich darauf, dass alle Angriffe im <em>Zeitrahmen</em> zwischen <em>18 und 0 Uhr </em>abgeschickt werden sollen. Der fr&uuml;heste Angriff soll am 20.01.09 um 13:00 Uhr starten, die Ankunft aller Truppen soll der 24.01.09 unmittelbar vor Beginn des Nachtbonus sein. Die gr&uuml;nen Bereiche zeigen an, in welchen Zeitr&auml;umen <em>DS Workbench</em> nach m&ouml;glichen Abschickzeitpunkten sucht, gesteuert durch den f&uuml;r die Angriffe angegebenen Zeitrahmen. Die Abschickzeit spielt, wie man sieht, eine eher untergeordnete Rolle, es sei denn man will bewusst nur kurze Laufzeiten w&auml;hlen, dann w&uuml;rde man die Abschickzeit z.B. auf den 24.01.09 um 13:00 setzen, wodurch allerdings nur noch der letzte gr&uuml;ne Bereich f&uuml;r Angriffe zur Verf&uuml;gung steht. <br>
+          Die Aktivierung der Nacht-Sperre ist in diesem Beispiel uninteressant, da durch die Beschr&auml;nkung der Abschickzeit bereits Angriffe nach 0 Uhr ausgeschlossen werden.<br>
+          Weiterhin sagt die Grafik nicht aus, dass zwangsl&auml;ufig Truppen in den gr&uuml;nen Zeitfenstern abgeschickt werden m&uuml;ssen. Vielmehr wird versucht, die Angriffe so nah wie m&ouml;glich an der Ankunftszeit zu positionieren. Alle anderen Zeitfenster werden nur gef&uuml;llt, wenn kein Angriff aus dem entsprechenden Dorf ein Ziel eher eher erreichen w&uuml;rde. </td>
+      </tr>
+      <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+	  <tr valign="middle">
+        <td style="padding:10px 10px 10px 10px;background-color:#E1D5BE" width="10%"><div align="center"><img src="../images/help.png" width="24" height="24"></div></td>
+        <td style="padding:10px 10px 10px 10px;background-color:#E1D5BE"><p><a name="not_assigned"></a>Nat&uuml;rlich kann es &ouml;fters mal vorkommen, dass nicht alle <em>Herkunftsd&ouml;rfer</em> einem <em>Zieldorf</em> zugewiesen werden k&ouml;nnen. Wie man an der Komplexit&auml;t der Einstellungen erkennt, kann man in diesen F&auml;llen kein Allheilmittel anbieten, um soetwas zu vermeiden.<br>
+          Trefft ihr auf einen solchen Fall gibt es jedoch einige M&ouml;glichkeiten, doch noch alle D&ouml;rfer unterzubringen:</p>
+          <ul>
+            <li>Erh&ouml;ht die Anzahl der Angriffe pro gegnerisches Dorf in den <a href="attack_planer_target.html"><em>Zieleinstellungen</em></a></li>
+            <li>Ver&auml;ndert den Abschickzeitrahmen f&uuml;r alle <a href="attack_planer_source.html"><em>Herkunftsd&ouml;rfer</em></a> auf <em>egal</em>, um den kompletten Tag f&uuml;r das Abschicken von Angriffen zu ber&uuml;cksichtigen. Die <em>Nacht-Sperre</em> k&ouml;nnt ihr ja trotzdem aktivieren.</li>
+            <li>Verschiebt die globale Abschickzeit nach hinten, um Angriffe vielleicht ein oder zwei Tage fr&uuml;her abzuschicken</li>
+            <li>Verschiebt die Ankunftszeit der Truppen nach vorn </li>
+            <li>Ignoriert die D&ouml;rfer, zu denen kein gegnerisches Dorf gefunden werden konnte</li>
+          </ul></td>
+      </tr>
+    </table></td>
+</td>
+    <td style="background-image:url(../images/r.gif);background-repeat:repeat-y">&nbsp;</td>
+  </tr>
+  <tr>
+    <td><img src="../images/ll.gif" width="20" height="20"></td>
+    <td style="background-image:url(../images/b.gif);background-repeat:repeat-x" width="100%">&nbsp;</td>
+    <td><img src="../images/lr.gif" width="20" height="20"></td>
+  </tr>
+</table>
+</body>
+</html>

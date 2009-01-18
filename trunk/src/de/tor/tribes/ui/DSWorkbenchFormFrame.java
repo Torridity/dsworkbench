@@ -11,6 +11,7 @@
 package de.tor.tribes.ui;
 
 import de.tor.tribes.types.AbstractForm;
+import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.map.FormManager;
 import java.awt.Rectangle;
 import javax.swing.DefaultListModel;
@@ -34,6 +35,9 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame {
     /** Creates new form DSWorkbenchFormFrame */
     DSWorkbenchFormFrame() {
         initComponents();
+           // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
+       GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.form_view", GlobalOptions.getHelpBroker().getHelpSet());
+// </editor-fold>
     }
 
     public void updateFormList() {

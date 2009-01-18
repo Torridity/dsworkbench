@@ -403,7 +403,7 @@
                           <Component id="jEndArrowLabel" min="-2" max="-2" attributes="1"/>
                           <Component id="jDrawEndArrow" min="0" pref="0" max="32767" attributes="1"/>
                       </Group>
-                      <EmptySpace pref="16" max="32767" attributes="0"/>
+                      <EmptySpace pref="17" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>

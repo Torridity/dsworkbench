@@ -10,17 +10,13 @@
 
    <tocitem text="Karten " target="pages.map_settings" image="images.tictac_grey"/>
 
+   <tocitem text="Tags " target="pages.tag_settings" image="images.tictac_grey"/>
+
    <tocitem text="Angriffe " target="pages.attack_settings" image="images.tictac_grey"/>
 
    <tocitem text="Netzwerk " target="pages.network_settings" image="images.tictac_grey"/>
 
    <tocitem text="Sonstiges " target="pages.misc_settings" image="images.tictac_grey"/>
-
-  </tocitem>
-  <tocitem text="Grundlagen " target="pages.basics" image="images.tictac_orange">
-   <tocitem text="Navigation auf der Karte " target="pages.map_navigation" image="images.tictac_grey"/>
-
-   <tocitem text="Datenhaltung " target="pages.data_handling" image="images.tictac_grey"/>
 
   </tocitem>
   <tocitem text="Werkzeuge " target="pages.tools" image="images.tictac_orange">
@@ -41,15 +37,37 @@
 
     <tocitem text="Uhr " target="pages.clock_tool" image="images.tictac_grey"/>
 
-    <tocitem text="Angriffsplaner " target="pages.attack_planer" image="images.tictac_grey"/>
+    <tocitem text="Angriffsplaner " target="pages.attack_planer" image="images.tictac_orange">
+     <tocitem text="Herkunft " target="pages.attack_planer_source" image="images.tictac_grey"/>
 
+     <tocitem text="Ziel " target="pages.attack_planer_target" image="images.tictac_grey"/>
+
+     <tocitem text="Einstellungen " target="pages.attack_planer_settings" image="images.tictac_grey"/>
+
+     <tocitem text="Ergebnisse " target="pages.attack_planer_results" image="images.tictac_grey"/>
+
+    </tocitem>
     <tocitem text="Laufzeit&#252;bersicht " target="pages.runtime_tool" image="images.tictac_grey"/>
 
    </tocitem>
   </tocitem>
-  <tocitem text="Ansichten " target="pages.views" image="images.tictac_orange">
-   <tocitem text="Angriffe " target="pages.attack_view" image="images.tictac_grey"/>
+  <tocitem text="Grundlagen " target="pages.basics" image="images.tictac_orange">
+   <tocitem text="Navigation auf der Karte " target="pages.map_navigation" image="images.tictac_grey"/>
 
+   <tocitem text="Datenhaltung " target="pages.data_handling" image="images.tictac_grey"/>
+
+   <tocitem text="Export in die Zwischenablage " target="pages.bb_export" image="images.tictac_grey"/>
+
+   <tocitem text="Import von Spielinformationen " target="pages.import_ingame" image="images.tictac_grey"/>
+
+  </tocitem>
+  <tocitem text="Ansichten " target="pages.views" image="images.tictac_orange">
+   <tocitem text="Angriffe " target="pages.attack_view" image="images.tictac_orange">
+    <tocitem text="Gefilterte Auswahl von Angriffen " target="pages.attack_select_filter" image="images.tictac_grey"/>
+
+    <tocitem text="Angriffszeiten ver&#228;ndern " target="pages.change_attack_times" image="images.tictac_grey"/>
+
+   </tocitem>
    <tocitem text="Entfernungs&#252;bersicht " target="pages.distance_view" image="images.tictac_grey"/>
 
    <tocitem text="Markierungen " target="pages.markers_view" image="images.tictac_grey"/>
@@ -58,9 +76,7 @@
 
    <tocitem text="Ranglisten " target="pages.ranking_view" image="images.tictac_grey"/>
 
-  </tocitem>
-  <tocitem text="Erweiterte Funktionen " target="pages.extended_functions" image="images.tictac_orange">
-   <tocitem text="Import von Spielinformationen " target="pages.import_ingame" image="images.tictac_grey"/>
+   <tocitem text="Formen " target="pages.form_view" image="images.tictac_grey"/>
 
   </tocitem>
   <tocitem text="Shortcuts " target="pages.shortcuts" image="images.tictac_orange"/>

@@ -39,7 +39,7 @@ import javax.swing.filechooser.FileFilter;
 import org.apache.log4j.Logger;
 
 /**
- *
+ *@TODO Write Help for mapshot tool
  * @author  jejkal
  */
 public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerListener {

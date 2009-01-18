@@ -33,6 +33,9 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame {
         } catch (Exception e) {
             //setting not available
         }
+           // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
+        GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.distance_view", GlobalOptions.getHelpBroker().getHelpSet());
+// </editor-fold>
         pack();
     }
 

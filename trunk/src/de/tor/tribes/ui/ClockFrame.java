@@ -6,6 +6,7 @@
 package de.tor.tribes.ui;
 
 import de.tor.tribes.util.Constants;
+import de.tor.tribes.util.GlobalOptions;
 import java.awt.Toolkit;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -38,6 +39,9 @@ public class ClockFrame extends javax.swing.JFrame {
         ((DateEditor) jSpinner1.getEditor()).getFormat().applyPattern("dd.MM.yy HH:mm:ss.SSS");
         tThread = new TimerThread(this);
         tThread.start();
+           // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
+       GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.clock_tool", GlobalOptions.getHelpBroker().getHelpSet());
+        // </editor-fold>
     }
 
     protected void updateTime(String time) {

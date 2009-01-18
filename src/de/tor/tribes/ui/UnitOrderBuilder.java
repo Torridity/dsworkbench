@@ -30,7 +30,7 @@ public class UnitOrderBuilder {
     private static String server = null;
 
     public static void showUnitOrder(Component pParent, UnitHolder pUnit) {
-        if ((frame == null) || (unit != pUnit) || (server != GlobalOptions.getSelectedServer())) {
+        if ((frame == null) || (unit != pUnit) || ((server != null) && (!server.equals(GlobalOptions.getSelectedServer())))) {
             Point oldLoc = null;
             if (frame != null) {
                 oldLoc = frame.getLocation();

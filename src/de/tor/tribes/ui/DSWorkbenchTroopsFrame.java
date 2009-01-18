@@ -97,6 +97,9 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
         } catch (Exception e) {
             logger.error("Failed to read table header icons", e);
         }
+           // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
+        GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.troops_view", GlobalOptions.getHelpBroker().getHelpSet());
+// </editor-fold>
         pack();
     }
 

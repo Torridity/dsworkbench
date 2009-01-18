@@ -92,6 +92,11 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
             jToggleDrawFilterButton.setSelected(Boolean.parseBoolean(GlobalOptions.getProperty("draw.marked.only")));
         } catch (Exception e) {
         }
+
+          // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
+        GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.markers_view", GlobalOptions.getHelpBroker().getHelpSet());
+// </editor-fold>
+
         pack();
     }
 

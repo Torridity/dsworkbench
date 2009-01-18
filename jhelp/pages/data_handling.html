@@ -12,11 +12,11 @@
     <td style="background-image:url(../images/t.gif);background-repeat:repeat" width="100%"/>
     <td><img src="../images/ur.gif"></td>
   </tr>
-   <tr height="600px" valign="top">
+   <tr valign="top">
     <td style="background-image:url(../images/l.gif);background-repeat:repeat-y">&nbsp;</td>
     <td style="background-image:url(../images/c.gif);background-repeat:repeat" width="100%"><table width="100%"  border="0" cellspacing="0" cellpadding="0">
       <tr>
-        <td><h2 style="color:#953333">Werkzeuge</h2></td>
+        <td><h2 style="color:#953333">Datenhaltung</h2></td>
         <td>&nbsp;</td>
       </tr>
       <tr>
@@ -24,14 +24,52 @@
         <td>&nbsp;</td>
       </tr>
       <tr>
-        <td colspan="2">Als <a href="tools.html"><em>Werkzeug</em></a> wird in DS Workbench zum einen eine Funktion bezeichnet, die man auf die Hauptkarte oder die Minimap anwenden kann, wie z.B. das <a href="tools.html#marker"><em>Erstellen von Markierungen</em></a>. Zum anderen k&ouml;nnen <em>Werkzeuge</em> selbst komplexe Dialoge darstellen, die umfangreiche Aktionen erm&ouml;glichen. <br>
-Alle auf die Karte oder die Minimap anwendbaren <em>Werkzeuge</em> sind im <em>Werkzeugmen&uuml;</em> zu finden, welches &uuml;ber einen <em>Klick mit der mittleren oder der rechten Maustaste</em> auf die Hauptkarte direkt auf dieser angezeigt wird.<br>
-Werkzeuge die selbst eine Oberfl&auml;che besitzen, wie z.B. den <a href="attack_planer.html"><em>Angriffsplaner</em></a>, findet man im Hauptmen&uuml; im Untermen&uuml; <em>Werkzeuge</em>.</td>
+        <td colspan="2">Durch die Verwendung von <em>DS Workbench</em> wird, allein durch den Download der <em>Weltdaten</em>, einiges an Plattenplatz ben&ouml;tigt. Sicher, in Zeiten von Gigabyte und Terrabyte erscheint das verschwindend gering, aber als Nutzer sollte man wohl zumindest einmal gelesen haben, was wann auf die Festplatte geschrieben wird. <br>
+          Wie bereits erw&auml;hnt nehmen anfangs den gr&ouml;&szlig;ten Teil die <em>Weltdaten</em> ein. Dies kann, je nach Spieleranzahl auf dem Server 5 MB ausmachen.<br>          <br>
+          Die Weltdaten werden nicht direkt von den DS Servern geladen, sondern von einem privaten Webspace. So ist es garantiert, dass jeder Nutzer dieselbe Version der <em>Weltdaten</em> hat, was in sp&auml;teren Versionen von <em>DS Workbench</em> eine wichtige Rolle spielen wird.<br>
+          Zugleich bedeutet das, dass sich die M&ouml;glichkeit eines Weltdatendownload nach der Version richtet, die auf dem Server vorliegt, was den begrenzten Kapazit&auml;ten eines Servers sehr zugute kommt.<br>          <br>
+          Alle Daten f&uuml;r einen Server werden im <em>DS Workbench</em> Verzeichnis, in einem Unterverzeichnis <em><strong>server/&lt;SERVER_ID&gt; </strong></em>abgelegt. Dazu z&auml;hlen auch eurer pers&ouml;nlichen Daten, also erstellte <em>Angriffe</em> oder <em>Markierungen</em>. Wenn ihr mal in ein Serververzeichnis schaut werdet ihr eine Reihe von Dateien mit der Endung XML finden. Einige dieser Dateien enthalten eure erstellten Daten: </td>
         </tr>
       <tr>
-        <td>&nbsp;</td>
-        <td>&nbsp;</td>
+        <td colspan="2">&nbsp;</td>
       </tr>
+	   <tr>
+        <td width="10%"><div align="center"><em>attacks.xml</em></div></td>
+        <td>Enth&auml;lt die erstellten Angriffspl&auml;ne f&uuml;r den Server </td>
+      </tr>
+	   <tr>
+        <td width="10%"><div align="center"><em>forms.xml</em></div></td>
+        <td>Enth&auml;lt die Formen, die mit den <a href="draw_tools.html"><em>Zeichenwerkzeugen</em></a> erstellt wurden </td>
+      </tr>
+	   <tr>
+        <td width="10%"><div align="center"><em>markers.xml</em></div></td>
+        <td>Enth&auml;lt die Farbmarkierungen von Spielern und St&auml;mmen </td>
+      </tr>
+	   <tr>
+        <td width="10%"><div align="center"><em>tags.xml</em></div></td>
+        <td>Enth&auml;lt die verteilten Tags (Gruppen) und die zugeordneten D&ouml;rfer </td>
+      </tr>
+	   <tr>
+        <td><div align="center"><em>troops.xml</em></div></td>
+        <td>Enth&auml;lt die <a href="import_ingame.html"><em>importieren</em></a> Truppen </td>
+      </tr>
+	   <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+	  <tr>
+        <td colspan="2">Wie ihr seht k&ouml;nnen auch diese Daten, abh&auml;ngig von der Dorfanzahl und der Intensivit&auml;t der Nutzung von <em>DS Workbench </em>ebenso auf eine gewisse Gr&ouml;&szlig;e anwachsen. Diese Dateien werden daher nicht direkt bei jeder Ver&auml;nderung auf die Festplatte geschrieben, sondern erst wenn <em>DS Workbench</em> <u><em>ordnungsgem&auml;&szlig;</em></u> beendet wird. Sollte <em>DS Workbench</em> &uuml;ber den Taskmanager (Windows) beendet werden oder &uuml;ber den &auml;hnlich drastischen <em>kill</em> Befehl (Linux), so gehen die Daten, die seit dem letzten Start ver&auml;ndert wurden, unwiderruflich verloren.<br>
+          <br>
+          Alle anderen Dateien die sich im jeweiligen Serververzeichnis befinden geh&ouml;ren zu den Servereinstellungen und den Weltdaten. </td>
+      </tr>
+	  <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr><tr>
+       	  <tr valign="middle">
+        <td style="padding:10px 10px 10px 10px;background-color:#E1D5BE" width="10%"><div align="center"><img src="../images/help.png" width="24" height="24"></div></td>
+        <td style="padding:10px 10px 10px 10px;background-color:#E1D5BE">Sollten aus irgendeinem Grund die auf eurer Platte gespeicherten Weltdaten und/oder Servereinstellungen fehlerhaft und nicht mehr zu lesen sein, beendet <em>DS Workbench</em> und  l&ouml;scht alle Dateien in einem Serververzeichnis, <em><strong>au&szlig;er</strong></em> nat&uuml;rlich die XML Dateien mit euren pers&ouml;nlichen Daten, die oben aufgelistet sind. 
+          Anschlie&szlig;end startet ihr DS Workbench neu und die Serverdaten werden erneut heruntergeladen. <br>
+          Dieses Vorgehen ist allerdings nur im <u>&auml;u&szlig;ersten Notfall</u> anzuwenden. Wie weiter oben erw&auml;hnt, wird es dadurch keine andere/aktuellere Version der Weltdaten geben. </td>
+       </tr>
     </table></td>
 </td>
     <td style="background-image:url(../images/r.gif);background-repeat:repeat-y">&nbsp;</td>

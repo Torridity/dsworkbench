@@ -546,9 +546,9 @@ public class MapPanel extends javax.swing.JPanel {
                         }
                         double dx = location.getX() - mouseDownPoint.getX();
                         double dy = location.getY() - mouseDownPoint.getY();
-                        if (Math.abs(dx) > 10 || Math.abs(dy) > 10) {
+                        if (Math.abs(dx) > 20 || Math.abs(dy) > 20) {
                             mouseDownPoint = location;
-                            fireScrollEvents((int) Math.rint(dx / 10), (int) Math.rint(dy / 10));
+                            fireScrollEvents((int) Math.rint(dx / -20), (int) Math.rint(dy / -20));
                         }
                         break;
                     }

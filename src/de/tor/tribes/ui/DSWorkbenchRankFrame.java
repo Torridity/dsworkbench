@@ -62,6 +62,9 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame {
         jScrollPane1.getViewport().setBackground(Constants.DS_BACK_LIGHT);
         jRankTable.setColumnSelectionAllowed(false);
         jRankTable.getTableHeader().setReorderingAllowed(false);
+        // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
+        GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.ranking_view", GlobalOptions.getHelpBroker().getHelpSet());
+// </editor-fold>
         updateRankTable();
     }
 

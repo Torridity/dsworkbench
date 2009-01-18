@@ -58,6 +58,9 @@ public class SearchFrame extends javax.swing.JFrame implements SearchListener {
         mSearchThread = new SearchThread("", this);
         mSearchThread.setDaemon(true);
         mSearchThread.start();
+           // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
+        GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.search_tool", GlobalOptions.getHelpBroker().getHelpSet());
+        // </editor-fold>
     }
 
     /** This method is called from within the constructor to

@@ -19,8 +19,14 @@ import de.tor.tribes.util.troops.TroopsManager;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.net.URL;
 import java.util.Date;
 import java.util.Properties;
+import javax.help.CSH;
+import javax.help.HelpBroker;
+import javax.help.HelpSet;
+import javax.help.HelpSetException;
+import javax.swing.JMenuItem;
 import javax.swing.UIManager;
 import org.apache.log4j.Logger;
 
@@ -41,6 +47,10 @@ public class GlobalOptions {
     private static boolean isOfflineMode = false;
     //used to store last attack time of AttackAddFrame
     private static Date lastArriveTime = null;
+    private static HelpBroker mainHelpBroker = null;
+    private static CSH.DisplayHelpFromSource csh = null;
+    private static final String mainHelpSetName = "DS Workbench Dokumentation.hs";
+    private JMenuItem helpItem = null;
 
     /**Init all managed objects
      * @param pDownloadData TRUE=download the WorldData from the tribes server
@@ -51,6 +61,8 @@ public class GlobalOptions {
             return;
         }
         INITIALIZED = true;
+        logger.debug("Loading help system");
+        loadHelpSystem();
         logger.debug("Loading properties");
         loadProperties();
         logger.debug("Loading cursors");
@@ -80,6 +92,45 @@ public class GlobalOptions {
     /**Get the list of available skins*/
     public static String[] getAvailableSkins() {
         return new File("graphics/skins").list();
+    }
+
+    private static void loadHelpSystem() {
+        if (mainHelpBroker == null) {
+            HelpSet mainHelpSet = null;
+            try {
+                URL hsURL = HelpSet.findHelpSet(null, mainHelpSetName);
+                if (hsURL == null) {
+                    logger.error("HelpSet " + mainHelpSetName + " not found.");
+                } else {
+                    logger.debug("HelpSet found");
+                    mainHelpSet = new HelpSet(null, hsURL);
+                }
+
+            } catch (HelpSetException ee) {
+                logger.error("HelpSet " + mainHelpSetName + " could not be opened.", ee);
+                return;
+            }
+            logger.debug("HelpSet opened");
+
+            if (mainHelpSet != null) {
+                logger.debug("Creating HelpBroker");
+                mainHelpBroker = mainHelpSet.createHelpBroker();
+            }
+
+            if (mainHelpBroker != null) {
+                logger.debug("Creating DisplayHelpFromSource");
+                csh = new CSH.DisplayHelpFromSource(mainHelpBroker);
+            }
+        }
+        logger.debug("HelpSystem initialized");
+    }
+
+    public static HelpBroker getHelpBroker() {
+        return mainHelpBroker;
+    }
+
+    public static CSH.DisplayHelpFromSource getHelpDisplay() {
+        return csh;
     }
 
     /**Load the global properties*/

@@ -7,7 +7,6 @@ package de.tor.tribes.ui;
 
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.util.GlobalOptions;
-import javax.swing.JOptionPane;
 import org.apache.log4j.Logger;
 import de.tor.tribes.io.DataHolderListener;
 import de.tor.tribes.php.DatabaseInterface;
@@ -16,10 +15,9 @@ import java.awt.Font;
 import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
-import javax.swing.ImageIcon;
-import javax.swing.UIManager;
 import org.apache.log4j.Level;
 import org.apache.log4j.RollingFileAppender;
+import javax.swing.*;
 
 /**
  * @author  Jejkal
@@ -29,9 +27,18 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
     private static Logger logger = Logger.getLogger("Launcher");
     private final DSWorkbenchSplashScreen self = this;
     private final SplashRepaintThread t;
+   
+    private static DSWorkbenchSplashScreen SINGLETON = null;
+
+    public static synchronized DSWorkbenchSplashScreen getSingleton() {
+        if (SINGLETON == null) {
+            SINGLETON = new DSWorkbenchSplashScreen();
+        }
+        return SINGLETON;
+    }
 
     /** Creates new form DSWorkbenchSplashScreen */
-    public DSWorkbenchSplashScreen() {
+    DSWorkbenchSplashScreen() {
         initComponents();
         jLabel1.setIcon(new ImageIcon("./graphics/splash_beta.png"));
         new Timer("StartupTimer", true).schedule(new HideSplashTask(this), 1000);
@@ -78,6 +85,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
 
     protected void hideSplash() {
         try {
@@ -248,9 +256,8 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
 
             @Override
             public void run() {
-                DSWorkbenchSplashScreen splash = new DSWorkbenchSplashScreen();
-                splash.setLocationRelativeTo(null);
-                splash.setVisible(true);
+                DSWorkbenchSplashScreen.getSingleton().setLocationRelativeTo(null);
+                DSWorkbenchSplashScreen.getSingleton().setVisible(true);
             }
         });
     }

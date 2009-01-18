@@ -15,6 +15,7 @@ import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.util.Constants;
+import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.SupportCalculator;
 import de.tor.tribes.util.tag.TagManager;
 import de.tor.tribes.util.troops.TroopsManager;
@@ -34,7 +35,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 /**
- *
+ *@TODO Write Help for SupportTool
  * @author Charon
  */
 public class VillageSupportFrame extends javax.swing.JFrame {
@@ -52,6 +53,9 @@ public class VillageSupportFrame extends javax.swing.JFrame {
     /** Creates new form VillageSupportFrame */
     VillageSupportFrame() {
         initComponents();
+         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
+        GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.support_tool", GlobalOptions.getHelpBroker().getHelpSet());
+        // </editor-fold>
     }
 
     public void showSupportFrame(Village pCurrent) {

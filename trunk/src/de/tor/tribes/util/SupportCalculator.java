@@ -10,6 +10,7 @@ import de.tor.tribes.types.Ally;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
+import de.tor.tribes.ui.DSWorkbenchMainFrame;
 import de.tor.tribes.util.troops.TroopsManager;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -64,13 +65,17 @@ public class SupportCalculator {
             }
         }
 
-        Tribe own = pVillage.getTribe();
+        Tribe own = DSWorkbenchMainFrame.getSingleton().getCurrentUser();
+        if (own == null) {
+            logger.warn("Current user is 'null'");
+            return new LinkedList<SupportMovement>();
+        }
         List<SupportMovement> movements = new LinkedList<SupportMovement>();
         Village[] villageList = own.getVillageList().toArray(new Village[]{});
         List<Village> villages = new LinkedList<Village>();
         //buid list of allowed villages
         for (Village v : villageList) {
-            if (pTags != null) {
+            if (pTags != null && !pTags.isEmpty()) {
                 for (Tag t : pTags) {
                     if (t.tagsVillage(v.getId())) {
                         if (!villages.contains(v)) {
@@ -79,11 +84,13 @@ public class SupportCalculator {
                         }
                     }
                 }
+            } else {
+                //add all villages
+                villages.add(v);
             }
         }
         //move village itself
         villages.remove(pVillage);
-
         for (Village v : villages) {
             //use all villages
             UnitHolder slowestUnit = calculateAvailableUnits(pVillage, v, unitTable, pArrive, pMinNumber);
@@ -104,9 +111,7 @@ public class SupportCalculator {
         while (allowedKeys.hasMoreElements()) {
             UnitHolder unit = allowedKeys.nextElement();
             int index = pUnitTable.get(unit);
-            System.out.println("Check unit " + unit + " with idx " + index + " for " + pSource);
             int availCount = availableTroops.get(index);
-            System.out.println("avail " + availCount);
             if (availCount > pMinNumber) {
                 long ms = (long) DSCalculator.calculateMoveTimeInSeconds(pSource, pTarget, unit.getSpeed()) * 1000;
                 if (pArrive.getTime() - ms > System.currentTimeMillis()) {

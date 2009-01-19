@@ -64,7 +64,6 @@ import org.apache.log4j.Logger;
  * @author Charon
  */
 /**Thread for updating after scroll operations
- * @TODO Do tag rendering after village drawing (improve unit image scaling)
  */
 public class MapRenderer extends Thread {
 
@@ -105,7 +104,6 @@ public class MapRenderer extends Thread {
             logger.error("Failed to load border images", e);
         }
         mLayers = new Hashtable<Integer, BufferedImage>();
-        loadUnitIcons();
     }
 
     public void initiateRedraw(int pType) {
@@ -554,27 +552,6 @@ public class MapRenderer extends Thread {
         g2d.dispose();
         mapRedrawRequired = false;
     }
-    private List<BufferedImage> unitIcons = new LinkedList<BufferedImage>();
-
-    private void loadUnitIcons() {
-        try {
-            unitIcons.add(ImageIO.read(new File("graphics/icons/spear.png")));//0
-            unitIcons.add(ImageIO.read(new File("graphics/icons/sword.png")));//1
-            unitIcons.add(ImageIO.read(new File("graphics/icons/axe.png")));//2
-            unitIcons.add(ImageIO.read(new File("graphics/icons/archer.png")));//3
-            unitIcons.add(ImageIO.read(new File("graphics/icons/spy.png")));//4
-            unitIcons.add(ImageIO.read(new File("graphics/icons/light.png")));//5
-            unitIcons.add(ImageIO.read(new File("graphics/icons/marcher.png")));//6
-            unitIcons.add(ImageIO.read(new File("graphics/icons/heavy.png")));//7
-            unitIcons.add(ImageIO.read(new File("graphics/icons/ram.png")));//8
-            unitIcons.add(ImageIO.read(new File("graphics/icons/cata.png")));//9
-            unitIcons.add(ImageIO.read(new File("graphics/icons/knight.png")));//10
-            unitIcons.add(ImageIO.read(new File("graphics/icons/snob.png")));//11
-        } catch (Exception e) {
-            logger.error("Failed to load unit icons", e);
-        //throw new Exception("Failed to load unit icons");
-        }
-    }
 
     private void renderTagMarkers() {
         int wb = MapPanel.getSingleton().getWidth();
@@ -626,7 +603,7 @@ public class MapRenderer extends Thread {
                                     //drawing
                                     Point p = copyRegions.get(iconType);
                                     if (p == null) {
-                                        Image tagImage = unitIcons.get(iconType).getScaledInstance(tagsize, tagsize, Image.SCALE_FAST);
+                                        Image tagImage = ImageManager.getUnitImage(iconType).getScaledInstance(tagsize, tagsize, Image.SCALE_FAST);
                                         g2d.drawImage(tagImage, tagX, tagY, null);
                                         //check containment using size tolerance
                                         if (MapPanel.getSingleton().getBounds().contains(new Rectangle(tagX, tagY, tagsize + 2, tagsize + 2))) {

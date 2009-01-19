@@ -10,8 +10,11 @@ import java.awt.Cursor;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Toolkit;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import org.apache.log4j.Logger;
 
@@ -62,6 +65,7 @@ public class ImageManager {
     public final static int CURSOR_RADAR = 23;
     private static final List<Cursor> CURSORS = new LinkedList<Cursor>();
     private static final List<ImageIcon> CURSOR_IMAGES = new LinkedList<ImageIcon>();
+    private static final List<BufferedImage> UNIT_IMAGES = new LinkedList<BufferedImage>();
     private static final List<ImageIcon> UNIT_ICONS = new LinkedList<ImageIcon>();
     private static boolean cursorSupported = true;
 
@@ -128,18 +132,22 @@ public class ImageManager {
     /**Load the icons of the units used for the animated unit movement on the MapPanel*/
     public static void loadUnitIcons() throws Exception {
         try {
-            UNIT_ICONS.add(new ImageIcon("graphics/icons/spear.png"));//0
-            UNIT_ICONS.add(new ImageIcon("graphics/icons/sword.png"));//1
-            UNIT_ICONS.add(new ImageIcon("graphics/icons/axe.png"));//2
-            UNIT_ICONS.add(new ImageIcon("graphics/icons/archer.png"));//3
-            UNIT_ICONS.add(new ImageIcon("graphics/icons/spy.png"));//4
-            UNIT_ICONS.add(new ImageIcon("graphics/icons/light.png"));//5
-            UNIT_ICONS.add(new ImageIcon("graphics/icons/marcher.png"));//6
-            UNIT_ICONS.add(new ImageIcon("graphics/icons/heavy.png"));//7
-            UNIT_ICONS.add(new ImageIcon("graphics/icons/ram.png"));//8
-            UNIT_ICONS.add(new ImageIcon("graphics/icons/cata.png"));//9
-            UNIT_ICONS.add(new ImageIcon("graphics/icons/knight.png"));//10
-            UNIT_ICONS.add(new ImageIcon("graphics/icons/snob.png"));//11
+            UNIT_IMAGES.add(ImageIO.read(new File("graphics/icons/spear.png")));//0
+            UNIT_IMAGES.add(ImageIO.read(new File("graphics/icons/sword.png")));//1
+            UNIT_IMAGES.add(ImageIO.read(new File("graphics/icons/axe.png")));//2
+            UNIT_IMAGES.add(ImageIO.read(new File("graphics/icons/archer.png")));//3
+            UNIT_IMAGES.add(ImageIO.read(new File("graphics/icons/spy.png")));//4
+            UNIT_IMAGES.add(ImageIO.read(new File("graphics/icons/light.png")));//5
+            UNIT_IMAGES.add(ImageIO.read(new File("graphics/icons/marcher.png")));//6
+            UNIT_IMAGES.add(ImageIO.read(new File("graphics/icons/heavy.png")));//7
+            UNIT_IMAGES.add(ImageIO.read(new File("graphics/icons/ram.png")));//8
+            UNIT_IMAGES.add(ImageIO.read(new File("graphics/icons/cata.png")));//9
+            UNIT_IMAGES.add(ImageIO.read(new File("graphics/icons/knight.png")));//10
+            UNIT_IMAGES.add(ImageIO.read(new File("graphics/icons/snob.png")));//11
+
+            for (BufferedImage i : UNIT_IMAGES) {
+                UNIT_ICONS.add(new ImageIcon(i.getScaledInstance(i.getWidth(), i.getHeight(), BufferedImage.SCALE_DEFAULT)));
+            }
         } catch (Exception e) {
             logger.error("Failed to load unit icons", e);
             throw new Exception("Failed to load unit icons");
@@ -177,34 +185,98 @@ public class ImageManager {
         }
     }
 
+    /**Get thr unit icon for the provided ID*/
+    public static BufferedImage getUnitImage(int pId) {
+        if (DataHolder.getSingleton().getUnits().size() == 9) {
+            //old style
+            switch (pId) {
+                case 0:
+                    return UNIT_IMAGES.get(0);
+                case 1:
+                    return UNIT_IMAGES.get(1);
+                case 2:
+                    return UNIT_IMAGES.get(2);
+                case 3:
+                    return UNIT_IMAGES.get(4);
+                case 4:
+                    return UNIT_IMAGES.get(5);
+                case 5:
+                    return UNIT_IMAGES.get(7);
+                case 6:
+                    return UNIT_IMAGES.get(8);
+                case 7:
+                    return UNIT_IMAGES.get(9);
+                case 8:
+                    return UNIT_IMAGES.get(11);
+                default:
+                    return null;
+            }
+        } else {
+            return UNIT_IMAGES.get(pId);
+        }
+    }
+
     public static ImageIcon getUnitIcon(UnitHolder pUnit) {
         if (pUnit == null) {
             return null;
         }
-        if (pUnit.getName().equals("Speerträger")) {
+        if (pUnit.getPlainName().equals("spear")) {
             return UNIT_ICONS.get(ICON_SPEAR);
-        } else if (pUnit.getName().equals("Schwertkämpfer")) {
+        } else if (pUnit.getPlainName().equals("sword")) {
             return UNIT_ICONS.get(ICON_SWORD);
-        } else if (pUnit.getName().equals("Axtkämpfer")) {
+        } else if (pUnit.getPlainName().equals("axe")) {
             return UNIT_ICONS.get(ICON_AXE);
-        } else if (pUnit.getName().equals("Bogenschütze")) {
+        } else if (pUnit.getPlainName().equals("archer")) {
             return UNIT_ICONS.get(ICON_ARCHER);
-        } else if (pUnit.getName().equals("Späher")) {
+        } else if (pUnit.getPlainName().equals("spy")) {
             return UNIT_ICONS.get(ICON_SPY);
-        } else if (pUnit.getName().equals("Leichte Kavallerie")) {
+        } else if (pUnit.getPlainName().equals("light")) {
             return UNIT_ICONS.get(ICON_LKAV);
-        } else if (pUnit.getName().equals("Berittener Bogenschütze")) {
+        } else if (pUnit.getPlainName().equals("marcher")) {
             return UNIT_ICONS.get(ICON_MARCHER);
-        } else if (pUnit.getName().equals("Schwere Kavallerie")) {
+        } else if (pUnit.getPlainName().equals("heavy")) {
             return UNIT_ICONS.get(ICON_HEAVY);
-        } else if (pUnit.getName().equals("Ramme")) {
+        } else if (pUnit.getPlainName().equals("ram")) {
             return UNIT_ICONS.get(ICON_RAM);
-        } else if (pUnit.getName().equals("Katapult")) {
+        } else if (pUnit.getPlainName().equals("cata")) {
             return UNIT_ICONS.get(ICON_CATA);
-        } else if (pUnit.getName().equals("Adelsgeschlecht")) {
+        } else if (pUnit.getPlainName().equals("snob")) {
             return UNIT_ICONS.get(ICON_SNOB);
-        } else if (pUnit.getName().equals("Paladin")) {
+        } else if (pUnit.getPlainName().equals("knight")) {
             return UNIT_ICONS.get(ICON_KNIGHT);
+        }
+        //unknown unit
+        return null;
+    }
+
+    public static BufferedImage getUnitImage(UnitHolder pUnit) {
+        if (pUnit == null) {
+            return null;
+        }
+        if (pUnit.getPlainName().equals("spear")) {
+            return UNIT_IMAGES.get(ICON_SPEAR);
+        } else if (pUnit.getPlainName().equals("sword")) {
+            return UNIT_IMAGES.get(ICON_SWORD);
+        } else if (pUnit.getPlainName().equals("axe")) {
+            return UNIT_IMAGES.get(ICON_AXE);
+        } else if (pUnit.getPlainName().equals("archer")) {
+            return UNIT_IMAGES.get(ICON_ARCHER);
+        } else if (pUnit.getPlainName().equals("spy")) {
+            return UNIT_IMAGES.get(ICON_SPY);
+        } else if (pUnit.getPlainName().equals("light")) {
+            return UNIT_IMAGES.get(ICON_LKAV);
+        } else if (pUnit.getPlainName().equals("marcher")) {
+            return UNIT_IMAGES.get(ICON_MARCHER);
+        } else if (pUnit.getPlainName().equals("heavy")) {
+            return UNIT_IMAGES.get(ICON_HEAVY);
+        } else if (pUnit.getPlainName().equals("ram")) {
+            return UNIT_IMAGES.get(ICON_RAM);
+        } else if (pUnit.getPlainName().equals("cata")) {
+            return UNIT_IMAGES.get(ICON_CATA);
+        } else if (pUnit.getPlainName().equals("snob")) {
+            return UNIT_IMAGES.get(ICON_SNOB);
+        } else if (pUnit.getPlainName().equals("knight")) {
+            return UNIT_IMAGES.get(ICON_KNIGHT);
         }
         //unknown unit
         return null;

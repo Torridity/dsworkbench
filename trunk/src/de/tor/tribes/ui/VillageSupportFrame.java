@@ -11,35 +11,43 @@
 package de.tor.tribes.ui;
 
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.io.ServerManager;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.Village;
+import de.tor.tribes.ui.renderer.DateCellRenderer;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.SupportCalculator;
 import de.tor.tribes.util.tag.TagManager;
 import de.tor.tribes.util.troops.TroopsManager;
 import java.awt.Component;
+import java.awt.Toolkit;
+import java.awt.datatransfer.StringSelection;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.StringTokenizer;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
+import javax.swing.UIManager;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import org.apache.log4j.Logger;
 
 /**
- *@TODO Write Help for SupportTool
  * @author Charon
  */
 public class VillageSupportFrame extends javax.swing.JFrame {
 
+    private static Logger logger = Logger.getLogger("SupportDialog");
     private static VillageSupportFrame SINGLETON = null;
     private Village mCurrentVillage = null;
 
@@ -53,9 +61,9 @@ public class VillageSupportFrame extends javax.swing.JFrame {
     /** Creates new form VillageSupportFrame */
     VillageSupportFrame() {
         initComponents();
-         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
+        // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
         GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.support_tool", GlobalOptions.getHelpBroker().getHelpSet());
-        // </editor-fold>
+    // </editor-fold>
     }
 
     public void showSupportFrame(Village pCurrent) {
@@ -90,9 +98,10 @@ public class VillageSupportFrame extends javax.swing.JFrame {
         jButton3 = new javax.swing.JButton();
         jLabel6 = new javax.swing.JLabel();
         jArriveTime = new javax.swing.JTextField();
-        jButton4 = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
         jButton6 = new javax.swing.JButton();
+        jButton4 = new javax.swing.JButton();
+        jButton7 = new javax.swing.JButton();
         jArriveTimeSpinner = new javax.swing.JSpinner();
         jLabel1 = new javax.swing.JLabel();
         jDefOnlyBox = new javax.swing.JCheckBox();
@@ -124,7 +133,7 @@ public class VillageSupportFrame extends javax.swing.JFrame {
             }
         ));
         jSupportTable.setOpaque(false);
-        jSupportTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jSupportTable.setSelectionMode(javax.swing.ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         jScrollPane2.setViewportView(jSupportTable);
 
         jButton3.setBackground(new java.awt.Color(239, 235, 223));
@@ -139,18 +148,12 @@ public class VillageSupportFrame extends javax.swing.JFrame {
 
         jArriveTime.setEditable(false);
 
-        jButton4.setBackground(new java.awt.Color(239, 235, 223));
-        jButton4.setText("Zentrieren");
-        jButton4.setToolTipText("Gewähltes Dorf aus der Tabelle auf der Karte zentrieren");
-        jButton4.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireCenterSelectionEvent(evt);
-            }
-        });
-
         jButton5.setBackground(new java.awt.Color(239, 235, 223));
-        jButton5.setText("Laufzeitenliste anzeigen");
+        jButton5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/speed.png"))); // NOI18N
         jButton5.setToolTipText("Einordnung der Laufzeit für die in der Tabelle gewählte Einheit");
+        jButton5.setMaximumSize(new java.awt.Dimension(57, 33));
+        jButton5.setMinimumSize(new java.awt.Dimension(57, 33));
+        jButton5.setPreferredSize(new java.awt.Dimension(57, 33));
         jButton5.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireShowTroopListEvent(evt);
@@ -158,11 +161,30 @@ public class VillageSupportFrame extends javax.swing.JFrame {
         });
 
         jButton6.setBackground(new java.awt.Color(239, 235, 223));
-        jButton6.setText("Kampfkraft berechnen");
+        jButton6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ally.png"))); // NOI18N
         jButton6.setToolTipText("Anzeige der maximalen Kampfkraft (Späher, Ramme und AG werden in jedem Fall ignoriert)");
+        jButton6.setMaximumSize(new java.awt.Dimension(57, 33));
+        jButton6.setMinimumSize(new java.awt.Dimension(57, 33));
+        jButton6.setPreferredSize(new java.awt.Dimension(57, 33));
         jButton6.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireCalculateForceEvent(evt);
+            }
+        });
+
+        jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_clipboard.png"))); // NOI18N
+        jButton4.setToolTipText("Unformatiert in die Zwischenablage kopieren");
+        jButton4.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireCopyUnformatedToClipboardEvent(evt);
+            }
+        });
+
+        jButton7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_clipboardBB.png"))); // NOI18N
+        jButton7.setToolTipText("Als BB-Code in die Zwischenablage kopieren");
+        jButton7.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireCopyBBCodeToClipboardEvent(evt);
             }
         });
 
@@ -173,22 +195,24 @@ public class VillageSupportFrame extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jResultDialogLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jResultDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 387, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 470, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jResultDialogLayout.createSequentialGroup()
                         .addGroup(jResultDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel5)
                             .addComponent(jLabel6))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jResultDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jArriveTime, javax.swing.GroupLayout.DEFAULT_SIZE, 265, Short.MAX_VALUE)
-                            .addComponent(jTargetVillage, javax.swing.GroupLayout.DEFAULT_SIZE, 265, Short.MAX_VALUE)))
+                            .addComponent(jArriveTime, javax.swing.GroupLayout.DEFAULT_SIZE, 348, Short.MAX_VALUE)
+                            .addComponent(jTargetVillage, javax.swing.GroupLayout.DEFAULT_SIZE, 348, Short.MAX_VALUE)))
                     .addComponent(jButton3)
                     .addGroup(jResultDialogLayout.createSequentialGroup()
-                        .addComponent(jButton6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton5)
+                        .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton4)))
+                        .addComponent(jButton4)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton7)))
                 .addContainerGap())
         );
         jResultDialogLayout.setVerticalGroup(
@@ -203,12 +227,14 @@ public class VillageSupportFrame extends javax.swing.JFrame {
                     .addComponent(jLabel6)
                     .addComponent(jArriveTime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jResultDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton4)
-                    .addComponent(jButton5)
-                    .addComponent(jButton6))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 266, Short.MAX_VALUE)
+                .addGroup(jResultDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jResultDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(jButton7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButton5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 259, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jButton3)
                 .addContainerGap())
@@ -229,7 +255,7 @@ public class VillageSupportFrame extends javax.swing.JFrame {
         jDefOnlyBox.setMargin(new java.awt.Insets(0, 0, 0, 0));
         jDefOnlyBox.setOpaque(false);
 
-        jLabel2.setText("Nur Deff berücksichtigen");
+        jLabel2.setText("Nur Def berücksichtigen");
 
         jLabel3.setText("<html>Dörfer mit folgenden Tags<BR/>berücksichtigen</html>");
 
@@ -332,8 +358,6 @@ public class VillageSupportFrame extends javax.swing.JFrame {
             jTargetVillage.setText(mCurrentVillage.toString());
             jArriveTime.setText(new SimpleDateFormat("dd.MM.yy HH:mm:ss").format((Date) jArriveTimeSpinner.getValue()));
             jResultDialog.setLocationRelativeTo(this);
-
-
             jResultDialog.setVisible(true);
         }
     }//GEN-LAST:event_fireCalculateEvent
@@ -347,14 +371,6 @@ public class VillageSupportFrame extends javax.swing.JFrame {
         UnitOrderBuilder.showUnitOrder(null, selectedUnit);
     }//GEN-LAST:event_fireShowTroopListEvent
 
-    private void fireCenterSelectionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCenterSelectionEvent
-        int row = jSupportTable.getSelectedRow();
-        if (row >= 0) {
-            Village v = (Village) jSupportTable.getValueAt(row, 0);
-            DSWorkbenchMainFrame.getSingleton().centerVillage(v);
-        }
-    }//GEN-LAST:event_fireCenterSelectionEvent
-
     private void fireCloseResultsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCloseResultsEvent
         jResultDialog.setVisible(false);
     }//GEN-LAST:event_fireCloseResultsEvent
@@ -362,6 +378,154 @@ public class VillageSupportFrame extends javax.swing.JFrame {
     private void fireCalculateForceEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCalculateForceEvent
         calculateForce();
     }//GEN-LAST:event_fireCalculateForceEvent
+
+    private void fireCopyUnformatedToClipboardEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCopyUnformatedToClipboardEvent
+        try {
+            int[] rows = jSupportTable.getSelectedRows();
+            if ((rows != null) && (rows.length > 0)) {
+                StringBuffer buffer = new StringBuffer();
+                for (int i : rows) {
+                    Village source = (Village) jSupportTable.getValueAt(i, 0);
+                    UnitHolder sUnit = (UnitHolder) jSupportTable.getValueAt(i, 1);
+                    Date sTime = (Date) jSupportTable.getValueAt(i, 2);
+                    String sendtime = new SimpleDateFormat("dd.MM.yy HH:mm:ss.SSS").format(sTime);
+                    String v = jTargetVillage.getText();
+                    String coord = v.substring(v.lastIndexOf("(") + 1, v.lastIndexOf(")")).trim();
+                    String[] pos = coord.split("\\|");
+                    int x = Integer.parseInt(pos[0]);
+                    int y = Integer.parseInt(pos[1]);
+                    Village target = DataHolder.getSingleton().getVillages()[x][y];
+
+                    if (source.getTribe() == null) {
+                        buffer.append("Barbaren");
+                    } else {
+                        buffer.append(source.getTribe());
+                    }
+                    buffer.append("\t");
+                    buffer.append(source);
+                    buffer.append("\t");
+                    if (target.getTribe() == null) {
+                        buffer.append("Barbaren");
+                    } else {
+                        buffer.append(target.getTribe());
+                    }
+                    buffer.append("\t");
+                    buffer.append(target);
+                    buffer.append("\t");
+                    buffer.append(sUnit);
+                    buffer.append("\t");
+                    buffer.append(sendtime);
+                    buffer.append("\t");
+                    buffer.append(jArriveTime.getText());
+                    buffer.append("\n");
+                }
+
+                Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(buffer.toString()), null);
+                String result = "Daten in Zwischenablage kopiert.";
+                JOptionPane.showMessageDialog(jResultDialog, result, "Information", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(jResultDialog, "Keine Unterstützungen ausgewählt.", "Warnung", JOptionPane.WARNING_MESSAGE);
+            }
+        } catch (Exception e) {
+            logger.error("Failed to copy data to clipboard", e);
+            String result = "Fehler beim Kopieren in die Zwischenablage.";
+            JOptionPane.showMessageDialog(jResultDialog, result, "Fehler", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_fireCopyUnformatedToClipboardEvent
+
+    private void fireCopyBBCodeToClipboardEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCopyBBCodeToClipboardEvent
+        try {
+            int[] rows = jSupportTable.getSelectedRows();
+            if ((rows != null) && (rows.length > 0)) {
+                UIManager.put("OptionPane.noButtonText", "Nein");
+                UIManager.put("OptionPane.yesButtonText", "Ja");
+                boolean extended = (JOptionPane.showConfirmDialog(jResultDialog, "Erweiterte BB-Codes verwenden (nur für Forum und Notizen geeignet)?", "Erweiterter BB-Code", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION);
+                UIManager.put("OptionPane.noButtonText", "No");
+                UIManager.put("OptionPane.yesButtonText", "Yes");
+                StringBuffer buffer = new StringBuffer();
+                if (extended) {
+                    buffer.append("[u][size=12]Unterstützungsplan[/size][/u]\n\n");
+                } else {
+                    buffer.append("[u]Unterstützungsplan[/u]\n\n");
+                }
+                String v = jTargetVillage.getText();
+                String coord = v.substring(v.lastIndexOf("(") + 1, v.lastIndexOf(")")).trim();
+                String[] pos = coord.split("\\|");
+                int x = Integer.parseInt(pos[0]);
+                int y = Integer.parseInt(pos[1]);
+                Village target = DataHolder.getSingleton().getVillages()[x][y];
+                buffer.append("[quote]Zu unterstützendes Dorf: " + target.toBBCode() + "\n");
+                Date arrive = new SimpleDateFormat("dd.MM.yy HH:mm:ss").parse(jArriveTime.getText());
+                buffer.append("Geplante Ankunft: ");
+                if (extended) {
+                    buffer.append(new SimpleDateFormat("'[color=green]'dd.MM.yy 'um' HH:mm:ss.'[size=8]'SSS'[/size][/color]'").format(arrive) + "[/quote]\n\n");
+                } else {
+                    buffer.append(new SimpleDateFormat("'[color=green]'dd.MM.yy 'um' HH:mm:ss.SSS'[/color]'").format(arrive) + "[/quote]\n\n");
+                }
+
+                String sUrl = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
+                for (int i : rows) {
+                    Village source = (Village) jSupportTable.getValueAt(i, 0);
+                    UnitHolder unit = (UnitHolder) jSupportTable.getValueAt(i, 1);
+                    Date sendTime = (Date) jSupportTable.getValueAt(i, 2);
+                    buffer.append("");
+                    String sendtime = "";
+                    if (extended) {
+                        sendtime = new SimpleDateFormat("'[color=red]'dd.MM.yy 'um' HH:mm:ss.'[size=8]'SSS'[/size][/color]'").format(sendTime);
+                    } else {
+                        sendtime = new SimpleDateFormat("'[color=red]'dd.MM.yy 'um' HH:mm:ss.SSS'[/color]'").format(sendTime);
+                    }
+                    buffer.append("Unterstützung aus ");
+                    buffer.append(source.toBBCode());
+                    buffer.append(" mit ");
+                    if (extended) {
+                        buffer.append("[img]" + sUrl + "/graphic/unit/unit_" + unit.getPlainName() + ".png[/img]");
+                    } else {
+                        buffer.append(unit.getName());
+                    }
+                    buffer.append(" startet am ");
+                    buffer.append(sendtime);
+                    buffer.append("\n");
+                }
+                if (extended) {
+                    buffer.append("\n[size=8]Erstellt am ");
+                    buffer.append(new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss").format(Calendar.getInstance().getTime()));
+                    buffer.append(" mit [url=\"http://www.dsworkbench.de/index.php?id=23\"]DS Workbench ");
+                    buffer.append(Constants.VERSION + Constants.VERSION_ADDITION + "[/url][/size]\n");
+                } else {
+                    buffer.append("\nErstellt am ");
+                    buffer.append(new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss").format(Calendar.getInstance().getTime()));
+                    buffer.append(" mit [url=\"http://www.dsworkbench.de/index.php?id=23\"]DS Workbench ");
+                    buffer.append(Constants.VERSION + Constants.VERSION_ADDITION + "[/url]\n");
+                }
+
+                String b = buffer.toString();
+                StringTokenizer t = new StringTokenizer(b, "[");
+                int cnt = t.countTokens();
+                if (cnt > 500) {
+                    UIManager.put("OptionPane.noButtonText", "Nein");
+                    UIManager.put("OptionPane.yesButtonText", "Ja");
+                    if (JOptionPane.showConfirmDialog(jResultDialog, "Die zu exportierenden Unterstützungen benötigen mehr als 500 BB-Codes\n" +
+                            "und können daher im Spiel (Forum/IGM/Notizen) nicht auf einmal dargestellt werden.\nTrotzdem exportieren?", "Zu viele BB-Codes", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.NO_OPTION) {
+                        UIManager.put("OptionPane.noButtonText", "No");
+                        UIManager.put("OptionPane.yesButtonText", "Yes");
+                        return;
+                    }
+                    UIManager.put("OptionPane.noButtonText", "No");
+                    UIManager.put("OptionPane.yesButtonText", "Yes");
+                }
+                Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(b), null);
+                String result = "Daten in Zwischenablage kopiert.";
+                JOptionPane.showMessageDialog(jResultDialog, result, "Information", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(jResultDialog, "Keine Unterstützungen ausgewählt.", "Warnung", JOptionPane.WARNING_MESSAGE);
+            }
+        } catch (Exception e) {
+            logger.error("Failed to copy data to clipboard", e);
+            String result = "Fehler beim Kopieren in die Zwischenablage.";
+            JOptionPane.showMessageDialog(jResultDialog, result, "Fehler", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_fireCopyBBCodeToClipboardEvent
 
     private void buildResults(List<SupportCalculator.SupportMovement> pMovements) {
         DefaultTableModel model = new javax.swing.table.DefaultTableModel(
@@ -371,7 +535,7 @@ public class VillageSupportFrame extends javax.swing.JFrame {
                 }) {
 
             Class[] types = new Class[]{
-                Village.class, UnitHolder.class, String.class
+                Village.class, UnitHolder.class, Date.class
             };
 
             @Override
@@ -402,11 +566,11 @@ public class VillageSupportFrame extends javax.swing.JFrame {
             jSupportTable.getColumn(jSupportTable.getColumnName(i)).setHeaderRenderer(headerRenderer);
         }
 
-
+        jSupportTable.setDefaultRenderer(Date.class, new DateCellRenderer("dd.MM.yy HH:mm:ss.SSS"));
         for (SupportCalculator.SupportMovement movement : pMovements) {
             Village village = movement.getSource();
             UnitHolder unit = movement.getUnit();
-            String sendTime = new SimpleDateFormat("dd.MM.yy HH:mm:ss.SSS").format(movement.getSendTime());
+            Date sendTime = movement.getSendTime();
             model.addRow(new Object[]{village, unit, sendTime});
         }
     }
@@ -501,19 +665,17 @@ public class VillageSupportFrame extends javax.swing.JFrame {
             }
         }
         JOptionPane.showMessageDialog(jResultDialog, buffer.toString(), "Maximale Kampfkraft", JOptionPane.INFORMATION_MESSAGE);
-
     }
 
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        java.awt.EventQueue.invokeLater(new Runnable() {
-
-            public void run() {
-                new VillageSupportFrame().setVisible(true);
-            }
-        });
+        String t = "456|234";
+        String[] s = t.split("\\|");
+        for (int i = 0; i < s.length; i++) {
+            System.out.println("STRING " + s[i]);
+        }
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -525,6 +687,7 @@ public class VillageSupportFrame extends javax.swing.JFrame {
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
+    private javax.swing.JButton jButton7;
     private javax.swing.JCheckBox jDefOnlyBox;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;

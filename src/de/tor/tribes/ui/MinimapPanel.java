@@ -39,7 +39,6 @@ import javax.swing.filechooser.FileFilter;
 import org.apache.log4j.Logger;
 
 /**
- *@TODO Write Help for mapshot tool
  * @author  jejkal
  */
 public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerListener {
@@ -407,7 +406,7 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
         jTransparancySlider.setPaintTicks(true);
         jTransparancySlider.setSnapToTicks(true);
         jTransparancySlider.setToolTipText("Transparenz der Legende (10 = keine Legende)");
-        jTransparancySlider.setValue(4);
+        jTransparancySlider.setValue(0);
         jTransparancySlider.setOpaque(false);
 
         javax.swing.GroupLayout jScreenshotControlLayout = new javax.swing.GroupLayout(jScreenshotControl.getContentPane());
@@ -455,6 +454,7 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
                 .addContainerGap())
         );
 
+        jScreenshotPreview.setTitle("Vorschau");
         jScreenshotPreview.addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 fireMapPreviewClosingEvent(evt);
@@ -523,7 +523,7 @@ private void fireSaveScreenshotEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST
 
         @Override
         public boolean accept(File f) {
-            if (f.getName().endsWith(type)) {
+            if ((f != null) && (f.isDirectory() || f.getName().endsWith(type)))  {
                 return true;
             }
             return false;

@@ -24,11 +24,15 @@
 
 <mapID target="pages.attack_planer_settings_not_assigned" url="pages/attack_planer_settings.html#not_assigned"/>
 
+<mapID target="pages.map_tools_mapshot_tool" url="pages/map_tools.html#mapshot_tool"/>
+
 <mapID target="pages.map_tools_tags" url="pages/map_tools.html#tags"/>
 
 <mapID target="pages.runtime_tool" url="pages/runtime_tool.html"/>
 
 <mapID target="pages.tools" url="pages/tools.html"/>
+
+<mapID target="pages.map_settings_show_continents" url="pages/map_settings.html#show_continents"/>
 
 <mapID target="index" url="index.html"/>
 
@@ -104,9 +108,9 @@
 
 <mapID target="pages.data_handling" url="pages/data_handling.html"/>
 
-<mapID target="pages.support_tool" url="pages/support_tool.html"/>
-
 <mapID target="pages.template" url="pages/template.html"/>
+
+<mapID target="pages.support_tool" url="pages/support_tool.html"/>
 
 <mapID target="images.help" url="images/help.png"/>
 

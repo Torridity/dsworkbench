@@ -202,10 +202,10 @@ public class VillageTagFrame extends javax.swing.JFrame {
 
 private void fireAddTagEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireAddTagEvent
     Village selection = (Village) jVillageList.getSelectedItem();
-    if (selection == null) {
+    Tag tag = (Tag) jTagsChooser.getSelectedItem();
+    if ((selection == null) || (tag == null)) {
         return;
     }
-    Tag tag = (Tag) jTagsChooser.getSelectedItem();
 
     DefaultListModel model = (DefaultListModel) jTagsList.getModel();
     if (!model.contains(tag)) {
@@ -232,6 +232,8 @@ private void fireRemoveTagEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:even
 private void fireOkEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireOkEvent
     TagManager.getSingleton().saveTagsToFile(DataHolder.getSingleton().getDataDirectory() + "/tags.xml");
     setVisible(false);
+    //init redraw
+    MapPanel.getSingleton().getMapRenderer().initiateRedraw(0);
 }//GEN-LAST:event_fireOkEvent
 
 private void fireCancelEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCancelEvent

@@ -18,13 +18,13 @@ images/tictac_orange.gif
  </config>
  <view>
   <helptitle>
-Help
+DS Workbench Dokumentation
   </helptitle>
-  <toc showing="yes" label="TOC"/>
+  <toc showing="yes" label="Inhalt"/>
 
   <index showing="yes" label="Index"/>
 
-  <search showing="yes" label="Search"/>
+  <search showing="yes" label="Suche"/>
 
  </view>
  <encoding value="ISO-8859-1"/>

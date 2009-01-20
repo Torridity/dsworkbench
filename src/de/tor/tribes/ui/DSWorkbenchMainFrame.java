@@ -247,14 +247,14 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         }
 // </editor-fold>
 
-// <editor-fold defaultstate="collapsed" desc=" Check for desktop support ">
+        // <editor-fold defaultstate="collapsed" desc=" Check for desktop support ">
         if (!Desktop.isDesktopSupported()) {
             jCenterIngameButton.setEnabled(false);
             jCenterCoordinateIngame.setEnabled(false);
         }
 // </editor-fold>
 
-// <editor-fold defaultstate="collapsed" desc=" Restore last map position ">
+        // <editor-fold defaultstate="collapsed" desc=" Restore last map position ">
         try {
             String x = GlobalOptions.getProperty("last.x");
             String y = GlobalOptions.getProperty("last.y");
@@ -272,7 +272,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
 
 // </editor-fold>
 
-// <editor-fold defaultstate="collapsed" desc=" Setup WindowListeners ">
+        // <editor-fold defaultstate="collapsed" desc=" Setup WindowListeners ">
         WindowListener frameListener = new WindowListener() {
 
             @Override
@@ -320,6 +320,11 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         DSWorkbenchAttackFrame.getSingleton().addWindowListener(frameListener);
 
         // </editor-fold>        
+
+        // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
+        GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "index", GlobalOptions.getHelpBroker().getHelpSet());
+        jHelpItem.addActionListener(GlobalOptions.getHelpDisplay());
+        // </editor-fold>
 
         //update online state
         onlineStateChanged();
@@ -596,7 +601,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             //draw map the first time
             fireRefreshMapEvent(null);
         }
-
     }
 
     /** This method is called from within the constructor to
@@ -662,6 +666,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jShowRankFrame = new javax.swing.JCheckBoxMenuItem();
         jShowFormsFrame = new javax.swing.JCheckBoxMenuItem();
         jMenu4 = new javax.swing.JMenu();
+        jHelpItem = new javax.swing.JMenuItem();
         jAboutItem = new javax.swing.JMenuItem();
 
         jDetailedInfoPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
@@ -1084,7 +1089,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                 .addGroup(jInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jInformationPanelLayout.createSequentialGroup()
                         .addComponent(jOnlineLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 93, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 97, Short.MAX_VALUE)
                         .addComponent(jCurrentToolLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jCenterIngameButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
@@ -1243,6 +1248,10 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jMenu4.setBackground(new java.awt.Color(225, 213, 190));
         jMenu4.setText(bundle.getString("DSWorkbenchMainFrame.jMenu4.text")); // NOI18N
 
+        jHelpItem.setBackground(new java.awt.Color(239, 235, 223));
+        jHelpItem.setText(bundle.getString("DSWorkbenchMainFrame.jHelpItem.text")); // NOI18N
+        jMenu4.add(jHelpItem);
+
         jAboutItem.setBackground(new java.awt.Color(239, 235, 223));
         jAboutItem.setText(bundle.getString("DSWorkbenchMainFrame.jAboutItem.text")); // NOI18N
         jAboutItem.addActionListener(new java.awt.event.ActionListener() {
@@ -1284,7 +1293,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                         .addComponent(jNavigationPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jInformationPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 654, Short.MAX_VALUE))
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 656, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jInfoPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -1730,6 +1739,7 @@ private void fireShowFormsFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIRS
     private javax.swing.JLabel jCurrentToolLabel;
     private javax.swing.JPanel jDetailedInfoPanel;
     private javax.swing.JEditorPane jEditorPane1;
+    private javax.swing.JMenuItem jHelpItem;
     private javax.swing.JPanel jInfoPanel;
     private javax.swing.JPanel jInformationPanel;
     private javax.swing.JLabel jLabel1;

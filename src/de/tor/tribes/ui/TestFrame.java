@@ -5,7 +5,14 @@
  */
 package de.tor.tribes.ui;
 
-import javax.swing.UIManager;
+import com.visutools.nav.bislider.BiSlider;
+import de.tor.tribes.ui.components.MThumbSlider;
+import java.awt.Color;
+import java.awt.FlowLayout;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.text.DecimalFormat;
+import javax.swing.BoundedRangeModel;
 
 /**
  *
@@ -22,20 +29,26 @@ public class TestFrame extends javax.swing.JFrame {
     /** Creates new form TestFrame */
     public TestFrame() {
         initComponents();
+        biSlider1.setMinimumValue(0);
+        biSlider1.setMaximumValue(24);
+        biSlider1.setSegmentSize(1);
+        biSlider1.setUnit("h");
+    //bs.set
         /*System.getProperties().put("proxySet", "true");
-        System.getProperties().put("proxyHost", "proxy.fzk.de");
-        System.getProperties().put("proxyPort", "8000");
-        jEditorPane1.setContentType("text/html");
-        try {
-        URL url = new URL("http://www.heise.de");
-        
-        jEditorPane1.setPage(url);
-        } catch (Exception e) {
-        e.printStackTrace();
-        }*/
-        /* frameControlPanel1.setupPanel(this, true, true);
-        frameControlPanel1.setTitle("Test Frame with title and laberzeug und so weiet damit es lang");*/
-        setLocation(200, 500);
+    System.getProperties().put("proxyHost", "proxy.fzk.de");
+    System.getProperties().put("proxyPort", "8000");
+    jEditorPane1.setContentType("text/html");
+    try {
+    URL url = new URL("http://www.heise.de");
+
+    jEditorPane1.setPage(url);
+    } catch (Exception e) {
+    e.printStackTrace();
+    }*/
+    /* frameControlPanel1.setupPanel(this, true, true);
+    frameControlPanel1.setTitle("Test Frame with title and laberzeug und so weiet damit es lang");*/
+    //  setLocation(200, 500);
+
     /*new Thread(new Runnable() {
     
     public void run() {
@@ -73,30 +86,11 @@ public class TestFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jButton1 = new javax.swing.JButton();
+        biSlider1 = new com.visutools.nav.bislider.BiSlider();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setUndecorated(true);
-
-        jButton1.setIcon(new javax.swing.ImageIcon("C:\\Dokumente und Einstellungen\\Jejkal\\Favoriten\\Eigene Dateien\\Untitled-1.gif")); // NOI18N
-        jButton1.setText("jButton1");
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(148, 148, 148)
-                .addComponent(jButton1)
-                .addContainerGap(132, Short.MAX_VALUE))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(108, 108, 108)
-                .addComponent(jButton1)
-                .addContainerGap(159, Short.MAX_VALUE))
-        );
+        getContentPane().add(biSlider1, java.awt.BorderLayout.PAGE_END);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -104,21 +98,39 @@ public class TestFrame extends javax.swing.JFrame {
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) throws Exception {
-        /*
-        try {
-        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception e) {
-        }
-        java.awt.EventQueue.invokeLater(new Runnable() {
-        
-        public void run() {
-        new TestFrame().setVisible(true);
-        }
+    /*public static void main(String args[]) throws Exception {
+
+    try {
+    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+    } catch (Exception e) {
+    }
+    java.awt.EventQueue.invokeLater(new Runnable() {
+
+    public void run() {
+    new TestFrame().setVisible(true);
+    }
+    });
+
+    }*/
+    public static void main(String args[]) {
+        /*try {
+        UIManager.setLookAndFeel("com.sun.java.swing.plaf.motif.MotifLookAndFeel");
+        } catch (Exception ex) {
+        System.err.println("Error loading L&F: " + ex);
+        }*/
+
+       /* TestFrame f = new TestFrame();
+        f.addWindowListener(new WindowAdapter() {
+
+            public void windowClosing(WindowEvent e) {
+                System.exit(0);
+            }
         });
-         */
+        f.setSize(300, 100);
+        f.setVisible(true);*/
+        new com.visutools.nav.bislider.Test().setVisible(true);
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
+    private com.visutools.nav.bislider.BiSlider biSlider1;
     // End of variables declaration//GEN-END:variables
 }

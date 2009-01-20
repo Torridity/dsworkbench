@@ -356,6 +356,7 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
         jTransparancySlider = new javax.swing.JSlider();
         jScreenshotPreview = new javax.swing.JDialog();
         jPanel1 = new javax.swing.JPanel();
+        jProgressBar1 = new javax.swing.JProgressBar();
 
         jScreenshotControl.setTitle("Einstellungen");
         jScreenshotControl.addWindowListener(new java.awt.event.WindowAdapter() {
@@ -483,15 +484,23 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
                 .addContainerGap())
         );
 
+        jProgressBar1.setMinimum(10);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(94, Short.MAX_VALUE)
+                .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(60, 60, 60))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 145, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(70, Short.MAX_VALUE)
+                .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(56, 56, 56))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -579,6 +588,7 @@ private void fireScreenshotControlClosingEvent(java.awt.event.WindowEvent evt) {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JProgressBar jProgressBar1;
     private javax.swing.JSlider jScalingSlider;
     private javax.swing.JFrame jScreenshotControl;
     private javax.swing.JDialog jScreenshotPreview;

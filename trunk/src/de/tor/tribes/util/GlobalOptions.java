@@ -50,7 +50,6 @@ public class GlobalOptions {
     private static HelpBroker mainHelpBroker = null;
     private static CSH.DisplayHelpFromSource csh = null;
     private static final String mainHelpSetName = "DS Workbench Dokumentation.hs";
-    private JMenuItem helpItem = null;
 
     /**Init all managed objects
      * @param pDownloadData TRUE=download the WorldData from the tribes server
@@ -120,6 +119,7 @@ public class GlobalOptions {
             if (mainHelpBroker != null) {
                 logger.debug("Creating DisplayHelpFromSource");
                 csh = new CSH.DisplayHelpFromSource(mainHelpBroker);
+                
             }
         }
         logger.debug("HelpSystem initialized");

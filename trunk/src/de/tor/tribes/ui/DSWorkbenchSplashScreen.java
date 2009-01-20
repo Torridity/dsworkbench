@@ -27,7 +27,6 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
     private static Logger logger = Logger.getLogger("Launcher");
     private final DSWorkbenchSplashScreen self = this;
     private final SplashRepaintThread t;
-   
     private static DSWorkbenchSplashScreen SINGLETON = null;
 
     public static synchronized DSWorkbenchSplashScreen getSingleton() {
@@ -85,7 +84,6 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
 
     protected void hideSplash() {
         try {
@@ -208,6 +206,19 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
         UIManager.put("ToolTip.font", f);
         UIManager.put("Tree.font", f);
         UIManager.put("Viewport.font", f);
+
+
+        //UIManager.put("Panel.background", Constants.DS_BACK);
+        UIManager.put("Label.background", Constants.DS_BACK);
+        UIManager.put("MenuBar.background", Constants.DS_BACK);
+        UIManager.put("ScrollPane.background", Constants.DS_BACK);
+        UIManager.put("Button.background", Constants.DS_BACK);
+        UIManager.put("TabbedPane.background", Constants.DS_BACK);
+        UIManager.put("SplitPane.background", Constants.DS_BACK);
+        UIManager.put("Separator.background", Constants.DS_BACK);
+        UIManager.put("Menu.background", Constants.DS_BACK);
+        UIManager.put("OptionPane.background", Constants.DS_BACK);
+        UIManager.put("ToolBar.background", Constants.DS_BACK);
 
         //error mode
         int mode = -1;

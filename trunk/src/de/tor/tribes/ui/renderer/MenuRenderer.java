@@ -11,7 +11,7 @@ import de.tor.tribes.ui.FormConfigFrame;
 import de.tor.tribes.ui.ImageManager;
 import de.tor.tribes.ui.MapPanel;
 import de.tor.tribes.ui.MinimapPanel;
-import de.tor.tribes.ui.SearchFrame;
+import de.tor.tribes.ui.DSWorkbenchSearchFrame;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import java.awt.Color;
@@ -369,7 +369,7 @@ public class MenuRenderer implements MouseListener, MouseMotionListener {
                                 break;
                             }
                             case 24: {
-                                SearchFrame.getSingleton().setVisible(true);
+                                DSWorkbenchSearchFrame.getSingleton().setVisible(true);
                                 break;
                             }
                             case 25: {

@@ -4,8 +4,10 @@
  */
 package de.tor.tribes.types;
 
+import de.tor.tribes.ui.DSWorkbenchMainFrame;
 import de.tor.tribes.ui.MapPanel;
-import de.tor.tribes.util.PatchFontMetrics;
+import de.tor.tribes.util.GlobalOptions;
+import de.tor.tribes.util.Skin;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;
@@ -46,23 +48,34 @@ public class Text extends AbstractForm {
 
     @Override
     public void renderForm(Graphics2D g2d) {
+        Font fBefore = g2d.getFont();
+        g2d.setFont(fBefore.deriveFont((float) getTextSize()));
         java.awt.Rectangle mapBounds = MapPanel.getSingleton().getBounds();
-        FontMetrics met = PatchFontMetrics.patch(g2d.getFontMetrics());
+        FontMetrics met = g2d.getFontMetrics();
         Rectangle2D bounds = met.getStringBounds(getFormName(), g2d);
         Point s = MapPanel.getSingleton().virtualPosToSceenPos(getXPos(), getYPos());
         mBounds = new java.awt.Rectangle((int) (bounds.getX() + s.x), (int) (bounds.getY() + s.y), (int) (bounds.getWidth()), (int) (bounds.getHeight()));
-        if (mapBounds.intersects(mBounds)) {
+        java.awt.Rectangle virtBounds = new java.awt.Rectangle((int) (bounds.getX() + s.x), (int) (bounds.getY() + s.y), (int) (bounds.getWidth()), (int) (bounds.getHeight()));
+
+        //calculate bounds
+        double zoom = DSWorkbenchMainFrame.getSingleton().getZoomFactor();
+        int w = GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, zoom).getWidth(null);
+        int h = GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, zoom).getHeight(null);
+        mBounds = new java.awt.Rectangle((int) (getXPos()), (int) (getYPos()), (int) Math.rint(bounds.getWidth() / (double) w), (int) Math.rint(bounds.getHeight() / (double) h));
+
+        if (mapBounds.intersects(virtBounds)) {
             setVisibleOnMap(true);
         } else {
             setVisibleOnMap(false);
+            g2d.setFont(fBefore);
             return;
         }
+
         //save properties
         Color cBefore = g2d.getColor();
         Composite coBefore = g2d.getComposite();
-        Font fBefore = g2d.getFont();
+
         //draw
-        g2d.setFont(fBefore.deriveFont((float) getTextSize()));
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, getTextAlpha()));
         checkShowMode(g2d, getTextColor());
         g2d.drawString(getFormName(), s.x, s.y);

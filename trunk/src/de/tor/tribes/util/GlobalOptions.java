@@ -119,7 +119,7 @@ public class GlobalOptions {
             if (mainHelpBroker != null) {
                 logger.debug("Creating DisplayHelpFromSource");
                 csh = new CSH.DisplayHelpFromSource(mainHelpBroker);
-                
+
             }
         }
         logger.debug("HelpSystem initialized");
@@ -208,7 +208,7 @@ public class GlobalOptions {
             TroopsManager.getSingleton().saveTroopsToFile(DataHolder.getSingleton().getDataDirectory() + "/troops.xml");
             logger.debug("Saving forms");
             FormManager.getSingleton().saveFormsToFile(DataHolder.getSingleton().getDataDirectory() + "/forms.xml");
-
+            logger.debug("User data saved");
         }
     }
 

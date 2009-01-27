@@ -52,7 +52,10 @@ public class DSCalculator {
         dur -= hour * 60;
         int min = (int) Math.floor(dur);
         int sec = (int) Math.rint((dur - min) * 60);
-
+        if (sec == 60) {
+            min++;
+            sec -= 60;
+        }
         String result = "";
         if (hour < 10) {
             result += "0" + hour + ":";

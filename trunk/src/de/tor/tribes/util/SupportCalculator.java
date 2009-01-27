@@ -12,6 +12,7 @@ import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.DSWorkbenchMainFrame;
 import de.tor.tribes.util.troops.TroopsManager;
+import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Enumeration;
@@ -21,7 +22,6 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 /**
- *
  * @author Charon
  */
 public class SupportCalculator {
@@ -105,7 +105,11 @@ public class SupportCalculator {
 
     private static UnitHolder calculateAvailableUnits(Village pTarget, Village pSource, Hashtable<UnitHolder, Integer> pUnitTable, Date pArrive, int pMinNumber) {
         Enumeration<UnitHolder> allowedKeys = pUnitTable.keys();
-        List<Integer> availableTroops = TroopsManager.getSingleton().getTroopsForVillage(pSource).getTroops();
+        VillageTroopsHolder troops = TroopsManager.getSingleton().getTroopsForVillage(pSource);
+        if (troops == null) {
+            return null;
+        }
+        List<Integer> availableTroops = troops.getTroops();
 
         UnitHolder slowestPossible = null;
         while (allowedKeys.hasMoreElements()) {

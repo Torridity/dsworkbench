@@ -74,7 +74,6 @@ public class MapPanel extends javax.swing.JPanel {
     public static synchronized MapPanel getSingleton() {
         if (SINGLETON == null) {
             SINGLETON = new MapPanel();
-
         }
         return SINGLETON;
     }
@@ -526,7 +525,7 @@ public class MapPanel extends javax.swing.JPanel {
                 if (MenuRenderer.getSingleton().isVisible()) {
                     return;
                 }
-                fireVillageAtMousePosChangedEvents(getVillageAtMousePos());
+                // fireVillageAtMousePosChangedEvents(getVillageAtMousePos());
                 boolean isAttack = false;
                 if ((iCurrentCursor == ImageManager.CURSOR_ATTACK_AXE) ||
                         (iCurrentCursor == ImageManager.CURSOR_ATTACK_SWORD) ||
@@ -579,7 +578,7 @@ public class MapPanel extends javax.swing.JPanel {
                         }
                         mTargetVillage = getVillageAtMousePos();
 
-                        fireDistanceEvents(mSourceVillage, mTargetVillage);
+                        //fireDistanceEvents(mSourceVillage, mTargetVillage);
                         break;
                     }
                     case ImageManager.CURSOR_DRAW_LINE: {
@@ -624,7 +623,7 @@ public class MapPanel extends javax.swing.JPanel {
 
             @Override
             public void mouseMoved(MouseEvent e) {
-                fireVillageAtMousePosChangedEvents(getVillageAtMousePos());
+                // fireVillageAtMousePosChangedEvents(getVillageAtMousePos());
 
                 if (isOutside) {
                     mousePos = e.getLocationOnScreen();
@@ -899,18 +898,16 @@ public class MapPanel extends javax.swing.JPanel {
     }
 
     public synchronized void fireVillageAtMousePosChangedEvents(Village pVillage) {
-        for (MapPanelListener listener : mMapPanelListeners) {
-            listener.fireVillageAtMousePosChangedEvent(pVillage);
-        }
+        /*  for (MapPanelListener listener : mMapPanelListeners) {
+        listener.fireVillageAtMousePosChangedEvent(pVillage);
+        }*/
     }
 
-    public synchronized void fireDistanceEvents(Village pSource, Village pTarget) {
-        for (MapPanelListener listener : mMapPanelListeners) {
-            listener.fireDistanceEvent(pSource, pTarget);
-        }
-
+    /* public synchronized void fireDistanceEvents(Village pSource, Village pTarget) {
+    for (MapPanelListener listener : mMapPanelListeners) {
+    listener.fireDistanceEvent(pSource, pTarget);
     }
-
+    }*/
     public synchronized void fireScrollEvents(int pX, int pY) {
         for (MapPanelListener listener : mMapPanelListeners) {
             listener.fireScrollEvent(pX, pY);

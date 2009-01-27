@@ -44,7 +44,7 @@ public class FormConfigFrame extends javax.swing.JFrame {
     }
 
     /** Creates new form FormConfigFrame */
-    public FormConfigFrame() {
+    FormConfigFrame() {
         initComponents();
         mTextColorChooser = new ColorChooser(Color.BLACK);
         mDrawColorChooser = new ColorChooser(Color.WHITE);
@@ -68,9 +68,9 @@ public class FormConfigFrame extends javax.swing.JFrame {
         } catch (Exception e) {
             //setting not available
         }
-         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
+        // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
         GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.form_setup", GlobalOptions.getHelpBroker().getHelpSet());
-        // </editor-fold>
+    // </editor-fold>
     }
 
     /** This method is called from within the constructor to
@@ -115,6 +115,13 @@ public class FormConfigFrame extends javax.swing.JFrame {
 
         setTitle("Form Einstellungen");
         setResizable(false);
+        addWindowFocusListener(new java.awt.event.WindowFocusListener() {
+            public void windowGainedFocus(java.awt.event.WindowEvent evt) {
+            }
+            public void windowLostFocus(java.awt.event.WindowEvent evt) {
+                fireWindowFocusLostEvent(evt);
+            }
+        });
 
         jPanel1.setBackground(new java.awt.Color(239, 235, 223));
 
@@ -368,7 +375,7 @@ public class FormConfigFrame extends javax.swing.JFrame {
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jEndArrowLabel)
                     .addComponent(jDrawEndArrow, 0, 0, Short.MAX_VALUE))
-                .addContainerGap(16, Short.MAX_VALUE))
+                .addContainerGap(18, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -571,6 +578,11 @@ public class FormConfigFrame extends javax.swing.JFrame {
 
         //showing frame
         setVisible(true);
+        int state = getExtendedState();
+        // Clear the iconified bit
+        state &= ~ICONIFIED;
+        // Deiconify the frame
+        setExtendedState(state);
         jSamplePanel.updateUI();
         setupMode = false;
     }
@@ -721,6 +733,13 @@ public class FormConfigFrame extends javax.swing.JFrame {
         setAlwaysOnTop(jAlwaysOnTop.isSelected());
     }//GEN-LAST:event_fireChangeAlwaysOnTopEvent
 
+    private void fireWindowFocusLostEvent(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_fireWindowFocusLostEvent
+        //cancel on focus lost in edit mode
+        if (isInEditMode) {
+            setVisible(false);
+        }
+    }//GEN-LAST:event_fireWindowFocusLostEvent
+
     private void updateValues() {
         if (setupMode) {
             //do not set values in setup
@@ -770,6 +789,7 @@ public class FormConfigFrame extends javax.swing.JFrame {
             } else if (mCurrentForm instanceof Line) {
                 ((Line) mCurrentForm).setStrokeWidth((Float) jStrokeWidth.getValue());
                 ((Line) mCurrentForm).setDrawColor(mDrawColorChooser.getColor());
+                ((Line) mCurrentForm).setTextSize((Integer) jTextHeight.getValue());
                 ((Line) mCurrentForm).setTextColor(mTextColorChooser.getColor());
                 ((Line) mCurrentForm).setDrawAlpha((Float) jDrawTransparency.getValue());
                 ((Line) mCurrentForm).setTextAlpha((Float) jTextTransparency.getValue());

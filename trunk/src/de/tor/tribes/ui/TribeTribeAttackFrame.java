@@ -43,11 +43,11 @@ import org.apache.log4j.Logger;
 import de.tor.tribes.util.tag.TagManager;
 import java.awt.Color;
 import java.awt.Point;
+import java.text.DecimalFormat;
 import java.util.StringTokenizer;
 import javax.swing.UIManager;
 
 /**
- * @TODO "time frame" configurable
  * @TODO reasign timeframe if no attack found
  * @author  Jejkal
  */
@@ -62,6 +62,15 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Village
         initComponents();
         getContentPane().setBackground(Constants.DS_BACK);
         jTransferToAttackManagerDialog.pack();
+        jSendTimeFrame.setMinimumValue(0);
+        jSendTimeFrame.setSliderBackground(Constants.DS_BACK);
+        jSendTimeFrame.setMaximumColor(Constants.DS_BACK_LIGHT);
+        jSendTimeFrame.setMinimumColor(Constants.DS_BACK_LIGHT);
+        jSendTimeFrame.setMaximumValue(24);
+        jSendTimeFrame.setSegmentSize(1);
+        jSendTimeFrame.setUnit("h");
+        jSendTimeFrame.setDecimalFormater(new DecimalFormat("##"));
+        jSendTimeFrame.setBackground(jSettingsPanel.getBackground());
 
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
         GlobalOptions.getHelpBroker().enableHelp(jSourcePanel, "pages.attack_planer_source", GlobalOptions.getHelpBroker().getHelpSet());
@@ -79,11 +88,11 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Village
         DefaultTableModel attackModel = new javax.swing.table.DefaultTableModel(
                 new Object[][]{},
                 new String[]{
-                    "Herkunft", "Einheit", "Zeitrahmen"
+                    "Herkunft", "Einheit"
                 }) {
 
             Class[] types = new Class[]{
-                Village.class, UnitHolder.class, String.class
+                Village.class, UnitHolder.class
             };
 
             @Override
@@ -245,9 +254,6 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Village
         jSourceVillageLabel = new javax.swing.JLabel();
         jSourceUnitLabel = new javax.swing.JLabel();
         jTroopsList = new javax.swing.JComboBox();
-        jPanel5 = new javax.swing.JPanel();
-        jTimeFrameLabel = new javax.swing.JLabel();
-        jTimeFrame = new javax.swing.JComboBox();
         jButton8 = new javax.swing.JButton();
         jButton7 = new javax.swing.JButton();
         jTargetPanel = new javax.swing.JPanel();
@@ -278,6 +284,9 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Village
         jNightForbidden = new javax.swing.JCheckBox();
         jRandomizeLabel = new javax.swing.JLabel();
         jRandomizeTribes = new javax.swing.JCheckBox();
+        jPanel2 = new javax.swing.JPanel();
+        jSendTimeFrame = new com.visutools.nav.bislider.BiSlider();
+        jLabel4 = new javax.swing.JLabel();
 
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("de/tor/tribes/ui/Bundle"); // NOI18N
         jResultFrame.setTitle(bundle.getString("TribeTribeAttackFrame.jResultFrame.title")); // NOI18N
@@ -540,34 +549,6 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Village
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanel5.setOpaque(false);
-
-        jTimeFrameLabel.setText(bundle.getString("TribeTribeAttackFrame.jTimeFrameLabel.text")); // NOI18N
-
-        jTimeFrame.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "egal", "Früh (6-8)", "Vormittag (8-12)", "Nachmittag (12-18)", "Abend (18-0)", "Nacht (0-6)" }));
-        jTimeFrame.setToolTipText(bundle.getString("TribeTribeAttackFrame.jTimeFrame.toolTipText")); // NOI18N
-
-        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
-        jPanel5.setLayout(jPanel5Layout);
-        jPanel5Layout.setHorizontalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel5Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jTimeFrameLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jTimeFrame, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        jPanel5Layout.setVerticalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel5Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTimeFrameLabel)
-                    .addComponent(jTimeFrame, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(63, Short.MAX_VALUE))
-        );
-
         jButton8.setBackground(new java.awt.Color(239, 235, 223));
         jButton8.setText(bundle.getString("TribeTribeAttackFrame.jButton8.text")); // NOI18N
         jButton8.setToolTipText(bundle.getString("TribeTribeAttackFrame.jButton8.toolTipText")); // NOI18N
@@ -594,30 +575,25 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Village
                 .addContainerGap()
                 .addGroup(jSourcePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 594, Short.MAX_VALUE)
-                    .addGroup(jSourcePanelLayout.createSequentialGroup()
-                        .addGroup(jSourcePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(jSourcePanelLayout.createSequentialGroup()
-                                .addComponent(jButton7)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton8))
-                            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(jSourcePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addGroup(jSourcePanelLayout.createSequentialGroup()
+                            .addComponent(jButton7)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(jButton8))
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         jSourcePanelLayout.setVerticalGroup(
             jSourcePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jSourcePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 163, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 166, Short.MAX_VALUE)
                 .addGap(11, 11, 11)
-                .addGroup(jSourcePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jSourcePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jButton8)
@@ -815,7 +791,7 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Village
             jTargetPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jTargetPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 167, Short.MAX_VALUE)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 169, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jTargetPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -890,6 +866,11 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Village
 
         jNightForbidden.setToolTipText(bundle.getString("TribeTribeAttackFrame.jNightForbidden.toolTipText")); // NOI18N
         jNightForbidden.setOpaque(false);
+        jNightForbidden.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                fireChangeNightBlockEvent(evt);
+            }
+        });
 
         jRandomizeLabel.setText(bundle.getString("TribeTribeAttackFrame.jRandomizeLabel.text")); // NOI18N
 
@@ -925,16 +906,44 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Village
                 .addGap(10, 10, 10))
         );
 
+        jPanel2.setOpaque(false);
+
+        jLabel4.setText(bundle.getString("TribeTribeAttackFrame.jLabel4.text")); // NOI18N
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jSendTimeFrame, javax.swing.GroupLayout.DEFAULT_SIZE, 273, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jSendTimeFrame, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
         javax.swing.GroupLayout jSettingsPanelLayout = new javax.swing.GroupLayout(jSettingsPanel);
         jSettingsPanel.setLayout(jSettingsPanelLayout);
         jSettingsPanelLayout.setHorizontalGroup(
             jSettingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jSettingsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(207, 207, 207))
+                .addGroup(jSettingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jSettingsPanelLayout.createSequentialGroup()
+                        .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(207, Short.MAX_VALUE))
         );
         jSettingsPanelLayout.setVerticalGroup(
             jSettingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -943,7 +952,9 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Village
                 .addGroup(jSettingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(278, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(205, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab(bundle.getString("TribeTribeAttackFrame.jSettingsPanel.TabConstraints.tabTitle"), new javax.swing.ImageIcon(getClass().getResource("/res/settings.png")), jSettingsPanel); // NOI18N
@@ -953,9 +964,10 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Village
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jTabbedPane1)
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 619, Short.MAX_VALUE))
                     .addComponent(jCalculateButton))
                 .addContainerGap())
         );
@@ -975,8 +987,7 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Village
 private void fireAddAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireAddAttackEvent
     Village vSource = (Village) jSourceVillageList.getSelectedItem();
     UnitHolder uSource = (UnitHolder) jTroopsList.getSelectedItem();
-    String timeFrame = (String) jTimeFrame.getSelectedItem();
-    ((DefaultTableModel) jAttacksTable.getModel()).addRow(new Object[]{vSource, uSource, timeFrame});
+    ((DefaultTableModel) jAttacksTable.getModel()).addRow(new Object[]{vSource, uSource});
 }//GEN-LAST:event_fireAddAttackEvent
 
 private void fireRemoveAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireRemoveAttackEvent
@@ -1029,11 +1040,11 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
     for (int i = 0; i < attackModel.getRowCount(); i++) {
         Village vSource = (Village) attackModel.getValueAt(i, 0);
         UnitHolder uSource = (UnitHolder) attackModel.getValueAt(i, 1);
-        String sTimeFrame = (String) attackModel.getValueAt(i, 2);
+//        String sTimeFrame = (String) attackModel.getValueAt(i, 2);
         //time when the fist attacks should begin
         long minSendTime = ((Date) jSendTime.getValue()).getTime();
         //time frame for sending troops
-        int timeFrame = ((DefaultComboBoxModel) jTimeFrame.getModel()).getIndexOf(sTimeFrame);
+//        int timeFrame = ((DefaultComboBoxModel) jTimeFrame.getModel()).getIndexOf(sTimeFrame);
         //time when the attacks should arrive
         long arrive = ((Date) jArriveTime.getValue()).getTime();
         //max. number of attacks per target village
@@ -1062,61 +1073,72 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
                 int minute = c.get(Calendar.MINUTE);
                 int second = c.get(Calendar.SECOND);
                 boolean inTimeFrame = false;
-                switch (timeFrame) {
-                    case 1: {
-                        //6 to 8
-                        if ((hour >= 6) && ((hour <= 7) && (minute <= 59) && (second <= 59))) {
-                            inTimeFrame = true;
-                        }
-                        break;
-                    }
-                    case 2: {
-                        //8 to 12
-                        if ((hour >= 8) && ((hour <= 11) && (minute <= 59) && (second <= 59))) {
-                            inTimeFrame = true;
-                        }
-                        break;
-                    }
-                    case 3: {
-                        //12 to 18
-                        if ((hour >= 12) && ((hour <= 17) && (minute <= 59) && (second <= 59))) {
-                            inTimeFrame = true;
-                        }
-                        break;
-                    }
-                    case 4: {
-                        //18 to 0
-                        if ((hour >= 18) && ((hour <= 23) && (minute <= 59) && (second <= 59))) {
-                            inTimeFrame = true;
-                        }
-                        break;
-                    }
-                    case 5: {
-                        //0 to 6
-                        if ((hour >= 0) && (hour < 6)) {
-                            inTimeFrame = true;
-                        }
-                        break;
-                    }
-                    default: {
-                        //doesn't matter
-                        inTimeFrame = true;
-                    }
+
+                int min = (int) Math.rint(jSendTimeFrame.getMinimumColoredValue()) - 1;
+                int max = (int) Math.rint(jSendTimeFrame.getMaximumColoredValue()) - 1;
+                if ((hour >= min) && ((hour <= max) && (minute <= 59) && (second <= 59))) {
+                    inTimeFrame = true;
                 }
 
-                //check sleep mode of still in time frame
-                if (inTimeFrame) {
-                    if (jNightForbidden.isSelected()) {
-                        hour = c.get(Calendar.HOUR_OF_DAY);
-                        int min = c.get(Calendar.MINUTE);
-                        int sec = c.get(Calendar.SECOND);
-                        if (((hour <= 23) && (min <= 59) && (sec <= 59)) && ((hour >= 8) && (min >= 0) && (sec >= 0))) {
-                            //time between 23:59:59 and 08:00:00, outside night mode
-                            } else {
-                            inTimeFrame = false;
-                        }
-                    }
+                // <editor-fold defaultstate="collapsed" desc=" Old TimeFrame handling">
+/*
+                switch (timeFrame) {
+                case 1: {
+                //6 to 8
+                if ((hour >= 6) && ((hour <= 7) && (minute <= 59) && (second <= 59))) {
+                inTimeFrame = true;
                 }
+                break;
+                }
+                case 2: {
+                //8 to 12
+                if ((hour >= 8) && ((hour <= 11) && (minute <= 59) && (second <= 59))) {
+                inTimeFrame = true;
+                }
+                break;
+                }
+                case 3: {
+                //12 to 18
+                if ((hour >= 12) && ((hour <= 17) && (minute <= 59) && (second <= 59))) {
+                inTimeFrame = true;
+                }
+                break;
+                }
+                case 4: {
+                //18 to 0
+                if ((hour >= 18) && ((hour <= 23) && (minute <= 59) && (second <= 59))) {
+                inTimeFrame = true;
+                }
+                break;
+                }
+                case 5: {
+                //0 to 6
+                if ((hour >= 0) && (hour < 6)) {
+                inTimeFrame = true;
+                }
+                break;
+                }
+                default: {
+                //doesn't matter
+                inTimeFrame = true;
+                }
+                }
+                 */
+// </editor-fold>
+
+                //check sleep mode of still in time frame
+               /* if (inTimeFrame) {
+                if (jNightForbidden.isSelected()) {
+                hour = c.get(Calendar.HOUR_OF_DAY);
+                int min = c.get(Calendar.MINUTE);
+                int sec = c.get(Calendar.SECOND);
+                if (((hour <= 23) && (min <= 59) && (sec <= 59)) && ((hour >= 8) && (min >= 0) && (sec >= 0))) {
+                //time between 23:59:59 and 08:00:00, outside night mode
+                } else {
+                inTimeFrame = false;
+                }
+                }
+                }*/
 
                 if (inTimeFrame) {
                     //only calculate if time is in time frame
@@ -1223,21 +1245,35 @@ private void fireAttacksToClipboardEvent(java.awt.event.MouseEvent evt) {//GEN-F
             } else {
                 time = new SimpleDateFormat("'[color=red]'dd.MM.yy 'um' HH:mm:ss.SSS'[/color]'").format(dTime);
             }
-            buffer.append("Angriff aus ");
+            buffer.append("Angriff ");
+            if (Boolean.parseBoolean(GlobalOptions.getProperty("export.tribe.names"))) {
+                buffer.append(" von ");
+                if (sVillage.getTribe() != null) {
+                    buffer.append(sVillage.getTribe().toBBCode());
+                } else {
+                    buffer.append("Barbaren");
+                }
+            }
+            buffer.append(" aus ");
             buffer.append(sVillage.toBBCode());
-            buffer.append(" mit ");
-            if (extended) {
-                buffer.append("[img]" + sUrl + "/graphic/unit/unit_" + sUnit.getPlainName() + ".png[/img]");
-            } else {
-                buffer.append(sUnit.getName());
+            if (Boolean.parseBoolean(GlobalOptions.getProperty("export.units"))) {
+                buffer.append(" mit ");
+                if (extended) {
+                    buffer.append("[img]" + sUrl + "/graphic/unit/unit_" + sUnit.getPlainName() + ".png[/img]");
+                } else {
+                    buffer.append(sUnit.getName());
+                }
             }
             buffer.append(" auf ");
-            if (tVillage.getTribe() != null) {
-                buffer.append(tVillage.getTribe().toBBCode());
-            } else {
-                buffer.append("Barbaren");
+            if (Boolean.parseBoolean(GlobalOptions.getProperty("export.tribe.names"))) {
+                if (tVillage.getTribe() != null) {
+                    buffer.append(tVillage.getTribe().toBBCode());
+                } else {
+                    buffer.append("Barbaren");
+                }
+                buffer.append(" in ");
             }
-            buffer.append(" in ");
+
             buffer.append(tVillage.toBBCode());
             buffer.append(" am ");
             buffer.append(time);
@@ -1316,14 +1352,13 @@ private void fireUnformattedAttacksToClipboardEvent(java.awt.event.MouseEvent ev
 private void fireAddAllPlayerVillages(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireAddAllPlayerVillages
     Village current = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage();
     UnitHolder uSource = (UnitHolder) jTroopsList.getSelectedItem();
-    String timeFrame = (String) jTimeFrame.getSelectedItem();
     jAttacksTable.invalidate();
     boolean error = false;
     if (current != null) {
         Tribe t = current.getTribe();
         if (t != null) {
             for (Village v : t.getVillageList()) {
-                ((DefaultTableModel) jAttacksTable.getModel()).addRow(new Object[]{v, uSource, timeFrame});
+                ((DefaultTableModel) jAttacksTable.getModel()).addRow(new Object[]{v, uSource});
             }
         } else {
             error = true;
@@ -1533,6 +1568,14 @@ private void fireChooseTargetRegionEvent(java.awt.event.MouseEvent evt) {//GEN-F
     bChooseTargetRegionMode = true;
 }//GEN-LAST:event_fireChooseTargetRegionEvent
 
+private void fireChangeNightBlockEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireChangeNightBlockEvent
+    if (jNightForbidden.isSelected()) {
+        jSendTimeFrame.setMinimumValue(8);
+    } else {
+        jSendTimeFrame.setMinimumValue(0);
+    }
+}//GEN-LAST:event_fireChangeNightBlockEvent
+
     private void showResults(Hashtable<Village, Hashtable<Village, UnitHolder>> pAttacks) {
         DefaultTableModel resultModel = new javax.swing.table.DefaultTableModel(
                 new Object[][]{},
@@ -1591,7 +1634,6 @@ private void fireChooseTargetRegionEvent(java.awt.event.MouseEvent evt) {//GEN-F
         if (bChooseSourceRegionMode) {
             Tribe you = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage().getTribe();
             UnitHolder uSource = (UnitHolder) jTroopsList.getSelectedItem();
-            String timeFrame = (String) jTimeFrame.getSelectedItem();
             jAttacksTable.invalidate();
             for (int x = vStart.x; x <= vEnd.x; x++) {
                 for (int y = vStart.y; y <= vEnd.y; y++) {
@@ -1600,7 +1642,7 @@ private void fireChooseTargetRegionEvent(java.awt.event.MouseEvent evt) {//GEN-F
                         Tribe t = v.getTribe();
                         if (t != null) {
                             if (t.equals(you)) {
-                                ((DefaultTableModel) jAttacksTable.getModel()).addRow(new Object[]{v, uSource, timeFrame});
+                                ((DefaultTableModel) jAttacksTable.getModel()).addRow(new Object[]{v, uSource});
                             }
                         }
                     }
@@ -1667,13 +1709,14 @@ private void fireChooseTargetRegionEvent(java.awt.event.MouseEvent evt) {//GEN-F
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JTextField jMaxAttacksPerVillage;
     private javax.swing.JLabel jMaxAttacksPerVillageLabel;
     private javax.swing.JTextField jNewPlanName;
     private javax.swing.JCheckBox jNightForbidden;
     private javax.swing.JLabel jNoNightLabel;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
@@ -1686,6 +1729,7 @@ private void fireChooseTargetRegionEvent(java.awt.event.MouseEvent evt) {//GEN-F
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JSpinner jSendTime;
+    private com.visutools.nav.bislider.BiSlider jSendTimeFrame;
     private javax.swing.JPanel jSettingsPanel;
     private javax.swing.JPanel jSourcePanel;
     private javax.swing.JLabel jSourceUnitLabel;
@@ -1700,8 +1744,6 @@ private void fireChooseTargetRegionEvent(java.awt.event.MouseEvent evt) {//GEN-F
     private javax.swing.JLabel jTargetTribeLabel;
     private javax.swing.JComboBox jTargetTribeList;
     private javax.swing.JComboBox jTargetVillageBox;
-    private javax.swing.JComboBox jTimeFrame;
-    private javax.swing.JLabel jTimeFrameLabel;
     private javax.swing.JDialog jTransferToAttackManagerDialog;
     private javax.swing.JComboBox jTroopsList;
     private javax.swing.JTable jVictimTable;

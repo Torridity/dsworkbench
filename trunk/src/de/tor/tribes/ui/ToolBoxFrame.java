@@ -470,7 +470,7 @@ private void fireToolClickedEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
     } else if (evt.getSource() == jShotButton) {
         MinimapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_SHOT);
     } else if (evt.getSource() == jSearchButton) {
-        SearchFrame.getSingleton().setVisible(true);
+        DSWorkbenchSearchFrame.getSingleton().setVisible(true);
     } else if (evt.getSource() == jSettingsButton) {
         DSWorkbenchSettingsDialog.getSingleton().setVisible(true);
     } else if (evt.getSource() == jClockButton) {

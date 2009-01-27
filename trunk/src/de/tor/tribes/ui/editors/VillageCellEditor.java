@@ -7,11 +7,17 @@ package de.tor.tribes.ui.editors;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import java.awt.Component;
+import java.awt.KeyboardFocusManager;
+import java.awt.event.FocusEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.AbstractCellEditor;
+import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JTable;
@@ -23,9 +29,33 @@ import javax.swing.table.TableCellEditor;
  */
 public class VillageCellEditor extends AbstractCellEditor implements TableCellEditor {
 
-    private final JComboBox comboComponent = new javax.swing.JComboBox();
+    private JComboBox comboComponent = null;
 
     public VillageCellEditor() {
+        comboComponent = new javax.swing.JComboBox() {
+
+            public void processMouseEvent(MouseEvent e) {
+                Component focusOwner = KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner();
+
+                if (isDisplayable() && focusOwner == this && !isPopupVisible()) {
+                    showPopup();
+                }
+            }
+
+            public void processFocusEvent(FocusEvent fe) {
+            }
+        };
+        comboComponent.setBorder(BorderFactory.createEmptyBorder());
+        comboComponent.addItemListener(new ItemListener() {
+
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                    stopCellEditing();
+                }
+            }
+        });
+
         comboComponent.addKeyListener(new KeyListener() {
 
             @Override

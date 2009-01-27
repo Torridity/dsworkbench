@@ -38,13 +38,13 @@
 
 <mapID target="pages.tag_settings" url="pages/tag_settings.html"/>
 
-<mapID target="pages.distance_view" url="pages/distance_view.html"/>
-
 <mapID target="pages.network_settings" url="pages/network_settings.html"/>
 
 <mapID target="pages.misc_settings" url="pages/misc_settings.html"/>
 
 <mapID target="pages.attack_planer_target" url="pages/attack_planer_target.html"/>
+
+<mapID target="pages.attack_view_attack_alert" url="pages/attack_view.html#attack_alert"/>
 
 <mapID target="pages.player_server_settings" url="pages/player_server_settings.html"/>
 

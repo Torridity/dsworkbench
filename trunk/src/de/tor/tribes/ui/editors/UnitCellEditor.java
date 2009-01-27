@@ -7,9 +7,15 @@ package de.tor.tribes.ui.editors;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import java.awt.Component;
+import java.awt.KeyboardFocusManager;
+import java.awt.event.FocusEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
 import javax.swing.AbstractCellEditor;
+import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JTable;
@@ -21,24 +27,37 @@ import javax.swing.table.TableCellEditor;
  */
 public class UnitCellEditor extends AbstractCellEditor implements TableCellEditor {
 
-    private final JComboBox comboComponent = new javax.swing.JComboBox();
+    private JComboBox comboComponent = null;
 
     public UnitCellEditor() {
         DefaultComboBoxModel model = new DefaultComboBoxModel();
-        
+        comboComponent = new javax.swing.JComboBox() {
+
+            public void processMouseEvent(MouseEvent e) {
+                Component focusOwner = KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner();
+
+                if (isDisplayable() && focusOwner == this && !isPopupVisible()) {
+                    showPopup();
+                }
+            }
+
+            public void processFocusEvent(FocusEvent fe) {
+            }
+        };
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
             model.addElement(unit);
         }
+        comboComponent.setBorder(BorderFactory.createEmptyBorder());
         comboComponent.setModel(model);
-        /*comboComponent.addItemListener(new ItemListener() {
-        
-        @Override
-        public void itemStateChanged(ItemEvent e) {
-        if (e.getStateChange() == ItemEvent.SELECTED) {
-        fireEditingStopped();
-        }
-        }
-        });*/
+        comboComponent.addItemListener(new ItemListener() {
+
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                    stopCellEditing();
+                }
+            }
+        });
 
         comboComponent.addKeyListener(new KeyListener() {
 

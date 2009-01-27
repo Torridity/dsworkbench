@@ -6,7 +6,6 @@
 package de.tor.tribes.ui;
 
 import de.tor.tribes.io.DataHolder;
-import de.tor.tribes.types.Ally;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.models.TroopsManagerTableModel;
@@ -34,7 +33,6 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import org.apache.log4j.Logger;
 import de.tor.tribes.types.Tag;
@@ -55,12 +53,13 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
     private int iCenterY = 500;
     private List<ImageIcon> mIcons;
     private double dZoomFactor = 1.0;
-    private ToolBoxFrame mToolbox = null;
-    private AllyAllyAttackFrame mAllyAllyAttackFrame = null;
+    //private ToolBoxFrame mToolbox = null;
+    // private AllyAllyAttackFrame mAllyAllyAttackFrame = null;
     private TribeTribeAttackFrame mTribeTribeAttackFrame = null;
     private AboutDialog mAbout = null;
     private static DSWorkbenchMainFrame SINGLETON = null;
     private boolean initialized = false;
+    private JFrame fullscreenFrame = null;
 
     public static synchronized DSWorkbenchMainFrame getSingleton() {
         if (SINGLETON == null) {
@@ -86,20 +85,22 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                 GlobalOptions.addProperty("attack.frame.visible", Boolean.toString(DSWorkbenchAttackFrame.getSingleton().isVisible()));
                 GlobalOptions.addProperty("marker.frame.visible", Boolean.toString(DSWorkbenchMarkerFrame.getSingleton().isVisible()));
                 GlobalOptions.addProperty("troops.frame.visible", Boolean.toString(DSWorkbenchTroopsFrame.getSingleton().isVisible()));
-                GlobalOptions.addProperty("distance.frame.visible", Boolean.toString(DSWorkbenchDistanceFrame.getSingleton().isVisible()));
                 GlobalOptions.addProperty("rank.frame.visible", Boolean.toString(DSWorkbenchRankFrame.getSingleton().isVisible()));
                 GlobalOptions.addProperty("form.frame.visible", Boolean.toString(DSWorkbenchFormFrame.getSingleton().isVisible()));
-                GlobalOptions.addProperty("distance.frame.alwaysOnTop", Boolean.toString(DSWorkbenchDistanceFrame.getSingleton().isAlwaysOnTop()));
+                GlobalOptions.addProperty("search.frame.visible", Boolean.toString(DSWorkbenchSearchFrame.getSingleton().isVisible()));
                 GlobalOptions.addProperty("attack.frame.alwaysOnTop", Boolean.toString(DSWorkbenchAttackFrame.getSingleton().isAlwaysOnTop()));
                 GlobalOptions.addProperty("marker.frame.alwaysOnTop", Boolean.toString(DSWorkbenchMarkerFrame.getSingleton().isAlwaysOnTop()));
                 GlobalOptions.addProperty("troops.frame.alwaysOnTop", Boolean.toString(DSWorkbenchTroopsFrame.getSingleton().isAlwaysOnTop()));
                 GlobalOptions.addProperty("rank.frame.alwaysOnTop", Boolean.toString(DSWorkbenchRankFrame.getSingleton().isAlwaysOnTop()));
                 GlobalOptions.addProperty("form.frame.alwaysOnTop", Boolean.toString(DSWorkbenchFormFrame.getSingleton().isAlwaysOnTop()));
                 GlobalOptions.addProperty("form.config.frame.alwaysOnTop", Boolean.toString(FormConfigFrame.getSingleton().isAlwaysOnTop()));
+                GlobalOptions.addProperty("search.frame.alwaysOnTop", Boolean.toString(DSWorkbenchSearchFrame.getSingleton().isAlwaysOnTop()));
                 GlobalOptions.addProperty("zoom.factor", Double.toString(dZoomFactor));
                 GlobalOptions.addProperty("last.x", jCenterX.getText());
                 GlobalOptions.addProperty("last.y", jCenterY.getText());
+                logger.debug("Saving global properties");
                 GlobalOptions.saveProperties();
+                logger.debug("Shutdown finished");
             }
         }));
 
@@ -144,16 +145,16 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                             MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_SPY);
                         } else if ((e.getKeyCode() == KeyEvent.VK_5) && e.isShiftDown()) {
                             //attack sword tool shortcut
-                            MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_SWORD);
+                            MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_LIGHT);
                         } else if ((e.getKeyCode() == KeyEvent.VK_6) && e.isShiftDown()) {
                             //attack light tool shortcut
-                            MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_LIGHT);
+                            MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_HEAVY);
                         } else if ((e.getKeyCode() == KeyEvent.VK_7) && e.isShiftDown()) {
                             //attack heavy tool shortcut
-                            MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_HEAVY);
+                            MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_SWORD);
                         } else if ((e.getKeyCode() == KeyEvent.VK_S) && e.isControlDown()) {
                             //search frame shortcut
-                            SearchFrame.getSingleton().setVisible(!SearchFrame.getSingleton().isVisible());
+                            DSWorkbenchSearchFrame.getSingleton().setVisible(!DSWorkbenchSearchFrame.getSingleton().isVisible());
                         }
                     }
 
@@ -209,6 +210,8 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                         } else {
                             fullscreenFrame.remove(MapPanel.getSingleton());
                             jPanel1.add(MapPanel.getSingleton());
+                            jPanel1.updateUI();
+                            MapPanel.getSingleton().getMapRenderer().initiateRedraw(0);
                             fullscreenFrame.dispose();
                             fullscreenFrame = null;
                         }
@@ -218,14 +221,12 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                     } else if (e.getKeyCode() == KeyEvent.VK_F2) {
                         DSWorkbenchAttackFrame.getSingleton().setVisible(!DSWorkbenchAttackFrame.getSingleton().isVisible());
                     } else if (e.getKeyCode() == KeyEvent.VK_F3) {
-                        DSWorkbenchDistanceFrame.getSingleton().setVisible(!DSWorkbenchDistanceFrame.getSingleton().isVisible());
-                    } else if (e.getKeyCode() == KeyEvent.VK_F4) {
                         DSWorkbenchMarkerFrame.getSingleton().setVisible(!DSWorkbenchMarkerFrame.getSingleton().isVisible());
-                    } else if (e.getKeyCode() == KeyEvent.VK_F5) {
+                    } else if (e.getKeyCode() == KeyEvent.VK_F4) {
                         DSWorkbenchTroopsFrame.getSingleton().setVisible(!DSWorkbenchTroopsFrame.getSingleton().isVisible());
-                    } else if (e.getKeyCode() == KeyEvent.VK_F6) {
+                    } else if (e.getKeyCode() == KeyEvent.VK_F5) {
                         DSWorkbenchRankFrame.getSingleton().setVisible(!DSWorkbenchRankFrame.getSingleton().isVisible());
-                    } else if (e.getKeyCode() == KeyEvent.VK_F7) {
+                    } else if (e.getKeyCode() == KeyEvent.VK_F6) {
                         DSWorkbenchFormFrame.getSingleton().setVisible(!DSWorkbenchFormFrame.getSingleton().isVisible());
                     } else if (e.getKeyCode() == KeyEvent.VK_F12) {
                         DSWorkbenchSettingsDialog.getSingleton().setVisible(true);
@@ -272,6 +273,21 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
 
 // </editor-fold>
 
+        // <editor-fold defaultstate="collapsed" desc=" Restore other settings ">
+        try {
+            String val = GlobalOptions.getProperty("show.map.popup");
+            if (val == null) {
+                jShowMapPopup.setSelected(true);
+                GlobalOptions.addProperty("show.map.popup", Boolean.toString(true));
+            } else {
+                jShowMapPopup.setSelected(Boolean.parseBoolean(val));
+            }
+        } catch (Exception e) {
+            jShowMapPopup.setSelected(true);
+            GlobalOptions.addProperty("show.map.popup", Boolean.toString(true));
+        }
+        // </editor-fold>
+
         // <editor-fold defaultstate="collapsed" desc=" Setup WindowListeners ">
         WindowListener frameListener = new WindowListener() {
 
@@ -285,8 +301,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                     fireShowAttackFrameEvent(null);
                 } else if (e.getSource() == DSWorkbenchMarkerFrame.getSingleton()) {
                     fireShowMarkerFrameEvent(null);
-                } else if (e.getSource() == DSWorkbenchDistanceFrame.getSingleton()) {
-                    fireShowDistanceFrameEvent(null);
                 } else if (e.getSource() == DSWorkbenchTroopsFrame.getSingleton()) {
                     fireShowTroopsFrameEvent(null);
                 } else if (e.getSource() == DSWorkbenchRankFrame.getSingleton()) {
@@ -294,7 +308,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                 } else if (e.getSource() == DSWorkbenchFormFrame.getSingleton()) {
                     fireShowFormsFrameEvent(null);
                 }
-
             }
 
             @Override
@@ -330,7 +343,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         onlineStateChanged();
 
     }
-    private JFrame fullscreenFrame = null;
 
     /**Update on server change*/
     public void serverSettingsChangedEvent() {
@@ -346,7 +358,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             if ((villages != null && villages.length > 0)) {
                 centerVillage(villages[0]);
             }
-
         } else {
             DefaultComboBoxModel model = new DefaultComboBoxModel(new Object[]{"Keine Dörfer"});
             jCurrentPlayerVillages.setModel(model);
@@ -403,45 +414,46 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         setupFrames();
         //setup toolbox
 
-        logger.info(" * Setup toolbox");
+        /* logger.info(" * Setup toolbox");
         mToolbox = new ToolBoxFrame();
         mToolbox.addWindowListener(new WindowListener() {
 
-            @Override
-            public void windowOpened(WindowEvent e) {
-            }
+        @Override
+        public void windowOpened(WindowEvent e) {
+        }
 
-            @Override
-            public void windowClosing(WindowEvent e) {
-                jShowToolboxItem.setSelected(false);
-            }
+        @Override
+        public void windowClosing(WindowEvent e) {
+        jShowToolboxItem.setSelected(false);
+        }
 
-            @Override
-            public void windowClosed(WindowEvent e) {
-            }
+        @Override
+        public void windowClosed(WindowEvent e) {
+        }
 
-            @Override
-            public void windowIconified(WindowEvent e) {
-            }
+        @Override
+        public void windowIconified(WindowEvent e) {
+        }
 
-            @Override
-            public void windowDeiconified(WindowEvent e) {
-            }
+        @Override
+        public void windowDeiconified(WindowEvent e) {
+        }
 
-            @Override
-            public void windowActivated(WindowEvent e) {
-            }
+        @Override
+        public void windowActivated(WindowEvent e) {
+        }
 
-            @Override
-            public void windowDeactivated(WindowEvent e) {
-            }
+        @Override
+        public void windowDeactivated(WindowEvent e) {
+        }
         });
-        fireToolChangedEvent(ImageManager.CURSOR_DEFAULT);
+         */
 
+        fireToolChangedEvent(ImageManager.CURSOR_DEFAULT);
         logger.info(" * Setting up attack planner");
         //setup frames
-        mAllyAllyAttackFrame = new AllyAllyAttackFrame();
-        mAllyAllyAttackFrame.pack();
+        /*mAllyAllyAttackFrame = new AllyAllyAttackFrame();
+        mAllyAllyAttackFrame.pack();*/
         mTribeTribeAttackFrame = new TribeTribeAttackFrame();
         mTribeTribeAttackFrame.pack();
         mAbout = new AboutDialog(this, true);
@@ -457,7 +469,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
     private void setupFrames() {
         DSWorkbenchAttackFrame.getSingleton().addFrameListener(this);
         DSWorkbenchMarkerFrame.getSingleton().addFrameListener(this);
-        DSWorkbenchDistanceFrame.getSingleton().addFrameListener(this);
         TroopsManagerTableModel.getSingleton().setup();
         DSWorkbenchTroopsFrame.getSingleton().addFrameListener(this);
         DSWorkbenchRankFrame.getSingleton().addFrameListener(this);
@@ -502,11 +513,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         mIcons.add(new ImageIcon(this.getClass().getResource("/res/res.png")));
         mIcons.add(new ImageIcon(this.getClass().getResource("/res/speicher.png")));
 
-        jPlayerInfo.setText("");
-        jVillageInfo.setText("");
-        jVillageInfo.setIcon(null);
-        jAllyInfo.setText("");
-        jInfoPanel.add(jDetailedInfoPanel);
     }
 
     @Override
@@ -529,19 +535,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                     logger.info("Restoring attack frame");
                     DSWorkbenchAttackFrame.getSingleton().setVisible(true);
                 }
-
-            } catch (Exception e) {
-                logger.error("Failed to show main screen", e);
-                System.exit(-1);
-            }
-
-            try {
-                if (Boolean.parseBoolean(GlobalOptions.getProperty("distance.frame.visible"))) {
-                    jShowDistanceFrame.setSelected(true);
-                    logger.info("Restoring distance frame");
-                    DSWorkbenchDistanceFrame.getSingleton().setVisible(true);
-                }
-
             } catch (Exception e) {
             }
 
@@ -561,7 +554,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                     logger.info("Restoring troops frame");
                     DSWorkbenchTroopsFrame.getSingleton().setVisible(true);
                 }
-
             } catch (Exception e) {
             }
 
@@ -586,10 +578,9 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             }
 
             try {
-                if (Boolean.parseBoolean(GlobalOptions.getProperty("toolbar.visible"))) {
-                    jShowToolboxItem.setSelected(true);
-                    logger.info("Restoring toolbar frame");
-                    fireShowToolbarEvent(null);
+                if (Boolean.parseBoolean(GlobalOptions.getProperty("search.frame.visible"))) {
+                    logger.info("Restoring search frame");
+                    DSWorkbenchSearchFrame.getSingleton().setVisible(true);
                 }
 
             } catch (Exception e) {
@@ -611,15 +602,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jDetailedInfoPanel = new javax.swing.JPanel();
-        jVillageInfo = new javax.swing.JLabel();
-        jPlayerInfo = new javax.swing.JLabel();
-        jAllyInfo = new javax.swing.JLabel();
-        jPanel2 = new javax.swing.JPanel();
-        jPanel3 = new javax.swing.JPanel();
-        jLabel3 = new javax.swing.JLabel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jEditorPane1 = new javax.swing.JEditorPane();
         jPanel1 = new javax.swing.JPanel();
         jNavigationPanel = new javax.swing.JPanel();
         jMoveE = new javax.swing.JButton();
@@ -640,13 +622,14 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jZoomOutButton = new javax.swing.JButton();
         jCenterCoordinateIngame = new javax.swing.JButton();
         jMinimapPanel = new javax.swing.JPanel();
-        jInfoPanel = new javax.swing.JPanel();
         jInformationPanel = new javax.swing.JPanel();
         jCurrentPlayerVillages = new javax.swing.JComboBox();
         jCurrentPlayer = new javax.swing.JLabel();
         jCenterIngameButton = new javax.swing.JButton();
         jOnlineLabel = new javax.swing.JLabel();
+        jPanel2 = new javax.swing.JPanel();
         jCurrentToolLabel = new javax.swing.JLabel();
+        jShowMapPopup = new javax.swing.JCheckBox();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
@@ -658,9 +641,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jMassAttackItem = new javax.swing.JMenuItem();
         jUnitOverviewItem = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
-        jShowToolboxItem = new javax.swing.JCheckBoxMenuItem();
         jShowAttackFrame = new javax.swing.JCheckBoxMenuItem();
-        jShowDistanceFrame = new javax.swing.JCheckBoxMenuItem();
         jShowMarkerFrame = new javax.swing.JCheckBoxMenuItem();
         jShowTroopsFrame = new javax.swing.JCheckBoxMenuItem();
         jShowRankFrame = new javax.swing.JCheckBoxMenuItem();
@@ -669,97 +650,8 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jHelpItem = new javax.swing.JMenuItem();
         jAboutItem = new javax.swing.JMenuItem();
 
-        jDetailedInfoPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
-        jDetailedInfoPanel.setOpaque(false);
-
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("de/tor/tribes/ui/Bundle"); // NOI18N
-        jVillageInfo.setText(bundle.getString("DSWorkbenchMainFrame.jVillageInfo.text")); // NOI18N
-        jVillageInfo.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
-        jVillageInfo.setMaximumSize(new java.awt.Dimension(54, 20));
-        jVillageInfo.setMinimumSize(new java.awt.Dimension(54, 20));
-        jVillageInfo.setPreferredSize(new java.awt.Dimension(54, 20));
-
-        jPlayerInfo.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jPlayerInfo.setText(bundle.getString("DSWorkbenchMainFrame.jPlayerInfo.text")); // NOI18N
-        jPlayerInfo.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
-        jPlayerInfo.setMaximumSize(new java.awt.Dimension(54, 20));
-        jPlayerInfo.setMinimumSize(new java.awt.Dimension(54, 20));
-        jPlayerInfo.setPreferredSize(new java.awt.Dimension(54, 20));
-
-        jAllyInfo.setText(bundle.getString("DSWorkbenchMainFrame.jAllyInfo.text")); // NOI18N
-        jAllyInfo.setMaximumSize(new java.awt.Dimension(54, 20));
-        jAllyInfo.setMinimumSize(new java.awt.Dimension(54, 20));
-        jAllyInfo.setPreferredSize(new java.awt.Dimension(54, 20));
-
-        javax.swing.GroupLayout jDetailedInfoPanelLayout = new javax.swing.GroupLayout(jDetailedInfoPanel);
-        jDetailedInfoPanel.setLayout(jDetailedInfoPanelLayout);
-        jDetailedInfoPanelLayout.setHorizontalGroup(
-            jDetailedInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jDetailedInfoPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jDetailedInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jVillageInfo, javax.swing.GroupLayout.DEFAULT_SIZE, 785, Short.MAX_VALUE)
-                    .addComponent(jAllyInfo, javax.swing.GroupLayout.DEFAULT_SIZE, 785, Short.MAX_VALUE)
-                    .addComponent(jPlayerInfo, javax.swing.GroupLayout.DEFAULT_SIZE, 785, Short.MAX_VALUE))
-                .addContainerGap())
-        );
-        jDetailedInfoPanelLayout.setVerticalGroup(
-            jDetailedInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jDetailedInfoPanelLayout.createSequentialGroup()
-                .addComponent(jVillageInfo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(4, 4, 4)
-                .addComponent(jPlayerInfo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jAllyInfo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-        );
-
-        jPanel3.setBackground(new java.awt.Color(153, 255, 153));
-
-        jLabel3.setText(bundle.getString("DSWorkbenchMainFrame.jLabel3.text")); // NOI18N
-
-        jEditorPane1.setContentType(bundle.getString("DSWorkbenchMainFrame.jEditorPane1.contentType")); // NOI18N
-        jEditorPane1.setText(bundle.getString("DSWorkbenchMainFrame.jEditorPane1.text")); // NOI18N
-        jScrollPane1.setViewportView(jEditorPane1);
-
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 166, Short.MAX_VALUE)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
-        );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(40, Short.MAX_VALUE))
-        );
-
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("de/tor/tribes/ui/Bundle"); // NOI18N
         setTitle(bundle.getString("DSWorkbenchMainFrame.title")); // NOI18N
         setBackground(new java.awt.Color(225, 213, 190));
         addComponentListener(new java.awt.event.ComponentAdapter() {
@@ -1014,10 +906,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jMinimapPanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(128, 64, 0), 2));
         jMinimapPanel.setLayout(new java.awt.BorderLayout());
 
-        jInfoPanel.setBackground(new java.awt.Color(239, 235, 223));
-        jInfoPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(128, 64, 0), 2), bundle.getString("DSWorkbenchMainFrame.jInfoPanel.border.title"))); // NOI18N
-        jInfoPanel.setLayout(new java.awt.BorderLayout());
-
         jInformationPanel.setBackground(new java.awt.Color(239, 235, 223));
         jInformationPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(128, 64, 0), 2), bundle.getString("DSWorkbenchMainFrame.jInformationPanel.border.title"))); // NOI18N
 
@@ -1054,28 +942,19 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jOnlineLabel.setMinimumSize(new java.awt.Dimension(30, 30));
         jOnlineLabel.setPreferredSize(new java.awt.Dimension(30, 30));
 
-        jCurrentToolLabel.setToolTipText(bundle.getString("DSWorkbenchMainFrame.jCurrentToolLabel.toolTipText")); // NOI18N
-        jCurrentToolLabel.setAlignmentY(0.0F);
-        jCurrentToolLabel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        jCurrentToolLabel.setIconTextGap(0);
-        jCurrentToolLabel.setMaximumSize(new java.awt.Dimension(35, 35));
-        jCurrentToolLabel.setMinimumSize(new java.awt.Dimension(35, 35));
-        jCurrentToolLabel.setPreferredSize(new java.awt.Dimension(35, 35));
-
         javax.swing.GroupLayout jInformationPanelLayout = new javax.swing.GroupLayout(jInformationPanel);
         jInformationPanel.setLayout(jInformationPanelLayout);
         jInformationPanelLayout.setHorizontalGroup(
             jInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jInformationPanelLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jInformationPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jCurrentPlayer, javax.swing.GroupLayout.DEFAULT_SIZE, 238, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jInformationPanelLayout.createSequentialGroup()
+                .addGroup(jInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jCurrentPlayer, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 238, Short.MAX_VALUE)
+                    .addComponent(jCurrentPlayerVillages, javax.swing.GroupLayout.Alignment.LEADING, 0, 238, Short.MAX_VALUE)
+                    .addGroup(jInformationPanelLayout.createSequentialGroup()
                         .addComponent(jCenterIngameButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jOnlineLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jCurrentPlayerVillages, 0, 238, Short.MAX_VALUE)
-                    .addComponent(jCurrentToolLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jOnlineLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         jInformationPanelLayout.setVerticalGroup(
@@ -1084,14 +963,53 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                 .addContainerGap()
                 .addComponent(jCurrentPlayer, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jCurrentPlayerVillages, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jCurrentPlayerVillages, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jInformationPanelLayout.createSequentialGroup()
-                        .addComponent(jOnlineLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 97, Short.MAX_VALUE)
-                        .addComponent(jCurrentToolLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jOnlineLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jCenterIngameButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        jPanel2.setBackground(new java.awt.Color(239, 235, 223));
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(128, 64, 0), 2), bundle.getString("DSWorkbenchMainFrame.jPanel2.border.title"))); // NOI18N
+
+        jCurrentToolLabel.setToolTipText(bundle.getString("DSWorkbenchMainFrame.jCurrentToolLabel.toolTipText")); // NOI18N
+        jCurrentToolLabel.setAlignmentY(0.0F);
+        jCurrentToolLabel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        jCurrentToolLabel.setIconTextGap(0);
+        jCurrentToolLabel.setMaximumSize(new java.awt.Dimension(35, 35));
+        jCurrentToolLabel.setMinimumSize(new java.awt.Dimension(35, 35));
+        jCurrentToolLabel.setPreferredSize(new java.awt.Dimension(35, 35));
+
+        jShowMapPopup.setText(bundle.getString("DSWorkbenchMainFrame.jShowMapPopup.text")); // NOI18N
+        jShowMapPopup.setToolTipText(bundle.getString("DSWorkbenchMainFrame.jShowMapPopup.toolTipText")); // NOI18N
+        jShowMapPopup.setOpaque(false);
+        jShowMapPopup.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                fireShowMapPopupChangedEvent(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addContainerGap(213, Short.MAX_VALUE)
+                .addComponent(jCurrentToolLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jShowMapPopup)
+                .addContainerGap(119, Short.MAX_VALUE))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addComponent(jShowMapPopup)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 72, Short.MAX_VALUE)
+                .addComponent(jCurrentToolLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -1179,16 +1097,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jMenu2.setMnemonic('n');
         jMenu2.setText(bundle.getString("DSWorkbenchMainFrame.jMenu2.text")); // NOI18N
 
-        jShowToolboxItem.setBackground(new java.awt.Color(239, 235, 223));
-        jShowToolboxItem.setMnemonic('w');
-        jShowToolboxItem.setText(bundle.getString("DSWorkbenchMainFrame.jShowToolboxItem.text")); // NOI18N
-        jShowToolboxItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fireShowToolbarEvent(evt);
-            }
-        });
-        jMenu2.add(jShowToolboxItem);
-
         jShowAttackFrame.setBackground(new java.awt.Color(239, 235, 223));
         jShowAttackFrame.setText(bundle.getString("DSWorkbenchMainFrame.jShowAttackFrame.text")); // NOI18N
         jShowAttackFrame.addActionListener(new java.awt.event.ActionListener() {
@@ -1197,15 +1105,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             }
         });
         jMenu2.add(jShowAttackFrame);
-
-        jShowDistanceFrame.setBackground(new java.awt.Color(239, 235, 223));
-        jShowDistanceFrame.setText(bundle.getString("DSWorkbenchMainFrame.jShowDistanceFrame.text")); // NOI18N
-        jShowDistanceFrame.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fireShowDistanceFrameEvent(evt);
-            }
-        });
-        jMenu2.add(jShowDistanceFrame);
 
         jShowMarkerFrame.setBackground(new java.awt.Color(239, 235, 223));
         jShowMarkerFrame.setText(bundle.getString("DSWorkbenchMainFrame.jShowMarkerFrame.text")); // NOI18N
@@ -1271,31 +1170,29 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jInfoPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 847, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 571, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jMinimapPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jNavigationPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jInformationPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 571, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(jInformationPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jNavigationPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jMinimapPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 270, Short.MAX_VALUE)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 699, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jMinimapPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jNavigationPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jInformationPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 656, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jInfoPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jInformationPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -1435,12 +1332,6 @@ private void fireExitEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fi
 }//GEN-LAST:event_fireExitEvent
 
     /**Show the toolbar*/
-private void fireShowToolbarEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireShowToolbarEvent
-    mToolbox.setVisible(jShowToolboxItem.isSelected());
-    GlobalOptions.addProperty("toolbar.visible", Boolean.toString(jShowToolboxItem.isSelected()));
-    GlobalOptions.saveProperties();
-}//GEN-LAST:event_fireShowToolbarEvent
-
     /**Center village Ingame*/
 private void fireCenterVillageIngameEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCenterVillageIngameEvent
     if (!jCenterIngameButton.isEnabled()) {
@@ -1465,7 +1356,7 @@ private void fireCenterCurrentPosInGameEvent(java.awt.event.MouseEvent evt) {//G
     /**Do tool action*/
 private void fireToolsActionEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireToolsActionEvent
     if (evt.getSource() == jSearchItem) {
-        SearchFrame.getSingleton().setVisible(true);
+        DSWorkbenchSearchFrame.getSingleton().setVisible(true);
     } else if (evt.getSource() == jClockItem) {
         ClockFrame.getSingleton().setVisible(true);
     } else if (evt.getSource() == jTribeTribeAttackItem) {
@@ -1486,11 +1377,6 @@ private void fireShowAttackFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIR
     DSWorkbenchAttackFrame.getSingleton().setVisible(!DSWorkbenchAttackFrame.getSingleton().isVisible());
     jShowAttackFrame.setSelected(DSWorkbenchAttackFrame.getSingleton().isVisible());
 }//GEN-LAST:event_fireShowAttackFrameEvent
-
-private void fireShowDistanceFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireShowDistanceFrameEvent
-    DSWorkbenchDistanceFrame.getSingleton().setVisible(!DSWorkbenchDistanceFrame.getSingleton().isVisible());
-    jShowDistanceFrame.setSelected(DSWorkbenchDistanceFrame.getSingleton().isVisible());
-}//GEN-LAST:event_fireShowDistanceFrameEvent
 
 private void fireShowMarkerFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireShowMarkerFrameEvent
     DSWorkbenchMarkerFrame.getSingleton().setVisible(!DSWorkbenchMarkerFrame.getSingleton().isVisible());
@@ -1518,6 +1404,10 @@ private void fireShowFormsFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIRS
     DSWorkbenchFormFrame.getSingleton().setVisible(!DSWorkbenchFormFrame.getSingleton().isVisible());
     jShowFormsFrame.setSelected(DSWorkbenchFormFrame.getSingleton().isVisible());
 }//GEN-LAST:event_fireShowFormsFrameEvent
+
+private void fireShowMapPopupChangedEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireShowMapPopupChangedEvent
+    GlobalOptions.addProperty("show.map.popup", Boolean.toString(jShowMapPopup.isSelected()));
+}//GEN-LAST:event_fireShowMapPopupChangedEvent
 
     /**Check if zoom factor is valid and correct if needed*/
     private void checkZoomRange() {
@@ -1583,59 +1473,25 @@ private void fireShowFormsFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIRS
         fireRefreshMapEvent(null);
     }
 
-    /**Update the detailed information panel if it is visible
-     */
-    public void updateDetailedInfoPanel(Village pVillage) {
-        if (!jDetailedInfoPanel.isVisible()) {
-            return;
-        }
-
-        if (pVillage == null) {
-            jPlayerInfo.setText("");
-            jVillageInfo.setText("");
-            jAllyInfo.setText("");
-            jVillageInfo.setIcon(null);
-            return;
-
-        }
-
-
-
-        jVillageInfo.setText(pVillage.getHTMLInfo());
-        jLabel3.setMinimumSize(new Dimension(SwingUtilities.computeStringWidth(jVillageInfo.getGraphics().getFontMetrics(), pVillage.getHTMLInfo()), 20));
-        jVillageInfo.setIcon(mIcons.get(pVillage.getType()));
-
-        try {
-            Tribe tribe = pVillage.getTribe();
-            jPlayerInfo.setText(tribe.getHTMLInfo());
-
-            Ally ally = tribe.getAlly();
-            if (ally == null) {
-                jAllyInfo.setText("kein Stamm");
-            } else {
-                jAllyInfo.setText(ally.getHTMLInfo());
-            }
-
-        } catch (NullPointerException e) {
-            jPlayerInfo.setText("Barbaren");
-            jAllyInfo.setText("Barbaren");
-        }
-
-    }
-
     /**Get active user village*/
     public Village getCurrentUserVillage() {
         try {
             if (jCurrentPlayerVillages.getSelectedIndex() < 0) {
-                jCurrentPlayerVillages.setSelectedIndex(0);
+                if (jCurrentPlayerVillages.getItemCount() > 0) {
+                    jCurrentPlayerVillages.setSelectedIndex(0);
+                } else {
+                    //don't try to get village, list is still empty
+                    return null;
+                }
             }
-
             return (Village) jCurrentPlayerVillages.getSelectedItem();
+        } catch (ClassCastException cce) {
+            //if no player was selected yet
+            return null;
         } catch (Exception e) {
-            logger.warn("Could not get current user village. Probably no active player was selected.", e);
+            logger.warn("Could not get current user village.", e);
             return null;
         }
-
     }
 
     public void setCurrentUserVillage(Village pVillage) {
@@ -1658,16 +1514,6 @@ private void fireShowFormsFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIRS
     }
 
     @Override
-    public void fireVillageAtMousePosChangedEvent(Village pVillage) {
-        updateDetailedInfoPanel(pVillage);
-    }
-
-    @Override
-    public void fireDistanceEvent(Village pSource, Village pTarget) {
-        DSWorkbenchDistanceFrame.getSingleton().updateDistances(pSource, pTarget);
-    }
-
-    @Override
     public void fireScrollEvent(int pX, int pY) {
         scroll(pX, pY);
     }
@@ -1683,8 +1529,6 @@ private void fireShowFormsFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIRS
             jShowAttackFrame.setSelected(DSWorkbenchAttackFrame.getSingleton().isVisible());
         } else if (pSource == DSWorkbenchMarkerFrame.getSingleton()) {
             jShowMarkerFrame.setSelected(DSWorkbenchMarkerFrame.getSingleton().isVisible());
-        } else if (pSource == DSWorkbenchDistanceFrame.getSingleton()) {
-            jShowDistanceFrame.setSelected(DSWorkbenchDistanceFrame.getSingleton().isVisible());
         } else if (pSource == DSWorkbenchTroopsFrame.getSingleton()) {
             jShowTroopsFrame.setSelected(DSWorkbenchTroopsFrame.getSingleton().isVisible());
         } else if (pSource == DSWorkbenchRankFrame.getSingleton()) {
@@ -1698,7 +1542,14 @@ private void fireShowFormsFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIRS
         String[] groups = pParserResult.keySet().toArray(new String[]{});
         String message = "DS Workbench hat in deiner Zwischenablage Informationen zu den folgenden Gruppen gefunden:\n";
         for (String s : groups) {
-            message += "* " + s + " (" + pParserResult.get(s).size() + " Dörfer)\n";
+            int size = pParserResult.get(s).size();
+            if (size == 0) {
+                message += "* keine Dörfer)\n";
+            } else if (size == 1) {
+                message += "* " + s + " (" + pParserResult.get(s).size() + " Dorf)\n";
+            } else {
+                message += "* " + s + " (" + pParserResult.get(s).size() + " Dörfer)\n";
+            }
         }
 
         message += "Willst du diese Informationen in DS Workbench übernehmen oder sie verwerfen und aus der Zwischenablage entfernen?";
@@ -1728,7 +1579,6 @@ private void fireShowFormsFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIRS
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem jAboutItem;
-    private javax.swing.JLabel jAllyInfo;
     private javax.swing.JButton jCenterCoordinateIngame;
     private javax.swing.JButton jCenterIngameButton;
     private javax.swing.JTextField jCenterX;
@@ -1737,14 +1587,10 @@ private void fireShowFormsFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIRS
     private javax.swing.JLabel jCurrentPlayer;
     private javax.swing.JComboBox jCurrentPlayerVillages;
     private javax.swing.JLabel jCurrentToolLabel;
-    private javax.swing.JPanel jDetailedInfoPanel;
-    private javax.swing.JEditorPane jEditorPane1;
     private javax.swing.JMenuItem jHelpItem;
-    private javax.swing.JPanel jInfoPanel;
     private javax.swing.JPanel jInformationPanel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JMenuItem jMassAttackItem;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
@@ -1767,21 +1613,16 @@ private void fireShowFormsFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIRS
     private javax.swing.JLabel jOnlineLabel;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
-    private javax.swing.JLabel jPlayerInfo;
     private javax.swing.JButton jRefreshButton;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JMenuItem jSearchItem;
     private javax.swing.JCheckBoxMenuItem jShowAttackFrame;
-    private javax.swing.JCheckBoxMenuItem jShowDistanceFrame;
     private javax.swing.JCheckBoxMenuItem jShowFormsFrame;
+    private javax.swing.JCheckBox jShowMapPopup;
     private javax.swing.JCheckBoxMenuItem jShowMarkerFrame;
     private javax.swing.JCheckBoxMenuItem jShowRankFrame;
-    private javax.swing.JCheckBoxMenuItem jShowToolboxItem;
     private javax.swing.JCheckBoxMenuItem jShowTroopsFrame;
     private javax.swing.JMenuItem jTribeTribeAttackItem;
     private javax.swing.JMenuItem jUnitOverviewItem;
-    private javax.swing.JLabel jVillageInfo;
     private javax.swing.JButton jZoomInButton;
     private javax.swing.JButton jZoomOutButton;
     // End of variables declaration//GEN-END:variables

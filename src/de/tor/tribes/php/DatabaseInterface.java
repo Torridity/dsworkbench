@@ -43,7 +43,6 @@ public class DatabaseInterface {
     public static final int ID_USER_NOT_EXIST = -14;
     public static final int ID_VERSION_NOT_ALLOWED = -26;
     public final static String INTERFACE_URL = "http://www.support.dsworkbench.de/interface.php";
-
     private static Object callWebInterface(String pFunction, Hashtable<String, String> pArguments) {
         List<String> lines = new LinkedList<String>();
         URL url;
@@ -251,6 +250,33 @@ public class DatabaseInterface {
         } catch (Exception e) {
             //typecast or connection failed 
             logger.error("Failed checking user. Result is " + result);
+            try {
+                if ((Integer) result == -1) {
+                    return ID_WEB_CONNECTION_FAILED;
+                }
+
+            } catch (Exception cc) {
+                //result is no integer
+            }
+        }
+        return ID_UNKNOWN_ERROR;
+    }
+
+     public static int changePassword(String pUser, String pOldPassword, String pNewPassword) {
+        Hashtable<String, String> arguments = new Hashtable<String, String>();
+        arguments.put("user", pUser);
+
+        arguments.put("oldpass", SecurityAdapter.hashStringMD5(pOldPassword));
+        arguments.put("newpass", SecurityAdapter.hashStringMD5(pNewPassword));
+        Object result = callWebInterface("changePassword", arguments);
+        try {
+            String[] lines = (String[]) result;
+            int status = Integer.parseInt(lines[0]);
+            processStatus("change password", status);
+            return status;
+        } catch (Exception e) {
+            //typecast or connection failed
+            logger.error("Failed changing password. Result is " + result);
             try {
                 if ((Integer) result == -1) {
                     return ID_WEB_CONNECTION_FAILED;

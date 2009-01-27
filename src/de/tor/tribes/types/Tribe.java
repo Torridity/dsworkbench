@@ -174,7 +174,7 @@ public class Tribe implements Serializable, Comparable {
         b.append(" (");
         b.append(nf.format(getRankAtt()));
         b.append(") ");
-        b.append(" <b>Kills Def (Rang):</b> ");
+        b.append(" <b>Kills Deff (Rang):</b> ");
         b.append(nf.format(getKillsDef()));
         b.append(" (");
         b.append(nf.format(getRankDef()));

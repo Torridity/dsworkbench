@@ -26,29 +26,34 @@ import org.apache.log4j.Logger;
  *
  * @author  Jejkal
  */
-public class SearchFrame extends javax.swing.JFrame implements SearchListener {
+public class DSWorkbenchSearchFrame extends javax.swing.JFrame implements SearchListener {
 
     private static Logger logger = Logger.getLogger("Search");
     private String sLastPlayerValue = null;
     private SearchThread mSearchThread = null;
-    private static SearchFrame SINGLETON = null;
+    private static DSWorkbenchSearchFrame SINGLETON = null;
 
-    public static synchronized SearchFrame getSingleton() {
+    public static synchronized DSWorkbenchSearchFrame getSingleton() {
         if (SINGLETON == null) {
-            SINGLETON = new SearchFrame();
+            SINGLETON = new DSWorkbenchSearchFrame();
         }
         return SINGLETON;
     }
 
     /** Creates new form SearchFrame */
-    SearchFrame() {
+    DSWorkbenchSearchFrame() {
         initComponents();
-
         getContentPane().setBackground(Constants.DS_BACK);
         // frameControlPanel1.setupPanel(this, true, true);
         jCenterInGameButton.setIcon(new ImageIcon("./graphics/icons/center.png"));
         jSendResButton.setIcon(new ImageIcon("./graphics/icons/booty.png"));
         jSendDefButton.setIcon(new ImageIcon("./graphics/icons/def.png"));
+        try {
+            jSearchFrameAlwaysOnTop.setSelected(Boolean.parseBoolean(GlobalOptions.getProperty("search.frame.alwaysOnTop")));
+            setAlwaysOnTop(jSearchFrameAlwaysOnTop.isSelected());
+        } catch (Exception e) {
+            //setting not available
+        }
 
         //check desktop support
         if (!Desktop.isDesktopSupported()) {
@@ -90,12 +95,12 @@ public class SearchFrame extends javax.swing.JFrame implements SearchListener {
         jSendResButton = new javax.swing.JButton();
         jSendDefButton = new javax.swing.JButton();
         jInGameOptionsLabel = new javax.swing.JLabel();
+        jSearchFrameAlwaysOnTop = new javax.swing.JCheckBox();
 
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("de/tor/tribes/ui/Bundle"); // NOI18N
-        setTitle(bundle.getString("SearchFrame.title")); // NOI18N
-        setAlwaysOnTop(true);
+        setTitle(bundle.getString("DSWorkbenchSearchFrame.title")); // NOI18N
 
-        jPlayerSearch.setOpaque(false);
+        jPlayerSearch.setBackground(new java.awt.Color(239, 235, 223));
 
         jSearchTerm.setMaximumSize(new java.awt.Dimension(200, 20));
         jSearchTerm.setMinimumSize(new java.awt.Dimension(200, 20));
@@ -106,7 +111,7 @@ public class SearchFrame extends javax.swing.JFrame implements SearchListener {
             }
         });
 
-        jSearchTermLabel.setText(bundle.getString("SearchFrame.jSearchTermLabel.text")); // NOI18N
+        jSearchTermLabel.setText(bundle.getString("DSWorkbenchSearchFrame.jSearchTermLabel.text")); // NOI18N
 
         jTribesList.setMaximumSize(new java.awt.Dimension(200, 20));
         jTribesList.setMinimumSize(new java.awt.Dimension(200, 20));
@@ -117,11 +122,11 @@ public class SearchFrame extends javax.swing.JFrame implements SearchListener {
             }
         });
 
-        jTribesLabel.setText(bundle.getString("SearchFrame.jTribesLabel.text")); // NOI18N
+        jTribesLabel.setText(bundle.getString("DSWorkbenchSearchFrame.jTribesLabel.text")); // NOI18N
 
         jMarkAllyButton.setBackground(new java.awt.Color(239, 235, 223));
-        jMarkAllyButton.setText(bundle.getString("SearchFrame.jMarkAllyButton.text")); // NOI18N
-        jMarkAllyButton.setToolTipText(bundle.getString("SearchFrame.jMarkAllyButton.toolTipText")); // NOI18N
+        jMarkAllyButton.setText(bundle.getString("DSWorkbenchSearchFrame.jMarkAllyButton.text")); // NOI18N
+        jMarkAllyButton.setToolTipText(bundle.getString("DSWorkbenchSearchFrame.jMarkAllyButton.toolTipText")); // NOI18N
         jMarkAllyButton.setMaximumSize(new java.awt.Dimension(100, 23));
         jMarkAllyButton.setMinimumSize(new java.awt.Dimension(100, 23));
         jMarkAllyButton.setPreferredSize(new java.awt.Dimension(100, 23));
@@ -140,11 +145,11 @@ public class SearchFrame extends javax.swing.JFrame implements SearchListener {
             }
         });
 
-        jAlliesLabel.setText(bundle.getString("SearchFrame.jAlliesLabel.text")); // NOI18N
+        jAlliesLabel.setText(bundle.getString("DSWorkbenchSearchFrame.jAlliesLabel.text")); // NOI18N
 
         jMarkTribeButton.setBackground(new java.awt.Color(239, 235, 223));
-        jMarkTribeButton.setText(bundle.getString("SearchFrame.jMarkTribeButton.text")); // NOI18N
-        jMarkTribeButton.setToolTipText(bundle.getString("SearchFrame.jMarkTribeButton.toolTipText")); // NOI18N
+        jMarkTribeButton.setText(bundle.getString("DSWorkbenchSearchFrame.jMarkTribeButton.text")); // NOI18N
+        jMarkTribeButton.setToolTipText(bundle.getString("DSWorkbenchSearchFrame.jMarkTribeButton.toolTipText")); // NOI18N
         jMarkTribeButton.setMaximumSize(new java.awt.Dimension(100, 23));
         jMarkTribeButton.setMinimumSize(new java.awt.Dimension(100, 23));
         jMarkTribeButton.setPreferredSize(new java.awt.Dimension(100, 23));
@@ -154,11 +159,11 @@ public class SearchFrame extends javax.swing.JFrame implements SearchListener {
             }
         });
 
-        jVillagesLabel.setText(bundle.getString("SearchFrame.jVillagesLabel.text")); // NOI18N
+        jVillagesLabel.setText(bundle.getString("DSWorkbenchSearchFrame.jVillagesLabel.text")); // NOI18N
 
         jCenterButton.setBackground(new java.awt.Color(239, 235, 223));
-        jCenterButton.setText(bundle.getString("SearchFrame.jCenterButton.text")); // NOI18N
-        jCenterButton.setToolTipText(bundle.getString("SearchFrame.jCenterButton.toolTipText")); // NOI18N
+        jCenterButton.setText(bundle.getString("DSWorkbenchSearchFrame.jCenterButton.text")); // NOI18N
+        jCenterButton.setToolTipText(bundle.getString("DSWorkbenchSearchFrame.jCenterButton.toolTipText")); // NOI18N
         jCenterButton.setMaximumSize(new java.awt.Dimension(100, 23));
         jCenterButton.setMinimumSize(new java.awt.Dimension(100, 23));
         jCenterButton.setPreferredSize(new java.awt.Dimension(100, 23));
@@ -169,7 +174,7 @@ public class SearchFrame extends javax.swing.JFrame implements SearchListener {
         });
 
         jCenterInGameButton.setBackground(new java.awt.Color(239, 235, 223));
-        jCenterInGameButton.setToolTipText(bundle.getString("SearchFrame.jCenterInGameButton.toolTipText")); // NOI18N
+        jCenterInGameButton.setToolTipText(bundle.getString("DSWorkbenchSearchFrame.jCenterInGameButton.toolTipText")); // NOI18N
         jCenterInGameButton.setMaximumSize(new java.awt.Dimension(31, 31));
         jCenterInGameButton.setMinimumSize(new java.awt.Dimension(31, 31));
         jCenterInGameButton.setPreferredSize(new java.awt.Dimension(31, 31));
@@ -180,7 +185,7 @@ public class SearchFrame extends javax.swing.JFrame implements SearchListener {
         });
 
         jSendResButton.setBackground(new java.awt.Color(239, 235, 223));
-        jSendResButton.setToolTipText(bundle.getString("SearchFrame.jSendResButton.toolTipText")); // NOI18N
+        jSendResButton.setToolTipText(bundle.getString("DSWorkbenchSearchFrame.jSendResButton.toolTipText")); // NOI18N
         jSendResButton.setMaximumSize(new java.awt.Dimension(31, 31));
         jSendResButton.setMinimumSize(new java.awt.Dimension(31, 31));
         jSendResButton.setPreferredSize(new java.awt.Dimension(31, 31));
@@ -191,7 +196,7 @@ public class SearchFrame extends javax.swing.JFrame implements SearchListener {
         });
 
         jSendDefButton.setBackground(new java.awt.Color(239, 235, 223));
-        jSendDefButton.setToolTipText(bundle.getString("SearchFrame.jSendDefButton.toolTipText")); // NOI18N
+        jSendDefButton.setToolTipText(bundle.getString("DSWorkbenchSearchFrame.jSendDefButton.toolTipText")); // NOI18N
         jSendDefButton.setMaximumSize(new java.awt.Dimension(31, 31));
         jSendDefButton.setMinimumSize(new java.awt.Dimension(31, 31));
         jSendDefButton.setPreferredSize(new java.awt.Dimension(31, 31));
@@ -201,7 +206,7 @@ public class SearchFrame extends javax.swing.JFrame implements SearchListener {
             }
         });
 
-        jInGameOptionsLabel.setText(bundle.getString("SearchFrame.jInGameOptionsLabel.text")); // NOI18N
+        jInGameOptionsLabel.setText(bundle.getString("DSWorkbenchSearchFrame.jInGameOptionsLabel.text")); // NOI18N
 
         javax.swing.GroupLayout jPlayerSearchLayout = new javax.swing.GroupLayout(jPlayerSearch);
         jPlayerSearch.setLayout(jPlayerSearchLayout);
@@ -217,10 +222,10 @@ public class SearchFrame extends javax.swing.JFrame implements SearchListener {
                     .addComponent(jAlliesLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPlayerSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jAllyList, 0, 387, Short.MAX_VALUE)
+                    .addComponent(jAllyList, 0, 386, Short.MAX_VALUE)
                     .addComponent(jTribesList, 0, 0, Short.MAX_VALUE)
-                    .addComponent(jSearchTerm, javax.swing.GroupLayout.DEFAULT_SIZE, 387, Short.MAX_VALUE)
-                    .addComponent(jVillageList, javax.swing.GroupLayout.Alignment.TRAILING, 0, 387, Short.MAX_VALUE)
+                    .addComponent(jSearchTerm, javax.swing.GroupLayout.DEFAULT_SIZE, 386, Short.MAX_VALUE)
+                    .addComponent(jVillageList, javax.swing.GroupLayout.Alignment.TRAILING, 0, 386, Short.MAX_VALUE)
                     .addGroup(jPlayerSearchLayout.createSequentialGroup()
                         .addComponent(jCenterInGameButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -266,15 +271,33 @@ public class SearchFrame extends javax.swing.JFrame implements SearchListener {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        jSearchFrameAlwaysOnTop.setText(bundle.getString("DSWorkbenchSearchFrame.jSearchFrameAlwaysOnTop.text")); // NOI18N
+        jSearchFrameAlwaysOnTop.setOpaque(false);
+        jSearchFrameAlwaysOnTop.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                fireSearchFrameAlwaysOnTopEvent(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPlayerSearch, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jSearchFrameAlwaysOnTop)
+                    .addComponent(jPlayerSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPlayerSearch, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPlayerSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jSearchFrameAlwaysOnTop)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -384,6 +407,10 @@ private void fireSendResEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     }
 }//GEN-LAST:event_fireSendResEvent
 
+private void fireSearchFrameAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireSearchFrameAlwaysOnTopEvent
+    setAlwaysOnTop(!isAlwaysOnTop());
+}//GEN-LAST:event_fireSearchFrameAlwaysOnTopEvent
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JLabel jAlliesLabel;
@@ -394,6 +421,7 @@ private void fireSendResEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     private javax.swing.JButton jMarkAllyButton;
     private javax.swing.JButton jMarkTribeButton;
     private javax.swing.JPanel jPlayerSearch;
+    private javax.swing.JCheckBox jSearchFrameAlwaysOnTop;
     private javax.swing.JTextField jSearchTerm;
     private javax.swing.JLabel jSearchTermLabel;
     private javax.swing.JButton jSendDefButton;

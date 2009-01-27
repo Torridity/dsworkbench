@@ -2,13 +2,17 @@
 -outjars Release\core.jar
 
 -libraryjars 'C:\Programme\Java\jre1.6.0_07\lib\rt.jar'
--libraryjars lib\colorchooser.jar
--libraryjars lib\jaxen-1.1-beta-8.jar
--libraryjars lib\jdom.jar
--libraryjars lib\jerklib.jar
--libraryjars lib\log4j-1.2.15.jar
--libraryjars lib\mysql-connector-java-5.0.6-bin.jar
--libraryjars lib\not-yet-commons-ssl-0.3.9.jar
+-libraryjars dist\lib\BiSlider.jar
+-libraryjars dist\lib\colorchooser.jar
+-libraryjars 'dist\lib\DS Workbench Dokumentation_help.jar'
+-libraryjars dist\lib\jaxen-1.1-beta-8.jar
+-libraryjars dist\lib\jdom.jar
+-libraryjars dist\lib\jerklib.jar
+-libraryjars dist\lib\jhall.jar
+-libraryjars dist\lib\junit.jar
+-libraryjars dist\lib\log4j-1.2.15.jar
+-libraryjars dist\lib\not-yet-commons-ssl-0.3.9.jar
+-libraryjars dist\lib\xmlenc.jar
 
 -target 1.6
 -optimizationpasses 3

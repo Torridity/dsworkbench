@@ -86,8 +86,10 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
             @Override
             public void mouseClicked(MouseEvent e) {
                 fireUpdateLocationByMinimapEvents(e.getX(), e.getY());
-                if (mZoomFrame.isVisible()) {
-                    mZoomFrame.toFront();
+                if (mZoomFrame != null) {
+                    if (mZoomFrame.isVisible()) {
+                        mZoomFrame.toFront();
+                    }
                 }
             }
 
@@ -136,19 +138,23 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
             public void mouseEntered(MouseEvent e) {
                 switch (iCurrentCursor) {
                     case ImageManager.CURSOR_ZOOM: {
-                        mZoomFrame.setVisible(true);
+                        if (mZoomFrame != null) {
+                            mZoomFrame.setVisible(true);
+                        }
                     }
                 }
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
-                if (mZoomFrame.isVisible()) {
-                    mZoomFrame.setVisible(false);
+                if (mZoomFrame != null) {
+                    if (mZoomFrame.isVisible()) {
+                        mZoomFrame.setVisible(false);
+                    }
+                    iXDown = 0;
+                    iYDown = 0;
+                    rDrag = null;
                 }
-                iXDown = 0;
-                iYDown = 0;
-                rDrag = null;
             }
         });
 
@@ -174,20 +180,24 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
             public void mouseMoved(MouseEvent e) {
                 switch (iCurrentCursor) {
                     case ImageManager.CURSOR_ZOOM: {
-                        if (!mZoomFrame.isVisible()) {
-                            mZoomFrame.setVisible(true);
-                        }
-                        int mapWidth = (int) ServerSettings.getSingleton().getMapDimension().getWidth();
-                        int mapHeight = (int) ServerSettings.getSingleton().getMapDimension().getHeight();
+                        if (mZoomFrame != null) {
+                            if (!mZoomFrame.isVisible()) {
+                                mZoomFrame.setVisible(true);
+                            }
+                            int mapWidth = (int) ServerSettings.getSingleton().getMapDimension().getWidth();
+                            int mapHeight = (int) ServerSettings.getSingleton().getMapDimension().getHeight();
 
-                        int x = (int) Math.rint((double) mapWidth / (double) getWidth() * (double) e.getX());
-                        int y = (int) Math.rint((double) mapHeight / (double) getHeight() * (double) e.getY());
-                        mZoomFrame.updatePosition(x, y);
+                            int x = (int) Math.rint((double) mapWidth / (double) getWidth() * (double) e.getX());
+                            int y = (int) Math.rint((double) mapHeight / (double) getHeight() * (double) e.getY());
+                            mZoomFrame.updatePosition(x, y);
+                        }
                         break;
                     }
                     default: {
-                        if (mZoomFrame.isVisible()) {
-                            mZoomFrame.setVisible(false);
+                        if (mZoomFrame != null) {
+                            if (mZoomFrame.isVisible()) {
+                                mZoomFrame.setVisible(false);
+                            }
                         }
                     }
                 }
@@ -211,11 +221,15 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
                     iCurrentCursor = ImageManager.CURSOR_DEFAULT;
                 }
                 if (iCurrentCursor != ImageManager.CURSOR_ZOOM) {
-                    if (mZoomFrame.isVisible()) {
-                        mZoomFrame.setVisible(false);
+                    if (mZoomFrame != null) {
+                        if (mZoomFrame.isVisible()) {
+                            mZoomFrame.setVisible(false);
+                        }
                     }
                 } else {
-                    mZoomFrame.setVisible(true);
+                    if (mZoomFrame != null) {
+                        mZoomFrame.setVisible(true);
+                    }
                 }
                 setCurrentCursor(iCurrentCursor);
             }
@@ -356,7 +370,6 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
         jTransparancySlider = new javax.swing.JSlider();
         jScreenshotPreview = new javax.swing.JDialog();
         jPanel1 = new javax.swing.JPanel();
-        jProgressBar1 = new javax.swing.JProgressBar();
 
         jScreenshotControl.setTitle("Einstellungen");
         jScreenshotControl.addWindowListener(new java.awt.event.WindowAdapter() {
@@ -484,23 +497,15 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
                 .addContainerGap())
         );
 
-        jProgressBar1.setMinimum(10);
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(94, Short.MAX_VALUE)
-                .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(60, 60, 60))
+            .addGap(0, 304, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(70, Short.MAX_VALUE)
-                .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(56, 56, 56))
+            .addGap(0, 142, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -532,7 +537,7 @@ private void fireSaveScreenshotEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST
 
         @Override
         public boolean accept(File f) {
-            if ((f != null) && (f.isDirectory() || f.getName().endsWith(type)))  {
+            if ((f != null) && (f.isDirectory() || f.getName().endsWith(type))) {
                 return true;
             }
             return false;
@@ -588,7 +593,6 @@ private void fireScreenshotControlClosingEvent(java.awt.event.WindowEvent evt) {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JProgressBar jProgressBar1;
     private javax.swing.JSlider jScalingSlider;
     private javax.swing.JFrame jScreenshotControl;
     private javax.swing.JDialog jScreenshotPreview;
@@ -689,7 +693,6 @@ class MinimapRepaintThread extends Thread {
                             if ((markPlayer) || (markedOnly)) {
                                 mark = Color.YELLOW;
                             }
-
                         } else {
                             try {
                                 Marker m = MarkerManager.getSingleton().getMarker(v.getTribe());

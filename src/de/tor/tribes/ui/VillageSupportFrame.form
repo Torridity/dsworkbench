@@ -313,7 +313,7 @@
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel2">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Nur Def ber&#xfc;cksichtigen"/>
+        <Property name="text" type="java.lang.String" value="Nur Deff ber&#xfc;cksichtigen"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel3">

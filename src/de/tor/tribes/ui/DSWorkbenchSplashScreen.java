@@ -39,7 +39,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
     /** Creates new form DSWorkbenchSplashScreen */
     DSWorkbenchSplashScreen() {
         initComponents();
-        jLabel1.setIcon(new ImageIcon("./graphics/splash_beta.png"));
+        jLabel1.setIcon(new ImageIcon("./graphics/splash.gif"));
         new Timer("StartupTimer", true).schedule(new HideSplashTask(this), 1000);
         t = new SplashRepaintThread(this);
         t.setDaemon(true);
@@ -140,6 +140,8 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
         try {
             logger.debug("Initializing application window");
             DSWorkbenchMainFrame.getSingleton().init();
+            logger.debug("Initializing search frame");
+            DSWorkbenchSearchFrame.getSingleton();
             logger.info("Showing application window");
             DSWorkbenchMainFrame.getSingleton().setVisible(true);
             t.stopRunning();

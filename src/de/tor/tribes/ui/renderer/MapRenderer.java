@@ -8,6 +8,7 @@ import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.io.WorldDecorationHolder;
 import de.tor.tribes.types.AbstractForm;
+import de.tor.tribes.types.Ally;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.Marker;
 import de.tor.tribes.types.Tag;
@@ -28,22 +29,23 @@ import de.tor.tribes.util.mark.MarkerManager;
 import de.tor.tribes.util.tag.TagManager;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
+import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.Stroke;
 import java.awt.Toolkit;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;
@@ -91,6 +93,7 @@ public class MapRenderer extends Thread {
     private final NumberFormat nf = NumberFormat.getInstance();
     private Point viewStartPoint = null;
     private double currentZoom = 0.0;
+    private Village currentUserVillage = null;
 
     public MapRenderer() {
         mVisibleVillages = new Village[iVillagesX][iVillagesY];
@@ -125,6 +128,7 @@ public class MapRenderer extends Thread {
                     Image iBuffer = MapPanel.getSingleton().createImage(w, h);
                     Graphics2D g2d = (Graphics2D) iBuffer.getGraphics();
                     prepareGraphics(g2d);
+                    currentUserVillage = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage();
                     if (mapRedrawRequired) {
                         calculateVisibleVillages();
                         if (viewStartPoint == null) {
@@ -311,7 +315,7 @@ public class MapRenderer extends Thread {
                     if (v != null) {
                         //valid village
                         if (v.getTribe() != null) {
-                            if (!v.getTribe().equals(DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage().getTribe())) {
+                            if (!v.getTribe().equals(currentUserVillage.getTribe())) {
 
                                 //check tribe marker
                                 Marker m = MarkerManager.getSingleton().getMarker(v.getTribe());
@@ -515,7 +519,6 @@ public class MapRenderer extends Thread {
             for (Integer xs : xSectors) {
                 g2d.drawLine(xs, 0, xs, hb);
             }
-
             for (Integer ys : ySectors) {
                 g2d.drawLine(0, ys, wb, ys);
             }
@@ -672,8 +675,8 @@ public class MapRenderer extends Thread {
             Village v = villages.nextElement();
             Tribe t = v.getTribe();
             Color markerColor = null;
-            if (t == DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage().getTribe()) {
-                if (v.equals(DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage())) {
+            if (t == currentUserVillage.getTribe()) {
+                if (v.equals(currentUserVillage)) {
                     markerColor = Color.WHITE;
                 } else {
                     markerColor = Color.YELLOW;
@@ -738,9 +741,8 @@ public class MapRenderer extends Thread {
             }
 
             if (markActiveVillage) {
-                Village current = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage();
-                if (current != null) {
-                    if (v.compareTo(current) == 0) {
+                if (currentUserVillage != null) {
+                    if (v.compareTo(currentUserVillage) == 0) {
                         int markX = villageRect.x + (int) Math.round(villageRect.width / 2);
                         int markY = villageRect.y + (int) Math.round(villageRect.height / 2);
                         g2d.drawImage(mMarkerImage, markX, markY - mMarkerImage.getHeight(null), null);
@@ -935,88 +937,9 @@ public class MapRenderer extends Thread {
         }
         //</editor-fold>
 
-        // <editor-fold defaultstate="collapsed" desc=" Troop information (Foreground)">
-
-        boolean showTroopInfo = false;
-        try {
-            showTroopInfo = Boolean.parseBoolean(GlobalOptions.getProperty("show.troop.info"));
-        } catch (Exception e) {
-            showTroopInfo = false;
+        if (Boolean.parseBoolean(GlobalOptions.getProperty("show.map.popup"))) {
+            renderVillageInfo(g2d, mouseVillage);
         }
-
-        if (showTroopInfo) {
-            if (mouseVillage != null) {
-                Rectangle villageRect = villagePositions.get(mouseVillage);
-                if (villageRect != null) {
-                    VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(mouseVillage);
-                    if ((holder != null) && (!holder.getTroops().isEmpty())) {
-                        //get half the units for the current server
-                        int unitCount = DataHolder.getSingleton().getUnits().size();
-                        FontMetrics metrics = PatchFontMetrics.patch(g2d.getFontMetrics(g2d.getFont()));
-
-                        float textHeight = g2d.getFontMetrics().getLineMetrics("1.234.567", g2d).getHeight();
-                        Point pos = villageRect.getLocation();
-                        //number format without fraction digits
-                        NumberFormat numFormat = NumberFormat.getInstance();
-                        numFormat.setMaximumFractionDigits(0);
-                        numFormat.setMinimumFractionDigits(0);
-                        //default width for unit number
-                        double maxWidth = metrics.getStringBounds("1.234.567", g2d).getWidth();
-                        int unitHeight = ImageManager.getUnitIcon(0).getImage().getHeight(null);
-
-                        //get largest unit value
-                        for (Integer i : holder.getTroops()) {
-                            int w = metrics.stringWidth(numFormat.format(i));
-                            if (w > maxWidth) {
-                                maxWidth = w;
-                            }
-                        }
-
-                        g2d.setColor(Constants.DS_BACK_LIGHT);
-                        int popupWidth = 12 + (int) Math.rint(maxWidth) + unitHeight;
-                        int popupHeight = unitCount * unitHeight + 10 + (int) Math.rint(textHeight) + 2;
-                        g2d.fill3DRect(pos.x - popupWidth, pos.y, popupWidth, popupHeight, true);
-
-                        g2d.setColor(Color.BLACK);
-
-                        //draw state
-                        String state = "(" + new SimpleDateFormat("dd.MM.yyyy").format(holder.getState()) + ")";
-                        double dY = metrics.getStringBounds(state, g2d).getY();
-                        g2d.drawString(state, pos.x - popupWidth + 5, pos.y - (int) Math.rint(dY) + 5);
-
-                        //fixed value for linux issues
-                        double sx = 0.84;//(double) textHeight / (double) unitHeight;
-                        for (int i = 0; i < unitCount; i++) {
-                            //draw unit with a border of 5px
-                            AffineTransform xform = AffineTransform.getTranslateInstance(pos.x - popupWidth + 5, pos.y + i * unitHeight + 5 + textHeight + 2);
-                            xform.scale(sx, sx);
-                            g2d.drawImage(ImageManager.getUnitIcon(i).getImage(), xform, null);
-                            //draw the unit count
-                            dY = metrics.getStringBounds(numFormat.format(holder.getTroops().get(i)), g2d).getY();
-                            g2d.drawString(numFormat.format(holder.getTroops().get(i)), pos.x - popupWidth + 5 + unitHeight + 2, pos.y + i * unitHeight - (int) Math.rint(dY) + 5 + (int) Math.rint(textHeight) + 2);
-                        }
-
-                    } else {
-                        Point pos = villageRect.getLocation();
-                        if (pos != null) {
-                            String noInfo = "keine Informationen";
-                            FontMetrics metrics = PatchFontMetrics.patch(g2d.getFontMetrics(g2d.getFont()));
-                            int textWidth = metrics.stringWidth(noInfo);
-                            int popupX = pos.x - textWidth - 10;
-                            int popupY = pos.y;
-                            Rectangle2D bounds = metrics.getStringBounds(noInfo, g2d);
-
-                            g2d.setColor(Constants.DS_BACK_LIGHT);
-                            g2d.fill3DRect(popupX, popupY, 10 + textWidth, metrics.getHeight() + 4, true);
-                            g2d.setColor(Color.BLACK);
-                            g2d.drawString(noInfo, popupX + 5, popupY - (int) Math.rint(bounds.getY()) + 2);
-                        }
-
-                    }
-                }
-            }
-        }
-        // </editor-fold>
 
         // <editor-fold defaultstate="collapsed" desc=" Draw radar information ">
         if (mouseVillage != null) {
@@ -1057,12 +980,323 @@ public class MapRenderer extends Thread {
 // </editor-fold>
     }
 
+    private void renderVillageInfo(Graphics2D g2d, Village mouseVillage) {
+        if (mouseVillage == null) {
+            return;
+        }
+        Tribe t = mouseVillage.getTribe();
+        Ally a = null;
+        if (t != null) {
+            a = mouseVillage.getTribe().getAlly();
+        }
+
+        boolean showMoral = Boolean.parseBoolean(GlobalOptions.getProperty("show.popup.moral"));
+        boolean showRanks = Boolean.parseBoolean(GlobalOptions.getProperty("show.popup.ranks"));
+        boolean showConquers = Boolean.parseBoolean(GlobalOptions.getProperty("show.popup.conquers"));
+
+        Rectangle villageRect = villagePositions.get(mouseVillage);
+        Font before = g2d.getFont();
+        Stroke sBefore = g2d.getStroke();
+        g2d.setStroke(new BasicStroke(0.5f));
+        Font current = new Font("SansSerif", Font.BOLD, 12);
+        FontMetrics metrics = g2d.getFontMetrics(current);
+        NumberFormat nf = NumberFormat.getInstance();
+        nf.setMinimumFractionDigits(0);
+        nf.setMaximumFractionDigits(0);
+        g2d.setFont(current);
+        int width = 430;
+        //Village name rect
+        int dy = 19;
+        g2d.setColor(Constants.DS_BACK);
+        g2d.fillRect(villageRect.getLocation().x, villageRect.getLocation().y, width, 19);
+        g2d.drawRect(villageRect.getLocation().x, villageRect.getLocation().y, width, 19);
+        g2d.setColor(Color.BLACK);
+        Rectangle2D bounds = metrics.getStringBounds(mouseVillage.getName(), g2d);
+        g2d.drawString(mouseVillage.toString(), villageRect.getLocation().x + 2, villageRect.getLocation().y - (int) Math.rint(bounds.getY()) + 2);
+        String bonus = getBonusType(mouseVillage);
+        if (bonus != null) {
+            drawPopupField(g2d, metrics, villageRect, null, bonus, width, dy);
+            dy += 19;
+        }
+        current = new Font("SansSerif", Font.PLAIN, 12);
+        metrics = g2d.getFontMetrics(current);
+        g2d.setFont(current);
+
+        //Points rect
+        String value = nf.format(mouseVillage.getPoints());
+        drawPopupField(g2d, metrics, villageRect, "Punkte", value, width, dy);
+        dy += 19;
+
+        //tags
+        List<Tag> tags = TagManager.getSingleton().getTags(mouseVillage);
+        if ((tags != null) && (!tags.isEmpty())) {
+            value = "";
+            List<String> tagLines = new LinkedList<String>();
+            for (int i = 0; i < tags.size(); i++) {
+                bounds = metrics.getStringBounds(value + tags.get(i) + ", ", g2d);
+                if (bounds.getWidth() > 260) {
+                    tagLines.add(value);
+                    value = "";
+                } else {
+                    value += tags.get(i) + ", ";
+                }
+            }
+            //add last line
+            if (value.length() > 1) {
+                tagLines.add(value);
+            }
+
+            //render tags
+            if (!tagLines.isEmpty()) {
+                String line = tagLines.remove(0);
+                if (tagLines.isEmpty()) {
+                    line = line.substring(0, line.lastIndexOf(","));
+                }
+                drawPopupField(g2d, metrics, villageRect, "Tags", line, width, dy);
+
+                int lines = tagLines.size();
+                for (int i = 0; i < lines - 1; i++) {
+                    dy += 19;
+                    drawPopupField(g2d, metrics, villageRect, "", tagLines.remove(0), width, dy);
+                }
+
+                if (!tagLines.isEmpty()) {
+                    dy += 19;
+                    line = tagLines.remove(0);
+                    line = line.substring(0, line.lastIndexOf(","));
+                    drawPopupField(g2d, metrics, villageRect, "", line, width, dy);
+                }
+                dy += 19;
+            }
+        }
+
+        //Tribe rect
+        if (t != null) {
+            if (showRanks) {
+                value = t.getName() + " (" + nf.format(t.getPoints()) + " | " + t.getRank() + ")";
+                drawPopupField(g2d, metrics, villageRect, "Besitzer (Punkte | Rang)", value, width, dy);
+            } else {
+                value = t.getName() + " (" + nf.format(t.getPoints()) + ")";
+                drawPopupField(g2d, metrics, villageRect, "Besitzer (Punkte)", value, width, dy);
+            }
+
+            dy += 19;
+            if (showConquers) {
+                if (showRanks) {
+                    value = nf.format(t.getKillsAtt()) + " (" + nf.format(t.getRankAtt()) + "), " + nf.format(t.getKillsDef()) + " (" + nf.format(t.getRankDef()) + ")";
+                    drawPopupField(g2d, metrics, villageRect, "Besiegte Gegner (Off, Def)", value, width, dy);
+                } else {
+                    value = nf.format(t.getKillsAtt()) + ", " + nf.format(t.getKillsDef()) + ")";
+                    drawPopupField(g2d, metrics, villageRect, "Besiegte Gegner (Off, Def)", value, width, dy);
+                }
+                dy += 19;
+            }
+            //Ally rect
+            if (a != null) {
+                if (showRanks) {
+                    value = a.getTag() + " (" + nf.format(a.getAll_points()) + " | " + a.getRank() + ")";
+                    drawPopupField(g2d, metrics, villageRect, "Stamm (Punkte | Rang)", value, width, dy);
+                } else {
+                    value = a.getTag() + " (" + nf.format(a.getAll_points()) + ")";
+                    drawPopupField(g2d, metrics, villageRect, "Stamm (Punkte)", value, width, dy);
+                }
+                dy += 19;
+            }
+            if (showMoral) {
+                double moral = ((mouseVillage.getTribe().getPoints() / currentUserVillage.getTribe().getPoints()) * 3 + 0.3) * 100;
+                moral = (moral > 100) ? 100 : moral;
+                drawPopupField(g2d, metrics, villageRect, "Moral", nf.format(moral) + "%", width, dy);
+                dy += 19;
+            }
+        } else {
+            value = "verlassen";
+            drawPopupField(g2d, metrics, villageRect, null, value, width, dy);
+            dy += 19;
+        }
+
+        //render troop/runtime information
+        renderExtendedInformation(g2d, mouseVillage, villageRect, width, dy);
+        g2d.setFont(before);
+        g2d.setStroke(sBefore);
+    }
+
+    private String getBonusType(Village pVillage) {
+        int bonusType = DataHolder.getSingleton().getCurrentBonusType();
+        if (bonusType == 0) {
+            switch (pVillage.getType()) {
+                case 1: {
+                    //holz
+                    return "10% mehr Holzproduktion";
+                }
+                case 2: {
+                    //lehm
+                    return "10% mehr Lehmproduktion";
+                }
+                case 3: {
+                    //eisen
+                    return "10% mehr Eisenproduktion";
+                }
+                case 4: {
+                    return "10% mehr Bevölkerung";
+                }
+                case 5: {
+                    //kaserne
+                    return "10% schnellere Produktion in der Kaserne";
+                }
+                case 6: {
+                    //stall
+                    return "10% schnellere Produktion im Stall";
+                }
+                case 7: {
+                    //werkstatt
+                    return "10% schnellere Produktion in der Werkstatt";
+                }
+                case 8: {
+                    //alle ressourcen
+                    return "3% mehr Rohstoffproduktion (alle Rohstoffe)";
+                }
+            }
+        } else {
+            switch (pVillage.getType()) {
+                case 1: {
+                    //holz
+                    return "100% mehr Holzproduktion";
+                }
+                case 2: {
+                    //lehm
+                    return "100% mehr Lehmproduktion";
+                }
+                case 3: {
+                    //eisen
+                    return "100% mehr Eisenproduktion";
+                }
+                case 4: {
+                    //bevölkerung
+                    return "10% mehr Bevölkerung";
+                }
+                case 5: {
+                    //kaserne
+                    return "50% schnellere Produktion in der Kaserne";
+                }
+                case 6: {
+                    //stall
+                    return "50% schnellere Produktion im Stall";
+                }
+                case 7: {
+                    //werkstatt
+                    return "100% schnellere Produktion in der Werkstatt";
+                }
+                case 8: {
+                    //alle rohstoffe
+                    return "30% mehr Rohstoffproduktion (alle Rohstoffe)";
+                }
+                case 9: {
+                    //speicher + markt
+                    return "50% mehr Speicherkapazität und Händler";
+                }
+            }
+        }
+        return null;
+    }
+
+    private void drawPopupField(Graphics2D g2d, FontMetrics pMetrics, Rectangle pRect, String pName, String pValue, int pWidth, int pDy) {
+        g2d.setColor(Constants.DS_BACK_LIGHT);
+        g2d.fillRect(pRect.getLocation().x, pRect.getLocation().y + pDy, pWidth, 19);
+        g2d.setColor(Constants.DS_BACK);
+        g2d.drawRect(pRect.getLocation().x, pRect.getLocation().y + pDy, pWidth, 19);
+
+        int dx = 0;
+        if (pName != null) {
+            dx = 150;
+            g2d.drawRect(pRect.getLocation().x, pRect.getLocation().y + pDy, dx, 19);
+            g2d.setColor(Color.BLACK);
+            Rectangle2D bounds = pMetrics.getStringBounds(pName, g2d);
+            g2d.drawString(pName, pRect.getLocation().x + 2, pRect.getLocation().y + pDy - (int) Math.rint(bounds.getY()) + 2);
+        } else {
+            g2d.setColor(Color.BLACK);
+        }
+        Rectangle2D bounds = pMetrics.getStringBounds(pValue, g2d);
+        g2d.drawString(pValue, pRect.getLocation().x + dx + 2, pRect.getLocation().y + pDy - (int) Math.rint(bounds.getY()) + 2);
+    }
+
+    private void renderExtendedInformation(Graphics2D g2d, Village pMouseVillage, Rectangle pRect, int pWidth, int pDy) {
+        VillageTroopsHolder troops = TroopsManager.getSingleton().getTroopsForVillage(pMouseVillage);
+        Font current = new Font("SansSerif", Font.PLAIN, 10);
+        boolean drawDist = false;
+        if (MapPanel.getSingleton().getCurrentCursor() == ImageManager.CURSOR_MEASURE) {
+            if (mSourceVillage != null) {
+                current = new Font("SansSerif", Font.PLAIN, 8);
+                drawDist = true;
+            }
+        }
+        //if no runtime drawing, check troops
+        if (!drawDist) {
+            if ((troops == null) || (troops.getTroops().isEmpty())) {
+                return;
+            }
+        }
+        g2d.setFont(current);
+        FontMetrics metrics = g2d.getFontMetrics(current);
+        NumberFormat nf = NumberFormat.getInstance();
+        nf.setMinimumFractionDigits(0);
+        nf.setMaximumFractionDigits(0);
+        //draw runtimes/unit count
+        g2d.setColor(Constants.DS_BACK_LIGHT);
+        g2d.fillRect(pRect.getLocation().x, pRect.getLocation().y + pDy, pWidth, 35);
+        g2d.setColor(Constants.DS_BACK);
+        g2d.drawRect(pRect.getLocation().x, pRect.getLocation().y + pDy, pWidth, 35);
+
+        int x = 0;
+        int w = (int) Math.floor((double) (pWidth - 4.0) / (double) DataHolder.getSingleton().getUnits().size());
+        int unitCount = 0;
+
+        for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
+            if (!drawDist) {
+                //draw troop information
+                int cnt = troops.getTroopsOfUnit(unit);
+                if (cnt > 0) {
+                    if (unitCount % 2 == 0) {
+                        g2d.setColor(Constants.DS_BACK);
+                    } else {
+                        g2d.setColor(Constants.DS_BACK_LIGHT);
+                    }
+
+                    g2d.fillRect(pRect.getLocation().x + x + 2, pRect.getLocation().y + pDy, w, 35);
+                    g2d.drawImage(ImageManager.getUnitImage(unit), pRect.getLocation().x + x + 2 + (int) Math.rint(w / 2.0 - 9), pRect.getLocation().y + pDy + 2, null);
+                    String troopsValue = nf.format(cnt);
+                    Rectangle2D troopBounds = metrics.getStringBounds(troopsValue, g2d);
+                    g2d.setColor(Color.BLACK);
+                    g2d.drawString(troopsValue, pRect.getLocation().x + x + 2 + (int) Math.rint(w / 2.0 - troopBounds.getWidth() / 2.0), pRect.getLocation().y + pDy + 2 + 25 + (int) Math.rint(troopBounds.getHeight() / 2.0));
+                    x += w;
+                    unitCount++;
+                }
+            } else {
+                //draw runtime
+                double runtime = DSCalculator.calculateMoveTimeInMinutes(mSourceVillage, pMouseVillage, unit.getSpeed());
+                if (unitCount % 2 == 0) {
+                    g2d.setColor(Constants.DS_BACK);
+                } else {
+                    g2d.setColor(Constants.DS_BACK_LIGHT);
+                }
+
+                g2d.fillRect(pRect.getLocation().x + x + 2, pRect.getLocation().y + pDy, w, 35);
+                g2d.drawImage(ImageManager.getUnitImage(unit), pRect.getLocation().x + x + 2 + (int) Math.rint(w / 2.0 - 9), pRect.getLocation().y + pDy + 2, null);
+                String runtimeValue = DSCalculator.formatTimeInMinutes(runtime);
+                Rectangle2D troopBounds = metrics.getStringBounds(runtimeValue, g2d);
+                g2d.setColor(Color.BLACK);
+                g2d.drawString(runtimeValue, pRect.getLocation().x + x + 2 + (int) Math.rint(w / 2.0 - troopBounds.getWidth() / 2.0), pRect.getLocation().y + pDy + 2 + 25 + (int) Math.rint(troopBounds.getHeight() / 2.0));
+                x += w;
+                unitCount++;
+            }
+        }
+    }
+
     private void prepareGraphics(Graphics2D pG2d) {
         pG2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         pG2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
         // Speed
         pG2d.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED);
-        pG2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+        pG2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         pG2d.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_SPEED);
         pG2d.setRenderingHint(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_DISABLE);
         pG2d.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_OFF);

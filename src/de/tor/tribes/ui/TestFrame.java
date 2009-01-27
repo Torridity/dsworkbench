@@ -37,9 +37,9 @@ public class TestFrame extends javax.swing.JFrame {
         initComponents();
         try {
             biSlider1.setMinimumValue(0);
-            biSlider1.setDefaultColor(Constants.DS_BACK);
+            biSlider1.setSliderBackground(Constants.DS_BACK);
             biSlider1.setMaximumColor(Constants.DS_BACK_LIGHT);
-            biSlider1.setMinimumColor(Color.RED);
+            biSlider1.setMinimumColor(Constants.DS_BACK_LIGHT);
             biSlider1.setMaximumValue(24);
             biSlider1.setSegmentSize(1);
             biSlider1.setUnit("h");
@@ -59,7 +59,7 @@ public class TestFrame extends javax.swing.JFrame {
             }
             });*/
 
-            biSlider1.addContentPainterListener(new ContentPainterListener() {
+            /*biSlider1.addContentPainterListener(new ContentPainterListener() {
 
                 public void paint(ContentPainterEvent ContentPainterEvent_Arg) {
                     Graphics2D Graphics2 = (Graphics2D) ContentPainterEvent_Arg.getGraphics();
@@ -69,8 +69,14 @@ public class TestFrame extends javax.swing.JFrame {
                     double w = (double) biSlider1.getWidth();
                     double perc = 100.0 * ((double) Rect2.x + (double) Rect2.width) / w;
                     Paint old = Graphics2.getPaint();
-                    Graphics2.setColor(Color.GREEN);
+                    Graphics2.setColor(Constants.DS_BACK_LIGHT);
                     Graphics2.fillRect(0, 0, Rect1.width, Rect1.height);
+
+                    double min = ContentPainterEvent_Arg.getMinimum();
+                    double max = ContentPainterEvent_Arg.getMaximum();
+                    System.out.println(min + "," + max);
+
+                    System.out.println((9*Rect2.width));
                     Graphics2.setPaint(new GradientPaint(0, 0, Color.BLACK, (int) (9 * Rect2.width), Rect1.height, Color.WHITE));
                     Graphics2.fillRect(0, 0, (int) (9 * Rect2.width), Rect1.height);
                     Graphics2.setPaint(old);
@@ -97,8 +103,8 @@ public class TestFrame extends javax.swing.JFrame {
                 }*/
                 /*Graphics2.setColor(Color.BLACK);
                 Graphics2.drawRect(Rect2.x, Rect2.y + (int) ((Rand * Rect2.height)), Rect2.width - 1, (int) (((1 - Rand) * Rect2.height)));
-                 */                }
-            });
+                 */             /*   }
+            });*/
 
         } catch (Exception e) {
         }

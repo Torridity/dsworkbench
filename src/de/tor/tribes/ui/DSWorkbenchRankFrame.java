@@ -17,6 +17,7 @@ import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import java.awt.Component;
 import java.awt.event.ItemEvent;
+import java.awt.event.KeyEvent;
 import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -24,7 +25,6 @@ import java.util.LinkedList;
 import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -243,7 +243,7 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame {
         DefaultTableModel model = new javax.swing.table.DefaultTableModel(
                 new Object[][]{},
                 new String[]{
-                    "Rang (Off)", "Rang (Def)", "Name", "Kills Off", "Kills Def", "Kills:Punkte<BR/>Off [%]", "Kills:Punkte<BR/>Def [%]"
+                    "Rang (Off)", "Rang (Deff)", "Name", "Kills Off", "Kills Deff", "Kills:Punkte<BR/>Off [%]", "Kills:Punkte<BR/>Deff [%]"
                 }) {
 
             Class[] types = new Class[]{
@@ -320,7 +320,7 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame {
         DefaultTableModel model = new javax.swing.table.DefaultTableModel(
                 new Object[][]{},
                 new String[]{
-                    "Name", "Tag", "Mitglieder", "Kills Off", "Kills Def", "Kills:Punkte<BR/>Off [%]", "Kills:Punkte<BR/>Def [%]"
+                    "Name", "Tag", "Mitglieder", "Kills Off", "Kills Deff", "Kills:Punkte<BR/>Off [%]", "Kills:Punkte<BR/>Deff [%]"
                 }) {
 
             Class[] types = new Class[]{
@@ -430,6 +430,11 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame {
         jFilterField.setMaximumSize(new java.awt.Dimension(100, 20));
         jFilterField.setMinimumSize(new java.awt.Dimension(100, 20));
         jFilterField.setPreferredSize(new java.awt.Dimension(100, 20));
+        jFilterField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                fireFilterKeyReleasedEvent(evt);
+            }
+        });
 
         jLabel5.setFont(new java.awt.Font("Tahoma", 0, 10));
         jLabel5.setText("(Ein Ausdruck mit weniger als 3 Zeichen löscht den Filter)");
@@ -539,6 +544,12 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame {
         }
         updateRankTable();
     }//GEN-LAST:event_fireFilterEvent
+
+    private void fireFilterKeyReleasedEvent(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_fireFilterKeyReleasedEvent
+         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            fireFilterEvent(null);
+        }
+    }//GEN-LAST:event_fireFilterKeyReleasedEvent
 
     private String getFilter() {
         String filter = jFilterField.getText().toLowerCase();

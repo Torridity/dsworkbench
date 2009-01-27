@@ -238,7 +238,7 @@ public class ImageManager {
             return UNIT_ICONS.get(ICON_HEAVY);
         } else if (pUnit.getPlainName().equals("ram")) {
             return UNIT_ICONS.get(ICON_RAM);
-        } else if (pUnit.getPlainName().equals("cata")) {
+        } else if (pUnit.getPlainName().equals("catapult")) {
             return UNIT_ICONS.get(ICON_CATA);
         } else if (pUnit.getPlainName().equals("snob")) {
             return UNIT_ICONS.get(ICON_SNOB);
@@ -271,7 +271,7 @@ public class ImageManager {
             return UNIT_IMAGES.get(ICON_HEAVY);
         } else if (pUnit.getPlainName().equals("ram")) {
             return UNIT_IMAGES.get(ICON_RAM);
-        } else if (pUnit.getPlainName().equals("cata")) {
+        } else if (pUnit.getPlainName().equals("catapult")) {
             return UNIT_IMAGES.get(ICON_CATA);
         } else if (pUnit.getPlainName().equals("snob")) {
             return UNIT_IMAGES.get(ICON_SNOB);

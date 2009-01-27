@@ -11,6 +11,7 @@ import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.models.AttackManagerTableModel;
+import java.awt.event.MouseEvent;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -33,6 +34,8 @@ import java.awt.Component;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ItemEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseListener;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.LinkedList;
@@ -137,6 +140,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         GlobalOptions.getHelpBroker().enableHelpKey(jTimeChangeDialog.getRootPane(), "pages.change_attack_times", GlobalOptions.getHelpBroker().getHelpSet());
         GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.attack_view", GlobalOptions.getHelpBroker().getHelpSet());
 // </editor-fold>
+
         pack();
     }
 
@@ -1273,36 +1277,46 @@ private void fireCopyAsBBCodeToClipboardEvent(java.awt.event.MouseEvent evt) {//
                     sendtime = new SimpleDateFormat("'[color=red]'dd.MM.yy 'um' HH:mm:ss.SSS'[/color]'").format(sTime);
                     arrivetime = new SimpleDateFormat("'[color=green]'dd.MM.yy 'um' HH:mm:ss.SSS'[/color]'").format(aTime);
                 }
-                buffer.append("Angriff von ");
-                if (sVillage.getTribe() != null) {
-                    buffer.append(sVillage.getTribe().toBBCode());
-                    buffer.append(" aus ");
-                } else {
-                    buffer.append(" Barbaren aus ");
+                buffer.append("Angriff ");
+                if (Boolean.parseBoolean(GlobalOptions.getProperty("export.tribe.names"))) {
+                    buffer.append(" von ");
+                    if (sVillage.getTribe() != null) {
+                        buffer.append(sVillage.getTribe().toBBCode());
+                    } else {
+                        buffer.append("Barbaren");
+                    }
                 }
-
+                buffer.append(" aus ");
                 buffer.append(sVillage.toBBCode());
-                buffer.append(" mit ");
-                if (extended) {
-                    buffer.append("[img]" + sUrl + "/graphic/unit/unit_" + sUnit.getPlainName() + ".png[/img]");
-                } else {
-                    buffer.append(sUnit.getName());
+                if (Boolean.parseBoolean(GlobalOptions.getProperty("export.units"))) {
+                    buffer.append(" mit ");
+                    if (extended) {
+                        buffer.append("[img]" + sUrl + "/graphic/unit/unit_" + sUnit.getPlainName() + ".png[/img]");
+                    } else {
+                        buffer.append(sUnit.getName());
+                    }
                 }
                 buffer.append(" auf ");
 
-                if (tVillage.getTribe() != null) {
-                    buffer.append(tVillage.getTribe().toBBCode());
+                if (Boolean.parseBoolean(GlobalOptions.getProperty("export.tribe.names"))) {
+                    if (tVillage.getTribe() != null) {
+                        buffer.append(tVillage.getTribe().toBBCode());
+                    } else {
+                        buffer.append("Barbaren");
+                    }
                     buffer.append(" in ");
-                } else {
-                    buffer.append(" Barbaren in ");
                 }
 
                 buffer.append(tVillage.toBBCode());
                 buffer.append(" startet am ");
                 buffer.append(sendtime);
-                buffer.append(" und kommt am ");
-                buffer.append(arrivetime);
-                buffer.append(" an\n");
+                if (Boolean.parseBoolean(GlobalOptions.getProperty("export.arrive.time"))) {
+                    buffer.append(" und kommt am ");
+                    buffer.append(arrivetime);
+                    buffer.append(" an\n");
+                } else {
+                    buffer.append("\n");
+                }
             }
             jAttackTable.revalidate();
             if (extended) {
@@ -1646,7 +1660,6 @@ private void fireCloseTimeChangeDialogEvent(java.awt.event.MouseEvent evt) {//GE
                 jAttackTable.revalidate();
                 jAttackTable.updateUI();
             }
-
         }
     }
 
@@ -1827,7 +1840,6 @@ private void jDoMoveToPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:even
         int[] rows = jAttackTable.getSelectedRows();
         if ((rows != null) && (rows.length > 0)) {
             List<Attack> sourcePlan = AttackManager.getSingleton().getAttackPlan(oldPlan);
-            List<Attack> targetPlan = AttackManager.getSingleton().getAttackPlan(newPlan);
             List<Attack> tmpPlan = new LinkedList<Attack>();
             jAttackTable.invalidate();
             for (int i : rows) {
@@ -1905,7 +1917,7 @@ private void jDoMoveToPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:even
             pTable.getColumn(pTable.getColumnName(i)).setHeaderRenderer(headerRenderer);
         }
 
-//set max width
+        //set max width
         pTable.getColumnModel().getColumn(1).setMaxWidth(75);
         //set sorter
         TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(model);
@@ -1915,8 +1927,7 @@ private void jDoMoveToPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:even
     protected void setupAttackPanel() {
         AttackManager.getSingleton().addAttackManagerListener(this);
         //setup renderer and general view
-        jAttackTable.setDefaultRenderer(Date.class,
-                new DateCellRenderer());
+        jAttackTable.setDefaultRenderer(Date.class, new DateCellRenderer());
 
 
         jAttackTable.setDefaultEditor(Date.class, new DateSpinEditor());

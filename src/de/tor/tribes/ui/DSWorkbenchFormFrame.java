@@ -17,12 +17,14 @@ import java.awt.Rectangle;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
+import org.apache.log4j.Logger;
 
 /**
  * @author Charon
  */
 public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame {
 
+    private static Logger logger = Logger.getLogger("FormFrame");
     private static DSWorkbenchFormFrame SINGLETON = null;
 
     public static synchronized DSWorkbenchFormFrame getSingleton() {
@@ -35,13 +37,22 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame {
     /** Creates new form DSWorkbenchFormFrame */
     DSWorkbenchFormFrame() {
         initComponents();
-           // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
-       GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.form_view", GlobalOptions.getHelpBroker().getHelpSet());
+
+        try {
+            jAlwaysOnTop.setSelected(Boolean.parseBoolean(GlobalOptions.getProperty("form.frame.alwaysOnTop")));
+            setAlwaysOnTop(jAlwaysOnTop.isSelected());
+        } catch (Exception e) {
+            //setting not available
+        }
+
+        // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
+        GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.form_view", GlobalOptions.getHelpBroker().getHelpSet());
 // </editor-fold>
     }
 
     public void updateFormList() {
         AbstractForm[] forms = null;
+        jFormsList.invalidate();
         if (jToggleVisibleOnlyButton.isSelected()) {
             forms = FormManager.getSingleton().getForms().toArray(new AbstractForm[]{});
         } else {
@@ -52,6 +63,7 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame {
             model.addElement(f);
         }
         jFormsList.setModel(model);
+        jFormsList.revalidate();
     }
 
     /** This method is called from within the constructor to
@@ -72,7 +84,7 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame {
         jToggleVisibleOnlyButton = new javax.swing.JToggleButton();
         jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
-        jCheckBox1 = new javax.swing.JCheckBox();
+        jAlwaysOnTop = new javax.swing.JCheckBox();
 
         setTitle("Formen");
 
@@ -183,8 +195,13 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame {
                 .addContainerGap())
         );
 
-        jCheckBox1.setText("Immer im Vordergrund");
-        jCheckBox1.setOpaque(false);
+        jAlwaysOnTop.setText("Immer im Vordergrund");
+        jAlwaysOnTop.setOpaque(false);
+        jAlwaysOnTop.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                fireFormFrameAlwaysOnTopEvent(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -193,7 +210,7 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jCheckBox1)
+                    .addComponent(jAlwaysOnTop)
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -203,7 +220,7 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame {
                 .addContainerGap()
                 .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jCheckBox1)
+                .addComponent(jAlwaysOnTop)
                 .addContainerGap())
         );
 
@@ -224,7 +241,7 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.warn("Failed to remove form", e);
         }
     }//GEN-LAST:event_fireRemoveFormEvent
 
@@ -241,6 +258,13 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame {
         try {
             AbstractForm toEdit = (AbstractForm) jFormsList.getSelectedValue();
             if (toEdit != null) {
+                if ((MapPanel.getSingleton().getCurrentCursor() == ImageManager.CURSOR_DRAW_CIRCLE) ||
+                        (MapPanel.getSingleton().getCurrentCursor() == ImageManager.CURSOR_DRAW_LINE) ||
+                        (MapPanel.getSingleton().getCurrentCursor() == ImageManager.CURSOR_DRAW_RECT) ||
+                        (MapPanel.getSingleton().getCurrentCursor() == ImageManager.CURSOR_DRAW_TEXT) ||
+                        (MapPanel.getSingleton().getCurrentCursor() == ImageManager.CURSOR_DRAW_FREEFORM)) {
+                    MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_DEFAULT);
+                }
                 FormConfigFrame.getSingleton().setupAndShowInEditMode(toEdit);
             }
         } catch (Exception e) {
@@ -276,12 +300,16 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame {
         }
     }//GEN-LAST:event_fireShowFormEvent
 
+    private void fireFormFrameAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireFormFrameAlwaysOnTopEvent
+        setAlwaysOnTop(!isAlwaysOnTop());
+    }//GEN-LAST:event_fireFormFrameAlwaysOnTopEvent
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JCheckBox jAlwaysOnTop;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
-    private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JList jFormsList;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;

@@ -1350,27 +1350,17 @@ private void fireUnformattedAttacksToClipboardEvent(java.awt.event.MouseEvent ev
 }//GEN-LAST:event_fireUnformattedAttacksToClipboardEvent
 
 private void fireAddAllPlayerVillages(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireAddAllPlayerVillages
-    Village current = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage();
     UnitHolder uSource = (UnitHolder) jTroopsList.getSelectedItem();
     jAttacksTable.invalidate();
-    boolean error = false;
-    if (current != null) {
-        Tribe t = current.getTribe();
-        if (t != null) {
-            for (Village v : t.getVillageList()) {
-                ((DefaultTableModel) jAttacksTable.getModel()).addRow(new Object[]{v, uSource});
-            }
-        } else {
-            error = true;
+    try {
+        int size = jSourceVillageList.getModel().getSize();
+        for (int i = 0; i < size; i++) {
+            ((DefaultTableModel) jAttacksTable.getModel()).addRow(new Object[]{jSourceVillageList.getModel().getElementAt(i), uSource});
         }
-    } else {
-        error = true;
+    } catch (Exception e) {
+        logger.error("Failed to add current group as source", e);
     }
     jAttacksTable.revalidate();
-    if (error) {
-        JOptionPane.showMessageDialog(this, "Es ist ein Fehler bei der Bestimmung des verwendeten In-Game Accounts aufgetreten.\nBitte überprüfe deine Servereinstellungen.", "Fehler", JOptionPane.ERROR_MESSAGE);
-    }
-
 }//GEN-LAST:event_fireAddAllPlayerVillages
 
 private void fireTargetAllyChangedEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireTargetAllyChangedEvent

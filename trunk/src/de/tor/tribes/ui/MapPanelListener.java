@@ -13,5 +13,5 @@ import de.tor.tribes.types.Village;
  */
 public interface MapPanelListener {
 
-    public void fireScrollEvent(int pX, int pY);
+    public void fireScrollEvent(double pX, double pY);
 }

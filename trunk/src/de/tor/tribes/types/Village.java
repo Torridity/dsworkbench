@@ -39,6 +39,7 @@ public class Village implements Serializable, Comparable {
     private int points;
     private byte type;
     private String stringRepresentation = null;
+    private boolean visibleOnMap = true;
     //$id, $name, $x, $y, $tribe, $points, $type
 
     public static Village parseFromPlainData(String pLine) {
@@ -340,6 +341,20 @@ public class Village implements Serializable, Comparable {
         }
     }
     public static final Comparator<Village> CASE_INSENSITIVE_ORDER = new CaseInsensitiveComparator();
+
+    /**
+     * @return the visibleOnMap
+     */
+    public boolean isVisibleOnMap() {
+        return visibleOnMap;
+    }
+
+    /**
+     * @param visibleOnMap the visibleOnMap to set
+     */
+    public void setVisibleOnMap(boolean visibleOnMap) {
+        this.visibleOnMap = visibleOnMap;
+    }
 
     private static class CaseInsensitiveComparator implements Comparator<Village>, java.io.Serializable {
         // use serialVersionUID from JDK 1.2.2 for interoperability

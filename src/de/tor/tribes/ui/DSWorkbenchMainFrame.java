@@ -49,8 +49,8 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         DSWorkbenchFrameListener {
 
     private static Logger logger = Logger.getLogger("MainApp");
-    private int iCenterX = 500;
-    private int iCenterY = 500;
+    private double dCenterX = 500.0;
+    private double dCenterY = 500.0;
     private List<ImageIcon> mIcons;
     private double dZoomFactor = 1.0;
     //private ToolBoxFrame mToolbox = null;
@@ -124,13 +124,13 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                     if (DSWorkbenchMainFrame.getSingleton().isActive() || fullscreenFrame != null) {
                         //move shortcuts
                         if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-                            scroll(0, 2);
+                            scroll(0.0, 2.0);
                         } else if (e.getKeyCode() == KeyEvent.VK_UP) {
-                            scroll(0, -2);
+                            scroll(0.0, -2.0);
                         } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-                            scroll(-2, 0);
+                            scroll(-2.0, 0.0);
                         } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-                            scroll(2, 0);
+                            scroll(2.0, 0.0);
                         } else if ((e.getKeyCode() == KeyEvent.VK_1) && e.isShiftDown()) {
                             //shot minimap tool shortcut
                             MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_ATTACK_AXE);
@@ -259,14 +259,13 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         try {
             String x = GlobalOptions.getProperty("last.x");
             String y = GlobalOptions.getProperty("last.y");
-            iCenterX = Integer.parseInt(x);
-            iCenterY = Integer.parseInt(y);
+            dCenterX = Double.parseDouble(x);
+            dCenterY = Double.parseDouble(y);
             jCenterX.setText(x);
             jCenterY.setText(y);
         } catch (Exception e) {
-            iCenterX = 500;
-            iCenterY =
-                    500;
+            dCenterX = 500.0;
+            dCenterY = 500.0;
             jCenterX.setText("500");
             jCenterY.setText("500");
         }
@@ -365,7 +364,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         //update views
 
         MinimapPanel.getSingleton().redraw();
-        MapPanel.getSingleton().updateMapPosition(iCenterX, iCenterY);
+        MapPanel.getSingleton().updateMapPosition(dCenterX, dCenterY);
         DSWorkbenchMarkerFrame.getSingleton().setupMarkerPanel();
         DSWorkbenchAttackFrame.getSingleton().setupAttackPanel();
         //update troops table and troops view
@@ -521,11 +520,11 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         super.setVisible(v);
         if (v) {
             //only if set to visible
-            MapPanel.getSingleton().updateMapPosition(iCenterX, iCenterY);
+            MapPanel.getSingleton().updateMapPosition(dCenterX, dCenterY);
 
             double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
             double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
-            MinimapPanel.getSingleton().setSelection(iCenterX, iCenterY, (int) Math.rint(w), (int) Math.rint(h));
+            MinimapPanel.getSingleton().setSelection((int) Math.floor(dCenterX), (int) Math.floor(dCenterY), (int) Math.rint(w), (int) Math.rint(h));
 
             // <editor-fold defaultstate="collapsed" desc=" Check frames and toolbar visibility ">
 
@@ -1199,86 +1198,78 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
 
     /**Update map position*/
 private void fireRefreshMapEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireRefreshMapEvent
-    int cx = iCenterX;
-    int cy = iCenterY;
+    double cx = dCenterX;
+    double cy = dCenterY;
     try {
         cx = Integer.parseInt(jCenterX.getText());
         cy = Integer.parseInt(jCenterY.getText());
     } catch (Exception e) {
-        cx = iCenterX;
-        cy = iCenterY;
+        cx = dCenterX;
+        cy = dCenterY;
     }
 
-    jCenterX.setText(Integer.toString(cx));
-    jCenterY.setText(Integer.toString(cy));
-    iCenterX = cx;
-    iCenterY = cy;
+    jCenterX.setText(Integer.toString((int)Math.floor(cx)));
+    jCenterY.setText(Integer.toString((int)Math.floor(cy)));
+    dCenterX = cx;
+    dCenterY = cy;
 
     double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
     double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
-    MinimapPanel.getSingleton().setSelection(cx, cy, (int) Math.rint(w), (int) Math.rint(h));
-    MapPanel.getSingleton().updateMapPosition(iCenterX, iCenterY);
+    MinimapPanel.getSingleton().setSelection((int)Math.floor(cx), (int)Math.floor(cy), (int) Math.rint(w), (int) Math.rint(h));
+    MapPanel.getSingleton().updateMapPosition(dCenterX, dCenterY);
 }//GEN-LAST:event_fireRefreshMapEvent
 
     /**Update map movement*/
 private void fireMoveMapEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireMoveMapEvent
 
-    int cx = iCenterX;
-    int cy = iCenterY;
+    double cx = dCenterX;
+    double cy = dCenterY;
     try {
         cx = Integer.parseInt(jCenterX.getText());
-        cy =
-                Integer.parseInt(jCenterY.getText());
+        cy = Integer.parseInt(jCenterY.getText());
     } catch (Exception e) {
-        cx = iCenterX;
-        cy =
-                iCenterY;
+        cx = dCenterX;
+        cy = dCenterY;
     }
 
     if (evt.getSource() == jMoveN) {
-        cy -= MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
+        cy -= (double)MapPanel.getSingleton().getHeight() / (double)GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
     } else if (evt.getSource() == jMoveNE) {
-        cx += MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
-        cy -=
-                MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
+        cx += (double)MapPanel.getSingleton().getWidth() / (double)GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
+        cy -= (double)MapPanel.getSingleton().getWidth() / (double)GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
     } else if (evt.getSource() == jMoveE) {
-        cx += MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
+        cx += (double)MapPanel.getSingleton().getWidth() / (double)GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
     } else if (evt.getSource() == jMoveSE) {
-        cx += MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
-        cy +=
-                MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
+        cx += (double)MapPanel.getSingleton().getWidth() / (double)GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
+        cy += (double)MapPanel.getSingleton().getWidth() / (double)GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
     } else if (evt.getSource() == jMoveS) {
-        cy += MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
+        cy += (double)MapPanel.getSingleton().getHeight() / (double)GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
     } else if (evt.getSource() == jMoveSW) {
-        cx -= MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
-        cy +=
-                MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
+        cx -= (double)MapPanel.getSingleton().getWidth() / (double)GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
+        cy += (double)MapPanel.getSingleton().getWidth() / (double)GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
     } else if (evt.getSource() == jMoveW) {
-        cx -= MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
+        cx -= (double)MapPanel.getSingleton().getWidth() / (double)GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
     } else if (evt.getSource() == jMoveNW) {
-        cx -= MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
-        cy -=
-                MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
+        cx -= (double)MapPanel.getSingleton().getWidth() / (double)GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
+        cy -= (double)MapPanel.getSingleton().getWidth() / (double)GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
     }
 
-    jCenterX.setText(Integer.toString(cx));
-    jCenterY.setText(Integer.toString(cy));
-    iCenterX =
-            cx;
-    iCenterY =
-            cy;
-    MapPanel.getSingleton().updateMapPosition(iCenterX, iCenterY);
+    jCenterX.setText(Integer.toString((int)Math.floor(cx)));
+    jCenterY.setText(Integer.toString((int)Math.floor(cy)));
+    dCenterX = cx;
+    dCenterY = cy;
+    MapPanel.getSingleton().updateMapPosition(dCenterX, dCenterY);
     double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
     double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
-    MinimapPanel.getSingleton().setSelection(cx, cy, (int) Math.rint(w), (int) Math.rint(h));
+    MinimapPanel.getSingleton().setSelection((int)Math.floor(cx), (int)Math.floor(cy), (int) Math.rint(w), (int) Math.rint(h));
 }//GEN-LAST:event_fireMoveMapEvent
 
     /**React on resize events*/
 private void fireFrameResizedEvent(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_fireFrameResizedEvent
     try {
-        MapPanel.getSingleton().updateMapPosition(iCenterX, iCenterY);
+        MapPanel.getSingleton().updateMapPosition(dCenterX, dCenterY);
     } catch (Exception e) {
-        logger.error("Failed to resize map for (" + iCenterX + ", " + iCenterY + ")", e);
+        logger.error("Failed to resize map for (" + dCenterX + ", " + dCenterY + ")", e);
     }
 }//GEN-LAST:event_fireFrameResizedEvent
 
@@ -1430,30 +1421,27 @@ private void fireShowMapPopupChangedEvent(javax.swing.event.ChangeEvent evt) {//
         double dx = ServerSettings.getSingleton().getMapDimension().getWidth() / (double) MinimapPanel.getSingleton().getWidth() * (double) pX;
         double dy = ServerSettings.getSingleton().getMapDimension().getHeight() / (double) MinimapPanel.getSingleton().getHeight() * (double) pY;
 
-        int x = (int) dx;
-        int y = (int) dy;
-        jCenterX.setText(Integer.toString(x));
-        jCenterY.setText(Integer.toString(y));
-        iCenterX = x;
-        iCenterY = y;
-        MapPanel.getSingleton().updateMapPosition(iCenterX, iCenterY);
+        jCenterX.setText(Integer.toString((int)Math.floor(dx)));
+        jCenterY.setText(Integer.toString((int)Math.floor(dy)));
+        dCenterX = dx;
+        dCenterY = dy;
+        MapPanel.getSingleton().updateMapPosition(dCenterX, dCenterY);
         double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
         double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
-        MinimapPanel.getSingleton().setSelection(x, y, (int) Math.rint(w), (int) Math.rint(h));
+        MinimapPanel.getSingleton().setSelection((int)Math.floor(dx), (int)Math.floor(dy), (int) Math.rint(w), (int) Math.rint(h));
     }
 
     /**Scroll the map*/
-    public void scroll(int pXDir, int pYDir) {
-        iCenterX = iCenterX + pXDir;
-        iCenterY =
-                iCenterY + pYDir;
-        jCenterX.setText(Integer.toString(iCenterX));
-        jCenterY.setText(Integer.toString(iCenterY));
+    public void scroll(double pXDir, double pYDir) {
+        dCenterX = dCenterX + pXDir;
+        dCenterY = dCenterY + pYDir;
+        jCenterX.setText(Integer.toString((int)Math.floor(dCenterX)));
+        jCenterY.setText(Integer.toString((int)Math.floor(dCenterY)));
 
         double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
         double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
-        MinimapPanel.getSingleton().setSelection(iCenterX, iCenterY, (int) Math.rint(w), (int) Math.rint(h));
-        MapPanel.getSingleton().updateMapPosition(iCenterX, iCenterY);
+        MinimapPanel.getSingleton().setSelection((int)Math.floor(dCenterX), (int)Math.floor(dCenterY), (int) Math.rint(w), (int) Math.rint(h));
+        MapPanel.getSingleton().updateMapPosition(dCenterX, dCenterY);
     }
 
     /**Center a village*/
@@ -1514,7 +1502,7 @@ private void fireShowMapPopupChangedEvent(javax.swing.event.ChangeEvent evt) {//
     }
 
     @Override
-    public void fireScrollEvent(int pX, int pY) {
+    public void fireScrollEvent(double pX, double pY) {
         scroll(pX, pY);
     }
 

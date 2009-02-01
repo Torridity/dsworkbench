@@ -29,7 +29,6 @@ import de.tor.tribes.util.mark.MarkerManager;
 import de.tor.tribes.util.tag.TagManager;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
-import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
@@ -42,6 +41,7 @@ import java.awt.RenderingHints;
 import java.awt.Stroke;
 import java.awt.Toolkit;
 import java.awt.geom.Line2D;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -83,15 +83,17 @@ public class MapRenderer extends Thread {
     private Hashtable<Integer, BufferedImage> mLayers = null;
     private int iVillagesX = 0;
     private int iVillagesY = 0;
-    private int iCenterX = 500;
-    private int iCenterY = 500;
+    /* private int iCenterX = 500;
+    private int iCenterY = 500;*/
+    private double dCenterX = 500.0;
+    private double dCenterY = 500.0;
     private int xe = 0;
     private int ye = 0;
     private Village mSourceVillage = null;
     private BufferedImage mDistBorder = null;
     private Image mMarkerImage = null;
     private final NumberFormat nf = NumberFormat.getInstance();
-    private Point viewStartPoint = null;
+    private Point2D.Double viewStartPoint = null;
     private double currentZoom = 0.0;
     private Village currentUserVillage = null;
 
@@ -151,7 +153,8 @@ public class MapRenderer extends Thread {
                         selection.renderForm(g2d);
                     }
                     MenuRenderer.getSingleton().renderMenu(g2d);
-                    MapPanel.getSingleton().updateComplete(mVisibleVillages, iBuffer);
+                    Hashtable<Village, Rectangle> pos = (Hashtable<Village, Rectangle>) villagePositions.clone();
+                    MapPanel.getSingleton().updateComplete(pos, iBuffer);
                     MapPanel.getSingleton().repaint();
                     g2d.dispose();
                 }
@@ -170,53 +173,49 @@ public class MapRenderer extends Thread {
         xe = pXE;
         ye = pYE;
     }
-    private Rectangle2D.Double drawRegion = new Rectangle2D.Double(0, 0, 0, 0);
 
     /**Extract the visible villages (only needed on full repaint)*/
     private void calculateVisibleVillages() {
-        iCenterX = MapPanel.getSingleton().getCurrentPosition().x;
-        iCenterY = MapPanel.getSingleton().getCurrentPosition().y;
+        dCenterX = MapPanel.getSingleton().getCurrentPosition().x;
+        dCenterY = MapPanel.getSingleton().getCurrentPosition().y;
 
         if (DataHolder.getSingleton().getVillages() == null) {
             //probably reloading data
             return;
         }
+
         //get number of drawn villages
         currentZoom = DSWorkbenchMainFrame.getSingleton().getZoomFactor();
-        iVillagesX = (int) Math.rint((double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, currentZoom).getWidth(null));
-        iVillagesY = (int) Math.rint((double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, currentZoom).getHeight(null));
+        iVillagesX = (int) Math.ceil((double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, currentZoom).getWidth(null));
+        iVillagesY = (int) Math.ceil((double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, currentZoom).getHeight(null));
+        iVillagesX++;
+        iVillagesY++;
 
-        //make number odd to avoid spaces at the borders
-        if (iVillagesX % 2 == 0) {
-            iVillagesX++;
-        }
-        if (iVillagesY % 2 == 0) {
-            iVillagesY++;
-        }
         //calculate village coordinates of the upper left corner
-        int xStart = (int) Math.rint((double) iCenterX - (double) iVillagesX / 2.0);
-        int yStart = (int) Math.rint((double) iCenterY - (double) iVillagesY / 2.0);
+        int xStartVillage = (int) Math.floor(dCenterX - iVillagesX / 2.0);
+        int yStartVillage = (int) Math.floor(dCenterY - iVillagesY / 2.0);
 
-        /*xStart = (xStart < 0) ? 0 : xStart;
-        yStart = (yStart < 0) ? 0 : yStart;
-         */
+        double dXStart = dCenterX - (double) iVillagesX / 2.0;
+        double dYStart = dCenterY - (double) iVillagesY / 2.0;
+
         //calculate village coordinates of the lower right corner
-        int xEnd = (int) Math.rint((double) iCenterX + (double) iVillagesX / 2);
-        int yEnd = (int) Math.rint((double) iCenterY + (double) iVillagesY / 2);
+        int xEndVillage = (int) Math.ceil((double) dCenterX + (double) iVillagesX / 2.0);
+        int yEndVillage = (int) Math.ceil((double) dCenterY + (double) iVillagesY / 2.0);
 
-        /*xEnd = (xEnd > 1000) ? 1000 : xEnd;
-        yEnd = (yEnd > 1000) ? 1000 : yEnd;
-         */
+
+        //correct village count
+        iVillagesX = xEndVillage - xStartVillage;
+        iVillagesY = yEndVillage - yStartVillage;
+
         //add a small drawing buffer for all directions
-        iVillagesX += 1;
-        iVillagesY += 1;
+
         mVisibleVillages = new Village[iVillagesX][iVillagesY];
 
         int x = 0;
         int y = 0;
 
-        for (int i = xStart; i < xEnd; i++) {
-            for (int j = yStart; j < yEnd; j++) {
+        for (int i = xStartVillage; i < xEndVillage; i++) {
+            for (int j = yStartVillage; j < yEndVillage; j++) {
                 if ((i < 0) || (i > 999) || (j < 0) || (j > 999)) {
                     //handle villages outside map
                     mVisibleVillages[x][y] = null;
@@ -229,7 +228,7 @@ public class MapRenderer extends Thread {
             y = 0;
         }
 
-        viewStartPoint = new Point(xStart, yStart);
+        viewStartPoint = new Point2D.Double(dXStart, dYStart);
         MapPanel.getSingleton().updateVirtualBounds(viewStartPoint);
     }
 
@@ -272,10 +271,14 @@ public class MapRenderer extends Thread {
         int width = GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, currentZoom).getWidth(null);
         int height = GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, currentZoom).getHeight(null);
 
+
+        double xPos = viewStartPoint.x;
+        double yPos = viewStartPoint.y;
         int x = 0;
         int y = 0;
-        int xPos = viewStartPoint.x;
-        int yPos = viewStartPoint.y;
+        double dx = 0 - ((xPos - Math.floor(xPos)) * width);
+        double dy = 0 - ((yPos - Math.floor(yPos)) * height);
+
         boolean showSectors = false;
         try {
             showSectors = Boolean.parseBoolean(GlobalOptions.getProperty("show.sectors"));
@@ -294,7 +297,7 @@ public class MapRenderer extends Thread {
         List<Integer> ySectors = new LinkedList<Integer>();
         List<Integer> xContinents = new LinkedList<Integer>();
         List<Integer> yContinents = new LinkedList<Integer>();
-        Hashtable<Integer, Point> copyRegions = new Hashtable<Integer, Point>();
+        Hashtable<Integer, Point2D.Double> copyRegions = new Hashtable<Integer, Point2D.Double>();
 
         de.tor.tribes.types.Rectangle selection = MapPanel.getSingleton().getSelectionRect();
 
@@ -304,6 +307,7 @@ public class MapRenderer extends Thread {
                 Village v = mVisibleVillages[i][j];
                 boolean drawVillage = true;
 
+                // <editor-fold defaultstate="collapsed" desc=" Check if village should be drawn ">
                 //check for barbarian
                 if (!showBarbarian) {
                     if ((v != null) && (v.getTribe() == null)) {
@@ -312,7 +316,7 @@ public class MapRenderer extends Thread {
                 }
 
                 if (markedOnly && drawVillage) {
-                    if (v != null) {
+                    if (v != null && currentUserVillage != null) {
                         //valid village
                         if (v.getTribe() != null) {
                             if (!v.getTribe().equals(currentUserVillage.getTribe())) {
@@ -352,28 +356,33 @@ public class MapRenderer extends Thread {
                         drawVillage = false;
                     }
                 }
+                // </editor-fold>
 
                 if (v == null) {
+                    //no village at current position
                     Image underground = null;
                     if (useDecoration) {
-                        underground = WorldDecorationHolder.getTexture(xPos, yPos, currentZoom);
+                        underground = WorldDecorationHolder.getTexture((int) Math.floor(xPos), (int) Math.floor(yPos), currentZoom);
                     }
 
                     if (underground == null) {
-                        Point p = copyRegions.get(Skin.ID_DEFAULT_UNDERGROUND);
+                        Point2D.Double p = copyRegions.get(Skin.ID_DEFAULT_UNDERGROUND);
                         if (p == null) {
-                            g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, currentZoom), x, y, null);
-                            if (MapPanel.getSingleton().getBounds().contains(new Rectangle(x, y, width, height))) {
-                                copyRegions.put(Skin.ID_DEFAULT_UNDERGROUND, new Point(x, y));
+                            g2d.drawImage(GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, currentZoom), (int) Math.floor(x + dx), (int) Math.floor(y + dy), null);
+                            //check containment using size tolerance
+                            if (MapPanel.getSingleton().getBounds().contains(new Rectangle((int) Math.floor(x + dx), (int) Math.floor(y + dy), width + 2, height + 2))) {
+                                copyRegions.put(Skin.ID_DEFAULT_UNDERGROUND, new Point2D.Double((int) Math.floor(x + dx), (int) Math.floor(y + dy)));
                             }
                         } else {
-                            g2d.copyArea(p.x, p.y, width, height, x - p.x, y - p.y);
+                            g2d.copyArea((int) Math.floor(p.x), (int) Math.floor(p.y), width, height, (int) Math.floor(x + dx - p.x), (int) Math.floor(y + dy - p.y));
                         }
                     } else {
-                        g2d.drawImage(underground, x, y, null);
+                        g2d.drawImage(underground, (int) Math.floor(x + dx), (int) Math.floor(y + dy), null);
                     }
                 } else {
+                    // <editor-fold defaultstate="collapsed" desc=" Select village type ">
                     int type = Skin.ID_V1;
+                    v.setVisibleOnMap(drawVillage);
                     if (drawVillage) {
                         boolean isLeft = false;
                         if (v.getTribe() == null) {
@@ -460,22 +469,23 @@ public class MapRenderer extends Thread {
                             }
                         }
                         //store village rectangle
-                        villagePositions.put(v, new Rectangle(x, y, width, height));
+                        villagePositions.put(v, new Rectangle((int) Math.floor(x + dx), (int) Math.floor(y + dy), width, height));
                     } else {
                         type = Skin.ID_DEFAULT_UNDERGROUND;
                         mVisibleVillages[i][j] = null;
                     }
+                    // </editor-fold>
 
                     //drawing
-                    Point p = copyRegions.get(type);
+                    Point2D.Double p = copyRegions.get(type);
                     if (p == null) {
-                        g2d.drawImage(GlobalOptions.getSkin().getImage(type, currentZoom), x, y, null);
+                        g2d.drawImage(GlobalOptions.getSkin().getImage(type, currentZoom), (int) Math.floor(x + dx), (int) Math.floor(y + dy), null);
                         //check containment using size tolerance
-                        if (MapPanel.getSingleton().getBounds().contains(new Rectangle(x, y, width + 2, height + 2))) {
-                            copyRegions.put(type, new Point(x, y));
+                        if (MapPanel.getSingleton().getBounds().contains(new Rectangle((int) Math.floor(x + dx), (int) Math.floor(y + dy), width + 2, height + 2))) {
+                            copyRegions.put(type, new Point2D.Double((int) Math.floor(x + dx), (int) Math.floor(y + dy)));
                         }
                     } else {
-                        g2d.copyArea(p.x, p.y, width, height, x - p.x, y - p.y);
+                        g2d.copyArea((int) Math.floor(p.x), (int) Math.floor(p.y), width, height, (int) Math.floor(x + dx - p.x), (int) Math.floor(y + dy - p.y));
                     }
 
                     if (selection != null) {
@@ -487,53 +497,57 @@ public class MapRenderer extends Thread {
                 y += height;
                 yPos++;
 
-                if ((showSectors) && (yPos % 5 == 0)) {
-                    int pos = (yPos - viewStartPoint.y) * height;
+                if ((showSectors) && ((int) Math.floor(yPos) % 5 == 0)) {
+                    int pos = (int) Math.floor((yPos - viewStartPoint.y) * height);
                     ySectors.add(pos);
                 }
 
-                if ((showContinents) && (yPos % 100 == 0)) {
-                    int pos = (yPos - viewStartPoint.y) * height;
+                if ((showContinents) && ((int) Math.floor(yPos) % 100 == 0)) {
+                    int pos = (int) Math.floor((yPos - viewStartPoint.y) * height);
                     yContinents.add(pos);
                 }
             }
+
             y = 0;
             x += width;
             yPos = viewStartPoint.y;
             xPos++;
 
-            if ((showSectors) && (xPos % 5 == 0)) {
-                int pos = (xPos - viewStartPoint.x) * width;
+            if ((showSectors) && ((int) Math.floor(xPos) % 5 == 0)) {
+                int pos = (int) Math.floor((xPos - viewStartPoint.x) * width);
                 xSectors.add(pos);
             }
 
-            if ((showContinents) && (xPos % 100 == 0)) {
-                int pos = (xPos - viewStartPoint.x) * width;
+            if ((showContinents) && ((int) Math.floor(xPos) % 100 == 0)) {
+                int pos = (int) Math.floor((xPos - viewStartPoint.x) * width);
                 xContinents.add(pos);
             }
         }
 
-        g2d.setStroke(new BasicStroke(0.5f));
+        Stroke s = g2d.getStroke();
         if (showSectors) {
+            g2d.setStroke(new BasicStroke(0.5f));
             g2d.setColor(Color.BLACK);
             for (Integer xs : xSectors) {
-                g2d.drawLine(xs, 0, xs, hb);
+                g2d.drawLine((int) Math.floor(xs + dx), 0, (int) Math.floor(xs + dx), hb);
             }
             for (Integer ys : ySectors) {
-                g2d.drawLine(0, ys, wb, ys);
+                g2d.drawLine(0, (int) Math.floor(ys + dy), wb, (int) Math.floor(ys + dy));
             }
         }
-        g2d.setStroke(new BasicStroke(1.0f));
+
         if (showContinents) {
+            g2d.setStroke(new BasicStroke(1.0f));
             g2d.setColor(Color.YELLOW);
             for (Integer xs : xContinents) {
-                g2d.drawLine(xs, 0, xs, hb);
+                g2d.drawLine((int) Math.floor(xs + dx), 0, (int) Math.floor(xs + dx), hb);
             }
 
             for (Integer ys : yContinents) {
-                g2d.drawLine(0, ys, wb, ys);
+                g2d.drawLine(0, (int) Math.floor(ys + dy), wb, (int) Math.floor(ys + dy));
             }
         }
+        g2d.setStroke(s);
         //</editor-fold>
 
         /* Enumeration<Integer> keys = copyRegions.keys();
@@ -569,54 +583,47 @@ public class MapRenderer extends Thread {
         Graphics2D g2d = layer.createGraphics();
         prepareGraphics(g2d);
 
-        int width = GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, currentZoom).getWidth(null);
-        int height = GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, currentZoom).getHeight(null);
-
-        int x = 0;
-        int y = 0;
-        int xPos = viewStartPoint.x;
-        int yPos = viewStartPoint.y;
-
         Hashtable<Integer, Point> copyRegions = new Hashtable<Integer, Point>();
         int tagsize = (int) Math.rint((double) 18 / currentZoom);
+
         // <editor-fold defaultstate="collapsed" desc="Graphics drawing">
-        for (int i = 0; i < iVillagesX; i++) {
-            for (int j = 0; j < iVillagesY; j++) {
-                Village v = mVisibleVillages[i][j];
-                if (v != null) {
-                    //filter tags
-                    List<Tag> villageTags = TagManager.getSingleton().getTags(v);
-                    if (villageTags.size() != 0) {
-                        int xcnt = 1;
-                        int ycnt = 2;
-                        int cnt = 0;
-                        for (Tag tag : TagManager.getSingleton().getTags(v)) {
-                            if (tag.isShowOnMap()) {
-                                int iconType = tag.getTagIcon();
-                                Color color = tag.getTagColor();
-                                int tagX = x + width - xcnt * tagsize;
-                                int tagY = y + height - ycnt * tagsize;
-                                if (color != null) {
-                                    Color before = g2d.getColor();
-                                    g2d.setColor(color);
-                                    g2d.fillRect(tagX, tagY, tagsize, tagsize);
-                                    g2d.setColor(before);
-                                }
-                                if (iconType != -1) {
-                                    //drawing
-                                    Point p = copyRegions.get(iconType);
-                                    if (p == null) {
-                                        Image tagImage = ImageManager.getUnitImage(iconType).getScaledInstance(tagsize, tagsize, Image.SCALE_FAST);
-                                        g2d.drawImage(tagImage, tagX, tagY, null);
-                                        //check containment using size tolerance
-                                        if (MapPanel.getSingleton().getBounds().contains(new Rectangle(tagX, tagY, tagsize + 2, tagsize + 2))) {
-                                            copyRegions.put(iconType, new Point(tagX, tagY));
-                                        }
-                                    } else {
-                                        g2d.copyArea(p.x, p.y, tagsize, tagsize, tagX - p.x, tagY - p.y);
+        Enumeration<Village> villages = villagePositions.keys();
+        while (villages.hasMoreElements()) {
+            Village current = villages.nextElement();
+            Rectangle r = villagePositions.get(current);
+            List<Tag> villageTags = TagManager.getSingleton().getTags(current);
+            if (villageTags != null && villageTags.size() != 0) {
+                int xcnt = 1;
+                int ycnt = 2;
+                int cnt = 0;
+                for (Tag tag : TagManager.getSingleton().getTags(current)) {
+                    if (tag.isShowOnMap()) {
+                        int iconType = tag.getTagIcon();
+                        Color color = tag.getTagColor();
+                        if (color != null || iconType != -1) {
+                            int tagX = r.x + r.width - xcnt * tagsize;
+                            int tagY = r.y + r.height - ycnt * tagsize;
+                            if (color != null) {
+                                Color before = g2d.getColor();
+                                g2d.setColor(color);
+                                g2d.fillRect(tagX, tagY, tagsize, tagsize);
+                                g2d.setColor(before);
+                            }
+                            if (iconType != -1) {
+                                //drawing
+                                Point p = copyRegions.get(iconType);
+                                if (p == null) {
+                                    Image tagImage = ImageManager.getUnitImage(iconType).getScaledInstance(tagsize, tagsize, Image.SCALE_FAST);
+                                    g2d.drawImage(tagImage, tagX, tagY, null);
+                                    //check containment using size tolerance
+                                    if (MapPanel.getSingleton().getBounds().contains(new Rectangle(tagX, tagY, tagsize + 2, tagsize + 2))) {
+                                        copyRegions.put(iconType, new Point(tagX, tagY));
                                     }
+                                } else {
+                                    g2d.copyArea(p.x, p.y, tagsize, tagsize, tagX - p.x, tagY - p.y);
                                 }
                             }
+
                             //calculate positioning
                             cnt++;
                             xcnt++;
@@ -628,13 +635,7 @@ public class MapRenderer extends Thread {
                         }
                     }
                 }
-                y += height;
-                yPos++;
             }
-            y = 0;
-            x += width;
-            yPos = viewStartPoint.y;
-            xPos++;
         }
 
 
@@ -646,6 +647,7 @@ public class MapRenderer extends Thread {
         }
          */
         //</editor-fold>
+
         g2d.dispose();
     }
 
@@ -791,10 +793,10 @@ public class MapRenderer extends Thread {
                     Rectangle2D.Double bounds = new Rectangle2D.Double(viewStartPoint.x, viewStartPoint.y, iVillagesX, iVillagesY);
                     String value = GlobalOptions.getProperty("attack.movement");
                     boolean showAttackMovement = (value == null) ? false : Boolean.parseBoolean(value);
-                    int xStart = ((int) attackLine.getX1() - viewStartPoint.x) * width + width / 2;
-                    int yStart = ((int) attackLine.getY1() - viewStartPoint.y) * height + height / 2;
-                    int xEnd = (int) (attackLine.getX2() - viewStartPoint.x) * width + width / 2;
-                    int yEnd = (int) (attackLine.getY2() - viewStartPoint.y) * height + height / 2;
+                    double xStart = (attackLine.getX1() - viewStartPoint.x) * width + width / 2;
+                    double yStart = (attackLine.getY1() - viewStartPoint.y) * height + height / 2;
+                    double xEnd = (attackLine.getX2() - viewStartPoint.x) * width + width / 2;
+                    double yEnd = (attackLine.getY2() - viewStartPoint.y) * height + height / 2;
                     ImageIcon unitIcon = null;
                     int unitXPos = 0;
                     int unitYPos = 0;
@@ -828,10 +830,10 @@ public class MapRenderer extends Thread {
                     }
 
                     g2d.setColor(attackColors.get(attack.getUnit().getName()));
-                    g2d.drawLine(xStart, yStart, xEnd, yEnd);
+                    g2d.drawLine((int) Math.rint(xStart), (int) Math.rint(yStart), (int) Math.rint(xEnd), (int) Math.rint(yEnd));
                     g2d.setColor(Color.YELLOW);
                     if (bounds.contains(attackLine.getP1())) {
-                        g2d.fillRect((int) xStart - 3, yStart - 1, 6, 6);
+                        g2d.fillRect((int) Math.rint(xStart) - 3, (int) Math.rint(yStart) - 1, 6, 6);
                     }
 
                     if (bounds.contains(attackLine.getP2())) {

@@ -503,7 +503,8 @@ public class DataHolder {
                 URL u = new URL(downloadURL + "/village.txt.gz");
 
                 Proxy p = DSWorkbenchSettingsDialog.getSingleton().getWebProxy();
-                BufferedReader r = new BufferedReader(new InputStreamReader(new GZIPInputStream(u.openConnection(p).getInputStream())));
+                URLConnection con = u.openConnection(p);
+                BufferedReader r = new BufferedReader(new InputStreamReader(new GZIPInputStream(con.getInputStream())));
                 String line = "";
                 while ((line = r.readLine()) != null) {
                     line = line.replaceAll(",,", ", ,");

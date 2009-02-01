@@ -6,6 +6,7 @@
 package de.tor.tribes.ui;
 
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.util.BrowserCommandSender;
@@ -30,25 +31,31 @@ import de.tor.tribes.ui.renderer.MapRenderer;
 import de.tor.tribes.ui.renderer.MenuRenderer;
 import de.tor.tribes.util.Skin;
 import de.tor.tribes.util.VillageSelectionListener;
+import de.tor.tribes.util.tag.TagManager;
 import java.awt.Color;
+import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 import java.awt.geom.Point2D;
+import java.util.Enumeration;
+import java.util.Hashtable;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
 /**
  *@TODO Add flag-marker for single villages/notes? -> notes as forms? (Version 2.0)
+@TODO Only allow selection of drawn villages by selection tool
  * @author  Charon
  */
 public class MapPanel extends javax.swing.JPanel {
 
     // <editor-fold defaultstate="collapsed" desc=" Member variables ">
     private static Logger logger = Logger.getLogger("MapCanvas");
-    private Village[][] mVisibleVillages = null;
     private Image mBuffer = null;
-    private int iCenterX = 500;
-    private int iCenterY = 500;
+    /* private int iCenterX = 500;
+    private int iCenterY = 500;*/
+    private double dCenterX = 500.0;
+    private double dCenterY = 500.0;
     private Rectangle2D.Double mVirtualBounds = null;
     private int iCurrentCursor = ImageManager.CURSOR_DEFAULT;
     private Village mSourceVillage = null;
@@ -69,8 +76,9 @@ public class MapPanel extends javax.swing.JPanel {
     private boolean positionUpdate = false;
     private de.tor.tribes.types.Rectangle selectionRect = null;
     private VillageSelectionListener mVillageSelectionListener = null;
-
+    private Hashtable<Village, Rectangle> mVillagePositions = null;
     // </editor-fold>
+
     public static synchronized MapPanel getSingleton() {
         if (SINGLETON == null) {
             SINGLETON = new MapPanel();
@@ -539,16 +547,21 @@ public class MapPanel extends javax.swing.JPanel {
 
                 switch (iCurrentCursor) {
                     case ImageManager.CURSOR_DEFAULT: {
+                        if (isOutside) {
+                            return;
+                        }
                         Point location = MouseInfo.getPointerInfo().getLocation();
                         if ((mouseDownPoint == null) || (location == null)) {
                             break;
                         }
-                        double dx = location.getX() - mouseDownPoint.getX();
-                        double dy = location.getY() - mouseDownPoint.getY();
-                        if (Math.abs(dx) > 20 || Math.abs(dy) > 20) {
-                            mouseDownPoint = location;
-                            fireScrollEvents((int) Math.rint(dx / -20), (int) Math.rint(dy / -20));
-                        }
+                        double dx = (double) location.getX() - (double) mouseDownPoint.getX();
+                        double dy = (double) location.getY() - (double) mouseDownPoint.getY();
+                        mouseDownPoint = location;
+                        double zoom = DSWorkbenchMainFrame.getSingleton().getZoomFactor();
+                        Image i = GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, zoom);
+                        double w = (double) i.getWidth(null);
+                        double h = (double) i.getHeight(null);
+                        fireScrollEvents(-dx / w, -dy / h);
                         break;
                     }
                     case ImageManager.CURSOR_SELECTION: {
@@ -660,7 +673,8 @@ public class MapPanel extends javax.swing.JPanel {
         for (int x = xStart; x <= xEnd; x++) {
             for (int y = yStart; y <= yEnd; y++) {
                 try {
-                    if (DataHolder.getSingleton().getVillages()[x][y] != null) {
+                    Village v = DataHolder.getSingleton().getVillages()[x][y];
+                    if (v != null && v.isVisibleOnMap()) {
                         cnt++;
                     }
                 } catch (Exception e) {
@@ -681,7 +695,7 @@ public class MapPanel extends javax.swing.JPanel {
             for (int y = yStart; y <= yEnd; y++) {
                 try {
                     Village v = DataHolder.getSingleton().getVillages()[x][y];
-                    if (v != null) {
+                    if (v != null && v.isVisibleOnMap()) {
                         villages.add(v);
                     }
                 } catch (Exception e) {
@@ -739,10 +753,11 @@ public class MapPanel extends javax.swing.JPanel {
             //clean map
             g.fillRect(0, 0, getWidth(), getHeight());
             //calculate move direction if mouse is dragged outside the map
-            if ((isOutside) && (mouseDown)) {
-                mousePos = MouseInfo.getPointerInfo().getLocation();
-                int outcodes = mapBounds.outcode(mousePos);
 
+            if ((isOutside) && (mouseDown) && (iCurrentCursor != ImageManager.CURSOR_DEFAULT)) {
+                mousePos = MouseInfo.getPointerInfo().getLocation();
+
+                int outcodes = mapBounds.outcode(mousePos);
                 if ((outcodes & Rectangle2D.OUT_LEFT) != 0) {
                     xDir += -1;
                 } else if ((outcodes & Rectangle2D.OUT_RIGHT) != 0) {
@@ -779,7 +794,7 @@ public class MapPanel extends javax.swing.JPanel {
 
             //draw off-screen image of map
             Graphics2D g2d = (Graphics2D) g;
-            g2d.drawImage(mBuffer, 0, 0, getWidth(), getHeight(), null);
+            g2d.drawImage(mBuffer, 0, 0, null);
             g2d.dispose();
         } catch (Exception e) {
             logger.error("Failed to paint", e);
@@ -788,9 +803,9 @@ public class MapPanel extends javax.swing.JPanel {
     }
 
     /**Update map to new position -> needs fully update*/
-    protected synchronized void updateMapPosition(int pX, int pY) {
-        iCenterX = pX;
-        iCenterY = pY;
+    protected synchronized void updateMapPosition(double pX, double pY) {
+        dCenterX = pX;
+        dCenterY = pY;
 
         if (mMapRenderer == null) {
             logger.info("Creating MapRenderer");
@@ -802,7 +817,7 @@ public class MapPanel extends javax.swing.JPanel {
         getMapRenderer().initiateRedraw(MapRenderer.ALL_LAYERS);
     }
 
-    public void updateVirtualBounds(Point pViewStart) {
+    public void updateVirtualBounds(Point2D.Double pViewStart) {
         double zoom = DSWorkbenchMainFrame.getSingleton().getZoomFactor();
         double xV = pViewStart.getX();
         double yV = pViewStart.getY();
@@ -811,8 +826,8 @@ public class MapPanel extends javax.swing.JPanel {
         mVirtualBounds.setRect(xV, yV, wV, hV);
     }
 
-    public Point getCurrentPosition() {
-        return new Point(iCenterX, iCenterY);
+    public Point2D.Double getCurrentPosition() {
+        return new Point2D.Double(dCenterX, dCenterY);
     }
 
     public void setVillageSelectionListener(VillageSelectionListener pListener) {
@@ -865,14 +880,19 @@ public class MapPanel extends javax.swing.JPanel {
             return null;
         }
 
+        if (mVillagePositions == null) {
+            return null;
+        }
+
         try {
-            int x = (int) getMousePosition().getX();
-            int y = (int) getMousePosition().getY();
-
-            x /= GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, DSWorkbenchMainFrame.getSingleton().getZoomFactor()).getWidth(null);
-            y /= GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, DSWorkbenchMainFrame.getSingleton().getZoomFactor()).getHeight(null);
-
-            return mVisibleVillages[x][y];
+            Enumeration<Village> villages = mVillagePositions.keys();
+            Point mouse = getMousePosition();
+            while (villages.hasMoreElements()) {
+                Village current = villages.nextElement();
+                if (mVillagePositions.get(current).contains(mouse)) {
+                    return current;
+                }
+            }
         } catch (Exception e) {
             //failed getting village (probably getting mousepos failed)
         }
@@ -881,9 +901,9 @@ public class MapPanel extends javax.swing.JPanel {
     }
 
     /**Update operation perfomed by the RepaintThread was completed*/
-    public void updateComplete(Village[][] pVillages, Image pBuffer) {
+    public void updateComplete(Hashtable<Village, Rectangle> pPositions, Image pBuffer) {
         mBuffer = pBuffer;
-        mVisibleVillages = pVillages;
+        mVillagePositions = pPositions;
         if (positionUpdate) {
             DSWorkbenchFormFrame.getSingleton().updateFormList();
         }
@@ -908,7 +928,7 @@ public class MapPanel extends javax.swing.JPanel {
     listener.fireDistanceEvent(pSource, pTarget);
     }
     }*/
-    public synchronized void fireScrollEvents(int pX, int pY) {
+    public synchronized void fireScrollEvents(double pX, double pY) {
         for (MapPanelListener listener : mMapPanelListeners) {
             listener.fireScrollEvent(pX, pY);
         }

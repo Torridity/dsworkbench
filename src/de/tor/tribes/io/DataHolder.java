@@ -59,7 +59,7 @@ public class DataHolder {
     private static DataHolder SINGLETON = null;
     private boolean loading = false;
     private int currentBonusType = 0;
-
+    
     public static synchronized DataHolder getSingleton() {
         if (SINGLETON == null) {
             SINGLETON = new DataHolder();
@@ -414,6 +414,7 @@ public class DataHolder {
             logger.info("Read " + vc + " villages");
             logger.info("Read " + ac + " allies");
             logger.info("Read " + tc + " tribes");
+
             r.close();
         } catch (Exception e) {
             logger.error("Failed loading local data", e);

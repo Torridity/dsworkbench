@@ -319,6 +319,7 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
                 mBuffer = mBuffer.getScaledInstance(getWidth(), getHeight(), BufferedImage.SCALE_SMOOTH);
             }
             doRedraw = false;
+            
             repaint();
         } catch (Exception e) {
             logger.error("Exception while updating Minimap", e);

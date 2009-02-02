@@ -118,12 +118,8 @@ public class MapRenderer extends Thread {
     @Override
     public void run() {
         logger.debug("Entering render loop");
-        //long s = System.currentTimeMillis();
         while (true) {
-            // System.out.println("Dur: " + (System.currentTimeMillis() - s));
-            //  s = System.currentTimeMillis();
             try {
-
                 int w = MapPanel.getSingleton().getWidth();
                 int h = MapPanel.getSingleton().getHeight();
                 if ((w != 0) && (h != 0)) {
@@ -145,7 +141,6 @@ public class MapRenderer extends Thread {
                     renderBasicDecoration(g2d);
                     renderAttacks(g2d);
                     renderExtendedDecoration(g2d);
-
                     //draw live layer
                     renderLiveLayer(g2d);
                     de.tor.tribes.types.Rectangle selection = MapPanel.getSingleton().getSelectionRect();
@@ -374,7 +369,7 @@ public class MapRenderer extends Thread {
                                 copyRegions.put(Skin.ID_DEFAULT_UNDERGROUND, new Point2D.Double((int) Math.floor(x + dx), (int) Math.floor(y + dy)));
                             }
                         } else {
-                            g2d.copyArea((int) Math.floor(p.x), (int) Math.floor(p.y), width, height, (int) Math.floor(x + dx - p.x), (int) Math.floor(y + dy - p.y));
+                            g2d.copyArea((int) p.x, (int) p.y, width, height, (int) Math.floor(x + dx - p.x), (int) Math.floor(y + dy - p.y));
                         }
                     } else {
                         g2d.drawImage(underground, (int) Math.floor(x + dx), (int) Math.floor(y + dy), null);
@@ -485,7 +480,7 @@ public class MapRenderer extends Thread {
                             copyRegions.put(type, new Point2D.Double((int) Math.floor(x + dx), (int) Math.floor(y + dy)));
                         }
                     } else {
-                        g2d.copyArea((int) Math.floor(p.x), (int) Math.floor(p.y), width, height, (int) Math.floor(x + dx - p.x), (int) Math.floor(y + dy - p.y));
+                        g2d.copyArea((int) p.x, (int) p.y, width, height, (int) Math.floor(x + dx - p.x), (int) Math.floor(y + dy - p.y));
                     }
 
                     if (selection != null) {

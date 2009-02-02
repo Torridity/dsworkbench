@@ -41,6 +41,7 @@ import javax.swing.JTable;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
 import org.apache.log4j.Logger;
 
 /**
@@ -367,6 +368,7 @@ public class VillageSupportFrame extends javax.swing.JFrame {
         UnitHolder selectedUnit = null;
         int row = jSupportTable.getSelectedRow();
         if (row >= 0) {
+            //row = jSupportTable.convertRowIndexToModel(row);
             selectedUnit = (UnitHolder) jSupportTable.getValueAt(row, 1);
         }
         UnitOrderBuilder.showUnitOrder(null, selectedUnit);
@@ -386,9 +388,10 @@ public class VillageSupportFrame extends javax.swing.JFrame {
             if ((rows != null) && (rows.length > 0)) {
                 StringBuffer buffer = new StringBuffer();
                 for (int i : rows) {
-                    Village source = (Village) jSupportTable.getValueAt(i, 0);
-                    UnitHolder sUnit = (UnitHolder) jSupportTable.getValueAt(i, 1);
-                    Date sTime = (Date) jSupportTable.getValueAt(i, 2);
+                    int row = i;//jSupportTable.convertRowIndexToModel(i);
+                    Village source = (Village) jSupportTable.getValueAt(row, 0);
+                    UnitHolder sUnit = (UnitHolder) jSupportTable.getValueAt(row, 1);
+                    Date sTime = (Date) jSupportTable.getValueAt(row, 2);
                     String sendtime = new SimpleDateFormat("dd.MM.yy HH:mm:ss.SSS").format(sTime);
                     String v = jTargetVillage.getText();
                     String coord = v.substring(v.lastIndexOf("(") + 1, v.lastIndexOf(")")).trim();
@@ -466,9 +469,10 @@ public class VillageSupportFrame extends javax.swing.JFrame {
 
                 String sUrl = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
                 for (int i : rows) {
-                    Village source = (Village) jSupportTable.getValueAt(i, 0);
-                    UnitHolder unit = (UnitHolder) jSupportTable.getValueAt(i, 1);
-                    Date sendTime = (Date) jSupportTable.getValueAt(i, 2);
+                    int row = i;//jSupportTable.convertRowIndexToModel(i);
+                    Village source = (Village) jSupportTable.getValueAt(row, 0);
+                    UnitHolder unit = (UnitHolder) jSupportTable.getValueAt(row, 1);
+                    Date sendTime = (Date) jSupportTable.getValueAt(row, 2);
                     buffer.append("");
                     String sendtime = "";
                     if (extended) {
@@ -551,7 +555,7 @@ public class VillageSupportFrame extends javax.swing.JFrame {
         };
 
         jSupportTable.setModel(model);
-
+        jSupportTable.setRowSorter(new TableRowSorter(model));
         for (int i = 0; i < jSupportTable.getColumnCount(); i++) {
             DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
 
@@ -595,8 +599,9 @@ public class VillageSupportFrame extends javax.swing.JFrame {
 
         Hashtable<UnitHolder, Integer> forceTable = new Hashtable<UnitHolder, Integer>();
         for (int i = 0; i < jSupportTable.getRowCount(); i++) {
-            Village v = (Village) jSupportTable.getValueAt(i, 0);
-            UnitHolder u = (UnitHolder) jSupportTable.getValueAt(i, 1);
+            int row = i;//jSupportTable.convertRowIndexToModel(i);
+            Village v = (Village) jSupportTable.getValueAt(row, 0);
+            UnitHolder u = (UnitHolder) jSupportTable.getValueAt(row, 1);
             boolean useUnits = false;
             for (int j = 0; j < units.length; j++) {
                 if (!useUnits) {

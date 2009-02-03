@@ -24,6 +24,7 @@ public class VillageTagFrame extends javax.swing.JFrame {
 
     public static synchronized VillageTagFrame getSingleton() {
         if (SINGLETON == null) {
+            System.out.println("VilTag");
             SINGLETON = new VillageTagFrame();
         }
         return SINGLETON;

@@ -45,7 +45,6 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
 
     private static Logger logger = Logger.getLogger("MinimapCanvas");
     private Image mBuffer = null;
-    private MinimapRepaintThread mPaintThread = null;
     private int iX = 0;
     private int iY = 0;
     private int iWidth = 0;
@@ -63,6 +62,7 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
 
     public static synchronized MinimapPanel getSingleton() {
         if (SINGLETON == null) {
+            System.out.println("MiniMapPanel");
             SINGLETON = new MinimapPanel();
         }
         return SINGLETON;
@@ -78,8 +78,7 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
         mScreenshotPanel = new ScreenshotPanel();
         jPanel1.add(mScreenshotPanel);
         MarkerManager.getSingleton().addMarkerManagerListener(this);
-        mPaintThread = new MinimapRepaintThread();
-        mPaintThread.start();
+        MinimapRepaintThread.getSingleton().start();
 
         addMouseListener(new MouseListener() {
 
@@ -108,7 +107,7 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
                 }
                 if (iCurrentCursor == ImageManager.CURSOR_SHOT) {
                     try {
-                        BufferedImage i = mPaintThread.getBuffer();
+                        BufferedImage i = MinimapRepaintThread.getSingleton().getBuffer();
                         int mapWidth = (int) ServerSettings.getSingleton().getMapDimension().getWidth();
                         int mapHeight = (int) ServerSettings.getSingleton().getMapDimension().getHeight();
                         int x = (int) Math.rint((double) mapWidth / (double) getWidth() * (double) rDrag.getX());
@@ -299,6 +298,7 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
 
     public void resetBuffer() {
         mBuffer = null;
+        redraw();
     }
 
     protected void updateComplete(BufferedImage pBuffer) {
@@ -319,7 +319,7 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
                 mBuffer = mBuffer.getScaledInstance(getWidth(), getHeight(), BufferedImage.SCALE_SMOOTH);
             }
             doRedraw = false;
-            
+
             repaint();
         } catch (Exception e) {
             logger.error("Exception while updating Minimap", e);
@@ -330,7 +330,7 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
     public void redraw() {
         doRedraw = true;
         try {
-            mPaintThread.update();
+            MinimapRepaintThread.getSingleton().update();
         } catch (Exception e) {
         }
     }
@@ -607,16 +607,35 @@ class MinimapRepaintThread extends Thread {
     private BufferedImage mBuffer = null;
     private boolean drawn = false;
     private Dimension mapDim = null;
+    private static MinimapRepaintThread SINGLETON = null;
 
-    public MinimapRepaintThread() {
-        mapDim = ServerSettings.getSingleton().getMapDimension();
-        mBuffer = new BufferedImage(mapDim.width, mapDim.height, BufferedImage.TYPE_INT_RGB);
+    public static synchronized MinimapRepaintThread getSingleton() {
+        if (SINGLETON == null) {
+            try {
+                System.out.println("MiniMapRep");
+                SINGLETON = new MinimapRepaintThread();
+            } catch (Exception e) {
+                SINGLETON = null;
+            }
+        }
+
+        return SINGLETON;
+    }
+
+    MinimapRepaintThread() {
     }
 
     public void update() {
         Dimension currentDim = ServerSettings.getSingleton().getMapDimension();
-        if ((mapDim.width != currentDim.width) || (mapDim.height != currentDim.height)) {
-            mapDim.setSize(currentDim);
+        if (currentDim == null) {
+            return;
+        }
+        if ((mapDim == null) || (mapDim.width != currentDim.width) || (mapDim.height != currentDim.height)) {
+            if (mapDim == null) {
+                mapDim = (Dimension) currentDim.clone();
+            } else {
+                mapDim.setSize(currentDim);
+            }
             mBuffer = new BufferedImage(mapDim.width, mapDim.height, BufferedImage.TYPE_INT_RGB);
         }
         drawn = false;
@@ -639,7 +658,11 @@ class MinimapRepaintThread extends Thread {
                 } catch (Exception e) {
                 }
             } catch (Exception oe) {
-                logger.error("Failed to re-render minimap", oe);
+                if (mBuffer == null) {
+                    update();
+                } else {
+                    logger.error("Failed to re-render minimap", oe);
+                }
             }
         }
     }

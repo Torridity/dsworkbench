@@ -28,6 +28,7 @@ public class TagManager {
 
     public static synchronized TagManager getSingleton() {
         if (SINGLETON == null) {
+            System.out.println("TagManager");
             SINGLETON = new TagManager();
         }
         return SINGLETON;

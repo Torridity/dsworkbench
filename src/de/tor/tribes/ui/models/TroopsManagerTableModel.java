@@ -29,6 +29,7 @@ public class TroopsManagerTableModel extends AbstractTableModel {
 
     public static synchronized TroopsManagerTableModel getSingleton() {
         if (SINGLETON == null) {
+            System.out.println("TroopTableModel");
             SINGLETON = new TroopsManagerTableModel();
         }
         return SINGLETON;

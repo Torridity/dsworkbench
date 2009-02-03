@@ -62,6 +62,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
 
     public static synchronized DSWorkbenchAttackFrame getSingleton() {
         if (SINGLETON == null) {
+            System.out.println("AttackFrame");
             SINGLETON = new DSWorkbenchAttackFrame();
         }
         return SINGLETON;

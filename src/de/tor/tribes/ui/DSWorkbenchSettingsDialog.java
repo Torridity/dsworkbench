@@ -71,6 +71,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
 
     public static synchronized DSWorkbenchSettingsDialog getSingleton() {
         if (SINGLETON == null) {
+            System.out.println("Settings");
             SINGLETON = new DSWorkbenchSettingsDialog();
         }
 

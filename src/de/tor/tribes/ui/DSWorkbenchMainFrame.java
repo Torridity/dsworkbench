@@ -63,6 +63,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
 
     public static synchronized DSWorkbenchMainFrame getSingleton() {
         if (SINGLETON == null) {
+            System.out.println("MainFrame");
             SINGLETON = new DSWorkbenchMainFrame();
         }
         return SINGLETON;
@@ -362,7 +363,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             jCurrentPlayerVillages.setModel(model);
         }
         //update views
-
         MinimapPanel.getSingleton().redraw();
         MapPanel.getSingleton().updateMapPosition(dCenterX, dCenterY);
         DSWorkbenchMarkerFrame.getSingleton().setupMarkerPanel();
@@ -861,7 +861,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                 .addGroup(jNavigationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jRefreshButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jCenterCoordinateIngame, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(32, Short.MAX_VALUE))
+                .addContainerGap(42, Short.MAX_VALUE))
         );
         jNavigationPanelLayout.setVerticalGroup(
             jNavigationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -948,8 +948,8 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jInformationPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jCurrentPlayer, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 238, Short.MAX_VALUE)
-                    .addComponent(jCurrentPlayerVillages, javax.swing.GroupLayout.Alignment.LEADING, 0, 238, Short.MAX_VALUE)
+                    .addComponent(jCurrentPlayer, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 248, Short.MAX_VALUE)
+                    .addComponent(jCurrentPlayerVillages, javax.swing.GroupLayout.Alignment.LEADING, 0, 248, Short.MAX_VALUE)
                     .addGroup(jInformationPanelLayout.createSequentialGroup()
                         .addComponent(jCenterIngameButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -994,14 +994,15 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap(213, Short.MAX_VALUE)
-                .addComponent(jCurrentToolLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jShowMapPopup)
-                .addContainerGap(119, Short.MAX_VALUE))
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                        .addContainerGap(223, Short.MAX_VALUE)
+                        .addComponent(jCurrentToolLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jShowMapPopup)))
+                .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1169,13 +1170,13 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 571, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 561, Short.MAX_VALUE)
+                .addGap(6, 6, 6)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jInformationPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jNavigationPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jInformationPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jMinimapPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 270, Short.MAX_VALUE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jNavigationPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -1184,7 +1185,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 699, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addComponent(jMinimapPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jNavigationPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1208,14 +1209,14 @@ private void fireRefreshMapEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:eve
         cy = dCenterY;
     }
 
-    jCenterX.setText(Integer.toString((int)Math.floor(cx)));
-    jCenterY.setText(Integer.toString((int)Math.floor(cy)));
+    jCenterX.setText(Integer.toString((int) Math.floor(cx)));
+    jCenterY.setText(Integer.toString((int) Math.floor(cy)));
     dCenterX = cx;
     dCenterY = cy;
 
     double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
     double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
-    MinimapPanel.getSingleton().setSelection((int)Math.floor(cx), (int)Math.floor(cy), (int) Math.rint(w), (int) Math.rint(h));
+    MinimapPanel.getSingleton().setSelection((int) Math.floor(cx), (int) Math.floor(cy), (int) Math.rint(w), (int) Math.rint(h));
     MapPanel.getSingleton().updateMapPosition(dCenterX, dCenterY);
 }//GEN-LAST:event_fireRefreshMapEvent
 
@@ -1233,35 +1234,35 @@ private void fireMoveMapEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     }
 
     if (evt.getSource() == jMoveN) {
-        cy -= (double)MapPanel.getSingleton().getHeight() / (double)GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
+        cy -= (double) MapPanel.getSingleton().getHeight() / (double) GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
     } else if (evt.getSource() == jMoveNE) {
-        cx += (double)MapPanel.getSingleton().getWidth() / (double)GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
-        cy -= (double)MapPanel.getSingleton().getWidth() / (double)GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
+        cx += (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
+        cy -= (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
     } else if (evt.getSource() == jMoveE) {
-        cx += (double)MapPanel.getSingleton().getWidth() / (double)GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
+        cx += (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
     } else if (evt.getSource() == jMoveSE) {
-        cx += (double)MapPanel.getSingleton().getWidth() / (double)GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
-        cy += (double)MapPanel.getSingleton().getWidth() / (double)GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
+        cx += (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
+        cy += (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
     } else if (evt.getSource() == jMoveS) {
-        cy += (double)MapPanel.getSingleton().getHeight() / (double)GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
+        cy += (double) MapPanel.getSingleton().getHeight() / (double) GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
     } else if (evt.getSource() == jMoveSW) {
-        cx -= (double)MapPanel.getSingleton().getWidth() / (double)GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
-        cy += (double)MapPanel.getSingleton().getWidth() / (double)GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
+        cx -= (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
+        cy += (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
     } else if (evt.getSource() == jMoveW) {
-        cx -= (double)MapPanel.getSingleton().getWidth() / (double)GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
+        cx -= (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
     } else if (evt.getSource() == jMoveNW) {
-        cx -= (double)MapPanel.getSingleton().getWidth() / (double)GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
-        cy -= (double)MapPanel.getSingleton().getWidth() / (double)GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
+        cx -= (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
+        cy -= (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
     }
 
-    jCenterX.setText(Integer.toString((int)Math.floor(cx)));
-    jCenterY.setText(Integer.toString((int)Math.floor(cy)));
+    jCenterX.setText(Integer.toString((int) Math.floor(cx)));
+    jCenterY.setText(Integer.toString((int) Math.floor(cy)));
     dCenterX = cx;
     dCenterY = cy;
     MapPanel.getSingleton().updateMapPosition(dCenterX, dCenterY);
     double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
     double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
-    MinimapPanel.getSingleton().setSelection((int)Math.floor(cx), (int)Math.floor(cy), (int) Math.rint(w), (int) Math.rint(h));
+    MinimapPanel.getSingleton().setSelection((int) Math.floor(cx), (int) Math.floor(cy), (int) Math.rint(w), (int) Math.rint(h));
 }//GEN-LAST:event_fireMoveMapEvent
 
     /**React on resize events*/
@@ -1340,7 +1341,6 @@ private void fireCenterCurrentPosInGameEvent(java.awt.event.MouseEvent evt) {//G
     if (!jCenterCoordinateIngame.isEnabled()) {
         return;
     }
-
     BrowserCommandSender.centerCoordinate(Integer.parseInt(jCenterX.getText()), Integer.parseInt(jCenterY.getText()));
 }//GEN-LAST:event_fireCenterCurrentPosInGameEvent
 
@@ -1421,26 +1421,26 @@ private void fireShowMapPopupChangedEvent(javax.swing.event.ChangeEvent evt) {//
         double dx = ServerSettings.getSingleton().getMapDimension().getWidth() / (double) MinimapPanel.getSingleton().getWidth() * (double) pX;
         double dy = ServerSettings.getSingleton().getMapDimension().getHeight() / (double) MinimapPanel.getSingleton().getHeight() * (double) pY;
 
-        jCenterX.setText(Integer.toString((int)Math.floor(dx)));
-        jCenterY.setText(Integer.toString((int)Math.floor(dy)));
+        jCenterX.setText(Integer.toString((int) Math.floor(dx)));
+        jCenterY.setText(Integer.toString((int) Math.floor(dy)));
         dCenterX = dx;
         dCenterY = dy;
         MapPanel.getSingleton().updateMapPosition(dCenterX, dCenterY);
         double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
         double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
-        MinimapPanel.getSingleton().setSelection((int)Math.floor(dx), (int)Math.floor(dy), (int) Math.rint(w), (int) Math.rint(h));
+        MinimapPanel.getSingleton().setSelection((int) Math.floor(dx), (int) Math.floor(dy), (int) Math.rint(w), (int) Math.rint(h));
     }
 
     /**Scroll the map*/
     public void scroll(double pXDir, double pYDir) {
         dCenterX = dCenterX + pXDir;
         dCenterY = dCenterY + pYDir;
-        jCenterX.setText(Integer.toString((int)Math.floor(dCenterX)));
-        jCenterY.setText(Integer.toString((int)Math.floor(dCenterY)));
+        jCenterX.setText(Integer.toString((int) Math.floor(dCenterX)));
+        jCenterY.setText(Integer.toString((int) Math.floor(dCenterY)));
 
         double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
         double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
-        MinimapPanel.getSingleton().setSelection((int)Math.floor(dCenterX), (int)Math.floor(dCenterY), (int) Math.rint(w), (int) Math.rint(h));
+        MinimapPanel.getSingleton().setSelection((int) Math.floor(dCenterX), (int) Math.floor(dCenterY), (int) Math.rint(w), (int) Math.rint(h));
         MapPanel.getSingleton().updateMapPosition(dCenterX, dCenterY);
     }
 

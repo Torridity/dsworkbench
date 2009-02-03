@@ -102,6 +102,7 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
 
     public static DSWorkbenchMarkerFrame getSingleton() {
         if (SINGLETON == null) {
+            System.out.println("MarkerFrame");
             SINGLETON = new DSWorkbenchMarkerFrame();
         }
         return SINGLETON;

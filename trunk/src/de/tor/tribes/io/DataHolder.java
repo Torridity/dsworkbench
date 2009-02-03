@@ -59,9 +59,10 @@ public class DataHolder {
     private static DataHolder SINGLETON = null;
     private boolean loading = false;
     private int currentBonusType = 0;
-    
+
     public static synchronized DataHolder getSingleton() {
         if (SINGLETON == null) {
+            System.out.println("DataHolder");
             SINGLETON = new DataHolder();
         }
         return SINGLETON;

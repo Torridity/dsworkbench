@@ -24,6 +24,7 @@ public class ClockFrame extends javax.swing.JFrame {
 
     public static synchronized ClockFrame getSingleton() {
         if (SINGLETON == null) {
+            System.out.println("ClockFrame");
             SINGLETON = new ClockFrame();
         }
         return SINGLETON;

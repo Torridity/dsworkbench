@@ -29,6 +29,7 @@ public class FormManager {
 
     public static synchronized FormManager getSingleton() {
         if (SINGLETON == null) {
+            System.out.println("Formmanager");
             SINGLETON = new FormManager();
         }
         return SINGLETON;

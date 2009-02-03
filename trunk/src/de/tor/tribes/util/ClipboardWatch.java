@@ -25,6 +25,7 @@ public class ClipboardWatch extends Thread {
 
     public static synchronized ClipboardWatch getSingleton() {
         if (SINGLETON == null) {
+            System.out.println("ClipWatch");
             SINGLETON = new ClipboardWatch();
             SINGLETON.start();
         }

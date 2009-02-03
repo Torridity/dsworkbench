@@ -281,13 +281,13 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="1" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="jPanel1" pref="571" max="32767" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
+              <Component id="jPanel1" pref="561" max="32767" attributes="0"/>
+              <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                  <Component id="jInformationPanel" alignment="1" max="32767" attributes="1"/>
-                  <Component id="jNavigationPanel" alignment="1" max="32767" attributes="1"/>
-                  <Component id="jMinimapPanel" alignment="1" pref="270" max="32767" attributes="1"/>
                   <Component id="jPanel2" alignment="1" min="-2" max="-2" attributes="1"/>
+                  <Component id="jInformationPanel" alignment="1" min="-2" max="-2" attributes="1"/>
+                  <Component id="jMinimapPanel" alignment="1" pref="270" max="32767" attributes="1"/>
+                  <Component id="jNavigationPanel" alignment="1" min="-2" max="-2" attributes="1"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -299,7 +299,7 @@
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="1" attributes="0">
                   <Component id="jPanel1" alignment="0" pref="699" max="32767" attributes="1"/>
-                  <Group type="102" alignment="1" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
                       <Component id="jMinimapPanel" min="-2" pref="270" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jNavigationPanel" min="-2" max="-2" attributes="1"/>
@@ -400,7 +400,7 @@
                       <Component id="jRefreshButton" min="-2" max="-2" attributes="1"/>
                       <Component id="jCenterCoordinateIngame" min="-2" max="-2" attributes="1"/>
                   </Group>
-                  <EmptySpace pref="32" max="32767" attributes="0"/>
+                  <EmptySpace pref="42" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -829,8 +829,8 @@
               <Group type="102" alignment="1" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="1" attributes="0">
-                      <Component id="jCurrentPlayer" alignment="0" pref="238" max="32767" attributes="0"/>
-                      <Component id="jCurrentPlayerVillages" alignment="0" pref="238" max="32767" attributes="0"/>
+                      <Component id="jCurrentPlayer" alignment="0" pref="248" max="32767" attributes="0"/>
+                      <Component id="jCurrentPlayerVillages" alignment="0" pref="248" max="32767" attributes="0"/>
                       <Group type="102" alignment="1" attributes="0">
                           <Component id="jCenterIngameButton" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
@@ -957,15 +957,18 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" alignment="1" attributes="0">
-                  <EmptySpace pref="213" max="32767" attributes="0"/>
-                  <Component id="jCurrentToolLabel" min="-2" max="-2" attributes="0"/>
+              <Group type="102" attributes="0">
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="102" alignment="1" attributes="0">
+                          <EmptySpace pref="223" max="32767" attributes="0"/>
+                          <Component id="jCurrentToolLabel" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <Group type="102" alignment="0" attributes="0">
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="jShowMapPopup" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                  </Group>
                   <EmptySpace max="-2" attributes="0"/>
-              </Group>
-              <Group type="102" alignment="0" attributes="0">
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Component id="jShowMapPopup" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="119" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>

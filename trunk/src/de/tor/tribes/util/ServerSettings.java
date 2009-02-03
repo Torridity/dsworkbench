@@ -27,6 +27,7 @@ public class ServerSettings {
 
     public static synchronized ServerSettings getSingleton() {
         if (SINGLETON == null) {
+            System.out.println("ServerSettings");
             SINGLETON = new ServerSettings();
         }
         return SINGLETON;

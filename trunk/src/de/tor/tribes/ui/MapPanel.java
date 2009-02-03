@@ -83,6 +83,7 @@ public class MapPanel extends javax.swing.JPanel {
 
     public static synchronized MapPanel getSingleton() {
         if (SINGLETON == null) {
+            System.out.println("MapPanel");
             SINGLETON = new MapPanel();
         }
         return SINGLETON;

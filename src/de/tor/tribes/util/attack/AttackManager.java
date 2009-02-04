@@ -40,7 +40,6 @@ public class AttackManager {
 
     public static synchronized AttackManager getSingleton() {
         if (SINGLETON == null) {
-            System.out.println("AttackManager");
             SINGLETON = new AttackManager();
         }
         return SINGLETON;

@@ -38,7 +38,6 @@ public class FormConfigFrame extends javax.swing.JFrame {
 
     public static synchronized FormConfigFrame getSingleton() {
         if (SINGLETON == null) {
-            System.out.println("FormConfig");
             SINGLETON = new FormConfigFrame();
         }
         return SINGLETON;

@@ -29,7 +29,6 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame {
 
     public static synchronized DSWorkbenchFormFrame getSingleton() {
         if (SINGLETON == null) {
-            System.out.println("FormFrame");
             SINGLETON = new DSWorkbenchFormFrame();
         }
         return SINGLETON;

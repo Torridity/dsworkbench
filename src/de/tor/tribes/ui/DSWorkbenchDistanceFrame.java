@@ -41,7 +41,6 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame {
 
     public static synchronized DSWorkbenchDistanceFrame getSingleton() {
         if (SINGLETON == null) {
-            System.out.println("DistFrame");
             SINGLETON = new DSWorkbenchDistanceFrame();
         }
         return SINGLETON;

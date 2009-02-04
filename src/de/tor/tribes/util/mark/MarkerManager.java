@@ -38,7 +38,6 @@ public class MarkerManager {
 
     public static synchronized MarkerManager getSingleton() {
         if (SINGLETON == null) {
-            System.out.println("MarkerManager");
             SINGLETON = new MarkerManager();
         }
         return SINGLETON;

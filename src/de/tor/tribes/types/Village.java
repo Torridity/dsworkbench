@@ -159,23 +159,13 @@ public class Village implements Serializable, Comparable {
         return this.type;
     }
 
-     public Tribe getTribe() {
-    return tribe;
+    public Tribe getTribe() {
+        return tribe;
     }
 
     public void setTribe(Tribe tribe) {
-    this.tribe = tribe;
+        this.tribe = tribe;
     }
-     
-  /*  public Tribe getTribe() {
-        return DataHolder.getSingleton().getTribes().get(getTribeID());
-    }
-
-    public void setTribe(Tribe tribe) {
-        if (tribe != null) {
-            setTribeID(tribe.getId());
-        }
-    }*/
 
     public String getHTMLInfo() {
         StringBuffer b = new StringBuffer();

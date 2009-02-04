@@ -93,7 +93,7 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
         } catch (Exception e) {
         }
 
-          // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
+        // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
         GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.markers_view", GlobalOptions.getHelpBroker().getHelpSet());
 // </editor-fold>
 
@@ -102,7 +102,6 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
 
     public static DSWorkbenchMarkerFrame getSingleton() {
         if (SINGLETON == null) {
-            System.out.println("MarkerFrame");
             SINGLETON = new DSWorkbenchMarkerFrame();
         }
         return SINGLETON;
@@ -178,7 +177,7 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
         jToggleDrawFilterButton.setLabel(bundle.getString("DSWorkbenchMarkerFrame.jToggleDrawFilterButton.label")); // NOI18N
         jToggleDrawFilterButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireDrawMarkedOnlyChangedEvent(evt);
+                fireDrawFilterClickedEvent(evt);
             }
         });
 
@@ -276,15 +275,17 @@ private void fireMarkerFrameOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN
     setAlwaysOnTop(!isAlwaysOnTop());
 }//GEN-LAST:event_fireMarkerFrameOnTopEvent
 
-private void fireDrawMarkedOnlyChangedEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireDrawMarkedOnlyChangedEvent
+private void fireDrawFilterClickedEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireDrawFilterClickedEvent
     GlobalOptions.addProperty("draw.marked.only", Boolean.toString(jToggleDrawFilterButton.isSelected()));
     MinimapPanel.getSingleton().redraw();
     MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.ALL_LAYERS);
-}//GEN-LAST:event_fireDrawMarkedOnlyChangedEvent
+}//GEN-LAST:event_fireDrawFilterClickedEvent
 
     public void firePublicDrawMarkedOnlyChangedEvent() {
         jToggleDrawFilterButton.setSelected(!jToggleDrawFilterButton.isSelected());
-        fireDrawMarkedOnlyChangedEvent(null);
+        GlobalOptions.addProperty("draw.marked.only", Boolean.toString(jToggleDrawFilterButton.isSelected()));
+        MinimapPanel.getSingleton().redraw();
+        MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.ALL_LAYERS);
     }
 
     /**Setup marker panel*/

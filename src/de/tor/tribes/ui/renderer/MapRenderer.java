@@ -101,7 +101,6 @@ public class MapRenderer extends Thread {
     private Image mMainBuffer = null;
 
     public MapRenderer() {
-        System.out.println("MapRenderer");
         mVisibleVillages = new Village[iVillagesX][iVillagesY];
         setDaemon(true);
         nf.setMaximumFractionDigits(2);
@@ -160,9 +159,17 @@ public class MapRenderer extends Thread {
                         renderTagMarkers();
                     }
                     //render misc map elements
-                    g2d.drawImage(mLayers.get(MAP_LAYER), 0, 0, null);
-                    renderMarkers(g2d);
-                    g2d.drawImage(mLayers.get(MAP_LAYER), 0, 0, null);
+                    boolean markOnTop = Boolean.parseBoolean(GlobalOptions.getProperty("mark.on.top"));
+                    if (markOnTop) {
+                        g2d.drawImage(mLayers.get(MAP_LAYER), 0, 0, null);
+                        Composite gg = g2d.getComposite();
+                        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
+                        renderMarkers(g2d);
+                        g2d.setComposite(gg);
+                    } else {
+                        renderMarkers(g2d);
+                        g2d.drawImage(mLayers.get(MAP_LAYER), 0, 0, null);
+                    }
                     g2d.drawImage(mLayers.get(EXTENDED_DECORATION_LAYER), 0, 0, null);
                     renderBasicDecoration(g2d);
                     renderAttacks(g2d);

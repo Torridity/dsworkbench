@@ -37,6 +37,7 @@ import javax.swing.UIManager;
 import org.apache.log4j.Logger;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.util.ServerSettings;
+import javax.management.JMRuntimeException;
 
 /**
  * @author  Charon
@@ -63,7 +64,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
 
     public static synchronized DSWorkbenchMainFrame getSingleton() {
         if (SINGLETON == null) {
-            System.out.println("MainFrame");
             SINGLETON = new DSWorkbenchMainFrame();
         }
         return SINGLETON;
@@ -219,6 +219,8 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                         MapPanel.getSingleton().updateMapPosition(Integer.parseInt(jCenterX.getText()), Integer.parseInt(jCenterY.getText()));
                     } else if ((e.getKeyCode() == KeyEvent.VK_F) && e.isAltDown()) {
                         DSWorkbenchMarkerFrame.getSingleton().firePublicDrawMarkedOnlyChangedEvent();
+                    } else if ((e.getKeyCode() == KeyEvent.VK_M) && e.isAltDown()) {
+                        switchMarkOnTop();
                     } else if (e.getKeyCode() == KeyEvent.VK_F2) {
                         DSWorkbenchAttackFrame.getSingleton().setVisible(!DSWorkbenchAttackFrame.getSingleton().isVisible());
                     } else if (e.getKeyCode() == KeyEvent.VK_F3) {
@@ -285,6 +287,19 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         } catch (Exception e) {
             jShowMapPopup.setSelected(true);
             GlobalOptions.addProperty("show.map.popup", Boolean.toString(true));
+        }
+
+        try {
+            String val = GlobalOptions.getProperty("mark.on.top");
+            if (val == null) {
+                jMarkOnTopBox.setSelected(false);
+                GlobalOptions.addProperty("mark.on.top", Boolean.toString(false));
+            } else {
+                jMarkOnTopBox.setSelected(Boolean.parseBoolean(val));
+            }
+        } catch (Exception e) {
+            jMarkOnTopBox.setSelected(false);
+            GlobalOptions.addProperty("mark.on.top", Boolean.toString(false));
         }
         // </editor-fold>
 
@@ -629,6 +644,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jPanel2 = new javax.swing.JPanel();
         jCurrentToolLabel = new javax.swing.JLabel();
         jShowMapPopup = new javax.swing.JCheckBox();
+        jMarkOnTopBox = new javax.swing.JCheckBox();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
@@ -990,6 +1006,15 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             }
         });
 
+        jMarkOnTopBox.setText(bundle.getString("DSWorkbenchMainFrame.jMarkOnTopBox.text")); // NOI18N
+        jMarkOnTopBox.setToolTipText(bundle.getString("DSWorkbenchMainFrame.jMarkOnTopBox.toolTipText")); // NOI18N
+        jMarkOnTopBox.setOpaque(false);
+        jMarkOnTopBox.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                fireMarkOnTopChangedEvent(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -1001,14 +1026,18 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                         .addComponent(jCurrentToolLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jShowMapPopup)))
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(jMarkOnTopBox, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jShowMapPopup, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addComponent(jShowMapPopup)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 72, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jMarkOnTopBox)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 49, Short.MAX_VALUE)
                 .addComponent(jCurrentToolLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -1400,6 +1429,14 @@ private void fireShowMapPopupChangedEvent(javax.swing.event.ChangeEvent evt) {//
     GlobalOptions.addProperty("show.map.popup", Boolean.toString(jShowMapPopup.isSelected()));
 }//GEN-LAST:event_fireShowMapPopupChangedEvent
 
+private void fireMarkOnTopChangedEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireMarkOnTopChangedEvent
+    GlobalOptions.addProperty("mark.on.top", Boolean.toString(jMarkOnTopBox.isSelected()));
+}//GEN-LAST:event_fireMarkOnTopChangedEvent
+
+    protected void switchMarkOnTop() {
+        jMarkOnTopBox.setSelected(!jMarkOnTopBox.isSelected());
+    }
+
     /**Check if zoom factor is valid and correct if needed*/
     private void checkZoomRange() {
         if (dZoomFactor <= 0.1) {
@@ -1579,6 +1616,7 @@ private void fireShowMapPopupChangedEvent(javax.swing.event.ChangeEvent evt) {//
     private javax.swing.JPanel jInformationPanel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JCheckBox jMarkOnTopBox;
     private javax.swing.JMenuItem jMassAttackItem;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;

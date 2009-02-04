@@ -26,7 +26,6 @@ import javax.help.CSH;
 import javax.help.HelpBroker;
 import javax.help.HelpSet;
 import javax.help.HelpSetException;
-import javax.swing.JMenuItem;
 import javax.swing.UIManager;
 import org.apache.log4j.Logger;
 
@@ -190,7 +189,8 @@ public class GlobalOptions {
             TroopsManager.getSingleton().loadTroopsFromFile(DataHolder.getSingleton().getDataDirectory() + "/troops.xml");
             logger.debug("Loading forms");
             FormManager.getSingleton().loadFormsFromFile(DataHolder.getSingleton().getDataDirectory() + "/forms.xml");
-
+            logger.debug("Removing temporary data");
+            DataHolder.getSingleton().removeTempData();
         }
     }
 
@@ -216,8 +216,8 @@ public class GlobalOptions {
         return mSkin;
     }
 
-    /**Get the DataHolder
-     * @return DataHolder Object which contains the WorldData
+    /**Get the DecorationHolder
+     * @return WorldDecorationHolder Object which contains the WorldData
      */
     public static WorldDecorationHolder getWorldDecorationHolder() {
         return mDecorationHolder;

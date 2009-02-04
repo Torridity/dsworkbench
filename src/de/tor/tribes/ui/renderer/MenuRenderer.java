@@ -45,7 +45,6 @@ public class MenuRenderer implements MouseListener, MouseMotionListener {
 
     public static synchronized MenuRenderer getSingleton() {
         if (SINGLETON == null) {
-            System.out.println("MenuRenderer");
             SINGLETON = new MenuRenderer();
         }
         return SINGLETON;

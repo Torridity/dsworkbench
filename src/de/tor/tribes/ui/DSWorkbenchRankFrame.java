@@ -44,7 +44,6 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame {
 
     public static synchronized DSWorkbenchRankFrame getSingleton() {
         if (SINGLETON == null) {
-            System.out.println("RankFrame");
             SINGLETON = new DSWorkbenchRankFrame();
         }
         return SINGLETON;

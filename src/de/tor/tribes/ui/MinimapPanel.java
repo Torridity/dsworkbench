@@ -62,7 +62,6 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
 
     public static synchronized MinimapPanel getSingleton() {
         if (SINGLETON == null) {
-            System.out.println("MiniMapPanel");
             SINGLETON = new MinimapPanel();
         }
         return SINGLETON;
@@ -612,7 +611,6 @@ class MinimapRepaintThread extends Thread {
     public static synchronized MinimapRepaintThread getSingleton() {
         if (SINGLETON == null) {
             try {
-                System.out.println("MiniMapRep");
                 SINGLETON = new MinimapRepaintThread();
             } catch (Exception e) {
                 SINGLETON = null;

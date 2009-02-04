@@ -31,7 +31,6 @@ import de.tor.tribes.ui.renderer.MapRenderer;
 import de.tor.tribes.ui.renderer.MenuRenderer;
 import de.tor.tribes.util.Skin;
 import de.tor.tribes.util.VillageSelectionListener;
-import de.tor.tribes.util.tag.TagManager;
 import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
@@ -44,7 +43,6 @@ import javax.swing.UIManager;
 
 /**
  *@TODO Add flag-marker for single villages/notes? -> notes as forms? (Version 2.0)
-@TODO Only allow selection of drawn villages by selection tool
  * @author  Charon
  */
 public class MapPanel extends javax.swing.JPanel {
@@ -83,7 +81,6 @@ public class MapPanel extends javax.swing.JPanel {
 
     public static synchronized MapPanel getSingleton() {
         if (SINGLETON == null) {
-            System.out.println("MapPanel");
             SINGLETON = new MapPanel();
         }
         return SINGLETON;

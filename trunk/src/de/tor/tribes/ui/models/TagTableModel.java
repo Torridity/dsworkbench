@@ -25,7 +25,6 @@ public class TagTableModel extends AbstractTableModel {
 
     public static synchronized TagTableModel getSingleton() {
         if (SINGLETON == null) {
-            System.out.println("TagTableModel");
             SINGLETON = new TagTableModel();
         }
         return SINGLETON;

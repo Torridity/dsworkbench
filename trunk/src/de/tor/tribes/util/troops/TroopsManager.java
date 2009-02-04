@@ -35,7 +35,6 @@ public class TroopsManager {
 
     public static synchronized TroopsManager getSingleton() {
         if (SINGLETON == null) {
-            System.out.println("TroopsManager");
             SINGLETON = new TroopsManager();
         }
         return SINGLETON;

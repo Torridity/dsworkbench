@@ -55,7 +55,6 @@ public class VillageSupportFrame extends javax.swing.JFrame {
 
     public static synchronized VillageSupportFrame getSingleton() {
         if (SINGLETON == null) {
-            System.out.println("SuppFrame");
             SINGLETON = new VillageSupportFrame();
         }
         return SINGLETON;

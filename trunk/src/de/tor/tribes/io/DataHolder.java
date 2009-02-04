@@ -62,7 +62,6 @@ public class DataHolder {
 
     public static synchronized DataHolder getSingleton() {
         if (SINGLETON == null) {
-            System.out.println("DataHolder");
             SINGLETON = new DataHolder();
         }
         return SINGLETON;
@@ -85,7 +84,6 @@ public class DataHolder {
         System.gc();
 
         mVillages = new Village[1000][1000];
-
         mVillagesTable = new Hashtable<Integer, Village>();
         mAllies = new Hashtable<Integer, Ally>();
         mTribes = new Hashtable<Integer, Tribe>();
@@ -381,7 +379,6 @@ public class DataHolder {
                         Village v = Village.parseFromPlainData(line);
                         if (v != null) {
                             mVillages[v.getX()][v.getY()] = v;
-                            mVillagesTable.put(v.getId(), v);
                             vc++;
                         }
                         break;
@@ -415,7 +412,6 @@ public class DataHolder {
             logger.info("Read " + vc + " villages");
             logger.info("Read " + ac + " allies");
             logger.info("Read " + tc + " tribes");
-
             r.close();
         } catch (Exception e) {
             logger.error("Failed loading local data", e);
@@ -513,7 +509,6 @@ public class DataHolder {
                     Village v = Village.parseFromPlainData(line);
                     try {
                         mVillages[v.getX()][v.getY()] = v;
-                        mVillagesTable.put(v.getId(), v);
                     } catch (Exception e) {
                         //ignore invalid village
                     }
@@ -626,6 +621,7 @@ public class DataHolder {
         for (int i = 0; i < 1000; i++) {
             for (int j = 0; j < 1000; j++) {
                 Village current = mVillages[i][j];
+
                 if (current != null) {
                     //set tribe of village
                     Tribe t = mTribes.get(current.getTribeID());
@@ -642,6 +638,7 @@ public class DataHolder {
                             currentAlly.addTribe(t);
                         }
                     }
+                    mVillagesTable.put(current.getId(), current);
                 }
             }
         }
@@ -674,7 +671,7 @@ public class DataHolder {
             String rank = tokenizer.nextToken();
             String tribeID = tokenizer.nextToken();
             String kills = tokenizer.nextToken();
-            Tribe t = getTribes().get(Integer.parseInt(tribeID));
+            Tribe t = mTribes.get(Integer.parseInt(tribeID));
             if (pType == ID_OFF) {
                 t.setKillsAtt(Double.parseDouble(kills));
                 t.setRankAtt(Integer.parseInt(rank));
@@ -711,22 +708,22 @@ public class DataHolder {
 
     /**Parse the list of buildings*/
     public void parseBuildings() {
-        String buildingsFile = getDataDirectory();
+        /* String buildingsFile = getDataDirectory();
         buildingsFile += "/buildings.xml";
         try {
-            Document d = JaxenUtils.getDocument(new File(buildingsFile));
-            d = JaxenUtils.getDocument(new File(buildingsFile));
-            List<Element> l = JaxenUtils.getNodes(d, "/config/*");
-            for (Element e : l) {
-                try {
-                    mBuildings.add(new BuildingHolder(e));
-                } catch (Exception inner) {
-                }
-            }
-        } catch (Exception outer) {
-            logger.error("Failed to load buildings", outer);
-            fireDataHolderEvents("Laden der Gebäude fehlgeschlagen");
+        Document d = JaxenUtils.getDocument(new File(buildingsFile));
+        d = JaxenUtils.getDocument(new File(buildingsFile));
+        List<Element> l = JaxenUtils.getNodes(d, "/config/*");
+        for (Element e : l) {
+        try {
+        mBuildings.add(new BuildingHolder(e));
+        } catch (Exception inner) {
         }
+        }
+        } catch (Exception outer) {
+        logger.error("Failed to load buildings", outer);
+        fireDataHolderEvents("Laden der Gebäude fehlgeschlagen");
+        }*/
     }
 
     /**Get all villages<BR>
@@ -755,6 +752,12 @@ public class DataHolder {
         return mVillagesTable;
     }
 
+    public void removeTempData() {
+        mVillagesTable.clear();
+        mVillagesTable = null;
+        System.gc();
+    }
+
     /**Get all allies*/
     public Hashtable<Integer, Ally> getAllies() {
         return mAllies;
@@ -762,9 +765,9 @@ public class DataHolder {
 
     /**Search the ally list for the ally with the provided name*/
     public Ally getAllyByName(String pName) {
-        Enumeration<Integer> ids = getAllies().keys();
+        Enumeration<Integer> ids = mAllies.keys();
         while (ids.hasMoreElements()) {
-            Ally a = getAllies().get(ids.nextElement());
+            Ally a = mAllies.get(ids.nextElement());
             if (a != null) {
                 if (a.getName() != null) {
                     if (a.getName().equals(pName)) {

@@ -47,7 +47,6 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
 
     public static synchronized DSWorkbenchTroopsFrame getSingleton() {
         if (SINGLETON == null) {
-            System.out.println("TroopFrame");
             SINGLETON = new DSWorkbenchTroopsFrame();
         }
         return SINGLETON;

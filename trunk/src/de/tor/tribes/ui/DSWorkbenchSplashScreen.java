@@ -31,7 +31,6 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
 
     public static synchronized DSWorkbenchSplashScreen getSingleton() {
         if (SINGLETON == null) {
-            System.out.println("Splash");
             SINGLETON = new DSWorkbenchSplashScreen();
         }
         return SINGLETON;

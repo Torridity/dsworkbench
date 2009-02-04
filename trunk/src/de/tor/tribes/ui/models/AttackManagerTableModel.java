@@ -33,7 +33,6 @@ public class AttackManagerTableModel extends AbstractTableModel {
 
     public static synchronized AttackManagerTableModel getSingleton() {
         if (SINGLETON == null) {
-            System.out.println("AttackTableModel");
             SINGLETON = new AttackManagerTableModel();
         }
         return SINGLETON;

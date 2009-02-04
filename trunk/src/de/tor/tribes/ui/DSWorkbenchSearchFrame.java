@@ -35,7 +35,6 @@ public class DSWorkbenchSearchFrame extends javax.swing.JFrame implements Search
 
     public static synchronized DSWorkbenchSearchFrame getSingleton() {
         if (SINGLETON == null) {
-            System.out.println("SearchFrame");
             SINGLETON = new DSWorkbenchSearchFrame();
         }
         return SINGLETON;

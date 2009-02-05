@@ -282,8 +282,9 @@ private void fireDrawFilterClickedEvent(java.awt.event.MouseEvent evt) {//GEN-FI
 }//GEN-LAST:event_fireDrawFilterClickedEvent
 
     public void firePublicDrawMarkedOnlyChangedEvent() {
-        jToggleDrawFilterButton.setSelected(!jToggleDrawFilterButton.isSelected());
-        GlobalOptions.addProperty("draw.marked.only", Boolean.toString(jToggleDrawFilterButton.isSelected()));
+        boolean v = jToggleDrawFilterButton.isSelected();
+        jToggleDrawFilterButton.setSelected(!v);
+        GlobalOptions.addProperty("draw.marked.only", Boolean.toString(v));
         MinimapPanel.getSingleton().redraw();
         MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.ALL_LAYERS);
     }

@@ -8,11 +8,13 @@
  */
 package de.tor.tribes.types;
 
+import de.tor.tribes.io.DataHolder;
 import java.io.Serializable;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.text.NumberFormat;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -54,7 +56,7 @@ public class Tribe implements Serializable, Comparable {
             entry.setId(Integer.parseInt(tokenizer.nextToken()));
             String nn = tokenizer.nextToken();
             String n = URLDecoder.decode(nn, "UTF-8");
-          
+
             entry.setName(n);
             entry.setAllyID(Integer.parseInt(tokenizer.nextToken()));
             entry.setVillages(Short.parseShort(tokenizer.nextToken()));
@@ -147,13 +149,16 @@ public class Tribe implements Serializable, Comparable {
         if (villageList == null) {
             villageList = new LinkedList<Village>();
         }
-        villageList.add(v);
+        if (!villageList.contains(v)) {
+            villageList.add(v);
+        }
     }
 
     public List<Village> getVillageList() {
         if (villageList == null) {
             villageList = new LinkedList<Village>();
         }
+
         return villageList;
     }
 

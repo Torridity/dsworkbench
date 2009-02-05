@@ -65,6 +65,9 @@ public class Circle extends AbstractForm {
 
     @Override
     public void renderForm(Graphics2D g2d) {
+        if (getXPos() < 0 || getYPos() < 0 || xPosEnd < 0 || yPosEnd < 0) {
+            return;
+        }
         Point2D.Double s = MapPanel.getSingleton().virtualPosToSceenPosDouble(getXPos(), getYPos());
         Point.Double e = MapPanel.getSingleton().virtualPosToSceenPosDouble(getXPosEnd(), getYPosEnd());
         int x = (int) Math.rint((s.getX() < e.getX()) ? s.getX() : e.getX());

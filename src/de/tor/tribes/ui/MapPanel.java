@@ -78,7 +78,6 @@ public class MapPanel extends javax.swing.JPanel {
     private Hashtable<Village, Rectangle> mVillagePositions = null;
     // </editor-fold>
 
-
     public static synchronized MapPanel getSingleton() {
         if (SINGLETON == null) {
             SINGLETON = new MapPanel();
@@ -500,7 +499,7 @@ public class MapPanel extends javax.swing.JPanel {
                 }
                 mSourceVillage = null;
                 mTargetVillage = null;
-                mMapRenderer.setDragLine(0, 0, 0, 0);
+                mMapRenderer.setDragLine(-1, -1, -1, -1);
             }
 
             @Override
@@ -796,7 +795,6 @@ public class MapPanel extends javax.swing.JPanel {
             Graphics2D g2d = (Graphics2D) g;
             g2d.drawImage(mBuffer, 0, 0, null);
             g2d.dispose();
-
         } catch (Exception e) {
             logger.error("Failed to paint", e);
         }

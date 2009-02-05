@@ -675,6 +675,8 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jAccountPassword = new javax.swing.JPasswordField();
         jAccountName = new javax.swing.JTextField();
         jCheckAccountButton = new javax.swing.JButton();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        jEditorPane1 = new javax.swing.JEditorPane();
         jPlayerServerSettings = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jServerList = new javax.swing.JComboBox();
@@ -812,7 +814,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jCancelRegistrationButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jRegisterButton, javax.swing.GroupLayout.DEFAULT_SIZE, 109, Short.MAX_VALUE))
+                        .addComponent(jRegisterButton, javax.swing.GroupLayout.DEFAULT_SIZE, 111, Short.MAX_VALUE))
                     .addComponent(jRegistrationAccountName, javax.swing.GroupLayout.DEFAULT_SIZE, 202, Short.MAX_VALUE)
                     .addComponent(jRegistrationPassword, javax.swing.GroupLayout.DEFAULT_SIZE, 202, Short.MAX_VALUE))
                 .addContainerGap())
@@ -1294,36 +1296,48 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             }
         });
 
+        jEditorPane1.setContentType(bundle.getString("DSWorkbenchSettingsDialog.jEditorPane1.contentType")); // NOI18N
+        jEditorPane1.setEditable(false);
+        jEditorPane1.setText(bundle.getString("DSWorkbenchSettingsDialog.jEditorPane1.text")); // NOI18N
+        jEditorPane1.setOpaque(false);
+        jScrollPane3.setViewportView(jEditorPane1);
+
         javax.swing.GroupLayout jLoginPanelLayout = new javax.swing.GroupLayout(jLoginPanel);
         jLoginPanel.setLayout(jLoginPanelLayout);
         jLoginPanelLayout.setHorizontalGroup(
             jLoginPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jLoginPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jLoginPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jAccountPasswordLabel)
-                    .addComponent(jAccountNameLabel))
-                .addGap(21, 21, 21)
-                .addGroup(jLoginPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jAccountName, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 238, Short.MAX_VALUE)
-                    .addComponent(jAccountPassword, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 238, Short.MAX_VALUE)
-                    .addComponent(jCheckAccountButton))
-                .addContainerGap(267, Short.MAX_VALUE))
+                .addGroup(jLoginPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 560, Short.MAX_VALUE)
+                    .addGroup(jLoginPanelLayout.createSequentialGroup()
+                        .addGroup(jLoginPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jAccountNameLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jAccountPasswordLabel))
+                        .addGap(21, 21, 21)
+                        .addGroup(jLoginPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jCheckAccountButton)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jLoginPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addComponent(jAccountPassword, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jAccountName, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                .addContainerGap())
         );
         jLoginPanelLayout.setVerticalGroup(
             jLoginPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jLoginPanelLayout.createSequentialGroup()
                 .addContainerGap()
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
                 .addGroup(jLoginPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jAccountNameLabel)
-                    .addComponent(jAccountName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jAccountName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jAccountNameLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jLoginPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jAccountPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jAccountPasswordLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jCheckAccountButton)
-                .addContainerGap(301, Short.MAX_VALUE))
+                .addContainerGap(178, Short.MAX_VALUE))
         );
 
         jSettingsTabbedPane.addTab(bundle.getString("DSWorkbenchSettingsDialog.jLoginPanel.TabConstraints.tabTitle"), new javax.swing.ImageIcon(getClass().getResource("/res/login.png")), jLoginPanel); // NOI18N
@@ -3113,6 +3127,7 @@ private void fireCancelChangePasswordEvent(java.awt.event.MouseEvent evt) {//GEN
     private javax.swing.JRadioButton jDirectConnectOption;
     private javax.swing.JButton jDownloadDataButton;
     private javax.swing.JCheckBox jDrawAttacksByDefaultBox;
+    private javax.swing.JEditorPane jEditorPane1;
     private javax.swing.JCheckBox jExportArriveTime;
     private javax.swing.JCheckBox jExportTribeNames;
     private javax.swing.JCheckBox jExportUnit;
@@ -3201,6 +3216,7 @@ private void fireCancelChangePasswordEvent(java.awt.event.MouseEvent evt) {//GEN
     private javax.swing.JLabel jRepeatPasswordLabel;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JButton jSelectServerButton;
     private javax.swing.JButton jSelectSkinButton;

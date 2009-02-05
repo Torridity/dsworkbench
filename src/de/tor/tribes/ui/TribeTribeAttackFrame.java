@@ -1373,6 +1373,7 @@ private void fireTargetAllyChangedEvent(java.awt.event.ActionEvent evt) {//GEN-F
     if (a != null) {
         //ally selected
         Tribe[] tribes = a.getTribes().toArray(new Tribe[]{});
+        System.out.println("L " + tribes.length);
         if ((tribes != null) && (tribes.length != 0)) {
             Arrays.sort(tribes, Tribe.CASE_INSENSITIVE_ORDER);
             jTargetTribeList.setModel(new DefaultComboBoxModel(tribes));

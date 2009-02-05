@@ -65,6 +65,9 @@ public class Rectangle extends AbstractForm {
 
     @Override
     public void renderForm(Graphics2D g2d) {
+        if (getXPos() < 0 || getYPos() < 0 || xPosEnd < 0 || yPosEnd < 0) {
+            return;
+        }
         Point s = MapPanel.getSingleton().virtualPosToSceenPos(getXPos(), getYPos());
         Point e = MapPanel.getSingleton().virtualPosToSceenPos(getXPosEnd(), getYPosEnd());
         int x = (int) ((s.x < e.x) ? s.x : e.x);

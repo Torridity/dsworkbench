@@ -13,6 +13,8 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.text.NumberFormat;
 import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -47,7 +49,7 @@ public class Ally implements Serializable, Comparable {
             entry.setId(Integer.parseInt(tokenizer.nextToken()));
             String name = URLDecoder.decode(tokenizer.nextToken(), "UTF-8");
             entry.setName(name);
-            String tag = URLDecoder.decode(tokenizer.nextToken(), "UTF-8"); 
+            String tag = URLDecoder.decode(tokenizer.nextToken(), "UTF-8");
             entry.setTag(tag);
             entry.setMembers(Short.parseShort(tokenizer.nextToken()));
             entry.setVillages(Integer.parseInt(tokenizer.nextToken()));
@@ -223,8 +225,8 @@ public class Ally implements Serializable, Comparable {
 
         @Override
         public int compare(Ally s1, Ally s2) {
-            int n1 = s1.toString().length(),     n2 = s2.toString().length();
-            for (int i1 = 0,     i2 = 0; i1 < n1 && i2 < n2; i1++, i2++) {
+            int n1 = s1.toString().length(), n2 = s2.toString().length();
+            for (int i1 = 0, i2 = 0; i1 < n1 && i2 < n2; i1++, i2++) {
                 char c1 = s1.toString().charAt(i1);
                 char c2 = s2.toString().charAt(i2);
                 if (c1 != c2) {

@@ -46,6 +46,19 @@ public class DSCalculator {
         return new Point((int) xMass, (int) yMass);
     }
 
+    public static int[] xyToHierarchical(int x, int y) {
+        int con = ((2 * y) / 100) * 10 + ((2 * x) / 100);
+        int sec = (((2 * y) / 10) % 10) * 10 + ((2 * x) / 10) % 10;
+        int sub = (int) Math.floor(((2 * y) % 10) * 2.5 + ((2 * x) % 10) / 2);
+        return new int[]{con, sec, sub};
+    }
+
+    public static int[] hierarchicalToXy(int con, int sec, int sub) {
+        int x = (con % 10) * 50 + (sec % 10) * 5 + (sub % 5);
+        int y = (con / 10) * 50 + (sec / 10) * 5 + (sub / 5);
+        return new int[]{x, y};
+    }
+
     public static String formatTimeInMinutes(double pTime) {
         double dur = pTime;
         int hour = (int) Math.floor(dur / 60);

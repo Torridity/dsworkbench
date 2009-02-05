@@ -85,7 +85,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    protected void hideSplash() {
+    protected boolean hideSplash() {
         try {
             //load properties, cursors, skins, world decoration
             GlobalOptions.initialize();
@@ -94,7 +94,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
         } catch (Exception e) {
             logger.error("Failed to initialize global options", e);
             JOptionPane.showMessageDialog(self, "Fehler bei der Initialisierung.\nMöglicherweise ist deine DS Workbench Installation defekt.", "Fehler", JOptionPane.ERROR_MESSAGE);
-            System.exit(1);
+            return false;
         }
         if (!DSWorkbenchSettingsDialog.getSingleton().checkSettings()) {
             logger.info("Reading user settings returned error(s)");
@@ -133,7 +133,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
             DataHolder.getSingleton().loadData(checkForUpdates);
         } catch (Exception e) {
             logger.error("Failed to load server data", e);
-            System.exit(1);
+            return false;
         }
         // </editor-fold>
 
@@ -142,7 +142,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
             DSWorkbenchMainFrame.getSingleton().init();
             logger.debug("Initializing search frame");
             DSWorkbenchSearchFrame.getSingleton();
-        
+
             logger.info("Showing application window");
             DSWorkbenchMainFrame.getSingleton().setVisible(true);
             t.stopRunning();
@@ -166,10 +166,12 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
                             "Klicke auf das Update Icon um \'http://www.dsworkbench.de\' im Browser zu öffnen.", NotifierFrame.NOTIFY_UPDATE);
                 }
             }
+            return true;
         } catch (Throwable th) {
             logger.fatal("Fatal error while running DS Workbench", th);
             JOptionPane.showMessageDialog(self, "Ein schwerwiegender Fehler ist aufgetreten.\nMöglicherweise ist deine DS Workbench Installation defekt. Bitte kontaktiere den Entwickler.", "Fehler", JOptionPane.ERROR_MESSAGE);
-            System.exit(1);
+            return false;
+
         }
     }
 
@@ -309,7 +311,9 @@ class HideSplashTask extends TimerTask {
     }
 
     public void run() {
-        mParent.hideSplash();
+        if (!mParent.hideSplash()) {
+            System.exit(1);
+        }
     }
 }
 

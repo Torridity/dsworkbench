@@ -36,6 +36,7 @@ import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import org.apache.log4j.Logger;
 import de.tor.tribes.types.Tag;
+import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.ServerSettings;
 import javax.management.JMRuntimeException;
 
@@ -216,7 +217,13 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                             fullscreenFrame.dispose();
                             fullscreenFrame = null;
                         }
-                        MapPanel.getSingleton().updateMapPosition(Integer.parseInt(jCenterX.getText()), Integer.parseInt(jCenterY.getText()));
+
+                        if (ServerSettings.getSingleton().getCoordType() != 2) {
+                            int[] hier = DSCalculator.hierarchicalToXy(Integer.parseInt(jCenterX.getText()), Integer.parseInt(jCenterY.getText()), 0);
+                            MapPanel.getSingleton().updateMapPosition(hier[0] + 2.5, hier[1] + 2.5);
+                        } else {
+                            MapPanel.getSingleton().updateMapPosition(Integer.parseInt(jCenterX.getText()), Integer.parseInt(jCenterY.getText()));
+                        }
                     } else if ((e.getKeyCode() == KeyEvent.VK_F) && e.isAltDown()) {
                         DSWorkbenchMarkerFrame.getSingleton().firePublicDrawMarkedOnlyChangedEvent();
                     } else if ((e.getKeyCode() == KeyEvent.VK_M) && e.isAltDown()) {
@@ -264,13 +271,25 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             String y = GlobalOptions.getProperty("last.y");
             dCenterX = Double.parseDouble(x);
             dCenterY = Double.parseDouble(y);
-            jCenterX.setText(x);
-            jCenterY.setText(y);
+            if (ServerSettings.getSingleton().getCoordType() != 2) {
+                int[] hier = DSCalculator.xyToHierarchical((int) Math.floor(dCenterX), (int) Math.floor(dCenterY));
+                jCenterX.setText(Integer.toString(hier[0]));
+                jCenterY.setText(Integer.toString(hier[1]));
+            } else {
+                jCenterX.setText(x);
+                jCenterY.setText(y);
+            }
         } catch (Exception e) {
             dCenterX = 500.0;
             dCenterY = 500.0;
-            jCenterX.setText("500");
-            jCenterY.setText("500");
+            if (ServerSettings.getSingleton().getCoordType() != 2) {
+                int[] hier = DSCalculator.xyToHierarchical(250, 250);
+                jCenterX.setText(Integer.toString(hier[0]));
+                jCenterY.setText(Integer.toString(hier[1]));
+            } else {
+                jCenterX.setText("500");
+                jCenterY.setText("500");
+            }
         }
 
 // </editor-fold>
@@ -393,6 +412,13 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         DSWorkbenchSettingsDialog.getSingleton().setupAttackColorTable();
         DSWorkbenchRankFrame.getSingleton().updateAllyList();
         DSWorkbenchRankFrame.getSingleton().updateRankTable();
+        if (ServerSettings.getSingleton().getCoordType() != 2) {
+            jLabel1.setText("K");
+            jLabel2.setText("S");
+        } else {
+            jLabel1.setText("X");
+            jLabel2.setText("Y");
+        }
         logger.info("Server settings updated");
     }
 
@@ -1236,22 +1262,26 @@ private void fireRefreshMapEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:eve
     } catch (Exception e) {
         cx = dCenterX;
         cy = dCenterY;
+        jCenterX.setText(Integer.toString((int) cx));
+        jCenterY.setText(Integer.toString((int) cy));
     }
 
-    jCenterX.setText(Integer.toString((int) Math.floor(cx)));
-    jCenterY.setText(Integer.toString((int) Math.floor(cy)));
-    dCenterX = cx;
-    dCenterY = cy;
-
+    if (ServerSettings.getSingleton().getCoordType() != 2) {
+        int[] hier = DSCalculator.hierarchicalToXy((int) cx, (int) cy, 0);
+        dCenterX = hier[0] + 2.5;
+        dCenterY = hier[1] + 2.5;
+    } else {
+        dCenterX = cx;
+        dCenterY = cy;
+    }
     double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
     double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
-    MinimapPanel.getSingleton().setSelection((int) Math.floor(cx), (int) Math.floor(cy), (int) Math.rint(w), (int) Math.rint(h));
+    MinimapPanel.getSingleton().setSelection((int) Math.floor(dCenterX), (int) Math.floor(dCenterY), (int) Math.rint(w), (int) Math.rint(h));
     MapPanel.getSingleton().updateMapPosition(dCenterX, dCenterY);
 }//GEN-LAST:event_fireRefreshMapEvent
 
     /**Update map movement*/
 private void fireMoveMapEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireMoveMapEvent
-
     double cx = dCenterX;
     double cy = dCenterY;
     try {
@@ -1260,6 +1290,12 @@ private void fireMoveMapEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     } catch (Exception e) {
         cx = dCenterX;
         cy = dCenterY;
+    }
+
+    if (ServerSettings.getSingleton().getCoordType() != 2) {
+        int[] hier = DSCalculator.hierarchicalToXy((int) cx, (int) cy, 0);
+        cx = hier[0] + 2.5;
+        cy = hier[1] + 2.5;
     }
 
     if (evt.getSource() == jMoveN) {
@@ -1282,6 +1318,12 @@ private void fireMoveMapEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     } else if (evt.getSource() == jMoveNW) {
         cx -= (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
         cy -= (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
+    }
+
+    if (ServerSettings.getSingleton().getCoordType() != 2) {
+        int[] hier = DSCalculator.xyToHierarchical((int) cx, (int) cy);
+        cx = hier[0] + 2.5;
+        cy = hier[1] + 2.5;
     }
 
     jCenterX.setText(Integer.toString((int) Math.floor(cx)));
@@ -1458,8 +1500,14 @@ private void fireMarkOnTopChangedEvent(javax.swing.event.ChangeEvent evt) {//GEN
         double dx = ServerSettings.getSingleton().getMapDimension().getWidth() / (double) MinimapPanel.getSingleton().getWidth() * (double) pX;
         double dy = ServerSettings.getSingleton().getMapDimension().getHeight() / (double) MinimapPanel.getSingleton().getHeight() * (double) pY;
 
-        jCenterX.setText(Integer.toString((int) Math.floor(dx)));
-        jCenterY.setText(Integer.toString((int) Math.floor(dy)));
+        if (ServerSettings.getSingleton().getCoordType() != 2) {
+            int[] hier = DSCalculator.xyToHierarchical((int) dx, (int) dy);
+            jCenterX.setText(Integer.toString((int) Math.floor(hier[0] + 2.5)));
+            jCenterY.setText(Integer.toString((int) Math.floor(hier[1] + 2.5)));
+        } else {
+            jCenterX.setText(Integer.toString((int) Math.floor(dx)));
+            jCenterY.setText(Integer.toString((int) Math.floor(dy)));
+        }
         dCenterX = dx;
         dCenterY = dy;
         MapPanel.getSingleton().updateMapPosition(dCenterX, dCenterY);
@@ -1472,9 +1520,15 @@ private void fireMarkOnTopChangedEvent(javax.swing.event.ChangeEvent evt) {//GEN
     public void scroll(double pXDir, double pYDir) {
         dCenterX = dCenterX + pXDir;
         dCenterY = dCenterY + pYDir;
-        jCenterX.setText(Integer.toString((int) Math.floor(dCenterX)));
-        jCenterY.setText(Integer.toString((int) Math.floor(dCenterY)));
 
+        if (ServerSettings.getSingleton().getCoordType() != 2) {
+            int[] hier = DSCalculator.xyToHierarchical((int) dCenterX, (int) dCenterY);
+            jCenterX.setText(Integer.toString((int) Math.floor(hier[0] + 2.5)));
+            jCenterY.setText(Integer.toString((int) Math.floor(hier[1] + 2.5)));
+        } else {
+            jCenterX.setText(Integer.toString((int) Math.floor(dCenterX)));
+            jCenterY.setText(Integer.toString((int) Math.floor(dCenterY)));
+        }
         double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
         double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
         MinimapPanel.getSingleton().setSelection((int) Math.floor(dCenterX), (int) Math.floor(dCenterY), (int) Math.rint(w), (int) Math.rint(h));
@@ -1486,15 +1540,26 @@ private void fireMarkOnTopChangedEvent(javax.swing.event.ChangeEvent evt) {//GEN
         if (pVillage == null) {
             return;
         }
-
-        jCenterX.setText(Integer.toString(pVillage.getX()));
-        jCenterY.setText(Integer.toString(pVillage.getY()));
+        if (ServerSettings.getSingleton().getCoordType() != 2) {
+            int[] hier = DSCalculator.xyToHierarchical((int) pVillage.getX(), (int) pVillage.getY());
+            jCenterX.setText(Integer.toString((int) Math.floor(hier[0] + 2.5)));
+            jCenterY.setText(Integer.toString((int) Math.floor(hier[1] + 2.5)));
+        } else {
+            jCenterX.setText(Integer.toString(pVillage.getX()));
+            jCenterY.setText(Integer.toString(pVillage.getY()));
+        }
         fireRefreshMapEvent(null);
     }
 
     public void centerPosition(int xPos, int yPos) {
-        jCenterX.setText(Integer.toString(xPos));
-        jCenterY.setText(Integer.toString(yPos));
+        if (ServerSettings.getSingleton().getCoordType() != 2) {
+            int[] hier = DSCalculator.xyToHierarchical((int) xPos, (int) yPos);
+            jCenterX.setText(Integer.toString((int) Math.floor(hier[0] + 2.5)));
+            jCenterY.setText(Integer.toString((int) Math.floor(hier[1] + 2.5)));
+        } else {
+            jCenterX.setText(Integer.toString(xPos));
+            jCenterY.setText(Integer.toString(yPos));
+        }
         fireRefreshMapEvent(null);
     }
 

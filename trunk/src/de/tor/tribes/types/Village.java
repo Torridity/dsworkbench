@@ -10,7 +10,9 @@ package de.tor.tribes.types;
 
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.ui.DSWorkbenchMainFrame;
+import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.GlobalOptions;
+import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.tag.TagManager;
 import java.awt.geom.Rectangle2D;
 import java.io.Serializable;
@@ -169,12 +171,24 @@ public class Village implements Serializable, Comparable {
 
     public String getHTMLInfo() {
         StringBuffer b = new StringBuffer();
-        b.append("<html><p><b>Name (X|Y):</b> ");
-        b.append(getName().replaceAll("<", "&lt;").replaceAll(">", "&gt;"));
-        b.append(" (");
-        b.append(getX());
-        b.append("|");
-        b.append(getY());
+        if (ServerSettings.getSingleton().getCoordType() != 2) {
+            b.append("<html><p><b>Name (C:S:S):</b> ");
+            b.append(getName().replaceAll("<", "&lt;").replaceAll(">", "&gt;"));
+            b.append(" (");
+            int[] hier = DSCalculator.xyToHierarchical(getX(), getY());
+            b.append(hier[0]);
+            b.append(":");
+            b.append(hier[1]);
+            b.append(":");
+            b.append(hier[2]);
+        } else {
+            b.append("<html><p><b>Name (X|Y):</b> ");
+            b.append(getName().replaceAll("<", "&lt;").replaceAll(">", "&gt;"));
+            b.append(" (");
+            b.append(getX());
+            b.append("|");
+            b.append(getY());
+        }
         b.append("), <b>Punkte:</b> ");
         b.append(getPoints());
         b.append(",");
@@ -300,12 +314,21 @@ public class Village implements Serializable, Comparable {
     @Override
     public String toString() {
         if (stringRepresentation == null) {
-            stringRepresentation = getName() + " (" + getX() + "|" + getY() + ")";
+            if (ServerSettings.getSingleton().getCoordType() != 2) {
+                int[] hier = DSCalculator.xyToHierarchical(getX(), getY());
+                stringRepresentation = getName() + " (" + hier[0] + ":" + hier[1] + ":" + hier[2] + ")";
+            } else {
+                stringRepresentation = getName() + " (" + getX() + "|" + getY() + ")";
+            }
         }
         return stringRepresentation;
     }
 
     public String toBBCode() {
+        if (ServerSettings.getSingleton().getCoordType() != 2) {
+            int[] hier = DSCalculator.xyToHierarchical(getX(), getY());
+            return "[village]" + hier[0] + ":" + hier[1] + ":" + hier[2] + "[/village]";
+        }
         return "[village]" + getX() + "|" + getY() + "[/village]";
     }
 
@@ -315,6 +338,7 @@ public class Village implements Serializable, Comparable {
             return -1;
         }
         //switch order type
+
         if (orderType == ORDER_ALPHABETICALLY) {
             return toString().toLowerCase().compareTo(o.toString().toLowerCase());
         } else {
@@ -333,11 +357,13 @@ public class Village implements Serializable, Comparable {
                     } else {
                         return 0;
                     }
+
                 }
             } catch (Exception e) {
                 //left hand side is no village, compare strings
                 return toString().toLowerCase().compareTo(o.toString().toLowerCase());
             }
+
         }
     }
     public static final Comparator<Village> CASE_INSENSITIVE_ORDER = new CaseInsensitiveComparator();

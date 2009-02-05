@@ -136,11 +136,11 @@ public class DataHolder {
                 Integer mapType = Integer.parseInt(JaxenUtils.getNodeValue(d, "//coord/sector"));*/
                 ServerSettings.getSingleton().loadSettings(GlobalOptions.getSelectedServer());
                 //Integer mapType = ServerSettings.getSingleton().getCoordType();
-                if (ServerSettings.getSingleton().getCoordType() != 2) {
+               /* if (ServerSettings.getSingleton().getCoordType() != 2) {
                     logger.error("Map type '" + ServerSettings.getSingleton().getCoordType() + "' is not supported yet");
                     fireDataHolderEvents("Der gewählte Sever wird leider (noch) nicht unterstützt");
                     return false;
-                }
+                }*/
                 try {
                     /* Integer bonusType = Integer.parseInt(JaxenUtils.getNodeValue(d, "//coord/bonus_new"));
                     currentBonusType = bonusType;*/

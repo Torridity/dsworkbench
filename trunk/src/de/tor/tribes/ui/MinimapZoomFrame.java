@@ -92,8 +92,6 @@ class DrawThread extends Thread {
     private MinimapZoomFrame mParent;
     private int centerX = 0;
     private int centerY = 0;
-    private BufferedImage mBorder;
-    private BufferedImage mBuffer;
 
     public DrawThread(MinimapZoomFrame pParent) {
         mParent = pParent;
@@ -120,14 +118,13 @@ class DrawThread extends Thread {
                 }
 
                 if (pXStart + pWidth > mParent.mMap.getWidth()) {
-                    pWidth = mParent.mMap.getWidth() - pXStart;
+                    pXStart = mParent.mMap.getWidth() - pWidth;
                 }
                 if (pYStart + pHeight > mParent.mMap.getHeight()) {
-                    pHeight = mParent.mMap.getHeight() - pYStart;
+                    pYStart = mParent.mMap.getHeight() - pHeight;
                 }
                 BufferedImage part = mParent.mMap.getSubimage(pXStart, pYStart, pWidth, pHeight);
-                
-                mParent.update(part.getScaledInstance(mParent.getWidth(), mParent.getHeight(), BufferedImage.SCALE_DEFAULT), dx, dy);
+                 mParent.update(part.getScaledInstance(mParent.getWidth(), mParent.getHeight(), BufferedImage.SCALE_DEFAULT), dx, dy);
             }
             try {
                 Thread.sleep(100);

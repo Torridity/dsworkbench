@@ -36,6 +36,10 @@ public class MinimapZoomFrame extends javax.swing.JFrame {
         }
     }
 
+    public void setMinimap(BufferedImage pMap) {
+        mMap = pMap;
+    }
+
     public void update(Image bImage, int dx, int dy) {
         if (isVisible()) {
             BufferStrategy bs = getBufferStrategy();
@@ -43,7 +47,6 @@ public class MinimapZoomFrame extends javax.swing.JFrame {
                 Graphics2D g2d = (Graphics2D) bs.getDrawGraphics();
                 g2d.setColor(new Color(35, 125, 0));
                 g2d.fillRect(0, 0, getWidth(), getHeight());
-
                 g2d.drawImage(bImage, dx, dy, null);
                 if (mBorder != null) {
                     g2d.drawImage(mBorder, null, 0, 0);
@@ -118,13 +121,15 @@ class DrawThread extends Thread {
                 }
 
                 if (pXStart + pWidth > mParent.mMap.getWidth()) {
+                    dx = mParent.mMap.getWidth() - (pXStart + pWidth);
                     pXStart = mParent.mMap.getWidth() - pWidth;
                 }
                 if (pYStart + pHeight > mParent.mMap.getHeight()) {
+                    dy = mParent.mMap.getHeight() - (pYStart + pHeight);
                     pYStart = mParent.mMap.getHeight() - pHeight;
                 }
                 BufferedImage part = mParent.mMap.getSubimage(pXStart, pYStart, pWidth, pHeight);
-                 mParent.update(part.getScaledInstance(mParent.getWidth(), mParent.getHeight(), BufferedImage.SCALE_DEFAULT), dx, dy);
+                mParent.update(part.getScaledInstance(mParent.getWidth(), mParent.getHeight(), BufferedImage.SCALE_DEFAULT), dx, dy);
             }
             try {
                 Thread.sleep(100);

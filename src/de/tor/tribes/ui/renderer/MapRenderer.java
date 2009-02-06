@@ -371,7 +371,10 @@ public class MapRenderer extends Thread {
         Hashtable<Integer, Point> copyRegions = new Hashtable<Integer, Point>();
         Hashtable<Integer, Point> copyRegionsMap = new Hashtable<Integer, Point>();
         villagePositions = new Hashtable<Village, Rectangle>();
-
+        int contSpacing = 100;
+        if (ServerSettings.getSingleton().getCoordType() != 2) {
+            contSpacing = 50;
+        }
         //de.tor.tribes.types.Rectangle selection = MapPanel.getSingleton().getSelectionRect();
 
         // <editor-fold defaultstate="collapsed" desc="Village drawing">
@@ -427,15 +430,10 @@ public class MapRenderer extends Thread {
                             break;
 
                         }
-
-
-
-
                     }
                     if (notShown) {
                         drawVillage = false;
                     }
-
                 }
                 // </editor-fold>
 
@@ -608,16 +606,16 @@ public class MapRenderer extends Thread {
                 y += height;
                 yPos++;
 
+
                 if ((showSectors) && ((int) Math.floor(yPos) % 5 == 0)) {
                     int pos = (int) Math.floor((yPos - viewStartPoint.y) * height);
                     ySectors.add(pos);
                 }
 
-                if ((showContinents) && ((int) Math.floor(yPos) % 100 == 0)) {
+                if ((showContinents) && ((int) Math.floor(yPos) % contSpacing == 0)) {
                     int pos = (int) Math.floor((yPos - viewStartPoint.y) * height);
                     yContinents.add(pos);
                 }
-
             }
 
             y = 0;
@@ -630,11 +628,11 @@ public class MapRenderer extends Thread {
                 xSectors.add(pos);
             }
 
-            if ((showContinents) && ((int) Math.floor(xPos) % 100 == 0)) {
+
+            if ((showContinents) && ((int) Math.floor(xPos) % contSpacing == 0)) {
                 int pos = (int) Math.floor((xPos - viewStartPoint.x) * width);
                 xContinents.add(pos);
             }
-
         }
 
         Stroke s = g2d.getStroke();
@@ -1204,20 +1202,17 @@ public class MapRenderer extends Thread {
         String bonus = getBonusType(mouseVillage);
         if (bonus != null) {
             drawPopupField(g2d, metrics, villageRect, null, bonus, width, dy);
-            dy +=
-                    19;
+            dy += 19;
         }
 
         current = new Font("SansSerif", Font.PLAIN, 12);
-        metrics =
-                g2d.getFontMetrics(current);
+        metrics = g2d.getFontMetrics(current);
         g2d.setFont(current);
 
         //Points rect
         String value = nf.format(mouseVillage.getPoints());
         drawPopupField(g2d, metrics, villageRect, "Punkte", value, width, dy);
-        dy +=
-                19;
+        dy += 19;
 
         //tags
         List<Tag> tags = TagManager.getSingleton().getTags(mouseVillage);
@@ -1229,8 +1224,7 @@ public class MapRenderer extends Thread {
                 bounds = metrics.getStringBounds(value + tags.get(i) + ", ", g2d);
                 if (bounds.getWidth() > 260) {
                     tagLines.add(value);
-                    value =
-                            "";
+                    value = "";
                 } else {
                     value += tags.get(i) + ", ";
                 }
@@ -1251,21 +1245,17 @@ public class MapRenderer extends Thread {
                 drawPopupField(g2d, metrics, villageRect, "Tags", line, width, dy);
 
                 int lines = tagLines.size();
-                for (int i = 0; i <
-                        lines - 1; i++) {
+                for (int i = 0; i < lines - 1; i++) {
                     dy += 19;
                     drawPopupField(g2d, metrics, villageRect, "", tagLines.remove(0), width, dy);
                 }
 
                 if (!tagLines.isEmpty()) {
                     dy += 19;
-                    line =
-                            tagLines.remove(0);
-                    line =
-                            line.substring(0, line.lastIndexOf(","));
+                    line = tagLines.remove(0);
+                    line = line.substring(0, line.lastIndexOf(","));
                     drawPopupField(g2d, metrics, villageRect, "", line, width, dy);
                 }
-
                 dy += 19;
             }
 
@@ -1293,8 +1283,8 @@ public class MapRenderer extends Thread {
 
                 dy += 19;
             }
-//Ally rect
 
+            //Ally rect
             if (a != null) {
                 if (showRanks) {
                     value = a.getTag() + " (" + nf.format(a.getAll_points()) + " | " + a.getRank() + ")";
@@ -1312,18 +1302,16 @@ public class MapRenderer extends Thread {
                 moral =
                         (moral > 100) ? 100 : moral;
                 drawPopupField(g2d, metrics, villageRect, "Moral", nf.format(moral) + "%", width, dy);
-                dy +=
-                        19;
+                dy += 19;
             }
 
         } else {
             value = "verlassen";
             drawPopupField(g2d, metrics, villageRect, null, value, width, dy);
-            dy +=
-                    19;
+            dy += 19;
         }
 
-//render troop/runtime information
+        //render troop/runtime information
         renderExtendedInformation(g2d, mouseVillage, villageRect, width, dy);
         g2d.setFont(before);
         g2d.setStroke(sBefore);

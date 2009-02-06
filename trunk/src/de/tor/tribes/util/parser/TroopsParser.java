@@ -6,6 +6,8 @@ package de.tor.tribes.util.parser;
 
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Village;
+import de.tor.tribes.util.DSCalculator;
+import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.troops.TroopsManager;
 import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
@@ -83,14 +85,24 @@ public class TroopsParser {
                     //search village
                     if (currentToken.startsWith("(") && currentToken.endsWith(")")) {
                         //check if we got a village
-                        if (currentToken.matches("\\([0-9]+\\|[0-9]+\\)") && (nextToken != null) && (nextToken.startsWith("K"))) {
-                            //extract village coordinates
-                            String[] split = currentToken.trim().split("[(\\|)]");
-                            v = DataHolder.getSingleton().getVillages()[Integer.parseInt(split[1])][Integer.parseInt(split[2])];
-                            // System.out.println("Village " + split[1] + " " + split[2]);
-                            //next 4 lines are village
-                            villageLines = 4;
-                            break;
+                        if (ServerSettings.getSingleton().getCoordType() != 2) {
+                            if (currentToken.matches("\\([0-9]+\\:[0-9]+\\:[0-9]+\\)") && (nextToken != null) && (nextToken.startsWith("K"))) {
+                                //extract village coordinates
+                                String[] split = currentToken.trim().split("[(\\:)]");
+                                int[] xy = DSCalculator.hierarchicalToXy(Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2]));
+                                v = DataHolder.getSingleton().getVillages()[xy[0]][xy[1]];
+                                villageLines = 4;
+                                break;
+                            }
+                        } else {
+                            if (currentToken.matches("\\([0-9]+\\|[0-9]+\\)") && (nextToken != null) && (nextToken.startsWith("K"))) {
+                                //extract village coordinates
+                                String[] split = currentToken.trim().split("[(\\|)]");
+                                v = DataHolder.getSingleton().getVillages()[Integer.parseInt(split[1])][Integer.parseInt(split[2])];
+                                //next 4 lines are village
+                                villageLines = 4;
+                                break;
+                            }
                         }
                     }
                 }

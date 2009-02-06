@@ -316,7 +316,7 @@ public class Village implements Serializable, Comparable {
         if (stringRepresentation == null) {
             if (ServerSettings.getSingleton().getCoordType() != 2) {
                 int[] hier = DSCalculator.xyToHierarchical(getX(), getY());
-                stringRepresentation = getName() + " (" + hier[0] + ":" + hier[1] + ":" + hier[2] + ")";
+                stringRepresentation = getName() + " (" + ((hier[0] < 10) ? "0" + hier[0] : hier[0]) + ":" + ((hier[1] < 10) ? "0" + hier[1] : hier[1]) + ":" + ((hier[2] < 10) ? "0" + hier[2] : hier[2]) + ")";
             } else {
                 stringRepresentation = getName() + " (" + getX() + "|" + getY() + ")";
             }

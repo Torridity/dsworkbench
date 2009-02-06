@@ -219,8 +219,10 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                         }
 
                         if (ServerSettings.getSingleton().getCoordType() != 2) {
-                            int[] hier = DSCalculator.hierarchicalToXy(Integer.parseInt(jCenterX.getText()), Integer.parseInt(jCenterY.getText()), 0);
-                            MapPanel.getSingleton().updateMapPosition(hier[0] + 2.5, hier[1] + 2.5);
+                            int[] hier = DSCalculator.hierarchicalToXy(Integer.parseInt(jCenterX.getText()), Integer.parseInt(jCenterY.getText()), 12);
+                            if (hier != null) {
+                                MapPanel.getSingleton().updateMapPosition(hier[0], hier[1]);
+                            }
                         } else {
                             MapPanel.getSingleton().updateMapPosition(Integer.parseInt(jCenterX.getText()), Integer.parseInt(jCenterY.getText()));
                         }
@@ -271,22 +273,18 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             String y = GlobalOptions.getProperty("last.y");
             dCenterX = Double.parseDouble(x);
             dCenterY = Double.parseDouble(y);
-            if (ServerSettings.getSingleton().getCoordType() != 2) {
-                int[] hier = DSCalculator.xyToHierarchical((int) Math.floor(dCenterX), (int) Math.floor(dCenterY));
-                jCenterX.setText(Integer.toString(hier[0]));
-                jCenterY.setText(Integer.toString(hier[1]));
-            } else {
-                jCenterX.setText(x);
-                jCenterY.setText(y);
-            }
+            jCenterX.setText(x);
+            jCenterY.setText(y);
         } catch (Exception e) {
-            dCenterX = 500.0;
-            dCenterY = 500.0;
             if (ServerSettings.getSingleton().getCoordType() != 2) {
+                dCenterX = 250.0;
+                dCenterY = 250.0;
                 int[] hier = DSCalculator.xyToHierarchical(250, 250);
                 jCenterX.setText(Integer.toString(hier[0]));
                 jCenterY.setText(Integer.toString(hier[1]));
             } else {
+                dCenterX = 500.0;
+                dCenterY = 500.0;
                 jCenterX.setText("500");
                 jCenterY.setText("500");
             }
@@ -1267,9 +1265,11 @@ private void fireRefreshMapEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:eve
     }
 
     if (ServerSettings.getSingleton().getCoordType() != 2) {
-        int[] hier = DSCalculator.hierarchicalToXy((int) cx, (int) cy, 0);
-        dCenterX = hier[0] + 2.5;
-        dCenterY = hier[1] + 2.5;
+        int[] hier = DSCalculator.hierarchicalToXy((int) cx, (int) cy, 12);
+        if (hier != null) {
+            dCenterX = hier[0];
+            dCenterY = hier[1];
+        }
     } else {
         dCenterX = cx;
         dCenterY = cy;
@@ -1293,9 +1293,11 @@ private void fireMoveMapEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     }
 
     if (ServerSettings.getSingleton().getCoordType() != 2) {
-        int[] hier = DSCalculator.hierarchicalToXy((int) cx, (int) cy, 0);
-        cx = hier[0] + 2.5;
-        cy = hier[1] + 2.5;
+        int[] hier = DSCalculator.hierarchicalToXy((int) cx, (int) cy, 12);
+        if (hier != null) {
+            cx = hier[0];
+            cy = hier[1];
+        }
     }
 
     if (evt.getSource() == jMoveN) {
@@ -1322,8 +1324,10 @@ private void fireMoveMapEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
 
     if (ServerSettings.getSingleton().getCoordType() != 2) {
         int[] hier = DSCalculator.xyToHierarchical((int) cx, (int) cy);
-        cx = hier[0] + 2.5;
-        cy = hier[1] + 2.5;
+        if (hier != null) {
+            cx = hier[0];
+            cy = hier[1];
+        }
     }
 
     jCenterX.setText(Integer.toString((int) Math.floor(cx)));
@@ -1364,6 +1368,13 @@ private void fireZoomEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fir
         double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
         int xPos = Integer.parseInt(jCenterX.getText());
         int yPos = Integer.parseInt(jCenterY.getText());
+        if (ServerSettings.getSingleton().getCoordType() != 2) {
+            int[] hier = DSCalculator.hierarchicalToXy((int) xPos, (int) yPos, 12);
+            if (hier != null) {
+                xPos = hier[0];
+                yPos = hier[1];
+            }
+        }
         MinimapPanel.getSingleton().setSelection(xPos, yPos, (int) Math.rint(w), (int) Math.rint(h));
         MapPanel.getSingleton().updateMapPosition(xPos, yPos);
     }
@@ -1378,6 +1389,15 @@ private void fireZoomEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fir
         double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
         int xPos = Integer.parseInt(jCenterX.getText());
         int yPos = Integer.parseInt(jCenterY.getText());
+
+        if (ServerSettings.getSingleton().getCoordType() != 2) {
+            int[] hier = DSCalculator.hierarchicalToXy((int) xPos, (int) yPos, 12);
+            if (hier != null) {
+                xPos = hier[0];
+                yPos = hier[1];
+            }
+        }
+
         MinimapPanel.getSingleton().setSelection(xPos, yPos, (int) Math.rint(w), (int) Math.rint(h));
         MapPanel.getSingleton().updateMapPosition(xPos, yPos);
     }
@@ -1499,11 +1519,12 @@ private void fireMarkOnTopChangedEvent(javax.swing.event.ChangeEvent evt) {//GEN
     private void updateLocationByMinimap(int pX, int pY) {
         double dx = ServerSettings.getSingleton().getMapDimension().getWidth() / (double) MinimapPanel.getSingleton().getWidth() * (double) pX;
         double dy = ServerSettings.getSingleton().getMapDimension().getHeight() / (double) MinimapPanel.getSingleton().getHeight() * (double) pY;
-
         if (ServerSettings.getSingleton().getCoordType() != 2) {
             int[] hier = DSCalculator.xyToHierarchical((int) dx, (int) dy);
-            jCenterX.setText(Integer.toString((int) Math.floor(hier[0] + 2.5)));
-            jCenterY.setText(Integer.toString((int) Math.floor(hier[1] + 2.5)));
+            if (hier != null) {
+                jCenterX.setText(Integer.toString(hier[0]));
+                jCenterY.setText(Integer.toString(hier[1]));
+            }
         } else {
             jCenterX.setText(Integer.toString((int) Math.floor(dx)));
             jCenterY.setText(Integer.toString((int) Math.floor(dy)));
@@ -1520,11 +1541,12 @@ private void fireMarkOnTopChangedEvent(javax.swing.event.ChangeEvent evt) {//GEN
     public void scroll(double pXDir, double pYDir) {
         dCenterX = dCenterX + pXDir;
         dCenterY = dCenterY + pYDir;
-
         if (ServerSettings.getSingleton().getCoordType() != 2) {
             int[] hier = DSCalculator.xyToHierarchical((int) dCenterX, (int) dCenterY);
-            jCenterX.setText(Integer.toString((int) Math.floor(hier[0] + 2.5)));
-            jCenterY.setText(Integer.toString((int) Math.floor(hier[1] + 2.5)));
+            if (hier != null) {
+                jCenterX.setText(Integer.toString(hier[0]));
+                jCenterY.setText(Integer.toString(hier[1]));
+            }
         } else {
             jCenterX.setText(Integer.toString((int) Math.floor(dCenterX)));
             jCenterY.setText(Integer.toString((int) Math.floor(dCenterY)));
@@ -1542,8 +1564,10 @@ private void fireMarkOnTopChangedEvent(javax.swing.event.ChangeEvent evt) {//GEN
         }
         if (ServerSettings.getSingleton().getCoordType() != 2) {
             int[] hier = DSCalculator.xyToHierarchical((int) pVillage.getX(), (int) pVillage.getY());
-            jCenterX.setText(Integer.toString((int) Math.floor(hier[0] + 2.5)));
-            jCenterY.setText(Integer.toString((int) Math.floor(hier[1] + 2.5)));
+            if (hier != null) {
+                jCenterX.setText(Integer.toString(hier[0]));
+                jCenterY.setText(Integer.toString(hier[1]));
+            }
         } else {
             jCenterX.setText(Integer.toString(pVillage.getX()));
             jCenterY.setText(Integer.toString(pVillage.getY()));
@@ -1554,8 +1578,10 @@ private void fireMarkOnTopChangedEvent(javax.swing.event.ChangeEvent evt) {//GEN
     public void centerPosition(int xPos, int yPos) {
         if (ServerSettings.getSingleton().getCoordType() != 2) {
             int[] hier = DSCalculator.xyToHierarchical((int) xPos, (int) yPos);
-            jCenterX.setText(Integer.toString((int) Math.floor(hier[0] + 2.5)));
-            jCenterY.setText(Integer.toString((int) Math.floor(hier[1] + 2.5)));
+            if (hier != null) {
+                jCenterX.setText(Integer.toString(hier[0]));
+                jCenterY.setText(Integer.toString(hier[1]));
+            }
         } else {
             jCenterX.setText(Integer.toString(xPos));
             jCenterY.setText(Integer.toString(yPos));

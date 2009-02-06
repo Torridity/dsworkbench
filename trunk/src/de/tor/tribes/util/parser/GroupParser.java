@@ -7,6 +7,8 @@ package de.tor.tribes.util.parser;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.DSWorkbenchMainFrame;
+import de.tor.tribes.util.DSCalculator;
+import de.tor.tribes.util.ServerSettings;
 import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -52,8 +54,14 @@ public class GroupParser {
                     Village v = null;
                     try {
                         String coord = villageToken.substring(villageToken.lastIndexOf("(") + 1, villageToken.lastIndexOf(")"));
-                        String[] split = coord.trim().split("[(\\|)]");
-                        v = DataHolder.getSingleton().getVillages()[Integer.parseInt(split[0])][Integer.parseInt(split[1])];
+                        if (ServerSettings.getSingleton().getCoordType() != 2) {
+                            String[] split = coord.trim().split("[(\\:)]");
+                            int[] xy = DSCalculator.hierarchicalToXy(Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2]));
+                            v = DataHolder.getSingleton().getVillages()[xy[0]][xy[1]];
+                        } else {
+                            String[] split = coord.trim().split("[(\\|)]");
+                            v = DataHolder.getSingleton().getVillages()[Integer.parseInt(split[0])][Integer.parseInt(split[1])];
+                        }
                     } catch (Exception e) {
                     }
                     if (v != null) {

@@ -311,9 +311,11 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
                 mBuffer = pBuffer;
                 mBuffer = mBuffer.getScaledInstance(getWidth(), getHeight(), BufferedImage.SCALE_SMOOTH);
             } else if ((mBuffer.getWidth(null) != getWidth()) || (mBuffer.getHeight(null) != getHeight())) {
+                mZoomFrame.setMinimap(pBuffer);
                 mBuffer = pBuffer;
                 mBuffer = mBuffer.getScaledInstance(getWidth(), getHeight(), BufferedImage.SCALE_SMOOTH);
             } else if (doRedraw) {
+                mZoomFrame.setMinimap(pBuffer);
                 mBuffer = pBuffer;
                 mBuffer = mBuffer.getScaledInstance(getWidth(), getHeight(), BufferedImage.SCALE_SMOOTH);
             }
@@ -760,25 +762,41 @@ class MinimapRepaintThread extends Thread {
                 Composite a = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f);
                 Font f = g2d.getFont();
                 Font t = new Font("Serif", Font.BOLD, 30);
+                int coordType = ServerSettings.getSingleton().getCoordType();
+                if (coordType != 2) {
+                    t = new Font("Serif", Font.BOLD, 20);
+                }
                 g2d.setFont(t);
+                int fact = 10;
+                int mid = 50;
+                if (coordType != 2) {
+                    fact = 5;
+                    mid = 25;
+                }
 
                 for (int i = 0; i < 10; i++) {
                     for (int j = 0; j < 10; j++) {
                         g2d.setComposite(a);
+
                         String conti = "K" + (j * 10 + i);
                         Rectangle2D bounds = g2d.getFontMetrics(t).getStringBounds(conti, g2d);
 
-                        g2d.drawString(conti, (int) Math.rint(i * 100 + 50 - bounds.getWidth() / 2), (int) Math.rint(j * 100 + 80 - bounds.getHeight() / 2));
+                        g2d.drawString(conti, (int) Math.rint(i * fact * 10 + mid - bounds.getWidth() / 2), (int) Math.rint(j * fact * 10 + mid + bounds.getHeight() / 2));
                         g2d.setComposite(c);
                         int wk = 100;
                         int hk = 100;
+                        if (coordType != 2) {
+                            wk = 50;
+                            hk = 50;
+                        }
                         if (i == 9) {
-                            wk = 99;
+                            wk -= 1;
                         }
                         if (j == 9) {
-                            hk = 99;
+                            hk -= 1;
                         }
-                        g2d.drawRect(i * 100, j * 100, wk, hk);
+
+                        g2d.drawRect(i * fact * 10, j * fact * 10, wk, hk);
                     }
                 }
                 g2d.setFont(f);

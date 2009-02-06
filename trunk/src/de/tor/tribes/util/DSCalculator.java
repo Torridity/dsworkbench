@@ -47,15 +47,23 @@ public class DSCalculator {
     }
 
     public static int[] xyToHierarchical(int x, int y) {
-        int con = ((2 * y) / 100) * 10 + ((2 * x) / 100);
-        int sec = (((2 * y) / 10) % 10) * 10 + ((2 * x) / 10) % 10;
-        int sub = (int) Math.floor(((2 * y) % 10) * 2.5 + ((2 * x) % 10) / 2);
+        if (Math.abs(x) > 499 || Math.abs(y) > 499) {
+            return null; // out of range
+        }
+        x *= 2;
+        y *= 2;
+        int con = (int) (Math.floor(y / 100) * 10 + Math.floor(x / 100));
+        int sec = (int) ((Math.floor(y / 10) % 10) * 10 + (Math.floor(x / 10) % 10));
+        int sub = (int) ((y % 10) * 2.5 + (x % 10) / 2);
         return new int[]{con, sec, sub};
     }
 
     public static int[] hierarchicalToXy(int con, int sec, int sub) {
+        if (con < 0 || con > 99 || sec < 0 || sec > 99 || sub < 0 || sub > 24) {
+            return null; // invalid s3-coords
+        }
         int x = (con % 10) * 50 + (sec % 10) * 5 + (sub % 5);
-        int y = (con / 10) * 50 + (sec / 10) * 5 + (sub / 5);
+        int y = (int) (Math.floor(con / 10) * 50 + Math.floor(sec / 10) * 5 + Math.floor(sub / 5));
         return new int[]{x, y};
     }
 

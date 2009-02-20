@@ -4,6 +4,7 @@
  */
 package de.tor.tribes.util;
 
+import de.tor.tribes.io.ServerManager;
 import de.tor.tribes.types.Village;
 import java.awt.Desktop;
 import java.net.URI;
@@ -20,8 +21,8 @@ public class BrowserCommandSender {
 
     public static void sendTroops(Village pSource, Village pTarget) {
         try {
-
-            String url = "http://" + GlobalOptions.getSelectedServer() + ".die-staemme.de/game.php?village=";
+            String baseURL = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
+            String url = baseURL + "/game.php?village=";
             url += pSource.getId() + "&screen=place&mode=command&target=" + pTarget.getId();
             /*            
             javascript:
@@ -53,7 +54,8 @@ public class BrowserCommandSender {
 
     public static void centerVillage(Village pSource) {
         try {
-            String url = "http://" + GlobalOptions.getSelectedServer() + ".die-staemme.de/game.php?village=";
+            String baseURL = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
+            String url = baseURL + "/game.php?village=";
             url += pSource.getId() + "&screen=map&x=" + pSource.getX() + "&y=" + pSource.getY();
             Desktop.getDesktop().browse(new URI(url));
         } catch (Exception e) {
@@ -64,7 +66,8 @@ public class BrowserCommandSender {
 
     public static void centerCoordinate(int pX, int pY) {
         try {
-            String url = "http://" + GlobalOptions.getSelectedServer() + ".die-staemme.de/game.php?village=";
+            String baseURL = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
+            String url = baseURL + "/game.php?village=";
             url += "&screen=map&x=" + pX + "&y=" + pY;
             Desktop.getDesktop().browse(new URI(url));
         } catch (Exception e) {
@@ -75,7 +78,8 @@ public class BrowserCommandSender {
 
     public static void sendRes(Village pSource, Village pTarget) {
         try {
-            String url = "http://" + GlobalOptions.getSelectedServer() + ".die-staemme.de/game.php?village=";
+            String baseURL = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
+            String url = baseURL + "/game.php?village=";
             url += pSource.getId() + "&screen=market&mode=send&target=" + pTarget.getId();
             Desktop.getDesktop().browse(new URI(url));
         } catch (Exception e) {

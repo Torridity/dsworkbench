@@ -42,7 +42,8 @@ public class GroupParser {
         while (lineTok.hasMoreElements()) {
             //parse single line for village
             String line = lineTok.nextToken();
-            if (line.trim().endsWith("bearbeiten")) {
+            //german and suisse
+            if (line.trim().endsWith("bearbeiten") || line.trim().endsWith("bearbeite")) {
                 try {
                     //tokenize line by tab
                     StringTokenizer elemTok = new StringTokenizer(line, "\t");

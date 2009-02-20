@@ -26,11 +26,10 @@ import java.util.StringTokenizer;
  *
  * @author Charon
  */
-public class Village implements Serializable, Comparable {
+public class Village implements Comparable {
 
     public final static int ORDER_ALPHABETICALLY = 0;
     public final static int ORDER_BY_COORDINATES = 1;
-    private static final long serialVersionUID = 10L;
     private static int orderType = ORDER_ALPHABETICALLY;
     private int id;
     private String name = null;
@@ -57,6 +56,8 @@ public class Village implements Serializable, Comparable {
             String n = URLDecoder.decode(tokenizer.nextToken(), "UTF-8");
             //replace HTML characters
             n = n.replaceAll("&gt;", ">").replaceAll("&lt;", "<");
+            n = n.replaceAll("&quot;", "\"").replaceAll("&amp;", "&");
+            n = n.replaceAll("&tilde;", "~");
             entry.setName(n);
             entry.setX(Short.parseShort(tokenizer.nextToken()));
             entry.setY(Short.parseShort(tokenizer.nextToken()));

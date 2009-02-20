@@ -43,7 +43,7 @@ public class MinimapZoomFrame extends javax.swing.JFrame {
     public void update(Image bImage, int dx, int dy) {
         if (isVisible()) {
             BufferStrategy bs = getBufferStrategy();
-            if (bs != null) {
+            if (bs != null && bImage != null) {
                 Graphics2D g2d = (Graphics2D) bs.getDrawGraphics();
                 g2d.setColor(new Color(35, 125, 0));
                 g2d.fillRect(0, 0, getWidth(), getHeight());
@@ -103,33 +103,38 @@ class DrawThread extends Thread {
     @Override
     public void run() {
         while (true) {
-            if (mParent.isVisible()) {
-                int pWidth = mParent.getWidth() / 2;
-                int pHeight = mParent.getHeight() / 2;
-                int dx = 0;
-                int dy = 0;
-                int pXStart = centerX - pWidth / 2;
-                int pYStart = centerY - pHeight / 2;
+            try {
+                if (mParent.isVisible()) {
+                    int pWidth = mParent.getWidth() / 2;
+                    int pHeight = mParent.getHeight() / 2;
+                    int dx = 0;
+                    int dy = 0;
+                    int pXStart = centerX - pWidth / 2;
+                    int pYStart = centerY - pHeight / 2;
 
-                if (pXStart < 0) {
-                    dx = -1 * pXStart;
-                    pXStart = 0;
-                }
-                if (pYStart < 0) {
-                    dy = -1 * pYStart;
-                    pYStart = 0;
-                }
+                    if (pXStart < 0) {
+                        dx = -1 * pXStart;
+                        pXStart = 0;
+                    }
+                    if (pYStart < 0) {
+                        dy = -1 * pYStart;
+                        pYStart = 0;
+                    }
 
-                if (pXStart + pWidth > mParent.mMap.getWidth()) {
-                    dx = mParent.mMap.getWidth() - (pXStart + pWidth);
-                    pXStart = mParent.mMap.getWidth() - pWidth;
+                    if (pXStart + pWidth > mParent.mMap.getWidth()) {
+                        dx = mParent.mMap.getWidth() - (pXStart + pWidth);
+                        pXStart = mParent.mMap.getWidth() - pWidth;
+                    }
+                    if (pYStart + pHeight > mParent.mMap.getHeight()) {
+                        dy = mParent.mMap.getHeight() - (pYStart + pHeight);
+                        pYStart = mParent.mMap.getHeight() - pHeight;
+                    }
+                    BufferedImage part = mParent.mMap.getSubimage(pXStart, pYStart, pWidth, pHeight);
+                    //  System.out.println("Si " + pXStart + "," + pYStart + "," + pWidth + "," + pHeight);
+                    mParent.update(part.getScaledInstance(mParent.getWidth(), mParent.getHeight(), BufferedImage.SCALE_DEFAULT), dx, dy);
                 }
-                if (pYStart + pHeight > mParent.mMap.getHeight()) {
-                    dy = mParent.mMap.getHeight() - (pYStart + pHeight);
-                    pYStart = mParent.mMap.getHeight() - pHeight;
-                }
-                BufferedImage part = mParent.mMap.getSubimage(pXStart, pYStart, pWidth, pHeight);
-                mParent.update(part.getScaledInstance(mParent.getWidth(), mParent.getHeight(), BufferedImage.SCALE_DEFAULT), dx, dy);
+            } catch (Exception e) {
+                //redraw failed, ignore it
             }
             try {
                 Thread.sleep(100);

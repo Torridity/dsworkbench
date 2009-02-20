@@ -23,10 +23,10 @@ public class AttackManagerTableModel extends AbstractTableModel {
 
     private static Logger logger = Logger.getLogger("AttackTable");
     Class[] types = new Class[]{
-        Village.class, Village.class, UnitHolder.class, Date.class, Date.class, Boolean.class
+        Village.class, Village.class, UnitHolder.class, Date.class, Date.class, Boolean.class, Integer.class
     };
     String[] colNames = new String[]{
-        "Herkunft", "Ziel", "Einheit", "Abschickzeit", "Ankunftzeit", "Einzeichnen"
+        "Herkunft", "Ziel", "Einheit", "Abschickzeit", "Ankunftzeit", "Einzeichnen", "Typ"
     };
     private String sActiveAttackPlan = AttackManager.DEFAULT_PLAN_ID;
     private static AttackManagerTableModel SINGLETON = null;
@@ -104,8 +104,10 @@ public class AttackManagerTableModel extends AbstractTableModel {
             }
             case 4:
                 return a.getArriveTime();
-            default:
+            case 5:
                 return a.isShowOnMap();
+            default:
+                return a.getType();
         }
     }
 
@@ -148,8 +150,13 @@ public class AttackManagerTableModel extends AbstractTableModel {
                 a.setArriveTime((Date) pValue);
                 break;
             }
-            default:
+            case 5: {
                 a.setShowOnMap((Boolean) pValue);
+                break;
+            }
+            default: {
+                a.setType((Integer) pValue);
+            }
         }
     }
 

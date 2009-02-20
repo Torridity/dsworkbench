@@ -1043,7 +1043,6 @@ public class MapRenderer extends Thread {
             if (f != null) {
                 f.renderForm(g2d);
             }
-
         }
     }
 
@@ -1073,7 +1072,7 @@ public class MapRenderer extends Thread {
                 targetRect = villagePositions.get(mouseVillage);
             }
 
-//check which region is visible
+            //check which region is visible
             if (sourceRect != null && targetRect != null) {
                 //source and target are visible and selected. Draw drag line between them
                 dragLine.setLine(sourceRect.x + sourceRect.width / 2, sourceRect.y + sourceRect.height / 2, targetRect.x + targetRect.width / 2, targetRect.y + targetRect.height / 2);
@@ -1090,7 +1089,6 @@ public class MapRenderer extends Thread {
                 int y1 = (int) dragLine.getY1();
                 int x2 = (int) dragLine.getX2();
                 int y2 = (int) dragLine.getY2();
-                System.out.println(mSourceVillage);
                 g2d.drawLine(x1, y1, x2, y2);
             /* boolean drawDistance = false;
             try {

@@ -182,7 +182,7 @@ public class GlobalOptions {
             logger.debug("Loading markers");
             MarkerManager.getSingleton().loadMarkersFromFile(DataHolder.getSingleton().getDataDirectory() + "/markers.xml");
             logger.debug("Loading attacks");
-            AttackManager.getSingleton().loadAttacksFromFile(DataHolder.getSingleton().getDataDirectory() + "/attacks.xml");
+            AttackManager.getSingleton().loadTroopMovementsFromDisk(DataHolder.getSingleton().getDataDirectory() + "/attacks.xml");
             logger.debug("Loading tags");
             TagManager.getSingleton().loadTagsFromFile(DataHolder.getSingleton().getDataDirectory() + "/tags.xml");
             logger.debug("Loading troops");
@@ -201,7 +201,7 @@ public class GlobalOptions {
             logger.debug("Saving markers");
             MarkerManager.getSingleton().saveMarkersToFile(DataHolder.getSingleton().getDataDirectory() + "/markers.xml");
             logger.debug("Saving attacks");
-            AttackManager.getSingleton().saveAttacksToFile(DataHolder.getSingleton().getDataDirectory() + "/attacks.xml");
+            AttackManager.getSingleton().saveTroopMovementsToDisk(DataHolder.getSingleton().getDataDirectory() + "/attacks.xml");
             logger.debug("Saving tags");
             TagManager.getSingleton().saveTagsToFile(DataHolder.getSingleton().getDataDirectory() + "/tags.xml");
             logger.debug("Saving troops");

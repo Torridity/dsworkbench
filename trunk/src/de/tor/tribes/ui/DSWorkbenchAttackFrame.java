@@ -10,8 +10,8 @@ import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
+import de.tor.tribes.ui.editors.AttackTypeCellEditor;
 import de.tor.tribes.ui.models.AttackManagerTableModel;
-import java.awt.event.MouseEvent;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -28,14 +28,13 @@ import de.tor.tribes.util.attack.AttackManagerListener;
 import de.tor.tribes.ui.editors.DateSpinEditor;
 import de.tor.tribes.ui.editors.UnitCellEditor;
 import de.tor.tribes.ui.editors.VillageCellEditor;
+import de.tor.tribes.ui.renderer.AttackTypeCellRenderer;
 import de.tor.tribes.ui.renderer.DateCellRenderer;
 import de.tor.tribes.util.DSCalculator;
 import java.awt.Component;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ItemEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseListener;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.LinkedList;
@@ -122,14 +121,12 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
             renderers.add(headerRenderer);
         }
 
+        jAttackTable.setDefaultRenderer(Integer.class, new AttackTypeCellRenderer());
+        jAttackTable.setDefaultEditor(Integer.class, new AttackTypeCellEditor());
         jAddPlanDialog.pack();
-
         jRenamePlanDialog.pack();
-
         jSelectionFilterDialog.pack();
-
         jTimeChangeDialog.pack();
-
         jMoveToPlanDialog.pack();
         mNotifyThread = new NotifyThread();
 

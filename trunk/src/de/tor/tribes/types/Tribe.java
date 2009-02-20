@@ -23,9 +23,8 @@ import java.util.StringTokenizer;
  *
  * @author Charon
  */
-public class Tribe implements Serializable, Comparable {
+public class Tribe implements Comparable {
 
-    private static final long serialVersionUID = 10L;
     private int id = 0;
     private String name = null;
     private int allyID = 0;

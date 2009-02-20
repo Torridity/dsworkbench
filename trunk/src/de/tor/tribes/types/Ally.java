@@ -23,7 +23,7 @@ import java.util.StringTokenizer;
  *
  * @author Charon
  */
-public class Ally implements Serializable, Comparable {
+public class Ally implements Comparable {
 
     private int id = 0;
     private String name = null;

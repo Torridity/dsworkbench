@@ -208,13 +208,12 @@ public class AttackManager {
                 a.setType(Attack.CLEAN_TYPE);
             } else if (pUnit.getPlainName().equals("snob")) {
                 a.setType(Attack.SNOB_TYPE);
-            } else if (pUnit.getPlainName().equals("sword")) {
+            } else if (pUnit.getPlainName().equals("sword") || pUnit.getPlainName().equals("heavy")) {
                 a.setType(Attack.SUPPORT_TYPE);
             } else {
                 a.setType(Attack.NO_TYPE);
             }
         } else {
-            System.out.println("TYPE NOTO -1 " + pType);
             a.setType(pType);
         }
         List<Attack> attackPlan = mAttackPlans.get(plan);

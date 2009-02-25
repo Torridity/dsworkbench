@@ -129,33 +129,62 @@ public class AttackManagerTableModel extends AbstractTableModel {
         Attack a = AttackManager.getSingleton().getAttackPlan(activePlan).get(pRow);
         switch (pCol) {
             case 0: {
-                a.setSource((Village) pValue);
+                if (pValue == null) {
+                    a.setSource(null);
+                } else {
+                    a.setSource((Village) pValue);
+                }
                 break;
             }
             case 1: {
-                a.setTarget((Village) pValue);
+                if (pValue == null) {
+                    a.setTarget(null);
+                } else {
+                    a.setTarget((Village) pValue);
+                }
                 break;
             }
             case 2: {
-                a.setUnit((UnitHolder) pValue);
+                if (pValue == null) {
+                    a.setUnit(null);
+                } else {
+                    a.setUnit((UnitHolder) pValue);
+                }
                 break;
             }
             case 3: {
-                Date sendTime = (Date) pValue;
-                long arriveTime = sendTime.getTime() + (long) (DSCalculator.calculateMoveTimeInSeconds(a.getSource(), a.getTarget(), a.getUnit().getSpeed()) * 1000);
-                a.setArriveTime(new Date(arriveTime));
+                if (pValue == null) {
+                    a.setArriveTime(null);
+                } else {
+                    Date sendTime = (Date) pValue;
+                    long arriveTime = sendTime.getTime() + (long) (DSCalculator.calculateMoveTimeInSeconds(a.getSource(), a.getTarget(), a.getUnit().getSpeed()) * 1000);
+                    a.setArriveTime(new Date(arriveTime));
+                }
                 break;
             }
             case 4: {
-                a.setArriveTime((Date) pValue);
+                if (pValue == null) {
+                    a.setArriveTime(null);
+                } else {
+                    a.setArriveTime((Date) pValue);
+                }
                 break;
             }
             case 5: {
-                a.setShowOnMap((Boolean) pValue);
+                if (pValue == null) {
+                    a.setShowOnMap(false);
+                } else {
+                    a.setShowOnMap((Boolean) pValue);
+                }
                 break;
             }
             default: {
-                a.setType((Integer) pValue);
+                if (pValue == null) {
+                    a.setType(Attack.NO_TYPE);
+                } else {
+                    a.setType((Integer) pValue);
+                }
+                break;
             }
         }
     }

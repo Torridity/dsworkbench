@@ -49,13 +49,13 @@ public class AttackTypeCellRenderer implements TableCellRenderer {
             ((JLabel) c).setText("-");
             ((JLabel) c).setIcon(null);
         } else {
-            //setBackground(selectColor);
-            ((JLabel) c).setText("");
             int pos = type - 1;
             if (pos >= 0) {
+                ((JLabel) c).setText("");
                 ((JLabel) c).setIcon(icons.get(pos));
             } else {
                 ((JLabel) c).setText("-");
+                ((JLabel) c).setIcon(null);
             }
         }
         return c;

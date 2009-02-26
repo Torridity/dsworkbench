@@ -20,6 +20,8 @@ public class ServerManager {
 
     // private static Hashtable<String, URL> SERVER_LIST = null;
     private static List<DatabaseServerEntry> SERVERS = null;
+    private static boolean SERVERS_UPDATED = false;
+
 
     static {
         SERVERS = new LinkedList<DatabaseServerEntry>();
@@ -30,7 +32,14 @@ public class ServerManager {
     }
 
     public static void loadServerList() throws Exception {
+        if (SERVERS_UPDATED) {
+            //don't reload servers every time
+            return;
+        }
         SERVERS = DatabaseInterface.listServers();
+        if (SERVERS != null && !SERVERS.isEmpty()) {
+            SERVERS_UPDATED = true;
+        }
     }
 
     /**Get the listof locally stored servers*/

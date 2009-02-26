@@ -43,6 +43,10 @@ public class DatabaseInterface {
     public static final int ID_USER_NOT_EXIST = -14;
     public static final int ID_VERSION_NOT_ALLOWED = -26;
     public final static String INTERFACE_URL = "http://www.support.dsworkbench.de/interface.php";
+    public static boolean bAccountValidated = false;
+    public static String sValidatedUser = null;
+    public static String sValidatedPassword = null;
+    
     private static Object callWebInterface(String pFunction, Hashtable<String, String> pArguments) {
         List<String> lines = new LinkedList<String>();
         URL url;
@@ -162,7 +166,6 @@ public class DatabaseInterface {
             default: {
                 logger.error("Unknown status code in '" + pFunction + "': " + pStatus);
             }
-
         }
     }
 
@@ -238,14 +241,35 @@ public class DatabaseInterface {
 
     public static int checkUser(String pUser, String pPassword) {
         Hashtable<String, String> arguments = new Hashtable<String, String>();
-        arguments.put("user", pUser);
+        String password = SecurityAdapter.hashStringMD5(pPassword);
 
-        arguments.put("pass", SecurityAdapter.hashStringMD5(pPassword));
+        if (pUser != null && sValidatedUser != null && pPassword != null && sValidatedPassword != null) {
+            if (!pUser.equals(sValidatedUser) || !password.equals(sValidatedPassword)) {
+                //user or password has changed
+                bAccountValidated = false;
+            }
+        } else {
+            //some value is null or was not set yet
+            bAccountValidated = false;
+        }
+        if (bAccountValidated) {
+            //account is valid
+            return ID_SUCCESS;
+        }
+
+        //validate account
+        arguments.put("user", pUser);
+        arguments.put("pass", password);
         Object result = callWebInterface("checkUser", arguments);
         try {
             String[] lines = (String[]) result;
             int status = Integer.parseInt(lines[0]);
             processStatus("check user", status);
+            if (status == 0) {
+                sValidatedUser = pUser;
+                sValidatedPassword = password;
+                bAccountValidated = true;
+            }
             return status;
         } catch (Exception e) {
             //typecast or connection failed 
@@ -262,7 +286,7 @@ public class DatabaseInterface {
         return ID_UNKNOWN_ERROR;
     }
 
-     public static int changePassword(String pUser, String pOldPassword, String pNewPassword) {
+    public static int changePassword(String pUser, String pOldPassword, String pNewPassword) {
         Hashtable<String, String> arguments = new Hashtable<String, String>();
         arguments.put("user", pUser);
 

@@ -7,17 +7,10 @@ package de.tor.tribes.db;
 import de.tor.tribes.php.DatabaseInterface;
 import de.tor.tribes.sec.SecurityAdapter;
 import de.tor.tribes.util.Constants;
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.InputStreamReader;
-import java.net.URLDecoder;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.zip.GZIPInputStream;
 import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
 
@@ -43,7 +36,7 @@ public class DatabaseAdapter {
     private static boolean DRIVER_AVAILABLE = false;
     private static boolean INITIALIZED = false;
 
-    private static void findDriver() {
+    /*private static void findDriver() {
         //try to load the MySQL driver
         try {
             Class.forName("com.mysql.jdbc.Driver").newInstance();
@@ -54,7 +47,7 @@ public class DatabaseAdapter {
             DRIVER_AVAILABLE = false;
         }
         INITIALIZED = true;
-    }
+    }*/
     private static boolean localMode = false;
 
     public static void setToLocalMode() {
@@ -66,7 +59,7 @@ public class DatabaseAdapter {
     }
 
     /**Open the database connection*/
-    private static boolean openConnection() {
+  /*  private static boolean openConnection() {
         if (isLocalMode()) {
             return openLocalConnection();
         }
@@ -84,15 +77,15 @@ public class DatabaseAdapter {
             Authenticator.setDefault(new Authenticator() {
             protected 
             });*/
-            return true;
+/*            return true;
         } catch (SQLException se) {
             logger.error("Failed to establish database connection", se);
             return false;
         }
     }
-
+*/
     /**Open the database connection*/
-    private static boolean openLocalConnection() {
+/*    private static boolean openLocalConnection() {
         if (!INITIALIZED) {
             findDriver();
         }
@@ -108,7 +101,7 @@ public class DatabaseAdapter {
             return false;
         }
     }
-
+*/
     /**Close the database connection*/
     private static void closeConnection() {
         try {

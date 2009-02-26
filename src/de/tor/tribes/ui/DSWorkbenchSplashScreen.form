@@ -24,10 +24,10 @@
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
-              <Component id="jLabel1" min="-2" pref="800" max="-2" attributes="0"/>
+              <Component id="jLabel1" min="-2" pref="576" max="-2" attributes="0"/>
               <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
           </Group>
-          <Component id="jStatusOutput" alignment="0" pref="800" max="32767" attributes="0"/>
+          <Component id="jStatusOutput" alignment="0" pref="576" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">

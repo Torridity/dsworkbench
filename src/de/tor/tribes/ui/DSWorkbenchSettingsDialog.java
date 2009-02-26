@@ -554,10 +554,10 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             return false;
         }
 
-
         if (!checkAccountSettings()) {
             return false;
         }
+
         return checkTribesAccountSettings();
     }
 
@@ -2914,7 +2914,7 @@ private void fireCancelChangePasswordEvent(java.awt.event.MouseEvent evt) {//GEN
     private void checkConnectivity() {
         logger.debug("Checking general connectivity");
         try {
-            URLConnection c = new URL("http://www.dsworkbench.de").openConnection(getWebProxy());
+            URLConnection c = new URL("http://www.heise.de").openConnection(getWebProxy());
             c.setConnectTimeout(10000);
             String header = c.getHeaderField(0);
             if (header != null) {

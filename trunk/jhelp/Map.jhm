@@ -156,9 +156,9 @@
 
 <mapID target="images.tools.attack_spy" url="images/tools/attack_spy.png"/>
 
-<mapID target="images.att_selectInv" url="images/att_selectInv.gif"/>
-
 <mapID target="images.shortcuts.Shift1" url="images/shortcuts/Shift1.gif"/>
+
+<mapID target="images.att_selectInv" url="images/att_selectInv.gif"/>
 
 <mapID target="images.shortcuts.Shift2" url="images/shortcuts/Shift2.gif"/>
 
@@ -209,6 +209,8 @@
 <mapID target="images.tictac_grey" url="images/tictac_grey.gif"/>
 
 <mapID target="images.att_selectDraw" url="images/att_selectDraw.png"/>
+
+<mapID target="images.shortcuts.AltM" url="images/shortcuts/AltM.gif"/>
 
 <mapID target="images.forbidden" url="images/forbidden.png"/>
 

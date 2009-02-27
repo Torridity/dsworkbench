@@ -50,6 +50,7 @@ import javax.swing.UIManager;
 
 /**
  * @TODO reasign timeframe if no attack found
+ * @TODO Change min. time selection to seconds
  * @author  Jejkal
  */
 public class TribeTribeAttackFrame extends javax.swing.JFrame implements VillageSelectionListener {

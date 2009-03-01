@@ -38,11 +38,10 @@ import org.apache.log4j.Logger;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.ServerSettings;
-import javax.management.JMRuntimeException;
 
 /**
+ * @TODO Introduce import funktionality for attacks, troops etc.
  * @author  Charon
- * @TODO Remove form entry for former versions
  */
 public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         MapPanelListener,
@@ -55,8 +54,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
     private double dCenterY = 500.0;
     private List<ImageIcon> mIcons;
     private double dZoomFactor = 1.0;
-    //private ToolBoxFrame mToolbox = null;
-    // private AllyAllyAttackFrame mAllyAllyAttackFrame = null;
     private TribeTribeAttackFrame mTribeTribeAttackFrame = null;
     private AboutDialog mAbout = null;
     private static DSWorkbenchMainFrame SINGLETON = null;

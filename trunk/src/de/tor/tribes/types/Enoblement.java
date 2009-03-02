@@ -4,6 +4,8 @@
  */
 package de.tor.tribes.types;
 
+import de.tor.tribes.util.DSCalculator;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -17,6 +19,7 @@ public class Enoblement {
     private Village mTarget = null;
     private List<Village> cleanSources = null;
     private List<Village> snobSources = null;
+    public static final Comparator<Enoblement> DISTANCE_SORTER = new SnobDistanceSort();
 
     public Enoblement(Village pTarget, int pCleanOffs) {
         mTarget = pTarget;
@@ -51,5 +54,18 @@ public class Enoblement {
 
     public List<Village> getCleanSources() {
         return cleanSources;
+    }
+
+    private static class SnobDistanceSort implements Comparator<Enoblement>, java.io.Serializable {
+        // use serialVersionUID from JDK 1.2.2 for interoperability
+
+        private static final long serialVersionUID = 8575799808933029326L;
+
+        @Override
+        public int compare(Enoblement e1, Enoblement e2) {
+            double d1 = DSCalculator.calculateDistance(e1.getSnobSources().get(0), e1.getSnobSources().get(3));
+            double d2 = DSCalculator.calculateDistance(e2.getSnobSources().get(0), e2.getSnobSources().get(3));
+            return Double.compare(d1, d2);
+        }
     }
 }

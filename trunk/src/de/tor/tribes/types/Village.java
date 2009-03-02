@@ -28,6 +28,7 @@ import java.util.StringTokenizer;
  */
 public class Village implements Comparable {
 
+    public static final Comparator<Village> CASE_INSENSITIVE_ORDER = new CaseInsensitiveComparator();
     public final static int ORDER_ALPHABETICALLY = 0;
     public final static int ORDER_BY_COORDINATES = 1;
     private static int orderType = ORDER_ALPHABETICALLY;
@@ -367,7 +368,6 @@ public class Village implements Comparable {
 
         }
     }
-    public static final Comparator<Village> CASE_INSENSITIVE_ORDER = new CaseInsensitiveComparator();
 
     /**
      * @return the visibleOnMap

@@ -2,14 +2,15 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package de.tor.tribes.util;
+package de.tor.tribes.util.algo;
 
+import de.tor.tribes.util.*;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Enoblement;
 import de.tor.tribes.types.Fake;
 import de.tor.tribes.types.Village;
-import de.tor.tribes.util.troops.TroopsManager;
+import java.awt.Point;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -17,6 +18,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.TreeSet;
 
 /**
  *
@@ -43,49 +45,112 @@ public class AttackCalculator {
         if (snobVillages == null) {
             snobVillages = new LinkedList<Village>();
         }
+
         //get max possible number of enoblements
-        int snobs = 0;
-
-        for (Village snobVillage : snobVillages) {
-            snobs += TroopsManager.getSingleton().getTroopsForVillage(snobVillage).getTroopsOfUnit(snobUnit);
-        }
-
-        int maxEnoblements = (int) Math.floor(snobs / 4);
+        int maxEnoblements = (int) Math.floor(snobVillages.size() / 4);
         //build timeframe
         TimeFrame timeFrame = new TimeFrame(pStartTime, pArriveTime, pTimeFrameStartHour, pTimeFrameEndHour);
         Hashtable<Village, Enoblement> enoblements = new Hashtable<Village, Enoblement>();
 
-        // <editor-fold defaultstate="collapsed" desc="Assign possible enoblements">
-        //assign snobs
-        for (Village source : snobVillages) {
-            //build target mappings ordered by distance
-            List<DistanceMapping> snobMappings = buildSourceTargetsMapping(source, pTargets);
 
-            for (DistanceMapping map : snobMappings) {
-                long dur = (long) DSCalculator.calculateMoveTimeInSeconds(map.getSource(), map.getTarget(), snobUnit.getSpeed()) * 1000;
+        List<DistanceMapping> mappingList = new LinkedList<DistanceMapping>();
+        List<Enoblement> tmpEno = new LinkedList<Enoblement>();
+
+        for (Village target : pTargets) {
+            List<DistanceMapping> snobMappings = buildSourceTargetsMapping(target, snobVillages);
+            int availSnobs = 0;
+            for (DistanceMapping mapping : snobMappings) {
+                long dur = (long) (mapping.getDistance() * snobUnit.getSpeed() * 60000.0);
                 Date send = new Date(pArriveTime.getTime() - dur);
                 //check if needed snob can arrive village in time frame
                 if (timeFrame.inside(send)) {
-                    //ok, check enoblement
-                    Enoblement e = enoblements.get(map.getTarget());
-                    if (e != null) {
-                        //enoblement for village available
-                        if (e.snobDone()) {
-                            //all snobs available
-                            break;
-                        } else {
-                            e.addSnob(map.getSource());
+                    availSnobs++;
+                    if (availSnobs == 4) {
+                        //add new enoblement
+                        Enoblement e = new Enoblement(target, pMaxCleanPerSnob);
+                        for (int i = 0; i < 4; i++) {
+                            e.addSnob(snobMappings.get(i).getTarget());
                         }
-                    } else {
-                        if (enoblements.size() < maxEnoblements) {
-                            e = new Enoblement(map.getTarget(), pMaxCleanPerSnob);
-                            e.addSnob(map.getSource());
-                            enoblements.put(map.getTarget(), e);
-                            break;
-                        }
+                        tmpEno.add(e);
+                        break;
                     }
                 }
             }
+        }
+
+
+        Collections.sort(tmpEno, Enoblement.DISTANCE_SORTER);
+        List<Enoblement> taken = new LinkedList<Enoblement>();
+        for (Enoblement e : tmpEno) {
+            boolean take = true;
+            List<Village> enoSnobVillages = e.getSnobSources();
+            for (Enoblement t : taken) {
+                List<Village> tSnobVillages = t.getSnobSources();
+                for (Village v : tSnobVillages) {
+                    if (enoSnobVillages.contains(v)) {
+                        //dont take
+                        take = false;
+                        break;
+                    }
+                }
+                if (!take) {
+                    break;
+                }
+            }
+            if (take) {
+                taken.add(e);
+            }
+            if (taken.size() == maxEnoblements) {
+                break;
+            }
+        }
+
+        Collections.sort(taken, Enoblement.DISTANCE_SORTER);
+        for (Enoblement e : taken) {
+            System.out.println(DSCalculator.calculateDistance(e.getSnobSources().get(0), e.getSnobSources().get(3)));
+        }
+
+        /*
+
+        // <editor-fold defaultstate="collapsed" desc="Assign possible enoblements">
+        //assign snobs
+        for (Village source : snobVillages) {
+        //build target mappings ordered by distance
+        List<DistanceMapping> snobMappings = buildSourceTargetsMapping(source, pTargets);
+        boolean targetFound = false;
+        for (DistanceMapping map : snobMappings) {
+        long dur = (long) DSCalculator.calculateMoveTimeInSeconds(map.getSource(), map.getTarget(), snobUnit.getSpeed()) * 1000;
+        Date send = new Date(pArriveTime.getTime() - dur);
+        //check if needed snob can arrive village in time frame
+        if (timeFrame.inside(send)) {
+        //ok, check enoblement
+        Enoblement e = enoblements.get(map.getTarget());
+        if (e != null) {
+        //enoblement for village available
+        if (e.snobDone()) {
+        System.out.println(" *SnobDone");
+        //all snobs availablet
+        break;
+        } else {
+        System.out.println(" *Add Snob");
+        e.addSnob(source);
+        targetFound = true;
+        break;
+        }
+        }
+        }
+        }
+        //only add new enoblement if absolutely no target was found
+        if (!targetFound) {
+        if (enoblements.size() < maxEnoblements) {
+        System.out.println(" *New enoblement");
+        Village target = snobMappings.get(0).getTarget();
+        Enoblement e = new Enoblement(target, pMaxCleanPerSnob);
+        e.addSnob(source);
+        enoblements.put(target, e);
+        }
+        }
+        System.out.println(" * OutsideFor");
         }
 
         //</editor-fold>
@@ -99,20 +164,21 @@ public class AttackCalculator {
 
         List<Village> ramSources = pSources.get(ramUnit);
         if (ramSources == null) {
-            ramSources = new LinkedList<Village>();
+        ramSources = new LinkedList<Village>();
         }
         List<Village> cataSources = pSources.get(cataUnit);
         if (cataSources == null) {
-            cataSources = new LinkedList<Village>();
+        cataSources = new LinkedList<Village>();
         }
         //source villages for offs
         List<Village> offSources = new LinkedList<Village>();
         for (Village v : ramSources) {
-            offSources.add(v);
+        offSources.add(v);
         }
         for (Village v : cataSources) {
-            offSources.add(v);
+        offSources.add(v);
         }
+        System.out.println("PossibleOffs: " + offSources.size());
         //</editor-fold>
 
         // <editor-fold defaultstate="collapsed" desc="Get fake villages (not enobled targets)">
@@ -121,95 +187,142 @@ public class AttackCalculator {
         System.out.println("Planned enoblements: " + enoblements.size());
         //remove enoble villages from fake list
         while (toEnoble.hasMoreElements()) {
-            fakeVillages.remove(toEnoble.nextElement());
+        fakeVillages.remove(toEnoble.nextElement());
         }
         System.out.println("Planed fakes: " + fakeVillages.size());
         //</editor-fold>
 
         Hashtable<Village, Fake> fakes = new Hashtable<Village, Fake>();
         for (Village v : fakeVillages) {
-            fakes.put(v, new Fake(v, pMaxAttacksPerVillage));
+        fakes.put(v, new Fake(v, pMaxAttacksPerVillage));
         }
 
         assignOffs(enoblements, offSources, fakes, pArriveTime, timeFrame, ramUnit.getSpeed());
 
+        List<Village> attacked = new LinkedList<Village>();
         toEnoble = enoblements.keys();
         int validEnoblements = 0;
         while (toEnoble.hasMoreElements()) {
-            Enoblement e = enoblements.get(toEnoble.nextElement());
-            if (e.snobDone() && e.offDone()) {
-                //not enough snobs
-                validEnoblements++;
-            }
+        System.out.println("Enoblement: ");
+        Enoblement e = enoblements.get(toEnoble.nextElement());
+        if (!attacked.contains(e.getTarget())) {
+        attacked.add(e.getTarget());
+        }
+
+        for (Village v : e.getSnobSources()) {
+        System.out.println(" - " + v);
+        }
+
+        if (e.snobDone() && e.offDone()) {
+        //not enough snobs
+        validEnoblements++;
+        }
         }
 
         Enumeration<Village> fakeKeys = fakes.keys();
         int validFakes = 0;
         while (fakeKeys.hasMoreElements()) {
-            Fake f = fakes.get(fakeKeys.nextElement());
-            int offs = f.getOffSources().size();
-            //not enough snobs
-            validFakes += offs;
+        Fake f = fakes.get(fakeKeys.nextElement());
+        if (!attacked.contains(f.getTarget())) {
+        attacked.add(f.getTarget());
         }
+        int offs = f.getOffSources().size();
+        //not enough snobs
+        validFakes += offs;
+        }
+
+
+        System.out.println("Attacked Villages: " + attacked.size());
         System.out.println("Valid Enoblements: " + validEnoblements);
         System.out.println("Fakes: " + validFakes);
         System.out.println("Not assigned: " + offSources.size());
-        return null;
+         */ return null;
     }
 
     private static void assignOffs(Hashtable<Village, Enoblement> pEnoblements, List<Village> pOffSources, Hashtable<Village, Fake> pFakeTargets, Date pArriveTime, TimeFrame pTimeFrame, double pSpeed) {
-        if (pOffSources.isEmpty()) {
-            return;
-        }
-
+        /*if (pOffSources.isEmpty()) {
+        return;
+        }*/
+        System.out.println("*ASSIGN ITERATION");
         Enumeration<Village> enobleKeys = pEnoblements.keys();
+        UnitHolder snob = DataHolder.getSingleton().getUnitByPlainName("snob");
+        UnitHolder ram = DataHolder.getSingleton().getUnitByPlainName("ram");
         boolean assigned = false;
         while (enobleKeys.hasMoreElements()) {
             Village enobleKey = enobleKeys.nextElement();
+
             Enoblement enoblement = pEnoblements.get(enobleKey);
+            System.out.println(" * Check Enoblement: " + enobleKey + ", AGs " + enoblement.getSnobSources().size());
             if (!enoblement.offDone()) {
                 //build mapping between enobled village and off list
                 List<DistanceMapping> mappings = buildSourceTargetsMapping(enobleKey, pOffSources);
                 for (DistanceMapping mapping : mappings) {
-                    long dur = (long) DSCalculator.calculateMoveTimeInSeconds(mapping.getSource(), mapping.getTarget(), pSpeed) * 1000;
+                    //check if source reaches target in time
+                    long dur = (long) DSCalculator.calculateMoveTimeInSeconds(mapping.getSource(), mapping.getTarget(), snob.getSpeed()) * 1000;
                     Date send = new Date(pArriveTime.getTime() - dur);
                     if (pTimeFrame.inside(send)) {
+                        System.out.println(" - Enobelment assigned");
+                        //send time is in time frame
                         enoblement.addCleanOff(mapping.getTarget());
+                        //remove off from list of available offs
                         pOffSources.remove(mapping.getTarget());
-                        assigned = true;
+                        assigned =
+                                true;
                         break;
+
+                    } else {
+                        System.out.println("Not in time frame");
                     }
+
                 }
             }
-        }
+            if (assigned) {
+                break;
+            }
 
+        }
+        System.out.println("*Enoblements checked");
         if (!assigned) {
+            // System.out.println("No enoblement assigned");
             //no off source could be used for enoblement, try to use one as fake
             Enumeration<Village> fakeKeys = pFakeTargets.keys();
             while (fakeKeys.hasMoreElements()) {
                 Village fakeKey = fakeKeys.nextElement();
                 Fake fake = pFakeTargets.get(fakeKey);
+                //check if max number of offs was reached
                 if (!fake.offDone()) {
+                    //build distance map between fake source and target
                     List<DistanceMapping> mappings = buildSourceTargetsMapping(fakeKey, pOffSources);
+                    //check all villages if fake could reach it
                     for (DistanceMapping mapping : mappings) {
-                        long dur = (long) DSCalculator.calculateMoveTimeInSeconds(mapping.getSource(), mapping.getTarget(), pSpeed) * 1000;
+                        long dur = (long) DSCalculator.calculateMoveTimeInSeconds(mapping.getSource(), mapping.getTarget(), ram.getSpeed()) * 1000;
                         Date send = new Date(pArriveTime.getTime() - dur);
+                        //check if time is in time frame
                         if (pTimeFrame.inside(send)) {
+                            //System.out.println(" - Fake assigned");
                             fake.addOff(mapping.getTarget());
                             pOffSources.remove(mapping.getTarget());
-                            assigned = true;
+                            assigned =
+                                    true;
                             break;
+
                         }
+
+
                     }
                 }
-            }
+                if (assigned) {
+                    break;
+                }
 
-            //check if next iteration is possible
-            if (assigned) {
-                //offSources still change, so iterate again
-                assignOffs(pEnoblements, pOffSources, pFakeTargets, pArriveTime, pTimeFrame, pSpeed);
             }
         }
+        //check if next iteration is possible
+        if (assigned) {
+            //offSources still change, so iterate again
+            assignOffs(pEnoblements, pOffSources, pFakeTargets, pArriveTime, pTimeFrame, pSpeed);
+        }
+
     }
 
     private static List<DistanceMapping> buildSourceTargetsMapping(Village pSource, List<Village> pTargets) {
@@ -219,6 +332,7 @@ public class AttackCalculator {
             DistanceMapping mapping = new DistanceMapping(pSource, target);
             mappings.add(mapping);
         }
+
         Collections.sort(mappings);
         return mappings;
     }

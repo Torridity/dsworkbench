@@ -16,6 +16,7 @@ import de.tor.tribes.ui.editors.DateSpinEditor;
 import de.tor.tribes.ui.editors.VillageCellEditor;
 import de.tor.tribes.ui.renderer.DateCellRenderer;
 import de.tor.tribes.ui.editors.UnitCellEditor;
+import de.tor.tribes.util.AttackCalculator;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.GlobalOptions;
@@ -285,7 +286,7 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Village
         jArriveTimeLabel = new javax.swing.JLabel();
         jArriveTime = new javax.swing.JSpinner();
         jLabel6 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        jIdleTimeBetweenAttacks = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
         jPanel9 = new javax.swing.JPanel();
         jNoNightLabel = new javax.swing.JLabel();
@@ -615,7 +616,7 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Village
             jSourcePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jSourcePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 166, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 163, Short.MAX_VALUE)
                 .addGap(11, 11, 11)
                 .addGroup(jSourcePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jSourcePanelLayout.createSequentialGroup()
@@ -832,7 +833,7 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Village
             jTargetPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jTargetPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 169, Short.MAX_VALUE)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 160, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jTargetPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -871,9 +872,9 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Village
 
         jLabel6.setText(bundle.getString("TribeTribeAttackFrame.jLabel6.text")); // NOI18N
 
-        jTextField1.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
-        jTextField1.setText(bundle.getString("TribeTribeAttackFrame.jTextField1.text")); // NOI18N
-        jTextField1.setToolTipText(bundle.getString("TribeTribeAttackFrame.jTextField1.toolTipText")); // NOI18N
+        jIdleTimeBetweenAttacks.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        jIdleTimeBetweenAttacks.setText(bundle.getString("TribeTribeAttackFrame.jIdleTimeBetweenAttacks.text")); // NOI18N
+        jIdleTimeBetweenAttacks.setToolTipText(bundle.getString("TribeTribeAttackFrame.jIdleTimeBetweenAttacks.toolTipText")); // NOI18N
 
         jLabel7.setText(bundle.getString("TribeTribeAttackFrame.jLabel7.text")); // NOI18N
 
@@ -890,7 +891,7 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Village
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel8Layout.createSequentialGroup()
-                        .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 83, Short.MAX_VALUE)
+                        .addComponent(jIdleTimeBetweenAttacks, javax.swing.GroupLayout.DEFAULT_SIZE, 83, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel7))
                     .addComponent(jArriveTime, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 134, Short.MAX_VALUE)
@@ -911,7 +912,7 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Village
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jIdleTimeBetweenAttacks, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel7))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -1015,7 +1016,7 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Village
                     .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(191, Short.MAX_VALUE))
+                .addContainerGap(188, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab(bundle.getString("TribeTribeAttackFrame.jSettingsPanel.TabConstraints.tabTitle"), new javax.swing.ImageIcon(getClass().getResource("/res/settings.png")), jSettingsPanel); // NOI18N
@@ -1100,107 +1101,168 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
     Hashtable<Tribe, Integer> attacksPerTribe = new Hashtable<Tribe, Integer>();
 
 
-
+    //build source-unit map
+    Hashtable<UnitHolder, List<Village>> sources = new Hashtable<UnitHolder, List<Village>>();
     for (int i = 0; i < attackModel.getRowCount(); i++) {
-        Village vSource = (Village) attackModel.getValueAt(i, 0);
         UnitHolder uSource = (UnitHolder) attackModel.getValueAt(i, 1);
-
-        //time when the fist attacks should begin
-        long minSendTime = ((Date) jSendTime.getValue()).getTime();
-        //time when the attacks should arrive
-        long arrive = ((Date) jArriveTime.getValue()).getTime();
-        //max. number of attacks per target village
-        int maxAttacksPerVillage = 0;
-        try {
-            maxAttacksPerVillage = Integer.parseInt(jMaxAttacksPerVillage.getText());
-            jMaxAttacksPerVillage.setBackground(Color.WHITE);
-        } catch (Exception e) {
-            jMaxAttacksPerVillage.setBackground(Color.RED);
-            jTabbedPane1.setSelectedIndex(1);
-            return;
-        }
-        Village vTarget = null;
-
-        //search all tribes and villages for targets
-        for (Village v : victimVillages) {
-            double time = DSCalculator.calculateMoveTimeInSeconds(vSource, v, uSource.getSpeed());
-            long sendTime = arrive - (long) time * 1000;
-            //check if attack is somehow possible
-
-            if (sendTime > minSendTime) {
-                //check time frame
-                Calendar c = Calendar.getInstance();
-                c.setTimeInMillis(sendTime);
-                int hour = c.get(Calendar.HOUR_OF_DAY);
-                int minute = c.get(Calendar.MINUTE);
-                int second = c.get(Calendar.SECOND);
-                boolean inTimeFrame = false;
-
-                int min = (int) Math.rint(jSendTimeFrame.getMinimumColoredValue()) - 1;
-                int max = (int) Math.rint(jSendTimeFrame.getMaximumColoredValue()) - 1;
-                if ((hour >= min) && ((hour <= max) && (minute <= 59) && (second <= 59))) {
-                    inTimeFrame = true;
-                }
-
-                if (inTimeFrame) {
-                    //only calculate if time is in time frame
-                    //get list of source villages for current target
-                    Hashtable<Village, UnitHolder> attacksForVillage = attacks.get(v);
-                    if (attacksForVillage == null) {
-                        //no attack found for this village
-                        //get number of attacks on this tribe
-                        Integer cnt = attacksPerTribe.get(v.getTribe());
-                        if (cnt == null) {
-                            //no attacks on this tribe yet
-                            cnt = 0;
-                        }
-                        //create new table of attacks
-                        attacksForVillage = new Hashtable<Village, UnitHolder>();
-                        attacksForVillage.put(vSource, uSource);
-                        attacks.put(v, attacksForVillage);
-                        attacksPerTribe.put(v.getTribe(), cnt + 1);
-                        vTarget = v;
-                    } else {
-                        //there are already attacks on this village
-                        if (attacksForVillage.keySet().size() < maxAttacksPerVillage) {
-                            //more attacks on this village are allowed
-                            Integer cnt = attacksPerTribe.get(v.getTribe());
-                            if (cnt == null) {
-                                cnt = 0;
-                            }
-                            //max number of attacks neither for villages nor for player reached
-                            attacksForVillage.put(vSource, uSource);
-                            attacksPerTribe.put(v.getTribe(), cnt + 1);
-                            vTarget = v;
-                        } else {
-                            //max number of attacks per village reached, continue search
-                        }
-                    }
-                }
-            }
-            if (vTarget != null) {
-                break;
-            }
-        }
-
-        if (vTarget == null) {
-            notAssigned.add(vSource);
+        Village vSource = (Village) attackModel.getValueAt(i, 0);
+        List<Village> sourcesForUnit = sources.get(uSource);
+        if (sourcesForUnit == null) {
+            sourcesForUnit = new LinkedList<Village>();
+            sourcesForUnit.add(vSource);
+            sources.put(uSource, sourcesForUnit);
+        } else {
+            sourcesForUnit.add(vSource);
         }
     }
 
+    // <editor-fold defaultstate="collapsed" desc="Obtain parameters">
+    int maxAttacksPerVillage = 0;
+    try {
+        maxAttacksPerVillage = Integer.parseInt(jMaxAttacksPerVillage.getText());
+        jMaxAttacksPerVillage.setBackground(Color.WHITE);
+    } catch (Exception e) {
+        jMaxAttacksPerVillage.setBackground(Color.RED);
+        jTabbedPane1.setSelectedIndex(1);
+        return;
+    }
+    int minCleanForSnob = 0;
+    try {
+        minCleanForSnob = Integer.parseInt(jCleanOffs.getText());
+        jCleanOffs.setBackground(Color.WHITE);
+    } catch (Exception e) {
+        jCleanOffs.setBackground(Color.RED);
+        jTabbedPane1.setSelectedIndex(2);
+        return;
+    }
+    int timeBetweenAttacks = 0;
+    try {
+        timeBetweenAttacks = Integer.parseInt(jIdleTimeBetweenAttacks.getText()) * 1000;
+        jIdleTimeBetweenAttacks.setBackground(Color.WHITE);
+    } catch (Exception e) {
+        jIdleTimeBetweenAttacks.setBackground(Color.RED);
+        jTabbedPane1.setSelectedIndex(2);
+        return;
+    }
+
+    Date minSendTime = ((Date) jSendTime.getValue());
+    Date arrive = ((Date) jArriveTime.getValue());
+    int min = (int) Math.rint(jSendTimeFrame.getMinimumColoredValue()) - 1;
+    int max = (int) Math.rint(jSendTimeFrame.getMaximumColoredValue()) - 1;
+    //</editor-fold>
+
+    //start processing
+    AttackCalculator.calculateAttacks(sources,
+            victimVillages,
+            maxAttacksPerVillage,
+            minCleanForSnob,
+            minSendTime,
+            arrive,
+            timeBetweenAttacks,
+            min,
+            max,
+            jNightForbidden.isSelected(), jRandomizeTribes.isSelected());
+
+    /*   for (int i = 0; i < attackModel.getRowCount(); i++) {
+    Village vSource = (Village) attackModel.getValueAt(i, 0);
+    UnitHolder uSource = (UnitHolder) attackModel.getValueAt(i, 1);
+
+    //time when the fist attacks should begin
+    long minSendTime = ((Date) jSendTime.getValue()).getTime();
+    //time when the attacks should arrive
+    long arrive = ((Date) jArriveTime.getValue()).getTime();
+    //max. number of attacks per target village
+    int maxAttacksPerVillage = 0;
+    try {
+    maxAttacksPerVillage = Integer.parseInt(jMaxAttacksPerVillage.getText());
+    jMaxAttacksPerVillage.setBackground(Color.WHITE);
+    } catch (Exception e) {
+    jMaxAttacksPerVillage.setBackground(Color.RED);
+    jTabbedPane1.setSelectedIndex(1);
+    return;
+    }
+    Village vTarget = null;
+
+    //search all tribes and villages for targets
+    for (Village v : victimVillages) {
+    double time = DSCalculator.calculateMoveTimeInSeconds(vSource, v, uSource.getSpeed());
+    long sendTime = arrive - (long) time * 1000;
+    //check if attack is somehow possible
+
+    if (sendTime > minSendTime) {
+    //check time frame
+    Calendar c = Calendar.getInstance();
+    c.setTimeInMillis(sendTime);
+    int hour = c.get(Calendar.HOUR_OF_DAY);
+    int minute = c.get(Calendar.MINUTE);
+    int second = c.get(Calendar.SECOND);
+    boolean inTimeFrame = false;
+
+    int min = (int) Math.rint(jSendTimeFrame.getMinimumColoredValue()) - 1;
+    int max = (int) Math.rint(jSendTimeFrame.getMaximumColoredValue()) - 1;
+    if ((hour >= min) && ((hour <= max) && (minute <= 59) && (second <= 59))) {
+    inTimeFrame = true;
+    }
+
+    if (inTimeFrame) {
+    //only calculate if time is in time frame
+    //get list of source villages for current target
+    Hashtable<Village, UnitHolder> attacksForVillage = attacks.get(v);
+    if (attacksForVillage == null) {
+    //no attack found for this village
+    //get number of attacks on this tribe
+    Integer cnt = attacksPerTribe.get(v.getTribe());
+    if (cnt == null) {
+    //no attacks on this tribe yet
+    cnt = 0;
+    }
+    //create new table of attacks
+    attacksForVillage = new Hashtable<Village, UnitHolder>();
+    attacksForVillage.put(vSource, uSource);
+    attacks.put(v, attacksForVillage);
+    attacksPerTribe.put(v.getTribe(), cnt + 1);
+    vTarget = v;
+    } else {
+    //there are already attacks on this village
+    if (attacksForVillage.keySet().size() < maxAttacksPerVillage) {
+    //more attacks on this village are allowed
+    Integer cnt = attacksPerTribe.get(v.getTribe());
+    if (cnt == null) {
+    cnt = 0;
+    }
+    //max number of attacks neither for villages nor for player reached
+    attacksForVillage.put(vSource, uSource);
+    attacksPerTribe.put(v.getTribe(), cnt + 1);
+    vTarget = v;
+    } else {
+    //max number of attacks per village reached, continue search
+    }
+    }
+    }
+    }
+    if (vTarget != null) {
+    break;
+    }
+    }
+
+    if (vTarget == null) {
+    notAssigned.add(vSource);
+    }
+    }
     showResults(attacks);
     if (notAssigned.size() > 0) {
-        String notAssignedMessage = "Für das Dorf " + notAssigned.get(0) + " konnte kein Ziel ";
-        if (notAssigned.size() > 1) {
-            notAssignedMessage = "Für " + notAssigned.size() + " Dörfer konnten keine Ziele ";
-        }
-        notAssignedMessage += "gefunden werden.\nDu kannst nun wie folgt vorgehen:\n";
-        notAssignedMessage += "   * Veränderung der Abschick-, Ankunftzeit oder der Zeitrahmen\n";
-        notAssignedMessage += "   * Deaktivieren der Nacht-Sperre\n";
-        notAssignedMessage += "   * Mehr Angriffe auf ein gegnerisches Dorf erlauben\n";
-        notAssignedMessage += "   * Diese Meldung ignorieren\n";
-        JOptionPane.showMessageDialog(jResultFrame, notAssignedMessage, "Information", JOptionPane.INFORMATION_MESSAGE);
+    String notAssignedMessage = "Für das Dorf " + notAssigned.get(0) + " konnte kein Ziel ";
+    if (notAssigned.size() > 1) {
+    notAssignedMessage = "Für " + notAssigned.size() + " Dörfer konnten keine Ziele ";
     }
+    notAssignedMessage += "gefunden werden.\nDu kannst nun wie folgt vorgehen:\n";
+    notAssignedMessage += "   * Veränderung der Abschick-, Ankunftzeit oder der Zeitrahmen\n";
+    notAssignedMessage += "   * Deaktivieren der Nacht-Sperre\n";
+    notAssignedMessage += "   * Mehr Angriffe auf ein gegnerisches Dorf erlauben\n";
+    notAssignedMessage += "   * Diese Meldung ignorieren\n";
+    JOptionPane.showMessageDialog(jResultFrame, notAssignedMessage, "Information", JOptionPane.INFORMATION_MESSAGE);
+    }*/
+    System.out.println("Done!");
 }//GEN-LAST:event_fireCalculateAttackEvent
 
 private void fireHideResultsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireHideResultsEvent
@@ -1716,6 +1778,7 @@ private void fireUseSnobEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     private javax.swing.JButton jCloseResultsButton;
     private javax.swing.JButton jCopyToClipboardAsBBButton;
     private javax.swing.JButton jCopyToClipboardButton;
+    private javax.swing.JTextField jIdleTimeBetweenAttacks;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -1757,7 +1820,6 @@ private void fireUseSnobEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     private javax.swing.JLabel jTargetTribeLabel;
     private javax.swing.JComboBox jTargetTribeList;
     private javax.swing.JComboBox jTargetVillageBox;
-    private javax.swing.JTextField jTextField1;
     private javax.swing.JDialog jTransferToAttackManagerDialog;
     private javax.swing.JComboBox jTroopsList;
     private javax.swing.JTable jVictimTable;

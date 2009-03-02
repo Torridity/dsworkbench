@@ -40,4 +40,16 @@ public class Enoblement {
     public boolean offDone() {
         return (cleanSources.size() == iCleaners);
     }
+
+    public Village getTarget() {
+        return mTarget;
+    }
+
+    public List<Village> getSnobSources() {
+        return snobSources;
+    }
+
+    public List<Village> getCleanSources() {
+        return cleanSources;
+    }
 }

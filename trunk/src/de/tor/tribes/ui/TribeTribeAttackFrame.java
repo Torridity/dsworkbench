@@ -49,8 +49,10 @@ import java.awt.Point;
 import java.text.DecimalFormat;
 import java.util.StringTokenizer;
 import javax.swing.UIManager;
+import de.tor.tribes.util.troops.VillageTroopsHolder;
 
 /**
+ * @TODO off-only algorithm which uses offs of a definable strength and shows best snob locations
  * @TODO reasign timeframe if no attack found
  * @TODO Change min. time selection to seconds
  * @author  Jejkal
@@ -1568,14 +1570,29 @@ private void fireUseSnobEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     int rows = model.getRowCount();
     UnitHolder snob = DataHolder.getSingleton().getUnitByPlainName("snob");
     jAttacksTable.invalidate();
+    Hashtable<Village, Integer> assignedTroops = new Hashtable<Village, Integer>();
     for (int row = 0; row < rows; row++) {
         Village v = (Village) model.getValueAt(row, 0);
-
-        if (TroopsManager.getSingleton().getTroopsForVillage(v).getTroopsOfUnit(snob) > 0) {
+        VillageTroopsHolder troops = TroopsManager.getSingleton().getTroopsForVillage(v);
+        if (troops != null) {
+            int availSnobs = troops.getTroopsOfUnit(snob);
+            Integer assignedSnobs = assignedTroops.get(v);
+            if (assignedSnobs == null) {
+                assignedSnobs = 0;
+            } else {
+                assignedSnobs += 1;
+            }
+            availSnobs -= assignedSnobs;
+            System.out.println("Assigned: " + assignedSnobs);
+            assignedTroops.put(v, assignedSnobs);
             //snob avail
-            model.setValueAt(snob, row, 1);
+            if (availSnobs > 0) {
+                model.setValueAt(snob, row, 1);
+            }
+
         }
     }
+
     jAttacksTable.revalidate();
 }//GEN-LAST:event_fireUseSnobEvent
 
@@ -1596,6 +1613,18 @@ private void fireUseSnobEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
         };
 
         Enumeration<Village> targets = pAttacks.keys();
+
+
+
+
+
+
+
+
+
+
+
+
         while (targets.hasMoreElements()) {
             Village target = targets.nextElement();
             Hashtable<Village, UnitHolder> sources = pAttacks.get(target);
@@ -1608,10 +1637,11 @@ private void fireUseSnobEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
                 resultModel.addRow(new Object[]{source, unit, target, new Date(startTime)});
             }
         }
+
         jResultsTable.setModel(resultModel);
         TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(jResultsTable.getModel());
-        jResultsTable.setRowSorter(sorter);
 
+        jResultsTable.setRowSorter(sorter);
         DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
 
             @Override
@@ -1625,11 +1655,13 @@ private void fireUseSnobEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
                 return c;
             }
         };
-
-        for (int i = 0; i < jResultsTable.getColumnCount(); i++) {
+        for (int i = 0;
+                i < jResultsTable.getColumnCount();
+                i++) {
             jResultsTable.getColumn(jResultsTable.getColumnName(i)).setHeaderRenderer(headerRenderer);
         }
-        jResultFrame.setVisible(true);
+        jResultFrame.setVisible(
+                true);
     }
 
     @Override

@@ -23,9 +23,17 @@ public class Enoblement {
 
     public Enoblement(Village pTarget, int pCleanOffs) {
         mTarget = pTarget;
-        iCleaners = pCleanOffs;
+        setNumberOfCleanOffs(pCleanOffs);
         cleanSources = new LinkedList<Village>();
         snobSources = new LinkedList<Village>();
+    }
+
+    public void setNumberOfCleanOffs(int pValue) {
+        iCleaners = pValue;
+    }
+
+    public int getNumberOfCleanOffs() {
+        return iCleaners;
     }
 
     public void addCleanOff(Village pSource) {
@@ -63,8 +71,9 @@ public class Enoblement {
 
         @Override
         public int compare(Enoblement e1, Enoblement e2) {
-            double d1 = DSCalculator.calculateDistance(e1.getSnobSources().get(0), e1.getSnobSources().get(3));
-            double d2 = DSCalculator.calculateDistance(e2.getSnobSources().get(0), e2.getSnobSources().get(3));
+
+            double d1 = DSCalculator.calculateDistance(e1.getSnobSources().get(3), e1.getTarget());
+            double d2 = DSCalculator.calculateDistance(e2.getSnobSources().get(3), e2.getTarget());
             return Double.compare(d1, d2);
         }
     }

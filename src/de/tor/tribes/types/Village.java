@@ -15,7 +15,6 @@ import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.tag.TagManager;
 import java.awt.geom.Rectangle2D;
-import java.io.Serializable;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.Comparator;

@@ -16,11 +16,11 @@ import de.tor.tribes.ui.editors.DateSpinEditor;
 import de.tor.tribes.ui.editors.VillageCellEditor;
 import de.tor.tribes.ui.renderer.DateCellRenderer;
 import de.tor.tribes.ui.editors.UnitCellEditor;
-import de.tor.tribes.util.algo.AttackCalculator;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.VillageSelectionListener;
+import de.tor.tribes.util.algo.AttackCalculator;
 import de.tor.tribes.util.algo.BruteForce;
 import de.tor.tribes.util.attack.AttackManager;
 import java.awt.Component;
@@ -1196,107 +1196,6 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
     }
 
 // </editor-fold>
-
-    /*   for (int i = 0; i < attackModel.getRowCount(); i++) {
-    Village vSource = (Village) attackModel.getValueAt(i, 0);
-    UnitHolder uSource = (UnitHolder) attackModel.getValueAt(i, 1);
-
-    //time when the fist attacks should begin
-    long minSendTime = ((Date) jSendTime.getValue()).getTime();
-    //time when the attacks should arrive
-    long arrive = ((Date) jArriveTime.getValue()).getTime();
-    //max. number of attacks per target village
-    int maxAttacksPerVillage = 0;
-    try {
-    maxAttacksPerVillage = Integer.parseInt(jMaxAttacksPerVillage.getText());
-    jMaxAttacksPerVillage.setBackground(Color.WHITE);
-    } catch (Exception e) {
-    jMaxAttacksPerVillage.setBackground(Color.RED);
-    jTabbedPane1.setSelectedIndex(1);
-    return;
-    }
-    Village vTarget = null;
-
-    //search all tribes and villages for targets
-    for (Village v : victimVillages) {
-    double time = DSCalculator.calculateMoveTimeInSeconds(vSource, v, uSource.getSpeed());
-    long sendTime = arrive - (long) time * 1000;
-    //check if attack is somehow possible
-
-    if (sendTime > minSendTime) {
-    //check time frame
-    Calendar c = Calendar.getInstance();
-    c.setTimeInMillis(sendTime);
-    int hour = c.get(Calendar.HOUR_OF_DAY);
-    int minute = c.get(Calendar.MINUTE);
-    int second = c.get(Calendar.SECOND);
-    boolean inTimeFrame = false;
-
-    int min = (int) Math.rint(jSendTimeFrame.getMinimumColoredValue()) - 1;
-    int max = (int) Math.rint(jSendTimeFrame.getMaximumColoredValue()) - 1;
-    if ((hour >= min) && ((hour <= max) && (minute <= 59) && (second <= 59))) {
-    inTimeFrame = true;
-    }
-
-    if (inTimeFrame) {
-    //only calculate if time is in time frame
-    //get list of source villages for current target
-    Hashtable<Village, UnitHolder> attacksForVillage = attacks.get(v);
-    if (attacksForVillage == null) {
-    //no attack found for this village
-    //get number of attacks on this tribe
-    Integer cnt = attacksPerTribe.get(v.getTribe());
-    if (cnt == null) {
-    //no attacks on this tribe yet
-    cnt = 0;
-    }
-    //create new table of attacks
-    attacksForVillage = new Hashtable<Village, UnitHolder>();
-    attacksForVillage.put(vSource, uSource);
-    attacks.put(v, attacksForVillage);
-    attacksPerTribe.put(v.getTribe(), cnt + 1);
-    vTarget = v;
-    } else {
-    //there are already attacks on this village
-    if (attacksForVillage.keySet().size() < maxAttacksPerVillage) {
-    //more attacks on this village are allowed
-    Integer cnt = attacksPerTribe.get(v.getTribe());
-    if (cnt == null) {
-    cnt = 0;
-    }
-    //max number of attacks neither for villages nor for player reached
-    attacksForVillage.put(vSource, uSource);
-    attacksPerTribe.put(v.getTribe(), cnt + 1);
-    vTarget = v;
-    } else {
-    //max number of attacks per village reached, continue search
-    }
-    }
-    }
-    }
-    if (vTarget != null) {
-    break;
-    }
-    }
-
-    if (vTarget == null) {
-    notAssigned.add(vSource);
-    }
-    }
-    showResults(attacks);
-    if (notAssigned.size() > 0) {
-    String notAssignedMessage = "Für das Dorf " + notAssigned.get(0) + " konnte kein Ziel ";
-    if (notAssigned.size() > 1) {
-    notAssignedMessage = "Für " + notAssigned.size() + " Dörfer konnten keine Ziele ";
-    }
-    notAssignedMessage += "gefunden werden.\nDu kannst nun wie folgt vorgehen:\n";
-    notAssignedMessage += "   * Veränderung der Abschick-, Ankunftzeit oder der Zeitrahmen\n";
-    notAssignedMessage += "   * Deaktivieren der Nacht-Sperre\n";
-    notAssignedMessage += "   * Mehr Angriffe auf ein gegnerisches Dorf erlauben\n";
-    notAssignedMessage += "   * Diese Meldung ignorieren\n";
-    JOptionPane.showMessageDialog(jResultFrame, notAssignedMessage, "Information", JOptionPane.INFORMATION_MESSAGE);
-    }*/
-    System.out.println("Done!");
 }//GEN-LAST:event_fireCalculateAttackEvent
 
 private void fireHideResultsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireHideResultsEvent

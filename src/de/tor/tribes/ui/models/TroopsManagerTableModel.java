@@ -111,7 +111,7 @@ public class TroopsManagerTableModel extends AbstractTableModel {
 
     @Override
     public boolean isCellEditable(int row, int col) {
-        if ((col > 1) && (col < 2 + DataHolder.getSingleton().getUnits().size())) {
+        if ((col > 1) && (col <= 2 + DataHolder.getSingleton().getUnits().size())) {
             return true;
         }
         return false;

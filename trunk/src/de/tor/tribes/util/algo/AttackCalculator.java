@@ -8,10 +8,10 @@ import de.tor.tribes.util.*;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.ServerManager;
 import de.tor.tribes.io.UnitHolder;
+import de.tor.tribes.types.AbstractTroopMovement;
 import de.tor.tribes.types.Enoblement;
 import de.tor.tribes.types.Fake;
 import de.tor.tribes.types.Village;
-import java.awt.Point;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -26,11 +26,11 @@ import java.util.List;
  */
 public class AttackCalculator {
 
-    public static Hashtable<Village, Hashtable<Village, UnitHolder>> calculateAttacks(
+    public static List<AbstractTroopMovement> calculateAttacks(
             Hashtable<UnitHolder, List<Village>> pSources,
             List<Village> pTargets,
             int pMaxAttacksPerVillage,
-            int pMaxCleanPerSnob,
+            int pCleanPerSnob,
             Date pStartTime,
             Date pArriveTime,
             int pMinTimeBetweenAttacks,
@@ -51,10 +51,12 @@ public class AttackCalculator {
         List<Enoblement> finalEnoblements = new LinkedList<Enoblement>();
         //generate enoblements with minimum runtime
 
+        System.out.println("===GENERATING ENOBLEMENTS===");
         generateEnoblements(snobVillages, pTargets, timeFrame, finalEnoblements);
-
-        System.out.println("RemainingSnobs: " + snobVillages.size());
-        System.out.println("Found Enoblements: " + finalEnoblements.size());
+        System.out.println("===GENERATING ENOBLEMENTS FINISHED===");
+        System.out.println("| RemainingSnobs: " + snobVillages.size());
+        System.out.println("| Found Enoblements: " + finalEnoblements.size());
+        System.out.println("|--------------------");
 
         // <editor-fold defaultstate="collapsed" desc="Get off villages">
         UnitHolder ramUnit = DataHolder.getSingleton().getUnitByPlainName("ram");
@@ -76,16 +78,17 @@ public class AttackCalculator {
 
         //set desired number of clean offs
         for (Enoblement e : finalEnoblements) {
-            e.setNumberOfCleanOffs(pMaxCleanPerSnob);
+            e.setMinOffs(pCleanPerSnob);
+            e.setMaxOffs(pMaxAttacksPerVillage);
         }
-
+        System.out.println("===ASSIGNING OFFS TO ENOBLEMENTS===");
         assignOffsToEnoblements(finalEnoblements, offSources, timeFrame);
-
-        System.out.println("Remaining Offs: " + offSources.size());
+        System.out.println("===ASSIGNING OFFS TO ENOBLEMENTS FINISHED===");
+        System.out.println("| Remaining Offs: " + offSources.size());
 
         int fullyValid = 0;
         for (Enoblement e : finalEnoblements) {
-            System.out.println("Enoblement:");
+            System.out.println("| Enoblement:");
             if (e.offDone() && e.snobDone()) {
                 fullyValid++;
                 double maxDist = 0;
@@ -95,50 +98,63 @@ public class AttackCalculator {
                         maxDist = dist;
                     }
                 }
-                for (Village v : e.getCleanSources()) {
-                    double dist = DSCalculator.calculateDistance(v, e.getTarget());
-                    if (dist > maxDist) {
-                        maxDist = dist;
+                List<Village> ramVillages = e.getOffs().get(ramUnit);
+                if (ramVillages != null) {
+                    for (Village v : ramVillages) {
+                        double dist = DSCalculator.calculateDistance(v, e.getTarget());
+                        if (dist > maxDist) {
+                            maxDist = dist;
+                        }
                     }
-                }
-                System.out.println(" * MaxDist: " + maxDist);
+                    System.out.println("|  * MaxDist: " + maxDist);
 
-                double minDist = Double.MAX_VALUE;
-                for (Village v : e.getSnobSources()) {
-                    double dist = DSCalculator.calculateDistance(v, e.getTarget());
-                    if (dist < minDist) {
-                        minDist = dist;
+                    double minDist = Double.MAX_VALUE;
+                    for (Village v : e.getSnobSources()) {
+                        double dist = DSCalculator.calculateDistance(v, e.getTarget());
+                        if (dist < minDist) {
+                            minDist = dist;
+                        }
                     }
-                }
-                for (Village v : e.getCleanSources()) {
-                    double dist = DSCalculator.calculateDistance(v, e.getTarget());
-                    if (dist < minDist) {
-                        minDist = dist;
+                    for (Village v : ramVillages) {
+                        double dist = DSCalculator.calculateDistance(v, e.getTarget());
+                        if (dist < minDist) {
+                            minDist = dist;
+                        }
                     }
+                    System.out.println("|  * MinDist: " + minDist);
+                    System.out.println("|  * Delta: " + (maxDist - minDist));
+                }else{
+                    System.out.println("| No ram sources found");
                 }
-                System.out.println(" * MinDist: " + minDist);
-                System.out.println(" * Delta: " + (maxDist - minDist));
             }
         }
 
-        System.out.println("Fully Valid: " + fullyValid);
-
-        System.out.println("Assigning remaining offs");
+        System.out.println("| Fully Valid: " + fullyValid);
+        System.out.println("|----------------");
+        System.out.println("===ASSIGNING REMAINING OFFS===");
         List<Fake> pFinalFakes = new LinkedList<Fake>();
         assignOffs(pFinalFakes, offSources, pTargets, timeFrame, pMaxAttacksPerVillage);
-        System.out.println("Fakes: " + pFinalFakes.size());
+        System.out.println("===ASSIGNING REMAINING OFFS FINISHED===");
+        System.out.println("| Fakes: " + pFinalFakes.size());
         int fullFakes = 0;
         for (Fake f : pFinalFakes) {
-            if (f.getOffSources().size() == pMaxAttacksPerVillage) {
+            if (f.offComplete()) {
                 fullFakes++;
             }
         }
-        System.out.println("Full Fakes: " + fullFakes);
-        /*for (Enoblement e : finalEnoblements) {
-        System.out.println("MaxDist: " + DSCalculator.calculateDistance(e.getSnobSources().get(3), e.getTarget()));
-        }*/
+        System.out.println("| Full Fakes: " + fullFakes);
+        System.out.println("|--------------");
 
-        return null;
+        List<AbstractTroopMovement> movements = new LinkedList<AbstractTroopMovement>();
+
+        for (Enoblement e : finalEnoblements) {
+            movements.add(e);
+        }
+
+        for (Fake f : pFinalFakes) {
+            movements.add(f);
+        }
+        return movements;
     }
 
     private static void generateEnoblements(List<Village> pSnobSources, List<Village> pTargets, TimeFrame pTimeFrame, List<Enoblement> pFinalEnoblements) {
@@ -171,7 +187,7 @@ public class AttackCalculator {
             //if all snob villages are in time, create enoblement
             if (valid) {
                 //add new temp enoblement
-                Enoblement e = new Enoblement(target, 0);
+                Enoblement e = new Enoblement(target, 0, 0);
                 for (int j = 0; j < 4; j++) {
                     Village snobVillage = snobMappings.get(j).getTarget();
                     e.addSnob(snobVillage);
@@ -180,28 +196,25 @@ public class AttackCalculator {
             }
         }
 
-        System.out.println(" * Possible Enoblements: " + tmpEno.size());
         if (tmpEno.size() == 0) {
-            System.out.println("---Finished Enoblement---");
             return;
         }
 
         Collections.sort(tmpEno, Enoblement.DISTANCE_SORTER);
         //remove first element and recalculate
         Enoblement e = tmpEno.get(0);
-        System.out.println(" * Dist " + DSCalculator.calculateDistance(e.getSnobSources().get(3), e.getTarget()));
         pFinalEnoblements.add(e);
         pTargets.remove(e.getTarget());
         for (Village source : e.getSnobSources()) {
             pSnobSources.remove(source);
         }
-        System.out.println("New Enoblement-Iteration");
         generateEnoblements(pSnobSources, pTargets, pTimeFrame, pFinalEnoblements);
     }
 
     private static void assignOffsToEnoblements(List<Enoblement> pInOutEnoblements, List<Village> pOffSources, TimeFrame pTimeFrame) {
 
         Hashtable<Enoblement, List<DistanceMapping>> tmpMappings = new Hashtable<Enoblement, List<DistanceMapping>>();
+        UnitHolder ram = DataHolder.getSingleton().getUnitByPlainName("ram");
         for (Enoblement enoblement : pInOutEnoblements) {
             //use enoblement if offs where not assigned yet
             if (!enoblement.offDone()) {
@@ -211,7 +224,7 @@ public class AttackCalculator {
                 //expect target to be valid
                 boolean valid = true;
                 //check distances for first (fastest) possible off
-                UnitHolder ram = DataHolder.getSingleton().getUnitByPlainName("ram");
+
                 if (pOffSources.size() > enoblement.getNumberOfCleanOffs()) {
                     //at least 4 snobs left
                     for (int i = 0; i <= enoblement.getNumberOfCleanOffs(); i++) {
@@ -240,9 +253,7 @@ public class AttackCalculator {
             }
         }
 
-        System.out.println(" * Remaining Enoblements: " + tmpMappings.size());
         if (tmpMappings.size() == 0) {
-            System.out.println("---Finished OffMapping---");
             return;
         }
 
@@ -267,29 +278,28 @@ public class AttackCalculator {
                 }
             }
         }
-        System.out.println(" *BestDistance: " + minDist);
         List<DistanceMapping> offMappings = tmpMappings.get(best);
 
         for (DistanceMapping offMapping : offMappings) {
             //use target due to the distance was calculated based on the enoblements target
             Village off = offMapping.getTarget();
-            best.addCleanOff(off);
+            best.addCleanOff(ram, off);
             pOffSources.remove(off);
         }
 
-        System.out.println("New Off-Iteration");
         assignOffsToEnoblements(pInOutEnoblements, pOffSources, pTimeFrame);
     }
 
     private static void assignOffs(List<Fake> pFakes, List<Village> pOffSources, List<Village> pTargets, TimeFrame pTimeFrame, int pMaxAttacks) {
+        //table which holds for every target the distance of each source
         Hashtable<Village, List<DistanceMapping>> tmpMappings = new Hashtable<Village, List<DistanceMapping>>();
-        System.out.println(" * Remainging offs: " + pOffSources.size());
+        UnitHolder ram = DataHolder.getSingleton().getUnitByPlainName("ram");
         for (Village target : pTargets) {
             //calculate snob distances for current enoblement target village
             List<DistanceMapping> offMappings = buildSourceTargetsMapping(target, pOffSources);
 
             //check distances for first (fastest) possible off
-            UnitHolder ram = DataHolder.getSingleton().getUnitByPlainName("ram");
+
             //temp map for valid distances
             List<DistanceMapping> tmpMap = new LinkedList<DistanceMapping>();
             for (DistanceMapping mapping : offMappings) {
@@ -311,9 +321,8 @@ public class AttackCalculator {
 
         }
 
-        System.out.println(" * Remaining Mappings: " + tmpMappings.size());
         if (tmpMappings.size() == 0) {
-            System.out.println("---Finished FinalOffMapping---");
+            //no off could be assigned in time frame
             return;
         }
 
@@ -322,7 +331,7 @@ public class AttackCalculator {
         Enumeration<Village> keys = tmpMappings.keys();
         //find the enoblement for which the worst off has the smallest runtime
         while (keys.hasMoreElements()) {
-            //get next enoblement
+            //get next off source
             Village e = keys.nextElement();
             if (best == null) {
                 //no best set yet, so take the first element to initialize
@@ -340,20 +349,35 @@ public class AttackCalculator {
                 }
             }
         }
-        System.out.println(" *BestDistance: " + minDist);
         List<DistanceMapping> offMappings = tmpMappings.get(best);
-        Fake f = new Fake(best, pMaxAttacks);
-        if (offMappings.size() == pMaxAttacks) {
-            //remove target only if max number was reached
-            pTargets.remove(best);
+        Fake f = null;
+
+
+        //try to find existing fake
+        for (Fake fake : pFakes) {
+            if (fake.getTarget().equals(best)) {
+                f = fake;
+                break;
+            }
+        }
+
+        //no existing fake found
+        if (f == null) {
+            f = new Fake(best, pMaxAttacks);
+            pFakes.add(f);
         }
         for (DistanceMapping offMapping : offMappings) {
             //use target due to the distance was calculated based on the enoblements target
-            f.addOff(offMapping.getTarget());
-            pOffSources.remove(offMapping.getTarget());
+            if (!f.offComplete()) {
+                f.addOff(ram, offMapping.getTarget());
+                pOffSources.remove(offMapping.getTarget());
+            }
         }
-        pFakes.add(f);
-        System.out.println("New FinalOff-Iteration");
+        if (f.offComplete()) {
+            //remove target only if max number was reached
+            pTargets.remove(best);
+        }
+
         assignOffs(pFakes, pOffSources, pTargets, pTimeFrame, pMaxAttacks);
     }
 

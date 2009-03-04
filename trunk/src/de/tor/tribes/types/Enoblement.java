@@ -4,6 +4,7 @@
  */
 package de.tor.tribes.types;
 
+import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.util.DSCalculator;
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -13,31 +14,22 @@ import java.util.List;
  *
  * @author Jejkal
  */
-public class Enoblement {
+public class Enoblement extends AbstractTroopMovement {
 
-    private int iCleaners = 0;
-    private Village mTarget = null;
-    private List<Village> cleanSources = null;
     private List<Village> snobSources = null;
     public static final Comparator<Enoblement> DISTANCE_SORTER = new SnobDistanceSort();
 
-    public Enoblement(Village pTarget, int pCleanOffs) {
-        mTarget = pTarget;
-        setNumberOfCleanOffs(pCleanOffs);
-        cleanSources = new LinkedList<Village>();
+    public Enoblement(Village pTarget, int pCleanOffs, int pMaxOffs) {
+        super(pTarget, pCleanOffs, pMaxOffs);
         snobSources = new LinkedList<Village>();
     }
 
-    public void setNumberOfCleanOffs(int pValue) {
-        iCleaners = pValue;
-    }
-
     public int getNumberOfCleanOffs() {
-        return iCleaners;
+        return getMinOffs();
     }
 
-    public void addCleanOff(Village pSource) {
-        cleanSources.add(pSource);
+    public void addCleanOff(UnitHolder pUnit, Village pSource) {
+        addOff(pUnit, pSource);
     }
 
     public void addSnob(Village pSource) {
@@ -49,19 +41,11 @@ public class Enoblement {
     }
 
     public boolean offDone() {
-        return (cleanSources.size() == iCleaners);
-    }
-
-    public Village getTarget() {
-        return mTarget;
+        return offValid();
     }
 
     public List<Village> getSnobSources() {
         return snobSources;
-    }
-
-    public List<Village> getCleanSources() {
-        return cleanSources;
     }
 
     private static class SnobDistanceSort implements Comparator<Enoblement>, java.io.Serializable {

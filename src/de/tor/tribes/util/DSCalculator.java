@@ -18,7 +18,9 @@ public class DSCalculator {
         if ((pSource == null) || (pTarget == null)) {
             return 0;
         }
-        return Math.sqrt(Math.pow(pTarget.getX() - pSource.getX(), 2) + Math.pow(pTarget.getY() - pSource.getY(), 2));
+        int dx = pTarget.getX() - pSource.getX();
+        int dy = pTarget.getY() - pSource.getY();
+        return Math.sqrt(dx * dx + dy * dy);
     }
 
     public static double calculateMoveTimeInMinutes(Village pSource, Village pTarget, double pMinPerField) {

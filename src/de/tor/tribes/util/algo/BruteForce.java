@@ -5,6 +5,7 @@
 package de.tor.tribes.util.algo;
 
 import de.tor.tribes.io.UnitHolder;
+import de.tor.tribes.types.AbstractTroopMovement;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.util.DSCalculator;
@@ -14,14 +15,15 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
+import de.tor.tribes.types.Fake;
 
 /**
- *
+ *@TODO re-check correctness of algorithm
  * @author Charon
  */
 public class BruteForce {
 
-    public static Hashtable<Village, Hashtable<Village, UnitHolder>> calculateAttacks(
+    public static List<AbstractTroopMovement> calculateAttacks(
             Hashtable<UnitHolder, List<Village>> pSources,
             List<Village> pTargets,
             int pMaxAttacksPerVillage,
@@ -121,20 +123,38 @@ public class BruteForce {
             }
         }
 
-        int validAttacks = 0;
+       /* int validAttacks = 0;
         Enumeration<Village> villages = attacks.keys();
         while (villages.hasMoreElements()) {
             Village v = villages.nextElement();
-            System.out.println("Attacked: " + v + ", Attacks: " + attacks.get(v).size());
             Hashtable<Village, UnitHolder> attackTable = attacks.get(v);
             Enumeration<Village> enu = attackTable.keys();
-            while(enu.hasMoreElements()){
+            while (enu.hasMoreElements()) {
                 System.out.println(" - " + enu.nextElement());
             }
             validAttacks += attacks.get(v).size();
         }
-        System.out.println("AttackedVillages: " + attacks.size());
-        System.out.println("Attacks: " + validAttacks);
+*/
+        List<AbstractTroopMovement> movements = new LinkedList<AbstractTroopMovement>();
+        Enumeration<Village> targetKeys = attacks.keys();
+        int fullFakes = 0;
+
+        while (targetKeys.hasMoreElements()) {
+            Village target = targetKeys.nextElement();
+            Enumeration<Village> sourceKeys = attacks.get(target).keys();
+            Fake f = new Fake(target, pMaxAttacksPerVillage);
+            while (sourceKeys.hasMoreElements()) {
+                Village source = sourceKeys.nextElement();
+                f.addOff(attacks.get(target).get(source), source);
+            }
+            if (f.offComplete()) {
+                fullFakes++;
+            }
+            movements.add(f);
+
+        }
+        System.out.println("AttackedVillages: " + movements.size());
+        System.out.println("FullFakes: " + fullFakes);
         System.out.println("Not Assigned: " + notAssigned.size());
         return null;
     }

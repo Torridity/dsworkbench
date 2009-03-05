@@ -6,7 +6,6 @@ package de.tor.tribes.util.algo;
 
 import de.tor.tribes.util.*;
 import de.tor.tribes.io.DataHolder;
-import de.tor.tribes.io.ServerManager;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.AbstractTroopMovement;
 import de.tor.tribes.types.Enoblement;
@@ -123,7 +122,7 @@ public class AttackCalculator {
                     }
                     System.out.println("|  * MinDist: " + minDist);
                     System.out.println("|  * Delta: " + (maxDist - minDist));
-                }else{
+                } else {
                     System.out.println("| No ram sources found");
                 }
             }
@@ -154,6 +153,8 @@ public class AttackCalculator {
         for (Fake f : pFinalFakes) {
             movements.add(f);
         }
+       
+
         return movements;
     }
 

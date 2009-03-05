@@ -232,7 +232,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         jSelectionFilterDialog.setModal(true);
 
         jPanel1.setBackground(new java.awt.Color(239, 235, 223));
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, bundle.getString("DSWorkbenchAttackFrame.jPanel1.border.title"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 11), new java.awt.Color(0, 0, 0))); // NOI18N
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(bundle.getString("DSWorkbenchAttackFrame.jPanel1.border.title"))); // NOI18N
         jPanel1.setOpaque(false);
 
         jLabel1.setText(bundle.getString("DSWorkbenchAttackFrame.jLabel1.text")); // NOI18N
@@ -549,9 +549,9 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         jModifyArrivalOption.setText(bundle.getString("DSWorkbenchAttackFrame.jModifyArrivalOption.text")); // NOI18N
         jModifyArrivalOption.setToolTipText(bundle.getString("DSWorkbenchAttackFrame.jModifyArrivalOption.toolTipText")); // NOI18N
         jModifyArrivalOption.setOpaque(false);
-        jModifyArrivalOption.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                fireModifyTimeChangedEvent(evt);
+        jModifyArrivalOption.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                fireModifyTimeEvent(evt);
             }
         });
 
@@ -560,9 +560,9 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         jMoveTimeOption.setText(bundle.getString("DSWorkbenchAttackFrame.jMoveTimeOption.text")); // NOI18N
         jMoveTimeOption.setToolTipText(bundle.getString("DSWorkbenchAttackFrame.jMoveTimeOption.toolTipText")); // NOI18N
         jMoveTimeOption.setOpaque(false);
-        jMoveTimeOption.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                fireModifyTimeChangedEvent(evt);
+        jMoveTimeOption.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                fireModifyTimeEvent(evt);
             }
         });
 
@@ -1674,22 +1674,6 @@ private void fireChangeTimesEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
     jTimeChangeDialog.setVisible(true);
 }//GEN-LAST:event_fireChangeTimesEvent
 
-private void fireModifyTimeChangedEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireModifyTimeChangedEvent
-    boolean moveMode = true;
-    if (evt.getSource() == jModifyArrivalOption) {
-        moveMode = false;
-    }
-
-    jLabel5.setEnabled(moveMode);
-    jLabel6.setEnabled(moveMode);
-    jLabel7.setEnabled(moveMode);
-    jMinuteField.setEnabled(moveMode);
-    jHourField.setEnabled(moveMode);
-    jDayField.setEnabled(moveMode);
-    jLabel8.setEnabled(!moveMode);
-    jArriveDateField.setEnabled(!moveMode);
-}//GEN-LAST:event_fireModifyTimeChangedEvent
-
 private void fireChangeNotifyEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireChangeNotifyEvent
     mNotifyThread.setActive(jNotifyButton.isSelected());
 }//GEN-LAST:event_fireChangeNotifyEvent
@@ -1857,6 +1841,22 @@ private void jDoMoveToPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:even
     jMoveToPlanDialog.setVisible(false);
 }//GEN-LAST:event_jDoMoveToPlanEvent
 
+private void fireModifyTimeEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireModifyTimeEvent
+    boolean moveMode = true;
+    if (evt.getSource() == jModifyArrivalOption) {
+        moveMode = false;
+    }
+
+    jLabel5.setEnabled(moveMode);
+    jLabel6.setEnabled(moveMode);
+    jLabel7.setEnabled(moveMode);
+    jMinuteField.setEnabled(moveMode);
+    jHourField.setEnabled(moveMode);
+    jDayField.setEnabled(moveMode);
+    jLabel8.setEnabled(!moveMode);
+    jArriveDateField.setEnabled(!moveMode);
+}//GEN-LAST:event_fireModifyTimeEvent
+
     /**Set table model for filteres selection*/
     private void setTableModel(JTable pTable, Hashtable<Village, Boolean> pVillages) {
         //create default table model
@@ -1884,7 +1884,7 @@ private void jDoMoveToPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:even
             }
         };
 
-//walk villages for row values
+        //walk villages for row values
         if (pVillages.size() != 0) {
             Enumeration<Village> villages = pVillages.keys();
             while (villages.hasMoreElements()) {

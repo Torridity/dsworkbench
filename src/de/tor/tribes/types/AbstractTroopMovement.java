@@ -94,8 +94,8 @@ public abstract class AbstractTroopMovement {
 
         @Override
         public int compare(Attack a1, Attack a2) {
-            double d1 = DSCalculator.calculateMoveTimeInSeconds(a1.getSource(), a1.getTarget(), a1.getUnit().getSpeed());
-            double d2 = DSCalculator.calculateMoveTimeInSeconds(a2.getSource(), a2.getTarget(), a2.getUnit().getSpeed());
+            double d1 = a1.getArriveTime().getTime() - (long) DSCalculator.calculateMoveTimeInSeconds(a1.getSource(), a1.getTarget(), a1.getUnit().getSpeed()) * 1000;
+            double d2 = a2.getArriveTime().getTime() - (long) DSCalculator.calculateMoveTimeInSeconds(a2.getSource(), a2.getTarget(), a2.getUnit().getSpeed()) * 1000;
             return Double.compare(d1, d2);
         }
     }

@@ -12,7 +12,6 @@ import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
 import de.tor.tribes.io.DataHolder;
-import java.util.Collections;
 
 /**
  *

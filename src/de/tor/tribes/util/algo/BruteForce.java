@@ -9,14 +9,12 @@ import de.tor.tribes.types.AbstractTroopMovement;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.util.DSCalculator;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import de.tor.tribes.types.Fake;
-import org.apache.commons.ssl.PEMItem;
 
 /**
  *@TODO re-check correctness of algorithm

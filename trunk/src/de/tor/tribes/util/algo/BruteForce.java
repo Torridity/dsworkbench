@@ -16,6 +16,7 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import de.tor.tribes.types.Fake;
+import org.apache.commons.ssl.PEMItem;
 
 /**
  *@TODO re-check correctness of algorithm
@@ -45,69 +46,49 @@ public class BruteForce {
             List<Village> sources = pSources.get(unit);
             if (sources != null) {
                 for (Village source : sources) {
-
-                    //time when the fist attacks should begin
-                    long minSendTime = pStartTime.getTime();
                     //time when the attacks should arrive
                     long arrive = pArriveTime.getTime();
                     //max. number of attacks per target village
                     int maxAttacksPerVillage = pMaxAttacksPerVillage;
                     Village vTarget = null;
-
+                    TimeFrame t = new TimeFrame(pStartTime, pArriveTime, pTimeFrameStartHour, pTimeFrameEndHour);
                     //search all tribes and villages for targets
                     for (Village v : pTargets) {
                         double time = DSCalculator.calculateMoveTimeInSeconds(source, v, unit.getSpeed());
-                        long sendTime = arrive - (long) time * 1000;
+                        Date sendTime = new Date(arrive - (long) time * 1000);
                         //check if attack is somehow possible
-
-                        if (sendTime > minSendTime) {
-                            //check time frame
-                            Calendar c = Calendar.getInstance();
-                            c.setTimeInMillis(sendTime);
-                            int hour = c.get(Calendar.HOUR_OF_DAY);
-                            int minute = c.get(Calendar.MINUTE);
-                            int second = c.get(Calendar.SECOND);
-                            boolean inTimeFrame = false;
-
-                            int min = pTimeFrameStartHour;
-                            int max = pTimeFrameEndHour;
-                            if ((hour >= min) && ((hour <= max) && (minute <= 59) && (second <= 59))) {
-                                inTimeFrame = true;
-                            }
-
-                            if (inTimeFrame) {
-                                //only calculate if time is in time frame
-                                //get list of source villages for current target
-                                Hashtable<Village, UnitHolder> attacksForVillage = attacks.get(v);
-                                if (attacksForVillage == null) {
-                                    //no attack found for this village
-                                    //get number of attacks on this tribe
-                                    Integer cnt = pMaxAttacksPerVillage;
+                        if (t.inside(sendTime)) {
+                            //only calculate if time is in time frame
+                            //get list of source villages for current target
+                            Hashtable<Village, UnitHolder> attacksForVillage = attacks.get(v);
+                            if (attacksForVillage == null) {
+                                //no attack found for this village
+                                //get number of attacks on this tribe
+                                Integer cnt = pMaxAttacksPerVillage;
+                                if (cnt == null) {
+                                    //no attacks on this tribe yet
+                                    cnt = 0;
+                                }
+                                //create new table of attacks
+                                attacksForVillage = new Hashtable<Village, UnitHolder>();
+                                attacksForVillage.put(source, unit);
+                                attacks.put(v, attacksForVillage);
+                                attacksPerTribe.put(v.getTribe(), cnt + 1);
+                                vTarget = v;
+                            } else {
+                                //there are already attacks on this village
+                                if (attacksForVillage.keySet().size() < maxAttacksPerVillage) {
+                                    //more attacks on this village are allowed
+                                    Integer cnt = attacksPerTribe.get(v.getTribe());
                                     if (cnt == null) {
-                                        //no attacks on this tribe yet
                                         cnt = 0;
                                     }
-                                    //create new table of attacks
-                                    attacksForVillage = new Hashtable<Village, UnitHolder>();
+                                    //max number of attacks neither for villages nor for player reached
                                     attacksForVillage.put(source, unit);
-                                    attacks.put(v, attacksForVillage);
                                     attacksPerTribe.put(v.getTribe(), cnt + 1);
                                     vTarget = v;
                                 } else {
-                                    //there are already attacks on this village
-                                    if (attacksForVillage.keySet().size() < maxAttacksPerVillage) {
-                                        //more attacks on this village are allowed
-                                        Integer cnt = attacksPerTribe.get(v.getTribe());
-                                        if (cnt == null) {
-                                            cnt = 0;
-                                        }
-                                        //max number of attacks neither for villages nor for player reached
-                                        attacksForVillage.put(source, unit);
-                                        attacksPerTribe.put(v.getTribe(), cnt + 1);
-                                        vTarget = v;
-                                    } else {
-                                        //max number of attacks per village reached, continue search
-                                        }
+                                    //max number of attacks per village reached, continue search
                                 }
                             }
                         }
@@ -123,24 +104,15 @@ public class BruteForce {
             }
         }
 
-       /* int validAttacks = 0;
-        Enumeration<Village> villages = attacks.keys();
-        while (villages.hasMoreElements()) {
-            Village v = villages.nextElement();
-            Hashtable<Village, UnitHolder> attackTable = attacks.get(v);
-            Enumeration<Village> enu = attackTable.keys();
-            while (enu.hasMoreElements()) {
-                System.out.println(" - " + enu.nextElement());
-            }
-            validAttacks += attacks.get(v).size();
-        }
-*/
+        System.out.println("Attacks: " + attacks.size());
+
         List<AbstractTroopMovement> movements = new LinkedList<AbstractTroopMovement>();
         Enumeration<Village> targetKeys = attacks.keys();
         int fullFakes = 0;
 
         while (targetKeys.hasMoreElements()) {
             Village target = targetKeys.nextElement();
+            System.out.println("Attacks at " + target + ": " + attacks.get(target).size());
             Enumeration<Village> sourceKeys = attacks.get(target).keys();
             Fake f = new Fake(target, pMaxAttacksPerVillage);
             while (sourceKeys.hasMoreElements()) {
@@ -156,6 +128,6 @@ public class BruteForce {
         System.out.println("AttackedVillages: " + movements.size());
         System.out.println("FullFakes: " + fullFakes);
         System.out.println("Not Assigned: " + notAssigned.size());
-        return null;
+        return movements;
     }
 }

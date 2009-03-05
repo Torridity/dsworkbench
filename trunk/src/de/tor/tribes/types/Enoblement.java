@@ -7,8 +7,12 @@ package de.tor.tribes.types;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.util.DSCalculator;
 import java.util.Comparator;
+import java.util.Date;
+import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
+import de.tor.tribes.io.DataHolder;
+import java.util.Collections;
 
 /**
  *
@@ -46,6 +50,41 @@ public class Enoblement extends AbstractTroopMovement {
 
     public List<Village> getSnobSources() {
         return snobSources;
+    }
+
+    @Override
+    public List<Attack> getAttacks(Date pArriveTime, int pTimeBetweenAttacks) {
+        List<Attack> result = new LinkedList<Attack>();
+        Enumeration<UnitHolder> unitKeys = getOffs().keys();
+        Village target = getTarget();
+        int type = Attack.CLEAN_TYPE;
+        UnitHolder snob = DataHolder.getSingleton().getUnitByPlainName("snob");
+        while (unitKeys.hasMoreElements()) {
+            UnitHolder unit = unitKeys.nextElement();
+            List<Village> sources = getOffs().get(unit);
+            for (Village offSource : sources) {
+                Attack a = new Attack();
+                a.setTarget(target);
+                a.setSource(offSource);
+                a.setArriveTime(pArriveTime);
+                a.setUnit(unit);
+                a.setType(type);
+                result.add(a);
+            }
+        }
+        type = Attack.SNOB_TYPE;
+        for (Village snobSource : getSnobSources()) {
+            Attack a = new Attack();
+            a.setTarget(target);
+            a.setSource(snobSource);
+            a.setArriveTime(pArriveTime);
+            a.setUnit(snob);
+            a.setType(type);
+            result.add(a);
+        }
+
+
+        return result;
     }
 
     private static class SnobDistanceSort implements Comparator<Enoblement>, java.io.Serializable {

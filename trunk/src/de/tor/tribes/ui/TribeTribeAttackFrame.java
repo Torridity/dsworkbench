@@ -8,7 +8,9 @@ package de.tor.tribes.ui;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.ServerManager;
 import de.tor.tribes.io.UnitHolder;
+import de.tor.tribes.types.AbstractTroopMovement;
 import de.tor.tribes.types.Ally;
+import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
@@ -50,6 +52,7 @@ import java.text.DecimalFormat;
 import java.util.StringTokenizer;
 import javax.swing.UIManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
+import java.util.Collections;
 
 /**
  * @TODO off-only algorithm which uses offs of a definable strength and shows best snob locations
@@ -1171,9 +1174,10 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
     //</editor-fold>
 
     //start processing
+    List<AbstractTroopMovement> result = new LinkedList<AbstractTroopMovement>();
     if (jAlgorithmChooser.getSelectedIndex() == 0) {
         System.out.println("Using BruteForce");
-        BruteForce.calculateAttacks(sources,
+        result = BruteForce.calculateAttacks(sources,
                 victimVillages,
                 maxAttacksPerVillage,
                 minCleanForSnob,
@@ -1185,7 +1189,7 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
                 jNightForbidden.isSelected(), jRandomizeTribes.isSelected());
     } else if (jAlgorithmChooser.getSelectedIndex() == 1) {
         System.out.println("Using optimized runtime");
-        AttackCalculator.calculateAttacks(sources,
+        result = AttackCalculator.calculateAttacks(sources,
                 victimVillages,
                 maxAttacksPerVillage,
                 minCleanForSnob,
@@ -1197,6 +1201,35 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
                 jNightForbidden.isSelected(), jRandomizeTribes.isSelected());
     }
 
+    System.out.println("Generating attacks");
+    List<Attack> attackList = new LinkedList<Attack>();
+    for (AbstractTroopMovement movement : result) {
+        List<Attack> atts = movement.getAttacks(arrive, timeBetweenAttacks);
+        for (Attack attack : atts) {
+            attackList.add(attack);
+        }
+    }
+    System.out.println("Sorting...");
+    //sort result by start time
+    Collections.sort(attackList, AbstractTroopMovement.RUNTIME_SORT);
+    //apply min distance calculation
+    System.out.println("Moving attacks");
+    long last = 0;
+    for (Attack a : attackList) {
+        long startTime = a.getArriveTime().getTime() - (long) DSCalculator.calculateMoveTimeInSeconds(a.getSource(), a.getTarget(), a.getUnit().getSpeed()) * 1000;
+        if (last != 0) {
+            double diff = timeBetweenAttacks - Math.abs(startTime - last);
+            if (diff < 0) {
+                //diff is smaller than zero, so also smaller than min difference
+                //so move the attack to future by this value
+                a.setArriveTime(new Date(a.getArriveTime().getTime() - (long) diff));
+                //correct the start time
+                startTime = startTime - (long) diff;
+            }
+        }
+        last = startTime;
+    }
+    System.out.println("Done");
 // </editor-fold>
 }//GEN-LAST:event_fireCalculateAttackEvent
 

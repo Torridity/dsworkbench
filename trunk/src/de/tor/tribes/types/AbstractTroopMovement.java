@@ -4,8 +4,10 @@
  */
 package de.tor.tribes.types;
 
-import de.tor.tribes.io.DataHolderListener;
 import de.tor.tribes.io.UnitHolder;
+import de.tor.tribes.util.DSCalculator;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;
@@ -21,6 +23,7 @@ public abstract class AbstractTroopMovement {
     private Hashtable<UnitHolder, List<Village>> mOffs = null;
     private int iMinOffs = 0;
     private int iMaxOffs = 0;
+    public final static AttackRuntimeSort RUNTIME_SORT = new AttackRuntimeSort();
 
     public AbstractTroopMovement(Village pTarget, int pMinOffs, int pMaxOffs) {
         setTarget(pTarget);
@@ -83,5 +86,17 @@ public abstract class AbstractTroopMovement {
 
     public int getMinOffs() {
         return iMinOffs;
+    }
+
+    public abstract List<Attack> getAttacks(Date pArriveTime, int pTimeBetweenAttacks);
+
+    private static class AttackRuntimeSort implements Comparator<Attack>, java.io.Serializable {
+
+        @Override
+        public int compare(Attack a1, Attack a2) {
+            double d1 = DSCalculator.calculateMoveTimeInSeconds(a1.getSource(), a1.getTarget(), a1.getUnit().getSpeed());
+            double d2 = DSCalculator.calculateMoveTimeInSeconds(a2.getSource(), a2.getTarget(), a2.getUnit().getSpeed());
+            return Double.compare(d1, d2);
+        }
     }
 }

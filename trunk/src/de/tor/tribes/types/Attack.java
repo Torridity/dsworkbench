@@ -6,6 +6,7 @@ package de.tor.tribes.types;
 
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
+import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.io.Serializable;
 import java.util.Date;
@@ -139,8 +140,13 @@ public class Attack implements Serializable {
     <unit>Name</unit>
     <extensions>
     <showOnMap>true</showOnMap>
-     <type>0</type>
+    <type>0</type>
     </extensions>
     </attack>
      */
+
+    public String toString() {
+        String result = getSource() + " > " + getTarget() + " = " + DSCalculator.calculateMoveTimeInSeconds(getSource(), getTarget(), getUnit().getSpeed());
+        return result;
+    }
 }

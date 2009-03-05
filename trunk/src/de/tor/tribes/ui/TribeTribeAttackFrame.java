@@ -18,6 +18,7 @@ import de.tor.tribes.ui.editors.DateSpinEditor;
 import de.tor.tribes.ui.editors.VillageCellEditor;
 import de.tor.tribes.ui.renderer.DateCellRenderer;
 import de.tor.tribes.ui.editors.UnitCellEditor;
+import de.tor.tribes.ui.renderer.AttackTypeCellRenderer;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.GlobalOptions;
@@ -56,7 +57,8 @@ import java.util.Collections;
 
 /**
  * @TODO off-only algorithm which uses offs of a definable strength and shows best snob locations
- * @TODO reasign timeframe if no attack found
+ * @TODO check timediff assignment (have to accumulate diff's if changed!!)
+ * @TODO Show summary of calculation
  * @TODO Change min. time selection to seconds
  * @author  Jejkal
  */
@@ -1117,12 +1119,7 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
         victimVillages.add((Village) victimModel.getValueAt(i, 1));
     }
 
-    Hashtable<Village, Hashtable<Village, UnitHolder>> attacks = new Hashtable<Village, Hashtable<Village, UnitHolder>>();
-    List<Village> notAssigned = new LinkedList<Village>();
-    Hashtable<Tribe, Integer> attacksPerTribe = new Hashtable<Tribe, Integer>();
-
 // <editor-fold defaultstate="collapsed" desc="New algorithm">
-
     //build source-unit map
     Hashtable<UnitHolder, List<Village>> sources = new Hashtable<UnitHolder, List<Village>>();
     for (int i = 0; i < attackModel.getRowCount(); i++) {
@@ -1169,7 +1166,7 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
 
     Date minSendTime = ((Date) jSendTime.getValue());
     Date arrive = ((Date) jArriveTime.getValue());
-    int min = (int) Math.rint(jSendTimeFrame.getMinimumColoredValue()) - 1;
+    int min = (int) Math.rint(jSendTimeFrame.getMinimumColoredValue());
     int max = (int) Math.rint(jSendTimeFrame.getMaximumColoredValue()) - 1;
     //</editor-fold>
 
@@ -1218,17 +1215,26 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
     for (Attack a : attackList) {
         long startTime = a.getArriveTime().getTime() - (long) DSCalculator.calculateMoveTimeInSeconds(a.getSource(), a.getTarget(), a.getUnit().getSpeed()) * 1000;
         if (last != 0) {
-            double diff = timeBetweenAttacks - Math.abs(startTime - last);
-            if (diff < 0) {
+            double diff = Math.abs(startTime - last);
+            // System.out.println("Diff " + diff);
+            if (diff < timeBetweenAttacks) {
+                diff = timeBetweenAttacks;
                 //diff is smaller than zero, so also smaller than min difference
                 //so move the attack to future by this value
-                a.setArriveTime(new Date(a.getArriveTime().getTime() - (long) diff));
+                //System.out.println("AT " + a.getArriveTime().getTime());
+                Date newTime = new Date(a.getArriveTime().getTime() + (long) diff);
+                a.setArriveTime(newTime);
+                //System.out.println("AT2 " + a.getArriveTime().getTime());
                 //correct the start time
-                startTime = startTime - (long) diff;
+                startTime = startTime + (long) diff;
             }
         }
         last = startTime;
+    // System.out.println(a);
     }
+    int desired = attackModel.getRowCount();
+    int calculated = attackList.size();
+    showResults(attackList);
     System.out.println("Done");
 // </editor-fold>
 }//GEN-LAST:event_fireCalculateAttackEvent
@@ -1546,13 +1552,20 @@ private void fireTransferAttacksToPlanEvent(java.awt.event.MouseEvent evt) {//GE
     }
 
     DefaultTableModel resultModel = (DefaultTableModel) jResultsTable.getModel();
+    boolean showOnMap = false;
+    try {
+        showOnMap = Boolean.parseBoolean(GlobalOptions.getProperty("draw.attacks.by.default"));
+    } catch (Exception e) {
+    }
+
     for (int i = 0; i < resultModel.getRowCount(); i++) {
         Village source = (Village) resultModel.getValueAt(i, 0);
         UnitHolder unit = (UnitHolder) resultModel.getValueAt(i, 1);
         Village target = (Village) resultModel.getValueAt(i, 2);
         Date sendTime = (Date) resultModel.getValueAt(i, 3);
+        Integer type = (Integer) resultModel.getValueAt(i, 4);
         long arriveTime = sendTime.getTime() + (long) (DSCalculator.calculateMoveTimeInSeconds(source, target, unit.getSpeed()) * 1000);
-        AttackManager.getSingleton().addAttackFast(source, target, unit, new Date(arriveTime), planName);
+        AttackManager.getSingleton().addAttackFast(source, target, unit, new Date(arriveTime), showOnMap, planName, type);
     }
     AttackManager.getSingleton().forceUpdate(planName);
     jTransferToAttackManagerDialog.setVisible(false);
@@ -1629,14 +1642,14 @@ private void fireUseSnobEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     jAttacksTable.revalidate();
 }//GEN-LAST:event_fireUseSnobEvent
 
-    private void showResults(Hashtable<Village, Hashtable<Village, UnitHolder>> pAttacks) {
+    private void showResults(List<Attack> pAttacks) {
         DefaultTableModel resultModel = new javax.swing.table.DefaultTableModel(
                 new Object[][]{},
                 new String[]{
-                    "Herkunft", "Truppen", "Ziel", "Startzeit"}) {
+                    "Herkunft", "Truppen", "Ziel", "Startzeit", "Typ"}) {
 
             Class[] types = new Class[]{
-                Village.class, UnitHolder.class, Village.class, Date.class
+                Village.class, UnitHolder.class, Village.class, Date.class, Integer.class
             };
 
             @Override
@@ -1645,30 +1658,26 @@ private void fireUseSnobEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
             }
         };
 
-        Enumeration<Village> targets = pAttacks.keys();
-
-
-
-
-
-
-
-
-
-
-
+        jResultsTable.setDefaultRenderer(Integer.class, new AttackTypeCellRenderer());
+        /* Enumeration<Village> targets = pAttacks.keys();
 
         while (targets.hasMoreElements()) {
-            Village target = targets.nextElement();
-            Hashtable<Village, UnitHolder> sources = pAttacks.get(target);
-            Enumeration<Village> sourceEnum = sources.keys();
-            while (sourceEnum.hasMoreElements()) {
-                Village source = sourceEnum.nextElement();
-                UnitHolder unit = sources.get(source);
-                long targetTime = ((Date) jArriveTime.getValue()).getTime();
-                long startTime = targetTime - (long) DSCalculator.calculateMoveTimeInSeconds(source, target, unit.getSpeed()) * 1000;
-                resultModel.addRow(new Object[]{source, unit, target, new Date(startTime)});
-            }
+        Village target = targets.nextElement();
+        Hashtable<Village, UnitHolder> sources = pAttacks.get(target);
+        Enumeration<Village> sourceEnum = sources.keys();
+        while (sourceEnum.hasMoreElements()) {
+        Village source = sourceEnum.nextElement();
+        UnitHolder unit = sources.get(source);
+        long targetTime = ((Date) jArriveTime.getValue()).getTime();
+        long startTime = targetTime - (long) DSCalculator.calculateMoveTimeInSeconds(source, target, unit.getSpeed()) * 1000;
+        resultModel.addRow(new Object[]{source, unit, target, new Date(startTime)});
+        }
+        }*/
+
+        for (Attack a : pAttacks) {
+            long targetTime = a.getArriveTime().getTime();
+            long startTime = targetTime - (long) DSCalculator.calculateMoveTimeInSeconds(a.getSource(), a.getTarget(), a.getUnit().getSpeed()) * 1000;
+            resultModel.addRow(new Object[]{a.getSource(), a.getUnit(), a.getTarget(), new Date(startTime), a.getType()});
         }
 
         jResultsTable.setModel(resultModel);
@@ -1688,13 +1697,10 @@ private void fireUseSnobEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
                 return c;
             }
         };
-        for (int i = 0;
-                i < jResultsTable.getColumnCount();
-                i++) {
+        for (int i = 0; i < jResultsTable.getColumnCount(); i++) {
             jResultsTable.getColumn(jResultsTable.getColumnName(i)).setHeaderRenderer(headerRenderer);
         }
-        jResultFrame.setVisible(
-                true);
+        jResultFrame.setVisible(true);
     }
 
     @Override

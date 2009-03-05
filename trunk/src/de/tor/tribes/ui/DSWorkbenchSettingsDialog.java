@@ -547,8 +547,9 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         if (!updateServerList()) {
             //remote update failed and no local servers found
             String message = "Serverliste konnte nicht geladen werden.\n" +
-                    "Mögliche Ursachen sind fehlerhafte Netzwerkeinstellungen oder keine Verbindung zum Internet.\n" +
-                    "Da noch kein Datenabgleich mit dem Server stattgefunden hat " +
+                    "Mögliche Ursachen sind fehlerhafte Netzwerkeinstellungen, keine Verbindung zum Internet\n" +
+                    "oder 'dsworkbench.de' ist nicht verfügbar.\n" +
+                    "Da noch kein Datenabgleich mit dem Server stattgefunden hat\n" +
                     "korrigiere bitte deine Netzwerkeinstellungen um diesen einmalig durchzuführen.";
             JOptionPane.showMessageDialog(this, message, "Warnung", JOptionPane.WARNING_MESSAGE);
             return false;
@@ -2192,7 +2193,8 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         if (!updateServerList()) {
             //fully failed --> remote update failed and no local servers found
             String message = "Serverliste konnte nicht geladen werden.\n" +
-                    "Mögliche Ursachen sind fehlerhafte Netzwerkeinstellungen oder keine Verbindung zum Internet.\n" +
+                    "Mögliche Ursachen sind fehlerhafte Netzwerkeinstellungen, keine Verbindung zum Internet\n" +
+                    "oder 'dsworkbench.de' ist nicht verfügbar.\n" + 
                     "Da noch kein Datenabgleich mit dem Server stattgefunden hat " +
                     "korrigiere bitte deine Netzwerkeinstellungen um diesen einmalig durchzuführen.";
             JOptionPane.showMessageDialog(this, message, "Warnung", JOptionPane.WARNING_MESSAGE);
@@ -2914,7 +2916,7 @@ private void fireCancelChangePasswordEvent(java.awt.event.MouseEvent evt) {//GEN
     private void checkConnectivity() {
         logger.debug("Checking general connectivity");
         try {
-            URLConnection c = new URL("http://www.heise.de").openConnection(getWebProxy());
+            URLConnection c = new URL("http://www.dsworkbench.de").openConnection(getWebProxy());
             c.setConnectTimeout(10000);
             String header = c.getHeaderField(0);
             if (header != null) {

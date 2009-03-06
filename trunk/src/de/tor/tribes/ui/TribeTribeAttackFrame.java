@@ -23,6 +23,7 @@ import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.VillageSelectionListener;
+import de.tor.tribes.util.algo.AbstractAttackAlgorithm;
 import de.tor.tribes.util.algo.AttackCalculator;
 import de.tor.tribes.util.algo.BruteForce;
 import de.tor.tribes.util.attack.AttackManager;
@@ -57,7 +58,7 @@ import java.util.Collections;
 
 /**
  * @TODO off-only algorithm which uses offs of a definable strength and shows best snob locations
- * @TODO check timediff assignment (have to accumulate diff's if changed!!)
+ * @TODO drop timediff feature -> too complex for the moment!
  * @TODO Show summary of calculation
  * @TODO Change min. time selection to seconds
  * @author  Jejkal
@@ -1135,6 +1136,9 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
         }
     }
 
+    int numInputAttacks = attackModel.getRowCount();
+    int numInputTargets = victimVillages.size();
+
     // <editor-fold defaultstate="collapsed" desc="Obtain parameters">
     int maxAttacksPerVillage = 0;
     try {
@@ -1172,46 +1176,51 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
 
     //start processing
     List<AbstractTroopMovement> result = new LinkedList<AbstractTroopMovement>();
+    AbstractAttackAlgorithm algo = null;
     if (jAlgorithmChooser.getSelectedIndex() == 0) {
-        System.out.println("Using BruteForce");
-        result = BruteForce.calculateAttacks(sources,
-                victimVillages,
-                maxAttacksPerVillage,
-                minCleanForSnob,
-                minSendTime,
-                arrive,
-                timeBetweenAttacks,
-                min,
-                max,
-                jNightForbidden.isSelected(), jRandomizeTribes.isSelected());
+        // System.out.println("Using BruteForce");
+        algo = new BruteForce();
     } else if (jAlgorithmChooser.getSelectedIndex() == 1) {
-        System.out.println("Using optimized runtime");
-        result = AttackCalculator.calculateAttacks(sources,
-                victimVillages,
-                maxAttacksPerVillage,
-                minCleanForSnob,
-                minSendTime,
-                arrive,
-                timeBetweenAttacks,
-                min,
-                max,
-                jNightForbidden.isSelected(), jRandomizeTribes.isSelected());
+        // System.out.println("Using optimized runtime");
+        algo = new AttackCalculator();
     }
 
-    System.out.println("Generating attacks");
+    result = algo.calculateAttacks(sources,
+            victimVillages,
+            maxAttacksPerVillage,
+            minCleanForSnob,
+            minSendTime,
+            arrive,
+            timeBetweenAttacks,
+            min,
+            max,
+            jNightForbidden.isSelected(), jRandomizeTribes.isSelected());
+
+    //System.out.println("Generating attacks");
     List<Attack> attackList = new LinkedList<Attack>();
+    List<Village> targets = new LinkedList<Village>();
+    Hashtable<Village, AbstractTroopMovement> targetMovementMapping = new Hashtable<Village, AbstractTroopMovement>();
     for (AbstractTroopMovement movement : result) {
         List<Attack> atts = movement.getAttacks(arrive, timeBetweenAttacks);
         for (Attack attack : atts) {
             attackList.add(attack);
+            if (!targets.contains(attack.getTarget())) {
+                targets.add(attack.getTarget());
+                
+            }
         }
     }
-    System.out.println("Sorting...");
+    int numOutputAttacks = attackList.size();
+    int numOutputTargets = targets.size();
+    int validEnoblements = algo.getValidEnoblements();
+    int fullOffs = algo.getFullOffs();
+
+    //System.out.println("Sorting...");
     //sort result by start time
     Collections.sort(attackList, AbstractTroopMovement.RUNTIME_SORT);
     //apply min distance calculation
-    System.out.println("Moving attacks");
-    long last = 0;
+    // System.out.println("Moving attacks");
+    /*long last = 0;
     for (Attack a : attackList) {
         long startTime = a.getArriveTime().getTime() - (long) DSCalculator.calculateMoveTimeInSeconds(a.getSource(), a.getTarget(), a.getUnit().getSpeed()) * 1000;
         if (last != 0) {
@@ -1226,12 +1235,12 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
                 a.setArriveTime(newTime);
                 //System.out.println("AT2 " + a.getArriveTime().getTime());
                 //correct the start time
-                startTime = startTime + (long) diff;
+                startTime = startTime;
             }
         }
         last = startTime;
     // System.out.println(a);
-    }
+    }*/
     int desired = attackModel.getRowCount();
     int calculated = attackList.size();
     showResults(attackList);

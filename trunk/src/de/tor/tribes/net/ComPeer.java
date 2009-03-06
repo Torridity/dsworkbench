@@ -5,9 +5,8 @@
 package de.tor.tribes.net;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
+import java.io.OutputStream;
 import java.net.Socket;
 import org.apache.log4j.Logger;
 
@@ -19,7 +18,7 @@ public class ComPeer extends Thread {
     private static Logger logger = Logger.getLogger("Client");
     private Socket sSocket = null;
     private BufferedReader inReader = null;
-    private BufferedWriter outStream = null;
+    private OutputStream outStream = null;
     private ComPeerListener mPeerListener = null;
     private boolean connected = false;
     private String sUserName = "unknown";
@@ -28,7 +27,8 @@ public class ComPeer extends Thread {
     public ComPeer(Socket pSocket) throws Exception {
         sSocket = pSocket;
         inReader = new BufferedReader(new InputStreamReader(pSocket.getInputStream()));
-        outStream = new BufferedWriter(new OutputStreamWriter(pSocket.getOutputStream()));
+        //outStream = new BufferedWriter(new OutputStreamWriter(pSocket.getOutputStream()));
+        outStream = pSocket.getOutputStream();
         connected = true;
         setDaemon(true);
     }
@@ -53,13 +53,13 @@ public class ComPeer extends Thread {
                 if (line != null) {
                     mPeerListener.fireInputEvent(this, line);
                 }
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException ie) {
-                }
 
             } catch (Exception e) {
                 //e.printStackTrace();
+            }
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException ie) {
             }
         }
     }
@@ -69,7 +69,10 @@ public class ComPeer extends Thread {
         boolean error = false;
         while (attemps < 3) {
             try {
-                outStream.write(pData);
+                System.out.println("Bound: " + sSocket.isBound());
+                System.out.println("InShut" + sSocket.isInputShutdown());
+                System.out.println("OutShut" + sSocket.isOutputShutdown());
+                outStream.write(pData.getBytes());
                 outStream.flush();
                 try {
                     Thread.sleep(50);

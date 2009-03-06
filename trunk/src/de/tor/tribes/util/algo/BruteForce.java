@@ -20,9 +20,9 @@ import de.tor.tribes.types.Fake;
  *@TODO re-check correctness of algorithm
  * @author Charon
  */
-public class BruteForce {
+public class BruteForce extends AbstractAttackAlgorithm {
 
-    public static List<AbstractTroopMovement> calculateAttacks(
+    public List<AbstractTroopMovement> calculateAttacks(
             Hashtable<UnitHolder, List<Village>> pSources,
             List<Village> pTargets,
             int pMaxAttacksPerVillage,
@@ -102,30 +102,28 @@ public class BruteForce {
             }
         }
 
-        System.out.println("Attacks: " + attacks.size());
-
+        //convert to result list
         List<AbstractTroopMovement> movements = new LinkedList<AbstractTroopMovement>();
         Enumeration<Village> targetKeys = attacks.keys();
-        int fullFakes = 0;
+        int fullMovements = 0;
 
         while (targetKeys.hasMoreElements()) {
             Village target = targetKeys.nextElement();
-            System.out.println("Attacks at " + target + ": " + attacks.get(target).size());
             Enumeration<Village> sourceKeys = attacks.get(target).keys();
             Fake f = new Fake(target, pMaxAttacksPerVillage);
             while (sourceKeys.hasMoreElements()) {
                 Village source = sourceKeys.nextElement();
-                f.addOff(attacks.get(target).get(source), source);
+                UnitHolder unit = attacks.get(target).get(source);
+                f.addOff(unit, source);
             }
             if (f.offComplete()) {
-                fullFakes++;
+                fullMovements++;
             }
             movements.add(f);
-
         }
-        System.out.println("AttackedVillages: " + movements.size());
-        System.out.println("FullFakes: " + fullFakes);
-        System.out.println("Not Assigned: " + notAssigned.size());
+
+        setValidEnoblements(0);
+        setFullOffs(fullMovements);
         return movements;
     }
 }

@@ -23,9 +23,9 @@ import java.util.List;
  *
  * @author Charon
  */
-public class AttackCalculator {
+public class AttackCalculator extends AbstractAttackAlgorithm {
 
-    public static List<AbstractTroopMovement> calculateAttacks(
+    public List<AbstractTroopMovement> calculateAttacks(
             Hashtable<UnitHolder, List<Village>> pSources,
             List<Village> pTargets,
             int pMaxAttacksPerVillage,
@@ -50,13 +50,13 @@ public class AttackCalculator {
         List<Enoblement> finalEnoblements = new LinkedList<Enoblement>();
         //generate enoblements with minimum runtime
 
-        System.out.println("===GENERATING ENOBLEMENTS===");
+        //System.out.println("===GENERATING ENOBLEMENTS===");
         generateEnoblements(snobVillages, pTargets, timeFrame, finalEnoblements);
-        System.out.println("===GENERATING ENOBLEMENTS FINISHED===");
+        /* System.out.println("===GENERATING ENOBLEMENTS FINISHED===");
         System.out.println("| RemainingSnobs: " + snobVillages.size());
         System.out.println("| Found Enoblements: " + finalEnoblements.size());
         System.out.println("|--------------------");
-
+         */
         // <editor-fold defaultstate="collapsed" desc="Get off villages">
         UnitHolder ramUnit = DataHolder.getSingleton().getUnitByPlainName("ram");
         UnitHolder cataUnit = DataHolder.getSingleton().getUnitByPlainName("catapult");
@@ -80,14 +80,14 @@ public class AttackCalculator {
             e.setMinOffs(pCleanPerSnob);
             e.setMaxOffs(pMaxAttacksPerVillage);
         }
-        System.out.println("===ASSIGNING OFFS TO ENOBLEMENTS===");
+        // System.out.println("===ASSIGNING OFFS TO ENOBLEMENTS===");
         assignOffsToEnoblements(finalEnoblements, offSources, timeFrame);
-        System.out.println("===ASSIGNING OFFS TO ENOBLEMENTS FINISHED===");
+        /* System.out.println("===ASSIGNING OFFS TO ENOBLEMENTS FINISHED===");
         System.out.println("| Remaining Offs: " + offSources.size());
-
+         */
         int fullyValid = 0;
         for (Enoblement e : finalEnoblements) {
-            System.out.println("| Enoblement:");
+            //System.out.println("| Enoblement:");
             if (e.offDone() && e.snobDone()) {
                 fullyValid++;
                 double maxDist = 0;
@@ -105,7 +105,7 @@ public class AttackCalculator {
                             maxDist = dist;
                         }
                     }
-                    System.out.println("|  * MaxDist: " + maxDist);
+                    //  System.out.println("|  * MaxDist: " + maxDist);
 
                     double minDist = Double.MAX_VALUE;
                     for (Village v : e.getSnobSources()) {
@@ -120,29 +120,29 @@ public class AttackCalculator {
                             minDist = dist;
                         }
                     }
-                    System.out.println("|  * MinDist: " + minDist);
-                    System.out.println("|  * Delta: " + (maxDist - minDist));
-                } else {
-                    System.out.println("| No ram sources found");
-                }
+                /*   System.out.println("|  * MinDist: " + minDist);
+                System.out.println("|  * Delta: " + (maxDist - minDist));*/
+                } /*else {
+            System.out.println("| No ram sources found");
+            }*/
             }
         }
 
-        System.out.println("| Fully Valid: " + fullyValid);
+        setValidEnoblements(fullyValid);
+        /*System.out.println("| Fully Valid: " + fullyValid);
         System.out.println("|----------------");
-        System.out.println("===ASSIGNING REMAINING OFFS===");
+        System.out.println("===ASSIGNING REMAINING OFFS===");*/
         List<Fake> pFinalFakes = new LinkedList<Fake>();
         assignOffs(pFinalFakes, offSources, pTargets, timeFrame, pMaxAttacksPerVillage);
-        System.out.println("===ASSIGNING REMAINING OFFS FINISHED===");
-        System.out.println("| Fakes: " + pFinalFakes.size());
+        //System.out.println("===ASSIGNING REMAINING OFFS FINISHED===");
+        //System.out.println("| Fakes: " + pFinalFakes.size());
         int fullFakes = 0;
         for (Fake f : pFinalFakes) {
             if (f.offComplete()) {
                 fullFakes++;
             }
         }
-        System.out.println("| Full Fakes: " + fullFakes);
-        System.out.println("|--------------");
+        setFullOffs(fullFakes);
 
         List<AbstractTroopMovement> movements = new LinkedList<AbstractTroopMovement>();
 
@@ -153,7 +153,6 @@ public class AttackCalculator {
         for (Fake f : pFinalFakes) {
             movements.add(f);
         }
-       
 
         return movements;
     }
@@ -395,73 +394,3 @@ public class AttackCalculator {
     }
 }
 
-class TimeFrame {
-
-    private long start = 0;
-    private long end = 0;
-    private int minHour = 0;
-    private int maxHour = 0;
-
-    public TimeFrame(Date pStart, Date pEnd, int pMinHour, int pMaxHour) {
-        start = pStart.getTime();
-        end = pEnd.getTime();
-        minHour = pMinHour;
-        maxHour = pMaxHour;
-    }
-
-    public boolean inside(Date pDate) {
-        long t = pDate.getTime();
-        Calendar c = Calendar.getInstance();
-        c.setTime(pDate);
-        int hour = c.get(Calendar.HOUR_OF_DAY);
-        int minute = c.get(Calendar.MINUTE);
-        int second = c.get(Calendar.SECOND);
-        if ((t > start) && (t < end)) {
-            return ((hour >= minHour) && ((hour <= maxHour) && (minute <= 59) && (second <= 59)));
-        }
-        return false;
-    }
-
-    public long getStart() {
-        return start;
-    }
-
-    public long getEnd() {
-        return end;
-    }
-}
-
-class DistanceMapping implements Comparable<DistanceMapping> {
-
-    private Village source = null;
-    private Village target = null;
-    private double distance = 0.0;
-
-    public DistanceMapping(Village pSource, Village pTarget) {
-        source = pSource;
-        target = pTarget;
-        distance = DSCalculator.calculateDistance(pSource, pTarget);
-    }
-
-    public Village getSource() {
-        return source;
-    }
-
-    public Village getTarget() {
-        return target;
-    }
-
-    public double getDistance() {
-        return distance;
-    }
-
-    @Override
-    public int compareTo(DistanceMapping o) {
-        if (getDistance() < o.getDistance()) {
-            return -1;
-        } else if (getDistance() > o.getDistance()) {
-            return 1;
-        }
-        return 0;
-    }
-}

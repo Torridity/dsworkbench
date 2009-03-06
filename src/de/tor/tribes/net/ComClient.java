@@ -66,12 +66,11 @@ public class ComClient extends Thread implements CommandHandlerListener {
                 if (line != null) {
                     mHandler.parseClientData(line);
                 }
-                try {
-                    Thread.sleep(50);
-                } catch (InterruptedException ie) {
-                }
-
             } catch (Exception e) {
+            }
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException ie) {
             }
         }
     }

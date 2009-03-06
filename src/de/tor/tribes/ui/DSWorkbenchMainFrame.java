@@ -41,6 +41,7 @@ import de.tor.tribes.util.ServerSettings;
 
 /**
  * @TODO Introduce import funktionality for attacks, troops etc.
+ * @TODO Mapshot tool also for main map
  * @author  Charon
  */
 public class DSWorkbenchMainFrame extends javax.swing.JFrame implements

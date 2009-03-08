@@ -6,7 +6,6 @@
 package de.tor.tribes.ui;
 
 import de.tor.tribes.io.DataHolder;
-import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.util.BrowserCommandSender;
@@ -29,15 +28,24 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import de.tor.tribes.ui.renderer.MapRenderer;
 import de.tor.tribes.ui.renderer.MenuRenderer;
+import de.tor.tribes.util.Constants;
+import de.tor.tribes.util.DSCalculator;
+import de.tor.tribes.util.MapShotListener;
+import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.Skin;
 import de.tor.tribes.util.VillageSelectionListener;
+import java.awt.AlphaComposite;
 import java.awt.Color;
+import java.awt.FontMetrics;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 import java.awt.geom.Point2D;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
@@ -648,7 +656,7 @@ public class MapPanel extends javax.swing.JPanel {
 
         addMouseMotionListener(MenuRenderer.getSingleton());
 
-    //<editor-fold>
+        //<editor-fold>
     }
 
     //return bounds without border
@@ -798,7 +806,6 @@ public class MapPanel extends javax.swing.JPanel {
         } catch (Exception e) {
             logger.error("Failed to paint", e);
         }
-
     }
 
     /**Update map to new position -> needs fully update*/
@@ -903,10 +910,57 @@ public class MapPanel extends javax.swing.JPanel {
     public void updateComplete(Hashtable<Village, Rectangle> pPositions, Image pBuffer) {
         mBuffer = pBuffer;
         mVillagePositions = pPositions;
+        if (bMapSHotPlaned) {
+            saveMapShot(mBuffer);
+        }
         if (positionUpdate) {
             DSWorkbenchFormFrame.getSingleton().updateFormList();
         }
         positionUpdate = false;
+    }
+    private String sMapShotType = null;
+    private File mMapShotFile = null;
+    private boolean bMapSHotPlaned = false;
+    private MapShotListener mMapShotListener = null;
+
+    protected void planMapShot(String pType, File pLocation, MapShotListener pListener) {
+        sMapShotType = pType;
+        mMapShotFile = pLocation;
+        bMapSHotPlaned = true;
+        mMapShotListener = pListener;
+    }
+
+    private void saveMapShot(Image pImage) {
+        try{
+        Point2D.Double pos = getCurrentPosition();
+        String first = "";
+        if (ServerSettings.getSingleton().getCoordType() != 2) {
+            int[] hier = DSCalculator.xyToHierarchical((int) pos.x, (int) pos.y);
+            first = "Zentrum: " + hier[0] + ":" + hier[1] + ":" + hier[2];
+        } else {
+            first = "Zentrum: " + (int) Math.floor(pos.getX()) + "|" + (int) Math.floor(pos.getY());
+        }
+        BufferedImage result = new BufferedImage(pImage.getWidth(null), pImage.getHeight(null), BufferedImage.TYPE_INT_RGB);
+        Graphics2D g2d = (Graphics2D) result.getGraphics();
+        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.6f));
+        FontMetrics fm = g2d.getFontMetrics();
+        g2d.drawImage(pImage, 0, 0, null);
+        Rectangle2D firstBounds = fm.getStringBounds(first, g2d);
+        String second = "Erstellt mit DS Workbench " + Constants.VERSION + Constants.VERSION_ADDITION;
+        Rectangle2D secondBounds = fm.getStringBounds(second, g2d);
+        g2d.setColor(Constants.DS_BACK_LIGHT);
+        g2d.fill3DRect(0, (int) (result.getHeight() - firstBounds.getHeight() - secondBounds.getHeight() - 9), (int) (secondBounds.getWidth() + 6), (int) (firstBounds.getHeight() + secondBounds.getHeight() + 9), true);
+        g2d.setColor(Color.BLACK);
+        g2d.drawString(first, 3, (int) (result.getHeight() - firstBounds.getHeight() - secondBounds.getHeight() - firstBounds.getY() - 6));
+        g2d.drawString(second, 3, (int) (result.getHeight() - secondBounds.getHeight() - secondBounds.getY() - 3));
+        ImageIO.write(result, sMapShotType, mMapShotFile);
+        g2d.dispose();
+        bMapSHotPlaned = false;
+        mMapShotListener.fireMapShotDoneEvent();
+        }catch(Exception e){
+            logger.error("Creating MapShot failed");
+            mMapShotListener.fireMapShotFailedEvent();
+        }
     }
 
     public synchronized void fireToolChangedEvents(int pTool) {

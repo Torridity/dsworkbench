@@ -235,8 +235,6 @@ private void fireRemoveTroopsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
         jTroopsTable.setModel(TroopsManagerTableModel.getSingleton());
         TroopsManager.getSingleton().addTroopsManagerListener(this);
         //setup renderer and general view
-        jTroopsTable.setDefaultRenderer(Date.class, new DateCellRenderer("dd.MM.yyyy"));
-        jTroopsTable.setDefaultEditor(Date.class, new DateSpinEditor());
         jTroopsTable.getTableHeader().setReorderingAllowed(false);
 
         DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {

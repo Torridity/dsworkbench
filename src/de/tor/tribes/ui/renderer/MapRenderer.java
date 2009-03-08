@@ -18,11 +18,9 @@ import de.tor.tribes.ui.DSWorkbenchMainFrame;
 import de.tor.tribes.ui.FormConfigFrame;
 import de.tor.tribes.ui.ImageManager;
 import de.tor.tribes.ui.MapPanel;
-import de.tor.tribes.ui.MinimapPanel;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.GlobalOptions;
-import de.tor.tribes.util.PatchFontMetrics;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.Skin;
 import de.tor.tribes.util.attack.AttackManager;
@@ -39,13 +37,11 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Stroke;
 import java.awt.Toolkit;
-import java.awt.event.MouseAdapter;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -192,6 +188,7 @@ public class MapRenderer extends Thread {
                     MapPanel.getSingleton().updateComplete(pos, mMainBuffer);
                     MapPanel.getSingleton().repaint();
                     g2d.dispose();
+
                 }
             } catch (Throwable t) {
                 logger.error("Redrawing map failed", t);
@@ -699,6 +696,7 @@ public class MapRenderer extends Thread {
     }
 
     private void renderTagMarkers() {
+        long s = System.currentTimeMillis();
         int wb = MapPanel.getSingleton().getWidth();
         int hb = MapPanel.getSingleton().getHeight();
         if (wb == 0 || hb == 0) {
@@ -712,16 +710,14 @@ public class MapRenderer extends Thread {
         if (mLayers.get(EXTENDED_DECORATION_LAYER) == null) {
             layer = new BufferedImage(wb, hb, BufferedImage.TYPE_INT_ARGB);
             mLayers.put(EXTENDED_DECORATION_LAYER, layer);
-            g2d =
-                    layer.createGraphics();
+            g2d = layer.createGraphics();
             prepareGraphics(g2d);
         } else {
             layer = mLayers.get(EXTENDED_DECORATION_LAYER);
             if (layer.getWidth() != wb || layer.getHeight() != hb) {
                 layer = new BufferedImage(wb, hb, BufferedImage.TYPE_INT_ARGB);
                 mLayers.put(EXTENDED_DECORATION_LAYER, layer);
-                g2d =
-                        layer.createGraphics();
+                g2d = layer.createGraphics();
                 prepareGraphics(g2d);
             } else {
                 g2d = (Graphics2D) layer.getGraphics();
@@ -738,65 +734,64 @@ public class MapRenderer extends Thread {
 
         // <editor-fold defaultstate="collapsed" desc="Graphics drawing">
         Enumeration<Village> villages = villagePositions.keys();
-        while (villages.hasMoreElements()) {
-            Village current = villages.nextElement();
-            Rectangle r = villagePositions.get(current);
-            List<Tag> villageTags = TagManager.getSingleton().getTags(current);
-            if (villageTags != null && villageTags.size() != 0) {
-                int xcnt = 1;
-                int ycnt = 2;
-                int cnt = 0;
-                for (Tag tag : TagManager.getSingleton().getTags(current)) {
-                    if (tag.isShowOnMap()) {
-                        int iconType = tag.getTagIcon();
-                        Color color = tag.getTagColor();
-                        if (color != null || iconType != -1) {
-                            int tagX = r.x + r.width - xcnt * tagsize;
-                            int tagY = r.y + r.height - ycnt * tagsize;
-                            if (color != null) {
-                                Color before = g2d.getColor();
-                                g2d.setColor(color);
-                                g2d.fillRect(tagX, tagY, tagsize, tagsize);
-                                g2d.setColor(before);
-                            }
-
-                            if (iconType != -1) {
-                                //drawing
-                                Point p = copyRegions.get(iconType);
-                                if (p == null) {
-                                    Image tagImage = ImageManager.getUnitImage(iconType).getScaledInstance(tagsize, tagsize, Image.SCALE_FAST);
-                                    g2d.drawImage(tagImage, tagX, tagY, null);
-                                    //check containment using size tolerance
-                                    if (MapPanel.getSingleton().getBounds().contains(new Rectangle(tagX, tagY, tagsize + 2, tagsize + 2))) {
-                                        copyRegions.put(iconType, new Point(tagX, tagY));
-                                    }
-
-                                } else {
-                                    g2d.copyArea(p.x, p.y, tagsize, tagsize, tagX - p.x, tagY - p.y);
+        int cc = 0;
+        try {
+            while (villages.hasMoreElements()) {
+                Village current = villages.nextElement();
+                cc++;
+                Rectangle r = villagePositions.get(current);
+                List<Tag> villageTags = TagManager.getSingleton().getTags(current);
+                if (villageTags != null && villageTags.size() != 0) {
+                    int xcnt = 1;
+                    int ycnt = 2;
+                    int cnt = 0;
+                    for (Tag tag : TagManager.getSingleton().getTags(current)) {
+                        if (tag.isShowOnMap()) {
+                            int iconType = tag.getTagIcon();
+                            Color color = tag.getTagColor();
+                            if (color != null || iconType != -1) {
+                                int tagX = r.x + r.width - xcnt * tagsize;
+                                int tagY = r.y + r.height - ycnt * tagsize;
+                                if (color != null) {
+                                    Color before = g2d.getColor();
+                                    g2d.setColor(color);
+                                    g2d.fillRect(tagX, tagY, tagsize, tagsize);
+                                    g2d.setColor(before);
                                 }
 
+                                if (iconType != -1) {
+                                    //drawing
+                                    Point p = copyRegions.get(iconType);
+                                    if (p == null) {
+                                        Image tagImage = ImageManager.getUnitImage(iconType, false).getScaledInstance(tagsize, tagsize, Image.SCALE_FAST);
+                                        g2d.drawImage(tagImage, tagX, tagY, null);
+                                        //check containment using size tolerance
+                                        if (MapPanel.getSingleton().getBounds().contains(new Rectangle(tagX, tagY, tagsize + 2, tagsize + 2))) {
+                                            copyRegions.put(iconType, new Point(tagX, tagY));
+                                        }
+
+                                    } else {
+                                        g2d.copyArea(p.x, p.y, tagsize, tagsize, tagX - p.x, tagY - p.y);
+                                    }
+                                }
+
+                                //calculate positioning
+                                cnt++;
+                                xcnt++;
+
+                                if (cnt == 2) {
+                                    //show only 2 icons in the first line to avoid marker overlay
+                                    xcnt = 1;
+                                    ycnt--;
+                                }
                             }
-
-                            //calculate positioning
-                            cnt++;
-                            xcnt++;
-
-                            if (cnt == 2) {
-                                //show only 2 icons in the first line to avoid marker overlay
-                                xcnt = 1;
-                                ycnt--;
-
-                            }
-
-
-
-
                         }
                     }
                 }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
 
         /*Enumeration<Integer> keys = copyRegions.keys();
         while (keys.hasMoreElements()) {

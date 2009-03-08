@@ -125,7 +125,6 @@ public class DataHolder {
     }
 
     /**Check if server is supported or not. Currently only 1000x1000 servers are allowed
-     * @TODO Re-Activate map type check!
      */
     public boolean serverSupported() {
         fireDataHolderEvents("Prüfe Server Einstellungen");
@@ -753,8 +752,8 @@ public class DataHolder {
     }
 
     public void removeTempData() {
-        mVillagesTable.clear();
-        mVillagesTable = null;
+      /*  mVillagesTable.clear();
+        mVillagesTable = null;*/
         System.gc();
     }
 

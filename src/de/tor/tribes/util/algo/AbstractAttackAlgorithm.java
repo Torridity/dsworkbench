@@ -7,8 +7,10 @@ package de.tor.tribes.util.algo;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.AbstractTroopMovement;
 import de.tor.tribes.types.Village;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Hashtable;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -27,7 +29,6 @@ public abstract class AbstractAttackAlgorithm {
             int pMaxCleanPerSnob,
             Date pStartTime,
             Date pArriveTime,
-            int pMinTimeBetweenAttacks,
             int pTimeFrameStartHour,
             int pTimeFrameEndHour,
             boolean pNightBlock,
@@ -59,5 +60,17 @@ public abstract class AbstractAttackAlgorithm {
      */
     public void setFullOffs(int fullOffs) {
         this.fullOffs = fullOffs;
+    }
+
+    public static List<DistanceMapping> buildSourceTargetsMapping(Village pSource, List<Village> pTargets) {
+        List<DistanceMapping> mappings = new LinkedList<DistanceMapping>();
+
+        for (Village target : pTargets) {
+            DistanceMapping mapping = new DistanceMapping(pSource, target);
+            mappings.add(mapping);
+        }
+
+        Collections.sort(mappings);
+        return mappings;
     }
 }

@@ -185,9 +185,14 @@ public class ImageManager {
         }
     }
 
-    /**Get thr unit icon for the provided ID*/
     public static BufferedImage getUnitImage(int pId) {
-        if (DataHolder.getSingleton().getUnits().size() == 9) {
+        return getUnitImage(pId, true);
+    }
+
+    /**Get thr unit icon for the provided ID*/
+    public static BufferedImage getUnitImage(int pId, boolean pChecked) {
+        
+        if (DataHolder.getSingleton().getUnits().size() == 9 && pChecked) {
             //old style
             switch (pId) {
                 case 0:

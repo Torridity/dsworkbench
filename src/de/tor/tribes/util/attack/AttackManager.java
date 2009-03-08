@@ -109,6 +109,44 @@ public class AttackManager {
         }
     }
 
+    public boolean importAttacks(File pFile) {
+        if (pFile == null) {
+            logger.error("File argument is 'null'");
+            return false;
+        }
+        try {
+            logger.info("Importing attacks");
+
+            Document d = JaxenUtils.getDocument(pFile);
+            for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//plans/plan")) {
+                String planKey = e.getAttributeValue("key");
+                planKey = URLDecoder.decode(planKey, "UTF-8");
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Loading plan '" + planKey + "'");
+                }
+                List<Attack> planAttacks = mAttackPlans.get(planKey);
+                if (planAttacks == null) {
+                    planAttacks = new LinkedList<Attack>();
+                    mAttackPlans.put(planKey, planAttacks);
+                }
+                for (Element e1 : (List<Element>) JaxenUtils.getNodes(e, "attacks/attack")) {
+                    Attack a = new Attack(e1);
+                    if (a != null) {
+                        Village source = DataHolder.getSingleton().getVillages()[a.getSource().getX()][a.getSource().getY()];
+                        Village target = DataHolder.getSingleton().getVillages()[a.getTarget().getX()][a.getTarget().getY()];
+                        addAttackFast(source, target, a.getUnit(), a.getArriveTime(), a.isShowOnMap(), planKey, a.getType());
+                    }
+                }
+            }
+            forceUpdate(DEFAULT_PLAN_ID);
+            logger.debug("Troop movements imported successfully");
+            return true;
+        } catch (Exception e) {
+            logger.error("Failed to import troop movements", e);
+            return false;
+        }
+    }
+
     public void saveAttacksToDatabase(String pUrl) {
         //not implemented yet
     }
@@ -126,15 +164,18 @@ public class AttackManager {
                 for (Attack a : attacks) {
                     w.write(a.toXml() + "\n");
                 }
+
                 w.write("</attacks>\n");
                 w.write("</plan>\n");
             }
+
             w.write("</plans>\n");
             w.flush();
             w.close();
         } catch (Exception e) {
             logger.error("Failed to store attacks", e);
         }
+
     }
 
     public synchronized void addAttack(Village pSource, Village pTarget, UnitHolder pUnit, Date pArriveTime) {
@@ -195,7 +236,12 @@ public class AttackManager {
         if (pSource == null || pTarget == null || pUnit == null || pArriveTime == null) {
             logger.error("Invalid attack");
             return;
+
         }
+
+
+
+
 
         Attack a = new Attack();
         a.setSource(pSource);
@@ -213,9 +259,11 @@ public class AttackManager {
             } else {
                 a.setType(Attack.NO_TYPE);
             }
+
         } else {
             a.setType(pType);
         }
+
         List<Attack> attackPlan = mAttackPlans.get(plan);
         if (attackPlan == null) {
             attackPlan = new LinkedList<Attack>();
@@ -224,6 +272,7 @@ public class AttackManager {
         } else {
             attackPlan.add(a);
         }
+
         fireAttacksChangedEvents(plan);
     }
 
@@ -237,7 +286,12 @@ public class AttackManager {
         if (pSource == null || pTarget == null || pUnit == null || pArriveTime == null) {
             logger.error("Invalid attack");
             return;
+
         }
+
+
+
+
 
         Attack a = new Attack();
         a.setSource(pSource);
@@ -254,12 +308,14 @@ public class AttackManager {
         } else {
             attackPlan.add(a);
         }
+
     }
 
     public synchronized void addEmptyPlan(String pPlan) {
         if (pPlan == null) {
             return;
         }
+
         List<Attack> attackPlan = new LinkedList<Attack>();
         mAttackPlans.put(pPlan, attackPlan);
     }
@@ -270,9 +326,11 @@ public class AttackManager {
         if (pPlan == null) {
             plan = DEFAULT_PLAN_ID;
         }
+
         if (logger.isDebugEnabled()) {
             logger.debug("Removing attack plan '" + plan + "'");
         }
+
         mAttackPlans.remove(plan);
         fireAttacksChangedEvents(plan);
     }
@@ -313,8 +371,10 @@ public class AttackManager {
                 if (logger.isDebugEnabled()) {
                     logger.debug("Removing attack " + i + " from plan '" + plan + "'");
                 }
+
                 planAttacks.remove(attacks[i]);
             }
+
         }
         fireAttacksChangedEvents(plan);
     }
@@ -324,6 +384,7 @@ public class AttackManager {
         if (plan == null) {
             plan = DEFAULT_PLAN_ID;
         }
+
         return mAttackPlans.get(plan);
     }
 
@@ -345,10 +406,12 @@ public class AttackManager {
         if (plan == null) {
             plan = DEFAULT_PLAN_ID;
         }
+
         AttackManagerListener[] listeners = mManagerListeners.toArray(new AttackManagerListener[]{});
         for (AttackManagerListener listener : listeners) {
             listener.fireAttacksChangedEvent(plan);
         }
+
         try {
             //if the attacks are read too fast on startup the MapRenderer might be 'null'
             MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.ATTACK_LAYER);

@@ -505,7 +505,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jAttackColorTable.revalidate();
     }
 
-    protected void setupTagsPanel() {
+    public void setupTagsPanel() {
         jTagTable.setRowHeight(20);
         jTagTable.setModel(TagTableModel.getSingleton());
         jTagTable.putClientProperty("terminateEditOnFocusLost", true);
@@ -2194,7 +2194,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             //fully failed --> remote update failed and no local servers found
             String message = "Serverliste konnte nicht geladen werden.\n" +
                     "Mögliche Ursachen sind fehlerhafte Netzwerkeinstellungen, keine Verbindung zum Internet\n" +
-                    "oder 'dsworkbench.de' ist nicht verfügbar.\n" + 
+                    "oder 'dsworkbench.de' ist nicht verfügbar.\n" +
                     "Da noch kein Datenabgleich mit dem Server stattgefunden hat " +
                     "korrigiere bitte deine Netzwerkeinstellungen um diesen einmalig durchzuführen.";
             JOptionPane.showMessageDialog(this, message, "Warnung", JOptionPane.WARNING_MESSAGE);

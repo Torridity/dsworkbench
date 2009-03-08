@@ -6,6 +6,7 @@ package de.tor.tribes.util.troops;
 
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Village;
+import de.tor.tribes.ui.DSWorkbenchTroopsFrame;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.awt.Image;
 import java.io.File;
@@ -166,6 +167,43 @@ public class TroopsManager {
             }
         } else {
             logger.info("No troops found under '" + pFile + "'");
+        }
+    }
+
+    public boolean importTroops(File pFile) {
+        mTroops.clear();
+        if (pFile == null) {
+            logger.error("File argument is 'null'");
+            return false;
+        }
+
+        logger.info("Importing troops");
+
+        try {
+            Document d = JaxenUtils.getDocument(pFile);
+            for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//villages/village")) {
+                //get basic village without merged information
+                Village v = DataHolder.getSingleton().getVillagesById().get(Integer.parseInt(e.getChild("id").getText()));
+                Date state = Calendar.getInstance().getTime();
+                try {
+                    state = new Date(Long.parseLong(e.getChild("state").getText()));
+                } catch (Exception ie) {
+                }
+                //get correct village
+                v = DataHolder.getSingleton().getVillages()[v.getX()][v.getY()];
+                List<Integer> troops = new LinkedList<Integer>();
+                for (Element t : (List<Element>) JaxenUtils.getNodes(e, "troops/troop")) {
+                    troops.add(Integer.parseInt(t.getText()));
+                }
+                mTroops.put(v, new VillageTroopsHolder(v, troops, state));
+            }
+            logger.debug("Troops imported successfully");
+            DSWorkbenchTroopsFrame.getSingleton().fireTroopsChangedEvent();
+            return true;
+        } catch (Exception e) {
+            logger.error("Failed to import troops", e);
+            DSWorkbenchTroopsFrame.getSingleton().fireTroopsChangedEvent();
+            return false;
         }
     }
 

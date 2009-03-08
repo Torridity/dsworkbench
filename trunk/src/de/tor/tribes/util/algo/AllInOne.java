@@ -11,7 +11,6 @@ import de.tor.tribes.types.AbstractTroopMovement;
 import de.tor.tribes.types.Enoblement;
 import de.tor.tribes.types.Fake;
 import de.tor.tribes.types.Village;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
@@ -23,7 +22,7 @@ import java.util.List;
  *
  * @author Charon
  */
-public class AttackCalculator extends AbstractAttackAlgorithm {
+public class AllInOne extends AbstractAttackAlgorithm {
 
     public List<AbstractTroopMovement> calculateAttacks(
             Hashtable<UnitHolder, List<Village>> pSources,
@@ -32,7 +31,6 @@ public class AttackCalculator extends AbstractAttackAlgorithm {
             int pCleanPerSnob,
             Date pStartTime,
             Date pArriveTime,
-            int pMinTimeBetweenAttacks,
             int pTimeFrameStartHour,
             int pTimeFrameEndHour,
             boolean pNightBlock,
@@ -379,18 +377,6 @@ public class AttackCalculator extends AbstractAttackAlgorithm {
         }
 
         assignOffs(pFakes, pOffSources, pTargets, pTimeFrame, pMaxAttacks);
-    }
-
-    private static List<DistanceMapping> buildSourceTargetsMapping(Village pSource, List<Village> pTargets) {
-        List<DistanceMapping> mappings = new LinkedList<DistanceMapping>();
-
-        for (Village target : pTargets) {
-            DistanceMapping mapping = new DistanceMapping(pSource, target);
-            mappings.add(mapping);
-        }
-
-        Collections.sort(mappings);
-        return mappings;
     }
 }
 

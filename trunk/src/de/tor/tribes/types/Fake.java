@@ -21,7 +21,7 @@ public class Fake extends AbstractTroopMovement {
     }
 
     @Override
-    public List<Attack> getAttacks(Date pArriveTime, int pTimeBetweenAttacks) {
+    public List<Attack> getAttacks(Date pArriveTime) {
         List<Attack> result = new LinkedList<Attack>();
         Enumeration<UnitHolder> unitKeys = getOffs().keys();
         Village target = getTarget();

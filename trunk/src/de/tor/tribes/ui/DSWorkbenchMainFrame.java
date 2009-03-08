@@ -37,18 +37,25 @@ import javax.swing.UIManager;
 import org.apache.log4j.Logger;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.util.DSCalculator;
+import de.tor.tribes.util.MapShotListener;
 import de.tor.tribes.util.ServerSettings;
+import de.tor.tribes.util.attack.AttackManager;
+import de.tor.tribes.util.map.FormManager;
+import de.tor.tribes.util.mark.MarkerManager;
+import java.io.File;
+import javax.swing.JFileChooser;
+import de.tor.tribes.util.troops.TroopsManager;
 
 /**
- * @TODO Introduce import funktionality for attacks, troops etc.
- * @TODO Mapshot tool also for main map
+ * @TODO Introduce export funktionality for attacks, troops etc.
  * @author  Charon
  */
 public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         MapPanelListener,
         MinimapListener,
         ToolChangeListener,
-        DSWorkbenchFrameListener {
+        DSWorkbenchFrameListener,
+        MapShotListener {
 
     private static Logger logger = Logger.getLogger("MainApp");
     private double dCenterX = 500.0;
@@ -109,6 +116,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         // <editor-fold defaultstate="collapsed" desc=" General UI setup ">
 
         getContentPane().setBackground(Constants.DS_BACK);
+        jImportDialog.pack();
         pack();
 
         // </editor-fold>        
@@ -426,7 +434,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         } else {
             jOnlineLabel.setToolTipText("Online");
         }
-
     }
 
     /**Get current zoom factor*/
@@ -531,6 +538,8 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
 
         MinimapPanel.getSingleton().addMinimapListener(this);
         logger.info("Adding MinimapPanel");
+        /*MinimapPanel.getSingleton().setMinimumSize(jMinimapPanel.getMinimumSize());
+        MapPanel.getSingleton().setMinimumSize(jPanel1.getMinimumSize());*/
         jMinimapPanel.add(MinimapPanel.getSingleton());
     }
 
@@ -638,6 +647,19 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jMapShotDialog = new javax.swing.JDialog();
+        jLabel3 = new javax.swing.JLabel();
+        jFileTypeChooser = new javax.swing.JComboBox();
+        jButton2 = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
+        jImportDialog = new javax.swing.JDialog();
+        jLabel4 = new javax.swing.JLabel();
+        jImportTypeBox = new javax.swing.JComboBox();
+        jLabel5 = new javax.swing.JLabel();
+        jImportFile = new javax.swing.JTextField();
+        jButton4 = new javax.swing.JButton();
+        jButton5 = new javax.swing.JButton();
+        jButton6 = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         jNavigationPanel = new javax.swing.JPanel();
         jMoveE = new javax.swing.JButton();
@@ -667,9 +689,12 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jCurrentToolLabel = new javax.swing.JLabel();
         jShowMapPopup = new javax.swing.JCheckBox();
         jMarkOnTopBox = new javax.swing.JCheckBox();
+        jButton1 = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
+        jMenuItem3 = new javax.swing.JMenuItem();
+        jSeparator1 = new javax.swing.JSeparator();
         jMenuItem2 = new javax.swing.JMenuItem();
         jMenu3 = new javax.swing.JMenu();
         jSearchItem = new javax.swing.JMenuItem();
@@ -687,8 +712,143 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jHelpItem = new javax.swing.JMenuItem();
         jAboutItem = new javax.swing.JMenuItem();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("de/tor/tribes/ui/Bundle"); // NOI18N
+        jLabel3.setText(bundle.getString("DSWorkbenchMainFrame.jLabel3.text")); // NOI18N
+
+        jFileTypeChooser.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "png", "gif", "jpg", "bmp" }));
+        jFileTypeChooser.setMaximumSize(new java.awt.Dimension(80, 22));
+        jFileTypeChooser.setMinimumSize(new java.awt.Dimension(80, 22));
+        jFileTypeChooser.setPreferredSize(new java.awt.Dimension(80, 22));
+
+        jButton2.setText(bundle.getString("DSWorkbenchMainFrame.jButton2.text")); // NOI18N
+        jButton2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireCreateMapShotEvent(evt);
+            }
+        });
+
+        jButton3.setText(bundle.getString("DSWorkbenchMainFrame.jButton3.text")); // NOI18N
+        jButton3.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireCancelMapShotEvent(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jMapShotDialogLayout = new javax.swing.GroupLayout(jMapShotDialog.getContentPane());
+        jMapShotDialog.getContentPane().setLayout(jMapShotDialogLayout);
+        jMapShotDialogLayout.setHorizontalGroup(
+            jMapShotDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jMapShotDialogLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jMapShotDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jMapShotDialogLayout.createSequentialGroup()
+                        .addComponent(jLabel3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jFileTypeChooser, 0, 123, Short.MAX_VALUE))
+                    .addGroup(jMapShotDialogLayout.createSequentialGroup()
+                        .addComponent(jButton3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton2)))
+                .addContainerGap())
+        );
+        jMapShotDialogLayout.setVerticalGroup(
+            jMapShotDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jMapShotDialogLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jMapShotDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(jFileTypeChooser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jMapShotDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton3)
+                    .addComponent(jButton2))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        jImportDialog.setTitle(bundle.getString("DSWorkbenchMainFrame.jImportDialog.title")); // NOI18N
+        jImportDialog.setAlwaysOnTop(true);
+
+        jLabel4.setText(bundle.getString("DSWorkbenchMainFrame.jLabel4.text")); // NOI18N
+
+        jImportTypeBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Angriffe", "Markierungen", "Gruppen", "Truppen", "Formen" }));
+
+        jLabel5.setText(bundle.getString("DSWorkbenchMainFrame.jLabel5.text")); // NOI18N
+
+        jImportFile.setText(bundle.getString("DSWorkbenchMainFrame.jImportFile.text")); // NOI18N
+
+        jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/folder.png"))); // NOI18N
+        jButton4.setText(bundle.getString("DSWorkbenchMainFrame.jButton4.text")); // NOI18N
+        jButton4.setMaximumSize(new java.awt.Dimension(25, 25));
+        jButton4.setMinimumSize(new java.awt.Dimension(25, 25));
+        jButton4.setPreferredSize(new java.awt.Dimension(25, 25));
+        jButton4.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireSelectImportFileEvent(evt);
+            }
+        });
+
+        jButton5.setText(bundle.getString("DSWorkbenchMainFrame.jButton5.text")); // NOI18N
+        jButton5.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireImportEvent(evt);
+            }
+        });
+
+        jButton6.setText(bundle.getString("DSWorkbenchMainFrame.jButton6.text")); // NOI18N
+        jButton6.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireCancelImportEvent(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jImportDialogLayout = new javax.swing.GroupLayout(jImportDialog.getContentPane());
+        jImportDialog.getContentPane().setLayout(jImportDialogLayout);
+        jImportDialogLayout.setHorizontalGroup(
+            jImportDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jImportDialogLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jImportDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jImportDialogLayout.createSequentialGroup()
+                        .addGroup(jImportDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel4)
+                            .addComponent(jLabel5))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jImportDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jImportTypeBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jImportDialogLayout.createSequentialGroup()
+                                .addComponent(jImportFile, javax.swing.GroupLayout.DEFAULT_SIZE, 308, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jImportDialogLayout.createSequentialGroup()
+                        .addComponent(jButton6)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jButton5)))
+                .addContainerGap())
+        );
+        jImportDialogLayout.setVerticalGroup(
+            jImportDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jImportDialogLayout.createSequentialGroup()
+                .addGroup(jImportDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jImportDialogLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(jImportDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel4)
+                            .addComponent(jImportTypeBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jImportDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jImportFile, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel5)))
+                    .addGroup(jImportDialogLayout.createSequentialGroup()
+                        .addGap(38, 38, 38)
+                        .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(18, 18, 18)
+                .addGroup(jImportDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton5)
+                    .addComponent(jButton6))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle(bundle.getString("DSWorkbenchMainFrame.title")); // NOI18N
         setBackground(new java.awt.Color(225, 213, 190));
         addComponentListener(new java.awt.event.ComponentAdapter() {
@@ -1037,6 +1197,19 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             }
         });
 
+        jButton1.setBackground(new java.awt.Color(239, 235, 223));
+        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/camera.png"))); // NOI18N
+        jButton1.setText(bundle.getString("DSWorkbenchMainFrame.jButton1.text")); // NOI18N
+        jButton1.setToolTipText(bundle.getString("DSWorkbenchMainFrame.jButton1.toolTipText")); // NOI18N
+        jButton1.setMaximumSize(new java.awt.Dimension(35, 35));
+        jButton1.setMinimumSize(new java.awt.Dimension(35, 35));
+        jButton1.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireCreateMapShotEvent(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -1044,7 +1217,9 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                        .addContainerGap(223, Short.MAX_VALUE)
+                        .addContainerGap(178, Short.MAX_VALUE)
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jCurrentToolLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addContainerGap()
@@ -1060,7 +1235,9 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jMarkOnTopBox)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 49, Short.MAX_VALUE)
-                .addComponent(jCurrentToolLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jCurrentToolLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
@@ -1079,6 +1256,16 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             }
         });
         jMenu1.add(jMenuItem1);
+
+        jMenuItem3.setBackground(new java.awt.Color(239, 235, 223));
+        jMenuItem3.setText(bundle.getString("DSWorkbenchMainFrame.jMenuItem3.text")); // NOI18N
+        jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fireShowImportDialogEvent(evt);
+            }
+        });
+        jMenu1.add(jMenuItem3);
+        jMenu1.add(jSeparator1);
 
         jMenuItem2.setBackground(new java.awt.Color(239, 235, 223));
         jMenuItem2.setMnemonic('n');
@@ -1224,10 +1411,10 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                 .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 561, Short.MAX_VALUE)
                 .addGap(6, 6, 6)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jInformationPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jInformationPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jMinimapPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 270, Short.MAX_VALUE)
-                    .addComponent(jNavigationPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jNavigationPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -1493,6 +1680,180 @@ private void fireMarkOnTopChangedEvent(javax.swing.event.ChangeEvent evt) {//GEN
     GlobalOptions.addProperty("mark.on.top", Boolean.toString(jMarkOnTopBox.isSelected()));
 }//GEN-LAST:event_fireMarkOnTopChangedEvent
 
+private void fireCreateMapShotEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCreateMapShotEvent
+    String dir = GlobalOptions.getProperty("screen.dir");
+    if (dir == null) {
+        dir = ".";
+    }
+    JFileChooser chooser = new JFileChooser(dir);
+    chooser.setDialogTitle("Speichern unter...");
+    chooser.setSelectedFile(new File("map"));
+
+    final String type = (String) jFileTypeChooser.getSelectedItem();
+    chooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
+
+        @Override
+        public boolean accept(File f) {
+            if ((f != null) && (f.isDirectory() || f.getName().endsWith(type))) {
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        public String getDescription() {
+            return "*." + type;
+        }
+    });
+    int ret = chooser.showSaveDialog(jMapShotDialog);
+    if (ret == JFileChooser.APPROVE_OPTION) {
+        try {
+            File f = chooser.getSelectedFile();
+            String file = f.getCanonicalPath();
+            if (!file.endsWith(type)) {
+                file += "." + type;
+            }
+            File target = new File(file);
+            if (target.exists()) {
+                //ask if overwrite
+                UIManager.put("OptionPane.noButtonText", "Nein");
+                UIManager.put("OptionPane.yesButtonText", "Ja");
+                if (JOptionPane.showConfirmDialog(jMapShotDialog, "Existierende Datei überschreiben?", "Überschreiben", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) != JOptionPane.YES_OPTION) {
+                    UIManager.put("OptionPane.noButtonText", "No");
+                    UIManager.put("OptionPane.yesButtonText", "Yes");
+                    return;
+                }
+                UIManager.put("OptionPane.noButtonText", "No");
+                UIManager.put("OptionPane.yesButtonText", "Yes");
+            }
+            MapPanel.getSingleton().planMapShot(type, target, this);
+            GlobalOptions.addProperty("screen.dir", target.getParent());
+        } catch (Exception e) {
+            logger.error("Failed to write map shot", e);
+        }
+    }
+    jMapShotDialog.setVisible(false);
+}//GEN-LAST:event_fireCreateMapShotEvent
+
+private void fireCancelMapShotEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCancelMapShotEvent
+    jMapShotDialog.setVisible(false);
+}//GEN-LAST:event_fireCancelMapShotEvent
+
+private void fireShowImportDialogEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireShowImportDialogEvent
+    jImportDialog.setVisible(true);
+    jImportTypeBox.setSelectedIndex(0);
+}//GEN-LAST:event_fireShowImportDialogEvent
+
+private void fireSelectImportFileEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSelectImportFileEvent
+    String dir = GlobalOptions.getProperty("screen.dir");
+    if (dir == null) {
+        dir = ".";
+    }
+    JFileChooser chooser = new JFileChooser(dir);
+    chooser.setDialogTitle("Datei auswählen");
+
+    chooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
+
+        @Override
+        public boolean accept(File f) {
+            if ((f != null) && (f.isDirectory() || f.getName().endsWith(".xml"))) {
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        public String getDescription() {
+            return "*.xml";
+        }
+    });
+    int ret = chooser.showOpenDialog(jMapShotDialog);
+    if (ret == JFileChooser.APPROVE_OPTION) {
+        try {
+            File f = chooser.getSelectedFile();
+            String file = f.getCanonicalPath();
+            if (!file.endsWith(".xml")) {
+                file += ".xml";
+            }
+            File target = new File(file);
+            if (target.exists()) {
+                jImportFile.setText(target.getCanonicalPath());
+            }
+            GlobalOptions.addProperty("screen.dir", target.getParent());
+        } catch (Exception e) {
+            logger.error("Failed to write map shot", e);
+        }
+    }
+}//GEN-LAST:event_fireSelectImportFileEvent
+
+private void fireCancelImportEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCancelImportEvent
+    jImportDialog.setVisible(false);
+}//GEN-LAST:event_fireCancelImportEvent
+
+private void fireImportEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireImportEvent
+    int type = jImportTypeBox.getSelectedIndex();
+    File f = new File(jImportFile.getText());
+    if (f.exists()) {
+        if (type == 0) {
+            //import attacks
+            try {
+                if (AttackManager.getSingleton().importAttacks(f)) {
+                    JOptionPane.showMessageDialog(jImportDialog, "Angriffe erfolgreich importiert.", "Erfolg", JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(jImportDialog, "Fehler beim Import der Angriffe.", "Fehler", JOptionPane.ERROR_MESSAGE);
+                }
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(jImportDialog, "Fehler beim Import der Angriffe.", "Fehler", JOptionPane.ERROR_MESSAGE);
+            }
+        } else if (type == 1) {
+            //import marks
+            try {
+                if (MarkerManager.getSingleton().importMarkers(f)) {
+                    JOptionPane.showMessageDialog(jImportDialog, "Markierungen erfolgreich importiert.", "Erfolg", JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(jImportDialog, "Fehler beim Import der Markierungen.", "Fehler", JOptionPane.ERROR_MESSAGE);
+                }
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(jImportDialog, "Fehler beim Import der Markierungen.", "Fehler", JOptionPane.ERROR_MESSAGE);
+            }
+        } else if (type == 2) {
+            //import groups/tags
+            //import marks
+            try {
+                if (TagManager.getSingleton().importTags(f)) {
+                    JOptionPane.showMessageDialog(jImportDialog, "Gruppen erfolgreich importiert.", "Erfolg", JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(jImportDialog, "Fehler beim Import der Gruppen.", "Fehler", JOptionPane.ERROR_MESSAGE);
+                }
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(jImportDialog, "Fehler beim Import der Gruppen.", "Fehler", JOptionPane.ERROR_MESSAGE);
+            }
+        } else if (type == 3) {
+            //import troops
+            try {
+                if (TroopsManager.getSingleton().importTroops(f)) {
+                    JOptionPane.showMessageDialog(jImportDialog, "Truppen erfolgreich importiert.", "Erfolg", JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(jImportDialog, "Fehler beim Import der Truppen.", "Fehler", JOptionPane.ERROR_MESSAGE);
+                }
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(jImportDialog, "Fehler beim Import der Truppen.", "Fehler", JOptionPane.ERROR_MESSAGE);
+            }
+        } else if (type == 4) {
+            //import forms
+            try {
+                if (FormManager.getSingleton().importForms(f)) {
+                    JOptionPane.showMessageDialog(jImportDialog, "Formen erfolgreich importiert.", "Erfolg", JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(jImportDialog, "Fehler beim Import der Formen.", "Fehler", JOptionPane.ERROR_MESSAGE);
+                }
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(jImportDialog, "Fehler beim Import der Formen.", "Fehler", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+}//GEN-LAST:event_fireImportEvent
+
     protected void switchMarkOnTop() {
         jMarkOnTopBox.setSelected(!jMarkOnTopBox.isSelected());
     }
@@ -1688,11 +2049,27 @@ private void fireMarkOnTopChangedEvent(javax.swing.event.ChangeEvent evt) {//GEN
         UIManager.put("OptionPane.yesButtonText", "Yes");
     }
 
+    @Override
+    public void fireMapShotDoneEvent() {
+        JOptionPane.showMessageDialog(this, "Kartengrafik erfolgreich gespeichert.", "Information", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    @Override
+    public void fireMapShotFailedEvent() {
+        JOptionPane.showMessageDialog(this, "Fehler beim Speichern der Kartengrafik.", "Fehler", JOptionPane.ERROR_MESSAGE);
+    }
+
 // </editor-fold>
 // <editor-fold defaultstate="collapsed" desc="Generated Variables">
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem jAboutItem;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton4;
+    private javax.swing.JButton jButton5;
+    private javax.swing.JButton jButton6;
     private javax.swing.JButton jCenterCoordinateIngame;
     private javax.swing.JButton jCenterIngameButton;
     private javax.swing.JTextField jCenterX;
@@ -1701,10 +2078,18 @@ private void fireMarkOnTopChangedEvent(javax.swing.event.ChangeEvent evt) {//GEN
     private javax.swing.JLabel jCurrentPlayer;
     private javax.swing.JComboBox jCurrentPlayerVillages;
     private javax.swing.JLabel jCurrentToolLabel;
+    private javax.swing.JComboBox jFileTypeChooser;
     private javax.swing.JMenuItem jHelpItem;
+    private javax.swing.JDialog jImportDialog;
+    private javax.swing.JTextField jImportFile;
+    private javax.swing.JComboBox jImportTypeBox;
     private javax.swing.JPanel jInformationPanel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JDialog jMapShotDialog;
     private javax.swing.JCheckBox jMarkOnTopBox;
     private javax.swing.JMenuItem jMassAttackItem;
     private javax.swing.JMenu jMenu1;
@@ -1714,6 +2099,7 @@ private void fireMarkOnTopChangedEvent(javax.swing.event.ChangeEvent evt) {//GEN
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;
+    private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JPanel jMinimapPanel;
     private javax.swing.JButton jMoveE;
     private javax.swing.JButton jMoveE1;
@@ -1730,6 +2116,7 @@ private void fireMarkOnTopChangedEvent(javax.swing.event.ChangeEvent evt) {//GEN
     private javax.swing.JPanel jPanel2;
     private javax.swing.JButton jRefreshButton;
     private javax.swing.JMenuItem jSearchItem;
+    private javax.swing.JSeparator jSeparator1;
     private javax.swing.JCheckBoxMenuItem jShowAttackFrame;
     private javax.swing.JCheckBoxMenuItem jShowFormsFrame;
     private javax.swing.JCheckBox jShowMapPopup;

@@ -7,6 +7,7 @@ package de.tor.tribes.util.map;
 import de.tor.tribes.types.AbstractForm;
 import de.tor.tribes.types.Line;
 import de.tor.tribes.ui.DSWorkbenchFormFrame;
+import de.tor.tribes.ui.MapPanel;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.awt.Color;
 import java.io.File;
@@ -67,6 +68,35 @@ public class FormManager {
             }
         } else {
             logger.info("No forms found under '" + pFile + "'");
+        }
+    }
+
+    public boolean importForms(File pFile) {
+        if (pFile == null) {
+            logger.error("File argument is 'null'");
+            return false;
+        }
+
+        logger.info("Loading forms");
+
+        try {
+            Document d = JaxenUtils.getDocument(pFile);
+            for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//forms/form")) {
+                AbstractForm form = AbstractForm.fromXml(e);
+                if (form != null) {
+                    System.out.println("Add form");
+                    forms.add(form);
+                }
+            }
+            logger.debug("Forms imported successfully");
+            //do a pseudo-scroll to update the forms visibility
+            MapPanel.getSingleton().fireScrollEvents(0, 0);
+            return true;
+        } catch (Exception e) {
+            logger.error("Failed to import forms", e);
+            //do a pseudo-scroll to update the forms visibility
+            MapPanel.getSingleton().fireScrollEvents(0, 0);
+            return false;
         }
     }
 

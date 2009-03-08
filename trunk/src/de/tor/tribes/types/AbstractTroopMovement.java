@@ -88,9 +88,9 @@ public abstract class AbstractTroopMovement {
         return iMinOffs;
     }
 
-    public abstract List<Attack> getAttacks(Date pArriveTime, int pTimeBetweenAttacks);
+    public abstract List<Attack> getAttacks(Date pArriveTime);
 
-    private static class AttackRuntimeSort implements Comparator<Attack>, java.io.Serializable {
+    protected static class AttackRuntimeSort implements Comparator<Attack>, java.io.Serializable {
 
         @Override
         public int compare(Attack a1, Attack a2) {

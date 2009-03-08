@@ -166,6 +166,10 @@ public class TroopsManagerTableModel extends AbstractTableModel {
                 //not allowed
                 break;
             }
+             case 2: {
+                //not allowed
+                break;
+            }
             default: {
                 int troopIndex = pCol - 3;
                 Village row = TroopsManager.getSingleton().getVillages()[pRow];

@@ -8,6 +8,7 @@ import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Ally;
 import de.tor.tribes.types.Marker;
 import de.tor.tribes.types.Tribe;
+import de.tor.tribes.ui.DSWorkbenchMarkerFrame;
 import de.tor.tribes.ui.MapPanel;
 import de.tor.tribes.ui.MarkerCell;
 import de.tor.tribes.ui.renderer.MapRenderer;
@@ -125,6 +126,50 @@ public class MarkerManager {
             if (logger.isInfoEnabled()) {
                 logger.info("Marker file not found under '" + pFile + "'");
             }
+        }
+    }
+
+    public boolean importMarkers(File pFile) {
+
+        if (pFile == null) {
+            logger.error("File argument is 'null'");
+            return false;
+        }
+        logger.debug("Importing markers");
+        try {
+            Document d = JaxenUtils.getDocument(pFile);
+            for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//markers/marker")) {
+                try {
+                    Marker m = new Marker(e);
+                    // check if tribe/ally still exists
+                    if (m.getMarkerType() == Marker.ALLY_MARKER_TYPE) {
+                        Ally a = DataHolder.getSingleton().getAllies().get(m.getMarkerID());
+                        if (a != null) {
+                            //don't overwrite existing markers
+                            if (getMarker(a) == null) {
+                                lMarkers.add(m);
+                            }
+                        }
+                    } else if (m.getMarkerType() == Marker.TRIBE_MARKER_TYPE) {
+                        Tribe t = DataHolder.getSingleton().getTribes().get(m.getMarkerID());
+                        if (t != null) {
+                            //don't overwrite existing markers
+                            if (getMarker(t) == null) {
+                                lMarkers.add(m);
+                            }
+                        }
+                    }
+                } catch (Exception inner) {
+                    //ignored, marker invalid
+                    }
+            }
+            logger.debug("Markers imported successfully");
+            DSWorkbenchMarkerFrame.getSingleton().fireMarkersChangedEvent();
+            return true;
+        } catch (Exception e) {
+            logger.error("Failed to import markers", e);
+            DSWorkbenchMarkerFrame.getSingleton().fireMarkersChangedEvent();
+            return false;
         }
     }
 

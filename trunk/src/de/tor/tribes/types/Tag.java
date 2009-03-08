@@ -75,7 +75,9 @@ public class Tag {
     }
 
     public void tagVillage(Integer pVillageID) {
-        mVillageIDs.add(pVillageID);
+        if (!mVillageIDs.contains(pVillageID)) {
+            mVillageIDs.add(pVillageID);
+        }
     }
 
     public void untagVillage(Integer pVillageID) {

@@ -51,19 +51,20 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame {
     }
 
     public void updateFormList() {
-        AbstractForm[] forms = null;
-        jFormsList.invalidate();
-        if (jToggleVisibleOnlyButton.isSelected()) {
-            forms = FormManager.getSingleton().getForms().toArray(new AbstractForm[]{});
-        } else {
-            forms = FormManager.getSingleton().getVisibleForms().toArray(new AbstractForm[]{});
-        }
-        DefaultListModel model = new DefaultListModel();
-        for (AbstractForm f : forms) {
-            model.addElement(f);
-        }
-        jFormsList.setModel(model);
-        jFormsList.revalidate();
+            AbstractForm[] forms = null;
+            jFormsList.invalidate();
+            if (jToggleVisibleOnlyButton.isSelected()) {
+                forms = FormManager.getSingleton().getForms().toArray(new AbstractForm[]{});
+            } else {
+                forms = FormManager.getSingleton().getVisibleForms().toArray(new AbstractForm[]{});
+            }
+
+            DefaultListModel model = new DefaultListModel();
+            for (AbstractForm f : forms) {
+                model.addElement(f);
+            }
+            jFormsList.setModel(model);
+            jFormsList.revalidate();       
     }
 
     /** This method is called from within the constructor to

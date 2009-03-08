@@ -22,6 +22,7 @@ import de.tor.tribes.types.Fake;
  */
 public class BruteForce extends AbstractAttackAlgorithm {
 
+    @Override
     public List<AbstractTroopMovement> calculateAttacks(
             Hashtable<UnitHolder, List<Village>> pSources,
             List<Village> pTargets,
@@ -29,7 +30,6 @@ public class BruteForce extends AbstractAttackAlgorithm {
             int pMaxCleanPerSnob,
             Date pStartTime,
             Date pArriveTime,
-            int pMinTimeBetweenAttacks,
             int pTimeFrameStartHour,
             int pTimeFrameEndHour,
             boolean pNightBlock,

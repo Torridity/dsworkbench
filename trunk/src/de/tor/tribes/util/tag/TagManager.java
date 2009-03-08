@@ -8,6 +8,7 @@ import de.tor.tribes.types.Tag;
 import java.util.List;
 import org.apache.log4j.Logger;
 import de.tor.tribes.types.Village;
+import de.tor.tribes.ui.DSWorkbenchSettingsDialog;
 import de.tor.tribes.ui.VillageTagFrame;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.io.File;
@@ -73,9 +74,9 @@ public class TagManager {
                         cnt++;
                     }
                 }
-                if(cnt == 0){
+                if (cnt == 0) {
                     logger.debug("Tags loaded successfully");
-                }else{
+                } else {
                     logger.warn(cnt + " errors while loading tags");
                 }
             } catch (Exception e) {
@@ -87,6 +88,43 @@ public class TagManager {
             }
         }
         VillageTagFrame.getSingleton().updateUserTags();
+    }
+
+    public boolean importTags(File pFile) {
+        if (pFile == null) {
+            logger.error("File argument is 'null'");
+            return false;
+        }
+        logger.debug("Importing tags");
+        try {
+            Document d = JaxenUtils.getDocument(pFile);
+            for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//tags/tag")) {
+                try {
+                    Tag t = Tag.fromXml(e);
+                    Tag existing = getTagByName(t.getName());
+                    if (existing == null) {
+                        //add new tag
+                        mTags.add(t);
+                    } else {
+                        //set tag for new villages
+                        for (Integer villageID : t.getVillageIDs()) {
+                            existing.tagVillage(villageID);
+                        }
+                    }
+                } catch (Exception inner) {
+                }
+            }
+
+            logger.debug("Tags imported successfully");
+            VillageTagFrame.getSingleton().updateUserTags();
+            DSWorkbenchSettingsDialog.getSingleton().setupTagsPanel();
+            return true;
+        } catch (Exception e) {
+            logger.error("Failed to load tags", e);
+            VillageTagFrame.getSingleton().updateUserTags();
+            DSWorkbenchSettingsDialog.getSingleton().setupTagsPanel();
+            return false;
+        }
     }
 
     /**Load tags from a database (not implemented yet*/

@@ -50,7 +50,7 @@ import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
 /**
- *@TODO Add flag-marker for single villages/notes? -> notes as forms? (Version 2.0)
+ *@TODO (1.X) Add flag-marker for single villages/notes? -> notes as forms? (Version 2.0)
  * @author  Charon
  */
 public class MapPanel extends javax.swing.JPanel {

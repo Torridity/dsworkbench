@@ -22,7 +22,7 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 
 /**
- *@TODO Put perm bans to global options
+ *@TODO (1.3) Put perm bans to global options
  * @author Charon
  */
 public class DSWorkbenchComServerFrame extends AbstractDSWorkbenchFrame implements PeerManagerListener {

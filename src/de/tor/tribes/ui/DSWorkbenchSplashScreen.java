@@ -40,6 +40,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
     DSWorkbenchSplashScreen() {
         initComponents();
         jLabel1.setIcon(new ImageIcon("./graphics/splash.gif"));
+        setTitle("DS Workbench " + Constants.VERSION + Constants.VERSION_ADDITION);
         new Timer("StartupTimer", true).schedule(new HideSplashTask(this), 1000);
         t = new SplashRepaintThread(this);
         t.setDaemon(true);

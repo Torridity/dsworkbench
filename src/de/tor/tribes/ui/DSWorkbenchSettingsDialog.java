@@ -55,7 +55,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import net.java.dev.colorchooser.ColorChooser;
 
 /**
- * @TODO Integrate browser access for linux
+ * @TODO (1.X) Integrate browser access for linux
  * @author  Jejkal
  */
 public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements

@@ -51,7 +51,7 @@ import javax.swing.table.TableRowSorter;
 import org.apache.log4j.Logger;
 
 /**
- * @TODO Introduce "copy" feature for attacks
+ * @TODO (1.2) Introduce "copy" feature for attacks
  * @author  Charon
  */
 public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements AttackManagerListener {
@@ -207,6 +207,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         jNewPlanBox = new javax.swing.JComboBox();
         jButton9 = new javax.swing.JButton();
         jButton10 = new javax.swing.JButton();
+        jCopyToPlanDialog = new javax.swing.JDialog();
         jAttackPanel = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jAttackTable = new javax.swing.JTable();
@@ -228,6 +229,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         jButton4 = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
         jRemoveAttackButton1 = new javax.swing.JButton();
+        jRemoveAttackButton2 = new javax.swing.JButton();
         jAttackFrameAlwaysOnTop = new javax.swing.JCheckBox();
 
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("de/tor/tribes/ui/Bundle"); // NOI18N
@@ -785,6 +787,17 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        javax.swing.GroupLayout jCopyToPlanDialogLayout = new javax.swing.GroupLayout(jCopyToPlanDialog.getContentPane());
+        jCopyToPlanDialog.getContentPane().setLayout(jCopyToPlanDialogLayout);
+        jCopyToPlanDialogLayout.setHorizontalGroup(
+            jCopyToPlanDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 400, Short.MAX_VALUE)
+        );
+        jCopyToPlanDialogLayout.setVerticalGroup(
+            jCopyToPlanDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 300, Short.MAX_VALUE)
+        );
+
         setTitle(bundle.getString("DSWorkbenchAttackFrame.title")); // NOI18N
 
         jAttackPanel.setBackground(new java.awt.Color(239, 235, 223));
@@ -992,6 +1005,16 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
             }
         });
 
+        jRemoveAttackButton2.setBackground(new java.awt.Color(239, 235, 223));
+        jRemoveAttackButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_remove.png"))); // NOI18N
+        jRemoveAttackButton2.setText(bundle.getString("DSWorkbenchAttackFrame.jRemoveAttackButton2.text")); // NOI18N
+        jRemoveAttackButton2.setToolTipText(bundle.getString("DSWorkbenchAttackFrame.jRemoveAttackButton2.toolTipText")); // NOI18N
+        jRemoveAttackButton2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireCopyAttacksEvent(evt);
+            }
+        });
+
         javax.swing.GroupLayout jAttackPanelLayout = new javax.swing.GroupLayout(jAttackPanel);
         jAttackPanel.setLayout(jAttackPanelLayout);
         jAttackPanelLayout.setHorizontalGroup(
@@ -999,34 +1022,33 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jAttackPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jAttackPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 606, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 573, Short.MAX_VALUE)
                     .addGroup(jAttackPanelLayout.createSequentialGroup()
                         .addComponent(jLabel9)
                         .addGap(18, 18, 18)
-                        .addComponent(jActiveAttackPlan, 0, 394, Short.MAX_VALUE)
+                        .addComponent(jActiveAttackPlan, 0, 361, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jAttackPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jAttackPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(jCheckAttacksButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jRemoveAttackButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(jRemoveAttackButton1, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(jAttackPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(jNotifyButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jNotDrawMarkedButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jSendAttackButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jMarkAllButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jMarkFilteredButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jFlipMarkButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jDrawMarkedButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jChangeArrivalButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jCopyUnformattedToClipboardButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jCopyBBCodeToClipboardButton, javax.swing.GroupLayout.Alignment.TRAILING)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jAttackPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(jCheckAttacksButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jRemoveAttackButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jRemoveAttackButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jNotifyButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jNotDrawMarkedButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jSendAttackButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jMarkAllButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jMarkFilteredButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jFlipMarkButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jDrawMarkedButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jChangeArrivalButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jCopyUnformattedToClipboardButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jCopyBBCodeToClipboardButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jRemoveAttackButton2))
                 .addContainerGap())
         );
         jAttackPanelLayout.setVerticalGroup(
@@ -1042,11 +1064,12 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
                     .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jAttackPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 665, Short.MAX_VALUE)
                     .addGroup(jAttackPanelLayout.createSequentialGroup()
                         .addComponent(jCheckAttacksButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jRemoveAttackButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jRemoveAttackButton2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jRemoveAttackButton1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -1068,7 +1091,8 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jCopyBBCodeToClipboardButton)
                         .addGap(30, 30, 30)
-                        .addComponent(jNotifyButton)))
+                        .addComponent(jNotifyButton))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 707, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -1085,10 +1109,12 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addContainerGap(545, Short.MAX_VALUE)
+                .addComponent(jAttackFrameAlwaysOnTop)
+                .addContainerGap())
+            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jAttackFrameAlwaysOnTop)
-                    .addComponent(jAttackPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 691, Short.MAX_VALUE))
+                .addComponent(jAttackPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 662, Short.MAX_VALUE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -1711,9 +1737,6 @@ private void fireRenameAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
 
     }
 
-
-
-
     jNewPlanName.setText(selection);
     jRenamePlanDialog.setLocationRelativeTo(this);
     jRenamePlanDialog.setVisible(true);
@@ -1765,10 +1788,6 @@ private void fireAddNewAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
         return;
 
     }
-
-
-
-
     AttackManager.getSingleton().addEmptyPlan(name);
     buildAttackPlanList();
 
@@ -1784,14 +1803,8 @@ private void fireRenameEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_f
         return;
 
     }
-
-
-
-
     AttackManager.getSingleton().renamePlan(selection, newName);
-
     buildAttackPlanList();
-
     jRenamePlanDialog.setVisible(false);
 }//GEN-LAST:event_fireRenameEvent
 
@@ -1872,6 +1885,30 @@ private void fireModifyTimeEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:even
     jLabel8.setEnabled(!moveMode);
     jArriveDateField.setEnabled(!moveMode);
 }//GEN-LAST:event_fireModifyTimeEvent
+
+private void fireCopyAttacksEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCopyAttacksEvent
+
+    //@TODO Use CopyToPlanDialog
+    int[] rows = jAttackTable.getSelectedRows();
+    if (rows.length == 0) {
+        return;
+    }
+    jAttackTable.editingCanceled(new ChangeEvent(this));
+    String plan = (String) jActiveAttackPlan.getSelectedItem();
+    List<Attack> currentPlan = AttackManager.getSingleton().getAttackPlan(plan);
+    for (int r = rows.length - 1; r >= 0; r--) {
+        jAttackTable.invalidate();
+        int row = jAttackTable.convertRowIndexToModel(rows[r]);
+        Attack toCopy = currentPlan.get(row);
+        AttackManager.getSingleton().addAttackFast(toCopy.getSource(), toCopy.getTarget(), toCopy.getUnit(), toCopy.getArriveTime(), toCopy.isShowOnMap(), plan, toCopy.getType());
+        jAttackTable.revalidate();
+    }
+    
+    jAttackTable.updateUI();
+
+
+
+}//GEN-LAST:event_fireCopyAttacksEvent
 
     /**Set table model for filteres selection*/
     private void setTableModel(JTable pTable, Hashtable<Village, Boolean> pVillages) {
@@ -2006,6 +2043,7 @@ private void fireModifyTimeEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:even
     private javax.swing.JButton jChangeArrivalButton;
     private javax.swing.JButton jCheckAttacksButton;
     private javax.swing.JButton jCopyBBCodeToClipboardButton;
+    private javax.swing.JDialog jCopyToPlanDialog;
     private javax.swing.JButton jCopyUnformattedToClipboardButton;
     private javax.swing.JTextField jCurrentPlanBox;
     private javax.swing.JSpinner jDayField;
@@ -2045,6 +2083,7 @@ private void fireModifyTimeEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:even
     private javax.swing.JPanel jPanel4;
     private javax.swing.JButton jRemoveAttackButton;
     private javax.swing.JButton jRemoveAttackButton1;
+    private javax.swing.JButton jRemoveAttackButton2;
     private javax.swing.JDialog jRenamePlanDialog;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;

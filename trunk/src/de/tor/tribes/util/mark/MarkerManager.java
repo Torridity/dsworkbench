@@ -11,6 +11,7 @@ import de.tor.tribes.types.Tribe;
 import de.tor.tribes.ui.DSWorkbenchMarkerFrame;
 import de.tor.tribes.ui.MapPanel;
 import de.tor.tribes.ui.MarkerCell;
+import de.tor.tribes.ui.MinimapPanel;
 import de.tor.tribes.ui.renderer.MapRenderer;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.awt.Color;
@@ -165,12 +166,30 @@ public class MarkerManager {
             }
             logger.debug("Markers imported successfully");
             DSWorkbenchMarkerFrame.getSingleton().fireMarkersChangedEvent();
+            MinimapPanel.getSingleton().redraw();
             return true;
         } catch (Exception e) {
             logger.error("Failed to import markers", e);
             DSWorkbenchMarkerFrame.getSingleton().fireMarkersChangedEvent();
+            MinimapPanel.getSingleton().redraw();
             return false;
         }
+    }
+
+    public String getExportData() {
+        logger.debug("Generating marker export data");
+
+        String result = "<markers>\n";
+        Marker[] markers = getMarkers();
+        for (Marker m : markers) {
+            String xml = m.toXml();
+            if (xml != null) {
+                result += xml + "\n";
+            }
+        }
+        result += "</markers>\n";
+        logger.debug("Export data generated successfully");
+        return result;
     }
 
     /**Load markers from database (not implemented yet)
@@ -197,7 +216,7 @@ public class MarkerManager {
             for (Marker m : markers) {
                 String xml = m.toXml();
                 if (xml != null) {
-                    w.write(m.toXml() + "\n");
+                    w.write(xml + "\n");
                 }
             }
             w.write("</markers>");

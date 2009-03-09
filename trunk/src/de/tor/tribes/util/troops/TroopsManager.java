@@ -171,7 +171,6 @@ public class TroopsManager {
     }
 
     public boolean importTroops(File pFile) {
-        mTroops.clear();
         if (pFile == null) {
             logger.error("File argument is 'null'");
             return false;
@@ -181,7 +180,7 @@ public class TroopsManager {
 
         try {
             Document d = JaxenUtils.getDocument(pFile);
-            for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//villages/village")) {
+            for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//troops/villages/village")) {
                 //get basic village without merged information
                 Village v = DataHolder.getSingleton().getVillagesById().get(Integer.parseInt(e.getChild("id").getText()));
                 Date state = Calendar.getInstance().getTime();
@@ -204,6 +203,37 @@ public class TroopsManager {
             logger.error("Failed to import troops", e);
             DSWorkbenchTroopsFrame.getSingleton().fireTroopsChangedEvent();
             return false;
+        }
+    }
+
+    public String getExportData() {
+        try {
+            logger.debug("Generating troop export data");
+
+            String result = "<troops>\n<villages>\n";
+            Enumeration<Village> villages = mTroops.keys();
+            while (villages.hasMoreElements()) {
+                //write village information
+                Village v = villages.nextElement();
+                VillageTroopsHolder holder = mTroops.get(v);
+                result += "<village>\n";
+                result += "<id>" + v.getId() + "</id>\n";
+                result += "<state>" + holder.getState().getTime() + "</state>\n";
+                result += "<troops>\n";
+                for (Integer i : holder.getTroops()) {
+                    //write troop information
+                    result += "<troop>" + i + "</troop>\n";
+                }
+                //close troops for village
+                result += "</troops>\n";
+                result += "</village>\n";
+            }
+            result += "</villages>\n</troops>\n";
+            logger.debug("Export data generated successfully");
+            return result;
+        } catch (Exception e) {
+            logger.error("Failed to generate troop export data", e);
+            return "";
         }
     }
 

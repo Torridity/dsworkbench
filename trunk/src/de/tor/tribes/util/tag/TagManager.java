@@ -9,6 +9,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.DSWorkbenchSettingsDialog;
+import de.tor.tribes.ui.MinimapPanel;
 import de.tor.tribes.ui.VillageTagFrame;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.io.File;
@@ -118,12 +119,31 @@ public class TagManager {
             logger.debug("Tags imported successfully");
             VillageTagFrame.getSingleton().updateUserTags();
             DSWorkbenchSettingsDialog.getSingleton().setupTagsPanel();
+            MinimapPanel.getSingleton().redraw();
             return true;
         } catch (Exception e) {
             logger.error("Failed to load tags", e);
             VillageTagFrame.getSingleton().updateUserTags();
             DSWorkbenchSettingsDialog.getSingleton().setupTagsPanel();
+            MinimapPanel.getSingleton().redraw();
             return false;
+        }
+    }
+
+    public String getExportData() {
+        try {
+            logger.debug("Generating tag export data");
+
+            String result = "<tags>\n";
+            for (Tag t : mTags) {
+                result += t.toXml();
+            }
+            result += "</tags>\n";
+            logger.debug("Export data generated successfully");
+            return result;
+        } catch (Exception e) {
+            logger.error("Failed to generate export data for tags", e);
+            return "";
         }
     }
 

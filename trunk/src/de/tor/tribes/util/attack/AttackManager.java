@@ -12,6 +12,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.Village;
+import de.tor.tribes.ui.DSWorkbenchAttackFrame;
 import de.tor.tribes.ui.MapPanel;
 import de.tor.tribes.ui.models.AttackManagerTableModel;
 import de.tor.tribes.ui.renderer.MapRenderer;
@@ -124,8 +125,10 @@ public class AttackManager {
                 if (logger.isDebugEnabled()) {
                     logger.debug("Loading plan '" + planKey + "'");
                 }
-                List<Attack> planAttacks = mAttackPlans.get(planKey);
-                if (planAttacks == null) {
+                List<Attack> planAttacks = null;
+                if (mAttackPlans.containsKey(planKey)) {
+                    planAttacks = mAttackPlans.get(planKey);
+                } else {
                     planAttacks = new LinkedList<Attack>();
                     mAttackPlans.put(planKey, planAttacks);
                 }
@@ -139,12 +142,40 @@ public class AttackManager {
                 }
             }
             forceUpdate(DEFAULT_PLAN_ID);
+            DSWorkbenchAttackFrame.getSingleton().buildAttackPlanList();
             logger.debug("Troop movements imported successfully");
             return true;
         } catch (Exception e) {
             logger.error("Failed to import troop movements", e);
+            forceUpdate(DEFAULT_PLAN_ID);
             return false;
         }
+    }
+
+    public String getExportData(List<String> plansToExport) {
+        if (plansToExport.isEmpty()) {
+            return "";
+        }
+        logger.debug("Generating attacks export data");
+        String result = "<plans>\n";
+
+        for (String plan : plansToExport) {
+            try {
+                result += "<plan key=\"" + URLEncoder.encode(plan, "UTF-8") + "\">\n";
+                List<Attack> attacks = mAttackPlans.get(plan);
+                result += "<attacks>\n";
+                for (Attack a : attacks) {
+                    result += a.toXml() + "\n";
+                }
+                result += "</attacks>\n";
+                result += "</plan>\n";
+            } catch (Exception e) {
+                logger.warn("Failed to export plan '" + plan + "'", e);
+            }
+        }
+        result += "</plans>\n";
+        logger.debug("Export data generated successfully");
+        return result;
     }
 
     public void saveAttacksToDatabase(String pUrl) {

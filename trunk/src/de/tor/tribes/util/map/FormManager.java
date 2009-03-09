@@ -84,7 +84,6 @@ public class FormManager {
             for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//forms/form")) {
                 AbstractForm form = AbstractForm.fromXml(e);
                 if (form != null) {
-                    System.out.println("Add form");
                     forms.add(form);
                 }
             }
@@ -97,6 +96,23 @@ public class FormManager {
             //do a pseudo-scroll to update the forms visibility
             MapPanel.getSingleton().fireScrollEvents(0, 0);
             return false;
+        }
+    }
+
+    public String getExportData() {
+        try {
+            logger.debug("Generating forms export data");
+            String result = "<forms>\n";
+
+            for (AbstractForm form : forms) {
+                result += form.toXml();
+            }
+            result += "</forms>\n";
+            logger.debug("Export data generated successfully");
+            return result;
+        } catch (Exception e) {
+            logger.error("Failed to generate forms export data", e);
+            return "";
         }
     }
 

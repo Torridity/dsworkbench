@@ -45,9 +45,14 @@ import de.tor.tribes.util.mark.MarkerManager;
 import java.io.File;
 import javax.swing.JFileChooser;
 import de.tor.tribes.util.troops.TroopsManager;
+import java.awt.Component;
+import java.io.FileWriter;
+import java.util.Enumeration;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 
 /**
- * @TODO Introduce export funktionality for attacks, troops etc.
  * @author  Charon
  */
 public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
@@ -80,7 +85,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         initComponents();
         setTitle("DS Workbench " + Constants.VERSION + Constants.VERSION_ADDITION);
         jMassAttackItem.setVisible(false);
-
+        jExportDialog.pack();
         // <editor-fold defaultstate="collapsed" desc=" Register ShutdownHook ">
 
         Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
@@ -116,7 +121,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         // <editor-fold defaultstate="collapsed" desc=" General UI setup ">
 
         getContentPane().setBackground(Constants.DS_BACK);
-        jImportDialog.pack();
         pack();
 
         // </editor-fold>        
@@ -652,14 +656,15 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jFileTypeChooser = new javax.swing.JComboBox();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
-        jImportDialog = new javax.swing.JDialog();
-        jLabel4 = new javax.swing.JLabel();
-        jImportTypeBox = new javax.swing.JComboBox();
-        jLabel5 = new javax.swing.JLabel();
-        jImportFile = new javax.swing.JTextField();
-        jButton4 = new javax.swing.JButton();
-        jButton5 = new javax.swing.JButton();
-        jButton6 = new javax.swing.JButton();
+        jExportDialog = new javax.swing.JDialog();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jAttackExportTable = new javax.swing.JTable();
+        jExportMarks = new javax.swing.JCheckBox();
+        jExportTags = new javax.swing.JCheckBox();
+        jExportTroops = new javax.swing.JCheckBox();
+        jExportForms = new javax.swing.JCheckBox();
+        jExportButton = new javax.swing.JButton();
+        jCancelExportButton = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         jNavigationPanel = new javax.swing.JPanel();
         jMoveE = new javax.swing.JButton();
@@ -693,7 +698,9 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
+        jSeparator2 = new javax.swing.JSeparator();
         jMenuItem3 = new javax.swing.JMenuItem();
+        jMenuItem4 = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JSeparator();
         jMenuItem2 = new javax.swing.JMenuItem();
         jMenu3 = new javax.swing.JMenu();
@@ -765,87 +772,96 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jImportDialog.setTitle(bundle.getString("DSWorkbenchMainFrame.jImportDialog.title")); // NOI18N
-        jImportDialog.setAlwaysOnTop(true);
+        jExportDialog.setTitle(bundle.getString("DSWorkbenchMainFrame.jExportDialog.title")); // NOI18N
+        jExportDialog.setAlwaysOnTop(true);
 
-        jLabel4.setText(bundle.getString("DSWorkbenchMainFrame.jLabel4.text")); // NOI18N
+        jScrollPane1.setOpaque(false);
 
-        jImportTypeBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Angriffe", "Markierungen", "Gruppen", "Truppen", "Formen" }));
+        jAttackExportTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
 
-        jLabel5.setText(bundle.getString("DSWorkbenchMainFrame.jLabel5.text")); // NOI18N
+            },
+            new String [] {
+                "Angriffplan", "Exportieren"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.Boolean.class
+            };
 
-        jImportFile.setText(bundle.getString("DSWorkbenchMainFrame.jImportFile.text")); // NOI18N
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+        });
+        jAttackExportTable.setOpaque(false);
+        jScrollPane1.setViewportView(jAttackExportTable);
 
-        jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/folder.png"))); // NOI18N
-        jButton4.setText(bundle.getString("DSWorkbenchMainFrame.jButton4.text")); // NOI18N
-        jButton4.setMaximumSize(new java.awt.Dimension(25, 25));
-        jButton4.setMinimumSize(new java.awt.Dimension(25, 25));
-        jButton4.setPreferredSize(new java.awt.Dimension(25, 25));
-        jButton4.addMouseListener(new java.awt.event.MouseAdapter() {
+        jExportMarks.setText(bundle.getString("DSWorkbenchMainFrame.jExportMarks.text")); // NOI18N
+        jExportMarks.setOpaque(false);
+
+        jExportTags.setText(bundle.getString("DSWorkbenchMainFrame.jExportTags.text")); // NOI18N
+        jExportTags.setOpaque(false);
+
+        jExportTroops.setText(bundle.getString("DSWorkbenchMainFrame.jExportTroops.text")); // NOI18N
+        jExportTroops.setOpaque(false);
+
+        jExportForms.setText(bundle.getString("DSWorkbenchMainFrame.jExportForms.text")); // NOI18N
+        jExportForms.setOpaque(false);
+
+        jExportButton.setText(bundle.getString("DSWorkbenchMainFrame.jExportButton.text")); // NOI18N
+        jExportButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireSelectImportFileEvent(evt);
+                fireExportEvent(evt);
             }
         });
 
-        jButton5.setText(bundle.getString("DSWorkbenchMainFrame.jButton5.text")); // NOI18N
-        jButton5.addMouseListener(new java.awt.event.MouseAdapter() {
+        jCancelExportButton.setText(bundle.getString("DSWorkbenchMainFrame.jCancelExportButton.text")); // NOI18N
+        jCancelExportButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireImportEvent(evt);
+                fireExportEvent(evt);
             }
         });
 
-        jButton6.setText(bundle.getString("DSWorkbenchMainFrame.jButton6.text")); // NOI18N
-        jButton6.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireCancelImportEvent(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jImportDialogLayout = new javax.swing.GroupLayout(jImportDialog.getContentPane());
-        jImportDialog.getContentPane().setLayout(jImportDialogLayout);
-        jImportDialogLayout.setHorizontalGroup(
-            jImportDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jImportDialogLayout.createSequentialGroup()
+        javax.swing.GroupLayout jExportDialogLayout = new javax.swing.GroupLayout(jExportDialog.getContentPane());
+        jExportDialog.getContentPane().setLayout(jExportDialogLayout);
+        jExportDialogLayout.setHorizontalGroup(
+            jExportDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jExportDialogLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jImportDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jImportDialogLayout.createSequentialGroup()
-                        .addGroup(jImportDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel4)
-                            .addComponent(jLabel5))
+                .addGroup(jExportDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 301, Short.MAX_VALUE)
+                    .addGroup(jExportDialogLayout.createSequentialGroup()
+                        .addGroup(jExportDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jExportMarks)
+                            .addComponent(jExportTags))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27, Short.MAX_VALUE)
+                        .addGroup(jExportDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jExportForms)
+                            .addComponent(jExportTroops)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jExportDialogLayout.createSequentialGroup()
+                        .addComponent(jCancelExportButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jImportDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jImportTypeBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jImportDialogLayout.createSequentialGroup()
-                                .addComponent(jImportFile, javax.swing.GroupLayout.DEFAULT_SIZE, 308, Short.MAX_VALUE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jImportDialogLayout.createSequentialGroup()
-                        .addComponent(jButton6)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton5)))
+                        .addComponent(jExportButton)))
                 .addContainerGap())
         );
-        jImportDialogLayout.setVerticalGroup(
-            jImportDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jImportDialogLayout.createSequentialGroup()
-                .addGroup(jImportDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jImportDialogLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(jImportDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel4)
-                            .addComponent(jImportTypeBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jImportDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jImportFile, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel5)))
-                    .addGroup(jImportDialogLayout.createSequentialGroup()
-                        .addGap(38, 38, 38)
-                        .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+        jExportDialogLayout.setVerticalGroup(
+            jExportDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jExportDialogLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 144, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
-                .addGroup(jImportDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton5)
-                    .addComponent(jButton6))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(jExportDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jExportMarks)
+                    .addComponent(jExportTroops))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jExportDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jExportTags)
+                    .addComponent(jExportForms))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jExportDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jExportButton)
+                    .addComponent(jCancelExportButton))
+                .addContainerGap())
         );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -1256,6 +1272,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             }
         });
         jMenu1.add(jMenuItem1);
+        jMenu1.add(jSeparator2);
 
         jMenuItem3.setBackground(new java.awt.Color(239, 235, 223));
         jMenuItem3.setText(bundle.getString("DSWorkbenchMainFrame.jMenuItem3.text")); // NOI18N
@@ -1265,6 +1282,15 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             }
         });
         jMenu1.add(jMenuItem3);
+
+        jMenuItem4.setBackground(new java.awt.Color(239, 235, 223));
+        jMenuItem4.setText(bundle.getString("DSWorkbenchMainFrame.jMenuItem4.text")); // NOI18N
+        jMenuItem4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fireOpenExportDialogEvent(evt);
+            }
+        });
+        jMenu1.add(jMenuItem4);
         jMenu1.add(jSeparator1);
 
         jMenuItem2.setBackground(new java.awt.Color(239, 235, 223));
@@ -1740,11 +1766,6 @@ private void fireCancelMapShotEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
 }//GEN-LAST:event_fireCancelMapShotEvent
 
 private void fireShowImportDialogEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireShowImportDialogEvent
-    jImportDialog.setVisible(true);
-    jImportTypeBox.setSelectedIndex(0);
-}//GEN-LAST:event_fireShowImportDialogEvent
-
-private void fireSelectImportFileEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSelectImportFileEvent
     String dir = GlobalOptions.getProperty("screen.dir");
     if (dir == null) {
         dir = ".";
@@ -1767,7 +1788,7 @@ private void fireSelectImportFileEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
             return "*.xml";
         }
     });
-    int ret = chooser.showOpenDialog(jMapShotDialog);
+    int ret = chooser.showOpenDialog(this);
     if (ret == JFileChooser.APPROVE_OPTION) {
         try {
             File f = chooser.getSelectedFile();
@@ -1777,82 +1798,171 @@ private void fireSelectImportFileEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
             }
             File target = new File(file);
             if (target.exists()) {
-                jImportFile.setText(target.getCanonicalPath());
+                //do import
+                boolean attackImported = AttackManager.getSingleton().importAttacks(target);
+                boolean markersImported = MarkerManager.getSingleton().importMarkers(target);
+                boolean tagImported = TagManager.getSingleton().importTags(target);
+                boolean troopsImported = TroopsManager.getSingleton().importTroops(target);
+                boolean formsImported = FormManager.getSingleton().importForms(target);
+
+                String message = "Import beendet.\n";
+                if (!attackImported) {
+                    message += "  * Fehler beim Import der Angriffe\n";
+                }
+                if (!markersImported) {
+                    message += "  * Fehler beim Import der Markierungen\n";
+                }
+                if (!tagImported) {
+                    message += "  * Fehler beim Import der Tags\n";
+                }
+                if (!troopsImported) {
+                    message += "  * Fehler beim Import der Truppen\n";
+                }
+                if (!formsImported) {
+                    message += "  * Fehler beim Import der Formen\n";
+                }
+
+                JOptionPane.showMessageDialog(this, message, "Import", JOptionPane.INFORMATION_MESSAGE);
             }
             GlobalOptions.addProperty("screen.dir", target.getParent());
         } catch (Exception e) {
-            logger.error("Failed to write map shot", e);
+            logger.error("Failed to import data", e);
+            JOptionPane.showMessageDialog(this, "Import fehlgeschlagen.", "Import", JOptionPane.ERROR_MESSAGE);
         }
     }
-}//GEN-LAST:event_fireSelectImportFileEvent
+}//GEN-LAST:event_fireShowImportDialogEvent
 
-private void fireCancelImportEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCancelImportEvent
-    jImportDialog.setVisible(false);
-}//GEN-LAST:event_fireCancelImportEvent
+private void fireExportEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireExportEvent
+    if (evt.getSource() == jExportButton) {
+        //do export
+        logger.debug("Building export data");
 
-private void fireImportEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireImportEvent
-    int type = jImportTypeBox.getSelectedIndex();
-    File f = new File(jImportFile.getText());
-    if (f.exists()) {
-        if (type == 0) {
-            //import attacks
-            try {
-                if (AttackManager.getSingleton().importAttacks(f)) {
-                    JOptionPane.showMessageDialog(jImportDialog, "Angriffe erfolgreich importiert.", "Erfolg", JOptionPane.INFORMATION_MESSAGE);
-                } else {
-                    JOptionPane.showMessageDialog(jImportDialog, "Fehler beim Import der Angriffe.", "Fehler", JOptionPane.ERROR_MESSAGE);
-                }
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(jImportDialog, "Fehler beim Import der Angriffe.", "Fehler", JOptionPane.ERROR_MESSAGE);
-            }
-        } else if (type == 1) {
-            //import marks
-            try {
-                if (MarkerManager.getSingleton().importMarkers(f)) {
-                    JOptionPane.showMessageDialog(jImportDialog, "Markierungen erfolgreich importiert.", "Erfolg", JOptionPane.INFORMATION_MESSAGE);
-                } else {
-                    JOptionPane.showMessageDialog(jImportDialog, "Fehler beim Import der Markierungen.", "Fehler", JOptionPane.ERROR_MESSAGE);
-                }
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(jImportDialog, "Fehler beim Import der Markierungen.", "Fehler", JOptionPane.ERROR_MESSAGE);
-            }
-        } else if (type == 2) {
-            //import groups/tags
-            //import marks
-            try {
-                if (TagManager.getSingleton().importTags(f)) {
-                    JOptionPane.showMessageDialog(jImportDialog, "Gruppen erfolgreich importiert.", "Erfolg", JOptionPane.INFORMATION_MESSAGE);
-                } else {
-                    JOptionPane.showMessageDialog(jImportDialog, "Fehler beim Import der Gruppen.", "Fehler", JOptionPane.ERROR_MESSAGE);
-                }
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(jImportDialog, "Fehler beim Import der Gruppen.", "Fehler", JOptionPane.ERROR_MESSAGE);
-            }
-        } else if (type == 3) {
-            //import troops
-            try {
-                if (TroopsManager.getSingleton().importTroops(f)) {
-                    JOptionPane.showMessageDialog(jImportDialog, "Truppen erfolgreich importiert.", "Erfolg", JOptionPane.INFORMATION_MESSAGE);
-                } else {
-                    JOptionPane.showMessageDialog(jImportDialog, "Fehler beim Import der Truppen.", "Fehler", JOptionPane.ERROR_MESSAGE);
-                }
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(jImportDialog, "Fehler beim Import der Truppen.", "Fehler", JOptionPane.ERROR_MESSAGE);
-            }
-        } else if (type == 4) {
-            //import forms
-            try {
-                if (FormManager.getSingleton().importForms(f)) {
-                    JOptionPane.showMessageDialog(jImportDialog, "Formen erfolgreich importiert.", "Erfolg", JOptionPane.INFORMATION_MESSAGE);
-                } else {
-                    JOptionPane.showMessageDialog(jImportDialog, "Fehler beim Import der Formen.", "Fehler", JOptionPane.ERROR_MESSAGE);
-                }
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(jImportDialog, "Fehler beim Import der Formen.", "Fehler", JOptionPane.ERROR_MESSAGE);
+        List<String> plansToExport = new LinkedList<String>();
+        for (int i = 0; i < jAttackExportTable.getRowCount(); i++) {
+            String plan = (String) jAttackExportTable.getValueAt(i, 0);
+            Boolean export = (Boolean) jAttackExportTable.getValueAt(i, 1);
+            if (export) {
+                logger.debug("Selecting attack plan '" + plan + "' to export list");
+                plansToExport.add(plan);
             }
         }
+
+        boolean needExport = false;
+        needExport = (plansToExport.size() > 0);
+        needExport |= jExportMarks.isSelected();
+        needExport |= jExportTags.isSelected();
+        needExport |= jExportTroops.isSelected();
+        needExport |= jExportForms.isSelected();
+        if (!needExport) {
+            JOptionPane.showMessageDialog(jExportDialog, "Keine Daten für den Export gewählt", "Export", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
+        String dir = GlobalOptions.getProperty("screen.dir");
+        if (dir == null) {
+            dir = ".";
+        }
+        JFileChooser chooser = new JFileChooser(dir);
+        chooser.setDialogTitle("Datei auswählen");
+        chooser.setSelectedFile(new File("export.xml"));
+        chooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
+
+            @Override
+            public boolean accept(File f) {
+                if ((f != null) && (f.isDirectory() || f.getName().endsWith(".xml"))) {
+                    return true;
+                }
+                return false;
+            }
+
+            @Override
+            public String getDescription() {
+                return "*.xml";
+            }
+        });
+        int ret = chooser.showSaveDialog(jExportDialog);
+        if (ret == JFileChooser.APPROVE_OPTION) {
+            try {
+                File f = chooser.getSelectedFile();
+                String file = f.getCanonicalPath();
+                if (!file.endsWith(".xml")) {
+                    file += ".xml";
+                }
+                File target = new File(file);
+                if (target.exists()) {
+                    if (JOptionPane.showConfirmDialog(jExportDialog, "Bestehende Datei überschreiben?", "Export", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.NO_OPTION) {
+                        return;
+                    }
+                }
+
+                String exportString = "<export>\n";
+                exportString += AttackManager.getSingleton().getExportData(plansToExport);
+                if (jExportMarks.isSelected()) {
+                    exportString += MarkerManager.getSingleton().getExportData();
+                }
+                if (jExportTags.isSelected()) {
+                    exportString += TagManager.getSingleton().getExportData();
+                }
+                if (jExportTroops.isSelected()) {
+                    exportString += TroopsManager.getSingleton().getExportData();
+                }
+
+                if (jExportForms.isSelected()) {
+                    exportString += FormManager.getSingleton().getExportData();
+                }
+                exportString += "</export>";
+                logger.debug("Writing data to disk");
+                FileWriter w = new FileWriter(target);
+                w.write(exportString);
+                logger.debug("Finalizing writer");
+                w.flush();
+                w.close();
+                logger.debug("Export finished successfully");
+                JOptionPane.showMessageDialog(jExportDialog, "Export erfolgreich beendet.", "Export", JOptionPane.INFORMATION_MESSAGE);
+            } catch (Exception e) {
+                logger.error("Failed to export data", e);
+                JOptionPane.showMessageDialog(this, "Export fehlgeschlagen.", "Import", JOptionPane.ERROR_MESSAGE);
+            }
+        } else {
+            //cancel pressed
+            return;
+        }
     }
-}//GEN-LAST:event_fireImportEvent
+    jExportDialog.setVisible(false);
+}//GEN-LAST:event_fireExportEvent
+
+private void fireOpenExportDialogEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireOpenExportDialogEvent
+    Enumeration<String> plans = AttackManager.getSingleton().getPlans();
+    jAttackExportTable.invalidate();
+    for (int i = 0; i < jAttackExportTable.getColumnCount(); i++) {
+        DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
+
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
+                c.setBackground(Constants.DS_BACK);
+                DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
+                r.setText("<html><b>" + r.getText() + "</b></html>");
+                return c;
+            }
+        };
+        jAttackExportTable.getColumn(jAttackExportTable.getColumnName(i)).setHeaderRenderer(headerRenderer);
+    }
+    DefaultTableModel model = (DefaultTableModel) jAttackExportTable.getModel();
+    int rows = model.getRowCount();
+    for (int i = 0; i < rows; i++) {
+        model.removeRow(0);
+    }
+
+    while (plans.hasMoreElements()) {
+        String next = plans.nextElement();
+        model.addRow(new Object[]{next, Boolean.FALSE});
+    }
+    jAttackExportTable.revalidate();
+    jAttackExportTable.updateUI();
+
+    jExportDialog.setVisible(true);
+}//GEN-LAST:event_fireOpenExportDialogEvent
 
     protected void switchMarkOnTop() {
         jMarkOnTopBox.setSelected(!jMarkOnTopBox.isSelected());
@@ -2031,11 +2141,27 @@ private void fireImportEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_f
         UIManager.put("OptionPane.noButtonText", "Verwerfen");
         UIManager.put("OptionPane.yesButtonText", "Übernehmen");
         if (JOptionPane.showConfirmDialog(this, message, "Gruppeninformationen gefunden", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION) {
+            //remove all tags
             for (String group : groups) {
-                TagManager.getSingleton().addTag(group);
-                Tag t = TagManager.getSingleton().getTagByName(group);
                 List<Village> villagesForGroup = pParserResult.get(group);
                 if (villagesForGroup != null) {
+                    for (Village v : villagesForGroup) {
+                        TagManager.getSingleton().removeTags(v);
+                    }
+                }
+            }
+
+            for (String group : groups) {
+                //add new groups
+                TagManager.getSingleton().addTag(group);
+                //get (added) group
+                Tag t = TagManager.getSingleton().getTagByName(group);
+                //add villages to group
+                List<Village> villagesForGroup = pParserResult.get(group);
+                if (villagesForGroup != null) {
+                    //remove all tags
+
+                    //set new tags
                     for (Village v : villagesForGroup) {
                         t.tagVillage(v.getId());
                     }
@@ -2060,16 +2186,16 @@ private void fireImportEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_f
     }
 
 // </editor-fold>
+
 // <editor-fold defaultstate="collapsed" desc="Generated Variables">
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem jAboutItem;
+    private javax.swing.JTable jAttackExportTable;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
-    private javax.swing.JButton jButton6;
+    private javax.swing.JButton jCancelExportButton;
     private javax.swing.JButton jCenterCoordinateIngame;
     private javax.swing.JButton jCenterIngameButton;
     private javax.swing.JTextField jCenterX;
@@ -2078,17 +2204,18 @@ private void fireImportEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_f
     private javax.swing.JLabel jCurrentPlayer;
     private javax.swing.JComboBox jCurrentPlayerVillages;
     private javax.swing.JLabel jCurrentToolLabel;
+    private javax.swing.JButton jExportButton;
+    private javax.swing.JDialog jExportDialog;
+    private javax.swing.JCheckBox jExportForms;
+    private javax.swing.JCheckBox jExportMarks;
+    private javax.swing.JCheckBox jExportTags;
+    private javax.swing.JCheckBox jExportTroops;
     private javax.swing.JComboBox jFileTypeChooser;
     private javax.swing.JMenuItem jHelpItem;
-    private javax.swing.JDialog jImportDialog;
-    private javax.swing.JTextField jImportFile;
-    private javax.swing.JComboBox jImportTypeBox;
     private javax.swing.JPanel jInformationPanel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
     private javax.swing.JDialog jMapShotDialog;
     private javax.swing.JCheckBox jMarkOnTopBox;
     private javax.swing.JMenuItem jMassAttackItem;
@@ -2100,6 +2227,7 @@ private void fireImportEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_f
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;
+    private javax.swing.JMenuItem jMenuItem4;
     private javax.swing.JPanel jMinimapPanel;
     private javax.swing.JButton jMoveE;
     private javax.swing.JButton jMoveE1;
@@ -2115,8 +2243,10 @@ private void fireImportEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_f
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JButton jRefreshButton;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JMenuItem jSearchItem;
     private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JSeparator jSeparator2;
     private javax.swing.JCheckBoxMenuItem jShowAttackFrame;
     private javax.swing.JCheckBoxMenuItem jShowFormsFrame;
     private javax.swing.JCheckBox jShowMapPopup;

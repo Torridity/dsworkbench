@@ -51,7 +51,6 @@ import javax.swing.table.TableRowSorter;
 import org.apache.log4j.Logger;
 
 /**
- * @TODO (1.2) Introduce "copy" feature for attacks
  * @author  Charon
  */
 public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements AttackManagerListener {
@@ -105,8 +104,8 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
                 }
             }
         });
-        //instantiate the column renderers
 
+        //instantiate the column renderers
         for (int i = 0; i < jAttackTable.getColumnCount(); i++) {
             DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
 
@@ -126,6 +125,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         jAttackTable.setDefaultRenderer(Integer.class, new AttackTypeCellRenderer());
         jAttackTable.setDefaultEditor(Integer.class, new AttackTypeCellEditor());
         jAddPlanDialog.pack();
+        jCopyToPlanDialog.pack();
         jRenamePlanDialog.pack();
         jSelectionFilterDialog.pack();
         jTimeChangeDialog.pack();
@@ -208,6 +208,12 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         jButton9 = new javax.swing.JButton();
         jButton10 = new javax.swing.JButton();
         jCopyToPlanDialog = new javax.swing.JDialog();
+        jLabel15 = new javax.swing.JLabel();
+        jCurrentPlanField = new javax.swing.JTextField();
+        jLabel16 = new javax.swing.JLabel();
+        jCopyTargetBox = new javax.swing.JComboBox();
+        jCopyButton = new javax.swing.JButton();
+        jCancelCopyButton = new javax.swing.JButton();
         jAttackPanel = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jAttackTable = new javax.swing.JTable();
@@ -780,22 +786,71 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
                 .addGroup(jMoveToPlanDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel13)
                     .addComponent(jNewPlanBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(18, 18, 18)
                 .addGroup(jMoveToPlanDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton9)
-                    .addComponent(jButton10))
+                    .addComponent(jButton10)
+                    .addComponent(jButton9))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
+
+        jLabel15.setText(bundle.getString("DSWorkbenchAttackFrame.jLabel15.text")); // NOI18N
+
+        jCurrentPlanField.setEditable(false);
+        jCurrentPlanField.setText(bundle.getString("DSWorkbenchAttackFrame.jCurrentPlanField.text")); // NOI18N
+
+        jLabel16.setText(bundle.getString("DSWorkbenchAttackFrame.jLabel16.text")); // NOI18N
+
+        jCopyButton.setText(bundle.getString("DSWorkbenchAttackFrame.jCopyButton.text")); // NOI18N
+        jCopyButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireCopyEvent(evt);
+            }
+        });
+
+        jCancelCopyButton.setText(bundle.getString("DSWorkbenchAttackFrame.jCancelCopyButton.text")); // NOI18N
+        jCancelCopyButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireCopyEvent(evt);
+            }
+        });
 
         javax.swing.GroupLayout jCopyToPlanDialogLayout = new javax.swing.GroupLayout(jCopyToPlanDialog.getContentPane());
         jCopyToPlanDialog.getContentPane().setLayout(jCopyToPlanDialogLayout);
         jCopyToPlanDialogLayout.setHorizontalGroup(
             jCopyToPlanDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGroup(jCopyToPlanDialogLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jCopyToPlanDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jCopyToPlanDialogLayout.createSequentialGroup()
+                        .addGroup(jCopyToPlanDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel15)
+                            .addComponent(jLabel16))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jCopyToPlanDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jCopyTargetBox, 0, 308, Short.MAX_VALUE)
+                            .addComponent(jCurrentPlanField, javax.swing.GroupLayout.DEFAULT_SIZE, 308, Short.MAX_VALUE)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jCopyToPlanDialogLayout.createSequentialGroup()
+                        .addComponent(jCancelCopyButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jCopyButton)))
+                .addContainerGap())
         );
         jCopyToPlanDialogLayout.setVerticalGroup(
             jCopyToPlanDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addGroup(jCopyToPlanDialogLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jCopyToPlanDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel15)
+                    .addComponent(jCurrentPlanField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jCopyToPlanDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel16)
+                    .addComponent(jCopyTargetBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jCopyToPlanDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jCopyButton)
+                    .addComponent(jCancelCopyButton))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         setTitle(bundle.getString("DSWorkbenchAttackFrame.title")); // NOI18N
@@ -1006,7 +1061,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         });
 
         jRemoveAttackButton2.setBackground(new java.awt.Color(239, 235, 223));
-        jRemoveAttackButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_remove.png"))); // NOI18N
+        jRemoveAttackButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_copy.png"))); // NOI18N
         jRemoveAttackButton2.setText(bundle.getString("DSWorkbenchAttackFrame.jRemoveAttackButton2.text")); // NOI18N
         jRemoveAttackButton2.setToolTipText(bundle.getString("DSWorkbenchAttackFrame.jRemoveAttackButton2.toolTipText")); // NOI18N
         jRemoveAttackButton2.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -1022,11 +1077,11 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jAttackPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jAttackPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 573, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 575, Short.MAX_VALUE)
                     .addGroup(jAttackPanelLayout.createSequentialGroup()
                         .addComponent(jLabel9)
                         .addGap(18, 18, 18)
-                        .addComponent(jActiveAttackPlan, 0, 361, Short.MAX_VALUE)
+                        .addComponent(jActiveAttackPlan, 0, 363, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -1109,12 +1164,10 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(545, Short.MAX_VALUE)
-                .addComponent(jAttackFrameAlwaysOnTop)
-                .addContainerGap())
-            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jAttackPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 662, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jAttackFrameAlwaysOnTop, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jAttackPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 662, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -1887,28 +1940,48 @@ private void fireModifyTimeEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:even
 }//GEN-LAST:event_fireModifyTimeEvent
 
 private void fireCopyAttacksEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCopyAttacksEvent
-
-    //@TODO Use CopyToPlanDialog
     int[] rows = jAttackTable.getSelectedRows();
-    if (rows.length == 0) {
+    if (rows == null || rows.length == 0) {
+        JOptionPane.showMessageDialog(this, "Keine Angriffe ausgewählt.", "Kopieren", JOptionPane.INFORMATION_MESSAGE);
         return;
     }
-    jAttackTable.editingCanceled(new ChangeEvent(this));
-    String plan = (String) jActiveAttackPlan.getSelectedItem();
-    List<Attack> currentPlan = AttackManager.getSingleton().getAttackPlan(plan);
-    for (int r = rows.length - 1; r >= 0; r--) {
-        jAttackTable.invalidate();
-        int row = jAttackTable.convertRowIndexToModel(rows[r]);
-        Attack toCopy = currentPlan.get(row);
-        AttackManager.getSingleton().addAttackFast(toCopy.getSource(), toCopy.getTarget(), toCopy.getUnit(), toCopy.getArriveTime(), toCopy.isShowOnMap(), plan, toCopy.getType());
-        jAttackTable.revalidate();
+
+    String active = (String) jActiveAttackPlan.getSelectedItem();
+    if (active == null) {
+        //no plan selected?
+        active = AttackManager.DEFAULT_PLAN_ID;
     }
-    
-    jAttackTable.updateUI();
-
-
-
+    //build plan list
+    jCopyTargetBox.setModel(new DefaultComboBoxModel(AttackManager.getSingleton().getPlansAsArray()));
+    jCurrentPlanField.setText(active);
+    jCopyTargetBox.setSelectedItem(active);
+    jCopyToPlanDialog.setVisible(true);
 }//GEN-LAST:event_fireCopyAttacksEvent
+
+private void fireCopyEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCopyEvent
+    if (evt.getSource() == jCopyButton) {
+        int[] rows = jAttackTable.getSelectedRows();
+        if (rows == null || rows.length == 0) {
+            return;
+        }
+        jAttackTable.editingCanceled(new ChangeEvent(this));
+        String newPlan = (String) jCopyTargetBox.getSelectedItem();
+        String current = (String) jActiveAttackPlan.getSelectedItem();
+        logger.debug("Copying attacks from plan '" + current + "' to '" + newPlan + "'");
+        List<Attack> currentPlan = AttackManager.getSingleton().getAttackPlan(current);
+        for (int r = rows.length - 1; r >= 0; r--) {
+            jAttackTable.invalidate();
+            int row = jAttackTable.convertRowIndexToModel(rows[r]);
+            Attack toCopy = currentPlan.get(row);
+            AttackManager.getSingleton().addAttackFast(toCopy.getSource(), toCopy.getTarget(), toCopy.getUnit(), toCopy.getArriveTime(), toCopy.isShowOnMap(), newPlan, toCopy.getType());
+            jAttackTable.revalidate();
+        }
+        AttackManager.getSingleton().forceUpdate(current);
+        jAttackTable.updateUI();
+    }
+
+    jCopyToPlanDialog.setVisible(false);
+}//GEN-LAST:event_fireCopyEvent
 
     /**Set table model for filteres selection*/
     private void setTableModel(JTable pTable, Hashtable<Village, Boolean> pVillages) {
@@ -2040,12 +2113,16 @@ private void fireCopyAttacksEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
     private javax.swing.JButton jButton8;
     private javax.swing.JButton jButton9;
     private javax.swing.JButton jCancelButton;
+    private javax.swing.JButton jCancelCopyButton;
     private javax.swing.JButton jChangeArrivalButton;
     private javax.swing.JButton jCheckAttacksButton;
     private javax.swing.JButton jCopyBBCodeToClipboardButton;
+    private javax.swing.JButton jCopyButton;
+    private javax.swing.JComboBox jCopyTargetBox;
     private javax.swing.JDialog jCopyToPlanDialog;
     private javax.swing.JButton jCopyUnformattedToClipboardButton;
     private javax.swing.JTextField jCurrentPlanBox;
+    private javax.swing.JTextField jCurrentPlanField;
     private javax.swing.JSpinner jDayField;
     private javax.swing.JButton jDrawMarkedButton;
     private javax.swing.JButton jFlipMarkButton;
@@ -2056,6 +2133,8 @@ private void fireCopyAttacksEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
+    private javax.swing.JLabel jLabel15;
+    private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;

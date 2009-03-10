@@ -153,7 +153,20 @@ public class ImageManager {
             throw new Exception("Failed to load unit icons");
         }
     }
-
+/*
+ *  public final static int ICON_SPEAR = 0;
+    public final static int ICON_SWORD = 1;
+    public final static int ICON_AXE = 2;
+    public final static int ICON_ARCHER = 3;
+    public final static int ICON_SPY = 4;
+    public final static int ICON_LKAV = 5;
+    public final static int ICON_MARCHER = 6;
+    public final static int ICON_HEAVY = 7;
+    public final static int ICON_RAM = 8;
+    public final static int ICON_CATA = 9;
+    public final static int ICON_KNIGHT = 10;
+    public final static int ICON_SNOB = 11;
+ */
     /**Get thr unit icon for the provided ID*/
     public static ImageIcon getUnitIcon(int pId) {
         if (DataHolder.getSingleton().getUnits().size() == 9) {

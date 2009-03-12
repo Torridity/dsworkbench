@@ -23,14 +23,37 @@
         <td colspan="2">&nbsp;</td>
       </tr>
 	  	  <tr>
-        <td colspan="2"><img src="../images/screens/attack_planer_settings.gif" width="647" height="470"></td>
+        <td colspan="2"><img src="../images/screens/attack_planer_settings.gif" width="662" height="485"></td>
       </tr>
 	  	  <tr>
         <td colspan="2">&nbsp;</td>
       </tr>
 	   <tr>
-        <td colspan="2"><p>Die <em>Einstellungen</em> des Angriffsplaners befassen sich mit den Rahmenbedingungen aller Angriffe. Hier kann man zum einen die <em>Startzeit</em> festlegen. Dieser Wert stellt den globalen Zeitpunkt dar, zu dem der <em>allererste Angriffe</em> fr&uuml;hestens abgeschickt werden soll. Zum anderen kann man die Ankunftszeit festlegen, zu der <em>alle Truppen</em> gemeinsam ihre Ziele erreichen.<br>
-          Die Option <em>Nacht-Sperre</em> bewirkt, dass man keine Angriffe zwischen 0 und 8 Uhr losschicken muss. Eine weitere Einstellung die sich auf die Abschickzeit bezieht ist der <em>Abschickzeitrahmen</em>. Mit Hilfe dieses Wertes kann man den Zeitrahmen einstellen, zu dem man bereit/f&auml;hig ist, Angriffe abzuschicken. Dieser Wert bezieht sich auf alle Angriffe die erstellt werden. Ist die <em>Nachtsperre</em> eingeschaltet, wird der <em>Zeitrahmen</em> entsprechend angepasst. Letztendlich gibt es noch die <em>Zufallsstreuung</em>. Ist dieses Feld aktiviert, werden die Angriffe in zuf&auml;lliger Reihenfolge den Zield&ouml;rfern zugewiesen. Diese Option gewinnt an Bedeutung, wenn man sehr viele D&ouml;rfer eines Spielers angreift. Ohne aktivierte <em>Zufallsstreuung</em> w&uuml;rden die Ziele der Reihe nach verwendet werden, bis keine <em>Herkunftsd&ouml;rfer</em> mehr verf&uuml;gbar sind. Je nach Dorfsortierung k&ouml;nnten sich so die Angriffe  auf ein Gebiet des Gegners konzentrieren. Ist die <em>Zufallsstreuung</em> aktiv ist die Wahrscheinlichkeit hoch, dass viele verschiedene D&ouml;rfer des Feindes ber&uuml;cksichtigt werden, so z.B. auch D&ouml;rfer in Save-Gebiet. </p>
+        <td colspan="2"><p>Die <em>Einstellungen</em> des Angriffsplaners befassen sich mit den Rahmenbedingungen aller Angriffe. Hier kann man zum einen die <em>Startzeit</em> festlegen. Dieser Wert stellt den globalen Zeitpunkt dar, zu dem der <em>allererste Angriffe</em> fr&uuml;hestens abgeschickt werden soll. Zum anderen kann man die Ankunftszeit festlegen, zu der <em>alle Truppen</em> gemeinsam ihre Ziele erreichen.</p>
+          <p>Die Auswahl des <em>Algorithmus</em> bestimmt das Verfahren, mit dem m&ouml;gliche Angriffe bestimmt werden. Dabei stehen folgende Verfahren zur Auswahl: </p>
+          <table width="100%" border="0" cellspacing="0" cellpadding="0">
+            <tr>
+              <td width="10%">Brute Force </td>
+              <td>Dieser Algorithmus entspricht dem urspr&uuml;nglichen Verfahren, wie es bei <em>DS Workbench</em> verwendet wurde. Hierbei wird versucht, alle Herkunftsd&ouml;rfer der Reihe nach einem Zieldorf zuzuordnen. Ausschlaggebend f&uuml;r eine Zuordnung ist lediglich, ob die Laufzeit im angegebenen Zeitrahmen liegt. Die Art der Einheiten oder eventuell m&ouml;gliche Adelungen werden nicht ber&uuml;cksichtigt.</td>
+            </tr>
+            <tr>
+              <td width="10%">All In One</td>
+              <td>Dieser erweiterte Algorithmus bezieht die Truppentypen, die f&uuml;r die <a href="attack_planer_source.html"><em>Herkunfsd&ouml;rfer</em></a> ausgew&auml;hlt wurde, in die Planung ein. Da es sich um einen <u>Angriffs</u>planer handelt werden dabei jedoch lediglich Rammen, Katapulte und AGs ber&uuml;cksichtigt. Bei der Berechnung versucht der Algorithmus zuerst, f&uuml;r alle AG-Herkunftsd&ouml;rfer ein Ziel zu finden. <br>
+                Wurden alle AGs verteilt wird versucht, die angegebenen Off-Herkunftsd&ouml;rfer (Truppentyp Ramme oder Katapult) den AG-Zielen zuzuordnen, bis die gew&uuml;nschte Anzahl der Clean-Offs f&uuml;r ein AG-Ziel erreicht wurde. Abschlie&szlig;end werden die verbliebenen Offs den verbliebenen Zielen zugeordnet. Auswahlkriterium f&uuml;r jeden dieser Schritte ist eine m&ouml;glichst geringe Laufzeit. </td>
+            </tr>
+            <tr>
+              <td width="10%">Blitzkrieg</td>
+              <td><p>Dieser Algorithmus ist komplett auf kurze Laufzeiten ausgelegt.  Hier werden zuerst die angegebenen Off-Herkunftsd&ouml;rfer m&ouml;glichen Zielen zugewiesen, wieder unter dem Kriterium der minimalen Laufzeit. Wurden alle Offs verteilt, sucht der Algorithmus nach D&ouml;rfern, bei denen die Anzahl der geplanten Angriffe der Anzahl von Clean Offs entspricht. F&uuml;r diese Ziele werden nun Herkunftsd&ouml;rfer von AGs gesucht, die in einer einstellbaren Entfernung vom Ziel liegen (<em>AG-Entfernung</em>). Wurde ein Herkunftsdorf f&uuml;r ein Ziel gefunden, so werden 4 AG Angriffe aus diesem Dorf vorgemerkt. </p>
+                <p><em><u>Achtung:</u></em> Es wird an dieser Stelle nicht &uuml;berpr&uuml;ft, wieviele AGs wirklich vorhanden sind. Fehlende AGs m&uuml;ssen ggf. noch rekrutiert werden!<br> 
+                  <br>
+                Nach Abschluss der Berechnung wird nachgefragt, ob die vorgemerkten AG Angriffe in die Angriffsplanung &uuml;bernommen werden sollen. Ist dies der Fall, so wird <u>jetzt erst</u> gepr&uuml;ft, wieviele von den geplanten Adelungen mit den importierten Truppenzahlen bereits m&ouml;glich sind. Diese Information erscheint dann in der Statistik im oberen Bereich der Ergebnis&uuml;bersicht. </p></td>
+            </tr>
+          </table>          
+          <p>Einige der Einstellungen im unteren Bereich sind nur f&uuml;r bestimmte Algorithmen verf&uuml;gbar. Bei der Auswahl des Algorithmus werden Einstellungen die nicht notwendig sind entsprechend deaktiviert.<br>
+              Die Einstellungen der <em>Clean Offs </em>ist zum Beispiel nur f&uuml;r 'All In One' und 'Blitzkrieg' verf&uuml;gbar, die <em>Zufallsstreuung</em> ist dagegen nur f&uuml;r 'Brute Force' aktiv.<br> 
+              Die Zufallsstreuung dient einfach dazu, die D&ouml;rfer des Gegners nicht ihrer Sortierung nach f&uuml;r Angriffen auszuw&auml;hlen, sondern zuf&auml;llig. Da viele Spieler ihre D&ouml;rfer mit Namen versehen, welche die Dorfkoordinaten oder die Lage des Dorfes enthalten, werden durch die zuf&auml;llige Auswahl auch D&ouml;rfer ber&uuml;cksichtigt, die in verschiedenen Regionen der Karte liegen.
+                <br>
+            Die Option <em>Nacht-Sperre</em> bewirkt, dass man keine Angriffe zwischen 0 und 8 Uhr losschicken muss. Eine weitere Einstellung die sich auf die Abschickzeit bezieht ist der <em>Abschickzeitrahmen</em>. Mit Hilfe dieses Wertes kann man den Zeitrahmen einstellen, zu dem man bereit/f&auml;hig ist, Angriffe abzuschicken. Dieser Wert bezieht sich auf alle Angriffe die erstellt werden. Ist die <em>Nachtsperre</em> eingeschaltet, wird der <em>Zeitrahmen</em> entsprechend angepasst. </p>
           </td>
       </tr>
 	   <tr>
@@ -62,6 +85,7 @@
           Trefft ihr auf einen solchen Fall gibt es jedoch einige M&ouml;glichkeiten, doch noch alle D&ouml;rfer unterzubringen:</p>
           <ul>
             <li>Erh&ouml;ht die Anzahl der Angriffe pro gegnerisches Dorf in den <a href="attack_planer_target.html"><em>Zieleinstellungen</em></a></li>
+            <li>&Auml;nderung des verwendeten Algorithmus </li>
             <li>Vergr&ouml;&szlig;ert den <em>Abschickzeitrahmen</em>, um den kompletten Tag f&uuml;r das Abschicken von Angriffen zu ber&uuml;cksichtigen. Die <em>Nacht-Sperre</em> k&ouml;nnt ihr ja trotzdem aktivieren.</li>
             <li>Verschiebt die globale Abschickzeit nach hinten, um Angriffe vielleicht ein oder zwei Tage fr&uuml;her abzuschicken</li>
             <li>Verschiebt die Ankunftszeit der Truppen nach vorn </li>

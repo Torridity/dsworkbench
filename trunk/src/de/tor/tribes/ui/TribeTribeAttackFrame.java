@@ -247,7 +247,6 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Village
             logger.error("Failed to initialize TribeAttackFrame", e);
         }
 
-        jResultsTable.setDefaultRenderer(Date.class, new DateCellRenderer());
     }
 
     /** This method is called from within the constructor to
@@ -509,7 +508,7 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Village
         jResultFrameLayout.setHorizontalGroup(
             jResultFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jResultFrameLayout.createSequentialGroup()
-                .addContainerGap(379, Short.MAX_VALUE)
+                .addContainerGap(387, Short.MAX_VALUE)
                 .addComponent(jAddToAttacksButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jCopyToClipboardButton)
@@ -1112,7 +1111,7 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Village
             jSourcePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jSourcePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 125, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 122, Short.MAX_VALUE)
                 .addGap(11, 11, 11)
                 .addGroup(jSourcePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jSourcePanelLayout.createSequentialGroup()
@@ -1287,7 +1286,7 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Village
             jTargetPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jTargetPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 127, Short.MAX_VALUE)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 124, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -1304,7 +1303,7 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Village
 
         jSettingsPanel.setBackground(new java.awt.Color(239, 235, 223));
 
-        jAlgorithmChooser.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Brute Force", "AllInOne", "Blitzkrieg" }));
+        jAlgorithmChooser.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Brute Force", "All In One", "Blitzkrieg" }));
         jAlgorithmChooser.setToolTipText(bundle.getString("TribeTribeAttackFrame.jAlgorithmChooser.toolTipText")); // NOI18N
         jAlgorithmChooser.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
@@ -1491,7 +1490,7 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Village
                 .addGroup(jSettingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jRandomizeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jRandomizeTribes))
-                .addContainerGap(15, Short.MAX_VALUE))
+                .addContainerGap(14, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab(bundle.getString("TribeTribeAttackFrame.jSettingsPanel.TabConstraints.tabTitle"), new javax.swing.ImageIcon(getClass().getResource("/res/settings.png")), jSettingsPanel); // NOI18N
@@ -1574,7 +1573,7 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
     // <editor-fold defaultstate="collapsed" desc="New algorithm">
     //build source-unit map
     int snobSources = 0;
-    int maxEnoblements = (int) Math.floor(snobSources / 4);
+
     Hashtable<UnitHolder, List<Village>> sources = new Hashtable<UnitHolder, List<Village>>();
     for (int i = 0; i < attackModel.getRowCount(); i++) {
         UnitHolder uSource = (UnitHolder) attackModel.getValueAt(i, 1);
@@ -1596,7 +1595,7 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
             sourcesForUnit.add(vSource);
         }
     }
-
+    int maxEnoblements = (int) Math.floor(snobSources / 4);
     boolean useMiscUnits = false;
     Enumeration<UnitHolder> involvedUnits = sources.keys();
     while (involvedUnits.hasMoreElements()) {
@@ -1850,7 +1849,7 @@ private void fireAttacksToClipboardEvent(java.awt.event.MouseEvent evt) {//GEN-F
     try {
         UIManager.put("OptionPane.noButtonText", "Nein");
         UIManager.put("OptionPane.yesButtonText", "Ja");
-        boolean extended = (JOptionPane.showConfirmDialog(this, "Erweiterte BB-Codes verwenden (nur für Forum und Notizen geeignet)?", "Erweiterter BB-Code", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION);
+        boolean extended = (JOptionPane.showConfirmDialog(jResultFrame, "Erweiterte BB-Codes verwenden (nur für Forum und Notizen geeignet)?", "Erweiterter BB-Code", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION);
         UIManager.put("OptionPane.noButtonText", "No");
         UIManager.put("OptionPane.yesButtonText", "Yes");
 
@@ -1864,8 +1863,7 @@ private void fireAttacksToClipboardEvent(java.awt.event.MouseEvent evt) {//GEN-F
             buffer.append("[u]Angriffsplan[/u]\n\n");
         }
 
-        for (int i = 0; i <
-                resultModel.getRowCount(); i++) {
+        for (int i = 0; i < resultModel.getRowCount(); i++) {
             Village sVillage = (Village) resultModel.getValueAt(i, 0);
             UnitHolder sUnit = (UnitHolder) resultModel.getValueAt(i, 1);
             Village tVillage = (Village) resultModel.getValueAt(i, 2);
@@ -1933,15 +1931,12 @@ private void fireAttacksToClipboardEvent(java.awt.event.MouseEvent evt) {//GEN-F
         if (cnt > 500) {
             UIManager.put("OptionPane.noButtonText", "Nein");
             UIManager.put("OptionPane.yesButtonText", "Ja");
-            if (JOptionPane.showConfirmDialog(this, "Die ausgewählten Angriffe benötigen mehr als 500 BB-Codes\n" +
+            if (JOptionPane.showConfirmDialog(jResultFrame, "Die ausgewählten Angriffe benötigen mehr als 500 BB-Codes\n" +
                     "und können daher im Spiel (Forum/IGM/Notizen) nicht auf einmal dargestellt werden.\nTrotzdem exportieren?", "Zu viele BB-Codes", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.NO_OPTION) {
                 UIManager.put("OptionPane.noButtonText", "No");
                 UIManager.put("OptionPane.yesButtonText", "Yes");
                 return;
-
             }
-
-
             UIManager.put("OptionPane.noButtonText", "No");
             UIManager.put("OptionPane.yesButtonText", "Yes");
         }
@@ -1960,8 +1955,7 @@ private void fireUnformattedAttacksToClipboardEvent(java.awt.event.MouseEvent ev
     try {
         DefaultTableModel resultModel = (DefaultTableModel) jResultsTable.getModel();
         StringBuffer buffer = new StringBuffer();
-        for (int i = 0; i <
-                resultModel.getRowCount(); i++) {
+        for (int i = 0; i < resultModel.getRowCount(); i++) {
             Village sVillage = (Village) resultModel.getValueAt(i, 0);
             UnitHolder sUnit = (UnitHolder) resultModel.getValueAt(i, 1);
             Village tVillage = (Village) resultModel.getValueAt(i, 2);
@@ -2420,6 +2414,8 @@ private void fireTroopStrengthFocusEvent(java.awt.event.FocusEvent evt) {//GEN-F
         };
 
         jResultsTable.setDefaultRenderer(Integer.class, new AttackTypeCellRenderer());
+
+        jResultsTable.setDefaultRenderer(Date.class, new DateCellRenderer());
         /* Enumeration<Village> targets = pAttacks.keys();
 
         while (targets.hasMoreElements()) {
@@ -2434,13 +2430,6 @@ private void fireTroopStrengthFocusEvent(java.awt.event.FocusEvent evt) {//GEN-F
         resultModel.addRow(new Object[]{source, unit, target, new Date(startTime)});
         }
         }*/
-
-
-
-
-
-
-
 
         for (Attack a : pAttacks) {
             long targetTime = a.getArriveTime().getTime();

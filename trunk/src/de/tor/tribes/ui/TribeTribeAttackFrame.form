@@ -13,7 +13,7 @@
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="1" attributes="0">
-                  <EmptySpace pref="379" max="32767" attributes="0"/>
+                  <EmptySpace pref="387" max="32767" attributes="0"/>
                   <Component id="jAddToAttacksButton" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" max="-2" attributes="0"/>
                   <Component id="jCopyToClipboardButton" min="-2" max="-2" attributes="0"/>
@@ -1130,7 +1130,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
                       <EmptySpace min="-2" max="-2" attributes="0"/>
-                      <Component id="jScrollPane1" pref="125" max="32767" attributes="0"/>
+                      <Component id="jScrollPane1" pref="122" max="32767" attributes="0"/>
                       <EmptySpace min="-2" pref="11" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" attributes="0">
@@ -1476,7 +1476,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jScrollPane3" pref="127" max="32767" attributes="0"/>
+                      <Component id="jScrollPane3" pref="124" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jPanel6" min="-2" max="-2" attributes="1"/>
                       <EmptySpace max="-2" attributes="0"/>
@@ -1870,7 +1870,7 @@
                           <Component id="jRandomizeLabel" min="-2" pref="20" max="-2" attributes="0"/>
                           <Component id="jRandomizeTribes" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="15" max="32767" attributes="0"/>
+                      <EmptySpace pref="14" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -1881,7 +1881,7 @@
                 <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
                   <StringArray count="3">
                     <StringItem index="0" value="Brute Force"/>
-                    <StringItem index="1" value="AllInOne"/>
+                    <StringItem index="1" value="All In One"/>
                     <StringItem index="2" value="Blitzkrieg"/>
                   </StringArray>
                 </Property>

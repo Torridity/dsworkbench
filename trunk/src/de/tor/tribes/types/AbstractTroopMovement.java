@@ -66,6 +66,16 @@ public abstract class AbstractTroopMovement {
         return (offs >= iMinOffs);
     }
 
+    public int getOffCount() {
+        Enumeration<UnitHolder> unitKeys = mOffs.keys();
+        int offs = 0;
+        while (unitKeys.hasMoreElements()) {
+            UnitHolder unit = unitKeys.nextElement();
+            offs += mOffs.get(unit).size();
+        }
+        return offs;
+    }
+
     public boolean offComplete() {
         Enumeration<UnitHolder> unitKeys = mOffs.keys();
         int offs = 0;
@@ -94,8 +104,8 @@ public abstract class AbstractTroopMovement {
 
         @Override
         public int compare(Attack a1, Attack a2) {
-            double d1 = a1.getArriveTime().getTime() - (long) DSCalculator.calculateMoveTimeInSeconds(a1.getSource(), a1.getTarget(), a1.getUnit().getSpeed()) * 1000;
-            double d2 = a2.getArriveTime().getTime() - (long) DSCalculator.calculateMoveTimeInSeconds(a2.getSource(), a2.getTarget(), a2.getUnit().getSpeed()) * 1000;
+            double d1 = a1.getArriveTime().getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(a1.getSource(), a1.getTarget(), a1.getUnit().getSpeed()) * 1000);
+            double d2 = a2.getArriveTime().getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(a2.getSource(), a2.getTarget(), a2.getUnit().getSpeed()) * 1000);
             return Double.compare(d1, d2);
         }
     }

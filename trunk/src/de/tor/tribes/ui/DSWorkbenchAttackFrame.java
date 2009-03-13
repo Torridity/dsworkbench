@@ -2214,7 +2214,7 @@ class NotifyThread extends Thread {
                         Attack[] attacks = AttackManager.getSingleton().getAttackPlan(plan).toArray(new Attack[]{});
                         int attackCount = 0;
                         for (Attack a : attacks) {
-                            long sendTime = a.getArriveTime().getTime() - (long) DSCalculator.calculateMoveTimeInSeconds(a.getSource(), a.getTarget(), a.getUnit().getSpeed()) * 1000;
+                            long sendTime = a.getArriveTime().getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(a.getSource(), a.getTarget(), a.getUnit().getSpeed()) * 1000);
                             //find send times between now and in 10 minutes
                             if ((sendTime >= now) && (sendTime <= now + TEN_MINUTES)) {
                                 attackCount++;

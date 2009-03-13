@@ -14,12 +14,15 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import de.tor.tribes.io.DataHolder;
+import org.apache.log4j.Logger;
 
 /**
  *
  * @author Charon
  */
 public class Blitzkrieg extends AbstractAttackAlgorithm {
+
+    private static Logger logger = Logger.getLogger("Algorithm_Blitzkrieg");
 
     @Override
     public List<AbstractTroopMovement> calculateAttacks(Hashtable<UnitHolder, List<Village>> pSources, List<Village> pTargets, int pMaxAttacksPerVillage, int pMaxCleanPerSnob, Date pStartTime, Date pArriveTime, int pTimeFrameStartHour, int pTimeFrameEndHour, boolean pNightBlock, boolean pRandomize) {
@@ -29,6 +32,7 @@ public class Blitzkrieg extends AbstractAttackAlgorithm {
         TimeFrame timeFrame = new TimeFrame(pStartTime, pArriveTime, pTimeFrameStartHour, pTimeFrameEndHour);
         //generate enoblements with minimum runtime
 
+        logger.debug("Getting off sources");
         // <editor-fold defaultstate="collapsed" desc="Get off villages">
         UnitHolder ramUnit = DataHolder.getSingleton().getUnitByPlainName("ram");
         UnitHolder cataUnit = DataHolder.getSingleton().getUnitByPlainName("catapult");
@@ -48,10 +52,12 @@ public class Blitzkrieg extends AbstractAttackAlgorithm {
         }
         //</editor-fold>
 
+        logger.debug("Assigning offs");
         List<Fake> pFinalFakes = new LinkedList<Fake>();
         assignOffs(pFinalFakes, offSources, pTargets, timeFrame, pMaxAttacksPerVillage);
         int fullFakes = 0;
 
+        logger.debug("Checking for full offs");
         for (Fake f : pFinalFakes) {
             if (f.offComplete()) {
                 fullFakes++;
@@ -59,6 +65,7 @@ public class Blitzkrieg extends AbstractAttackAlgorithm {
         }
         setFullOffs(fullFakes);
 
+        logger.debug("Building result list");
         List<AbstractTroopMovement> movements = new LinkedList<AbstractTroopMovement>();
 
         for (Fake f : pFinalFakes) {

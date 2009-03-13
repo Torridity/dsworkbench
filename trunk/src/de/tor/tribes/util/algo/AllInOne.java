@@ -17,12 +17,15 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
+import org.apache.log4j.Logger;
 
 /**
  *
  * @author Charon
  */
 public class AllInOne extends AbstractAttackAlgorithm {
+
+    private static Logger logger = Logger.getLogger("Algorithm_AllInOne");
 
     public List<AbstractTroopMovement> calculateAttacks(
             Hashtable<UnitHolder, List<Village>> pSources,
@@ -37,6 +40,7 @@ public class AllInOne extends AbstractAttackAlgorithm {
             boolean pRandomize) {
 
         //get snob villages
+        logger.debug("Getting snob sources");
         UnitHolder snobUnit = DataHolder.getSingleton().getUnitByPlainName("snob");
         List<Village> snobVillages = pSources.get(snobUnit);
         if (snobVillages == null) {
@@ -49,12 +53,14 @@ public class AllInOne extends AbstractAttackAlgorithm {
         //generate enoblements with minimum runtime
 
         //System.out.println("===GENERATING ENOBLEMENTS===");
+        logger.debug("Generating enoblements");
         generateEnoblements(snobVillages, pTargets, timeFrame, finalEnoblements);
         /* System.out.println("===GENERATING ENOBLEMENTS FINISHED===");
         System.out.println("| RemainingSnobs: " + snobVillages.size());
         System.out.println("| Found Enoblements: " + finalEnoblements.size());
         System.out.println("|--------------------");
          */
+        logger.debug("Getting off sources");
         // <editor-fold defaultstate="collapsed" desc="Get off villages">
         UnitHolder ramUnit = DataHolder.getSingleton().getUnitByPlainName("ram");
         UnitHolder cataUnit = DataHolder.getSingleton().getUnitByPlainName("catapult");
@@ -78,14 +84,13 @@ public class AllInOne extends AbstractAttackAlgorithm {
             e.setMinOffs(pCleanPerSnob);
             e.setMaxOffs(pMaxAttacksPerVillage);
         }
-        // System.out.println("===ASSIGNING OFFS TO ENOBLEMENTS===");
+        logger.debug("Assigning offs to enoblements");
         assignOffsToEnoblements(finalEnoblements, offSources, timeFrame);
-        /* System.out.println("===ASSIGNING OFFS TO ENOBLEMENTS FINISHED===");
-        System.out.println("| Remaining Offs: " + offSources.size());
-         */
+
         int fullyValid = 0;
-        for (Enoblement e : finalEnoblements) {
-            //System.out.println("| Enoblement:");
+        Enoblement[] aEnoblements = finalEnoblements.toArray(new Enoblement[]{});
+        logger.debug("Checking for fully valid enoblements");
+        for (Enoblement e : aEnoblements) {
             if (e.offDone() && e.snobDone()) {
                 fullyValid++;
                 double maxDist = 0;
@@ -103,7 +108,6 @@ public class AllInOne extends AbstractAttackAlgorithm {
                             maxDist = dist;
                         }
                     }
-                    //  System.out.println("|  * MaxDist: " + maxDist);
 
                     double minDist = Double.MAX_VALUE;
                     for (Village v : e.getSnobSources()) {
@@ -118,23 +122,24 @@ public class AllInOne extends AbstractAttackAlgorithm {
                             minDist = dist;
                         }
                     }
-                /*   System.out.println("|  * MinDist: " + minDist);
-                System.out.println("|  * Delta: " + (maxDist - minDist));*/
-                } /*else {
-            System.out.println("| No ram sources found");
-            }*/
+
+                }
+            } else {
+                if (e.getOffCount() == 0) {
+                    //remove enoblements without any off
+                    logger.debug("Removing enoblement without any assigned off");
+                    finalEnoblements.remove(e);
+                }
             }
         }
 
         setValidEnoblements(fullyValid);
-        /*System.out.println("| Fully Valid: " + fullyValid);
-        System.out.println("|----------------");
-        System.out.println("===ASSIGNING REMAINING OFFS===");*/
         List<Fake> pFinalFakes = new LinkedList<Fake>();
+        logger.debug("Generating misc attacks");
         assignOffs(pFinalFakes, offSources, pTargets, timeFrame, pMaxAttacksPerVillage);
-        //System.out.println("===ASSIGNING REMAINING OFFS FINISHED===");
-        //System.out.println("| Fakes: " + pFinalFakes.size());
+
         int fullFakes = 0;
+        logger.debug("Checking for full attacks");
         for (Fake f : pFinalFakes) {
             if (f.offComplete()) {
                 fullFakes++;
@@ -143,15 +148,15 @@ public class AllInOne extends AbstractAttackAlgorithm {
         setFullOffs(fullFakes);
 
         List<AbstractTroopMovement> movements = new LinkedList<AbstractTroopMovement>();
-
+        logger.debug("Building result list");
+        logger.debug(" - adding enoblements");
         for (Enoblement e : finalEnoblements) {
             movements.add(e);
         }
-
+        logger.debug(" - adding misc attacks");
         for (Fake f : pFinalFakes) {
             movements.add(f);
         }
-
         return movements;
     }
 

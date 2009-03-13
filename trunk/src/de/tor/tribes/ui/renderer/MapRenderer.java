@@ -46,14 +46,12 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.text.NumberFormat;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
-import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import org.apache.log4j.Logger;
 

@@ -1714,18 +1714,22 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
     if (needPostProcessing) {
         //do algorithm postprocessing
         if (jAlgorithmChooser.getSelectedIndex() == 2) {
+            logger.debug("Start algorithm post-processing");
             //try to find fastest snob sources
             UnitHolder snob = DataHolder.getSingleton().getUnitByPlainName("snob");
             Hashtable<Village, Attack> enoblements = new Hashtable<Village, Attack>();
             List<Village> attackSourceVillages = new LinkedList<Village>();
             int snobMinDist = (int) Math.rint(jSnobDistance.getMinimumColoredValue());
             int snobMaxDist = (int) Math.rint(jSnobDistance.getMaximumColoredValue());
+            logger.debug("Building attack source list");
             for (int i = 0; i < numInputAttacks; i++) {
                 Village vSource = (Village) attackModel.getValueAt(i, 0);
                 attackSourceVillages.add(vSource);
             }
             snobSources = 0;
+            logger.debug("Start checking for possible enoblements");
             for (AbstractTroopMovement movement : result) {
+                logger.debug(" - getting attacks of movement");
                 List<Attack> atts = movement.getAttacks(arrive);
                 for (Attack attack : atts) {
                     attackList.add(attack);
@@ -1734,12 +1738,14 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
                     }
                 }
                 if (atts.size() >= minCleanForSnob) {
+                    logger.debug(" - attack count larger/equal min. enoblement offs");
                     //possible enoblement
                     Village target = movement.getTarget();
                     for (DistanceMapping mapping : AbstractAttackAlgorithm.buildSourceTargetsMapping(target, attackSourceVillages)) {
-                        long sendTime = arrive.getTime() - (long) DSCalculator.calculateMoveTimeInSeconds(mapping.getSource(), mapping.getTarget(), snob.getSpeed()) * 1000;
+                        long sendTime = arrive.getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(mapping.getSource(), mapping.getTarget(), snob.getSpeed()) * 1000);
                         TimeFrame f = new TimeFrame(minSendTime, arrive, min, max);
                         if (f.inside(new Date(sendTime))) {
+                            logger.debug(" - found snob source in time frame");
                             Village snobSource = mapping.getTarget();
                             if (!enoblements.containsKey(snobSource)) {
                                 double dist = mapping.getDistance();
@@ -1753,7 +1759,10 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
                                     enoblements.put(snobSource, snobAttack);
                                     int cnt = TroopsManager.getSingleton().getTroopsForVillage(snobSource).getTroopsOfUnit(snob);
                                     if (cnt >= 4) {
+                                        logger.debug(" - already enough snobs in village");
                                         validEnoblements++;
+                                    } else {
+                                        logger.debug(" - not enough snobs in village (recruiting needed)");
                                     }
                                     break;
                                 }
@@ -1763,6 +1772,8 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
                 }
             }
 
+            logger.debug("Possible enoblements assigned");
+
             if (enoblements.size() > 0) {
                 UIManager.put("OptionPane.noButtonText", "Nein");
                 UIManager.put("OptionPane.yesButtonText", "Ja");
@@ -1771,6 +1782,7 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
                     Enumeration<Village> keys = enoblements.keys();
                     maxEnoblements = enoblements.size();
                     while (keys.hasMoreElements()) {
+                        logger.debug(" - adding possible enoblement");
                         Attack a = enoblements.get(keys.nextElement());
                         for (int i = 0; i < 4; i++) {
                             attackList.add(a);
@@ -1784,6 +1796,7 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
             }
         }
     } else {
+        logger.debug("Algorithm post-processing skipped");
         for (AbstractTroopMovement movement : result) {
             List<Attack> atts = movement.getAttacks(arrive);
             for (Attack attack : atts) {
@@ -1820,10 +1833,10 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
     jAttacksBar.setValue(calculatedAttacks);
     jAttacksBar.setString(calculatedAttacks + " / " + numInputAttacks);
 
-    //System.out.println("Sorting...");
+    logger.debug("Sorting attacks by runtime");
     //sort result by start time
     Collections.sort(attackList, AbstractTroopMovement.RUNTIME_SORT);
-
+    logger.debug("Building results...");
     showResults(attackList);
 // </editor-fold>
 }//GEN-LAST:event_fireCalculateAttackEvent
@@ -1903,7 +1916,6 @@ private void fireAttacksToClipboardEvent(java.awt.event.MouseEvent evt) {//GEN-F
                 } else {
                     buffer.append("Barbaren");
                 }
-
                 buffer.append(" in ");
             }
 
@@ -2029,7 +2041,6 @@ private void fireTargetAllyChangedEvent(java.awt.event.ActionEvent evt) {//GEN-F
             if (t.getAlly() == null) {
                 noAlly.add(t);
             }
-
         }
         Tribe[] noAllyTribes = noAlly.toArray(new Tribe[]{});
         Arrays.sort(noAllyTribes, Tribe.CASE_INSENSITIVE_ORDER);
@@ -2126,8 +2137,6 @@ private void fireVillageGroupChangedEvent(java.awt.event.ActionEvent evt) {//GEN
 
     }
 
-
-
     Tribe current = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage().getTribe();
     List<Village> selectedVillages = new LinkedList<Village>();
     for (Village v : current.getVillageList()) {
@@ -2136,7 +2145,6 @@ private void fireVillageGroupChangedEvent(java.awt.event.ActionEvent evt) {//GEN
                 if (!selectedVillages.contains(v)) {
                     selectedVillages.add(v);
                 }
-
             }
         }
     }
@@ -2433,7 +2441,7 @@ private void fireTroopStrengthFocusEvent(java.awt.event.FocusEvent evt) {//GEN-F
 
         for (Attack a : pAttacks) {
             long targetTime = a.getArriveTime().getTime();
-            long startTime = targetTime - (long) DSCalculator.calculateMoveTimeInSeconds(a.getSource(), a.getTarget(), a.getUnit().getSpeed()) * 1000;
+            long startTime = targetTime - (long) (DSCalculator.calculateMoveTimeInSeconds(a.getSource(), a.getTarget(), a.getUnit().getSpeed()) * 1000);
             resultModel.addRow(new Object[]{a.getSource(), a.getUnit(), a.getTarget(), new Date(startTime), a.getType()});
         }
 

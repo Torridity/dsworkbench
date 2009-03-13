@@ -51,6 +51,7 @@ import javax.swing.UIManager;
 
 /**
  *@TODO (1.X) Add flag-marker for single villages/notes? -> notes as forms? (Version 2.0)
+ *@TODO (1.3) Add church range/church map+tactical map+group map ... ?
  * @author  Charon
  */
 public class MapPanel extends javax.swing.JPanel {
@@ -82,7 +83,10 @@ public class MapPanel extends javax.swing.JPanel {
     private boolean positionUpdate = false;
     private de.tor.tribes.types.Rectangle selectionRect = null;
     private VillageSelectionListener mVillageSelectionListener = null;
-    // </editor-fold>
+    private String sMapShotType = null;
+    private File mMapShotFile = null;
+    private boolean bMapSHotPlaned = false;
+    private MapShotListener mMapShotListener = null;
     private Hashtable<Village, Rectangle> mVillagePositions = null;
     // </editor-fold>
 
@@ -105,7 +109,6 @@ public class MapPanel extends javax.swing.JPanel {
         attackAddFrame = new AttackAddFrame();
         mVirtualBounds = new Rectangle2D.Double(0.0, 0.0, 0.0, 0.0);
         initListeners();
-
     }
 
     public synchronized void addMapPanelListener(MapPanelListener pListener) {
@@ -656,7 +659,7 @@ public class MapPanel extends javax.swing.JPanel {
 
         addMouseMotionListener(MenuRenderer.getSingleton());
 
-        //<editor-fold>
+    //<editor-fold>
     }
 
     //return bounds without border
@@ -918,10 +921,6 @@ public class MapPanel extends javax.swing.JPanel {
         }
         positionUpdate = false;
     }
-    private String sMapShotType = null;
-    private File mMapShotFile = null;
-    private boolean bMapSHotPlaned = false;
-    private MapShotListener mMapShotListener = null;
 
     protected void planMapShot(String pType, File pLocation, MapShotListener pListener) {
         sMapShotType = pType;
@@ -931,33 +930,33 @@ public class MapPanel extends javax.swing.JPanel {
     }
 
     private void saveMapShot(Image pImage) {
-        try{
-        Point2D.Double pos = getCurrentPosition();
-        String first = "";
-        if (ServerSettings.getSingleton().getCoordType() != 2) {
-            int[] hier = DSCalculator.xyToHierarchical((int) pos.x, (int) pos.y);
-            first = "Zentrum: " + hier[0] + ":" + hier[1] + ":" + hier[2];
-        } else {
-            first = "Zentrum: " + (int) Math.floor(pos.getX()) + "|" + (int) Math.floor(pos.getY());
-        }
-        BufferedImage result = new BufferedImage(pImage.getWidth(null), pImage.getHeight(null), BufferedImage.TYPE_INT_RGB);
-        Graphics2D g2d = (Graphics2D) result.getGraphics();
-        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.6f));
-        FontMetrics fm = g2d.getFontMetrics();
-        g2d.drawImage(pImage, 0, 0, null);
-        Rectangle2D firstBounds = fm.getStringBounds(first, g2d);
-        String second = "Erstellt mit DS Workbench " + Constants.VERSION + Constants.VERSION_ADDITION;
-        Rectangle2D secondBounds = fm.getStringBounds(second, g2d);
-        g2d.setColor(Constants.DS_BACK_LIGHT);
-        g2d.fill3DRect(0, (int) (result.getHeight() - firstBounds.getHeight() - secondBounds.getHeight() - 9), (int) (secondBounds.getWidth() + 6), (int) (firstBounds.getHeight() + secondBounds.getHeight() + 9), true);
-        g2d.setColor(Color.BLACK);
-        g2d.drawString(first, 3, (int) (result.getHeight() - firstBounds.getHeight() - secondBounds.getHeight() - firstBounds.getY() - 6));
-        g2d.drawString(second, 3, (int) (result.getHeight() - secondBounds.getHeight() - secondBounds.getY() - 3));
-        ImageIO.write(result, sMapShotType, mMapShotFile);
-        g2d.dispose();
-        bMapSHotPlaned = false;
-        mMapShotListener.fireMapShotDoneEvent();
-        }catch(Exception e){
+        try {
+            Point2D.Double pos = getCurrentPosition();
+            String first = "";
+            if (ServerSettings.getSingleton().getCoordType() != 2) {
+                int[] hier = DSCalculator.xyToHierarchical((int) pos.x, (int) pos.y);
+                first = "Zentrum: " + hier[0] + ":" + hier[1] + ":" + hier[2];
+            } else {
+                first = "Zentrum: " + (int) Math.floor(pos.getX()) + "|" + (int) Math.floor(pos.getY());
+            }
+            BufferedImage result = new BufferedImage(pImage.getWidth(null), pImage.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g2d = (Graphics2D) result.getGraphics();
+            g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.6f));
+            FontMetrics fm = g2d.getFontMetrics();
+            g2d.drawImage(pImage, 0, 0, null);
+            Rectangle2D firstBounds = fm.getStringBounds(first, g2d);
+            String second = "Erstellt mit DS Workbench " + Constants.VERSION + Constants.VERSION_ADDITION;
+            Rectangle2D secondBounds = fm.getStringBounds(second, g2d);
+            g2d.setColor(Constants.DS_BACK_LIGHT);
+            g2d.fill3DRect(0, (int) (result.getHeight() - firstBounds.getHeight() - secondBounds.getHeight() - 9), (int) (secondBounds.getWidth() + 6), (int) (firstBounds.getHeight() + secondBounds.getHeight() + 9), true);
+            g2d.setColor(Color.BLACK);
+            g2d.drawString(first, 3, (int) (result.getHeight() - firstBounds.getHeight() - secondBounds.getHeight() - firstBounds.getY() - 6));
+            g2d.drawString(second, 3, (int) (result.getHeight() - secondBounds.getHeight() - secondBounds.getY() - 3));
+            ImageIO.write(result, sMapShotType, mMapShotFile);
+            g2d.dispose();
+            bMapSHotPlaned = false;
+            mMapShotListener.fireMapShotDoneEvent();
+        } catch (Exception e) {
             logger.error("Creating MapShot failed");
             mMapShotListener.fireMapShotFailedEvent();
         }

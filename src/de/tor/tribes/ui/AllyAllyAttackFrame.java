@@ -833,7 +833,7 @@ private void fireAddAllPlayerVillages(java.awt.event.MouseEvent evt) {//GEN-FIRS
                 Village source = sourceEnum.nextElement();
                 UnitHolder unit = sources.get(source);
                 long targetTime = ((Date) jArriveTime.getValue()).getTime();
-                long startTime = targetTime - (long) DSCalculator.calculateMoveTimeInSeconds(source, target, unit.getSpeed()) * 1000;
+                long startTime = targetTime - (long) (DSCalculator.calculateMoveTimeInSeconds(source, target, unit.getSpeed()) * 1000);
                 String tStart = DATE_FORMAT.format(new Date(startTime));
                 resultModel.addRow(new Object[]{source.getTribe(), source, unit, target, tStart});
             }

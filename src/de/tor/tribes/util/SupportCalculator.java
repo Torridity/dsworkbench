@@ -95,7 +95,7 @@ public class SupportCalculator {
             UnitHolder slowestUnit = calculateAvailableUnits(pVillage, v, unitTable, pArrive, pMinNumber);
             if (slowestUnit != null) {
                 //unit found
-                movements.add(new SupportMovement(v, slowestUnit, new Date(pArrive.getTime() - ((long) DSCalculator.calculateMoveTimeInSeconds(pVillage, v, slowestUnit.getSpeed()) * 1000))));
+                movements.add(new SupportMovement(v, slowestUnit, new Date(pArrive.getTime() - ((long) (DSCalculator.calculateMoveTimeInSeconds(pVillage, v, slowestUnit.getSpeed()) * 1000)))));
             }
         }
 
@@ -116,7 +116,7 @@ public class SupportCalculator {
             int index = pUnitTable.get(unit);
             int availCount = availableTroops.get(index);
             if (availCount > pMinNumber) {
-                long ms = (long) DSCalculator.calculateMoveTimeInSeconds(pSource, pTarget, unit.getSpeed()) * 1000;
+                long ms = (long) (DSCalculator.calculateMoveTimeInSeconds(pSource, pTarget, unit.getSpeed()) * 1000);
                 if (pArrive.getTime() - ms > System.currentTimeMillis()) {
                     if (slowestPossible == null) {
                         slowestPossible = unit;

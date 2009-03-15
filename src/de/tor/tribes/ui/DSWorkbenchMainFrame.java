@@ -240,7 +240,9 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                         DSWorkbenchMarkerFrame.getSingleton().firePublicDrawMarkedOnlyChangedEvent();
                     } else if ((e.getKeyCode() == KeyEvent.VK_M) && e.isAltDown()) {
                         switchMarkOnTop();
-                    } else if (e.getKeyCode() == KeyEvent.VK_F2) {
+                    }  else if ((e.getKeyCode() == KeyEvent.VK_S) && e.isAltDown()) {
+                        fireCreateMapShotEvent(null);
+                    }else if (e.getKeyCode() == KeyEvent.VK_F2) {
                         DSWorkbenchAttackFrame.getSingleton().setVisible(!DSWorkbenchAttackFrame.getSingleton().isVisible());
                     } else if (e.getKeyCode() == KeyEvent.VK_F3) {
                         DSWorkbenchMarkerFrame.getSingleton().setVisible(!DSWorkbenchMarkerFrame.getSingleton().isVisible());

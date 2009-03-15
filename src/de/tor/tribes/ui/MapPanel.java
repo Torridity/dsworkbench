@@ -43,8 +43,10 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.text.NumberFormat;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.StringTokenizer;
 import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
@@ -88,6 +90,7 @@ public class MapPanel extends javax.swing.JPanel {
     private boolean bMapSHotPlaned = false;
     private MapShotListener mMapShotListener = null;
     private Hashtable<Village, Rectangle> mVillagePositions = null;
+    private List<Village> exportVillageList = null;
     // </editor-fold>
 
     public static synchronized MapPanel getSingleton() {
@@ -108,6 +111,7 @@ public class MapPanel extends javax.swing.JPanel {
         setIgnoreRepaint(true);
         attackAddFrame = new AttackAddFrame();
         mVirtualBounds = new Rectangle2D.Double(0.0, 0.0, 0.0, 0.0);
+        jCopyVillagesDialog.pack();
         initListeners();
     }
 
@@ -421,49 +425,16 @@ public class MapPanel extends javax.swing.JPanel {
                                 //if a selectionlistener is registered notify it
                                 mVillageSelectionListener.fireSelectionFinishedEvent(new Point(xs, ys), new Point(xe, ye));
                             } else {
-                                List<Village> selection = getSelectedVillages(new Point(xs, ys), new Point(xe, ye));
-                                if (selection.size() > 0) {
+                                exportVillageList = getSelectedVillages(new Point(xs, ys), new Point(xe, ye));
+                                if (exportVillageList.size() > 0) {
                                     //do selection handling by ourself
-                                    UIManager.put("OptionPane.cancelButtonText", "Verwerfen");
-                                    UIManager.put("OptionPane.noButtonText", "Unformatiert");
-                                    UIManager.put("OptionPane.yesButtonText", "BB-Code");
-                                    String message = "Es wurden ";
-                                    if (selection.size() == 1) {
-                                        message = "Es wurde 1 Dorf ausgewählt.\n";
+                                    if (exportVillageList.size() == 1) {
+                                        jVillageExportDetails.setText("Es wurde 1 Dorf zum Kopieren in die Zwischenablage ausgewählt.");
                                     } else {
-                                        message += selection.size() + " Dörfer ausgewählt.\n";
+                                        jVillageExportDetails.setText("Es wurden " + exportVillageList.size() + " Dörfer zum Kopieren in die Zwischenablage ausgewählt.");
                                     }
-                                    message += "In welchem Format soll die Auswahl in die Zwischenablage\nkopiert werden?";
-
-                                    int res = JOptionPane.showConfirmDialog(MapPanel.getSingleton(), message, "Dorfauswahl", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
-
-                                    switch (res) {
-                                        case JOptionPane.NO_OPTION: {
-                                            //unformatted
-                                            String result = "";
-
-                                            for (Village v : selection) {
-                                                result += v.getX() + "\t" + v.getY() + "\n";
-                                            }
-                                            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(result), null);
-                                            break;
-                                        }
-                                        case JOptionPane.YES_OPTION: {
-                                            //as BB code
-                                            String result = "";
-                                            for (Village v : selection) {
-                                                result += v.toBBCode() + "\n";
-                                            }
-                                            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(result), null);
-                                            break;
-                                        }
-                                        default: {
-                                            //cancel
-                                        }
-                                    }
-                                    UIManager.put("OptionPane.cancelButtonText", "Cancel");
-                                    UIManager.put("OptionPane.noButtonText", "No");
-                                    UIManager.put("OptionPane.yesButtonText", "Yes");
+                                    jCopyVillagesDialog.setLocationRelativeTo(MapPanel.getSingleton());
+                                    jCopyVillagesDialog.setVisible(true);
                                 }
                             }
                             selectionRect = null;
@@ -744,17 +715,202 @@ public class MapPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jCopyVillagesDialog = new javax.swing.JDialog();
+        jVillageExportDetails = new javax.swing.JLabel();
+        jExportTribeName = new javax.swing.JCheckBox();
+        jLabel2 = new javax.swing.JLabel();
+        jExportAllyName = new javax.swing.JCheckBox();
+        jExportPoints = new javax.swing.JCheckBox();
+        jExportBBButton = new javax.swing.JButton();
+        jExportPlainButton = new javax.swing.JButton();
+        jCancelExportButton = new javax.swing.JButton();
+
+        jCopyVillagesDialog.setTitle("Dorfinformationen kopieren");
+        jCopyVillagesDialog.setAlwaysOnTop(true);
+
+        jVillageExportDetails.setText("Es wurden 0 Dörfer zum Kopieren in die Zwischenablage ausgewählt.");
+
+        jExportTribeName.setText("Besitzer");
+        jExportTribeName.setOpaque(false);
+
+        jLabel2.setText("Welche Informationen sollen zusätzlich kopiert werden?");
+
+        jExportAllyName.setText("Stamm");
+        jExportAllyName.setOpaque(false);
+
+        jExportPoints.setText("Punktzahl");
+        jExportPoints.setOpaque(false);
+
+        jExportBBButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_clipboardBB.png"))); // NOI18N
+        jExportBBButton.setToolTipText("Als BB Codes in die Zwischenablage kopieren");
+        jExportBBButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireVillageExportEvent(evt);
+            }
+        });
+
+        jExportPlainButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_clipboard.png"))); // NOI18N
+        jExportPlainButton.setToolTipText("Unformatiert in die Zwischenablage kopieren");
+        jExportPlainButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireVillageExportEvent(evt);
+            }
+        });
+
+        jCancelExportButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_remove.png"))); // NOI18N
+        jCancelExportButton.setToolTipText("Abbrechen");
+        jCancelExportButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireVillageExportEvent(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jCopyVillagesDialogLayout = new javax.swing.GroupLayout(jCopyVillagesDialog.getContentPane());
+        jCopyVillagesDialog.getContentPane().setLayout(jCopyVillagesDialogLayout);
+        jCopyVillagesDialogLayout.setHorizontalGroup(
+            jCopyVillagesDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jCopyVillagesDialogLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jCopyVillagesDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jVillageExportDetails, javax.swing.GroupLayout.DEFAULT_SIZE, 372, Short.MAX_VALUE)
+                    .addGroup(jCopyVillagesDialogLayout.createSequentialGroup()
+                        .addComponent(jExportTribeName)
+                        .addGap(18, 18, 18)
+                        .addComponent(jExportAllyName)
+                        .addGap(18, 18, 18)
+                        .addComponent(jExportPoints))
+                    .addComponent(jLabel2)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jCopyVillagesDialogLayout.createSequentialGroup()
+                        .addComponent(jCancelExportButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jExportPlainButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jExportBBButton)))
+                .addContainerGap())
+        );
+        jCopyVillagesDialogLayout.setVerticalGroup(
+            jCopyVillagesDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jCopyVillagesDialogLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jVillageExportDetails)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel2)
+                .addGap(23, 23, 23)
+                .addGroup(jCopyVillagesDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jExportTribeName)
+                    .addComponent(jExportAllyName)
+                    .addComponent(jExportPoints))
+                .addGap(18, 18, Short.MAX_VALUE)
+                .addGroup(jCopyVillagesDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jExportBBButton)
+                    .addComponent(jExportPlainButton)
+                    .addComponent(jCancelExportButton))
+                .addContainerGap())
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 207, Short.MAX_VALUE)
+            .addGap(0, 392, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 89, Short.MAX_VALUE)
+            .addGap(0, 155, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    private void fireVillageExportEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireVillageExportEvent
+        try {
+            NumberFormat nf = NumberFormat.getInstance();
+            nf.setMinimumFractionDigits(0);
+            nf.setMaximumFractionDigits(0);
+            if (evt.getSource() == jExportBBButton) {
+                String result = "";
+                for (Village v : exportVillageList) {
+                    result += v.toBBCode();
+                    if (jExportPoints.isSelected()) {
+                        result += " (" + nf.format(v.getPoints()) + ") ";
+                    } else {
+                        result += " ";
+                    }
+                    if (jExportTribeName.isSelected() && v.getTribe() != null) {
+                        result += v.getTribe().toBBCode() + " ";
+                    } else {
+                        if (jExportTribeName.isSelected()) {
+                            result += "Barbaren ";
+                        } else {
+                            result += " ";
+                        }
+                    }
+                    if (jExportAllyName.isSelected() && v.getTribe() != null && v.getTribe().getAlly() != null) {
+                        result += v.getTribe().getAlly().toBBCode() + "\n";
+                    } else {
+                        if (jExportAllyName.isSelected()) {
+                            result += "(kein Stamm)\n";
+                        } else {
+                            result += "\n";
+                        }
+                    }
+                }
+                StringTokenizer t = new StringTokenizer(result, "[");
+                int cnt = t.countTokens();
+                boolean doExport = true;
+                if (cnt > 500) {
+                    UIManager.put("OptionPane.noButtonText", "Nein");
+                    UIManager.put("OptionPane.yesButtonText", "Ja");
+                    if (JOptionPane.showConfirmDialog(this, "Die ausgewählten Dörfer benötigen mehr als 500 BB-Codes\n" +
+                            "und können daher im Spiel (Forum/IGM/Notizen) nicht auf einmal dargestellt werden.\nTrotzdem exportieren?", "Zu viele BB-Codes", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.NO_OPTION) {
+                        UIManager.put("OptionPane.noButtonText", "No");
+                        UIManager.put("OptionPane.yesButtonText", "Yes");
+                        doExport = false;
+                    }
+                    UIManager.put("OptionPane.noButtonText", "No");
+                    UIManager.put("OptionPane.yesButtonText", "Yes");
+                }
+                if (doExport) {
+                    Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(result), null);
+                    JOptionPane.showMessageDialog(jCopyVillagesDialog, "Dorfdaten in die Zwischenablage kopiert.", "Daten kopiert", JOptionPane.INFORMATION_MESSAGE);
+                }
+            } else if (evt.getSource() == jExportPlainButton) {
+                String result = "";
+                for (Village v : exportVillageList) {
+                    result += v + "\t";
+                    if (jExportPoints.isSelected()) {
+                        result += nf.format(v.getPoints()) + "\t";
+                    } else {
+                        result += "\t";
+                    }
+                    if (jExportTribeName.isSelected() && v.getTribe() != null) {
+                        result += v.getTribe() + "\t";
+                    } else {
+                        if (jExportTribeName.isSelected()) {
+                            result += "Barbaren\t";
+                        } else {
+                            result += "\t";
+                        }
+                    }
+                    if (jExportAllyName.isSelected() && v.getTribe() != null && v.getTribe().getAlly() != null) {
+                        result += v.getTribe().getAlly() + "\n";
+                    } else {
+                        if (jExportAllyName.isSelected()) {
+                            result += "(kein Stamm)\n";
+                        } else {
+                            result += "\n";
+                        }
+                    }
+                }
+
+                Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(result), null);
+                JOptionPane.showMessageDialog(jCopyVillagesDialog, "Dorfdaten in die Zwischenablage kopiert.", "Daten kopiert", JOptionPane.INFORMATION_MESSAGE);
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(jCopyVillagesDialog, "Fehler beim kopieren der Daten.", "Fehler", JOptionPane.ERROR_MESSAGE);
+        }
+        exportVillageList.clear();
+        jCopyVillagesDialog.setVisible(false);
+
+    }//GEN-LAST:event_fireVillageExportEvent
 
     /**Draw buffer into panel*/
     @Override
@@ -986,6 +1142,15 @@ public class MapPanel extends javax.swing.JPanel {
 
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jCancelExportButton;
+    private javax.swing.JDialog jCopyVillagesDialog;
+    private javax.swing.JCheckBox jExportAllyName;
+    private javax.swing.JButton jExportBBButton;
+    private javax.swing.JButton jExportPlainButton;
+    private javax.swing.JCheckBox jExportPoints;
+    private javax.swing.JCheckBox jExportTribeName;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jVillageExportDetails;
     // End of variables declaration//GEN-END:variables
 
     public static void main(String[] args) {

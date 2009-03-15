@@ -17,7 +17,6 @@ import java.util.List;
 import de.tor.tribes.types.Fake;
 
 /**
- *@TODO (1.2) re-check correctness of algorithm (Millisecond!!!)
  * @author Charon
  */
 public class BruteForce extends AbstractAttackAlgorithm {

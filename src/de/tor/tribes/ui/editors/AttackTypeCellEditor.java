@@ -44,10 +44,10 @@ public class AttackTypeCellEditor extends AbstractCellEditor implements TableCel
             icons.add(new ImageIcon("./graphics/icons/axe.png"));
             icons.add(new ImageIcon("./graphics/icons/snob.png"));
             icons.add(new ImageIcon("./graphics/icons/def.png"));
-            //temp fake image
-            icons.add(new ImageIcon("./graphics/icons/troops.png"));
+            icons.add(new ImageIcon("./graphics/icons/fake.png"));
             comboComponent = new javax.swing.JComboBox() {
 
+                @Override
                 public void processMouseEvent(MouseEvent e) {
                     Component focusOwner = KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner();
 
@@ -56,6 +56,7 @@ public class AttackTypeCellEditor extends AbstractCellEditor implements TableCel
                     }
                 }
 
+                @Override
                 public void processFocusEvent(FocusEvent fe) {
                 }
             };

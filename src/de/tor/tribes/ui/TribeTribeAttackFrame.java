@@ -61,6 +61,8 @@ import java.util.Collections;
 import javax.swing.JSpinner.DateEditor;
 
 /**
+ * @TODO 1.3 Filter for troops goes crazy if no troops are imported
+ * @TODO 1.3 Blitzkrieg fails when calculate -> close -> re-calculate with same settings until one setting changes
  * @author  Jejkal
  */
 public class TribeTribeAttackFrame extends javax.swing.JFrame implements VillageSelectionListener {
@@ -326,6 +328,7 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Village
         jButton7 = new javax.swing.JButton();
         jButton11 = new javax.swing.JButton();
         jButton14 = new javax.swing.JButton();
+        jLabel20 = new javax.swing.JLabel();
         jTargetPanel = new javax.swing.JPanel();
         jPanel6 = new javax.swing.JPanel();
         jTargetAllyLabel = new javax.swing.JLabel();
@@ -1082,6 +1085,8 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Village
             }
         });
 
+        jLabel20.setText(bundle.getString("TribeTribeAttackFrame.jLabel20.text")); // NOI18N
+
         javax.swing.GroupLayout jSourcePanelLayout = new javax.swing.GroupLayout(jSourcePanel);
         jSourcePanel.setLayout(jSourcePanelLayout);
         jSourcePanelLayout.setHorizontalGroup(
@@ -1089,7 +1094,7 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Village
             .addGroup(jSourcePanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jSourcePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 544, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 560, Short.MAX_VALUE)
                     .addGroup(jSourcePanelLayout.createSequentialGroup()
                         .addGroup(jSourcePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(jSourcePanelLayout.createSequentialGroup()
@@ -1104,14 +1109,15 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Village
                         .addGap(18, 18, 18)
                         .addGroup(jSourcePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jButton14, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jButton11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                            .addComponent(jButton11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addComponent(jLabel20, javax.swing.GroupLayout.DEFAULT_SIZE, 560, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jSourcePanelLayout.setVerticalGroup(
             jSourcePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jSourcePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 122, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 111, Short.MAX_VALUE)
                 .addGap(11, 11, 11)
                 .addGroup(jSourcePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jSourcePanelLayout.createSequentialGroup()
@@ -1127,7 +1133,9 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Village
                         .addComponent(jButton11)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton14)))
-                .addGap(83, 83, 83))
+                .addGap(58, 58, 58)
+                .addComponent(jLabel20)
+                .addContainerGap())
         );
 
         jTabbedPane1.addTab(bundle.getString("TribeTribeAttackFrame.jSourcePanel.TabConstraints.tabTitle"), new javax.swing.ImageIcon(getClass().getResource("/res/barracks.png")), jSourcePanel); // NOI18N
@@ -1269,7 +1277,7 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Village
             .addGroup(jTargetPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jTargetPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 544, Short.MAX_VALUE)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 560, Short.MAX_VALUE)
                     .addGroup(jTargetPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                         .addGroup(jTargetPanelLayout.createSequentialGroup()
                             .addComponent(jButton10)
@@ -1286,7 +1294,7 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Village
             jTargetPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jTargetPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 124, Short.MAX_VALUE)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 127, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -1490,7 +1498,7 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Village
                 .addGroup(jSettingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jRandomizeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jRandomizeTribes))
-                .addContainerGap(14, Short.MAX_VALUE))
+                .addContainerGap(15, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab(bundle.getString("TribeTribeAttackFrame.jSettingsPanel.TabConstraints.tabTitle"), new javax.swing.ImageIcon(getClass().getResource("/res/settings.png")), jSettingsPanel); // NOI18N
@@ -1503,7 +1511,7 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Village
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 569, Short.MAX_VALUE))
+                        .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 585, Short.MAX_VALUE))
                     .addComponent(jCalculateButton))
                 .addContainerGap())
         );
@@ -1683,7 +1691,7 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
         if (maxAttacksPerVillage < minCleanForSnob) {
             UIManager.put("OptionPane.noButtonText", "Nein");
             UIManager.put("OptionPane.yesButtonText", "Ja");
-            if (JOptionPane.showConfirmDialog(this, "Die maximale Anzahl der Angriffe pro Dorf ist kleiner als die mindestens notwendige Anzahl der Clean Angriffe vor einer Adelung.\n" +
+            if (JOptionPane.showConfirmDialog(this, "Die maximale Anzahl der Angriffe pro Dorf ist kleiner als die mindestens notwendige Anzahl der Clean Offs vor einer Adelung.\n" +
                     "Mit dem gewählten Algorithmus werden daher keine AGs zugewiesen.\n" +
                     "Trotzdem fortfahren?", "Warnung", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.NO_OPTION) {
                 UIManager.put("OptionPane.noButtonText", "No");
@@ -1745,7 +1753,7 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
                         long sendTime = arrive.getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(mapping.getSource(), mapping.getTarget(), snob.getSpeed()) * 1000);
                         TimeFrame f = new TimeFrame(minSendTime, arrive, min, max);
                         if (f.inside(new Date(sendTime))) {
-                            logger.debug(" - found snob source in time frame");
+                         //   logger.debug(" - found snob source in time frame");
                             Village snobSource = mapping.getTarget();
                             if (!enoblements.containsKey(snobSource)) {
                                 double dist = mapping.getDistance();
@@ -1757,7 +1765,11 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
                                     snobAttack.setUnit(snob);
                                     snobAttack.setType(Attack.SNOB_TYPE);
                                     enoblements.put(snobSource, snobAttack);
-                                    int cnt = TroopsManager.getSingleton().getTroopsForVillage(snobSource).getTroopsOfUnit(snob);
+                                    int cnt = 0;
+                                    VillageTroopsHolder troops = TroopsManager.getSingleton().getTroopsForVillage(snobSource);
+                                    if (troops != null) {
+                                        cnt = troops.getTroopsOfUnit(snob);
+                                    }
                                     if (cnt >= 4) {
                                         logger.debug(" - already enough snobs in village");
                                         validEnoblements++;
@@ -1778,6 +1790,7 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
                 UIManager.put("OptionPane.noButtonText", "Nein");
                 UIManager.put("OptionPane.yesButtonText", "Ja");
                 if (JOptionPane.showConfirmDialog(this, "Es konnten " + enoblements.size() + " Adelungen in der angegebenen Entfernung bestimmt werden.\n" +
+                        "Achtung: Es wird nicht überprüft, ob die benötigte Anzahl AGs in den Dörfern vorhanden ist. AGs müssen ggf. rekrutiert werden.\n" +
                         "Sollen diese zu den bestehenden Angriffen hinzugefügt werden?", "Nachbearbeitung", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
                     Enumeration<Village> keys = enoblements.keys();
                     maxEnoblements = enoblements.size();
@@ -2365,7 +2378,11 @@ private void fireAcceptStrengthEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST
     for (int i = 0; i < jAttacksTable.getRowCount(); i++) {
         Village v = (Village) jAttacksTable.getValueAt(i, 0);
         try {
-            int offValue = (int) TroopsManager.getSingleton().getTroopsForVillage(v).getOffValue();
+            VillageTroopsHolder troops = TroopsManager.getSingleton().getTroopsForVillage(v);
+            int offValue = 0;
+            if (troops != null) {
+                offValue = (int) troops.getOffValue();
+            }
             if (offValue < strength - diff) {
                 int row = jAttacksTable.convertRowIndexToModel(i);
                 model.removeRow(row);
@@ -2572,6 +2589,7 @@ private void fireTroopStrengthFocusEvent(java.awt.event.FocusEvent evt) {//GEN-F
     private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;

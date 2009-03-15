@@ -31,8 +31,7 @@ public class AttackTypeCellRenderer implements TableCellRenderer {
             icons.add(new ImageIcon("./graphics/icons/axe.png"));
             icons.add(new ImageIcon("./graphics/icons/snob.png"));
             icons.add(new ImageIcon("./graphics/icons/def.png"));
-            //temp fake image
-            icons.add(new ImageIcon("./graphics/icons/troops.png"));
+            icons.add(new ImageIcon("./graphics/icons/fake.png"));
         } catch (Exception e) {
             logger.warn("Failed to load attack type icons");
             icons = null;

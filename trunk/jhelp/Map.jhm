@@ -34,9 +34,9 @@
 
 <mapID target="pages.map_settings_show_continents" url="pages/map_settings.html#show_continents"/>
 
-<mapID target="index" url="index.html"/>
-
 <mapID target="pages.tag_settings" url="pages/tag_settings.html"/>
+
+<mapID target="index" url="index.html"/>
 
 <mapID target="pages.network_settings" url="pages/network_settings.html"/>
 
@@ -55,6 +55,8 @@
 <mapID target="pages.search_tool" url="pages/search_tool.html"/>
 
 <mapID target="pages.views" url="pages/views.html"/>
+
+<mapID target="pages.export_import" url="pages/export_import.html"/>
 
 <mapID target="pages.form_setup" url="pages/form_setup.html"/>
 
@@ -166,9 +168,9 @@
 
 <mapID target="images.t" url="images/t.gif"/>
 
-<mapID target="images.att_validate" url="images/att_validate.png"/>
-
 <mapID target="images.shortcuts.F7" url="images/shortcuts/F7.gif"/>
+
+<mapID target="images.att_validate" url="images/att_validate.png"/>
 
 <mapID target="images.tools.radar" url="images/tools/radar.png"/>
 
@@ -235,6 +237,8 @@
 <mapID target="images.att_selectSome" url="images/att_selectSome.png"/>
 
 <mapID target="images.tools.attack_snob" url="images/tools/attack_snob.png"/>
+
+<mapID target="images.att_copy" url="images/att_copy.png"/>
 
 <mapID target="images.tools.measure" url="images/tools/measure.png"/>
 

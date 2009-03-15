@@ -15,7 +15,7 @@
 -libraryjars dist\lib\xmlenc.jar
 
 -target 1.6
--optimizationpasses 3
+-dontoptimize
 -overloadaggressively
 -flattenpackagehierarchy dswb
 

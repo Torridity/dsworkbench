@@ -732,11 +732,9 @@ public class MapRenderer extends Thread {
 
         // <editor-fold defaultstate="collapsed" desc="Graphics drawing">
         Enumeration<Village> villages = villagePositions.keys();
-        int cc = 0;
         try {
             while (villages.hasMoreElements()) {
                 Village current = villages.nextElement();
-                cc++;
                 Rectangle r = villagePositions.get(current);
                 List<Tag> villageTags = TagManager.getSingleton().getTags(current);
                 if (villageTags != null && villageTags.size() != 0) {
@@ -747,6 +745,10 @@ public class MapRenderer extends Thread {
                         if (tag.isShowOnMap()) {
                             int iconType = tag.getTagIcon();
                             Color color = tag.getTagColor();
+                            int key = iconType;
+                            if (color != null) {
+                                key = color.getRGB() + iconType;
+                            }
                             if (color != null || iconType != -1) {
                                 int tagX = r.x + r.width - xcnt * tagsize;
                                 int tagY = r.y + r.height - ycnt * tagsize;
@@ -759,15 +761,14 @@ public class MapRenderer extends Thread {
 
                                 if (iconType != -1) {
                                     //drawing
-                                    Point p = copyRegions.get(iconType);
+                                    Point p = copyRegions.get(key);
                                     if (p == null) {
                                         Image tagImage = ImageManager.getUnitImage(iconType, false).getScaledInstance(tagsize, tagsize, Image.SCALE_FAST);
                                         g2d.drawImage(tagImage, tagX, tagY, null);
                                         //check containment using size tolerance
-                                        if (MapPanel.getSingleton().getBounds().contains(new Rectangle(tagX, tagY, tagsize + 2, tagsize + 2))) {
-                                            copyRegions.put(iconType, new Point(tagX, tagY));
+                                        if (MapPanel.getSingleton().getBounds().contains(new Rectangle(tagX - 2, tagY - 2, tagsize + 2, tagsize + 2))) {
+                                            copyRegions.put(key, new Point(tagX, tagY));
                                         }
-
                                     } else {
                                         g2d.copyArea(p.x, p.y, tagsize, tagsize, tagX - p.x, tagY - p.y);
                                     }
@@ -788,16 +789,15 @@ public class MapRenderer extends Thread {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
         }
 
         /*Enumeration<Integer> keys = copyRegions.keys();
         while (keys.hasMoreElements()) {
-        Point p = copyRegions.get(keys.nextElement());
-        g2d.setColor(Color.MAGENTA);
-        g2d.drawRect(p.x, p.y, tagsize, tagsize);
+            Point p = copyRegions.get(keys.nextElement());
+            g2d.setColor(Color.MAGENTA);
+            g2d.drawRect(p.x, p.y, tagsize, tagsize);
         }
-         */
+*/
         //</editor-fold>
 
         g2d.dispose();
@@ -1210,8 +1210,7 @@ public class MapRenderer extends Thread {
         if ((tags != null) && (!tags.isEmpty())) {
             value = "";
             List<String> tagLines = new LinkedList<String>();
-            for (int i = 0; i <
-                    tags.size(); i++) {
+            for (int i = 0; i < tags.size(); i++) {
                 bounds = metrics.getStringBounds(value + tags.get(i) + ", ", g2d);
                 if (bounds.getWidth() > 260) {
                     tagLines.add(value);
@@ -1432,8 +1431,7 @@ public class MapRenderer extends Thread {
         if (MapPanel.getSingleton().getCurrentCursor() == ImageManager.CURSOR_MEASURE) {
             if (mSourceVillage != null) {
                 current = new Font("SansSerif", Font.PLAIN, 8);
-                drawDist =
-                        true;
+                drawDist = true;
             }
 
         }

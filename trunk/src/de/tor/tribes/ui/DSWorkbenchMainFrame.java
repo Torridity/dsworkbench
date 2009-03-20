@@ -53,6 +53,8 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 /**
+ * @TODO (1.3) Implement question dialog when importing groups with existing group names
+ * @TODO (1.3) Change browser access to work with UV
  * @author  Charon
  */
 public class DSWorkbenchMainFrame extends javax.swing.JFrame implements

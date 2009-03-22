@@ -29,7 +29,7 @@ import de.tor.tribes.ui.editors.DateSpinEditor;
 import de.tor.tribes.ui.editors.UnitCellEditor;
 import de.tor.tribes.ui.editors.VillageCellEditor;
 import de.tor.tribes.ui.renderer.AttackTypeCellRenderer;
-import de.tor.tribes.ui.renderer.DateCellRenderer;
+import de.tor.tribes.ui.renderer.ColoredDateCellRenderer;
 import de.tor.tribes.util.DSCalculator;
 import java.awt.Component;
 import java.awt.Toolkit;
@@ -51,6 +51,7 @@ import javax.swing.table.TableRowSorter;
 import org.apache.log4j.Logger;
 
 /**
+ * @TODO (DIFF) Colored send time depending on remaining time
  * @author  Charon
  */
 public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements AttackManagerListener {
@@ -131,7 +132,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         jTimeChangeDialog.pack();
         jMoveToPlanDialog.pack();
         mNotifyThread = new NotifyThread();
-
+        new ColorUpdateThread().start();
         mNotifyThread.start();
         jArriveDateField.setEditor(new DateEditor(jArriveDateField, "dd.MM.yy HH:mm:ss"));
 
@@ -2051,7 +2052,7 @@ private void fireCopyEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fir
     protected void setupAttackPanel() {
         AttackManager.getSingleton().addAttackManagerListener(this);
         //setup renderer and general view
-        jAttackTable.setDefaultRenderer(Date.class, new DateCellRenderer());
+        jAttackTable.setDefaultRenderer(Date.class, new ColoredDateCellRenderer());
 
 
         jAttackTable.setDefaultEditor(Date.class, new DateSpinEditor());
@@ -2090,6 +2091,11 @@ private void fireCopyEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fir
             logger.error("Failed to update attacks table", e);
         }
     }
+
+    public void updateTableUI() {
+        jAttackTable.updateUI();
+    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JComboBox jActiveAttackPlan;
@@ -2258,6 +2264,23 @@ class NotifyThread extends Thread {
             try {
                 Thread.sleep(10000);
             } catch (InterruptedException ie) {
+            }
+        }
+    }
+}
+
+class ColorUpdateThread extends Thread {
+
+    public ColorUpdateThread() {
+        setDaemon(true);
+    }
+
+    public void run() {
+        while (true) {
+            DSWorkbenchAttackFrame.getSingleton().updateTableUI();
+            try {
+                Thread.sleep(10000);
+            } catch (Exception e) {
             }
         }
     }

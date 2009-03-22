@@ -52,6 +52,7 @@ import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
 /**
+ * @TODO (DIFF) Snob range included
  *@TODO (1.X) Add flag-marker for single villages/notes? -> notes as forms? (Version 2.0)
  *@TODO (1.3) Add church range/church map+tactical map+group map ... ?
  * @author  Charon
@@ -470,6 +471,15 @@ public class MapPanel extends javax.swing.JPanel {
                         }
                         case ImageManager.CURSOR_ATTACK_SNOB: {
                             unit = DataHolder.getSingleton().getUnitID("Adelsgeschlecht");
+                            try {
+                                double d = DSCalculator.calculateDistance(mSourceVillage, mTargetVillage);
+                                if (d > ServerSettings.getSingleton().getSnobRange()) {
+                                    JOptionPane.showMessageDialog(DSWorkbenchMainFrame.getSingleton(), "Maximale AG Reichweite überschritten", "Fehler", JOptionPane.WARNING_MESSAGE);
+                                    isAttack = false;
+                                }
+                            } catch (Exception inner) {
+                                isAttack = false;
+                            }
                             break;
                         }
                     }

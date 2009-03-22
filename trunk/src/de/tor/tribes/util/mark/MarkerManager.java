@@ -13,6 +13,7 @@ import de.tor.tribes.ui.MapPanel;
 import de.tor.tribes.ui.MarkerCell;
 import de.tor.tribes.ui.MinimapPanel;
 import de.tor.tribes.ui.renderer.MapRenderer;
+import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.awt.Color;
 import java.io.File;
@@ -138,6 +139,7 @@ public class MarkerManager {
         }
         logger.debug("Importing markers");
         try {
+            boolean overwriteMarkers = Boolean.parseBoolean(GlobalOptions.getProperty("import.replace.markers"));
             Document d = JaxenUtils.getDocument(pFile);
             for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//markers/marker")) {
                 try {
@@ -149,6 +151,11 @@ public class MarkerManager {
                             //don't overwrite existing markers
                             if (getMarker(a) == null) {
                                 lMarkers.add(m);
+                            } else {
+                                //if overwrite requested, overwrite current color
+                                if (overwriteMarkers) {
+                                    getMarker(a).setMarkerColor(m.getMarkerColor());
+                                }
                             }
                         }
                     } else if (m.getMarkerType() == Marker.TRIBE_MARKER_TYPE) {
@@ -157,6 +164,11 @@ public class MarkerManager {
                             //don't overwrite existing markers
                             if (getMarker(t) == null) {
                                 lMarkers.add(m);
+                            } else {
+                                //if overwrite requested, overwrite current color
+                                if (overwriteMarkers) {
+                                    getMarker(t).setMarkerColor(m.getMarkerColor());
+                                }
                             }
                         }
                     }

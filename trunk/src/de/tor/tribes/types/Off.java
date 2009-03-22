@@ -14,9 +14,9 @@ import java.util.List;
  *
  * @author Jejkal
  */
-public class Fake extends AbstractTroopMovement {
+public class Off extends AbstractTroopMovement {
 
-    public Fake(Village pTarget, int pMaxAttacks) {
+    public Off(Village pTarget, int pMaxAttacks) {
         super(pTarget, 0, pMaxAttacks);
     }
 
@@ -25,9 +25,15 @@ public class Fake extends AbstractTroopMovement {
         List<Attack> result = new LinkedList<Attack>();
         Enumeration<UnitHolder> unitKeys = getOffs().keys();
         Village target = getTarget();
-        int type = Attack.FAKE_TYPE;
+        int type = Attack.NO_TYPE;
         while (unitKeys.hasMoreElements()) {
             UnitHolder unit = unitKeys.nextElement();
+            if (unit.getPlainName().equals("snob")) {
+                type = Attack.SNOB_TYPE;
+            } else if (unit.getPlainName().equals("ram") || (unit.getPlainName().equals("catapult"))) {
+                type = Attack.CLEAN_TYPE;
+            }
+
             List<Village> sources = getOffs().get(unit);
             for (Village offSource : sources) {
                 Attack a = new Attack();

@@ -23,6 +23,7 @@ public class ServerSettings {
     private boolean MAP_NEW = true;
     private int BONUS_NEW = 0;
     private int SNOB_RANGE = 70;
+    private boolean church = false;
     private static ServerSettings SINGLETON = null;
 
     public static synchronized ServerSettings getSingleton() {
@@ -61,6 +62,12 @@ public class ServerSettings {
                 setSnobRange(Integer.parseInt(JaxenUtils.getNodeValue(d, "//snob/max_dist")));
             } catch (Exception inner) {
                 SNOB_RANGE = 70;
+            }
+            logger.debug(" - reading church setting");
+            try {
+                setChurch(Integer.parseInt(JaxenUtils.getNodeValue(d, "//game/church")) == 1);
+            } catch (Exception inner) {
+                setChurch(false);
             }
         } catch (Exception e) {
             logger.error("Failed to load server settings", e);
@@ -121,5 +128,13 @@ public class ServerSettings {
 
     public int getSnobRange() {
         return SNOB_RANGE;
+    }
+
+    public void setChurch(boolean v) {
+        church = v;
+    }
+
+    public boolean isChurch() {
+        return church;
     }
 }

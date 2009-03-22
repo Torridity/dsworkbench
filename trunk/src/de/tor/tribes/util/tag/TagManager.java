@@ -11,6 +11,7 @@ import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.DSWorkbenchSettingsDialog;
 import de.tor.tribes.ui.MinimapPanel;
 import de.tor.tribes.ui.VillageTagFrame;
+import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.io.File;
 import java.io.FileWriter;
@@ -111,6 +112,13 @@ public class TagManager {
                         for (Integer villageID : t.getVillageIDs()) {
                             existing.tagVillage(villageID);
                         }
+
+                        boolean replaceMarkers = Boolean.parseBoolean(GlobalOptions.getProperty("import.replace.tag.markers"));
+                        if (replaceMarkers) {
+                            existing.setTagColor(t.getTagColor());
+                            existing.setTagIcon(t.getTagIcon());
+                        }
+
                     }
                 } catch (Exception inner) {
                 }

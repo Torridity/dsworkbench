@@ -60,6 +60,13 @@ public class DSCalculator {
         return new int[]{con, sec, sub};
     }
 
+    public static int getContinent(int x, int y) {
+        if (Math.abs(x) > 999 || Math.abs(y) > 999) {
+            return 0; // out of range
+        }
+        return (int) (Math.floor(y / 100) * 10 + Math.floor(x / 100));
+    }
+
     public static int[] hierarchicalToXy(int con, int sec, int sub) {
         if (con < 0 || con > 99 || sec < 0 || sec > 99 || sub < 0 || sub > 24) {
             return null; // invalid s3-coords

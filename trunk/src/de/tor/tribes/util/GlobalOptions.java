@@ -49,6 +49,7 @@ public class GlobalOptions {
     private static HelpBroker mainHelpBroker = null;
     private static CSH.DisplayHelpFromSource csh = null;
     private static final String mainHelpSetName = "DS Workbench Dokumentation.hs";
+    private static int iUVID = -1;
 
     /**Init all managed objects
      * @param pDownloadData TRUE=download the WorldData from the tribes server
@@ -85,6 +86,18 @@ public class GlobalOptions {
     /**Set the network status*/
     public static void setOfflineMode(boolean pValue) {
         isOfflineMode = pValue;
+    }
+
+    public static void setUVMode(int pUVID) {
+        iUVID = pUVID;
+    }
+
+    public static void unsetUVMode() {
+        iUVID = -1;
+    }
+
+    public static int getUVID(){
+        return iUVID;
     }
 
     /**Get the list of available skins*/

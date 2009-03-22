@@ -10,6 +10,7 @@ import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.AbstractTroopMovement;
 import de.tor.tribes.types.Enoblement;
 import de.tor.tribes.types.Fake;
+import de.tor.tribes.types.Off;
 import de.tor.tribes.types.Village;
 import java.util.Collections;
 import java.util.Date;
@@ -29,6 +30,7 @@ public class AllInOne extends AbstractAttackAlgorithm {
 
     public List<AbstractTroopMovement> calculateAttacks(
             Hashtable<UnitHolder, List<Village>> pSources,
+            Hashtable<UnitHolder, List<Village>> pFakes,
             List<Village> pTargets,
             int pMaxAttacksPerVillage,
             int pCleanPerSnob,
@@ -50,16 +52,10 @@ public class AllInOne extends AbstractAttackAlgorithm {
         //build timeframe
         TimeFrame timeFrame = new TimeFrame(pStartTime, pArriveTime, pTimeFrameStartHour, pTimeFrameEndHour);
         List<Enoblement> finalEnoblements = new LinkedList<Enoblement>();
-        //generate enoblements with minimum runtime
 
-        //System.out.println("===GENERATING ENOBLEMENTS===");
+        //generate enoblements with minimum runtime
         logger.debug("Generating enoblements");
         generateEnoblements(snobVillages, pTargets, timeFrame, finalEnoblements);
-        /* System.out.println("===GENERATING ENOBLEMENTS FINISHED===");
-        System.out.println("| RemainingSnobs: " + snobVillages.size());
-        System.out.println("| Found Enoblements: " + finalEnoblements.size());
-        System.out.println("|--------------------");
-         */
         logger.debug("Getting off sources");
         // <editor-fold defaultstate="collapsed" desc="Get off villages">
         UnitHolder ramUnit = DataHolder.getSingleton().getUnitByPlainName("ram");
@@ -75,6 +71,19 @@ public class AllInOne extends AbstractAttackAlgorithm {
         if (cataSources != null) {
             for (Village cataSource : cataSources) {
                 offSources.add(cataSource);
+            }
+        }
+        List<Village> fakeSources = new LinkedList<Village>();
+        ramSources = pFakes.get(ramUnit);
+        if (ramSources != null) {
+            for (Village ramSource : ramSources) {
+                fakeSources.add(ramSource);
+            }
+        }
+        cataSources = pFakes.get(cataUnit);
+        if (cataSources != null) {
+            for (Village cataSource : cataSources) {
+                fakeSources.add(cataSource);
             }
         }
         //</editor-fold>
@@ -134,18 +143,21 @@ public class AllInOne extends AbstractAttackAlgorithm {
         }
 
         setValidEnoblements(fullyValid);
-        List<Fake> pFinalFakes = new LinkedList<Fake>();
-        logger.debug("Generating misc attacks");
-        assignOffs(pFinalFakes, offSources, pTargets, timeFrame, pMaxAttacksPerVillage);
+        List<Off> pOffs = new LinkedList<Off>();
+        logger.debug("Generating attacks");
+        assignOffs(pOffs, offSources, pTargets, timeFrame, pMaxAttacksPerVillage);
 
-        int fullFakes = 0;
+        int fullOffs = 0;
         logger.debug("Checking for full attacks");
-        for (Fake f : pFinalFakes) {
+        for (Off f : pOffs) {
             if (f.offComplete()) {
-                fullFakes++;
+                fullOffs++;
             }
         }
-        setFullOffs(fullFakes);
+        setFullOffs(fullOffs);
+        List<Fake> pFinalFakes = new LinkedList<Fake>();
+        logger.debug("Generating fakes");
+        assignFakes(pFinalFakes, fakeSources, pTargets, timeFrame, pMaxAttacksPerVillage);
 
         List<AbstractTroopMovement> movements = new LinkedList<AbstractTroopMovement>();
         logger.debug("Building result list");
@@ -153,10 +165,16 @@ public class AllInOne extends AbstractAttackAlgorithm {
         for (Enoblement e : finalEnoblements) {
             movements.add(e);
         }
-        logger.debug(" - adding misc attacks");
+        logger.debug(" - adding offs");
+        for (Off f : pOffs) {
+            movements.add(f);
+        }
+
+        logger.debug(" - adding fakes");
         for (Fake f : pFinalFakes) {
             movements.add(f);
         }
+
         return movements;
     }
 
@@ -293,7 +311,7 @@ public class AllInOne extends AbstractAttackAlgorithm {
         assignOffsToEnoblements(pInOutEnoblements, pOffSources, pTimeFrame);
     }
 
-    private static void assignOffs(List<Fake> pFakes, List<Village> pOffSources, List<Village> pTargets, TimeFrame pTimeFrame, int pMaxAttacks) {
+    private static void assignOffs(List<Off> pOffs, List<Village> pOffSources, List<Village> pTargets, TimeFrame pTimeFrame, int pMaxAttacks) {
         //table which holds for every target the distance of each source
         Hashtable<Village, List<DistanceMapping>> tmpMappings = new Hashtable<Village, List<DistanceMapping>>();
         UnitHolder ram = DataHolder.getSingleton().getUnitByPlainName("ram");
@@ -353,9 +371,97 @@ public class AllInOne extends AbstractAttackAlgorithm {
             }
         }
         List<DistanceMapping> offMappings = tmpMappings.get(best);
+        Off f = null;
+        //try to find existing fake
+        for (Off off : pOffs) {
+            if (off.getTarget().equals(best)) {
+                f = off;
+                break;
+            }
+        }
+
+        //no existing off found
+        if (f == null) {
+            f = new Off(best, pMaxAttacks);
+            pOffs.add(f);
+        }
+        for (DistanceMapping offMapping : offMappings) {
+            //use target due to the distance was calculated based on the enoblements target
+            if (!f.offComplete()) {
+                f.addOff(ram, offMapping.getTarget());
+                pOffSources.remove(offMapping.getTarget());
+            }
+        }
+        if (f.offComplete()) {
+            //remove target only if max number was reached
+            pTargets.remove(best);
+        }
+
+        assignOffs(pOffs, pOffSources, pTargets, pTimeFrame, pMaxAttacks);
+    }
+
+    private static void assignFakes(List<Fake> pFakes, List<Village> pFakeSources, List<Village> pTargets, TimeFrame pTimeFrame, int pMaxAttacks) {
+        //table which holds for every target the distance of each source
+        Hashtable<Village, List<DistanceMapping>> tmpMappings = new Hashtable<Village, List<DistanceMapping>>();
+        UnitHolder ram = DataHolder.getSingleton().getUnitByPlainName("ram");
+        for (Village target : pTargets) {
+            //calculate snob distances for current enoblement target village
+            List<DistanceMapping> offMappings = buildSourceTargetsMapping(target, pFakeSources);
+
+            //check distances for first (fastest) possible off
+
+            //temp map for valid distances
+            List<DistanceMapping> tmpMap = new LinkedList<DistanceMapping>();
+            for (DistanceMapping mapping : offMappings) {
+                long dur = (long) (mapping.getDistance() * ram.getSpeed() * 60000.0);
+                Date send = new Date(pTimeFrame.getEnd() - dur);
+                //check if needed off can arrive village in time frame
+                if (!pTimeFrame.inside(send) || (tmpMap.size() == pMaxAttacks)) {
+                    //break if at least one is not in time or max number of attacks was reached
+                    break;
+                } else {
+                    //add valid distance to map
+                    tmpMap.add(mapping);
+                }
+            }
+            //if all off villages are in time, create enoblement
+            if (tmpMap.size() > 0) {
+                tmpMappings.put(target, tmpMap);
+            }
+
+        }
+
+        if (tmpMappings.size() == 0) {
+            //no off could be assigned in time frame
+            return;
+        }
+
+        double minDist = 0;
+        Village best = null;
+        Enumeration<Village> keys = tmpMappings.keys();
+        //find the enoblement for which the worst off has the smallest runtime
+        while (keys.hasMoreElements()) {
+            //get next off source
+            Village e = keys.nextElement();
+            if (best == null) {
+                //no best set yet, so take the first element to initialize
+                best = e;
+                //use the slowest off to calculate the worst case
+                List<DistanceMapping> mappings = tmpMappings.get(e);
+                minDist = mappings.get(mappings.size() - 1).getDistance();
+            } else {
+                //use the slowest off to calculate the worst case
+                List<DistanceMapping> mappings = tmpMappings.get(e);
+                double dist = mappings.get(mappings.size() - 1).getDistance();
+                if (dist < minDist) {
+                    best = e;
+                    minDist = dist;
+                }
+            }
+        }
+
+        List<DistanceMapping> offMappings = tmpMappings.get(best);
         Fake f = null;
-
-
         //try to find existing fake
         for (Fake fake : pFakes) {
             if (fake.getTarget().equals(best)) {
@@ -373,7 +479,7 @@ public class AllInOne extends AbstractAttackAlgorithm {
             //use target due to the distance was calculated based on the enoblements target
             if (!f.offComplete()) {
                 f.addOff(ram, offMapping.getTarget());
-                pOffSources.remove(offMapping.getTarget());
+                pFakeSources.remove(offMapping.getTarget());
             }
         }
         if (f.offComplete()) {
@@ -381,7 +487,6 @@ public class AllInOne extends AbstractAttackAlgorithm {
             pTargets.remove(best);
         }
 
-        assignOffs(pFakes, pOffSources, pTargets, pTimeFrame, pMaxAttacks);
+        assignFakes(pFakes, pFakeSources, pTargets, pTimeFrame, pMaxAttacks);
     }
 }
-

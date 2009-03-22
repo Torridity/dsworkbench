@@ -35,17 +35,25 @@ import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Font;
 import java.awt.FontMetrics;
+import java.awt.GradientPaint;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Paint;
+import java.awt.PaintContext;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Stroke;
 import java.awt.Toolkit;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.Raster;
+import java.awt.image.WritableRaster;
 import java.text.NumberFormat;
 import java.util.Enumeration;
 import java.util.HashSet;
@@ -793,11 +801,11 @@ public class MapRenderer extends Thread {
 
         /*Enumeration<Integer> keys = copyRegions.keys();
         while (keys.hasMoreElements()) {
-            Point p = copyRegions.get(keys.nextElement());
-            g2d.setColor(Color.MAGENTA);
-            g2d.drawRect(p.x, p.y, tagsize, tagsize);
+        Point p = copyRegions.get(keys.nextElement());
+        g2d.setColor(Color.MAGENTA);
+        g2d.drawRect(p.x, p.y, tagsize, tagsize);
         }
-*/
+         */
         //</editor-fold>
 
         g2d.dispose();
@@ -1035,6 +1043,83 @@ public class MapRenderer extends Thread {
 
             if (f != null) {
                 f.renderForm(g2d);
+            }
+        }
+
+        int x = mVisibleVillages.length / 2;
+        int y = mVisibleVillages[0].length / 2;
+
+        for (int i = x; i < mVisibleVillages.length; i++) {
+            for (int j = y; j < mVisibleVillages[0].length; j++) {
+                Village v = mVisibleVillages[i][j];
+                if (v != null) {
+                    Rectangle g = villagePositions.get(v);
+                    double cx = g.getCenterX();
+                    double cy = g.getCenterY();
+                    Paint before = g2d.getPaint();
+                    Composite cb = g2d.getComposite();
+                    //  g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .2f));
+                    //g2d.setPaint(new GradientPaint(new Point2D.Double(cx, cy), Color.WHITE, new Point2D.Double(cx + 50, cy + 50), Color.YELLOW, true));
+
+                    GeneralPath p = new GeneralPath();
+                    p.moveTo(g.getX() + g.getWidth(), g.getY() - 4 * g.getHeight());
+                    p.lineTo(g.getX(), g.getY() - 4 * g.getHeight());
+                    p.lineTo(g.getX(), g.getY() - 3 * g.getHeight());
+                    p.lineTo(g.getX() - 2 * g.getWidth(), g.getY() - 3 * g.getHeight());
+                    p.lineTo(g.getX() - 2 * g.getWidth(), g.getY() - 2 * g.getHeight());
+                    p.lineTo(g.getX() - 3 * g.getWidth(), g.getY() - 2 * g.getHeight());
+                    p.lineTo(g.getX() - 3 * g.getWidth(), g.getY());
+                    p.lineTo(g.getX() - 4 * g.getWidth(), g.getY());
+                    p.lineTo(g.getX() - 4 * g.getWidth(), g.getY() + g.getHeight());
+                     p.lineTo(g.getX() - 3 * g.getWidth(), g.getY() + g.getHeight());
+                    p.lineTo(g.getX() - 3 * g.getWidth(), g.getY() + 3 * g.getHeight());
+                    p.lineTo(g.getX() - 2 * g.getWidth(), g.getY() + 3 * g.getHeight());
+                    p.lineTo(g.getX() - 2 * g.getWidth(), g.getY() + 4 * g.getHeight());
+                    p.lineTo(g.getX(), g.getY() + 4 * g.getHeight());
+                    p.lineTo(g.getX(), g.getY() + 5 * g.getHeight());
+                   /* p.lineTo(g.getX() + g.getWidth(), g.getY() + 5 * g.getHeight());
+                    p.lineTo(g.getX() + g.getWidth(), g.getY() + 4 * g.getHeight());
+                    p.lineTo(g.getX() + 3 * g.getWidth(), g.getY() + 4 * g.getHeight());
+                    p.lineTo(g.getX() + 3 * g.getWidth(), g.getY() + 3 * g.getHeight());
+                    p.lineTo(g.getX() + 4 * g.getWidth(), g.getY() + 3 * g.getHeight());
+                    p.lineTo(g.getX() + 4 * g.getWidth(), g.getY() + g.getHeight());
+                    p.lineTo(g.getX() + 5 * g.getWidth(), g.getY() + g.getHeight());
+                    p.lineTo(g.getX() + 5 * g.getWidth(), g.getY());
+                    p.lineTo(g.getX() + 4 * g.getWidth(), g.getY());
+                    p.lineTo(g.getX() + 4 * g.getWidth(), g.getY() - 2 * g.getHeight());
+                    p.lineTo(g.getX() + 3 * g.getWidth(), g.getY() - 2 * g.getHeight());
+                    p.lineTo(g.getX() + 3 * g.getWidth(), g.getY() - 3 * g.getHeight());
+                    p.lineTo(g.getX() + g.getWidth(), g.getY() - 3 * g.getHeight());
+                    p.lineTo(g.getX() + g.getWidth(), g.getY() - 4 * g.getHeight());
+                    p.closePath();*/
+
+                    /*g2d.setPaint(new RoundGradientPaint(cx, cy, new Color(255, 255, 0, 100), new Point2D.Double(2 * g.getHeight(), 2 * g.getWidth()), new Color(255, 255, 255, 0)));
+                    //g2d.fillOval((int) (cx - 50), (int) (cy - 50), 100, 100);
+                    g2d.fillRect((int) g.getX(), (int) (g.getY()), (int) g.getWidth(), (int) g.getHeight());
+                    g2d.fillRect((int) (g.getX() - g.getWidth()), (int) (g.getY() - g.getHeight()), (int) g.getWidth(), (int) g.getHeight());
+                    g2d.fillRect((int) (g.getX()), (int) (g.getY() - 2 * g.getHeight()), (int) g.getWidth(), (int) g.getHeight());
+                    g2d.fillRect((int) (g.getX() - g.getWidth()), (int) (g.getY()), (int) g.getWidth(), (int) g.getHeight());
+                    g2d.fillRect((int) (g.getX()), (int) (g.getY() - g.getHeight()), (int) g.getWidth(), (int) g.getHeight());
+                    g2d.fillRect((int) (g.getX() + g.getWidth()), (int) (g.getY() + g.getHeight()), (int) g.getWidth(), (int) g.getHeight());
+                    g2d.fillRect((int) (g.getX() + g.getWidth()), (int) (g.getY()), (int) g.getWidth(), (int) g.getHeight());
+                    g2d.fillRect((int) (g.getX()), (int) (g.getY() + g.getHeight()), (int) g.getWidth(), (int) g.getHeight());
+                     */
+                    g2d.setPaint(new RoundGradientPaint(cx, cy, new Color(255, 255, 255, 0), new Point2D.Double(5 * g.getHeight(), 5 * g.getWidth()), new Color(255, 255, 0, 80)));
+                    Stroke sb = g2d.getStroke();
+                    g2d.setStroke(new BasicStroke(10.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+                    AffineTransform ab = g2d.getTransform();
+                    g2d.draw(p);
+
+
+                    AffineTransform a = AffineTransform.getRotateInstance(Math.toRadians(180), cx, cy);
+                    g2d.setTransform(a);
+                    g2d.draw(p);
+                    g2d.setStroke(sb);
+                    g2d.setPaint(before);
+                    g2d.setTransform(ab);
+                    g2d.setComposite(cb);
+                    return;
+                }
             }
         }
     }
@@ -1589,4 +1674,82 @@ cnt++;
 }
 }
  */
+class RoundGradientPaint implements Paint {
+
+    protected Point2D point;
+    protected Point2D mRadius;
+    protected Color mPointColor,  mBackgroundColor;
+
+    public RoundGradientPaint(double x, double y, Color pointColor,
+            Point2D radius, Color backgroundColor) {
+        if (radius.distance(0, 0) <= 0) {
+            throw new IllegalArgumentException("Radius must be greater than 0.");
+        }
+        point = new Point2D.Double(x, y);
+        mPointColor = pointColor;
+        mRadius = radius;
+        mBackgroundColor = backgroundColor;
+    }
+
+    public PaintContext createContext(ColorModel cm, Rectangle deviceBounds,
+            Rectangle2D userBounds, AffineTransform xform, RenderingHints hints) {
+        Point2D transformedPoint = xform.transform(point, null);
+        Point2D transformedRadius = xform.deltaTransform(mRadius, null);
+        return new RoundGradientContext(transformedPoint, mPointColor,
+                transformedRadius, mBackgroundColor);
+    }
+
+    public int getTransparency() {
+        int a1 = mPointColor.getAlpha();
+        int a2 = mBackgroundColor.getAlpha();
+        return (((a1 & a2) == 0xff) ? OPAQUE : TRANSLUCENT);
+    }
+}
+
+class RoundGradientContext implements PaintContext {
+
+    protected Point2D mPoint;
+    protected Point2D mRadius;
+    protected Color color1,  color2;
+
+    public RoundGradientContext(Point2D p, Color c1, Point2D r, Color c2) {
+        mPoint = p;
+        color1 = c1;
+        mRadius = r;
+        color2 = c2;
+    }
+
+    public void dispose() {
+    }
+
+    public ColorModel getColorModel() {
+        return ColorModel.getRGBdefault();
+    }
+
+    public Raster getRaster(int x, int y, int w, int h) {
+        WritableRaster raster = getColorModel().createCompatibleWritableRaster(
+                w, h);
+
+        int[] data = new int[w * h * 4];
+        for (int j = 0; j < h; j++) {
+            for (int i = 0; i < w; i++) {
+                double distance = mPoint.distance(x + i, y + j);
+                double radius = mRadius.distance(0, 0);
+                double ratio = distance / radius;
+                if (ratio > 1.0) {
+                    ratio = 1.0;
+                }
+
+                int base = (j * w + i) * 4;
+                data[base + 0] = (int) (color1.getRed() + ratio * (color2.getRed() - color1.getRed()));
+                data[base + 1] = (int) (color1.getGreen() + ratio * (color2.getGreen() - color1.getGreen()));
+                data[base + 2] = (int) (color1.getBlue() + ratio * (color2.getBlue() - color1.getBlue()));
+                data[base + 3] = (int) (color1.getAlpha() + ratio * (color2.getAlpha() - color1.getAlpha()));
+            }
+        }
+        raster.setPixels(0, 0, w, h, data);
+
+        return raster;
+    }
+}
 

@@ -14,7 +14,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- *
+ *@TODO (1.3) Check if fakes could be assigned to villages which have assigned offs
  * @author Jejkal
  */
 public abstract class AbstractAttackAlgorithm {
@@ -24,6 +24,7 @@ public abstract class AbstractAttackAlgorithm {
 
     public abstract List<AbstractTroopMovement> calculateAttacks(
             Hashtable<UnitHolder, List<Village>> pSources,
+            Hashtable<UnitHolder, List<Village>> pFakes,
             List<Village> pTargets,
             int pMaxAttacksPerVillage,
             int pMaxCleanPerSnob,

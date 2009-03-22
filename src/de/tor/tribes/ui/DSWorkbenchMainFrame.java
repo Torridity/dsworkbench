@@ -53,8 +53,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 /**
- * @TODO (1.3) Implement question dialog when importing groups with existing group names
- * @TODO (1.3) Change browser access to work with UV
+ * @TODO (DIFF) UV Mode Icons (uv.png, uv_off.png)
  * @author  Charon
  */
 public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
@@ -74,6 +73,8 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
     private static DSWorkbenchMainFrame SINGLETON = null;
     private boolean initialized = false;
     private JFrame fullscreenFrame = null;
+    private ImageIcon uvModeOn = null;
+    private ImageIcon uvModeOff = null;
 
     public static synchronized DSWorkbenchMainFrame getSingleton() {
         if (SINGLETON == null) {
@@ -242,9 +243,9 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                         DSWorkbenchMarkerFrame.getSingleton().firePublicDrawMarkedOnlyChangedEvent();
                     } else if ((e.getKeyCode() == KeyEvent.VK_M) && e.isAltDown()) {
                         switchMarkOnTop();
-                    }  else if ((e.getKeyCode() == KeyEvent.VK_S) && e.isAltDown()) {
+                    } else if ((e.getKeyCode() == KeyEvent.VK_S) && e.isAltDown()) {
                         fireCreateMapShotEvent(null);
-                    }else if (e.getKeyCode() == KeyEvent.VK_F2) {
+                    } else if (e.getKeyCode() == KeyEvent.VK_F2) {
                         DSWorkbenchAttackFrame.getSingleton().setVisible(!DSWorkbenchAttackFrame.getSingleton().isVisible());
                     } else if (e.getKeyCode() == KeyEvent.VK_F3) {
                         DSWorkbenchMarkerFrame.getSingleton().setVisible(!DSWorkbenchMarkerFrame.getSingleton().isVisible());
@@ -269,6 +270,8 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             jCenterIngameButton.setIcon(new ImageIcon("./graphics/icons/center.png"));
             jRefreshButton.setIcon(new ImageIcon("./graphics/icons/refresh.png"));
             jCenterCoordinateIngame.setIcon(new ImageIcon("./graphics/icons/center.png"));
+            uvModeOn = new ImageIcon(getClass().getResource("/res/ui/uv.png"));
+            uvModeOff = new ImageIcon(getClass().getResource("/res/ui/uv_off.png"));
         } catch (Exception e) {
             logger.error("Failed to load status icon(s)", e);
         }
@@ -699,6 +702,9 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jShowMapPopup = new javax.swing.JCheckBox();
         jMarkOnTopBox = new javax.swing.JCheckBox();
         jButton1 = new javax.swing.JButton();
+        jUVIDField = new javax.swing.JTextField();
+        jLabel4 = new javax.swing.JLabel();
+        jUVModeButton = new javax.swing.JToggleButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
@@ -1230,22 +1236,46 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             }
         });
 
+        jUVIDField.setText(bundle.getString("DSWorkbenchMainFrame.jUVIDField.text")); // NOI18N
+
+        jLabel4.setText(bundle.getString("DSWorkbenchMainFrame.jLabel4.text")); // NOI18N
+
+        jUVModeButton.setBackground(new java.awt.Color(239, 235, 223));
+        jUVModeButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/uv_off.png"))); // NOI18N
+        jUVModeButton.setText(bundle.getString("DSWorkbenchMainFrame.jUVModeButton.text")); // NOI18N
+        jUVModeButton.setToolTipText(bundle.getString("DSWorkbenchMainFrame.jUVModeButton.toolTipText")); // NOI18N
+        jUVModeButton.setMaximumSize(new java.awt.Dimension(35, 35));
+        jUVModeButton.setMinimumSize(new java.awt.Dimension(35, 35));
+        jUVModeButton.setPreferredSize(new java.awt.Dimension(35, 35));
+        jUVModeButton.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                fireChangeUVModeEvent(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(jMarkOnTopBox, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jShowMapPopup, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                        .addContainerGap(178, Short.MAX_VALUE)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel4)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jCurrentToolLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(jMarkOnTopBox, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jShowMapPopup, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(jUVIDField, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(41, 41, 41))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(jUVModeButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jCurrentToolLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -1254,10 +1284,15 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                 .addComponent(jShowMapPopup)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jMarkOnTopBox)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 49, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 8, Short.MAX_VALUE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel4)
+                    .addComponent(jUVIDField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(21, 21, 21)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jCurrentToolLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jUVModeButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
@@ -1968,6 +2003,26 @@ private void fireOpenExportDialogEvent(java.awt.event.ActionEvent evt) {//GEN-FI
     jExportDialog.setVisible(true);
 }//GEN-LAST:event_fireOpenExportDialogEvent
 
+private void fireChangeUVModeEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireChangeUVModeEvent
+    if (jUVModeButton.isSelected()) {
+        //set UV mode
+        jUVModeButton.setIcon(uvModeOn);
+        try {
+            int id = Integer.parseInt(jUVIDField.getText());
+            if (id < 0) {
+                throw new Exception();
+            }
+            GlobalOptions.setUVMode(id);
+        } catch (Exception e) {
+            jUVModeButton.setSelected(false);
+            GlobalOptions.unsetUVMode();
+        }
+    } else {
+        jUVModeButton.setIcon(uvModeOff);
+        GlobalOptions.unsetUVMode();
+    }
+}//GEN-LAST:event_fireChangeUVModeEvent
+
     protected void switchMarkOnTop() {
         jMarkOnTopBox.setSelected(!jMarkOnTopBox.isSelected());
     }
@@ -2220,6 +2275,7 @@ private void fireOpenExportDialogEvent(java.awt.event.ActionEvent evt) {//GEN-FI
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JDialog jMapShotDialog;
     private javax.swing.JCheckBox jMarkOnTopBox;
     private javax.swing.JMenuItem jMassAttackItem;
@@ -2258,6 +2314,8 @@ private void fireOpenExportDialogEvent(java.awt.event.ActionEvent evt) {//GEN-FI
     private javax.swing.JCheckBoxMenuItem jShowRankFrame;
     private javax.swing.JCheckBoxMenuItem jShowTroopsFrame;
     private javax.swing.JMenuItem jTribeTribeAttackItem;
+    private javax.swing.JTextField jUVIDField;
+    private javax.swing.JToggleButton jUVModeButton;
     private javax.swing.JMenuItem jUnitOverviewItem;
     private javax.swing.JButton jZoomInButton;
     private javax.swing.JButton jZoomOutButton;

@@ -12,7 +12,9 @@ import javax.swing.JOptionPane;
 import org.apache.log4j.Logger;
 
 /**
- *
+ *@TODO (DIFF) integrate UV mode
+ * http://de8.die-staemme.de/game.php?t=743256&village=269739&screen=place
+ * http://de8.die-staemme.de/game.php?t=743256&village=273090&screen=place&mode=command&target=285904
  * @author Charon
  */
 public class BrowserCommandSender {
@@ -23,6 +25,10 @@ public class BrowserCommandSender {
         try {
             String baseURL = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
             String url = baseURL + "/game.php?village=";
+            int uvID = GlobalOptions.getUVID();
+            if (uvID >= 0) {
+                url = baseURL + "/game.php?t=" + uvID + "&village=";
+            }
             url += pSource.getId() + "&screen=place&mode=command&target=" + pTarget.getId();
             /*            
             javascript:
@@ -56,6 +62,10 @@ public class BrowserCommandSender {
         try {
             String baseURL = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
             String url = baseURL + "/game.php?village=";
+            int uvID = GlobalOptions.getUVID();
+            if (uvID >= 0) {
+                url = baseURL + "/game.php?t=" + uvID + "&village=";
+            }
             url += pSource.getId() + "&screen=map&x=" + pSource.getX() + "&y=" + pSource.getY();
             Desktop.getDesktop().browse(new URI(url));
         } catch (Exception e) {
@@ -68,6 +78,10 @@ public class BrowserCommandSender {
         try {
             String baseURL = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
             String url = baseURL + "/game.php?village=";
+            int uvID = GlobalOptions.getUVID();
+            if (uvID >= 0) {
+                url = baseURL + "/game.php?t=" + uvID + "&village=";
+            }
             url += "&screen=map&x=" + pX + "&y=" + pY;
             Desktop.getDesktop().browse(new URI(url));
         } catch (Exception e) {
@@ -80,6 +94,10 @@ public class BrowserCommandSender {
         try {
             String baseURL = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
             String url = baseURL + "/game.php?village=";
+            int uvID = GlobalOptions.getUVID();
+            if (uvID >= 0) {
+                url = baseURL + "/game.php?t=" + uvID + "&village=";
+            }
             url += pSource.getId() + "&screen=market&mode=send&target=" + pTarget.getId();
             Desktop.getDesktop().browse(new URI(url));
         } catch (Exception e) {

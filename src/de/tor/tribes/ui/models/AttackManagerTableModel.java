@@ -7,6 +7,7 @@ package de.tor.tribes.ui.models;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.Village;
+import de.tor.tribes.ui.DSWorkbenchAttackFrame;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.attack.AttackManager;
 import de.tor.tribes.util.attack.AttackManagerListener;
@@ -187,6 +188,7 @@ public class AttackManagerTableModel extends AbstractTableModel {
                 break;
             }
         }
+        DSWorkbenchAttackFrame.getSingleton().updateTableUI();
     }
 
     @Override

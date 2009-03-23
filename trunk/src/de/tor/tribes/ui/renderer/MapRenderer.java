@@ -295,8 +295,7 @@ public class MapRenderer extends Thread {
         if (mLayers.get(MAP_LAYER) == null) {
             layer = new BufferedImage(wb, hb, BufferedImage.TYPE_INT_ARGB);
             mLayers.put(MAP_LAYER, layer);
-            g2d =
-                    layer.createGraphics();
+            g2d = layer.createGraphics();
             prepareGraphics(g2d);
         } else {
             //check if image size is still valid
@@ -305,8 +304,7 @@ public class MapRenderer extends Thread {
                 //mappanel has resized
                 layer = new BufferedImage(wb, hb, BufferedImage.TYPE_INT_ARGB);
                 mLayers.put(MAP_LAYER, layer);
-                g2d =
-                        layer.createGraphics();
+                g2d = layer.createGraphics();
                 prepareGraphics(g2d);
             } else {
                 //only clear image
@@ -901,8 +899,7 @@ public class MapRenderer extends Thread {
                 if (troopMark != null) {
                     int x = villageRect.x + (int) Math.round(villageRect.width / 2);
                     int y = villageRect.y + (int) Math.round(villageRect.width / 2);
-                    troopMark =
-                            troopMark.getScaledInstance((int) Math.rint(troopMark.getWidth(null) / currentZoom), (int) Math.rint(troopMark.getHeight(null) / currentZoom), BufferedImage.SCALE_FAST);
+                    troopMark = troopMark.getScaledInstance((int) Math.rint(troopMark.getWidth(null) / currentZoom), (int) Math.rint(troopMark.getHeight(null) / currentZoom), BufferedImage.SCALE_FAST);
                     g2d.drawImage(troopMark, x - troopMark.getWidth(null) / 2, y - troopMark.getHeight(null), null);
                 }
 

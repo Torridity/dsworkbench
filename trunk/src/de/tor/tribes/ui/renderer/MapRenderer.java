@@ -23,6 +23,7 @@ import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.Skin;
+import de.tor.tribes.util.algo.ChurchRangeCalculator;
 import de.tor.tribes.util.attack.AttackManager;
 import de.tor.tribes.util.map.FormManager;
 import de.tor.tribes.util.mark.MarkerManager;
@@ -35,14 +36,15 @@ import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Font;
 import java.awt.FontMetrics;
-import java.awt.GradientPaint;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Paint;
 import java.awt.PaintContext;
 import java.awt.Point;
+import java.awt.RadialGradientPaint;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.Toolkit;
 import java.awt.geom.AffineTransform;
@@ -1046,78 +1048,79 @@ public class MapRenderer extends Thread {
         int x = mVisibleVillages.length / 2;
         int y = mVisibleVillages[0].length / 2;
 
-        for (int i = x; i < mVisibleVillages.length; i++) {
-            for (int j = y; j < mVisibleVillages[0].length; j++) {
-                Village v = mVisibleVillages[i][j];
+        Rectangle g = null;
+        Village v = null;
+        boolean got = false;
+        for (int i = 0; i < mVisibleVillages.length; i++) {
+            for (int j = 0; j < mVisibleVillages[0].length; j++) {
+                v = mVisibleVillages[i][j];
                 if (v != null) {
-                    Rectangle g = villagePositions.get(v);
-                    double cx = g.getCenterX();
-                    double cy = g.getCenterY();
-                    Paint before = g2d.getPaint();
-                    Composite cb = g2d.getComposite();
-                    //  g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .2f));
-                    //g2d.setPaint(new GradientPaint(new Point2D.Double(cx, cy), Color.WHITE, new Point2D.Double(cx + 50, cy + 50), Color.YELLOW, true));
+                    g = villagePositions.get(v);
 
+                    // <editor-fold defaultstate="collapsed" desc=" Church calc">
+
+                    int rad = 4;
+                    List<Point2D.Double> positions = ChurchRangeCalculator.getChurchRange(v.getX(), v.getY(), rad);
                     GeneralPath p = new GeneralPath();
-                    p.moveTo(g.getX() + g.getWidth(), g.getY() - 4 * g.getHeight());
-                    p.lineTo(g.getX(), g.getY() - 4 * g.getHeight());
-                    p.lineTo(g.getX(), g.getY() - 3 * g.getHeight());
-                    p.lineTo(g.getX() - 2 * g.getWidth(), g.getY() - 3 * g.getHeight());
-                    p.lineTo(g.getX() - 2 * g.getWidth(), g.getY() - 2 * g.getHeight());
-                    p.lineTo(g.getX() - 3 * g.getWidth(), g.getY() - 2 * g.getHeight());
-                    p.lineTo(g.getX() - 3 * g.getWidth(), g.getY());
-                    p.lineTo(g.getX() - 4 * g.getWidth(), g.getY());
-                    p.lineTo(g.getX() - 4 * g.getWidth(), g.getY() + g.getHeight());
-                     p.lineTo(g.getX() - 3 * g.getWidth(), g.getY() + g.getHeight());
-                    p.lineTo(g.getX() - 3 * g.getWidth(), g.getY() + 3 * g.getHeight());
-                    p.lineTo(g.getX() - 2 * g.getWidth(), g.getY() + 3 * g.getHeight());
-                    p.lineTo(g.getX() - 2 * g.getWidth(), g.getY() + 4 * g.getHeight());
-                    p.lineTo(g.getX(), g.getY() + 4 * g.getHeight());
-                    p.lineTo(g.getX(), g.getY() + 5 * g.getHeight());
-                   /* p.lineTo(g.getX() + g.getWidth(), g.getY() + 5 * g.getHeight());
-                    p.lineTo(g.getX() + g.getWidth(), g.getY() + 4 * g.getHeight());
-                    p.lineTo(g.getX() + 3 * g.getWidth(), g.getY() + 4 * g.getHeight());
-                    p.lineTo(g.getX() + 3 * g.getWidth(), g.getY() + 3 * g.getHeight());
-                    p.lineTo(g.getX() + 4 * g.getWidth(), g.getY() + 3 * g.getHeight());
-                    p.lineTo(g.getX() + 4 * g.getWidth(), g.getY() + g.getHeight());
-                    p.lineTo(g.getX() + 5 * g.getWidth(), g.getY() + g.getHeight());
-                    p.lineTo(g.getX() + 5 * g.getWidth(), g.getY());
-                    p.lineTo(g.getX() + 4 * g.getWidth(), g.getY());
-                    p.lineTo(g.getX() + 4 * g.getWidth(), g.getY() - 2 * g.getHeight());
-                    p.lineTo(g.getX() + 3 * g.getWidth(), g.getY() - 2 * g.getHeight());
-                    p.lineTo(g.getX() + 3 * g.getWidth(), g.getY() - 3 * g.getHeight());
-                    p.lineTo(g.getX() + g.getWidth(), g.getY() - 3 * g.getHeight());
-                    p.lineTo(g.getX() + g.getWidth(), g.getY() - 4 * g.getHeight());
-                    p.closePath();*/
+                    p.moveTo(g.getX(), g.getY() - (rad - 1) * g.getHeight());
+                    int quad = 0;
+                    Point2D.Double lastPos = positions.get(0);
+                    for (Point2D.Double pos : positions) {
+                        if (quad == 0) {
+                            //north village
+                            p.lineTo(p.getCurrentPoint().getX(), p.getCurrentPoint().getY() - g.getHeight());
+                            p.lineTo(p.getCurrentPoint().getX() + g.getWidth(), p.getCurrentPoint().getY());
+                            quad = 1;
+                        } else if (pos.getX() == v.getX() + rad && pos.getY() == v.getY()) {
+                            //east village
+                            p.lineTo(p.getCurrentPoint().getX(), p.getCurrentPoint().getY() + g.getHeight());
+                            p.lineTo(p.getCurrentPoint().getX() + g.getWidth(), p.getCurrentPoint().getY());
+                            p.lineTo(p.getCurrentPoint().getX(), p.getCurrentPoint().getY() + g.getHeight());
+                            quad = 2;
+                        } else if (pos.getX() == v.getX() && pos.getY() == v.getY() + rad) {
+                            //south village
+                            p.lineTo(p.getCurrentPoint().getX() - g.getWidth(), p.getCurrentPoint().getY());
+                            p.lineTo(p.getCurrentPoint().getX(), p.getCurrentPoint().getY() + g.getHeight());
+                            p.lineTo(p.getCurrentPoint().getX() - g.getWidth(), p.getCurrentPoint().getY());
+                            quad = 3;
+                        } else if (pos.getX() == v.getX() - rad && pos.getY() == v.getY()) {
+                            //west village
+                            p.lineTo(p.getCurrentPoint().getX(), p.getCurrentPoint().getY() - g.getHeight());
+                            p.lineTo(p.getCurrentPoint().getX() - g.getWidth(), p.getCurrentPoint().getY());
+                            p.lineTo(p.getCurrentPoint().getX(), p.getCurrentPoint().getY() - g.getHeight());
+                            quad = 4;
+                        } else {
+                            //no special point
+                            int dx = (int) (pos.getX() - lastPos.getX());
+                            int dy = (int) (pos.getY() - lastPos.getY());
 
-                    /*g2d.setPaint(new RoundGradientPaint(cx, cy, new Color(255, 255, 0, 100), new Point2D.Double(2 * g.getHeight(), 2 * g.getWidth()), new Color(255, 255, 255, 0)));
-                    //g2d.fillOval((int) (cx - 50), (int) (cy - 50), 100, 100);
-                    g2d.fillRect((int) g.getX(), (int) (g.getY()), (int) g.getWidth(), (int) g.getHeight());
-                    g2d.fillRect((int) (g.getX() - g.getWidth()), (int) (g.getY() - g.getHeight()), (int) g.getWidth(), (int) g.getHeight());
-                    g2d.fillRect((int) (g.getX()), (int) (g.getY() - 2 * g.getHeight()), (int) g.getWidth(), (int) g.getHeight());
-                    g2d.fillRect((int) (g.getX() - g.getWidth()), (int) (g.getY()), (int) g.getWidth(), (int) g.getHeight());
-                    g2d.fillRect((int) (g.getX()), (int) (g.getY() - g.getHeight()), (int) g.getWidth(), (int) g.getHeight());
-                    g2d.fillRect((int) (g.getX() + g.getWidth()), (int) (g.getY() + g.getHeight()), (int) g.getWidth(), (int) g.getHeight());
-                    g2d.fillRect((int) (g.getX() + g.getWidth()), (int) (g.getY()), (int) g.getWidth(), (int) g.getHeight());
-                    g2d.fillRect((int) (g.getX()), (int) (g.getY() + g.getHeight()), (int) g.getWidth(), (int) g.getHeight());
-                     */
-                    g2d.setPaint(new RoundGradientPaint(cx, cy, new Color(255, 255, 255, 0), new Point2D.Double(5 * g.getHeight(), 5 * g.getWidth()), new Color(255, 255, 0, 80)));
-                    Stroke sb = g2d.getStroke();
+                            if (quad == 1) {
+                                p.lineTo(p.getCurrentPoint().getX(), p.getCurrentPoint().getY() + dy * g.getHeight());
+                                p.lineTo(p.getCurrentPoint().getX() + dx * g.getWidth(), p.getCurrentPoint().getY());
+                            } else if (quad == 2) {
+                                p.lineTo(p.getCurrentPoint().getX() + dx * g.getWidth(), p.getCurrentPoint().getY());
+                                p.lineTo(p.getCurrentPoint().getX(), p.getCurrentPoint().getY() + dy * g.getHeight());
+                            } else if (quad == 3) {
+                                p.lineTo(p.getCurrentPoint().getX(), p.getCurrentPoint().getY() + dy * g.getHeight());
+                                p.lineTo(p.getCurrentPoint().getX() + dx * g.getWidth(), p.getCurrentPoint().getY());
+                            } else if (quad == 4) {
+                                p.lineTo(p.getCurrentPoint().getX() + dx * g.getWidth(), p.getCurrentPoint().getY());
+                                p.lineTo(p.getCurrentPoint().getX(), p.getCurrentPoint().getY() + dy * g.getHeight());
+                            }
+                        }
+                        lastPos = pos;
+                    }
+                    p.closePath();
+                    Color cb = g2d.getColor();
+                    g2d.setColor(new Color(0, 0, 255, 80));
+                    //g2d.setPaint(new RoundGradientPaint(g.getCenterX(), g.getCenterY(), new Color(0, 0, 255, 155), new Point2D.Double(rad * g.getWidth() + g.getWidth(), rad * g.getHeight() + g.getHeight()), new Color(0, 0, 255, 0)));
                     g2d.setStroke(new BasicStroke(10.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-                    AffineTransform ab = g2d.getTransform();
                     g2d.draw(p);
-
-
-                    AffineTransform a = AffineTransform.getRotateInstance(Math.toRadians(180), cx, cy);
-                    g2d.setTransform(a);
-                    g2d.draw(p);
-                    g2d.setStroke(sb);
-                    g2d.setPaint(before);
-                    g2d.setTransform(ab);
-                    g2d.setComposite(cb);
-                    return;
+                    g2d.setColor(cb);
+//</editor-fold>
                 }
             }
+
         }
     }
 
@@ -1371,8 +1374,7 @@ public class MapRenderer extends Thread {
 
             if (showMoral) {
                 double moral = ((mouseVillage.getTribe().getPoints() / currentUserVillage.getTribe().getPoints()) * 3 + 0.3) * 100;
-                moral =
-                        (moral > 100) ? 100 : moral;
+                moral = (moral > 100) ? 100 : moral;
                 drawPopupField(g2d, metrics, villageRect, "Moral", nf.format(moral) + "%", width, dy);
                 dy += 19;
             }
@@ -1512,7 +1514,7 @@ public class MapRenderer extends Thread {
         boolean drawDist = false;
         if (MapPanel.getSingleton().getCurrentCursor() == ImageManager.CURSOR_MEASURE) {
             if (mSourceVillage != null) {
-                current = new Font("SansSerif", Font.PLAIN, 8);
+                current = new Font(Font.SANS_SERIF, Font.PLAIN, 8);
                 drawDist = true;
             }
 
@@ -1556,14 +1558,10 @@ public class MapRenderer extends Thread {
                     Rectangle2D troopBounds = metrics.getStringBounds(troopsValue, g2d);
                     g2d.setColor(Color.BLACK);
                     g2d.drawString(troopsValue, pRect.getLocation().x + x + 2 + (int) Math.rint(w / 2.0 - troopBounds.getWidth() / 2.0), pRect.getLocation().y + pDy + 2 + 25 + (int) Math.rint(troopBounds.getHeight() / 2.0));
-                    x +=
-                            w;
+                    x += w;
                     unitCount++;
 
                 }
-
-
-
 
             } else {
                 //draw runtime
@@ -1580,28 +1578,23 @@ public class MapRenderer extends Thread {
                 Rectangle2D troopBounds = metrics.getStringBounds(runtimeValue, g2d);
                 g2d.setColor(Color.BLACK);
                 g2d.drawString(runtimeValue, pRect.getLocation().x + x + 2 + (int) Math.rint(w / 2.0 - troopBounds.getWidth() / 2.0), pRect.getLocation().y + pDy + 2 + 25 + (int) Math.rint(troopBounds.getHeight() / 2.0));
-                x +=
-                        w;
+                x += w;
                 unitCount++;
 
             }
-
-
-
-
         }
     }
 
     private void prepareGraphics(Graphics2D pG2d) {
         pG2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-        pG2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+        pG2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
         // Speed
         pG2d.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED);
         pG2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         pG2d.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_SPEED);
-        pG2d.setRenderingHint(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_DISABLE);
+        pG2d.setRenderingHint(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_ENABLE);
         pG2d.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_OFF);
-        pG2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
+        pG2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
     //pG2d.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
     }
 }

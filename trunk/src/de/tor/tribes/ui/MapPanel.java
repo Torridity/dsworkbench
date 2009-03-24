@@ -54,7 +54,8 @@ import javax.swing.UIManager;
 /**
  * @TODO (DIFF) Snob range included
  *@TODO (1.X) Add flag-marker for single villages/notes? -> notes as forms? (Version 2.0)
- *@TODO (1.3) Add church range/church map+tactical map+group map ... ?
+ * @TODO (DIFF) Church range added
+ *@TODO (1.3) Add church map/tactical map (mark on top mode) ... ?
  * @author  Charon
  */
 public class MapPanel extends javax.swing.JPanel {

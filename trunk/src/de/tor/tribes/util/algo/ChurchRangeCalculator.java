@@ -65,7 +65,7 @@ public class ChurchRangeCalculator {
         villagePos.add(initStart);
         calculateSurroundingVillageRecursive(new Point2D.Double(pX, pY), pRadius, initStart, initStart, villagePos, 1);
         return villagePos;
-
+ 
     }
 
     private static void calculateSurroundingVillageRecursive(Point2D.Double pCenter, int pRadius, Point2D.Double pInitStart, Point2D.Double pCurrentStart, List<Point2D.Double> pVillages, int pQuadrant) {
@@ -92,6 +92,7 @@ public class ChurchRangeCalculator {
                 pVillages.add(check);
                 pCurrentStart = check;
                 break;
+
             }
         }
 

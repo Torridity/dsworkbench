@@ -53,7 +53,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 /**
- * @TODO (DIFF) UV Mode Icons (uv.png, uv_off.png)
+ * @TODO (DIFF) UV Mode Icons (uv.png, uv_off.png), Church icon (church.png)
  * @author  Charon
  */
 public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
@@ -434,6 +434,8 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             jLabel1.setText("X");
             jLabel2.setText("Y");
         }
+
+        jShowChurchFrame.setEnabled(ServerSettings.getSingleton().isChurch());
         logger.info("Server settings updated");
     }
 
@@ -725,6 +727,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jShowTroopsFrame = new javax.swing.JCheckBoxMenuItem();
         jShowRankFrame = new javax.swing.JCheckBoxMenuItem();
         jShowFormsFrame = new javax.swing.JCheckBoxMenuItem();
+        jShowChurchFrame = new javax.swing.JCheckBoxMenuItem();
         jMenu4 = new javax.swing.JMenu();
         jHelpItem = new javax.swing.JMenuItem();
         jAboutItem = new javax.swing.JMenuItem();
@@ -1444,6 +1447,9 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             }
         });
         jMenu2.add(jShowFormsFrame);
+
+        jShowChurchFrame.setText(bundle.getString("DSWorkbenchMainFrame.jShowChurchFrame.text")); // NOI18N
+        jMenu2.add(jShowChurchFrame);
 
         jMenuBar1.add(jMenu2);
 
@@ -2308,6 +2314,7 @@ private void fireChangeUVModeEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:ev
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JCheckBoxMenuItem jShowAttackFrame;
+    private javax.swing.JCheckBoxMenuItem jShowChurchFrame;
     private javax.swing.JCheckBoxMenuItem jShowFormsFrame;
     private javax.swing.JCheckBox jShowMapPopup;
     private javax.swing.JCheckBoxMenuItem jShowMarkerFrame;

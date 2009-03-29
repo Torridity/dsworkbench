@@ -41,10 +41,8 @@ import java.awt.Image;
 import java.awt.Paint;
 import java.awt.PaintContext;
 import java.awt.Point;
-import java.awt.RadialGradientPaint;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
-import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.Toolkit;
 import java.awt.geom.AffineTransform;
@@ -52,16 +50,20 @@ import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
+import java.awt.image.BufferedImageOp;
 import java.awt.image.ColorModel;
 import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
+import java.io.File;
 import java.text.NumberFormat;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import org.apache.log4j.Logger;
 
@@ -74,6 +76,7 @@ import org.apache.log4j.Logger;
  * 4: Misc. Extended Map Decoration: e.g. troop qualification or active village marker
  * 5: Live Layer: Redraw in every drawing cycle e.g. Drag line, tool popup(?), (troop movement?)
  * 6-16: Free assignable
+ * @TODO (DIFF) Font size for distance
  * @author Charon
  */
 /**Thread for updating after scroll operations
@@ -105,6 +108,7 @@ public class MapRenderer extends Thread {
     private double currentZoom = 0.0;
     private Village currentUserVillage = null;
     private Image mMainBuffer = null;
+    private BufferedImage church = null;
 
     public MapRenderer() {
         mVisibleVillages = new Village[iVillagesX][iVillagesY];
@@ -115,6 +119,12 @@ public class MapRenderer extends Thread {
             mMarkerImage = Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("/res/marker.png"));
         } catch (Exception e) {
             logger.error("Failed to load border images", e);
+        }
+
+        try {
+            church = ImageIO.read(new File("graphics/icons/church.png"));
+        } catch (Exception e) {
+            logger.error("Failed to load church image", e);
         }
         mLayers = new Hashtable<Integer, BufferedImage>();
     }
@@ -1051,14 +1061,21 @@ public class MapRenderer extends Thread {
         Rectangle g = null;
         Village v = null;
         boolean got = false;
-        for (int i = 0; i < mVisibleVillages.length; i++) {
-            for (int j = 0; j < mVisibleVillages[0].length; j++) {
+        Image iChurch = null;
+        if (church != null) {
+            iChurch = church.getScaledInstance((int) (church.getWidth() / currentZoom), (int) (church.getHeight() / currentZoom), BufferedImage.SCALE_DEFAULT);
+        }
+
+        for (int i = x; i < mVisibleVillages.length; i++) {
+            for (int j = y; j < mVisibleVillages[0].length; j++) {
                 v = mVisibleVillages[i][j];
                 if (v != null) {
                     g = villagePositions.get(v);
 
                     // <editor-fold defaultstate="collapsed" desc=" Church calc">
-
+                    if (iChurch != null) {
+                        g2d.drawImage(iChurch, (int) g.getX() + iChurch.getWidth(null) / 2, (int) g.getY() - iChurch.getHeight(null) + (int) g.getHeight() / 2, null);
+                    }
                     int rad = 4;
                     List<Point2D.Double> positions = ChurchRangeCalculator.getChurchRange(v.getX(), v.getY(), rad);
                     GeneralPath p = new GeneralPath();
@@ -1118,6 +1135,8 @@ public class MapRenderer extends Thread {
                     g2d.draw(p);
                     g2d.setColor(cb);
 //</editor-fold>
+
+                    return;
                 }
             }
 
@@ -1266,7 +1285,7 @@ public class MapRenderer extends Thread {
         nf.setMinimumFractionDigits(0);
         nf.setMaximumFractionDigits(0);
         g2d.setFont(current);
-        int width = 430;
+        int width = 500;
         //Village name rect
         int dy = 19;
         g2d.setColor(Constants.DS_BACK);
@@ -1510,11 +1529,11 @@ public class MapRenderer extends Thread {
 
     private void renderExtendedInformation(Graphics2D g2d, Village pMouseVillage, Rectangle pRect, int pWidth, int pDy) {
         VillageTroopsHolder troops = TroopsManager.getSingleton().getTroopsForVillage(pMouseVillage);
-        Font current = new Font("SansSerif", Font.PLAIN, 10);
+        Font current = new Font(Font.SANS_SERIF, Font.PLAIN, 10);
         boolean drawDist = false;
         if (MapPanel.getSingleton().getCurrentCursor() == ImageManager.CURSOR_MEASURE) {
             if (mSourceVillage != null) {
-                current = new Font(Font.SANS_SERIF, Font.PLAIN, 8);
+                current = new Font(Font.SANS_SERIF, Font.PLAIN, 9);
                 drawDist = true;
             }
 
@@ -1586,8 +1605,8 @@ public class MapRenderer extends Thread {
     }
 
     private void prepareGraphics(Graphics2D pG2d) {
-        pG2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-        pG2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        pG2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
+        pG2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
         // Speed
         pG2d.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED);
         pG2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);

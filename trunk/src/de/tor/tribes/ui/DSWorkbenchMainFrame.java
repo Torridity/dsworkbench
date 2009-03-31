@@ -54,6 +54,9 @@ import javax.swing.table.DefaultTableModel;
 
 /**
  * @TODO (DIFF) UV Mode Icons (uv.png, uv_off.png), Church icon (church.png)
+ * @TODO (DIFF) UV Mode (docu!)
+ * @TODO (DIFF) Shortcut F7 for churchframe
+ * @TODO (1.3) Add some zoom modes for minimap
  * @author  Charon
  */
 public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
@@ -99,12 +102,14 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                 GlobalOptions.saveUserData();
                 GlobalOptions.addProperty("attack.frame.visible", Boolean.toString(DSWorkbenchAttackFrame.getSingleton().isVisible()));
                 GlobalOptions.addProperty("marker.frame.visible", Boolean.toString(DSWorkbenchMarkerFrame.getSingleton().isVisible()));
+                GlobalOptions.addProperty("church.frame.visible", Boolean.toString(DSWorkbenchChurchFrame.getSingleton().isVisible()));
                 GlobalOptions.addProperty("troops.frame.visible", Boolean.toString(DSWorkbenchTroopsFrame.getSingleton().isVisible()));
                 GlobalOptions.addProperty("rank.frame.visible", Boolean.toString(DSWorkbenchRankFrame.getSingleton().isVisible()));
                 GlobalOptions.addProperty("form.frame.visible", Boolean.toString(DSWorkbenchFormFrame.getSingleton().isVisible()));
                 GlobalOptions.addProperty("search.frame.visible", Boolean.toString(DSWorkbenchSearchFrame.getSingleton().isVisible()));
                 GlobalOptions.addProperty("attack.frame.alwaysOnTop", Boolean.toString(DSWorkbenchAttackFrame.getSingleton().isAlwaysOnTop()));
                 GlobalOptions.addProperty("marker.frame.alwaysOnTop", Boolean.toString(DSWorkbenchMarkerFrame.getSingleton().isAlwaysOnTop()));
+                GlobalOptions.addProperty("church.frame.alwaysOnTop", Boolean.toString(DSWorkbenchChurchFrame.getSingleton().isAlwaysOnTop()));
                 GlobalOptions.addProperty("troops.frame.alwaysOnTop", Boolean.toString(DSWorkbenchTroopsFrame.getSingleton().isAlwaysOnTop()));
                 GlobalOptions.addProperty("rank.frame.alwaysOnTop", Boolean.toString(DSWorkbenchRankFrame.getSingleton().isAlwaysOnTop()));
                 GlobalOptions.addProperty("form.frame.alwaysOnTop", Boolean.toString(DSWorkbenchFormFrame.getSingleton().isAlwaysOnTop()));
@@ -255,6 +260,10 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                         DSWorkbenchRankFrame.getSingleton().setVisible(!DSWorkbenchRankFrame.getSingleton().isVisible());
                     } else if (e.getKeyCode() == KeyEvent.VK_F6) {
                         DSWorkbenchFormFrame.getSingleton().setVisible(!DSWorkbenchFormFrame.getSingleton().isVisible());
+                    } else if (e.getKeyCode() == KeyEvent.VK_F7) {
+                        if (jShowChurchFrame.isEnabled()) {
+                            DSWorkbenchChurchFrame.getSingleton().setVisible(!DSWorkbenchChurchFrame.getSingleton().isVisible());
+                        }
                     } else if (e.getKeyCode() == KeyEvent.VK_F12) {
                         DSWorkbenchSettingsDialog.getSingleton().setVisible(true);
                     }
@@ -337,51 +346,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         }
         // </editor-fold>
 
-        // <editor-fold defaultstate="collapsed" desc=" Setup WindowListeners ">
-        WindowListener frameListener = new WindowListener() {
-
-            @Override
-            public void windowOpened(WindowEvent e) {
-            }
-
-            @Override
-            public void windowClosing(WindowEvent e) {
-                if (e.getSource() == DSWorkbenchAttackFrame.getSingleton()) {
-                    fireShowAttackFrameEvent(null);
-                } else if (e.getSource() == DSWorkbenchMarkerFrame.getSingleton()) {
-                    fireShowMarkerFrameEvent(null);
-                } else if (e.getSource() == DSWorkbenchTroopsFrame.getSingleton()) {
-                    fireShowTroopsFrameEvent(null);
-                } else if (e.getSource() == DSWorkbenchRankFrame.getSingleton()) {
-                    fireShowRangFrameEvent(null);
-                } else if (e.getSource() == DSWorkbenchFormFrame.getSingleton()) {
-                    fireShowFormsFrameEvent(null);
-                }
-            }
-
-            @Override
-            public void windowClosed(WindowEvent e) {
-            }
-
-            @Override
-            public void windowIconified(WindowEvent e) {
-            }
-
-            @Override
-            public void windowDeiconified(WindowEvent e) {
-            }
-
-            @Override
-            public void windowActivated(WindowEvent e) {
-            }
-
-            @Override
-            public void windowDeactivated(WindowEvent e) {
-            }
-        };
-        DSWorkbenchAttackFrame.getSingleton().addWindowListener(frameListener);
-
-        // </editor-fold>        
+        // </editor-fold>
 
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
         GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "index", GlobalOptions.getHelpBroker().getHelpSet());
@@ -415,6 +380,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         MinimapPanel.getSingleton().redraw();
         MapPanel.getSingleton().updateMapPosition(dCenterX, dCenterY);
         DSWorkbenchMarkerFrame.getSingleton().setupMarkerPanel();
+        DSWorkbenchChurchFrame.getSingleton().setupChurchPanel();
         DSWorkbenchAttackFrame.getSingleton().setupAttackPanel();
         //update troops table and troops view
         TroopsManagerTableModel.getSingleton().setup();
@@ -470,41 +436,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         setupFrames();
         //setup toolbox
 
-        /* logger.info(" * Setup toolbox");
-        mToolbox = new ToolBoxFrame();
-        mToolbox.addWindowListener(new WindowListener() {
-
-        @Override
-        public void windowOpened(WindowEvent e) {
-        }
-
-        @Override
-        public void windowClosing(WindowEvent e) {
-        jShowToolboxItem.setSelected(false);
-        }
-
-        @Override
-        public void windowClosed(WindowEvent e) {
-        }
-
-        @Override
-        public void windowIconified(WindowEvent e) {
-        }
-
-        @Override
-        public void windowDeiconified(WindowEvent e) {
-        }
-
-        @Override
-        public void windowActivated(WindowEvent e) {
-        }
-
-        @Override
-        public void windowDeactivated(WindowEvent e) {
-        }
-        });
-         */
-
         fireToolChangedEvent(ImageManager.CURSOR_DEFAULT);
         logger.info(" * Setting up attack planner");
         //setup frames
@@ -525,6 +456,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
     private void setupFrames() {
         DSWorkbenchAttackFrame.getSingleton().addFrameListener(this);
         DSWorkbenchMarkerFrame.getSingleton().addFrameListener(this);
+        DSWorkbenchChurchFrame.getSingleton().addFrameListener(this);
         TroopsManagerTableModel.getSingleton().setup();
         DSWorkbenchTroopsFrame.getSingleton().addFrameListener(this);
         DSWorkbenchRankFrame.getSingleton().addFrameListener(this);
@@ -603,6 +535,17 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                     DSWorkbenchMarkerFrame.getSingleton().setVisible(true);
                 }
 
+            } catch (Exception e) {
+            }
+
+            try {
+                if (jShowChurchFrame.isEnabled()) {
+                    if (Boolean.parseBoolean(GlobalOptions.getProperty("church.frame.visible"))) {
+                        jShowChurchFrame.setSelected(true);
+                        logger.info("Restoring church frame");
+                        DSWorkbenchChurchFrame.getSingleton().setVisible(true);
+                    }
+                }
             } catch (Exception e) {
             }
 
@@ -1448,7 +1391,13 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         });
         jMenu2.add(jShowFormsFrame);
 
+        jShowChurchFrame.setBackground(new java.awt.Color(239, 235, 223));
         jShowChurchFrame.setText(bundle.getString("DSWorkbenchMainFrame.jShowChurchFrame.text")); // NOI18N
+        jShowChurchFrame.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fireShowChurchFrameEvent(evt);
+            }
+        });
         jMenu2.add(jShowChurchFrame);
 
         jMenuBar1.add(jMenu2);
@@ -2029,6 +1978,13 @@ private void fireChangeUVModeEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:ev
     }
 }//GEN-LAST:event_fireChangeUVModeEvent
 
+private void fireShowChurchFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireShowChurchFrameEvent
+    if (jShowChurchFrame.isEnabled()) {
+        DSWorkbenchChurchFrame.getSingleton().setVisible(!DSWorkbenchChurchFrame.getSingleton().isVisible());
+        jShowChurchFrame.setSelected(DSWorkbenchChurchFrame.getSingleton().isVisible());
+    }
+}//GEN-LAST:event_fireShowChurchFrameEvent
+
     protected void switchMarkOnTop() {
         jMarkOnTopBox.setSelected(!jMarkOnTopBox.isSelected());
     }
@@ -2185,6 +2141,8 @@ private void fireChangeUVModeEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:ev
             jShowRankFrame.setSelected(DSWorkbenchRankFrame.getSingleton().isVisible());
         } else if (pSource == DSWorkbenchFormFrame.getSingleton()) {
             jShowFormsFrame.setSelected(DSWorkbenchFormFrame.getSingleton().isVisible());
+        } else if (pSource == DSWorkbenchChurchFrame.getSingleton()) {
+            jShowChurchFrame.setSelected(DSWorkbenchChurchFrame.getSingleton().isVisible());
         }
     }
 

@@ -4,15 +4,18 @@
  */
 package de.tor.tribes.util.church;
 
-import de.tor.tribes.types.Marker;
+import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.DSWorkbenchMarkerFrame;
+import de.tor.tribes.ui.MapPanel;
 import de.tor.tribes.ui.MinimapPanel;
+import de.tor.tribes.ui.renderer.MapRenderer;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.LinkedList;
 import java.util.List;
 import javax.swing.table.DefaultTableModel;
 import org.apache.log4j.Logger;
@@ -31,13 +34,55 @@ public class ChurchManager {
     private static Logger logger = Logger.getLogger("ChurchManager");
     private static ChurchManager SINGLETON = null;
     private Hashtable<Integer, Integer> lChurches = null;
-  private DefaultTableModel model = null;
+    private DefaultTableModel model = null;
+    private List<ChurchManagerListener> mManagerListeners = null;
 
     public static synchronized ChurchManager getSingleton() {
         if (SINGLETON == null) {
             SINGLETON = new ChurchManager();
         }
         return SINGLETON;
+    }
+
+    ChurchManager() {
+        lChurches = new Hashtable<Integer, Integer>();
+        mManagerListeners = new LinkedList<ChurchManagerListener>();
+        model = new javax.swing.table.DefaultTableModel(
+                new Object[][]{},
+                new String[]{
+                    "Dorf", "Reichweite"
+                }) {
+
+            Class[] types = new Class[]{
+                Village.class, Integer.class
+            };
+            boolean[] canEdit = new boolean[]{
+                false, true
+            };
+
+            @Override
+            public Class getColumnClass(int columnIndex) {
+                return types[columnIndex];
+            }
+
+            @Override
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit[columnIndex];
+            }
+        };
+    }
+
+    public synchronized void addChurchManagerListener(ChurchManagerListener pListener) {
+        if (pListener == null) {
+            return;
+        }
+        if (!mManagerListeners.contains(pListener)) {
+            mManagerListeners.add(pListener);
+        }
+    }
+
+    public synchronized void removeChurchManagerListener(ChurchManagerListener pListener) {
+        mManagerListeners.remove(pListener);
     }
 
     /**Load markers from file
@@ -94,8 +139,7 @@ public class ChurchManager {
             }
             logger.debug("Churches imported successfully");
 
-            //@TODO UPDATE CHURCH VIEW
-            MinimapPanel.getSingleton().redraw();
+            fireChurchesChangedEvents();
             return true;
         } catch (Exception e) {
             logger.error("Failed to import churches", e);
@@ -184,7 +228,36 @@ public class ChurchManager {
         return level;
     }
 
-     /**Get the table model which contains all markers*/
+    public void addChurch(Village pVillage, int pRange) {
+        if (pVillage != null) {
+            lChurches.put(pVillage.getId(), pRange);
+        }
+        fireChurchesChangedEvents();
+    }
+
+    public void removeChurch(Village pVillage) {
+        if (pVillage != null) {
+            lChurches.remove(pVillage.getId());
+        }
+        fireChurchesChangedEvents();
+    }
+
+    public void removeChurches(Village[] pVillages) {
+        if (pVillages != null) {
+            for (Village v : pVillages) {
+                if (v != null) {
+                    lChurches.remove(v.getId());
+                }
+            }
+        }
+        fireChurchesChangedEvents();
+    }
+
+    public void churchesUpdatedExternally() {
+        fireChurchesChangedEvents();
+    }
+
+    /**Get the table model which contains all markers*/
     public DefaultTableModel getTableModel() {
 
         //remove former rows
@@ -192,12 +265,22 @@ public class ChurchManager {
             model.removeRow(0);
         }
 
-        Marker[] markers = getMarkers();
-        if (markers.length > 0) {
-            for (int i = 0; i < markers.length; i++) {
-                model.addRow(new Object[]{markers[i].getView(), markers[i].getMarkerColor()});
-            }
+        Enumeration<Integer> ids = lChurches.keys();
+        while (ids.hasMoreElements()) {
+            Integer id = ids.nextElement();
+            Integer range = lChurches.get(id);
+            model.addRow(new Object[]{DataHolder.getSingleton().getVillagesById().get(id), range});
+
         }
         return model;
+    }
+
+    /**Notify all MarkerManagerListeners that the marker data has changed*/
+    private void fireChurchesChangedEvents() {
+        ChurchManagerListener[] listeners = mManagerListeners.toArray(new ChurchManagerListener[]{});
+        for (ChurchManagerListener listener : listeners) {
+            listener.fireChurchesChangedEvent();
+        }
+        MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.MARKER_LAYER);
     }
 }

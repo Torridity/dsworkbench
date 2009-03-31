@@ -10,8 +10,12 @@
  */
 package de.tor.tribes.ui;
 
+import de.tor.tribes.types.Village;
+import de.tor.tribes.ui.editors.VillageCellEditor;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
+import de.tor.tribes.util.church.ChurchManager;
+import de.tor.tribes.util.church.ChurchManagerListener;
 import java.awt.Component;
 import java.util.LinkedList;
 import java.util.List;
@@ -20,12 +24,14 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
 /**
  *
  * @author Charon
  */
-public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame {
+public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements ChurchManagerListener {
 
     private static DSWorkbenchChurchFrame SINGLETON = null;
     private List<TableCellRenderer> mHeaderRenderers = null;
@@ -158,6 +164,7 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame {
         );
 
         jChurchFrameAlwaysOnTop.setText("Immer im Vordergrund");
+        jChurchFrameAlwaysOnTop.setOpaque(false);
         jChurchFrameAlwaysOnTop.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 fireChurchFrameOnTopEvent(evt);
@@ -189,25 +196,41 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void fireChurchFrameOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireChurchFrameOnTopEvent
-       setAlwaysOnTop(!isAlwaysOnTop());
+        setAlwaysOnTop(!isAlwaysOnTop());
     }//GEN-LAST:event_fireChurchFrameOnTopEvent
 
+    protected void setupChurchPanel() {
+        jChurchTable.invalidate();
+        jChurchTable.setModel(ChurchManager.getSingleton().getTableModel());
+        ChurchManager.getSingleton().addChurchManagerListener(this);
+        //setup renderer and general view
+        TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(jChurchTable.getModel());
+        jChurchTable.setRowSorter(sorter);
 
-       @Override
+        jChurchTable.setDefaultEditor(Village.class, new VillageCellEditor());
+        jScrollPane1.getViewport().setBackground(Constants.DS_BACK_LIGHT);
+        //update view
+        ChurchManager.getSingleton().churchesUpdatedExternally();
+        jChurchTable.revalidate();
+        jChurchTable.updateUI();
+
+    }
+
+    @Override
     public void fireChurchesChangedEvent() {
         jChurchTable.invalidate();
         jChurchTable.setModel(ChurchManager.getSingleton().getTableModel());
 
         //setup marker table view
-        jMarkerTable.getColumnModel().getColumn(1).setMaxWidth(75);
+        jChurchTable.getColumnModel().getColumn(1).setMaxWidth(75);
 
-        for (int i = 0; i < jMarkerTable.getColumnCount(); i++) {
-            jMarkerTable.getColumn(jMarkerTable.getColumnName(i)).setHeaderRenderer(mHeaderRenderers.get(i));
+        for (int i = 0; i < jChurchTable.getColumnCount(); i++) {
+            jChurchTable.getColumn(jChurchTable.getColumnName(i)).setHeaderRenderer(mHeaderRenderers.get(i));
         }
 
-        TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(MarkerManager.getSingleton().getTableModel());
-        jMarkerTable.setRowSorter(sorter);
-        jMarkerTable.revalidate();
+        TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(ChurchManager.getSingleton().getTableModel());
+        jChurchTable.setRowSorter(sorter);
+        jChurchTable.revalidate();
     }
 
     /**

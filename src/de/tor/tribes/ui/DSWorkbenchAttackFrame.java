@@ -2095,7 +2095,6 @@ private void fireCopyEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fir
     public void updateTableUI() {
         jAttackTable.updateUI();
     }
-    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JComboBox jActiveAttackPlan;
@@ -2277,10 +2276,13 @@ class ColorUpdateThread extends Thread {
 
     public void run() {
         while (true) {
-            DSWorkbenchAttackFrame.getSingleton().updateTableUI();
             try {
-                Thread.sleep(10000);
-            } catch (Exception e) {
+                DSWorkbenchAttackFrame.getSingleton().updateTableUI();
+                try {
+                    Thread.sleep(10000);
+                } catch (Exception e) {
+                }
+            } catch (Throwable t) {
             }
         }
     }

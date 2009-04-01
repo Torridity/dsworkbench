@@ -9,6 +9,7 @@ import de.tor.tribes.util.xml.JaxenUtils;
 import java.awt.Color;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import org.jdom.Document;
@@ -17,7 +18,7 @@ import org.jdom.Document;
  *
  * @author Charon
  */
-public class Tag {
+public class Tag implements Comparable<Tag> {
 
     /**<tags>
      * <tag name="TagName" shownOnMap="true">
@@ -27,6 +28,7 @@ public class Tag {
      * </tags>
      * 
      */
+    public static final Comparator<Tag> CASE_INSENSITIVE_ORDER = new CaseInsensitiveTagComparator();
     private String sName = null;
     private List<Integer> mVillageIDs = new LinkedList<Integer>();
     private Color tagColor = null;
@@ -160,5 +162,37 @@ public class Tag {
      */
     public void setTagIcon(int tagIcon) {
         this.tagIcon = tagIcon;
+    }
+
+    private static class CaseInsensitiveTagComparator implements Comparator<Tag>, java.io.Serializable {
+        // use serialVersionUID from JDK 1.2.2 for interoperability
+
+        private static final long serialVersionUID = 8575799808933029326L;
+
+        @Override
+        public int compare(Tag s1, Tag s2) {
+            int n1 = s1.toString().length(), n2 = s2.toString().length();
+            for (int i1 = 0, i2 = 0; i1 < n1 && i2 < n2; i1++, i2++) {
+                char c1 = s1.toString().charAt(i1);
+                char c2 = s2.toString().charAt(i2);
+                if (c1 != c2) {
+                    c1 = Character.toUpperCase(c1);
+                    c2 = Character.toUpperCase(c2);
+                    if (c1 != c2) {
+                        c1 = Character.toLowerCase(c1);
+                        c2 = Character.toLowerCase(c2);
+                        if (c1 != c2) {
+                            return c1 - c2;
+                        }
+                    }
+                }
+            }
+            return n1 - n2;
+        }
+    }
+
+    @Override
+    public int compareTo(Tag o) {
+        return CASE_INSENSITIVE_ORDER.compare(this, o);
     }
 }

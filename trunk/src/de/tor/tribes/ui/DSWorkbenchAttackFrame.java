@@ -56,7 +56,7 @@ import org.apache.log4j.Logger;
  */
 public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements AttackManagerListener {
 
-    private static Logger logger = Logger.getLogger("AttackDialog");
+    private static Logger logger = Logger.getLogger("AttackView");
     private static DSWorkbenchAttackFrame SINGLETON = null;
     private List<DefaultTableCellRenderer> renderers = new LinkedList<DefaultTableCellRenderer>();
     private NotifyThread mNotifyThread = null;

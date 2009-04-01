@@ -28,6 +28,7 @@ import org.jdom.Element;
  */
 public class ChurchManager {
 
+    public static final int NO_CHURCH = 0;
     public static final int RANGE1 = 4;
     public static final int RANGE2 = 6;
     public static final int RANGE3 = 8;
@@ -219,13 +220,16 @@ public class ChurchManager {
         logger.info("Not implemented yet");
     }
 
-    public int getChurchLevel(Village v) {
-        Integer level = lChurches.get(v.getId());
-        if (level == null) {
-            return 0;
+    public int getChurchRange(Village v) {
+        if (v == null) {
+            return NO_CHURCH;
+        }
+        Integer range = lChurches.get(v.getId());
+        if (range == null) {
+            return NO_CHURCH;
         }
 
-        return level;
+        return range;
     }
 
     public void addChurch(Village pVillage, int pRange) {

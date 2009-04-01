@@ -12,6 +12,7 @@ import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.WorldDecorationHolder;
 import de.tor.tribes.ui.ImageManager;
 import de.tor.tribes.util.attack.AttackManager;
+import de.tor.tribes.util.church.ChurchManager;
 import de.tor.tribes.util.map.FormManager;
 import de.tor.tribes.util.mark.MarkerManager;
 import de.tor.tribes.util.tag.TagManager;
@@ -20,7 +21,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.net.URL;
+import java.util.Collections;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Properties;
 import javax.help.CSH;
 import javax.help.HelpBroker;
@@ -96,13 +100,19 @@ public class GlobalOptions {
         iUVID = -1;
     }
 
-    public static int getUVID(){
+    public static int getUVID() {
         return iUVID;
     }
 
     /**Get the list of available skins*/
     public static String[] getAvailableSkins() {
-        return new File("graphics/skins").list();
+        List<String> skins = new LinkedList<String>();
+        skins.add(Skin.MINIMAP_SKIN_ID);
+        for (String s : new File("graphics/skins").list()) {
+            skins.add(s);
+        }
+        Collections.sort(skins);
+        return skins.toArray(new String[]{});
     }
 
     private static void loadHelpSystem() {
@@ -202,6 +212,8 @@ public class GlobalOptions {
             TroopsManager.getSingleton().loadTroopsFromFile(DataHolder.getSingleton().getDataDirectory() + "/troops.xml");
             logger.debug("Loading forms");
             FormManager.getSingleton().loadFormsFromFile(DataHolder.getSingleton().getDataDirectory() + "/forms.xml");
+            logger.debug("Loading churches");
+            ChurchManager.getSingleton().loadChurchesFromFile(DataHolder.getSingleton().getDataDirectory() + "/churches.xml");
             logger.debug("Removing temporary data");
             DataHolder.getSingleton().removeTempData();
         }
@@ -221,6 +233,8 @@ public class GlobalOptions {
             TroopsManager.getSingleton().saveTroopsToFile(DataHolder.getSingleton().getDataDirectory() + "/troops.xml");
             logger.debug("Saving forms");
             FormManager.getSingleton().saveFormsToFile(DataHolder.getSingleton().getDataDirectory() + "/forms.xml");
+            logger.debug("Saving churches");
+            ChurchManager.getSingleton().saveChurchesToFile(DataHolder.getSingleton().getDataDirectory() + "/churches.xml");
             logger.debug("User data saved");
         }
     }

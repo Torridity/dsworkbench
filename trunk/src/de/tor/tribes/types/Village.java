@@ -306,8 +306,8 @@ public class Village implements Comparable {
     }
 
     public Rectangle2D.Double getVirtualBounds() {
-        int w = GlobalOptions.getSkin().getFieldWidth();
-        int h = GlobalOptions.getSkin().getFieldHeight();
+        int w = GlobalOptions.getSkin().getBasicFieldHeight();
+        int h = GlobalOptions.getSkin().getBasicFieldHeight();
         double z = DSWorkbenchMainFrame.getSingleton().getZoomFactor();
         return new Rectangle2D.Double(getX(), getY(), (double) w / z, (double) h / z);
     }

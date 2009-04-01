@@ -56,6 +56,7 @@ import net.java.dev.colorchooser.ColorChooser;
 
 /**
  * @TODO (DIFF) Add import settings (overwrite existing tags, overwrite markers)
+ * @TODO (DIFF) Introduce skin "Minimap"
  * @TODO (1.X) Integrate browser access for linux
  * @author  Jejkal
  */

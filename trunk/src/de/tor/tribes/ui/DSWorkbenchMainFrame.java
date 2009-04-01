@@ -22,8 +22,6 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.AWTEventListener;
 import java.awt.event.KeyEvent;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.Hashtable;
@@ -55,8 +53,7 @@ import javax.swing.table.DefaultTableModel;
 /**
  * @TODO (DIFF) UV Mode Icons (uv.png, uv_off.png), Church icon (church.png)
  * @TODO (DIFF) UV Mode (docu!)
- * @TODO (DIFF) Shortcut F7 for churchframe
- * @TODO (1.3) Add some zoom modes for minimap
+ * @TODO (DIFF) Shortcut F7 for churchframe, ALT+C for show church ranges
  * @author  Charon
  */
 public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
@@ -248,6 +245,8 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                         DSWorkbenchMarkerFrame.getSingleton().firePublicDrawMarkedOnlyChangedEvent();
                     } else if ((e.getKeyCode() == KeyEvent.VK_M) && e.isAltDown()) {
                         switchMarkOnTop();
+                    } else if ((e.getKeyCode() == KeyEvent.VK_C) && e.isAltDown()) {
+                        switchShowChurchRange();
                     } else if ((e.getKeyCode() == KeyEvent.VK_S) && e.isAltDown()) {
                         fireCreateMapShotEvent(null);
                     } else if (e.getKeyCode() == KeyEvent.VK_F2) {
@@ -344,6 +343,19 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             jMarkOnTopBox.setSelected(false);
             GlobalOptions.addProperty("mark.on.top", Boolean.toString(false));
         }
+
+        try {
+            String val = GlobalOptions.getProperty("show.church.range");
+            if (val == null) {
+                jChurchRangeBox.setSelected(false);
+                GlobalOptions.addProperty("show.church.range", Boolean.toString(false));
+            } else {
+                jChurchRangeBox.setSelected(Boolean.parseBoolean(val));
+            }
+        } catch (Exception e) {
+            jChurchRangeBox.setSelected(false);
+            GlobalOptions.addProperty("show.church.range", Boolean.toString(false));
+        }
         // </editor-fold>
 
         // </editor-fold>
@@ -402,6 +414,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         }
 
         jShowChurchFrame.setEnabled(ServerSettings.getSingleton().isChurch());
+        jChurchRangeBox.setEnabled(ServerSettings.getSingleton().isChurch());
         logger.info("Server settings updated");
     }
 
@@ -513,8 +526,8 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             //only if set to visible
             MapPanel.getSingleton().updateMapPosition(dCenterX, dCenterY);
 
-            double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
-            double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
+            double w = (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getCurrentFieldWidth();
+            double h = (double) MapPanel.getSingleton().getHeight() / (double) GlobalOptions.getSkin().getCurrentFieldHeight();
             MinimapPanel.getSingleton().setSelection((int) Math.floor(dCenterX), (int) Math.floor(dCenterY), (int) Math.rint(w), (int) Math.rint(h));
 
             // <editor-fold defaultstate="collapsed" desc=" Check frames and toolbar visibility ">
@@ -650,6 +663,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jUVIDField = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
         jUVModeButton = new javax.swing.JToggleButton();
+        jChurchRangeBox = new javax.swing.JCheckBox();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
@@ -1031,7 +1045,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                 .addGroup(jNavigationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jRefreshButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jCenterCoordinateIngame, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(42, Short.MAX_VALUE))
+                .addContainerGap(58, Short.MAX_VALUE))
         );
         jNavigationPanelLayout.setVerticalGroup(
             jNavigationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1118,8 +1132,8 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jInformationPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jCurrentPlayer, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 248, Short.MAX_VALUE)
-                    .addComponent(jCurrentPlayerVillages, javax.swing.GroupLayout.Alignment.LEADING, 0, 248, Short.MAX_VALUE)
+                    .addComponent(jCurrentPlayer, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 264, Short.MAX_VALUE)
+                    .addComponent(jCurrentPlayerVillages, javax.swing.GroupLayout.Alignment.LEADING, 0, 264, Short.MAX_VALUE)
                     .addGroup(jInformationPanelLayout.createSequentialGroup()
                         .addComponent(jCenterIngameButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -1199,6 +1213,13 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             }
         });
 
+        jChurchRangeBox.setText(bundle.getString("DSWorkbenchMainFrame.jChurchRangeBox.text")); // NOI18N
+        jChurchRangeBox.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                fireShowChurchRangeChangedEvent(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -1206,20 +1227,18 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jChurchRangeBox)
                     .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                         .addComponent(jMarkOnTopBox, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jShowMapPopup, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                         .addComponent(jLabel4)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(jUVIDField, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(41, 41, 41))
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(jUVModeButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jUVIDField, javax.swing.GroupLayout.DEFAULT_SIZE, 99, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jUVModeButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jCurrentToolLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
@@ -1230,15 +1249,16 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                 .addComponent(jShowMapPopup)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jMarkOnTopBox)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 8, Short.MAX_VALUE)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4)
-                    .addComponent(jUVIDField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(21, 21, 21)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jChurchRangeBox)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jCurrentToolLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jUVModeButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jUVModeButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel4)
+                        .addComponent(jUVIDField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
 
@@ -1428,7 +1448,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 561, Short.MAX_VALUE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 545, Short.MAX_VALUE)
                 .addGap(6, 6, 6)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addComponent(jInformationPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -1479,8 +1499,8 @@ private void fireRefreshMapEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:eve
         dCenterX = cx;
         dCenterY = cy;
     }
-    double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
-    double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
+    double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getBasicFieldWidth() * dZoomFactor;
+    double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getBasicFieldHeight() * dZoomFactor;
     MinimapPanel.getSingleton().setSelection((int) Math.floor(dCenterX), (int) Math.floor(dCenterY), (int) Math.rint(w), (int) Math.rint(h));
     MapPanel.getSingleton().updateMapPosition(dCenterX, dCenterY);
 }//GEN-LAST:event_fireRefreshMapEvent
@@ -1506,25 +1526,25 @@ private void fireMoveMapEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     }
 
     if (evt.getSource() == jMoveN) {
-        cy -= (double) MapPanel.getSingleton().getHeight() / (double) GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
+        cy -= (double) MapPanel.getSingleton().getHeight() / (double) GlobalOptions.getSkin().getBasicFieldHeight() * dZoomFactor;
     } else if (evt.getSource() == jMoveNE) {
-        cx += (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
-        cy -= (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
+        cx += (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getBasicFieldWidth() * dZoomFactor;
+        cy -= (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getBasicFieldHeight() * dZoomFactor;
     } else if (evt.getSource() == jMoveE) {
-        cx += (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
+        cx += (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getBasicFieldHeight() * dZoomFactor;
     } else if (evt.getSource() == jMoveSE) {
-        cx += (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
-        cy += (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
+        cx += (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getBasicFieldWidth() * dZoomFactor;
+        cy += (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getBasicFieldHeight() * dZoomFactor;
     } else if (evt.getSource() == jMoveS) {
-        cy += (double) MapPanel.getSingleton().getHeight() / (double) GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
+        cy += (double) MapPanel.getSingleton().getHeight() / (double) GlobalOptions.getSkin().getBasicFieldHeight() * dZoomFactor;
     } else if (evt.getSource() == jMoveSW) {
-        cx -= (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
-        cy += (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
+        cx -= (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getBasicFieldWidth() * dZoomFactor;
+        cy += (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getBasicFieldHeight() * dZoomFactor;
     } else if (evt.getSource() == jMoveW) {
-        cx -= (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
+        cx -= (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getBasicFieldHeight() * dZoomFactor;
     } else if (evt.getSource() == jMoveNW) {
-        cx -= (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
-        cy -= (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
+        cx -= (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getBasicFieldWidth() * dZoomFactor;
+        cy -= (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getBasicFieldHeight() * dZoomFactor;
     }
 
     if (ServerSettings.getSingleton().getCoordType() != 2) {
@@ -1540,8 +1560,8 @@ private void fireMoveMapEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     dCenterX = cx;
     dCenterY = cy;
     MapPanel.getSingleton().updateMapPosition(dCenterX, dCenterY);
-    double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
-    double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
+    double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getBasicFieldWidth() * dZoomFactor;
+    double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getBasicFieldHeight() * dZoomFactor;
     MinimapPanel.getSingleton().setSelection((int) Math.floor(cx), (int) Math.floor(cy), (int) Math.rint(w), (int) Math.rint(h));
 }//GEN-LAST:event_fireMoveMapEvent
 
@@ -1569,8 +1589,8 @@ private void fireZoomEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fir
 
         dZoomFactor = Double.parseDouble(NumberFormat.getInstance().format(dZoomFactor).replaceAll(",", "."));
 
-        double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
-        double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
+        double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getBasicFieldWidth() * dZoomFactor;
+        double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getBasicFieldHeight() * dZoomFactor;
         int xPos = Integer.parseInt(jCenterX.getText());
         int yPos = Integer.parseInt(jCenterY.getText());
         if (ServerSettings.getSingleton().getCoordType() != 2) {
@@ -1590,8 +1610,8 @@ private void fireZoomEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fir
 
         dZoomFactor = Double.parseDouble(NumberFormat.getInstance().format(dZoomFactor).replaceAll(",", "."));
 
-        double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
-        double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
+        double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getBasicFieldWidth() * dZoomFactor;
+        double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getBasicFieldHeight() * dZoomFactor;
         int xPos = Integer.parseInt(jCenterX.getText());
         int yPos = Integer.parseInt(jCenterY.getText());
 
@@ -1985,8 +2005,22 @@ private void fireShowChurchFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIR
     }
 }//GEN-LAST:event_fireShowChurchFrameEvent
 
+private void fireShowChurchRangeChangedEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireShowChurchRangeChangedEvent
+    if (!jChurchRangeBox.isEnabled()) {
+        return;
+    }
+    GlobalOptions.addProperty("show.church.range", Boolean.toString(jChurchRangeBox.isSelected()));
+}//GEN-LAST:event_fireShowChurchRangeChangedEvent
+
     protected void switchMarkOnTop() {
         jMarkOnTopBox.setSelected(!jMarkOnTopBox.isSelected());
+    }
+
+    protected void switchShowChurchRange() {
+        if (!jChurchRangeBox.isEnabled()) {
+            return;
+        }
+        jChurchRangeBox.setSelected(!jChurchRangeBox.isSelected());
     }
 
     /**Check if zoom factor is valid and correct if needed*/
@@ -2022,8 +2056,8 @@ private void fireShowChurchFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIR
         dCenterX = dx;
         dCenterY = dy;
         MapPanel.getSingleton().updateMapPosition(dCenterX, dCenterY);
-        double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
-        double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
+        double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getBasicFieldWidth() * dZoomFactor;
+        double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getBasicFieldHeight() * dZoomFactor;
         MinimapPanel.getSingleton().setSelection((int) Math.floor(dx), (int) Math.floor(dy), (int) Math.rint(w), (int) Math.rint(h));
     }
 
@@ -2041,8 +2075,8 @@ private void fireShowChurchFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIR
             jCenterX.setText(Integer.toString((int) Math.floor(dCenterX)));
             jCenterY.setText(Integer.toString((int) Math.floor(dCenterY)));
         }
-        double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getFieldWidth() * dZoomFactor;
-        double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getFieldHeight() * dZoomFactor;
+        double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getBasicFieldWidth() * dZoomFactor;
+        double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getBasicFieldHeight() * dZoomFactor;
         MinimapPanel.getSingleton().setSelection((int) Math.floor(dCenterX), (int) Math.floor(dCenterY), (int) Math.rint(w), (int) Math.rint(h));
         MapPanel.getSingleton().updateMapPosition(dCenterX, dCenterY);
     }
@@ -2223,6 +2257,7 @@ private void fireShowChurchFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIR
     private javax.swing.JButton jCenterIngameButton;
     private javax.swing.JTextField jCenterX;
     private javax.swing.JTextField jCenterY;
+    private javax.swing.JCheckBox jChurchRangeBox;
     private javax.swing.JMenuItem jClockItem;
     private javax.swing.JLabel jCurrentPlayer;
     private javax.swing.JComboBox jCurrentPlayerVillages;

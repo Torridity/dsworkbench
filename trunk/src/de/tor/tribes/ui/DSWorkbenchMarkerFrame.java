@@ -38,7 +38,7 @@ import org.apache.log4j.Logger;
  */
 public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements MarkerManagerListener {
 
-    private static Logger logger = Logger.getLogger(DSWorkbenchMarkerFrame.class);
+    private static Logger logger = Logger.getLogger("MarkerView");
     private static DSWorkbenchMarkerFrame SINGLETON = null;
     private List<TableCellRenderer> mHeaderRenderers = null;
     // private List<DSWorkbenchFrameListener> mFrameListeners = null;

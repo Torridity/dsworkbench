@@ -15,12 +15,13 @@ import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.io.File;
 import java.io.FileWriter;
+import java.util.Collections;
 import java.util.LinkedList;
 import org.jdom.Document;
 import org.jdom.Element;
 
 /**Manager for village tags. Tags can be stored in files or in a database (not implemented yet)
-* @TODO (1.3) Sort tags
+ * @TODO (DIFF) Sort tags alphabetically
  * @author Jejkal
  */
 public class TagManager {
@@ -82,6 +83,7 @@ public class TagManager {
                 } else {
                     logger.warn(cnt + " errors while loading tags");
                 }
+                Collections.sort(mTags);
             } catch (Exception e) {
                 logger.error("Failed to load tags", e);
             }
@@ -121,6 +123,7 @@ public class TagManager {
                         }
 
                     }
+                    Collections.sort(mTags);
                 } catch (Exception inner) {
                 }
             }
@@ -260,7 +263,9 @@ public class TagManager {
                 nt.tagVillage(pVillage.getId());
             }
             mTags.add(nt);
+            Collections.sort(mTags);
         }
+
         fireTagsChangedEvents();
     }
 

@@ -22,12 +22,12 @@ import javax.imageio.ImageIO;
 import org.apache.log4j.Logger;
 
 /**
- *
  * @author Charon
  */
 public class Skin {
 
     private static Logger logger = Logger.getLogger("TexturePack");    //init with default skin dimensions
+    public final static String MINIMAP_SKIN_ID = "minimap";
     private int iFieldWidth = 0;
     private int iFieldHeight = 0;
     /**Texture IDs*/
@@ -93,7 +93,19 @@ public class Skin {
     }
 
     public Skin(String pSkinPath) throws Exception {
-        loadSkin(pSkinPath);
+        if (!pSkinPath.equals(MINIMAP_SKIN_ID)) {
+            loadSkin(pSkinPath);
+        } else {
+            loadMinimapSkin();
+        }
+    }
+
+    public boolean isMinimapSkin() {
+        try {
+            return (sSkinID.equals(MINIMAP_SKIN_ID));
+        } catch (Exception e) {
+        }
+        return false;
     }
 
     /**Get the list of available skins*/
@@ -109,6 +121,13 @@ public class Skin {
         SkinPreviewFrame f = new SkinPreviewFrame(new Skin(pSkinID));
         f.setLocation(pPos);
         f.setVisible(true);
+    }
+
+    private void loadMinimapSkin() throws Exception {
+        sSkinID = MINIMAP_SKIN_ID;
+        iFieldWidth = 10;
+        iFieldHeight = 10;
+        mTextures = new Hashtable<Integer, BufferedImage>();
     }
 
     private void loadSkin(String pSkinID) throws Exception {
@@ -176,39 +195,54 @@ public class Skin {
         if (pScaling == 1) {
             return mTextures.get(pID);
         }
-        /*
-        Hashtable<Integer, Image> cache = mCache.get(pScaling);
-        if (cache != null) {
-        if (cache.get(pID) == null) {
-        cache.put(pID, mTextures.get(pID).getScaledInstance((int) (iFieldWidth / pScaling), (int) (iFieldHeight / pScaling), BufferedImage.SCALE_FAST));
+        try {
+            /*
+            Hashtable<Integer, Image> cache = mCache.get(pScaling);
+            if (cache != null) {
+            if (cache.get(pID) == null) {
+            cache.put(pID, mTextures.get(pID).getScaledInstance((int) (iFieldWidth / pScaling), (int) (iFieldHeight / pScaling), BufferedImage.SCALE_FAST));
+            }
+
+            } else {
+            cache = new Hashtable<Integer, Image>();
+            cache.put(pID, mTextures.get(pID).getScaledInstance((int) (iFieldWidth / pScaling), (int) (iFieldHeight / pScaling), BufferedImage.SCALE_FAST));
+            mCache.put(pScaling, cache);
+            }
+
+            return cache.get(pID);*/
+            Image ret = mTextures.get(pID).getScaledInstance((int) (iFieldWidth / pScaling), (int) (iFieldHeight / pScaling), BufferedImage.SCALE_FAST);
+            return ret;
+        } catch (Exception e) {
+            return null;
         }
-        
-        } else {
-        cache = new Hashtable<Integer, Image>();
-        cache.put(pID, mTextures.get(pID).getScaledInstance((int) (iFieldWidth / pScaling), (int) (iFieldHeight / pScaling), BufferedImage.SCALE_FAST));
-        mCache.put(pScaling, cache);
-        }
-        
-        return cache.get(pID);*/
-        return mTextures.get(pID).getScaledInstance((int) (iFieldWidth / pScaling), (int) (iFieldHeight / pScaling), BufferedImage.SCALE_FAST);
     }
 
-    public int getFieldWidth() {
+    public int getCurrentFieldWidth() {
+        return (int) (iFieldWidth / DSWorkbenchMainFrame.getSingleton().getZoomFactor());
+    }
+
+    public int getCurrentFieldHeight() {
+        return (int) (iFieldHeight / DSWorkbenchMainFrame.getSingleton().getZoomFactor());
+    }
+
+    public int getBasicFieldWidth() {
         return iFieldWidth;
     }
 
-    public int getFieldHeight() {
+    public int getBasicFieldHeight() {
         return iFieldHeight;
     }
 
     public Point2D.Double getError() {
         double z = DSWorkbenchMainFrame.getSingleton().getZoomFactor();
         //get real size of one scaled texture
-        double w = getFieldWidth() / z;
-        double h = getFieldHeight() / z;
+        double w = getBasicFieldWidth() / z;
+        double h = getBasicFieldHeight() / z;
         //get int size of texture
-        int ws = getImage(Skin.ID_DEFAULT_UNDERGROUND, z).getWidth(null);
-        int hs = getImage(Skin.ID_DEFAULT_UNDERGROUND, z).getHeight(null);
+        /*int ws = getImage(Skin.ID_DEFAULT_UNDERGROUND, z).getWidth(null);
+        int hs = getImage(Skin.ID_DEFAULT_UNDERGROUND, z).getHeight(null);*/
+        double ws = GlobalOptions.getSkin().getCurrentFieldWidth();
+        double hs = GlobalOptions.getSkin().getCurrentFieldHeight();
         //calculate error in width and height
         double errorw = w / ws - 1;
         errorw *= (ws < w) ? - 1 : 1;

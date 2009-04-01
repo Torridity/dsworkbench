@@ -55,7 +55,6 @@ import javax.swing.UIManager;
  * @TODO (DIFF) Snob range included
  *@TODO (1.X) Add flag-marker for single villages/notes? -> notes as forms? (Version 2.0)
  * @TODO (DIFF) Church range added
- *@TODO (1.3) Add church map/tactical map (mark on top mode) ... ?
  * @author  Charon
  */
 public class MapPanel extends javax.swing.JPanel {
@@ -550,9 +549,11 @@ public class MapPanel extends javax.swing.JPanel {
                         double dy = (double) location.getY() - (double) mouseDownPoint.getY();
                         mouseDownPoint = location;
                         double zoom = DSWorkbenchMainFrame.getSingleton().getZoomFactor();
-                        Image i = GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, zoom);
+                        /*Image i = GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, zoom);
                         double w = (double) i.getWidth(null);
-                        double h = (double) i.getHeight(null);
+                        double h = (double) i.getHeight(null);*/
+                        double w = GlobalOptions.getSkin().getCurrentFieldWidth();
+                        double h = GlobalOptions.getSkin().getCurrentFieldHeight();
                         fireScrollEvents(-dx / w, -dy / h);
                         break;
                     }
@@ -997,8 +998,10 @@ public class MapPanel extends javax.swing.JPanel {
         double zoom = DSWorkbenchMainFrame.getSingleton().getZoomFactor();
         double xV = pViewStart.getX();
         double yV = pViewStart.getY();
-        double wV = (double) getWidth() / ((double) GlobalOptions.getSkin().getFieldWidth() / zoom);
-        double hV = (double) getHeight() / ((double) GlobalOptions.getSkin().getFieldHeight() / zoom);
+        /*double wV = (double) getWidth() / ((double) GlobalOptions.getSkin().getFieldWidth() / zoom);
+        double hV = (double) getHeight() / ((double) GlobalOptions.getSkin().getFieldHeight() / zoom);*/
+        double wV = (double) getWidth() / GlobalOptions.getSkin().getCurrentFieldWidth();
+        double hV = (double) getHeight() / GlobalOptions.getSkin().getCurrentFieldHeight();
         mVirtualBounds.setRect(xV, yV, wV, hV);
     }
 
@@ -1016,10 +1019,12 @@ public class MapPanel extends javax.swing.JPanel {
 
     public Point virtualPosToSceenPos(double pXVirt, double pYVirt) {
         double z = DSWorkbenchMainFrame.getSingleton().getZoomFactor();
-        Image tmp = GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, z);
+        /*Image tmp = GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, z);
         double width = (double) tmp.getWidth(null);
         double height = (double) tmp.getHeight(null);
-
+*/
+        double width = GlobalOptions.getSkin().getCurrentFieldWidth();
+        double height = GlobalOptions.getSkin().getCurrentFieldHeight();
         double xp = (pXVirt - mVirtualBounds.getX()) * width;
         double yp = (pYVirt - mVirtualBounds.getY()) * height;
         return new Point((int) Math.rint(xp), (int) Math.rint(yp));
@@ -1027,9 +1032,11 @@ public class MapPanel extends javax.swing.JPanel {
 
     public Point2D.Double mouseToVirtualPos(int pX, int pY) {
         double z = DSWorkbenchMainFrame.getSingleton().getZoomFactor();
-        Image tmp = GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, z);
+      /*  Image tmp = GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, z);
         double width = (double) tmp.getWidth(null);
-        double height = (double) tmp.getHeight(null);
+        double height = (double) tmp.getHeight(null);*/
+        double width = GlobalOptions.getSkin().getCurrentFieldWidth();
+        double height = GlobalOptions.getSkin().getCurrentFieldHeight();
         double x = mVirtualBounds.getX() + ((double) pX / (double) width);
         double y = mVirtualBounds.getY() + ((double) pY / (double) height);
         return new Point2D.Double(x, y);
@@ -1038,9 +1045,11 @@ public class MapPanel extends javax.swing.JPanel {
     public Point2D.Double virtualPosToSceenPosDouble(double pXVirt, double pYVirt) {
         double z = DSWorkbenchMainFrame.getSingleton().getZoomFactor();
         //calculate real pos in current frame
-        Image tmp = GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, z);
+       /* Image tmp = GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, z);
         double width = (double) tmp.getWidth(null);
-        double height = (double) tmp.getHeight(null);
+        double height = (double) tmp.getHeight(null);*/
+        double width = GlobalOptions.getSkin().getCurrentFieldWidth();
+        double height = GlobalOptions.getSkin().getCurrentFieldHeight();
         double xp = (pXVirt - mVirtualBounds.getX()) * width;
         double yp = (pYVirt - mVirtualBounds.getY()) * height;
         return new Point2D.Double(xp, yp);

@@ -68,7 +68,8 @@ import javax.swing.JSpinner.DateEditor;
  * @TODO (DIFF) Continent selection for source and target
  * @TODO (DIFF) No-Fake, UseSnob, FilterOff Icon (no_fake.png, use_snob.png, filter_off.png)
  * @TODO (DIFF) Continent based source and target list
- * @TODO (1.3) Fakes definable in source list
+ * @TODO (DIFF) Fakes definable in source list
+ * @TODO (1.3) Change AG assignment for Blitzkrieg
  * @author Jejkal
  */
 public class TribeTribeAttackFrame extends javax.swing.JFrame implements VillageSelectionListener {

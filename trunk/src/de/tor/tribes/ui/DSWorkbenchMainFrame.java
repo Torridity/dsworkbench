@@ -54,6 +54,8 @@ import javax.swing.table.DefaultTableModel;
  * @TODO (DIFF) UV Mode Icons (uv.png, uv_off.png), Church icon (church.png)
  * @TODO (DIFF) UV Mode (docu!)
  * @TODO (DIFF) Shortcut F7 for churchframe, ALT+C for show church ranges
+ * @TODO (1.3) Check unit selection on 9 unit servers for manual attack creation (ram selected, marcher used)
+ * @TODO (1.3) Skip preview for 'Minimap' skin
  * @author  Charon
  */
 public class DSWorkbenchMainFrame extends javax.swing.JFrame implements

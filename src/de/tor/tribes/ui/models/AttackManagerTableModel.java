@@ -84,31 +84,35 @@ public class AttackManagerTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int pRow, int pCol) {
-        List<Attack> attacks = AttackManager.getSingleton().getAttackPlan(getActiveAttackPlan());
-        Attack a = null;
-        if (attacks.size() > pRow) {
-            a = attacks.get(pRow);
-        } else {
-            return null;
-        }
-
-        switch (pCol) {
-            case 0:
-                return a.getSource();
-            case 1:
-                return a.getTarget();
-            case 2:
-                return a.getUnit();
-            case 3: {
-                long sendTime = a.getArriveTime().getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(a.getSource(), a.getTarget(), a.getUnit().getSpeed()) * 1000);
-                return new Date(sendTime);
+        try {
+            List<Attack> attacks = AttackManager.getSingleton().getAttackPlan(getActiveAttackPlan());
+            Attack a = null;
+            if (attacks.size() > pRow) {
+                a = attacks.get(pRow);
+            } else {
+                return null;
             }
-            case 4:
-                return a.getArriveTime();
-            case 5:
-                return a.isShowOnMap();
-            default:
-                return a.getType();
+
+            switch (pCol) {
+                case 0:
+                    return a.getSource();
+                case 1:
+                    return a.getTarget();
+                case 2:
+                    return a.getUnit();
+                case 3: {
+                    long sendTime = a.getArriveTime().getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(a.getSource(), a.getTarget(), a.getUnit().getSpeed()) * 1000);
+                    return new Date(sendTime);
+                }
+                case 4:
+                    return a.getArriveTime();
+                case 5:
+                    return a.isShowOnMap();
+                default:
+                    return a.getType();
+            }
+        } catch (Exception e) {
+            return null;
         }
     }
 
@@ -126,6 +130,7 @@ public class AttackManagerTableModel extends AbstractTableModel {
 
     @Override
     public void setValueAt(Object pValue, int pRow, int pCol) {
+        try{
         String activePlan = getActiveAttackPlan();
         Attack a = AttackManager.getSingleton().getAttackPlan(activePlan).get(pRow);
         switch (pCol) {
@@ -188,7 +193,9 @@ public class AttackManagerTableModel extends AbstractTableModel {
                 break;
             }
         }
-        DSWorkbenchAttackFrame.getSingleton().updateTableUI();
+        //DSWorkbenchAttackFrame.getSingleton().updateTableUI();
+        }catch(Exception e){
+        }
     }
 
     @Override

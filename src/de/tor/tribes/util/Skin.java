@@ -19,7 +19,9 @@ import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import javax.imageio.ImageIO;
+import javax.swing.JOptionPane;
 import org.apache.log4j.Logger;
+import de.tor.tribes.ui.DSWorkbenchSettingsDialog;
 
 /**
  * @author Charon
@@ -118,9 +120,13 @@ public class Skin {
     }
 
     public static void showPreview(String pSkinID, Point pPos) throws Exception {
-        SkinPreviewFrame f = new SkinPreviewFrame(new Skin(pSkinID));
-        f.setLocation(pPos);
-        f.setVisible(true);
+        try {
+            SkinPreviewFrame f = new SkinPreviewFrame(new Skin(pSkinID));
+            f.setLocation(pPos);
+            f.setVisible(true);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(DSWorkbenchSettingsDialog.getSingleton(), "Keine Vorschauf verfügbar.", "Informatione", JOptionPane.INFORMATION_MESSAGE);
+        }
     }
 
     private void loadMinimapSkin() throws Exception {

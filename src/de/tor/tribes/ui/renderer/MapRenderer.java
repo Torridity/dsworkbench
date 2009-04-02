@@ -78,7 +78,7 @@ import org.apache.log4j.Logger;
  * @TODO (DIFF) Font size for distance
  * @TODO (DIFF) Minimap skin added
  * @TODO (DIFF) Popup not outside FOV any longer
- * @TODO (1.3) Ignore tag icons if field size < 10 !?
+ * @TODO (DIFF) Ignore tag icons if field size < tagSize
  * @author Charon
  */
 /**Thread for updating after scroll operations
@@ -110,7 +110,7 @@ public class MapRenderer extends Thread {
     private double currentZoom = 0.0;
     private Village currentUserVillage = null;
     private Image mMainBuffer = null;
-    private BufferedImage church = null;
+    // private BufferedImage church = null;
 
     public MapRenderer() {
         mVisibleVillages = new Village[iVillagesX][iVillagesY];
@@ -123,11 +123,11 @@ public class MapRenderer extends Thread {
             logger.error("Failed to load border images", e);
         }
 
-        try {
-            church = ImageIO.read(new File("graphics/icons/church.png"));
+        /*try {
+        church = ImageIO.read(new File("graphics/icons/church.png"));
         } catch (Exception e) {
-            logger.error("Failed to load church image", e);
-        }
+        logger.error("Failed to load church image", e);
+        }*/
         mLayers = new Hashtable<Integer, BufferedImage>();
     }
 
@@ -756,6 +756,8 @@ public class MapRenderer extends Thread {
             return;
         }
 
+        int tagsize = (int) Math.rint((double) 18 / currentZoom);
+
         BufferedImage layer = null;
         Graphics2D g2d = null;
         //prepare drawing buffer
@@ -778,11 +780,13 @@ public class MapRenderer extends Thread {
                 g2d.fillRect(0, 0, wb, hb);
                 g2d.setComposite(c);
             }
-
         }
 
+        if (tagsize > GlobalOptions.getSkin().getCurrentFieldHeight() ||
+                tagsize > GlobalOptions.getSkin().getCurrentFieldWidth()) {
+            return;
+        }
         Hashtable<Integer, Point> copyRegions = new Hashtable<Integer, Point>();
-        int tagsize = (int) Math.rint((double) 18 / currentZoom);
 
         // <editor-fold defaultstate="collapsed" desc="Graphics drawing">
         Enumeration<Village> villages = villagePositions.keys();
@@ -1102,11 +1106,11 @@ public class MapRenderer extends Thread {
 
         Rectangle g = null;
         Village v = null;
-        Image iChurch = null;
+        /* Image iChurch = null;
         if (church != null) {
-            iChurch = church.getScaledInstance((int) (church.getWidth() / currentZoom), (int) (church.getHeight() / currentZoom), BufferedImage.SCALE_DEFAULT);
+        iChurch = church.getScaledInstance((int) (church.getWidth() / currentZoom), (int) (church.getHeight() / currentZoom), BufferedImage.SCALE_DEFAULT);
         }
-
+         */
         for (int i = 0; i < mVisibleVillages.length; i++) {
             for (int j = 0; j < mVisibleVillages[0].length; j++) {
                 v = mVisibleVillages[i][j];
@@ -1116,9 +1120,9 @@ public class MapRenderer extends Thread {
                     g = villagePositions.get(v);
 
                     // <editor-fold defaultstate="collapsed" desc=" Church calc">
-                    if (iChurch != null) {
-                        g2d.drawImage(iChurch, (int) g.getX() + iChurch.getWidth(null) / 2, (int) g.getY() - iChurch.getHeight(null) + (int) g.getHeight() / 2, null);
-                    }
+                   /* if (iChurch != null) {
+                    g2d.drawImage(iChurch, (int) g.getX() + iChurch.getWidth(null) / 2, (int) g.getY() - iChurch.getHeight(null) + (int) g.getHeight() / 2, null);
+                    }*/
                     List<Point2D.Double> positions = ChurchRangeCalculator.getChurchRange(v.getX(), v.getY(), range);
                     GeneralPath p = new GeneralPath();
                     p.moveTo(g.getX(), g.getY() - (range - 1) * g.getHeight());

@@ -60,7 +60,6 @@ public class AttackAddFrame extends javax.swing.JFrame {
                 }
             }
         });
-        buildUnitBox();
     }
 
     /**Check if the currently selected unit can arrive at the target village at the selected time.
@@ -75,7 +74,7 @@ public class AttackAddFrame extends javax.swing.JFrame {
         return (sendMillis > System.currentTimeMillis() + moveTime);
     }
 
-    private void buildUnitBox() {
+    protected void buildUnitBox() {
         DefaultComboBoxModel model = new DefaultComboBoxModel();
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
             model.addElement(unit);

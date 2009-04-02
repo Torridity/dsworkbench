@@ -241,8 +241,8 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Village
             }*/
             // </editor-fold>
 
-            jSendTime.updateUI();
-            jArriveTime.updateUI();
+            jSendTime.repaint();//.updateUI();
+            jArriveTime.repaint();//.updateUI();
             jAttacksTable.setDefaultRenderer(Date.class, new DateCellRenderer());
             jAttacksTable.setDefaultEditor(Date.class, new DateSpinEditor());
             jAttacksTable.setDefaultEditor(UnitHolder.class, new UnitCellEditor());
@@ -2028,6 +2028,7 @@ private void fireAttacksToClipboardEvent(java.awt.event.MouseEvent evt) {//GEN-F
             UnitHolder sUnit = (UnitHolder) resultModel.getValueAt(i, 1);
             Village tVillage = (Village) resultModel.getValueAt(i, 2);
             Date dTime = (Date) resultModel.getValueAt(i, 3);
+            int type = (Integer) resultModel.getValueAt(i, 4);
             String time = null;
             if (extended) {
                 time = new SimpleDateFormat("'[color=red]'dd.MM.yy 'um' HH:mm:ss.'[size=8]'SSS'[/size][/color]'").format(dTime);
@@ -2035,7 +2036,32 @@ private void fireAttacksToClipboardEvent(java.awt.event.MouseEvent evt) {//GEN-F
                 time = new SimpleDateFormat("'[color=red]'dd.MM.yy 'um' HH:mm:ss.SSS'[/color]'").format(dTime);
             }
 
-            buffer.append("Angriff ");
+            switch (type) {
+                case Attack.CLEAN_TYPE: {
+                    buffer.append("Angriff (Clean-Off) ");
+                    buffer.append("\n");
+                    break;
+                }
+                case Attack.FAKE_TYPE: {
+                    buffer.append("Angriff (Fake) ");
+                    buffer.append("\n");
+                    break;
+                }
+                case Attack.SNOB_TYPE: {
+                    buffer.append("Angriff (AG) ");
+                    buffer.append("\n");
+                    break;
+                }
+                case Attack.SUPPORT_TYPE: {
+                    buffer.append("Unterstützung ");
+                    buffer.append("\n");
+                    break;
+                }
+                default: {
+                    buffer.append("Angriff ");
+                }
+            }
+
             if (Boolean.parseBoolean(GlobalOptions.getProperty("export.tribe.names"))) {
                 buffer.append(" von ");
                 if (sVillage.getTribe() != null) {
@@ -2119,7 +2145,32 @@ private void fireUnformattedAttacksToClipboardEvent(java.awt.event.MouseEvent ev
             UnitHolder sUnit = (UnitHolder) resultModel.getValueAt(i, 1);
             Village tVillage = (Village) resultModel.getValueAt(i, 2);
             Date dTime = (Date) resultModel.getValueAt(i, 3);
+            int type = (Integer) resultModel.getValueAt(i, 4);
             String time = new SimpleDateFormat("dd.MM.yy HH:mm:ss.SSS").format(dTime);
+
+            switch (type) {
+                case Attack.CLEAN_TYPE: {
+                    buffer.append("(Clean-Off)");
+                    buffer.append("\t");
+                    break;
+                }
+                case Attack.FAKE_TYPE: {
+                    buffer.append("(Fake)");
+                    buffer.append("\t");
+                    break;
+                }
+                case Attack.SNOB_TYPE: {
+                    buffer.append("(AG)");
+                    buffer.append("\t");
+                    break;
+                }
+                case Attack.SUPPORT_TYPE: {
+                    buffer.append("(Unterstützung)");
+                    buffer.append("\t");
+                    break;
+                }
+            }
+
             buffer.append(sVillage);
             buffer.append("\t");
             buffer.append(sUnit);
@@ -2233,7 +2284,7 @@ private void fireAddTargetVillageEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
     jVictimTable.invalidate();
     victimModel.addRow(new Object[]{village.getTribe(), village});
     jVictimTable.revalidate();
-    jVictimTable.updateUI();
+    jVictimTable.repaint();//.updateUI();
 }//GEN-LAST:event_fireAddTargetVillageEvent
 
 private void fireAddAllTargetVillagesEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireAddAllTargetVillagesEvent
@@ -2249,7 +2300,7 @@ private void fireAddAllTargetVillagesEvent(java.awt.event.MouseEvent evt) {//GEN
     }
 
     jVictimTable.revalidate();
-    jVictimTable.updateUI();
+    jVictimTable.repaint();//.updateUI();
 }//GEN-LAST:event_fireAddAllTargetVillagesEvent
 
 private void fireTargetTribeChangedEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireTargetTribeChangedEvent
@@ -2321,7 +2372,7 @@ private void fireVillageGroupChangedEvent(java.awt.event.ActionEvent evt) {//GEN
         }
         Collections.sort(continents, String.CASE_INSENSITIVE_ORDER);
         jSourceVillageContinentChooser.setModel(new DefaultComboBoxModel(continents.toArray(new String[]{})));
-        jSourceVillageContinentChooser.updateUI();
+        jSourceVillageContinentChooser.repaint();//.updateUI();
         jSourceVillageContinentChooser.setSelectedIndex(0);
     }
 
@@ -2345,11 +2396,11 @@ private void fireVillageGroupChangedEvent(java.awt.event.ActionEvent evt) {//GEN
             Collections.sort(continents, String.CASE_INSENSITIVE_ORDER);
 
             jTargetVillageContinentChooser.setModel(new DefaultComboBoxModel(continents.toArray(new String[]{})));
-            jTargetVillageContinentChooser.updateUI();
+            jTargetVillageContinentChooser.repaint();//.updateUI();
             jTargetVillageContinentChooser.setSelectedIndex(0);
         } else {
             jTargetVillageContinentChooser.setModel(new DefaultComboBoxModel());
-            jTargetVillageContinentChooser.updateUI();
+            jTargetVillageContinentChooser.repaint();//.updateUI();
         }
     }
 
@@ -2655,7 +2706,7 @@ private void fireSourceVillageContinentChangedEvent(java.awt.event.ActionEvent e
             for (Village v : toRemove) {
                 jSourceVillageList.removeItem(v);
             }
-            jSourceVillageList.updateUI();
+            jSourceVillageList.repaint();//.updateUI();
         } catch (Exception e) {
         }
     }
@@ -2690,7 +2741,7 @@ private void fireTargetContinentChangedEvent(java.awt.event.ActionEvent evt) {//
             for (Village v : toRemove) {
                 jTargetVillageBox.removeItem(v);
             }
-            jTargetVillageBox.updateUI();
+            jTargetVillageBox.repaint();//.updateUI();
         } catch (Exception e) {
         }
     }
@@ -2812,7 +2863,7 @@ private void fireChangeSourceFakeStateEvent(java.awt.event.MouseEvent evt) {//GE
                 }
             }
             jVictimTable.revalidate();
-            jVictimTable.updateUI();
+            jVictimTable.repaint();//.updateUI();
         }
         bChooseSourceRegionMode = false;
         bChooseTargetRegionMode = false;

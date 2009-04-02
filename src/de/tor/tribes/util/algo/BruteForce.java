@@ -43,6 +43,7 @@ public class BruteForce extends AbstractAttackAlgorithm {
         List<Village> notAssigned = new LinkedList<Village>();
         Hashtable<Tribe, Integer> attacksPerTribe = new Hashtable<Tribe, Integer>();
         logger.debug("Assigning offs");
+
         // <editor-fold defaultstate="collapsed" desc=" Assign Offs">
 
         while (unitKeys.hasMoreElements()) {
@@ -107,9 +108,16 @@ public class BruteForce extends AbstractAttackAlgorithm {
                 }
             }
         }
-// </editor-fold>
+        // </editor-fold>
+
+        logger.debug("Removing off targets from fake list");
+        Enumeration<Village> targets = attacks.keys();
+        while (targets.hasMoreElements()) {
+            pTargets.remove(targets.nextElement());
+        }
 
         logger.debug("Assigning fakes");
+        
         // <editor-fold defaultstate="collapsed" desc=" Assign fakes">
         unitKeys = pFakes.keys();
         Hashtable<Village, Hashtable<Village, UnitHolder>> fakes = new Hashtable<Village, Hashtable<Village, UnitHolder>>();

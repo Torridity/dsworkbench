@@ -83,11 +83,13 @@ public class Blitzkrieg extends AbstractAttackAlgorithm {
         assignOffs(pOffs, offSources, pTargets, timeFrame, pMaxAttacksPerVillage);
         int fullOffs = 0;
 
-        logger.debug("Checking for full offs");
+        logger.debug("Checking for full offs and removing off tagets from faked list");
         for (Off f : pOffs) {
             if (f.offComplete()) {
                 fullOffs++;
             }
+            //remove target to disallow faking of village a off is running at
+            pTargets.remove(f.getTarget());
         }
         setFullOffs(fullOffs);
         logger.debug("Assigning fakes");

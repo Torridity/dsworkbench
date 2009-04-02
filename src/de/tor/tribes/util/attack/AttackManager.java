@@ -110,7 +110,7 @@ public class AttackManager {
         }
     }
 
-    public boolean importAttacks(File pFile) {
+    public boolean importAttacks(File pFile, String pExtension) {
         if (pFile == null) {
             logger.error("File argument is 'null'");
             return false;
@@ -122,6 +122,9 @@ public class AttackManager {
             for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//plans/plan")) {
                 String planKey = e.getAttributeValue("key");
                 planKey = URLDecoder.decode(planKey, "UTF-8");
+                if (pExtension != null) {
+                    planKey += "_" + pExtension;
+                }
                 if (logger.isDebugEnabled()) {
                     logger.debug("Loading plan '" + planKey + "'");
                 }

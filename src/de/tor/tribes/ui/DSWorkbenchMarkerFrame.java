@@ -334,7 +334,7 @@ private void fireDrawFilterClickedEvent(java.awt.event.MouseEvent evt) {//GEN-FI
         //update view
         MarkerManager.getSingleton().markerUpdatedExternally();
         jMarkerTable.revalidate();
-        jMarkerTable.updateUI();
+        jMarkerTable.repaint();//.updateUI();
     }
 
     @Override

@@ -574,7 +574,7 @@ public class FormConfigFrame extends javax.swing.JFrame {
         mTextColorChooser.setColor(mCurrentForm.getTextColor());
         jTextTransparency.setValue(Math.abs(mCurrentForm.getTextAlpha()));
         jTextHeight.setValue(mCurrentForm.getTextSize());
-        jSamplePanel.updateUI();
+        jSamplePanel.repaint();//.updateUI();
 
         //showing frame
         setVisible(true);
@@ -583,7 +583,7 @@ public class FormConfigFrame extends javax.swing.JFrame {
         state &= ~ICONIFIED;
         // Deiconify the frame
         setExtendedState(state);
-        jSamplePanel.updateUI();
+        jSamplePanel.repaint();//.updateUI();
         setupMode = false;
     }
 
@@ -827,7 +827,7 @@ public class FormConfigFrame extends javax.swing.JFrame {
             mSamplePanel.setTextSize((Integer) jTextHeight.getValue());
             mSamplePanel.setTextColor(mTextColorChooser.getColor());
             mSamplePanel.setTextTransparency((Float) jTextTransparency.getValue());
-            jSamplePanel.updateUI();
+            jSamplePanel.repaint();//.updateUI();
         }
     }
 

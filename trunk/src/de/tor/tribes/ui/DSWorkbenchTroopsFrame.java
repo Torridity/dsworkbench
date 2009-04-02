@@ -6,6 +6,8 @@
 package de.tor.tribes.ui;
 
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.types.Village;
+import de.tor.tribes.ui.models.CurrentTribeVillagesModel;
 import de.tor.tribes.ui.models.TroopsManagerTableModel;
 import de.tor.tribes.util.Constants;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -31,7 +33,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 /**
- *@TODO (1.3) Allow to add troops for single villages
+ *@TODO (DIFF) Allow to add troops for single villages
  * @author  Jejkal
  */
 public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements TroopsManagerListener {
@@ -94,6 +96,8 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
         } catch (Exception e) {
             logger.error("Failed to read table header icons", e);
         }
+        jAddTroopsDialog.pack();
+
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
         GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.troops_view", GlobalOptions.getHelpBroker().getHelpSet());
 // </editor-fold>
@@ -109,12 +113,69 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jAddTroopsDialog = new javax.swing.JDialog();
+        jLabel1 = new javax.swing.JLabel();
+        jVillageBox = new javax.swing.JComboBox();
+        jAddButton = new javax.swing.JButton();
+        jButton4 = new javax.swing.JButton();
         jTroopsInformationAlwaysOnTop = new javax.swing.JCheckBox();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTroopsTable = new javax.swing.JTable();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
+
+        jAddTroopsDialog.setTitle("Dorf  hinzufügen");
+        jAddTroopsDialog.setAlwaysOnTop(true);
+        jAddTroopsDialog.setModal(true);
+
+        jLabel1.setText("Dorf");
+
+        jAddButton.setText("Hinzufügen");
+        jAddButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireTroopAddActionEvent(evt);
+            }
+        });
+
+        jButton4.setText("Schließen");
+        jButton4.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireTroopAddActionEvent(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jAddTroopsDialogLayout = new javax.swing.GroupLayout(jAddTroopsDialog.getContentPane());
+        jAddTroopsDialog.getContentPane().setLayout(jAddTroopsDialogLayout);
+        jAddTroopsDialogLayout.setHorizontalGroup(
+            jAddTroopsDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jAddTroopsDialogLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jVillageBox, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jAddTroopsDialogLayout.createSequentialGroup()
+                .addContainerGap(57, Short.MAX_VALUE)
+                .addComponent(jButton4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jAddButton)
+                .addContainerGap())
+        );
+        jAddTroopsDialogLayout.setVerticalGroup(
+            jAddTroopsDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jAddTroopsDialogLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jAddTroopsDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(jVillageBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jAddTroopsDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jAddButton)
+                    .addComponent(jButton4))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
 
         setTitle("Truppen");
 
@@ -151,10 +212,19 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
 
         jButton2.setBackground(new java.awt.Color(239, 235, 223));
         jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/add.gif"))); // NOI18N
-        jButton2.setToolTipText("Gewählte Truppeninformationen entfernen");
+        jButton2.setToolTipText("Neues Dorf ohne Truppeninformationen hinzufügen");
         jButton2.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireAddTroopsEvent(evt);
+            }
+        });
+
+        jButton3.setBackground(new java.awt.Color(239, 235, 223));
+        jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/center.png"))); // NOI18N
+        jButton3.setToolTipText("Gewähltes Dorf auf der Karte zentrieren");
+        jButton3.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireCenterSelectionEvent(evt);
             }
         });
 
@@ -166,9 +236,11 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
                 .addContainerGap()
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 531, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton1))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButton1))
+                    .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -179,7 +251,9 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 413, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -236,12 +310,50 @@ private void fireRemoveTroopsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
         TroopsManagerTableModel.getSingleton().removeRow(row);
         jTroopsTable.revalidate();
     }
-    jTroopsTable.updateUI();
+    jTroopsTable.repaint();//.updateUI();
 }//GEN-LAST:event_fireRemoveTroopsEvent
 
 private void fireAddTroopsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireAddTroopsEvent
-    // TODO add your handling code here:
+    jVillageBox.setModel(CurrentTribeVillagesModel.getModel());
+    jAddTroopsDialog.setLocationRelativeTo(this);
+    jAddTroopsDialog.setVisible(true);
 }//GEN-LAST:event_fireAddTroopsEvent
+
+private void fireTroopAddActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireTroopAddActionEvent
+    if (evt.getSource() == jAddButton) {
+        try {
+            Village v = (Village) jVillageBox.getSelectedItem();
+            if (v != null) {
+                int units = DataHolder.getSingleton().getUnits().size();
+                List<Integer> emptyUnitList = new LinkedList<Integer>();
+                for (int i = 0; i < units; i++) {
+                    emptyUnitList.add(0);
+                }
+                if (TroopsManager.getSingleton().getTroopsForVillage(v) == null) {
+                    TroopsManager.getSingleton().addTroopsForVillage(v, emptyUnitList);
+                    JOptionPane.showMessageDialog(jAddTroopsDialog, "Truppen hinzugefügt", "Information", JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(jAddTroopsDialog, "Für das gewählte Dorf sind bereits Truppeninformationen vorhanden.", "Information", JOptionPane.INFORMATION_MESSAGE);
+                }
+            }
+        } catch (Exception e) {
+            logger.error("Failed to add empty troop list", e);
+            JOptionPane.showMessageDialog(jAddTroopsDialog, "Fehler beim hinzufügen der Truppen", "Warnung", JOptionPane.WARNING_MESSAGE);
+        }
+    } else {
+        jAddTroopsDialog.setVisible(false);
+    }
+}//GEN-LAST:event_fireTroopAddActionEvent
+
+private void fireCenterSelectionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCenterSelectionEvent
+    try {
+        int row = jTroopsTable.convertRowIndexToModel(jTroopsTable.getSelectedRow());
+        Village v = (Village) jTroopsTable.getValueAt(row, 1);
+        DSWorkbenchMainFrame.getSingleton().centerVillage(v);
+    } catch (Exception e) {
+        logger.error("Failed to center village", e);
+    }
+}//GEN-LAST:event_fireCenterSelectionEvent
 
     protected void setupTroopsPanel() {
         jTroopsTable.invalidate();
@@ -314,17 +426,23 @@ private void fireAddTroopsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:even
             }
 
             jTroopsTable.revalidate();
-            jTroopsTable.updateUI();
+            jTroopsTable.repaint();//.updateUI();
         } catch (Exception e) {
             logger.error("Failed to update troops table", e);
         }
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jAddButton;
+    private javax.swing.JDialog jAddTroopsDialog;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton4;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JCheckBox jTroopsInformationAlwaysOnTop;
     private javax.swing.JTable jTroopsTable;
+    private javax.swing.JComboBox jVillageBox;
     // End of variables declaration//GEN-END:variables
 }

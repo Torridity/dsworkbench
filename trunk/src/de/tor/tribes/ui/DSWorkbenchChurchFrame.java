@@ -14,6 +14,7 @@ import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.editors.VillageCellEditor;
+import de.tor.tribes.ui.models.CurrentTribeVillagesModel;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.church.ChurchManager;
@@ -395,23 +396,9 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
         //update view
         ChurchManager.getSingleton().churchesUpdatedExternally();
         jChurchTable.revalidate();
-        jChurchTable.updateUI();
+        jChurchTable.repaint();
 
-        try {
-            String playerID = GlobalOptions.getProperty("player." + GlobalOptions.getSelectedServer());
-            Tribe t = DataHolder.getSingleton().getTribeByName(playerID);
-
-            Village[] villages = t.getVillageList().toArray(new Village[]{});
-            Arrays.sort(villages, Village.CASE_INSENSITIVE_ORDER);
-            DefaultComboBoxModel model = new DefaultComboBoxModel(villages);
-            jTribeVillageList.setModel(model);
-            jChurchLevel.setSelectedIndex(0);
-            jOpenAddChurchDialogButton.setEnabled(true);
-        } catch (Exception e) {
-            logger.error("Failed to obtain current player", e);
-            //do not allow add if tribe village list was not set
-            jOpenAddChurchDialogButton.setEnabled(false);
-        }
+        jTribeVillageList.setModel(CurrentTribeVillagesModel.getModel());
     }
 
     @Override

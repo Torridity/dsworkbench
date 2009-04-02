@@ -36,7 +36,7 @@ public class VillageTagFrame extends javax.swing.JFrame {
 
     public void updateUserTags() {
         jTagsChooser.setModel(new DefaultComboBoxModel(TagManager.getSingleton().getTags().toArray(new Tag[]{})));
-        jTagsChooser.updateUI();
+        jTagsChooser.repaint();//.updateUI();
     }
 
     public void showTagsFrame(Village pVillage) {

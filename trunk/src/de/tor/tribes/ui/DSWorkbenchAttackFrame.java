@@ -52,6 +52,7 @@ import org.apache.log4j.Logger;
 
 /**
  * @TODO (DIFF) Colored send time depending on remaining time
+ * @TODO (DIFF) Attack type exported
  * @author  Charon
  */
 public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements AttackManagerListener {
@@ -95,13 +96,16 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
 
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                int selected = jAttackTable.getSelectedRows().length;
-                if (selected == 0) {
-                    setTitle("Angriffe");
-                } else if (selected == 1) {
-                    setTitle("Angriffe (1 Angriff ausgewählt)");
-                } else if (selected > 1) {
-                    setTitle("Angriffe (" + selected + " Angriffe ausgewählt)");
+                try {
+                    int selected = jAttackTable.getSelectedRows().length;
+                    if (selected == 0) {
+                        setTitle("Angriffe");
+                    } else if (selected == 1) {
+                        setTitle("Angriffe (1 Angriff ausgewählt)");
+                    } else if (selected > 1) {
+                        setTitle("Angriffe (" + selected + " Angriffe ausgewählt)");
+                    }
+                } catch (Exception ignored) {
                 }
             }
         });
@@ -1208,7 +1212,7 @@ private void fireRemoveAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
         AttackManagerTableModel.getSingleton().removeRow(row);
         jAttackTable.revalidate();
     }
-    jAttackTable.updateUI();
+    jAttackTable.repaint();//.updateUI();
 }//GEN-LAST:event_fireRemoveAttackEvent
 
 private void fireValidateAttacksEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireValidateAttacksEvent
@@ -1277,7 +1281,7 @@ private void fireDrawSelectedEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
             jAttackTable.revalidate();
         }
     }
-    jAttackTable.updateUI();
+    jAttackTable.repaint();//.updateUI();
 }//GEN-LAST:event_fireDrawSelectedEvent
 
 private void fireCopyUnformatedToClipboardEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCopyUnformatedToClipboardEvent
@@ -1294,9 +1298,33 @@ private void fireCopyUnformatedToClipboardEvent(java.awt.event.MouseEvent evt) {
                 UnitHolder sUnit = attacks.get(row).getUnit();
                 Date aTime = attacks.get(row).getArriveTime();
                 Date sTime = new Date(aTime.getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(sVillage, tVillage, sUnit.getSpeed()) * 1000));
-
+                int type = attacks.get(row).getType();
                 String sendtime = new SimpleDateFormat("dd.MM.yy HH:mm:ss.SSS").format(sTime);
                 String arrivetime = new SimpleDateFormat("dd.MM.yy HH:mm:ss.SSS").format(aTime);
+
+                switch (type) {
+                    case Attack.CLEAN_TYPE: {
+                        buffer.append("(Clean-Off)");
+                        buffer.append("\t");
+                        break;
+                    }
+                    case Attack.FAKE_TYPE: {
+                        buffer.append("(Fake)");
+                        buffer.append("\t");
+                        break;
+                    }
+                    case Attack.SNOB_TYPE: {
+                        buffer.append("(AG)");
+                        buffer.append("\t");
+                        break;
+                    }
+                    case Attack.SUPPORT_TYPE: {
+                        buffer.append("(Unterstützung)");
+                        buffer.append("\t");
+                        break;
+                    }
+                }
+
                 if (sVillage.getTribe() == null) {
                     buffer.append("Barbaren");
                 } else {
@@ -1361,6 +1389,7 @@ private void fireCopyAsBBCodeToClipboardEvent(java.awt.event.MouseEvent evt) {//
                 UnitHolder sUnit = attacks.get(row).getUnit();
                 Date aTime = attacks.get(row).getArriveTime();
                 Date sTime = new Date(aTime.getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(sVillage, tVillage, sUnit.getSpeed()) * 1000));
+                int type = attacks.get(row).getType();
                 String sendtime = null;
                 String arrivetime = null;
                 if (extended) {
@@ -1370,7 +1399,29 @@ private void fireCopyAsBBCodeToClipboardEvent(java.awt.event.MouseEvent evt) {//
                     sendtime = new SimpleDateFormat("'[color=red]'dd.MM.yy 'um' HH:mm:ss.SSS'[/color]'").format(sTime);
                     arrivetime = new SimpleDateFormat("'[color=green]'dd.MM.yy 'um' HH:mm:ss.SSS'[/color]'").format(aTime);
                 }
-                buffer.append("Angriff ");
+
+                switch (type) {
+                    case Attack.CLEAN_TYPE: {
+                        buffer.append("Angriff (Clean-Off) ");
+                        break;
+                    }
+                    case Attack.FAKE_TYPE: {
+                        buffer.append("Angriff (Fake) ");
+                        break;
+                    }
+                    case Attack.SNOB_TYPE: {
+                        buffer.append("Angriff (AG) ");
+                        break;
+                    }
+                    case Attack.SUPPORT_TYPE: {
+                        buffer.append("Unterstützung ");
+                        break;
+                    }
+                    default: {
+                        buffer.append("Angriff ");
+                    }
+                }
+
                 if (Boolean.parseBoolean(GlobalOptions.getProperty("export.tribe.names"))) {
                     buffer.append(" von ");
                     if (sVillage.getTribe() != null) {
@@ -1535,7 +1586,7 @@ private void fireSourcePlayerChangedEvent(java.awt.event.ActionEvent evt) {//GEN
             //create model with player villages in attack plan
             setTableModel(jSourceVillageTable, villageMarks);
             jSourceVillageTable.revalidate();
-            jSourceVillageTable.updateUI();
+            jSourceVillageTable.repaint();//.updateUI();
         }
     } catch (Exception e) {
         //"please select" selected    
@@ -1576,7 +1627,7 @@ private void fireTargetPlayerChangedEvent(java.awt.event.ActionEvent evt) {//GEN
         //create model with player villages in attack plan
         setTableModel(jTargetVillageTable, villageMarks);
         jTargetVillageTable.revalidate();
-        jTargetVillageTable.updateUI();
+        jTargetVillageTable.repaint();//.updateUI();
     } catch (Exception e) {
         //"please select" selected    
         setTableModel(jTargetVillageTable, new Hashtable<Village, Boolean>());
@@ -1678,7 +1729,7 @@ private void fireSelectNoneAllEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
             }
 
             jSourceVillageTable.revalidate();
-            jSourceVillageTable.updateUI();
+            jSourceVillageTable.repaint();//.updateUI();
         }
 
     } else if (evt.getSource() == jNoSourceVillageButton) {
@@ -1689,7 +1740,7 @@ private void fireSelectNoneAllEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
         }
 
         jSourceVillageTable.revalidate();
-        jSourceVillageTable.updateUI();
+        jSourceVillageTable.repaint();//.updateUI();
     } else if (evt.getSource() == jAllTargetVillageButton) {
         //update target table values that all villages are selected
         if (jTargetVillageTable.getRowCount() > 0) {
@@ -1700,7 +1751,7 @@ private void fireSelectNoneAllEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
             }
 
             jTargetVillageTable.revalidate();
-            jTargetVillageTable.updateUI();
+            jTargetVillageTable.repaint();//.updateUI();
         }
 
     } else if (evt.getSource() == jNoTargetVillageButton) {
@@ -1712,7 +1763,7 @@ private void fireSelectNoneAllEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
         }
 
         jTargetVillageTable.revalidate();
-        jTargetVillageTable.updateUI();
+        jTargetVillageTable.repaint();//.updateUI();
     }
 }//GEN-LAST:event_fireSelectNoneAllEvent
 
@@ -1740,7 +1791,7 @@ private void fireCloseTimeChangeDialogEvent(java.awt.event.MouseEvent evt) {//GE
                 }
 
                 jAttackTable.revalidate();
-                jAttackTable.updateUI();
+                jAttackTable.repaint();//.updateUI();
             } else {
                 Date arrive = (Date) jArriveDateField.getValue();
                 jAttackTable.invalidate();
@@ -1752,7 +1803,7 @@ private void fireCloseTimeChangeDialogEvent(java.awt.event.MouseEvent evt) {//GE
                 }
 
                 jAttackTable.revalidate();
-                jAttackTable.updateUI();
+                jAttackTable.repaint();//.updateUI();
             }
         }
     }
@@ -1829,7 +1880,7 @@ private void fireActiveAttackChangedEvent(java.awt.event.ItemEvent evt) {//GEN-F
         jAttackTable.setRowSorter(new TableRowSorter(AttackManagerTableModel.getSingleton()));
         AttackManagerTableModel.getSingleton().setActiveAttackPlan((String) jActiveAttackPlan.getSelectedItem());
 
-        jAttackTable.updateUI();
+        jAttackTable.repaint();//.updateUI();
         jAttackTable.revalidate();
     }
 }//GEN-LAST:event_fireActiveAttackChangedEvent
@@ -1978,7 +2029,7 @@ private void fireCopyEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fir
             jAttackTable.revalidate();
         }
         AttackManager.getSingleton().forceUpdate(current);
-        jAttackTable.updateUI();
+        jAttackTable.repaint();//.updateUI();
     }
 
     jCopyToPlanDialog.setVisible(false);
@@ -2086,15 +2137,12 @@ private void fireCopyEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fir
                 jAttackTable.getColumn(jAttackTable.getColumnName(i)).setHeaderRenderer(renderers.get(i));
             }
             jAttackTable.revalidate();
-            jAttackTable.updateUI();
+            jAttackTable.repaint();//.updateUI();
         } catch (Exception e) {
             logger.error("Failed to update attacks table", e);
         }
     }
 
-    public void updateTableUI() {
-        jAttackTable.updateUI();
-    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JComboBox jActiveAttackPlan;
@@ -2277,7 +2325,7 @@ class ColorUpdateThread extends Thread {
     public void run() {
         while (true) {
             try {
-                DSWorkbenchAttackFrame.getSingleton().updateTableUI();
+                DSWorkbenchAttackFrame.getSingleton().repaint();
                 try {
                     Thread.sleep(10000);
                 } catch (Exception e) {

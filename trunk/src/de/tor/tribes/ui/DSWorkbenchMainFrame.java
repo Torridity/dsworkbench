@@ -34,6 +34,7 @@ import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import org.apache.log4j.Logger;
 import de.tor.tribes.types.Tag;
+import de.tor.tribes.ui.models.CurrentTribeVillagesModel;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.MapShotListener;
 import de.tor.tribes.util.ServerSettings;
@@ -54,8 +55,8 @@ import javax.swing.table.DefaultTableModel;
  * @TODO (DIFF) UV Mode Icons (uv.png, uv_off.png), Church icon (church.png)
  * @TODO (DIFF) UV Mode (docu!)
  * @TODO (DIFF) Shortcut F7 for churchframe, ALT+C for show church ranges
- * @TODO (1.3) Check unit selection on 9 unit servers for manual attack creation (ram selected, marcher used)
- * @TODO (1.3) Skip preview for 'Minimap' skin
+ * @TODO (DIFF) Unit selection on 9 unit servers corrected
+ * @TODO (DIFF) Add import-extension option to mark imported, other players data?
  * @author  Charon
  */
 public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
@@ -229,7 +230,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                         } else {
                             fullscreenFrame.remove(MapPanel.getSingleton());
                             jPanel1.add(MapPanel.getSingleton());
-                            jPanel1.updateUI();
+                            jPanel1.repaint();//.updateUI();
                             MapPanel.getSingleton().getMapRenderer().initiateRedraw(0);
                             fullscreenFrame.dispose();
                             fullscreenFrame = null;
@@ -378,21 +379,12 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         String playerID = GlobalOptions.getProperty("player." + GlobalOptions.getSelectedServer()) + "@" + GlobalOptions.getSelectedServer();
         jCurrentPlayer.setText(playerID);
 
-        Tribe t = DataHolder.getSingleton().getTribeByName(GlobalOptions.getProperty("player." + GlobalOptions.getSelectedServer()));
-        if (t != null) {
-            Village[] villages = t.getVillageList().toArray(new Village[]{});
-            Arrays.sort(villages);
-            jCurrentPlayerVillages.setModel(new DefaultComboBoxModel(villages));
-            if ((villages != null && villages.length > 0)) {
-                centerVillage(villages[0]);
-            }
-        } else {
-            DefaultComboBoxModel model = new DefaultComboBoxModel(new Object[]{"Keine Dörfer"});
-            jCurrentPlayerVillages.setModel(model);
-        }
+        jCurrentPlayerVillages.setModel(CurrentTribeVillagesModel.getModel());
+
         //update views
         MinimapPanel.getSingleton().redraw();
         MapPanel.getSingleton().updateMapPosition(dCenterX, dCenterY);
+        MapPanel.getSingleton().getAttackAddFrame().buildUnitBox();
         DSWorkbenchMarkerFrame.getSingleton().setupMarkerPanel();
         DSWorkbenchChurchFrame.getSingleton().setupChurchPanel();
         DSWorkbenchAttackFrame.getSingleton().setupAttackPanel();
@@ -1813,11 +1805,20 @@ private void fireShowImportDialogEvent(java.awt.event.ActionEvent evt) {//GEN-FI
                 file += ".xml";
             }
             File target = new File(file);
+
+            String extension = JOptionPane.showInputDialog(this, "Welche Kennzeichnung sollen importierte Angriffspläne und Tags erhalten?\n" +
+                    "Lass das Eingabefeld leer oder drücke 'Abbrechen', um sie unverändert zu importieren.", "Kennzeichnung festlegen", JOptionPane.INFORMATION_MESSAGE);
+            if (extension != null && extension.length() > 0) {
+                logger.debug("Using import extension '" + extension + "'");
+            } else {
+                logger.debug("Using no import extension");
+                extension = null;
+            }
             if (target.exists()) {
                 //do import
-                boolean attackImported = AttackManager.getSingleton().importAttacks(target);
+                boolean attackImported = AttackManager.getSingleton().importAttacks(target, extension);
                 boolean markersImported = MarkerManager.getSingleton().importMarkers(target);
-                boolean tagImported = TagManager.getSingleton().importTags(target);
+                boolean tagImported = TagManager.getSingleton().importTags(target, extension);
                 boolean troopsImported = TroopsManager.getSingleton().importTroops(target);
                 boolean formsImported = FormManager.getSingleton().importForms(target);
 
@@ -1975,7 +1976,7 @@ private void fireOpenExportDialogEvent(java.awt.event.ActionEvent evt) {//GEN-FI
         model.addRow(new Object[]{next, Boolean.FALSE});
     }
     jAttackExportTable.revalidate();
-    jAttackExportTable.updateUI();
+    jAttackExportTable.repaint();//.updateUI();
 
     jExportDialog.setVisible(true);
 }//GEN-LAST:event_fireOpenExportDialogEvent

@@ -271,6 +271,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
             Logger.getLogger("dswb").addAppender(a);
         } catch (IOException ioe) {
         }
+
         java.awt.EventQueue.invokeLater(new Runnable() {
 
             @Override
@@ -292,7 +293,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
     }
 
     public void updateStatus() {
-        jStatusOutput.updateUI();
+        jStatusOutput.repaint();//.updateUI();
     }
 
     @Override

@@ -24,6 +24,7 @@ public class BrowserCommandSender {
     public static void sendTroops(Village pSource, Village pTarget) {
         try {
             String baseURL = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
+            
             String url = baseURL + "/game.php?village=";
             int uvID = GlobalOptions.getUVID();
             if (uvID >= 0) {
@@ -44,16 +45,16 @@ public class BrowserCommandSender {
             A.insertUnit(A.document.forms['units'].elements['attack'].click());    
              */
             Desktop.getDesktop().browse(new URI(url));
-        } catch (Exception e) {
+        } catch (Throwable t) {
             JOptionPane.showMessageDialog(null, "Fehler beim Öffnen des Browsers", "Fehler", JOptionPane.ERROR_MESSAGE);
-            logger.error("Failed to open browser window", e);
+            logger.error("Failed to open browser window", t);
         }
     }
 
     public static void openPage(String pUrl) {
         try {
             Desktop.getDesktop().browse(new URI(pUrl));
-        } catch (Exception e) {
+        } catch (Throwable t) {
             logger.error("Failed opening URL " + pUrl);
         }
     }
@@ -68,9 +69,9 @@ public class BrowserCommandSender {
             }
             url += pSource.getId() + "&screen=map&x=" + pSource.getX() + "&y=" + pSource.getY();
             Desktop.getDesktop().browse(new URI(url));
-        } catch (Exception e) {
+        } catch (Throwable t) {
             JOptionPane.showMessageDialog(null, "Fehler beim Öffnen des Browsers", "Fehler", JOptionPane.ERROR_MESSAGE);
-            logger.error("Failed to open browser window", e);
+            logger.error("Failed to open browser window", t);
         }
     }
 
@@ -84,9 +85,9 @@ public class BrowserCommandSender {
             }
             url += "&screen=map&x=" + pX + "&y=" + pY;
             Desktop.getDesktop().browse(new URI(url));
-        } catch (Exception e) {
+        } catch (Throwable t) {
             JOptionPane.showMessageDialog(null, "Fehler beim Öffnen des Browsers", "Fehler", JOptionPane.ERROR_MESSAGE);
-            logger.error("Failed to open browser window", e);
+            logger.error("Failed to open browser window", t);
         }
     }
 
@@ -100,9 +101,9 @@ public class BrowserCommandSender {
             }
             url += pSource.getId() + "&screen=market&mode=send&target=" + pTarget.getId();
             Desktop.getDesktop().browse(new URI(url));
-        } catch (Exception e) {
+        } catch (Throwable t) {
             JOptionPane.showMessageDialog(null, "Fehler beim Öffnen des Browsers", "Fehler", JOptionPane.ERROR_MESSAGE);
-            logger.error("Failed to open browser window", e);
+            logger.error("Failed to open browser window", t);
         }
     }
 }

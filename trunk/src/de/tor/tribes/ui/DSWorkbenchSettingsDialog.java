@@ -56,9 +56,8 @@ import net.java.dev.colorchooser.ColorChooser;
 
 /**
  * @TODO (DIFF) Add import settings (overwrite existing tags, overwrite markers)
- * @TODO (DIFF) Introduce skin "Minimap"
  * @TODO (1.X) Integrate browser access for linux
- * @author  Jejkal
+ * @author Jejkal
  */
 public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         DataHolderListener,
@@ -546,7 +545,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         for (int i = 0; i < jTagTable.getColumnCount(); i++) {
             jTagTable.getColumnModel().getColumn(i).setHeaderRenderer(headerRenderer);
         }
-        jTagTable.updateUI();
+        jTagTable.repaint();//.updateUI();
     }
 
     @Override
@@ -3146,7 +3145,7 @@ private void fireCancelChangePasswordEvent(java.awt.event.MouseEvent evt) {//GEN
             jTagTable.invalidate();
             GlobalOptions.loadUserData();
             jTagTable.revalidate();
-            jTagTable.updateUI();
+            jTagTable.repaint();//.updateUI();
         }
 
         updating = false;

@@ -656,6 +656,10 @@ public class MapPanel extends javax.swing.JPanel {
         return mMapRenderer;
     }
 
+    protected AttackAddFrame getAttackAddFrame() {
+        return attackAddFrame;
+    }
+
     private int countVillages(Point pStart, Point pEnd) {
         int cnt = 0;
         //sort coordinates
@@ -1022,7 +1026,7 @@ public class MapPanel extends javax.swing.JPanel {
         /*Image tmp = GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, z);
         double width = (double) tmp.getWidth(null);
         double height = (double) tmp.getHeight(null);
-*/
+         */
         double width = GlobalOptions.getSkin().getCurrentFieldWidth();
         double height = GlobalOptions.getSkin().getCurrentFieldHeight();
         double xp = (pXVirt - mVirtualBounds.getX()) * width;
@@ -1032,7 +1036,7 @@ public class MapPanel extends javax.swing.JPanel {
 
     public Point2D.Double mouseToVirtualPos(int pX, int pY) {
         double z = DSWorkbenchMainFrame.getSingleton().getZoomFactor();
-      /*  Image tmp = GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, z);
+        /*  Image tmp = GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, z);
         double width = (double) tmp.getWidth(null);
         double height = (double) tmp.getHeight(null);*/
         double width = GlobalOptions.getSkin().getCurrentFieldWidth();

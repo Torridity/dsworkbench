@@ -123,7 +123,7 @@ public class SamplePanel extends javax.swing.JPanel {
     }
 
     public BufferedImage createSample() {
-        BufferedImage result = new BufferedImage(6 * GlobalOptions.getSkin().getFieldWidth(), 2 * GlobalOptions.getSkin().getFieldHeight(), BufferedImage.TYPE_INT_RGB);
+        BufferedImage result = new BufferedImage(6 * GlobalOptions.getSkin().getBasicFieldWidth(), 2 * GlobalOptions.getSkin().getBasicFieldHeight(), BufferedImage.TYPE_INT_RGB);
         Graphics2D g2d = (Graphics2D) result.getGraphics();
         g2d.setColor(Color.RED);
         g2d.fillRect(0, 0, result.getWidth(), result.getHeight());

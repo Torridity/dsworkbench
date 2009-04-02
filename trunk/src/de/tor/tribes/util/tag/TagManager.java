@@ -95,7 +95,7 @@ public class TagManager {
         VillageTagFrame.getSingleton().updateUserTags();
     }
 
-    public boolean importTags(File pFile) {
+    public boolean importTags(File pFile, String pExtension) {
         if (pFile == null) {
             logger.error("File argument is 'null'");
             return false;
@@ -106,6 +106,9 @@ public class TagManager {
             for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//tags/tag")) {
                 try {
                     Tag t = Tag.fromXml(e);
+                    if (pExtension != null) {
+                        t.setName(t.getName() + "_" + pExtension);
+                    }
                     Tag existing = getTagByName(t.getName());
                     if (existing == null) {
                         //add new tag
@@ -255,7 +258,7 @@ public class TagManager {
 
         if (!added) {
             if (logger.isDebugEnabled()) {
-                logger.debug("Adding new tag " + pTag + " for village " + pVillage);
+                logger.debug("Adding new tag " + pTag + ((pVillage != null) ? (" for village " + pVillage) : ""));
             }
             Tag nt = new Tag(pTag, true);
             if (pVillage != null) {
@@ -295,9 +298,9 @@ public class TagManager {
         if (pVillage == null) {
             return;
         }
-        if (logger.isDebugEnabled()) {
-            logger.debug("Removing all tags for village " + pVillage);
-        }
+        /*if (logger.isDebugEnabled()) {
+        logger.debug("Removing all tags for village " + pVillage);
+        }*/
 
         for (Tag t : mTags) {
             t.untagVillage(pVillage.getId());

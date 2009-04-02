@@ -6,6 +6,7 @@
 package de.tor.tribes.ui;
 
 import de.tor.tribes.util.Skin;
+import java.io.File;
 import javax.swing.ImageIcon;
 
 /**
@@ -17,11 +18,16 @@ public class SkinPreviewFrame extends javax.swing.JDialog {
     /** Creates new form SkinPreviewFrame */
     public SkinPreviewFrame(Skin pSkin) throws Exception {
         initComponents();
-        ImageIcon icon = new ImageIcon(pSkin.getPreviewFile());
+        File preview = new File(pSkin.getPreviewFile());
+        if (!preview.exists()) {
+            throw new Exception("Preview file does not exist");
+        }
+        ImageIcon icon = new ImageIcon(preview.toURI().toURL());
         setSize(icon.getIconWidth(), icon.getIconHeight());
         jLabel1.setSize(icon.getIconWidth(), icon.getIconHeight());
         jLabel1.setIcon(new ImageIcon(pSkin.getPreviewFile()));
         setModal(true);
+        pack();
     }
 
     /** This method is called from within the constructor to

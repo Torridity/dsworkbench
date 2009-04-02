@@ -148,12 +148,20 @@ public class AllInOne extends AbstractAttackAlgorithm {
         assignOffs(pOffs, offSources, pTargets, timeFrame, pMaxAttacksPerVillage);
 
         int fullOffs = 0;
-        logger.debug("Checking for full attacks");
+        logger.debug("Checking for full attacks and removing off tagets from faked list");
         for (Off f : pOffs) {
             if (f.offComplete()) {
                 fullOffs++;
             }
+            //remove off target from list of fakes villages
+            pTargets.remove(f.getTarget());
         }
+
+        //remove enoblement targets from faked list
+        for (Enoblement e : aEnoblements) {
+            pTargets.remove(e.getTarget());
+        }
+
         setFullOffs(fullOffs);
         List<Fake> pFinalFakes = new LinkedList<Fake>();
         logger.debug("Generating fakes");

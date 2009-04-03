@@ -5,7 +5,7 @@
  */
 package de.tor.tribes.ui;
 
-import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.php.ScreenUploadInterface;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.models.TroopsManagerTableModel;
@@ -23,11 +23,9 @@ import java.awt.Toolkit;
 import java.awt.event.AWTEventListener;
 import java.awt.event.KeyEvent;
 import java.text.NumberFormat;
-import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -45,6 +43,7 @@ import java.io.File;
 import javax.swing.JFileChooser;
 import de.tor.tribes.util.troops.TroopsManager;
 import java.awt.Component;
+import java.awt.datatransfer.StringSelection;
 import java.io.FileWriter;
 import java.util.Enumeration;
 import javax.swing.JTable;
@@ -78,6 +77,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
     private JFrame fullscreenFrame = null;
     private ImageIcon uvModeOn = null;
     private ImageIcon uvModeOff = null;
+    private boolean putOnline = false;
 
     public static synchronized DSWorkbenchMainFrame getSingleton() {
         if (SINGLETON == null) {
@@ -686,7 +686,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("de/tor/tribes/ui/Bundle"); // NOI18N
         jLabel3.setText(bundle.getString("DSWorkbenchMainFrame.jLabel3.text")); // NOI18N
 
-        jFileTypeChooser.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "png", "gif", "jpg", "bmp" }));
+        jFileTypeChooser.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "png", "gif", "jpeg" }));
         jFileTypeChooser.setMaximumSize(new java.awt.Dimension(80, 22));
         jFileTypeChooser.setMinimumSize(new java.awt.Dimension(80, 22));
         jFileTypeChooser.setPreferredSize(new java.awt.Dimension(80, 22));
@@ -1715,55 +1715,92 @@ private void fireMarkOnTopChangedEvent(javax.swing.event.ChangeEvent evt) {//GEN
 }//GEN-LAST:event_fireMarkOnTopChangedEvent
 
 private void fireCreateMapShotEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCreateMapShotEvent
-    String dir = GlobalOptions.getProperty("screen.dir");
-    if (dir == null) {
-        dir = ".";
-    }
-    JFileChooser chooser = new JFileChooser(dir);
-    chooser.setDialogTitle("Speichern unter...");
-    chooser.setSelectedFile(new File("map"));
 
-    final String type = (String) jFileTypeChooser.getSelectedItem();
-    chooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
 
-        @Override
-        public boolean accept(File f) {
-            if ((f != null) && (f.isDirectory() || f.getName().endsWith(type))) {
-                return true;
-            }
-            return false;
+    UIManager.put("OptionPane.yesButtonText", "Online stellen");
+    UIManager.put("OptionPane.noButtonText", "Nur Speichern");
+    if (JOptionPane.showConfirmDialog(this, "Willst du die Karte online stellen oder auf deinem Rechner speichern?", "Speichern", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+        UIManager.put("OptionPane.noButtonText", "No");
+        UIManager.put("OptionPane.yesButtonText", "Yes");
+        putOnline = true;
+        MapPanel.getSingleton().planMapShot("png", new File("tmp.png"), this);
+    } else {
+        UIManager.put("OptionPane.noButtonText", "No");
+        UIManager.put("OptionPane.yesButtonText", "Yes");
+        putOnline = false;
+        String dir = GlobalOptions.getProperty("screen.dir");
+        if (dir == null) {
+            dir = ".";
         }
+        JFileChooser chooser = new JFileChooser(dir);
+        chooser.setDialogTitle("Speichern unter...");
+        chooser.setSelectedFile(new File("map"));
+        chooser.addChoosableFileFilter(new javax.swing.filechooser.FileFilter() {
 
-        @Override
-        public String getDescription() {
-            return "*." + type;
-        }
-    });
-    int ret = chooser.showSaveDialog(jMapShotDialog);
-    if (ret == JFileChooser.APPROVE_OPTION) {
-        try {
-            File f = chooser.getSelectedFile();
-            String file = f.getCanonicalPath();
-            if (!file.endsWith(type)) {
-                file += "." + type;
+            @Override
+            public boolean accept(File f) {
+                if ((f != null) && (f.isDirectory() || f.getName().endsWith(".png"))) {
+                    return true;
+                }
+                return false;
             }
-            File target = new File(file);
-            if (target.exists()) {
-                //ask if overwrite
-                UIManager.put("OptionPane.noButtonText", "Nein");
-                UIManager.put("OptionPane.yesButtonText", "Ja");
-                if (JOptionPane.showConfirmDialog(jMapShotDialog, "Existierende Datei überschreiben?", "Überschreiben", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) != JOptionPane.YES_OPTION) {
+
+            @Override
+            public String getDescription() {
+                return "PNG Image (*.png)";
+            }
+        });
+
+        chooser.addChoosableFileFilter(new javax.swing.filechooser.FileFilter() {
+
+            @Override
+            public boolean accept(File f) {
+                if ((f != null) && (f.isDirectory() || f.getName().endsWith(".jpeg"))) {
+                    return true;
+                }
+                return false;
+            }
+
+            @Override
+            public String getDescription() {
+                return "JPEG Image (*.jpeg)";
+            }
+        });
+        String type = null;
+        int ret = chooser.showSaveDialog(jMapShotDialog);
+        if (ret == JFileChooser.APPROVE_OPTION) {
+            try {
+                File f = chooser.getSelectedFile();
+                javax.swing.filechooser.FileFilter filter = chooser.getFileFilter();
+                if (filter.getDescription().indexOf("jpeg") > 0) {
+                    type = "jpeg";
+                } else if (filter.getDescription().indexOf("png") > 0) {
+                    type = "png";
+                } else {
+                    type = "png";
+                }
+                String file = f.getCanonicalPath();
+                if (!file.endsWith(type)) {
+                    file += "." + type;
+                }
+                File target = new File(file);
+                if (target.exists()) {
+                    //ask if overwrite
+                    UIManager.put("OptionPane.noButtonText", "Nein");
+                    UIManager.put("OptionPane.yesButtonText", "Ja");
+                    if (JOptionPane.showConfirmDialog(jMapShotDialog, "Existierende Datei überschreiben?", "Überschreiben", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) != JOptionPane.YES_OPTION) {
+                        UIManager.put("OptionPane.noButtonText", "No");
+                        UIManager.put("OptionPane.yesButtonText", "Yes");
+                        return;
+                    }
                     UIManager.put("OptionPane.noButtonText", "No");
                     UIManager.put("OptionPane.yesButtonText", "Yes");
-                    return;
                 }
-                UIManager.put("OptionPane.noButtonText", "No");
-                UIManager.put("OptionPane.yesButtonText", "Yes");
+                MapPanel.getSingleton().planMapShot(type, target, this);
+                GlobalOptions.addProperty("screen.dir", target.getParent());
+            } catch (Exception e) {
+                logger.error("Failed to write map shot", e);
             }
-            MapPanel.getSingleton().planMapShot(type, target, this);
-            GlobalOptions.addProperty("screen.dir", target.getParent());
-        } catch (Exception e) {
-            logger.error("Failed to write map shot", e);
         }
     }
     jMapShotDialog.setVisible(false);
@@ -2237,7 +2274,28 @@ private void fireShowChurchRangeChangedEvent(javax.swing.event.ChangeEvent evt) 
 
     @Override
     public void fireMapShotDoneEvent() {
-        JOptionPane.showMessageDialog(this, "Kartengrafik erfolgreich gespeichert.", "Information", JOptionPane.INFORMATION_MESSAGE);
+        if (!putOnline) {
+            JOptionPane.showMessageDialog(this, "Kartengrafik erfolgreich gespeichert.", "Information", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            String result = ScreenUploadInterface.upload("tmp.png");
+            if (result != null) {
+                if (result.indexOf("view.php") > 0) {
+                    try {
+                        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(result), null);
+                        JOptionPane.showMessageDialog(this, "Kartengrafik erfolgreich Online gestellt.\n" +
+                                "Der Zugriffslink (" + result + ")\n" +
+                                "wurde in die Zwischenablage kopiert.", "Information", JOptionPane.INFORMATION_MESSAGE);
+                    } catch (Exception e) {
+                        JOptionPane.showMessageDialog(this, "Fehler beim Kopieren in die Zwischenablage." +
+                                "Der Zugriffslink lautet: " + result);
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(this, "Kartengrafik konnte nicht Online gestellt werden.\n" +
+                            "Fehler: " + result, "Fehler", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        }
+        putOnline = false;
     }
 
     @Override

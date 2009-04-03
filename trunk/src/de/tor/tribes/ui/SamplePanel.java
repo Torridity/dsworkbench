@@ -30,7 +30,7 @@ import java.io.File;
 import javax.imageio.ImageIO;
 
 /**
- *
+ *@TODO (1.3) Sample for Minimap skin
  * @author Charon
  */
 public class SamplePanel extends javax.swing.JPanel {

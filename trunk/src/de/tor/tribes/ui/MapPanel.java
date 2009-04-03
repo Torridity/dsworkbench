@@ -32,7 +32,6 @@ import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.MapShotListener;
 import de.tor.tribes.util.ServerSettings;
-import de.tor.tribes.util.Skin;
 import de.tor.tribes.util.VillageSelectionListener;
 import java.awt.AlphaComposite;
 import java.awt.Color;
@@ -46,8 +45,15 @@ import java.io.File;
 import java.text.NumberFormat;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Locale;
 import java.util.StringTokenizer;
+import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
+import javax.imageio.stream.ImageOutputStream;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
@@ -1119,11 +1125,13 @@ public class MapPanel extends javax.swing.JPanel {
             } else {
                 first = "Zentrum: " + (int) Math.floor(pos.getX()) + "|" + (int) Math.floor(pos.getY());
             }
-            BufferedImage result = new BufferedImage(pImage.getWidth(null), pImage.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+            BufferedImage result = null;
+            result = new BufferedImage(pImage.getWidth(null), pImage.getHeight(null), BufferedImage.TYPE_INT_RGB);
+
             Graphics2D g2d = (Graphics2D) result.getGraphics();
+            g2d.drawImage(pImage, 0, 0, null);
             g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.6f));
             FontMetrics fm = g2d.getFontMetrics();
-            g2d.drawImage(pImage, 0, 0, null);
             Rectangle2D firstBounds = fm.getStringBounds(first, g2d);
             String second = "Erstellt mit DS Workbench " + Constants.VERSION + Constants.VERSION_ADDITION;
             Rectangle2D secondBounds = fm.getStringBounds(second, g2d);
@@ -1132,13 +1140,34 @@ public class MapPanel extends javax.swing.JPanel {
             g2d.setColor(Color.BLACK);
             g2d.drawString(first, 3, (int) (result.getHeight() - firstBounds.getHeight() - secondBounds.getHeight() - firstBounds.getY() - 6));
             g2d.drawString(second, 3, (int) (result.getHeight() - secondBounds.getHeight() - secondBounds.getY() - 3));
+
             ImageIO.write(result, sMapShotType, mMapShotFile);
             g2d.dispose();
             bMapSHotPlaned = false;
             mMapShotListener.fireMapShotDoneEvent();
         } catch (Exception e) {
+            e.printStackTrace();
+            bMapSHotPlaned = false;
             logger.error("Creating MapShot failed");
             mMapShotListener.fireMapShotFailedEvent();
+        }
+    }
+
+    public class MyImageWriteParam extends JPEGImageWriteParam {
+
+        public MyImageWriteParam() {
+            super(Locale.getDefault());
+        }
+
+        // This method accepts quality levels between 0 (lowest) and 1 (highest) and simply converts
+        // it to a range between 0 and 256; this is not a correct conversion algorithm.
+        // However, a proper alternative is a lot more complicated.
+        // This should do until the bug is fixed.
+        public void setCompressionQuality(float quality) {
+            if (quality < 0.0F || quality > 1.0F) {
+                throw new IllegalArgumentException("Quality out-of-bounds!");
+            }
+            this.compressionQuality = 256 - (quality * 256);
         }
     }
 

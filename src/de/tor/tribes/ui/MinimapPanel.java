@@ -398,7 +398,7 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
 
         jLabel2.setText("Dateityp");
 
-        jFileTypeChooser.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "png", "gif", "jpg", "bmp" }));
+        jFileTypeChooser.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "png", "gif", "jpeg" }));
 
         jButton1.setText("Schließen");
         jButton1.addMouseListener(new java.awt.event.MouseAdapter() {

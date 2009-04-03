@@ -28,7 +28,7 @@ import org.apache.log4j.xml.DOMConfigurator;
  */
 public class DatabaseInterface {
 
-    private static Logger logger = Logger.getLogger("DatebaseInterface");
+    private static Logger logger = Logger.getLogger("PDIAccess");
     //server specific codes
     public static final int ID_UNKNOWN_ERROR = -4711;
     public static final int ID_SUCCESS = 0;

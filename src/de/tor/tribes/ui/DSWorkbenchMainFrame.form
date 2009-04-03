@@ -54,11 +54,10 @@
         <Component class="javax.swing.JComboBox" name="jFileTypeChooser">
           <Properties>
             <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-              <StringArray count="4">
+              <StringArray count="3">
                 <StringItem index="0" value="png"/>
                 <StringItem index="1" value="gif"/>
-                <StringItem index="2" value="jpg"/>
-                <StringItem index="3" value="bmp"/>
+                <StringItem index="2" value="jpeg"/>
               </StringArray>
             </Property>
             <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">

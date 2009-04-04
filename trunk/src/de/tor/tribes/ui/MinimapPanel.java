@@ -6,8 +6,10 @@
 package de.tor.tribes.ui;
 
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.php.ScreenUploadInterface;
 import de.tor.tribes.types.Marker;
 import de.tor.tribes.types.Village;
+import de.tor.tribes.util.BrowserCommandSender;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.ToolChangeListener;
@@ -21,6 +23,8 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Toolkit;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -370,6 +374,7 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
         jButton2 = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
         jTransparancySlider = new javax.swing.JSlider();
+        jButton3 = new javax.swing.JButton();
         jScreenshotPreview = new javax.swing.JDialog();
         jPanel1 = new javax.swing.JPanel();
 
@@ -425,6 +430,13 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
         jTransparancySlider.setValue(0);
         jTransparancySlider.setOpaque(false);
 
+        jButton3.setText("Online stellen");
+        jButton3.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                firePutScreenOnlineEvent(evt);
+            }
+        });
+
         javax.swing.GroupLayout jScreenshotControlLayout = new javax.swing.GroupLayout(jScreenshotControl.getContentPane());
         jScreenshotControl.getContentPane().setLayout(jScreenshotControlLayout);
         jScreenshotControlLayout.setHorizontalGroup(
@@ -434,6 +446,8 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
                 .addGroup(jScreenshotControlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jScreenshotControlLayout.createSequentialGroup()
                         .addComponent(jButton1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton2))
                     .addGroup(jScreenshotControlLayout.createSequentialGroup()
@@ -466,6 +480,7 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 36, Short.MAX_VALUE)
                 .addGroup(jScreenshotControlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton2)
+                    .addComponent(jButton3)
                     .addComponent(jButton1))
                 .addContainerGap())
         );
@@ -587,9 +602,38 @@ private void fireScreenshotControlClosingEvent(java.awt.event.WindowEvent evt) {
     jScreenshotPreview.setVisible(false);
 }//GEN-LAST:event_fireScreenshotControlClosingEvent
 
+private void firePutScreenOnlineEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_firePutScreenOnlineEvent
+    try {
+        ImageIO.write(mScreenshotPanel.getResult(jTransparancySlider.getValue()), "png", new File("tmp.png"));
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(jScreenshotControl, "Fehler beim Speichern der Grafik", "Fehler", JOptionPane.ERROR_MESSAGE);
+        return;
+    }
+    String result = ScreenUploadInterface.upload("tmp.png");
+    if (result != null) {
+        if (result.indexOf("view.php") > 0) {
+            try {
+                Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(result), null);
+                JOptionPane.showMessageDialog(jScreenshotControl, "Kartengrafik erfolgreich Online gestellt.\n" +
+                        "Der Zugriffslink (" + result + ")\n" +
+                        "wurde in die Zwischenablage kopiert.", "Information", JOptionPane.INFORMATION_MESSAGE);
+                BrowserCommandSender.openPage(result);
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(jScreenshotControl, "Fehler beim Kopieren in die Zwischenablage." +
+                        "Der Zugriffslink lautet: " + result);
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Kartengrafik konnte nicht Online gestellt werden.\n" +
+                    "Fehler: " + result, "Fehler", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+}//GEN-LAST:event_firePutScreenOnlineEvent
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
     private javax.swing.JComboBox jFileTypeChooser;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;

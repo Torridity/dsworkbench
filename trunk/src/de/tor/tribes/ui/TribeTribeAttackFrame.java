@@ -63,13 +63,7 @@ import java.util.Collections;
 import javax.swing.JSpinner.DateEditor;
 
 /**
- * @TODO (DIFF) Filter for troops goes crazy if no troops are imported
- * @TODO (DIFF) Calculations fail when calculate -> close -> re-calculate with same settings until one setting changes
- * @TODO (DIFF) Continent selection for source and target
- * @TODO (DIFF) No-Fake, UseSnob, FilterOff Icon (no_fake.png, use_snob.png, filter_off.png)
- * @TODO (DIFF) Continent based source and target list
- * @TODO (DIFF) Fakes definable in source list
- * @TODO (1.3) Change AG assignment for Blitzkrieg
+ * @TODO (1.4) Change AG assignment for Blitzkrieg
  * @author Jejkal
  */
 public class TribeTribeAttackFrame extends javax.swing.JFrame implements VillageSelectionListener {
@@ -97,7 +91,7 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Village
         jSnobDistance.setSliderBackground(Color.DARK_GRAY);
         jSnobDistance.setMaximumColor(Color.LIGHT_GRAY);
         jSnobDistance.setMinimumColor(Color.LIGHT_GRAY);
-        jSnobDistance.setMaximumValue(10);
+        jSnobDistance.setMaximumValue(70);
         jSnobDistance.setSegmentSize(1);
         jSnobDistance.setUnit(" Feld(er)");
         jSnobDistance.setDecimalFormater(new DecimalFormat("##"));

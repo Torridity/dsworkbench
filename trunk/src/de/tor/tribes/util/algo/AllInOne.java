@@ -253,7 +253,6 @@ public class AllInOne extends AbstractAttackAlgorithm {
                 //expect target to be valid
                 boolean valid = true;
                 //check distances for first (fastest) possible off
-
                 if (pOffSources.size() > enoblement.getNumberOfCleanOffs()) {
                     //at least 4 snobs left
                     for (int i = 0; i <= enoblement.getNumberOfCleanOffs(); i++) {

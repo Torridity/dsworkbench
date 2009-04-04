@@ -21,7 +21,6 @@ import org.jdom.Document;
 import org.jdom.Element;
 
 /**Manager for village tags. Tags can be stored in files or in a database (not implemented yet)
- * @TODO (DIFF) Sort tags alphabetically
  * @author Jejkal
  */
 public class TagManager {

@@ -22,6 +22,8 @@
   <tocitem text="Grundlagen " target="pages.basics" image="images.tictac_orange">
    <tocitem text="Navigation auf der Karte " target="pages.map_navigation" image="images.tictac_grey"/>
 
+   <tocitem text="Funktionen im Hauptfenster " target="pages.main_window_basics" image="images.tictac_grey"/>
+
    <tocitem text="Datenhaltung " target="pages.data_handling" image="images.tictac_grey"/>
 
    <tocitem text="Export / Import von Benutzerdaten " target="pages.export_import" image="images.tictac_grey"/>
@@ -56,6 +58,14 @@
 
      <tocitem text="Einstellungen " target="pages.attack_planer_settings" image="images.tictac_grey"/>
 
+     <tocitem text="Algorithmen " image="images.tictac_orange">
+      <tocitem text="Brute Force " target="pages.attack_planer_bruteforce" image="images.tictac_grey"/>
+
+      <tocitem text="All In One " target="pages.attack_planer_allinone" image="images.tictac_grey"/>
+
+      <tocitem text="Blitzkrieg " target="pages.attack_planer_blitzkrieg" image="images.tictac_grey"/>
+
+     </tocitem>
      <tocitem text="Ergebnisse " target="pages.attack_planer_results" image="images.tictac_grey"/>
 
     </tocitem>
@@ -77,6 +87,8 @@
    <tocitem text="Ranglisten " target="pages.ranking_view" image="images.tictac_grey"/>
 
    <tocitem text="Formen " target="pages.form_view" image="images.tictac_grey"/>
+
+   <tocitem text="Kirchen&#252;bersicht " target="pages.church_view" image="images.tictac_grey"/>
 
   </tocitem>
   <tocitem text="Shortcuts " target="pages.shortcuts" image="images.tictac_orange"/>

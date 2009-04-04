@@ -12,7 +12,6 @@ import javax.swing.JOptionPane;
 import org.apache.log4j.Logger;
 
 /**
- *@TODO (DIFF) integrate UV mode
  * http://de8.die-staemme.de/game.php?t=743256&village=269739&screen=place
  * http://de8.die-staemme.de/game.php?t=743256&village=273090&screen=place&mode=command&target=285904
  * @author Charon

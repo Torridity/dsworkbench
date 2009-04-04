@@ -12,6 +12,8 @@
 
 <mapID target="pages.change_attack_times" url="pages/change_attack_times.html"/>
 
+<mapID target="pages.church_view" url="pages/church_view.html"/>
+
 <mapID target="pages.attack_view_validate_attacks" url="pages/attack_view.html#validate_attacks"/>
 
 <mapID target="pages.settings" url="pages/settings.html"/>
@@ -42,6 +44,8 @@
 
 <mapID target="pages.misc_settings" url="pages/misc_settings.html"/>
 
+<mapID target="pages.attack_planer_bruteforce" url="pages/attack_planer_bruteforce.html"/>
+
 <mapID target="pages.attack_planer_target" url="pages/attack_planer_target.html"/>
 
 <mapID target="pages.attack_view_attack_alert" url="pages/attack_view.html#attack_alert"/>
@@ -50,17 +54,21 @@
 
 <mapID target="pages.attack_planer_source" url="pages/attack_planer_source.html"/>
 
-<mapID target="pages.map_tools_radar" url="pages/map_tools.html#radar"/>
-
 <mapID target="pages.search_tool" url="pages/search_tool.html"/>
+
+<mapID target="pages.map_tools_radar" url="pages/map_tools.html#radar"/>
 
 <mapID target="pages.views" url="pages/views.html"/>
 
 <mapID target="pages.export_import" url="pages/export_import.html"/>
 
-<mapID target="pages.form_setup" url="pages/form_setup.html"/>
+<mapID target="pages.attack_planer_allinone" url="pages/attack_planer_allinone.html"/>
 
 <mapID target="pages.attack_select_filter" url="pages/attack_select_filter.html"/>
+
+<mapID target="pages.form_setup" url="pages/form_setup.html"/>
+
+<mapID target="pages.main_window_basics" url="pages/main_window_basics.html"/>
 
 <mapID target="pages.attack_tools" url="pages/attack_tools.html"/>
 
@@ -90,6 +98,8 @@
 
 <mapID target="pages.shortcuts" url="pages/shortcuts.html"/>
 
+<mapID target="pages.attack_planer_blitzkrieg" url="pages/attack_planer_blitzkrieg.html"/>
+
 <mapID target="pages.draw_tools" url="pages/draw_tools.html"/>
 
 <mapID target="pages.basics" url="pages/basics.html"/>
@@ -116,65 +126,35 @@
 
 <mapID target="images.help" url="images/help.png"/>
 
+<mapID target="images.snob_type" url="images/snob_type.png"/>
+
 <mapID target="images.tools.mark" url="images/tools/mark.png"/>
 
 <mapID target="images.tools.draw_line" url="images/tools/draw_line.png"/>
 
 <mapID target="images.ll" url="images/ll.gif"/>
 
-<mapID target="images.camera" url="images/camera.png"/>
-
 <mapID target="images.tools.attack_light" url="images/tools/attack_light.png"/>
 
 <mapID target="images.lr" url="images/lr.gif"/>
 
-<mapID target="images.tag" url="images/tag.png"/>
-
 <mapID target="images.att_selectAllOrNone" url="images/att_selectAllOrNone.gif"/>
-
-<mapID target="images.att_selectNoDraw" url="images/att_selectNoDraw.png"/>
 
 <mapID target="images.booty" url="images/booty.png"/>
 
-<mapID target="images.att_alert" url="images/att_alert.png"/>
-
-<mapID target="images.att_browser" url="images/att_browser.png"/>
-
-<mapID target="images.shortcuts.Shift3" url="images/shortcuts/Shift3.gif"/>
-
 <mapID target="images.b" url="images/b.gif"/>
-
-<mapID target="images.shortcuts.Shift4" url="images/shortcuts/Shift4.gif"/>
-
-<mapID target="images.shortcuts.Shift5" url="images/shortcuts/Shift5.gif"/>
-
-<mapID target="images.shortcuts.Shift6" url="images/shortcuts/Shift6.gif"/>
-
-<mapID target="images.shortcuts.Shift7" url="images/shortcuts/Shift7.gif"/>
-
-<mapID target="images.support_tool" url="images/support_tool.png"/>
-
-<mapID target="images.shortcuts.Shift8" url="images/shortcuts/Shift8.gif"/>
 
 <mapID target="images.tools.attack_spy" url="images/tools/attack_spy.png"/>
 
-<mapID target="images.shortcuts.Shift1" url="images/shortcuts/Shift1.gif"/>
-
 <mapID target="images.att_selectInv" url="images/att_selectInv.gif"/>
-
-<mapID target="images.shortcuts.Shift2" url="images/shortcuts/Shift2.gif"/>
 
 <mapID target="images.r" url="images/r.gif"/>
 
-<mapID target="images.t" url="images/t.gif"/>
+<mapID target="images.att_validate" url="images/att_validate.png"/>
 
 <mapID target="images.shortcuts.F7" url="images/shortcuts/F7.gif"/>
 
-<mapID target="images.att_validate" url="images/att_validate.png"/>
-
-<mapID target="images.tools.radar" url="images/tools/radar.png"/>
-
-<mapID target="images.tools.tag" url="images/tools/tag.png"/>
+<mapID target="images.t" url="images/t.gif"/>
 
 <mapID target="images.tools.move" url="images/tools/move.png"/>
 
@@ -182,11 +162,7 @@
 
 <mapID target="images.shortcuts.F1" url="images/shortcuts/F1.gif"/>
 
-<mapID target="images.tools.def" url="images/tools/def.png"/>
-
 <mapID target="images.replace2" url="images/replace2.png"/>
-
-<mapID target="images.tools.support_tool" url="images/tools/support_tool.png"/>
 
 <mapID target="images.l" url="images/l.gif"/>
 
@@ -200,71 +176,49 @@
 
 <mapID target="images.shortcuts.F3" url="images/shortcuts/F3.gif"/>
 
-<mapID target="images.measure" url="images/measure.png"/>
-
-<mapID target="images.shortcuts.F12" url="images/shortcuts/F12.gif"/>
-
 <mapID target="images.zoom" url="images/zoom.png"/>
-
-<mapID target="images.tools.draw_freeform" url="images/tools/draw_freeform.png"/>
-
-<mapID target="images.tictac_grey" url="images/tictac_grey.gif"/>
-
-<mapID target="images.att_selectDraw" url="images/att_selectDraw.png"/>
 
 <mapID target="images.shortcuts.AltM" url="images/shortcuts/AltM.gif"/>
 
+<mapID target="images.tictac_grey" url="images/tictac_grey.gif"/>
+
 <mapID target="images.forbidden" url="images/forbidden.png"/>
-
-<mapID target="images.tools.draw_rect" url="images/tools/draw_rect.png"/>
-
-<mapID target="images.tools.attack_ram" url="images/tools/attack_ram.png"/>
 
 <mapID target="images.shortcuts.AltF" url="images/shortcuts/AltF.gif"/>
 
-<mapID target="images.def" url="images/def.png"/>
+<mapID target="images.tools.draw_rect" url="images/tools/draw_rect.png"/>
 
-<mapID target="images.tools.camera" url="images/tools/camera.png"/>
+<mapID target="images.def" url="images/def.png"/>
 
 <mapID target="images.help_16" url="images/help_16.png"/>
 
-<mapID target="images.tools.attack_heavy" url="images/tools/attack_heavy.png"/>
-
-<mapID target="images.tictac_orange" url="images/tictac_orange.gif"/>
+<mapID target="images.tools.camera" url="images/tools/camera.png"/>
 
 <mapID target="images.move" url="images/move.png"/>
 
-<mapID target="images.att_selectSome" url="images/att_selectSome.png"/>
+<mapID target="images.tictac_orange" url="images/tictac_orange.gif"/>
 
 <mapID target="images.tools.attack_snob" url="images/tools/attack_snob.png"/>
 
-<mapID target="images.att_copy" url="images/att_copy.png"/>
-
-<mapID target="images.tools.measure" url="images/tools/measure.png"/>
-
 <mapID target="images.shortcuts.Alt6" url="images/shortcuts/Alt6.gif"/>
-
-<mapID target="images.att_clipboardBB" url="images/att_clipboardBB.png"/>
 
 <mapID target="images.shortcuts.Alt7" url="images/shortcuts/Alt7.gif"/>
 
-<mapID target="images.shortcuts.StrgS" url="images/shortcuts/StrgS.gif"/>
+<mapID target="images.att_clipboardBB" url="images/att_clipboardBB.png"/>
 
 <mapID target="images.shortcuts.Alt8" url="images/shortcuts/Alt8.gif"/>
 
-<mapID target="images.shortcuts.StrgT" url="images/shortcuts/StrgT.gif"/>
+<mapID target="images.shortcuts.StrgS" url="images/shortcuts/StrgS.gif"/>
 
-<mapID target="images.att_remove" url="images/att_remove.png"/>
+<mapID target="images.shortcuts.StrgT" url="images/shortcuts/StrgT.gif"/>
 
 <mapID target="images.shortcuts.Alt2" url="images/shortcuts/Alt2.gif"/>
 
 <mapID target="images.shortcuts.Alt3" url="images/shortcuts/Alt3.gif"/>
 
-<mapID target="images.tools.draw_circle" url="images/tools/draw_circle.png"/>
-
-<mapID target="images.information" url="images/information.png"/>
-
 <mapID target="images.shortcuts.Alt4" url="images/shortcuts/Alt4.gif"/>
+
+<mapID target="images.tools.draw_circle" url="images/tools/draw_circle.png"/>
 
 <mapID target="images.shortcuts.Alt5" url="images/shortcuts/Alt5.gif"/>
 
@@ -280,15 +234,15 @@
 
 <mapID target="images.tools.attack_axe" url="images/tools/attack_axe.png"/>
 
-<mapID target="images.tools.selection" url="images/tools/selection.png"/>
-
 <mapID target="images.mark" url="images/mark.png"/>
+
+<mapID target="images.tools.selection" url="images/tools/selection.png"/>
 
 <mapID target="images.tools.attack_sword" url="images/tools/attack_sword.png"/>
 
-<mapID target="images.tools.draw_text" url="images/tools/draw_text.png"/>
+<mapID target="images.fake_type" url="images/fake_type.png"/>
 
-<mapID target="images.tools.booty" url="images/tools/booty.png"/>
+<mapID target="images.tools.draw_text" url="images/tools/draw_text.png"/>
 
 <mapID target="images.ur" url="images/ur.gif"/>
 
@@ -301,6 +255,72 @@
 <mapID target="images.shortcuts.Strg2" url="images/shortcuts/Strg2.gif"/>
 
 <mapID target="images.tools.zoom" url="images/tools/zoom.png"/>
+
+<mapID target="images.support_type" url="images/support_type.png"/>
+
+<mapID target="images.camera" url="images/camera.png"/>
+
+<mapID target="images.tag" url="images/tag.png"/>
+
+<mapID target="images.att_selectNoDraw" url="images/att_selectNoDraw.png"/>
+
+<mapID target="images.att_alert" url="images/att_alert.png"/>
+
+<mapID target="images.att_browser" url="images/att_browser.png"/>
+
+<mapID target="images.shortcuts.Shift3" url="images/shortcuts/Shift3.gif"/>
+
+<mapID target="images.shortcuts.Shift4" url="images/shortcuts/Shift4.gif"/>
+
+<mapID target="images.shortcuts.Shift5" url="images/shortcuts/Shift5.gif"/>
+
+<mapID target="images.shortcuts.Shift6" url="images/shortcuts/Shift6.gif"/>
+
+<mapID target="images.shortcuts.Shift7" url="images/shortcuts/Shift7.gif"/>
+
+<mapID target="images.shortcuts.Shift8" url="images/shortcuts/Shift8.gif"/>
+
+<mapID target="images.support_tool" url="images/support_tool.png"/>
+
+<mapID target="images.shortcuts.Shift1" url="images/shortcuts/Shift1.gif"/>
+
+<mapID target="images.shortcuts.Shift2" url="images/shortcuts/Shift2.gif"/>
+
+<mapID target="images.shortcuts.AltS" url="images/shortcuts/AltS.gif"/>
+
+<mapID target="images.tools.radar" url="images/tools/radar.png"/>
+
+<mapID target="images.tools.tag" url="images/tools/tag.png"/>
+
+<mapID target="images.tools.def" url="images/tools/def.png"/>
+
+<mapID target="images.tools.support_tool" url="images/tools/support_tool.png"/>
+
+<mapID target="images.measure" url="images/measure.png"/>
+
+<mapID target="images.shortcuts.F12" url="images/shortcuts/F12.gif"/>
+
+<mapID target="images.tools.draw_freeform" url="images/tools/draw_freeform.png"/>
+
+<mapID target="images.att_selectDraw" url="images/att_selectDraw.png"/>
+
+<mapID target="images.tools.attack_ram" url="images/tools/attack_ram.png"/>
+
+<mapID target="images.tools.attack_heavy" url="images/tools/attack_heavy.png"/>
+
+<mapID target="images.att_selectSome" url="images/att_selectSome.png"/>
+
+<mapID target="images.att_copy" url="images/att_copy.png"/>
+
+<mapID target="images.tools.measure" url="images/tools/measure.png"/>
+
+<mapID target="images.att_remove" url="images/att_remove.png"/>
+
+<mapID target="images.information" url="images/information.png"/>
+
+<mapID target="images.tools.booty" url="images/tools/booty.png"/>
+
+<mapID target="images.off_type" url="images/off_type.png"/>
 
 <mapID target="images.att_clipboard" url="images/att_clipboard.png"/>
 

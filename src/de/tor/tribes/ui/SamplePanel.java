@@ -15,6 +15,7 @@ import de.tor.tribes.types.FreeForm;
 import de.tor.tribes.types.Line;
 import de.tor.tribes.types.Rectangle;
 import de.tor.tribes.types.Text;
+import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.Skin;
 import java.awt.Color;
@@ -30,7 +31,6 @@ import java.io.File;
 import javax.imageio.ImageIO;
 
 /**
- *@TODO (1.3) Sample for Minimap skin
  * @author Charon
  */
 public class SamplePanel extends javax.swing.JPanel {
@@ -125,18 +125,25 @@ public class SamplePanel extends javax.swing.JPanel {
     public BufferedImage createSample() {
         BufferedImage result = new BufferedImage(6 * GlobalOptions.getSkin().getBasicFieldWidth(), 2 * GlobalOptions.getSkin().getBasicFieldHeight(), BufferedImage.TYPE_INT_RGB);
         Graphics2D g2d = (Graphics2D) result.getGraphics();
-        g2d.setColor(Color.RED);
-        g2d.fillRect(0, 0, result.getWidth(), result.getHeight());
-        for (int i = Skin.ID_V1; i <= Skin.ID_V6; i++) {
-            Image image = GlobalOptions.getSkin().getImage(i, 1.0f);
-            g2d.drawImage(image, (i - Skin.ID_V1) * image.getWidth(null), 0, this);
+        if (!GlobalOptions.getSkin().isMinimapSkin()) {
+            g2d.setColor(Color.RED);
+            g2d.fillRect(0, 0, result.getWidth(), result.getHeight());
+            for (int i = Skin.ID_V1; i <= Skin.ID_V6; i++) {
+                Image image = GlobalOptions.getSkin().getImage(i, 1.0f);
+                g2d.drawImage(image, (i - Skin.ID_V1) * image.getWidth(null), 0, this);
+            }
+            for (int i = Skin.ID_V1_LEFT; i <= Skin.ID_V6_LEFT; i++) {
+                Image image = GlobalOptions.getSkin().getImage(i, 1.0f);
+                g2d.drawImage(image, (i - Skin.ID_V1_LEFT) * image.getWidth(null), image.getHeight(null), this);
+            }
+            g2d.dispose();
+            return result;
+        } else {
+            g2d.setColor(Constants.DS_BACK);
+            g2d.fillRect(0, 0, result.getWidth(), result.getHeight());
+            g2d.dispose();
+            return result;
         }
-        for (int i = Skin.ID_V1_LEFT; i <= Skin.ID_V6_LEFT; i++) {
-            Image image = GlobalOptions.getSkin().getImage(i, 1.0f);
-            g2d.drawImage(image, (i - Skin.ID_V1_LEFT) * image.getWidth(null), image.getHeight(null), this);
-        }
-        g2d.dispose();
-        return result;
     }
 
     public void paint(Graphics g) {

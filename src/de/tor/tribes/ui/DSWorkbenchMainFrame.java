@@ -51,11 +51,6 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 /**
- * @TODO (DIFF) UV Mode Icons (uv.png, uv_off.png), Church icon (church.png)
- * @TODO (DIFF) UV Mode (docu!)
- * @TODO (DIFF) Shortcut F7 for churchframe, ALT+C for show church ranges
- * @TODO (DIFF) Unit selection on 9 unit servers corrected
- * @TODO (DIFF) Add import-extension option to mark imported, other players data?
  * @author  Charon
  */
 public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
@@ -1208,6 +1203,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         });
 
         jChurchRangeBox.setText(bundle.getString("DSWorkbenchMainFrame.jChurchRangeBox.text")); // NOI18N
+        jChurchRangeBox.setOpaque(false);
         jChurchRangeBox.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 fireShowChurchRangeChangedEvent(evt);
@@ -1715,11 +1711,14 @@ private void fireMarkOnTopChangedEvent(javax.swing.event.ChangeEvent evt) {//GEN
 }//GEN-LAST:event_fireMarkOnTopChangedEvent
 
 private void fireCreateMapShotEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCreateMapShotEvent
-
+    Component parent = fullscreenFrame;
+    if (parent == null) {
+        parent = this;
+    }
 
     UIManager.put("OptionPane.yesButtonText", "Online stellen");
     UIManager.put("OptionPane.noButtonText", "Nur Speichern");
-    if (JOptionPane.showConfirmDialog(this, "Willst du die Karte online stellen oder auf deinem Rechner speichern?", "Speichern", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+    if (JOptionPane.showConfirmDialog(parent, "Willst du die Karte online stellen oder auf deinem Rechner speichern?", "Speichern", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
         UIManager.put("OptionPane.noButtonText", "No");
         UIManager.put("OptionPane.yesButtonText", "Yes");
         putOnline = true;
@@ -2274,23 +2273,28 @@ private void fireShowChurchRangeChangedEvent(javax.swing.event.ChangeEvent evt) 
 
     @Override
     public void fireMapShotDoneEvent() {
+        Component parent = fullscreenFrame;
+        if (parent == null) {
+            parent = this;
+        }
         if (!putOnline) {
-            JOptionPane.showMessageDialog(this, "Kartengrafik erfolgreich gespeichert.", "Information", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(parent, "Kartengrafik erfolgreich gespeichert.", "Information", JOptionPane.INFORMATION_MESSAGE);
         } else {
             String result = ScreenUploadInterface.upload("tmp.png");
             if (result != null) {
                 if (result.indexOf("view.php") > 0) {
                     try {
                         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(result), null);
-                        JOptionPane.showMessageDialog(this, "Kartengrafik erfolgreich Online gestellt.\n" +
+                        JOptionPane.showMessageDialog(parent, "Kartengrafik erfolgreich Online gestellt.\n" +
                                 "Der Zugriffslink (" + result + ")\n" +
                                 "wurde in die Zwischenablage kopiert.", "Information", JOptionPane.INFORMATION_MESSAGE);
+                        BrowserCommandSender.openPage(result);
                     } catch (Exception e) {
-                        JOptionPane.showMessageDialog(this, "Fehler beim Kopieren in die Zwischenablage." +
+                        JOptionPane.showMessageDialog(parent, "Fehler beim Kopieren in die Zwischenablage." +
                                 "Der Zugriffslink lautet: " + result);
                     }
                 } else {
-                    JOptionPane.showMessageDialog(this, "Kartengrafik konnte nicht Online gestellt werden.\n" +
+                    JOptionPane.showMessageDialog(parent, "Kartengrafik konnte nicht Online gestellt werden.\n" +
                             "Fehler: " + result, "Fehler", JOptionPane.ERROR_MESSAGE);
                 }
             }
@@ -2300,7 +2304,11 @@ private void fireShowChurchRangeChangedEvent(javax.swing.event.ChangeEvent evt) 
 
     @Override
     public void fireMapShotFailedEvent() {
-        JOptionPane.showMessageDialog(this, "Fehler beim Speichern der Kartengrafik.", "Fehler", JOptionPane.ERROR_MESSAGE);
+        Component parent = fullscreenFrame;
+        if (parent == null) {
+            parent = this;
+        }
+        JOptionPane.showMessageDialog(parent, "Fehler beim Speichern der Kartengrafik.", "Fehler", JOptionPane.ERROR_MESSAGE);
     }
 
 // </editor-fold>

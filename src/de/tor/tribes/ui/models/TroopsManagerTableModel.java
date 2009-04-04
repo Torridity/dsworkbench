@@ -166,7 +166,7 @@ public class TroopsManagerTableModel extends AbstractTableModel {
                 //not allowed
                 break;
             }
-             case 2: {
+            case 2: {
                 //not allowed
                 break;
             }
@@ -175,8 +175,13 @@ public class TroopsManagerTableModel extends AbstractTableModel {
                 Village row = TroopsManager.getSingleton().getVillages()[pRow];
                 //set current troops
                 TroopsManager.getSingleton().getTroopsForVillage(row).getTroops().set(troopIndex, (Integer) pValue);
+                try {
+                    TroopsManager.getSingleton().getTroopsForVillage(row).calculateTroopsPowers();
+                } catch (Exception e) {
+                }
                 //refresh time
                 TroopsManager.getSingleton().getTroopsForVillage(row).setState(Calendar.getInstance().getTime());
+                fireTableDataChanged();
             }
         }
     }

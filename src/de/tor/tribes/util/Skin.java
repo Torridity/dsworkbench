@@ -95,7 +95,7 @@ public class Skin {
     }
 
     public Skin(String pSkinPath) throws Exception {
-        if (!pSkinPath.equals(MINIMAP_SKIN_ID)) {
+        if (pSkinPath == null || !pSkinPath.equals(MINIMAP_SKIN_ID)) {
             loadSkin(pSkinPath);
         } else {
             loadMinimapSkin();

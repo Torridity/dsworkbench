@@ -58,7 +58,7 @@ public class VillageTroopsHolder {
         iDefPower = -1;
         iArchDefPower = -1;
         iCavDefPower = -1;
-        initTroopsPowers();
+        calculateTroopsPowers();
         this.troops = mTroops;
     }
 
@@ -72,34 +72,34 @@ public class VillageTroopsHolder {
 
     public double getOffValue() {
         if (iOffPower < 0) {
-            initTroopsPowers();
+            calculateTroopsPowers();
         }
         return iOffPower;
     }
 
     public double getDefValue() {
         if (iOffPower < 0) {
-            initTroopsPowers();
+            calculateTroopsPowers();
         }
         return iDefPower;
     }
 
     public double getDefArcherValue() {
         if (iOffPower < 0) {
-            initTroopsPowers();
+            calculateTroopsPowers();
         }
         return iArchDefPower;
     }
 
     public double getDefCavalryValue() {
         if (iOffPower < 0) {
-            initTroopsPowers();
+            calculateTroopsPowers();
         }
         return iCavDefPower;
     }
 
-    private void initTroopsPowers() {
-        if ((iOffPower < 0) || (iDefPower < 0) || (iArchDefPower < 0) || (iCavDefPower < 0)) {
+    public void calculateTroopsPowers() {
+       // if ((iOffPower < 0) || (iDefPower < 0) || (iArchDefPower < 0) || (iCavDefPower < 0)) {
             try {
                 for (int i = 0; i < troops.size(); i++) {
                     iOffPower += troops.get(i) * DataHolder.getSingleton().getUnits().get(i).getAttack();
@@ -114,6 +114,6 @@ public class VillageTroopsHolder {
             } catch (Exception e) {
                 //units not loaded yet
             }
-        }
+       // }
     }
 }

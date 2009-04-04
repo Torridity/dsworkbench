@@ -16,6 +16,7 @@ import java.util.LinkedList;
 import java.util.List;
 import de.tor.tribes.types.Fake;
 import de.tor.tribes.types.Off;
+import java.util.Collections;
 import org.apache.log4j.Logger;
 
 /**
@@ -45,7 +46,9 @@ public class BruteForce extends AbstractAttackAlgorithm {
         logger.debug("Assigning offs");
 
         // <editor-fold defaultstate="collapsed" desc=" Assign Offs">
-
+        if (pRandomize) {
+            Collections.shuffle(pTargets);
+        }
         while (unitKeys.hasMoreElements()) {
             UnitHolder unit = unitKeys.nextElement();
             List<Village> sources = pSources.get(unit);
@@ -117,7 +120,7 @@ public class BruteForce extends AbstractAttackAlgorithm {
         }
 
         logger.debug("Assigning fakes");
-        
+
         // <editor-fold defaultstate="collapsed" desc=" Assign fakes">
         unitKeys = pFakes.keys();
         Hashtable<Village, Hashtable<Village, UnitHolder>> fakes = new Hashtable<Village, Hashtable<Village, UnitHolder>>();

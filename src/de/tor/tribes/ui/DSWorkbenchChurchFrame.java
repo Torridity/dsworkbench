@@ -96,11 +96,11 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
         });
 
         jChurchAddDialog.pack();
-        /*
+        
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
-        GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.markers_view", GlobalOptions.getHelpBroker().getHelpSet());
+        GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.church_view", GlobalOptions.getHelpBroker().getHelpSet());
         // </editor-fold>
-         */
+         
 
         pack();
     }

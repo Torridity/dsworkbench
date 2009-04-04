@@ -75,10 +75,6 @@ import org.apache.log4j.Logger;
  * 4: Misc. Extended Map Decoration: e.g. troop qualification or active village marker
  * 5: Live Layer: Redraw in every drawing cycle e.g. Drag line, tool popup(?), (troop movement?)
  * 6-16: Free assignable
- * @TODO (DIFF) Font size for distance
- * @TODO (DIFF) Minimap skin added
- * @TODO (DIFF) Popup not outside FOV any longer
- * @TODO (DIFF) Ignore tag icons if field size < tagSize
  * @author Charon
  */
 /**Thread for updating after scroll operations

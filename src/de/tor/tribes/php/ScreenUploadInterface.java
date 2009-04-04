@@ -4,6 +4,7 @@
  */
 package de.tor.tribes.php;
 
+import de.tor.tribes.ui.DSWorkbenchSettingsDialog;
 import de.tor.tribes.util.GlobalOptions;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -12,8 +13,6 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.SocketAddress;
@@ -41,14 +40,13 @@ public class ScreenUploadInterface {
             SocketAddress addr = new InetSocketAddress("proxy.fzk.de", 8000);
             Proxy webProxy = new Proxy(Proxy.Type.HTTP, addr);
             URL url = new URL("http://dsworkbench.de/upload_interface.php");
-            URLConnection con = url.openConnection(webProxy);
-            //URLConnection con = url.openConnection(DSWorkbenchSettingsDialog.getSingleton().getWebProxy());
+            //URLConnection con = url.openConnection(webProxy);
+           URLConnection con = url.openConnection(DSWorkbenchSettingsDialog.getSingleton().getWebProxy());
             con.setDoInput(true);
             con.setDoOutput(true);
             con.setDefaultUseCaches(false);
 
-            //@TODO (1.3) Get owner from globaloptions
-            String owner = "Torridity";//GlobalOptions.getProperty("account.name");
+            String owner = GlobalOptions.getProperty("account.name");
             if (owner == null) {
                 return "Benutzername konnte nicht bestimmt werden. Bitte überprüfe deine Logineinstellungen.";
             }

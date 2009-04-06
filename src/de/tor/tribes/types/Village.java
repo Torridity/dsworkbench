@@ -41,6 +41,7 @@ public class Village implements Comparable {
     private byte type;
     private String stringRepresentation = null;
     private boolean visibleOnMap = true;
+    private int continent = -1;
     //$id, $name, $x, $y, $tribe, $points, $type
 
     public static Village parseFromPlainData(String pLine) {
@@ -136,6 +137,17 @@ public class Village implements Comparable {
 
     public void setY(short y) {
         this.y = y;
+    }
+
+    public int getContinent() {
+        if (continent == -1) {
+            if (ServerSettings.getSingleton().getCoordType() != 2) {
+                continent = DSCalculator.xyToHierarchical(getX(), getY())[0];
+            } else {
+                continent = DSCalculator.getContinent(getX(), getY());
+            }
+        }
+        return continent;
     }
 
     public int getTribeID() {

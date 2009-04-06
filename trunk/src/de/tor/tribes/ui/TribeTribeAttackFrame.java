@@ -20,8 +20,8 @@ import de.tor.tribes.ui.editors.VillageCellEditor;
 import de.tor.tribes.ui.renderer.DateCellRenderer;
 import de.tor.tribes.ui.editors.UnitCellEditor;
 import de.tor.tribes.ui.renderer.AttackTypeCellRenderer;
+import de.tor.tribes.ui.tree.AllyNode;
 import de.tor.tribes.ui.tree.DSWorkbenchTreeExpansionListener;
-import de.tor.tribes.ui.tree.DSWorkbenchTreeNode;
 import de.tor.tribes.ui.tree.NodeCellRenderer;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.DSCalculator;
@@ -69,6 +69,7 @@ import javax.swing.tree.DefaultTreeModel;
 
 /**
  * @TODO (1.4) Change AG assignment for Blitzkrieg
+ * @TODO (1.4) Combination of groups for source selection
  * @author Jejkal
  */
 public class TribeTribeAttackFrame extends javax.swing.JFrame implements VillageSelectionListener {
@@ -262,11 +263,11 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Village
         DefaultMutableTreeNode allAllies = new DefaultMutableTreeNode("Alle Stämme");
         root.add(allAllies);
         while (allyIDs.hasMoreElements()) {
-
             Integer allyID = allyIDs.nextElement();
             Ally a = DataHolder.getSingleton().getAllies().get(allyID);
-            DSWorkbenchTreeNode<Ally> allyNode = new DSWorkbenchTreeNode<Ally>(a);
+            AllyNode allyNode = new AllyNode(a);
             allAllies.add(allyNode);
+            allyNode.add(new DefaultMutableTreeNode(""));
             //DefaultMutableTreeNode allyNode = new DefaultMutableTreeNode(a);
             /*for (Tribe t : a.getTribes()) {
                 DSWorkbenchTreeNode<Tribe> tribeNode = new DSWorkbenchTreeNode<Tribe>(t);
@@ -279,7 +280,7 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Village
         DefaultTreeModel model = new DefaultTreeModel(root);
         jTree1.setModel(model);
         jTree1.setCellRenderer(new NodeCellRenderer());
-        jTree1.addTreeExpansionListener(new DSWorkbenchTreeExpansionListener());
+        jTree1.addTreeExpansionListener(new DSWorkbenchTreeExpansionListener(model));
         System.out.println("Dur: " + (System.currentTimeMillis() - s));
     }
 

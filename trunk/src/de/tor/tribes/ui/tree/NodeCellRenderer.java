@@ -41,15 +41,15 @@ public class NodeCellRenderer extends DefaultTreeCellRenderer {
                 hasFocus);
 
         try {
-            DSWorkbenchTreeNode node = ((DSWorkbenchTreeNode) value);
+            AbstractTreeNode node = ((AbstractTreeNode) value);
             if (node.isAllyNode()) {
                 setIcon(ally);
-                setToolTipText("AllyName");
+                //setToolTipText("AllyName");
             } else if (node.isTribeNode()) {
                 setIcon(tribe);
-                setToolTipText("TribeName");
+                //setToolTipText("TribeName");
             } else {
-                setToolTipText("");
+                //setToolTipText("");
             }
         } catch (Exception e) {
             

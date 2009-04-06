@@ -20,6 +20,9 @@ import de.tor.tribes.ui.editors.VillageCellEditor;
 import de.tor.tribes.ui.renderer.DateCellRenderer;
 import de.tor.tribes.ui.editors.UnitCellEditor;
 import de.tor.tribes.ui.renderer.AttackTypeCellRenderer;
+import de.tor.tribes.ui.tree.DSWorkbenchTreeExpansionListener;
+import de.tor.tribes.ui.tree.DSWorkbenchTreeNode;
+import de.tor.tribes.ui.tree.NodeCellRenderer;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.GlobalOptions;
@@ -61,6 +64,8 @@ import javax.swing.UIManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.util.Collections;
 import javax.swing.JSpinner.DateEditor;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
 
 /**
  * @TODO (1.4) Change AG assignment for Blitzkrieg
@@ -250,6 +255,32 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Village
             logger.error("Failed to initialize TribeAttackFrame", e);
         }
 
+        System.out.println("Setting up tree");
+        long s = System.currentTimeMillis();
+        Enumeration<Integer> allyIDs = DataHolder.getSingleton().getAllies().keys();
+        DefaultMutableTreeNode root = new DefaultMutableTreeNode("Herkunft");
+        DefaultMutableTreeNode allAllies = new DefaultMutableTreeNode("Alle Stämme");
+        root.add(allAllies);
+        while (allyIDs.hasMoreElements()) {
+
+            Integer allyID = allyIDs.nextElement();
+            Ally a = DataHolder.getSingleton().getAllies().get(allyID);
+            DSWorkbenchTreeNode<Ally> allyNode = new DSWorkbenchTreeNode<Ally>(a);
+            allAllies.add(allyNode);
+            //DefaultMutableTreeNode allyNode = new DefaultMutableTreeNode(a);
+            /*for (Tribe t : a.getTribes()) {
+                DSWorkbenchTreeNode<Tribe> tribeNode = new DSWorkbenchTreeNode<Tribe>(t);
+                allyNode.add(tribeNode);
+            }*/
+
+           // allTribes.add(allyNode);
+
+        }
+        DefaultTreeModel model = new DefaultTreeModel(root);
+        jTree1.setModel(model);
+        jTree1.setCellRenderer(new NodeCellRenderer());
+        jTree1.addTreeExpansionListener(new DSWorkbenchTreeExpansionListener());
+        System.out.println("Dur: " + (System.currentTimeMillis() - s));
     }
 
     /** This method is called from within the constructor to
@@ -372,6 +403,9 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Village
         jSnobDistance = new com.visutools.nav.bislider.BiSlider();
         jPanel4 = new javax.swing.JPanel();
         jSendTimeFrame = new com.visutools.nav.bislider.BiSlider();
+        jPanel5 = new javax.swing.JPanel();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        jTree1 = new javax.swing.JTree();
 
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("de/tor/tribes/ui/Bundle"); // NOI18N
         jResultFrame.setTitle(bundle.getString("TribeTribeAttackFrame.jResultFrame.title")); // NOI18N
@@ -1177,14 +1211,14 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Village
                                 .addGroup(jSourcePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addComponent(jSetFakeButton, 0, 0, Short.MAX_VALUE)
                                     .addComponent(jButton11))))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 97, Short.MAX_VALUE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 101, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jSourcePanelLayout.setVerticalGroup(
             jSourcePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jSourcePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 126, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 123, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jSourcePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1387,7 +1421,7 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Village
             jTargetPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jTargetPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 157, Short.MAX_VALUE)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 154, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -1595,6 +1629,27 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Village
         );
 
         jTabbedPane1.addTab(bundle.getString("TribeTribeAttackFrame.jSettingsPanel.TabConstraints.tabTitle"), new javax.swing.ImageIcon(getClass().getResource("/res/settings.png")), jSettingsPanel); // NOI18N
+
+        jScrollPane4.setViewportView(jTree1);
+
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(495, Short.MAX_VALUE))
+        );
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(16, Short.MAX_VALUE))
+        );
+
+        jTabbedPane1.addTab(bundle.getString("TribeTribeAttackFrame.jPanel5.TabConstraints.tabTitle"), jPanel5); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -2821,13 +2876,17 @@ private void fireChangeSourceFakeStateEvent(java.awt.event.MouseEvent evt) {//GE
     }
 
     @Override
-    public void fireSelectionFinishedEvent(Point vStart, Point vEnd) {
+    public void fireSelectionFinishedEvent(Point pStart, Point pEnd) {
+        int xStart = (pStart.x < pEnd.x) ? pStart.x : pEnd.x;
+        int xEnd = (pEnd.x > pStart.x) ? pEnd.x : pStart.x;
+        int yStart = (pStart.y < pEnd.y) ? pStart.y : pEnd.y;
+        int yEnd = (pEnd.y > pStart.y) ? pEnd.y : pStart.y;
         if (bChooseSourceRegionMode) {
             Tribe you = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage().getTribe();
             UnitHolder uSource = (UnitHolder) jTroopsList.getSelectedItem();
             jAttacksTable.invalidate();
-            for (int x = vStart.x; x <= vEnd.x; x++) {
-                for (int y = vStart.y; y <= vEnd.y; y++) {
+            for (int x = xStart; x <= xEnd; x++) {
+                for (int y = yStart; y <= yEnd; y++) {
                     Village v = DataHolder.getSingleton().getVillages()[x][y];
                     if (v != null) {
                         Tribe t = v.getTribe();
@@ -2843,8 +2902,8 @@ private void fireChangeSourceFakeStateEvent(java.awt.event.MouseEvent evt) {//GE
         } else if (bChooseTargetRegionMode) {
             Tribe victim = (Tribe) jTargetTribeList.getSelectedItem();
             jVictimTable.invalidate();
-            for (int x = vStart.x; x <= vEnd.x; x++) {
-                for (int y = vStart.y; y <= vEnd.y; y++) {
+            for (int x = xStart; x <= xEnd; x++) {
+                for (int y = yStart; y <= yEnd; y++) {
                     Village v = DataHolder.getSingleton().getVillages()[x][y];
                     if (v != null) {
                         Tribe t = v.getTribe();
@@ -2947,6 +3006,7 @@ private void fireChangeSourceFakeStateEvent(java.awt.event.MouseEvent evt) {//GE
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JTextField jRamField;
     private javax.swing.JTextField jRamRange;
@@ -2957,6 +3017,7 @@ private void fireChangeSourceFakeStateEvent(java.awt.event.MouseEvent evt) {//GE
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JSpinner jSendTime;
     private com.visutools.nav.bislider.BiSlider jSendTimeFrame;
     private javax.swing.JButton jSetFakeButton;
@@ -2986,6 +3047,7 @@ private void fireChangeSourceFakeStateEvent(java.awt.event.MouseEvent evt) {//GE
     private javax.swing.JSlider jToleranceSlider;
     private javax.swing.JTextField jToleranceValue;
     private javax.swing.JDialog jTransferToAttackManagerDialog;
+    private javax.swing.JTree jTree1;
     private javax.swing.JComboBox jTroopsList;
     private javax.swing.JTable jVictimTable;
     private javax.swing.JComboBox jVillageGroupChooser;

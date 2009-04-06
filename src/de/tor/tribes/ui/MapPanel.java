@@ -45,19 +45,15 @@ import java.io.File;
 import java.text.NumberFormat;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.Locale;
 import java.util.StringTokenizer;
-import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
-import javax.imageio.ImageWriteParam;
-import javax.imageio.ImageWriter;
 import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
-import javax.imageio.stream.ImageOutputStream;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
 /**
+ * @TODO (DIFF) Select villages in attack planer from bottom right to top left don't work
  *@TODO (1.X) Add flag-marker for single villages/notes? -> notes as forms? (Version 2.0)
  * @author  Charon
  */
@@ -691,6 +687,7 @@ public class MapPanel extends javax.swing.JPanel {
         int xEnd = (pEnd.x > pStart.x) ? pEnd.x : pStart.x;
         int yStart = (pStart.y < pEnd.y) ? pStart.y : pEnd.y;
         int yEnd = (pEnd.y > pStart.y) ? pEnd.y : pStart.y;
+
         List<Village> villages = new LinkedList<Village>();
         for (int x = xStart; x <= xEnd; x++) {
             for (int y = yStart; y <= yEnd; y++) {

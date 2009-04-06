@@ -641,6 +641,19 @@ public class DataHolder {
                 }
             }
         }
+        logger.debug("Removing empty allies");
+        Enumeration<Integer> allyKeys = mAllies.keys();
+        List<Ally> toRemove = new LinkedList<Ally>();
+        while(allyKeys.hasMoreElements()){
+            Ally a = mAllies.get(allyKeys.nextElement());
+            if(a.getTribes() == null || a.getTribes().isEmpty()){
+                toRemove.add(a);
+            }
+        }
+        for(Ally a : toRemove){
+            mAllies.remove(a.getId());
+        }
+        logger.debug("Removed " + toRemove.size() + " empty allies");
     }
 
     /**Download one single file from a URL*/

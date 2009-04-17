@@ -55,6 +55,7 @@ import javax.swing.UIManager;
 /**
  * @TODO (DIFF) Select villages in attack planer from bottom right to top left don't work
  *@TODO (1.X) Add flag-marker for single villages/notes? -> notes as forms? (Version 2.0)
+ *@TODO (1.4) Ask conquers interface (http://de41.die-staemme.de/interface.php?func=get_conquer&since=1239873543) for enoblements
  * @author  Charon
  */
 public class MapPanel extends javax.swing.JPanel {

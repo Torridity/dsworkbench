@@ -4,7 +4,6 @@
  */
 package de.tor.tribes.ui.renderer;
 
-import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.ui.ClockFrame;
 import de.tor.tribes.ui.DSWorkbenchSettingsDialog;
 import de.tor.tribes.ui.FormConfigFrame;
@@ -14,8 +13,8 @@ import de.tor.tribes.ui.MinimapPanel;
 import de.tor.tribes.ui.DSWorkbenchSearchFrame;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
+import de.tor.tribes.util.ServerSettings;
 import java.awt.Color;
-import java.awt.Frame;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -147,30 +146,42 @@ public class MenuRenderer implements MouseListener, MouseMotionListener {
             menuRegions.put(pos, new Rectangle(menuLocation.x + space + (pos - lastPos) * iconw + (pos - lastPos) * space, menuLocation.y + space + iconh + space + iconh + space + iconh + space + iconh + space, iconw, iconh));
         }
         lastPos = pos;
-        for (; pos < 30; pos++) {
+        for (; pos < 31; pos++) {
             menuRegions.put(pos, new Rectangle(menuLocation.x + space + (pos - lastPos) * iconw + (pos - lastPos) * space, menuLocation.y + space + iconh + space + iconh + space + iconh + space + iconh + space + iconh + space, iconw, iconh));
         }
         Enumeration<Integer> regions = menuRegions.keys();
+        boolean showChurchTools = ServerSettings.getSingleton().isChurch();
         while (regions.hasMoreElements()) {
+
             Integer region = regions.nextElement();
             Rectangle rect = menuRegions.get(region);
 
             if (rect.contains(mouseLocation)) {
                 g2d.setColor(Constants.DS_BACK);
-                g2d.fill3DRect(rect.x, rect.y, rect.width, rect.height, false);
+
+                if (!showChurchTools && (region == 24 || region == 25 || region == 26 || region == 27)) {
+                    g2d.fillRect(rect.x, rect.y, rect.width, rect.height);
+                } else {
+                    g2d.fill3DRect(rect.x, rect.y, rect.width, rect.height, false);
+                }
                 g2d.setColor(Color.BLACK);
                 String name = getToolName(region);
                 g2d.drawString(name, menuLocation.x + space, menuLocation.y - 5);
             } else {
-                g2d.setColor(Constants.DS_BACK_LIGHT);
-                g2d.fill3DRect(rect.x, rect.y, rect.width, rect.height, true);
+                if (!showChurchTools && (region == 24 || region == 25 || region == 26 || region == 27)) {
+                    g2d.setColor(Constants.DS_BACK);
+                    g2d.fillRect(rect.x, rect.y, rect.width, rect.height);
+                } else {
+                    g2d.setColor(Constants.DS_BACK_LIGHT);
+                    g2d.fill3DRect(rect.x, rect.y, rect.width, rect.height, true);
+                }
             }
-
             g2d.drawImage(mIcons.get(region).getScaledInstance(rect.width, rect.height, BufferedImage.SCALE_SMOOTH), rect.x, rect.y, null);
         }
     }
 
     private String getToolName(int id) {
+        boolean showChurchTools = ServerSettings.getSingleton().isChurch();
         switch (id) {
             case 0: {
                 return "Kein Werkzeug";
@@ -253,15 +264,27 @@ public class MenuRenderer implements MouseListener, MouseMotionListener {
                 return "Text zeichnen";
             }
             case 24: {
+                if (!showChurchTools) {
+                    return "(Nicht verfügbar)";
+                }
                 return "Kirche (Stufe 1) erstellen";
             }
             case 25: {
+                if (!showChurchTools) {
+                    return "(Nicht verfügbar)";
+                }
                 return "Kirche (Stufe 2) erstellen";
             }
             case 26: {
+                if (!showChurchTools) {
+                    return "(Nicht verfügbar)";
+                }
                 return "Kirche (Stufe 3) erstellen";
             }
             case 27: {
+                if (!showChurchTools) {
+                    return "(Nicht verfügbar)";
+                }
                 return "Kirche entfernen";
             }
             case 28: {
@@ -281,6 +304,7 @@ public class MenuRenderer implements MouseListener, MouseMotionListener {
     public void mouseClicked(MouseEvent e) {
         if (isVisible()) {
             if (e.getButton() == MouseEvent.BUTTON1) {
+                boolean showChurchTools = ServerSettings.getSingleton().isChurch();
                 Enumeration<Integer> regions = menuRegions.keys();
                 while (regions.hasMoreElements()) {
                     Integer region = regions.nextElement();
@@ -389,19 +413,33 @@ public class MenuRenderer implements MouseListener, MouseMotionListener {
                                 break;
                             }
                             case 24: {
-                                MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_CHURCH_1);
+                                if (showChurchTools) {
+                                    MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_CHURCH_1);
+                                } else {
+                                    return;
+                                }
                                 break;
                             }
                             case 25: {
-                                MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_CHURCH_2);
+                                if (showChurchTools) {
+                                    MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_CHURCH_2);
+                                } else {
+                                    return;
+                                }
                                 break;
                             }
                             case 26: {
-                                MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_CHURCH_3);
+                                if (showChurchTools) {
+                                    MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_CHURCH_3);
+                                } else {
+                                    return;
+                                }
                                 break;
                             }
                             case 27: {
-                                MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_REMOVE_CHURCH);
+                                if (showChurchTools) {
+                                    MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_REMOVE_CHURCH);
+                                }
                                 break;
                             }
                             case 28: {

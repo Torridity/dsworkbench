@@ -217,6 +217,8 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         jCopyTargetBox = new javax.swing.JComboBox();
         jCopyButton = new javax.swing.JButton();
         jCancelCopyButton = new javax.swing.JButton();
+        jAttackFrameAlwaysOnTop = new javax.swing.JCheckBox();
+        jScrollPane4 = new javax.swing.JScrollPane();
         jAttackPanel = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jAttackTable = new javax.swing.JTable();
@@ -239,7 +241,6 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         jButton5 = new javax.swing.JButton();
         jRemoveAttackButton1 = new javax.swing.JButton();
         jRemoveAttackButton2 = new javax.swing.JButton();
-        jAttackFrameAlwaysOnTop = new javax.swing.JCheckBox();
 
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("de/tor/tribes/ui/Bundle"); // NOI18N
         jSelectionFilterDialog.setTitle(bundle.getString("DSWorkbenchAttackFrame.jSelectionFilterDialog.title")); // NOI18N
@@ -858,6 +859,14 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
 
         setTitle(bundle.getString("DSWorkbenchAttackFrame.title")); // NOI18N
 
+        jAttackFrameAlwaysOnTop.setText(bundle.getString("DSWorkbenchAttackFrame.jAttackFrameAlwaysOnTop.text")); // NOI18N
+        jAttackFrameAlwaysOnTop.setOpaque(false);
+        jAttackFrameAlwaysOnTop.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                fireAttackFrameOnTopEvent(evt);
+            }
+        });
+
         jAttackPanel.setBackground(new java.awt.Color(239, 235, 223));
         jAttackPanel.setMaximumSize(new java.awt.Dimension(750, 377));
         jAttackPanel.setMinimumSize(new java.awt.Dimension(750, 377));
@@ -1080,11 +1089,11 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jAttackPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jAttackPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 575, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 573, Short.MAX_VALUE)
                     .addGroup(jAttackPanelLayout.createSequentialGroup()
                         .addComponent(jLabel9)
                         .addGap(18, 18, 18)
-                        .addComponent(jActiveAttackPlan, 0, 363, Short.MAX_VALUE)
+                        .addComponent(jActiveAttackPlan, 0, 361, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -1154,13 +1163,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
                 .addContainerGap())
         );
 
-        jAttackFrameAlwaysOnTop.setText(bundle.getString("DSWorkbenchAttackFrame.jAttackFrameAlwaysOnTop.text")); // NOI18N
-        jAttackFrameAlwaysOnTop.setOpaque(false);
-        jAttackFrameAlwaysOnTop.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                fireAttackFrameOnTopEvent(evt);
-            }
-        });
+        jScrollPane4.setViewportView(jAttackPanel);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -1170,14 +1173,14 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jAttackFrameAlwaysOnTop, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jAttackPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 662, Short.MAX_VALUE))
+                    .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 662, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jAttackPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 760, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jAttackFrameAlwaysOnTop, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -2218,6 +2221,7 @@ private void fireCopyEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fir
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JSpinner jSecondsField;
     private javax.swing.JDialog jSelectionFilterDialog;
     private javax.swing.JButton jSendAttackButton;

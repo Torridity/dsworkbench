@@ -10,8 +10,6 @@
  */
 package de.tor.tribes.ui;
 
-import de.tor.tribes.io.DataHolder;
-import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.editors.VillageCellEditor;
 import de.tor.tribes.ui.models.CurrentTribeVillagesModel;
@@ -20,10 +18,8 @@ import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.church.ChurchManager;
 import de.tor.tribes.util.church.ChurchManagerListener;
 import java.awt.Component;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.UIManager;
@@ -37,7 +33,7 @@ import javax.swing.table.TableRowSorter;
 import org.apache.log4j.Logger;
 
 /**
- *@TODO (1.4) show owner of church village
+ *@TODO (DIFF) show owner of church village
  * @author Charon
  */
 public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements ChurchManagerListener {
@@ -76,7 +72,7 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
             }
         };
 
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < 3; i++) {
             mHeaderRenderers.add(headerRenderer);
         }
 
@@ -95,12 +91,9 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
             }
         });
 
-        jChurchAddDialog.pack();
-        
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
         GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.church_view", GlobalOptions.getHelpBroker().getHelpSet());
         // </editor-fold>
-         
 
         pack();
     }
@@ -114,79 +107,12 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jChurchAddDialog = new javax.swing.JDialog();
-        jLabel1 = new javax.swing.JLabel();
-        jTribeVillageList = new javax.swing.JComboBox();
-        jLabel2 = new javax.swing.JLabel();
-        jChurchLevel = new javax.swing.JComboBox();
-        jCancelAddCurchButton = new javax.swing.JButton();
-        jAddChurchButton = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jChurchTable = new javax.swing.JTable();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
-        jOpenAddChurchDialogButton = new javax.swing.JButton();
         jChurchFrameAlwaysOnTop = new javax.swing.JCheckBox();
-
-        jLabel1.setText("Kirchendorf");
-
-        jLabel2.setText("Kirchenstufe");
-
-        jChurchLevel.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Stufe 1", "Stufe 2 / 1. Kirche", "Stufe 3" }));
-
-        jCancelAddCurchButton.setText("Abbrechen");
-        jCancelAddCurchButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireDoChurchAddEvent(evt);
-            }
-        });
-
-        jAddChurchButton.setText("Hinzufügen");
-        jAddChurchButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireDoChurchAddEvent(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jChurchAddDialogLayout = new javax.swing.GroupLayout(jChurchAddDialog.getContentPane());
-        jChurchAddDialog.getContentPane().setLayout(jChurchAddDialogLayout);
-        jChurchAddDialogLayout.setHorizontalGroup(
-            jChurchAddDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jChurchAddDialogLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jChurchAddDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jChurchAddDialogLayout.createSequentialGroup()
-                        .addGroup(jChurchAddDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(jChurchAddDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jChurchLevel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jTribeVillageList, 0, 310, Short.MAX_VALUE)))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jChurchAddDialogLayout.createSequentialGroup()
-                        .addComponent(jCancelAddCurchButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jAddChurchButton)))
-                .addContainerGap())
-        );
-        jChurchAddDialogLayout.setVerticalGroup(
-            jChurchAddDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jChurchAddDialogLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jChurchAddDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(jTribeVillageList, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jChurchAddDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(jChurchLevel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jChurchAddDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jAddChurchButton)
-                    .addComponent(jCancelAddCurchButton))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
 
         setTitle("Kirchen");
 
@@ -231,15 +157,6 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
             }
         });
 
-        jOpenAddChurchDialogButton.setBackground(new java.awt.Color(239, 235, 223));
-        jOpenAddChurchDialogButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/add.gif"))); // NOI18N
-        jOpenAddChurchDialogButton.setToolTipText("Kirchendorf hinzufügen");
-        jOpenAddChurchDialogButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireAddChurchEvent(evt);
-            }
-        });
-
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -249,7 +166,6 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 364, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jOpenAddChurchDialogButton, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton2)
                     .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
@@ -259,13 +175,11 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 297, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jOpenAddChurchDialogButton, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 297, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -305,14 +219,6 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
         setAlwaysOnTop(!isAlwaysOnTop());
     }//GEN-LAST:event_fireChurchFrameOnTopEvent
 
-    private void fireAddChurchEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireAddChurchEvent
-        if (!jOpenAddChurchDialogButton.isEnabled()) {
-            return;
-        }
-        jChurchAddDialog.setLocationRelativeTo(this);
-        jChurchAddDialog.setVisible(true);
-    }//GEN-LAST:event_fireAddChurchEvent
-
     private void fireRemoveChurchVillagesEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireRemoveChurchVillagesEvent
         int[] rows = jChurchTable.getSelectedRows();
         if (rows.length == 0) {
@@ -351,38 +257,6 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
         DSWorkbenchMainFrame.getSingleton().centerVillage(v);
     }//GEN-LAST:event_fireCenterChurchVillageEvent
 
-    private void fireDoChurchAddEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireDoChurchAddEvent
-        if (evt.getSource() == jAddChurchButton) {
-            Object o = jTribeVillageList.getSelectedItem();
-            if (o == null) {
-                return;
-            }
-            try {
-                Village v = (Village) o;
-                int level = jChurchLevel.getSelectedIndex();
-                switch (level) {
-                    case 1: {
-                        ChurchManager.getSingleton().addChurch(v, ChurchManager.RANGE2);
-                        break;
-                    }
-                    case 2: {
-                        ChurchManager.getSingleton().addChurch(v, ChurchManager.RANGE3);
-                        break;
-                    }
-                    default: {
-                        ChurchManager.getSingleton().addChurch(v, ChurchManager.RANGE1);
-                        break;
-                    }
-                }
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(jChurchAddDialog, "Fehler beim hinzufügen des Kirchendorfes", "Fehler", JOptionPane.ERROR_MESSAGE);
-                logger.error("Failed to add church", e);
-                return;
-            }
-        }
-        jChurchAddDialog.setVisible(false);
-    }//GEN-LAST:event_fireDoChurchAddEvent
-
     protected void setupChurchPanel() {
         jChurchTable.invalidate();
         jChurchTable.setModel(ChurchManager.getSingleton().getTableModel());
@@ -397,8 +271,6 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
         ChurchManager.getSingleton().churchesUpdatedExternally();
         jChurchTable.revalidate();
         jChurchTable.repaint();
-
-        jTribeVillageList.setModel(CurrentTribeVillagesModel.getModel());
     }
 
     @Override
@@ -407,10 +279,9 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
         jChurchTable.setModel(ChurchManager.getSingleton().getTableModel());
 
         //setup marker table view
-        jChurchTable.getColumnModel().getColumn(1).setMaxWidth(75);
+        jChurchTable.getColumnModel().getColumn(2).setMaxWidth(75);
 
-        for (int i = 0; i <
-                jChurchTable.getColumnCount(); i++) {
+        for (int i = 0; i < jChurchTable.getColumnCount(); i++) {
             jChurchTable.getColumn(jChurchTable.getColumnName(i)).setHeaderRenderer(mHeaderRenderers.get(i));
         }
 
@@ -432,19 +303,11 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jAddChurchButton;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
-    private javax.swing.JButton jCancelAddCurchButton;
-    private javax.swing.JDialog jChurchAddDialog;
     private javax.swing.JCheckBox jChurchFrameAlwaysOnTop;
-    private javax.swing.JComboBox jChurchLevel;
     private javax.swing.JTable jChurchTable;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JButton jOpenAddChurchDialogButton;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JComboBox jTribeVillageList;
     // End of variables declaration//GEN-END:variables
 }

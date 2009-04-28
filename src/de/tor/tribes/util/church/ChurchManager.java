@@ -5,6 +5,7 @@
 package de.tor.tribes.util.church;
 
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.DSWorkbenchMarkerFrame;
 import de.tor.tribes.ui.MapPanel;
@@ -51,14 +52,14 @@ public class ChurchManager {
         model = new javax.swing.table.DefaultTableModel(
                 new Object[][]{},
                 new String[]{
-                    "Dorf", "Reichweite"
+                    "Spieler", "Dorf", "Reichweite"
                 }) {
 
             Class[] types = new Class[]{
-                Village.class, Integer.class
+                String.class, Village.class, Integer.class
             };
             boolean[] canEdit = new boolean[]{
-                false, true
+                false, false, true
             };
 
             @Override
@@ -232,11 +233,11 @@ public class ChurchManager {
         return range;
     }
 
-    public List<Village> getChurchVillages(){
+    public List<Village> getChurchVillages() {
         List<Village> villages = new LinkedList<Village>();
         Enumeration<Integer> ids = lChurches.keys();
-        while(ids.hasMoreElements()){
-        villages.add(DataHolder.getSingleton().getVillagesById().get(ids.nextElement()));
+        while (ids.hasMoreElements()) {
+            villages.add(DataHolder.getSingleton().getVillagesById().get(ids.nextElement()));
         }
         return villages;
     }
@@ -282,8 +283,9 @@ public class ChurchManager {
         while (ids.hasMoreElements()) {
             Integer id = ids.nextElement();
             Integer range = lChurches.get(id);
-            model.addRow(new Object[]{DataHolder.getSingleton().getVillagesById().get(id), range});
-
+            Village v = DataHolder.getSingleton().getVillagesById().get(id);
+            String tribe = (v.getTribe() == null) ? "Barbaren" : v.getTribe().getName();
+            model.addRow(new Object[]{tribe, v, range});
         }
         return model;
     }

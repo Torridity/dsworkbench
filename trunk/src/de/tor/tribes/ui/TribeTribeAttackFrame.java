@@ -71,6 +71,7 @@ import javax.swing.tree.DefaultTreeModel;
 /**
  * @TODO (1.4) Change AG assignment for Blitzkrieg
  * @TODO (1.4) Combination of groups for source selection
+ * @TODO (1.4) Multi time range!?
  * @TODO (DIFF) Results table now has attack type editor
  * @author Jejkal
  */

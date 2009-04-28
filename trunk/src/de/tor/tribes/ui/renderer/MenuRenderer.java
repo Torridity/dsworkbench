@@ -31,7 +31,7 @@ import java.util.List;
 import javax.imageio.ImageIO;
 
 /**
- *
+ *@TODO (DIFF) Church icons added
  * @author Charon
  */
 public class MenuRenderer implements MouseListener, MouseMotionListener {
@@ -81,7 +81,12 @@ public class MenuRenderer implements MouseListener, MouseMotionListener {
             mIcons.add(ImageIO.read(new File("./graphics/icons/draw_rect.png")));
             mIcons.add(ImageIO.read(new File("./graphics/icons/draw_circle.png")));
             mIcons.add(ImageIO.read(new File("./graphics/icons/draw_text.png")));
-            //24-26 misc
+            //24-27 church
+            mIcons.add(ImageIO.read(new File("./graphics/icons/church1.png")));
+            mIcons.add(ImageIO.read(new File("./graphics/icons/church2.png")));
+            mIcons.add(ImageIO.read(new File("./graphics/icons/church3.png")));
+            mIcons.add(ImageIO.read(new File("./graphics/icons/no_church.png")));
+            //28-30 misc
             mIcons.add(ImageIO.read(new File("./graphics/icons/search.png")));
             mIcons.add(ImageIO.read(new File("./graphics/icons/settings.png")));
             mIcons.add(ImageIO.read(new File("./graphics/icons/clock.png")));
@@ -114,7 +119,7 @@ public class MenuRenderer implements MouseListener, MouseMotionListener {
         int space = 5;
         int maxIconsX = 9;
         g2d.setColor(Constants.DS_BACK);
-        g2d.fill3DRect(menuLocation.x, menuLocation.y - 20, maxIconsX * iconw + (maxIconsX + 1) * space, 5 * iconh + 5 * space + 25, true);
+        g2d.fill3DRect(menuLocation.x, menuLocation.y - 20, maxIconsX * iconw + (maxIconsX + 1) * space, 6 * iconh + 6 * space + 25, true);
         //map tools
         int pos = 0;
         int lastPos = 0;
@@ -138,10 +143,13 @@ public class MenuRenderer implements MouseListener, MouseMotionListener {
         }
         //misc tools
         lastPos = pos;
-        for (; pos < 27; pos++) {
+        for (; pos < 28; pos++) {
             menuRegions.put(pos, new Rectangle(menuLocation.x + space + (pos - lastPos) * iconw + (pos - lastPos) * space, menuLocation.y + space + iconh + space + iconh + space + iconh + space + iconh + space, iconw, iconh));
         }
-
+        lastPos = pos;
+        for (; pos < 30; pos++) {
+            menuRegions.put(pos, new Rectangle(menuLocation.x + space + (pos - lastPos) * iconw + (pos - lastPos) * space, menuLocation.y + space + iconh + space + iconh + space + iconh + space + iconh + space + iconh + space, iconw, iconh));
+        }
         Enumeration<Integer> regions = menuRegions.keys();
         while (regions.hasMoreElements()) {
             Integer region = regions.nextElement();
@@ -245,12 +253,24 @@ public class MenuRenderer implements MouseListener, MouseMotionListener {
                 return "Text zeichnen";
             }
             case 24: {
-                return "Suche öffnen";
+                return "Kirche (Stufe 1) erstellen";
             }
             case 25: {
-                return "Einstellungen öffnen";
+                return "Kirche (Stufe 2) erstellen";
             }
             case 26: {
+                return "Kirche (Stufe 3) erstellen";
+            }
+            case 27: {
+                return "Kirche entfernen";
+            }
+            case 28: {
+                return "Suche öffnen";
+            }
+            case 29: {
+                return "Einstellungen öffnen";
+            }
+            case 30: {
                 return "Uhr öffnen";
             }
         }
@@ -369,14 +389,30 @@ public class MenuRenderer implements MouseListener, MouseMotionListener {
                                 break;
                             }
                             case 24: {
-                                DSWorkbenchSearchFrame.getSingleton().setVisible(true);
+                                MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_CHURCH_1);
                                 break;
                             }
                             case 25: {
-                                DSWorkbenchSettingsDialog.getSingleton().setVisible(true);
+                                MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_CHURCH_2);
                                 break;
                             }
                             case 26: {
+                                MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_CHURCH_3);
+                                break;
+                            }
+                            case 27: {
+                                MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_REMOVE_CHURCH);
+                                break;
+                            }
+                            case 28: {
+                                DSWorkbenchSearchFrame.getSingleton().setVisible(true);
+                                break;
+                            }
+                            case 29: {
+                                DSWorkbenchSettingsDialog.getSingleton().setVisible(true);
+                                break;
+                            }
+                            case 30: {
                                 ClockFrame.getSingleton().setVisible(true);
                                 break;
                             }

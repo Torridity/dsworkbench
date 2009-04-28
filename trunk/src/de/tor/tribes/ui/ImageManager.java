@@ -19,6 +19,7 @@ import javax.swing.ImageIcon;
 import org.apache.log4j.Logger;
 
 /**Class for loading and holding all cursors needed for DS Workbench
+ * @TODO (DIFF) Church cursors added
  * @author Jejkal
  */
 public class ImageManager {
@@ -63,6 +64,10 @@ public class ImageManager {
     public final static int CURSOR_SELECTION = 21;
     public final static int CURSOR_DRAW_FREEFORM = 22;
     public final static int CURSOR_RADAR = 23;
+    public final static int CURSOR_CHURCH_1 = 24;
+    public final static int CURSOR_CHURCH_2 = 25;
+    public final static int CURSOR_CHURCH_3 = 26;
+    public final static int CURSOR_REMOVE_CHURCH = 27;
     private static final List<Cursor> CURSORS = new LinkedList<Cursor>();
     private static final List<ImageIcon> CURSOR_IMAGES = new LinkedList<ImageIcon>();
     private static final List<BufferedImage> UNIT_IMAGES = new LinkedList<BufferedImage>();
@@ -90,15 +95,24 @@ public class ImageManager {
             //minimap cursors
             loadCursor("graphics/cursors/move.png", "move");
             loadCursor("graphics/cursors/zoom.png", "zoom");
+            //misc cursors
             loadCursor("graphics/cursors/camera.png", "camera");
             loadCursor("graphics/cursors/support.png", "support");
+            //draw cursors
             loadCursor("graphics/cursors/draw_line.png", "draw_line");
             loadCursor("graphics/cursors/draw_rect.png", "draw_rect");
             loadCursor("graphics/cursors/draw_circle.png", "draw_circle");
             loadCursor("graphics/cursors/draw_text.png", "draw_text");
+            //new tools cursors
             loadCursor("graphics/cursors/selection.png", "selection");
             loadCursor("graphics/cursors/draw_freeform.png", "draw_freeform");
             loadCursor("graphics/cursors/radar.png", "radar");
+            //church cursors
+            loadCursor("graphics/cursors/church1.png", "church1");
+            loadCursor("graphics/cursors/church2.png", "church2");
+            loadCursor("graphics/cursors/church3.png", "church3");
+            loadCursor("graphics/cursors/no_church.png", "church0");
+
         } catch (Exception e) {
             logger.error("Failed to load cursor images", e);
             throw new Exception("Failed to load cursors");
@@ -153,8 +167,8 @@ public class ImageManager {
             throw new Exception("Failed to load unit icons");
         }
     }
-/*
- *  public final static int ICON_SPEAR = 0;
+    /*
+     *  public final static int ICON_SPEAR = 0;
     public final static int ICON_SWORD = 1;
     public final static int ICON_AXE = 2;
     public final static int ICON_ARCHER = 3;
@@ -166,7 +180,8 @@ public class ImageManager {
     public final static int ICON_CATA = 9;
     public final static int ICON_KNIGHT = 10;
     public final static int ICON_SNOB = 11;
- */
+     */
+
     /**Get thr unit icon for the provided ID*/
     public static ImageIcon getUnitIcon(int pId) {
         if (DataHolder.getSingleton().getUnits().size() == 9) {
@@ -204,7 +219,7 @@ public class ImageManager {
 
     /**Get thr unit icon for the provided ID*/
     public static BufferedImage getUnitImage(int pId, boolean pChecked) {
-        
+
         if (DataHolder.getSingleton().getUnits().size() == 9 && pChecked) {
             //old style
             switch (pId) {

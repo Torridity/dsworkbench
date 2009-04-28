@@ -37,7 +37,7 @@ import javax.swing.table.TableRowSorter;
 import org.apache.log4j.Logger;
 
 /**
- *
+ *@TODO (1.4) show owner of church village
  * @author Charon
  */
 public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements ChurchManagerListener {

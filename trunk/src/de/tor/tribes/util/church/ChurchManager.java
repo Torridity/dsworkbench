@@ -232,6 +232,15 @@ public class ChurchManager {
         return range;
     }
 
+    public List<Village> getChurchVillages(){
+        List<Village> villages = new LinkedList<Village>();
+        Enumeration<Integer> ids = lChurches.keys();
+        while(ids.hasMoreElements()){
+        villages.add(DataHolder.getSingleton().getVillagesById().get(ids.nextElement()));
+        }
+        return villages;
+    }
+
     public void addChurch(Village pVillage, int pRange) {
         if (pVillage != null) {
             lChurches.put(pVillage.getId(), pRange);

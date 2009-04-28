@@ -20,7 +20,7 @@ import java.util.Collections;
 import org.apache.log4j.Logger;
 
 /**
- *@TODO (1.4) Check not assigned source villages
+ *@TODO (DIFF) Now more attacks per village are assigned
  * @TODO (1.4) Check selection of attack type
  * @author Charon
  */
@@ -113,7 +113,7 @@ public class BruteForce extends AbstractAttackAlgorithm {
                                     attacksPerTribe.put(v.getTribe(), cnt + 1);
                                     vTarget = v;
                                 } else {
-                                //max number of attacks per village reached, continue search
+                                    //max number of attacks per village reached, continue search
                                 }
                             }
                         }

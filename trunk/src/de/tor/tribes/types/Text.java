@@ -59,8 +59,8 @@ public class Text extends AbstractForm {
 
         //calculate bounds
         double zoom = DSWorkbenchMainFrame.getSingleton().getZoomFactor();
-        int w = GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, zoom).getWidth(null);
-        int h = GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, zoom).getHeight(null);
+        int w = GlobalOptions.getSkin().getCurrentFieldWidth();//getImage(Skin.ID_DEFAULT_UNDERGROUND, zoom).getWidth(null);
+        int h = GlobalOptions.getSkin().getCurrentFieldHeight();//getImage(Skin.ID_DEFAULT_UNDERGROUND, zoom).getHeight(null);
         mBounds = new java.awt.Rectangle((int) (getXPos()), (int) (getYPos()), (int) Math.rint(bounds.getWidth() / (double) w), (int) Math.rint(bounds.getHeight() / (double) h));
 
         if (mapBounds.intersects(virtBounds)) {

@@ -57,7 +57,7 @@ import net.java.dev.colorchooser.ColorChooser;
 /**
  * @TODO (1.X) Integrate browser access for linux
  * @TODO (1.4) Shortcuts editable
- * @TODO (1.4) Shortcuts for map regions (direct access via main frame)
+ * @TODO (1.4) Shortcuts for map regions (direct access via main frame and shortcuts)
  * @author Jejkal
  */
 public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements

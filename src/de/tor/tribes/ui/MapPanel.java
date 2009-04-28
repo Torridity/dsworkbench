@@ -33,6 +33,7 @@ import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.MapShotListener;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.VillageSelectionListener;
+import de.tor.tribes.util.church.ChurchManager;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.FontMetrics;
@@ -56,15 +57,17 @@ import javax.swing.UIManager;
  * @TODO (DIFF) Select villages in attack planer from bottom right to top left don't work
  *@TODO (1.X) Add flag-marker for single villages/notes? -> notes as forms? (Version 2.0)
  *@TODO (1.4) Ask conquers interface (http://de41.die-staemme.de/interface.php?func=get_conquer&since=1239873543) for enoblements
- * @author  Charon
+ * @TODO (DIFF) Make church range colored based on tribe marker
+ * @TODO (DIFF) Add 3 church range tools to speed up adding of churches
+ * @TODO (1.4) Selection tool should be able to filter (only own, only enemy, only ally, only barbarian)
+ * @TODO (1.4) Runtime radar as fixed ranges, show always!? ask size every time
+ * @author Charon
  */
 public class MapPanel extends javax.swing.JPanel {
 
     // <editor-fold defaultstate="collapsed" desc=" Member variables ">
     private static Logger logger = Logger.getLogger("MapCanvas");
     private Image mBuffer = null;
-    /* private int iCenterX = 500;
-    private int iCenterY = 500;*/
     private double dCenterX = 500.0;
     private double dCenterY = 500.0;
     private Rectangle2D.Double mVirtualBounds = null;
@@ -279,6 +282,37 @@ public class MapPanel extends javax.swing.JPanel {
                     }
                     case ImageManager.CURSOR_ATTACK_SNOB: {
                         unit = DataHolder.getSingleton().getUnitID("Adelsgeschlecht");
+                        break;
+                    }
+                    case ImageManager.CURSOR_CHURCH_1: {
+                        Village v = getVillageAtMousePos();
+                        if (v != null) {
+                            ChurchManager.getSingleton().addChurch(v, ChurchManager.RANGE1);
+
+                        }
+                        break;
+                    }
+                    case ImageManager.CURSOR_CHURCH_2: {
+                        Village v = getVillageAtMousePos();
+                        if (v != null) {
+                            ChurchManager.getSingleton().addChurch(v, ChurchManager.RANGE2);
+
+                        }
+                        break;
+                    }
+                    case ImageManager.CURSOR_CHURCH_3: {
+                        Village v = getVillageAtMousePos();
+                        if (v != null) {
+                            ChurchManager.getSingleton().addChurch(v, ChurchManager.RANGE3);
+
+                        }
+                        break;
+                    }
+                    case ImageManager.CURSOR_REMOVE_CHURCH: {
+                        Village v = getVillageAtMousePos();
+                        if (v != null) {
+                            ChurchManager.getSingleton().removeChurch(v);
+                        }
                         break;
                     }
                 }

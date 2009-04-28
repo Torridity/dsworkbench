@@ -34,12 +34,12 @@ public class ToolsRenderer {
             mToolsImages.add(ImageIO.read(new File("./graphics/icons/general_tools.png")));
 
             mToolsImages.add(ImageIO.read(new File("./graphics/icons/attack_axe.png")));
-        mToolsImages.add(ImageIO.read(new File("./graphics/icons/attack_ram.png")));
-        mToolsImages.add(ImageIO.read(new File("./graphics/icons/attack_snob.png")));
-        mToolsImages.add(ImageIO.read(new File("./graphics/icons/attack_spy.png")));
-        mToolsImages.add(ImageIO.read(new File("./graphics/icons/attack_light.png")));
-        mToolsImages.add(ImageIO.read(new File("./graphics/icons/attack_heavy.png")));
-        mToolsImages.add(ImageIO.read(new File("./graphics/icons/attack_sword.png")));
+            mToolsImages.add(ImageIO.read(new File("./graphics/icons/attack_ram.png")));
+            mToolsImages.add(ImageIO.read(new File("./graphics/icons/attack_snob.png")));
+            mToolsImages.add(ImageIO.read(new File("./graphics/icons/attack_spy.png")));
+            mToolsImages.add(ImageIO.read(new File("./graphics/icons/attack_light.png")));
+            mToolsImages.add(ImageIO.read(new File("./graphics/icons/attack_heavy.png")));
+            mToolsImages.add(ImageIO.read(new File("./graphics/icons/attack_sword.png")));
         } catch (Exception e) {
         }
     }
@@ -58,7 +58,7 @@ public class ToolsRenderer {
          */
         int cnt = 0;
         g2d.drawImage(mMenuImages[0], 0, h - 40, null);
-        for(BufferedImage i : mToolsImages){
+        for (BufferedImage i : mToolsImages) {
             g2d.drawImage(mMenuImages[1], 20 + cnt * 40, h - 40, null);
             g2d.drawImage(i, 20 + cnt * 40 + 5, h - 40 + 5, null);
             cnt++;
@@ -67,13 +67,11 @@ public class ToolsRenderer {
     }
 }
 
-class MenuItem{
+class MenuItem {
 
-    public MenuItem(BufferedImage pItemImage){
+    public MenuItem(BufferedImage pItemImage) {
     }
 
-    public void performItemAction(){
-
+    public void performItemAction() {
     }
-
 }

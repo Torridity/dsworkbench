@@ -15,6 +15,7 @@ import de.tor.tribes.types.Fake;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
+import de.tor.tribes.ui.editors.AttackTypeCellEditor;
 import de.tor.tribes.ui.editors.DateSpinEditor;
 import de.tor.tribes.ui.editors.VillageCellEditor;
 import de.tor.tribes.ui.renderer.DateCellRenderer;
@@ -70,6 +71,7 @@ import javax.swing.tree.DefaultTreeModel;
 /**
  * @TODO (1.4) Change AG assignment for Blitzkrieg
  * @TODO (1.4) Combination of groups for source selection
+ * @TODO (DIFF) Results table now has attack type editor
  * @author Jejkal
  */
 public class TribeTribeAttackFrame extends javax.swing.JFrame implements VillageSelectionListener {
@@ -2830,6 +2832,7 @@ private void fireChangeSourceFakeStateEvent(java.awt.event.MouseEvent evt) {//GE
         };
 
         jResultsTable.setDefaultRenderer(Integer.class, new AttackTypeCellRenderer());
+jResultsTable.setDefaultEditor(Integer.class, new AttackTypeCellEditor());
 
         jResultsTable.setDefaultRenderer(Date.class, new DateCellRenderer());
         /* Enumeration<Village> targets = pAttacks.keys();

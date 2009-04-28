@@ -21,7 +21,7 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 
 /**
- * @TODO (1.4) Correct "name-text overlap" for fast input frequency
+ * @TODO (1.X) Correct "name-text overlap" for fast input frequency
  * @author Charon
  */
 public class DSWorkbenchComClientFrame extends AbstractDSWorkbenchFrame implements ComClientListener {

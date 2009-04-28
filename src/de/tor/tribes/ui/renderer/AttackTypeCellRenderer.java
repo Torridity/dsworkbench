@@ -16,7 +16,6 @@ import javax.swing.table.TableCellRenderer;
 import org.apache.log4j.Logger;
 
 /**
- *
  * @author Jejkal
  */
 public class AttackTypeCellRenderer implements TableCellRenderer {

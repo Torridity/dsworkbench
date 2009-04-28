@@ -20,6 +20,8 @@ import java.util.Collections;
 import org.apache.log4j.Logger;
 
 /**
+ *@TODO (1.4) Check not assigned source villages
+ * @TODO (1.4) Check selection of attack type
  * @author Charon
  */
 public class BruteForce extends AbstractAttackAlgorithm {
@@ -40,7 +42,7 @@ public class BruteForce extends AbstractAttackAlgorithm {
             boolean pNightBlock,
             boolean pRandomize) {
         Enumeration<UnitHolder> unitKeys = pSources.keys();
-        Hashtable<Village, Hashtable<Village, UnitHolder>> attacks = new Hashtable<Village, Hashtable<Village, UnitHolder>>();
+        Hashtable<Village, Hashtable<UnitHolder, List<Village>>> attacks = new Hashtable<Village, Hashtable<UnitHolder, List<Village>>>();
         List<Village> notAssigned = new LinkedList<Village>();
         Hashtable<Tribe, Integer> attacksPerTribe = new Hashtable<Tribe, Integer>();
         logger.debug("Assigning offs");
@@ -62,13 +64,14 @@ public class BruteForce extends AbstractAttackAlgorithm {
                     TimeFrame t = new TimeFrame(pStartTime, pArriveTime, pTimeFrameStartHour, pTimeFrameEndHour);
                     //search all tribes and villages for targets
                     for (Village v : pTargets) {
+
                         double time = DSCalculator.calculateMoveTimeInSeconds(source, v, unit.getSpeed());
                         Date sendTime = new Date(arrive - (long) time * 1000);
                         //check if attack is somehow possible
                         if (t.inside(sendTime)) {
                             //only calculate if time is in time frame
                             //get list of source villages for current target
-                            Hashtable<Village, UnitHolder> attacksForVillage = attacks.get(v);
+                            Hashtable<UnitHolder, List<Village>> attacksForVillage = attacks.get(v);
                             if (attacksForVillage == null) {
                                 //no attack found for this village
                                 //get number of attacks on this tribe
@@ -78,25 +81,39 @@ public class BruteForce extends AbstractAttackAlgorithm {
                                     cnt = 0;
                                 }
                                 //create new table of attacks
-                                attacksForVillage = new Hashtable<Village, UnitHolder>();
-                                attacksForVillage.put(source, unit);
+                                attacksForVillage = new Hashtable<UnitHolder, List<Village>>();
+                                List<Village> sourceList = new LinkedList<Village>();
+                                sourceList.add(source);
+                                attacksForVillage.put(unit, sourceList);
                                 attacks.put(v, attacksForVillage);
                                 attacksPerTribe.put(v.getTribe(), cnt + 1);
                                 vTarget = v;
                             } else {
+                                Enumeration<UnitHolder> units = attacksForVillage.keys();
+                                int currentAttacks = 0;
+                                while (units.hasMoreElements()) {
+                                    currentAttacks += attacksForVillage.get(units.nextElement()).size();
+                                }
                                 //there are already attacks on this village
-                                if (attacksForVillage.keySet().size() < maxAttacksPerVillage) {
+                                if (currentAttacks < maxAttacksPerVillage) {
                                     //more attacks on this village are allowed
                                     Integer cnt = attacksPerTribe.get(v.getTribe());
                                     if (cnt == null) {
                                         cnt = 0;
                                     }
                                     //max number of attacks neither for villages nor for player reached
-                                    attacksForVillage.put(source, unit);
+                                    List<Village> attsPerUnit = attacksForVillage.get(unit);
+                                    if (attsPerUnit != null) {
+                                        attsPerUnit.add(source);
+                                    } else {
+                                        attsPerUnit = new LinkedList<Village>();
+                                        attsPerUnit.add(source);
+                                        attacksForVillage.put(unit, attsPerUnit);
+                                    }
                                     attacksPerTribe.put(v.getTribe(), cnt + 1);
                                     vTarget = v;
                                 } else {
-                                    //max number of attacks per village reached, continue search
+                                //max number of attacks per village reached, continue search
                                 }
                             }
                         }
@@ -116,7 +133,9 @@ public class BruteForce extends AbstractAttackAlgorithm {
         logger.debug("Removing off targets from fake list");
         Enumeration<Village> targets = attacks.keys();
         while (targets.hasMoreElements()) {
-            pTargets.remove(targets.nextElement());
+            Village target = targets.nextElement();
+            System.out.println("remove target " + target);
+            pTargets.remove(target);
         }
 
         logger.debug("Assigning fakes");
@@ -201,12 +220,14 @@ public class BruteForce extends AbstractAttackAlgorithm {
         logger.debug(" - adding offs");
         while (targetKeys.hasMoreElements()) {
             Village target = targetKeys.nextElement();
-            Enumeration<Village> sourceKeys = attacks.get(target).keys();
+            Enumeration<UnitHolder> sourceKeys = attacks.get(target).keys();
             Off f = new Off(target, pMaxAttacksPerVillage);
             while (sourceKeys.hasMoreElements()) {
-                Village source = sourceKeys.nextElement();
-                UnitHolder unit = attacks.get(target).get(source);
-                f.addOff(unit, source);
+                UnitHolder sourceUnit = sourceKeys.nextElement();
+                List<Village> unitVillages = attacks.get(target).get(sourceUnit);
+                for (Village source : unitVillages) {
+                    f.addOff(sourceUnit, source);
+                }
             }
             if (f.offComplete()) {
                 fullMovements++;

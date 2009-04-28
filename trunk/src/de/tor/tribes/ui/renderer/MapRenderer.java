@@ -1092,91 +1092,176 @@ public class MapRenderer extends Thread {
      */
     private void renderChurches(Graphics2D g2d) {
         Rectangle g = null;
+        boolean markedOnly = false;
+        try {
+            markedOnly = Boolean.parseBoolean(GlobalOptions.getProperty("draw.marked.only"));
+        } catch (Exception e) {
+            markedOnly = false;
+        }
 
+        boolean showBarbarian = true;
+        try {
+            showBarbarian = Boolean.parseBoolean(GlobalOptions.getProperty("show.barbarian"));
+        } catch (Exception e) {
+            showBarbarian = true;
+        }
         List<Village> churchVillages = ChurchManager.getSingleton().getChurchVillages();
         for (Village v : churchVillages) {
-            int range = ChurchManager.getSingleton().getChurchRange(v);
-            int vx = MapPanel.getSingleton().virtualPosToSceenPos(v.getX(), v.getY()).x;
-            int vy = MapPanel.getSingleton().virtualPosToSceenPos(v.getX(), v.getY()).y;
-            g = new Rectangle(vx, vy, GlobalOptions.getSkin().getCurrentFieldWidth(), GlobalOptions.getSkin().getCurrentFieldHeight());
+            boolean drawVillage = true;
 
-            // <editor-fold defaultstate="collapsed" desc=" Church calc">
-            List<Point2D.Double> positions = ChurchRangeCalculator.getChurchRange(v.getX(), v.getY(), range);
-            GeneralPath p = new GeneralPath();
-            p.moveTo(g.getX(), g.getY() - (range - 1) * g.getHeight());
-            int quad = 0;
-            Point2D.Double lastPos = positions.get(0);
-            for (Point2D.Double pos : positions) {
-                if (quad == 0) {
-                    //north village
-                    p.lineTo(p.getCurrentPoint().getX(), p.getCurrentPoint().getY() - g.getHeight());
-                    p.lineTo(p.getCurrentPoint().getX() + g.getWidth(), p.getCurrentPoint().getY());
-                    quad = 1;
-                } else if (pos.getX() == v.getX() + range && pos.getY() == v.getY()) {
-                    //east village
-                    p.lineTo(p.getCurrentPoint().getX(), p.getCurrentPoint().getY() + g.getHeight());
-                    p.lineTo(p.getCurrentPoint().getX() + g.getWidth(), p.getCurrentPoint().getY());
-                    p.lineTo(p.getCurrentPoint().getX(), p.getCurrentPoint().getY() + g.getHeight());
-                    quad = 2;
-                } else if (pos.getX() == v.getX() && pos.getY() == v.getY() + range) {
-                    //south village
-                    p.lineTo(p.getCurrentPoint().getX() - g.getWidth(), p.getCurrentPoint().getY());
-                    p.lineTo(p.getCurrentPoint().getX(), p.getCurrentPoint().getY() + g.getHeight());
-                    p.lineTo(p.getCurrentPoint().getX() - g.getWidth(), p.getCurrentPoint().getY());
-                    quad = 3;
-                } else if (pos.getX() == v.getX() - range && pos.getY() == v.getY()) {
-                    //west village
-                    p.lineTo(p.getCurrentPoint().getX(), p.getCurrentPoint().getY() - g.getHeight());
-                    p.lineTo(p.getCurrentPoint().getX() - g.getWidth(), p.getCurrentPoint().getY());
-                    p.lineTo(p.getCurrentPoint().getX(), p.getCurrentPoint().getY() - g.getHeight());
-                    quad = 4;
-                } else {
-                    //no special point
-                    int dx = (int) (pos.getX() - lastPos.getX());
-                    int dy = (int) (pos.getY() - lastPos.getY());
-
-                    if (quad == 1) {
-                        p.lineTo(p.getCurrentPoint().getX(), p.getCurrentPoint().getY() + dy * g.getHeight());
-                        p.lineTo(p.getCurrentPoint().getX() + dx * g.getWidth(), p.getCurrentPoint().getY());
-                    } else if (quad == 2) {
-                        p.lineTo(p.getCurrentPoint().getX() + dx * g.getWidth(), p.getCurrentPoint().getY());
-                        p.lineTo(p.getCurrentPoint().getX(), p.getCurrentPoint().getY() + dy * g.getHeight());
-                    } else if (quad == 3) {
-                        p.lineTo(p.getCurrentPoint().getX(), p.getCurrentPoint().getY() + dy * g.getHeight());
-                        p.lineTo(p.getCurrentPoint().getX() + dx * g.getWidth(), p.getCurrentPoint().getY());
-                    } else if (quad == 4) {
-                        p.lineTo(p.getCurrentPoint().getX() + dx * g.getWidth(), p.getCurrentPoint().getY());
-                        p.lineTo(p.getCurrentPoint().getX(), p.getCurrentPoint().getY() + dy * g.getHeight());
-                    }
+            // <editor-fold defaultstate="collapsed" desc=" Check if village should be drawn ">
+            //check for barbarian
+            if (!showBarbarian) {
+                if ((v != null) && (v.getTribe() == null)) {
+                    drawVillage = false;
                 }
-                lastPos = pos;
+
             }
 
-            p.closePath();
-            Color cb = g2d.getColor();
-            Composite c = g2d.getComposite();
-            g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f));
+            if (drawVillage && markedOnly) {
+                if (v != null && currentUserVillage != null) {
+                    //valid village
+                    if (v.getTribe() != null) {
+                        if (!v.getTribe().equals(currentUserVillage.getTribe())) {
+                            //check tribe marker
+                            Marker m = MarkerManager.getSingleton().getMarker(v.getTribe());
+                            if (m == null) {
+                                //tribe is not marked check ally marker
+                                if (v.getTribe().getAlly() != null) {
+                                    m = MarkerManager.getSingleton().getMarker(v.getTribe().getAlly());
+                                    if (m == null) {
+                                        //tribe and ally are not marked
+                                        drawVillage = false;
+                                    }
 
-            Marker m = MarkerManager.getSingleton().getMarker(v.getTribe());
-            if (m != null) {
-                g2d.setColor(m.getMarkerColor());
-            } else {
+                                } else {
+                                    drawVillage = false;
+                                }
+
+                            }
+                        }//village is owned by current user
+                    }
+                }
+            }
+
+            //filter tags
+            List<Tag> villageTags = TagManager.getSingleton().getTags(v);
+            if ((drawVillage) && (villageTags != null) && (villageTags.size() != 0)) {
+                boolean notShown = true;
+                for (Tag tag : TagManager.getSingleton().getTags(v)) {
+                    if (tag.isShowOnMap()) {
+                        //at least one of the tags for the village is visible
+                        notShown = false;
+                        break;
+
+                    }
+                }
+                if (notShown) {
+                    drawVillage = false;
+                }
+            }
+            // </editor-fold>
+
+            // <editor-fold defaultstate="collapsed" desc=" Church calculation">
+            if (drawVillage) {
+                int range = ChurchManager.getSingleton().getChurchRange(v);
+                int vx = MapPanel.getSingleton().virtualPosToSceenPos(v.getX(), v.getY()).x;
+                int vy = MapPanel.getSingleton().virtualPosToSceenPos(v.getX(), v.getY()).y;
+                g = new Rectangle(vx, vy, GlobalOptions.getSkin().getCurrentFieldWidth(), GlobalOptions.getSkin().getCurrentFieldHeight());
+
+
+                List<Point2D.Double> positions = ChurchRangeCalculator.getChurchRange(v.getX(), v.getY(), range);
+                GeneralPath p = new GeneralPath();
+                p.moveTo(g.getX(), g.getY() - (range - 1) * g.getHeight());
+                int quad = 0;
+                Point2D.Double lastPos = positions.get(0);
+                for (Point2D.Double pos : positions) {
+                    if (quad == 0) {
+                        //north village
+                        p.lineTo(p.getCurrentPoint().getX(), p.getCurrentPoint().getY() - g.getHeight());
+                        p.lineTo(p.getCurrentPoint().getX() + g.getWidth(), p.getCurrentPoint().getY());
+                        quad = 1;
+                    } else if (pos.getX() == v.getX() + range && pos.getY() == v.getY()) {
+                        //east village
+                        p.lineTo(p.getCurrentPoint().getX(), p.getCurrentPoint().getY() + g.getHeight());
+                        p.lineTo(p.getCurrentPoint().getX() + g.getWidth(), p.getCurrentPoint().getY());
+                        p.lineTo(p.getCurrentPoint().getX(), p.getCurrentPoint().getY() + g.getHeight());
+                        quad = 2;
+                    } else if (pos.getX() == v.getX() && pos.getY() == v.getY() + range) {
+                        //south village
+                        p.lineTo(p.getCurrentPoint().getX() - g.getWidth(), p.getCurrentPoint().getY());
+                        p.lineTo(p.getCurrentPoint().getX(), p.getCurrentPoint().getY() + g.getHeight());
+                        p.lineTo(p.getCurrentPoint().getX() - g.getWidth(), p.getCurrentPoint().getY());
+                        quad = 3;
+                    } else if (pos.getX() == v.getX() - range && pos.getY() == v.getY()) {
+                        //west village
+                        p.lineTo(p.getCurrentPoint().getX(), p.getCurrentPoint().getY() - g.getHeight());
+                        p.lineTo(p.getCurrentPoint().getX() - g.getWidth(), p.getCurrentPoint().getY());
+                        p.lineTo(p.getCurrentPoint().getX(), p.getCurrentPoint().getY() - g.getHeight());
+                        quad = 4;
+                    } else {
+                        //no special point
+                        int dx = (int) (pos.getX() - lastPos.getX());
+                        int dy = (int) (pos.getY() - lastPos.getY());
+
+                        if (quad == 1) {
+                            p.lineTo(p.getCurrentPoint().getX(), p.getCurrentPoint().getY() + dy * g.getHeight());
+                            p.lineTo(p.getCurrentPoint().getX() + dx * g.getWidth(), p.getCurrentPoint().getY());
+                        } else if (quad == 2) {
+                            p.lineTo(p.getCurrentPoint().getX() + dx * g.getWidth(), p.getCurrentPoint().getY());
+                            p.lineTo(p.getCurrentPoint().getX(), p.getCurrentPoint().getY() + dy * g.getHeight());
+                        } else if (quad == 3) {
+                            p.lineTo(p.getCurrentPoint().getX(), p.getCurrentPoint().getY() + dy * g.getHeight());
+                            p.lineTo(p.getCurrentPoint().getX() + dx * g.getWidth(), p.getCurrentPoint().getY());
+                        } else if (quad == 4) {
+                            p.lineTo(p.getCurrentPoint().getX() + dx * g.getWidth(), p.getCurrentPoint().getY());
+                            p.lineTo(p.getCurrentPoint().getX(), p.getCurrentPoint().getY() + dy * g.getHeight());
+                        }
+                    }
+                    lastPos = pos;
+                }
+
+                p.closePath();
+                Color cb = g2d.getColor();
+                Composite c = g2d.getComposite();
+                g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f));
+                Color radiusColor = null;
                 try {
-                    if (Integer.parseInt(GlobalOptions.getProperty("default.mark")) == 1) {
-                        g2d.setColor(Color.RED);
+                    if (v.getTribe().equals(currentUserVillage.getTribe())) {
+                        radiusColor = Color.YELLOW;
                     }
-
                 } catch (Exception e) {
-                    g2d.setColor(Color.WHITE);
+                    if (v.getTribe() == null) {
+                        radiusColor = Color.LIGHT_GRAY;
+                    } else {
+                        radiusColor = null;
+                    }
                 }
+                if (radiusColor == null) {
+                    Marker m = MarkerManager.getSingleton().getMarker(v.getTribe());
+                    if (m != null) {
+                        radiusColor = m.getMarkerColor();
+                    } else {
+                        try {
+                            if (Integer.parseInt(GlobalOptions.getProperty("default.mark")) == 1) {
+                                radiusColor = Color.RED;
+                            } else {
+                                radiusColor = Color.WHITE;
+                            }
+                        } catch (Exception e) {
+                            radiusColor = Color.WHITE;
+                        }
+                    }
+                }
+                g2d.setColor(radiusColor);
+                //g2d.setPaint(new RoundGradientPaint(g.getCenterX(), g.getCenterY(), new Color(0, 0, 255, 155), new Point2D.Double(rad * g.getWidth() + g.getWidth(), rad * g.getHeight() + g.getHeight()), new Color(0, 0, 255, 0)));
+                g2d.setStroke(new BasicStroke(10.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+                g2d.draw(p);
+                g2d.fill(p);
+                g2d.setComposite(c);
+                g2d.setColor(cb);
             }
-            //g2d.setPaint(new RoundGradientPaint(g.getCenterX(), g.getCenterY(), new Color(0, 0, 255, 155), new Point2D.Double(rad * g.getWidth() + g.getWidth(), rad * g.getHeight() + g.getHeight()), new Color(0, 0, 255, 0)));
-            g2d.setStroke(new BasicStroke(10.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-            g2d.draw(p);
-            g2d.fill(p);
-            g2d.setComposite(c);
-            g2d.setColor(cb);
-        //</fold>
+        //</editor-fold>
         }
     }
 

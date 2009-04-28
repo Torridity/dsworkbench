@@ -356,7 +356,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         }
         // </editor-fold>
 
-        // </editor-fold>
 
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
         GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "index", GlobalOptions.getHelpBroker().getHelpSet());

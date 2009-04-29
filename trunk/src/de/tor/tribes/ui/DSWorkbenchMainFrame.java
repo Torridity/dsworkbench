@@ -39,6 +39,7 @@ import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.attack.AttackManager;
 import de.tor.tribes.util.map.FormManager;
 import de.tor.tribes.util.mark.MarkerManager;
+import de.tor.tribes.util.roi.ROIManager;
 import java.io.File;
 import javax.swing.JFileChooser;
 import de.tor.tribes.util.troops.TroopsManager;
@@ -46,11 +47,15 @@ import java.awt.Component;
 import java.awt.datatransfer.StringSelection;
 import java.io.FileWriter;
 import java.util.Enumeration;
+import javax.swing.ComboBoxModel;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 /**
+ * @TODO (1.4) Remove SHIFT+8 shortcut from help
+ * @TODO (1.4) Check if border features could be dynamically sized
  * @author  Charon
  */
 public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
@@ -87,6 +92,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         setTitle("DS Workbench " + Constants.VERSION + Constants.VERSION_ADDITION);
         jMassAttackItem.setVisible(false);
         jExportDialog.pack();
+        jAddROIDialog.pack();
         // <editor-fold defaultstate="collapsed" desc=" Register ShutdownHook ">
 
         Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
@@ -618,6 +624,15 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jExportForms = new javax.swing.JCheckBox();
         jExportButton = new javax.swing.JButton();
         jCancelExportButton = new javax.swing.JButton();
+        jAddROIDialog = new javax.swing.JDialog();
+        jLabel7 = new javax.swing.JLabel();
+        jROIRegion = new javax.swing.JTextField();
+        jLabel8 = new javax.swing.JLabel();
+        jROITextField = new javax.swing.JTextField();
+        jLabel9 = new javax.swing.JLabel();
+        jROIPosition = new javax.swing.JComboBox();
+        jAddNewROIButton = new javax.swing.JButton();
+        jButton5 = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         jNavigationPanel = new javax.swing.JPanel();
         jMoveE = new javax.swing.JButton();
@@ -652,6 +667,12 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jLabel4 = new javax.swing.JLabel();
         jUVModeButton = new javax.swing.JToggleButton();
         jChurchRangeBox = new javax.swing.JCheckBox();
+        jLabel5 = new javax.swing.JLabel();
+        jSpinner1 = new javax.swing.JSpinner();
+        jLabel6 = new javax.swing.JLabel();
+        jROIBox = new javax.swing.JComboBox();
+        jRemoveROIButton = new javax.swing.JButton();
+        jAddROIButton = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
@@ -820,6 +841,87 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                     .addComponent(jExportButton)
                     .addComponent(jCancelExportButton))
                 .addContainerGap())
+        );
+
+        jAddROIDialog.setTitle(bundle.getString("DSWorkbenchMainFrame.jAddROIDialog.title")); // NOI18N
+
+        jLabel7.setText(bundle.getString("DSWorkbenchMainFrame.jLabel7.text")); // NOI18N
+
+        jROIRegion.setText(bundle.getString("DSWorkbenchMainFrame.jROIRegion.text")); // NOI18N
+        jROIRegion.setEnabled(false);
+        jROIRegion.setMaximumSize(new java.awt.Dimension(120, 20));
+        jROIRegion.setMinimumSize(new java.awt.Dimension(120, 20));
+        jROIRegion.setPreferredSize(new java.awt.Dimension(120, 20));
+
+        jLabel8.setText(bundle.getString("DSWorkbenchMainFrame.jLabel8.text")); // NOI18N
+
+        jROITextField.setText(bundle.getString("DSWorkbenchMainFrame.jROITextField.text")); // NOI18N
+        jROITextField.setToolTipText(bundle.getString("DSWorkbenchMainFrame.jROITextField.toolTipText")); // NOI18N
+
+        jLabel9.setText(bundle.getString("DSWorkbenchMainFrame.jLabel9.text")); // NOI18N
+
+        jROIPosition.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "Ende" }));
+        jROIPosition.setToolTipText(bundle.getString("DSWorkbenchMainFrame.jROIPosition.toolTipText")); // NOI18N
+
+        jAddNewROIButton.setText(bundle.getString("DSWorkbenchMainFrame.jAddNewROIButton.text")); // NOI18N
+        jAddNewROIButton.setToolTipText(bundle.getString("DSWorkbenchMainFrame.jAddNewROIButton.toolTipText")); // NOI18N
+        jAddNewROIButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireAddROIDoneEvent(evt);
+            }
+        });
+
+        jButton5.setText(bundle.getString("DSWorkbenchMainFrame.jButton5.text")); // NOI18N
+        jButton5.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireAddROIDoneEvent(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jAddROIDialogLayout = new javax.swing.GroupLayout(jAddROIDialog.getContentPane());
+        jAddROIDialog.getContentPane().setLayout(jAddROIDialogLayout);
+        jAddROIDialogLayout.setHorizontalGroup(
+            jAddROIDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jAddROIDialogLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jAddROIDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jAddROIDialogLayout.createSequentialGroup()
+                        .addComponent(jButton5)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jAddNewROIButton))
+                    .addGroup(jAddROIDialogLayout.createSequentialGroup()
+                        .addGroup(jAddROIDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jAddROIDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(jLabel8, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jLabel7, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(jLabel9))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jAddROIDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jROIRegion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jROITextField, javax.swing.GroupLayout.DEFAULT_SIZE, 227, Short.MAX_VALUE)
+                            .addComponent(jROIPosition, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                .addContainerGap(16, Short.MAX_VALUE))
+        );
+        jAddROIDialogLayout.setVerticalGroup(
+            jAddROIDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jAddROIDialogLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jAddROIDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel7)
+                    .addComponent(jROIRegion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jAddROIDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel8)
+                    .addComponent(jROITextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jAddROIDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel9)
+                    .addComponent(jROIPosition, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jAddROIDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jAddNewROIButton)
+                    .addComponent(jButton5))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -1209,6 +1311,32 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             }
         });
 
+        jLabel5.setText(bundle.getString("DSWorkbenchMainFrame.jLabel5.text")); // NOI18N
+
+        jLabel6.setText(bundle.getString("DSWorkbenchMainFrame.jLabel6.text")); // NOI18N
+
+        jRemoveROIButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/remove.gif"))); // NOI18N
+        jRemoveROIButton.setText(bundle.getString("DSWorkbenchMainFrame.jRemoveROIButton.text")); // NOI18N
+        jRemoveROIButton.setMaximumSize(new java.awt.Dimension(35, 35));
+        jRemoveROIButton.setMinimumSize(new java.awt.Dimension(35, 35));
+        jRemoveROIButton.setPreferredSize(new java.awt.Dimension(35, 35));
+        jRemoveROIButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireChangeROIEvent(evt);
+            }
+        });
+
+        jAddROIButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/add.gif"))); // NOI18N
+        jAddROIButton.setText(bundle.getString("DSWorkbenchMainFrame.jAddROIButton.text")); // NOI18N
+        jAddROIButton.setMaximumSize(new java.awt.Dimension(35, 35));
+        jAddROIButton.setMinimumSize(new java.awt.Dimension(35, 35));
+        jAddROIButton.setPreferredSize(new java.awt.Dimension(35, 35));
+        jAddROIButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireChangeROIEvent(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -1217,37 +1345,63 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jChurchRangeBox)
-                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(jMarkOnTopBox, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jShowMapPopup, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel4)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jUVIDField, javax.swing.GroupLayout.DEFAULT_SIZE, 99, Short.MAX_VALUE)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(jMarkOnTopBox, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jShowMapPopup, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(96, 96, 96)
+                        .addComponent(jCurrentToolLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jUVModeButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jCurrentToolLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                                .addComponent(jUVIDField, javax.swing.GroupLayout.DEFAULT_SIZE, 111, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                    .addComponent(jAddROIButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jUVModeButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(jRemoveROIButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(jROIBox, 0, 193, Short.MAX_VALUE)
+                            .addComponent(jSpinner1, javax.swing.GroupLayout.DEFAULT_SIZE, 193, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addComponent(jShowMapPopup)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jMarkOnTopBox)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jChurchRangeBox)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jCurrentToolLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jUVModeButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jShowMapPopup)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jMarkOnTopBox)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jChurchRangeBox))
+                    .addComponent(jCurrentToolLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel5)
+                    .addComponent(jSpinner1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel6)
+                    .addComponent(jROIBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jRemoveROIButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jAddROIButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 11, Short.MAX_VALUE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel4)
-                        .addComponent(jUVIDField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jUVIDField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jUVModeButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
@@ -1438,12 +1592,12 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 545, Short.MAX_VALUE)
-                .addGap(6, 6, 6)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jInformationPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jMinimapPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 270, Short.MAX_VALUE)
-                    .addComponent(jNavigationPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jNavigationPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -1451,8 +1605,8 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 699, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                    .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 778, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
                         .addComponent(jMinimapPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jNavigationPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -2050,6 +2204,57 @@ private void fireShowChurchRangeChangedEvent(javax.swing.event.ChangeEvent evt) 
     GlobalOptions.addProperty("show.church.range", Boolean.toString(jChurchRangeBox.isSelected()));
 }//GEN-LAST:event_fireShowChurchRangeChangedEvent
 
+private void fireChangeROIEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireChangeROIEvent
+    if (evt.getSource() == jAddROIButton) {
+        try {
+            int x = Integer.parseInt(jCenterX.getText());
+            int y = Integer.parseInt(jCenterY.getText());
+            jROIRegion.setText("(" + x + "|" + y + ")");
+            jROIPosition.setSelectedIndex(jROIPosition.getItemCount() - 1);
+        } catch (Exception e) {
+            logger.error("Failed to initialite ROI dialog", e);
+            return;
+        }
+
+        jAddROIDialog.setLocationRelativeTo(this);
+        jAddROIDialog.setVisible(true);
+    } else {
+        try {
+            jROIBox.removeItemAt(jROIBox.getSelectedIndex());
+        } catch (Exception e) {
+        }
+    }
+}//GEN-LAST:event_fireChangeROIEvent
+
+private void fireAddROIDoneEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireAddROIDoneEvent
+
+    if (evt.getSource() == jAddNewROIButton) {
+        try {
+            int x = Integer.parseInt(jCenterX.getText());
+            int y = Integer.parseInt(jCenterY.getText());
+            String value = jROITextField.getText() + " (" + x + "|" + y + ")";
+            int pos = Integer.MAX_VALUE;
+            try {
+                pos = Integer.parseInt((String) jROIPosition.getSelectedItem());
+                pos -= 1;
+            } catch (Exception ee) {
+                //end pos selected
+                pos = Integer.MAX_VALUE;
+            }
+            if (ROIManager.getSingleton().containsROI(value)) {
+                JOptionPane.showMessageDialog(this, "ROI '" + value + "' existiert bereits.", "ROI vorhanden", JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+            ROIManager.getSingleton().addROI(pos, value);
+            jROIBox.setModel(new DefaultComboBoxModel(ROIManager.getSingleton().getROIs()));
+        } catch (Exception e) {
+            logger.error("Failed to add ROI", e);
+        }
+    }
+    jAddROIDialog.setVisible(false);
+
+}//GEN-LAST:event_fireAddROIDoneEvent
+
     protected void switchMarkOnTop() {
         jMarkOnTopBox.setSelected(!jMarkOnTopBox.isSelected());
     }
@@ -2316,10 +2521,14 @@ private void fireShowChurchRangeChangedEvent(javax.swing.event.ChangeEvent evt) 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem jAboutItem;
+    private javax.swing.JButton jAddNewROIButton;
+    private javax.swing.JButton jAddROIButton;
+    private javax.swing.JDialog jAddROIDialog;
     private javax.swing.JTable jAttackExportTable;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton5;
     private javax.swing.JButton jCancelExportButton;
     private javax.swing.JButton jCenterCoordinateIngame;
     private javax.swing.JButton jCenterIngameButton;
@@ -2343,6 +2552,11 @@ private void fireShowChurchRangeChangedEvent(javax.swing.event.ChangeEvent evt) 
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JDialog jMapShotDialog;
     private javax.swing.JCheckBox jMarkOnTopBox;
     private javax.swing.JMenuItem jMassAttackItem;
@@ -2369,7 +2583,12 @@ private void fireShowChurchRangeChangedEvent(javax.swing.event.ChangeEvent evt) 
     private javax.swing.JLabel jOnlineLabel;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JComboBox jROIBox;
+    private javax.swing.JComboBox jROIPosition;
+    private javax.swing.JTextField jROIRegion;
+    private javax.swing.JTextField jROITextField;
     private javax.swing.JButton jRefreshButton;
+    private javax.swing.JButton jRemoveROIButton;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JMenuItem jSearchItem;
     private javax.swing.JSeparator jSeparator1;
@@ -2381,6 +2600,7 @@ private void fireShowChurchRangeChangedEvent(javax.swing.event.ChangeEvent evt) 
     private javax.swing.JCheckBoxMenuItem jShowMarkerFrame;
     private javax.swing.JCheckBoxMenuItem jShowRankFrame;
     private javax.swing.JCheckBoxMenuItem jShowTroopsFrame;
+    private javax.swing.JSpinner jSpinner1;
     private javax.swing.JMenuItem jTribeTribeAttackItem;
     private javax.swing.JTextField jUVIDField;
     private javax.swing.JToggleButton jUVModeButton;

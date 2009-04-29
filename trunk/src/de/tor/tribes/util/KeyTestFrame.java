@@ -24,17 +24,8 @@ public class KeyTestFrame extends javax.swing.JFrame {
     /** Creates new form KeyTestFrame */
     public KeyTestFrame() {
         initComponents();
-        Toolkit.getDefaultToolkit().addAWTEventListener(new AWTEventListener() {
+        Toolkit.getDefaultToolkit().addAWTEventListener(ShortcutHandler.getSingleton(), AWTEvent.KEY_EVENT_MASK);
 
-            @Override
-            public void eventDispatched(AWTEvent event) {
-                if (((KeyEvent) event).getID() == KeyEvent.KEY_PRESSED) {
-                    KeyEvent e = (KeyEvent) event;
-                    System.out.println(KeyEvent.getKeyText(e.getKeyCode()));
-                    System.out.println(KeyEvent.getModifiersExText(e.getModifiersEx()));
-                }
-            }
-        }, AWTEvent.KEY_EVENT_MASK);
     }
 
     /** This method is called from within the constructor to

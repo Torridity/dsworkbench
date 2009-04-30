@@ -3160,6 +3160,7 @@ private void fireCancelChangePasswordEvent(java.awt.event.MouseEvent evt) {//GEN
     @Override
     public void fireServerChangedEvent() {
     }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup connectionTypeGroup;
     private javax.swing.JTextField jAccountName;

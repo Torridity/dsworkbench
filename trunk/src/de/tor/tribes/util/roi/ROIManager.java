@@ -4,8 +4,14 @@
  */
 package de.tor.tribes.util.roi;
 
+import de.tor.tribes.util.xml.JaxenUtils;
+import java.io.File;
+import java.io.FileWriter;
 import java.util.LinkedList;
 import java.util.List;
+import org.apache.log4j.Logger;
+import org.jdom.Document;
+import org.jdom.Element;
 
 /**
  *
@@ -13,6 +19,7 @@ import java.util.List;
  */
 public class ROIManager {
 
+    private static Logger logger = Logger.getLogger("ROIManager");
     private static ROIManager SINGLETON = null;
     private List<String> rois = null;
 
@@ -27,20 +34,94 @@ public class ROIManager {
         rois = new LinkedList<String>();
     }
 
-    public void loadROIsFromFile() {
+    /**Load ROIs for server from file
+     * @param pFile Source file
+     */
+    public void loadROIsFromFile(String pFile) {
+        rois.clear();
+        if (pFile == null) {
+            logger.error("File argument is 'null'");
+            return;
+        }
+        File roiFile = new File(pFile);
+        if (roiFile.exists()) {
+            if (logger.isDebugEnabled()) {
+                logger.debug("Reading markers from '" + pFile + "'");
+            }
+            try {
+                Document d = JaxenUtils.getDocument(roiFile);
+                for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//rois/roi")) {
+                    try {
+                        rois.add(e.getText());
+                    } catch (Exception inner) {
+                        //ignored, marker invalid
+                    }
+                }
+                logger.debug("ROIs successfully loaded");
+            } catch (Exception e) {
+                logger.error("Failed to load ROIs", e);
+            }
+        } else {
+            if (logger.isInfoEnabled()) {
+                logger.info("ROI file not found under '" + pFile + "'");
+            }
+        }
     }
 
-    public void saveROIsToFile() {
+    /**
+     * Write ROIs for server to file
+     * @param pFile Target file
+     */
+    public void saveROIsToFile(String pFile) {
+        if (pFile == null) {
+            logger.error("File argument is 'null'");
+            return;
+        }
+
+        if (logger.isDebugEnabled()) {
+            logger.debug("Writing ROIs to '" + pFile + "'");
+        }
+        try {
+            FileWriter w = new FileWriter(pFile);
+            w.write("<rois>\n");
+
+            for (String r : rois) {
+                w.write("<roi>" + r + "</roi>\n");
+            }
+            w.write("</rois>");
+            w.flush();
+            w.close();
+            logger.debug("ROIs successfully saved");
+        } catch (Exception e) {
+            if (!new File(pFile).getParentFile().exists()) {
+                //server directory obviously does not exist yet
+                //this should only happen at the first start
+                logger.info("Ignoring error, server directory does not exists yet");
+            } else {
+                logger.error("Failed to save ROIs", e);
+            }
+        }
     }
 
+    /** Get all ROIs
+     * @return String[] List of ROIs
+     */
     public String[] getROIs() {
         return rois.toArray(new String[]{});
     }
 
+    /**Check if ROI exists or not
+     * @param pRoi Name of the ROI [NAME (X|Y)]
+     * @return TRUE if ROI exists
+     */
     public boolean containsROI(String pRoi) {
         return rois.contains(pRoi);
     }
 
+    /**Add a new ROI to a specific position
+     * @param pIdx Position of ROI
+     * @param pRoi Name of the ROI
+     */
     public void addROI(int pIdx, String pRoi) {
         if (pIdx > rois.size() - 1) {
             rois.add(pRoi);
@@ -49,6 +130,9 @@ public class ROIManager {
         }
     }
 
+    /** Remove a ROI
+     * @param pRoi Name of the ROI to remove
+     */
     public void removeROI(String pRoi) {
         rois.remove(pRoi);
     }

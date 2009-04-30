@@ -43,11 +43,6 @@ public class ShortcutHandler implements AWTEventListener {
     public static void main(String[] args) {
         //Toolkit.getDefaultToolkit().addAWTEventListener(ShortcutHandler.getSingleton(), AWTEvent.KEY_EVENT_MASK);
       
-        while (true) {
-            try {
-                Thread.sleep(100);
-            } catch (Exception e) {
-            }
-        }
+       
     }
 }

@@ -15,6 +15,7 @@ import de.tor.tribes.util.attack.AttackManager;
 import de.tor.tribes.util.church.ChurchManager;
 import de.tor.tribes.util.map.FormManager;
 import de.tor.tribes.util.mark.MarkerManager;
+import de.tor.tribes.util.roi.ROIManager;
 import de.tor.tribes.util.tag.TagManager;
 import de.tor.tribes.util.troops.TroopsManager;
 import java.io.File;
@@ -214,6 +215,9 @@ public class GlobalOptions {
             FormManager.getSingleton().loadFormsFromFile(DataHolder.getSingleton().getDataDirectory() + "/forms.xml");
             logger.debug("Loading churches");
             ChurchManager.getSingleton().loadChurchesFromFile(DataHolder.getSingleton().getDataDirectory() + "/churches.xml");
+            logger.debug("Loading rois");
+            ROIManager.getSingleton().loadROIsFromFile(DataHolder.getSingleton().getDataDirectory() + "/rois.xml");
+
             logger.debug("Removing temporary data");
             DataHolder.getSingleton().removeTempData();
         }
@@ -235,6 +239,8 @@ public class GlobalOptions {
             FormManager.getSingleton().saveFormsToFile(DataHolder.getSingleton().getDataDirectory() + "/forms.xml");
             logger.debug("Saving churches");
             ChurchManager.getSingleton().saveChurchesToFile(DataHolder.getSingleton().getDataDirectory() + "/churches.xml");
+            logger.debug("Saving rois");
+            ROIManager.getSingleton().saveROIsToFile(DataHolder.getSingleton().getDataDirectory() + "/rois.xml");
             logger.debug("User data saved");
         }
     }

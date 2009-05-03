@@ -11,10 +11,19 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" attributes="0">
-                  <EmptySpace max="-2" attributes="0"/>
+              <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace min="-2" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="jVillageExportDetails" alignment="0" pref="372" max="32767" attributes="0"/>
+                      <Group type="102" alignment="0" attributes="0">
+                          <Component id="jCopyOwn" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
+                          <Component id="jCopyOwnAlly" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
+                          <Component id="jCopyEnemyAlly" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
+                          <Component id="jCopyBarbarian" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <Component id="jVillageExportDetails" alignment="0" pref="410" max="32767" attributes="0"/>
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="jExportTribeName" min="-2" max="-2" attributes="0"/>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
@@ -22,16 +31,17 @@
                           <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Component id="jExportPoints" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <Component id="jLabel2" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Group type="102" alignment="1" attributes="0">
                           <Component id="jCancelExportButton" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
+                          <EmptySpace min="-2" max="-2" attributes="0"/>
                           <Component id="jExportPlainButton" min="-2" max="-2" attributes="0"/>
                           <EmptySpace min="-2" max="-2" attributes="0"/>
                           <Component id="jExportBBButton" min="-2" max="-2" attributes="0"/>
                       </Group>
+                      <Component id="jLabel2" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Component id="jLabel3" alignment="0" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="42" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -41,8 +51,17 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="jVillageExportDetails" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
+                  <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="jCopyOwn" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="jCopyOwnAlly" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="jCopyBarbarian" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="jCopyEnemyAlly" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
                   <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="23" max="-2" attributes="0"/>
+                  <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="jExportTribeName" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="jExportAllyName" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -120,6 +139,31 @@
           <Events>
             <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fireVillageExportEvent"/>
           </Events>
+        </Component>
+        <Component class="javax.swing.JLabel" name="jLabel3">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Welche D&#xf6;rfer sollen kopiert werden?"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JCheckBox" name="jCopyOwn">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Eigene"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JCheckBox" name="jCopyOwnAlly">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Eigener Stamm"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JCheckBox" name="jCopyEnemyAlly">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Fremde St&#xe4;mme"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JCheckBox" name="jCopyBarbarian">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Barbarend&#xf6;rfer"/>
+          </Properties>
         </Component>
       </SubComponents>
     </Container>

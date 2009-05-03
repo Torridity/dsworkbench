@@ -1330,52 +1330,48 @@ public class MapRenderer extends Thread {
         }
         //</editor-fold>
 
-        if (Boolean.parseBoolean(GlobalOptions.getProperty("show.map.popup"))) {
-            renderVillageInfo(g2d, mouseVillage);
-        }
 
         // <editor-fold defaultstate="collapsed" desc=" Draw radar information ">
-        if (mouseVillage != null) {
+        Village radarVillage = MapPanel.getSingleton().getRadarVillage();
+        if (radarVillage != null) {
             try {
-                if (MapPanel.getSingleton().getCurrentCursor() == ImageManager.CURSOR_RADAR) {
-                    int cnt = 0;
-                    for (UnitHolder u : DataHolder.getSingleton().getUnits()) {
-                        de.tor.tribes.types.Circle c = new de.tor.tribes.types.Circle();
-                        int r = Integer.parseInt(GlobalOptions.getProperty("radar.size"));
-                        double diam = 2 * (double) r / u.getSpeed();
-                        double xp = mouseVillage.getX() + 0.5 - diam / 2;
-                        double yp = mouseVillage.getY() + 0.5 - diam / 2;
-                        double cx = mouseVillage.getX() + 0.5;
-                        double cy = mouseVillage.getY() + 0.5;
+                int cnt = 0;
+                for (UnitHolder u : DataHolder.getSingleton().getUnits()) {
+                    de.tor.tribes.types.Circle c = new de.tor.tribes.types.Circle();
+                    int r = Integer.parseInt(GlobalOptions.getProperty("radar.size"));
+                    double diam = 2 * (double) r / u.getSpeed();
+                    double xp = radarVillage.getX() + 0.5 - diam / 2;
+                    double yp = radarVillage.getY() + 0.5 - diam / 2;
+                    double cx = radarVillage.getX() + 0.5;
+                    double cy = radarVillage.getY() + 0.5;
 
-                        double xi = Math.cos(Math.toRadians(270 + cnt * (10))) * diam / 2;
-                        double yi = Math.sin(Math.toRadians(270 + cnt * 10)) * diam / 2;
-                        c.setXPos(xp);
-                        c.setYPos(yp);
-                        c.setXPosEnd(xp + diam);
-                        c.setYPosEnd(yp + diam);
-                        Color co = Color.RED;
-                        try {
-                            co = Color.decode(GlobalOptions.getProperty(u.getName() + ".color"));
-                        } catch (Exception e) {
-                        }
-                        c.setDrawColor(co);
-                        c.renderForm(g2d);
-                        Image unit = ImageManager.getUnitIcon(u).getImage();
-                        Point p = MapPanel.getSingleton().virtualPosToSceenPos((cx + xi), (cy + yi));
-                        g2d.drawImage(unit, p.x - (int) ((double) unit.getWidth(null) / 2), (int) ((double) p.y - unit.getHeight(null) / 2), null);
-                        cnt++;
-
+                    double xi = Math.cos(Math.toRadians(270 + cnt * (10))) * diam / 2;
+                    double yi = Math.sin(Math.toRadians(270 + cnt * 10)) * diam / 2;
+                    c.setXPos(xp);
+                    c.setYPos(yp);
+                    c.setXPosEnd(xp + diam);
+                    c.setYPosEnd(yp + diam);
+                    Color co = Color.RED;
+                    try {
+                        co = Color.decode(GlobalOptions.getProperty(u.getName() + ".color"));
+                    } catch (Exception e) {
                     }
-
-
-
+                    c.setDrawColor(co);
+                    c.renderForm(g2d);
+                    Image unit = ImageManager.getUnitIcon(u).getImage();
+                    Point p = MapPanel.getSingleton().virtualPosToSceenPos((cx + xi), (cy + yi));
+                    g2d.drawImage(unit, p.x - (int) ((double) unit.getWidth(null) / 2), (int) ((double) p.y - unit.getHeight(null) / 2), null);
+                    cnt++;
 
                 }
             } catch (Exception e) {
             }
         }
 // </editor-fold>
+
+        if (Boolean.parseBoolean(GlobalOptions.getProperty("show.map.popup"))) {
+            renderVillageInfo(g2d, mouseVillage);
+        }
     }
 
     private void renderVillageInfo(Graphics2D g2d, Village mouseVillage) {

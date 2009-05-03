@@ -11,8 +11,12 @@ import org.apache.log4j.Logger;
 import de.tor.tribes.io.DataHolderListener;
 import de.tor.tribes.php.DatabaseInterface;
 import de.tor.tribes.util.Constants;
+import java.awt.Color;
 import java.awt.Font;
+import java.io.File;
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import org.apache.log4j.Level;
@@ -42,6 +46,9 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
         jLabel1.setIcon(new ImageIcon("./graphics/splash.gif"));
         setTitle("DS Workbench " + Constants.VERSION + Constants.VERSION_ADDITION);
         new Timer("StartupTimer", true).schedule(new HideSplashTask(this), 1000);
+        jProfileDialog.getContentPane().setBackground(Constants.DS_BACK_LIGHT);
+        jProfileDialog.pack();
+        jProfileDialog.setLocationRelativeTo(this);
         t = new SplashRepaintThread(this);
         t.setDaemon(true);
         t.start();
@@ -56,8 +63,57 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jProfileDialog = new javax.swing.JDialog();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jAccountsList = new javax.swing.JList();
+        jLabel2 = new javax.swing.JLabel();
+        jButton1 = new javax.swing.JButton();
         jStatusOutput = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
+
+        jProfileDialog.setTitle("Profile");
+        jProfileDialog.setAlwaysOnTop(true);
+        jProfileDialog.setModal(true);
+        jProfileDialog.setUndecorated(true);
+
+        jAccountsList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jScrollPane1.setViewportView(jAccountsList);
+
+        jLabel2.setText("Verfügbare Profile");
+
+        jButton1.setBackground(new java.awt.Color(239, 235, 223));
+        jButton1.setText("Auswählen");
+        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireSelectAccountEvent(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jProfileDialogLayout = new javax.swing.GroupLayout(jProfileDialog.getContentPane());
+        jProfileDialog.getContentPane().setLayout(jProfileDialogLayout);
+        jProfileDialogLayout.setHorizontalGroup(
+            jProfileDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jProfileDialogLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jProfileDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jProfileDialogLayout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 283, Short.MAX_VALUE))
+                    .addComponent(jButton1, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addContainerGap())
+        );
+        jProfileDialogLayout.setVerticalGroup(
+            jProfileDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jProfileDialogLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jProfileDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jButton1)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setUndecorated(true);
@@ -88,6 +144,19 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void fireSelectAccountEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSelectAccountEvent
+
+        String value = (String) jAccountsList.getSelectedValue();
+        if (value == null) {
+            JOptionPane.showMessageDialog(jProfileDialog, "Bitte eine Profil auswählen.", "Bitte wählen", JOptionPane.WARNING_MESSAGE);
+            return;
+        } else {
+            GlobalOptions.setSelectedServer(value.substring(0, value.indexOf("(")).trim());
+            jProfileDialog.setVisible(false);
+        }
+
+    }//GEN-LAST:event_fireSelectAccountEvent
+
     protected boolean hideSplash() {
         try {
             //load properties, cursors, skins, world decoration
@@ -99,11 +168,37 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
             JOptionPane.showMessageDialog(self, "Fehler bei der Initialisierung.\nMöglicherweise ist deine DS Workbench Installation defekt.", "Fehler", JOptionPane.ERROR_MESSAGE);
             return false;
         }
+
+        try{
+        //open account selection
+        File f = new File("./servers");
+        List<String> profiles = new LinkedList<String>();
+        for (File server : f.listFiles()) {
+            String name = server.getName();
+            String player = GlobalOptions.getProperty("player." + name);
+            if (player != null) {
+                profiles.add(name + " (" + player + ")");
+            }
+        }
+        if (profiles.size() > 1) {
+            DefaultListModel accounts = new DefaultListModel();
+            for (String profile : profiles) {
+                accounts.addElement(profile);
+            }
+            jAccountsList.setModel(accounts);
+
+            String currentServer = GlobalOptions.getSelectedServer() + " (" + GlobalOptions.getProperty("player." + GlobalOptions.getSelectedServer()) + ")";
+            jAccountsList.setSelectedValue(currentServer, true);
+            jProfileDialog.setVisible(true);
+        }
         if (!DSWorkbenchSettingsDialog.getSingleton().checkSettings()) {
             logger.info("Reading user settings returned error(s)");
             DSWorkbenchSettingsDialog.getSingleton().setVisible(true);
         }
-
+        }catch(Exception e){
+            logger.warn("Failed to open profile manager");
+        }
+        
         // <editor-fold defaultstate="collapsed" desc=" Check for data updates ">
         boolean checkForUpdates = false;
         try {
@@ -283,7 +378,12 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JList jAccountsList;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JDialog jProfileDialog;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel jStatusOutput;
     // End of variables declaration//GEN-END:variables
 

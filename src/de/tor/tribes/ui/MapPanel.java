@@ -46,10 +46,8 @@ import java.io.File;
 import java.text.NumberFormat;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Locale;
 import java.util.StringTokenizer;
 import javax.imageio.ImageIO;
-import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
@@ -59,8 +57,10 @@ import javax.swing.UIManager;
  * @TODO (1.4) Ask conquers interface (http://de41.die-staemme.de/interface.php?func=get_conquer&since=1239873543) for enoblements
  * @TODO (DIFF) Make church range colored based on tribe marker
  * @TODO (DIFF) Add 3 church range tools to speed up adding of churches
- * @TODO (1.4) Selection tool should be able to filter (only own, only enemy, only ally, only barbarian)
- * @TODO (1.4) Runtime radar as fixed ranges, show always!? ask size every time
+ * @TODO (DIFF) Selection tool should be able to filter (only own, only enemy, only ally, only barbarian)
+ * @TODO (DIFF) Selection export with tabs instead of spaces to insert data into TCalc
+ * @TODO (DIFF) Runtime radar as fixed ranges, show always!? ask size every time
+ * @TODO (1.4) Add risk estimation for attacks on enemy allies
  * @author Charon
  */
 public class MapPanel extends javax.swing.JPanel {
@@ -96,6 +96,7 @@ public class MapPanel extends javax.swing.JPanel {
     private MapShotListener mMapShotListener = null;
     private Hashtable<Village, Rectangle> mVillagePositions = null;
     private List<Village> exportVillageList = null;
+    private Village radarVillage = null;
     // </editor-fold>
 
     public static synchronized MapPanel getSingleton() {
@@ -116,7 +117,12 @@ public class MapPanel extends javax.swing.JPanel {
         setIgnoreRepaint(true);
         attackAddFrame = new AttackAddFrame();
         mVirtualBounds = new Rectangle2D.Double(0.0, 0.0, 0.0, 0.0);
+        jCopyOwn.setSelected(true);
+        jCopyOwnAlly.setSelected(true);
+        jCopyEnemyAlly.setSelected(true);
+        jCopyBarbarian.setSelected(true);
         jCopyVillagesDialog.pack();
+
         initListeners();
     }
 
@@ -230,6 +236,18 @@ public class MapPanel extends javax.swing.JPanel {
                         }
                         VillageSupportFrame.getSingleton().setLocation(e.getPoint());
                         VillageSupportFrame.getSingleton().showSupportFrame(current);
+                        break;
+                    }
+                    case ImageManager.CURSOR_RADAR: {
+                        try {
+                            if (radarVillage != null && radarVillage.equals(getVillageAtMousePos())) {
+                                radarVillage = null;
+                            } else {
+                                radarVillage = getVillageAtMousePos();
+                            }
+                        } catch (Exception inner) {
+                            radarVillage = getVillageAtMousePos();
+                        }
                         break;
                     }
                     case ImageManager.CURSOR_ATTACK_INGAME: {
@@ -469,6 +487,7 @@ public class MapPanel extends javax.swing.JPanel {
                                     } else {
                                         jVillageExportDetails.setText("Es wurden " + exportVillageList.size() + " Dörfer zum Kopieren in die Zwischenablage ausgewählt.");
                                     }
+
                                     jCopyVillagesDialog.setLocationRelativeTo(MapPanel.getSingleton());
                                     jCopyVillagesDialog.setVisible(true);
                                 }
@@ -680,6 +699,9 @@ public class MapPanel extends javax.swing.JPanel {
     //<editor-fold>
     }
 
+    protected void resetServerDependendSettings() {
+        radarVillage = null;
+    }
     //return bounds without border
    /* public Rectangle getCorrectedBounds() {
     Rectangle b = super.getBounds();
@@ -687,8 +709,13 @@ public class MapPanel extends javax.swing.JPanel {
     int dy = 0 - (int) b.getY();
     return new Rectangle(0, 0, (int) b.getWidth() - dx, (int) b.getHeight() - dy);
     }*/
+
     public MapRenderer getMapRenderer() {
         return mMapRenderer;
+    }
+
+    public Village getRadarVillage() {
+        return radarVillage;
     }
 
     protected AttackAddFrame getAttackAddFrame() {
@@ -776,6 +803,11 @@ public class MapPanel extends javax.swing.JPanel {
         jExportBBButton = new javax.swing.JButton();
         jExportPlainButton = new javax.swing.JButton();
         jCancelExportButton = new javax.swing.JButton();
+        jLabel3 = new javax.swing.JLabel();
+        jCopyOwn = new javax.swing.JCheckBox();
+        jCopyOwnAlly = new javax.swing.JCheckBox();
+        jCopyEnemyAlly = new javax.swing.JCheckBox();
+        jCopyBarbarian = new javax.swing.JCheckBox();
 
         jCopyVillagesDialog.setTitle("Dorfinformationen kopieren");
         jCopyVillagesDialog.setAlwaysOnTop(true);
@@ -817,6 +849,16 @@ public class MapPanel extends javax.swing.JPanel {
             }
         });
 
+        jLabel3.setText("Welche Dörfer sollen kopiert werden?");
+
+        jCopyOwn.setText("Eigene");
+
+        jCopyOwnAlly.setText("Eigener Stamm");
+
+        jCopyEnemyAlly.setText("Fremde Stämme");
+
+        jCopyBarbarian.setText("Barbarendörfer");
+
         javax.swing.GroupLayout jCopyVillagesDialogLayout = new javax.swing.GroupLayout(jCopyVillagesDialog.getContentPane());
         jCopyVillagesDialog.getContentPane().setLayout(jCopyVillagesDialogLayout);
         jCopyVillagesDialogLayout.setHorizontalGroup(
@@ -824,21 +866,30 @@ public class MapPanel extends javax.swing.JPanel {
             .addGroup(jCopyVillagesDialogLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jCopyVillagesDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jVillageExportDetails, javax.swing.GroupLayout.DEFAULT_SIZE, 372, Short.MAX_VALUE)
+                    .addGroup(jCopyVillagesDialogLayout.createSequentialGroup()
+                        .addComponent(jCopyOwn)
+                        .addGap(18, 18, 18)
+                        .addComponent(jCopyOwnAlly)
+                        .addGap(18, 18, 18)
+                        .addComponent(jCopyEnemyAlly)
+                        .addGap(18, 18, 18)
+                        .addComponent(jCopyBarbarian))
+                    .addComponent(jVillageExportDetails, javax.swing.GroupLayout.DEFAULT_SIZE, 410, Short.MAX_VALUE)
                     .addGroup(jCopyVillagesDialogLayout.createSequentialGroup()
                         .addComponent(jExportTribeName)
                         .addGap(18, 18, 18)
                         .addComponent(jExportAllyName)
                         .addGap(18, 18, 18)
                         .addComponent(jExportPoints))
-                    .addComponent(jLabel2)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jCopyVillagesDialogLayout.createSequentialGroup()
                         .addComponent(jCancelExportButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jExportPlainButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jExportBBButton)))
-                .addContainerGap())
+                        .addComponent(jExportBBButton))
+                    .addComponent(jLabel2)
+                    .addComponent(jLabel3))
+                .addGap(42, 42, 42))
         );
         jCopyVillagesDialogLayout.setVerticalGroup(
             jCopyVillagesDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -846,8 +897,16 @@ public class MapPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(jVillageExportDetails)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jCopyVillagesDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jCopyOwn)
+                    .addComponent(jCopyOwnAlly)
+                    .addComponent(jCopyBarbarian)
+                    .addComponent(jCopyEnemyAlly))
+                .addGap(18, 18, 18)
                 .addComponent(jLabel2)
-                .addGap(23, 23, 23)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jCopyVillagesDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jExportTribeName)
                     .addComponent(jExportAllyName)
@@ -877,31 +936,62 @@ public class MapPanel extends javax.swing.JPanel {
             NumberFormat nf = NumberFormat.getInstance();
             nf.setMinimumFractionDigits(0);
             nf.setMaximumFractionDigits(0);
+            Tribe own = DSWorkbenchMainFrame.getSingleton().getCurrentUser();
             if (evt.getSource() == jExportBBButton) {
                 String result = "";
+
                 for (Village v : exportVillageList) {
-                    result += v.toBBCode();
-                    if (jExportPoints.isSelected()) {
-                        result += " (" + nf.format(v.getPoints()) + ") ";
-                    } else {
-                        result += " ";
-                    }
-                    if (jExportTribeName.isSelected() && v.getTribe() != null) {
-                        result += v.getTribe().toBBCode() + " ";
-                    } else {
-                        if (jExportTribeName.isSelected()) {
-                            result += "Barbaren ";
-                        } else {
-                            result += " ";
+                    boolean doExport = false;
+                    if (jCopyBarbarian.isSelected()) {
+                        if (v.getTribe() == null) {
+                            //is barbarian
+                            doExport = true;
                         }
                     }
-                    if (jExportAllyName.isSelected() && v.getTribe() != null && v.getTribe().getAlly() != null) {
-                        result += v.getTribe().getAlly().toBBCode() + "\n";
-                    } else {
-                        if (jExportAllyName.isSelected()) {
-                            result += "(kein Stamm)\n";
+                    if (jCopyOwn.isSelected()) {
+                        if (v.getTribe() != null && v.getTribe().equals(own)) {
+                            //no barbarian, village tribe equals own
+                            doExport = true;
+                        }
+                    }
+                    if (jCopyOwnAlly.isSelected()) {
+                        if (v.getTribe() != null && own.getAlly() != null && v.getTribe().getAlly() != null && v.getTribe().getAlly().equals(own.getAlly())) {
+                            //no barbarian, own ally not null, village ally not null, village ally equals own
+                            doExport = true;
+                        }
+                    }
+
+                    if (jCopyEnemyAlly.isSelected()) {
+                        if (v.getTribe() != null && v.getTribe().getAlly() == null || !v.getTribe().getAlly().equals(own.getAlly())) {
+                            //no barbarien, no ally or ally not equal own ally
+                            doExport = true;
+                        }
+                    }
+
+                    if (doExport) {
+                        result += v.toBBCode();
+                        if (jExportPoints.isSelected()) {
+                            result += " (" + nf.format(v.getPoints()) + ") ";
                         } else {
-                            result += "\n";
+                            result += "\t";
+                        }
+                        if (jExportTribeName.isSelected() && v.getTribe() != null) {
+                            result += v.getTribe().toBBCode() + " ";
+                        } else {
+                            if (jExportTribeName.isSelected()) {
+                                result += "Barbaren ";
+                            } else {
+                                result += "\t";
+                            }
+                        }
+                        if (jExportAllyName.isSelected() && v.getTribe() != null && v.getTribe().getAlly() != null) {
+                            result += v.getTribe().getAlly().toBBCode() + "\n";
+                        } else {
+                            if (jExportAllyName.isSelected()) {
+                                result += "(kein Stamm)\n";
+                            } else {
+                                result += "\n";
+                            }
                         }
                     }
                 }
@@ -927,28 +1017,56 @@ public class MapPanel extends javax.swing.JPanel {
             } else if (evt.getSource() == jExportPlainButton) {
                 String result = "";
                 for (Village v : exportVillageList) {
-                    result += v + "\t";
-                    if (jExportPoints.isSelected()) {
-                        result += nf.format(v.getPoints()) + "\t";
-                    } else {
-                        result += "\t";
+                    boolean doExport = false;
+                    if (jCopyBarbarian.isSelected()) {
+                        if (v.getTribe() == null) {
+                            //is barbarian
+                            doExport = true;
+                        }
                     }
-                    if (jExportTribeName.isSelected() && v.getTribe() != null) {
-                        result += v.getTribe() + "\t";
-                    } else {
-                        if (jExportTribeName.isSelected()) {
-                            result += "Barbaren\t";
+                    if (jCopyOwn.isSelected()) {
+                        if (v.getTribe() != null && v.getTribe().equals(own)) {
+                            //no barbarian, village tribe equals own
+                            doExport = true;
+                        }
+                    }
+                    if (jCopyOwnAlly.isSelected()) {
+                        if (v.getTribe() != null && own.getAlly() != null && v.getTribe().getAlly() != null && v.getTribe().getAlly().equals(own.getAlly())) {
+                            //no barbarian, own ally not null, village ally not null, village ally equals own
+                            doExport = true;
+                        }
+                    }
+
+                    if (jCopyEnemyAlly.isSelected()) {
+                        if (v.getTribe() != null && v.getTribe().getAlly() == null || !v.getTribe().getAlly().equals(own.getAlly())) {
+                            //no barbarien, no ally or ally not equal own ally
+                            doExport = true;
+                        }
+                    }
+                    if (doExport) {
+                        result += v + "\t";
+                        if (jExportPoints.isSelected()) {
+                            result += nf.format(v.getPoints()) + "\t";
                         } else {
                             result += "\t";
                         }
-                    }
-                    if (jExportAllyName.isSelected() && v.getTribe() != null && v.getTribe().getAlly() != null) {
-                        result += v.getTribe().getAlly() + "\n";
-                    } else {
-                        if (jExportAllyName.isSelected()) {
-                            result += "(kein Stamm)\n";
+                        if (jExportTribeName.isSelected() && v.getTribe() != null) {
+                            result += v.getTribe() + "\t";
                         } else {
-                            result += "\n";
+                            if (jExportTribeName.isSelected()) {
+                                result += "Barbaren\t";
+                            } else {
+                                result += "\t";
+                            }
+                        }
+                        if (jExportAllyName.isSelected() && v.getTribe() != null && v.getTribe().getAlly() != null) {
+                            result += v.getTribe().getAlly() + "\n";
+                        } else {
+                            if (jExportAllyName.isSelected()) {
+                                result += "(kein Stamm)\n";
+                            } else {
+                                result += "\n";
+                            }
                         }
                     }
                 }
@@ -1183,24 +1301,6 @@ public class MapPanel extends javax.swing.JPanel {
         }
     }
 
-    public class MyImageWriteParam extends JPEGImageWriteParam {
-
-        public MyImageWriteParam() {
-            super(Locale.getDefault());
-        }
-
-        // This method accepts quality levels between 0 (lowest) and 1 (highest) and simply converts
-        // it to a range between 0 and 256; this is not a correct conversion algorithm.
-        // However, a proper alternative is a lot more complicated.
-        // This should do until the bug is fixed.
-        public void setCompressionQuality(float quality) {
-            if (quality < 0.0F || quality > 1.0F) {
-                throw new IllegalArgumentException("Quality out-of-bounds!");
-            }
-            this.compressionQuality = 256 - (quality * 256);
-        }
-    }
-
     public synchronized void fireToolChangedEvents(int pTool) {
         for (ToolChangeListener listener : mToolChangeListeners) {
             listener.fireToolChangedEvent(pTool);
@@ -1226,6 +1326,10 @@ public class MapPanel extends javax.swing.JPanel {
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jCancelExportButton;
+    private javax.swing.JCheckBox jCopyBarbarian;
+    private javax.swing.JCheckBox jCopyEnemyAlly;
+    private javax.swing.JCheckBox jCopyOwn;
+    private javax.swing.JCheckBox jCopyOwnAlly;
     private javax.swing.JDialog jCopyVillagesDialog;
     private javax.swing.JCheckBox jExportAllyName;
     private javax.swing.JButton jExportBBButton;
@@ -1233,6 +1337,7 @@ public class MapPanel extends javax.swing.JPanel {
     private javax.swing.JCheckBox jExportPoints;
     private javax.swing.JCheckBox jExportTribeName;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jVillageExportDetails;
     // End of variables declaration//GEN-END:variables
 

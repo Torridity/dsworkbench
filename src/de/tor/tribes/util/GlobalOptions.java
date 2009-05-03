@@ -226,7 +226,6 @@ public class GlobalOptions {
     /**Load user data (attacks, markers...)*/
     public static void saveUserData() {
         if (getSelectedServer() != null) {
-
             logger.debug("Saving markers");
             MarkerManager.getSingleton().saveMarkersToFile(DataHolder.getSingleton().getDataDirectory() + "/markers.xml");
             logger.debug("Saving attacks");

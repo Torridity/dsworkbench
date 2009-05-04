@@ -11,10 +11,11 @@ import org.apache.log4j.Logger;
 import de.tor.tribes.io.DataHolderListener;
 import de.tor.tribes.php.DatabaseInterface;
 import de.tor.tribes.util.Constants;
-import java.awt.Color;
 import java.awt.Font;
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Timer;
@@ -169,36 +170,62 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
             return false;
         }
 
-        try{
-        //open account selection
-        File f = new File("./servers");
-        List<String> profiles = new LinkedList<String>();
-        for (File server : f.listFiles()) {
-            String name = server.getName();
-            String player = GlobalOptions.getProperty("player." + name);
-            if (player != null) {
-                profiles.add(name + " (" + player + ")");
+        try {
+            //open account selection
+            File f = new File("./servers");
+            List<String> servers = new LinkedList<String>();
+            for (File server : f.listFiles()) {
+                String name = server.getName();
+                servers.add(server.getName());
             }
-        }
-        if (profiles.size() > 1) {
-            DefaultListModel accounts = new DefaultListModel();
-            for (String profile : profiles) {
-                accounts.addElement(profile);
-            }
-            jAccountsList.setModel(accounts);
 
-            String currentServer = GlobalOptions.getSelectedServer() + " (" + GlobalOptions.getProperty("player." + GlobalOptions.getSelectedServer()) + ")";
-            jAccountsList.setSelectedValue(currentServer, true);
-            jProfileDialog.setVisible(true);
-        }
-        if (!DSWorkbenchSettingsDialog.getSingleton().checkSettings()) {
-            logger.info("Reading user settings returned error(s)");
-            DSWorkbenchSettingsDialog.getSingleton().setVisible(true);
-        }
-        }catch(Exception e){
+            if (servers.size() > 1) {
+                //sort server names
+                Collections.sort(servers, new Comparator<String>() {
+
+                    @Override
+                    public int compare(String o1, String o2) {
+                        if (o1.length() < o2.length()) {
+                            return -1;
+                        } else if (o1.length() > o2.length()) {
+                            return 1;
+                        }
+                        return o1.compareTo(o2);
+                    }
+                });
+                List<String> profiles = new LinkedList<String>();
+                for (String server : servers) {
+                    String player = GlobalOptions.getProperty("player." + server);
+                    if (player != null) {
+                        profiles.add(server + " (" + player + ")");
+                    }
+                }
+
+                if (profiles.size() > 1) {
+                    //only proceed if number of valid profiles larger 1
+                    DefaultListModel accounts = new DefaultListModel();
+                    for (String profile : profiles) {
+                        accounts.addElement(profile);
+                    }
+
+                    jAccountsList.setModel(accounts);
+
+                    String currentServer = GlobalOptions.getSelectedServer() + " (" + GlobalOptions.getProperty("player." + GlobalOptions.getSelectedServer()) + ")";
+                    jAccountsList.setSelectedValue(currentServer, true);
+                    jProfileDialog.setVisible(true);
+                }
+            }
+
+
+
+            if (!DSWorkbenchSettingsDialog.getSingleton().checkSettings()) {
+                logger.info("Reading user settings returned error(s)");
+                DSWorkbenchSettingsDialog.getSingleton().setVisible(true);
+            }
+        } catch (Exception e) {
             logger.warn("Failed to open profile manager");
         }
-        
+
         // <editor-fold defaultstate="collapsed" desc=" Check for data updates ">
         boolean checkForUpdates = false;
         try {

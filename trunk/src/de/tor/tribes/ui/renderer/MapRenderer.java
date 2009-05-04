@@ -877,7 +877,7 @@ public class MapRenderer extends Thread {
             Village v = villages.nextElement();
             Tribe t = v.getTribe();
             Color markerColor = null;
-            if (t == currentUserVillage.getTribe()) {
+            if (currentUserVillage != null && t == currentUserVillage.getTribe()) {
                 if (v.equals(currentUserVillage)) {
                     markerColor = Color.WHITE;
                 } else {

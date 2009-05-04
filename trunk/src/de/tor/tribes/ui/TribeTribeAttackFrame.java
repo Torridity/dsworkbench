@@ -71,6 +71,7 @@ import javax.swing.event.ListSelectionListener;
  * @TODO (DIFF-TEST!) Combination of groups for source selection
  * @TODO (1.4) Finish changed target selection
  * @TODO (1.4) Multi time range!?
+ * @TODO (1.4) New algorithm with variable arrive time?
  * @TODO (DIFF) Results table now has attack type editor
  * @author Jejkal
  */
@@ -219,7 +220,6 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Village
             }
 
             jTargetAllyList.setModel(targetAllyModel);
-            jTargetAllyList.setSelectedIndex(0);
             jTargetAllyList.addListSelectionListener(new ListSelectionListener() {
 
                 @Override
@@ -243,6 +243,9 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Village
                     fireFilterTargetByContinentEvent();
                 }
             });
+            //select first ally and initialize all lists
+            jTargetAllyList.setSelectedIndex(0);
+
             // </editor-fold>
 
             // <editor-fold defaultstate="collapsed" desc=" Build user village list ">
@@ -254,7 +257,7 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Village
                 tagModel.addElement(t);
             }
             jVillageGroupList.setModel(tagModel);
-            jVillageGroupList.getSelectionModel().setSelectionInterval(0, tags.length - 1);
+
             jVillageGroupList.addListSelectionListener(new ListSelectionListener() {
 
                 @Override
@@ -270,15 +273,15 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Village
                     fireFilterSourceContinentEvent();
                 }
             });
-            // fireFilterSourceVillagesByGroupEvent();
 
             if (TagManager.getSingleton().getTags().isEmpty()) {
                 jVillageGroupList.setEnabled(false);
             } else {
                 jVillageGroupList.setEnabled(true);
             }
-
-            fireFilterSourceContinentEvent();
+            //select all groups and initialize lists
+            jVillageGroupList.getSelectionModel().setSelectionInterval(0, tags.length - 1);
+            //fireFilterSourceContinentEvent();
             // </editor-fold>
 
             jSendTime.repaint();//.updateUI();
@@ -2400,7 +2403,7 @@ private void fireChooseTargetRegionEvent(java.awt.event.MouseEvent evt) {//GEN-F
     MapPanel.getSingleton().setVillageSelectionListener(this);
     Tribe victim = null;
     try {
-        victim = (Tribe) jTargetTribeList.getSelectedItem();
+        victim = (Tribe) jTargetTribeList.getSelectedValue();
     } catch (Exception e) {
     }
     if (victim == null) {
@@ -2745,7 +2748,7 @@ private void fireChangeSourceFakeStateEvent(java.awt.event.MouseEvent evt) {//GE
             }
             jAttacksTable.revalidate();
         } else if (bChooseTargetRegionMode) {
-            Tribe victim = (Tribe) jTargetTribeList.getSelectedItem();
+            Tribe victim = (Tribe) jTargetTribeList.getSelectedValue();
             jVictimTable.invalidate();
             for (int x = xStart; x <= xEnd; x++) {
                 for (int y = yStart; y <= yEnd; y++) {
@@ -2768,36 +2771,6 @@ private void fireChangeSourceFakeStateEvent(java.awt.event.MouseEvent evt) {//GE
         toFront();
         requestFocus();
     }
-
-    private void buildTargetContinentList(Village[] pVillages) {
-        List<String> continents = new LinkedList<String>();
-        if (pVillages.length > 0) {
-            continents.add("Alle");
-            for (Village v : pVillages) {
-                int cont = 0;
-                if (ServerSettings.getSingleton().getCoordType() != 2) {
-                    cont = DSCalculator.xyToHierarchical(v.getX(), v.getY())[0];
-                } else {
-                    cont = DSCalculator.getContinent(v.getX(), v.getY());
-                }
-
-                String contString = "K" + cont;
-                if (!continents.contains(contString)) {
-                    continents.add(contString);
-                }
-
-            }
-            Collections.sort(continents, String.CASE_INSENSITIVE_ORDER);
-
-            jTargetVillageContinentChooser.setModel(new DefaultComboBoxModel(continents.toArray(new String[]{})));
-            jTargetVillageContinentChooser.repaint();//.updateUI();
-            jTargetVillageContinentChooser.setSelectedIndex(0);
-        } else {
-            jTargetVillageContinentChooser.setModel(new DefaultComboBoxModel());
-            jTargetVillageContinentChooser.repaint();//.updateUI();
-        }
-    }
-
 
     // <editor-fold defaultstate="collapsed" desc="Source selection handlers">
     private void fireFilterSourceVillagesByGroupEvent() {
@@ -2890,6 +2863,7 @@ private void fireChangeSourceFakeStateEvent(java.awt.event.MouseEvent evt) {//GE
     }
 
     // </editor-fold>
+
     // <editor-fold defaultstate="collapsed" desc="Target selection handlers">
     private void fireFilterTargetByAllyEvent() {
         Ally a = null;
@@ -2906,7 +2880,10 @@ private void fireChangeSourceFakeStateEvent(java.awt.event.MouseEvent evt) {//GE
                 jTargetTribeList.setModel(new DefaultComboBoxModel(tribes));
                 jTargetTribeList.setSelectedIndex(0);
             } else {
+                //not tribes in ally -> should never happen
                 jTargetTribeList.setModel(new DefaultListModel());
+                jTargetContinentList.setModel(new DefaultListModel());
+                jTargetVillageList.setModel(new DefaultListModel());
             }
 
         } else {
@@ -2928,56 +2905,89 @@ private void fireChangeSourceFakeStateEvent(java.awt.event.MouseEvent evt) {//GE
 
     private void fireFilterTargetByTribeEvent() {
         try {
-            Tribe t = (Tribe) jTargetTribeList.getSelectedItem();
-            if (t != null) {
+            Tribe t = (Tribe) jTargetTribeList.getSelectedValue();
+            if (t != null && t.getVillageList() != null && t.getVillageList().size() > 0) {
                 Village[] villages = t.getVillageList().toArray(new Village[]{});
-                Arrays.sort(villages, Village.CASE_INSENSITIVE_ORDER);
-                jTargetVillageBox.setModel(new DefaultComboBoxModel(villages));
-                buildTargetContinentList(villages);
+                List<String> continents = new LinkedList<String>();
+
+                for (Village v : villages) {
+                    int cont = 0;
+                    if (ServerSettings.getSingleton().getCoordType() != 2) {
+                        cont = DSCalculator.xyToHierarchical(v.getX(), v.getY())[0];
+                    } else {
+                        cont = DSCalculator.getContinent(v.getX(), v.getY());
+                    }
+
+                    String contString = "K" + cont;
+                    if (!continents.contains(contString)) {
+                        continents.add(contString);
+                    }
+
+                }
+                Collections.sort(continents, String.CASE_INSENSITIVE_ORDER);
+
+                DefaultListModel contModel = new DefaultListModel();
+                for (String cont : continents) {
+                    contModel.addElement(cont);
+                }
+                jTargetContinentList.setModel(contModel);
+                jTargetContinentList.repaint();//.updateUI();
+                jTargetContinentList.getSelectionModel().setSelectionInterval(0, continents.size() - 1);
             } else {
-                jTargetVillageBox.setModel(new DefaultComboBoxModel());
-                buildTargetContinentList(new Village[]{});
+                //no tribe selected -> should never happen!
+                jTargetContinentList.setModel(new DefaultListModel());
+                jTargetVillageList.setModel(new DefaultListModel());
             }
 
         } catch (Exception e) {
-            jTargetVillageBox.setModel(new DefaultComboBoxModel());
-            buildTargetContinentList(new Village[]{});
+            jTargetContinentList.setModel(new DefaultListModel());
+            jTargetVillageList.setModel(new DefaultListModel());
         }
     }
 
     private void fireFilterTargetByContinentEvent() {
-        String cont = (String) jTargetVillageContinentChooser.getSelectedItem();
-        if (cont == null) {
-            return;
+        Tribe t = (Tribe) jTargetTribeList.getSelectedValue();
+
+        Village[] villages = t.getVillageList().toArray(new Village[]{});
+        Arrays.sort(villages, Village.CASE_INSENSITIVE_ORDER);
+        DefaultListModel villageModel = new DefaultListModel();
+        for (Village v : villages) {
+            villageModel.addElement(v);
         }
+        jTargetVillageList.setModel(villageModel);
 
-            fireTargetTribeChangedEvent(null);
-            jTargetVillageContinentChooser.setSelectedItem(cont);
-            try {
-                int contId = Integer.parseInt(cont.replaceAll("K", ""));
-                List<Village> toRemove = new LinkedList<Village>();
-                for (int i = 0; i < jTargetVillageBox.getItemCount(); i++) {
-                    Village v = (Village) jTargetVillageBox.getItemAt(i);
-                    int vCont = 0;
-                    if (ServerSettings.getSingleton().getCoordType() != 2) {
-                        vCont = DSCalculator.xyToHierarchical(v.getX(), v.getY())[0];
-                    } else {
-                        vCont = DSCalculator.getContinent(v.getX(), v.getY());
-                    }
 
-                    if (vCont != contId) {
-                        toRemove.add(v);
-                    }
+    /* String cont = (String) jTargetContinentList.getSelectedItem();
+    if (cont == null) {
+    return;
+    }
 
-                }
-                for (Village v : toRemove) {
-                    ((DefaultListModel) jTargetVillageList.getModel()).removeElement(v);
-                }
+    //get currently valid villages
 
-                jTargetVillageList.repaint();//.updateUI();
-            } catch (Exception e) {
-            }
-        
+    try {
+    int contId = Integer.parseInt(cont.replaceAll("K", ""));
+    List<Village> toRemove = new LinkedList<Village>();
+    for (int i = 0; i < jTargetVillageBox.getItemCount(); i++) {
+    Village v = (Village) jTargetVillageBox.getItemAt(i);
+    int vCont = 0;
+    if (ServerSettings.getSingleton().getCoordType() != 2) {
+    vCont = DSCalculator.xyToHierarchical(v.getX(), v.getY())[0];
+    } else {
+    vCont = DSCalculator.getContinent(v.getX(), v.getY());
+    }
+
+    if (vCont != contId) {
+    toRemove.add(v);
+    }
+
+    }
+    for (Village v : toRemove) {
+    ((DefaultListModel) jTargetVillageList.getModel()).removeElement(v);
+    }
+
+    jTargetVillageList.repaint();//.updateUI();
+    } catch (Exception e) {
+    }*/
     }
 // </editor-fold>
 

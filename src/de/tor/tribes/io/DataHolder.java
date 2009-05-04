@@ -653,6 +653,7 @@ public class DataHolder {
         for(Ally a : toRemove){
             mAllies.remove(a.getId());
         }
+
         logger.debug("Removed " + toRemove.size() + " empty allies");
     }
 

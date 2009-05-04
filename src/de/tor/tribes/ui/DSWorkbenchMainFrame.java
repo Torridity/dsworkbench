@@ -412,6 +412,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
     public void serverSettingsChangedEvent() {
         logger.info("Updating server settings");
         String playerID = GlobalOptions.getProperty("player." + GlobalOptions.getSelectedServer()) + "@" + GlobalOptions.getSelectedServer();
+        logger.info(" - using playerID " + playerID);
         jCurrentPlayer.setText(playerID);
 
         jCurrentPlayerVillages.setModel(CurrentTribeVillagesModel.getModel());

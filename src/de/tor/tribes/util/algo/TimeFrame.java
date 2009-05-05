@@ -4,8 +4,11 @@
  */
 package de.tor.tribes.util.algo;
 
+import java.awt.Point;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  *
@@ -15,14 +18,28 @@ public class TimeFrame {
 
     private long start = 0;
     private long end = 0;
-    private int minHour = 0;
-    private int maxHour = 0;
+    private List<Point> mFrames = null;
+    private int arriveTolerance = 0;
 
     public TimeFrame(Date pStart, Date pEnd, int pMinHour, int pMaxHour) {
         start = pStart.getTime();
         end = pEnd.getTime();
-        minHour = pMinHour;
-        maxHour = pMaxHour;
+        mFrames = new LinkedList<Point>();
+        mFrames.add(new Point(pMinHour, pMaxHour));
+    }
+
+    public TimeFrame(Date pStart, Date pEnd) {
+        start = pStart.getTime();
+        end = pEnd.getTime();
+        mFrames = new LinkedList<Point>();
+    }
+
+    public void setArriveTolerance(int pSeconds){
+        arriveTolerance = pSeconds;
+    }
+    
+    public void addFrame(int pMinHour, int pMaxHour) {
+        mFrames.add(new Point(pMinHour, pMaxHour));
     }
 
     public boolean inside(Date pDate) {
@@ -32,10 +49,19 @@ public class TimeFrame {
         int hour = c.get(Calendar.HOUR_OF_DAY);
         int minute = c.get(Calendar.MINUTE);
         int second = c.get(Calendar.SECOND);
+        boolean inFrame = false;
+        //check if time is in time frame
         if ((t > start) && (t < end)) {
-            return ((hour >= minHour) && ((hour <= maxHour) && (minute <= 59) && (second <= 59)));
+            //general time is ok
+            for (Point p : mFrames) {
+                //check time frame parts
+                inFrame = ((hour >= p.x) && ((hour <= p.y) && (minute <= 59) && (second <= 59)));
+                if (inFrame) {
+                    break;
+                }
+            }
         }
-        return false;
+        return inFrame;
     }
 
     public long getStart() {

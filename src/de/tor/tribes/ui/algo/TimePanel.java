@@ -14,7 +14,6 @@ import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.algo.TimeFrame;
 import java.awt.geom.Line2D;
 import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import javax.swing.DefaultListModel;
@@ -104,25 +103,25 @@ public class TimePanel extends javax.swing.JPanel {
         c.setTimeInMillis(arrive.getTime());
         boolean mightBeInNightBonus = false;
         //check for night bonus
-        if (c.get(Calendar.HOUR) >= 0 && c.get(Calendar.HOUR) < 8) {
+        if (c.get(Calendar.HOUR_OF_DAY) >= 0 && c.get(Calendar.HOUR_OF_DAY) < 8) {
             //in night bonus
             mightBeInNightBonus = true;
         }
 
         //check min arrive time
         c.setTimeInMillis(arrive.getTime() - arrivalTolerance);
-        if (c.get(Calendar.HOUR) >= 0 && c.get(Calendar.HOUR) < 8) {
+        if (c.get(Calendar.HOUR_OF_DAY) >= 0 && c.get(Calendar.HOUR_OF_DAY) < 8) {
             mightBeInNightBonus = true;
         } else {
             //check max arrive time
             c.setTimeInMillis(arrive.getTime() + arrivalTolerance);
-            if (c.get(Calendar.HOUR) >= 0 && c.get(Calendar.HOUR) < 8) {
+            if (c.get(Calendar.HOUR_OF_DAY) >= 0 && c.get(Calendar.HOUR_OF_DAY) < 8) {
                 mightBeInNightBonus = true;
             }
         }
 
         if (mightBeInNightBonus) {
-            if (JOptionPane.showConfirmDialog(this, "Die angegebene Ankunftszeit kann unter Umständen implements Nachbonus (0 - 8 Uhr) liegen.\n" +
+            if (JOptionPane.showConfirmDialog(this, "Die angegebene Ankunftszeit kann unter Umständen im Nachbonus (0 - 8 Uhr) liegen.\n" +
                     "Willst du die Ankunftszeit entsprechend korrigieren?", "Nachtbonus", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
                 //correction requested
                 result = false;
@@ -249,6 +248,13 @@ public class TimePanel extends javax.swing.JPanel {
     private void fireAddNewTimeFrameEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireAddNewTimeFrameEvent
         int min = (int) Math.rint(jSendTimeFrame.getMinimumColoredValue());
         int max = (int) Math.rint(jSendTimeFrame.getMaximumColoredValue());
+
+        if (min == max) {
+            //start == end
+            JOptionPane.showMessageDialog(this, "Der angegebene Zeitrahmen ist ungültig", "Warnung", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
         Line2D.Double newFrame = new Line2D.Double((double) min, 0, (double) max - 0.1, 0);
         //check if timeframe exists or intersects with other existing frame
         int intersection = -1;

@@ -20,7 +20,6 @@ import de.tor.tribes.ui.renderer.DateCellRenderer;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.SupportCalculator;
-import de.tor.tribes.util.attack.AttackManager;
 import de.tor.tribes.util.tag.TagManager;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
@@ -51,6 +50,7 @@ import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.attack.AttackManager;
 
 /**
+ * @TODO (1.4) Insert result row with nr. of occurances in attack plans of result village
  * @author Charon
  */
 public class VillageSupportFrame extends javax.swing.JFrame {
@@ -111,6 +111,7 @@ public class VillageSupportFrame extends javax.swing.JFrame {
         jButton4 = new javax.swing.JButton();
         jButton7 = new javax.swing.JButton();
         jButton8 = new javax.swing.JButton();
+        jButton11 = new javax.swing.JButton();
         jTransferToAttackOverviewDialog = new javax.swing.JDialog();
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
@@ -212,6 +213,18 @@ public class VillageSupportFrame extends javax.swing.JFrame {
             }
         });
 
+        jButton11.setBackground(new java.awt.Color(239, 235, 223));
+        jButton11.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_validate.png"))); // NOI18N
+        jButton11.setToolTipText("Gleicht Ergebnisse mit vorhandenen Unterstützungen ab und entfernt ggf. Duplikate");
+        jButton11.setMaximumSize(new java.awt.Dimension(57, 33));
+        jButton11.setMinimumSize(new java.awt.Dimension(57, 33));
+        jButton11.setPreferredSize(new java.awt.Dimension(57, 33));
+        jButton11.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireValidateSupportsEvent(evt);
+            }
+        });
+
         javax.swing.GroupLayout jResultDialogLayout = new javax.swing.GroupLayout(jResultDialog.getContentPane());
         jResultDialog.getContentPane().setLayout(jResultDialogLayout);
         jResultDialogLayout.setHorizontalGroup(
@@ -219,17 +232,19 @@ public class VillageSupportFrame extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jResultDialogLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jResultDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 470, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 474, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jResultDialogLayout.createSequentialGroup()
                         .addGroup(jResultDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel5)
                             .addComponent(jLabel6))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jResultDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jArriveTime, javax.swing.GroupLayout.DEFAULT_SIZE, 348, Short.MAX_VALUE)
-                            .addComponent(jTargetVillage, javax.swing.GroupLayout.DEFAULT_SIZE, 348, Short.MAX_VALUE)))
+                            .addComponent(jArriveTime, javax.swing.GroupLayout.DEFAULT_SIZE, 352, Short.MAX_VALUE)
+                            .addComponent(jTargetVillage, javax.swing.GroupLayout.DEFAULT_SIZE, 352, Short.MAX_VALUE)))
                     .addComponent(jButton3)
                     .addGroup(jResultDialogLayout.createSequentialGroup()
+                        .addComponent(jButton11, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -259,7 +274,8 @@ public class VillageSupportFrame extends javax.swing.JFrame {
                         .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addComponent(jButton8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jButton5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton11, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 259, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -667,6 +683,10 @@ public class VillageSupportFrame extends javax.swing.JFrame {
         jTransferToAttackOverviewDialog.setVisible(false);
     }//GEN-LAST:event_fireCancelTransferSupportsEvent
 
+    private void fireValidateSupportsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireValidateSupportsEvent
+        // TODO add your handling code here:
+    }//GEN-LAST:event_fireValidateSupportsEvent
+
     private void buildResults(List<SupportCalculator.SupportMovement> pMovements) {
         DefaultTableModel model = new javax.swing.table.DefaultTableModel(
                 new Object[][]{},
@@ -837,6 +857,7 @@ public class VillageSupportFrame extends javax.swing.JFrame {
     private javax.swing.JComboBox jAttackPlansBox;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton10;
+    private javax.swing.JButton jButton11;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;

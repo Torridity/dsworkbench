@@ -34,10 +34,10 @@ public class TimeFrame {
         mFrames = new LinkedList<Point>();
     }
 
-    public void setArriveTolerance(int pSeconds){
+    public void setArriveTolerance(int pSeconds) {
         arriveTolerance = pSeconds;
     }
-    
+
     public void addFrame(int pMinHour, int pMaxHour) {
         mFrames.add(new Point(pMinHour, pMaxHour));
     }
@@ -51,7 +51,8 @@ public class TimeFrame {
         int second = c.get(Calendar.SECOND);
         boolean inFrame = false;
         //check if time is in time frame
-        if ((t > start) && (t < end)) {
+        //use max. arrive time
+        if ((t > start) && (t < end + arriveTolerance * 1000)) {
             //general time is ok
             for (Point p : mFrames) {
                 //check time frame parts
@@ -59,6 +60,11 @@ public class TimeFrame {
                 if (inFrame) {
                     break;
                 }
+            }
+            //check end frame
+            if (!inFrame) {
+                //if not yet in frame check end frame
+                inFrame = ((t > (end - arriveTolerance * 1000)) && (t < (end + arriveTolerance * 1000)));
             }
         }
         return inFrame;

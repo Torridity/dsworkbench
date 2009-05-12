@@ -61,9 +61,7 @@ import javax.swing.table.DefaultTableModel;
  * @TODO (DIFF) Put navigation to view to reduce min frame size
  * @TODO (DIFF) Add kind of profile manager for existing accounts
  * @TODO (DIFF) Shutdown fixes
- * @TODO (1.4) UV mode only works if UV account is selected as players account
  * @TODO (1.4) Deff planer uses already planned deff villages -> check attack plan for used deffs!
- * @TODO (1.4) Troop filter in attack planer does not work (probably remove while running through rows!?)
  * @TODO (1.4) Add min number to troop filter in attack planer????
  * @author  Charon
  */

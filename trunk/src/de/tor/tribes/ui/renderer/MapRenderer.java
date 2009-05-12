@@ -75,6 +75,7 @@ import org.apache.log4j.Logger;
  * 6-16: Free assignable
  * @TODO (DIFF) Problems with text form and minimap skin solved
  * @TODO (DIFF) Church range is now also drawn if village is outside view
+ * @TODO (DIFF) Don't draw attack if source and target are not visible, but draw if one of both is
  * @author Charon
  */
 /**Thread for updating after scroll operations
@@ -990,7 +991,8 @@ public class MapRenderer extends Thread {
             Attack[] attacks = AttackManager.getSingleton().getAttackPlan(plan).toArray(new Attack[]{});
             for (Attack attack : attacks) {
                 //go through all attacks
-                if (attack.isShowOnMap()) {
+                //renader if shown on map or if either source or target are visible
+                if (attack.isShowOnMap() && (attack.getSource().isVisibleOnMap() || attack.getTarget().isVisibleOnMap())) {
                     //only enter if attack should be visible
                     //get line for this attack
                     Line2D.Double attackLine = new Line2D.Double(attack.getSource().getX(), attack.getSource().getY(), attack.getTarget().getX(), attack.getTarget().getY());

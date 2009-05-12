@@ -71,8 +71,11 @@ import javax.swing.event.ListSelectionListener;
  * @TODO (DIFF-TEST!) Combination of groups for source selection
  * @TODO (1.4) Finish changed target selection
  * @TODO (1.4) Multi time range!?
- * @TODO (1.4) New algorithm with variable arrive time?
+ * @TODO (DIFF) Troop filter in attack planer now works properly
+ * @TODO (DIFF) Timeframe allows variable arrive time
+ * @TODO (DIFF) Select Group villages not dependent from current player villages (allows better UV handling)
  * @TODO (DIFF) Results table now has attack type editor
+ * @TODO (1.4) Use separate group for non-tagged villages of player (UV won't work here->document this!)
  * @author Jejkal
  */
 public class TribeTribeAttackFrame extends javax.swing.JFrame implements VillageSelectionListener {
@@ -1682,14 +1685,12 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
         JOptionPane.showMessageDialog(this, "Keine Herkunftsdörfer ausgewählt", "Fehler", JOptionPane.ERROR_MESSAGE);
         jTabbedPane1.setSelectedIndex(0);
         return;
-
     }
 
     if (victimModel.getRowCount() == 0) {
         JOptionPane.showMessageDialog(this, "Keine Ziele ausgewählt", "Fehler", JOptionPane.ERROR_MESSAGE);
         jTabbedPane1.setSelectedIndex(1);
         return;
-
     }
 
     List<Village> victimVillages = new LinkedList<Village>();
@@ -1830,7 +1831,6 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
                 UIManager.put("OptionPane.noButtonText", "No");
                 UIManager.put("OptionPane.yesButtonText", "Yes");
                 return;
-
             }
 
             UIManager.put("OptionPane.noButtonText", "No");
@@ -2550,18 +2550,17 @@ private void fireToleranceChangedEvent(javax.swing.event.ChangeEvent evt) {//GEN
         diff = (int) Math.floor((double) strength * (double) v / 100);
         jStrengthRange.setText("min. " + ((int) strength - diff));
     } catch (Exception e) {
-        JOptionPane.showMessageDialog(jOffStrengthFrame, "Bitte nur ganzzahlige Truppenzahlen verwenden.", "Fehler", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(jOffStrengthFrame, "Bitte nur ganzzahlige Einträge verwenden.", "Fehler", JOptionPane.ERROR_MESSAGE);
     }
 }//GEN-LAST:event_fireToleranceChangedEvent
 
 private void fireAcceptStrengthEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireAcceptStrengthEvent
     //remove sources with too small strength
-    DefaultTableModel model = (DefaultTableModel) jAttacksTable.getModel();
-    jAttacksTable.invalidate();
     int strength = Integer.parseInt(jStrengthField.getText());
     int diff = (int) Math.floor((double) strength * (double) jToleranceSlider.getValue() / 100);
     int removeCount = 0;
     int noInformation = 0;
+    List<Integer> toRemove = new LinkedList<Integer>();
     for (int i = 0; i < jAttacksTable.getRowCount(); i++) {
         Village v = (Village) jAttacksTable.getValueAt(i, 0);
         try {
@@ -2570,8 +2569,9 @@ private void fireAcceptStrengthEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST
             if (troops != null) {
                 offValue = (int) troops.getOffValue();
                 if (offValue < strength - diff) {
-                    int row = jAttacksTable.convertRowIndexToModel(i);
-                    model.removeRow(row);
+                    //int row = jAttacksTable.convertRowIndexToModel(i);
+                    //model.removeRow(row);
+                    toRemove.add(i);
                     removeCount++;
                 }
             } else {
@@ -2581,7 +2581,14 @@ private void fireAcceptStrengthEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST
         } catch (Exception e) {
         }
     }
-    jAttacksTable.revalidate();
+
+    //remove rows
+    for (int i = toRemove.size() - 1; i >= 0; i--) {
+        jAttacksTable.invalidate();
+        int row = jAttacksTable.convertRowIndexToModel(toRemove.get(i));
+        ((DefaultTableModel) jAttacksTable.getModel()).removeRow(row);
+        jAttacksTable.revalidate();
+    }
 
     jOffStrengthFrame.setVisible(false);
     String message = "Es wurden keine Angriffe entfernt.";
@@ -2806,20 +2813,24 @@ private void fireChangeSourceFakeStateEvent(java.awt.event.MouseEvent evt) {//GE
 
     private List<Village> getGroupFilteredSourceVillages() {
         Object[] values = (Object[]) jVillageGroupList.getSelectedValues();
-        List<Village> villages = DSWorkbenchMainFrame.getSingleton().getCurrentUser().getVillageList();
+
+
         List<Village> villageList = new LinkedList<Village>();
         if (jVillageGroupList.isEnabled()) {
             //tags available, use them
-            for (Village v : villages) {
-                for (Object t : values) {
-                    if (((Tag) t).tagsVillage(v.getId())) {
+            for (Object t : values) {
+                for (Integer vId : ((Tag) t).getVillageIDs()) {
+                    Village v = DataHolder.getSingleton().getVillagesById().get(vId);
+                    if (v.getTribe() != null) {
+                        //add only if a players villages is tagged
                         villageList.add(v);
-                        break;
                     }
                 }
             }
         } else {
-            //no tags available, take all villages
+            //no tags available, take current users villages
+            List<Village> villages = DSWorkbenchMainFrame.getSingleton().getCurrentUser().getVillageList();
+
             for (Village v : villages) {
                 villageList.add(v);
             }

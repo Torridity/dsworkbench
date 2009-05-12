@@ -32,16 +32,12 @@ public class Blitzkrieg extends AbstractAttackAlgorithm {
             List<Village> pTargets,
             int pMaxAttacksPerVillage,
             int pMaxCleanPerSnob,
-            Date pStartTime,
-            Date pArriveTime,
-            int pTimeFrameStartHour,
-            int pTimeFrameEndHour,
-            boolean pNightBlock,
+            TimeFrame pTimeFrame,
             boolean pRandomize) {
         //get snob villages
 
         //build timeframe
-        TimeFrame timeFrame = new TimeFrame(pStartTime, pArriveTime, pTimeFrameStartHour, pTimeFrameEndHour);
+        //TimeFrame timeFrame = new TimeFrame(pStartTime, pArriveTime, pTimeFrameStartHour, pTimeFrameEndHour);
         //generate enoblements with minimum runtime
 
         logger.debug("Getting off sources");
@@ -80,7 +76,7 @@ public class Blitzkrieg extends AbstractAttackAlgorithm {
 
         logger.debug("Assigning offs");
         List<Off> pOffs = new LinkedList<Off>();
-        assignOffs(pOffs, offSources, pTargets, timeFrame, pMaxAttacksPerVillage);
+        assignOffs(pOffs, offSources, pTargets, pTimeFrame, pMaxAttacksPerVillage);
         int fullOffs = 0;
 
         logger.debug("Checking for full offs and removing off tagets from faked list");
@@ -94,7 +90,7 @@ public class Blitzkrieg extends AbstractAttackAlgorithm {
         setFullOffs(fullOffs);
         logger.debug("Assigning fakes");
         List<Fake> pFinalFakes = new LinkedList<Fake>();
-        assignFakes(pFinalFakes, fakeSources, pTargets, timeFrame, pMaxAttacksPerVillage);
+        assignFakes(pFinalFakes, fakeSources, pTargets, pTimeFrame, pMaxAttacksPerVillage);
 
         logger.debug("Building result list");
         List<AbstractTroopMovement> movements = new LinkedList<AbstractTroopMovement>();

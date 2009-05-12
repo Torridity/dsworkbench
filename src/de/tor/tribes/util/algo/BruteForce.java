@@ -35,11 +35,7 @@ public class BruteForce extends AbstractAttackAlgorithm {
             List<Village> pTargets,
             int pMaxAttacksPerVillage,
             int pMaxCleanPerSnob,
-            Date pStartTime,
-            Date pArriveTime,
-            int pTimeFrameStartHour,
-            int pTimeFrameEndHour,
-            boolean pNightBlock,
+            TimeFrame pTimeFrame,
             boolean pRandomize) {
         Enumeration<UnitHolder> unitKeys = pSources.keys();
         Hashtable<Village, Hashtable<UnitHolder, List<Village>>> attacks = new Hashtable<Village, Hashtable<UnitHolder, List<Village>>>();
@@ -57,18 +53,18 @@ public class BruteForce extends AbstractAttackAlgorithm {
             if (sources != null) {
                 for (Village source : sources) {
                     //time when the attacks should arrive
-                    long arrive = pArriveTime.getTime();
+                    long arrive = pTimeFrame.getEnd();
                     //max. number of attacks per target village
                     int maxAttacksPerVillage = pMaxAttacksPerVillage;
                     Village vTarget = null;
-                    TimeFrame t = new TimeFrame(pStartTime, pArriveTime, pTimeFrameStartHour, pTimeFrameEndHour);
+                    //TimeFrame t = new TimeFrame(pStartTime, pArriveTime, pTimeFrameStartHour, pTimeFrameEndHour);
                     //search all tribes and villages for targets
                     for (Village v : pTargets) {
 
                         double time = DSCalculator.calculateMoveTimeInSeconds(source, v, unit.getSpeed());
                         Date sendTime = new Date(arrive - (long) time * 1000);
                         //check if attack is somehow possible
-                        if (t.inside(sendTime)) {
+                        if (pTimeFrame.inside(sendTime)) {
                             //only calculate if time is in time frame
                             //get list of source villages for current target
                             Hashtable<UnitHolder, List<Village>> attacksForVillage = attacks.get(v);
@@ -152,18 +148,18 @@ public class BruteForce extends AbstractAttackAlgorithm {
             if (sources != null) {
                 for (Village source : sources) {
                     //time when the attacks should arrive
-                    long arrive = pArriveTime.getTime();
+                    long arrive = pTimeFrame.getEnd();
                     //max. number of attacks per target village
                     int maxAttacksPerVillage = pMaxAttacksPerVillage;
                     Village vTarget = null;
-                    TimeFrame t = new TimeFrame(pStartTime, pArriveTime, pTimeFrameStartHour, pTimeFrameEndHour);
+                    //TimeFrame t = new TimeFrame(pStartTime, pArriveTime, pTimeFrameStartHour, pTimeFrameEndHour);
                     //search all tribes and villages for targets
                     for (Village v : pTargets) {
                         if (!attacks.contains(v)) {
                             double time = DSCalculator.calculateMoveTimeInSeconds(source, v, unit.getSpeed());
                             Date sendTime = new Date(arrive - (long) time * 1000);
                             //check if attack is somehow possible
-                            if (t.inside(sendTime)) {
+                            if (pTimeFrame.inside(sendTime)) {
                                 //only calculate if time is in time frame
                                 //get list of source villages for current target
                                 Hashtable<Village, UnitHolder> attacksForVillage = fakes.get(v);

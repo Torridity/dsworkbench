@@ -15,6 +15,8 @@ import de.tor.tribes.types.Fake;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
+import de.tor.tribes.ui.algo.MiscSettingsPanel;
+import de.tor.tribes.ui.algo.TimePanel;
 import de.tor.tribes.ui.editors.AttackTypeCellEditor;
 import de.tor.tribes.ui.editors.DateSpinEditor;
 import de.tor.tribes.ui.editors.VillageCellEditor;
@@ -67,15 +69,17 @@ import javax.swing.JSpinner.DateEditor;
 import javax.swing.event.ListSelectionListener;
 
 /**
- * @TODO (1.4) Change AG assignment for Blitzkrieg
+ * @TODO (1.5) Change AG assignment for Blitzkrieg
  * @TODO (DIFF-TEST!) Combination of groups for source selection
- * @TODO (1.4) Finish changed target selection
- * @TODO (1.4) Multi time range!?
+ * @TODO (1.4-Check) Finish changed target selection
+ * @TODO (1.4-Doc) Update documentation + images
+ * @TODO (1.4) Add fulltext algorithm selection
+ * @TODO (DIFF) Multi time range
  * @TODO (DIFF) Troop filter in attack planer now works properly
  * @TODO (DIFF) Timeframe allows variable arrive time
  * @TODO (DIFF) Select Group villages not dependent from current player villages (allows better UV handling)
  * @TODO (DIFF) Results table now has attack type editor
- * @TODO (1.4) Use separate group for non-tagged villages of player (UV won't work here->document this!)
+ * @TODO (DIFF) Use separate group for non-tagged villages of player (UV won't work here->document this!)
  * @author Jejkal
  */
 public class TribeTribeAttackFrame extends javax.swing.JFrame implements VillageSelectionListener {
@@ -83,10 +87,16 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Village
     private static Logger logger = Logger.getLogger("AttackPlanner");
     private boolean bChooseSourceRegionMode = false;
     private boolean bChooseTargetRegionMode = false;
+    private TimePanel mTimePanel = null;
+    private MiscSettingsPanel mMiscPanel = null;
 
     /** Creates new form TribeTribeAttackFrame */
     public TribeTribeAttackFrame() {
         initComponents();
+        mTimePanel = new TimePanel();
+        mMiscPanel = new MiscSettingsPanel();
+        jTabbedPane1.addTab("Zeiteinstellungen", mTimePanel);
+        jTabbedPane1.addTab("Sonstige Einstellungen", mMiscPanel);
         getContentPane().setBackground(Constants.DS_BACK);
         jTransferToAttackManagerDialog.pack();
         jSendTimeFrame.setMinimumValue(0);
@@ -254,6 +264,7 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Village
             // <editor-fold defaultstate="collapsed" desc=" Build user village list ">
             Tag[] tags = TagManager.getSingleton().getTags().toArray(new Tag[]{});
             DefaultListModel tagModel = new DefaultListModel();
+            tagModel.addElement("Keinen Tag");
             for (Tag t : tags) {
                 tagModel.addElement(t);
             }
@@ -1679,6 +1690,7 @@ private void fireRemoveAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
 
 private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCalculateAttackEvent
     //algorithm calculation
+    //pre check
     DefaultTableModel victimModel = (DefaultTableModel) jVictimTable.getModel();
     DefaultTableModel attackModel = (DefaultTableModel) jAttacksTable.getModel();
     if (attackModel.getRowCount() == 0) {
@@ -1693,6 +1705,15 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
         return;
     }
 
+    if (!mTimePanel.validatePanel()) {
+        return;
+    }
+
+    if (!mMiscPanel.validatePanel()) {
+        return;
+    }
+
+    //reading values
     List<Village> victimVillages = new LinkedList<Village>();
     for (int i = 0; i < victimModel.getRowCount(); i++) {
         victimVillages.add((Village) victimModel.getValueAt(i, 1));
@@ -1704,8 +1725,7 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
     // <editor-fold defaultstate="collapsed" desc=" Build attacks and fakes">
     Hashtable<UnitHolder, List<Village>> sources = new Hashtable<UnitHolder, List<Village>>();
     Hashtable<UnitHolder, List<Village>> fakes = new Hashtable<UnitHolder, List<Village>>();
-    for (int i = 0; i <
-            attackModel.getRowCount(); i++) {
+    for (int i = 0; i < attackModel.getRowCount(); i++) {
         Village vSource = (Village) attackModel.getValueAt(i, 0);
         UnitHolder uSource = (UnitHolder) attackModel.getValueAt(i, 1);
         boolean fake = (Boolean) attackModel.getValueAt(i, 2);
@@ -1750,11 +1770,7 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
         if (!u.getPlainName().equals("ram") && !u.getPlainName().equals("catapult") && !u.getPlainName().equals("snob")) {
             useMiscUnits = true;
             break;
-
         }
-
-
-
     }
     if (!useMiscUnits) {
         involvedUnits = fakes.keys();
@@ -1764,10 +1780,7 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
             if (!u.getPlainName().equals("ram") && !u.getPlainName().equals("catapult") && !u.getPlainName().equals("snob")) {
                 useMiscUnits = true;
                 break;
-
             }
-
-
         }
     }
 
@@ -1778,37 +1791,38 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
     int numInputTargets = victimVillages.size();
 
     // <editor-fold defaultstate="collapsed" desc="Obtain other parameters">
-    int maxAttacksPerVillage = 0;
-    try {
-        maxAttacksPerVillage = Integer.parseInt(jMaxAttacksPerVillage.getText());
-        jMaxAttacksPerVillage.setBackground(Color.WHITE);
+    int maxAttacksPerVillage = mMiscPanel.getMaxAttacksPerVillage();
+    /*try {
+    maxAttacksPerVillage = Integer.parseInt(jMaxAttacksPerVillage.getText());
+    jMaxAttacksPerVillage.setBackground(Color.WHITE);
     } catch (Exception e) {
-        jMaxAttacksPerVillage.setBackground(Color.RED);
-        jTabbedPane1.setSelectedIndex(1);
-        return;
+    jMaxAttacksPerVillage.setBackground(Color.RED);
+    jTabbedPane1.setSelectedIndex(1);
+    return;
+
+    }*/
+
+
+    int minCleanForSnob = mMiscPanel.getCleanOffsPerEnoblement();
+    /*if (jCleanOffs.isEnabled()) {
+    try {
+    minCleanForSnob = Integer.parseInt(jCleanOffs.getText());
+    jCleanOffs.setBackground(Color.WHITE);
+    } catch (Exception e) {
+    jCleanOffs.setBackground(Color.RED);
+    jTabbedPane1.setSelectedIndex(2);
+    return;
 
     }
-
-
-    int minCleanForSnob = 0;
-    if (jCleanOffs.isEnabled()) {
-        try {
-            minCleanForSnob = Integer.parseInt(jCleanOffs.getText());
-            jCleanOffs.setBackground(Color.WHITE);
-        } catch (Exception e) {
-            jCleanOffs.setBackground(Color.RED);
-            jTabbedPane1.setSelectedIndex(2);
-            return;
-
-        }
     } else {
-        jCleanOffs.setBackground(Color.LIGHT_GRAY);
-    }
-
-    Date minSendTime = ((Date) jSendTime.getValue());
+    jCleanOffs.setBackground(Color.LIGHT_GRAY);
+    }*/
+    boolean randomize = mMiscPanel.isRandomize();
+   /* Date minSendTime = ((Date) jSendTime.getValue());
     Date arrive = ((Date) jArriveTime.getValue());
     int min = (int) Math.rint(jSendTimeFrame.getMinimumColoredValue());
-    int max = (int) Math.rint(jSendTimeFrame.getMaximumColoredValue()) - 1;
+    int max = (int) Math.rint(jSendTimeFrame.getMaximumColoredValue()) - 1;*/
+    TimeFrame timeFrame = mTimePanel.getTimeFrame();
     //</editor-fold>
 
     //start processing
@@ -1872,7 +1886,6 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
             UIManager.put("OptionPane.noButtonText", "No");
             UIManager.put("OptionPane.yesButtonText", "Yes");
         }
-
     }
 
     result = algo.calculateAttacks(sources,
@@ -1880,11 +1893,8 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
             victimVillages,
             maxAttacksPerVillage,
             minCleanForSnob,
-            minSendTime,
-            arrive,
-            min,
-            max,
-            jNightForbidden.isSelected(), jRandomizeTribes.isSelected());
+           timeFrame,
+            randomize);
 
     //System.out.println("Generating attacks");
     List<Attack> attackList = new LinkedList<Attack>();
@@ -1912,7 +1922,8 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
             snobSources = 0;
             logger.debug("Start checking for possible enoblements");
             for (AbstractTroopMovement movement : result) {
-                List<Attack> atts = movement.getAttacks(arrive);
+                //@TODO Adept to TimeFrame(1)!!!
+                List<Attack> atts = movement.getAttacks(new Date(timeFrame.getEnd()));
                 boolean isFake = (movement instanceof Fake);
                 for (Attack attack : atts) {
                     attackList.add(attack);
@@ -1927,8 +1938,9 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
                     //possible enoblement
                     Village target = movement.getTarget();
                     for (DistanceMapping mapping : AbstractAttackAlgorithm.buildSourceTargetsMapping(target, attackSourceVillages)) {
-                        long sendTime = arrive.getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(mapping.getSource(), mapping.getTarget(), snob.getSpeed()) * 1000);
-                        TimeFrame f = new TimeFrame(minSendTime, arrive, min, max);
+                        //@TODO Adept to TimeFrame(2)!!!
+                        long sendTime = timeFrame.getEnd() - (long) (DSCalculator.calculateMoveTimeInSeconds(mapping.getSource(), mapping.getTarget(), snob.getSpeed()) * 1000);
+                        TimeFrame f = timeFrame;//new TimeFrame(minSendTime, arrive, min, max);
                         if (f.inside(new Date(sendTime))) {
                             //   logger.debug(" - found snob source in time frame");
                             Village snobSource = mapping.getTarget();
@@ -1938,7 +1950,8 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
                                     Attack snobAttack = new Attack();
                                     snobAttack.setSource(snobSource);
                                     snobAttack.setTarget(mapping.getSource());
-                                    snobAttack.setArriveTime(arrive);
+                                     //@TODO Adept to TimeFrame(3)!!!
+                                    snobAttack.setArriveTime(new Date(timeFrame.getEnd()));
                                     snobAttack.setUnit(snob);
                                     snobAttack.setType(Attack.SNOB_TYPE);
                                     enoblements.put(snobSource, snobAttack);
@@ -1954,7 +1967,6 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
 
                                     break;
                                 }
-
                             }
                         }
                     }
@@ -1992,7 +2004,8 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
     } else {
         logger.debug("Algorithm post-processing skipped");
         for (AbstractTroopMovement movement : result) {
-            List<Attack> atts = movement.getAttacks(arrive);
+            //@TODO Adept to TimeFrame(4)!!!
+            List<Attack> atts = movement.getAttacks(new Date(timeFrame.getEnd()));
             for (Attack attack : atts) {
                 attackList.add(attack);
                 if (!targets.contains(attack.getTarget())) {
@@ -2813,16 +2826,37 @@ private void fireChangeSourceFakeStateEvent(java.awt.event.MouseEvent evt) {//GE
 
     private List<Village> getGroupFilteredSourceVillages() {
         Object[] values = (Object[]) jVillageGroupList.getSelectedValues();
-
-
         List<Village> villageList = new LinkedList<Village>();
+
         if (jVillageGroupList.isEnabled()) {
+            List<Tag> tags = new LinkedList<Tag>();
+            boolean useNoTag = false;
+            for (Object o : values) {
+                try {
+                    tags.add((Tag) o);
+                } catch (Exception e) {
+                    //no-tag villages contained
+                    logger.debug("Using untagged villages");
+                    useNoTag = true;
+                }
+            }
+
             //tags available, use them
-            for (Object t : values) {
-                for (Integer vId : ((Tag) t).getVillageIDs()) {
+            for (Tag t : tags) {
+                for (Integer vId : t.getVillageIDs()) {
                     Village v = DataHolder.getSingleton().getVillagesById().get(vId);
-                    if (v.getTribe() != null) {
+                    if (v.getTribe() != null && !villageList.contains(v)) {
                         //add only if a players villages is tagged
+                        villageList.add(v);
+                    }
+                }
+            }
+            if (useNoTag) {
+                //use villages of current user which are not tagged
+                List<Village> villages = DSWorkbenchMainFrame.getSingleton().getCurrentUser().getVillageList();
+                for (Village v : villages) {
+                    List<Tag> vtags = TagManager.getSingleton().getTags(v);
+                    if (vtags == null || vtags.isEmpty() && !villageList.contains(v)) {
                         villageList.add(v);
                     }
                 }
@@ -2834,13 +2868,14 @@ private void fireChangeSourceFakeStateEvent(java.awt.event.MouseEvent evt) {//GE
             for (Village v : villages) {
                 villageList.add(v);
             }
+
         }
         return villageList;
     }
 
-    // </editor-fold>
+// </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Target selection handlers">
+// <editor-fold defaultstate="collapsed" desc="Target selection handlers">
     private void fireFilterTargetByAllyEvent() {
         Ally a = null;
         try {
@@ -2871,12 +2906,14 @@ private void fireChangeSourceFakeStateEvent(java.awt.event.MouseEvent evt) {//GE
                 if (t.getAlly() == null) {
                     noAlly.add(t);
                 }
+
             }
             Tribe[] noAllyTribes = noAlly.toArray(new Tribe[]{});
             Arrays.sort(noAllyTribes, Tribe.CASE_INSENSITIVE_ORDER);
             jTargetTribeList.setModel(new DefaultComboBoxModel(noAllyTribes));
             jTargetTribeList.setSelectedIndex(0);
         }
+
     }
 
     private void fireFilterTargetByTribeEvent() {
@@ -2906,6 +2943,7 @@ private void fireChangeSourceFakeStateEvent(java.awt.event.MouseEvent evt) {//GE
                 for (String cont : continents) {
                     contModel.addElement(cont);
                 }
+
                 jTargetContinentList.setModel(contModel);
                 jTargetContinentList.repaint();//.updateUI();
                 jTargetContinentList.getSelectionModel().setSelectionInterval(0, continents.size() - 1);
@@ -2919,6 +2957,7 @@ private void fireChangeSourceFakeStateEvent(java.awt.event.MouseEvent evt) {//GE
             jTargetContinentList.setModel(new DefaultListModel());
             jTargetVillageList.setModel(new DefaultListModel());
         }
+
     }
 
     private void fireFilterTargetByContinentEvent() {
@@ -2927,7 +2966,8 @@ private void fireChangeSourceFakeStateEvent(java.awt.event.MouseEvent evt) {//GE
         List<Integer> validConts = new LinkedList<Integer>();
         for (Object cont : conts) {
             String c = (String) cont;
-            c = c.replaceAll("K", "").trim();
+            c =
+                    c.replaceAll("K", "").trim();
             validConts.add(Integer.parseInt(c));
         }
 
@@ -2942,9 +2982,11 @@ private void fireChangeSourceFakeStateEvent(java.awt.event.MouseEvent evt) {//GE
             } else {
                 cont = DSCalculator.getContinent(v.getX(), v.getY());
             }
+
             if (validConts.contains(cont)) {
                 villageModel.addElement(v);
             }
+
         }
         jTargetVillageList.setModel(villageModel);
     }

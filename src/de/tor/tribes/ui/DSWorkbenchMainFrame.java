@@ -57,12 +57,11 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 /**
- * @TODO (1.4) Remove SHIFT+8 shortcut from help
+ * @TODO (1.4-Doc) Remove SHIFT+8 shortcut from help
  * @TODO (DIFF) Put navigation to view to reduce min frame size
  * @TODO (DIFF) Add kind of profile manager for existing accounts
  * @TODO (DIFF) Shutdown fixes
- * @TODO (1.4) Deff planer uses already planned deff villages -> check attack plan for used deffs!
- * @TODO (1.4) Add min number to troop filter in attack planer????
+ * @TODO (1.5?) Add min number to troop filter in attack planer????
  * @author  Charon
  */
 public class DSWorkbenchMainFrame extends javax.swing.JFrame implements

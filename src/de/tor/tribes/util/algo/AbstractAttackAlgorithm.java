@@ -14,6 +14,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
+ * @TODO (1.4!!!!) Implement dynamic time framing
  * @author Jejkal
  */
 public abstract class AbstractAttackAlgorithm {
@@ -27,11 +28,7 @@ public abstract class AbstractAttackAlgorithm {
             List<Village> pTargets,
             int pMaxAttacksPerVillage,
             int pMaxCleanPerSnob,
-            Date pStartTime,
-            Date pArriveTime,
-            int pTimeFrameStartHour,
-            int pTimeFrameEndHour,
-            boolean pNightBlock,
+            TimeFrame pTimeFrame,
             boolean pRandomize);
 
     /**

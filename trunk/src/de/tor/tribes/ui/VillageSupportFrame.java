@@ -47,10 +47,13 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 import org.apache.log4j.Logger;
 import de.tor.tribes.util.DSCalculator;
+import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.attack.AttackManager;
 
 /**
- * @TODO (1.4) Insert result row with nr. of occurances in attack plans of result village
+ * @TODO (DIFF) Insert result row with nr. of occurances in attack plans of result village
+ * @TODO (DIFF) Works now for hierarchical system
+ * @TODO (DIFF) Single supports selectable
  * @author Charon
  */
 public class VillageSupportFrame extends javax.swing.JFrame {
@@ -69,6 +72,7 @@ public class VillageSupportFrame extends javax.swing.JFrame {
     /** Creates new form VillageSupportFrame */
     VillageSupportFrame() {
         initComponents();
+        jTransferToAttackOverviewDialog.pack();
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
         GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.support_tool", GlobalOptions.getHelpBroker().getHelpSet());
     // </editor-fold>
@@ -111,7 +115,6 @@ public class VillageSupportFrame extends javax.swing.JFrame {
         jButton4 = new javax.swing.JButton();
         jButton7 = new javax.swing.JButton();
         jButton8 = new javax.swing.JButton();
-        jButton11 = new javax.swing.JButton();
         jTransferToAttackOverviewDialog = new javax.swing.JDialog();
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
@@ -188,6 +191,7 @@ public class VillageSupportFrame extends javax.swing.JFrame {
             }
         });
 
+        jButton4.setBackground(new java.awt.Color(239, 235, 223));
         jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_clipboard.png"))); // NOI18N
         jButton4.setToolTipText("Unformatiert in die Zwischenablage kopieren");
         jButton4.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -196,6 +200,7 @@ public class VillageSupportFrame extends javax.swing.JFrame {
             }
         });
 
+        jButton7.setBackground(new java.awt.Color(239, 235, 223));
         jButton7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_clipboardBB.png"))); // NOI18N
         jButton7.setToolTipText("Als BB-Code in die Zwischenablage kopieren");
         jButton7.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -210,18 +215,6 @@ public class VillageSupportFrame extends javax.swing.JFrame {
         jButton8.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireMoveSupportsToAttackViewEvent(evt);
-            }
-        });
-
-        jButton11.setBackground(new java.awt.Color(239, 235, 223));
-        jButton11.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_validate.png"))); // NOI18N
-        jButton11.setToolTipText("Gleicht Ergebnisse mit vorhandenen Unterstützungen ab und entfernt ggf. Duplikate");
-        jButton11.setMaximumSize(new java.awt.Dimension(57, 33));
-        jButton11.setMinimumSize(new java.awt.Dimension(57, 33));
-        jButton11.setPreferredSize(new java.awt.Dimension(57, 33));
-        jButton11.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireValidateSupportsEvent(evt);
             }
         });
 
@@ -243,8 +236,6 @@ public class VillageSupportFrame extends javax.swing.JFrame {
                             .addComponent(jTargetVillage, javax.swing.GroupLayout.DEFAULT_SIZE, 352, Short.MAX_VALUE)))
                     .addComponent(jButton3)
                     .addGroup(jResultDialogLayout.createSequentialGroup()
-                        .addComponent(jButton11, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -273,15 +264,18 @@ public class VillageSupportFrame extends javax.swing.JFrame {
                         .addComponent(jButton7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addComponent(jButton8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton11, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jButton5, javax.swing.GroupLayout.DEFAULT_SIZE, 35, Short.MAX_VALUE)
+                    .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 259, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jButton3)
                 .addContainerGap())
         );
+
+        jTransferToAttackOverviewDialog.setTitle("In Angriffsplan einfügen");
+        jTransferToAttackOverviewDialog.setAlwaysOnTop(true);
+        jTransferToAttackOverviewDialog.setModal(true);
 
         jLabel7.setText("Existierender Plan");
 
@@ -631,6 +625,11 @@ public class VillageSupportFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_fireCopyBBCodeToClipboardEvent
 
     private void fireMoveSupportsToAttackViewEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireMoveSupportsToAttackViewEvent
+        int[] rows = jSupportTable.getSelectedRows();
+        if (rows == null || rows.length == 0) {
+            JOptionPane.showMessageDialog(jResultDialog, "Keine Unterstützungen ausgewählt", "Fehler", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
         jNewPlanName.setText("");
         Enumeration<String> plans = AttackManager.getSingleton().getPlans();
         DefaultComboBoxModel model = new DefaultComboBoxModel();
@@ -663,15 +662,27 @@ public class VillageSupportFrame extends javax.swing.JFrame {
 
         String v = jTargetVillage.getText();
         String coord = v.substring(v.lastIndexOf("(") + 1, v.lastIndexOf(")")).trim();
-        String[] pos = coord.split("\\|");
-        int x = Integer.parseInt(pos[0]);
-        int y = Integer.parseInt(pos[1]);
-        Village target = DataHolder.getSingleton().getVillages()[x][y];
+        int[] co = null;
+        if (ServerSettings.getSingleton().getCoordType() != 2) {
+            String[] pos = coord.split("\\:");
+            int x = Integer.parseInt(pos[0]);
+            int y = Integer.parseInt(pos[1]);
+            int z = Integer.parseInt(pos[2]);
+            co = DSCalculator.hierarchicalToXy(x, y, z);
+        } else {
+            String[] pos = coord.split("\\|");
+            int x = Integer.parseInt(pos[0]);
+            int y = Integer.parseInt(pos[1]);
+            co = new int[]{x, y};
+        }
+        int[] rows = jSupportTable.getSelectedRows();
+        Village target = DataHolder.getSingleton().getVillages()[co[0]][co[1]];
         DefaultTableModel resultModel = (DefaultTableModel) jSupportTable.getModel();
-        for (int i = 0; i < resultModel.getRowCount(); i++) {
-            Village source = (Village) resultModel.getValueAt(i, 0);
-            UnitHolder unit = (UnitHolder) resultModel.getValueAt(i, 1);
-            Date sendTime = (Date) resultModel.getValueAt(i, 2);
+        for (int r : rows) {
+            int row = jSupportTable.convertRowIndexToModel(r);
+            Village source = (Village) resultModel.getValueAt(row, 0);
+            UnitHolder unit = (UnitHolder) resultModel.getValueAt(row, 1);
+            Date sendTime = (Date) resultModel.getValueAt(row, 2);
             long arriveTime = sendTime.getTime() + (long) (DSCalculator.calculateMoveTimeInSeconds(source, target, unit.getSpeed()) * 1000);
             AttackManager.getSingleton().addAttackFast(source, target, unit, new Date(arriveTime), false, planName, Attack.SUPPORT_TYPE);
         }
@@ -683,19 +694,15 @@ public class VillageSupportFrame extends javax.swing.JFrame {
         jTransferToAttackOverviewDialog.setVisible(false);
     }//GEN-LAST:event_fireCancelTransferSupportsEvent
 
-    private void fireValidateSupportsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireValidateSupportsEvent
-        // TODO add your handling code here:
-    }//GEN-LAST:event_fireValidateSupportsEvent
-
     private void buildResults(List<SupportCalculator.SupportMovement> pMovements) {
         DefaultTableModel model = new javax.swing.table.DefaultTableModel(
                 new Object[][]{},
                 new String[]{
-                    "Herkunftsdorf", "Truppen", "Abschickzeit"
+                    "Herkunftsdorf", "Truppen", "Abschickzeit", "#Verwendungen"
                 }) {
 
             Class[] types = new Class[]{
-                Village.class, UnitHolder.class, Date.class
+                Village.class, UnitHolder.class, Date.class, Integer.class
             };
 
             @Override
@@ -731,7 +738,18 @@ public class VillageSupportFrame extends javax.swing.JFrame {
             Village village = movement.getSource();
             UnitHolder unit = movement.getUnit();
             Date sendTime = movement.getSendTime();
-            model.addRow(new Object[]{village, unit, sendTime});
+            int usages = 0;
+            Enumeration<String> plans = AttackManager.getSingleton().getPlans();
+            while (plans.hasMoreElements()) {
+                String planId = plans.nextElement();
+                List<Attack> plan = AttackManager.getSingleton().getAttackPlan(planId);
+                for (Attack a : plan) {
+                    if (a.getSource().equals(village) && a.getType() == Attack.SUPPORT_TYPE) {
+                        usages++;
+                    }
+                }
+            }
+            model.addRow(new Object[]{village, unit, sendTime, usages});
         }
     }
 
@@ -857,7 +875,6 @@ public class VillageSupportFrame extends javax.swing.JFrame {
     private javax.swing.JComboBox jAttackPlansBox;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton10;
-    private javax.swing.JButton jButton11;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;

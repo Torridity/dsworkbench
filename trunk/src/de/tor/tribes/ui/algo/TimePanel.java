@@ -30,12 +30,11 @@ public class TimePanel extends javax.swing.JPanel {
     /** Creates new form SendTimePanel */
     public TimePanel() {
         initComponents();
+        setBackground(Constants.DS_BACK_LIGHT);
         reset();
     }
 
     public void reset() {
-        //general setup
-        setBackground(Constants.DS_BACK);
         //setup of send time spinner
         jSendTime.setEditor(new DateEditor(jSendTime, "dd.MM.yy HH:mm:ss"));
         jSendTime.setValue(Calendar.getInstance().getTime());
@@ -48,7 +47,7 @@ public class TimePanel extends javax.swing.JPanel {
         jSendTimeFrame.setSegmentSize(1);
         jSendTimeFrame.setUnit("h");
         jSendTimeFrame.setDecimalFormater(new DecimalFormat("##"));
-        jSendTimeFrame.setBackground(Constants.DS_BACK);
+        jSendTimeFrame.setBackground(Constants.DS_BACK_LIGHT);
         //setup time frame table
         DefaultListModel model = new DefaultListModel();
         jSendTimeFramesList.setModel(model);
@@ -63,7 +62,7 @@ public class TimePanel extends javax.swing.JPanel {
 
     /**Return selected send time frames
      */
-    public TimeFrame getSendFrames() {
+    public TimeFrame getTimeFrame() {
         TimeFrame result = new TimeFrame((Date) jSendTime.getValue(), (Date) jArriveTime.getValue());
         //set arrive tolerance in seconds
         Calendar c = Calendar.getInstance();
@@ -281,10 +280,6 @@ public class TimePanel extends javax.swing.JPanel {
     }//GEN-LAST:event_fireAddNewTimeFrameEvent
 
     private void fireRemoveTimeFrameEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireRemoveTimeFrameEvent
-        if (true) {
-            validatePanel();
-            return;
-        }
         Object[] selection = jSendTimeFramesList.getSelectedValues();
         if (selection == null || selection.length == 0) {
             return;

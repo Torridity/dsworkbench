@@ -34,11 +34,7 @@ public class AllInOne extends AbstractAttackAlgorithm {
             List<Village> pTargets,
             int pMaxAttacksPerVillage,
             int pCleanPerSnob,
-            Date pStartTime,
-            Date pArriveTime,
-            int pTimeFrameStartHour,
-            int pTimeFrameEndHour,
-            boolean pNightBlock,
+            TimeFrame pTimeFrame,
             boolean pRandomize) {
 
         //get snob villages
@@ -50,12 +46,12 @@ public class AllInOne extends AbstractAttackAlgorithm {
         }
 
         //build timeframe
-        TimeFrame timeFrame = new TimeFrame(pStartTime, pArriveTime, pTimeFrameStartHour, pTimeFrameEndHour);
+       // TimeFrame timeFrame = new TimeFrame(pStartTime, pArriveTime, pTimeFrameStartHour, pTimeFrameEndHour);
         List<Enoblement> finalEnoblements = new LinkedList<Enoblement>();
 
         //generate enoblements with minimum runtime
         logger.debug("Generating enoblements");
-        generateEnoblements(snobVillages, pTargets, timeFrame, finalEnoblements);
+        generateEnoblements(snobVillages, pTargets, pTimeFrame, finalEnoblements);
         logger.debug("Getting off sources");
         // <editor-fold defaultstate="collapsed" desc="Get off villages">
         UnitHolder ramUnit = DataHolder.getSingleton().getUnitByPlainName("ram");
@@ -94,7 +90,7 @@ public class AllInOne extends AbstractAttackAlgorithm {
             e.setMaxOffs(pMaxAttacksPerVillage);
         }
         logger.debug("Assigning offs to enoblements");
-        assignOffsToEnoblements(finalEnoblements, offSources, timeFrame);
+        assignOffsToEnoblements(finalEnoblements, offSources, pTimeFrame);
 
         int fullyValid = 0;
         Enoblement[] aEnoblements = finalEnoblements.toArray(new Enoblement[]{});
@@ -145,7 +141,7 @@ public class AllInOne extends AbstractAttackAlgorithm {
         setValidEnoblements(fullyValid);
         List<Off> pOffs = new LinkedList<Off>();
         logger.debug("Generating attacks");
-        assignOffs(pOffs, offSources, pTargets, timeFrame, pMaxAttacksPerVillage);
+        assignOffs(pOffs, offSources, pTargets, pTimeFrame, pMaxAttacksPerVillage);
 
         int fullOffs = 0;
         logger.debug("Checking for full attacks and removing off tagets from faked list");
@@ -165,7 +161,7 @@ public class AllInOne extends AbstractAttackAlgorithm {
         setFullOffs(fullOffs);
         List<Fake> pFinalFakes = new LinkedList<Fake>();
         logger.debug("Generating fakes");
-        assignFakes(pFinalFakes, fakeSources, pTargets, timeFrame, pMaxAttacksPerVillage);
+        assignFakes(pFinalFakes, fakeSources, pTargets, pTimeFrame, pMaxAttacksPerVillage);
 
         List<AbstractTroopMovement> movements = new LinkedList<AbstractTroopMovement>();
         logger.debug("Building result list");

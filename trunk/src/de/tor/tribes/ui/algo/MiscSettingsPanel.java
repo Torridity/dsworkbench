@@ -25,17 +25,31 @@ public class MiscSettingsPanel extends javax.swing.JPanel {
     /** Creates new form MiscSettingsPanel */
     public MiscSettingsPanel() {
         initComponents();
+        setBackground(Constants.DS_BACK_LIGHT);
     }
 
     public void reset() {
         jAttacksPerTarget.setText("6");
         jCleanOffsPerEnoblement.setText("3");
         jSnobDistSlider.setValue(35);
+        jSnobDistSlider.updateUI();
         fireSnobSliderChangedEvent(null);
     }
 
     public int getMaxAttacksPerVillage() {
         return Integer.parseInt(jAttacksPerTarget.getText());
+    }
+
+    public int getCleanOffsPerEnoblement() {
+        return Integer.parseInt(jCleanOffsPerEnoblement.getText());
+    }
+
+    public boolean isRandomize() {
+        return (jRandomizeBox.getSelectedIndex() == 1);
+    }
+
+    public int getMaxSnobDistance() {
+        return jSnobDistSlider.getValue();
     }
 
     public boolean validatePanel() {
@@ -97,7 +111,7 @@ public class MiscSettingsPanel extends javax.swing.JPanel {
         jSnobDistSlider = new javax.swing.JSlider();
         jSliderValueLabel = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox();
+        jRandomizeBox = new javax.swing.JComboBox();
 
         jLabel1.setText("Wieviele Angriffe sollen einem einzelnen Zieldorf maximal zugeordnet werden?");
         jLabel1.setMaximumSize(new java.awt.Dimension(374, 14));
@@ -121,6 +135,7 @@ public class MiscSettingsPanel extends javax.swing.JPanel {
         jSnobDistSlider.setMinimum(1);
         jSnobDistSlider.setMinorTickSpacing(1);
         jSnobDistSlider.setValue(35);
+        jSnobDistSlider.setOpaque(false);
         jSnobDistSlider.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 fireSnobSliderChangedEvent(evt);
@@ -138,7 +153,7 @@ public class MiscSettingsPanel extends javax.swing.JPanel {
         jLabel4.setMinimumSize(new java.awt.Dimension(374, 14));
         jLabel4.setPreferredSize(new java.awt.Dimension(374, 14));
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Alphabetisch, entsprechend der Dorfliste", "Zufällig" }));
+        jRandomizeBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Alphabetisch, entsprechend der Dorfliste", "Zufällig" }));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -163,7 +178,7 @@ public class MiscSettingsPanel extends javax.swing.JPanel {
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jRandomizeBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(97, 97, 97))))
         );
         layout.setVerticalGroup(
@@ -186,7 +201,7 @@ public class MiscSettingsPanel extends javax.swing.JPanel {
                 .addGap(18, 18, 18)
                 .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jRandomizeBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(70, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -198,11 +213,11 @@ public class MiscSettingsPanel extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField jAttacksPerTarget;
     private javax.swing.JTextField jCleanOffsPerEnoblement;
-    private javax.swing.JComboBox jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JComboBox jRandomizeBox;
     private javax.swing.JLabel jSliderValueLabel;
     private javax.swing.JSlider jSnobDistSlider;
     // End of variables declaration//GEN-END:variables

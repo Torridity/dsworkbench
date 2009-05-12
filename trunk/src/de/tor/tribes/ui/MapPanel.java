@@ -54,13 +54,13 @@ import javax.swing.UIManager;
 /**
  * @TODO (DIFF) Select villages in attack planer from bottom right to top left don't work
  * @TODO (1.X) Add flag-marker for single villages/notes? -> notes as forms? (Version 2.0)
- * @TODO (1.4) Ask conquers interface (http://de41.die-staemme.de/interface.php?func=get_conquer&since=1239873543) for enoblements
+ * @TODO (1.5) Ask conquers interface (http://de41.die-staemme.de/interface.php?func=get_conquer&since=1239873543) for enoblements
  * @TODO (DIFF) Make church range colored based on tribe marker
  * @TODO (DIFF) Add 3 church range tools to speed up adding of churches
  * @TODO (DIFF) Selection tool should be able to filter (only own, only enemy, only ally, only barbarian)
  * @TODO (DIFF) Selection export with tabs instead of spaces to insert data into TCalc
  * @TODO (DIFF) Runtime radar as fixed ranges, show always!? ask size every time
- * @TODO (1.4) Add risk estimation for attacks on enemy allies
+ * @TODO (1.5) Add risk estimation for attacks on enemy allies
  * @author Charon
  */
 public class MapPanel extends javax.swing.JPanel {

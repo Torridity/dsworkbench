@@ -22,7 +22,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JSpinner.DateEditor;
 
 /**
- *
  * @author Jejkal
  */
 public class TimePanel extends javax.swing.JPanel {
@@ -30,6 +29,9 @@ public class TimePanel extends javax.swing.JPanel {
     /** Creates new form SendTimePanel */
     public TimePanel() {
         initComponents();
+        //TODO (1.X) Integrate tolerance in later version
+        jTolerance.setVisible(false);
+        jLabel4.setVisible(false);
         setBackground(Constants.DS_BACK_LIGHT);
         reset();
     }

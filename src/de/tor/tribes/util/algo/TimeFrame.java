@@ -52,7 +52,8 @@ public class TimeFrame {
         boolean inFrame = false;
         //check if time is in time frame
         //use max. arrive time
-        if ((t > start) && (t < end + arriveTolerance * 1000)) {
+        //if ((t > start) && (t < end + arriveTolerance * 1000)) {
+        if ((t > start) && (t < end)) {
             //general time is ok
             for (Point p : mFrames) {
                 //check time frame parts
@@ -62,10 +63,10 @@ public class TimeFrame {
                 }
             }
             //check end frame
-            if (!inFrame) {
+            /*if (!inFrame) {
                 //if not yet in frame check end frame
                 inFrame = ((t > (end - arriveTolerance * 1000)) && (t < (end + arriveTolerance * 1000)));
-            }
+            }*/
         }
         return inFrame;
     }

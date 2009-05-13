@@ -8,13 +8,12 @@ import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.AbstractTroopMovement;
 import de.tor.tribes.types.Village;
 import java.util.Collections;
-import java.util.Date;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 
 /**
- * @TODO (1.4!!!!) Implement dynamic time framing
+ * @TODO (1.X) Implement dynamic time framing
  * @author Jejkal
  */
 public abstract class AbstractAttackAlgorithm {

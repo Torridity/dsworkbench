@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 /**
- *
+ *@TODO(1.5) Separate troop informations and use them in different tools
  * @author Charon
  */
 public class TroopsParser {

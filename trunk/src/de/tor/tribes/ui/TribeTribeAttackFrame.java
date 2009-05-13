@@ -1818,7 +1818,7 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
     jCleanOffs.setBackground(Color.LIGHT_GRAY);
     }*/
     boolean randomize = mMiscPanel.isRandomize();
-   /* Date minSendTime = ((Date) jSendTime.getValue());
+    /* Date minSendTime = ((Date) jSendTime.getValue());
     Date arrive = ((Date) jArriveTime.getValue());
     int min = (int) Math.rint(jSendTimeFrame.getMinimumColoredValue());
     int max = (int) Math.rint(jSendTimeFrame.getMaximumColoredValue()) - 1;*/
@@ -1893,7 +1893,7 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
             victimVillages,
             maxAttacksPerVillage,
             minCleanForSnob,
-           timeFrame,
+            timeFrame,
             randomize);
 
     //System.out.println("Generating attacks");
@@ -1950,7 +1950,7 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
                                     Attack snobAttack = new Attack();
                                     snobAttack.setSource(snobSource);
                                     snobAttack.setTarget(mapping.getSource());
-                                     //@TODO Adept to TimeFrame(3)!!!
+                                    //@TODO Adept to TimeFrame(3)!!!
                                     snobAttack.setArriveTime(new Date(timeFrame.getEnd()));
                                     snobAttack.setUnit(snob);
                                     snobAttack.setType(Attack.SNOB_TYPE);
@@ -1964,7 +1964,6 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
                                     if (cnt >= 4) {
                                         validEnoblements++;
                                     }
-
                                     break;
                                 }
                             }
@@ -1982,13 +1981,11 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
                         "Achtung: Es wird nicht überprüft, ob die benötigte Anzahl AGs in den Dörfern vorhanden ist. AGs müssen ggf. rekrutiert werden.\n" +
                         "Sollen diese zu den bestehenden Angriffen hinzugefügt werden?", "Nachbearbeitung", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
                     Enumeration<Village> keys = enoblements.keys();
-                    maxEnoblements =
-                            enoblements.size();
+                    maxEnoblements = enoblements.size();
                     while (keys.hasMoreElements()) {
                         logger.debug(" - adding possible enoblement");
                         Attack a = enoblements.get(keys.nextElement());
-                        for (int i = 0; i <
-                                4; i++) {
+                        for (int i = 0; i < 4; i++) {
                             attackList.add(a);
                         }
 

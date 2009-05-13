@@ -81,8 +81,6 @@ public class Enoblement extends AbstractTroopMovement {
             a.setType(type);
             result.add(a);
         }
-
-
         return result;
     }
 

@@ -237,7 +237,7 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
             jChurchTable.invalidate();
             for (int i = rows.length - 1; i >= 0; i--) {
                 int row = jChurchTable.convertRowIndexToModel(rows[i]);
-                Village v = ((Village) ((DefaultTableModel) jChurchTable.getModel()).getValueAt(row, 0));
+                Village v = ((Village) ((DefaultTableModel) jChurchTable.getModel()).getValueAt(row, 1));
                 toRemove.add(v);
             }
             jChurchTable.revalidate();
@@ -253,7 +253,7 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
             return;
         }
         int row = jChurchTable.convertRowIndexToModel(rows[0]);
-        Village v = ((Village) ((DefaultTableModel) jChurchTable.getModel()).getValueAt(row, 0));
+        Village v = ((Village) ((DefaultTableModel) jChurchTable.getModel()).getValueAt(row, 1));
         DSWorkbenchMainFrame.getSingleton().centerVillage(v);
     }//GEN-LAST:event_fireCenterChurchVillageEvent
 

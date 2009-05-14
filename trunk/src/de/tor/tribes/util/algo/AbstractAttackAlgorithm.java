@@ -21,6 +21,8 @@ public abstract class AbstractAttackAlgorithm {
     private int validEnoblements = 0;
     private int fullOffs = 0;
 
+    public abstract List<Village> getNotAssignedSources();
+
     public abstract List<AbstractTroopMovement> calculateAttacks(
             Hashtable<UnitHolder, List<Village>> pSources,
             Hashtable<UnitHolder, List<Village>> pFakes,

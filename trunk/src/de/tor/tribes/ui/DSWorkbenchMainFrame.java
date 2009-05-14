@@ -402,7 +402,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
 
         //update online state
         onlineStateChanged();
-
     }
 
     public String[] getCurrentPosition() {

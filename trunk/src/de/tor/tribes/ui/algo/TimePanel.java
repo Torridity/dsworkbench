@@ -86,12 +86,13 @@ public class TimePanel extends javax.swing.JPanel {
 
     public boolean validatePanel() {
         //no time frame specified
-        boolean result = false;
+        boolean result = true;
         if (jSendTimeFramesList.getModel().getSize() == 0) {
             if (JOptionPane.showConfirmDialog(this, "Es muss mindestens ein Abschickzeitfenster angegebene werden.\n" +
                     "Soll der Standardzeitrahmen (8 - 24 Uhr) verwendet werden?", "Fehlendes Zeitfenster", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
                 ((DefaultListModel) jSendTimeFramesList.getModel()).addElement(8 + " Uhr - " + 24 + " Uhr");
-                result = true;
+            } else {
+                result = false;
             }
         }
 

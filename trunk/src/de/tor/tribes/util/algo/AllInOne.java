@@ -27,6 +27,11 @@ import org.apache.log4j.Logger;
 public class AllInOne extends AbstractAttackAlgorithm {
 
     private static Logger logger = Logger.getLogger("Algorithm_AllInOne");
+    private List<Village> notAssignedSources = null;
+
+    public List<Village> getNotAssignedSources() {
+        return notAssignedSources;
+    }
 
     public List<AbstractTroopMovement> calculateAttacks(
             Hashtable<UnitHolder, List<Village>> pSources,
@@ -38,6 +43,7 @@ public class AllInOne extends AbstractAttackAlgorithm {
             boolean pRandomize) {
 
         //get snob villages
+        notAssignedSources = new LinkedList<Village>();
         logger.debug("Getting snob sources");
         UnitHolder snobUnit = DataHolder.getSingleton().getUnitByPlainName("snob");
         List<Village> snobVillages = pSources.get(snobUnit);
@@ -46,7 +52,7 @@ public class AllInOne extends AbstractAttackAlgorithm {
         }
 
         //build timeframe
-       // TimeFrame timeFrame = new TimeFrame(pStartTime, pArriveTime, pTimeFrameStartHour, pTimeFrameEndHour);
+        // TimeFrame timeFrame = new TimeFrame(pStartTime, pArriveTime, pTimeFrameStartHour, pTimeFrameEndHour);
         List<Enoblement> finalEnoblements = new LinkedList<Enoblement>();
 
         //generate enoblements with minimum runtime
@@ -177,6 +183,17 @@ public class AllInOne extends AbstractAttackAlgorithm {
         logger.debug(" - adding fakes");
         for (Fake f : pFinalFakes) {
             movements.add(f);
+        }
+
+        for (Village snobSource : snobVillages) {
+            notAssignedSources.add(snobSource);
+        }
+
+        for (Village offSource : offSources) {
+            notAssignedSources.add(offSource);
+        }
+        for (Village fakeSource : fakeSources) {
+            notAssignedSources.add(fakeSource);
         }
 
         return movements;

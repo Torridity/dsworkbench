@@ -76,6 +76,7 @@ import org.apache.log4j.Logger;
  * @TODO (DIFF) Problems with text form and minimap skin solved
  * @TODO (DIFF) Church range is now also drawn if village is outside view
  * @TODO (DIFF) Don't draw attack if source and target are not visible, but draw if one of both is
+ * @TODO (DIFF) Radar tools shows one fixed radar and radar of mouse village
  * @author Charon
  */
 /**Thread for updating after scroll operations
@@ -114,18 +115,21 @@ public class MapRenderer extends Thread {
         nf.setMaximumFractionDigits(2);
         nf.setMinimumFractionDigits(2);
         try {
+            //load flag marker
             mMarkerImage = Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("/res/marker.png"));
         } catch (Exception e) {
-            logger.error("Failed to load border images", e);
+            logger.error("Failed to load marker images", e);
         }
 
         mLayers = new Hashtable<Integer, BufferedImage>();
     }
 
+    /**Complete redraw on resize or scroll*/
     public void initiateRedraw(int pType) {
         mapRedrawRequired = true;
     }
 
+    /**Render loop*/
     @Override
     public void run() {
         logger.debug("Entering render loop");
@@ -136,6 +140,7 @@ public class MapRenderer extends Thread {
                 if ((w != 0) && (h != 0)) {
                     Graphics2D g2d = null;
                     if (mMainBuffer == null) {
+                        //create main buffer during first iteration
                         mMainBuffer = MapPanel.getSingleton().createImage(w, h);
                         g2d = (Graphics2D) mMainBuffer.getGraphics();
                         prepareGraphics(g2d);
@@ -143,6 +148,7 @@ public class MapRenderer extends Thread {
                         mapRedrawRequired = true;
                     } else {
                         //check if image size is still valid
+                        //if not re-create main buffer
                         if (mMainBuffer.getWidth(null) != w || mMainBuffer.getHeight(null) != h) {
                             //map panel has resized
                             mMainBuffer = MapPanel.getSingleton().createImage(w, h);
@@ -159,7 +165,7 @@ public class MapRenderer extends Thread {
                             g2d.setComposite(c);
                         }
                     }
-
+                    //get currently selected user village for marking -> one call reduces sync effort
                     currentUserVillage = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage();
                     if (mapRedrawRequired) {
                         //complete redraw is required
@@ -170,31 +176,37 @@ public class MapRenderer extends Thread {
                         renderMap();
                         renderTagMarkers();
                     }
-                    //render misc map elements
+                    //render misc map elements needed  to be redrawn in every iteration
                     boolean markOnTop = Boolean.parseBoolean(GlobalOptions.getProperty("mark.on.top"));
                     if (markOnTop) {
+                        //draw markers above map layer
                         g2d.drawImage(mLayers.get(MAP_LAYER), 0, 0, null);
                         Composite gg = g2d.getComposite();
                         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
                         renderMarkers(g2d);
                         g2d.setComposite(gg);
                     } else {
+                        //draw markers below map layer
                         renderMarkers(g2d);
                         g2d.drawImage(mLayers.get(MAP_LAYER), 0, 0, null);
                     }
+                    //render tag markers (graphics created only on complete redraw)
                     g2d.drawImage(mLayers.get(EXTENDED_DECORATION_LAYER), 0, 0, null);
+                    //render other layers
                     renderBasicDecoration(g2d);
                     renderAttacks(g2d);
                     renderExtendedDecoration(g2d);
                     //draw live layer
                     renderLiveLayer(g2d);
+                    //render selection
                     de.tor.tribes.types.Rectangle selection = MapPanel.getSingleton().getSelectionRect();
                     if (selection != null) {
                         selection.renderForm(g2d);
                     }
+                    //render menu
                     MenuRenderer.getSingleton().renderMenu(g2d);
 
-                    //notify MapPanel
+                    //notify MapPanel to bring buffer to screen
                     Hashtable<Village, Rectangle> pos = (Hashtable<Village, Rectangle>) villagePositions.clone();
                     MapPanel.getSingleton().updateComplete(pos, mMainBuffer);
                     MapPanel.getSingleton().repaint();
@@ -211,6 +223,7 @@ public class MapRenderer extends Thread {
         }
     }
 
+    /**Set the drag line externally (done by MapPanel class)*/
     public void setDragLine(int pXS, int pYS, int pXE, int pYE) {
         if (pXS == -1 && pYS == -1 && pXE == -1 && pYE == -1) {
             mSourceVillage = null;
@@ -233,25 +246,24 @@ public class MapRenderer extends Thread {
             return;
         }
 
-//get number of drawn villages
+        //get number of drawn villages
         currentZoom = DSWorkbenchMainFrame.getSingleton().getZoomFactor();
         double width = GlobalOptions.getSkin().getCurrentFieldWidth();
         double height = GlobalOptions.getSkin().getCurrentFieldHeight();
-        /*iVillagesX = (int) Math.ceil((double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, currentZoom).getWidth(null));
-        iVillagesY = (int) Math.ceil((double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, currentZoom).getHeight(null));*/
         iVillagesX = (int) Math.ceil((double) MapPanel.getSingleton().getWidth() / (double) width);
         iVillagesY = (int) Math.ceil((double) MapPanel.getSingleton().getHeight() / (double) height);
+        //add small buffer
         iVillagesX++;
         iVillagesY++;
 
-//calculate village coordinates of the upper left corner
+        //village start
         int xStartVillage = (int) Math.floor(dCenterX - iVillagesX / 2.0);
         int yStartVillage = (int) Math.floor(dCenterY - iVillagesY / 2.0);
-
+        //double start
         double dXStart = dCenterX - (double) iVillagesX / 2.0;
         double dYStart = dCenterY - (double) iVillagesY / 2.0;
 
-        //calculate village coordinates of the lower right corner
+        //village end
         int xEndVillage = (int) Math.ceil((double) dCenterX + (double) iVillagesX / 2.0);
         int yEndVillage = (int) Math.ceil((double) dCenterY + (double) iVillagesY / 2.0);
 
@@ -259,8 +271,6 @@ public class MapRenderer extends Thread {
         //correct village count
         iVillagesX = xEndVillage - xStartVillage;
         iVillagesY = yEndVillage - yStartVillage;
-
-        //add a small drawing buffer for all directions
 
         mVisibleVillages = new Village[iVillagesX][iVillagesY];
 
@@ -277,10 +287,8 @@ public class MapRenderer extends Thread {
                 } else {
                     mVisibleVillages[x][y] = DataHolder.getSingleton().getVillages()[i][j];
                 }
-
                 y++;
             }
-
             x++;
             y = 0;
         }
@@ -289,6 +297,7 @@ public class MapRenderer extends Thread {
         MapPanel.getSingleton().updateVirtualBounds(viewStartPoint);
     }
 
+    /**Render village graphics and create village rectangles for further rendering*/
     private void renderMap() {
         int wb = MapPanel.getSingleton().getWidth();
         int hb = MapPanel.getSingleton().getHeight();
@@ -739,6 +748,7 @@ public class MapRenderer extends Thread {
         mapRedrawRequired = false;
     }
 
+    /**Render tag markers*/
     private void renderTagMarkers() {
         int wb = MapPanel.getSingleton().getWidth();
         int hb = MapPanel.getSingleton().getHeight();
@@ -852,6 +862,7 @@ public class MapRenderer extends Thread {
         g2d.dispose();
     }
 
+    /**Render marker layer -> drawn on same buffer as map*/
     private void renderMarkers(Graphics2D g2d) {
         int wb = MapPanel.getSingleton().getWidth();
         int hb = MapPanel.getSingleton().getHeight();
@@ -865,7 +876,6 @@ public class MapRenderer extends Thread {
             if (Integer.parseInt(GlobalOptions.getProperty("default.mark")) == 1) {
                 DEFAULT = Color.RED;
             }
-
         } catch (Exception e) {
             DEFAULT = Color.WHITE;
         }
@@ -876,7 +886,7 @@ public class MapRenderer extends Thread {
         Enumeration<Village> villages = villagePositions.keys();
         while (villages.hasMoreElements()) {
             Village v = villages.nextElement();
-            Tribe t = v.getTribe();
+            Tribe t = (v == null) ? null : v.getTribe();
             Color markerColor = null;
             if (currentUserVillage != null && t == currentUserVillage.getTribe()) {
                 if (v.equals(currentUserVillage)) {
@@ -906,10 +916,10 @@ public class MapRenderer extends Thread {
                 g2d.setColor(markerColor);
                 g2d.fillRect(vRect.x, vRect.y, vRect.width, vRect.height);
             }
-
         }
     }
 
+    /**Render basic decoration e.g. Active village mark and troops type mark*/
     private void renderBasicDecoration(Graphics2D g2d) {
         int wb = MapPanel.getSingleton().getWidth();
         int hb = MapPanel.getSingleton().getHeight();
@@ -959,6 +969,7 @@ public class MapRenderer extends Thread {
         }
     }
 
+    /**Render attack vectors*/
     private void renderAttacks(Graphics2D g2d) {
         int wb = MapPanel.getSingleton().getWidth();
         int hb = MapPanel.getSingleton().getHeight();
@@ -1335,17 +1346,31 @@ public class MapRenderer extends Thread {
 
         // <editor-fold defaultstate="collapsed" desc=" Draw radar information ">
         Village radarVillage = MapPanel.getSingleton().getRadarVillage();
+        List<Village> radarVillages = new LinkedList<Village>();
+        //add radar village
         if (radarVillage != null) {
+            radarVillages.add(radarVillage);
+        }
+
+        //add mouse village if radar tool is selected
+        if (mouseVillage != null && MapPanel.getSingleton().getCurrentCursor() == ImageManager.CURSOR_RADAR) {
+            //check if radar village == mouse village
+            if (!radarVillages.contains(mouseVillage)) {
+                radarVillages.add(mouseVillage);
+            }
+        }
+
+        for (Village v : radarVillages) {
             try {
                 int cnt = 0;
                 for (UnitHolder u : DataHolder.getSingleton().getUnits()) {
                     de.tor.tribes.types.Circle c = new de.tor.tribes.types.Circle();
                     int r = Integer.parseInt(GlobalOptions.getProperty("radar.size"));
                     double diam = 2 * (double) r / u.getSpeed();
-                    double xp = radarVillage.getX() + 0.5 - diam / 2;
-                    double yp = radarVillage.getY() + 0.5 - diam / 2;
-                    double cx = radarVillage.getX() + 0.5;
-                    double cy = radarVillage.getY() + 0.5;
+                    double xp = v.getX() + 0.5 - diam / 2;
+                    double yp = v.getY() + 0.5 - diam / 2;
+                    double cx = v.getX() + 0.5;
+                    double cy = v.getY() + 0.5;
 
                     double xi = Math.cos(Math.toRadians(270 + cnt * (10))) * diam / 2;
                     double yi = Math.sin(Math.toRadians(270 + cnt * 10)) * diam / 2;
@@ -1364,7 +1389,6 @@ public class MapRenderer extends Thread {
                     Point p = MapPanel.getSingleton().virtualPosToSceenPos((cx + xi), (cy + yi));
                     g2d.drawImage(unit, p.x - (int) ((double) unit.getWidth(null) / 2), (int) ((double) p.y - unit.getHeight(null) / 2), null);
                     cnt++;
-
                 }
             } catch (Exception e) {
             }
@@ -1376,6 +1400,7 @@ public class MapRenderer extends Thread {
         }
     }
 
+    /**Rendering map popup (called by renderLiveLayer())*/
     private void renderVillageInfo(Graphics2D g2d, Village mouseVillage) {
         if (mouseVillage == null) {
             return;
@@ -1537,6 +1562,7 @@ public class MapRenderer extends Thread {
         g2d.setStroke(sBefore);
     }
 
+    /**Get bonus text, depending on server version*/
     private String getBonusType(Village pVillage) {
         int bonusType = DataHolder.getSingleton().getCurrentBonusType();
         if (bonusType == 0) {
@@ -1633,6 +1659,7 @@ public class MapRenderer extends Thread {
         return null;
     }
 
+    /**Draw one single field of map popup*/
     private void drawPopupField(Graphics2D g2d, FontMetrics pMetrics, Rectangle pRect, String pName, String pValue, int pWidth, int pDy) {
         g2d.setColor(Constants.DS_BACK_LIGHT);
         g2d.fillRect(pRect.getLocation().x, pRect.getLocation().y + pDy, pWidth, 19);
@@ -1654,6 +1681,7 @@ public class MapRenderer extends Thread {
         g2d.drawString(pValue, pRect.getLocation().x + dx + 2, pRect.getLocation().y + pDy - (int) Math.rint(bounds.getY()) + 2);
     }
 
+    /**Render extended information to map popup e.g. troop information*/
     private void renderExtendedInformation(Graphics2D g2d, Village pMouseVillage, Rectangle pRect, int pWidth, int pDy) {
         VillageTroopsHolder troops = TroopsManager.getSingleton().getTroopsForVillage(pMouseVillage);
         Font current = new Font(Font.SANS_SERIF, Font.PLAIN, 10);
@@ -1730,17 +1758,17 @@ public class MapRenderer extends Thread {
         }
     }
 
+    /**Prepare any g2d object with same parameters*/
     private void prepareGraphics(Graphics2D pG2d) {
         pG2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
         pG2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
         // Speed
         pG2d.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED);
-        pG2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        pG2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
         pG2d.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_SPEED);
-        pG2d.setRenderingHint(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_ENABLE);
+        pG2d.setRenderingHint(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_DISABLE);
         pG2d.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_OFF);
-        pG2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-    //pG2d.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
+        pG2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
     }
 }
 

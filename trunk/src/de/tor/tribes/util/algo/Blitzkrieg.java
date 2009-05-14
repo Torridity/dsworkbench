@@ -24,6 +24,11 @@ import org.apache.log4j.Logger;
 public class Blitzkrieg extends AbstractAttackAlgorithm {
 
     private static Logger logger = Logger.getLogger("Algorithm_Blitzkrieg");
+    private List<Village> notAssignedSources = null;
+
+    public List<Village> getNotAssignedSources() {
+        return notAssignedSources;
+    }
 
     @Override
     public List<AbstractTroopMovement> calculateAttacks(
@@ -39,7 +44,7 @@ public class Blitzkrieg extends AbstractAttackAlgorithm {
         //build timeframe
         //TimeFrame timeFrame = new TimeFrame(pStartTime, pArriveTime, pTimeFrameStartHour, pTimeFrameEndHour);
         //generate enoblements with minimum runtime
-
+        notAssignedSources = new LinkedList<Village>();
         logger.debug("Getting off sources");
         // <editor-fold defaultstate="collapsed" desc="Get off villages">
         UnitHolder ramUnit = DataHolder.getSingleton().getUnitByPlainName("ram");
@@ -101,6 +106,13 @@ public class Blitzkrieg extends AbstractAttackAlgorithm {
         logger.debug(" - adding fakes");
         for (Fake f : pFinalFakes) {
             movements.add(f);
+        }
+
+        for (Village offSource : offSources) {
+            notAssignedSources.add(offSource);
+        }
+        for (Village fakeSource : fakeSources) {
+            notAssignedSources.add(fakeSource);
         }
         return movements;
     }

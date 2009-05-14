@@ -1270,7 +1270,6 @@ private void fireMarkAllEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
 }//GEN-LAST:event_fireMarkAllEvent
 
 private void fireDrawSelectedEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireDrawSelectedEvent
-
     boolean draw = (evt.getSource() == jDrawMarkedButton);
 
     int[] rows = jAttackTable.getSelectedRows();

@@ -10,7 +10,9 @@
  */
 package de.tor.tribes.ui.algo;
 
+import de.tor.tribes.io.ServerManager;
 import de.tor.tribes.util.Constants;
+import de.tor.tribes.util.ServerSettings;
 import java.awt.Font;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -29,11 +31,27 @@ public class MiscSettingsPanel extends javax.swing.JPanel {
     }
 
     public void reset() {
+        jSnobDistSlider.setMaximum(ServerSettings.getSingleton().getSnobRange());
         jAttacksPerTarget.setText("6");
         jCleanOffsPerEnoblement.setText("3");
         jSnobDistSlider.setValue(35);
         jSnobDistSlider.updateUI();
         fireSnobSliderChangedEvent(null);
+    }
+
+    public void setRandomizeEnabled(boolean pValue) {
+        jLabel4.setEnabled(pValue);
+        jRandomizeBox.setEnabled(pValue);
+    }
+
+    public void setSnobDistanceEnabled(boolean pValue) {
+        jLabel3.setEnabled(pValue);
+        jSnobDistSlider.setEnabled(pValue);
+    }
+
+    public void setCleanOffsEnabled(boolean pValue) {
+        jLabel2.setEnabled(pValue);
+        jCleanOffsPerEnoblement.setEnabled(pValue);
     }
 
     public int getMaxAttacksPerVillage() {
@@ -53,12 +71,12 @@ public class MiscSettingsPanel extends javax.swing.JPanel {
     }
 
     public boolean validatePanel() {
-        boolean result = false;
-
+        boolean result = true;
+        int maxAttacks = 0;
         //check max. attacks per village
         try {
-            int v = Integer.parseInt(jAttacksPerTarget.getText());
-            if (v == 0) {
+            maxAttacks = Integer.parseInt(jAttacksPerTarget.getText());
+            if (maxAttacks == 0) {
                 //invalid value
                 throw new Exception();
             }
@@ -66,15 +84,21 @@ public class MiscSettingsPanel extends javax.swing.JPanel {
             if (JOptionPane.showConfirmDialog(this, "Der Wert für die maximale Anzahl der Angriffe pro Ziel ist ungültig.\n" +
                     "Soll der Standardwert (6) verwendet werden?", "Fehlerhafte Eingabe", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
                 jAttacksPerTarget.setText("6");
-                result = true;
+                maxAttacks = 6;
+            } else {
+                result = false;
             }
         }
 
+        if (!jCleanOffsPerEnoblement.isEnabled()) {
+            //skip check if not enabled
+            return result;
+        }
         //check clean offs per enoblement
-        int maxAttacks = getMaxAttacksPerVillage();
         try {
             int v = Integer.parseInt(jCleanOffsPerEnoblement.getText());
-            if (v < maxAttacks) {
+            if (maxAttacks < v) {
+                //more clean offs needed than max attacks allowed
                 throw new Exception();
             }
         } catch (Exception e) {
@@ -88,7 +112,8 @@ public class MiscSettingsPanel extends javax.swing.JPanel {
             if (JOptionPane.showConfirmDialog(this, "Der Wert für die minimale Anzahl an Clean-Offs pro Adelung ist ungültig.\n" +
                     "Soll der Standardwert (" + stdClean + ") verwendet werden?", "Fehlerhafte Eingabe", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
                 jCleanOffsPerEnoblement.setText(Integer.toString(stdClean));
-                result = true;
+            } else {
+                result = false;
             }
         }
         return result;

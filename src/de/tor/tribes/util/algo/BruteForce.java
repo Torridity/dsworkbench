@@ -21,12 +21,17 @@ import org.apache.log4j.Logger;
 
 /**
  *@TODO (DIFF) Now more attacks per village are assigned
- * @TODO (1.4-Check) Check selection of attack type
  * @author Charon
  */
 public class BruteForce extends AbstractAttackAlgorithm {
 
     private static Logger logger = Logger.getLogger("Algorithm_BruteForce");
+    private List<Village> notAssignedSources = null;
+
+    @Override
+    public List<Village> getNotAssignedSources(){
+        return notAssignedSources;
+    }
 
     @Override
     public List<AbstractTroopMovement> calculateAttacks(
@@ -39,7 +44,7 @@ public class BruteForce extends AbstractAttackAlgorithm {
             boolean pRandomize) {
         Enumeration<UnitHolder> unitKeys = pSources.keys();
         Hashtable<Village, Hashtable<UnitHolder, List<Village>>> attacks = new Hashtable<Village, Hashtable<UnitHolder, List<Village>>>();
-        List<Village> notAssigned = new LinkedList<Village>();
+        notAssignedSources = new LinkedList<Village>();
         Hashtable<Tribe, Integer> attacksPerTribe = new Hashtable<Tribe, Integer>();
         logger.debug("Assigning offs");
 
@@ -61,7 +66,7 @@ public class BruteForce extends AbstractAttackAlgorithm {
                     //search all tribes and villages for targets
                     for (Village v : pTargets) {
                         double time = DSCalculator.calculateMoveTimeInSeconds(source, v, unit.getSpeed());
-                        
+
                         Date sendTime = new Date(arrive - (long) time * 1000);
                         //check if attack is somehow possible
                         if (pTimeFrame.inside(sendTime)) {
@@ -114,16 +119,13 @@ public class BruteForce extends AbstractAttackAlgorithm {
                             }
                         }
 
-
-
-
                         if (vTarget != null) {
                             break;
                         }
                     }
 
                     if (vTarget == null) {
-                        notAssigned.add(source);
+                        notAssignedSources.add(source);
                     }
                 }
             }
@@ -134,7 +136,6 @@ public class BruteForce extends AbstractAttackAlgorithm {
         Enumeration<Village> targets = attacks.keys();
         while (targets.hasMoreElements()) {
             Village target = targets.nextElement();
-            System.out.println("remove target " + target);
             pTargets.remove(target);
         }
 
@@ -143,7 +144,7 @@ public class BruteForce extends AbstractAttackAlgorithm {
         // <editor-fold defaultstate="collapsed" desc=" Assign fakes">
         unitKeys = pFakes.keys();
         Hashtable<Village, Hashtable<Village, UnitHolder>> fakes = new Hashtable<Village, Hashtable<Village, UnitHolder>>();
-        notAssigned = new LinkedList<Village>();
+        //notAssigned = new LinkedList<Village>();
         attacksPerTribe = new Hashtable<Tribe, Integer>();
 
         while (unitKeys.hasMoreElements()) {
@@ -204,7 +205,7 @@ public class BruteForce extends AbstractAttackAlgorithm {
                         }
 
                         if (vTarget == null) {
-                            notAssigned.add(source);
+                            notAssignedSources.add(source);
                         }
                     }
                 }
@@ -250,6 +251,7 @@ public class BruteForce extends AbstractAttackAlgorithm {
             }
             movements.add(f);
         }
+
 
         setValidEnoblements(0);
         setFullOffs(fullMovements);

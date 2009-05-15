@@ -28,9 +28,11 @@
 
 <mapID target="pages.map_tools_mapshot_tool" url="pages/map_tools.html#mapshot_tool"/>
 
+<mapID target="pages.runtime_tool" url="pages/runtime_tool.html"/>
+
 <mapID target="pages.map_tools_tags" url="pages/map_tools.html#tags"/>
 
-<mapID target="pages.runtime_tool" url="pages/runtime_tool.html"/>
+<mapID target="pages.attack_planer_type" url="pages/attack_planer_type.html"/>
 
 <mapID target="pages.tools" url="pages/tools.html"/>
 
@@ -41,6 +43,8 @@
 <mapID target="index" url="index.html"/>
 
 <mapID target="pages.network_settings" url="pages/network_settings.html"/>
+
+<mapID target="pages.attack_planer_time" url="pages/attack_planer_time.html"/>
 
 <mapID target="pages.misc_settings" url="pages/misc_settings.html"/>
 
@@ -62,9 +66,9 @@
 
 <mapID target="pages.export_import" url="pages/export_import.html"/>
 
-<mapID target="pages.attack_planer_allinone" url="pages/attack_planer_allinone.html"/>
-
 <mapID target="pages.attack_select_filter" url="pages/attack_select_filter.html"/>
+
+<mapID target="pages.attack_planer_allinone" url="pages/attack_planer_allinone.html"/>
 
 <mapID target="pages.form_setup" url="pages/form_setup.html"/>
 
@@ -89,6 +93,8 @@
 <mapID target="pages.mapshot_tool" url="pages/mapshot_tool.html"/>
 
 <mapID target="pages.ranking_view" url="pages/ranking_view.html"/>
+
+<mapID target="pages.attack_planer_results_details_targets" url="pages/attack_planer_results_details_targets.html"/>
 
 <mapID target="pages.markers_view" url="pages/markers_view.html"/>
 
@@ -124,6 +130,8 @@
 
 <mapID target="pages.support_tool" url="pages/support_tool.html"/>
 
+<mapID target="pages.attack_planer_results_details_sources" url="pages/attack_planer_results_details_sources.html"/>
+
 <mapID target="images.help" url="images/help.png"/>
 
 <mapID target="images.snob_type" url="images/snob_type.png"/>
@@ -131,6 +139,8 @@
 <mapID target="images.tools.mark" url="images/tools/mark.png"/>
 
 <mapID target="images.tools.draw_line" url="images/tools/draw_line.png"/>
+
+<mapID target="images.tools.no_church" url="images/tools/no_church.png"/>
 
 <mapID target="images.ll" url="images/ll.gif"/>
 
@@ -189,6 +199,8 @@
 <mapID target="images.tools.draw_rect" url="images/tools/draw_rect.png"/>
 
 <mapID target="images.def" url="images/def.png"/>
+
+<mapID target="images.shortcuts.AltC" url="images/shortcuts/AltC.gif"/>
 
 <mapID target="images.help_16" url="images/help_16.png"/>
 
@@ -269,6 +281,8 @@
 <mapID target="images.att_browser" url="images/att_browser.png"/>
 
 <mapID target="images.shortcuts.Shift3" url="images/shortcuts/Shift3.gif"/>
+
+<mapID target="images.tools.church1" url="images/tools/church1.png"/>
 
 <mapID target="images.shortcuts.Shift4" url="images/shortcuts/Shift4.gif"/>
 

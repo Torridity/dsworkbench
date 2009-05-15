@@ -51,6 +51,7 @@ import javax.swing.table.TableRowSorter;
 import org.apache.log4j.Logger;
 
 /**
+ * @TODO (DIFF) Grouped into tasks
  * @author  Charon
  */
 public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements AttackManagerListener {
@@ -78,7 +79,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         } catch (Exception e) {
             //setting not available
         }
-
+jTaskPaneGroup1.setBackground(Constants.DS_BACK);
         //color scrollpanes of selection dialog
         jScrollPane1.getViewport().setBackground(Constants.DS_BACK_LIGHT);
         jScrollPane2.getViewport().setBackground(Constants.DS_BACK_LIGHT);
@@ -217,30 +218,33 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         jCopyTargetBox = new javax.swing.JComboBox();
         jCopyButton = new javax.swing.JButton();
         jCancelCopyButton = new javax.swing.JButton();
-        jAttackFrameAlwaysOnTop = new javax.swing.JCheckBox();
-        jScrollPane4 = new javax.swing.JScrollPane();
         jAttackPanel = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jAttackTable = new javax.swing.JTable();
-        jRemoveAttackButton = new javax.swing.JButton();
-        jCheckAttacksButton = new javax.swing.JButton();
-        jSendAttackButton = new javax.swing.JButton();
-        jMarkFilteredButton = new javax.swing.JButton();
-        jCopyUnformattedToClipboardButton = new javax.swing.JButton();
-        jCopyBBCodeToClipboardButton = new javax.swing.JButton();
-        jChangeArrivalButton = new javax.swing.JButton();
-        jMarkAllButton = new javax.swing.JButton();
-        jDrawMarkedButton = new javax.swing.JButton();
-        jFlipMarkButton = new javax.swing.JButton();
-        jNotDrawMarkedButton = new javax.swing.JButton();
-        jNotifyButton = new javax.swing.JToggleButton();
         jActiveAttackPlan = new javax.swing.JComboBox();
         jLabel9 = new javax.swing.JLabel();
         jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
-        jRemoveAttackButton1 = new javax.swing.JButton();
-        jRemoveAttackButton2 = new javax.swing.JButton();
+        jTaskPane1 = new com.l2fprod.common.swing.JTaskPane();
+        jTaskPaneGroup1 = new com.l2fprod.common.swing.JTaskPaneGroup();
+        jRemoveAttackButton = new javax.swing.JButton();
+        jCopyAttackButton = new javax.swing.JButton();
+        jMoveAttacksButton = new javax.swing.JButton();
+        jChangeArrivalButton = new javax.swing.JButton();
+        jTaskPaneGroup2 = new com.l2fprod.common.swing.JTaskPaneGroup();
+        jMarkAllButton = new javax.swing.JButton();
+        jMarkFilteredButton = new javax.swing.JButton();
+        jFlipMarkButton = new javax.swing.JButton();
+        jDrawMarkedButton = new javax.swing.JButton();
+        jNotDrawMarkedButton = new javax.swing.JButton();
+        jTaskPaneGroup3 = new com.l2fprod.common.swing.JTaskPaneGroup();
+        jCopyUnformattedToClipboardButton = new javax.swing.JButton();
+        jCopyBBCodeToClipboardButton = new javax.swing.JButton();
+        jSendAttackButton = new javax.swing.JButton();
+        jTaskPaneGroup4 = new com.l2fprod.common.swing.JTaskPaneGroup();
+        jNotifyButton = new javax.swing.JToggleButton();
+        jAttackFrameAlwaysOnTop = new javax.swing.JCheckBox();
 
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("de/tor/tribes/ui/Bundle"); // NOI18N
         jSelectionFilterDialog.setTitle(bundle.getString("DSWorkbenchAttackFrame.jSelectionFilterDialog.title")); // NOI18N
@@ -859,14 +863,6 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
 
         setTitle(bundle.getString("DSWorkbenchAttackFrame.title")); // NOI18N
 
-        jAttackFrameAlwaysOnTop.setText(bundle.getString("DSWorkbenchAttackFrame.jAttackFrameAlwaysOnTop.text")); // NOI18N
-        jAttackFrameAlwaysOnTop.setOpaque(false);
-        jAttackFrameAlwaysOnTop.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                fireAttackFrameOnTopEvent(evt);
-            }
-        });
-
         jAttackPanel.setBackground(new java.awt.Color(239, 235, 223));
         jAttackPanel.setMaximumSize(new java.awt.Dimension(750, 377));
         jAttackPanel.setMinimumSize(new java.awt.Dimension(750, 377));
@@ -892,128 +888,6 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         jAttackTable.setOpaque(false);
         jAttackTable.setSelectionMode(javax.swing.ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         jScrollPane2.setViewportView(jAttackTable);
-
-        jRemoveAttackButton.setBackground(new java.awt.Color(239, 235, 223));
-        jRemoveAttackButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_remove.png"))); // NOI18N
-        jRemoveAttackButton.setText(bundle.getString("DSWorkbenchAttackFrame.jRemoveAttackButton.text")); // NOI18N
-        jRemoveAttackButton.setToolTipText(bundle.getString("DSWorkbenchAttackFrame.jRemoveAttackButton.toolTipText")); // NOI18N
-        jRemoveAttackButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireRemoveAttackEvent(evt);
-            }
-        });
-
-        jCheckAttacksButton.setBackground(new java.awt.Color(239, 235, 223));
-        jCheckAttacksButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_validate.png"))); // NOI18N
-        jCheckAttacksButton.setText(bundle.getString("DSWorkbenchAttackFrame.jCheckAttacksButton.text")); // NOI18N
-        jCheckAttacksButton.setToolTipText(bundle.getString("DSWorkbenchAttackFrame.jCheckAttacksButton.toolTipText")); // NOI18N
-        jCheckAttacksButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireValidateAttacksEvent(evt);
-            }
-        });
-
-        jSendAttackButton.setBackground(new java.awt.Color(239, 235, 223));
-        jSendAttackButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_browser.png"))); // NOI18N
-        jSendAttackButton.setText(bundle.getString("DSWorkbenchAttackFrame.jSendAttackButton.text")); // NOI18N
-        jSendAttackButton.setToolTipText(bundle.getString("DSWorkbenchAttackFrame.jSendAttackButton.toolTipText")); // NOI18N
-        jSendAttackButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireSendAttackEvent(evt);
-            }
-        });
-
-        jMarkFilteredButton.setBackground(new java.awt.Color(239, 235, 223));
-        jMarkFilteredButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_selectSome.png"))); // NOI18N
-        jMarkFilteredButton.setText(bundle.getString("DSWorkbenchAttackFrame.jMarkAllButton.text")); // NOI18N
-        jMarkFilteredButton.setToolTipText(bundle.getString("DSWorkbenchAttackFrame.jMarkAllButton.toolTipText")); // NOI18N
-        jMarkFilteredButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireSelectFilteredEvent(evt);
-            }
-        });
-
-        jCopyUnformattedToClipboardButton.setBackground(new java.awt.Color(239, 235, 223));
-        jCopyUnformattedToClipboardButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_clipboard.png"))); // NOI18N
-        jCopyUnformattedToClipboardButton.setText(bundle.getString("DSWorkbenchAttackFrame.jCopyUnformattedToClipboardButton.text")); // NOI18N
-        jCopyUnformattedToClipboardButton.setToolTipText(bundle.getString("DSWorkbenchAttackFrame.jCopyUnformattedToClipboardButton.toolTipText")); // NOI18N
-        jCopyUnformattedToClipboardButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jCopyUnformattedToClipboardButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireCopyUnformatedToClipboardEvent(evt);
-            }
-        });
-
-        jCopyBBCodeToClipboardButton.setBackground(new java.awt.Color(239, 235, 223));
-        jCopyBBCodeToClipboardButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_clipboardBB.png"))); // NOI18N
-        jCopyBBCodeToClipboardButton.setText(bundle.getString("DSWorkbenchAttackFrame.jCopyBBCodeToClipboardButton.text")); // NOI18N
-        jCopyBBCodeToClipboardButton.setToolTipText(bundle.getString("DSWorkbenchAttackFrame.jCopyBBCodeToClipboardButton.toolTipText")); // NOI18N
-        jCopyBBCodeToClipboardButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jCopyBBCodeToClipboardButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireCopyAsBBCodeToClipboardEvent(evt);
-            }
-        });
-
-        jChangeArrivalButton.setBackground(new java.awt.Color(239, 235, 223));
-        jChangeArrivalButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_changeTime.png"))); // NOI18N
-        jChangeArrivalButton.setText(bundle.getString("DSWorkbenchAttackFrame.jChangeArrivalButton.text")); // NOI18N
-        jChangeArrivalButton.setToolTipText(bundle.getString("DSWorkbenchAttackFrame.jChangeArrivalButton.toolTipText")); // NOI18N
-        jChangeArrivalButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireChangeTimesEvent(evt);
-            }
-        });
-
-        jMarkAllButton.setBackground(new java.awt.Color(239, 235, 223));
-        jMarkAllButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_selectAllOrNone.gif"))); // NOI18N
-        jMarkAllButton.setText(bundle.getString("DSWorkbenchAttackFrame.jButton1.text")); // NOI18N
-        jMarkAllButton.setToolTipText(bundle.getString("DSWorkbenchAttackFrame.jButton1.toolTipText")); // NOI18N
-        jMarkAllButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireMarkAllEvent(evt);
-            }
-        });
-
-        jDrawMarkedButton.setBackground(new java.awt.Color(239, 235, 223));
-        jDrawMarkedButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_selectDraw.png"))); // NOI18N
-        jDrawMarkedButton.setText(bundle.getString("DSWorkbenchAttackFrame.jButton2.text")); // NOI18N
-        jDrawMarkedButton.setToolTipText(bundle.getString("DSWorkbenchAttackFrame.jDrawMarkedButton.toolTipText")); // NOI18N
-        jDrawMarkedButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireDrawSelectedEvent(evt);
-            }
-        });
-
-        jFlipMarkButton.setBackground(new java.awt.Color(239, 235, 223));
-        jFlipMarkButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_selectInv.gif"))); // NOI18N
-        jFlipMarkButton.setText(bundle.getString("DSWorkbenchAttackFrame.jFlipMarkButton.text")); // NOI18N
-        jFlipMarkButton.setToolTipText(bundle.getString("DSWorkbenchAttackFrame.jFlipMarkButton.toolTipText")); // NOI18N
-        jFlipMarkButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireFlipMarkEvent(evt);
-            }
-        });
-
-        jNotDrawMarkedButton.setBackground(new java.awt.Color(239, 235, 223));
-        jNotDrawMarkedButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_selectNoDraw.png"))); // NOI18N
-        jNotDrawMarkedButton.setText(bundle.getString("DSWorkbenchAttackFrame.jNotDrawMarkedButton.text")); // NOI18N
-        jNotDrawMarkedButton.setToolTipText(bundle.getString("DSWorkbenchAttackFrame.jNotDrawMarkedButton.toolTipText")); // NOI18N
-        jNotDrawMarkedButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireDrawSelectedEvent(evt);
-            }
-        });
-
-        jNotifyButton.setBackground(new java.awt.Color(239, 235, 223));
-        jNotifyButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_alert.png"))); // NOI18N
-        jNotifyButton.setText(bundle.getString("DSWorkbenchAttackFrame.jNotifyButton.text")); // NOI18N
-        jNotifyButton.setToolTipText(bundle.getString("DSWorkbenchAttackFrame.jNotifyButton.toolTipText")); // NOI18N
-        jNotifyButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireChangeNotifyEvent(evt);
-            }
-        });
 
         jActiveAttackPlan.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
@@ -1062,25 +936,188 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
             }
         });
 
-        jRemoveAttackButton1.setBackground(new java.awt.Color(239, 235, 223));
-        jRemoveAttackButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/replace2.png"))); // NOI18N
-        jRemoveAttackButton1.setText(bundle.getString("DSWorkbenchAttackFrame.jRemoveAttackButton1.text")); // NOI18N
-        jRemoveAttackButton1.setToolTipText(bundle.getString("DSWorkbenchAttackFrame.jRemoveAttackButton1.toolTipText")); // NOI18N
-        jRemoveAttackButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+        jTaskPane1.setOpaque(false);
+        com.l2fprod.common.swing.PercentLayout percentLayout1 = new com.l2fprod.common.swing.PercentLayout();
+        percentLayout1.setGap(14);
+        percentLayout1.setOrientation(1);
+        jTaskPane1.setLayout(percentLayout1);
+
+        jTaskPaneGroup1.setTitle(bundle.getString("DSWorkbenchAttackFrame.jTaskPaneGroup1.title")); // NOI18N
+        com.l2fprod.common.swing.PercentLayout percentLayout2 = new com.l2fprod.common.swing.PercentLayout();
+        percentLayout2.setGap(2);
+        percentLayout2.setOrientation(1);
+        jTaskPaneGroup1.getContentPane().setLayout(percentLayout2);
+
+        jRemoveAttackButton.setBackground(new java.awt.Color(239, 235, 223));
+        jRemoveAttackButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_remove.png"))); // NOI18N
+        jRemoveAttackButton.setText(bundle.getString("DSWorkbenchAttackFrame.jRemoveAttackButton.text")); // NOI18N
+        jRemoveAttackButton.setToolTipText(bundle.getString("DSWorkbenchAttackFrame.jRemoveAttackButton.toolTipText")); // NOI18N
+        jRemoveAttackButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireMoveAttacksEvent(evt);
+                fireRemoveAttackEvent(evt);
             }
         });
+        jTaskPaneGroup1.getContentPane().add(jRemoveAttackButton);
 
-        jRemoveAttackButton2.setBackground(new java.awt.Color(239, 235, 223));
-        jRemoveAttackButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_copy.png"))); // NOI18N
-        jRemoveAttackButton2.setText(bundle.getString("DSWorkbenchAttackFrame.jRemoveAttackButton2.text")); // NOI18N
-        jRemoveAttackButton2.setToolTipText(bundle.getString("DSWorkbenchAttackFrame.jRemoveAttackButton2.toolTipText")); // NOI18N
-        jRemoveAttackButton2.addMouseListener(new java.awt.event.MouseAdapter() {
+        jCopyAttackButton.setBackground(new java.awt.Color(239, 235, 223));
+        jCopyAttackButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_copy.png"))); // NOI18N
+        jCopyAttackButton.setText(bundle.getString("DSWorkbenchAttackFrame.jCopyAttackButton.text")); // NOI18N
+        jCopyAttackButton.setToolTipText(bundle.getString("DSWorkbenchAttackFrame.jCopyAttackButton.toolTipText")); // NOI18N
+        jCopyAttackButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireCopyAttacksEvent(evt);
             }
         });
+        jTaskPaneGroup1.getContentPane().add(jCopyAttackButton);
+
+        jMoveAttacksButton.setBackground(new java.awt.Color(239, 235, 223));
+        jMoveAttacksButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/replace2.png"))); // NOI18N
+        jMoveAttacksButton.setText(bundle.getString("DSWorkbenchAttackFrame.jMoveAttacksButton.text")); // NOI18N
+        jMoveAttacksButton.setToolTipText(bundle.getString("DSWorkbenchAttackFrame.jMoveAttacksButton.toolTipText")); // NOI18N
+        jMoveAttacksButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireMoveAttacksEvent(evt);
+            }
+        });
+        jTaskPaneGroup1.getContentPane().add(jMoveAttacksButton);
+
+        jChangeArrivalButton.setBackground(new java.awt.Color(239, 235, 223));
+        jChangeArrivalButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_changeTime.png"))); // NOI18N
+        jChangeArrivalButton.setText(bundle.getString("DSWorkbenchAttackFrame.jChangeArrivalButton.text")); // NOI18N
+        jChangeArrivalButton.setToolTipText(bundle.getString("DSWorkbenchAttackFrame.jChangeArrivalButton.toolTipText")); // NOI18N
+        jChangeArrivalButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireChangeTimesEvent(evt);
+            }
+        });
+        jTaskPaneGroup1.getContentPane().add(jChangeArrivalButton);
+
+        jTaskPane1.add(jTaskPaneGroup1);
+
+        jTaskPaneGroup2.setTitle(bundle.getString("DSWorkbenchAttackFrame.jTaskPaneGroup2.title")); // NOI18N
+        com.l2fprod.common.swing.PercentLayout percentLayout3 = new com.l2fprod.common.swing.PercentLayout();
+        percentLayout3.setGap(2);
+        percentLayout3.setOrientation(1);
+        jTaskPaneGroup2.getContentPane().setLayout(percentLayout3);
+
+        jMarkAllButton.setBackground(new java.awt.Color(239, 235, 223));
+        jMarkAllButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_selectAllOrNone.gif"))); // NOI18N
+        jMarkAllButton.setText(bundle.getString("DSWorkbenchAttackFrame.jButton1.text")); // NOI18N
+        jMarkAllButton.setToolTipText(bundle.getString("DSWorkbenchAttackFrame.jButton1.toolTipText")); // NOI18N
+        jMarkAllButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireMarkAllEvent(evt);
+            }
+        });
+        jTaskPaneGroup2.getContentPane().add(jMarkAllButton);
+
+        jMarkFilteredButton.setBackground(new java.awt.Color(239, 235, 223));
+        jMarkFilteredButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_selectSome.png"))); // NOI18N
+        jMarkFilteredButton.setText(bundle.getString("DSWorkbenchAttackFrame.jMarkAllButton.text")); // NOI18N
+        jMarkFilteredButton.setToolTipText(bundle.getString("DSWorkbenchAttackFrame.jMarkAllButton.toolTipText")); // NOI18N
+        jMarkFilteredButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireSelectFilteredEvent(evt);
+            }
+        });
+        jTaskPaneGroup2.getContentPane().add(jMarkFilteredButton);
+
+        jFlipMarkButton.setBackground(new java.awt.Color(239, 235, 223));
+        jFlipMarkButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_selectInv.gif"))); // NOI18N
+        jFlipMarkButton.setText(bundle.getString("DSWorkbenchAttackFrame.jFlipMarkButton.text")); // NOI18N
+        jFlipMarkButton.setToolTipText(bundle.getString("DSWorkbenchAttackFrame.jFlipMarkButton.toolTipText")); // NOI18N
+        jFlipMarkButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireFlipMarkEvent(evt);
+            }
+        });
+        jTaskPaneGroup2.getContentPane().add(jFlipMarkButton);
+
+        jDrawMarkedButton.setBackground(new java.awt.Color(239, 235, 223));
+        jDrawMarkedButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_selectDraw.png"))); // NOI18N
+        jDrawMarkedButton.setText(bundle.getString("DSWorkbenchAttackFrame.jButton2.text")); // NOI18N
+        jDrawMarkedButton.setToolTipText(bundle.getString("DSWorkbenchAttackFrame.jDrawMarkedButton.toolTipText")); // NOI18N
+        jDrawMarkedButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireDrawSelectedEvent(evt);
+            }
+        });
+        jTaskPaneGroup2.getContentPane().add(jDrawMarkedButton);
+
+        jNotDrawMarkedButton.setBackground(new java.awt.Color(239, 235, 223));
+        jNotDrawMarkedButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_selectNoDraw.png"))); // NOI18N
+        jNotDrawMarkedButton.setText(bundle.getString("DSWorkbenchAttackFrame.jNotDrawMarkedButton.text")); // NOI18N
+        jNotDrawMarkedButton.setToolTipText(bundle.getString("DSWorkbenchAttackFrame.jNotDrawMarkedButton.toolTipText")); // NOI18N
+        jNotDrawMarkedButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireDrawSelectedEvent(evt);
+            }
+        });
+        jTaskPaneGroup2.getContentPane().add(jNotDrawMarkedButton);
+
+        jTaskPane1.add(jTaskPaneGroup2);
+
+        jTaskPaneGroup3.setTitle(bundle.getString("DSWorkbenchAttackFrame.jTaskPaneGroup3.title")); // NOI18N
+        com.l2fprod.common.swing.PercentLayout percentLayout4 = new com.l2fprod.common.swing.PercentLayout();
+        percentLayout4.setGap(2);
+        percentLayout4.setOrientation(1);
+        jTaskPaneGroup3.getContentPane().setLayout(percentLayout4);
+
+        jCopyUnformattedToClipboardButton.setBackground(new java.awt.Color(239, 235, 223));
+        jCopyUnformattedToClipboardButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_clipboard.png"))); // NOI18N
+        jCopyUnformattedToClipboardButton.setText(bundle.getString("DSWorkbenchAttackFrame.jCopyUnformattedToClipboardButton.text")); // NOI18N
+        jCopyUnformattedToClipboardButton.setToolTipText(bundle.getString("DSWorkbenchAttackFrame.jCopyUnformattedToClipboardButton.toolTipText")); // NOI18N
+        jCopyUnformattedToClipboardButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jCopyUnformattedToClipboardButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireCopyUnformatedToClipboardEvent(evt);
+            }
+        });
+        jTaskPaneGroup3.getContentPane().add(jCopyUnformattedToClipboardButton);
+
+        jCopyBBCodeToClipboardButton.setBackground(new java.awt.Color(239, 235, 223));
+        jCopyBBCodeToClipboardButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_clipboardBB.png"))); // NOI18N
+        jCopyBBCodeToClipboardButton.setText(bundle.getString("DSWorkbenchAttackFrame.jCopyBBCodeToClipboardButton.text")); // NOI18N
+        jCopyBBCodeToClipboardButton.setToolTipText(bundle.getString("DSWorkbenchAttackFrame.jCopyBBCodeToClipboardButton.toolTipText")); // NOI18N
+        jCopyBBCodeToClipboardButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jCopyBBCodeToClipboardButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireCopyAsBBCodeToClipboardEvent(evt);
+            }
+        });
+        jTaskPaneGroup3.getContentPane().add(jCopyBBCodeToClipboardButton);
+
+        jSendAttackButton.setBackground(new java.awt.Color(239, 235, 223));
+        jSendAttackButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_browser.png"))); // NOI18N
+        jSendAttackButton.setText(bundle.getString("DSWorkbenchAttackFrame.jSendAttackButton.text")); // NOI18N
+        jSendAttackButton.setToolTipText(bundle.getString("DSWorkbenchAttackFrame.jSendAttackButton.toolTipText")); // NOI18N
+        jSendAttackButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireSendAttackEvent(evt);
+            }
+        });
+        jTaskPaneGroup3.getContentPane().add(jSendAttackButton);
+
+        jTaskPane1.add(jTaskPaneGroup3);
+
+        jTaskPaneGroup4.setTitle(bundle.getString("DSWorkbenchAttackFrame.jTaskPaneGroup4.title")); // NOI18N
+        com.l2fprod.common.swing.PercentLayout percentLayout5 = new com.l2fprod.common.swing.PercentLayout();
+        percentLayout5.setGap(2);
+        percentLayout5.setOrientation(1);
+        jTaskPaneGroup4.getContentPane().setLayout(percentLayout5);
+
+        jNotifyButton.setBackground(new java.awt.Color(239, 235, 223));
+        jNotifyButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_alert.png"))); // NOI18N
+        jNotifyButton.setText(bundle.getString("DSWorkbenchAttackFrame.jNotifyButton.text")); // NOI18N
+        jNotifyButton.setToolTipText(bundle.getString("DSWorkbenchAttackFrame.jNotifyButton.toolTipText")); // NOI18N
+        jNotifyButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireChangeNotifyEvent(evt);
+            }
+        });
+        jTaskPaneGroup4.getContentPane().add(jNotifyButton);
+
+        jTaskPane1.add(jTaskPaneGroup4);
 
         javax.swing.GroupLayout jAttackPanelLayout = new javax.swing.GroupLayout(jAttackPanel);
         jAttackPanel.setLayout(jAttackPanelLayout);
@@ -1089,100 +1126,65 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jAttackPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jAttackPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 573, Short.MAX_VALUE)
                     .addGroup(jAttackPanelLayout.createSequentialGroup()
                         .addComponent(jLabel9)
                         .addGap(18, 18, 18)
-                        .addComponent(jActiveAttackPlan, 0, 361, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jActiveAttackPlan, 0, 371, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jAttackPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jCheckAttacksButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jRemoveAttackButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jRemoveAttackButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jNotifyButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jNotDrawMarkedButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jSendAttackButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jMarkAllButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jMarkFilteredButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jFlipMarkButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jDrawMarkedButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jChangeArrivalButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jCopyUnformattedToClipboardButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jCopyBBCodeToClipboardButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jRemoveAttackButton2))
+                        .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 587, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jTaskPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         jAttackPanelLayout.setVerticalGroup(
             jAttackPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jAttackPanelLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jAttackPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jAttackPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jAttackPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel9)
-                        .addComponent(jActiveAttackPlan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jAttackPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jAttackPanelLayout.createSequentialGroup()
-                        .addComponent(jCheckAttacksButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jRemoveAttackButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jRemoveAttackButton2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jRemoveAttackButton1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jSendAttackButton)
-                        .addGap(30, 30, 30)
-                        .addComponent(jMarkAllButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jMarkFilteredButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jFlipMarkButton)
-                        .addGap(30, 30, 30)
-                        .addComponent(jChangeArrivalButton)
-                        .addGap(30, 30, 30)
-                        .addComponent(jDrawMarkedButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jNotDrawMarkedButton)
-                        .addGap(30, 30, 30)
-                        .addComponent(jCopyUnformattedToClipboardButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jCopyBBCodeToClipboardButton)
-                        .addGap(30, 30, 30)
-                        .addComponent(jNotifyButton))
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 707, Short.MAX_VALUE))
+                        .addComponent(jActiveAttackPlan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jAttackPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jTaskPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 703, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 703, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
-        jScrollPane4.setViewportView(jAttackPanel);
+        jAttackFrameAlwaysOnTop.setText(bundle.getString("DSWorkbenchAttackFrame.jAttackFrameAlwaysOnTop.text")); // NOI18N
+        jAttackFrameAlwaysOnTop.setOpaque(false);
+        jAttackFrameAlwaysOnTop.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                fireAttackFrameAlwaysOnTopEvent(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jAttackFrameAlwaysOnTop, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 662, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jAttackPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 737, Short.MAX_VALUE)
+                    .addComponent(jAttackFrameAlwaysOnTop))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 760, Short.MAX_VALUE)
+                .addComponent(jAttackPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jAttackFrameAlwaysOnTop, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jAttackFrameAlwaysOnTop)
                 .addContainerGap())
         );
 
@@ -1216,35 +1218,6 @@ private void fireRemoveAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
     jAttackTable.repaint();//.updateUI();
 }//GEN-LAST:event_fireRemoveAttackEvent
 
-private void fireValidateAttacksEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireValidateAttacksEvent
-    Hashtable<Integer, String> errors = new Hashtable<Integer, String>();
-    for (int i = 0; i < AttackManagerTableModel.getSingleton().getRowCount(); i++) {
-        Date sendTime = (Date) AttackManagerTableModel.getSingleton().getValueAt(i, 3);
-        Date arriveTime = (Date) AttackManagerTableModel.getSingleton().getValueAt(i, 4);
-        if (arriveTime.getTime() < System.currentTimeMillis()) {
-            errors.put(i, "Ankunftzeit liegt in der Vergangenheit");
-        } else if (sendTime.getTime() < System.currentTimeMillis()) {
-            errors.put(i, "Abschickzeit liegt in der Vergangenheit");
-        }
-    }
-
-    if (errors.size() != 0) {
-        String message = "";
-        Enumeration<Integer> keys = errors.keys();
-        ListSelectionModel sModel = jAttackTable.getSelectionModel();
-        sModel.removeSelectionInterval(0, jAttackTable.getRowCount());
-        while (keys.hasMoreElements()) {
-            int row = keys.nextElement();
-            String error = errors.get(row);
-            message = "Zeile " + (row + 1) + ": " + error + "\n" + message;
-            sModel.addSelectionInterval(row, row);
-        }
-        JOptionPane.showMessageDialog(this, message, "Fehler", JOptionPane.WARNING_MESSAGE);
-    } else {
-        JOptionPane.showMessageDialog(this, "Keine Fehler gefunden", "Information", JOptionPane.INFORMATION_MESSAGE);
-    }
-}//GEN-LAST:event_fireValidateAttacksEvent
-
 private void fireSendAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSendAttackEvent
     int selectedRow = jAttackTable.getSelectedRow();
     if (selectedRow < 0) {
@@ -1255,10 +1228,6 @@ private void fireSendAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:eve
     Village target = (Village) AttackManagerTableModel.getSingleton().getValueAt(selectedRow, 1);
     BrowserCommandSender.sendTroops(source, target);
 }//GEN-LAST:event_fireSendAttackEvent
-
-private void fireAttackFrameOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireAttackFrameOnTopEvent
-    setAlwaysOnTop(!isAlwaysOnTop());
-}//GEN-LAST:event_fireAttackFrameOnTopEvent
 
 private void fireMarkAllEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireMarkAllEvent
     int[] rows = jAttackTable.getSelectedRows();
@@ -2035,6 +2004,10 @@ private void fireCopyEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fir
     jCopyToPlanDialog.setVisible(false);
 }//GEN-LAST:event_fireCopyEvent
 
+private void fireAttackFrameAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireAttackFrameAlwaysOnTopEvent
+    setAlwaysOnTop(!isAlwaysOnTop());
+}//GEN-LAST:event_fireAttackFrameAlwaysOnTopEvent
+
     /**Set table model for filteres selection*/
     private void setTableModel(JTable pTable, Hashtable<Village, Boolean> pVillages) {
         //create default table model
@@ -2168,7 +2141,7 @@ private void fireCopyEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fir
     private javax.swing.JButton jCancelButton;
     private javax.swing.JButton jCancelCopyButton;
     private javax.swing.JButton jChangeArrivalButton;
-    private javax.swing.JButton jCheckAttacksButton;
+    private javax.swing.JButton jCopyAttackButton;
     private javax.swing.JButton jCopyBBCodeToClipboardButton;
     private javax.swing.JButton jCopyButton;
     private javax.swing.JComboBox jCopyTargetBox;
@@ -2200,6 +2173,7 @@ private void fireCopyEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fir
     private javax.swing.JButton jMarkFilteredButton;
     private javax.swing.JSpinner jMinuteField;
     private javax.swing.JRadioButton jModifyArrivalOption;
+    private javax.swing.JButton jMoveAttacksButton;
     private javax.swing.JRadioButton jMoveTimeOption;
     private javax.swing.JDialog jMoveToPlanDialog;
     private javax.swing.JComboBox jNewPlanBox;
@@ -2214,13 +2188,10 @@ private void fireCopyEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fir
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JButton jRemoveAttackButton;
-    private javax.swing.JButton jRemoveAttackButton1;
-    private javax.swing.JButton jRemoveAttackButton2;
     private javax.swing.JDialog jRenamePlanDialog;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JSpinner jSecondsField;
     private javax.swing.JDialog jSelectionFilterDialog;
     private javax.swing.JButton jSendAttackButton;
@@ -2228,6 +2199,11 @@ private void fireCopyEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fir
     private javax.swing.JTable jSourceVillageTable;
     private javax.swing.JComboBox jTargetTribeBox;
     private javax.swing.JTable jTargetVillageTable;
+    private com.l2fprod.common.swing.JTaskPane jTaskPane1;
+    private com.l2fprod.common.swing.JTaskPaneGroup jTaskPaneGroup1;
+    private com.l2fprod.common.swing.JTaskPaneGroup jTaskPaneGroup2;
+    private com.l2fprod.common.swing.JTaskPaneGroup jTaskPaneGroup3;
+    private com.l2fprod.common.swing.JTaskPaneGroup jTaskPaneGroup4;
     private javax.swing.JDialog jTimeChangeDialog;
     // End of variables declaration//GEN-END:variables
 }

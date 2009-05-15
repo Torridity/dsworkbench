@@ -16,64 +16,37 @@
     <td style="background-image:url(../images/l.gif);background-repeat:repeat-y">&nbsp;</td>
     <td style="background-image:url(../images/c.gif);background-repeat:repeat" width="100%"><table width="100%"  border="0" cellspacing="0" cellpadding="0">
       <tr>
-        <td colspan="2"><h2 style="color:#953333">Angriffsplaner - Einstellungen</h2></td>
+        <td colspan="2"><h2 style="color:#953333">Angriffsplaner - Sonstige Einstellungen</h2></td>
         <td>&nbsp;</td>
       </tr>
 	  <tr>
         <td colspan="2">&nbsp;</td>
       </tr>
 	  	  <tr>
-        <td colspan="2"><img src="../images/screens/attack_planer_settings.gif" width="662" height="479"></td>
+        <td colspan="2"><img src="../images/screens/attack_planer_settings.gif" width="767" height="522"></td>
       </tr>
 	  	  <tr>
         <td colspan="2">&nbsp;</td>
       </tr>
 	   <tr>
-        <td colspan="2"><p>Die <em>Einstellungen</em> des Angriffsplaners befassen sich mit den Rahmenbedingungen aller Angriffe. Hier kann man zum einen die <em>Startzeit</em> festlegen. Dieser Wert stellt den globalen Zeitpunkt dar, zu dem der <em>allererste Angriffe</em> fr&uuml;hestens abgeschickt werden soll. Zum anderen kann man die Ankunftszeit festlegen, zu der <em>alle Truppen</em> gemeinsam ihre Ziele erreichen.</p>
-          <p>Die Auswahl des <em>Algorithmus</em> bestimmt das Verfahren, mit dem m&ouml;gliche Angriffe berechnet werden. Dabei stehen folgende Verfahren zur Auswahl: <a href="attack_planer_bruteforce.html"><em>Brute Force</em></a>, <a href="attack_planer_allinone.html"><em>All In One</em></a>, <a href="attack_planer_blitzkrieg.html"><em>Blitzkrieg</em></a>.<br>
+        <td colspan="2"><p>Die sonstigen Einstellungen dienen dazu, die Angriffe, abh&auml;ngig f&uuml;r die einzelnen <a href="attack_planer_type.html"><em>Angriffstypen</em></a>, zu konfigurieren. Daher k&ouml;nnen, je nach gew&auml;hltem <em>Angriffstyp,</em> einzelne oder mehrere Einstellungen deaktiviert sein. Die Einstellungen an sich sollten soweit selbsterkl&auml;rend sein. <br>
             <br> 
             </p>
-   </tr>
+          </tr>
 		  <tr>
 	  <td colspan="2">
-          <p>Einige der Einstellungen im unteren Bereich sind nur f&uuml;r bestimmte Algorithmen verf&uuml;gbar. Bei der Auswahl des Algorithmus werden Einstellungen die nicht notwendig sind entsprechend deaktiviert.<br>
-              Die Einstellungen der <em>Clean Offs </em>ist zum Beispiel nur f&uuml;r 'All In One' und 'Blitzkrieg' verf&uuml;gbar, die <em>Zufallsstreuung</em> ist dagegen nur f&uuml;r 'Brute Force' aktiv.<br> 
-              Die Zufallsstreuung dient einfach dazu, die D&ouml;rfer des Gegners nicht ihrer Sortierung nach f&uuml;r Angriffen auszuw&auml;hlen, sondern zuf&auml;llig. Da viele Spieler ihre D&ouml;rfer mit Namen versehen, welche die Dorfkoordinaten oder die Lage des Dorfes enthalten, werden durch die zuf&auml;llige Auswahl auch D&ouml;rfer ber&uuml;cksichtigt, die in verschiedenen Regionen der Karte liegen.
-                <br>
-            Die Option <em>Nacht-Sperre</em> bewirkt, dass man keine Angriffe zwischen 0 und 8 Uhr losschicken muss. Eine weitere Einstellung die sich auf die Abschickzeit bezieht ist der <em>Abschickzeitrahmen</em>. Mit Hilfe dieses Wertes kann man den Zeitrahmen einstellen, zu dem man bereit/f&auml;hig ist, Angriffe abzuschicken. Dieser Wert bezieht sich auf alle Angriffe die erstellt werden. Ist die <em>Nachtsperre</em> eingeschaltet, wird der <em>Zeitrahmen</em> entsprechend angepasst. </p>
+          <p>&nbsp;</p>
           </td>
       </tr>
-	   <tr>
-        <td colspan="2">&nbsp;</td>
-      </tr>
-	   <tr>
-        <td colspan="2"><h3 style="color:#953333">Verteilungsverfahren für Abschickzeitpunkte</h3></td>
-      </tr>
-	   <tr>
-        <td colspan="2">&nbsp;</td>
-      </tr>
-	   <tr>
-        <td colspan="2"><img src="../images/attack_plan_schema.gif" width="555" height="113"></td>
-      </tr>
-	   <tr>
-        <td colspan="2">&nbsp;</td>
-      </tr>
-	   <tr>
-        <td colspan="2">Die Grafik gibt ein Beispiel, wie der <em>Angriffsplaner</em> Abschickzeitpunkte bestimmt. Das Beispiel bezieht sich darauf, dass alle Angriffe im <em>Zeitrahmen</em> zwischen <em>18 und 0 Uhr </em>abgeschickt werden sollen. Der fr&uuml;heste Angriff soll am 20.01.09 um 13:00 Uhr starten, die Ankunft aller Truppen soll der 24.01.09 unmittelbar vor Beginn des Nachtbonus sein. Die gr&uuml;nen Bereiche zeigen an, in welchen Zeitr&auml;umen <em>DS Workbench</em> nach m&ouml;glichen Abschickzeitpunkten sucht, gesteuert durch den  angegebenen <em>Abschickzeitrahmen</em>. Die Abschickzeit spielt, wie man sieht, eine eher untergeordnete Rolle, es sei denn man will bewusst nur kurze Laufzeiten w&auml;hlen, dann w&uuml;rde man die Abschickzeit z.B. auf den 24.01.09 um 13:00 setzen, wodurch allerdings nur noch der letzte gr&uuml;ne Bereich zum abschicken von Angriffen zur Verf&uuml;gung steht. <br>
-          Die Aktivierung der Nacht-Sperre ist in diesem Beispiel uninteressant, da durch die Beschr&auml;nkung der Abschickzeit bereits Angriffe nach 0 Uhr und vor 8 Uhr ausgeschlossen werden.<br>
-          Weiterhin bedeuten die Einstellungen nicht, dass zwangsl&auml;ufig Truppen in den gr&uuml;nen Zeitfenstern abgeschickt werden m&uuml;ssen. Vielmehr wird versucht, die Angriffe so nah wie m&ouml;glich an der Ankunftszeit zu positionieren. Alle anderen Zeitfenster werden nur gef&uuml;llt, wenn kein Angriff aus dem entsprechenden Dorf ein Ziel eher eher erreichen w&uuml;rde. </td>
-      </tr>
-      <tr>
-        <td colspan="2">&nbsp;</td>
-      </tr>
+	  	  
 	  <tr valign="middle">
         <td style="padding:10px 10px 10px 10px;background-color:#E1D5BE" width="10%"><div align="center"><img src="../images/help.png" width="24" height="24"></div></td>
         <td style="padding:10px 10px 10px 10px;background-color:#E1D5BE"><p><a name="not_assigned"></a>Nat&uuml;rlich kann es &ouml;fters mal vorkommen, dass nicht alle <em>Herkunftsd&ouml;rfer</em> einem <em>Zieldorf</em> zugewiesen werden k&ouml;nnen. Wie man an der Komplexit&auml;t der Einstellungen erkennt, kann man in diesen F&auml;llen kein Allheilmittel anbieten, um soetwas zu vermeiden.<br>
           Trefft ihr auf einen solchen Fall gibt es jedoch einige M&ouml;glichkeiten, doch noch alle D&ouml;rfer unterzubringen:</p>
           <ul>
             <li>Erh&ouml;ht die Anzahl der Angriffe pro gegnerisches Dorf in den <a href="attack_planer_target.html"><em>Zieleinstellungen</em></a></li>
-            <li>&Auml;nderung des verwendeten Algorithmus </li>
-            <li>Vergr&ouml;&szlig;ert den <em>Abschickzeitrahmen</em>, um den kompletten Tag f&uuml;r das Abschicken von Angriffen zu ber&uuml;cksichtigen. Die <em>Nacht-Sperre</em> k&ouml;nnt ihr ja trotzdem aktivieren.</li>
+            <li>&Auml;nderung des verwendeten Angriffstyps </li>
+            <li>Ver&auml;nderung den <em>Abschickzeitrahmen</em>, um den kompletten Tag f&uuml;r das Abschicken von Angriffen zu ber&uuml;cksichtigen</li>
             <li>Verschiebt die globale Abschickzeit nach hinten, um Angriffe vielleicht ein oder zwei Tage fr&uuml;her abzuschicken</li>
             <li>Verschiebt die Ankunftszeit der Truppen nach vorn </li>
             <li>Ignoriert die D&ouml;rfer, zu denen kein gegnerisches Dorf gefunden werden konnte</li>

@@ -74,7 +74,7 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
     /** Creates new form MinimapPanel */
     MinimapPanel() {
         initComponents();
-        setSize(270, 270);
+        setSize(300, 300);
         mMinimapListeners = new LinkedList<MinimapListener>();
         mToolChangeListeners = new LinkedList<ToolChangeListener>();
         setCursor(ImageManager.getCursor(iCurrentCursor));
@@ -323,8 +323,8 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
                 mBuffer = pBuffer;
                 mBuffer = mBuffer.getScaledInstance(getWidth(), getHeight(), BufferedImage.SCALE_SMOOTH);
             }
+            //System.out.println(getSize());
             doRedraw = false;
-
             repaint();
         } catch (Exception e) {
             logger.error("Exception while updating Minimap", e);

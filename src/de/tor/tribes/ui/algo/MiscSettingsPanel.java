@@ -10,7 +10,6 @@
  */
 package de.tor.tribes.ui.algo;
 
-import de.tor.tribes.io.ServerManager;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.ServerSettings;
 import java.awt.Font;
@@ -72,6 +71,9 @@ public class MiscSettingsPanel extends javax.swing.JPanel {
 
     public boolean validatePanel() {
         boolean result = true;
+        UIManager.put("OptionPane.noButtonText", "Nein");
+        UIManager.put("OptionPane.yesButtonText", "Ja");
+
         int maxAttacks = 0;
         //check max. attacks per village
         try {
@@ -92,6 +94,8 @@ public class MiscSettingsPanel extends javax.swing.JPanel {
 
         if (!jCleanOffsPerEnoblement.isEnabled()) {
             //skip check if not enabled
+            UIManager.put("OptionPane.noButtonText", "No");
+            UIManager.put("OptionPane.yesButtonText", "Yes");
             return result;
         }
         //check clean offs per enoblement
@@ -116,6 +120,8 @@ public class MiscSettingsPanel extends javax.swing.JPanel {
                 result = false;
             }
         }
+        UIManager.put("OptionPane.noButtonText", "No");
+        UIManager.put("OptionPane.yesButtonText", "Yes");
         return result;
     }
 

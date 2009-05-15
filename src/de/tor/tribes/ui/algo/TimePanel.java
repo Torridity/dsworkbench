@@ -20,6 +20,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JSpinner.DateEditor;
+import javax.swing.UIManager;
 
 /**
  * @author Jejkal
@@ -87,7 +88,11 @@ public class TimePanel extends javax.swing.JPanel {
     public boolean validatePanel() {
         //no time frame specified
         boolean result = true;
+        UIManager.put("OptionPane.noButtonText", "Nein");
+        UIManager.put("OptionPane.yesButtonText", "Ja");
+
         if (jSendTimeFramesList.getModel().getSize() == 0) {
+
             if (JOptionPane.showConfirmDialog(this, "Es muss mindestens ein Abschickzeitfenster angegebene werden.\n" +
                     "Soll der Standardzeitrahmen (8 - 24 Uhr) verwendet werden?", "Fehlendes Zeitfenster", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
                 ((DefaultListModel) jSendTimeFramesList.getModel()).addElement(8 + " Uhr - " + 24 + " Uhr");
@@ -129,7 +134,8 @@ public class TimePanel extends javax.swing.JPanel {
                 result = false;
             }
         }
-
+        UIManager.put("OptionPane.noButtonText", "No");
+        UIManager.put("OptionPane.yesButtonText", "Yes");
         return result;
     }
 

@@ -56,9 +56,7 @@
 
      <tocitem text="Ziel " target="pages.attack_planer_target" image="images.tictac_grey"/>
 
-     <tocitem text="Einstellungen " target="pages.attack_planer_settings" image="images.tictac_grey"/>
-
-     <tocitem text="Algorithmen " image="images.tictac_orange">
+     <tocitem text="Angriffstypen " target="pages.attack_planer_type" image="images.tictac_orange">
       <tocitem text="Brute Force " target="pages.attack_planer_bruteforce" image="images.tictac_grey"/>
 
       <tocitem text="All In One " target="pages.attack_planer_allinone" image="images.tictac_grey"/>
@@ -66,8 +64,16 @@
       <tocitem text="Blitzkrieg " target="pages.attack_planer_blitzkrieg" image="images.tictac_grey"/>
 
      </tocitem>
-     <tocitem text="Ergebnisse " target="pages.attack_planer_results" image="images.tictac_grey"/>
+     <tocitem text="Zeiteinstellungen " target="pages.attack_planer_time" image="images.tictac_grey"/>
 
+     <tocitem text="Sonstige Einstellungen " target="pages.attack_planer_settings" image="images.tictac_grey"/>
+
+     <tocitem text="Ergebnisse " target="pages.attack_planer_results" image="images.tictac_orange">
+      <tocitem text="Details (Herkunft) " target="pages.attack_planer_results_details_sources" image="images.tictac_grey"/>
+
+      <tocitem text="Details (Ziel) " target="pages.attack_planer_results_details_targets" image="images.tictac_grey"/>
+
+     </tocitem>
     </tocitem>
     <tocitem text="Laufzeit&#252;bersicht " target="pages.runtime_tool" image="images.tictac_grey"/>
 

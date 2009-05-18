@@ -13,6 +13,7 @@
 -libraryjars dist\lib\log4j-1.2.15.jar
 -libraryjars dist\lib\not-yet-commons-ssl-0.3.9.jar
 -libraryjars dist\lib\xmlenc.jar
+-libraryjars dist\lib\l2fprod-common-tasks.jar
 
 -target 1.6
 -dontoptimize

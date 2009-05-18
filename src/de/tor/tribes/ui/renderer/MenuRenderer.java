@@ -15,6 +15,7 @@ import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ServerSettings;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -117,6 +118,15 @@ public class MenuRenderer implements MouseListener, MouseMotionListener {
         int iconw = iconh;
         int space = 5;
         int maxIconsX = 9;
+        int menuW = maxIconsX * iconw + maxIconsX * space + 2 * space;
+        int menuH = 6 * iconh + 6 * space + 2 * space;
+        Dimension mapSize = MapPanel.getSingleton().getSize();
+        if (menuLocation.x + menuW > mapSize.width) {
+            menuLocation.move(mapSize.width - menuW, menuLocation.y);
+        }
+        if (menuLocation.y + menuH > mapSize.height) {
+            menuLocation.move(menuLocation.x, mapSize.height - menuH);
+        }
         g2d.setColor(Constants.DS_BACK);
         g2d.fill3DRect(menuLocation.x, menuLocation.y - 20, maxIconsX * iconw + (maxIconsX + 1) * space, 6 * iconh + 6 * space + 25, true);
         //map tools

@@ -588,12 +588,7 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame {
         jAllyBox.setSelectedIndex(0);
     }
 
-    public static void main(String[] args) {
-        double d = 34397843;
-        double d2 = 4564623;
-        double p = 100 * (int) d / (int) d2;
-        System.out.println(p);
-    }
+   
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox jAllyBox;
     private javax.swing.JCheckBox jAlwaysOnTop;

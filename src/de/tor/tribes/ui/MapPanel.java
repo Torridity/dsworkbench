@@ -852,12 +852,16 @@ public class MapPanel extends javax.swing.JPanel {
         jLabel3.setText("Welche Dörfer sollen kopiert werden?");
 
         jCopyOwn.setText("Eigene");
+        jCopyOwn.setOpaque(false);
 
         jCopyOwnAlly.setText("Eigener Stamm");
+        jCopyOwnAlly.setOpaque(false);
 
         jCopyEnemyAlly.setText("Fremde Stämme");
+        jCopyEnemyAlly.setOpaque(false);
 
         jCopyBarbarian.setText("Barbarendörfer");
+        jCopyBarbarian.setOpaque(false);
 
         javax.swing.GroupLayout jCopyVillagesDialogLayout = new javax.swing.GroupLayout(jCopyVillagesDialog.getContentPane());
         jCopyVillagesDialog.getContentPane().setLayout(jCopyVillagesDialogLayout);
@@ -889,7 +893,7 @@ public class MapPanel extends javax.swing.JPanel {
                         .addComponent(jExportBBButton))
                     .addComponent(jLabel2)
                     .addComponent(jLabel3))
-                .addGap(42, 42, 42))
+                .addContainerGap())
         );
         jCopyVillagesDialogLayout.setVerticalGroup(
             jCopyVillagesDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -937,6 +941,7 @@ public class MapPanel extends javax.swing.JPanel {
             nf.setMinimumFractionDigits(0);
             nf.setMaximumFractionDigits(0);
             Tribe own = DSWorkbenchMainFrame.getSingleton().getCurrentUser();
+            boolean exported = false;
             if (evt.getSource() == jExportBBButton) {
                 String result = "";
 
@@ -969,6 +974,7 @@ public class MapPanel extends javax.swing.JPanel {
                     }
 
                     if (doExport) {
+                        exported = true;
                         result += v.toBBCode();
                         if (jExportPoints.isSelected()) {
                             result += " (" + nf.format(v.getPoints()) + ") ";
@@ -995,24 +1001,30 @@ public class MapPanel extends javax.swing.JPanel {
                         }
                     }
                 }
-                StringTokenizer t = new StringTokenizer(result, "[");
-                int cnt = t.countTokens();
-                boolean doExport = true;
-                if (cnt > 500) {
-                    UIManager.put("OptionPane.noButtonText", "Nein");
-                    UIManager.put("OptionPane.yesButtonText", "Ja");
-                    if (JOptionPane.showConfirmDialog(this, "Die ausgewählten Dörfer benötigen mehr als 500 BB-Codes\n" +
-                            "und können daher im Spiel (Forum/IGM/Notizen) nicht auf einmal dargestellt werden.\nTrotzdem exportieren?", "Zu viele BB-Codes", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.NO_OPTION) {
+                if (exported) {
+                    StringTokenizer t = new StringTokenizer(result, "[");
+                    int cnt = t.countTokens();
+                    boolean doExport = true;
+                    if (cnt > 500) {
+                        UIManager.put("OptionPane.noButtonText", "Nein");
+                        UIManager.put("OptionPane.yesButtonText", "Ja");
+                        if (JOptionPane.showConfirmDialog(this, "Die ausgewählten Dörfer benötigen mehr als 500 BB-Codes\n" +
+                                "und können daher im Spiel (Forum/IGM/Notizen) nicht auf einmal dargestellt werden.\nTrotzdem exportieren?", "Zu viele BB-Codes", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.NO_OPTION) {
+                            UIManager.put("OptionPane.noButtonText", "No");
+                            UIManager.put("OptionPane.yesButtonText", "Yes");
+                            doExport = false;
+                        }
                         UIManager.put("OptionPane.noButtonText", "No");
                         UIManager.put("OptionPane.yesButtonText", "Yes");
-                        doExport = false;
                     }
-                    UIManager.put("OptionPane.noButtonText", "No");
-                    UIManager.put("OptionPane.yesButtonText", "Yes");
-                }
-                if (doExport) {
-                    Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(result), null);
-                    JOptionPane.showMessageDialog(jCopyVillagesDialog, "Dorfdaten in die Zwischenablage kopiert.", "Daten kopiert", JOptionPane.INFORMATION_MESSAGE);
+                    if (doExport) {
+
+                        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(result), null);
+                        JOptionPane.showMessageDialog(jCopyVillagesDialog, "Dorfdaten in die Zwischenablage kopiert.", "Daten kopiert", JOptionPane.INFORMATION_MESSAGE);
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(jCopyVillagesDialog, "Mit den gewählten Einstellungen werden keine Dörfer kopiert.", "Information", JOptionPane.INFORMATION_MESSAGE);
+                    return;
                 }
             } else if (evt.getSource() == jExportPlainButton) {
                 String result = "";
@@ -1037,13 +1049,16 @@ public class MapPanel extends javax.swing.JPanel {
                         }
                     }
 
+
                     if (jCopyEnemyAlly.isSelected()) {
                         if (v.getTribe() != null && v.getTribe().getAlly() == null || !v.getTribe().getAlly().equals(own.getAlly())) {
                             //no barbarien, no ally or ally not equal own ally
                             doExport = true;
                         }
                     }
+
                     if (doExport) {
+                        exported = true;
                         result += v + "\t";
                         if (jExportPoints.isSelected()) {
                             result += nf.format(v.getPoints()) + "\t";
@@ -1070,14 +1085,18 @@ public class MapPanel extends javax.swing.JPanel {
                         }
                     }
                 }
-
-                Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(result), null);
-                JOptionPane.showMessageDialog(jCopyVillagesDialog, "Dorfdaten in die Zwischenablage kopiert.", "Daten kopiert", JOptionPane.INFORMATION_MESSAGE);
+                if (exported) {
+                    Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(result), null);
+                    JOptionPane.showMessageDialog(jCopyVillagesDialog, "Dorfdaten in die Zwischenablage kopiert.", "Daten kopiert", JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(jCopyVillagesDialog, "Mit den gewählten Einstellungen werden keine Dörfer kopiert.", "Information", JOptionPane.INFORMATION_MESSAGE);
+                    return;
+                }
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(jCopyVillagesDialog, "Fehler beim kopieren der Daten.", "Fehler", JOptionPane.ERROR_MESSAGE);
         }
-        exportVillageList.clear();
+
         jCopyVillagesDialog.setVisible(false);
 
     }//GEN-LAST:event_fireVillageExportEvent
@@ -1106,45 +1125,52 @@ public class MapPanel extends javax.swing.JPanel {
                     yDir += 1;
                 }
 
-                //lower scroll speed
+//lower scroll speed
                 int sx = 0;
                 int sy = 0;
                 if (xDir >= 1) {
                     sx = 2;
-                    xDir = 0;
+                    xDir =
+                            0;
                 } else if (xDir <= -1) {
                     sx = -2;
-                    xDir = 0;
+                    xDir =
+                            0;
                 }
 
                 if (yDir >= 1) {
                     sy = 2;
-                    yDir = 0;
+                    yDir =
+                            0;
                 } else if (yDir <= -1) {
                     sy = -2;
-                    yDir = 0;
+                    yDir =
+                            0;
                 }
 
                 fireScrollEvents(sx, sy);
             }
 
-            //draw off-screen image of map
+//draw off-screen image of map
             Graphics2D g2d = (Graphics2D) g;
             g2d.drawImage(mBuffer, 0, 0, null);
             g2d.dispose();
         } catch (Exception e) {
             logger.error("Failed to paint", e);
         }
+
     }
 
     /**Update map to new position -> needs fully update*/
     protected synchronized void updateMapPosition(double pX, double pY) {
         dCenterX = pX;
-        dCenterY = pY;
+        dCenterY =
+                pY;
 
         if (mMapRenderer == null) {
             logger.info("Creating MapRenderer");
-            mMapRenderer = new MapRenderer();
+            mMapRenderer =
+                    new MapRenderer();
             mMapRenderer.start();
         }
 
@@ -1175,7 +1201,8 @@ public class MapPanel extends javax.swing.JPanel {
         return new Point.Double(mVirtualBounds.getX(), mVirtualBounds.getY());
     }
 
-    public Point virtualPosToSceenPos(double pXVirt, double pYVirt) {
+    public Point virtualPosToSceenPos(
+            double pXVirt, double pYVirt) {
         double z = DSWorkbenchMainFrame.getSingleton().getZoomFactor();
         /*Image tmp = GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, z);
         double width = (double) tmp.getWidth(null);
@@ -1235,6 +1262,7 @@ public class MapPanel extends javax.swing.JPanel {
                 if (mVillagePositions.get(current).contains(mouse)) {
                     return current;
                 }
+
             }
         } catch (Exception e) {
             //failed getting village (probably getting mousepos failed)
@@ -1246,21 +1274,27 @@ public class MapPanel extends javax.swing.JPanel {
     /**Update operation perfomed by the RepaintThread was completed*/
     public void updateComplete(Hashtable<Village, Rectangle> pPositions, Image pBuffer) {
         mBuffer = pBuffer;
-        mVillagePositions = pPositions;
+        mVillagePositions =
+                pPositions;
         if (bMapSHotPlaned) {
             saveMapShot(mBuffer);
         }
+
         if (positionUpdate) {
             DSWorkbenchFormFrame.getSingleton().updateFormList();
         }
+
         positionUpdate = false;
     }
 
     protected void planMapShot(String pType, File pLocation, MapShotListener pListener) {
         sMapShotType = pType;
-        mMapShotFile = pLocation;
-        bMapSHotPlaned = true;
-        mMapShotListener = pListener;
+        mMapShotFile =
+                pLocation;
+        bMapSHotPlaned =
+                true;
+        mMapShotListener =
+                pListener;
     }
 
     private void saveMapShot(Image pImage) {
@@ -1269,12 +1303,15 @@ public class MapPanel extends javax.swing.JPanel {
             String first = "";
             if (ServerSettings.getSingleton().getCoordType() != 2) {
                 int[] hier = DSCalculator.xyToHierarchical((int) pos.x, (int) pos.y);
-                first = "Zentrum: " + hier[0] + ":" + hier[1] + ":" + hier[2];
+                first =
+                        "Zentrum: " + hier[0] + ":" + hier[1] + ":" + hier[2];
             } else {
                 first = "Zentrum: " + (int) Math.floor(pos.getX()) + "|" + (int) Math.floor(pos.getY());
             }
+
             BufferedImage result = null;
-            result = new BufferedImage(pImage.getWidth(null), pImage.getHeight(null), BufferedImage.TYPE_INT_RGB);
+            result =
+                    new BufferedImage(pImage.getWidth(null), pImage.getHeight(null), BufferedImage.TYPE_INT_RGB);
 
             Graphics2D g2d = (Graphics2D) result.getGraphics();
             g2d.drawImage(pImage, 0, 0, null);
@@ -1291,20 +1328,24 @@ public class MapPanel extends javax.swing.JPanel {
 
             ImageIO.write(result, sMapShotType, mMapShotFile);
             g2d.dispose();
-            bMapSHotPlaned = false;
+            bMapSHotPlaned =
+                    false;
             mMapShotListener.fireMapShotDoneEvent();
         } catch (Exception e) {
             e.printStackTrace();
-            bMapSHotPlaned = false;
+            bMapSHotPlaned =
+                    false;
             logger.error("Creating MapShot failed");
             mMapShotListener.fireMapShotFailedEvent();
         }
+
     }
 
     public synchronized void fireToolChangedEvents(int pTool) {
         for (ToolChangeListener listener : mToolChangeListeners) {
             listener.fireToolChangedEvent(pTool);
         }
+
     }
 
     public synchronized void fireVillageAtMousePosChangedEvents(Village pVillage) {

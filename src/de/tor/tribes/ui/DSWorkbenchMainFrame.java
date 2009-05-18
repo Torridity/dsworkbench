@@ -2346,7 +2346,7 @@ private void fireChangeROIEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:even
             jROIRegion.setText("(" + x + "|" + y + ")");
             jROIPosition.setSelectedIndex(jROIPosition.getItemCount() - 1);
         } catch (Exception e) {
-            logger.error("Failed to initialite ROI dialog", e);
+            logger.error("Failed to initialize ROI dialog", e);
             return;
         }
 
@@ -2354,7 +2354,10 @@ private void fireChangeROIEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:even
         jAddROIDialog.setVisible(true);
     } else {
         try {
-            jROIBox.removeItemAt(jROIBox.getSelectedIndex());
+            String item = (String) jROIBox.getSelectedItem();
+            logger.debug("Removing ROI '" + item + "'");
+            ROIManager.getSingleton().removeROI(item);
+            jROIBox.removeItem(item);
         } catch (Exception e) {
         }
     }
@@ -2395,7 +2398,9 @@ private void fireROISelectedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:eve
             String item = (String) jROIBox.getSelectedItem();
             item = item.substring(item.lastIndexOf("(") + 1, item.lastIndexOf(")"));
             String[] pos = item.trim().split("\\|");
-            centerPosition(Integer.parseInt(pos[0]), Integer.parseInt(pos[1]));
+            jCenterX.setText(pos[0]);
+            jCenterY.setText(pos[1]);
+            fireRefreshMapEvent(null);
         } catch (Exception e) {
         }
     }
@@ -2425,7 +2430,9 @@ private void firePanelMin(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fire
             String item = (String) jROIBox.getItemAt(pId);
             item = item.substring(item.lastIndexOf("(") + 1, item.lastIndexOf(")"));
             String[] pos = item.trim().split("\\|");
-            centerPosition(Integer.parseInt(pos[0]), Integer.parseInt(pos[1]));
+            jCenterX.setText(pos[0]);
+            jCenterY.setText(pos[1]);
+            fireRefreshMapEvent(null);
         } catch (Exception e) {
         }
     }

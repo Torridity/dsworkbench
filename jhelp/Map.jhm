@@ -126,6 +126,8 @@
 
 <mapID target="pages.data_handling" url="pages/data_handling.html"/>
 
+<mapID target="pages.map_tools_church" url="pages/map_tools.html#church"/>
+
 <mapID target="pages.template" url="pages/template.html"/>
 
 <mapID target="pages.support_tool" url="pages/support_tool.html"/>

@@ -250,13 +250,11 @@ public class AttackManager {
 
     /**Add an attack to the default plan*/
     public synchronized void addAttack(Village pSource, Village pTarget, UnitHolder pUnit, Date pArriveTime, boolean pShowOnMap) {
-        //System.out.println("Attack " + pSource + ", " + pTarget+ ", " + de.tor.tribes.util.Constants.DATE_FORMAT.format(pArriveTime));
         addAttack(pSource, pTarget, pUnit, pArriveTime, pShowOnMap, null, -1);
     }
 
     /**Add an attack to the default plan*/
     public synchronized void addAttackFast(Village pSource, Village pTarget, UnitHolder pUnit, Date pArriveTime, boolean pShowOnMap) {
-        //System.out.println("Attack " + pSource + ", " + pTarget+ ", " + de.tor.tribes.util.Constants.DATE_FORMAT.format(pArriveTime));
         addAttackFast(pSource, pTarget, pUnit, pArriveTime, pShowOnMap, null, -1);
     }
 

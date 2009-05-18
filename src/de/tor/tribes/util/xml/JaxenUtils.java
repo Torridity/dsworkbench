@@ -386,7 +386,6 @@ public class JaxenUtils {
             XPath filter = createW3CFilter(xPath, context);
             result = filter.selectNodes(element);
         } catch (JaxenException je) {
-            System.out.println("JaxenException");
             je.printStackTrace();
         }
         return result;

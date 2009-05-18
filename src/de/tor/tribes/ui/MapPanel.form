@@ -41,7 +41,7 @@
                       <Component id="jLabel2" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Component id="jLabel3" alignment="0" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace min="-2" pref="42" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -148,21 +148,25 @@
         <Component class="javax.swing.JCheckBox" name="jCopyOwn">
           <Properties>
             <Property name="text" type="java.lang.String" value="Eigene"/>
+            <Property name="opaque" type="boolean" value="false"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JCheckBox" name="jCopyOwnAlly">
           <Properties>
             <Property name="text" type="java.lang.String" value="Eigener Stamm"/>
+            <Property name="opaque" type="boolean" value="false"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JCheckBox" name="jCopyEnemyAlly">
           <Properties>
             <Property name="text" type="java.lang.String" value="Fremde St&#xe4;mme"/>
+            <Property name="opaque" type="boolean" value="false"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JCheckBox" name="jCopyBarbarian">
           <Properties>
             <Property name="text" type="java.lang.String" value="Barbarend&#xf6;rfer"/>
+            <Property name="opaque" type="boolean" value="false"/>
           </Properties>
         </Component>
       </SubComponents>

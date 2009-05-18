@@ -858,16 +858,6 @@ public class VillageSupportFrame extends javax.swing.JFrame {
         JOptionPane.showMessageDialog(jResultDialog, buffer.toString(), "Maximale Kampfkraft", JOptionPane.INFORMATION_MESSAGE);
     }
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        String t = "456|234";
-        String[] s = t.split("\\|");
-        for (int i = 0; i < s.length; i++) {
-            System.out.println("STRING " + s[i]);
-        }
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField jArriveTime;

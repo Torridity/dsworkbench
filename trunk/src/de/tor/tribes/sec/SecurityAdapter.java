@@ -93,7 +93,5 @@ public class SecurityAdapter {
         return result;
     }
     //SELECT * FROM `users` WHERE SHA1(CONCAT(`name`,`password`))<>'dfe312c89cce6e72e06124a22dea1ffbd2515d6';
-    public static void main(String[] args) {
-        System.out.println(SecurityAdapter.hashStringSHA1("Test123"));
-    }
+  
 }

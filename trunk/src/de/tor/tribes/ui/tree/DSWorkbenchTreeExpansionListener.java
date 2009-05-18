@@ -41,11 +41,8 @@ public class DSWorkbenchTreeExpansionListener implements TreeExpansionListener {
                 //remove dummy
                 lastNode.removeAllChildren();
                 expandAlly((AllyNode) lastNode);
-            } else {
-                System.out.println(lastNode.getUserObject().getClass());
-            }
+            } 
         } catch (Exception e) {
-            System.out.println("Misc");
         }
     }
 
@@ -103,10 +100,8 @@ public class DSWorkbenchTreeExpansionListener implements TreeExpansionListener {
             if (contNode == null) {
                 contNode = new ContinentNode(sCont);
                 contNodes.put(sCont, contNode);
-                System.out.println("Add cont " + sCont);
             }
             //add village to cont
-            System.out.println(" - Add Village " + v);
             contNode.add(new VillageNode(v));
 
             //get tag
@@ -118,7 +113,6 @@ public class DSWorkbenchTreeExpansionListener implements TreeExpansionListener {
                 if (tagNode == null) {
                     tagNode = new TagNode(new Tag(TagNode.NO_TAG, false));
                     tagNodes.put(TagNode.NO_TAG, tagNode);
-                    System.out.println(" - add Tag " + tagNode.getDSUserObject());
                     pNode.add(tagNode);
                 }
 
@@ -132,7 +126,6 @@ public class DSWorkbenchTreeExpansionListener implements TreeExpansionListener {
                     if (!tagConts.contains(sCont)) {
                         //add continent and continent node
                         tagConts.add(sCont);
-                        System.out.println(" - addCont " + sCont + " to tag " + tagNode.getDSUserObject().getName());
                         tagNode.add(contNode);
                     }
                 }

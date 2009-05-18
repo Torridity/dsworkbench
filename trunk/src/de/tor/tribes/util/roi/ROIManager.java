@@ -7,6 +7,8 @@ package de.tor.tribes.util.roi;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.io.File;
 import java.io.FileWriter;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.LinkedList;
 import java.util.List;
 import org.apache.log4j.Logger;
@@ -52,7 +54,8 @@ public class ROIManager {
                 Document d = JaxenUtils.getDocument(roiFile);
                 for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//rois/roi")) {
                     try {
-                        rois.add(e.getText());
+                        String text = URLDecoder.decode(e.getTextTrim(), "UTF-8");
+                        rois.add(text);
                     } catch (Exception inner) {
                         //ignored, marker invalid
                     }
@@ -86,7 +89,8 @@ public class ROIManager {
             w.write("<rois>\n");
 
             for (String r : rois) {
-                w.write("<roi>" + r + "</roi>\n");
+                String text = URLEncoder.encode(r, "UTF-8");
+                w.write("<roi>" + text + "</roi>\n");
             }
             w.write("</rois>");
             w.flush();

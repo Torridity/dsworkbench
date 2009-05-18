@@ -141,8 +141,4 @@ public class ScreenUploadInterface {
         }
         return result;
     }
-
-    public static void main(String[] args) {
-        System.out.println(ScreenUploadInterface.upload("c:/map.png"));
-    }
 }

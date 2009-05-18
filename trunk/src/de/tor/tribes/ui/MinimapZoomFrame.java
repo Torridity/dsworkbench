@@ -130,8 +130,7 @@ class DrawThread extends Thread {
                         pYStart = mParent.mMap.getHeight() - pHeight;
                     }
                     BufferedImage part = mParent.mMap.getSubimage(pXStart, pYStart, pWidth, pHeight);
-                    //  System.out.println("Si " + pXStart + "," + pYStart + "," + pWidth + "," + pHeight);
-                    mParent.update(part.getScaledInstance(mParent.getWidth(), mParent.getHeight(), BufferedImage.SCALE_DEFAULT), dx, dy);
+                   mParent.update(part.getScaledInstance(mParent.getWidth(), mParent.getHeight(), BufferedImage.SCALE_DEFAULT), dx, dy);
                 }
             } catch (Exception e) {
                 //redraw failed, ignore it

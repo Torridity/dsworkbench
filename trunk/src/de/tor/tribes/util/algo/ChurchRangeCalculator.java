@@ -120,10 +120,5 @@ public class ChurchRangeCalculator {
         }
     }
 
-    public static void main(String[] args) {
-        /*long s = System.currentTimeMillis();
-        ChurchRangeCalculator.getChurchRange(500, 500, 4);
-        System.out.println("Dur " + (System.currentTimeMillis() - s));*/
-        Short.parseShort("21323234234");
-    }
+   
 }

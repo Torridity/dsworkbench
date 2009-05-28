@@ -99,21 +99,29 @@ public class VillageTroopsHolder {
     }
 
     public void calculateTroopsPowers() {
-       // if ((iOffPower < 0) || (iDefPower < 0) || (iArchDefPower < 0) || (iCavDefPower < 0)) {
-            try {
-                for (int i = 0; i < troops.size(); i++) {
-                    iOffPower += troops.get(i) * DataHolder.getSingleton().getUnits().get(i).getAttack();
-                    iDefPower += troops.get(i) * DataHolder.getSingleton().getUnits().get(i).getDefense();
-                    iArchDefPower += troops.get(i) * DataHolder.getSingleton().getUnits().get(i).getDefenseArcher();
-                    iCavDefPower += troops.get(i) * DataHolder.getSingleton().getUnits().get(i).getDefenseCavalry();
-                }
-                iOffPower = (iOffPower < 0) ? 0 : iOffPower;
-                iDefPower = (iDefPower < 0) ? 0 : iDefPower;
-                iArchDefPower = (iArchDefPower < 0) ? 0 : iArchDefPower;
-                iCavDefPower = (iCavDefPower < 0) ? 0 : iCavDefPower;
-            } catch (Exception e) {
-                //units not loaded yet
+        // if ((iOffPower < 0) || (iDefPower < 0) || (iArchDefPower < 0) || (iCavDefPower < 0)) {
+        try {
+            for (int i = 0; i < troops.size(); i++) {
+                iOffPower += troops.get(i) * DataHolder.getSingleton().getUnits().get(i).getAttack();
+                iDefPower += troops.get(i) * DataHolder.getSingleton().getUnits().get(i).getDefense();
+                iArchDefPower += troops.get(i) * DataHolder.getSingleton().getUnits().get(i).getDefenseArcher();
+                iCavDefPower += troops.get(i) * DataHolder.getSingleton().getUnits().get(i).getDefenseCavalry();
             }
-       // }
+            iOffPower = (iOffPower < 0) ? 0 : iOffPower;
+            iDefPower = (iDefPower < 0) ? 0 : iDefPower;
+            iArchDefPower = (iArchDefPower < 0) ? 0 : iArchDefPower;
+            iCavDefPower = (iCavDefPower < 0) ? 0 : iCavDefPower;
+        } catch (Exception e) {
+            //units not loaded yet
+            }
+    // }
+    }
+
+    public void recalculateTroopsPower() {
+        iOffPower = 0;
+        iDefPower = 0;
+        iArchDefPower = 0;
+        iCavDefPower = 0;
+        calculateTroopsPowers();
     }
 }

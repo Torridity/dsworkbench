@@ -46,7 +46,7 @@ public class DatabaseInterface {
     public static boolean bAccountValidated = false;
     public static String sValidatedUser = null;
     public static String sValidatedPassword = null;
-    
+
     private static Object callWebInterface(String pFunction, Hashtable<String, String> pArguments) {
         List<String> lines = new LinkedList<String>();
         URL url;
@@ -225,6 +225,16 @@ public class DatabaseInterface {
                     entry.setServerURL(t.nextToken());
                     entries.add(entry);
                 }
+                logger.debug("Merging acceptance increments");
+                Hashtable<String, Double> riseSpeeds = getAcceptanceRiseSpeed();
+                if (riseSpeeds != null) {
+                    for (DatabaseServerEntry e : entries) {
+                        Double speed = riseSpeeds.get(e.getServerID());
+                        if (speed != null) {
+                            e.setAcceptanceRiseSpeed(speed);
+                        }
+                    }
+                }
 
             } catch (Exception e) {
                 logger.error("Server entry in invalid format? Dropping.", e);
@@ -236,6 +246,42 @@ public class DatabaseInterface {
             logger.error("Failed getting list of servers. Result is " + result);
         }
 
+        return null;
+    }
+
+    public static Hashtable<String, Double> getAcceptanceRiseSpeed() {
+        Object result = null;
+        try {
+            result = callWebInterface("getAcceptanceRiseSpeed", null);
+            String[] lines = (String[]) result;
+            Hashtable<String, Double> entries = new Hashtable<String, Double>();
+            try {
+                for (String line : lines) {
+                    StringTokenizer t = new StringTokenizer(line, "[,]");
+                    if (t.countTokens() != 2) {
+                        //invalid entry, probably a status code!?
+                        try {
+                            int status = Integer.parseInt(line);
+                            processStatus("get acceptance rise speed", status);
+                            return null;
+                        } catch (Exception noStatus) {
+                            throw new Exception("Invalid entry '" + line + "'");
+                        }
+
+                    }
+
+                    entries.put(t.nextToken(), Double.parseDouble(t.nextToken()));
+                }
+
+            } catch (Exception e) {
+                logger.error("Server entry in invalid format? Dropping.", e);
+            }
+
+            return entries;
+        } catch (Exception outer) {
+            //typecast or connection failed
+            logger.error("Failed getting list of servers. Result is " + result);
+        }
         return null;
     }
 
@@ -462,41 +508,36 @@ public class DatabaseInterface {
 
     public static void main(String[] args) {
         DOMConfigurator.configure("log4j.xml");
-        System.setProperty("proxyUse", "true");
+        /* System.setProperty("proxyUse", "true");
         System.setProperty("proxyHost", "proxy.fzk.de");
         System.setProperty("proxyPort", "8000");
-
-        //System.out.println(DatabaseInterface.listServers());
-        //System.out.println(DatabaseInterface.checkUser("Torridity", "cfcaef487fc66a6d8295e8e3f68b4db9"));
-        //System.out.println(DatabaseInterface.addUser("Torridity", "cfcaef487fc66a6d8295e8e3f68b4db9"));
-        //System.out.println(DatabaseInterface.getProperty("min.version"));
-        //System.out.println(DatabaseInterface.getDownloadURL("de26"));
-        /*long versionU = DatabaseInterface.getUserDataVersion("Torridity", "de8");
-        if (versionU > 0) {
-        System.out.println("User: " + new SimpleDateFormat("dd.MM.yyyy - HH:mm:ss").format(new Date(versionU)));
-        }
-        long versionS = DatabaseInterface.getServerDataVersion("de8");
-        if (versionS > 0) {
-        System.out.println("Server: " + new SimpleDateFormat("dd.MM.yyyy - HH:mm:ss").format(new Date(versionS)));
-        }
          */
-        //  System.out.println("Result " + DatabaseInterface.updateDataVersion("Torridity", "de8"));
+        System.out.println(DatabaseInterface.getAcceptanceRiseSpeed());
+    //System.out.println(DatabaseInterface.listServers());
+    //System.out.println(DatabaseInterface.checkUser("Torridity", "cfcaef487fc66a6d8295e8e3f68b4db9"));
+    //System.out.println(DatabaseInterface.addUser("Torridity", "cfcaef487fc66a6d8295e8e3f68b4db9"));
+    //System.out.println(DatabaseInterface.getProperty("min.version"));
+    //System.out.println(DatabaseInterface.getDownloadURL("de26"));
+        /*long versionU = DatabaseInterface.getUserDataVersion("Torridity", "de8");
+    if (versionU > 0) {
+    System.out.println("User: " + new SimpleDateFormat("dd.MM.yyyy - HH:mm:ss").format(new Date(versionU)));
+    }
+    long versionS = DatabaseInterface.getServerDataVersion("de8");
+    if (versionS > 0) {
+    System.out.println("Server: " + new SimpleDateFormat("dd.MM.yyyy - HH:mm:ss").format(new Date(versionS)));
+    }
+     */
+    //  System.out.println("Result " + DatabaseInterface.updateDataVersion("Torridity", "de8"));
 
-        /* versionU = DatabaseInterface.getUserDataVersion("Torridity", "de8");
-        if (versionU > 0) {
-        System.out.println("User: " + new SimpleDateFormat("dd.MM.yyyy - HH:mm:ss").format(new Date(versionU)));
-        }
-        versionS = DatabaseInterface.getServerDataVersion("de8");
-        if (versionS > 0) {
-        System.out.println("Server: " + new SimpleDateFormat("dd.MM.yyyy - HH:mm:ss").format(new Date(versionS)));
-        }*/
+    /* versionU = DatabaseInterface.getUserDataVersion("Torridity", "de8");
+    if (versionU > 0) {
+    System.out.println("User: " + new SimpleDateFormat("dd.MM.yyyy - HH:mm:ss").format(new Date(versionU)));
+    }
+    versionS = DatabaseInterface.getServerDataVersion("de8");
+    if (versionS > 0) {
+    System.out.println("Server: " + new SimpleDateFormat("dd.MM.yyyy - HH:mm:ss").format(new Date(versionS)));
+    }*/
 
-        try {
-            //System.out.println(DatabaseInterface.registerUserForServer("Torridity", "de34"));
-            System.out.println(DatabaseInterface.updateDataVersion("Torridity", "de34"));
-        //System.out.println(DatabaseInterface.getUserDataVersion("Torridity", "de34"));
-        } catch (Exception e) {
-        }
     //System.out.println(DatabaseInterface.addUser("Töter&12<>", SecurityAdapter.hashStringMD5("1234")));
     }
 }

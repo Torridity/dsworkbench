@@ -10,6 +10,8 @@ import de.tor.tribes.io.WorldDecorationHolder;
 import de.tor.tribes.types.AbstractForm;
 import de.tor.tribes.types.Ally;
 import de.tor.tribes.types.Attack;
+import de.tor.tribes.types.Church;
+import de.tor.tribes.types.Conquer;
 import de.tor.tribes.types.Marker;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.Tribe;
@@ -26,6 +28,7 @@ import de.tor.tribes.util.Skin;
 import de.tor.tribes.util.algo.ChurchRangeCalculator;
 import de.tor.tribes.util.attack.AttackManager;
 import de.tor.tribes.util.church.ChurchManager;
+import de.tor.tribes.util.conquer.ConquerManager;
 import de.tor.tribes.util.map.FormManager;
 import de.tor.tribes.util.mark.MarkerManager;
 import de.tor.tribes.util.tag.TagManager;
@@ -55,12 +58,16 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
+import java.io.File;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import org.apache.log4j.Logger;
 
@@ -73,10 +80,7 @@ import org.apache.log4j.Logger;
  * 4: Misc. Extended Map Decoration: e.g. troop qualification or active village marker
  * 5: Live Layer: Redraw in every drawing cycle e.g. Drag line, tool popup(?), (troop movement?)
  * 6-16: Free assignable
- * @TODO (DIFF) Problems with text form and minimap skin solved
- * @TODO (DIFF) Church range is now also drawn if village is outside view
- * @TODO (DIFF) Don't draw attack if source and target are not visible, but draw if one of both is
- * @TODO (DIFF) Radar tools shows one fixed radar and radar of mouse village
+ * @TODO (DIFF) Added conquers information
  * @author Charon
  */
 /**Thread for updating after scroll operations
@@ -89,7 +93,7 @@ public class MapRenderer extends Thread {
     public static final int MARKER_LAYER = 2;
     public static final int BASIC_DECORATION_LAYER = 3;
     public static final int ATTACK_LAYER = 4;
-    public static final int EXTENDED_DECORATION_LAYER = 5;
+    public static final int TAG_MARKER_LAYER = 5;
     public static final int LIVE_LAYER = 6;
     private boolean mapRedrawRequired = true;
     private Village[][] mVisibleVillages = null;
@@ -108,6 +112,7 @@ public class MapRenderer extends Thread {
     private double currentZoom = 0.0;
     private Village currentUserVillage = null;
     private Image mMainBuffer = null;
+    private BufferedImage mConquerWarning = null;
 
     public MapRenderer() {
         mVisibleVillages = new Village[iVillagesX][iVillagesY];
@@ -117,6 +122,7 @@ public class MapRenderer extends Thread {
         try {
             //load flag marker
             mMarkerImage = Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("/res/marker.png"));
+            mConquerWarning = ImageIO.read(new File("./graphics/icons/warning.png"));
         } catch (Exception e) {
             logger.error("Failed to load marker images", e);
         }
@@ -191,10 +197,12 @@ public class MapRenderer extends Thread {
                         g2d.drawImage(mLayers.get(MAP_LAYER), 0, 0, null);
                     }
                     //render tag markers (graphics created only on complete redraw)
-                    g2d.drawImage(mLayers.get(EXTENDED_DECORATION_LAYER), 0, 0, null);
-                    //render other layers
+                    g2d.drawImage(mLayers.get(TAG_MARKER_LAYER), 0, 0, null);
+                    //render other layers (active village, troop type)
                     renderBasicDecoration(g2d);
+                    //attacks layer
                     renderAttacks(g2d);
+                    //forms, churches
                     renderExtendedDecoration(g2d);
                     //draw live layer
                     renderLiveLayer(g2d);
@@ -758,20 +766,20 @@ public class MapRenderer extends Thread {
         }
 
         int tagsize = (int) Math.rint((double) 18 / currentZoom);
-
+ int conquerSize = (int) Math.rint((double) 16 / currentZoom);
         BufferedImage layer = null;
         Graphics2D g2d = null;
         //prepare drawing buffer
-        if (mLayers.get(EXTENDED_DECORATION_LAYER) == null) {
+        if (mLayers.get(TAG_MARKER_LAYER) == null) {
             layer = new BufferedImage(wb, hb, BufferedImage.TYPE_INT_ARGB);
-            mLayers.put(EXTENDED_DECORATION_LAYER, layer);
+            mLayers.put(TAG_MARKER_LAYER, layer);
             g2d = layer.createGraphics();
             prepareGraphics(g2d);
         } else {
-            layer = mLayers.get(EXTENDED_DECORATION_LAYER);
+            layer = mLayers.get(TAG_MARKER_LAYER);
             if (layer.getWidth() != wb || layer.getHeight() != hb) {
                 layer = new BufferedImage(wb, hb, BufferedImage.TYPE_INT_ARGB);
-                mLayers.put(EXTENDED_DECORATION_LAYER, layer);
+                mLayers.put(TAG_MARKER_LAYER, layer);
                 g2d = layer.createGraphics();
                 prepareGraphics(g2d);
             } else {
@@ -789,11 +797,13 @@ public class MapRenderer extends Thread {
         }
         Hashtable<Integer, Point> copyRegions = new Hashtable<Integer, Point>();
 
-        // <editor-fold defaultstate="collapsed" desc="Graphics drawing">
-        Enumeration<Village> villages = villagePositions.keys();
+        // <editor-fold defaultstate="collapsed" desc="Tag marker graphics drawing">
         try {
+            Enumeration<Village> villages = villagePositions.keys();
+            Rectangle conquerCopyRegion = null;
             while (villages.hasMoreElements()) {
                 Village current = villages.nextElement();
+                Conquer c = ConquerManager.getSingleton().getConquer(current);
                 Rectangle r = villagePositions.get(current);
                 List<Tag> villageTags = TagManager.getSingleton().getTags(current);
                 if (villageTags != null && villageTags.size() != 0) {
@@ -801,6 +811,7 @@ public class MapRenderer extends Thread {
                     int ycnt = 2;
                     int cnt = 0;
                     for (Tag tag : TagManager.getSingleton().getTags(current)) {
+                        // <editor-fold defaultstate="collapsed" desc="Draw tag if active">
                         if (tag.isShowOnMap()) {
                             int iconType = tag.getTagIcon();
                             Color color = tag.getTagColor();
@@ -844,11 +855,24 @@ public class MapRenderer extends Thread {
                                 }
                             }
                         }
+                    // </editor-fold>
+                    }
+                }
+                if (c != null) {
+                    //village was recently conquered
+                    if (conquerCopyRegion != null) {
+                        g2d.copyArea(conquerCopyRegion.x, conquerCopyRegion.y, conquerCopyRegion.width, conquerCopyRegion.height, r.x + r.width - conquerSize - conquerCopyRegion.x, r.y + r.height - conquerSize-conquerCopyRegion.y);
+                    } else {
+                        g2d.drawImage(mConquerWarning, r.x + r.width - conquerSize, r.y + r.height - conquerSize, conquerSize, conquerSize, null);
+                        if (MapPanel.getSingleton().getBounds().contains(new Rectangle(r.x + r.width - conquerSize - 2, r.y + r.height - conquerSize - 2, conquerSize + 2, conquerSize + 2))) {
+                            conquerCopyRegion = new Rectangle(r.x + r.width - conquerSize, r.y + r.height - conquerSize, conquerSize, conquerSize);
+                        }
                     }
                 }
             }
         } catch (Exception e) {
         }
+
 
         /*Enumeration<Integer> keys = copyRegions.keys();
         while (keys.hasMoreElements()) {
@@ -1177,15 +1201,14 @@ public class MapRenderer extends Thread {
 
             // <editor-fold defaultstate="collapsed" desc=" Church calculation">
             if (drawVillage) {
-                int range = ChurchManager.getSingleton().getChurchRange(v);
+                Church c = ChurchManager.getSingleton().getChurch(v);
                 int vx = MapPanel.getSingleton().virtualPosToSceenPos(v.getX(), v.getY()).x;
                 int vy = MapPanel.getSingleton().virtualPosToSceenPos(v.getX(), v.getY()).y;
                 g = new Rectangle(vx, vy, GlobalOptions.getSkin().getCurrentFieldWidth(), GlobalOptions.getSkin().getCurrentFieldHeight());
 
-
-                List<Point2D.Double> positions = ChurchRangeCalculator.getChurchRange(v.getX(), v.getY(), range);
+                List<Point2D.Double> positions = ChurchRangeCalculator.getChurchRange(v.getX(), v.getY(), c.getRange());
                 GeneralPath p = new GeneralPath();
-                p.moveTo(g.getX(), g.getY() - (range - 1) * g.getHeight());
+                p.moveTo(g.getX(), g.getY() - (c.getRange() - 1) * g.getHeight());
                 int quad = 0;
                 Point2D.Double lastPos = positions.get(0);
                 for (Point2D.Double pos : positions) {
@@ -1194,19 +1217,19 @@ public class MapRenderer extends Thread {
                         p.lineTo(p.getCurrentPoint().getX(), p.getCurrentPoint().getY() - g.getHeight());
                         p.lineTo(p.getCurrentPoint().getX() + g.getWidth(), p.getCurrentPoint().getY());
                         quad = 1;
-                    } else if (pos.getX() == v.getX() + range && pos.getY() == v.getY()) {
+                    } else if (pos.getX() == v.getX() + c.getRange() && pos.getY() == v.getY()) {
                         //east village
                         p.lineTo(p.getCurrentPoint().getX(), p.getCurrentPoint().getY() + g.getHeight());
                         p.lineTo(p.getCurrentPoint().getX() + g.getWidth(), p.getCurrentPoint().getY());
                         p.lineTo(p.getCurrentPoint().getX(), p.getCurrentPoint().getY() + g.getHeight());
                         quad = 2;
-                    } else if (pos.getX() == v.getX() && pos.getY() == v.getY() + range) {
+                    } else if (pos.getX() == v.getX() && pos.getY() == v.getY() + c.getRange()) {
                         //south village
                         p.lineTo(p.getCurrentPoint().getX() - g.getWidth(), p.getCurrentPoint().getY());
                         p.lineTo(p.getCurrentPoint().getX(), p.getCurrentPoint().getY() + g.getHeight());
                         p.lineTo(p.getCurrentPoint().getX() - g.getWidth(), p.getCurrentPoint().getY());
                         quad = 3;
-                    } else if (pos.getX() == v.getX() - range && pos.getY() == v.getY()) {
+                    } else if (pos.getX() == v.getX() - c.getRange() && pos.getY() == v.getY()) {
                         //west village
                         p.lineTo(p.getCurrentPoint().getX(), p.getCurrentPoint().getY() - g.getHeight());
                         p.lineTo(p.getCurrentPoint().getX() - g.getWidth(), p.getCurrentPoint().getY());
@@ -1236,10 +1259,10 @@ public class MapRenderer extends Thread {
 
                 p.closePath();
                 Color cb = g2d.getColor();
-                Composite c = g2d.getComposite();
+                Composite com = g2d.getComposite();
                 g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f));
-                Color radiusColor = null;
-                try {
+                Color radiusColor = c.getRangeColor();
+              /*  try {
                     if (v.getTribe().equals(currentUserVillage.getTribe())) {
                         radiusColor = Color.YELLOW;
                     }
@@ -1265,13 +1288,13 @@ public class MapRenderer extends Thread {
                             radiusColor = Color.WHITE;
                         }
                     }
-                }
+                }*/
                 g2d.setColor(radiusColor);
                 //g2d.setPaint(new RoundGradientPaint(g.getCenterX(), g.getCenterY(), new Color(0, 0, 255, 155), new Point2D.Double(rad * g.getWidth() + g.getWidth(), rad * g.getHeight() + g.getHeight()), new Color(0, 0, 255, 0)));
                 g2d.setStroke(new BasicStroke(10.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
                 g2d.draw(p);
                 g2d.fill(p);
-                g2d.setComposite(c);
+                g2d.setComposite(com);
                 g2d.setColor(cb);
             }
         //</editor-fold>
@@ -1550,6 +1573,16 @@ public class MapRenderer extends Thread {
                 dy += 19;
             }
 
+            SimpleDateFormat f = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+            Conquer c = ConquerManager.getSingleton().getConquer(mouseVillage);
+            if (c != null) {
+                Calendar cal = Calendar.getInstance();
+                cal.setTimeInMillis((long) c.getTimestamp() * 1000);
+                drawPopupField(g2d, metrics, villageRect, "Adelung am", f.format(cal.getTime()), width, dy);
+                dy += 19;
+                drawPopupField(g2d, metrics, villageRect, "Zustimmung", Integer.toString(c.getCurrentAcceptance()), width, dy);
+                dy += 19;
+            }
         } else {
             value = "verlassen";
             drawPopupField(g2d, metrics, villageRect, null, value, width, dy);

@@ -293,7 +293,8 @@ public class TimePanel extends javax.swing.JPanel {
         if (selection == null || selection.length == 0) {
             return;
         }
-
+        UIManager.put("OptionPane.noButtonText", "Nein");
+        UIManager.put("OptionPane.yesButtonText", "Ja");
         String message = "Zeitrahmen wirklich entfernen?";
         if (selection.length > 1) {
             message = selection.length + " " + message;
@@ -304,6 +305,8 @@ public class TimePanel extends javax.swing.JPanel {
                 model.removeElement(o);
             }
         }
+        UIManager.put("OptionPane.noButtonText", "No");
+        UIManager.put("OptionPane.yesButtonText", "Yes");
     }//GEN-LAST:event_fireRemoveTimeFrameEvent
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

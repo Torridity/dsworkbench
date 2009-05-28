@@ -10,14 +10,19 @@
  */
 package de.tor.tribes.ui;
 
+import de.tor.tribes.types.Church;
 import de.tor.tribes.types.Village;
+import de.tor.tribes.ui.editors.ColorChooserCellEditor;
 import de.tor.tribes.ui.editors.VillageCellEditor;
-import de.tor.tribes.ui.models.CurrentTribeVillagesModel;
+import de.tor.tribes.ui.renderer.ColorCellRenderer;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.church.ChurchManager;
 import de.tor.tribes.util.church.ChurchManagerListener;
+import java.awt.Color;
 import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.JOptionPane;
@@ -33,7 +38,6 @@ import javax.swing.table.TableRowSorter;
 import org.apache.log4j.Logger;
 
 /**
- *@TODO (DIFF) show owner of church village
  * @author Charon
  */
 public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements ChurchManagerListener {
@@ -72,7 +76,7 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
             }
         };
 
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 4; i++) {
             mHeaderRenderers.add(headerRenderer);
         }
 
@@ -91,6 +95,22 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
             }
         });
 
+        jChurchTable.setDefaultRenderer(Color.class, new ColorCellRenderer());
+        jChurchTable.setDefaultEditor(Color.class, new ColorChooserCellEditor(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //update church color as soon as the colorchooser cell editor has closed
+                try {
+                    Village v = (Village) jChurchTable.getValueAt(jChurchTable.getSelectedRow(), 1);
+                    Church c = ChurchManager.getSingleton().getChurch(v);
+                    Color color = (Color) jChurchTable.getValueAt(jChurchTable.getSelectedRow(), 3);
+                    c.setRangeColor(color);
+                } catch (Exception ex) {
+                    logger.warn("Failed to change church range color", ex);
+                }
+            }
+        }));
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
         GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.church_view", GlobalOptions.getHelpBroker().getHelpSet());
         // </editor-fold>
@@ -247,7 +267,6 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
     }//GEN-LAST:event_fireRemoveChurchVillagesEvent
 
     private void fireCenterChurchVillageEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCenterChurchVillageEvent
-
         int[] rows = jChurchTable.getSelectedRows();
         if (rows.length != 1) {
             return;
@@ -264,7 +283,6 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
         //setup renderer and general view
         TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(jChurchTable.getModel());
         jChurchTable.setRowSorter(sorter);
-
         jChurchTable.setDefaultEditor(Village.class, new VillageCellEditor());
         jScrollPane1.getViewport().setBackground(Constants.DS_BACK_LIGHT);
         //update view
@@ -278,7 +296,7 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
         jChurchTable.invalidate();
         jChurchTable.setModel(ChurchManager.getSingleton().getTableModel());
 
-        //setup marker table view
+        //setup table view
         jChurchTable.getColumnModel().getColumn(2).setMaxWidth(75);
 
         for (int i = 0; i < jChurchTable.getColumnCount(); i++) {

@@ -19,7 +19,6 @@ import javax.swing.ImageIcon;
 import org.apache.log4j.Logger;
 
 /**Class for loading and holding all cursors needed for DS Workbench
- * @TODO (DIFF) Church cursors added
  * @author Jejkal
  */
 public class ImageManager {

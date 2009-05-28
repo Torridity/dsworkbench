@@ -35,6 +35,7 @@ import de.tor.tribes.util.algo.BruteForce;
 import de.tor.tribes.util.algo.DistanceMapping;
 import de.tor.tribes.util.algo.TimeFrame;
 import de.tor.tribes.util.attack.AttackManager;
+import de.tor.tribes.util.parser.VillageParser;
 import java.awt.Component;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
@@ -62,6 +63,8 @@ import java.awt.Point;
 import java.util.StringTokenizer;
 import javax.swing.UIManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
 import java.util.Collections;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
@@ -69,17 +72,11 @@ import javax.swing.event.ListSelectionListener;
 
 /**
  * @TODO (1.5) Change AG assignment for Blitzkrieg
- * @TODO (DIFF) Combination of groups for source selection
- * @TODO (DIFF) Finish changed target selection
- * @TODO (DIFF) Add fulltext algorithm selection
- * @TODO (DIFF) Multi time range
- * @TODO (DIFF) Troop filter in attack planer now works properly
- * @TODO (DIFF) Timeframe allows variable arrive time
- * @TODO (DIFF) Select Group villages not dependent from current player villages (allows better UV handling)
- * @TODO (DIFF) Results table now has attack type editor
- * @TODO (DIFF) Use separate group for non-tagged villages of player (UV won't work here->document this!)
- * @TODO (DIFF) Result details
- * @TODO (DIFF) Selection with selection tools uses now same group filter as manual selection
+ * @TODO (DIFF) AND and OR relation for village groups added
+ * @TODO (DIFF) Source filter for village range added
+ * @TODO (DIFF) Sync with attack plans added
+ * @TODO (1.5) Add attack type with dynamic arrival time
+
  * @author Jejkal
  */
 public class TribeTribeAttackFrame extends javax.swing.JFrame implements VillageSelectionListener {
@@ -276,7 +273,7 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Village
                 jVillageGroupList.setEnabled(true);
             }
             //select all groups and initialize lists
-            jVillageGroupList.getSelectionModel().setSelectionInterval(0, (tags.length > 0)?tags.length - 1:tags.length);
+            jVillageGroupList.getSelectionModel().setSelectionInterval(0, (tags.length > 0) ? tags.length - 1 : tags.length);
             // </editor-fold>
 
             mTimePanel.reset();
@@ -384,14 +381,25 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Village
         jScrollPane6 = new javax.swing.JScrollPane();
         jSourceVillageList = new javax.swing.JList();
         jLabel22 = new javax.swing.JLabel();
+        jSourceGroupRelation = new javax.swing.JRadioButton();
+        jSelectionStart = new javax.swing.JTextField();
+        jSelectionEnd = new javax.swing.JTextField();
+        jLabel4 = new javax.swing.JLabel();
+        jSelectionBeginButton = new javax.swing.JButton();
+        jPrevSelectionButton = new javax.swing.JButton();
+        jNextSelectionButton = new javax.swing.JButton();
+        jSelectionEndButton = new javax.swing.JButton();
+        jSelectButton = new javax.swing.JButton();
+        jMarkAsFakeBox = new javax.swing.JCheckBox();
         jButton8 = new javax.swing.JButton();
         jButton7 = new javax.swing.JButton();
         jButton11 = new javax.swing.JButton();
         jButton14 = new javax.swing.JButton();
         jLabel20 = new javax.swing.JLabel();
-        jMarkAsFakeBox = new javax.swing.JCheckBox();
         jSetFakeButton = new javax.swing.JButton();
         jSetNoFakeButton = new javax.swing.JButton();
+        jButton15 = new javax.swing.JButton();
+        jButton17 = new javax.swing.JButton();
         jTargetPanel = new javax.swing.JPanel();
         jPanel6 = new javax.swing.JPanel();
         jTargetAllyLabel = new javax.swing.JLabel();
@@ -412,6 +420,7 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Village
         jButton2 = new javax.swing.JButton();
         jButton9 = new javax.swing.JButton();
         jButton10 = new javax.swing.JButton();
+        jButton16 = new javax.swing.JButton();
         jAlgoPanel = new javax.swing.JPanel();
         jBruteForceAlgorithm = new javax.swing.JRadioButton();
         jAllInOneAlgorithm = new javax.swing.JRadioButton();
@@ -488,9 +497,9 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Village
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 152, Short.MAX_VALUE)
-                    .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 152, Short.MAX_VALUE)
-                    .addComponent(jTargetsBar, javax.swing.GroupLayout.DEFAULT_SIZE, 152, Short.MAX_VALUE))
+                    .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 154, Short.MAX_VALUE)
+                    .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 154, Short.MAX_VALUE)
+                    .addComponent(jTargetsBar, javax.swing.GroupLayout.DEFAULT_SIZE, 154, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -498,12 +507,12 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Village
                     .addComponent(jAttacksBar, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, 152, Short.MAX_VALUE)
-                    .addComponent(jEnoblementsBar, javax.swing.GroupLayout.DEFAULT_SIZE, 152, Short.MAX_VALUE))
+                    .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, 156, Short.MAX_VALUE)
+                    .addComponent(jEnoblementsBar, javax.swing.GroupLayout.DEFAULT_SIZE, 156, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, 153, Short.MAX_VALUE)
-                    .addComponent(jFullOffsBar, javax.swing.GroupLayout.DEFAULT_SIZE, 153, Short.MAX_VALUE))
+                    .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, 155, Short.MAX_VALUE)
+                    .addComponent(jFullOffsBar, javax.swing.GroupLayout.DEFAULT_SIZE, 155, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -597,7 +606,7 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Village
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jResultFrameLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jResultFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 681, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 689, Short.MAX_VALUE)
                     .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -1174,6 +1183,96 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Village
 
         jLabel22.setText(bundle.getString("TribeTribeAttackFrame.jLabel22.text")); // NOI18N
 
+        jSourceGroupRelation.setSelected(true);
+        jSourceGroupRelation.setText(bundle.getString("TribeTribeAttackFrame.jSourceGroupRelation.text")); // NOI18N
+        jSourceGroupRelation.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/logic_and.png"))); // NOI18N
+        jSourceGroupRelation.setOpaque(false);
+        jSourceGroupRelation.setSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/logic_or.png"))); // NOI18N
+        jSourceGroupRelation.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                fireChangeSourceGroupRelationEvent(evt);
+            }
+        });
+
+        jSelectionStart.setText(bundle.getString("TribeTribeAttackFrame.jSelectionStart.text")); // NOI18N
+        jSelectionStart.setMaximumSize(new java.awt.Dimension(40, 25));
+        jSelectionStart.setMinimumSize(new java.awt.Dimension(40, 25));
+        jSelectionStart.setPreferredSize(new java.awt.Dimension(40, 25));
+
+        jSelectionEnd.setText(bundle.getString("TribeTribeAttackFrame.jSelectionEnd.text")); // NOI18N
+        jSelectionEnd.setMaximumSize(new java.awt.Dimension(40, 25));
+        jSelectionEnd.setMinimumSize(new java.awt.Dimension(40, 25));
+        jSelectionEnd.setPreferredSize(new java.awt.Dimension(40, 25));
+
+        jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel4.setText(bundle.getString("TribeTribeAttackFrame.jLabel4.text")); // NOI18N
+        jLabel4.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+
+        jSelectionBeginButton.setBackground(new java.awt.Color(239, 235, 223));
+        jSelectionBeginButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/beginning.png"))); // NOI18N
+        jSelectionBeginButton.setText(bundle.getString("TribeTribeAttackFrame.jSelectionBeginButton.text")); // NOI18N
+        jSelectionBeginButton.setEnabled(false);
+        jSelectionBeginButton.setMaximumSize(new java.awt.Dimension(25, 25));
+        jSelectionBeginButton.setMinimumSize(new java.awt.Dimension(25, 25));
+        jSelectionBeginButton.setPreferredSize(new java.awt.Dimension(25, 25));
+        jSelectionBeginButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireUpdateSelectionEvent(evt);
+            }
+        });
+
+        jPrevSelectionButton.setBackground(new java.awt.Color(239, 235, 223));
+        jPrevSelectionButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/prev.png"))); // NOI18N
+        jPrevSelectionButton.setText(bundle.getString("TribeTribeAttackFrame.jPrevSelectionButton.text")); // NOI18N
+        jPrevSelectionButton.setMaximumSize(new java.awt.Dimension(25, 25));
+        jPrevSelectionButton.setMinimumSize(new java.awt.Dimension(25, 25));
+        jPrevSelectionButton.setPreferredSize(new java.awt.Dimension(25, 25));
+        jPrevSelectionButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireUpdateSelectionEvent(evt);
+            }
+        });
+
+        jNextSelectionButton.setBackground(new java.awt.Color(239, 235, 223));
+        jNextSelectionButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/next.png"))); // NOI18N
+        jNextSelectionButton.setText(bundle.getString("TribeTribeAttackFrame.jNextSelectionButton.text")); // NOI18N
+        jNextSelectionButton.setMaximumSize(new java.awt.Dimension(25, 25));
+        jNextSelectionButton.setMinimumSize(new java.awt.Dimension(25, 25));
+        jNextSelectionButton.setPreferredSize(new java.awt.Dimension(25, 25));
+        jNextSelectionButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireUpdateSelectionEvent(evt);
+            }
+        });
+
+        jSelectionEndButton.setBackground(new java.awt.Color(239, 235, 223));
+        jSelectionEndButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/end.png"))); // NOI18N
+        jSelectionEndButton.setText(bundle.getString("TribeTribeAttackFrame.jSelectionEndButton.text")); // NOI18N
+        jSelectionEndButton.setMaximumSize(new java.awt.Dimension(25, 25));
+        jSelectionEndButton.setMinimumSize(new java.awt.Dimension(25, 25));
+        jSelectionEndButton.setPreferredSize(new java.awt.Dimension(25, 25));
+        jSelectionEndButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireUpdateSelectionEvent(evt);
+            }
+        });
+
+        jSelectButton.setBackground(new java.awt.Color(239, 235, 223));
+        jSelectButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/select.png"))); // NOI18N
+        jSelectButton.setText(bundle.getString("TribeTribeAttackFrame.jSelectButton.text")); // NOI18N
+        jSelectButton.setMaximumSize(new java.awt.Dimension(25, 25));
+        jSelectButton.setMinimumSize(new java.awt.Dimension(25, 25));
+        jSelectButton.setPreferredSize(new java.awt.Dimension(25, 25));
+        jSelectButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireUpdateSelectionEvent(evt);
+            }
+        });
+
+        jMarkAsFakeBox.setText(bundle.getString("TribeTribeAttackFrame.jMarkAsFakeBox.text")); // NOI18N
+        jMarkAsFakeBox.setToolTipText(bundle.getString("TribeTribeAttackFrame.jMarkAsFakeBox.toolTipText")); // NOI18N
+        jMarkAsFakeBox.setOpaque(false);
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -1181,42 +1280,76 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Village
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jSourceVillageLabel1)
-                    .addComponent(jLabel22))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel22)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jSourceVillageLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(jSourceGroupRelation, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jTroopsList, javax.swing.GroupLayout.Alignment.LEADING, 0, 175, Short.MAX_VALUE)
+                            .addComponent(jScrollPane4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 175, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jSourceVillageLabel2)
-                        .addGap(18, 18, 18)
-                        .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jSourceVillageLabel2)
+                                .addGap(18, 18, 18)
+                                .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jMarkAsFakeBox, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel21)
-                        .addGap(10, 10, 10)
-                        .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 273, Short.MAX_VALUE))
-                    .addComponent(jTroopsList, javax.swing.GroupLayout.PREFERRED_SIZE, 315, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 291, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jSelectionStart, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel4)
+                        .addGap(11, 11, 11)
+                        .addComponent(jSelectionEnd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jSelectionBeginButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jPrevSelectionButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jSelectButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jNextSelectionButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jSelectionEndButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel21)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jLabel21)
+                        .addComponent(jSourceVillageLabel2)
+                        .addComponent(jSourceVillageLabel1)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jSourceVillageLabel2)
-                                .addComponent(jSourceVillageLabel1)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 132, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jSourceGroupRelation, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jTroopsList, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel22)
-                            .addComponent(jTroopsList, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(jMarkAsFakeBox)))
+                    .addComponent(jSelectionEnd, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jSelectionStart, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel4))
+                    .addComponent(jNextSelectionButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jSelectionEndButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jSelectButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jSelectionBeginButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jPrevSelectionButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
@@ -1249,7 +1382,7 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Village
         });
 
         jButton14.setBackground(new java.awt.Color(239, 235, 223));
-        jButton14.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/filter_off.png"))); // NOI18N
+        jButton14.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/filter_strength.png"))); // NOI18N
         jButton14.setText(bundle.getString("TribeTribeAttackFrame.jButton14.text")); // NOI18N
         jButton14.setToolTipText(bundle.getString("TribeTribeAttackFrame.jButton14.toolTipText")); // NOI18N
         jButton14.setMaximumSize(new java.awt.Dimension(59, 59));
@@ -1260,10 +1393,6 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Village
         });
 
         jLabel20.setText(bundle.getString("TribeTribeAttackFrame.jLabel20.text")); // NOI18N
-
-        jMarkAsFakeBox.setText(bundle.getString("TribeTribeAttackFrame.jMarkAsFakeBox.text")); // NOI18N
-        jMarkAsFakeBox.setToolTipText(bundle.getString("TribeTribeAttackFrame.jMarkAsFakeBox.toolTipText")); // NOI18N
-        jMarkAsFakeBox.setOpaque(false);
 
         jSetFakeButton.setBackground(new java.awt.Color(239, 235, 223));
         jSetFakeButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/fake.png"))); // NOI18N
@@ -1291,6 +1420,25 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Village
             }
         });
 
+        jButton15.setBackground(new java.awt.Color(239, 235, 223));
+        jButton15.setText(bundle.getString("TribeTribeAttackFrame.jButton15.text")); // NOI18N
+        jButton15.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireGetSourceVillagesFromClipboardEvent(evt);
+            }
+        });
+
+        jButton17.setBackground(new java.awt.Color(239, 235, 223));
+        jButton17.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/filter_off.png"))); // NOI18N
+        jButton17.setText(bundle.getString("TribeTribeAttackFrame.jButton17.text")); // NOI18N
+        jButton17.setToolTipText(bundle.getString("TribeTribeAttackFrame.jButton17.toolTipText")); // NOI18N
+        jButton17.setMaximumSize(new java.awt.Dimension(59, 59));
+        jButton17.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireFilterSourceByAttackPlansEvent(evt);
+            }
+        });
+
         javax.swing.GroupLayout jSourcePanelLayout = new javax.swing.GroupLayout(jSourcePanel);
         jSourcePanel.setLayout(jSourcePanelLayout);
         jSourcePanelLayout.setHorizontalGroup(
@@ -1299,23 +1447,24 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Village
                 .addContainerGap()
                 .addGroup(jSourcePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jSourcePanelLayout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 339, Short.MAX_VALUE)
+                        .addComponent(jButton15)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton7)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton8)
-                        .addGap(18, 18, 18)
-                        .addComponent(jMarkAsFakeBox))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 736, Short.MAX_VALUE)
+                        .addComponent(jButton8))
                     .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel20, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 736, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 740, Short.MAX_VALUE)
+                    .addComponent(jLabel20, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 740, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jSourcePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jSourcePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(jButton14, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jButton17, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jButton11)
-                    .addComponent(jButton14, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jSetNoFakeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jSetFakeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
@@ -1328,25 +1477,25 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Village
                     .addGroup(jSourcePanelLayout.createSequentialGroup()
                         .addComponent(jButton14, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton17, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton11)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jSetNoFakeButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jSetFakeButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(198, 198, 198))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jSourcePanelLayout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 134, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jSourcePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(jSourcePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(jButton8)
-                                .addComponent(jMarkAsFakeBox))
-                            .addGroup(jSourcePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(jButton1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jButton3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jButton7))))
+                        .addComponent(jSetFakeButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 189, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(13, 13, 13)
+                .addGroup(jSourcePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jButton8)
+                    .addGroup(jSourcePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(jButton1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButton3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jSourcePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jButton7)
+                        .addComponent(jButton15)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel20)
                 .addContainerGap())
@@ -1481,6 +1630,14 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Village
             }
         });
 
+        jButton16.setBackground(new java.awt.Color(239, 235, 223));
+        jButton16.setText(bundle.getString("TribeTribeAttackFrame.jButton16.text")); // NOI18N
+        jButton16.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireGetTargetVillagesFromClipboardEvent(evt);
+            }
+        });
+
         javax.swing.GroupLayout jTargetPanelLayout = new javax.swing.GroupLayout(jTargetPanel);
         jTargetPanel.setLayout(jTargetPanelLayout);
         jTargetPanelLayout.setHorizontalGroup(
@@ -1491,6 +1648,8 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Village
                     .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 805, Short.MAX_VALUE)
                     .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jTargetPanelLayout.createSequentialGroup()
+                        .addComponent(jButton16)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton10)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1504,7 +1663,7 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Village
             jTargetPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jTargetPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 176, Short.MAX_VALUE)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 270, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -1513,7 +1672,9 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Village
                     .addGroup(jTargetPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                         .addComponent(jButton2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jButton4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jButton10))
+                    .addGroup(jTargetPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jButton10)
+                        .addComponent(jButton16)))
                 .addContainerGap())
         );
 
@@ -1573,7 +1734,7 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Village
                 .addComponent(jAllInOneAlgorithm)
                 .addGap(18, 18, 18)
                 .addComponent(jBlitzkriegAlgorithm)
-                .addContainerGap(185, Short.MAX_VALUE))
+                .addContainerGap(279, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab(bundle.getString("TribeTribeAttackFrame.jAlgoPanel.TabConstraints.tabTitle"), new javax.swing.ImageIcon(getClass().getResource("/res/die.png")), jAlgoPanel); // NOI18N
@@ -1593,7 +1754,7 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Village
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 436, Short.MAX_VALUE)
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 530, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jCalculateButton)
                 .addContainerGap())
@@ -1608,9 +1769,9 @@ private void fireAddAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:even
     if (values == null) {
         return;
     }
+    UnitHolder uSource = (UnitHolder) jTroopsList.getSelectedItem();
     for (Object value : values) {
         Village vSource = (Village) value;
-        UnitHolder uSource = (UnitHolder) jTroopsList.getSelectedItem();
         ((DefaultTableModel) jAttacksTable.getModel()).addRow(new Object[]{vSource, uSource, jMarkAsFakeBox.isSelected()});
     }
 }//GEN-LAST:event_fireAddAttackEvent
@@ -2611,6 +2772,158 @@ private void fireAlgorithmChangedEvent(javax.swing.event.ChangeEvent evt) {//GEN
     }
 }//GEN-LAST:event_fireAlgorithmChangedEvent
 
+private void fireChangeSourceGroupRelationEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireChangeSourceGroupRelationEvent
+    if (jSourceGroupRelation.isSelected()) {
+        jSourceGroupRelation.setText("Verknüpfung (ODER)");
+    } else {
+        jSourceGroupRelation.setText("Verknüpfung (UND)");
+    }
+    fireFilterSourceVillagesByGroupEvent();
+}//GEN-LAST:event_fireChangeSourceGroupRelationEvent
+
+private void fireUpdateSelectionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireUpdateSelectionEvent
+    int start = 1;
+    int end = 10;
+    try {
+        start = Integer.parseInt(jSelectionStart.getText());
+        end = Integer.parseInt(jSelectionEnd.getText());
+    } catch (Exception e) {
+    }
+    try {
+        //switch numbers if start larger than end
+        if (start > end) {
+            int tmp = start;
+            start = end;
+            end = tmp;
+        }
+        int diff = end - start + 1;
+        if (evt == null || evt.getSource() == jSelectButton) {
+            //do nothing
+        } else if (evt.getSource() == jSelectionBeginButton && jSelectionBeginButton.isEnabled()) {
+            start = 1;
+            end = diff;
+        } else if (evt.getSource() == jPrevSelectionButton) {
+            start = start - diff;
+            if (start <= 0) {
+                start = 1;
+            }
+            end = start + diff - 1;
+        } else if (evt.getSource() == jNextSelectionButton) {
+            start = end + 1;
+            end = (start + diff - 1 > jSourceVillageList.getModel().getSize()) ? jSourceVillageList.getModel().getSize() : (start + diff - 1);
+        } else if (evt.getSource() == jSelectionEndButton && jSelectionEnd.isEnabled()) {
+            end = jSourceVillageList.getModel().getSize();
+            start = end - diff + 1;
+        }
+
+
+        jSelectionEndButton.setEnabled(!(end == jSourceVillageList.getModel().getSize()));
+        jSelectionBeginButton.setEnabled(!(start == 1));
+        jSelectionStart.setText(Integer.toString(start));
+        jSelectionEnd.setText(Integer.toString(end));
+
+        jSourceVillageList.getSelectionModel().setSelectionInterval(start - 1, end - 1);
+        jSourceVillageList.scrollRectToVisible(jSourceVillageList.getCellBounds(start - 1, end - 1));
+    } catch (Exception e) {
+        logger.warn("Error while calculating source selection step", e);
+    }
+}//GEN-LAST:event_fireUpdateSelectionEvent
+
+private void fireGetSourceVillagesFromClipboardEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireGetSourceVillagesFromClipboardEvent
+    try {
+        Transferable t = (Transferable) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
+        List<Village> villages = VillageParser.parse((String) t.getTransferData(DataFlavor.stringFlavor));
+        if (villages == null || villages.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Es konnten keine Dorfkoodinaten in der Zwischenablage gefunden werden.", "Information", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        } else {
+            UnitHolder uSource = (UnitHolder) jTroopsList.getSelectedItem();
+            for (Village v : villages) {
+                ((DefaultTableModel) jAttacksTable.getModel()).addRow(new Object[]{v, uSource, jMarkAsFakeBox.isSelected()});
+            }
+            String message = (villages.size() == 1) ? "1 Dorf " : villages.size() + " Dörfer ";
+            JOptionPane.showMessageDialog(this, message + " übertragen.", "Information", JOptionPane.INFORMATION_MESSAGE);
+        }
+    } catch (Exception e) {
+        logger.error("Failed to parse source villages from clipboard", e);
+    }
+}//GEN-LAST:event_fireGetSourceVillagesFromClipboardEvent
+
+private void fireGetTargetVillagesFromClipboardEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireGetTargetVillagesFromClipboardEvent
+    try {
+        Transferable t = (Transferable) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
+        List<Village> villages = VillageParser.parse((String) t.getTransferData(DataFlavor.stringFlavor));
+        if (villages == null || villages.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Es konnten keine Dorfkoodinaten in der Zwischenablage gefunden werden.", "Information", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        } else {
+            for (Village v : villages) {
+                Tribe victim = v.getTribe();
+                if (victim != null) {
+                    ((DefaultTableModel) jVictimTable.getModel()).addRow(new Object[]{victim, v});
+                }
+            }
+            String message = (villages.size() == 1) ? "1 Dorf " : villages.size() + " Dörfer ";
+            JOptionPane.showMessageDialog(this, message + " übertragen.", "Information", JOptionPane.INFORMATION_MESSAGE);
+        }
+    } catch (Exception e) {
+        logger.error("Failed to parse victim villages from clipboard", e);
+    }
+}//GEN-LAST:event_fireGetTargetVillagesFromClipboardEvent
+
+private void fireFilterSourceByAttackPlansEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireFilterSourceByAttackPlansEvent
+
+    Enumeration<String> plans = AttackManager.getSingleton().getPlans();
+    List<Integer> toRemove = new LinkedList<Integer>();
+    //process all plans
+    while (plans.hasMoreElements()) {
+        String plan = plans.nextElement();
+        logger.debug("Checking plan '" + plan + "'");
+        List<Attack> attacks = AttackManager.getSingleton().getAttackPlan(plan);
+
+        //process all attacks
+        for (Attack a : attacks) {
+            //search attack source village in all table rows
+            for (int i = 0; i < jAttacksTable.getRowCount(); i++) {
+                Village v = (Village) jAttacksTable.getValueAt(i, 0);
+                if (a.getSource().equals(v)) {
+                    if (!toRemove.contains(i)) {
+                        toRemove.add(i);
+                    }
+                }
+            }
+        }
+    }
+
+    UIManager.put("OptionPane.noButtonText", "Nein");
+    UIManager.put("OptionPane.yesButtonText", "Ja");
+    String message = "";
+    if (toRemove.size() == 0) {
+        JOptionPane.showMessageDialog(this, "Keine Herkunftsdörfer zu entfernen.", "Information", JOptionPane.INFORMATION_MESSAGE);
+        return;
+    } else {
+        message = (toRemove.size() == 1) ? "Ein Herkunftsdorf " : toRemove.size() + " Herkunftsdörfer ";
+    }
+    if (JOptionPane.showConfirmDialog(this, message + "entfernen?", "Entfernen", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
+        try {
+            logger.debug("Removing " + toRemove.size() + " source villages");
+            jAttacksTable.invalidate();
+            Collections.sort(toRemove);
+
+            while (toRemove.size() > 0) {
+                Integer row = toRemove.remove(toRemove.size() - 1);
+                ((DefaultTableModel) jAttacksTable.getModel()).removeRow(jAttacksTable.convertRowIndexToModel(row));
+            }
+            jAttacksTable.revalidate();
+        } catch (Exception e) {
+            logger.error("Removal failed", e);
+        }
+    }
+    UIManager.put("OptionPane.noButtonText", "No");
+    UIManager.put("OptionPane.yesButtonText", "Yes");
+
+}//GEN-LAST:event_fireFilterSourceByAttackPlansEvent
+
     private void showResults(List<Attack> pAttacks) {
         jResultsTable.invalidate();
         DefaultTableModel resultModel = new javax.swing.table.DefaultTableModel(
@@ -2938,33 +3251,79 @@ private void fireAlgorithmChangedEvent(javax.swing.event.ChangeEvent evt) {//GEN
                     tags.add((Tag) o);
                 } catch (Exception e) {
                     //no-tag villages contained
-                    logger.debug("Using untagged villages");
-                    useNoTag =
-                            true;
-                }
-
-            }
-
-            //tags available, use them
-            for (Tag t : tags) {
-                for (Integer vId : t.getVillageIDs()) {
-                    Village v = DataHolder.getSingleton().getVillagesById().get(vId);
-                    if (v.getTribe() != null && !villageList.contains(v)) {
-                        //add only if a players villages is tagged
-                        villageList.add(v);
-                    }
-
+                    useNoTag = true;
                 }
             }
-            if (useNoTag) {
-                //use villages of current user which are not tagged
-                List<Village> villages = DSWorkbenchMainFrame.getSingleton().getCurrentUser().getVillageList();
-                for (Village v : villages) {
-                    List<Tag> vtags = TagManager.getSingleton().getTags(v);
-                    if (vtags == null || vtags.isEmpty() && !villageList.contains(v)) {
-                        villageList.add(v);
-                    }
 
+            if (jSourceGroupRelation.isSelected()) {
+                //default OR relation
+                //tags available, use them
+                for (Tag t : tags) {
+                    for (Integer vId : t.getVillageIDs()) {
+                        Village v = DataHolder.getSingleton().getVillagesById().get(vId);
+                        if (v.getTribe() != null && !villageList.contains(v)) {
+                            //add only if a players villages is tagged
+                            villageList.add(v);
+                        }
+
+                    }
+                }
+                if (useNoTag) {
+                    //use villages of current user which are not tagged
+                    List<Village> villages = DSWorkbenchMainFrame.getSingleton().getCurrentUser().getVillageList();
+                    for (Village v : villages) {
+                        List<Tag> vtags = TagManager.getSingleton().getTags(v);
+                        if (vtags == null || vtags.isEmpty() && !villageList.contains(v)) {
+                            villageList.add(v);
+                        }
+
+                    }
+                }
+            } else {
+                //AND relation
+                if (tags.isEmpty() && useNoTag) {
+                    //only use non tagges villages
+                    //-> if one tag is selected for AND relation, ignore non-tagged due to logical error
+                    if (useNoTag) {
+                        //use villages of current user which are not tagged
+                        List<Village> villages = DSWorkbenchMainFrame.getSingleton().getCurrentUser().getVillageList();
+                        for (Village v : villages) {
+                            List<Tag> vtags = TagManager.getSingleton().getTags(v);
+                            if (vtags == null || vtags.isEmpty() && !villageList.contains(v)) {
+                                villageList.add(v);
+                            }
+
+                        }
+                    }
+                } else {
+                    //perform AND relation
+                    List<Integer> villageIds = new LinkedList<Integer>();
+                    //get all villages tagged by any tag
+                    for (Tag t : TagManager.getSingleton().getTags()) {
+                        for (Integer i : t.getVillageIDs()) {
+                            if (!villageIds.contains(i)) {
+                                villageIds.add(i);
+                            }
+                        }
+                    }
+                    //check for all villages, if they are tagged by all selected tags
+                    for (Integer i : villageIds) {
+                        boolean use = true;
+                        for (Tag t : tags) {
+                            if (!t.tagsVillage(i)) {
+                                //at least one tag does not tag current village
+                                use = false;
+                                break;
+                            }
+                        }
+                        if (use) {
+                            //all tags tag current village, so use them
+                            Village v = DataHolder.getSingleton().getVillagesById().get(i);
+                            if (!villageList.contains(v)) {
+                                villageList.add(v);
+                            }
+                        }
+                    }
                 }
             }
         } else {
@@ -3126,6 +3485,9 @@ private void fireAlgorithmChangedEvent(javax.swing.event.ChangeEvent evt) {//GEN
     private javax.swing.JButton jButton12;
     private javax.swing.JButton jButton13;
     private javax.swing.JButton jButton14;
+    private javax.swing.JButton jButton15;
+    private javax.swing.JButton jButton16;
+    private javax.swing.JButton jButton17;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
@@ -3163,6 +3525,7 @@ private void fireAlgorithmChangedEvent(javax.swing.event.ChangeEvent evt) {//GEN
     private javax.swing.JLabel jLabel23;
     private javax.swing.JLabel jLabel24;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
@@ -3174,11 +3537,13 @@ private void fireAlgorithmChangedEvent(javax.swing.event.ChangeEvent evt) {//GEN
     private javax.swing.JTextField jMarcherRange;
     private javax.swing.JCheckBox jMarkAsFakeBox;
     private javax.swing.JTextField jNewPlanName;
+    private javax.swing.JButton jNextSelectionButton;
     private javax.swing.JTable jNotAssignedSourcesTable;
     private javax.swing.JFrame jOffStrengthFrame;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel6;
+    private javax.swing.JButton jPrevSelectionButton;
     private javax.swing.JTextField jRamField;
     private javax.swing.JTextField jRamRange;
     private javax.swing.JFrame jResultFrame;
@@ -3195,9 +3560,15 @@ private void fireAlgorithmChangedEvent(javax.swing.event.ChangeEvent evt) {//GEN
     private javax.swing.JScrollPane jScrollPane7;
     private javax.swing.JScrollPane jScrollPane8;
     private javax.swing.JScrollPane jScrollPane9;
+    private javax.swing.JButton jSelectButton;
+    private javax.swing.JButton jSelectionBeginButton;
+    private javax.swing.JTextField jSelectionEnd;
+    private javax.swing.JButton jSelectionEndButton;
+    private javax.swing.JTextField jSelectionStart;
     private javax.swing.JButton jSetFakeButton;
     private javax.swing.JButton jSetNoFakeButton;
     private javax.swing.JList jSourceContinentList;
+    private javax.swing.JRadioButton jSourceGroupRelation;
     private javax.swing.JPanel jSourcePanel;
     private javax.swing.JLabel jSourceVillageLabel1;
     private javax.swing.JLabel jSourceVillageLabel2;

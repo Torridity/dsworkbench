@@ -163,6 +163,7 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
         jScrollPane1.setViewportView(jMarkerTable);
 
         jRemoveMarkerButton.setBackground(new java.awt.Color(239, 235, 223));
+        jRemoveMarkerButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_remove.png"))); // NOI18N
         jRemoveMarkerButton.setText(bundle.getString("DSWorkbenchMarkerFrame.jRemoveMarkerButton.text")); // NOI18N
         jRemoveMarkerButton.setToolTipText(bundle.getString("DSWorkbenchMarkerFrame.jRemoveMarkerButton.toolTipText")); // NOI18N
         jRemoveMarkerButton.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -172,9 +173,10 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
         });
 
         jToggleDrawFilterButton.setBackground(new java.awt.Color(239, 235, 223));
+        jToggleDrawFilterButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/draw_filter.gif"))); // NOI18N
+        jToggleDrawFilterButton.setText(bundle.getString("DSWorkbenchMarkerFrame.jToggleDrawFilterButton.text")); // NOI18N
         jToggleDrawFilterButton.setToolTipText(bundle.getString("DSWorkbenchMarkerFrame.jToggleDrawFilterButton.toolTipText")); // NOI18N
         jToggleDrawFilterButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jToggleDrawFilterButton.setLabel(bundle.getString("DSWorkbenchMarkerFrame.jToggleDrawFilterButton.label")); // NOI18N
         jToggleDrawFilterButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireDrawFilterClickedEvent(evt);
@@ -187,7 +189,7 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
             jMarkerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jMarkerPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 442, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 474, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jMarkerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jToggleDrawFilterButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)

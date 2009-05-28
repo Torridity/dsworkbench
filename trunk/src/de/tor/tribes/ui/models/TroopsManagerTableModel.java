@@ -176,7 +176,7 @@ public class TroopsManagerTableModel extends AbstractTableModel {
                 //set current troops
                 TroopsManager.getSingleton().getTroopsForVillage(row).getTroops().set(troopIndex, (Integer) pValue);
                 try {
-                    TroopsManager.getSingleton().getTroopsForVillage(row).calculateTroopsPowers();
+                    TroopsManager.getSingleton().getTroopsForVillage(row).recalculateTroopsPower();
                 } catch (Exception e) {
                 }
                 //refresh time

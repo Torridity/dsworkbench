@@ -12,6 +12,7 @@ public class DatabaseServerEntry {
 
     private String serverID = null;
     private String serverURL = null;
+    private double acceptanceRiseSpeed = 1.0;
     private int dataVersion = 0;
 
     public String getServerID() {
@@ -42,5 +43,19 @@ public class DatabaseServerEntry {
      */
     public void setDataVersion(int dataVersion) {
         this.dataVersion = dataVersion;
+    }
+
+    /**
+     * @return the acceptanceRiseSpeed
+     */
+    public double getAcceptanceRiseSpeed() {
+        return acceptanceRiseSpeed;
+    }
+
+    /**
+     * @param acceptanceRiseSpeed the acceptanceRiseSpeed to set
+     */
+    public void setAcceptanceRiseSpeed(double acceptanceRiseSpeed) {
+        this.acceptanceRiseSpeed = acceptanceRiseSpeed;
     }
 }

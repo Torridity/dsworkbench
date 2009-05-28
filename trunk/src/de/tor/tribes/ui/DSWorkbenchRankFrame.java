@@ -71,29 +71,42 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame {
     public void updateRankTable() {
         //build model depending of rank type
         int type = jRankTypeBox.getSelectedIndex();
+        TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>();
+        jRankTable.setRowSorter(sorter);
+
         switch (type) {
             case 0: {
                 buildTribeRanking();
+                sorter.setModel(jRankTable.getModel());
+                sorter.setComparator(1, String.CASE_INSENSITIVE_ORDER);
+                sorter.setComparator(2, String.CASE_INSENSITIVE_ORDER);
                 break;
             }
             case 1: {
                 buildAllyRanking();
+                 sorter.setModel(jRankTable.getModel());
+                sorter.setComparator(1, String.CASE_INSENSITIVE_ORDER);
+                sorter.setComparator(2, String.CASE_INSENSITIVE_ORDER);
                 break;
             }
             case 2: {
                 buildBashTribeRanking();
+                 sorter.setModel(jRankTable.getModel());
+                sorter.setComparator(2, String.CASE_INSENSITIVE_ORDER);
                 break;
             }
             case 3: {
                 buildBashAllyRanking();
+                 sorter.setModel(jRankTable.getModel());
+                sorter.setComparator(0, String.CASE_INSENSITIVE_ORDER);
+                sorter.setComparator(1, String.CASE_INSENSITIVE_ORDER);
                 break;
             }
         }
 
         //setup sorter, header and numeric renderer
-        TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>();
-        jRankTable.setRowSorter(sorter);
-        sorter.setModel(jRankTable.getModel());
+
+
         for (int i = 0; i < jRankTable.getColumnCount(); i++) {
             DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
 
@@ -113,7 +126,9 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
                 Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-
+                if (row % 2 == 0 && !isSelected) {
+                    c.setBackground(Constants.DS_BACK_LIGHT);
+                }
                 NumberFormat nf = NumberFormat.getInstance();
                 nf.setMaximumFractionDigits(0);
                 nf.setMinimumFractionDigits(0);
@@ -125,6 +140,19 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame {
         };
         jRankTable.setDefaultRenderer(Integer.class, renderer);
         jRankTable.setDefaultRenderer(Double.class, renderer);
+        DefaultTableCellRenderer renderer2 = new DefaultTableCellRenderer() {
+
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                if (row % 2 == 0 && !isSelected) {
+                    c.setBackground(Constants.DS_BACK_LIGHT);
+                }
+                DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
+                // r.setText(r.getText());
+                return c;
+            }
+        };
+        jRankTable.setDefaultRenderer(Object.class, renderer2);
 
         sorter.toggleSortOrder(0);
     }
@@ -546,7 +574,7 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame {
     }//GEN-LAST:event_fireFilterEvent
 
     private void fireFilterKeyReleasedEvent(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_fireFilterKeyReleasedEvent
-         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
             fireFilterEvent(null);
         }
     }//GEN-LAST:event_fireFilterKeyReleasedEvent
@@ -587,8 +615,6 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame {
         jAllyBox.setModel(model);
         jAllyBox.setSelectedIndex(0);
     }
-
-   
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox jAllyBox;
     private javax.swing.JCheckBox jAlwaysOnTop;

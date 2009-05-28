@@ -31,7 +31,6 @@ import java.util.List;
 import javax.imageio.ImageIO;
 
 /**
- *@TODO (DIFF) Church icons added
  * @author Charon
  */
 public class MenuRenderer implements MouseListener, MouseMotionListener {

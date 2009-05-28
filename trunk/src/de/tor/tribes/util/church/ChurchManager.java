@@ -5,17 +5,21 @@
 package de.tor.tribes.util.church;
 
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.types.Church;
+import de.tor.tribes.types.Marker;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
+import de.tor.tribes.ui.DSWorkbenchMainFrame;
 import de.tor.tribes.ui.DSWorkbenchMarkerFrame;
 import de.tor.tribes.ui.MapPanel;
 import de.tor.tribes.ui.MinimapPanel;
 import de.tor.tribes.ui.renderer.MapRenderer;
+import de.tor.tribes.util.GlobalOptions;
+import de.tor.tribes.util.mark.MarkerManager;
 import de.tor.tribes.util.xml.JaxenUtils;
+import java.awt.Color;
 import java.io.File;
 import java.io.FileWriter;
-import java.util.Enumeration;
-import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.table.DefaultTableModel;
@@ -24,18 +28,14 @@ import org.jdom.Document;
 import org.jdom.Element;
 
 /**
- *
+ *@TODO (DIFF) Church range color self definable
  * @author Charon
  */
 public class ChurchManager {
 
-    public static final int NO_CHURCH = 0;
-    public static final int RANGE1 = 4;
-    public static final int RANGE2 = 6;
-    public static final int RANGE3 = 8;
     private static Logger logger = Logger.getLogger("ChurchManager");
     private static ChurchManager SINGLETON = null;
-    private Hashtable<Integer, Integer> lChurches = null;
+    private List<Church> churches = null;
     private DefaultTableModel model = null;
     private List<ChurchManagerListener> mManagerListeners = null;
 
@@ -47,19 +47,19 @@ public class ChurchManager {
     }
 
     ChurchManager() {
-        lChurches = new Hashtable<Integer, Integer>();
+        churches = new LinkedList<Church>();
         mManagerListeners = new LinkedList<ChurchManagerListener>();
         model = new javax.swing.table.DefaultTableModel(
                 new Object[][]{},
                 new String[]{
-                    "Spieler", "Dorf", "Reichweite"
+                    "Spieler", "Dorf", "Reichweite", "Farbe"
                 }) {
 
             Class[] types = new Class[]{
-                String.class, Village.class, Integer.class
+                String.class, Village.class, Integer.class, Color.class
             };
             boolean[] canEdit = new boolean[]{
-                false, false, true
+                false, false, false, true
             };
 
             @Override
@@ -72,6 +72,7 @@ public class ChurchManager {
                 return canEdit[columnIndex];
             }
         };
+
     }
 
     public synchronized void addChurchManagerListener(ChurchManagerListener pListener) {
@@ -90,7 +91,7 @@ public class ChurchManager {
     /**Load markers from file
      */
     public void loadChurchesFromFile(String pFile) {
-        lChurches.clear();
+        churches.clear();
         if (pFile == null) {
             logger.error("File argument is 'null'");
             return;
@@ -98,15 +99,14 @@ public class ChurchManager {
         File churchFile = new File(pFile);
         if (churchFile.exists()) {
             if (logger.isDebugEnabled()) {
-                logger.debug("Reading markers from '" + pFile + "'");
+                logger.debug("Reading churches from '" + pFile + "'");
             }
             try {
                 Document d = JaxenUtils.getDocument(churchFile);
                 for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//churches/church")) {
                     try {
-                        Integer id = Integer.parseInt(e.getChild("village").getText());
-                        Integer range = Integer.parseInt(e.getChild("range").getText());
-                        lChurches.put(id, range);
+                        Church c = new Church(e);
+                        churches.add(c);
                     } catch (Exception inner) {
                         //ignored, marker invalid
                     }
@@ -132,9 +132,8 @@ public class ChurchManager {
             Document d = JaxenUtils.getDocument(pFile);
             for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//churches/church")) {
                 try {
-                    Integer id = Integer.parseInt(e.getChild("village").getText());
-                    Integer range = Integer.parseInt(e.getChild("range").getText());
-                    lChurches.put(id, range);
+                    Church c = new Church(e);
+                    churches.add(c);
                 } catch (Exception inner) {
                     //ignored, marker invalid
                     }
@@ -155,15 +154,8 @@ public class ChurchManager {
         logger.debug("Generating churches export data");
 
         String result = "<churches>\n";
-        Enumeration<Integer> ids = lChurches.keys();
-        while (ids.hasMoreElements()) {
-            Integer id = ids.nextElement();
-            Integer range = lChurches.get(id);
-            String xml = "<church>\n";
-            xml += "<village>" + id + "</village>\n";
-            xml += "<range>" + range + "</range>\n";
-            xml += "</church>\n";
-            result += xml;
+        for (Church c : churches) {
+            result += c.toXml() + "\n";
         }
         result += "</churches>\n";
         logger.debug("Export data generated successfully");
@@ -190,15 +182,8 @@ public class ChurchManager {
         try {
             FileWriter w = new FileWriter(pFile);
             w.write("<churches>\n");
-            Enumeration<Integer> ids = lChurches.keys();
-            while (ids.hasMoreElements()) {
-                Integer id = ids.nextElement();
-                Integer range = lChurches.get(id);
-                String xml = "<church>\n";
-                xml += "<village>" + id + "</village>\n";
-                xml += "<range>" + range + "</range>\n";
-                xml += "</church>\n";
-                w.write(xml);
+            for (Church c : churches) {
+                w.write(c.toXml() + "\n");
             }
             w.write("</churches>");
             w.flush();
@@ -221,50 +206,103 @@ public class ChurchManager {
         logger.info("Not implemented yet");
     }
 
-    public int getChurchRange(Village v) {
+    public Church getChurch(Village v) {
         if (v == null) {
-            return NO_CHURCH;
+            return null;
         }
-        Integer range = lChurches.get(v.getId());
-        if (range == null) {
-            return NO_CHURCH;
+        Church[] churchesArray = churches.toArray(new Church[]{});
+        for (Church c : churchesArray) {
+            if (c.getVillageId() == v.getId()) {
+                return c;
+            }
         }
-
-        return range;
+        return null;
     }
 
     public List<Village> getChurchVillages() {
         List<Village> villages = new LinkedList<Village>();
-        Enumeration<Integer> ids = lChurches.keys();
-        while (ids.hasMoreElements()) {
-            villages.add(DataHolder.getSingleton().getVillagesById().get(ids.nextElement()));
+        Church[] churchesArray = churches.toArray(new Church[]{});
+        for (Church c : churchesArray) {
+            villages.add(DataHolder.getSingleton().getVillagesById().get(c.getVillageId()));
         }
         return villages;
     }
 
     public void addChurch(Village pVillage, int pRange) {
         if (pVillage != null) {
-            lChurches.put(pVillage.getId(), pRange);
+            Church c = new Church();
+            c.setVillageId(pVillage.getId());
+            c.setRange(pRange);
+            Tribe t = pVillage.getTribe();
+            Marker m = MarkerManager.getSingleton().getMarker(t);
+            if (m == null && t != null) {
+                m = MarkerManager.getSingleton().getMarker(t.getAlly());
+            }
+            if (m != null) {
+                //set range to marker color
+                c.setRangeColor(m.getMarkerColor());
+            } else {
+                if (t != null) {
+                    //set range to default enemy color (RED/WHITE)
+                    Color DEFAULT = Color.WHITE;
+                    try {
+                        if (Integer.parseInt(GlobalOptions.getProperty("default.mark")) == 1) {
+                            DEFAULT = Color.RED;
+                        }
+                        try {
+                            Village v = DataHolder.getSingleton().getVillagesById().get(c.getVillageId());
+                            if (v != null) {
+                                Tribe tr = v.getTribe();
+                                if (tr != null && tr.equals(DSWorkbenchMainFrame.getSingleton().getCurrentUser())) {
+                                    DEFAULT = Color.YELLOW;
+                                }
+                            }
+                        } catch (Exception ignore) {
+                        }
+                    } catch (Exception inner) {
+                        DEFAULT = Color.LIGHT_GRAY;
+                    }
+                    c.setRangeColor(DEFAULT);
+                } else {
+                    //set range to barbarian color
+                    c.setRangeColor(Color.LIGHT_GRAY);
+                }
+            }
+            churches.add(c);
         }
         fireChurchesChangedEvents();
     }
 
     public void removeChurch(Village pVillage) {
         if (pVillage != null) {
-            lChurches.remove(pVillage.getId());
+            Church[] churchesArray = churches.toArray(new Church[]{});
+            for (Church c : churchesArray) {
+                if (c.getVillageId() == pVillage.getId()) {
+                    churches.remove(c);
+                    break;
+                }
+            }
+            fireChurchesChangedEvents();
         }
-        fireChurchesChangedEvents();
     }
 
     public void removeChurches(Village[] pVillages) {
         if (pVillages != null) {
+            Church[] churchesArray = churches.toArray(new Church[]{});
             for (Village v : pVillages) {
                 if (v != null) {
-                    lChurches.remove(v.getId());
+                    //village is valid
+                    for (Church c : churchesArray) {
+                        //iterate through all churches
+                        if (c.getVillageId() == v.getId()) {
+                            //remove current church
+                            churches.remove(c);
+                        }
+                    }
                 }
             }
+            fireChurchesChangedEvents();
         }
-        fireChurchesChangedEvents();
     }
 
     public void churchesUpdatedExternally() {
@@ -273,19 +311,18 @@ public class ChurchManager {
 
     /**Get the table model which contains all markers*/
     public DefaultTableModel getTableModel() {
-
         //remove former rows
         while (model.getRowCount() > 0) {
             model.removeRow(0);
         }
 
-        Enumeration<Integer> ids = lChurches.keys();
-        while (ids.hasMoreElements()) {
-            Integer id = ids.nextElement();
-            Integer range = lChurches.get(id);
-            Village v = DataHolder.getSingleton().getVillagesById().get(id);
+        Church[] churchesArray = churches.toArray(new Church[]{});
+        for (Church c : churchesArray) {
+            Integer range = c.getRange();
+            Village v = DataHolder.getSingleton().getVillagesById().get(c.getVillageId());
+            Color col = c.getRangeColor();
             String tribe = (v.getTribe() == null) ? "Barbaren" : v.getTribe().getName();
-            model.addRow(new Object[]{tribe, v, range});
+            model.addRow(new Object[]{tribe, v, range, col});
         }
         return model;
     }

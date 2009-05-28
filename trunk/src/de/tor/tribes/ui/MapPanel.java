@@ -6,6 +6,7 @@
 package de.tor.tribes.ui;
 
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.types.Church;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.util.BrowserCommandSender;
@@ -52,15 +53,10 @@ import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
 /**
- * @TODO (DIFF) Select villages in attack planer from bottom right to top left don't work
  * @TODO (1.X) Add flag-marker for single villages/notes? -> notes as forms? (Version 2.0)
- * @TODO (1.5) Ask conquers interface (http://de41.die-staemme.de/interface.php?func=get_conquer&since=1239873543) for enoblements
- * @TODO (DIFF) Make church range colored based on tribe marker
- * @TODO (DIFF) Add 3 church range tools to speed up adding of churches
- * @TODO (DIFF) Selection tool should be able to filter (only own, only enemy, only ally, only barbarian)
- * @TODO (DIFF) Selection export with tabs instead of spaces to insert data into TCalc
- * @TODO (DIFF) Runtime radar as fixed ranges, show always!? ask size every time
+ * @TODO (DIFF) Ask conquers interface (http://de41.die-staemme.de/interface.php?func=get_conquer&since=1239873543) for enoblements
  * @TODO (1.5) Add risk estimation for attacks on enemy allies
+ * @TODO (DIFF) Disabled support tool for empty coordinates
  * @author Charon
  */
 public class MapPanel extends javax.swing.JPanel {
@@ -233,6 +229,9 @@ public class MapPanel extends javax.swing.JPanel {
                                 //empty village
                                 return;
                             }
+                        }else{
+                            //no village
+                            return;
                         }
                         VillageSupportFrame.getSingleton().setLocation(e.getPoint());
                         VillageSupportFrame.getSingleton().showSupportFrame(current);
@@ -305,7 +304,7 @@ public class MapPanel extends javax.swing.JPanel {
                     case ImageManager.CURSOR_CHURCH_1: {
                         Village v = getVillageAtMousePos();
                         if (v != null) {
-                            ChurchManager.getSingleton().addChurch(v, ChurchManager.RANGE1);
+                            ChurchManager.getSingleton().addChurch(v, Church.RANGE1);
 
                         }
                         break;
@@ -313,7 +312,7 @@ public class MapPanel extends javax.swing.JPanel {
                     case ImageManager.CURSOR_CHURCH_2: {
                         Village v = getVillageAtMousePos();
                         if (v != null) {
-                            ChurchManager.getSingleton().addChurch(v, ChurchManager.RANGE2);
+                            ChurchManager.getSingleton().addChurch(v, Church.RANGE2);
 
                         }
                         break;
@@ -321,7 +320,7 @@ public class MapPanel extends javax.swing.JPanel {
                     case ImageManager.CURSOR_CHURCH_3: {
                         Village v = getVillageAtMousePos();
                         if (v != null) {
-                            ChurchManager.getSingleton().addChurch(v, ChurchManager.RANGE3);
+                            ChurchManager.getSingleton().addChurch(v, Church.RANGE3);
 
                         }
                         break;
@@ -1332,10 +1331,8 @@ public class MapPanel extends javax.swing.JPanel {
                     false;
             mMapShotListener.fireMapShotDoneEvent();
         } catch (Exception e) {
-            e.printStackTrace();
-            bMapSHotPlaned =
-                    false;
-            logger.error("Creating MapShot failed");
+            bMapSHotPlaned = false;
+            logger.error("Creating MapShot failed", e);
             mMapShotListener.fireMapShotFailedEvent();
         }
 

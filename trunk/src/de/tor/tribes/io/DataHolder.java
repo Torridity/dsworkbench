@@ -15,6 +15,7 @@ import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.DSWorkbenchSettingsDialog;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
+import de.tor.tribes.util.HSQLTest;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.io.BufferedReader;
@@ -136,9 +137,9 @@ public class DataHolder {
                 ServerSettings.getSingleton().loadSettings(GlobalOptions.getSelectedServer());
                 //Integer mapType = ServerSettings.getSingleton().getCoordType();
                /* if (ServerSettings.getSingleton().getCoordType() != 2) {
-                    logger.error("Map type '" + ServerSettings.getSingleton().getCoordType() + "' is not supported yet");
-                    fireDataHolderEvents("Der gewählte Sever wird leider (noch) nicht unterstützt");
-                    return false;
+                logger.error("Map type '" + ServerSettings.getSingleton().getCoordType() + "' is not supported yet");
+                fireDataHolderEvents("Der gewählte Sever wird leider (noch) nicht unterstützt");
+                return false;
                 }*/
                 try {
                     /* Integer bonusType = Integer.parseInt(JaxenUtils.getNodeValue(d, "//coord/bonus_new"));
@@ -362,6 +363,16 @@ public class DataHolder {
             int vc = 0;
             int tc = 0;
             initialize();
+            HSQLTest test = null;
+            /*try {
+                long s = System.currentTimeMillis();
+                test = new HSQLTest("villages");
+                System.out.println("Done " + (System.currentTimeMillis() - s));
+                test.update("CREATE TABLE sample_table ( id INTEGER IDENTITY, x INTEGER, y INTEGER, tribe INTEGER, points INTEGER, type INTEGER)");
+                System.out.println("SUCCESS!");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }*/
             while ((line = r.readLine()) != null) {
                 if (line.equals("<villages>")) {
                     logger.info("Reading villages");
@@ -373,11 +384,19 @@ public class DataHolder {
                     logger.info("Reading allies");
                     step = 3;
                 }
+
                 switch (step) {
                     case 1: {
                         Village v = Village.parseFromPlainData(line);
                         if (v != null) {
                             mVillages[v.getX()][v.getY()] = v;
+                            /*if (test != null) {
+                                try {
+                                    test.update("INSERT INTO sample_table(id, x, y, tribe, points, type) VALUES(" + v.getId() + "," + v.getX() + "," + v.getY() + "," + v.getTribeID() + "," + v.getPoints() + "," + v.getType() + ");");
+                                } catch (Throwable e) {
+                                    System.out.println("Error");
+                                }
+                            }*/
                             vc++;
                         }
                         break;
@@ -402,7 +421,15 @@ public class DataHolder {
                         //sth. else!?
                     }
                 }
+
             }
+            /*if (test != null) {
+                try {
+                    test.shutdown();
+                } catch (Throwable t) {
+                    t.printStackTrace();
+                }
+            }*/
             if (vc == 0 || ac == 0 || tc == 0) {
                 //data obviously invalid
                 logger.error("#villages | #allies | #tribes is 0");
@@ -644,13 +671,13 @@ public class DataHolder {
         logger.debug("Removing empty allies");
         Enumeration<Integer> allyKeys = mAllies.keys();
         List<Ally> toRemove = new LinkedList<Ally>();
-        while(allyKeys.hasMoreElements()){
+        while (allyKeys.hasMoreElements()) {
             Ally a = mAllies.get(allyKeys.nextElement());
-            if(a.getTribes() == null || a.getTribes().isEmpty()){
+            if (a.getTribes() == null || a.getTribes().isEmpty()) {
                 toRemove.add(a);
             }
         }
-        for(Ally a : toRemove){
+        for (Ally a : toRemove) {
             mAllies.remove(a.getId());
         }
 
@@ -766,7 +793,7 @@ public class DataHolder {
     }
 
     public void removeTempData() {
-      /*  mVillagesTable.clear();
+        /*  mVillagesTable.clear();
         mVillagesTable = null;*/
         System.gc();
     }

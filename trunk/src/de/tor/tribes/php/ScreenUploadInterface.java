@@ -137,7 +137,6 @@ public class ScreenUploadInterface {
             rd.close();
         } catch (Exception e) {
             logger.error("Internal error in PSU module", e);
-            e.printStackTrace();
         }
         return result;
     }

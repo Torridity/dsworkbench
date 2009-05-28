@@ -14,7 +14,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 
 /**
- *
+ * @TODO (DIFF) Change colors for better visibility (>10 default, 10<>5 green, 5<>3 yellow, 3<>1 orange, 1<>0 red, over grey)
  * @author Jejkal
  */
 public class ColoredDateCellRenderer implements TableCellRenderer {
@@ -22,7 +22,7 @@ public class ColoredDateCellRenderer implements TableCellRenderer {
     private SimpleDateFormat specialFormat = new SimpleDateFormat("dd.MM.yy HH:mm:ss.SSS");
     private DefaultTableCellRenderer coloredRenderer = null;
     private DefaultTableCellRenderer defaultRenderer = null;
-    private final int TEN_MINUTES = (1000 * 60 * 10);
+    private final int MINUTE = (1000 * 60);
     private final Color LAST_SEGMENT = new Color(255, 100, 0);
 
     public ColoredDateCellRenderer() {
@@ -51,24 +51,40 @@ public class ColoredDateCellRenderer implements TableCellRenderer {
         long t = d.getTime();
         long now = System.currentTimeMillis();
         renderComponent.setText(specialFormat.format(d));
-
+        /*
         if (t <= now) {
-            renderComponent.setBackground(Color.RED);
+        renderComponent.setBackground(Color.RED);
         } else if (t - TEN_MINUTES > now) {
-            //more than 10 minutes in past, do nothing
+        //more than 10 minutes in past, do nothing
+        c = defaultRenderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+        ((JLabel) c).setText(specialFormat.format((Date) value));
+        return c;
+        } else {
+        //do gradient calculation
+        long diff = t - now;
+        float posv = 100.0f * (float) diff / (float) TEN_MINUTES;
+        posv = (int) ((int) posv / 10) * 10;
+        posv /= 100;
+        int r = (int) Math.rint((float) LAST_SEGMENT.getRed() * (1.0f - posv) + (float) Color.YELLOW.getRed() * posv);
+        int g = (int) Math.rint((float) LAST_SEGMENT.getGreen() * (1.0f - posv) + (float) Color.YELLOW.getGreen() * posv);
+        int b = (int) Math.rint((float) LAST_SEGMENT.getBlue() * (1.0f - posv) + (float) Color.YELLOW.getBlue() * posv);
+        renderComponent.setBackground(new Color(r, g, b));
+        }*/
+        if (t <= now) {
+            renderComponent.setBackground(Color.DARK_GRAY);
+        } else if (t - now <= 1 * MINUTE) {
+            renderComponent.setBackground(Color.RED);
+        } else if (t - now <= 3 * MINUTE) {
+            renderComponent.setBackground(new Color(255, 125, 0));
+        } else if (t - now <= 5 * MINUTE) {
+            renderComponent.setBackground(Color.YELLOW);
+        } else if (t - now <= 10 * MINUTE) {
+            renderComponent.setBackground(Color.GREEN);
+        } else {
+            //default color
             c = defaultRenderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
             ((JLabel) c).setText(specialFormat.format((Date) value));
             return c;
-        } else {
-            //do gradient calculation
-            long diff = t - now;
-            float posv = 100.0f * (float) diff / (float) TEN_MINUTES;
-            posv = (int) ((int) posv / 10) * 10;
-            posv /= 100;
-            int r = (int) Math.rint((float) LAST_SEGMENT.getRed() * (1.0f - posv) + (float) Color.YELLOW.getRed() * posv);
-            int g = (int) Math.rint((float) LAST_SEGMENT.getGreen() * (1.0f - posv) + (float) Color.YELLOW.getGreen() * posv);
-            int b = (int) Math.rint((float) LAST_SEGMENT.getBlue() * (1.0f - posv) + (float) Color.YELLOW.getBlue() * posv);
-            renderComponent.setBackground(new Color(r, g, b));
         }
         return c;
     }

@@ -71,4 +71,13 @@ public class ServerManager {
         }
         return null;
     }
+
+    public static double getServerAcceptanceRiseSpeed(String pServerID) {
+        for (DatabaseServerEntry entry : SERVERS) {
+            if (entry.getServerID().equals(pServerID)) {
+                return entry.getAcceptanceRiseSpeed();
+            }
+        }
+        return 1;
+    }
 }

@@ -51,9 +51,6 @@ import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.attack.AttackManager;
 
 /**
- * @TODO (DIFF) Insert result row with nr. of occurances in attack plans of result village
- * @TODO (DIFF) Works now for hierarchical system
- * @TODO (DIFF) Single supports selectable
  * @author Charon
  */
 public class VillageSupportFrame extends javax.swing.JFrame {

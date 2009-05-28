@@ -20,7 +20,6 @@ import java.util.Collections;
 import org.apache.log4j.Logger;
 
 /**
- *@TODO (DIFF) Now more attacks per village are assigned
  * @author Charon
  */
 public class BruteForce extends AbstractAttackAlgorithm {

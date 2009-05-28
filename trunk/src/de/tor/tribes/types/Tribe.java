@@ -8,13 +8,10 @@
  */
 package de.tor.tribes.types;
 
-import de.tor.tribes.io.DataHolder;
-import java.io.Serializable;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.text.NumberFormat;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -113,7 +110,10 @@ public class Tribe implements Comparable {
     }
 
     public short getVillages() {
-        return villages;
+        if (villageList == null) {
+            return 0;
+        }
+        return (short) villageList.size();
     }
 
     public void setVillages(short villages) {

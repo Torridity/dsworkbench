@@ -32,12 +32,14 @@ import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import org.apache.log4j.Logger;
 import de.tor.tribes.types.Tag;
+import de.tor.tribes.ui.models.ConquersTableModel;
 import de.tor.tribes.ui.models.CurrentTribeVillagesModel;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.MainShutdownHook;
 import de.tor.tribes.util.MapShotListener;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.attack.AttackManager;
+import de.tor.tribes.util.conquer.ConquerManager;
 import de.tor.tribes.util.map.FormManager;
 import de.tor.tribes.util.mark.MarkerManager;
 import de.tor.tribes.util.roi.ROIManager;
@@ -57,10 +59,9 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 /**
- * @TODO (DIFF) Reduce min size by task pane
- * @TODO (DIFF) Add kind of profile manager for existing accounts
- * @TODO (DIFF) Shutdown fixes
  * @TODO (1.5?) Add min number to troop filter in attack planer????
+ * @TODO (DIFF) Conquers frame added (ALT F8)
+ * @TODO (1.5) Add licenses to lib path
  * @author  Charon
  */
 public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
@@ -243,6 +244,10 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                         if (jShowChurchFrame.isEnabled()) {
                             DSWorkbenchChurchFrame.getSingleton().setVisible(!DSWorkbenchChurchFrame.getSingleton().isVisible());
                         }
+                    } else if (e.getKeyCode() == KeyEvent.VK_F8) {
+                        if (jShowConquersFrame.isEnabled()) {
+                            DSWorkbenchConquersFrame.getSingleton().setVisible(!DSWorkbenchConquersFrame.getSingleton().isVisible());
+                        }
                     } else if (e.getKeyCode() == KeyEvent.VK_F12) {
                         DSWorkbenchSettingsDialog.getSingleton().setVisible(true);
                     } else if ((e.getKeyCode() == KeyEvent.VK_1) && e.isControlDown() && e.isAltDown() && !e.isShiftDown()) {
@@ -421,6 +426,8 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         DSWorkbenchMarkerFrame.getSingleton().setupMarkerPanel();
         DSWorkbenchChurchFrame.getSingleton().setupChurchPanel();
         DSWorkbenchAttackFrame.getSingleton().setupAttackPanel();
+        ConquersTableModel.getSingleton().setup();
+        DSWorkbenchConquersFrame.getSingleton().setupConquersPanel();
         //update troops table and troops view
         TroopsManagerTableModel.getSingleton().setup();
         DSWorkbenchTroopsFrame.getSingleton().setupTroopsPanel();
@@ -443,6 +450,9 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jShowChurchFrame.setEnabled(ServerSettings.getSingleton().isChurch());
         jChurchRangeBox.setEnabled(ServerSettings.getSingleton().isChurch());
         jROIBox.setModel(new DefaultComboBoxModel(ROIManager.getSingleton().getROIs()));
+
+        ConquerManager.getSingleton().forceUpdate();
+        MapPanel.getSingleton().getMapRenderer().initiateRedraw(0);
         logger.info("Server settings updated");
     }
 
@@ -495,6 +505,8 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         DSWorkbenchAttackFrame.getSingleton().addFrameListener(this);
         DSWorkbenchMarkerFrame.getSingleton().addFrameListener(this);
         DSWorkbenchChurchFrame.getSingleton().addFrameListener(this);
+        ConquersTableModel.getSingleton().setup();
+        DSWorkbenchConquersFrame.getSingleton().addFrameListener(this);
         TroopsManagerTableModel.getSingleton().setup();
         DSWorkbenchTroopsFrame.getSingleton().addFrameListener(this);
         DSWorkbenchRankFrame.getSingleton().addFrameListener(this);
@@ -565,6 +577,17 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                         jShowChurchFrame.setSelected(true);
                         logger.info("Restoring church frame");
                         DSWorkbenchChurchFrame.getSingleton().setVisible(true);
+                    }
+                }
+            } catch (Exception e) {
+            }
+
+            try {
+                if (jShowConquersFrame.isEnabled()) {
+                    if (Boolean.parseBoolean(GlobalOptions.getProperty("conquers.frame.visible"))) {
+                        jShowConquersFrame.setSelected(true);
+                        logger.info("Restoring conquers frame");
+                        DSWorkbenchConquersFrame.getSingleton().setVisible(true);
                     }
                 }
             } catch (Exception e) {
@@ -716,6 +739,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jShowRankFrame = new javax.swing.JCheckBoxMenuItem();
         jShowFormsFrame = new javax.swing.JCheckBoxMenuItem();
         jShowChurchFrame = new javax.swing.JCheckBoxMenuItem();
+        jShowConquersFrame = new javax.swing.JCheckBoxMenuItem();
         jMenu4 = new javax.swing.JMenu();
         jHelpItem = new javax.swing.JMenuItem();
         jAboutItem = new javax.swing.JMenuItem();
@@ -967,17 +991,9 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jMinimapPanel.setLayout(new java.awt.BorderLayout());
 
         jTaskPane1.setBackground(new java.awt.Color(239, 235, 223));
-        com.l2fprod.common.swing.PercentLayout percentLayout1 = new com.l2fprod.common.swing.PercentLayout();
-        percentLayout1.setGap(14);
-        percentLayout1.setOrientation(1);
-        jTaskPane1.setLayout(percentLayout1);
 
         jTaskPaneGroup4.setExpanded(false);
         jTaskPaneGroup4.setTitle(bundle.getString("DSWorkbenchMainFrame.jTaskPaneGroup4.title")); // NOI18N
-        com.l2fprod.common.swing.PercentLayout percentLayout6 = new com.l2fprod.common.swing.PercentLayout();
-        percentLayout6.setGap(2);
-        percentLayout6.setOrientation(1);
-        jTaskPaneGroup4.getContentPane().setLayout(percentLayout6);
 
         jNavigationPanel.setBackground(new java.awt.Color(239, 235, 223));
 
@@ -1177,7 +1193,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                 .addGroup(jNavigationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jRefreshButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jCenterCoordinateIngame, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(42, Short.MAX_VALUE))
+                .addContainerGap(32, Short.MAX_VALUE))
         );
         jNavigationPanelLayout.setVerticalGroup(
             jNavigationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1226,10 +1242,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
 
         jTaskPaneGroup1.setBackground(new java.awt.Color(239, 235, 223));
         jTaskPaneGroup1.setTitle(bundle.getString("DSWorkbenchMainFrame.jTaskPaneGroup1.title")); // NOI18N
-        com.l2fprod.common.swing.PercentLayout percentLayout2 = new com.l2fprod.common.swing.PercentLayout();
-        percentLayout2.setGap(2);
-        percentLayout2.setOrientation(1);
-        jTaskPaneGroup1.getContentPane().setLayout(percentLayout2);
 
         jInformationPanel.setBackground(new java.awt.Color(239, 235, 223));
 
@@ -1333,10 +1345,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
 
         jTaskPaneGroup5.setExpanded(false);
         jTaskPaneGroup5.setTitle(bundle.getString("DSWorkbenchMainFrame.jTaskPaneGroup5.title")); // NOI18N
-        com.l2fprod.common.swing.PercentLayout percentLayout8 = new com.l2fprod.common.swing.PercentLayout();
-        percentLayout8.setGap(2);
-        percentLayout8.setOrientation(1);
-        jTaskPaneGroup5.getContentPane().setLayout(percentLayout8);
 
         jPanel2.setBackground(new java.awt.Color(239, 235, 223));
 
@@ -1412,10 +1420,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
 
         jTaskPaneGroup2.setExpanded(false);
         jTaskPaneGroup2.setTitle(bundle.getString("DSWorkbenchMainFrame.jTaskPaneGroup2.title")); // NOI18N
-        com.l2fprod.common.swing.PercentLayout percentLayout9 = new com.l2fprod.common.swing.PercentLayout();
-        percentLayout9.setGap(2);
-        percentLayout9.setOrientation(1);
-        jTaskPaneGroup2.getContentPane().setLayout(percentLayout9);
 
         jPanel3.setBackground(new java.awt.Color(239, 235, 223));
         jPanel3.setMaximumSize(new java.awt.Dimension(293, 70));
@@ -1464,7 +1468,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(jLabel6)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jROIBox, 0, 204, Short.MAX_VALUE))
+                        .addComponent(jROIBox, 0, 18, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                         .addComponent(jRemoveROIButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -1491,10 +1495,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
 
         jTaskPaneGroup3.setExpanded(false);
         jTaskPaneGroup3.setTitle(bundle.getString("DSWorkbenchMainFrame.jTaskPaneGroup3.title")); // NOI18N
-        com.l2fprod.common.swing.PercentLayout percentLayout5 = new com.l2fprod.common.swing.PercentLayout();
-        percentLayout5.setGap(2);
-        percentLayout5.setOrientation(1);
-        jTaskPaneGroup3.getContentPane().setLayout(percentLayout5);
 
         jPanel4.setBackground(new java.awt.Color(239, 235, 223));
 
@@ -1525,7 +1525,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addComponent(jLabel4)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jUVIDField, javax.swing.GroupLayout.DEFAULT_SIZE, 206, Short.MAX_VALUE))
+                        .addComponent(jUVIDField))
                     .addComponent(jUVModeButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
@@ -1702,6 +1702,15 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             }
         });
         jMenu2.add(jShowChurchFrame);
+
+        jShowConquersFrame.setBackground(new java.awt.Color(239, 235, 223));
+        jShowConquersFrame.setText(bundle.getString("DSWorkbenchMainFrame.jShowConquersFrame.text")); // NOI18N
+        jShowConquersFrame.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fireShowConquersFrameEvent(evt);
+            }
+        });
+        jMenu2.add(jShowConquersFrame);
 
         jMenuBar1.add(jMenu2);
 
@@ -2425,6 +2434,13 @@ private void firePanelMin(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fire
     jPanel2.setSize(jPanel2.getWidth(), 10);
 }//GEN-LAST:event_firePanelMin
 
+private void fireShowConquersFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireShowConquersFrameEvent
+    if (jShowConquersFrame.isEnabled()) {
+        DSWorkbenchConquersFrame.getSingleton().setVisible(!DSWorkbenchConquersFrame.getSingleton().isVisible());
+        jShowConquersFrame.setSelected(DSWorkbenchConquersFrame.getSingleton().isVisible());
+    }
+}//GEN-LAST:event_fireShowConquersFrameEvent
+
     private void centerROI(int pId) {
         try {
             String item = (String) jROIBox.getItemAt(pId);
@@ -2602,6 +2618,8 @@ private void firePanelMin(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fire
             jShowFormsFrame.setSelected(DSWorkbenchFormFrame.getSingleton().isVisible());
         } else if (pSource == DSWorkbenchChurchFrame.getSingleton()) {
             jShowChurchFrame.setSelected(DSWorkbenchChurchFrame.getSingleton().isVisible());
+        } else if (pSource == DSWorkbenchConquersFrame.getSingleton()) {
+            jShowConquersFrame.setSelected(DSWorkbenchConquersFrame.getSingleton().isVisible());
         }
     }
 
@@ -2780,6 +2798,7 @@ private void firePanelMin(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fire
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JCheckBoxMenuItem jShowAttackFrame;
     private javax.swing.JCheckBoxMenuItem jShowChurchFrame;
+    private javax.swing.JCheckBoxMenuItem jShowConquersFrame;
     private javax.swing.JCheckBoxMenuItem jShowFormsFrame;
     private javax.swing.JCheckBox jShowMapPopup;
     private javax.swing.JCheckBoxMenuItem jShowMarkerFrame;

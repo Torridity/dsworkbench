@@ -57,7 +57,6 @@ import net.java.dev.colorchooser.ColorChooser;
 /**
  * @TODO (1.X) Integrate browser access for linux
  * @TODO (1.5) Shortcuts editable
- * @TODO (DIFF) Shortcuts for map regions (direct access via main frame and shortcuts)
  * @author Jejkal
  */
 public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
@@ -2355,7 +2354,6 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         if (!checkSettings()) {
             return;
         }
-
         DSWorkbenchMainFrame.getSingleton().serverSettingsChangedEvent();
         setVisible(false);
         MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.ALL_LAYERS);

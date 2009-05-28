@@ -17,6 +17,7 @@ import java.awt.Rectangle;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
+import javax.swing.UIManager;
 import org.apache.log4j.Logger;
 
 /**
@@ -51,20 +52,20 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame {
     }
 
     public void updateFormList() {
-            AbstractForm[] forms = null;
-            jFormsList.invalidate();
-            if (jToggleVisibleOnlyButton.isSelected()) {
-                forms = FormManager.getSingleton().getForms().toArray(new AbstractForm[]{});
-            } else {
-                forms = FormManager.getSingleton().getVisibleForms().toArray(new AbstractForm[]{});
-            }
+        AbstractForm[] forms = null;
+        jFormsList.invalidate();
+        if (jToggleVisibleOnlyButton.isSelected()) {
+            forms = FormManager.getSingleton().getForms().toArray(new AbstractForm[]{});
+        } else {
+            forms = FormManager.getSingleton().getVisibleForms().toArray(new AbstractForm[]{});
+        }
 
-            DefaultListModel model = new DefaultListModel();
-            for (AbstractForm f : forms) {
-                model.addElement(f);
-            }
-            jFormsList.setModel(model);
-            jFormsList.revalidate();       
+        DefaultListModel model = new DefaultListModel();
+        for (AbstractForm f : forms) {
+            model.addElement(f);
+        }
+        jFormsList.setModel(model);
+        jFormsList.revalidate();
     }
 
     /** This method is called from within the constructor to
@@ -230,6 +231,8 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame {
 
     private void fireRemoveFormEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireRemoveFormEvent
         try {
+            UIManager.put("OptionPane.noButtonText", "Nein");
+            UIManager.put("OptionPane.yesButtonText", "Ja");
             Object[] forms = jFormsList.getSelectedValues();
             if ((forms != null) && (forms.length > 0)) {
                 int l = forms.length;
@@ -244,6 +247,8 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame {
         } catch (Exception e) {
             logger.warn("Failed to remove form", e);
         }
+        UIManager.put("OptionPane.noButtonText", "No");
+        UIManager.put("OptionPane.yesButtonText", "Yes");
     }//GEN-LAST:event_fireRemoveFormEvent
 
     private void fireToggleVisibleOnlyEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireToggleVisibleOnlyEvent

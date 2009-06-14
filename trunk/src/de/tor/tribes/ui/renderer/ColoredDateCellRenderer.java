@@ -14,7 +14,6 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 
 /**
- * @TODO (DIFF) Change colors for better visibility (>10 default, 10<>5 green, 5<>3 yellow, 3<>1 orange, 1<>0 red, over grey)
  * @author Jejkal
  */
 public class ColoredDateCellRenderer implements TableCellRenderer {

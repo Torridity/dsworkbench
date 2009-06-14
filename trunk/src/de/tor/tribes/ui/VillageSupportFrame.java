@@ -786,7 +786,7 @@ public class VillageSupportFrame extends javax.swing.JFrame {
                         if (units[j].getPlainName().equals("spear") || units[j].getPlainName().equals("sword") || units[j].getPlainName().equals("archer") || units[j].getPlainName().equals("heavy")) {
                             VillageTroopsHolder troops = TroopsManager.getSingleton().getTroopsForVillage(v);
                             if (troops != null) {
-                                int cnt = troops.getTroopsOfUnit(units[j]);
+                                int cnt = troops.getTroopsInVillage().get(units[j]);
                                 if (forceTable.get(units[j]) != null) {
                                     forceTable.put(units[j], forceTable.get(units[j]) + cnt);
                                 } else {
@@ -798,7 +798,7 @@ public class VillageSupportFrame extends javax.swing.JFrame {
                         if (!units[j].getPlainName().equals("spy") && !units[j].getPlainName().equals("ram") && !units[j].getPlainName().equals("snob")) {
                             VillageTroopsHolder troops = TroopsManager.getSingleton().getTroopsForVillage(v);
                             if (troops != null) {
-                                int cnt = troops.getTroopsOfUnit(units[j]);
+                                int cnt = troops.getTroopsInVillage().get(units[j]);
                                 if (forceTable.get(units[j]) != null) {
                                     forceTable.put(units[j], forceTable.get(units[j]) + cnt);
                                 } else {
@@ -817,7 +817,7 @@ public class VillageSupportFrame extends javax.swing.JFrame {
                 if (units[j].getPlainName().equals("spear") || units[j].getPlainName().equals("sword") || units[j].getPlainName().equals("archer") || units[j].getPlainName().equals("heavy")) {
                     VillageTroopsHolder troops = TroopsManager.getSingleton().getTroopsForVillage(mCurrentVillage);
                     if (troops != null) {
-                        int cnt = troops.getTroopsOfUnit(units[j]);
+                        int cnt = troops.getTroopsInVillage().get(units[j]);
                         if (forceTable.get(units[j]) != null) {
                             forceTable.put(units[j], forceTable.get(units[j]) + cnt);
                         } else {
@@ -829,7 +829,7 @@ public class VillageSupportFrame extends javax.swing.JFrame {
                 if (!units[j].getPlainName().equals("spy") && !units[j].getPlainName().equals("ram") && !units[j].getPlainName().equals("snob")) {
                     VillageTroopsHolder troops = TroopsManager.getSingleton().getTroopsForVillage(mCurrentVillage);
                     if (troops != null) {
-                        int cnt = troops.getTroopsOfUnit(units[j]);
+                        int cnt = troops.getTroopsInVillage().get(units[j]);
                         if (forceTable.get(units[j]) != null) {
                             forceTable.put(units[j], forceTable.get(units[j]) + cnt);
                         } else {
@@ -854,8 +854,6 @@ public class VillageSupportFrame extends javax.swing.JFrame {
         }
         JOptionPane.showMessageDialog(jResultDialog, buffer.toString(), "Maximale Kampfkraft", JOptionPane.INFORMATION_MESSAGE);
     }
-
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField jArriveTime;
     private javax.swing.JSpinner jArriveTimeSpinner;

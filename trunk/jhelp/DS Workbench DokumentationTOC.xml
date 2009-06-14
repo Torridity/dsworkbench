@@ -96,6 +96,8 @@
 
    <tocitem text="Kirchen&#252;bersicht " target="pages.church_view" image="images.tictac_grey"/>
 
+   <tocitem text="Eroberungen " target="pages.conquers_view" image="images.tictac_grey"/>
+
   </tocitem>
   <tocitem text="Shortcuts " target="pages.shortcuts" image="images.tictac_orange"/>
 

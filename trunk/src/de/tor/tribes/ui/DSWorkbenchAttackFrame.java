@@ -16,7 +16,6 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import javax.swing.JOptionPane;
-import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.DefaultTableModel;
 import de.tor.tribes.util.BrowserCommandSender;
@@ -78,7 +77,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         } catch (Exception e) {
             //setting not available
         }
-jTaskPaneGroup1.setBackground(Constants.DS_BACK);
+        jTaskPaneGroup1.setBackground(Constants.DS_BACK);
         //color scrollpanes of selection dialog
         jScrollPane1.getViewport().setBackground(Constants.DS_BACK_LIGHT);
         jScrollPane2.getViewport().setBackground(Constants.DS_BACK_LIGHT);
@@ -192,6 +191,13 @@ jTaskPaneGroup1.setBackground(Constants.DS_BACK);
         jArriveDateField = new javax.swing.JSpinner();
         jModifyArrivalOption = new javax.swing.JRadioButton();
         jMoveTimeOption = new javax.swing.JRadioButton();
+        jRandomizeOption = new javax.swing.JRadioButton();
+        jPanel5 = new javax.swing.JPanel();
+        jLabel17 = new javax.swing.JLabel();
+        jLabel18 = new javax.swing.JLabel();
+        jRandomField = new javax.swing.JFormattedTextField();
+        jLabel19 = new javax.swing.JLabel();
+        jNotRandomToNightBonus = new javax.swing.JCheckBox();
         buttonGroup1 = new javax.swing.ButtonGroup();
         jAddPlanDialog = new javax.swing.JDialog();
         jLabel10 = new javax.swing.JLabel();
@@ -596,6 +602,68 @@ jTaskPaneGroup1.setBackground(Constants.DS_BACK);
             }
         });
 
+        buttonGroup1.add(jRandomizeOption);
+        jRandomizeOption.setText(bundle.getString("DSWorkbenchAttackFrame.jRandomizeOption.text")); // NOI18N
+        jRandomizeOption.setOpaque(false);
+        jRandomizeOption.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                fireModifyTimeEvent(evt);
+            }
+        });
+
+        jPanel5.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        jLabel17.setText(bundle.getString("DSWorkbenchAttackFrame.jLabel17.text")); // NOI18N
+        jLabel17.setEnabled(false);
+
+        jLabel18.setText(bundle.getString("DSWorkbenchAttackFrame.jLabel18.text")); // NOI18N
+        jLabel18.setEnabled(false);
+
+        jRandomField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(java.text.NumberFormat.getIntegerInstance())));
+        jRandomField.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        jRandomField.setText(bundle.getString("DSWorkbenchAttackFrame.jFormattedTextField1.text")); // NOI18N
+        jRandomField.setEnabled(false);
+
+        jLabel19.setText(bundle.getString("DSWorkbenchAttackFrame.jLabel19.text")); // NOI18N
+        jLabel19.setEnabled(false);
+
+        jNotRandomToNightBonus.setSelected(true);
+        jNotRandomToNightBonus.setText(bundle.getString("DSWorkbenchAttackFrame.jNotRandomToNightBonus.text")); // NOI18N
+        jNotRandomToNightBonus.setEnabled(false);
+        jNotRandomToNightBonus.setOpaque(false);
+
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jNotRandomToNightBonus, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 245, Short.MAX_VALUE)
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addComponent(jLabel17)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel18)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jRandomField, javax.swing.GroupLayout.DEFAULT_SIZE, 110, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel19)))
+                .addContainerGap())
+        );
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel17)
+                    .addComponent(jLabel18)
+                    .addComponent(jRandomField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel19))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jNotRandomToNightBonus)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
         javax.swing.GroupLayout jTimeChangeDialogLayout = new javax.swing.GroupLayout(jTimeChangeDialog.getContentPane());
         jTimeChangeDialog.getContentPane().setLayout(jTimeChangeDialogLayout);
         jTimeChangeDialogLayout.setHorizontalGroup(
@@ -603,6 +671,8 @@ jTaskPaneGroup1.setBackground(Constants.DS_BACK);
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jTimeChangeDialogLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jTimeChangeDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jPanel5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jRandomizeOption, javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jModifyArrivalOption, javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jMoveTimeOption, javax.swing.GroupLayout.Alignment.LEADING)
@@ -624,7 +694,11 @@ jTaskPaneGroup1.setBackground(Constants.DS_BACK);
                 .addComponent(jModifyArrivalOption)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 49, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addComponent(jRandomizeOption)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jTimeChangeDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jOKButton)
                     .addComponent(jCancelButton))
@@ -936,16 +1010,8 @@ jTaskPaneGroup1.setBackground(Constants.DS_BACK);
         });
 
         jTaskPane1.setOpaque(false);
-        com.l2fprod.common.swing.PercentLayout percentLayout1 = new com.l2fprod.common.swing.PercentLayout();
-        percentLayout1.setGap(14);
-        percentLayout1.setOrientation(1);
-        jTaskPane1.setLayout(percentLayout1);
 
         jTaskPaneGroup1.setTitle(bundle.getString("DSWorkbenchAttackFrame.jTaskPaneGroup1.title")); // NOI18N
-        com.l2fprod.common.swing.PercentLayout percentLayout2 = new com.l2fprod.common.swing.PercentLayout();
-        percentLayout2.setGap(2);
-        percentLayout2.setOrientation(1);
-        jTaskPaneGroup1.getContentPane().setLayout(percentLayout2);
 
         jRemoveAttackButton.setBackground(new java.awt.Color(239, 235, 223));
         jRemoveAttackButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_remove.png"))); // NOI18N
@@ -994,10 +1060,6 @@ jTaskPaneGroup1.setBackground(Constants.DS_BACK);
         jTaskPane1.add(jTaskPaneGroup1);
 
         jTaskPaneGroup2.setTitle(bundle.getString("DSWorkbenchAttackFrame.jTaskPaneGroup2.title")); // NOI18N
-        com.l2fprod.common.swing.PercentLayout percentLayout3 = new com.l2fprod.common.swing.PercentLayout();
-        percentLayout3.setGap(2);
-        percentLayout3.setOrientation(1);
-        jTaskPaneGroup2.getContentPane().setLayout(percentLayout3);
 
         jMarkAllButton.setBackground(new java.awt.Color(239, 235, 223));
         jMarkAllButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_selectAllOrNone.gif"))); // NOI18N
@@ -1057,10 +1119,6 @@ jTaskPaneGroup1.setBackground(Constants.DS_BACK);
         jTaskPane1.add(jTaskPaneGroup2);
 
         jTaskPaneGroup3.setTitle(bundle.getString("DSWorkbenchAttackFrame.jTaskPaneGroup3.title")); // NOI18N
-        com.l2fprod.common.swing.PercentLayout percentLayout4 = new com.l2fprod.common.swing.PercentLayout();
-        percentLayout4.setGap(2);
-        percentLayout4.setOrientation(1);
-        jTaskPaneGroup3.getContentPane().setLayout(percentLayout4);
 
         jCopyUnformattedToClipboardButton.setBackground(new java.awt.Color(239, 235, 223));
         jCopyUnformattedToClipboardButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_clipboard.png"))); // NOI18N
@@ -1100,10 +1158,6 @@ jTaskPaneGroup1.setBackground(Constants.DS_BACK);
         jTaskPane1.add(jTaskPaneGroup3);
 
         jTaskPaneGroup4.setTitle(bundle.getString("DSWorkbenchAttackFrame.jTaskPaneGroup4.title")); // NOI18N
-        com.l2fprod.common.swing.PercentLayout percentLayout5 = new com.l2fprod.common.swing.PercentLayout();
-        percentLayout5.setGap(2);
-        percentLayout5.setOrientation(1);
-        jTaskPaneGroup4.getContentPane().setLayout(percentLayout5);
 
         jNotifyButton.setBackground(new java.awt.Color(239, 235, 223));
         jNotifyButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_alert.png"))); // NOI18N
@@ -1755,12 +1809,12 @@ private void fireCloseTimeChangeDialogEvent(java.awt.event.MouseEvent evt) {//GE
                     //later if first index is selected
                     //if later, add diff to arrival, else remove diff from arrival
                     arrive += diff;
-                    AttackManager.getSingleton().getAttackPlan(AttackManagerTableModel.getSingleton().getActiveAttackPlan()).get(row).setArriveTime(new Date(arrive));
+                    attacks.get(row).setArriveTime(new Date(arrive));
                 }
 
                 jAttackTable.revalidate();
                 jAttackTable.repaint();//.updateUI();
-            } else {
+            } else if (jModifyArrivalOption.isSelected()) {
                 Date arrive = (Date) jArriveDateField.getValue();
                 jAttackTable.invalidate();
                 for (int i : rows) {
@@ -1770,6 +1824,36 @@ private void fireCloseTimeChangeDialogEvent(java.awt.event.MouseEvent evt) {//GE
                     AttackManager.getSingleton().getAttackPlan(AttackManagerTableModel.getSingleton().getActiveAttackPlan()).get(row).setArriveTime(arrive);
                 }
 
+                jAttackTable.revalidate();
+                jAttackTable.repaint();//.updateUI();
+            } else if (jRandomizeOption.isSelected()) {
+                long rand = (Long) jRandomField.getValue() * 60 * 60 * 1000;
+                jAttackTable.invalidate();
+                for (int i : rows) {
+                    int row = jAttackTable.convertRowIndexToModel(i);
+                    List<Attack> attacks = AttackManager.getSingleton().getAttackPlan(AttackManagerTableModel.getSingleton().getActiveAttackPlan());
+                    Calendar c = Calendar.getInstance();
+                    boolean valid = false;
+                    while (!valid) {
+                        //random until valid value was found
+                        long arrive = attacks.get(row).getArriveTime().getTime();
+                        //later if first index is selected
+                        //if later, add diff to arrival, else remove diff from arrival
+                        int sign = (Math.random() > .5) ? 1 : -1;
+                        arrive = (long) (arrive + (sign * Math.random() * rand));
+
+                        c.setTimeInMillis(arrive);
+                        int hours = c.get(Calendar.HOUR_OF_DAY);
+                        if (hours >= 0 && hours < 8 && jNotRandomToNightBonus.isSelected()) {
+                            //only invalid if in night bonus and this is not allowed
+                            valid = false;
+                        } else {
+                            valid = true;
+                        }
+                    }
+
+                    attacks.get(row).setArriveTime(c.getTime());
+                }
                 jAttackTable.revalidate();
                 jAttackTable.repaint();//.updateUI();
             }
@@ -1944,19 +2028,31 @@ private void jDoMoveToPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:even
 }//GEN-LAST:event_jDoMoveToPlanEvent
 
 private void fireModifyTimeEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireModifyTimeEvent
-    boolean moveMode = true;
-    if (evt.getSource() == jModifyArrivalOption) {
-        moveMode = false;
+    boolean moveMode = false;
+    boolean arriveMode = false;
+    boolean randomMode = false;
+    if (evt.getSource() == jMoveTimeOption) {
+        moveMode = true;
+    } else if (evt.getSource() == jModifyArrivalOption) {
+        arriveMode = true;
+    } else if (evt.getSource() == jRandomizeOption) {
+        randomMode = true;
     }
-
     jLabel5.setEnabled(moveMode);
     jLabel6.setEnabled(moveMode);
     jLabel7.setEnabled(moveMode);
     jMinuteField.setEnabled(moveMode);
     jHourField.setEnabled(moveMode);
     jDayField.setEnabled(moveMode);
-    jLabel8.setEnabled(!moveMode);
-    jArriveDateField.setEnabled(!moveMode);
+    //set arrive options
+    jLabel8.setEnabled(arriveMode);
+    jArriveDateField.setEnabled(arriveMode);
+    //random options
+    jLabel17.setEnabled(randomMode);
+    jLabel18.setEnabled(randomMode);
+    jLabel19.setEnabled(randomMode);
+    jRandomField.setEnabled(randomMode);
+    jNotRandomToNightBonus.setEnabled(randomMode);
 }//GEN-LAST:event_fireModifyTimeEvent
 
 private void fireCopyAttacksEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCopyAttacksEvent
@@ -2077,7 +2173,6 @@ private void fireAttackFrameAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) 
         //setup renderer and general view
         jAttackTable.setDefaultRenderer(Date.class, new ColoredDateCellRenderer());
 
-
         jAttackTable.setDefaultEditor(Date.class, new DateSpinEditor());
         jAttackTable.setDefaultEditor(UnitHolder.class, new UnitCellEditor());
         jAttackTable.setDefaultEditor(Village.class, new VillageCellEditor());
@@ -2160,6 +2255,9 @@ private void fireAttackFrameAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) 
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
+    private javax.swing.JLabel jLabel17;
+    private javax.swing.JLabel jLabel18;
+    private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -2180,12 +2278,16 @@ private void fireAttackFrameAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) 
     private javax.swing.JButton jNoSourceVillageButton;
     private javax.swing.JButton jNoTargetVillageButton;
     private javax.swing.JButton jNotDrawMarkedButton;
+    private javax.swing.JCheckBox jNotRandomToNightBonus;
     private javax.swing.JToggleButton jNotifyButton;
     private javax.swing.JButton jOKButton;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
+    private javax.swing.JFormattedTextField jRandomField;
+    private javax.swing.JRadioButton jRandomizeOption;
     private javax.swing.JButton jRemoveAttackButton;
     private javax.swing.JDialog jRenamePlanDialog;
     private javax.swing.JScrollPane jScrollPane1;

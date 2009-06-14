@@ -15,7 +15,8 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 /**
- *
+ * @TODO (1.6) Fix to new troop structure
+ * @TODO (1.6) Add question if overwrite
  * @author Jejkal
  */
 public class ReportParser {

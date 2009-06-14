@@ -108,13 +108,13 @@ public class SupportCalculator {
         if (troops == null) {
             return null;
         }
-        List<Integer> availableTroops = troops.getTroops();
+       // List<Integer> availableTroops = troops.getTroops();
 
         UnitHolder slowestPossible = null;
         while (allowedKeys.hasMoreElements()) {
             UnitHolder unit = allowedKeys.nextElement();
-            int index = pUnitTable.get(unit);
-            int availCount = availableTroops.get(index);
+            //int index = pUnitTable.get(unit);
+            int availCount = troops.getTroopsInVillage().get(unit);
             if (availCount > pMinNumber) {
                 long ms = (long) (DSCalculator.calculateMoveTimeInSeconds(pSource, pTarget, unit.getSpeed()) * 1000);
                 if (pArrive.getTime() - ms > System.currentTimeMillis()) {

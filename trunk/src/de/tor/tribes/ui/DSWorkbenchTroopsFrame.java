@@ -6,34 +6,37 @@
 package de.tor.tribes.ui;
 
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
-import de.tor.tribes.ui.models.CurrentTribeVillagesModel;
 import de.tor.tribes.ui.models.TroopsManagerTableModel;
 import de.tor.tribes.util.Constants;
 import javax.swing.table.DefaultTableCellRenderer;
 import org.apache.log4j.Logger;
 import de.tor.tribes.util.GlobalOptions;
-import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.TroopsManagerListener;
-import java.awt.Component;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.ImageIcon;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JTable;
 import javax.swing.event.ChangeEvent;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import de.tor.tribes.ui.renderer.NumberFormatCellRenderer;
+import de.tor.tribes.util.troops.TroopsManager;
+import de.tor.tribes.util.troops.VillageTroopsHolder;
+import java.awt.Component;
+import java.text.NumberFormat;
+import java.util.Arrays;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JLabel;
+import javax.swing.JTable;
 import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
 
 /**
- * @TODO (DIFF) Troop strength update corrected
  * @author  Jejkal
  */
 public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements TroopsManagerListener {
@@ -42,6 +45,7 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
     private static DSWorkbenchTroopsFrame SINGLETON = null;
     private List<DefaultTableCellRenderer> renderers = new LinkedList<DefaultTableCellRenderer>();
     private List<ImageIcon> mPowerIcons = new LinkedList<ImageIcon>();
+    private TroopInfoChartPanel infoPanel = null;
 
     public static synchronized DSWorkbenchTroopsFrame getSingleton() {
         if (SINGLETON == null) {
@@ -97,6 +101,17 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
             logger.error("Failed to read table header icons", e);
         }
         jAddTroopsDialog.pack();
+        infoPanel = new TroopInfoChartPanel();
+        jPanel2.add(infoPanel);
+        jTroopsTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) {
+                    fireTableSelectionChangedEvent();
+                }
+            }
+        });
 
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
         GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.troops_view", GlobalOptions.getHelpBroker().getHelpSet());
@@ -125,6 +140,17 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
+        jTroopsViewTypeBox = new javax.swing.JComboBox();
+        jLabel2 = new javax.swing.JLabel();
+        jPanel2 = new javax.swing.JPanel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        jLabel9 = new javax.swing.JLabel();
+        jLabel10 = new javax.swing.JLabel();
 
         jAddTroopsDialog.setTitle("Dorf  hinzufügen");
         jAddTroopsDialog.setAlwaysOnTop(true);
@@ -199,6 +225,7 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
             }
         ));
         jTroopsTable.setOpaque(false);
+        jTroopsTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane1.setViewportView(jTroopsTable);
 
         jButton1.setBackground(new java.awt.Color(239, 235, 223));
@@ -228,13 +255,81 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
             }
         });
 
+        jTroopsViewTypeBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Im Dorf", "Eigene", "Außerhalb", "Unterwegs", "Unterstützung" }));
+        jTroopsViewTypeBox.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                fireChangeViewTypeEvent(evt);
+            }
+        });
+
+        jLabel2.setText("Angezeigte Truppen");
+
+        jPanel2.setLayout(new java.awt.BorderLayout());
+
+        jLabel3.setBackground(new java.awt.Color(0, 255, 0));
+        jLabel3.setMaximumSize(new java.awt.Dimension(14, 14));
+        jLabel3.setMinimumSize(new java.awt.Dimension(14, 14));
+        jLabel3.setOpaque(true);
+        jLabel3.setPreferredSize(new java.awt.Dimension(14, 14));
+
+        jLabel4.setText("Unterstützung");
+
+        jLabel5.setBackground(new java.awt.Color(0, 0, 255));
+        jLabel5.setMaximumSize(new java.awt.Dimension(14, 14));
+        jLabel5.setMinimumSize(new java.awt.Dimension(14, 14));
+        jLabel5.setOpaque(true);
+        jLabel5.setPreferredSize(new java.awt.Dimension(14, 14));
+
+        jLabel6.setText("Eigene");
+
+        jLabel7.setBackground(new java.awt.Color(255, 255, 0));
+        jLabel7.setMaximumSize(new java.awt.Dimension(14, 14));
+        jLabel7.setMinimumSize(new java.awt.Dimension(14, 14));
+        jLabel7.setOpaque(true);
+        jLabel7.setPreferredSize(new java.awt.Dimension(14, 14));
+
+        jLabel8.setText("Außerhalb");
+
+        jLabel9.setBackground(new java.awt.Color(255, 0, 0));
+        jLabel9.setMaximumSize(new java.awt.Dimension(14, 14));
+        jLabel9.setMinimumSize(new java.awt.Dimension(14, 14));
+        jLabel9.setOpaque(true);
+        jLabel9.setPreferredSize(new java.awt.Dimension(14, 14));
+
+        jLabel10.setText("Unterwegs");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 531, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel6))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel4))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel8))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel10)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 136, Short.MAX_VALUE)
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jTroopsViewTypeBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 531, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -254,7 +349,29 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
                         .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 413, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 359, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel4))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel6))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel8))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel10)))
+                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jTroopsViewTypeBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel2)))
                 .addContainerGap())
         );
 
@@ -314,7 +431,27 @@ private void fireRemoveTroopsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
 }//GEN-LAST:event_fireRemoveTroopsEvent
 
 private void fireAddTroopsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireAddTroopsEvent
-    jVillageBox.setModel(CurrentTribeVillagesModel.getModel());
+    DefaultComboBoxModel model = new DefaultComboBoxModel();
+    boolean empty = true;
+    try {
+        String playerID = GlobalOptions.getProperty("player." + GlobalOptions.getSelectedServer());
+        Tribe t = DataHolder.getSingleton().getTribeByName(playerID);
+        Village[] villages = t.getVillageList().toArray(new Village[]{});
+        Arrays.sort(villages, Village.CASE_INSENSITIVE_ORDER);
+        for (Village v : villages) {
+            if (TroopsManager.getSingleton().getTroopsForVillage(v) == null) {
+                model.addElement(v);
+                empty = false;
+            }
+        }
+    } catch (Exception e) {
+        logger.error("Failed to update tribe villages model", e);
+        model = new DefaultComboBoxModel(new String[]{"keine Dörfer"});
+    }
+    if (empty) {
+        model = new DefaultComboBoxModel(new String[]{"Alle vorhanden"});
+    }
+    jVillageBox.setModel(model);
     jAddTroopsDialog.setLocationRelativeTo(this);
     jAddTroopsDialog.setVisible(true);
 }//GEN-LAST:event_fireAddTroopsEvent
@@ -329,17 +466,20 @@ private void fireTroopAddActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST
                 for (int i = 0; i < units; i++) {
                     emptyUnitList.add(0);
                 }
+
                 if (TroopsManager.getSingleton().getTroopsForVillage(v) == null) {
                     TroopsManager.getSingleton().addTroopsForVillage(v, emptyUnitList);
                     JOptionPane.showMessageDialog(jAddTroopsDialog, "Truppen hinzugefügt", "Information", JOptionPane.INFORMATION_MESSAGE);
                 } else {
                     JOptionPane.showMessageDialog(jAddTroopsDialog, "Für das gewählte Dorf sind bereits Truppeninformationen vorhanden.", "Information", JOptionPane.INFORMATION_MESSAGE);
                 }
+
             }
         } catch (Exception e) {
             logger.error("Failed to add empty troop list", e);
             JOptionPane.showMessageDialog(jAddTroopsDialog, "Fehler beim hinzufügen der Truppen", "Warnung", JOptionPane.WARNING_MESSAGE);
         }
+
     } else {
         jAddTroopsDialog.setVisible(false);
     }
@@ -348,12 +488,61 @@ private void fireTroopAddActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST
 private void fireCenterSelectionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCenterSelectionEvent
     try {
         int row = jTroopsTable.convertRowIndexToModel(jTroopsTable.getSelectedRow());
-        Village v = (Village) jTroopsTable.getValueAt(row, 1);
+        Village v = (Village) jTroopsTable.getModel().getValueAt(row, 1);
         DSWorkbenchMainFrame.getSingleton().centerVillage(v);
     } catch (Exception e) {
         logger.error("Failed to center village", e);
     }
 }//GEN-LAST:event_fireCenterSelectionEvent
+
+private void fireChangeViewTypeEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireChangeViewTypeEvent
+    if (evt.getStateChange() == java.awt.event.ItemEvent.SELECTED) {
+        int index = jTroopsViewTypeBox.getSelectedIndex();
+        if (index == -1) {
+            jTroopsViewTypeBox.setSelectedIndex(0);
+            index =
+                    0;
+        }
+
+        TroopsManagerTableModel.getSingleton().setViewType(index);
+    }
+}//GEN-LAST:event_fireChangeViewTypeEvent
+
+    protected void fireTableSelectionChangedEvent() {
+        try {
+            int row = jTroopsTable.getSelectedRow();
+            if (row == -1) {
+                return;
+            }
+            Village v = (Village) jTroopsTable.getValueAt(row, 1);
+            VillageTroopsHolder holder = null;
+            if (v != null) {
+                holder = TroopsManager.getSingleton().getTroopsForVillage(v);
+            }
+            if (holder != null) {
+                infoPanel.setVillage(v);
+                infoPanel.updateUI();
+                int own = holder.getTroopPopCount(TroopsManagerTableModel.SHOW_OWN_TROOPS);
+                int inVillage = holder.getTroopPopCount(TroopsManagerTableModel.SHOW_TROOPS_IN_VILLAGE);
+                int outside = holder.getTroopPopCount(TroopsManagerTableModel.SHOW_TROOPS_OUTSIDE);
+                int ontheway = holder.getTroopPopCount(TroopsManagerTableModel.SHOW_TROOPS_ON_THE_WAY);
+                NumberFormat nf = NumberFormat.getInstance();
+                nf.setMaximumFractionDigits(0);
+                nf.setMinimumFractionDigits(0);
+                jLabel4.setText("Unterstützung (" + nf.format(inVillage - own) + ")");
+                jLabel6.setText("Eigene (" + nf.format(own) + ")");
+                jLabel8.setText("Außerhalb (" + nf.format(outside) + ")");
+                jLabel10.setText("Unterwegs (" + nf.format(ontheway) + ")");
+            } else {
+                jLabel4.setText("Unterstützung");
+                jLabel6.setText("Eigene");
+                jLabel8.setText("Außerhalb");
+                jLabel10.setText("Unterwegs");
+            }
+
+        } catch (Exception e) {
+        }
+    }
 
     protected void setupTroopsPanel() {
         jTroopsTable.invalidate();
@@ -368,7 +557,8 @@ private void fireCenterSelectionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
         DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
 
             @Override
-            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            public Component getTableCellRendererComponent(
+                    JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
                 Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
                 c.setBackground(Constants.DS_BACK);
                 DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
@@ -382,6 +572,7 @@ private void fireCenterSelectionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
                     } catch (Exception e) {
                         r.setText(DataHolder.getSingleton().getUnits().get(column - 3).getName());
                     }
+
                 } else {
                     if (column == unitCount + 3) {
                         //off col
@@ -396,12 +587,14 @@ private void fireCenterSelectionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
                         //def archer col
                         r.setIcon(mPowerIcons.get(3));
                     }
+
                 }
                 return r;
             }
         };
 
-        for (int i = 0; i < jTroopsTable.getColumnCount(); i++) {
+        for (int i = 0; i <
+                jTroopsTable.getColumnCount(); i++) {
             TableColumn column = jTroopsTable.getColumnModel().getColumn(i);
             column.setHeaderRenderer(headerRenderer);
             if ((i > 2 && i < DataHolder.getSingleton().getUnits().size() + 3)) {
@@ -409,8 +602,10 @@ private void fireCenterSelectionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
                 column.setPreferredWidth(60);
             //column.setResizable(false);
             }
+
             renderers.add(headerRenderer);
         }
+
         jTroopsTable.revalidate();
         TroopsManager.getSingleton().forceUpdate();
     }
@@ -421,7 +616,8 @@ private void fireCenterSelectionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
             jTroopsTable.invalidate();
             jTroopsTable.getTableHeader().setReorderingAllowed(false);
 
-            for (int i = 0; i < jTroopsTable.getColumnCount(); i++) {
+            for (int i = 0; i <
+                    jTroopsTable.getColumnCount(); i++) {
                 jTroopsTable.getColumnModel().getColumn(i).setHeaderRenderer(renderers.get(i));
             }
 
@@ -430,6 +626,7 @@ private void fireCenterSelectionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
         } catch (Exception e) {
             logger.error("Failed to update troops table", e);
         }
+
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jAddButton;
@@ -439,10 +636,21 @@ private void fireCenterSelectionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JCheckBox jTroopsInformationAlwaysOnTop;
     private javax.swing.JTable jTroopsTable;
+    private javax.swing.JComboBox jTroopsViewTypeBox;
     private javax.swing.JComboBox jVillageBox;
     // End of variables declaration//GEN-END:variables
 }

@@ -31,7 +31,6 @@ import org.jdom.Document;
 import org.jdom.Element;
 
 /**
- * @TODO(1.5) Add rise speed to database
  * @author Charon
  */
 public class ConquerManager {
@@ -117,7 +116,8 @@ public class ConquerManager {
             //merge conquers and world data
             logger.debug("Merging conquer data with world data");
             try {
-                for (Conquer c : conquers) {
+                Conquer[] conquerA = conquers.toArray(new Conquer[]{});
+                for (Conquer c : conquerA) {
                     Village v = DataHolder.getSingleton().getVillagesById().get(c.getVillageID());
                     Tribe loser = DataHolder.getSingleton().getTribes().get(c.getLoser());
                     Tribe winner = DataHolder.getSingleton().getTribes().get(c.getWinner());
@@ -143,6 +143,8 @@ public class ConquerManager {
                     }
                 }
             } catch (Exception e) {
+                //setting last update to 0 to avoid errors
+                lastUpdate = 0;
             }
             updateAcceptance();
             MapPanel.getSingleton().getMapRenderer().initiateRedraw(0);
@@ -168,10 +170,13 @@ public class ConquerManager {
             FileWriter w = new FileWriter(pFile);
             w.write("<conquers>\n");
             w.write("<lastUpdate>" + getLastUpdate() + "</lastUpdate>\n");
-            for (Conquer c : conquers) {
-                String xml = c.toXml();
-                if (xml != null) {
-                    w.write(xml + "\n");
+            Conquer[] conquerA = conquers.toArray(new Conquer[]{});
+            for (Conquer c : conquerA) {
+                if (c != null) {
+                    String xml = c.toXml();
+                    if (xml != null) {
+                        w.write(xml + "\n");
+                    }
                 }
             }
             w.write("</conquers>");
@@ -185,6 +190,8 @@ public class ConquerManager {
                 logger.info("Ignoring error, server directory does not exists yet");
             } else {
                 logger.error("Failed to save conquers", e);
+                //try to delete errornous file
+                new File(pFile).delete();
             }
         }
     }
@@ -198,7 +205,8 @@ public class ConquerManager {
         }
         logger.debug(" - using " + risePerHour + " as acceptance increment value");
         List<Conquer> toRemove = new LinkedList<Conquer>();
-        for (Conquer c : conquers) {
+        Conquer[] conquersA = conquers.toArray(new Conquer[]{});
+        for (Conquer c : conquersA) {
             Village v = DataHolder.getSingleton().getVillagesById().get(c.getVillageID());
             if (v == null) {
                 toRemove.add(c);
@@ -252,7 +260,8 @@ public class ConquerManager {
                     int newOwner = Integer.parseInt(data[2]);
                     int oldOwner = Integer.parseInt(data[3]);
                     boolean exists = false;
-                    for (Conquer c : conquers) {
+                    Conquer[] conquerA = conquers.toArray(new Conquer[]{});
+                    for (Conquer c : conquerA) {
                         if (c.getVillageID() == villageID) {
                             //already exists
                             c.setWinner(newOwner);
@@ -317,7 +326,8 @@ public class ConquerManager {
         if (pVillage == null) {
             return null;
         }
-        for (Conquer c : conquers) {
+        Conquer[] conquerA = conquers.toArray(new Conquer[]{});
+        for (Conquer c : conquerA) {
             if (c.getVillageID() == pVillage.getId()) {
                 return c;
             }
@@ -351,7 +361,8 @@ public class ConquerManager {
 
         int grey = 0;
         int friendly = 0;
-        for (Conquer c : conquers) {
+        Conquer[] conquerA = conquers.toArray(new Conquer[]{});
+        for (Conquer c : conquerA) {
             if (c.getLoser() == 0) {
                 grey++;
             } else {
@@ -399,10 +410,13 @@ class ConquerUpdateThread extends Thread {
     @Override
     public void run() {
         while (true) {
-            ConquerManager.getSingleton().updateConquers();
             try {
-                Thread.sleep(FIVE_MINUTES);
-            } catch (Exception e) {
+                ConquerManager.getSingleton().updateConquers();
+                try {
+                    Thread.sleep(FIVE_MINUTES);
+                } catch (Exception e) {
+                }
+            } catch (Exception ignore) {
             }
         }
     }

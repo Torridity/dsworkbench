@@ -5,6 +5,7 @@
 package de.tor.tribes.ui.models;
 
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.util.troops.TroopsManager;
@@ -22,10 +23,16 @@ import javax.swing.table.AbstractTableModel;
  */
 public class TroopsManagerTableModel extends AbstractTableModel {
 
+    public final static int SHOW_TROOPS_IN_VILLAGE = 0;
+    public final static int SHOW_OWN_TROOPS = 1;
+    public final static int SHOW_TROOPS_OUTSIDE = 2;
+    public final static int SHOW_TROOPS_ON_THE_WAY = 3;
+    public final static int SHOW_FORGEIGN_TROOPS = 4;
     Class[] types = null;
     String[] colNames = null;
     private static TroopsManagerTableModel SINGLETON = null;
     private NumberFormat nf = null;
+    private int viewType = SHOW_TROOPS_IN_VILLAGE;
 
     public static synchronized TroopsManagerTableModel getSingleton() {
         if (SINGLETON == null) {
@@ -117,6 +124,11 @@ public class TroopsManagerTableModel extends AbstractTableModel {
         return false;
     }
 
+    public void setViewType(int type) {
+        viewType = type;
+        fireTableDataChanged();
+    }
+
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         Village row = TroopsManager.getSingleton().getVillages()[rowIndex];
@@ -135,20 +147,36 @@ public class TroopsManagerTableModel extends AbstractTableModel {
                 if (columnIndex < 3 + unitCount) {
                     try {
                         int troopIndex = columnIndex - 3;
-                        return TroopsManager.getSingleton().getTroopsForVillage(row).getTroops().get(troopIndex);
+                        UnitHolder unit = DataHolder.getSingleton().getUnits().get(troopIndex);
+                        switch (viewType) {
+                            case SHOW_OWN_TROOPS:
+                                return TroopsManager.getSingleton().getTroopsForVillage(row).getOwnTroops().get(unit);
+                            case SHOW_TROOPS_OUTSIDE:
+                                return TroopsManager.getSingleton().getTroopsForVillage(row).getTroopsOutside().get(unit);
+                            case SHOW_TROOPS_ON_THE_WAY:
+                                return TroopsManager.getSingleton().getTroopsForVillage(row).getTroopsOnTheWay().get(unit);
+                            case SHOW_FORGEIGN_TROOPS:
+                                int own = TroopsManager.getSingleton().getTroopsForVillage(row).getOwnTroops().get(unit);
+                                int inVillage = TroopsManager.getSingleton().getTroopsForVillage(row).getTroopsInVillage().get(unit);
+                                double res = inVillage - own;
+                                return (res >= 0) ? res : 0;
+                            default:
+                                return TroopsManager.getSingleton().getTroopsForVillage(row).getTroopsInVillage().get(unit);
+                        }
+                    //    return TroopsManager.getSingleton().getTroopsForVillage(row).getTroops().get(troopIndex);
                     } catch (Exception e) {
                         return 0;
                     }
                 } else {
                     //troop power columns
                     if (columnIndex == unitCount + 3) {
-                        return TroopsManager.getSingleton().getTroopsForVillage(row).getOffValue();
+                        return TroopsManager.getSingleton().getTroopsForVillage(row).getOffValue(viewType);
                     } else if (columnIndex == unitCount + 4) {
-                        return TroopsManager.getSingleton().getTroopsForVillage(row).getDefValue();
+                        return TroopsManager.getSingleton().getTroopsForVillage(row).getDefValue(viewType);
                     } else if (columnIndex == unitCount + 5) {
-                        return TroopsManager.getSingleton().getTroopsForVillage(row).getDefCavalryValue();
+                        return TroopsManager.getSingleton().getTroopsForVillage(row).getDefCavalryValue(viewType);
                     } else {
-                        return TroopsManager.getSingleton().getTroopsForVillage(row).getDefArcherValue();
+                        return TroopsManager.getSingleton().getTroopsForVillage(row).getDefArcherValue(viewType);
                     }
                 }
             }
@@ -173,12 +201,37 @@ public class TroopsManagerTableModel extends AbstractTableModel {
             default: {
                 int troopIndex = pCol - 3;
                 Village row = TroopsManager.getSingleton().getVillages()[pRow];
-                //set current troops
-                TroopsManager.getSingleton().getTroopsForVillage(row).getTroops().set(troopIndex, (Integer) pValue);
+                UnitHolder unit = DataHolder.getSingleton().getUnits().get(troopIndex);
+                Integer value = null;
                 try {
-                    TroopsManager.getSingleton().getTroopsForVillage(row).recalculateTroopsPower();
+                    value = (Integer) pValue;
                 } catch (Exception e) {
+                    return;
                 }
+                if (viewType == SHOW_FORGEIGN_TROOPS) {
+                    return;
+                }
+                //set current troops
+                switch (viewType) {
+                    case SHOW_OWN_TROOPS:
+                        TroopsManager.getSingleton().getTroopsForVillage(row).getOwnTroops().put(unit, value);
+                        break;
+                    case SHOW_TROOPS_OUTSIDE:
+                        TroopsManager.getSingleton().getTroopsForVillage(row).getTroopsOutside().put(unit, value);
+                        break;
+                    case SHOW_TROOPS_ON_THE_WAY:
+                        TroopsManager.getSingleton().getTroopsForVillage(row).getTroopsOnTheWay().put(unit, value);
+                        break;
+                    default:
+                        TroopsManager.getSingleton().getTroopsForVillage(row).getTroopsInVillage().put(unit, value);
+                }
+
+
+                //    TroopsManager.getSingleton().getTroopsForVillage(row).getTroops().set(troopIndex, (Integer) pValue);
+                /*try {
+                TroopsManager.getSingleton().getTroopsForVillage(row).recalculateTroopsPower();
+                } catch (Exception e) {
+                }*/
                 //refresh time
                 TroopsManager.getSingleton().getTroopsForVillage(row).setState(Calendar.getInstance().getTime());
                 fireTableDataChanged();

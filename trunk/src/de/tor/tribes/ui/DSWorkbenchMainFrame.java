@@ -40,6 +40,7 @@ import de.tor.tribes.util.MapShotListener;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.attack.AttackManager;
 import de.tor.tribes.util.conquer.ConquerManager;
+import de.tor.tribes.util.dsreal.DSRealManager;
 import de.tor.tribes.util.map.FormManager;
 import de.tor.tribes.util.mark.MarkerManager;
 import de.tor.tribes.util.roi.ROIManager;
@@ -60,8 +61,6 @@ import javax.swing.table.DefaultTableModel;
 
 /**
  * @TODO (1.5?) Add min number to troop filter in attack planer????
- * @TODO (DIFF) Conquers frame added (ALT F8)
- * @TODO (1.5) Add licenses to lib path
  * @author  Charon
  */
 public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
@@ -373,6 +372,19 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         }
 
         try {
+            String val = GlobalOptions.getProperty("show.troops.density");
+            if (val == null) {
+                jShowTroopDensity.setSelected(false);
+                GlobalOptions.addProperty("show.troops.density", Boolean.toString(false));
+            } else {
+                jShowTroopDensity.setSelected(Boolean.parseBoolean(val));
+            }
+        } catch (Exception e) {
+            jShowTroopDensity.setSelected(false);
+            GlobalOptions.addProperty("show.troops.density", Boolean.toString(false));
+        }
+
+        try {
             jRadarSpinner.setEditor(new JSpinner.DateEditor(jRadarSpinner, "HH'h' mm'min'"));
             String val = GlobalOptions.getProperty("radar.size");
             Calendar c = Calendar.getInstance();
@@ -437,14 +449,17 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         }
 
         DSWorkbenchSettingsDialog.getSingleton().setupAttackColorTable();
+        DSWorkbenchRankFrame.getSingleton().setup();
         DSWorkbenchRankFrame.getSingleton().updateAllyList();
         DSWorkbenchRankFrame.getSingleton().updateRankTable();
+
         if (ServerSettings.getSingleton().getCoordType() != 2) {
             jLabel1.setText("K");
             jLabel2.setText("S");
         } else {
             jLabel1.setText("X");
             jLabel2.setText("Y");
+            DSRealManager.getSingleton().checkFilesystem();
         }
 
         jShowChurchFrame.setEnabled(ServerSettings.getSingleton().isChurch());
@@ -707,6 +722,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jChurchRangeBox = new javax.swing.JCheckBox();
         jLabel5 = new javax.swing.JLabel();
         jRadarSpinner = new javax.swing.JSpinner();
+        jShowTroopDensity = new javax.swing.JCheckBox();
         jTaskPaneGroup2 = new com.l2fprod.common.swing.JTaskPaneGroup();
         jPanel3 = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
@@ -1343,7 +1359,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
 
         jTaskPane1.add(jTaskPaneGroup1);
 
-        jTaskPaneGroup5.setExpanded(false);
         jTaskPaneGroup5.setTitle(bundle.getString("DSWorkbenchMainFrame.jTaskPaneGroup5.title")); // NOI18N
 
         jPanel2.setBackground(new java.awt.Color(239, 235, 223));
@@ -1383,19 +1398,29 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             }
         });
 
+        jShowTroopDensity.setText(bundle.getString("DSWorkbenchMainFrame.jShowTroopDensity.text")); // NOI18N
+        jShowTroopDensity.setOpaque(false);
+        jShowTroopDensity.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                fireShowTroopDensityEvent(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jShowMapPopup, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jMarkOnTopBox, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jChurchRangeBox, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jRadarSpinner)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jChurchRangeBox, javax.swing.GroupLayout.DEFAULT_SIZE, 238, Short.MAX_VALUE)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jRadarSpinner, javax.swing.GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE))
+                    .addComponent(jShowTroopDensity, javax.swing.GroupLayout.DEFAULT_SIZE, 238, Short.MAX_VALUE)
+                    .addComponent(jMarkOnTopBox, javax.swing.GroupLayout.DEFAULT_SIZE, 238, Short.MAX_VALUE)
+                    .addComponent(jShowMapPopup, javax.swing.GroupLayout.DEFAULT_SIZE, 238, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -1406,8 +1431,10 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jMarkOnTopBox)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jShowTroopDensity)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jChurchRangeBox)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(10, 10, 10)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
                     .addComponent(jRadarSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -1752,11 +1779,11 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 746, Short.MAX_VALUE)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 788, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jMinimapPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jTaskPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 435, Short.MAX_VALUE)))
+                        .addComponent(jTaskPane1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -2441,6 +2468,10 @@ private void fireShowConquersFrameEvent(java.awt.event.ActionEvent evt) {//GEN-F
     }
 }//GEN-LAST:event_fireShowConquersFrameEvent
 
+private void fireShowTroopDensityEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireShowTroopDensityEvent
+    GlobalOptions.addProperty("show.troops.density", Boolean.toString(jShowTroopDensity.isSelected()));
+}//GEN-LAST:event_fireShowTroopDensityEvent
+
     private void centerROI(int pId) {
         try {
             String item = (String) jROIBox.getItemAt(pId);
@@ -2803,6 +2834,7 @@ private void fireShowConquersFrameEvent(java.awt.event.ActionEvent evt) {//GEN-F
     private javax.swing.JCheckBox jShowMapPopup;
     private javax.swing.JCheckBoxMenuItem jShowMarkerFrame;
     private javax.swing.JCheckBoxMenuItem jShowRankFrame;
+    private javax.swing.JCheckBox jShowTroopDensity;
     private javax.swing.JCheckBoxMenuItem jShowTroopsFrame;
     private com.l2fprod.common.swing.JTaskPane jTaskPane1;
     private com.l2fprod.common.swing.JTaskPaneGroup jTaskPaneGroup1;

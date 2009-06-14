@@ -20,6 +20,7 @@ import de.tor.tribes.ui.DSWorkbenchMainFrame;
 import de.tor.tribes.ui.FormConfigFrame;
 import de.tor.tribes.ui.ImageManager;
 import de.tor.tribes.ui.MapPanel;
+import de.tor.tribes.ui.models.TroopsManagerTableModel;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.GlobalOptions;
@@ -40,6 +41,7 @@ import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Font;
 import java.awt.FontMetrics;
+import java.awt.GradientPaint;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Paint;
@@ -80,7 +82,7 @@ import org.apache.log4j.Logger;
  * 4: Misc. Extended Map Decoration: e.g. troop qualification or active village marker
  * 5: Live Layer: Redraw in every drawing cycle e.g. Drag line, tool popup(?), (troop movement?)
  * 6-16: Free assignable
- * @TODO (DIFF) Added conquers information
+ * @TODO (DIFF) Fixed bonus village graphics error on 9k
  * @author Charon
  */
 /**Thread for updating after scroll operations
@@ -107,7 +109,6 @@ public class MapRenderer extends Thread {
     private int ye = 0;
     private Village mSourceVillage = null;
     private Image mMarkerImage = null;
-    private final NumberFormat nf = NumberFormat.getInstance();
     private Point2D.Double viewStartPoint = null;
     private double currentZoom = 0.0;
     private Village currentUserVillage = null;
@@ -117,8 +118,6 @@ public class MapRenderer extends Thread {
     public MapRenderer() {
         mVisibleVillages = new Village[iVillagesX][iVillagesY];
         setDaemon(true);
-        nf.setMaximumFractionDigits(2);
-        nf.setMinimumFractionDigits(2);
         try {
             //load flag marker
             mMarkerImage = Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("/res/marker.png"));
@@ -225,7 +224,7 @@ public class MapRenderer extends Thread {
                 logger.error("Redrawing map failed", t);
             }
             try {
-                Thread.sleep(50);
+                Thread.sleep(60);
             } catch (InterruptedException ie) {
             }
         }
@@ -274,7 +273,6 @@ public class MapRenderer extends Thread {
         //village end
         int xEndVillage = (int) Math.ceil((double) dCenterX + (double) iVillagesX / 2.0);
         int yEndVillage = (int) Math.ceil((double) dCenterY + (double) iVillagesY / 2.0);
-
 
         //correct village count
         iVillagesX = xEndVillage - xStartVillage;
@@ -588,7 +586,7 @@ public class MapRenderer extends Thread {
                             type = Skin.ID_V5;
                             if (!isLeft) {
                                 if (v.getType() != 0) {
-                                    type = Skin.ID_B4;
+                                    type = Skin.ID_B5;
                                 }
 
                             } else {
@@ -621,7 +619,7 @@ public class MapRenderer extends Thread {
                         type = Skin.ID_DEFAULT_UNDERGROUND;
                         mVisibleVillages[i][j] = null;
                     }
-// </editor-fold>
+                    // </editor-fold>
 
                     //drawing
                     Point p = copyRegions.get(type);
@@ -653,12 +651,6 @@ public class MapRenderer extends Thread {
                     } else {
                         g2d.copyArea(p.x, p.y, width, height, (int) Math.floor(x + dx - p.x), (int) Math.floor(y + dy - p.y));
                     }
-
-                /*  if (selection != null) {
-                if (new Rectangle((int) selection.getXPos(), (int) selection.getYPos(), (int) selection.getXPosEnd() - (int) selection.getXPos(), (int) selection.getYPosEnd() - (int) selection.getYPos()).intersects(v.getVirtualBounds())) {
-                //!?
-                }
-                }*/
                 }
 
                 y += height;
@@ -742,16 +734,6 @@ public class MapRenderer extends Thread {
         }
         }*/
 
-
-        /*  System.out.println("Regions " + copyRegions);
-        System.out.println("Village complete: " + (System.currentTimeMillis() - s));
-        // System.out.println("Preparation: " + (preTime));
-        // System.out.println("Transform: " + (transTime));
-        System.out.println("Drawing: " + (drawTime));
-        System.out.println("Copying: " + (copyTime));
-        //System.out.println("Count: " + cnt);
-        System.out.println("-------");*/
-        // System.out.println(copyRegions);
         g2d.dispose();
         mapRedrawRequired = false;
     }
@@ -766,7 +748,7 @@ public class MapRenderer extends Thread {
         }
 
         int tagsize = (int) Math.rint((double) 18 / currentZoom);
- int conquerSize = (int) Math.rint((double) 16 / currentZoom);
+        int conquerSize = (int) Math.rint((double) 16 / currentZoom);
         BufferedImage layer = null;
         Graphics2D g2d = null;
         //prepare drawing buffer
@@ -861,7 +843,7 @@ public class MapRenderer extends Thread {
                 if (c != null) {
                     //village was recently conquered
                     if (conquerCopyRegion != null) {
-                        g2d.copyArea(conquerCopyRegion.x, conquerCopyRegion.y, conquerCopyRegion.width, conquerCopyRegion.height, r.x + r.width - conquerSize - conquerCopyRegion.x, r.y + r.height - conquerSize-conquerCopyRegion.y);
+                        g2d.copyArea(conquerCopyRegion.x, conquerCopyRegion.y, conquerCopyRegion.width, conquerCopyRegion.height, r.x + r.width - conquerSize - conquerCopyRegion.x, r.y + r.height - conquerSize - conquerCopyRegion.y);
                     } else {
                         g2d.drawImage(mConquerWarning, r.x + r.width - conquerSize, r.y + r.height - conquerSize, conquerSize, conquerSize, null);
                         if (MapPanel.getSingleton().getBounds().contains(new Rectangle(r.x + r.width - conquerSize - 2, r.y + r.height - conquerSize - 2, conquerSize + 2, conquerSize + 2))) {
@@ -904,12 +886,20 @@ public class MapRenderer extends Thread {
             DEFAULT = Color.WHITE;
         }
 
-        g2d.setColor(DEFAULT);
+        g2d.setColor(new Color(0, 0, 0, 0));
         g2d.fillRect(0, 0, wb, hb);
 
+
+        Marker tribe = null;
+        Marker ally = null;
+        boolean own = false;
+        Color before = g2d.getColor();
         Enumeration<Village> villages = villagePositions.keys();
         while (villages.hasMoreElements()) {
             Village v = villages.nextElement();
+            own = false;
+            tribe = null;
+            ally = null;
             Tribe t = (v == null) ? null : v.getTribe();
             Color markerColor = null;
             if (currentUserVillage != null && t == currentUserVillage.getTribe()) {
@@ -918,29 +908,55 @@ public class MapRenderer extends Thread {
                 } else {
                     markerColor = Color.YELLOW;
                 }
-
+                own = true;
             } else {
-                Marker m = null;
                 if (t != null) {
-                    m = MarkerManager.getSingleton().getMarker(t);
-                    if (m == null) {
-                        if (t.getAlly() != null) {
-                            m = MarkerManager.getSingleton().getMarker(t.getAlly());
-                        }
-
+                    tribe = MarkerManager.getSingleton().getMarker(t);
+                    if (t.getAlly() != null) {
+                        ally = MarkerManager.getSingleton().getMarker(t.getAlly());
                     }
-                }
-                if (m != null) {
-                    markerColor = m.getMarkerColor();
-                }
 
+                }
             }
-            if (markerColor != null) {
+            if (markerColor != null || tribe != null || ally != null) {
                 Rectangle vRect = villagePositions.get(v);
-                g2d.setColor(markerColor);
+
+                if (tribe != null && ally != null && !own) {
+                    GeneralPath p = new GeneralPath();
+                    p.moveTo(vRect.getX(), vRect.getY());
+                    p.lineTo(vRect.getX() + vRect.getWidth(), vRect.getY() + vRect.getHeight());
+                    p.lineTo(vRect.getX(), vRect.getY() + vRect.getHeight());
+                    p.closePath();
+                    g2d.setColor(tribe.getMarkerColor());
+                    g2d.fill(p);
+                    p = new GeneralPath();
+                    p.moveTo(vRect.getX(), vRect.getY());
+                    p.lineTo(vRect.getX() + vRect.getWidth(), vRect.getY());
+                    p.lineTo(vRect.getX() + vRect.getWidth(), vRect.getY() + vRect.getHeight());
+                    p.closePath();
+                    g2d.setColor(ally.getMarkerColor());
+                    g2d.fill(p);
+                } else if (tribe != null && !own) {
+                    g2d.setColor(tribe.getMarkerColor());
+                    g2d.fillRect(vRect.x, vRect.y, vRect.width, vRect.height);
+                } else if (ally != null && !own) {
+                    g2d.setColor(ally.getMarkerColor());
+                    g2d.fillRect(vRect.x, vRect.y, vRect.width, vRect.height);
+                } else {
+                    g2d.setColor(markerColor);
+                    g2d.fillRect(vRect.x, vRect.y, vRect.width, vRect.height);
+                }
+            } else {
+                Rectangle vRect = villagePositions.get(v);
+                if (t != null) {
+                    g2d.setColor(DEFAULT);
+                } else {
+                    g2d.setColor(Color.LIGHT_GRAY);
+                }
                 g2d.fillRect(vRect.x, vRect.y, vRect.width, vRect.height);
             }
         }
+        g2d.setColor(before);
     }
 
     /**Render basic decoration e.g. Active village mark and troops type mark*/
@@ -967,7 +983,16 @@ public class MapRenderer extends Thread {
             markTroopTypes = false;
         }
 
+        boolean showTroopDensity = false;
+        try {
+            showTroopDensity = Boolean.parseBoolean(GlobalOptions.getProperty("show.troops.density"));
+        } catch (Exception e) {
+            showTroopDensity = false;
+        }
+
+        Hashtable<Village, Double> values = new Hashtable<Village, Double>();
         Enumeration<Village> villages = villagePositions.keys();
+        double maxDef = 0;
         while (villages.hasMoreElements()) {
             Village v = villages.nextElement();
             Rectangle villageRect = villagePositions.get(v);
@@ -981,6 +1006,17 @@ public class MapRenderer extends Thread {
                 }
             }
 
+            if (showTroopDensity) {
+                VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(v);
+                if (holder != null) {
+                    double def = holder.getDefValue(TroopsManagerTableModel.SHOW_TROOPS_IN_VILLAGE);
+                    values.put(v, def);
+                    if (def > maxDef) {
+                        maxDef = def;
+                    }
+                }
+            }
+
             if (markActiveVillage) {
                 if (currentUserVillage != null) {
                     if (v.compareTo(currentUserVillage) == 0) {
@@ -989,6 +1025,35 @@ public class MapRenderer extends Thread {
                         g2d.drawImage(mMarkerImage, markX, markY - mMarkerImage.getHeight(null), null);
                     }
                 }
+            }
+        }
+
+        if (!showTroopDensity) {
+            //skip density drawing
+            return;
+        }
+
+        Enumeration<Village> keys = values.keys();
+        while (keys.hasMoreElements()) {
+            Village v = keys.nextElement();
+            Rectangle villageRect = villagePositions.get(v);
+            double perc = values.get(v) / maxDef;
+            int alpha = (int) Math.rint(perc * 60);
+            alpha = (alpha > 80) ? 80 : alpha;
+            alpha = 110 - alpha;
+
+            int r = (int) Math.rint((float) 255 * (1.0f - perc) + (float) 180 * perc);
+            int g = (int) Math.rint((float) 0 * (1.0f - perc) + (float) 255 * perc);
+            int b = (int) Math.rint((float) 0 * (1.0f - perc) + (float) 0 * perc);
+
+            //Color c = new Color(0, 255, 0, alpha);
+            Color c = new Color(r, g, b, alpha);
+            int size = (int) Math.rint(perc * 5 * villageRect.width);
+            if (size > 0) {
+                Color cb = g2d.getColor();
+                g2d.setColor(c);
+                g2d.fillOval(villageRect.x - (int) Math.rint((size - villageRect.width) / 2), villageRect.y - (int) Math.rint((size - villageRect.height) / 2), size, size);// 3 * villageRect.width, 3 * villageRect.height);
+                g2d.setColor(cb);
             }
         }
     }
@@ -1262,32 +1327,32 @@ public class MapRenderer extends Thread {
                 Composite com = g2d.getComposite();
                 g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f));
                 Color radiusColor = c.getRangeColor();
-              /*  try {
-                    if (v.getTribe().equals(currentUserVillage.getTribe())) {
-                        radiusColor = Color.YELLOW;
-                    }
+                /*  try {
+                if (v.getTribe().equals(currentUserVillage.getTribe())) {
+                radiusColor = Color.YELLOW;
+                }
                 } catch (Exception e) {
-                    if (v.getTribe() == null) {
-                        radiusColor = Color.LIGHT_GRAY;
-                    } else {
-                        radiusColor = null;
-                    }
+                if (v.getTribe() == null) {
+                radiusColor = Color.LIGHT_GRAY;
+                } else {
+                radiusColor = null;
+                }
                 }
                 if (radiusColor == null) {
-                    Marker m = MarkerManager.getSingleton().getMarker(v.getTribe());
-                    if (m != null) {
-                        radiusColor = m.getMarkerColor();
-                    } else {
-                        try {
-                            if (Integer.parseInt(GlobalOptions.getProperty("default.mark")) == 1) {
-                                radiusColor = Color.RED;
-                            } else {
-                                radiusColor = Color.WHITE;
-                            }
-                        } catch (Exception e) {
-                            radiusColor = Color.WHITE;
-                        }
-                    }
+                Marker m = MarkerManager.getSingleton().getMarker(v.getTribe());
+                if (m != null) {
+                radiusColor = m.getMarkerColor();
+                } else {
+                try {
+                if (Integer.parseInt(GlobalOptions.getProperty("default.mark")) == 1) {
+                radiusColor = Color.RED;
+                } else {
+                radiusColor = Color.WHITE;
+                }
+                } catch (Exception e) {
+                radiusColor = Color.WHITE;
+                }
+                }
                 }*/
                 g2d.setColor(radiusColor);
                 //g2d.setPaint(new RoundGradientPaint(g.getCenterX(), g.getCenterY(), new Color(0, 0, 255, 155), new Point2D.Double(rad * g.getWidth() + g.getWidth(), rad * g.getHeight() + g.getHeight()), new Color(0, 0, 255, 0)));
@@ -1365,7 +1430,6 @@ public class MapRenderer extends Thread {
             }
         }
         //</editor-fold>
-
 
         // <editor-fold defaultstate="collapsed" desc=" Draw radar information ">
         Village radarVillage = MapPanel.getSingleton().getRadarVillage();
@@ -1728,7 +1792,7 @@ public class MapRenderer extends Thread {
         }
         //if no runtime drawing, check troops
         if (!drawDist) {
-            if ((troops == null) || (troops.getTroops().isEmpty())) {
+            if ((troops == null) || (troops.getTroopsInVillage().isEmpty())) {
                 return;
             }
 
@@ -1751,7 +1815,7 @@ public class MapRenderer extends Thread {
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
             if (!drawDist) {
                 //draw troop information
-                int cnt = troops.getTroopsOfUnit(unit);
+                int cnt = troops.getTroopsInVillage().get(unit);
                 if (cnt > 0) {
                     if (unitCount % 2 == 0) {
                         g2d.setColor(Constants.DS_BACK);

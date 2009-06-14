@@ -11,7 +11,6 @@
 package de.tor.tribes.ui.algo;
 
 import de.tor.tribes.util.Constants;
-import de.tor.tribes.util.ServerSettings;
 import java.awt.Font;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -30,22 +29,13 @@ public class MiscSettingsPanel extends javax.swing.JPanel {
     }
 
     public void reset() {
-        jSnobDistSlider.setMaximum(ServerSettings.getSingleton().getSnobRange());
         jAttacksPerTarget.setText("6");
         jCleanOffsPerEnoblement.setText("3");
-        jSnobDistSlider.setValue(35);
-        jSnobDistSlider.updateUI();
-        fireSnobSliderChangedEvent(null);
     }
 
     public void setRandomizeEnabled(boolean pValue) {
         jLabel4.setEnabled(pValue);
         jRandomizeBox.setEnabled(pValue);
-    }
-
-    public void setSnobDistanceEnabled(boolean pValue) {
-        jLabel3.setEnabled(pValue);
-        jSnobDistSlider.setEnabled(pValue);
     }
 
     public void setCleanOffsEnabled(boolean pValue) {
@@ -63,10 +53,6 @@ public class MiscSettingsPanel extends javax.swing.JPanel {
 
     public boolean isRandomize() {
         return (jRandomizeBox.getSelectedIndex() == 1);
-    }
-
-    public int getMaxSnobDistance() {
-        return jSnobDistSlider.getValue();
     }
 
     public boolean validatePanel() {
@@ -138,9 +124,6 @@ public class MiscSettingsPanel extends javax.swing.JPanel {
         jAttacksPerTarget = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
         jCleanOffsPerEnoblement = new javax.swing.JTextField();
-        jLabel3 = new javax.swing.JLabel();
-        jSnobDistSlider = new javax.swing.JSlider();
-        jSliderValueLabel = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jRandomizeBox = new javax.swing.JComboBox();
 
@@ -154,30 +137,12 @@ public class MiscSettingsPanel extends javax.swing.JPanel {
         jAttacksPerTarget.setPreferredSize(new java.awt.Dimension(120, 20));
 
         jLabel2.setText("Wieviele Clean-Offs sollen vor einer möglichen Adelung im Zieldorf eintreffen? ");
+        jLabel2.setEnabled(false);
 
+        jCleanOffsPerEnoblement.setEnabled(false);
         jCleanOffsPerEnoblement.setMaximumSize(new java.awt.Dimension(120, 20));
         jCleanOffsPerEnoblement.setMinimumSize(new java.awt.Dimension(120, 20));
         jCleanOffsPerEnoblement.setPreferredSize(new java.awt.Dimension(120, 20));
-
-        jLabel3.setText("Wieviele Felder darf ein AG maximal laufen?");
-
-        jSnobDistSlider.setMajorTickSpacing(1);
-        jSnobDistSlider.setMaximum(70);
-        jSnobDistSlider.setMinimum(1);
-        jSnobDistSlider.setMinorTickSpacing(1);
-        jSnobDistSlider.setValue(35);
-        jSnobDistSlider.setOpaque(false);
-        jSnobDistSlider.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                fireSnobSliderChangedEvent(evt);
-            }
-        });
-
-        jSliderValueLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jSliderValueLabel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        jSliderValueLabel.setMaximumSize(new java.awt.Dimension(40, 25));
-        jSliderValueLabel.setMinimumSize(new java.awt.Dimension(40, 25));
-        jSliderValueLabel.setPreferredSize(new java.awt.Dimension(40, 25));
 
         jLabel4.setText("In welcher Reihenfolge sollen die Angriffe auf die Zieldörfer verteilt werden?");
         jLabel4.setMaximumSize(new java.awt.Dimension(374, 14));
@@ -198,13 +163,7 @@ public class MiscSettingsPanel extends javax.swing.JPanel {
                             .addComponent(jAttacksPerTarget, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 408, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jCleanOffsPerEnoblement, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jSnobDistSlider, javax.swing.GroupLayout.PREFERRED_SIZE, 279, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jSliderValueLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                            .addComponent(jLabel2))
                         .addContainerGap(63, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -224,33 +183,20 @@ public class MiscSettingsPanel extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jCleanOffsPerEnoblement, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jLabel3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jSliderValueLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jSnobDistSlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
                 .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jRandomizeBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(70, Short.MAX_VALUE))
+                .addContainerGap(133, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
-
-    private void fireSnobSliderChangedEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireSnobSliderChangedEvent
-        jSliderValueLabel.setText(Integer.toString(jSnobDistSlider.getValue()));
-    }//GEN-LAST:event_fireSnobSliderChangedEvent
 //
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField jAttacksPerTarget;
     private javax.swing.JTextField jCleanOffsPerEnoblement;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JComboBox jRandomizeBox;
-    private javax.swing.JLabel jSliderValueLabel;
-    private javax.swing.JSlider jSnobDistSlider;
     // End of variables declaration//GEN-END:variables
 
     public static void main(String[] args) {

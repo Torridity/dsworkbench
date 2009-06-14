@@ -13,8 +13,11 @@ package de.tor.tribes.ui;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Ally;
 import de.tor.tribes.types.Tribe;
+import de.tor.tribes.util.BrowserCommandSender;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
+import de.tor.tribes.util.ServerSettings;
+import de.tor.tribes.util.dsreal.DSRealManager;
 import java.awt.Component;
 import java.awt.event.ItemEvent;
 import java.awt.event.KeyEvent;
@@ -34,7 +37,6 @@ import javax.swing.table.TableRowSorter;
 import org.apache.log4j.Logger;
 
 /**
- *
  * @author Charon
  */
 public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame {
@@ -68,6 +70,16 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame {
         updateRankTable();
     }
 
+    public void setup() {
+        if (ServerSettings.getSingleton().getCoordType() != 2) {
+            jDSRealButton.setEnabled(false);
+            jChartsButton.setEnabled(false);
+        } else {
+            jDSRealButton.setEnabled(true);
+            jChartsButton.setEnabled(true);
+        }
+    }
+
     public void updateRankTable() {
         //build model depending of rank type
         int type = jRankTypeBox.getSelectedIndex();
@@ -84,20 +96,20 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame {
             }
             case 1: {
                 buildAllyRanking();
-                 sorter.setModel(jRankTable.getModel());
+                sorter.setModel(jRankTable.getModel());
                 sorter.setComparator(1, String.CASE_INSENSITIVE_ORDER);
                 sorter.setComparator(2, String.CASE_INSENSITIVE_ORDER);
                 break;
             }
             case 2: {
                 buildBashTribeRanking();
-                 sorter.setModel(jRankTable.getModel());
+                sorter.setModel(jRankTable.getModel());
                 sorter.setComparator(2, String.CASE_INSENSITIVE_ORDER);
                 break;
             }
             case 3: {
                 buildBashAllyRanking();
-                 sorter.setModel(jRankTable.getModel());
+                sorter.setModel(jRankTable.getModel());
                 sorter.setComparator(0, String.CASE_INSENSITIVE_ORDER);
                 sorter.setComparator(1, String.CASE_INSENSITIVE_ORDER);
                 break;
@@ -167,7 +179,7 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame {
                 }) {
 
             Class[] types = new Class[]{
-                Integer.class, String.class, String.class, Double.class, Integer.class, Double.class
+                Integer.class, Tribe.class, String.class, Double.class, Integer.class, Double.class
             };
 
             @Override
@@ -413,6 +425,8 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame {
         jFilterField = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
+        jChartsButton = new javax.swing.JButton();
+        jDSRealButton = new javax.swing.JButton();
 
         setTitle("Rangliste");
 
@@ -434,6 +448,7 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame {
 
             }
         ));
+        jRankTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane1.setViewportView(jRankTable);
 
         jLabel1.setText("Rangliste");
@@ -467,6 +482,7 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame {
         jLabel5.setFont(new java.awt.Font("Tahoma", 0, 10));
         jLabel5.setText("(Ein Ausdruck mit weniger als 3 Zeichen löscht den Filter)");
 
+        jButton1.setBackground(new java.awt.Color(239, 235, 223));
         jButton1.setText("Filtern");
         jButton1.setToolTipText("List mit dem gewählten Ausdruck filtern");
         jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -475,13 +491,35 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame {
             }
         });
 
+        jChartsButton.setBackground(new java.awt.Color(239, 235, 223));
+        jChartsButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/chart.png"))); // NOI18N
+        jChartsButton.setToolTipText("Performance Chart(s) zum markierten Eintrag anzeigen (sponsored by DS Real)");
+        jChartsButton.setMaximumSize(new java.awt.Dimension(59, 37));
+        jChartsButton.setMinimumSize(new java.awt.Dimension(59, 37));
+        jChartsButton.setPreferredSize(new java.awt.Dimension(59, 37));
+        jChartsButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireShowDSRealChartsEvent(evt);
+            }
+        });
+
+        jDSRealButton.setBackground(new java.awt.Color(239, 235, 223));
+        jDSRealButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/dsreal.png"))); // NOI18N
+        jDSRealButton.setToolTipText("DS Real Statistik zum gewählten Eintrag im Browser öffnen");
+        jDSRealButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        jDSRealButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireOpenDSRealEvent(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
                         .addGap(35, 35, 35)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 653, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
@@ -502,12 +540,17 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame {
                                         .addComponent(jButton1))))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                                 .addGap(50, 50, 50)
-                                .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, 628, Short.MAX_VALUE)))))
+                                .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, 628, Short.MAX_VALUE))))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addContainerGap(528, Short.MAX_VALUE)
+                        .addComponent(jDSRealButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jChartsButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+            .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
@@ -524,8 +567,12 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel5)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 345, Short.MAX_VALUE)
-                .addGap(28, 28, 28))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 319, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jChartsButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jDSRealButton))
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -579,6 +626,94 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame {
         }
     }//GEN-LAST:event_fireFilterKeyReleasedEvent
 
+    private void fireShowDSRealChartsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireShowDSRealChartsEvent
+        if (!jChartsButton.isEnabled()) {
+            return;
+        }
+        int type = jRankTypeBox.getSelectedIndex();
+        int row = jRankTable.getSelectedRow();
+        if (row == -1) {
+            return;
+        }
+        row = jRankTable.convertRowIndexToModel(row);
+
+        switch (type) {
+            case 0: {
+                //tribe
+                String tribeName = (String) jRankTable.getModel().getValueAt(row, 1);
+                Tribe t = DataHolder.getSingleton().getTribeByName(tribeName);
+                DSRealManager.getSingleton().getTribePointsChart(t);
+                break;
+            }
+            case 1: {
+                //ally
+                String allyName = (String) jRankTable.getModel().getValueAt(row, 1);
+                Ally a = DataHolder.getSingleton().getAllyByName(allyName);
+                DSRealManager.getSingleton().getAllyPointsChart(a);
+                break;
+            }
+            case 2: {
+                //bash tribe
+                String tribeName = (String) jRankTable.getModel().getValueAt(row, 2);
+                Tribe t = DataHolder.getSingleton().getTribeByName(tribeName);
+                DSRealManager.getSingleton().getTribeBashChart(t);
+                break;
+            }
+            case 3: {
+                //bash ally
+                String allyName = (String) jRankTable.getModel().getValueAt(row, 0);
+                Ally a = DataHolder.getSingleton().getAllyByName(allyName);
+                DSRealManager.getSingleton().getAllyBashChart(a);
+                break;
+            }
+        }
+
+    }//GEN-LAST:event_fireShowDSRealChartsEvent
+
+    private void fireOpenDSRealEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireOpenDSRealEvent
+        if (!jDSRealButton.isEnabled()) {
+            return;
+        }
+        int type = jRankTypeBox.getSelectedIndex();
+        int row = jRankTable.getSelectedRow();
+        if (row == -1) {
+            return;
+        }
+        row = jRankTable.convertRowIndexToModel(row);
+        String url = "http://dsreal.de/index.php?tool=akte&mode=";
+        switch (type) {
+            case 0: {
+                //tribe
+                String tribeName = (String) jRankTable.getModel().getValueAt(row, 1);
+                Tribe t = DataHolder.getSingleton().getTribeByName(tribeName);
+                url += "player&id=" + t.getId() + "&world=" + GlobalOptions.getSelectedServer();
+                break;
+            }
+            case 1: {
+                //ally
+                String allyName = (String) jRankTable.getModel().getValueAt(row, 1);
+                Ally a = DataHolder.getSingleton().getAllyByName(allyName);
+                url += "ally&id=" + a.getId() + "&world=" + GlobalOptions.getSelectedServer();
+                break;
+            }
+            case 2: {
+                //bash tribe
+                String tribeName = (String) jRankTable.getModel().getValueAt(row, 2);
+                Tribe t = DataHolder.getSingleton().getTribeByName(tribeName);
+                url += "player&id=" + t.getId() + "&world=" + GlobalOptions.getSelectedServer();
+                break;
+            }
+            case 3: {
+                //bash ally
+                String allyName = (String) jRankTable.getModel().getValueAt(row, 0);
+                Ally a = DataHolder.getSingleton().getAllyByName(allyName);
+                url += "ally&id=" + a.getId() + "&world=" + GlobalOptions.getSelectedServer();
+                break;
+            }
+        }
+        BrowserCommandSender.openPage(url);
+    }//GEN-LAST:event_fireOpenDSRealEvent
+
     private String getFilter() {
         String filter = jFilterField.getText().toLowerCase();
         if (filter.length() < 3) {
@@ -619,6 +754,8 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame {
     private javax.swing.JComboBox jAllyBox;
     private javax.swing.JCheckBox jAlwaysOnTop;
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jChartsButton;
+    private javax.swing.JButton jDSRealButton;
     private javax.swing.JTextField jFilterField;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel3;

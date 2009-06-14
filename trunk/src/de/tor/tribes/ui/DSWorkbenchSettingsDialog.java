@@ -47,16 +47,15 @@ import java.net.InetSocketAddress;
 import java.net.PasswordAuthentication;
 import java.net.Proxy;
 import java.net.SocketAddress;
-import java.util.Calendar;
 import java.util.Comparator;
-import javax.swing.JSpinner;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import net.java.dev.colorchooser.ColorChooser;
 
 /**
  * @TODO (1.X) Integrate browser access for linux
- * @TODO (1.5) Shortcuts editable
+ * @TODO (1.X) Shortcuts editable
+ * @TODO (1.6) Add option to change shown troops
  * @author Jejkal
  */
 public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
@@ -2545,6 +2544,7 @@ private void fireDownloadDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
         jOKButton.setEnabled(false);
         jCreateAccountButton.setEnabled(false);
         jCancelButton.setEnabled(false);
+        jChangePasswordButton.setEnabled(false);
         jTribeNames.setModel(new DefaultComboBoxModel());
         jStatusArea.setText("");
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);

@@ -3,6 +3,28 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <title>DS Workbench Dokumentation</title>
+<style type="text/css">
+<!--
+.style1 {
+color: #00FF00;
+	background-color:#000000;
+	font-weight: bold;}
+.style2 {
+	color: #FFFF00;
+	background-color:#000000;
+	font-weight: bold;
+}
+.style3 {color: #FF0000;
+	background-color:#000000;
+	font-weight: bold;}
+.style4 {color: #FF9933;
+	background-color:#000000;
+	font-weight: bold;}
+.style6 {color: #666666;
+	background-color:#000000;
+	font-weight: bold;}
+-->
+</style>
 </head>
 
 <body style="background-color:#E1E1E1">
@@ -112,17 +134,11 @@
         <td width="10%"><div align="center"><img src="../images/att_alert.png" width="25" height="25"></div></td>
         <td><a name="attack_alert"></a>Aktiviert die <em>Benachrichtigung</em> bei anstehenden Angriffen. Ist diese Option aktiviert wird im Hintergrund &uuml;berpr&uuml;ft, ob Angriffe in den n&auml;chsten 10 Minuten abgeschickt werden m&uuml;ssen. Ist dies der Fall, erscheint ein <em>Hinweis</em> f&uuml;r eine<em> </em><a href="misc_settings.html"><em>einstellbare Dauer</em></a> und man kann dar&uuml;ber direkt in die Angriffs&uuml;bersicht wechseln. Die <em>Angriffsbenachrichtigung</em> pr&uuml;ft dabei alle Angriffe in allen Angriffspl&auml;ne und bezieht sich <u>nicht</u> auf die aktuelle Markierung. </td>
       </tr>
-	  <tr>
-        <td colspan="2">&nbsp;</td>
-      </tr>
-	   <tr>
-        <td colspan="2"><img src="../images/screens/time_colorbar.gif" width="500" height="45"></td>
-      </tr>
 	   <tr>
         <td colspan="2">&nbsp;</td>
       </tr>
 	   <tr>
-        <td colspan="2">Zur besseren &Uuml;bersicht werden die Abschickzeitpunkt farbig markiert, sofern sie 10 Minuten und weniger in der Zukunft liegen. Die oben zu sehende Farbskala gibt in etwa wieder, welche Farbe die Zeit bei wieviel Minuten bis zum Abschickzeitpunkt annimmt. In <em>DS Workbench</em> sind die Farbunterschiede zwischen den einzelnen Stufen allerdings ein wenig deutlicher getrennt, um eine Unterscheidung zu erm&ouml;glichen. Die Farben werden alle 10 Sekunden aktualisiert, eine Farb&auml;nderung geschieht im Minutentakt. Bei rot markierten Angriffen ist die notwendige Abschickzeit &uuml;berschritten. </td>
+        <td colspan="2">Zur besseren &Uuml;bersicht werden die Abschickzeitpunkt farbig markiert, sofern sie 10 Minuten und weniger in der Zukunft liegen. Angriffe die in den n&auml;chsten 10 Minuten abgeschickt werden m&uuml;ssen sind <span class="style1">Gr&uuml;n</span> gekennzeichnet. Sind es weniger als 5 Minuten bis zum Abschickzeitpunkt f&auml;rbt sich der Angriff <span class="style2">Gelb</span>. Betr&auml;gt die verbleibende Zeit weniger als 3 Minuten wird der Angriff <span class="style4">Orange</span> gef&auml;rbt, bei weniger als einer Minute <span class="style3">Rot</span>. Die Farben werden alle 10 Sekunden aktualisiert. Bei  <span class="style6">Dunkelgrau</span> markierten Angriffen ist die notwendige Abschickzeit &uuml;berschritten. </td>
       </tr>
 	   <tr>
         <td colspan="2">&nbsp;</td>

@@ -4,9 +4,9 @@
  */
 package de.tor.tribes.util.troops;
 
-import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.DSWorkbenchTroopsFrame;
+import de.tor.tribes.ui.models.TroopsManagerTableModel;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.awt.Image;
 import java.io.File;
@@ -81,12 +81,12 @@ public class TroopsManager {
     }
 
     public void addTroopsForVillage(Village pVillage, Date pState, List<Integer> pTroops) {
-        mTroops.put(pVillage, new VillageTroopsHolder(pVillage, pTroops, pState));
+        mTroops.put(pVillage, new VillageTroopsHolder(pVillage, pState));
         fireTroopsChangedEvents();
     }
 
     public void addTroopsForVillageFast(Village pVillage, Date pState, List<Integer> pTroops) {
-        mTroops.put(pVillage, new VillageTroopsHolder(pVillage, pTroops, pState));
+        mTroops.put(pVillage, new VillageTroopsHolder(pVillage, pState));
     }
 
     public VillageTroopsHolder getTroopsForVillage(Village pVillage) {
@@ -104,19 +104,24 @@ public class TroopsManager {
             return null;
         }
         List<Double> l = new LinkedList<Double>();
-        l.add(new Double(holder.getOffValue()));
-        l.add(new Double(holder.getDefValue()));
-        l.add(new Double(holder.getDefCavalryValue()));
-        l.add(new Double(holder.getDefArcherValue()));
+        double off = holder.getOffValue(TroopsManagerTableModel.SHOW_TROOPS_IN_VILLAGE);
+        double def = holder.getDefValue(TroopsManagerTableModel.SHOW_TROOPS_IN_VILLAGE);
+        double defCav = holder.getDefCavalryValue(TroopsManagerTableModel.SHOW_TROOPS_IN_VILLAGE);
+        double defArch = holder.getDefArcherValue(TroopsManagerTableModel.SHOW_TROOPS_IN_VILLAGE);
+
+        l.add(off);
+        l.add(def);
+        l.add(defCav);
+        l.add(defArch);
 
         Collections.sort(l);
 
         double max = l.get(3);
-        if (max == holder.getOffValue()) {
+        if (max == off) {
             return mTroopMarkImages.get(0);
-        } else if (max == holder.getDefValue()) {
+        } else if (max == def) {
             return mTroopMarkImages.get(1);
-        } else if (max == holder.getDefCavalryValue()) {
+        } else if (max == defCav) {
             return mTroopMarkImages.get(2);
         }
         //archer def must be max.
@@ -146,20 +151,22 @@ public class TroopsManager {
             try {
                 Document d = JaxenUtils.getDocument(troopsFile);
                 for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//villages/village")) {
-                    //get basic village without merged information
+                    /*        //get basic village without merged information
                     Village v = DataHolder.getSingleton().getVillagesById().get(Integer.parseInt(e.getChild("id").getText()));
                     Date state = Calendar.getInstance().getTime();
                     try {
-                        state = new Date(Long.parseLong(e.getChild("state").getText()));
+                    state = new Date(Long.parseLong(e.getChild("state").getText()));
                     } catch (Exception ie) {
                     }
                     //get correct village
                     v = DataHolder.getSingleton().getVillages()[v.getX()][v.getY()];
                     List<Integer> troops = new LinkedList<Integer>();
                     for (Element t : (List<Element>) JaxenUtils.getNodes(e, "troops/troop")) {
-                        troops.add(Integer.parseInt(t.getText()));
+                    troops.add(Integer.parseInt(t.getText()));
                     }
-                    mTroops.put(v, new VillageTroopsHolder(v, troops, state));
+                    mTroops.put(v, new VillageTroopsHolder(v, troops, state));*/
+                    VillageTroopsHolder holder = VillageTroopsHolder.fromXml(e);
+                    mTroops.put(holder.getVillage(), holder);
                 }
                 logger.debug("Troops loaded successfully");
             } catch (Exception e) {
@@ -182,19 +189,21 @@ public class TroopsManager {
             Document d = JaxenUtils.getDocument(pFile);
             for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//troops/villages/village")) {
                 //get basic village without merged information
-                Village v = DataHolder.getSingleton().getVillagesById().get(Integer.parseInt(e.getChild("id").getText()));
+              /*  Village v = DataHolder.getSingleton().getVillagesById().get(Integer.parseInt(e.getChild("id").getText()));
                 Date state = Calendar.getInstance().getTime();
                 try {
-                    state = new Date(Long.parseLong(e.getChild("state").getText()));
+                state = new Date(Long.parseLong(e.getChild("state").getText()));
                 } catch (Exception ie) {
                 }
                 //get correct village
                 v = DataHolder.getSingleton().getVillages()[v.getX()][v.getY()];
                 List<Integer> troops = new LinkedList<Integer>();
                 for (Element t : (List<Element>) JaxenUtils.getNodes(e, "troops/troop")) {
-                    troops.add(Integer.parseInt(t.getText()));
+                troops.add(Integer.parseInt(t.getText()));
                 }
-                mTroops.put(v, new VillageTroopsHolder(v, troops, state));
+                mTroops.put(v, new VillageTroopsHolder(v, state));*/
+                VillageTroopsHolder holder = VillageTroopsHolder.fromXml(e);
+                mTroops.put(holder.getVillage(), holder);
             }
             logger.debug("Troops imported successfully");
             DSWorkbenchTroopsFrame.getSingleton().fireTroopsChangedEvent();
@@ -216,17 +225,18 @@ public class TroopsManager {
                 //write village information
                 Village v = villages.nextElement();
                 VillageTroopsHolder holder = mTroops.get(v);
-                result += "<village>\n";
+                /* result += "<village>\n";
                 result += "<id>" + v.getId() + "</id>\n";
                 result += "<state>" + holder.getState().getTime() + "</state>\n";
                 result += "<troops>\n";
                 for (Integer i : holder.getTroops()) {
-                    //write troop information
-                    result += "<troop>" + i + "</troop>\n";
+                //write troop information
+                result += "<troop>" + i + "</troop>\n";
                 }
                 //close troops for village
                 result += "</troops>\n";
-                result += "</village>\n";
+                result += "</village>\n";*/
+                result += holder.toXml() + "\n";
             }
             result += "</villages>\n</troops>\n";
             logger.debug("Export data generated successfully");
@@ -247,7 +257,7 @@ public class TroopsManager {
             w.write("<villages>\n");
             Enumeration<Village> villages = mTroops.keys();
             while (villages.hasMoreElements()) {
-                //write village information
+                /*        //write village information
                 Village v = villages.nextElement();
                 VillageTroopsHolder holder = mTroops.get(v);
                 w.write("<village>\n");
@@ -255,12 +265,17 @@ public class TroopsManager {
                 w.write("<state>" + holder.getState().getTime() + "</state>\n");
                 w.write("<troops>\n");
                 for (Integer i : holder.getTroops()) {
-                    //write troop information
-                    w.write("<troop>" + i + "</troop>\n");
+                //write troop information
+                w.write("<troop>" + i + "</troop>\n");
                 }
                 //close troops for village
                 w.write("</troops>\n");
-                w.write("</village>\n");
+                w.write("</village>\n");*/
+
+                Village v = villages.nextElement();
+                VillageTroopsHolder holder = mTroops.get(v);
+                w.write(holder.toXml());
+
             }
             //close all
             w.write("</villages>\n");

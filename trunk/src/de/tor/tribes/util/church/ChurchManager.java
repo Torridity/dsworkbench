@@ -28,7 +28,6 @@ import org.jdom.Document;
 import org.jdom.Element;
 
 /**
- *@TODO (DIFF) Church range color self definable
  * @author Charon
  */
 public class ChurchManager {

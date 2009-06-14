@@ -4,71 +4,48 @@
  */
 package de.tor.tribes.util;
 
+import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
+import java.io.FileReader;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.DataLine;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.SourceDataLine;
 
 /**
  * @author Charon
  */
 public class TestClass {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
 
-
-        File f = new File("sound.wav");
-        AudioInputStream audioInputStream = null;
-        try {
-            audioInputStream = AudioSystem.getAudioInputStream(f);
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
-
-        AudioFormat audioFormat = audioInputStream.getFormat();
-
-
-        SourceDataLine line = null;
-        DataLine.Info info = new DataLine.Info(SourceDataLine.class, audioFormat);
-        try {
-            line = (SourceDataLine) AudioSystem.getLine(info);
-
-            line.open(audioFormat);
-        } catch (LineUnavailableException e) {
-            e.printStackTrace();
-            System.exit(1);
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
-        line.start();
-
-        int nBytesRead = 0;
-        byte[] abData = new byte[128000];
-        while (nBytesRead != -1) {
-            try {
-                nBytesRead = audioInputStream.read(abData, 0, abData.length);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            if (nBytesRead >= 0) {
-                int nBytesWritten = line.write(abData, 0, nBytesRead);
+        String url = "http://www.s213116505.online.de/village_interface.php?pw=a402daabeb2a1c861266544ef56c161c&villages=";
+        BufferedReader fr = new BufferedReader(new FileReader(new File("H:/Software/DSWorkbench/servers/de28/serverdata")));
+        String line = fr.readLine();
+        int cnt = 80;
+        while ((line = fr.readLine()) != null) {
+            String[] split = line.split(",");
+            url += split[0] + ";";
+            cnt--;
+            if (cnt <= 0) {
+                break;
             }
         }
+        url += "194925";
+        System.out.println(url);
 
-        line.drain();
-
-        line.close();
-
+        long s = System.currentTimeMillis();
+        URL u = new URL(url);
+        URLConnection con = u.openConnection();
+        BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+        line = "";
+        while ((line = in.readLine()) != null) {
+            System.out.println(line);
+        }
+        System.out.println("" + (System.currentTimeMillis() - s));
         if (true) {
             return;
         }

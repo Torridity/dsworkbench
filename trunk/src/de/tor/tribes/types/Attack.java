@@ -12,6 +12,8 @@ import java.io.Serializable;
 import java.util.Date;
 import org.jdom.Element;
 import de.tor.tribes.util.GlobalOptions;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 /**
  *
@@ -146,7 +148,11 @@ public class Attack implements Serializable {
      */
 
     public String toString() {
-        String result = getSource() + " > " + getTarget() + " = " + DSCalculator.calculateMoveTimeInSeconds(getSource(), getTarget(), getUnit().getSpeed());
+        long send = getArriveTime().getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(getSource(), getTarget(), getUnit().getSpeed()) * 1000);
+        SimpleDateFormat f = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
+        Calendar c = Calendar.getInstance();
+        c.setTimeInMillis(send);
+        String result = getSource() + " > " + getTarget() + ": " + f.format(c.getTime()) + " ... " + f.format(getArriveTime());
         return result;
     }
 }

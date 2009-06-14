@@ -13,7 +13,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * @TODO (1.X) Implement dynamic time framing
  * @author Jejkal
  */
 public abstract class AbstractAttackAlgorithm {

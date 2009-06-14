@@ -6,6 +6,7 @@ package de.tor.tribes.types;
 
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.util.DSCalculator;
+import de.tor.tribes.util.algo.TimeFrame;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Enumeration;

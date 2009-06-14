@@ -28,7 +28,7 @@ public class BruteForce extends AbstractAttackAlgorithm {
     private List<Village> notAssignedSources = null;
 
     @Override
-    public List<Village> getNotAssignedSources(){
+    public List<Village> getNotAssignedSources() {
         return notAssignedSources;
     }
 
@@ -51,6 +51,7 @@ public class BruteForce extends AbstractAttackAlgorithm {
         if (pRandomize) {
             Collections.shuffle(pTargets);
         }
+        List<Long> sendTimes = new LinkedList<Long>();
         while (unitKeys.hasMoreElements()) {
             UnitHolder unit = unitKeys.nextElement();
             List<Village> sources = pSources.get(unit);
@@ -68,7 +69,7 @@ public class BruteForce extends AbstractAttackAlgorithm {
 
                         Date sendTime = new Date(arrive - (long) time * 1000);
                         //check if attack is somehow possible
-                        if (pTimeFrame.inside(sendTime)) {
+                        if (pTimeFrame.inside(sendTime) && !sendTimes.contains(sendTime.getTime())) {
                             //only calculate if time is in time frame
                             //get list of source villages for current target
                             Hashtable<UnitHolder, List<Village>> attacksForVillage = attacks.get(v);
@@ -116,9 +117,11 @@ public class BruteForce extends AbstractAttackAlgorithm {
                                     //max number of attacks per village reached, continue search
                                 }
                             }
+
                         }
 
                         if (vTarget != null) {
+                            sendTimes.add(sendTime.getTime());
                             break;
                         }
                     }

@@ -75,7 +75,7 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
         }
 
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
-        //GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.conquer_view", GlobalOptions.getHelpBroker().getHelpSet());
+        GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.conquers_view", GlobalOptions.getHelpBroker().getHelpSet());
         // </editor-fold>
 
         pack();

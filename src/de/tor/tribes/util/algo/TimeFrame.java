@@ -19,7 +19,7 @@ public class TimeFrame {
     private long start = 0;
     private long end = 0;
     private List<Point> mFrames = null;
-    private int arriveTolerance = 0;
+    private long arriveTolerance = 0;
 
     public TimeFrame(Date pStart, Date pEnd, int pMinHour, int pMaxHour) {
         start = pStart.getTime();
@@ -34,8 +34,8 @@ public class TimeFrame {
         mFrames = new LinkedList<Point>();
     }
 
-    public void setArriveTolerance(int pSeconds) {
-        arriveTolerance = pSeconds;
+    public void setArriveTolerance(long pHours) {
+        arriveTolerance = pHours;
     }
 
     public void addFrame(int pMinHour, int pMaxHour) {
@@ -62,13 +62,46 @@ public class TimeFrame {
                     break;
                 }
             }
-            //check end frame
+        //check end frame
             /*if (!inFrame) {
-                //if not yet in frame check end frame
-                inFrame = ((t > (end - arriveTolerance * 1000)) && (t < (end + arriveTolerance * 1000)));
-            }*/
+        //if not yet in frame check end frame
+        inFrame = ((t > (end - arriveTolerance * 1000)) && (t < (end + arriveTolerance * 1000)));
+        }*/
         }
         return inFrame;
+    }
+
+    public Date getArriveDate(long runtime) {
+        Calendar sendCal = Calendar.getInstance();
+        long TOLERANCE = arriveTolerance * 60 * 60 * 1000;
+        long TWENTY_MINUTES = 20 * 60 * 1000;
+        for (long l = start; l < end; l += TWENTY_MINUTES) {
+            long sendTime = l;
+            long arriveTime = sendTime + runtime;
+            sendCal.setTimeInMillis(sendTime);
+            int sendHour = sendCal.get(Calendar.HOUR_OF_DAY);
+            int sendMinute = sendCal.get(Calendar.MINUTE);
+            int sendSecond = sendCal.get(Calendar.SECOND);
+            Calendar arriveCal = Calendar.getInstance();
+            arriveCal.setTimeInMillis(arriveTime);
+            int arriveHour = arriveCal.get(Calendar.HOUR_OF_DAY);
+            boolean inFrame = false;
+            if (arriveHour >= 0 && arriveHour < 8) {
+                //only possible in night bonus
+            } else if (Math.abs(arriveTime - end) > TOLERANCE) {
+                //too far away
+            } else {
+                for (Point p : mFrames) {
+                    //check time frame parts
+                    inFrame = ((sendHour >= p.x) && ((sendHour <= p.y) && (sendMinute <= 59) && (sendSecond <= 59)));
+                    if (inFrame) {
+                        arriveCal.setTimeInMillis(arriveTime);
+                        return arriveCal.getTime();
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     public long getStart() {

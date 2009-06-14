@@ -172,10 +172,11 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
             JOptionPane.showMessageDialog(jProfileDialog, "Bitte eine Profil auswählen.", "Bitte wählen", JOptionPane.WARNING_MESSAGE);
             return;
         } else {
-            GlobalOptions.setSelectedServer(value.substring(0, value.indexOf("(")).trim());
+            String server = value.substring(0, value.indexOf("(")).trim();
+            GlobalOptions.setSelectedServer(server);
+            GlobalOptions.addProperty("default.server", server);
             jProfileDialog.setVisible(false);
         }
-
     }//GEN-LAST:event_fireSelectAccountEvent
 
     protected boolean hideSplash() {

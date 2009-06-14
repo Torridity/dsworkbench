@@ -32,6 +32,8 @@
 
 <mapID target="pages.map_tools_tags" url="pages/map_tools.html#tags"/>
 
+<mapID target="pages.conquers_view" url="pages/conquers_view.html"/>
+
 <mapID target="pages.attack_planer_type" url="pages/attack_planer_type.html"/>
 
 <mapID target="pages.tools" url="pages/tools.html"/>
@@ -94,9 +96,9 @@
 
 <mapID target="pages.ranking_view" url="pages/ranking_view.html"/>
 
-<mapID target="pages.attack_planer_results_details_targets" url="pages/attack_planer_results_details_targets.html"/>
-
 <mapID target="pages.markers_view" url="pages/markers_view.html"/>
+
+<mapID target="pages.attack_planer_results_details_targets" url="pages/attack_planer_results_details_targets.html"/>
 
 <mapID target="pages.import_ingame" url="pages/import_ingame.html"/>
 

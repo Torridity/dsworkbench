@@ -14,7 +14,10 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.Off;
+import de.tor.tribes.util.DSCalculator;
+import java.util.Calendar;
 import org.apache.log4j.Logger;
 
 /**
@@ -25,9 +28,14 @@ public class Blitzkrieg extends AbstractAttackAlgorithm {
 
     private static Logger logger = Logger.getLogger("Algorithm_Blitzkrieg");
     private List<Village> notAssignedSources = null;
+    private List<Attack> miscAttacks = null;
 
     public List<Village> getNotAssignedSources() {
         return notAssignedSources;
+    }
+
+    public List<Attack> getMiscAttacks() {
+        return miscAttacks;
     }
 
     @Override
@@ -81,7 +89,13 @@ public class Blitzkrieg extends AbstractAttackAlgorithm {
 
         logger.debug("Assigning offs");
         List<Off> pOffs = new LinkedList<Off>();
-        assignOffs(pOffs, offSources, pTargets, pTimeFrame, pMaxAttacksPerVillage);
+        List<Long> sends = new LinkedList<Long>();
+        assignOffs(pOffs,
+                sends,
+                offSources,
+                pTargets,
+                pTimeFrame,
+                pMaxAttacksPerVillage);
         int fullOffs = 0;
 
         logger.debug("Checking for full offs and removing off tagets from faked list");
@@ -95,7 +109,11 @@ public class Blitzkrieg extends AbstractAttackAlgorithm {
         setFullOffs(fullOffs);
         logger.debug("Assigning fakes");
         List<Fake> pFinalFakes = new LinkedList<Fake>();
-        assignFakes(pFinalFakes, fakeSources, pTargets, pTimeFrame, pMaxAttacksPerVillage);
+        assignFakes(pFinalFakes, sends,
+                fakeSources,
+                pTargets,
+                pTimeFrame,
+                pMaxAttacksPerVillage);
 
         logger.debug("Building result list");
         List<AbstractTroopMovement> movements = new LinkedList<AbstractTroopMovement>();
@@ -108,6 +126,26 @@ public class Blitzkrieg extends AbstractAttackAlgorithm {
             movements.add(f);
         }
 
+        Hashtable<Village, Integer> attsPerTarget = new Hashtable<Village, Integer>();
+        for (AbstractTroopMovement movement : movements) {
+            Village target = movement.getTarget();
+            if (movement.getOffCount() < pMaxAttacksPerVillage) {
+                attsPerTarget.put(target, movement.getOffCount());
+            }
+        }
+
+        logger.debug("Assigning misc attacks");
+        miscAttacks = new LinkedList<Attack>();
+        assignMiscAttacks(miscAttacks,
+                sends,
+                attsPerTarget,
+                offSources,
+                fakeSources,
+                pTargets,
+                pTimeFrame,
+                pMaxAttacksPerVillage);
+
+        logger.debug("Getting list of not assigned sources");
         for (Village offSource : offSources) {
             notAssignedSources.add(offSource);
         }
@@ -117,33 +155,34 @@ public class Blitzkrieg extends AbstractAttackAlgorithm {
         return movements;
     }
 
-    private static void assignOffs(List<Off> pOffs, List<Village> pOffSources, List<Village> pTargets, TimeFrame pTimeFrame, int pMaxAttacks) {
-        //table which holds for every target the distance of each source
+    private void assignOffs(List<Off> pOffs, List<Long> sends, List<Village> pOffSources, List<Village> pTargets, TimeFrame pTimeFrame, int pMaxAttacks) {
+        //table, which holds for every target the distance of each source
         Hashtable<Village, List<DistanceMapping>> tmpMappings = new Hashtable<Village, List<DistanceMapping>>();
         UnitHolder ram = DataHolder.getSingleton().getUnitByPlainName("ram");
         for (Village target : pTargets) {
             //calculate snob distances for current enoblement target village
             List<DistanceMapping> offMappings = AbstractAttackAlgorithm.buildSourceTargetsMapping(target, pOffSources);
-
             //temp map for valid distances
             List<DistanceMapping> tmpMap = new LinkedList<DistanceMapping>();
             for (DistanceMapping mapping : offMappings) {
-                long dur = (long) (mapping.getDistance() * ram.getSpeed() * 60000.0);
+                long dur = (long) (mapping.getDistance() * ram.getSpeed() * 60000l);
                 Date send = new Date(pTimeFrame.getEnd() - dur);
+
                 //check if needed off can arrive village in time frame
                 if (!pTimeFrame.inside(send) || (tmpMap.size() == pMaxAttacks)) {
                     //break if at least one is not in time or max number of attacks was reached
                     break;
                 } else {
-                    //add valid distance to map
-                    tmpMap.add(mapping);
+                    //add valid distance to map of send time was not used yet
+                    if (!sends.contains(send.getTime())) {
+                        tmpMap.add(mapping);
+                    }
                 }
             }
             //if all off villages are in time, create enoblement
             if (tmpMap.size() > 0) {
                 tmpMappings.put(target, tmpMap);
             }
-
         }
 
         if (tmpMappings.size() == 0) {
@@ -158,15 +197,16 @@ public class Blitzkrieg extends AbstractAttackAlgorithm {
         while (keys.hasMoreElements()) {
             //get next off source
             Village e = keys.nextElement();
+            List<DistanceMapping> mappings = tmpMappings.get(e);
+
+            //check mapping if valid
             if (best == null) {
                 //no best set yet, so take the first element to initialize
                 best = e;
                 //use the slowest off to calculate the worst case
-                List<DistanceMapping> mappings = tmpMappings.get(e);
                 minDist = mappings.get(mappings.size() - 1).getDistance();
             } else {
                 //use the slowest off to calculate the worst case
-                List<DistanceMapping> mappings = tmpMappings.get(e);
                 double dist = mappings.get(mappings.size() - 1).getDistance();
                 if (dist < minDist) {
                     best = e;
@@ -174,7 +214,6 @@ public class Blitzkrieg extends AbstractAttackAlgorithm {
                 }
             }
         }
-
         List<DistanceMapping> offMappings = tmpMappings.get(best);
         Off f = null;
         //try to find existing fake
@@ -185,16 +224,19 @@ public class Blitzkrieg extends AbstractAttackAlgorithm {
             }
         }
 
-        //no existing fake found
+        //no existing off found
         if (f == null) {
             f = new Off(best, pMaxAttacks);
             pOffs.add(f);
         }
         for (DistanceMapping offMapping : offMappings) {
             //use target due to the distance was calculated based on the enoblements target
-            if (!f.offComplete()) {
+            long dur = (long) (offMapping.getDistance() * ram.getSpeed() * 60000l);
+            Date send = new Date(pTimeFrame.getEnd() - dur);
+            if (!f.offComplete() && !sends.contains(send.getTime())) {
                 f.addOff(ram, offMapping.getTarget());
                 pOffSources.remove(offMapping.getTarget());
+                sends.add(send.getTime());
             }
         }
         if (f.offComplete()) {
@@ -202,10 +244,11 @@ public class Blitzkrieg extends AbstractAttackAlgorithm {
             pTargets.remove(best);
         }
 
-        assignOffs(pOffs, pOffSources, pTargets, pTimeFrame, pMaxAttacks);
+        //next round
+        assignOffs(pOffs, sends, pOffSources, pTargets, pTimeFrame, pMaxAttacks);
     }
 
-    private static void assignFakes(List<Fake> pFakes, List<Village> pFakeSources, List<Village> pTargets, TimeFrame pTimeFrame, int pMaxAttacks) {
+    private void assignFakes(List<Fake> pFakes, List<Long> sends, List<Village> pFakeSources, List<Village> pTargets, TimeFrame pTimeFrame, int pMaxAttacks) {
         //table which holds for every target the distance of each source
         Hashtable<Village, List<DistanceMapping>> tmpMappings = new Hashtable<Village, List<DistanceMapping>>();
         UnitHolder ram = DataHolder.getSingleton().getUnitByPlainName("ram");
@@ -216,7 +259,7 @@ public class Blitzkrieg extends AbstractAttackAlgorithm {
             //temp map for valid distances
             List<DistanceMapping> tmpMap = new LinkedList<DistanceMapping>();
             for (DistanceMapping mapping : offMappings) {
-                long dur = (long) (mapping.getDistance() * ram.getSpeed() * 60000.0);
+                long dur = (long) (mapping.getDistance() * ram.getSpeed() * 60000l);
                 Date send = new Date(pTimeFrame.getEnd() - dur);
                 //check if needed off can arrive village in time frame
                 if (!pTimeFrame.inside(send) || (tmpMap.size() == pMaxAttacks)) {
@@ -224,14 +267,15 @@ public class Blitzkrieg extends AbstractAttackAlgorithm {
                     break;
                 } else {
                     //add valid distance to map
-                    tmpMap.add(mapping);
+                    if (!sends.contains(send.getTime())) {
+                        tmpMap.add(mapping);
+                    }
                 }
             }
             //if all off villages are in time, create enoblement
             if (tmpMap.size() > 0) {
                 tmpMappings.put(target, tmpMap);
             }
-
         }
 
         if (tmpMappings.size() == 0) {
@@ -262,7 +306,6 @@ public class Blitzkrieg extends AbstractAttackAlgorithm {
                 }
             }
         }
-
         List<DistanceMapping> offMappings = tmpMappings.get(best);
         Fake f = null;
         //try to find existing fake
@@ -280,9 +323,12 @@ public class Blitzkrieg extends AbstractAttackAlgorithm {
         }
         for (DistanceMapping offMapping : offMappings) {
             //use target due to the distance was calculated based on the enoblements target
-            if (!f.offComplete()) {
+            long dur = (long) (offMapping.getDistance() * ram.getSpeed() * 60000l);
+            Date send = new Date(pTimeFrame.getEnd() - dur);
+            if (!f.offComplete() && !sends.contains(send.getTime())) {
                 f.addOff(ram, offMapping.getTarget());
                 pFakeSources.remove(offMapping.getTarget());
+                sends.add(send.getTime());
             }
         }
         if (f.offComplete()) {
@@ -290,6 +336,111 @@ public class Blitzkrieg extends AbstractAttackAlgorithm {
             pTargets.remove(best);
         }
 
-        assignFakes(pFakes, pFakeSources, pTargets, pTimeFrame, pMaxAttacks);
+        //add used send times to list to avoid unsendable attacks
+        Calendar c = Calendar.getInstance();
+        c.setTimeInMillis(pTimeFrame.getEnd());
+        for (Attack a : f.getAttacks(c.getTime())) {
+            long send = a.getArriveTime().getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(a.getSource(), a.getTarget(), a.getUnit().getSpeed()) * 1000);
+            sends.add(send);
+        }
+
+        assignFakes(pFakes, sends, pFakeSources, pTargets, pTimeFrame, pMaxAttacks);
+    }
+
+    private void assignMiscAttacks(List<Attack> pAttacks, List<Long> sends, Hashtable<Village, Integer> attsPerTarget, List<Village> pOffSources, List<Village> pFakeSources, List<Village> pTargets, TimeFrame pTimeFrame, int pMaxAttacks) {
+        UnitHolder ram = DataHolder.getSingleton().getUnitByPlainName("ram");
+        int sizeBefore = pAttacks.size();
+        Enumeration<Village> keys = attsPerTarget.keys();
+        while (keys.hasMoreElements()) {
+            //go through all targets
+            Village target = keys.nextElement();
+            Integer cnt = attsPerTarget.get(target);
+            long bestDist = Long.MAX_VALUE;
+            long bestTime = 0;
+            Village best = null;
+            if (cnt <= pMaxAttacks) {
+                //only use target if no attacks < max
+                for (Village offSource : pOffSources) {
+                    //go through all sources to find best source with least distance
+                    long movetime = (long) (DSCalculator.calculateMoveTimeInSeconds(offSource, target, ram.getSpeed()) * 1000);
+                    Date d = pTimeFrame.getArriveDate(movetime);
+                    if (d != null && !sends.contains(d.getTime() - movetime)) {
+                        //add if arrive is valid and send time was not used yet
+                        long delta = Math.abs(pTimeFrame.getEnd() - d.getTime());
+                        if (delta < bestDist) {
+                            bestDist = delta;
+                            best = offSource;
+                            bestTime = d.getTime();
+                        }
+                    }
+                }
+            }
+
+            if (best != null) {
+                pOffSources.remove(best);
+                Attack a = new Attack();
+                a.setSource(best);
+                a.setTarget(target);
+                Calendar c = Calendar.getInstance();
+                c.setTimeInMillis(bestTime);
+                a.setArriveTime(c.getTime());
+                a.setUnit(ram);
+                a.setType(Attack.CLEAN_TYPE);
+                pAttacks.add(a);
+                attsPerTarget.put(target, cnt + 1);
+                long send = c.getTime().getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(a.getSource(), a.getTarget(), a.getUnit().getSpeed()) * 1000);
+                sends.add(send);
+            }
+        }
+
+        //fake round
+        keys = attsPerTarget.keys();
+        while (keys.hasMoreElements()) {
+            //go through all targets
+            Village target = keys.nextElement();
+            Integer cnt = attsPerTarget.get(target);
+            long bestDist = Long.MAX_VALUE;
+            long bestTime = 0;
+            Village best = null;
+            if (cnt <= pMaxAttacks) {
+                //only use target if no attacks < max
+                for (Village fakeSource : pFakeSources) {
+                    //go through all sources to find best source with least distance
+                    long movetime = (long) (DSCalculator.calculateMoveTimeInSeconds(fakeSource, target, ram.getSpeed()) * 1000);
+                    Date d = pTimeFrame.getArriveDate(movetime);
+                    if (d != null && !sends.contains(d.getTime() - movetime)) {
+                        //add if arrive is valid and send time was not used yet
+                        long delta = Math.abs(pTimeFrame.getEnd() - d.getTime());
+                        if (delta < bestDist) {
+                            bestDist = delta;
+                            best = fakeSource;
+                            bestTime = d.getTime();
+                        }
+                    }
+                }
+            }
+
+            if (best != null) {
+                pFakeSources.remove(best);
+                Attack a = new Attack();
+                a.setSource(best);
+                a.setTarget(target);
+                Calendar c = Calendar.getInstance();
+                c.setTimeInMillis(bestTime);
+                a.setArriveTime(c.getTime());
+                a.setUnit(ram);
+                a.setType(Attack.FAKE_TYPE);
+                pAttacks.add(a);
+                attsPerTarget.put(target, cnt + 1);
+                long send = c.getTime().getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(a.getSource(), a.getTarget(), a.getUnit().getSpeed()) * 1000);
+                sends.add(send);
+            }
+        }
+
+        if (sizeBefore == pAttacks.size()) {
+            //nothing changed, erturn
+            return;
+        }
+        assignMiscAttacks(pAttacks, sends, attsPerTarget, pOffSources, pFakeSources, pTargets, pTimeFrame, pMaxAttacks);
     }
 }

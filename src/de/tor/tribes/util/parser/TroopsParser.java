@@ -5,19 +5,17 @@
 package de.tor.tribes.util.parser;
 
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.troops.TroopsManager;
-import java.awt.Toolkit;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
+import de.tor.tribes.util.troops.VillageTroopsHolder;
+import java.util.Hashtable;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.StringTokenizer;
 
 /**
- *@TODO(1.5) Separate troop informations and use them in different tools
  * @author Charon
  */
 public class TroopsParser {
@@ -35,7 +33,11 @@ public class TroopsParser {
         boolean retValue = false;
         //boolean haveVillage = false;
         Village v = null;
-        List<Integer> troops = new LinkedList<Integer>();
+        // List<Integer> troops = new LinkedList<Integer>();
+        Hashtable<UnitHolder, Integer> ownTroops = new Hashtable<UnitHolder, Integer>();
+        Hashtable<UnitHolder, Integer> troopsInVillage = new Hashtable<UnitHolder, Integer>();
+        Hashtable<UnitHolder, Integer> troopsOutside = new Hashtable<UnitHolder, Integer>();
+        Hashtable<UnitHolder, Integer> troopsOnTheWay = new Hashtable<UnitHolder, Integer>();
         while (lineTok.hasMoreElements()) {
 
             //parse single line for village
@@ -47,25 +49,35 @@ public class TroopsParser {
                 //parse 4 village lines!
                 line = line.trim();
                 if (line.startsWith("eigene")) {
+                    int cnt = 0;
                     for (int i : parseUnits(line.replaceAll("eigene", "").trim())) {
                         //own units in village
-                        troops.add(i);
+                        //troops.add(i);
+                        ownTroops.put(DataHolder.getSingleton().getUnits().get(cnt), i);
+                        cnt++;
                     }
                 } else if (line.startsWith("im Dorf")) {
+                    int cnt = 0;
                     for (int i : parseUnits(line.replaceAll("im Dorf", "").trim())) {
-                        //all units in village
-                        //ignored for now
+                        //all units in village       
+                        troopsInVillage.put(DataHolder.getSingleton().getUnits().get(cnt), i);
+                        cnt++;
                     }
                 } else if (line.startsWith("auswärts")) {
+                    int cnt = 0;
                     for (int i : parseUnits(line.replaceAll("auswärts", "").trim())) {
-                        //own units in other village
-                        //ignore for now
+                        //own units in other village  
+                        troopsOutside.put(DataHolder.getSingleton().getUnits().get(cnt), i);
+                        cnt++;
                     }
                 } else if (line.startsWith("unterwegs")) {
-                    int[] underway = parseUnits(line.replaceAll("unterwegs", "").trim());
+                    // int[] underway = parseUnits(line.replaceAll("unterwegs", "").trim());
+                    int cnt = 0;
                     //own units on the way
-                    for (int i = 0; i < underway.length; i++) {
-                        troops.set(i, troops.get(i) + underway[i]);
+                    for (int i : parseUnits(line.replaceAll("unterwegs", "").trim())) {
+                        //troops.set(i, troops.get(i) + underway[i]);
+                        troopsOnTheWay.put(DataHolder.getSingleton().getUnits().get(cnt), i);
+                        cnt++;
                     }
                 }
                 villageLines--;
@@ -85,26 +97,6 @@ public class TroopsParser {
                     //search village
                     if (currentToken.startsWith("(") && currentToken.endsWith(")")) {
                         //check if we got a village
-
-                        /* if (ServerSettings.getSingleton().getCoordType() != 2) {
-                        if (currentToken.matches("\\([0-9]+\\:[0-9]+\\:[0-9]+\\)") && (nextToken != null) && (nextToken.startsWith("K"))) {
-                        //extract village coordinates
-                        String[] split = currentToken.trim().split("[(\\:)]");
-                        int[] xy = DSCalculator.hierarchicalToXy(Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2]));
-                        v = DataHolder.getSingleton().getVillages()[xy[0]][xy[1]];
-                        villageLines = 4;
-                        break;
-                        }
-                        } else {
-                        if (currentToken.matches("\\([0-9]+\\|[0-9]+\\)") && (nextToken != null) && (nextToken.startsWith("K"))) {
-                        //extract village coordinates
-                        String[] split = currentToken.trim().split("[(\\|)]");
-                        v = DataHolder.getSingleton().getVillages()[Integer.parseInt(split[1])][Integer.parseInt(split[2])];
-                        //next 4 lines are village
-                        villageLines = 4;
-                        break;
-                        }
-                        }*/
                         try {
                             String coord = currentToken.substring(currentToken.lastIndexOf("(") + 1, currentToken.lastIndexOf(")"));
                             if (ServerSettings.getSingleton().getCoordType() != 2) {
@@ -125,16 +117,33 @@ public class TroopsParser {
                 }
             }
             if (villageLines == 0) {
-                if ((v != null) && (troops.size() == DataHolder.getSingleton().getUnits().size())) {
+                int troopsCount = DataHolder.getSingleton().getUnits().size();
+                if ((v != null) && 
+                        (ownTroops.size() == troopsCount)&&
+                        (troopsInVillage.size() == troopsCount)&&
+                        (troopsOutside.size() == troopsCount)&&
+                        (troopsOnTheWay.size() == troopsCount)) {
                     //add troops to manager
-                    TroopsManager.getSingleton().addTroopsForVillageFast(v, new LinkedList<Integer>(troops));
-                    troops.clear();
+                    TroopsManager.getSingleton().addTroopsForVillageFast(v, new LinkedList<Integer>());
+                    VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(v);
+                    holder.setOwnTroops(ownTroops);
+                    holder.setTroopsInVillage(troopsInVillage);
+                    holder.setTroopsOutside(troopsOutside);
+                    holder.setTroopsOnTheWay(troopsOnTheWay);
+                    //troops.clear();
+                    ownTroops.clear();
+                    troopsInVillage.clear();
+                    troopsOutside.clear();
+                    troopsOnTheWay.clear();
                     v = null;
                     //found at least one village, so retValue is true    
                     retValue = true;
                 } else {
                     v = null;
-                    troops.clear();
+                    troopsInVillage.clear();
+                    troopsOutside.clear();
+                    troopsOnTheWay.clear();
+                // troops.clear();
                 }
             }
         }

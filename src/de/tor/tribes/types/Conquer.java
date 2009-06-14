@@ -34,13 +34,18 @@ public class Conquer {
     }
 
     public String toXml() {
-        String result = "<conquer>\n";
-        result += "<villageID>" + getVillageID() + "</villageID>\n";
-        result += "<timestamp>" + getTimestamp() + "</timestamp>\n";
-        result += "<winner>" + getWinner() + "</winner>\n";
-        result += "<loser>" + getLoser() + "</loser>\n";
-        result += "</conquer>";
-        return result;
+        try {
+            String result = "<conquer>\n";
+            result += "<villageID>" + getVillageID() + "</villageID>\n";
+            result += "<timestamp>" + getTimestamp() + "</timestamp>\n";
+            result += "<winner>" + getWinner() + "</winner>\n";
+            result += "<loser>" + getLoser() + "</loser>\n";
+            result += "</conquer>";
+            return result;
+        } catch (Exception e) {
+            //getting xml data failed
+        }
+        return null;
     }
 
     public int getCurrentAcceptance() {

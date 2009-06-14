@@ -30,17 +30,21 @@ public class TimePanel extends javax.swing.JPanel {
     /** Creates new form SendTimePanel */
     public TimePanel() {
         initComponents();
-        //TODO (1.X) Integrate tolerance in later version
-        jTolerance.setVisible(false);
-        jLabel4.setVisible(false);
         setBackground(Constants.DS_BACK_LIGHT);
         reset();
+    }
+
+    public void activateTolerance(boolean value) {
+        jToleranceField.setEnabled(value);
+        jLabel4.setEnabled(value);
     }
 
     public void reset() {
         //setup of send time spinner
         jSendTime.setEditor(new DateEditor(jSendTime, "dd.MM.yy HH:mm:ss"));
-        jSendTime.setValue(Calendar.getInstance().getTime());
+        Calendar c = Calendar.getInstance();
+        c.setTimeInMillis(System.currentTimeMillis() + 60 * 60 * 1000);
+        jSendTime.setValue(c.getTime());
         //setup of time frame selection
         jSendTimeFrame.setMinimumValue(0);
         jSendTimeFrame.setSliderBackground(Constants.DS_BACK);
@@ -55,12 +59,9 @@ public class TimePanel extends javax.swing.JPanel {
         DefaultListModel model = new DefaultListModel();
         jSendTimeFramesList.setModel(model);
         jArriveTime.setEditor(new DateEditor(jArriveTime, "dd.MM.yy HH:mm:ss"));
-        jArriveTime.setValue(Calendar.getInstance().getTime());
-        Calendar c = Calendar.getInstance();
-        c.set(Calendar.MINUTE, 0);
-        c.set(Calendar.SECOND, 0);
-        jTolerance.setEditor(new DateEditor(jTolerance, "mm:ss 'Min':'Sek'"));
-        jTolerance.setValue(c.getTime());
+        c.setTimeInMillis(System.currentTimeMillis() + 2*60 * 60 * 1000);
+        jArriveTime.setValue(c.getTime());
+        jToleranceField.setValue(2l);
     }
 
     /**Return selected send time frames
@@ -68,9 +69,7 @@ public class TimePanel extends javax.swing.JPanel {
     public TimeFrame getTimeFrame() {
         TimeFrame result = new TimeFrame((Date) jSendTime.getValue(), (Date) jArriveTime.getValue());
         //set arrive tolerance in seconds
-        Calendar c = Calendar.getInstance();
-        c.setTime((Date) jTolerance.getValue());
-        result.setArriveTolerance(c.get(Calendar.MINUTE) * 60 + c.get(Calendar.SECOND));
+        result.setArriveTolerance((Long) jToleranceField.getValue());
         //add time frames
         DefaultListModel model = (DefaultListModel) jSendTimeFramesList.getModel();
         for (int i = 0; i < model.getSize(); i++) {
@@ -101,12 +100,20 @@ public class TimePanel extends javax.swing.JPanel {
             }
         }
 
+        Date sendTime = (Date) jSendTime.getValue();
+        if (sendTime.getTime() < System.currentTimeMillis()) {
+            if (JOptionPane.showConfirmDialog(this, "Die Startzeit liegt in der Vergangenheit. Daher könnten Abschickzeitpunkte bestimmt werden,\n" +
+                    "die nicht eingehalten werden können. Trotzdem fortfahren?", "Startzeit in Vergangenheit", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION) {
+            } else {
+                result = false;
+            }
+        }
+
         //check if arrival might be in night bonus
-        Calendar c = Calendar.getInstance();
-        c.setTime((Date) jTolerance.getValue());
-        int arrivalTolerance = (c.get(Calendar.MINUTE) * 60 + c.get(Calendar.SECOND)) * 1000;
+        long arrivalTolerance = (Long) jToleranceField.getValue() * 60 * 60 * 1000;
         //check min case
         Date arrive = (Date) jArriveTime.getValue();
+        Calendar c = Calendar.getInstance();
         c.setTimeInMillis(arrive.getTime());
         boolean mightBeInNightBonus = false;
         //check for night bonus
@@ -159,7 +166,9 @@ public class TimePanel extends javax.swing.JPanel {
         jLabel3 = new javax.swing.JLabel();
         jArriveTime = new javax.swing.JSpinner();
         jLabel4 = new javax.swing.JLabel();
-        jTolerance = new javax.swing.JSpinner();
+        jLabel5 = new javax.swing.JLabel();
+        jToleranceField = new javax.swing.JFormattedTextField();
+        jLabel6 = new javax.swing.JLabel();
 
         jLabel1.setText("Startzeit");
 
@@ -194,8 +203,18 @@ public class TimePanel extends javax.swing.JPanel {
         jArriveTime.setModel(new javax.swing.SpinnerDateModel(new java.util.Date(), new java.util.Date(), null, java.util.Calendar.SECOND));
 
         jLabel4.setText("Toleranz");
+        jLabel4.setEnabled(false);
 
-        jTolerance.setModel(new javax.swing.SpinnerDateModel(new java.util.Date(1241533001836L), null, null, java.util.Calendar.SECOND));
+        jLabel5.setText("+/-");
+        jLabel5.setEnabled(false);
+
+        jToleranceField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(java.text.NumberFormat.getIntegerInstance())));
+        jToleranceField.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        jToleranceField.setText("10");
+        jToleranceField.setEnabled(false);
+
+        jLabel6.setText("Stunde(n)");
+        jLabel6.setEnabled(false);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -220,10 +239,16 @@ public class TimePanel extends javax.swing.JPanel {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(jTolerance, javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jArriveTime, javax.swing.GroupLayout.Alignment.LEADING)))
-                .addContainerGap(156, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                .addComponent(jLabel5)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jToleranceField))
+                            .addComponent(jArriveTime, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel6)))
+                .addContainerGap(247, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -248,8 +273,10 @@ public class TimePanel extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
-                    .addComponent(jTolerance, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(70, Short.MAX_VALUE))
+                    .addComponent(jLabel5)
+                    .addComponent(jToleranceField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel6))
+                .addContainerGap(117, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -317,11 +344,13 @@ public class TimePanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSpinner jSendTime;
     private com.visutools.nav.bislider.BiSlider jSendTimeFrame;
     private javax.swing.JList jSendTimeFramesList;
-    private javax.swing.JSpinner jTolerance;
+    private javax.swing.JFormattedTextField jToleranceField;
     // End of variables declaration//GEN-END:variables
 
     public static void main(String[] args) {

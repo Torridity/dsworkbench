@@ -54,9 +54,6 @@ import javax.swing.UIManager;
 
 /**
  * @TODO (1.X) Add flag-marker for single villages/notes? -> notes as forms? (Version 2.0)
- * @TODO (DIFF) Ask conquers interface (http://de41.die-staemme.de/interface.php?func=get_conquer&since=1239873543) for enoblements
- * @TODO (1.5) Add risk estimation for attacks on enemy allies
- * @TODO (DIFF) Disabled support tool for empty coordinates
  * @author Charon
  */
 public class MapPanel extends javax.swing.JPanel {

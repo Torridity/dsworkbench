@@ -42,7 +42,7 @@ public class Conquer {
             result += "<loser>" + getLoser() + "</loser>\n";
             result += "</conquer>";
             return result;
-        } catch (Exception e) {
+        } catch (Throwable t) {
             //getting xml data failed
         }
         return null;

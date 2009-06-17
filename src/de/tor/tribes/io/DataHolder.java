@@ -41,7 +41,7 @@ import org.jdom.Document;
 import org.jdom.Element;
 
 /**
- *
+ *@TODO (1.6) Load local copy if download fails
  * @author Charon
  */
 public class DataHolder {
@@ -363,7 +363,7 @@ public class DataHolder {
             int vc = 0;
             int tc = 0;
             initialize();
-            HSQLTest test = null;
+           // HSQLTest test = null;
             /*try {
                 long s = System.currentTimeMillis();
                 test = new HSQLTest("villages");

@@ -9,7 +9,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
-import org.hsqldb.jdbc.jdbcDataSource;
+//import org.hsqldb.jdbc.jdbcDataSource;
 
 /**
  *
@@ -28,11 +28,11 @@ public class HSQLTest {
         // of the db.
         // It can contain directory names relative to the
         // current working directory
-        jdbcDataSource dataSource = new jdbcDataSource();
+       /* jdbcDataSource dataSource = new jdbcDataSource();
 
         dataSource.setDatabase("jdbc:hsqldb:" + db_file_name_prefix);
 
-        conn = dataSource.getConnection("sa", "");
+        conn = dataSource.getConnection("sa", "");*/
     }
 
     public void shutdown() throws SQLException {

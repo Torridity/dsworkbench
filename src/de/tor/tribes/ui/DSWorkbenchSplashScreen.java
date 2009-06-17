@@ -276,7 +276,24 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
         }
 
         try {
-            DataHolder.getSingleton().loadData(checkForUpdates);
+            if (checkForUpdates) {
+                boolean ret = DataHolder.getSingleton().loadData(true);
+                logger.debug("Update finished " + ((ret) ? "successfully" : "with errors"));
+                if (!ret) {
+                    logger.info(" - Loading local copy due to update error");
+                    ret = DataHolder.getSingleton().loadData(false);
+                    logger.debug("Data loaded " + ((ret) ? "successfully" : "with errors"));
+                    if (!ret) {
+                        throw new Exception("Unable to load local data copy");
+                    }
+                }
+            } else {
+                boolean ret = DataHolder.getSingleton().loadData(true);
+                logger.debug("Data loaded " + ((ret) ? "successfully" : "with errors"));
+                if (!ret) {
+                    throw new Exception("Unable to load local data copy");
+                }
+            }
         } catch (Exception e) {
             logger.error("Failed to load server data", e);
             return false;

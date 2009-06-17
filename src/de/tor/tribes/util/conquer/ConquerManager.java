@@ -20,10 +20,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.Enumeration;
-import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import org.apache.log4j.Logger;
@@ -176,6 +173,7 @@ public class ConquerManager {
                     String xml = c.toXml();
                     if (xml != null) {
                         w.write(xml + "\n");
+                        w.flush();
                     }
                 }
             }
@@ -183,16 +181,16 @@ public class ConquerManager {
             w.flush();
             w.close();
             logger.debug("Conquers successfully saved");
-        } catch (Exception e) {
+        } catch (Throwable t) {
             if (!new File(pFile).getParentFile().exists()) {
                 //server directory obviously does not exist yet
                 //this should only happen at the first start
                 logger.info("Ignoring error, server directory does not exists yet");
             } else {
-                logger.error("Failed to save conquers", e);
-                //try to delete errornous file
-                new File(pFile).delete();
+                logger.error("Failed to save conquers", t);
             }
+            //try to delete errornous file
+            new File(pFile).delete();
         }
     }
 
@@ -401,7 +399,7 @@ public class ConquerManager {
 
 class ConquerUpdateThread extends Thread {
 
-    private final long FIVE_MINUTES = 1000 * 30 * 5;
+    private final long FIVE_MINUTES = 1000 * 60 * 5;
 
     public ConquerUpdateThread() {
         setDaemon(true);

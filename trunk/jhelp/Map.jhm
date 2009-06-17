@@ -74,6 +74,8 @@
 
 <mapID target="pages.form_setup" url="pages/form_setup.html"/>
 
+<mapID target="pages.main_window_basics_MarkOnTop" url="pages/main_window_basics.html#MarkOnTop"/>
+
 <mapID target="pages.main_window_basics" url="pages/main_window_basics.html"/>
 
 <mapID target="pages.attack_tools" url="pages/attack_tools.html"/>
@@ -164,6 +166,8 @@
 
 <mapID target="images.r" url="images/r.gif"/>
 
+<mapID target="images.shortcuts.F8" url="images/shortcuts/F8.gif"/>
+
 <mapID target="images.att_validate" url="images/att_validate.png"/>
 
 <mapID target="images.shortcuts.F7" url="images/shortcuts/F7.gif"/>
@@ -214,6 +218,8 @@
 
 <mapID target="images.tictac_orange" url="images/tictac_orange.gif"/>
 
+<mapID target="images.warning" url="images/warning.png"/>
+
 <mapID target="images.tools.attack_snob" url="images/tools/attack_snob.png"/>
 
 <mapID target="images.shortcuts.Alt6" url="images/shortcuts/Alt6.gif"/>
@@ -250,9 +256,9 @@
 
 <mapID target="images.tools.attack_axe" url="images/tools/attack_axe.png"/>
 
-<mapID target="images.mark" url="images/mark.png"/>
-
 <mapID target="images.tools.selection" url="images/tools/selection.png"/>
+
+<mapID target="images.mark" url="images/mark.png"/>
 
 <mapID target="images.tools.attack_sword" url="images/tools/attack_sword.png"/>
 

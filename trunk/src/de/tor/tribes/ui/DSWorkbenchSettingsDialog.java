@@ -2285,9 +2285,9 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             @Override
             public void run() {
                 try {
-                    logger.debug("Start loading from harddisk");
+                    logger.debug("Start loading from hard disk");
                     boolean ret = DataHolder.getSingleton().loadData(false);
-                    logger.debug("Update finished " + ((ret) ? "successfully" : "with errors"));
+                    logger.debug("Data loaded " + ((ret) ? "successfully" : "with errors"));
                 } catch (Exception e) {
                     logger.error("Failed loading data", e);
                 }
@@ -2560,6 +2560,14 @@ private void fireDownloadDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
                     logger.debug("Start downloading data");
                     boolean ret = DataHolder.getSingleton().loadData(true);
                     logger.debug("Update finished " + ((ret) ? "successfully" : "with errors"));
+                    if (!ret) {
+                        logger.info(" - Loading local copy due to update error");
+                        ret = DataHolder.getSingleton().loadData(false);
+                        logger.debug("Data loaded " + ((ret) ? "successfully" : "with errors"));
+                        if (!ret) {
+                            throw new Exception("Unable to load local data copy");
+                        }
+                    }
                 } catch (Exception e) {
                     logger.error("Failed to load data", e);
                 }

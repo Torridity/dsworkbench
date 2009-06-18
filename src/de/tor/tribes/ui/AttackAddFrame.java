@@ -11,6 +11,7 @@ import de.tor.tribes.types.Village;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.GlobalOptions;
+import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.attack.AttackManager;
 import java.awt.Color;
 import java.awt.event.ItemEvent;
@@ -369,7 +370,7 @@ private void fireSetLastArrivalEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST
     if (last != null) {
         jTimeSpinner.setValue(last);
     } else {
-        JOptionPane.showMessageDialog(this, "Noch kein Wert gespeichert", "Warnung", JOptionPane.WARNING_MESSAGE);
+        JOptionPaneHelper.showWarningBox(this, "Noch kein Wert gespeichert", "Warnung");
     }
 }//GEN-LAST:event_fireSetLastArrivalEvent
     // Variables declaration - do not modify//GEN-BEGIN:variables

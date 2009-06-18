@@ -38,6 +38,7 @@ import de.tor.tribes.util.ServerChangeListener;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.models.TagTableModel;
 import de.tor.tribes.ui.renderer.MapRenderer;
+import de.tor.tribes.util.JOptionPaneHelper;
 import java.awt.Component;
 import java.awt.MouseInfo;
 import java.awt.event.ActionListener;
@@ -548,7 +549,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                     "oder 'dsworkbench.de' ist nicht verfügbar.\n" +
                     "Da noch kein Datenabgleich mit dem Server stattgefunden hat\n" +
                     "korrigiere bitte deine Netzwerkeinstellungen um diesen einmalig durchzuführen.";
-            JOptionPane.showMessageDialog(this, message, "Warnung", JOptionPane.WARNING_MESSAGE);
+            JOptionPaneHelper.showWarningBox(this, message, "Warnung");
             return false;
         }
 
@@ -2218,7 +2219,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                     "oder 'dsworkbench.de' ist nicht verfügbar.\n" +
                     "Da noch kein Datenabgleich mit dem Server stattgefunden hat " +
                     "korrigiere bitte deine Netzwerkeinstellungen um diesen einmalig durchzuführen.";
-            JOptionPane.showMessageDialog(this, message, "Warnung", JOptionPane.WARNING_MESSAGE);
+            JOptionPaneHelper.showWarningBox(this, message, "Warnung");
         } else {
             String message = null;
             String title = "Fehler";
@@ -2239,7 +2240,14 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 title = "Information";
                 type = JOptionPane.INFORMATION_MESSAGE;
             }
-            JOptionPane.showMessageDialog(this, message, title, type);
+
+            //show box
+            if (type == JOptionPane.INFORMATION_MESSAGE) {
+                JOptionPaneHelper.showInformationBox(this, message, title);
+            } else {
+                JOptionPaneHelper.showErrorBox(this, message, title);
+            }
+
         }
 
         DSWorkbenchMainFrame.getSingleton().onlineStateChanged();
@@ -2364,7 +2372,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             GlobalOptions.loadSkin();
         } catch (Exception e) {
             logger.error("Failed to load skin '" + jGraphicPacks.getSelectedItem() + "'", e);
-            JOptionPane.showMessageDialog(this, "Fehler beim laden des Grafikpaketes.");
+            JOptionPaneHelper.showErrorBox(this, "Fehler beim laden des Grafikpaketes.", "Fehler");
             //load default
             GlobalOptions.addProperty("default.skin", "default");
             try {
@@ -2384,8 +2392,8 @@ private void fireCreateAccountEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
 
 private void fireLoginIntoAccountEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireLoginIntoAccountEvent
     if (GlobalOptions.isOfflineMode()) {
-        JOptionPane.showMessageDialog(this, "Du befindest dich im Offline Modus.\n" +
-                "Bitte korrigiere deine Netzwerkeinstellungen und versuche es erneut.", "Offline Modus", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPaneHelper.showInformationBox(this, "Du befindest dich im Offline Modus.\n" +
+                "Bitte korrigiere deine Netzwerkeinstellungen und versuche es erneut.", "Offline Modus");
         return;
     }
     String name = jAccountName.getText();
@@ -2396,17 +2404,17 @@ private void fireLoginIntoAccountEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
             GlobalOptions.addProperty("account.name", jAccountName.getText());
             GlobalOptions.addProperty("account.password", new String(jAccountPassword.getPassword()));
             GlobalOptions.saveProperties();
-            JOptionPane.showMessageDialog(this, "Account erfolgreich überprüft.", "Information", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPaneHelper.showInformationBox(this, "Account erfolgreich überprüft.", "Information");
         } else if (ret == DatabaseInterface.ID_DATABASE_CONNECTION_FAILED) {
-            JOptionPane.showMessageDialog(this, "Keine Verbindung zur Datenbank.\nBitte versuch es in Kürze noch einmal.", "Fehler", JOptionPane.ERROR_MESSAGE);
+            JOptionPaneHelper.showErrorBox(this, "Keine Verbindung zur Datenbank.\nBitte versuch es in Kürze noch einmal.", "Fehler");
         } else if (ret == DatabaseInterface.ID_USER_NOT_EXIST) {
-            JOptionPane.showMessageDialog(this, "Der Benutzer '" + name + "' existiert nicht oder das Passwort ist falsch.\nBitte überprüfe deine Accounteinstellungen.", "Information", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPaneHelper.showInformationBox(this, "Der Benutzer '" + name + "' existiert nicht oder das Passwort ist falsch.\nBitte überprüfe deine Accounteinstellungen.", "Information");
         } else if (ret == DatabaseInterface.ID_WEB_CONNECTION_FAILED) {
-            JOptionPane.showMessageDialog(this, "Es konnte keine Verbindung mit dem Server hergestellt werden.\nBitte überprüfe deine Netzwerkeinstellungen und versuch es in Kürze noch einmal.", "Fehler", JOptionPane.ERROR_MESSAGE);
+            JOptionPaneHelper.showErrorBox(this, "Es konnte keine Verbindung mit dem Server hergestellt werden.\nBitte überprüfe deine Netzwerkeinstellungen und versuch es in Kürze noch einmal.", "Fehler");
         } else if (ret == DatabaseInterface.ID_QUERY_RETURNED_UNEXPECTED_RESULT) {
-            JOptionPane.showMessageDialog(this, "Das Ergebnis der Nutzerprüfung war nicht eindeutig. Bitte kontaktiere den Entwickler.", "Fehler", JOptionPane.ERROR_MESSAGE);
+            JOptionPaneHelper.showErrorBox(this, "Das Ergebnis der Nutzerprüfung war nicht eindeutig. Bitte kontaktiere den Entwickler.", "Fehler");
         } else if (ret == DatabaseInterface.ID_UNKNOWN_ERROR) {
-            JOptionPane.showMessageDialog(this, "Ein unbekannter Fehler ist aufgetreten.\nBitte kontaktiere den Entwickler.", "Fehler", JOptionPane.ERROR_MESSAGE);
+            JOptionPaneHelper.showErrorBox(this, "Ein unbekannter Fehler ist aufgetreten.\nBitte kontaktiere den Entwickler.", "Fehler");
         }
     }
 }//GEN-LAST:event_fireLoginIntoAccountEvent
@@ -2422,46 +2430,46 @@ private void fireRegisterEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
         String password2 = new String(jRegistrationPassword2.getPassword());
 
         if ((user.length() < 3) || (password.length() < 3)) {
-            JOptionPane.showMessageDialog(jCreateAccountDialog, "Accountname und Passwort müssen mindestens 3 Zeichen lang sein.", "Fehler", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPaneHelper.showErrorBox(jCreateAccountDialog, "Accountname und Passwort müssen mindestens 3 Zeichen lang sein.", "Fehler");
             return;
         }
 
         if (user.length() > 20) {
-            JOptionPane.showMessageDialog(jCreateAccountDialog, "Der Accountname darf höchstens 20 Zeichen lang sein.", "Fehler", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPaneHelper.showErrorBox(jCreateAccountDialog, "Der Accountname darf höchstens 20 Zeichen lang sein.", "Fehler");
             return;
         }
 
         if (!password.equals(password2)) {
-            JOptionPane.showMessageDialog(jCreateAccountDialog, "Die eingegebenen Passwörter unterscheiden sich.\nBitte überprüfe deine Eingabe.", "Warnung", JOptionPane.WARNING_MESSAGE);
+            JOptionPaneHelper.showErrorBox(jCreateAccountDialog, "Die eingegebenen Passwörter unterscheiden sich.\nBitte überprüfe deine Eingabe.", "Fehler");
             return;
         }
 
         int ret = DatabaseInterface.addUser(user, password);
         switch (ret) {
             case DatabaseInterface.ID_DATABASE_CONNECTION_FAILED: {
-                JOptionPane.showMessageDialog(jCreateAccountDialog, "Fehler beim Verbinden mit der Datenbank.\nBitte versuch es in Kürze noch einmal.", "Fehler", JOptionPane.ERROR_MESSAGE);
+                JOptionPaneHelper.showErrorBox(jCreateAccountDialog, "Fehler beim Verbinden mit der Datenbank.\nBitte versuch es in Kürze noch einmal.", "Fehler");
                 break;
 
             }
             case DatabaseInterface.ID_WEB_CONNECTION_FAILED: {
-                JOptionPane.showMessageDialog(jCreateAccountDialog, "Es konnte keine Verbindung mit dem Server hergestellt werden.\nBitte überprüfe die Netzwerkeinstellungen und versuch es in Kürze noch einmal.", "Fehler", JOptionPane.ERROR_MESSAGE);
+                JOptionPaneHelper.showErrorBox(jCreateAccountDialog, "Es konnte keine Verbindung mit dem Server hergestellt werden.\nBitte überprüfe die Netzwerkeinstellungen und versuch es in Kürze noch einmal.", "Fehler");
                 break;
 
             }
             case DatabaseInterface.ID_USER_ALREADY_EXIST: {
-                JOptionPane.showMessageDialog(jCreateAccountDialog, "Es existiert bereits ein Benutzer mit dem angegebenen Namen.\nBitte wähle einen anderen Namen.", "Fehler", JOptionPane.ERROR_MESSAGE);
+                JOptionPaneHelper.showErrorBox(jCreateAccountDialog, "Es existiert bereits ein Benutzer mit dem angegebenen Namen.\nBitte wähle einen anderen Namen.", "Fehler");
                 break;
             }
             case DatabaseInterface.ID_QUERY_RETURNED_UNEXPECTED_RESULT: {
-                JOptionPane.showMessageDialog(jCreateAccountDialog, "Der Benutzer konnte nicht in hinzugefügt werden.\nBitte wende dich an den Entwickler.", "Fehler", JOptionPane.ERROR_MESSAGE);
+                JOptionPaneHelper.showErrorBox(jCreateAccountDialog, "Der Benutzer konnte nicht in hinzugefügt werden.\nBitte wende dich an den Entwickler.", "Fehler");
                 break;
             }
             case DatabaseInterface.ID_UNKNOWN_ERROR: {
-                JOptionPane.showMessageDialog(jCreateAccountDialog, "Ein unbekannter Fehler ist aufgetreten.\nBitte wende dich an den Entwickler.", "Fehler", JOptionPane.ERROR_MESSAGE);
+                JOptionPaneHelper.showErrorBox(jCreateAccountDialog, "Ein unbekannter Fehler ist aufgetreten.\nBitte wende dich an den Entwickler.", "Fehler");
                 break;
             }
             default: {
-                JOptionPane.showMessageDialog(jCreateAccountDialog, "Dein Account wurde erfolgreich angelegt.\nDu kannst nun DS-Serverdaten herunterladen.", "Account angelegt", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPaneHelper.showInformationBox(jCreateAccountDialog, "Dein Account wurde erfolgreich angelegt.\nDu kannst nun DS-Serverdaten herunterladen.", "Account angelegt");
                 jAccountName.setText(jRegistrationAccountName.getText());
                 jAccountPassword.setText(new String(jRegistrationPassword.getPassword()));
                 GlobalOptions.addProperty("account.name", user);
@@ -2494,9 +2502,9 @@ private void fireDownloadDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
         // <editor-fold defaultstate="collapsed" desc=" Offline Mode ? ">
 
         if (GlobalOptions.isOfflineMode()) {
-            JOptionPane.showMessageDialog(this, "Du befindest dich im Offline-Modus." +
+            JOptionPaneHelper.showWarningBox(this, "Du befindest dich im Offline-Modus." +
                     "\nBitte korrigiere deine Netzwerkeinstellungen um den Download durchzuführen.",
-                    "Warnung", JOptionPane.WARNING_MESSAGE);
+                    "Warnung");
             return;
         }
 
@@ -2507,25 +2515,25 @@ private void fireDownloadDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
         String name = GlobalOptions.getProperty("account.name");
         String password = GlobalOptions.getProperty("account.password");
         if (DatabaseInterface.checkUser(name, password) != DatabaseInterface.ID_SUCCESS) {
-            JOptionPane.showMessageDialog(this, "Die Accountvalidierung ist fehlgeschlagen.\n" +
+            JOptionPaneHelper.showErrorBox(this, "Die Accountvalidierung ist fehlgeschlagen.\n" +
                     "Bitte überprüfe deine Account- und Netzwerkeinstellungen und versuches es erneut.",
-                    "Fehler", JOptionPane.ERROR_MESSAGE);
+                    "Fehler");
             return;
         } else {
             long serverDataVersion = DatabaseInterface.getServerDataVersion(selectedServer);
             long userDataVersion = DatabaseInterface.getUserDataVersion(name, selectedServer);
             if (serverDataVersion < 0 || userDataVersion < 0) {
-                JOptionPane.showMessageDialog(this, "Fehler bei der Überprüfung der Datenversionen.\n" +
+                JOptionPaneHelper.showErrorBox(this, "Fehler bei der Überprüfung der Datenversionen.\n" +
                         "Bitte überprüfe deine Account- und Netzwerkeinstellungen und versuches es erneut.\n" +
                         "Sollte das Problem weiterhin bestehen, kontaktiere bitte den Entwickler.",
-                        "Fehler", JOptionPane.ERROR_MESSAGE);
+                        "Fehler");
                 return;
             }
             logger.debug("User data version is " + userDataVersion);
             logger.debug("Server data version is " + serverDataVersion);
             if (userDataVersion == serverDataVersion) {
-                JOptionPane.showMessageDialog(this, "Du besitzt bereits die aktuellsten Daten.",
-                        "Information", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPaneHelper.showInformationBox(this, "Du besitzt bereits die aktuellsten Daten.",
+                        "Information");
                 return;
             }
         }
@@ -2560,14 +2568,14 @@ private void fireDownloadDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
                     logger.debug("Start downloading data");
                     boolean ret = DataHolder.getSingleton().loadData(true);
                     logger.debug("Update finished " + ((ret) ? "successfully" : "with errors"));
-                    if (!ret) {
-                        logger.info(" - Loading local copy due to update error");
-                        ret = DataHolder.getSingleton().loadData(false);
-                        logger.debug("Data loaded " + ((ret) ? "successfully" : "with errors"));
-                        if (!ret) {
-                            throw new Exception("Unable to load local data copy");
-                        }
-                    }
+                /* if (!ret) {
+                logger.info(" - Loading local copy due to update error");
+                ret = DataHolder.getSingleton().loadData(false);
+                logger.debug("Data loaded " + ((ret) ? "successfully" : "with errors"));
+                if (!ret) {
+                throw new Exception("Unable to load local data copy");
+                }
+                }*/
                 } catch (Exception e) {
                     logger.error("Failed to load data", e);
                 }
@@ -2626,15 +2634,9 @@ private void fireAddTagEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_f
 private void fireRemoveTagEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireRemoveTagEvent
     int row = jTagTable.getSelectedRow();
     if (row != -1) {
-        UIManager.put("OptionPane.noButtonText", "Nein");
-        UIManager.put("OptionPane.yesButtonText", "Ja");
-        if (JOptionPane.showConfirmDialog(this, "Tag wirklich löschen?", "Tags löschen", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) != JOptionPane.YES_OPTION) {
-            UIManager.put("OptionPane.noButtonText", "No");
-            UIManager.put("OptionPane.yesButtonText", "Yes");
+        if (JOptionPaneHelper.showQuestionConfirmBox(this, "Tag wirklich löschen?", "Tags löschen", "Nein", "Ja") != JOptionPane.YES_OPTION) {
             return;
         }
-        UIManager.put("OptionPane.noButtonText", "No");
-        UIManager.put("OptionPane.yesButtonText", "Yes");
         try {
             TagTableModel.getSingleton().removeRow(row);
         } catch (Exception e) {
@@ -2647,18 +2649,12 @@ private void fireRemoveTagEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:even
 private void fireAddNewTagEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireAddNewTagEvent
     String name = jTagName.getText();
     if (TagManager.getSingleton().getTagByName(name) != null) {
-        UIManager.put("OptionPane.noButtonText", "Nein");
-        UIManager.put("OptionPane.yesButtonText", "Ja");
-        if (JOptionPane.showConfirmDialog(jTagAddDialog, "Ein Tag mit dem angegebenen Namen existiert bereits.\n" +
-                "Willst du den bestehenden Eintrag überschreiben?", "Überschreiben", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
+        if (JOptionPaneHelper.showQuestionConfirmBox(jTagAddDialog, "Ein Tag mit dem angegebenen Namen existiert bereits.\n" +
+                "Willst du den bestehenden Eintrag überschreiben?", "Überschreiben", "Nein", "Ja") == JOptionPane.YES_OPTION) {
             TagManager.getSingleton().removeTagByName(name);
         } else {
-            UIManager.put("OptionPane.noButtonText", "No");
-            UIManager.put("OptionPane.yesButtonText", "Yes");
             return;
         }
-        UIManager.put("OptionPane.noButtonText", "No");
-        UIManager.put("OptionPane.yesButtonText", "Yes");
     }
     TagManager.getSingleton().addTag(name);
     jTagAddDialog.setVisible(false);
@@ -2823,12 +2819,12 @@ private void fireDoChangePasswordEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
     String newPass2 = new String(jNewPassword2.getPassword());
     String user = jAccountName.getText();
     if ((newPass.length() < 3) || (newPass2.length() < 3)) {
-        JOptionPane.showMessageDialog(jCreateAccountDialog, "Das neue Passwort muss mindestens 3 Zeichen lang sein.", "Fehler", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPaneHelper.showInformationBox(jCreateAccountDialog, "Das neue Passwort muss mindestens 3 Zeichen lang sein.", "Fehler");
         return;
     }
 
     if (!newPass.equals(newPass2)) {
-        JOptionPane.showMessageDialog(jCreateAccountDialog, "Die eingegebenen Passwörter unterscheiden sich.\nBitte überprüfe deine Eingabe.", "Warnung", JOptionPane.WARNING_MESSAGE);
+        JOptionPaneHelper.showWarningBox(jCreateAccountDialog, "Die eingegebenen Passwörter unterscheiden sich.\nBitte überprüfe deine Eingabe.", "Warnung");
         return;
     }
 
@@ -2836,29 +2832,29 @@ private void fireDoChangePasswordEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
 
     switch (ret) {
         case DatabaseInterface.ID_DATABASE_CONNECTION_FAILED: {
-            JOptionPane.showMessageDialog(jChangePasswordDialog, "Fehler beim Verbinden mit der Datenbank.\nBitte versuch es in Kürze noch einmal.", "Fehler", JOptionPane.ERROR_MESSAGE);
+            JOptionPaneHelper.showErrorBox(jChangePasswordDialog, "Fehler beim Verbinden mit der Datenbank.\nBitte versuch es in Kürze noch einmal.", "Fehler");
             break;
 
         }
         case DatabaseInterface.ID_WEB_CONNECTION_FAILED: {
-            JOptionPane.showMessageDialog(jChangePasswordDialog, "Es konnte keine Verbindung mit dem Server hergestellt werden.\nBitte überprüfe die Netzwerkeinstellungen und versuch es in Kürze noch einmal.", "Fehler", JOptionPane.ERROR_MESSAGE);
+            JOptionPaneHelper.showErrorBox(jChangePasswordDialog, "Es konnte keine Verbindung mit dem Server hergestellt werden.\nBitte überprüfe die Netzwerkeinstellungen und versuch es in Kürze noch einmal.", "Fehler");
             break;
 
         }
         case DatabaseInterface.ID_QUERY_RETURNED_UNEXPECTED_RESULT: {
-            JOptionPane.showMessageDialog(jChangePasswordDialog, "Das Passwort konnte nicht geändert werden.\nBitte wende dich an den Entwickler.", "Fehler", JOptionPane.ERROR_MESSAGE);
+            JOptionPaneHelper.showErrorBox(jChangePasswordDialog, "Das Passwort konnte nicht geändert werden.\nBitte wende dich an den Entwickler.", "Fehler");
             break;
         }
         case DatabaseInterface.ID_USER_NOT_EXIST: {
-            JOptionPane.showMessageDialog(jChangePasswordDialog, "Ein Account mit dem angegebenen Namen und/oder Passwort existiert nicht.", "Fehler", JOptionPane.ERROR_MESSAGE);
+            JOptionPaneHelper.showErrorBox(jChangePasswordDialog, "Ein Account mit dem angegebenen Namen und/oder Passwort existiert nicht.", "Fehler");
             break;
         }
         case DatabaseInterface.ID_UNKNOWN_ERROR: {
-            JOptionPane.showMessageDialog(jChangePasswordDialog, "Ein unbekannter Fehler ist aufgetreten.\nBitte wende dich an den Entwickler.", "Fehler", JOptionPane.ERROR_MESSAGE);
+            JOptionPaneHelper.showErrorBox(jChangePasswordDialog, "Ein unbekannter Fehler ist aufgetreten.\nBitte wende dich an den Entwickler.", "Fehler");
             break;
         }
         default: {
-            JOptionPane.showMessageDialog(jChangePasswordDialog, "Das Passwort wurde erfolgreich geändert.", "Passwort geändert", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPaneHelper.showInformationBox(jChangePasswordDialog, "Das Passwort wurde erfolgreich geändert.", "Passwort geändert");
             jAccountName.setText(user);
             jAccountPassword.setText(newPass);
             GlobalOptions.addProperty("account.password", newPass);
@@ -2965,15 +2961,11 @@ private void fireCancelChangePasswordEvent(java.awt.event.MouseEvent evt) {//GEN
             String message = "Bitte überprüfe die Spieler-/Servereinstellungen und schließe die Einstellungen mit OK.\n";
             message += "Möglicherweise wurde noch kein Server oder kein Spieler ausgewählt.\n";
             message += "Diese Einstellungen sind für einen korrekten Ablauf zwingend notwendig.";
-            UIManager.put("OptionPane.noButtonText", "Beenden");
-            UIManager.put("OptionPane.yesButtonText", "Korrigieren");
 
-            if (JOptionPane.showConfirmDialog(this, message, "Warnung", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.NO_OPTION) {
+            if (JOptionPaneHelper.showQuestionConfirmBox(this, message, "Warnung", "Beenden", "Korrigieren") == JOptionPane.NO_OPTION) {
                 logger.error("Player/Server settings incorrect. User requested application to terminate");
                 System.exit(1);
             }
-            UIManager.put("OptionPane.noButtonText", "No");
-            UIManager.put("OptionPane.yesButtonText", "Yes");
             return false;
         } else {
             return true;
@@ -2982,9 +2974,6 @@ private void fireCancelChangePasswordEvent(java.awt.event.MouseEvent evt) {//GEN
 
     /**Check the DS Workbench account*/
     private boolean checkAccountSettings() {
-        UIManager.put("OptionPane.yesButtonText", "Einstellungen überprüfen");
-        UIManager.put("OptionPane.noButtonText", "Fortfahren");
-
         if (!GlobalOptions.isOfflineMode()) {
             String name = GlobalOptions.getProperty("account.name");
             String password = GlobalOptions.getProperty("account.password");
@@ -3004,10 +2993,7 @@ private void fireCancelChangePasswordEvent(java.awt.event.MouseEvent evt) {//GEN
                 message += "Wenn du noch nicht registriert bist tu dies bitte über den entsprechenden Button.\n";
                 message += "Falls du bereits registriert bist, überprüfe bitte deinen Benutzernamen und dein Passwort.\n";
                 message += "Solange die Accountvalidierung nicht durchgeführt wurde, ist es dir nicht möglich sein, Serverdaten zu aktualisieren.";
-                if (JOptionPane.showConfirmDialog(this, message, "Warnung", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION) {
-                    //NO_OPTION selected, so check settings again
-                    UIManager.put("OptionPane.noButtonText", "No");
-                    UIManager.put("OptionPane.yesButtonText", "Yes");
+                if (JOptionPaneHelper.showQuestionConfirmBox(this, message, "Warnung", "Fortfahren", "Einstellungen überprüfen") == JOptionPane.YES_OPTION) {
                     return false;
                 }
             } else if (result == DatabaseInterface.ID_WEB_CONNECTION_FAILED) {
@@ -3015,10 +3001,7 @@ private void fireCancelChangePasswordEvent(java.awt.event.MouseEvent evt) {//GEN
                 String message = "Die Accountvalidierung ist fehlgeschlagen.\n";
                 message += "Bitte überprüfe deine Netzwerkeinstellungen und ob du mit dem Internet verbunden bist.\n";
                 message += "Solange die Accountvalidierung nicht erfolgreich war wird es dir nicht möglich sein, Serverdaten zu aktualisieren.";
-                if (JOptionPane.showConfirmDialog(this, message, "Warnung", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION) {
-                    //NO_OPTION selected, so check settings again
-                    UIManager.put("OptionPane.noButtonText", "No");
-                    UIManager.put("OptionPane.yesButtonText", "Yes");
+                if (JOptionPaneHelper.showQuestionConfirmBox(this, message, "Warnung", "Fortfahren", "Einstellungen überprüfen") == JOptionPane.YES_OPTION) {
                     return false;
                 }
             } else if (result == DatabaseInterface.ID_SUCCESS) {
@@ -3032,30 +3015,21 @@ private void fireCancelChangePasswordEvent(java.awt.event.MouseEvent evt) {//GEN
                 message += "Bitte kontaktiere den Entwickler, da es sich um einen internen Fehler handelt.\n";
                 message += "Solange die Accountvalidierung nicht erfolgreich war wird es dir nicht möglich sein, Serverdaten zu aktualisieren.\n" +
                         "Um zu versuchen, das Programm trotzdem zu nutzen, wähle bitte Fortfahren.";
-                if (JOptionPane.showConfirmDialog(this, message, "Warnung", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION) {
-                    //NO_OPTION selected, so check settings again
-                    UIManager.put("OptionPane.noButtonText", "No");
-                    UIManager.put("OptionPane.yesButtonText", "Yes");
+                if (JOptionPaneHelper.showQuestionConfirmBox(this, message, "Warnung", "Fortfahren", "Einstellungen überprüfen") == JOptionPane.YES_OPTION) {
                     return false;
                 }
             }
-            UIManager.put("OptionPane.noButtonText", "No");
-            UIManager.put("OptionPane.yesButtonText", "Yes");
         } else {
             logger.warn("DS Workbench is in offline mode. Account checking not possible.");
-            int result = JOptionPane.showConfirmDialog(this, "Du befindest dich im Offline-Modus.\n" +
+
+            if (JOptionPaneHelper.showWarningConfirmBox(this, "Du befindest dich im Offline-Modus.\n" +
                     "Eine Accountüberprüfung ist daher nicht möglich. Solange dein Account nicht überprüft ist, " +
                     "stehen dir Online-Funktionen nicht zur Verfügung.\n" +
-                    "Willst du trotzdem fortfahren?", "Warnung", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE);
-            if (result == JOptionPane.YES_OPTION) {
+                    "Willst du trotzdem fortfahren?", "Warnung", "Fortfahren", "Einstellungen überprüfen") == JOptionPane.YES_OPTION) {
                 //"check settings" pressed
-                UIManager.put("OptionPane.noButtonText", "No");
-                UIManager.put("OptionPane.yesButtonText", "Yes");
                 return false;
             }
         }
-        UIManager.put("OptionPane.noButtonText", "No");
-        UIManager.put("OptionPane.yesButtonText", "Yes");
         return true;
     }
 

@@ -17,6 +17,7 @@ import de.tor.tribes.ui.editors.VillageCellEditor;
 import de.tor.tribes.ui.renderer.ColorCellRenderer;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
+import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.church.ChurchManager;
 import de.tor.tribes.util.church.ChurchManagerListener;
 import java.awt.Color;
@@ -245,13 +246,7 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
             return;
         }
         String message = ((rows.length == 1) ? "Kirchendorf " : (rows.length + " Kirchendörfer ")) + "wirklich löschen?";
-
-        UIManager.put("OptionPane.noButtonText", "Nein");
-        UIManager.put("OptionPane.yesButtonText", "Ja");
-        int ret = JOptionPane.showConfirmDialog(this, message, "Löschen", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-        UIManager.put("OptionPane.noButtonText", "No");
-        UIManager.put("OptionPane.yesButtonText", "Yes");
-        if (ret == JOptionPane.YES_OPTION) {
+        if (JOptionPaneHelper.showQuestionConfirmBox(this, message, "Löschen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
             //get markers to remove
             List<Village> toRemove = new LinkedList<Village>();
             jChurchTable.invalidate();

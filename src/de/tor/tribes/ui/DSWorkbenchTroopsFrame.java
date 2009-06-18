@@ -22,6 +22,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import de.tor.tribes.ui.renderer.NumberFormatCellRenderer;
+import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.awt.Component;
@@ -410,12 +411,7 @@ private void fireRemoveTroopsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
     }
 
     String message = ((rows.length == 1) ? "Eintrag " : (rows.length + " Einträge ")) + "wirklich löschen?";
-    UIManager.put("OptionPane.noButtonText", "Nein");
-    UIManager.put("OptionPane.yesButtonText", "Ja");
-    int res = JOptionPane.showConfirmDialog(this, message, "Truppeninformationen entfernen", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-    UIManager.put("OptionPane.noButtonText", "No");
-    UIManager.put("OptionPane.yesButtonText", "Yes");
-    if (res != JOptionPane.YES_OPTION) {
+    if (JOptionPaneHelper.showQuestionConfirmBox(this, message, "Truppeninformationen entfernen", "Nein", "Ja") != JOptionPane.YES_OPTION) {
         return;
     }
 
@@ -469,15 +465,15 @@ private void fireTroopAddActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST
 
                 if (TroopsManager.getSingleton().getTroopsForVillage(v) == null) {
                     TroopsManager.getSingleton().addTroopsForVillage(v, emptyUnitList);
-                    JOptionPane.showMessageDialog(jAddTroopsDialog, "Truppen hinzugefügt", "Information", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPaneHelper.showInformationBox(jAddTroopsDialog, "Truppen hinzugefügt", "Information");
                 } else {
-                    JOptionPane.showMessageDialog(jAddTroopsDialog, "Für das gewählte Dorf sind bereits Truppeninformationen vorhanden.", "Information", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPaneHelper.showInformationBox(jAddTroopsDialog, "Für das gewählte Dorf sind bereits Truppeninformationen vorhanden.", "Information");
                 }
 
             }
         } catch (Exception e) {
             logger.error("Failed to add empty troop list", e);
-            JOptionPane.showMessageDialog(jAddTroopsDialog, "Fehler beim hinzufügen der Truppen", "Warnung", JOptionPane.WARNING_MESSAGE);
+            JOptionPaneHelper.showWarningBox(jAddTroopsDialog, "Fehler beim hinzufügen der Truppen", "Warnung");
         }
 
     } else {

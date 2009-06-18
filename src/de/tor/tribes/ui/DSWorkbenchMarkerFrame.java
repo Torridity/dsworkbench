@@ -22,10 +22,10 @@ import de.tor.tribes.ui.renderer.MarkerPanelCellRenderer;
 import de.tor.tribes.ui.editors.ColorChooserCellEditor;
 import de.tor.tribes.ui.renderer.MapRenderer;
 import de.tor.tribes.util.GlobalOptions;
+import de.tor.tribes.util.JOptionPaneHelper;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import javax.swing.JTable;
-import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -248,12 +248,7 @@ private void fireRemoveMarkerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
     }
     String message = ((rows.length == 1) ? "Markierung " : (rows.length + " Markierungen ")) + "wirklich löschen?";
 
-    UIManager.put("OptionPane.noButtonText", "Nein");
-    UIManager.put("OptionPane.yesButtonText", "Ja");
-    int ret = JOptionPane.showConfirmDialog(this, message, "Löschen", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-    UIManager.put("OptionPane.noButtonText", "No");
-    UIManager.put("OptionPane.yesButtonText", "Yes");
-    if (ret == JOptionPane.YES_OPTION) {
+    if (JOptionPaneHelper.showQuestionConfirmBox(this, message, "Löschen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
         //get markers to remove
         List<Marker> toRemove = new LinkedList<Marker>();
         for (int i = rows.length - 1; i >= 0; i--) {

@@ -47,6 +47,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 import org.apache.log4j.Logger;
 import de.tor.tribes.util.DSCalculator;
+import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.attack.AttackManager;
 
@@ -442,7 +443,7 @@ public class VillageSupportFrame extends javax.swing.JFrame {
 
         List<SupportCalculator.SupportMovement> movements = SupportCalculator.calculateSupport(mCurrentVillage, arrive, defOnly, allowedTags, minUnitCnt);
         if ((movements == null) || (movements.size() == 0)) {
-            JOptionPane.showMessageDialog(this, "Mit den eingestellten Parametern ist keine Unterstützung möglich.", "Warnung", JOptionPane.WARNING_MESSAGE);
+            JOptionPaneHelper.showWarningBox(this, "Mit den eingestellten Parametern ist keine Unterstützung möglich.", "Warnung");
             return;
         } else {
             buildResults(movements);
@@ -515,14 +516,14 @@ public class VillageSupportFrame extends javax.swing.JFrame {
 
                 Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(buffer.toString()), null);
                 String result = "Daten in Zwischenablage kopiert.";
-                JOptionPane.showMessageDialog(jResultDialog, result, "Information", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPaneHelper.showInformationBox(jResultDialog, result, "Information");
             } else {
-                JOptionPane.showMessageDialog(jResultDialog, "Keine Unterstützungen ausgewählt.", "Warnung", JOptionPane.WARNING_MESSAGE);
+                JOptionPaneHelper.showWarningBox(jResultDialog, "Keine Unterstützungen ausgewählt.", "Warnung");
             }
         } catch (Exception e) {
             logger.error("Failed to copy data to clipboard", e);
             String result = "Fehler beim Kopieren in die Zwischenablage.";
-            JOptionPane.showMessageDialog(jResultDialog, result, "Fehler", JOptionPane.ERROR_MESSAGE);
+            JOptionPaneHelper.showErrorBox(jResultDialog, result, "Fehler");
         }
     }//GEN-LAST:event_fireCopyUnformatedToClipboardEvent
 
@@ -530,11 +531,8 @@ public class VillageSupportFrame extends javax.swing.JFrame {
         try {
             int[] rows = jSupportTable.getSelectedRows();
             if ((rows != null) && (rows.length > 0)) {
-                UIManager.put("OptionPane.noButtonText", "Nein");
-                UIManager.put("OptionPane.yesButtonText", "Ja");
-                boolean extended = (JOptionPane.showConfirmDialog(jResultDialog, "Erweiterte BB-Codes verwenden (nur für Forum und Notizen geeignet)?", "Erweiterter BB-Code", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION);
-                UIManager.put("OptionPane.noButtonText", "No");
-                UIManager.put("OptionPane.yesButtonText", "Yes");
+                boolean extended = (JOptionPaneHelper.showQuestionConfirmBox(jResultDialog, "Erweiterte BB-Codes verwenden (nur für Forum und Notizen geeignet)?", "Erweiterter BB-Code", "Nein", "Ja") == JOptionPane.YES_OPTION);
+               
                 StringBuffer buffer = new StringBuffer();
                 if (extended) {
                     buffer.append("[u][size=12]Unterstützungsplan[/size][/u]\n\n");
@@ -597,34 +595,28 @@ public class VillageSupportFrame extends javax.swing.JFrame {
                 StringTokenizer t = new StringTokenizer(b, "[");
                 int cnt = t.countTokens();
                 if (cnt > 500) {
-                    UIManager.put("OptionPane.noButtonText", "Nein");
-                    UIManager.put("OptionPane.yesButtonText", "Ja");
-                    if (JOptionPane.showConfirmDialog(jResultDialog, "Die zu exportierenden Unterstützungen benötigen mehr als 500 BB-Codes\n" +
-                            "und können daher im Spiel (Forum/IGM/Notizen) nicht auf einmal dargestellt werden.\nTrotzdem exportieren?", "Zu viele BB-Codes", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.NO_OPTION) {
-                        UIManager.put("OptionPane.noButtonText", "No");
-                        UIManager.put("OptionPane.yesButtonText", "Yes");
+                    if (JOptionPaneHelper.showQuestionConfirmBox(jResultDialog, "Die zu exportierenden Unterstützungen benötigen mehr als 500 BB-Codes\n" +
+                            "und können daher im Spiel (Forum/IGM/Notizen) nicht auf einmal dargestellt werden.\nTrotzdem exportieren?", "Zu viele BB-Codes", "Nein", "Ja") == JOptionPane.NO_OPTION) {
                         return;
                     }
-                    UIManager.put("OptionPane.noButtonText", "No");
-                    UIManager.put("OptionPane.yesButtonText", "Yes");
                 }
                 Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(b), null);
                 String result = "Daten in Zwischenablage kopiert.";
-                JOptionPane.showMessageDialog(jResultDialog, result, "Information", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPaneHelper.showInformationBox(jResultDialog, result, "Information");
             } else {
-                JOptionPane.showMessageDialog(jResultDialog, "Keine Unterstützungen ausgewählt.", "Warnung", JOptionPane.WARNING_MESSAGE);
+                JOptionPaneHelper.showWarningBox(jResultDialog, "Keine Unterstützungen ausgewählt.", "Warnung");
             }
         } catch (Exception e) {
             logger.error("Failed to copy data to clipboard", e);
             String result = "Fehler beim Kopieren in die Zwischenablage.";
-            JOptionPane.showMessageDialog(jResultDialog, result, "Fehler", JOptionPane.ERROR_MESSAGE);
+            JOptionPaneHelper.showErrorBox(jResultDialog, result, "Fehler");
         }
     }//GEN-LAST:event_fireCopyBBCodeToClipboardEvent
 
     private void fireMoveSupportsToAttackViewEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireMoveSupportsToAttackViewEvent
         int[] rows = jSupportTable.getSelectedRows();
         if (rows == null || rows.length == 0) {
-            JOptionPane.showMessageDialog(jResultDialog, "Keine Unterstützungen ausgewählt", "Fehler", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPaneHelper.showErrorBox(jResultDialog, "Keine Unterstützungen ausgewählt", "Fehler");
             return;
         }
         jNewPlanName.setText("");
@@ -852,7 +844,7 @@ public class VillageSupportFrame extends javax.swing.JFrame {
                 buffer.append(" " + u.getName() + "\n");
             }
         }
-        JOptionPane.showMessageDialog(jResultDialog, buffer.toString(), "Maximale Kampfkraft", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPaneHelper.showInformationBox(jResultDialog, buffer.toString(), "Maximale Kampfkraft");
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField jArriveTime;

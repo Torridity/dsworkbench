@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import javax.imageio.ImageIO;
-import javax.swing.JOptionPane;
 import org.apache.log4j.Logger;
 import de.tor.tribes.ui.DSWorkbenchSettingsDialog;
 
@@ -125,7 +124,7 @@ public class Skin {
             f.setLocation(pPos);
             f.setVisible(true);
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(DSWorkbenchSettingsDialog.getSingleton(), "Keine Vorschauf verfügbar.", "Informatione", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPaneHelper.showInformationBox(DSWorkbenchSettingsDialog.getSingleton(), "Keine Vorschauf verfügbar.", "Informatione");
         }
     }
 

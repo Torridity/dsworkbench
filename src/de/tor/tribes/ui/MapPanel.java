@@ -31,6 +31,7 @@ import de.tor.tribes.ui.renderer.MapRenderer;
 import de.tor.tribes.ui.renderer.MenuRenderer;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.DSCalculator;
+import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.MapShotListener;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.VillageSelectionListener;
@@ -226,7 +227,7 @@ public class MapPanel extends javax.swing.JPanel {
                                 //empty village
                                 return;
                             }
-                        }else{
+                        } else {
                             //no village
                             return;
                         }
@@ -524,7 +525,7 @@ public class MapPanel extends javax.swing.JPanel {
                             try {
                                 double d = DSCalculator.calculateDistance(mSourceVillage, mTargetVillage);
                                 if (d > ServerSettings.getSingleton().getSnobRange()) {
-                                    JOptionPane.showMessageDialog(DSWorkbenchMainFrame.getSingleton(), "Maximale AG Reichweite überschritten", "Fehler", JOptionPane.WARNING_MESSAGE);
+                                    JOptionPaneHelper.showErrorBox(DSWorkbenchMainFrame.getSingleton(), "Maximale AG Reichweite überschritten", "Fehler");
                                     isAttack = false;
                                 }
                             } catch (Exception inner) {
@@ -1002,24 +1003,17 @@ public class MapPanel extends javax.swing.JPanel {
                     int cnt = t.countTokens();
                     boolean doExport = true;
                     if (cnt > 500) {
-                        UIManager.put("OptionPane.noButtonText", "Nein");
-                        UIManager.put("OptionPane.yesButtonText", "Ja");
-                        if (JOptionPane.showConfirmDialog(this, "Die ausgewählten Dörfer benötigen mehr als 500 BB-Codes\n" +
-                                "und können daher im Spiel (Forum/IGM/Notizen) nicht auf einmal dargestellt werden.\nTrotzdem exportieren?", "Zu viele BB-Codes", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.NO_OPTION) {
-                            UIManager.put("OptionPane.noButtonText", "No");
-                            UIManager.put("OptionPane.yesButtonText", "Yes");
+                        if (JOptionPaneHelper.showQuestionConfirmBox(this, "Die ausgewählten Dörfer benötigen mehr als 500 BB-Codes\n" +
+                                "und können daher im Spiel (Forum/IGM/Notizen) nicht auf einmal dargestellt werden.\nTrotzdem exportieren?", "Zu viele BB-Codes", "Nein", "Ja") == JOptionPane.NO_OPTION) {
                             doExport = false;
                         }
-                        UIManager.put("OptionPane.noButtonText", "No");
-                        UIManager.put("OptionPane.yesButtonText", "Yes");
                     }
                     if (doExport) {
-
                         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(result), null);
-                        JOptionPane.showMessageDialog(jCopyVillagesDialog, "Dorfdaten in die Zwischenablage kopiert.", "Daten kopiert", JOptionPane.INFORMATION_MESSAGE);
+                        JOptionPaneHelper.showInformationBox(jCopyVillagesDialog, "Dorfdaten in die Zwischenablage kopiert.", "Daten kopiert");
                     }
                 } else {
-                    JOptionPane.showMessageDialog(jCopyVillagesDialog, "Mit den gewählten Einstellungen werden keine Dörfer kopiert.", "Information", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPaneHelper.showInformationBox(jCopyVillagesDialog, "Mit den gewählten Einstellungen werden keine Dörfer kopiert.", "Information");
                     return;
                 }
             } else if (evt.getSource() == jExportPlainButton) {
@@ -1083,14 +1077,14 @@ public class MapPanel extends javax.swing.JPanel {
                 }
                 if (exported) {
                     Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(result), null);
-                    JOptionPane.showMessageDialog(jCopyVillagesDialog, "Dorfdaten in die Zwischenablage kopiert.", "Daten kopiert", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPaneHelper.showInformationBox(jCopyVillagesDialog, "Dorfdaten in die Zwischenablage kopiert.", "Daten kopiert");
                 } else {
-                    JOptionPane.showMessageDialog(jCopyVillagesDialog, "Mit den gewählten Einstellungen werden keine Dörfer kopiert.", "Information", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPaneHelper.showInformationBox(jCopyVillagesDialog, "Mit den gewählten Einstellungen werden keine Dörfer kopiert.", "Information");
                     return;
                 }
             }
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(jCopyVillagesDialog, "Fehler beim kopieren der Daten.", "Fehler", JOptionPane.ERROR_MESSAGE);
+            JOptionPaneHelper.showErrorBox(jCopyVillagesDialog, "Fehler beim Kopieren der Daten.", "Fehler");
         }
 
         jCopyVillagesDialog.setVisible(false);
@@ -1126,22 +1120,18 @@ public class MapPanel extends javax.swing.JPanel {
                 int sy = 0;
                 if (xDir >= 1) {
                     sx = 2;
-                    xDir =
-                            0;
+                    xDir = 0;
                 } else if (xDir <= -1) {
                     sx = -2;
-                    xDir =
-                            0;
+                    xDir = 0;
                 }
 
                 if (yDir >= 1) {
                     sy = 2;
-                    yDir =
-                            0;
+                    yDir = 0;
                 } else if (yDir <= -1) {
                     sy = -2;
-                    yDir =
-                            0;
+                    yDir = 0;
                 }
 
                 fireScrollEvents(sx, sy);
@@ -1175,11 +1165,8 @@ public class MapPanel extends javax.swing.JPanel {
     }
 
     public void updateVirtualBounds(Point2D.Double pViewStart) {
-        double zoom = DSWorkbenchMainFrame.getSingleton().getZoomFactor();
         double xV = pViewStart.getX();
         double yV = pViewStart.getY();
-        /*double wV = (double) getWidth() / ((double) GlobalOptions.getSkin().getFieldWidth() / zoom);
-        double hV = (double) getHeight() / ((double) GlobalOptions.getSkin().getFieldHeight() / zoom);*/
         double wV = (double) getWidth() / GlobalOptions.getSkin().getCurrentFieldWidth();
         double hV = (double) getHeight() / GlobalOptions.getSkin().getCurrentFieldHeight();
         mVirtualBounds.setRect(xV, yV, wV, hV);
@@ -1197,13 +1184,7 @@ public class MapPanel extends javax.swing.JPanel {
         return new Point.Double(mVirtualBounds.getX(), mVirtualBounds.getY());
     }
 
-    public Point virtualPosToSceenPos(
-            double pXVirt, double pYVirt) {
-        double z = DSWorkbenchMainFrame.getSingleton().getZoomFactor();
-        /*Image tmp = GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, z);
-        double width = (double) tmp.getWidth(null);
-        double height = (double) tmp.getHeight(null);
-         */
+    public Point virtualPosToSceenPos(double pXVirt, double pYVirt) {
         double width = GlobalOptions.getSkin().getCurrentFieldWidth();
         double height = GlobalOptions.getSkin().getCurrentFieldHeight();
         double xp = (pXVirt - mVirtualBounds.getX()) * width;
@@ -1212,10 +1193,6 @@ public class MapPanel extends javax.swing.JPanel {
     }
 
     public Point2D.Double mouseToVirtualPos(int pX, int pY) {
-        double z = DSWorkbenchMainFrame.getSingleton().getZoomFactor();
-        /*  Image tmp = GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, z);
-        double width = (double) tmp.getWidth(null);
-        double height = (double) tmp.getHeight(null);*/
         double width = GlobalOptions.getSkin().getCurrentFieldWidth();
         double height = GlobalOptions.getSkin().getCurrentFieldHeight();
         double x = mVirtualBounds.getX() + ((double) pX / (double) width);
@@ -1224,11 +1201,6 @@ public class MapPanel extends javax.swing.JPanel {
     }
 
     public Point2D.Double virtualPosToSceenPosDouble(double pXVirt, double pYVirt) {
-        double z = DSWorkbenchMainFrame.getSingleton().getZoomFactor();
-        //calculate real pos in current frame
-       /* Image tmp = GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, z);
-        double width = (double) tmp.getWidth(null);
-        double height = (double) tmp.getHeight(null);*/
         double width = GlobalOptions.getSkin().getCurrentFieldWidth();
         double height = GlobalOptions.getSkin().getCurrentFieldHeight();
         double xp = (pXVirt - mVirtualBounds.getX()) * width;
@@ -1270,8 +1242,7 @@ public class MapPanel extends javax.swing.JPanel {
     /**Update operation perfomed by the RepaintThread was completed*/
     public void updateComplete(Hashtable<Village, Rectangle> pPositions, Image pBuffer) {
         mBuffer = pBuffer;
-        mVillagePositions =
-                pPositions;
+        mVillagePositions = pPositions;
         if (bMapSHotPlaned) {
             saveMapShot(mBuffer);
         }
@@ -1285,12 +1256,9 @@ public class MapPanel extends javax.swing.JPanel {
 
     protected void planMapShot(String pType, File pLocation, MapShotListener pListener) {
         sMapShotType = pType;
-        mMapShotFile =
-                pLocation;
-        bMapSHotPlaned =
-                true;
-        mMapShotListener =
-                pListener;
+        mMapShotFile = pLocation;
+        bMapSHotPlaned = true;
+        mMapShotListener = pListener;
     }
 
     private void saveMapShot(Image pImage) {
@@ -1299,15 +1267,13 @@ public class MapPanel extends javax.swing.JPanel {
             String first = "";
             if (ServerSettings.getSingleton().getCoordType() != 2) {
                 int[] hier = DSCalculator.xyToHierarchical((int) pos.x, (int) pos.y);
-                first =
-                        "Zentrum: " + hier[0] + ":" + hier[1] + ":" + hier[2];
+                first = "Zentrum: " + hier[0] + ":" + hier[1] + ":" + hier[2];
             } else {
                 first = "Zentrum: " + (int) Math.floor(pos.getX()) + "|" + (int) Math.floor(pos.getY());
             }
 
             BufferedImage result = null;
-            result =
-                    new BufferedImage(pImage.getWidth(null), pImage.getHeight(null), BufferedImage.TYPE_INT_RGB);
+            result = new BufferedImage(pImage.getWidth(null), pImage.getHeight(null), BufferedImage.TYPE_INT_RGB);
 
             Graphics2D g2d = (Graphics2D) result.getGraphics();
             g2d.drawImage(pImage, 0, 0, null);
@@ -1324,8 +1290,7 @@ public class MapPanel extends javax.swing.JPanel {
 
             ImageIO.write(result, sMapShotType, mMapShotFile);
             g2d.dispose();
-            bMapSHotPlaned =
-                    false;
+            bMapSHotPlaned = false;
             mMapShotListener.fireMapShotDoneEvent();
         } catch (Exception e) {
             bMapSHotPlaned = false;
@@ -1343,16 +1308,9 @@ public class MapPanel extends javax.swing.JPanel {
     }
 
     public synchronized void fireVillageAtMousePosChangedEvents(Village pVillage) {
-        /*  for (MapPanelListener listener : mMapPanelListeners) {
-        listener.fireVillageAtMousePosChangedEvent(pVillage);
-        }*/
+       
     }
 
-    /* public synchronized void fireDistanceEvents(Village pSource, Village pTarget) {
-    for (MapPanelListener listener : mMapPanelListeners) {
-    listener.fireDistanceEvent(pSource, pTarget);
-    }
-    }*/
     public synchronized void fireScrollEvents(double pX, double pY) {
         for (MapPanelListener listener : mMapPanelListeners) {
             listener.fireScrollEvent(pX, pY);
@@ -1380,8 +1338,6 @@ public class MapPanel extends javax.swing.JPanel {
         int[] xs = new int[]{0, 1, 2};
         int[] ys = new int[]{0, 1, 0};
         int tm = 3;
-
-
 
     }
 }

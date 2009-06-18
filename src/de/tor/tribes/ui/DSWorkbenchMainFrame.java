@@ -5,6 +5,7 @@
  */
 package de.tor.tribes.ui;
 
+import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.php.ScreenUploadInterface;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
@@ -33,8 +34,8 @@ import javax.swing.UIManager;
 import org.apache.log4j.Logger;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.ui.models.ConquersTableModel;
-import de.tor.tribes.ui.models.CurrentTribeVillagesModel;
 import de.tor.tribes.util.DSCalculator;
+import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.MainShutdownHook;
 import de.tor.tribes.util.MapShotListener;
 import de.tor.tribes.util.ServerSettings;
@@ -50,6 +51,7 @@ import de.tor.tribes.util.troops.TroopsManager;
 import java.awt.Component;
 import java.awt.datatransfer.StringSelection;
 import java.io.FileWriter;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
@@ -424,11 +426,22 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
     /**Update on server change*/
     public void serverSettingsChangedEvent() {
         logger.info("Updating server settings");
-        String playerID = GlobalOptions.getProperty("player." + GlobalOptions.getSelectedServer()) + "@" + GlobalOptions.getSelectedServer();
+        String playerName = GlobalOptions.getProperty("player." + GlobalOptions.getSelectedServer());
+        String playerID = playerName + "@" + GlobalOptions.getSelectedServer();
         logger.info(" - using playerID " + playerID);
         jCurrentPlayer.setText(playerID);
-
-        jCurrentPlayerVillages.setModel(CurrentTribeVillagesModel.getModel());
+        try {
+            DefaultComboBoxModel model = new DefaultComboBoxModel();
+            Tribe t = DataHolder.getSingleton().getTribeByName(playerName);
+            Village[] villages = t.getVillageList().toArray(new Village[]{});
+            Arrays.sort(villages, Village.CASE_INSENSITIVE_ORDER);
+            for (Village v : villages) {
+                model.addElement(v);
+            }
+            jCurrentPlayerVillages.setModel(model);
+        } catch (Exception e) {
+            jCurrentPlayerVillages.setModel(new DefaultComboBoxModel(new Object[]{"-keine Dörfer-"}));
+        }
 
         //update views
         MinimapPanel.getSingleton().redraw();
@@ -2039,16 +2052,10 @@ private void fireCreateMapShotEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
         parent = this;
     }
 
-    UIManager.put("OptionPane.yesButtonText", "Online stellen");
-    UIManager.put("OptionPane.noButtonText", "Nur Speichern");
-    if (JOptionPane.showConfirmDialog(parent, "Willst du die Karte online stellen oder auf deinem Rechner speichern?", "Speichern", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-        UIManager.put("OptionPane.noButtonText", "No");
-        UIManager.put("OptionPane.yesButtonText", "Yes");
+    if (JOptionPaneHelper.showQuestionConfirmBox(parent, "Willst du die Karte online stellen oder auf deinem Rechner speichern?", "Speichern", "Nur speichern", "Online stellen") == JOptionPane.YES_OPTION) {
         putOnline = true;
         MapPanel.getSingleton().planMapShot("png", new File("tmp.png"), this);
     } else {
-        UIManager.put("OptionPane.noButtonText", "No");
-        UIManager.put("OptionPane.yesButtonText", "Yes");
         putOnline = false;
         String dir = GlobalOptions.getProperty("screen.dir");
         if (dir == null) {
@@ -2108,15 +2115,10 @@ private void fireCreateMapShotEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
                 File target = new File(file);
                 if (target.exists()) {
                     //ask if overwrite
-                    UIManager.put("OptionPane.noButtonText", "Nein");
-                    UIManager.put("OptionPane.yesButtonText", "Ja");
-                    if (JOptionPane.showConfirmDialog(jMapShotDialog, "Existierende Datei überschreiben?", "Überschreiben", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) != JOptionPane.YES_OPTION) {
-                        UIManager.put("OptionPane.noButtonText", "No");
-                        UIManager.put("OptionPane.yesButtonText", "Yes");
+
+                    if (JOptionPaneHelper.showQuestionConfirmBox(jMapShotDialog, "Existierende Datei überschreiben?", "Überschreiben", "Nein", "Ja") != JOptionPane.YES_OPTION) {
                         return;
                     }
-                    UIManager.put("OptionPane.noButtonText", "No");
-                    UIManager.put("OptionPane.yesButtonText", "Yes");
                 }
                 MapPanel.getSingleton().planMapShot(type, target, this);
                 GlobalOptions.addProperty("screen.dir", target.getParent());
@@ -2125,6 +2127,7 @@ private void fireCreateMapShotEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
             }
         }
     }
+
     jMapShotDialog.setVisible(false);
 }//GEN-LAST:event_fireCreateMapShotEvent
 
@@ -2137,6 +2140,7 @@ private void fireShowImportDialogEvent(java.awt.event.ActionEvent evt) {//GEN-FI
     if (dir == null) {
         dir = ".";
     }
+
     JFileChooser chooser = new JFileChooser(dir);
     chooser.setDialogTitle("Datei auswählen");
 
@@ -2147,6 +2151,7 @@ private void fireShowImportDialogEvent(java.awt.event.ActionEvent evt) {//GEN-FI
             if ((f != null) && (f.isDirectory() || f.getName().endsWith(".xml"))) {
                 return true;
             }
+
             return false;
         }
 
@@ -2163,6 +2168,7 @@ private void fireShowImportDialogEvent(java.awt.event.ActionEvent evt) {//GEN-FI
             if (!file.endsWith(".xml")) {
                 file += ".xml";
             }
+
             File target = new File(file);
 
             String extension = JOptionPane.showInputDialog(this, "Welche Kennzeichnung sollen importierte Angriffspläne und Tags erhalten?\n" +
@@ -2173,6 +2179,7 @@ private void fireShowImportDialogEvent(java.awt.event.ActionEvent evt) {//GEN-FI
                 logger.debug("Using no import extension");
                 extension = null;
             }
+
             if (target.exists()) {
                 //do import
                 boolean attackImported = AttackManager.getSingleton().importAttacks(target, extension);
@@ -2185,26 +2192,32 @@ private void fireShowImportDialogEvent(java.awt.event.ActionEvent evt) {//GEN-FI
                 if (!attackImported) {
                     message += "  * Fehler beim Import der Angriffe\n";
                 }
+
                 if (!markersImported) {
                     message += "  * Fehler beim Import der Markierungen\n";
                 }
+
                 if (!tagImported) {
                     message += "  * Fehler beim Import der Tags\n";
                 }
+
                 if (!troopsImported) {
                     message += "  * Fehler beim Import der Truppen\n";
                 }
+
                 if (!formsImported) {
                     message += "  * Fehler beim Import der Formen\n";
                 }
 
-                JOptionPane.showMessageDialog(this, message, "Import", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPaneHelper.showInformationBox(this, message, "Import");
             }
+
             GlobalOptions.addProperty("screen.dir", target.getParent());
         } catch (Exception e) {
             logger.error("Failed to import data", e);
-            JOptionPane.showMessageDialog(this, "Import fehlgeschlagen.", "Import", JOptionPane.ERROR_MESSAGE);
+            JOptionPaneHelper.showErrorBox(this, "Import fehlgeschlagen.", "Import");
         }
+
     }
 }//GEN-LAST:event_fireShowImportDialogEvent
 
@@ -2214,30 +2227,33 @@ private void fireExportEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_f
         logger.debug("Building export data");
 
         List<String> plansToExport = new LinkedList<String>();
-        for (int i = 0; i < jAttackExportTable.getRowCount(); i++) {
+        for (int i = 0; i <
+                jAttackExportTable.getRowCount(); i++) {
             String plan = (String) jAttackExportTable.getValueAt(i, 0);
             Boolean export = (Boolean) jAttackExportTable.getValueAt(i, 1);
             if (export) {
                 logger.debug("Selecting attack plan '" + plan + "' to export list");
                 plansToExport.add(plan);
             }
+
         }
 
         boolean needExport = false;
-        needExport = (plansToExport.size() > 0);
+        needExport =(plansToExport.size() > 0);
         needExport |= jExportMarks.isSelected();
         needExport |= jExportTags.isSelected();
         needExport |= jExportTroops.isSelected();
         needExport |= jExportForms.isSelected();
         if (!needExport) {
-            JOptionPane.showMessageDialog(jExportDialog, "Keine Daten für den Export gewählt", "Export", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPaneHelper.showWarningBox(jExportDialog, "Keine Daten für den Export gewählt", "Export");
             return;
-        }
 
+        }
         String dir = GlobalOptions.getProperty("screen.dir");
         if (dir == null) {
             dir = ".";
         }
+
         JFileChooser chooser = new JFileChooser(dir);
         chooser.setDialogTitle("Datei auswählen");
         chooser.setSelectedFile(new File("export.xml"));
@@ -2248,6 +2264,7 @@ private void fireExportEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_f
                 if ((f != null) && (f.isDirectory() || f.getName().endsWith(".xml"))) {
                     return true;
                 }
+
                 return false;
             }
 
@@ -2264,21 +2281,26 @@ private void fireExportEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_f
                 if (!file.endsWith(".xml")) {
                     file += ".xml";
                 }
+
                 File target = new File(file);
                 if (target.exists()) {
-                    if (JOptionPane.showConfirmDialog(jExportDialog, "Bestehende Datei überschreiben?", "Export", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.NO_OPTION) {
+                    if (JOptionPaneHelper.showQuestionConfirmBox(jExportDialog, "Bestehende Datei überschreiben?", "Export", "Nein", "Ja") == JOptionPane.NO_OPTION) {
                         return;
                     }
+
                 }
 
                 String exportString = "<export>\n";
-                exportString += AttackManager.getSingleton().getExportData(plansToExport);
+                exportString +=
+                        AttackManager.getSingleton().getExportData(plansToExport);
                 if (jExportMarks.isSelected()) {
                     exportString += MarkerManager.getSingleton().getExportData();
                 }
+
                 if (jExportTags.isSelected()) {
                     exportString += TagManager.getSingleton().getExportData();
                 }
+
                 if (jExportTroops.isSelected()) {
                     exportString += TroopsManager.getSingleton().getExportData();
                 }
@@ -2286,6 +2308,7 @@ private void fireExportEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_f
                 if (jExportForms.isSelected()) {
                     exportString += FormManager.getSingleton().getExportData();
                 }
+
                 exportString += "</export>";
                 logger.debug("Writing data to disk");
                 FileWriter w = new FileWriter(target);
@@ -2294,15 +2317,17 @@ private void fireExportEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_f
                 w.flush();
                 w.close();
                 logger.debug("Export finished successfully");
-                JOptionPane.showMessageDialog(jExportDialog, "Export erfolgreich beendet.", "Export", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPaneHelper.showInformationBox(jExportDialog, "Export erfolgreich beendet.", "Export");
             } catch (Exception e) {
                 logger.error("Failed to export data", e);
-                JOptionPane.showMessageDialog(this, "Export fehlgeschlagen.", "Import", JOptionPane.ERROR_MESSAGE);
+                JOptionPaneHelper.showErrorBox(this, "Export fehlgeschlagen.", "Export");
             }
+
         } else {
             //cancel pressed
             return;
         }
+
     }
     jExportDialog.setVisible(false);
 }//GEN-LAST:event_fireExportEvent
@@ -2310,7 +2335,8 @@ private void fireExportEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_f
 private void fireOpenExportDialogEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireOpenExportDialogEvent
     Enumeration<String> plans = AttackManager.getSingleton().getPlans();
     jAttackExportTable.invalidate();
-    for (int i = 0; i < jAttackExportTable.getColumnCount(); i++) {
+    for (int i = 0; i <
+            jAttackExportTable.getColumnCount(); i++) {
         DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
 
             @Override
@@ -2324,9 +2350,10 @@ private void fireOpenExportDialogEvent(java.awt.event.ActionEvent evt) {//GEN-FI
         };
         jAttackExportTable.getColumn(jAttackExportTable.getColumnName(i)).setHeaderRenderer(headerRenderer);
     }
+
     DefaultTableModel model = (DefaultTableModel) jAttackExportTable.getModel();
     int rows = model.getRowCount();
-    for (int i = 0; i < rows; i++) {
+    for (int i = 0; i <        rows; i++) {
         model.removeRow(0);
     }
 
@@ -2334,6 +2361,7 @@ private void fireOpenExportDialogEvent(java.awt.event.ActionEvent evt) {//GEN-FI
         String next = plans.nextElement();
         model.addRow(new Object[]{next, Boolean.FALSE});
     }
+
     jAttackExportTable.revalidate();
     jAttackExportTable.repaint();//.updateUI();
 
@@ -2349,11 +2377,13 @@ private void fireChangeUVModeEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:ev
             if (id < 0) {
                 throw new Exception();
             }
+
             GlobalOptions.setUVMode(id);
         } catch (Exception e) {
             jUVModeButton.setSelected(false);
             GlobalOptions.unsetUVMode();
         }
+
     } else {
         jUVModeButton.setIcon(uvModeOff);
         GlobalOptions.unsetUVMode();
@@ -2371,6 +2401,7 @@ private void fireShowChurchRangeChangedEvent(javax.swing.event.ChangeEvent evt) 
     if (!jChurchRangeBox.isEnabled()) {
         return;
     }
+
     GlobalOptions.addProperty("show.church.range", Boolean.toString(jChurchRangeBox.isSelected()));
 }//GEN-LAST:event_fireShowChurchRangeChangedEvent
 
@@ -2384,6 +2415,7 @@ private void fireChangeROIEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:even
         } catch (Exception e) {
             logger.error("Failed to initialize ROI dialog", e);
             return;
+
         }
 
         jAddROIDialog.setLocationRelativeTo(this);
@@ -2409,20 +2441,25 @@ private void fireAddROIDoneEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:eve
             int pos = Integer.MAX_VALUE;
             try {
                 pos = Integer.parseInt((String) jROIPosition.getSelectedItem());
-                pos -= 1;
+                pos -=
+                        1;
             } catch (Exception ee) {
                 //end pos selected
                 pos = Integer.MAX_VALUE;
             }
+
             if (ROIManager.getSingleton().containsROI(value)) {
-                JOptionPane.showMessageDialog(this, "ROI '" + value + "' existiert bereits.", "ROI vorhanden", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPaneHelper.showWarningBox(this, "ROI '" + value + "' existiert bereits.", "ROI vorhanden");
                 return;
+
             }
+
             ROIManager.getSingleton().addROI(pos, value);
             jROIBox.setModel(new DefaultComboBoxModel(ROIManager.getSingleton().getROIs()));
         } catch (Exception e) {
             logger.error("Failed to add ROI", e);
         }
+
     }
     jAddROIDialog.setVisible(false);
 
@@ -2432,7 +2469,8 @@ private void fireROISelectedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:eve
     if (evt.getStateChange() == java.awt.event.ItemEvent.SELECTED) {
         try {
             String item = (String) jROIBox.getSelectedItem();
-            item = item.substring(item.lastIndexOf("(") + 1, item.lastIndexOf(")"));
+            item =
+                    item.substring(item.lastIndexOf("(") + 1, item.lastIndexOf(")"));
             String[] pos = item.trim().split("\\|");
             jCenterX.setText(pos[0]);
             jCenterY.setText(pos[1]);
@@ -2475,7 +2513,8 @@ private void fireShowTroopDensityEvent(javax.swing.event.ChangeEvent evt) {//GEN
     private void centerROI(int pId) {
         try {
             String item = (String) jROIBox.getItemAt(pId);
-            item = item.substring(item.lastIndexOf("(") + 1, item.lastIndexOf(")"));
+            item =
+                    item.substring(item.lastIndexOf("(") + 1, item.lastIndexOf(")"));
             String[] pos = item.trim().split("\\|");
             jCenterX.setText(pos[0]);
             jCenterY.setText(pos[1]);
@@ -2493,6 +2532,7 @@ private void fireShowTroopDensityEvent(javax.swing.event.ChangeEvent evt) {//GEN
         if (!jChurchRangeBox.isEnabled()) {
             return;
         }
+
         jChurchRangeBox.setSelected(!jChurchRangeBox.isSelected());
     }
 
@@ -2508,6 +2548,7 @@ private void fireShowTroopDensityEvent(javax.swing.event.ChangeEvent evt) {//GEN
             jZoomInButton.setEnabled(true);
             jZoomOutButton.setEnabled(true);
         }
+
     }
 
     /**Update the MapPanel when dragging the ROI at the MiniMap
@@ -2521,12 +2562,15 @@ private void fireShowTroopDensityEvent(javax.swing.event.ChangeEvent evt) {//GEN
                 jCenterX.setText(Integer.toString(hier[0]));
                 jCenterY.setText(Integer.toString(hier[1]));
             }
+
         } else {
             jCenterX.setText(Integer.toString((int) Math.floor(dx)));
             jCenterY.setText(Integer.toString((int) Math.floor(dy)));
         }
+
         dCenterX = dx;
-        dCenterY = dy;
+        dCenterY =
+                dy;
         MapPanel.getSingleton().updateMapPosition(dCenterX, dCenterY);
         double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getBasicFieldWidth() * dZoomFactor;
         double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getBasicFieldHeight() * dZoomFactor;
@@ -2536,17 +2580,20 @@ private void fireShowTroopDensityEvent(javax.swing.event.ChangeEvent evt) {//GEN
     /**Scroll the map*/
     public void scroll(double pXDir, double pYDir) {
         dCenterX = dCenterX + pXDir;
-        dCenterY = dCenterY + pYDir;
+        dCenterY =
+                dCenterY + pYDir;
         if (ServerSettings.getSingleton().getCoordType() != 2) {
             int[] hier = DSCalculator.xyToHierarchical((int) dCenterX, (int) dCenterY);
             if (hier != null) {
                 jCenterX.setText(Integer.toString(hier[0]));
                 jCenterY.setText(Integer.toString(hier[1]));
             }
+
         } else {
             jCenterX.setText(Integer.toString((int) Math.floor(dCenterX)));
             jCenterY.setText(Integer.toString((int) Math.floor(dCenterY)));
         }
+
         double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getBasicFieldWidth() * dZoomFactor;
         double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getBasicFieldHeight() * dZoomFactor;
         MinimapPanel.getSingleton().setSelection((int) Math.floor(dCenterX), (int) Math.floor(dCenterY), (int) Math.rint(w), (int) Math.rint(h));
@@ -2558,16 +2605,19 @@ private void fireShowTroopDensityEvent(javax.swing.event.ChangeEvent evt) {//GEN
         if (pVillage == null) {
             return;
         }
+
         if (ServerSettings.getSingleton().getCoordType() != 2) {
             int[] hier = DSCalculator.xyToHierarchical((int) pVillage.getX(), (int) pVillage.getY());
             if (hier != null) {
                 jCenterX.setText(Integer.toString(hier[0]));
                 jCenterY.setText(Integer.toString(hier[1]));
             }
+
         } else {
             jCenterX.setText(Integer.toString(pVillage.getX()));
             jCenterY.setText(Integer.toString(pVillage.getY()));
         }
+
         fireRefreshMapEvent(null);
     }
 
@@ -2578,10 +2628,12 @@ private void fireShowTroopDensityEvent(javax.swing.event.ChangeEvent evt) {//GEN
                 jCenterX.setText(Integer.toString(hier[0]));
                 jCenterY.setText(Integer.toString(hier[1]));
             }
+
         } else {
             jCenterX.setText(Integer.toString(xPos));
             jCenterY.setText(Integer.toString(yPos));
         }
+
         fireRefreshMapEvent(null);
     }
 
@@ -2595,6 +2647,7 @@ private void fireShowTroopDensityEvent(javax.swing.event.ChangeEvent evt) {//GEN
                     //don't try to get village, list is still empty
                     return null;
                 }
+
             }
             return (Village) jCurrentPlayerVillages.getSelectedItem();
         } catch (ClassCastException cce) {
@@ -2604,6 +2657,7 @@ private void fireShowTroopDensityEvent(javax.swing.event.ChangeEvent evt) {//GEN
             logger.warn("Could not get current user village.", e);
             return null;
         }
+
     }
 
     public void setCurrentUserVillage(Village pVillage) {
@@ -2619,7 +2673,7 @@ private void fireShowTroopDensityEvent(javax.swing.event.ChangeEvent evt) {//GEN
         return null;
     }
 
-    // <editor-fold defaultstate="collapsed" desc=" Listener EventHandlers ">
+// <editor-fold defaultstate="collapsed" desc=" Listener EventHandlers ">
     @Override
     public void fireToolChangedEvent(int pTool) {
         jCurrentToolLabel.setIcon(ImageManager.getCursorImage(pTool));
@@ -2652,6 +2706,7 @@ private void fireShowTroopDensityEvent(javax.swing.event.ChangeEvent evt) {//GEN
         } else if (pSource == DSWorkbenchConquersFrame.getSingleton()) {
             jShowConquersFrame.setSelected(DSWorkbenchConquersFrame.getSingleton().isVisible());
         }
+
     }
 
     public void fireGroupParserEvent(Hashtable<String, List<Village>> pParserResult) {
@@ -2666,12 +2721,11 @@ private void fireShowTroopDensityEvent(javax.swing.event.ChangeEvent evt) {//GEN
             } else {
                 message += "* " + s + " (" + pParserResult.get(s).size() + " Dörfer)\n";
             }
+
         }
 
-        message += "Willst du diese Informationen in DS Workbench übernehmen oder sie verwerfen und aus der Zwischenablage entfernen?";
-        UIManager.put("OptionPane.noButtonText", "Verwerfen");
-        UIManager.put("OptionPane.yesButtonText", "Übernehmen");
-        if (JOptionPane.showConfirmDialog(this, message, "Gruppeninformationen gefunden", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION) {
+        message += "Willst du diese Informationen in DS Workbench übernehmen oder sie verwerfen und aus der Zwischenablage entfernen?";     
+        if (JOptionPaneHelper.showQuestionConfirmBox(this, message, "Gruppeninformationen gefunden", "Verwerfen", "Übernehmen") == JOptionPane.YES_OPTION) {
             //remove all tags
             for (String group : groups) {
                 List<Village> villagesForGroup = pParserResult.get(group);
@@ -2679,6 +2733,7 @@ private void fireShowTroopDensityEvent(javax.swing.event.ChangeEvent evt) {//GEN
                     for (Village v : villagesForGroup) {
                         TagManager.getSingleton().removeTags(v);
                     }
+
                 }
             }
 
@@ -2696,14 +2751,13 @@ private void fireShowTroopDensityEvent(javax.swing.event.ChangeEvent evt) {//GEN
                     for (Village v : villagesForGroup) {
                         t.tagVillage(v.getId());
                     }
+
                 }
             }
             //update tag panel in settings
             DSWorkbenchSettingsDialog.getSingleton().setupTagsPanel();
         }
 
-        UIManager.put("OptionPane.noButtonText", "No");
-        UIManager.put("OptionPane.yesButtonText", "Yes");
     }
 
     @Override
@@ -2712,26 +2766,29 @@ private void fireShowTroopDensityEvent(javax.swing.event.ChangeEvent evt) {//GEN
         if (parent == null) {
             parent = this;
         }
+
         if (!putOnline) {
-            JOptionPane.showMessageDialog(parent, "Kartengrafik erfolgreich gespeichert.", "Information", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPaneHelper.showInformationBox(parent, "Kartengrafik erfolgreich gespeichert.", "Information");
         } else {
             String result = ScreenUploadInterface.upload("tmp.png");
             if (result != null) {
                 if (result.indexOf("view.php") > 0) {
                     try {
                         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(result), null);
-                        JOptionPane.showMessageDialog(parent, "Kartengrafik erfolgreich Online gestellt.\n" +
+                        JOptionPaneHelper.showInformationBox(parent, "Kartengrafik erfolgreich Online gestellt.\n" +
                                 "Der Zugriffslink (" + result + ")\n" +
-                                "wurde in die Zwischenablage kopiert.", "Information", JOptionPane.INFORMATION_MESSAGE);
+                                "wurde in die Zwischenablage kopiert.", "Information");
                         BrowserCommandSender.openPage(result);
                     } catch (Exception e) {
-                        JOptionPane.showMessageDialog(parent, "Fehler beim Kopieren in die Zwischenablage." +
-                                "Der Zugriffslink lautet: " + result);
+                         JOptionPaneHelper.showWarningBox(parent, "Fehler beim Kopieren des Links in die Zwischenablage.\n" +
+                                "Der Zugriffslink lautet: " + result, "Link nicht kopiert werden");
                     }
+
                 } else {
-                    JOptionPane.showMessageDialog(parent, "Kartengrafik konnte nicht Online gestellt werden.\n" +
-                            "Fehler: " + result, "Fehler", JOptionPane.ERROR_MESSAGE);
+                    JOptionPaneHelper.showErrorBox(parent, "Kartengrafik konnte nicht Online gestellt werden.\n" +
+                            "Fehler: " + result, "Fehler");
                 }
+
             }
         }
         putOnline = false;
@@ -2743,7 +2800,8 @@ private void fireShowTroopDensityEvent(javax.swing.event.ChangeEvent evt) {//GEN
         if (parent == null) {
             parent = this;
         }
-        JOptionPane.showMessageDialog(parent, "Fehler beim Speichern der Kartengrafik.", "Fehler", JOptionPane.ERROR_MESSAGE);
+
+        JOptionPaneHelper.showErrorBox(parent, "Fehler beim Speichern der Kartengrafik.", "Fehler");
     }
 
 // </editor-fold>

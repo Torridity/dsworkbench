@@ -11,6 +11,7 @@
 package de.tor.tribes.ui.algo;
 
 import de.tor.tribes.util.Constants;
+import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.algo.TimeFrame;
 import java.awt.geom.Line2D;
 import java.text.DecimalFormat;
@@ -59,7 +60,7 @@ public class TimePanel extends javax.swing.JPanel {
         DefaultListModel model = new DefaultListModel();
         jSendTimeFramesList.setModel(model);
         jArriveTime.setEditor(new DateEditor(jArriveTime, "dd.MM.yy HH:mm:ss"));
-        c.setTimeInMillis(System.currentTimeMillis() + 2*60 * 60 * 1000);
+        c.setTimeInMillis(System.currentTimeMillis() + 2 * 60 * 60 * 1000);
         jArriveTime.setValue(c.getTime());
         jToleranceField.setValue(2l);
     }
@@ -87,13 +88,10 @@ public class TimePanel extends javax.swing.JPanel {
     public boolean validatePanel() {
         //no time frame specified
         boolean result = true;
-        UIManager.put("OptionPane.noButtonText", "Nein");
-        UIManager.put("OptionPane.yesButtonText", "Ja");
 
         if (jSendTimeFramesList.getModel().getSize() == 0) {
-
-            if (JOptionPane.showConfirmDialog(this, "Es muss mindestens ein Abschickzeitfenster angegebene werden.\n" +
-                    "Soll der Standardzeitrahmen (8 - 24 Uhr) verwendet werden?", "Fehlendes Zeitfenster", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
+            if (JOptionPaneHelper.showQuestionConfirmBox(this, "Es muss mindestens ein Abschickzeitfenster angegebene werden.\n" +
+                    "Soll der Standardzeitrahmen (8 - 24 Uhr) verwendet werden?", "Fehlendes Zeitfenster", "Nein", "Ja") == JOptionPane.YES_OPTION) {
                 ((DefaultListModel) jSendTimeFramesList.getModel()).addElement(8 + " Uhr - " + 24 + " Uhr");
             } else {
                 result = false;
@@ -102,8 +100,8 @@ public class TimePanel extends javax.swing.JPanel {
 
         Date sendTime = (Date) jSendTime.getValue();
         if (sendTime.getTime() < System.currentTimeMillis()) {
-            if (JOptionPane.showConfirmDialog(this, "Die Startzeit liegt in der Vergangenheit. Daher könnten Abschickzeitpunkte bestimmt werden,\n" +
-                    "die nicht eingehalten werden können. Trotzdem fortfahren?", "Startzeit in Vergangenheit", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION) {
+            if (JOptionPaneHelper.showQuestionConfirmBox(this, "Die Startzeit liegt in der Vergangenheit. Daher könnten Abschickzeitpunkte bestimmt werden,\n" +
+                    "die nicht eingehalten werden können. Trotzdem fortfahren?", "Startzeit in Vergangenheit", "Nein", "Ja") == JOptionPane.YES_OPTION) {
             } else {
                 result = false;
             }
@@ -135,14 +133,12 @@ public class TimePanel extends javax.swing.JPanel {
         }
 
         if (mightBeInNightBonus) {
-            if (JOptionPane.showConfirmDialog(this, "Die angegebene Ankunftszeit kann unter Umständen im Nachbonus (0 - 8 Uhr) liegen.\n" +
-                    "Willst du die Ankunftszeit entsprechend korrigieren?", "Nachtbonus", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
+            if (JOptionPaneHelper.showQuestionConfirmBox(this, "Die angegebene Ankunftszeit kann unter Umständen im Nachbonus (0 - 8 Uhr) liegen.\n" +
+                    "Willst du die Ankunftszeit entsprechend korrigieren?", "Nachtbonus", "Nein", "Ja") == JOptionPane.YES_OPTION) {
                 //correction requested
                 result = false;
             }
         }
-        UIManager.put("OptionPane.noButtonText", "No");
-        UIManager.put("OptionPane.yesButtonText", "Yes");
         return result;
     }
 
@@ -286,7 +282,7 @@ public class TimePanel extends javax.swing.JPanel {
 
         if (min == max) {
             //start == end
-            JOptionPane.showMessageDialog(this, "Der angegebene Zeitrahmen ist ungültig", "Warnung", JOptionPane.WARNING_MESSAGE);
+            JOptionPaneHelper.showWarningBox(this, "Der angegebene Zeitrahmen ist ungültig", "Warnung");
             return;
         }
 
@@ -310,8 +306,8 @@ public class TimePanel extends javax.swing.JPanel {
         if (intersection == -1) {
             model.addElement(min + " Uhr - " + max + " Uhr");
         } else {
-            JOptionPane.showMessageDialog(this, "Das gewählte Zeitfenster überschneidet sich mit dem " + intersection + ". Eintrag.\n" +
-                    "Bitte wähle die Zeitfenster so, dass es zu keinen Überschneidungen kommt.", "Überschneidung", JOptionPane.WARNING_MESSAGE);
+            JOptionPaneHelper.showWarningBox(this, "Das gewählte Zeitfenster überschneidet sich mit dem " + intersection + ". Eintrag.\n" +
+                    "Bitte wähle die Zeitfenster so, dass es zu keinen Überschneidungen kommt.", "Überschneidung");
         }
     }//GEN-LAST:event_fireAddNewTimeFrameEvent
 
@@ -320,20 +316,17 @@ public class TimePanel extends javax.swing.JPanel {
         if (selection == null || selection.length == 0) {
             return;
         }
-        UIManager.put("OptionPane.noButtonText", "Nein");
-        UIManager.put("OptionPane.yesButtonText", "Ja");
         String message = "Zeitrahmen wirklich entfernen?";
         if (selection.length > 1) {
             message = selection.length + " " + message;
         }
-        if (JOptionPane.showConfirmDialog(this, message, "Entfernen", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
+
+        if (JOptionPaneHelper.showQuestionConfirmBox(this, message, "Entfernen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
             DefaultListModel model = (DefaultListModel) jSendTimeFramesList.getModel();
             for (Object o : selection) {
                 model.removeElement(o);
             }
         }
-        UIManager.put("OptionPane.noButtonText", "No");
-        UIManager.put("OptionPane.yesButtonText", "Yes");
     }//GEN-LAST:event_fireRemoveTimeFrameEvent
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -26,6 +26,7 @@ import de.tor.tribes.ui.renderer.AttackTypeCellRenderer;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.GlobalOptions;
+import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.VillageSelectionListener;
 import de.tor.tribes.util.algo.AbstractAttackAlgorithm;
@@ -249,7 +250,6 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Village
 
                 @Override
                 public void valueChanged(ListSelectionEvent e) {
-                    logger.error("VALUE!!!!!!!!!!!!!!");
                     fireFilterSourceVillagesByGroupEvent();
                 }
             });
@@ -258,8 +258,6 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Village
 
                 @Override
                 public void valueChanged(ListSelectionEvent e) {
-                    logger.error("VALLALLA!!!!!!!!!!!!!!");
-
                     fireFilterSourceContinentEvent();
                 }
             });
@@ -1803,12 +1801,7 @@ private void fireRemoveAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
             message = rows.length + " Angriffe entfernen?";
         }
 
-        UIManager.put("OptionPane.noButtonText", "Nein");
-        UIManager.put("OptionPane.yesButtonText", "Ja");
-        int res = JOptionPane.showConfirmDialog(this, message, "Angriff entfernen", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-        UIManager.put("OptionPane.noButtonText", "No");
-        UIManager.put("OptionPane.yesButtonText", "Yes");
-        if (res != JOptionPane.YES_OPTION) {
+        if (JOptionPaneHelper.showQuestionConfirmBox(this, message, "Angriff entfernen", "Nein", "Ja") != JOptionPane.YES_OPTION) {
             return;
         }
 
@@ -1827,13 +1820,13 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
     DefaultTableModel victimModel = (DefaultTableModel) jVictimTable.getModel();
     DefaultTableModel attackModel = (DefaultTableModel) jAttacksTable.getModel();
     if (attackModel.getRowCount() == 0) {
-        JOptionPane.showMessageDialog(this, "Keine Herkunftsdörfer ausgewählt", "Fehler", JOptionPane.ERROR_MESSAGE);
+        JOptionPaneHelper.showErrorBox(this, "Keine Herkunftsdörfer ausgewählt", "Fehler");
         jTabbedPane1.setSelectedIndex(0);
         return;
     }
 
     if (victimModel.getRowCount() == 0) {
-        JOptionPane.showMessageDialog(this, "Keine Ziele ausgewählt", "Fehler", JOptionPane.ERROR_MESSAGE);
+        JOptionPaneHelper.showErrorBox(this, "Keine Ziele ausgewählt", "Fehler");
         jTabbedPane1.setSelectedIndex(1);
         return;
     }
@@ -1960,19 +1953,11 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
 
     //check misc-units criteria
     if (useMiscUnits && !supportMiscUnits) {
-        UIManager.put("OptionPane.noButtonText", "Nein");
-        UIManager.put("OptionPane.yesButtonText", "Ja");
-
-        if (JOptionPane.showConfirmDialog(this, "Der gewählte Algorithmus unterstützt nur Rammen, Katapulte und AGs als angreifende Einheiten.\n" +
+        if (JOptionPaneHelper.showQuestionConfirmBox(this, "Der gewählte Algorithmus unterstützt nur Rammen, Katapulte und AGs als angreifende Einheiten.\n" +
                 "Dörfer für die eine andere Einheit gewählt wurde werden ignoriert.\n" +
-                "Trotzdem fortfahren?", "Warnung", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.NO_OPTION) {
-            UIManager.put("OptionPane.noButtonText", "No");
-            UIManager.put("OptionPane.yesButtonText", "Yes");
+                "Trotzdem fortfahren?", "Warnung", "Nein", "Ja") == JOptionPane.NO_OPTION) {
             return;
         }
-
-        UIManager.put("OptionPane.noButtonText", "No");
-        UIManager.put("OptionPane.yesButtonText", "Yes");
     }
 
     result = algo.calculateAttacks(sources,
@@ -2084,11 +2069,7 @@ private void fireTransferToAttackPlanningEvent(java.awt.event.MouseEvent evt) {/
 private void fireAttacksToClipboardEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireAttacksToClipboardEvent
     //copy results formatted to clipboard
     try {
-        UIManager.put("OptionPane.noButtonText", "Nein");
-        UIManager.put("OptionPane.yesButtonText", "Ja");
-        boolean extended = (JOptionPane.showConfirmDialog(jResultFrame, "Erweiterte BB-Codes verwenden (nur für Forum und Notizen geeignet)?", "Erweiterter BB-Code", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION);
-        UIManager.put("OptionPane.noButtonText", "No");
-        UIManager.put("OptionPane.yesButtonText", "Yes");
+        boolean extended = (JOptionPaneHelper.showQuestionConfirmBox(jResultFrame, "Erweiterte BB-Codes verwenden (nur für Forum und Notizen geeignet)?", "Erweiterter BB-Code", "Nein", "Ja") == JOptionPane.YES_OPTION);
 
         String sUrl = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
 
@@ -2195,12 +2176,10 @@ private void fireAttacksToClipboardEvent(java.awt.event.MouseEvent evt) {//GEN-F
         StringTokenizer t = new StringTokenizer(b, "[");
         int cnt = t.countTokens();
         if (cnt > 500) {
-            UIManager.put("OptionPane.noButtonText", "Nein");
-            UIManager.put("OptionPane.yesButtonText", "Ja");
-            if (JOptionPane.showConfirmDialog(jResultFrame, "Die ausgewählten Angriffe benötigen mehr als 500 BB-Codes\n" +
-                    "und können daher im Spiel (Forum/IGM/Notizen) nicht auf einmal dargestellt werden.\nTrotzdem exportieren?", "Zu viele BB-Codes", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.NO_OPTION) {
-                UIManager.put("OptionPane.noButtonText", "No");
-                UIManager.put("OptionPane.yesButtonText", "Yes");
+            
+            if (JOptionPaneHelper.showQuestionConfirmBox(jResultFrame, "Die ausgewählten Angriffe benötigen mehr als 500 BB-Codes\n" +
+                    "und können daher im Spiel (Forum/IGM/Notizen) nicht auf einmal dargestellt werden.\nTrotzdem exportieren?", "Zu viele BB-Codes", "Nein", "Ja") == JOptionPane.NO_OPTION) {
+                
                 return;
             }
 
@@ -2210,11 +2189,11 @@ private void fireAttacksToClipboardEvent(java.awt.event.MouseEvent evt) {//GEN-F
 
         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(b), null);
         String result = "Daten in Zwischenablage kopiert.";
-        JOptionPane.showMessageDialog(jResultFrame, result, "Information", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPaneHelper.showInformationBox(jResultFrame, result, "Information");
     } catch (Exception e) {
         logger.error("Failed to copy data to clipboard", e);
         String result = "Fehler beim Kopieren in die Zwischenablage.";
-        JOptionPane.showMessageDialog(jResultFrame, result, "Fehler", JOptionPane.ERROR_MESSAGE);
+        JOptionPaneHelper.showErrorBox(jResultFrame, result, "Fehler");
     }
 }//GEN-LAST:event_fireAttacksToClipboardEvent
 
@@ -2269,11 +2248,11 @@ private void fireUnformattedAttacksToClipboardEvent(java.awt.event.MouseEvent ev
 
         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(buffer.toString()), null);
         String result = "Daten in Zwischenablage kopiert.";
-        JOptionPane.showMessageDialog(jResultFrame, result, "Information", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPaneHelper.showInformationBox(jResultFrame, result, "Information");
     } catch (Exception e) {
         logger.error("Failed to copy data to clipboard", e);
         String result = "Fehler beim Kopieren in die Zwischenablage.";
-        JOptionPane.showMessageDialog(jResultFrame, result, "Fehler", JOptionPane.ERROR_MESSAGE);
+        JOptionPaneHelper.showErrorBox(jResultFrame, result, "Fehler");
     }
 }//GEN-LAST:event_fireUnformattedAttacksToClipboardEvent
 
@@ -2303,12 +2282,8 @@ private void fireRemoveTargetVillageEvent(java.awt.event.MouseEvent evt) {//GEN-
             message = rows.length + " Ziele entfernen?";
         }
 
-        UIManager.put("OptionPane.noButtonText", "Nein");
-        UIManager.put("OptionPane.yesButtonText", "Ja");
-        int res = JOptionPane.showConfirmDialog(this, message, "Ziel entfernen", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-        UIManager.put("OptionPane.noButtonText", "No");
-        UIManager.put("OptionPane.yesButtonText", "Yes");
-        if (res != JOptionPane.YES_OPTION) {
+        
+        if (JOptionPaneHelper.showQuestionConfirmBox(this, message, "Ziel entfernen", "Nein", "Ja") != JOptionPane.YES_OPTION) {
             return;
         }
 
@@ -2347,15 +2322,11 @@ private void fireAddAllTargetVillagesEvent(java.awt.event.MouseEvent evt) {//GEN
         return;
     }
 
-    DefaultTableModel victimModel = (DefaultTableModel) jVictimTable.getModel();
     jVictimTable.invalidate();
     int size = jTargetVillageList.getModel().getSize();
     for (int i = 0; i < size; i++) {
         ((DefaultTableModel) jVictimTable.getModel()).addRow(new Object[]{target, jTargetVillageList.getModel().getElementAt(i)});
     }
-    /* for (Village v : target.getVillageList()) {
-    victimModel.addRow(new Object[]{target, v});
-    }*/
 
     jVictimTable.revalidate();
     jVictimTable.repaint();//.updateUI();
@@ -2426,7 +2397,7 @@ private void fireChooseTargetRegionEvent(java.awt.event.MouseEvent evt) {//GEN-F
     } catch (Exception e) {
     }
     if (victim == null) {
-        JOptionPane.showMessageDialog(this, "Kein gültiger Spieler ausgewählt.", "Fehler", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPaneHelper.showInformationBox(this, "Kein gültiger Spieler ausgewählt.", "Fehler");
         return;
 
     }
@@ -2537,7 +2508,7 @@ private void fireToleranceChangedEvent(javax.swing.event.ChangeEvent evt) {//GEN
         diff = (int) Math.floor((double) strength * (double) v / 100);
         jStrengthRange.setText("min. " + ((int) strength - diff));
     } catch (Exception e) {
-        JOptionPane.showMessageDialog(jOffStrengthFrame, "Bitte nur ganzzahlige Einträge verwenden.", "Fehler", JOptionPane.ERROR_MESSAGE);
+        JOptionPaneHelper.showErrorBox(jOffStrengthFrame, "Bitte nur ganzzahlige Einträge verwenden.", "Fehler");
     }
 }//GEN-LAST:event_fireToleranceChangedEvent
 
@@ -2593,7 +2564,7 @@ private void fireAcceptStrengthEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST
             message += "\nZu " + noInformation + " Dörfern lagen keine Truppeninformationen vor.";
         }
     }
-    JOptionPane.showMessageDialog(this, message, "Information", JOptionPane.INFORMATION_MESSAGE);
+    JOptionPaneHelper.showInformationBox(this, message, "Information");
 }//GEN-LAST:event_fireAcceptStrengthEvent
 
 private void fireCancelStrengthEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCancelStrengthEvent
@@ -2660,12 +2631,7 @@ private void fireAlgorithmChangedEvent(javax.swing.event.ChangeEvent evt) {//GEN
         mMiscPanel.setCleanOffsEnabled(false);
         mMiscPanel.setRandomizeEnabled(false);
         mTimePanel.activateTolerance(true);
-    } /*else if (evt.getSource() == jFlexArriveAlgorithm && jFlexArriveAlgorithm.isSelected()) {
-mMiscPanel.setCleanOffsEnabled(false);
-mMiscPanel.setRandomizeEnabled(false);
-mMiscPanel.setSnobDistanceEnabled(false);
-mTimePanel.activateTolerance(true);
-}*/
+    }
 }//GEN-LAST:event_fireAlgorithmChangedEvent
 
 private void fireUpdateSelectionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireUpdateSelectionEvent
@@ -2721,7 +2687,7 @@ private void fireGetSourceVillagesFromClipboardEvent(java.awt.event.MouseEvent e
         Transferable t = (Transferable) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
         List<Village> villages = VillageParser.parse((String) t.getTransferData(DataFlavor.stringFlavor));
         if (villages == null || villages.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Es konnten keine Dorfkoodinaten in der Zwischenablage gefunden werden.", "Information", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPaneHelper.showInformationBox(this, "Es konnten keine Dorfkoodinaten in der Zwischenablage gefunden werden.", "Information");
             return;
         } else {
             UnitHolder uSource = (UnitHolder) jTroopsList.getSelectedItem();
@@ -2729,7 +2695,7 @@ private void fireGetSourceVillagesFromClipboardEvent(java.awt.event.MouseEvent e
                 ((DefaultTableModel) jAttacksTable.getModel()).addRow(new Object[]{v, uSource, jMarkAsFakeBox.isSelected()});
             }
             String message = (villages.size() == 1) ? "1 Dorf " : villages.size() + " Dörfer ";
-            JOptionPane.showMessageDialog(this, message + " übertragen.", "Information", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPaneHelper.showInformationBox(this, message + " übertragen.", "Information");
         }
     } catch (Exception e) {
         logger.error("Failed to parse source villages from clipboard", e);
@@ -2741,7 +2707,7 @@ private void fireGetTargetVillagesFromClipboardEvent(java.awt.event.MouseEvent e
         Transferable t = (Transferable) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
         List<Village> villages = VillageParser.parse((String) t.getTransferData(DataFlavor.stringFlavor));
         if (villages == null || villages.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Es konnten keine Dorfkoodinaten in der Zwischenablage gefunden werden.", "Information", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPaneHelper.showInformationBox(this, "Es konnten keine Dorfkoodinaten in der Zwischenablage gefunden werden.", "Information");
             return;
         } else {
             for (Village v : villages) {
@@ -2751,7 +2717,7 @@ private void fireGetTargetVillagesFromClipboardEvent(java.awt.event.MouseEvent e
                 }
             }
             String message = (villages.size() == 1) ? "1 Dorf " : villages.size() + " Dörfer ";
-            JOptionPane.showMessageDialog(this, message + " übertragen.", "Information", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPaneHelper.showInformationBox(this, message + " übertragen.", "Information");
         }
     } catch (Exception e) {
         logger.error("Failed to parse victim villages from clipboard", e);
@@ -2782,16 +2748,15 @@ private void fireFilterSourceByAttackPlansEvent(java.awt.event.MouseEvent evt) {
         }
     }
 
-    UIManager.put("OptionPane.noButtonText", "Nein");
-    UIManager.put("OptionPane.yesButtonText", "Ja");
+    
     String message = "";
     if (toRemove.size() == 0) {
-        JOptionPane.showMessageDialog(this, "Keine Herkunftsdörfer zu entfernen.", "Information", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPaneHelper.showInformationBox(this, "Keine Herkunftsdörfer zu entfernen.", "Information");
         return;
     } else {
         message = (toRemove.size() == 1) ? "Ein Herkunftsdorf " : toRemove.size() + " Herkunftsdörfer ";
     }
-    if (JOptionPane.showConfirmDialog(this, message + "entfernen?", "Entfernen", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
+    if (JOptionPaneHelper.showQuestionConfirmBox(this, message + "entfernen?", "Entfernen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
         try {
             logger.debug("Removing " + toRemove.size() + " source villages");
             jAttacksTable.invalidate();
@@ -2806,9 +2771,6 @@ private void fireFilterSourceByAttackPlansEvent(java.awt.event.MouseEvent evt) {
             logger.error("Removal failed", e);
         }
     }
-    UIManager.put("OptionPane.noButtonText", "No");
-    UIManager.put("OptionPane.yesButtonText", "Yes");
-
 }//GEN-LAST:event_fireFilterSourceByAttackPlansEvent
 
 private void fireShowPlayerSourcesOnlyChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireShowPlayerSourcesOnlyChangedEvent
@@ -2941,7 +2903,7 @@ private void fireSourceRelationChangedEvent(java.awt.event.ItemEvent evt) {//GEN
             } else {
                 message = impossibleAttacks + " berechnete Angriffe können vermutlich nicht abgeschickt werden.\nDie entsprechenden Angriffe sind in der Tabelle rot markiert.";
             }
-            JOptionPane.showMessageDialog(jResultFrame, message, "Warnung", JOptionPane.WARNING_MESSAGE);
+            JOptionPaneHelper.showWarningBox(jResultFrame, message, "Warnung");
         }
     }
 

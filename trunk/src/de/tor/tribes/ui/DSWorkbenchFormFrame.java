@@ -12,6 +12,7 @@ package de.tor.tribes.ui;
 
 import de.tor.tribes.types.AbstractForm;
 import de.tor.tribes.util.GlobalOptions;
+import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.map.FormManager;
 import java.awt.Rectangle;
 import javax.swing.DefaultListModel;
@@ -231,8 +232,6 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame {
 
     private void fireRemoveFormEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireRemoveFormEvent
         try {
-            UIManager.put("OptionPane.noButtonText", "Nein");
-            UIManager.put("OptionPane.yesButtonText", "Ja");
             Object[] forms = jFormsList.getSelectedValues();
             if ((forms != null) && (forms.length > 0)) {
                 int l = forms.length;
@@ -240,15 +239,13 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame {
                 if (l > 1) {
                     message = l + " Formen wirklich löschen?";
                 }
-                if (JOptionPane.showConfirmDialog(this, message, "Formen löschen", JOptionPane.YES_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
+                if (JOptionPaneHelper.showQuestionConfirmBox(this, message, "Formen löschen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
                     FormManager.getSingleton().removeForms(forms);
                 }
             }
         } catch (Exception e) {
             logger.warn("Failed to remove form", e);
         }
-        UIManager.put("OptionPane.noButtonText", "No");
-        UIManager.put("OptionPane.yesButtonText", "Yes");
     }//GEN-LAST:event_fireRemoveFormEvent
 
     private void fireToggleVisibleOnlyEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireToggleVisibleOnlyEvent

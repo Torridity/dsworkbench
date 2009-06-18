@@ -15,7 +15,6 @@ import de.tor.tribes.ui.models.AttackManagerTableModel;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import javax.swing.JOptionPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.DefaultTableModel;
 import de.tor.tribes.util.BrowserCommandSender;
@@ -30,6 +29,7 @@ import de.tor.tribes.ui.editors.VillageCellEditor;
 import de.tor.tribes.ui.renderer.AttackTypeCellRenderer;
 import de.tor.tribes.ui.renderer.ColoredDateCellRenderer;
 import de.tor.tribes.util.DSCalculator;
+import de.tor.tribes.util.JOptionPaneHelper;
 import java.awt.Component;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
@@ -39,6 +39,7 @@ import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.StringTokenizer;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JOptionPane;
 import javax.swing.JSpinner.DateEditor;
 import javax.swing.JTable;
 import javax.swing.UIManager;
@@ -1251,12 +1252,7 @@ private void fireRemoveAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
     }
 
     String message = ((rows.length == 1) ? "Angriff " : (rows.length + " Angriffe ")) + "wirklich löschen?";
-    UIManager.put("OptionPane.noButtonText", "Nein");
-    UIManager.put("OptionPane.yesButtonText", "Ja");
-    int res = JOptionPane.showConfirmDialog(this, message, "Angriff entfernen", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-    UIManager.put("OptionPane.noButtonText", "No");
-    UIManager.put("OptionPane.yesButtonText", "Yes");
-    if (res != JOptionPane.YES_OPTION) {
+    if (JOptionPaneHelper.showQuestionConfirmBox(this, message, "Angriffe löschen", "Nein", "Ja") != JOptionPane.YES_OPTION) {
         return;
     }
 
@@ -1374,13 +1370,13 @@ private void fireCopyUnformatedToClipboardEvent(java.awt.event.MouseEvent evt) {
 
             Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(buffer.toString()), null);
             String result = "Daten in Zwischenablage kopiert.";
-            JOptionPane.showMessageDialog(this, result, "Information", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPaneHelper.showInformationBox(this, result, "Information");
         } else {
         }
     } catch (Exception e) {
         logger.error("Failed to copy data to clipboard", e);
         String result = "Fehler beim Kopieren in die Zwischenablage.";
-        JOptionPane.showMessageDialog(this, result, "Fehler", JOptionPane.ERROR_MESSAGE);
+        JOptionPaneHelper.showErrorBox(this, result, "Fehler");
     }
 }//GEN-LAST:event_fireCopyUnformatedToClipboardEvent
 
@@ -1388,7 +1384,8 @@ private void fireCopyAsBBCodeToClipboardEvent(java.awt.event.MouseEvent evt) {//
     try {
         UIManager.put("OptionPane.noButtonText", "Nein");
         UIManager.put("OptionPane.yesButtonText", "Ja");
-        boolean extended = (JOptionPane.showConfirmDialog(this, "Erweiterte BB-Codes verwenden (nur für Forum und Notizen geeignet)?", "Erweiterter BB-Code", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION);
+
+        boolean extended = (JOptionPaneHelper.showQuestionConfirmBox(this, "Erweiterte BB-Codes verwenden (nur für Forum und Notizen geeignet)?", "Erweiterter BB-Code", "Nein", "Ja") == JOptionPane.YES_OPTION);
         UIManager.put("OptionPane.noButtonText", "No");
         UIManager.put("OptionPane.yesButtonText", "Yes");
 
@@ -1501,26 +1498,22 @@ private void fireCopyAsBBCodeToClipboardEvent(java.awt.event.MouseEvent evt) {//
             StringTokenizer t = new StringTokenizer(b, "[");
             int cnt = t.countTokens();
             if (cnt > 500) {
-                UIManager.put("OptionPane.noButtonText", "Nein");
-                UIManager.put("OptionPane.yesButtonText", "Ja");
-                if (JOptionPane.showConfirmDialog(this, "Die ausgewählten Angriffe benötigen mehr als 500 BB-Codes\n" +
-                        "und können daher im Spiel (Forum/IGM/Notizen) nicht auf einmal dargestellt werden.\nTrotzdem exportieren?", "Zu viele BB-Codes", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.NO_OPTION) {
+                if (JOptionPaneHelper.showQuestionConfirmBox(this, "Die ausgewählten Angriffe benötigen mehr als 500 BB-Codes\n" +
+                        "und können daher im Spiel (Forum/IGM/Notizen) nicht auf einmal dargestellt werden.\nTrotzdem exportieren?", "Zu viele BB-Codes", "Nein", "Ja") == JOptionPane.NO_OPTION) {
                     UIManager.put("OptionPane.noButtonText", "No");
                     UIManager.put("OptionPane.yesButtonText", "Yes");
                     return;
                 }
-                UIManager.put("OptionPane.noButtonText", "No");
-                UIManager.put("OptionPane.yesButtonText", "Yes");
             }
 
             Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(b), null);
             String result = "Daten in Zwischenablage kopiert.";
-            JOptionPane.showMessageDialog(this, result, "Information", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPaneHelper.showInformationBox(this, result, "Information");
         }
     } catch (Exception e) {
         logger.error("Failed to copy data to clipboard", e);
         String result = "Fehler beim Kopieren in die Zwischenablage.";
-        JOptionPane.showMessageDialog(this, result, "Fehler", JOptionPane.ERROR_MESSAGE);
+        JOptionPaneHelper.showErrorBox(this, result, "Fehler");
     }
 }//GEN-LAST:event_fireCopyAsBBCodeToClipboardEvent
 
@@ -1866,7 +1859,7 @@ private void fireCloseTimeChangeDialogEvent(java.awt.event.MouseEvent evt) {//GE
 private void fireChangeTimesEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireChangeTimesEvent
     int[] rows = jAttackTable.getSelectedRows();
     if ((rows == null) || (rows.length <= 0)) {
-        JOptionPane.showMessageDialog(this, "Keine Angriffe markiert", "Information", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPaneHelper.showInformationBox(this, "Keine Angriffe markiert", "Information");
         return;
 
     }
@@ -1889,7 +1882,7 @@ private void fireRenameAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
     }
 
     if (selection.equals(AttackManager.DEFAULT_PLAN_ID)) {
-        JOptionPane.showMessageDialog(this, "Der Standardplan kann nicht umbenannt werden.", "Information", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPaneHelper.showInformationBox(this, "Der Standardplan kann nicht umbenannt werden.", "Information");
         return;
 
     }
@@ -1906,12 +1899,13 @@ private void fireRemoveAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
     }
 
     if (selection.equals(AttackManager.DEFAULT_PLAN_ID)) {
-        JOptionPane.showMessageDialog(this, "Der Standardplan kann nicht gelöscht werden.");
+        JOptionPaneHelper.showInformationBox(this, "Der Standardplan kann nicht gelöscht werden.", "Information");
         return;
     }
 
-    if (JOptionPane.showConfirmDialog(this, "Willst du den Angriffsplan '" + selection + "' und alle enthaltenen Angriffe\n" +
-            "wirklich löschen?", "Angriffsplan löschen", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
+
+    if (JOptionPaneHelper.showQuestionConfirmBox(this, "Willst du den Angriffsplan '" + selection + "' und alle enthaltenen Angriffe\n" +
+            "wirklich löschen?", "Angriffsplan löschen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
         AttackManagerTableModel.getSingleton().setActiveAttackPlan(AttackManager.DEFAULT_PLAN_ID);
         AttackManager.getSingleton().removePlan(selection);
         buildAttackPlanList();
@@ -1940,8 +1934,8 @@ private void fireActiveAttackChangedEvent(java.awt.event.ItemEvent evt) {//GEN-F
 private void fireAddNewAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireAddNewAttackPlanEvent
     String name = jAttackPlanName.getText();
     if (AttackManager.getSingleton().getAttackPlan(name) != null) {
-        JOptionPane.showMessageDialog(jAddPlanDialog, "Ein Plan mit dem angegebenen Namen existiert bereits.\n" +
-                "Bitte wähle einen anderen Namen oder lösche zuerst den bestehenden Plan.", "Warnung", JOptionPane.WARNING_MESSAGE);
+        JOptionPaneHelper.showWarningBox(jAddPlanDialog, "Ein Plan mit dem angegebenen Namen existiert bereits.\n" +
+                "Bitte wähle einen anderen Namen oder lösche zuerst den bestehenden Plan.", "Warnung");
         return;
 
     }
@@ -1955,8 +1949,8 @@ private void fireRenameEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_f
     String selection = (String) jActiveAttackPlan.getSelectedItem();
     String newName = jNewPlanName.getText();
     if (AttackManager.getSingleton().getAttackPlan(newName) != null) {
-        JOptionPane.showMessageDialog(jRenamePlanDialog, "Ein Plan mit dem Namen '" + newName + "' existiert bereits.\n" +
-                "Bitte wähle einen anderen Namen oder lösche zuerst den bestehenden Plan.", "Warnung", JOptionPane.WARNING_MESSAGE);
+        JOptionPaneHelper.showWarningBox(jRenamePlanDialog, "Ein Plan mit dem Namen '" + newName + "' existiert bereits.\n" +
+                "Bitte wähle einen anderen Namen oder lösche zuerst den bestehenden Plan.", "Warnung");
         return;
 
     }
@@ -2002,7 +1996,7 @@ private void jDoMoveToPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:even
         String newPlan = (String) jNewPlanBox.getSelectedItem();
 
         if (newPlan == null) {
-            JOptionPane.showMessageDialog(jMoveToPlanDialog, "Kein neuer Plan ausgewählt", "Information", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPaneHelper.showInformationBox(jMoveToPlanDialog, "Kein neuer Plan ausgewählt", "Information");
             return;
         }
         int[] rows = jAttackTable.getSelectedRows();
@@ -2058,7 +2052,7 @@ private void fireModifyTimeEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:even
 private void fireCopyAttacksEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCopyAttacksEvent
     int[] rows = jAttackTable.getSelectedRows();
     if (rows == null || rows.length == 0) {
-        JOptionPane.showMessageDialog(this, "Keine Angriffe ausgewählt.", "Kopieren", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPaneHelper.showInformationBox(this, "Keine Angriffe ausgewählt.", "Kopieren");
         return;
     }
 

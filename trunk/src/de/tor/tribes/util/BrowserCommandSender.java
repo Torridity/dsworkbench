@@ -45,7 +45,7 @@ public class BrowserCommandSender {
              */
             Desktop.getDesktop().browse(new URI(url));
         } catch (Throwable t) {
-            JOptionPane.showMessageDialog(null, "Fehler beim Öffnen des Browsers", "Fehler", JOptionPane.ERROR_MESSAGE);
+            JOptionPaneHelper.showErrorBox(null, "Fehler beim Öffnen des Browsers", "Fehler");
             logger.error("Failed to open browser window", t);
         }
     }
@@ -69,7 +69,7 @@ public class BrowserCommandSender {
             url += pSource.getId() + "&screen=map&x=" + pSource.getX() + "&y=" + pSource.getY();
             Desktop.getDesktop().browse(new URI(url));
         } catch (Throwable t) {
-            JOptionPane.showMessageDialog(null, "Fehler beim Öffnen des Browsers", "Fehler", JOptionPane.ERROR_MESSAGE);
+            JOptionPaneHelper.showErrorBox(null, "Fehler beim Öffnen des Browsers", "Fehler");
             logger.error("Failed to open browser window", t);
         }
     }
@@ -85,7 +85,7 @@ public class BrowserCommandSender {
             url += "&screen=map&x=" + pX + "&y=" + pY;
             Desktop.getDesktop().browse(new URI(url));
         } catch (Throwable t) {
-            JOptionPane.showMessageDialog(null, "Fehler beim Öffnen des Browsers", "Fehler", JOptionPane.ERROR_MESSAGE);
+            JOptionPaneHelper.showErrorBox(null, "Fehler beim Öffnen des Browsers", "Fehler");
             logger.error("Failed to open browser window", t);
         }
     }
@@ -101,7 +101,7 @@ public class BrowserCommandSender {
             url += pSource.getId() + "&screen=market&mode=send&target=" + pTarget.getId();
             Desktop.getDesktop().browse(new URI(url));
         } catch (Throwable t) {
-            JOptionPane.showMessageDialog(null, "Fehler beim Öffnen des Browsers", "Fehler", JOptionPane.ERROR_MESSAGE);
+            JOptionPaneHelper.showErrorBox(null, "Fehler beim Öffnen des Browsers", "Fehler");
             logger.error("Failed to open browser window", t);
         }
     }

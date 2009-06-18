@@ -11,6 +11,7 @@ import de.tor.tribes.types.Marker;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.util.BrowserCommandSender;
 import de.tor.tribes.util.GlobalOptions;
+import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.ToolChangeListener;
 import de.tor.tribes.util.mark.MarkerManager;
@@ -575,15 +576,9 @@ private void fireSaveScreenshotEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST
             File target = new File(file);
             if (target.exists()) {
                 //ask if overwrite
-                UIManager.put("OptionPane.noButtonText", "Nein");
-                UIManager.put("OptionPane.yesButtonText", "Ja");
-                if (JOptionPane.showConfirmDialog(jScreenshotControl, "Existierende Datei überschreiben?", "Überschreiben", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) != JOptionPane.YES_OPTION) {
-                    UIManager.put("OptionPane.noButtonText", "No");
-                    UIManager.put("OptionPane.yesButtonText", "Yes");
+                if (JOptionPaneHelper.showQuestionConfirmBox(jScreenshotControl, "Existierende Datei überschreiben?", "Überschreiben", "Nein", "Ja") != JOptionPane.YES_OPTION) {
                     return;
                 }
-                UIManager.put("OptionPane.noButtonText", "No");
-                UIManager.put("OptionPane.yesButtonText", "Yes");
             }
             ImageIO.write(mScreenshotPanel.getResult(jTransparancySlider.getValue()), type, target);
             GlobalOptions.addProperty("screen.dir", target.getParent());
@@ -605,7 +600,7 @@ private void firePutScreenOnlineEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
     try {
         ImageIO.write(mScreenshotPanel.getResult(jTransparancySlider.getValue()), "png", new File("tmp.png"));
     } catch (Exception e) {
-        JOptionPane.showMessageDialog(jScreenshotControl, "Fehler beim Speichern der Grafik", "Fehler", JOptionPane.ERROR_MESSAGE);
+        JOptionPaneHelper.showErrorBox(jScreenshotControl, "Fehler beim Speichern der Grafik", "Fehler");
         return;
     }
     String result = ScreenUploadInterface.upload("tmp.png");
@@ -613,17 +608,17 @@ private void firePutScreenOnlineEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
         if (result.indexOf("view.php") > 0) {
             try {
                 Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(result), null);
-                JOptionPane.showMessageDialog(jScreenshotControl, "Kartengrafik erfolgreich Online gestellt.\n" +
+                JOptionPaneHelper.showInformationBox(jScreenshotControl, "Kartengrafik erfolgreich Online gestellt.\n" +
                         "Der Zugriffslink (" + result + ")\n" +
-                        "wurde in die Zwischenablage kopiert.", "Information", JOptionPane.INFORMATION_MESSAGE);
+                        "wurde in die Zwischenablage kopiert.", "Information");
                 BrowserCommandSender.openPage(result);
             } catch (Exception e) {
-                JOptionPane.showMessageDialog(jScreenshotControl, "Fehler beim Kopieren in die Zwischenablage." +
-                        "Der Zugriffslink lautet: " + result);
+                JOptionPaneHelper.showWarningBox(jScreenshotControl, "Fehler beim Kopieren des Links in die Zwischenablage." +
+                        "Der Zugriffslink lautet: " + result, "Warnung");
             }
         } else {
-            JOptionPane.showMessageDialog(this, "Kartengrafik konnte nicht Online gestellt werden.\n" +
-                    "Fehler: " + result, "Fehler", JOptionPane.ERROR_MESSAGE);
+            JOptionPaneHelper.showErrorBox(this, "Kartengrafik konnte nicht Online gestellt werden.\n" +
+                    "Fehler: " + result, "Fehler");
         }
     }
 

@@ -11,6 +11,7 @@
 package de.tor.tribes.ui.algo;
 
 import de.tor.tribes.util.Constants;
+import de.tor.tribes.util.JOptionPaneHelper;
 import java.awt.Font;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -57,9 +58,6 @@ public class MiscSettingsPanel extends javax.swing.JPanel {
 
     public boolean validatePanel() {
         boolean result = true;
-        UIManager.put("OptionPane.noButtonText", "Nein");
-        UIManager.put("OptionPane.yesButtonText", "Ja");
-
         int maxAttacks = 0;
         //check max. attacks per village
         try {
@@ -69,8 +67,9 @@ public class MiscSettingsPanel extends javax.swing.JPanel {
                 throw new Exception();
             }
         } catch (Exception e) {
-            if (JOptionPane.showConfirmDialog(this, "Der Wert für die maximale Anzahl der Angriffe pro Ziel ist ungültig.\n" +
-                    "Soll der Standardwert (6) verwendet werden?", "Fehlerhafte Eingabe", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
+
+            if (JOptionPaneHelper.showQuestionConfirmBox(this, "Der Wert für die maximale Anzahl der Angriffe pro Ziel ist ungültig.\n" +
+                    "Soll der Standardwert (6) verwendet werden?", "Fehlerhafte Eingabe", "Nein", "Ja") == JOptionPane.YES_OPTION) {
                 jAttacksPerTarget.setText("6");
                 maxAttacks = 6;
             } else {
@@ -80,17 +79,17 @@ public class MiscSettingsPanel extends javax.swing.JPanel {
 
         if (!jCleanOffsPerEnoblement.isEnabled()) {
             //skip check if not enabled
-            UIManager.put("OptionPane.noButtonText", "No");
-            UIManager.put("OptionPane.yesButtonText", "Yes");
             return result;
         }
-        //check clean offs per enoblement
+//check clean offs per enoblement
+
         try {
             int v = Integer.parseInt(jCleanOffsPerEnoblement.getText());
             if (maxAttacks < v) {
                 //more clean offs needed than max attacks allowed
                 throw new Exception();
             }
+
         } catch (Exception e) {
             //no valid number
             int stdClean = 3;
@@ -99,12 +98,14 @@ public class MiscSettingsPanel extends javax.swing.JPanel {
                 //due to its value is smaller than the standard value
                 stdClean = maxAttacks;
             }
-            if (JOptionPane.showConfirmDialog(this, "Der Wert für die minimale Anzahl an Clean-Offs pro Adelung ist ungültig.\n" +
-                    "Soll der Standardwert (" + stdClean + ") verwendet werden?", "Fehlerhafte Eingabe", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
+
+            if (JOptionPaneHelper.showQuestionConfirmBox(this, "Der Wert für die minimale Anzahl an Clean-Offs pro Adelung ist ungültig.\n" +
+                    "Soll der Standardwert (" + stdClean + ") verwendet werden?", "Fehlerhafte Eingabe", "Nein", "Ja") == JOptionPane.YES_OPTION) {
                 jCleanOffsPerEnoblement.setText(Integer.toString(stdClean));
             } else {
                 result = false;
             }
+
         }
         UIManager.put("OptionPane.noButtonText", "No");
         UIManager.put("OptionPane.yesButtonText", "Yes");

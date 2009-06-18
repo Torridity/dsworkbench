@@ -11,6 +11,7 @@ import org.apache.log4j.Logger;
 import de.tor.tribes.io.DataHolderListener;
 import de.tor.tribes.php.DatabaseInterface;
 import de.tor.tribes.util.Constants;
+import de.tor.tribes.util.JOptionPaneHelper;
 import java.awt.Font;
 import java.io.File;
 import java.io.IOException;
@@ -169,7 +170,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
 
         String value = (String) jAccountsList.getSelectedValue();
         if (value == null) {
-            JOptionPane.showMessageDialog(jProfileDialog, "Bitte eine Profil auswählen.", "Bitte wählen", JOptionPane.WARNING_MESSAGE);
+            JOptionPaneHelper.showWarningBox(jProfileDialog, "Bitte eine Profil auswählen.", "Bitte wählen");
             return;
         } else {
             String server = value.substring(0, value.indexOf("(")).trim();
@@ -187,7 +188,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
             DataHolder.getSingleton().addDataHolderListener(DSWorkbenchSettingsDialog.getSingleton());
         } catch (Exception e) {
             logger.error("Failed to initialize global options", e);
-            JOptionPane.showMessageDialog(self, "Fehler bei der Initialisierung.\nMöglicherweise ist deine DS Workbench Installation defekt.", "Fehler", JOptionPane.ERROR_MESSAGE);
+            JOptionPaneHelper.showErrorBox(self, "Fehler bei der Initialisierung.\nMöglicherweise ist deine DS Workbench Installation defekt.", "Fehler");
             return false;
         }
 
@@ -259,9 +260,9 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
             String name = GlobalOptions.getProperty("account.name");
             String password = GlobalOptions.getProperty("account.password");
             if (DatabaseInterface.checkUser(name, password) != DatabaseInterface.ID_SUCCESS) {
-                JOptionPane.showMessageDialog(this, "Die Accountvalidierung ist fehlgeschlagen.\n" +
+                 JOptionPaneHelper.showErrorBox(this, "Die Accountvalidierung ist fehlgeschlagen.\n" +
                         "Bitte überprüfe deine Account- und Netzwerkeinstellungen und versuches es erneut.",
-                        "Fehler", JOptionPane.ERROR_MESSAGE);
+                        "Fehler");
                 checkForUpdates = false;
             } else {
                 long serverDataVersion = DatabaseInterface.getServerDataVersion(selectedServer);
@@ -276,24 +277,25 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
         }
 
         try {
-            if (checkForUpdates) {
-                boolean ret = DataHolder.getSingleton().loadData(true);
-                logger.debug("Update finished " + ((ret) ? "successfully" : "with errors"));
-                if (!ret) {
-                    logger.info(" - Loading local copy due to update error");
-                    ret = DataHolder.getSingleton().loadData(false);
-                    logger.debug("Data loaded " + ((ret) ? "successfully" : "with errors"));
-                    if (!ret) {
-                        throw new Exception("Unable to load local data copy");
-                    }
-                }
-            } else {
-                boolean ret = DataHolder.getSingleton().loadData(true);
-                logger.debug("Data loaded " + ((ret) ? "successfully" : "with errors"));
-                if (!ret) {
-                    throw new Exception("Unable to load local data copy");
-                }
-            }
+            //if (checkForUpdates) {
+            //boolean ret =
+            DataHolder.getSingleton().loadData(checkForUpdates);
+        /*logger.debug("Update finished " + ((ret) ? "successfully" : "with errors"));
+        if (!ret) {
+        logger.info(" - Loading local copy due to update error");
+        ret = DataHolder.getSingleton().loadData(false);
+        logger.debug("Data loaded " + ((ret) ? "successfully" : "with errors"));
+        if (!ret) {
+        throw new Exception("Unable to load local data copy");
+        }
+        }
+        } else {
+        boolean ret = DataHolder.getSingleton().loadData(true);
+        logger.debug("Data loaded " + ((ret) ? "successfully" : "with errors"));
+        if (!ret) {
+        throw new Exception("Unable to load local data copy");
+        }*/
+        // }
         } catch (Exception e) {
             logger.error("Failed to load server data", e);
             return false;
@@ -332,7 +334,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
             return true;
         } catch (Throwable th) {
             logger.fatal("Fatal error while running DS Workbench", th);
-            JOptionPane.showMessageDialog(self, "Ein schwerwiegender Fehler ist aufgetreten.\nMöglicherweise ist deine DS Workbench Installation defekt. Bitte kontaktiere den Entwickler.", "Fehler", JOptionPane.ERROR_MESSAGE);
+             JOptionPaneHelper.showErrorBox(self, "Ein schwerwiegender Fehler ist aufgetreten.\nMöglicherweise ist deine DS Workbench Installation defekt. Bitte kontaktiere den Entwickler.", "Fehler");
             return false;
 
         }

@@ -56,6 +56,7 @@ public class GlobalOptions {
     private static CSH.DisplayHelpFromSource csh = null;
     private static final String mainHelpSetName = "DS Workbench Dokumentation.hs";
     private static int iUVID = -1;
+    private static boolean userDataLoaded = false;
 
     /**Init all managed objects
      * @param pDownloadData TRUE=download the WorldData from the tribes server
@@ -223,12 +224,13 @@ public class GlobalOptions {
 
             logger.debug("Removing temporary data");
             DataHolder.getSingleton().removeTempData();
+            userDataLoaded = true;
         }
     }
 
     /**Load user data (attacks, markers...)*/
     public static void saveUserData() {
-        if (getSelectedServer() != null) {
+        if (getSelectedServer() != null &&  userDataLoaded) {
             logger.debug("Saving markers");
             MarkerManager.getSingleton().saveMarkersToFile(DataHolder.getSingleton().getDataDirectory() + "/markers.xml");
             logger.debug("Saving attacks");
@@ -245,7 +247,6 @@ public class GlobalOptions {
             ROIManager.getSingleton().saveROIsToFile(DataHolder.getSingleton().getDataDirectory() + "/rois.xml");
             logger.debug("Saving conquers");
             ConquerManager.getSingleton().saveConquersToFile(DataHolder.getSingleton().getDataDirectory() + "/conquers.xml");
-
             logger.debug("User data saved");
         }
     }

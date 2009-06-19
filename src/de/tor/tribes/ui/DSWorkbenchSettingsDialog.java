@@ -2262,11 +2262,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
     }//GEN-LAST:event_fireChangeConnectTypeEvent
 
     private void fireSelectServerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSelectServerEvent
-        if (!jSelectServerButton.isEnabled()) {
-            return;
-        }
-
-        if (jServerList.getSelectedItem() == null) {
+        if (!jSelectServerButton.isEnabled() || jServerList.getSelectedItem() == null) {
             return;
         }
 

@@ -27,7 +27,7 @@ import de.tor.tribes.ui.DSWorkbenchSettingsDialog;
  */
 public class Skin {
 
-    private static Logger logger = Logger.getLogger("TexturePack");    //init with default skin dimensions
+    private static Logger logger = Logger.getLogger("TexturePack");
     public final static String MINIMAP_SKIN_ID = "minimap";
     private int iFieldWidth = 0;
     private int iFieldHeight = 0;
@@ -86,7 +86,6 @@ public class Skin {
     private final int TEXTURE_COUNT = 25;
     private static String BASE_PATH = "graphics/skins";
     private Hashtable<Integer, BufferedImage> mTextures = null;
-    private Hashtable<Double, Hashtable<Integer, Image>> mCache = null;
     private String sSkinID = null;
 
     public Skin() throws Exception {

@@ -41,7 +41,7 @@ import org.jdom.Document;
 import org.jdom.Element;
 
 /**
- *@TODO (1.6) Load local copy if download fails
+ *@TODO (1.6) Load local copy if download fails ///BACKUP NEEDED!?
  * @author Charon
  */
 public class DataHolder {
@@ -169,12 +169,12 @@ public class DataHolder {
 
                     /*Document d = JaxenUtils.getDocument(settings);
                     Integer mapType = Integer.parseInt(JaxenUtils.getNodeValue(d, "//coord/sector"));*/
-                    Integer mapType = ServerSettings.getSingleton().getCoordType();
+                    /* Integer mapType = ServerSettings.getSingleton().getCoordType();
                     if (mapType != 2) {
-                        logger.error("Map type '" + mapType + "' is not supported yet");
-                        fireDataHolderEvents("Der gewählte Sever wird leider (noch) nicht unterstützt");
-                        return false;
-                    }
+                    logger.error("Map type '" + mapType + "' is not supported yet");
+                    fireDataHolderEvents("Der gewählte Sever wird leider (noch) nicht unterstützt");
+                    return false;
+                    }*/
                     try {
                         //Integer bonusType = Integer.parseInt(JaxenUtils.getNodeValue(d, "//coord/bonus_new"));
                         //  currentBonusType = bonusType;
@@ -200,59 +200,131 @@ public class DataHolder {
             logger.info("Calling 'loadData()' for server " + serverID);
             try {
                 boolean recreateLocal = false;
-                //check if download was requested
                 if (pReload && !GlobalOptions.isOfflineMode()) {
-                    //completely reload data
-                    fireDataHolderEvents("Daten werden heruntergeladen...");
-                    //try to download
-                    if (!downloadData()) {
-                        fireDataHolderEvents("Download abgebrochen/fehlgeschlagen!");
-                        loading = false;
-                        fireDataLoadedEvents(false);
-                        return false;
-                    } else {
-                        //rebuild local data
+                    fireDataHolderEvents("Download der aktuellen Weltdaten gestartet");
+                    logger.debug(" - Initiating full reload");
+                    if (downloadData()) {
+                        logger.debug(" - Download succeeded");
+                        fireDataHolderEvents("Download erfolgreich");
                         recreateLocal = true;
-                    }
-                } else {
-                    //check if local loading possible
-                    if (!isDataAvailable()) {
-                        logger.error("Local data not available. Try to download data");
-                        fireDataHolderEvents("Lokale Kopie nicht gefunden. Lade Daten vom Server");
-                        if (!downloadData()) {
-                            logger.fatal("Download failed. No data available at the moment");
-                            fireDataHolderEvents("Download abgebrochen/fehlgeschlagen");
+                    } else {
+                        logger.error(" - Download failed");
+                        fireDataHolderEvents("Download fehlgeschlagen. Versuche lokale Kopie zu laden");
+                        if (isDataAvailable()) {
+                            logger.debug(" - local data is available, try to load it");
+                            if (readLocalDataCopy(getDataDirectory())) {
+                                logger.debug(" - Local copy successfully read");
+                                fireDataHolderEvents("Lokale Kopie erfolgreich geladen");
+                                recreateLocal = false;
+                            } else {
+                                logger.error(" - Reading local copy failed");
+                                fireDataHolderEvents("Lokale Kopie fehlerhaft. Laden wird abgebrochen!");
+                                loading = false;
+                                fireDataLoadedEvents(false);
+                                return false;
+                            }
+                        } else {
+                            fireDataHolderEvents("Lokale Kopie nicht vorhanden. Versuche erneuten Download");
+                            if (downloadData()) {
+                                logger.debug(" - Download succeeded");
+                                fireDataHolderEvents("Download erfolgreich.");
+                                recreateLocal = true;
+                            } else {
+                                logger.error(" - Second try failed");
+                                fireDataHolderEvents("Erneuter Downloadversuch fehlgeschlagen. Laden wird abgebrochen!");
+                                loading = false;
+                                fireDataLoadedEvents(false);
+                                return false;
+                            }
+                        }
+                    }//end of download failed branch
+                } else {//end of download branch
+                    fireDataHolderEvents("Lesen der existierenden Weltdaten gestartet");
+                    if (isDataAvailable()) {
+                        logger.debug(" - local data is available, try to load it");
+                        if (readLocalDataCopy(getDataDirectory())) {
+                            logger.debug(" - Local copy successfully read");
+                            fireDataHolderEvents("Lokale Kopie erfolgreich geladen");
+                            recreateLocal = false;
+                        } else {
+                            logger.error(" - Reading local copy failed");
+                            fireDataHolderEvents("Lokale Kopie fehlerhaft. Laden wird abgebrochen!");
                             loading = false;
                             fireDataLoadedEvents(false);
                             return false;
-                        } else {
-                            recreateLocal = true;
                         }
-                    } else if (!serverSupported()) {
-                        logger.error("Local data available but server not supported");
-                        loading = false;
-                        fireDataLoadedEvents(false);
-                        return false;
-                    } else {
-                        //load data from local copy
-                        fireDataHolderEvents("Lade lokale Kopie");
-                        if (!readLocalDataCopy(getDataDirectory())) {
-                            //local copy invalid, download data
-                            new File(getDataDirectory() + "/" + "serverdata.bin").delete();
-                            logger.error("Failed to read local copy from " + getDataDirectory() + ". Try to download data");
-                            fireDataHolderEvents("Lokale Kopie nicht gefunden. Lade Daten vom Server");
-                            if (!downloadData()) {
-                                logger.fatal("Download failed. No data available at the moment");
-                                fireDataHolderEvents("Download abgebrochen/fehlgeschlagen");
-                                loading = false;
-                                return false;
-                            } else {
-                                recreateLocal = true;
-                            }
+                    } else {//end of reading available data
+                        fireDataHolderEvents("Lokale Kopie nicht vorhanden. Versuche erneuten Download");
+                        if (downloadData()) {
+                            logger.debug(" - Download succeeded");
+                            fireDataHolderEvents("Download erfolgreich.");
+                            recreateLocal = true;
+                        } else {
+                            logger.error(" - Second try failed");
+                            fireDataHolderEvents("Erneuter Downloadversuch fehlgeschlagen. Laden wird abgebrochen!");
+                            loading = false;
+                            fireDataLoadedEvents(false);
+                            return false;
                         }
                     }
-                }
+                }//end of read local data
 
+                // <editor-fold defaultstate="collapsed" desc="Older reading">
+
+                /*             //start data loading
+
+                //check if download was requested
+                if (pReload && !GlobalOptions.isOfflineMode()) {
+                //reload requested and possible
+                fireDataHolderEvents("Daten werden heruntergeladen...");
+                //try to download
+                if (!downloadData()) {
+                //download failed
+                fireDataHolderEvents("Download abgebrochen/fehlgeschlagen!");
+                loading = false;
+                fireDataLoadedEvents(false);
+                return false;
+                } else {
+                //download succeeded, rebuild local data later
+                recreateLocal = true;
+                }
+                } else {
+                //check if local loading possible
+                if (!isDataAvailable()) {
+                logger.error("Local data not available. Try to download data");
+                fireDataHolderEvents("Lokale Kopie nicht gefunden. Lade Daten vom Server");
+                if (!downloadData()) {
+                logger.fatal("Download failed. No data available at the moment");
+                fireDataHolderEvents("Download abgebrochen/fehlgeschlagen");
+                loading = false;
+                fireDataLoadedEvents(false);
+                return false;
+                } else {
+                recreateLocal = true;
+                }
+                } else {
+                //load data from local copy
+                fireDataHolderEvents("Lade lokale Kopie");
+                if (!readLocalDataCopy(getDataDirectory())) {
+                //local copy invalid, download data
+                new File(getDataDirectory() + "/" + "serverdata.bin").delete();
+                logger.error("Failed to read local copy from " + getDataDirectory() + ". Try to download data");
+                fireDataHolderEvents("Lokale Kopie nicht gefunden. Lade Daten vom Server");
+                if (!downloadData()) {
+                logger.fatal("Download failed. No data available at the moment");
+                fireDataHolderEvents("Download abgebrochen/fehlgeschlagen");
+                loading = false;
+                return false;
+                } else {
+                recreateLocal = true;
+                }
+                }
+                }
+                }
+                 */
+//</editor-fold>
+
+                //parse additional data
                 logger.info("Reading conquered units");
                 BufferedReader r = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(getDataDirectory() + "/kill_att.txt.gz"))));
                 String line = "";
@@ -275,6 +347,8 @@ public class DataHolder {
                     }
                 }
                 r.close();
+
+                //do post processing
                 fireDataHolderEvents("Kombiniere Daten...");
                 mergeData();
                 fireDataHolderEvents("Lese Servereinstellungen...");
@@ -363,15 +437,15 @@ public class DataHolder {
             int vc = 0;
             int tc = 0;
             initialize();
-           // HSQLTest test = null;
+            // HSQLTest test = null;
             /*try {
-                long s = System.currentTimeMillis();
-                test = new HSQLTest("villages");
-                System.out.println("Done " + (System.currentTimeMillis() - s));
-                test.update("CREATE TABLE sample_table ( id INTEGER IDENTITY, x INTEGER, y INTEGER, tribe INTEGER, points INTEGER, type INTEGER)");
-                System.out.println("SUCCESS!");
+            long s = System.currentTimeMillis();
+            test = new HSQLTest("villages");
+            System.out.println("Done " + (System.currentTimeMillis() - s));
+            test.update("CREATE TABLE sample_table ( id INTEGER IDENTITY, x INTEGER, y INTEGER, tribe INTEGER, points INTEGER, type INTEGER)");
+            System.out.println("SUCCESS!");
             } catch (Exception e) {
-                e.printStackTrace();
+            e.printStackTrace();
             }*/
             while ((line = r.readLine()) != null) {
                 if (line.equals("<villages>")) {
@@ -391,11 +465,11 @@ public class DataHolder {
                         if (v != null) {
                             mVillages[v.getX()][v.getY()] = v;
                             /*if (test != null) {
-                                try {
-                                    test.update("INSERT INTO sample_table(id, x, y, tribe, points, type) VALUES(" + v.getId() + "," + v.getX() + "," + v.getY() + "," + v.getTribeID() + "," + v.getPoints() + "," + v.getType() + ");");
-                                } catch (Throwable e) {
-                                    System.out.println("Error");
-                                }
+                            try {
+                            test.update("INSERT INTO sample_table(id, x, y, tribe, points, type) VALUES(" + v.getId() + "," + v.getX() + "," + v.getY() + "," + v.getTribeID() + "," + v.getPoints() + "," + v.getType() + ");");
+                            } catch (Throwable e) {
+                            System.out.println("Error");
+                            }
                             }*/
                             vc++;
                         }
@@ -424,11 +498,11 @@ public class DataHolder {
 
             }
             /*if (test != null) {
-                try {
-                    test.shutdown();
-                } catch (Throwable t) {
-                    t.printStackTrace();
-                }
+            try {
+            test.shutdown();
+            } catch (Throwable t) {
+            t.printStackTrace();
+            }
             }*/
             if (vc == 0 || ac == 0 || tc == 0) {
                 //data obviously invalid
@@ -634,9 +708,9 @@ public class DataHolder {
 
             DatabaseInterface.updateDataVersion(accountName, serverID);
             fireDataHolderEvents("Download erfolgreich beendet.");
-        } catch (Exception e) {
+        } catch (Throwable t) {
             fireDataHolderEvents("Download fehlgeschlagen.");
-            logger.error("Failed to download data", e);
+            logger.error("Failed to download data", t);
             return false;
         }
         return true;

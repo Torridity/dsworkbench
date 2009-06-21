@@ -43,12 +43,12 @@ public class TroopsParser {
             //parse single line for village
             String line = lineTok.nextToken();
             //tokenize line by tab and space
-            StringTokenizer elemTok = new StringTokenizer(line, " \t");
+          //  StringTokenizer elemTok = new StringTokenizer(line, " \t");
             //parse single line for village
             if (v != null) {
                 //parse 4 village lines!
                 line = line.trim();
-                if (line.startsWith("eigene")) {
+                if (line.trim().startsWith("eigene")) {
                     int cnt = 0;
                     for (int i : parseUnits(line.replaceAll("eigene", "").trim())) {
                         //own units in village
@@ -56,21 +56,21 @@ public class TroopsParser {
                         ownTroops.put(DataHolder.getSingleton().getUnits().get(cnt), i);
                         cnt++;
                     }
-                } else if (line.startsWith("im Dorf")) {
+                } else if (line.trim().startsWith("im Dorf")) {
                     int cnt = 0;
                     for (int i : parseUnits(line.replaceAll("im Dorf", "").trim())) {
                         //all units in village       
                         troopsInVillage.put(DataHolder.getSingleton().getUnits().get(cnt), i);
                         cnt++;
                     }
-                } else if (line.startsWith("auswärts")) {
+                } else if (line.trim().startsWith("auswärts")) {
                     int cnt = 0;
                     for (int i : parseUnits(line.replaceAll("auswärts", "").trim())) {
                         //own units in other village  
                         troopsOutside.put(DataHolder.getSingleton().getUnits().get(cnt), i);
                         cnt++;
                     }
-                } else if (line.startsWith("unterwegs")) {
+                } else if (line.trim().startsWith("unterwegs")) {
                     // int[] underway = parseUnits(line.replaceAll("unterwegs", "").trim());
                     int cnt = 0;
                     //own units on the way
@@ -82,46 +82,51 @@ public class TroopsParser {
                 }
                 villageLines--;
             } else {
-                String nextToken = null;
-                while (elemTok.hasMoreElements()) {
-                    String currentToken = null;
-                    if (nextToken == null) {
-                        currentToken = elemTok.nextToken();
-                    } else {
-                        currentToken = nextToken;
-                    }
-                    if (elemTok.hasMoreTokens()) {
-                        nextToken = elemTok.nextToken();
-                    }
-
-                    //search village
-                    if (currentToken.startsWith("(") && currentToken.endsWith(")")) {
-                        //check if we got a village
-                        try {
-                            String coord = currentToken.substring(currentToken.lastIndexOf("(") + 1, currentToken.lastIndexOf(")"));
-                            if (ServerSettings.getSingleton().getCoordType() != 2) {
-                                String[] split = coord.trim().split("[(\\:)]");
-                                int[] xy = DSCalculator.hierarchicalToXy(Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2]));
-                                v = DataHolder.getSingleton().getVillages()[xy[0]][xy[1]];
-                                villageLines = 4;
-                                break;
-                            } else {
-                                String[] split = coord.trim().split("[(\\|)]");
-                                v = DataHolder.getSingleton().getVillages()[Integer.parseInt(split[0])][Integer.parseInt(split[1])];
-                                villageLines = 4;
-                                break;
-                            }
-                        } catch (Exception e) {
-                        }
-                    }
+                Village current = extractVillage(line);
+                if (current != null) {
+                    v = current;
+                    villageLines = 4;
                 }
+            /* String nextToken = null;
+            while (elemTok.hasMoreElements()) {
+            String currentToken = null;
+            if (nextToken == null) {
+            currentToken = elemTok.nextToken();
+            } else {
+            currentToken = nextToken;
+            }
+            if (elemTok.hasMoreTokens()) {
+            nextToken = elemTok.nextToken();
+            }
+
+            //search village
+            if (currentToken.trim().startsWith("(") && currentToken.trim().endsWith(")")) {
+            //check if we got a village
+            try {
+            String coord = currentToken.trim().substring(currentToken.lastIndexOf("(") + 1, currentToken.lastIndexOf(")"));
+            if (ServerSettings.getSingleton().getCoordType() != 2) {
+            String[] split = coord.trim().split("[(\\:)]");
+            int[] xy = DSCalculator.hierarchicalToXy(Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2]));
+            v = DataHolder.getSingleton().getVillages()[xy[0]][xy[1]];
+            villageLines = 4;
+            break;
+            } else {
+            String[] split = coord.trim().split("[(\\|)]");
+            v = DataHolder.getSingleton().getVillages()[Integer.parseInt(split[0])][Integer.parseInt(split[1])];
+            villageLines = 4;
+            break;
+            }
+            } catch (Exception e) {
+            }
+            }
+            }*/
             }
             if (villageLines == 0) {
                 int troopsCount = DataHolder.getSingleton().getUnits().size();
-                if ((v != null) && 
-                        (ownTroops.size() == troopsCount)&&
-                        (troopsInVillage.size() == troopsCount)&&
-                        (troopsOutside.size() == troopsCount)&&
+                if ((v != null) &&
+                        (ownTroops.size() == troopsCount) &&
+                        (troopsInVillage.size() == troopsCount) &&
+                        (troopsOutside.size() == troopsCount) &&
                         (troopsOnTheWay.size() == troopsCount)) {
                     //add troops to manager
                     TroopsManager.getSingleton().addTroopsForVillageFast(v, new LinkedList<Integer>());
@@ -147,19 +152,64 @@ public class TroopsParser {
                 }
             }
         }
-        TroopsManager.getSingleton().forceUpdate();
+        if(retValue){
+            TroopsManager.getSingleton().forceUpdate();
+        }
         return retValue;
+    }
+
+    private static Village extractVillage(String pLine) {
+        //tokenize line by tab and space
+        StringTokenizer elemTok = new StringTokenizer(pLine, " \t");
+        //try to find village line
+        String nextToken = null;
+        while (elemTok.hasMoreElements()) {
+            String currentToken = null;
+            if (nextToken == null) {
+                currentToken = elemTok.nextToken();
+            } else {
+                currentToken = nextToken;
+            }
+            if (elemTok.hasMoreTokens()) {
+                nextToken = elemTok.nextToken();
+            }
+
+            //search village
+            if (currentToken.startsWith("(") && currentToken.endsWith(")")) {
+                //check if we got a village
+                try {
+                    String coord = currentToken.substring(currentToken.lastIndexOf("(") + 1, currentToken.lastIndexOf(")"));
+                    if (ServerSettings.getSingleton().getCoordType() != 2) {
+                        String[] split = coord.trim().split("[(\\:)]");
+                        int[] xy = DSCalculator.hierarchicalToXy(Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2]));
+                        return DataHolder.getSingleton().getVillages()[xy[0]][xy[1]];
+                    } else {
+                        String[] split = coord.trim().split("[(\\|)]");
+                        return DataHolder.getSingleton().getVillages()[Integer.parseInt(split[0])][Integer.parseInt(split[1])];
+                    }
+                } catch (Exception e) {
+                }
+            }
+        }
+        return null;
     }
 
     private static int[] parseUnits(String pLine) {
         String line = pLine.replaceAll("eigene", "").replaceAll("Befehle", "").replaceAll("Truppen", "");
         StringTokenizer t = new StringTokenizer(line, " \t");
-        int uCount = t.countTokens();
+        int uCount = DataHolder.getSingleton().getUnits().size();
         int[] units = new int[uCount];
         int cnt = 0;
         while (t.hasMoreTokens()) {
-            units[cnt] = Integer.parseInt(t.nextToken());
-            cnt++;
+            try {
+                units[cnt] = Integer.parseInt(t.nextToken());
+                cnt++;
+            } catch (Exception e) {
+                //token with no troops
+            }
+        }
+        if (cnt < uCount) {
+            return new int[]{};
         }
         return units;
     }

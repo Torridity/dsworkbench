@@ -17,6 +17,7 @@ import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.DSWorkbenchMainFrame;
+import de.tor.tribes.ui.DSWorkbenchTroopsFrame;
 import de.tor.tribes.ui.FormConfigFrame;
 import de.tor.tribes.ui.ImageManager;
 import de.tor.tribes.ui.MapPanel;
@@ -1155,7 +1156,35 @@ public class MapRenderer extends Thread {
             attacks = null;
         }
 //</editor-fold>
+        Color b = g2d.getColor();
+        try {
+            /*Village v = DSWorkbenchTroopsFrame.getSingleton().getSelectedTroopsVillage();
+            if (v == null) {
+            return;
+            }**/
+            Rectangle2D.Double bounds = new Rectangle2D.Double(viewStartPoint.x, viewStartPoint.y, iVillagesX, iVillagesY);
 
+            for (Village v : DSWorkbenchTroopsFrame.getSingleton().getSelectedTroopsVillages()) {
+                for (Village target : TroopsManager.getSingleton().getTroopsForVillage(v).getSupportTargets()) {
+                    Line2D.Double supportLine = new Line2D.Double(v.getX(), v.getY(), target.getX(), target.getY());
+                    double xStart = (supportLine.getX1() - viewStartPoint.x) * width + width / 2;
+                    double yStart = (supportLine.getY1() - viewStartPoint.y) * height + height / 2;
+                    double xEnd = (supportLine.getX2() - viewStartPoint.x) * width + width / 2;
+                    double yEnd = (supportLine.getY2() - viewStartPoint.y) * height + height / 2;
+                    g2d.setColor(Color.MAGENTA);
+                    g2d.drawLine((int) Math.rint(xStart), (int) Math.rint(yStart), (int) Math.rint(xEnd), (int) Math.rint(yEnd));
+                    if (bounds.contains(supportLine.getP1())) {
+                        g2d.fillRect((int) Math.rint(xStart) - 3, (int) Math.rint(yStart) - 1, 6, 6);
+                    }
+
+                    if (bounds.contains(supportLine.getP2())) {
+                        g2d.fillOval((int) xEnd - 3, (int) yEnd - 3, 6, 6);
+                    }
+                }
+            }
+        } catch (Exception e) {
+        }
+        g2d.setColor(b);
     }
 
     /**Render e.g. forms and church ranges*/
@@ -1831,7 +1860,6 @@ public class MapRenderer extends Thread {
                     g2d.drawString(troopsValue, pRect.getLocation().x + x + 2 + (int) Math.rint(w / 2.0 - troopBounds.getWidth() / 2.0), pRect.getLocation().y + pDy + 2 + 25 + (int) Math.rint(troopBounds.getHeight() / 2.0));
                     x += w;
                     unitCount++;
-
                 }
 
             } else {

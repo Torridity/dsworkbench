@@ -43,25 +43,25 @@ public class ServerSettings {
             try {
                 setCoordType(Integer.parseInt(JaxenUtils.getNodeValue(d, "//coord/sector")));
             } catch (Exception inner) {
-                COORD = 2;
+                setCoordType(2);
             }
             logger.debug(" - reading map type");
             try {
                 setNewMap((Integer.parseInt(JaxenUtils.getNodeValue(d, "//coord/map_new")) == 1));
             } catch (Exception inner) {
-                MAP_NEW = true;
+                setNewMap(true);
             }
             logger.debug(" - reading bonus type");
             try {
                 setNewBonus(Integer.parseInt(JaxenUtils.getNodeValue(d, "//coord/bonus_new")));
             } catch (Exception inner) {
-                BONUS_NEW = 0;
+                setNewBonus(0);
             }
             logger.debug(" - reading snob distance");
             try {
                 setSnobRange(Integer.parseInt(JaxenUtils.getNodeValue(d, "//snob/max_dist")));
             } catch (Exception inner) {
-                SNOB_RANGE = 70;
+                setSnobRange(70);
             }
             logger.debug(" - reading church setting");
             try {

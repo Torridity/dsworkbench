@@ -257,21 +257,6 @@ public class TroopsManager {
             w.write("<villages>\n");
             Enumeration<Village> villages = mTroops.keys();
             while (villages.hasMoreElements()) {
-                /*        //write village information
-                Village v = villages.nextElement();
-                VillageTroopsHolder holder = mTroops.get(v);
-                w.write("<village>\n");
-                w.write("<id>" + v.getId() + "</id>\n");
-                w.write("<state>" + holder.getState().getTime() + "</state>\n");
-                w.write("<troops>\n");
-                for (Integer i : holder.getTroops()) {
-                //write troop information
-                w.write("<troop>" + i + "</troop>\n");
-                }
-                //close troops for village
-                w.write("</troops>\n");
-                w.write("</village>\n");*/
-
                 Village v = villages.nextElement();
                 VillageTroopsHolder holder = mTroops.get(v);
                 w.write(holder.toXml());

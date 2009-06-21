@@ -15,7 +15,6 @@ import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.DSWorkbenchSettingsDialog;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
-import de.tor.tribes.util.HSQLTest;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.io.BufferedReader;
@@ -41,7 +40,8 @@ import org.jdom.Document;
 import org.jdom.Element;
 
 /**
- *@TODO (1.6) Load local copy if download fails ///BACKUP NEEDED!?
+ * @TODO (DIFF) Load local copy if download fails
+ * @TODO (DIFF) "internal data damaged" marker added to avoid saving user data on error
  * @author Charon
  */
 public class DataHolder {
@@ -200,16 +200,49 @@ public class DataHolder {
             logger.info("Calling 'loadData()' for server " + serverID);
             try {
                 boolean recreateLocal = false;
-                if (pReload && !GlobalOptions.isOfflineMode()) {
-                    fireDataHolderEvents("Download der aktuellen Weltdaten gestartet");
-                    logger.debug(" - Initiating full reload");
-                    if (downloadData()) {
-                        logger.debug(" - Download succeeded");
-                        fireDataHolderEvents("Download erfolgreich");
-                        recreateLocal = true;
-                    } else {
-                        logger.error(" - Download failed");
-                        fireDataHolderEvents("Download fehlgeschlagen. Versuche lokale Kopie zu laden");
+                if (serverSupported()) {
+                    if (pReload && !GlobalOptions.isOfflineMode()) {
+                        fireDataHolderEvents("Download der aktuellen Weltdaten gestartet");
+                        logger.debug(" - Initiating full reload");
+                        if (downloadData()) {
+                            logger.debug(" - Download succeeded");
+                            fireDataHolderEvents("Download erfolgreich");
+                            recreateLocal = true;
+                        } else {
+                            logger.error(" - Download failed");
+                            fireDataHolderEvents("Download fehlgeschlagen. Versuche lokale Kopie zu laden");
+                            if (isDataAvailable()) {
+                                logger.debug(" - local data is available, try to load it");
+                                if (readLocalDataCopy(getDataDirectory())) {
+                                    logger.debug(" - Local copy successfully read");
+                                    fireDataHolderEvents("Lokale Kopie erfolgreich geladen");
+                                    recreateLocal = false;
+                                } else {
+                                    logger.error(" - Reading local copy failed");
+                                    fireDataHolderEvents("Lokale Kopie fehlerhaft. Laden wird abgebrochen!");
+                                    loading = false;
+                                    fireDataLoadedEvents(false);
+                                    GlobalOptions.setInternatDataDamaged(true);
+                                    return false;
+                                }
+                            } else {
+                                fireDataHolderEvents("Lokale Kopie nicht vorhanden. Versuche erneuten Download");
+                                if (downloadData()) {
+                                    logger.debug(" - Download succeeded");
+                                    fireDataHolderEvents("Download erfolgreich.");
+                                    recreateLocal = true;
+                                } else {
+                                    logger.error(" - Second try failed");
+                                    fireDataHolderEvents("Erneuter Downloadversuch fehlgeschlagen. Laden wird abgebrochen!");
+                                    loading = false;
+                                    fireDataLoadedEvents(false);
+                                    GlobalOptions.setInternatDataDamaged(true);
+                                    return false;
+                                }
+                            }
+                        }//end of download failed branch
+                    } else {//end of download branch
+                        fireDataHolderEvents("Lesen der existierenden Weltdaten gestartet");
                         if (isDataAvailable()) {
                             logger.debug(" - local data is available, try to load it");
                             if (readLocalDataCopy(getDataDirectory())) {
@@ -221,9 +254,10 @@ public class DataHolder {
                                 fireDataHolderEvents("Lokale Kopie fehlerhaft. Laden wird abgebrochen!");
                                 loading = false;
                                 fireDataLoadedEvents(false);
+                                GlobalOptions.setInternatDataDamaged(true);
                                 return false;
                             }
-                        } else {
+                        } else {//end of reading available data
                             fireDataHolderEvents("Lokale Kopie nicht vorhanden. Versuche erneuten Download");
                             if (downloadData()) {
                                 logger.debug(" - Download succeeded");
@@ -234,40 +268,21 @@ public class DataHolder {
                                 fireDataHolderEvents("Erneuter Downloadversuch fehlgeschlagen. Laden wird abgebrochen!");
                                 loading = false;
                                 fireDataLoadedEvents(false);
+                                GlobalOptions.setInternatDataDamaged(true);
                                 return false;
                             }
                         }
-                    }//end of download failed branch
-                } else {//end of download branch
-                    fireDataHolderEvents("Lesen der existierenden Weltdaten gestartet");
-                    if (isDataAvailable()) {
-                        logger.debug(" - local data is available, try to load it");
-                        if (readLocalDataCopy(getDataDirectory())) {
-                            logger.debug(" - Local copy successfully read");
-                            fireDataHolderEvents("Lokale Kopie erfolgreich geladen");
-                            recreateLocal = false;
-                        } else {
-                            logger.error(" - Reading local copy failed");
-                            fireDataHolderEvents("Lokale Kopie fehlerhaft. Laden wird abgebrochen!");
-                            loading = false;
-                            fireDataLoadedEvents(false);
-                            return false;
-                        }
-                    } else {//end of reading available data
-                        fireDataHolderEvents("Lokale Kopie nicht vorhanden. Versuche erneuten Download");
-                        if (downloadData()) {
-                            logger.debug(" - Download succeeded");
-                            fireDataHolderEvents("Download erfolgreich.");
-                            recreateLocal = true;
-                        } else {
-                            logger.error(" - Second try failed");
-                            fireDataHolderEvents("Erneuter Downloadversuch fehlgeschlagen. Laden wird abgebrochen!");
-                            loading = false;
-                            fireDataLoadedEvents(false);
-                            return false;
-                        }
-                    }
-                }//end of read local data
+                    }//end of read local data
+                } else {
+                    logger.error("Server not supported");
+                    fireDataHolderEvents("Server nicht unterstützt");
+                    fireDataLoadedEvents(false);
+                    GlobalOptions.setInternatDataDamaged(true);
+                    return false;
+                }
+
+                //setting internal data to be valid
+                GlobalOptions.setInternatDataDamaged(false);
 
                 // <editor-fold defaultstate="collapsed" desc="Older reading">
 
@@ -437,16 +452,6 @@ public class DataHolder {
             int vc = 0;
             int tc = 0;
             initialize();
-            // HSQLTest test = null;
-            /*try {
-            long s = System.currentTimeMillis();
-            test = new HSQLTest("villages");
-            System.out.println("Done " + (System.currentTimeMillis() - s));
-            test.update("CREATE TABLE sample_table ( id INTEGER IDENTITY, x INTEGER, y INTEGER, tribe INTEGER, points INTEGER, type INTEGER)");
-            System.out.println("SUCCESS!");
-            } catch (Exception e) {
-            e.printStackTrace();
-            }*/
             while ((line = r.readLine()) != null) {
                 if (line.equals("<villages>")) {
                     logger.info("Reading villages");
@@ -464,13 +469,6 @@ public class DataHolder {
                         Village v = Village.parseFromPlainData(line);
                         if (v != null) {
                             mVillages[v.getX()][v.getY()] = v;
-                            /*if (test != null) {
-                            try {
-                            test.update("INSERT INTO sample_table(id, x, y, tribe, points, type) VALUES(" + v.getId() + "," + v.getX() + "," + v.getY() + "," + v.getTribeID() + "," + v.getPoints() + "," + v.getType() + ");");
-                            } catch (Throwable e) {
-                            System.out.println("Error");
-                            }
-                            }*/
                             vc++;
                         }
                         break;
@@ -497,13 +495,6 @@ public class DataHolder {
                 }
 
             }
-            /*if (test != null) {
-            try {
-            test.shutdown();
-            } catch (Throwable t) {
-            t.printStackTrace();
-            }
-            }*/
             if (vc == 0 || ac == 0 || tc == 0) {
                 //data obviously invalid
                 logger.error("#villages | #allies | #tribes is 0");

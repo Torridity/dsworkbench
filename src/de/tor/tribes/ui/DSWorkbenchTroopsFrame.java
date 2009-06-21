@@ -31,7 +31,6 @@ import java.util.Arrays;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JLabel;
 import javax.swing.JTable;
-import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
@@ -226,7 +225,7 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
             }
         ));
         jTroopsTable.setOpaque(false);
-        jTroopsTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jTroopsTable.setSelectionMode(javax.swing.ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         jScrollPane1.setViewportView(jTroopsTable);
 
         jButton1.setBackground(new java.awt.Color(239, 235, 223));
@@ -416,13 +415,12 @@ private void fireRemoveTroopsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
     }
 
     jTroopsTable.editingCanceled(new ChangeEvent(this));
-
+    jTroopsTable.invalidate();
     for (int r = rows.length - 1; r >= 0; r--) {
-        jTroopsTable.invalidate();
         int row = jTroopsTable.convertRowIndexToModel(rows[r]);
         TroopsManagerTableModel.getSingleton().removeRow(row);
-        jTroopsTable.revalidate();
     }
+    jTroopsTable.revalidate();
     jTroopsTable.repaint();//.updateUI();
 }//GEN-LAST:event_fireRemoveTroopsEvent
 
@@ -496,13 +494,26 @@ private void fireChangeViewTypeEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:
         int index = jTroopsViewTypeBox.getSelectedIndex();
         if (index == -1) {
             jTroopsViewTypeBox.setSelectedIndex(0);
-            index =
-                    0;
+            index = 0;
         }
 
         TroopsManagerTableModel.getSingleton().setViewType(index);
     }
 }//GEN-LAST:event_fireChangeViewTypeEvent
+
+    public List<Village> getSelectedTroopsVillages() {
+        List<Village> villages = new LinkedList<Village>();
+        int[] rows = jTroopsTable.getSelectedRows();
+        if (rows == null) {
+            return villages;
+        }
+
+        for (int row : rows) {
+            row = jTroopsTable.convertRowIndexToModel(row);
+            villages.add((Village) TroopsManagerTableModel.getSingleton().getValueAt(row, 1));
+        }
+        return villages;
+    }
 
     protected void fireTableSelectionChangedEvent() {
         try {
@@ -525,7 +536,7 @@ private void fireChangeViewTypeEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:
                 NumberFormat nf = NumberFormat.getInstance();
                 nf.setMaximumFractionDigits(0);
                 nf.setMinimumFractionDigits(0);
-                jLabel4.setText("Unterstützung (" + nf.format(inVillage - own) + ")");
+                jLabel4.setText("Unterstützung (" + nf.format(((inVillage - own) >= 0) ? (inVillage - own) : 0) + ")");
                 jLabel6.setText("Eigene (" + nf.format(own) + ")");
                 jLabel8.setText("Außerhalb (" + nf.format(outside) + ")");
                 jLabel10.setText("Unterwegs (" + nf.format(ontheway) + ")");
@@ -589,8 +600,7 @@ private void fireChangeViewTypeEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:
             }
         };
 
-        for (int i = 0; i <
-                jTroopsTable.getColumnCount(); i++) {
+        for (int i = 0; i < jTroopsTable.getColumnCount(); i++) {
             TableColumn column = jTroopsTable.getColumnModel().getColumn(i);
             column.setHeaderRenderer(headerRenderer);
             if ((i > 2 && i < DataHolder.getSingleton().getUnits().size() + 3)) {

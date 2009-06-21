@@ -70,7 +70,7 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
         TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>();
         jConquersTable.setRowSorter(sorter);
 
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 6; i++) {
             mHeaderRenderers.add(headerRenderer);
         }
 

@@ -39,11 +39,11 @@ import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import javax.swing.UIManager;
 import javax.swing.filechooser.FileFilter;
 import org.apache.log4j.Logger;
 
 /**
+ * @TODO (DIFF) Enemy village color set to default (Red or White)
  * @author  jejkal
  */
 public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerListener {
@@ -314,6 +314,10 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
             }
             if (mBuffer == null) {
                 mBuffer = pBuffer;
+                if (pBuffer == null) {
+                    MinimapRepaintThread.getSingleton().update();
+                    return;
+                }
                 mBuffer = mBuffer.getScaledInstance(getWidth(), getHeight(), BufferedImage.SCALE_SMOOTH);
             } else if ((mBuffer.getWidth(null) != getWidth()) || (mBuffer.getHeight(null) != getHeight())) {
                 mZoomFrame.setMinimap(pBuffer);
@@ -739,6 +743,14 @@ class MinimapRepaintThread extends Thread {
             showBarbarian = Boolean.parseBoolean(GlobalOptions.getProperty("show.barbarian"));
         } catch (Exception e) {
         }
+        Color DEFAULT = Color.WHITE;
+        try {
+            if (Integer.parseInt(GlobalOptions.getProperty("default.mark")) == 1) {
+                DEFAULT = Color.RED;
+            }
+        } catch (Exception e) {
+            DEFAULT = Color.WHITE;
+        }
 
         for (int i = 0; i < ServerSettings.getSingleton().getMapDimension().getWidth(); i++) {
             for (int j = 0; j < ServerSettings.getSingleton().getMapDimension().getHeight(); j++) {
@@ -777,7 +789,7 @@ class MinimapRepaintThread extends Thread {
                             g2d.setColor(mark);
                         } else {
                             if (!markedOnly) {
-                                g2d.setColor(Color.RED);
+                                g2d.setColor(DEFAULT);
                             } else {
                                 g2d.setColor(new Color(35, 125, 0));
                             }

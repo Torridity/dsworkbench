@@ -56,7 +56,7 @@ public class GlobalOptions {
     private static CSH.DisplayHelpFromSource csh = null;
     private static final String mainHelpSetName = "DS Workbench Dokumentation.hs";
     private static int iUVID = -1;
-    private static boolean userDataLoaded = false;
+    private static boolean internalDataDamaged = false;
 
     /**Init all managed objects
      * @param pDownloadData TRUE=download the WorldData from the tribes server
@@ -83,6 +83,15 @@ public class GlobalOptions {
         UIManager.put("OptionPane.background", Constants.DS_BACK);
         UIManager.put("Panel.background", Constants.DS_BACK);
         UIManager.put("Button.background", Constants.DS_BACK_LIGHT);
+    }
+
+    public static void setInternatDataDamaged(boolean pValue) {
+        logger.info("Internal data markes as " + ((pValue) ? "'DAMAGED'" : "'VALID'"));
+        internalDataDamaged = pValue;
+    }
+
+    public static boolean isInternatDataDamaged() {
+        return internalDataDamaged;
     }
 
     /**Tells if a network connection is established or not*/
@@ -224,13 +233,12 @@ public class GlobalOptions {
 
             logger.debug("Removing temporary data");
             DataHolder.getSingleton().removeTempData();
-            userDataLoaded = true;
         }
     }
 
     /**Load user data (attacks, markers...)*/
     public static void saveUserData() {
-        if (getSelectedServer() != null &&  userDataLoaded) {
+        if (getSelectedServer() != null && !isInternatDataDamaged()) {
             logger.debug("Saving markers");
             MarkerManager.getSingleton().saveMarkersToFile(DataHolder.getSingleton().getDataDirectory() + "/markers.xml");
             logger.debug("Saving attacks");
@@ -248,6 +256,10 @@ public class GlobalOptions {
             logger.debug("Saving conquers");
             ConquerManager.getSingleton().saveConquersToFile(DataHolder.getSingleton().getDataDirectory() + "/conquers.xml");
             logger.debug("User data saved");
+        } else {
+            if (isInternatDataDamaged()) {
+                logger.warn("Internat data markes as 'damaged'. Skipped saving user data");
+            }
         }
     }
 

@@ -9,13 +9,14 @@ import de.tor.tribes.types.Barbarians;
 import de.tor.tribes.types.Conquer;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
+import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.conquer.ConquerManager;
 import de.tor.tribes.util.conquer.ConquerManagerListener;
 import java.text.SimpleDateFormat;
 import javax.swing.table.AbstractTableModel;
 
 /**
- *
+ *@TODO (DIFF) Continent added
  * @author Charon
  */
 public class ConquersTableModel extends AbstractTableModel {
@@ -33,10 +34,10 @@ public class ConquersTableModel extends AbstractTableModel {
 
     public void setup() {
         types = new Class[]{
-                    Village.class, String.class, Tribe.class, Tribe.class, Integer.class
+                    Village.class, String.class, String.class, Tribe.class, Tribe.class, Integer.class
                 };
         colNames = new String[]{
-                    "Dorf", "Geadelt am", "Verlierer", "Gewinner", "Zustimmung"
+                    "Dorf", "Kontinent", "Geadelt am", "Verlierer", "Gewinner", "Zustimmung"
                 };
     }
 
@@ -86,10 +87,14 @@ public class ConquersTableModel extends AbstractTableModel {
             case 0:
                 return DataHolder.getSingleton().getVillagesById().get(c.getVillageID());
             case 1: {
+                Village v = DataHolder.getSingleton().getVillagesById().get(c.getVillageID());
+                return "K" + DSCalculator.getContinent(v.getX(), v.getY());
+            }
+            case 2: {
                 SimpleDateFormat f = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
                 return f.format((long) c.getTimestamp() * 1000);
             }
-            case 2: {
+            case 3: {
                 Tribe t = DataHolder.getSingleton().getTribes().get(c.getLoser());
                 if (t == null) {
                     return Barbarians.getSingleton();
@@ -97,7 +102,7 @@ public class ConquersTableModel extends AbstractTableModel {
                     return t;
                 }
             }
-            case 3: {
+            case 4: {
                 Tribe t = DataHolder.getSingleton().getTribes().get(c.getWinner());
                 if (t == null) {
                     return Barbarians.getSingleton();

@@ -15,6 +15,7 @@ import java.util.Hashtable;
 import java.util.List;
 import org.jdom.Element;
 import de.tor.tribes.ui.models.TroopsManagerTableModel;
+import java.util.LinkedList;
 
 /**
  *
@@ -28,6 +29,8 @@ public class VillageTroopsHolder {
     private Hashtable<UnitHolder, Integer> troopsInVillage = null;
     private Hashtable<UnitHolder, Integer> troopsOutside = null;
     private Hashtable<UnitHolder, Integer> troopsOnTheWay = null;
+    private List<Village> supportTargets = null;
+    private Hashtable<Village, Hashtable<UnitHolder, Integer>> supports = null;
     private Date state = null;
     /* private int iOffPower = -1;
     private int iDefPower = -1;
@@ -61,7 +64,26 @@ public class VillageTroopsHolder {
         holder.setTroopsInVillage(troopsInVillage);
         holder.setTroopsOutside(troopsOutside);
         holder.setTroopsOnTheWay(troopsOnTheWay);
+        try {
+            List<Element> supportElements = (List<Element>) JaxenUtils.getNodes(e, "troops/supportTargets/supportTarget");
+            for (Element target : supportElements) {
+                int id = Integer.parseInt(target.getText());
+                holder.addSupportTarget(DataHolder.getSingleton().getVillagesById().get(id));
+            }
 
+            supportElements = (List<Element>) JaxenUtils.getNodes(e, "troops/supportSources/supportSource");
+            for (Element source : supportElements) {
+                int id = source.getAttribute("village").getIntValue();
+                Village village = DataHolder.getSingleton().getVillagesById().get(id);
+                Hashtable<UnitHolder, Integer> supportAmount = new Hashtable<UnitHolder, Integer>();
+                for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
+                    supportAmount.put(unit, source.getAttribute(unit.getPlainName()).getIntValue());
+                }
+                holder.addSupport(village, supportAmount);
+            }
+        } catch (Exception newFeature) {
+            //no support data yet
+        }
         return holder;
     }
 
@@ -70,6 +92,8 @@ public class VillageTroopsHolder {
         troopsInVillage = new Hashtable<UnitHolder, Integer>();
         troopsOutside = new Hashtable<UnitHolder, Integer>();
         troopsOnTheWay = new Hashtable<UnitHolder, Integer>();
+        supports = new Hashtable<Village, Hashtable<UnitHolder, Integer>>();
+        supportTargets = new LinkedList<Village>();
         for (UnitHolder u : DataHolder.getSingleton().getUnits()) {
             ownTroops.put(u, 0);
             troopsInVillage.put(u, 0);
@@ -101,7 +125,25 @@ public class VillageTroopsHolder {
         inVillage += "/>\n";
         outside += "/>\n";
         onTheWay += "/>\n";
-        result += own + inVillage + outside + onTheWay;
+        String targets = "<supportTargets>\n";
+        for (Village supportTarget : supportTargets) {
+            targets += "<supportTarget>" + supportTarget.getId() + "</supportTarget>\n";
+        }
+        targets += "</supportTargets>\n";
+
+        Enumeration<Village> keys = supports.keys();
+        String supportSrc = "<supportSources>\n";
+        while (keys.hasMoreElements()) {
+            Village key = keys.nextElement();
+            String support = "<supportSource village=\"" + key.getId() + "\" ";
+            for (UnitHolder unit : units) {
+                support += unit.getPlainName() + "=\"" + supports.get(key).get(unit) + "\" ";
+            }
+            support += "/>\n";
+            supportSrc += support;
+        }
+        supportSrc += "</supportSources>\n";
+        result += own + inVillage + outside + onTheWay + targets + supportSrc;
         result += "</troops>\n";
         result += "</village>";
         return result;
@@ -120,7 +162,16 @@ public class VillageTroopsHolder {
     }
 
     public Hashtable<UnitHolder, Integer> getTroopsInVillage() {
-        return troopsInVillage;
+        Hashtable<UnitHolder, Integer> troops = (Hashtable<UnitHolder, Integer>) troopsInVillage.clone();
+        Enumeration<Village> keys = supports.keys();
+        while (keys.hasMoreElements()) {
+            Village v = keys.nextElement();
+            Hashtable<UnitHolder, Integer> support = supports.get(v);
+            for (UnitHolder u : DataHolder.getSingleton().getUnits()) {
+                troops.put(u, troops.get(u) + support.get(u));
+            }
+        }
+        return troops;
     }
 
     public Hashtable<UnitHolder, Integer> getTroopsOutside() {
@@ -145,6 +196,71 @@ public class VillageTroopsHolder {
 
     public void setTroopsOutside(Hashtable<UnitHolder, Integer> mTroops) {
         troopsOutside = (Hashtable<UnitHolder, Integer>) mTroops.clone();
+    }
+
+    public void removeSupportTargets() {
+        supports.clear();
+    }
+
+    public void clearSupportTargets() {
+        supportTargets.clear();
+    }
+
+    public void addSupportTarget(Village pTarget) {
+        if (!supportTargets.contains(pTarget)) {
+            supportTargets.add(pTarget);
+        }
+    }
+
+    public List<Village> getSupportTargets() {
+        return supportTargets;
+    }
+
+    public void addSupport(Village pTarget, Hashtable<UnitHolder, Integer> pUnits) {
+        supports.put(pTarget, (Hashtable<UnitHolder, Integer>) pUnits.clone());
+    }
+
+    public void updateSupportValues() {
+        try {
+            //set own to invillage if no invillage information available
+            Hashtable<UnitHolder, Integer> own = getOwnTroops();
+            Enumeration<UnitHolder> keys = own.keys();
+            while (keys.hasMoreElements()) {
+                UnitHolder unit = keys.nextElement();
+                int inVillage = getTroopsOfUnitInVillage(unit);
+                int ownValue = own.get(unit);
+                if (inVillage == 0) {
+                    getTroopsInVillage().put(unit, ownValue);
+                }
+            }
+
+        /*
+        Hashtable<UnitHolder, Integer> outside = new Hashtable<UnitHolder, Integer>();
+        for (UnitHolder u : DataHolder.getSingleton().getUnits()) {
+        outside.put(u, 0);
+        }
+        Enumeration<Village> supportVillages = supports.keys();
+        while (supportVillages.hasMoreElements()) {
+        Village supportVillage = supportVillages.nextElement();
+        Hashtable<UnitHolder, Integer> supportingUnits = supports.get(supportVillage);
+        Enumeration<UnitHolder> units = supportingUnits.keys();
+        while (units.hasMoreElements()) {
+        UnitHolder unit = units.nextElement();
+        int cnt = supportingUnits.get(unit);
+        Integer oldCnt = outside.get(unit);
+        if (oldCnt == null) {
+        oldCnt = 0;
+        }
+        outside.put(unit, oldCnt + cnt);
+        }
+        }
+        setTroopsInVillage(outside);*/
+        } catch (Exception e) {
+        }
+    }
+
+    public Hashtable<Village, Hashtable<UnitHolder, Integer>> getSupports() {
+        return supports;
     }
 
     public void setTroopsOnTheWay(Hashtable<UnitHolder, Integer> mTroops) {
@@ -297,7 +413,7 @@ public class VillageTroopsHolder {
                 int res = inVillage - own;
                 return (res >= 0) ? res : 0;
             default:
-                active = troopsInVillage;
+                active = getTroopsInVillage();
         }
 
         Enumeration<UnitHolder> units = active.keys();

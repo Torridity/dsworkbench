@@ -31,7 +31,11 @@ public class NumberFormatCellRenderer extends DefaultTableCellRenderer {
         try {
             setText(format.format(value));
         } catch (Exception e) {
+            if(value != null){
             setText(value.toString());
+            }else{
+                setText("0");
+            }
         }
     }
 }

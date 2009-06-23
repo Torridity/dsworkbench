@@ -223,6 +223,10 @@ public class MapRenderer extends Thread {
                 }
             } catch (Throwable t) {
                 logger.error("Redrawing map failed", t);
+                logger.info("Memstat");
+                logger.info("  Free: " + Runtime.getRuntime().freeMemory());
+                logger.info("  Max: " + Runtime.getRuntime().maxMemory());
+                logger.info("  Total: " + Runtime.getRuntime().totalMemory());
             }
             try {
                 Thread.sleep(60);

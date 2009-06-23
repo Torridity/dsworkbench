@@ -97,6 +97,10 @@ public class ConquerManager {
                 Document d = JaxenUtils.getDocument(conquerFile);
                 String lastup = JaxenUtils.getNodeValue(d, "//conquers/lastUpdate");
                 setLastUpdate(Long.parseLong(lastup));
+                if (getLastUpdate() == -1) {
+                    //set update correct on error
+                    setLastUpdate(0);
+                }
                 for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//conquers/conquer")) {
                     try {
                         Conquer c = Conquer.fromXml(e);
@@ -108,6 +112,7 @@ public class ConquerManager {
                 logger.debug("Conquers successfully loaded");
             } catch (Exception e) {
                 logger.error("Failed to load conquers", e);
+                lastUpdate = 0;
             }
 
             //merge conquers and world data

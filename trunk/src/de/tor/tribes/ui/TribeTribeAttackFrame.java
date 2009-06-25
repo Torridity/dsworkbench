@@ -72,6 +72,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumn;
 
 /**
+ * @TODO (1.6) Handle "mark on map" via selection frame
  * @author Jejkal
  */
 public class TribeTribeAttackFrame extends javax.swing.JFrame implements VillageSelectionListener {
@@ -2176,10 +2177,10 @@ private void fireAttacksToClipboardEvent(java.awt.event.MouseEvent evt) {//GEN-F
         StringTokenizer t = new StringTokenizer(b, "[");
         int cnt = t.countTokens();
         if (cnt > 500) {
-            
+
             if (JOptionPaneHelper.showQuestionConfirmBox(jResultFrame, "Die ausgewählten Angriffe benötigen mehr als 500 BB-Codes\n" +
                     "und können daher im Spiel (Forum/IGM/Notizen) nicht auf einmal dargestellt werden.\nTrotzdem exportieren?", "Zu viele BB-Codes", "Nein", "Ja") == JOptionPane.NO_OPTION) {
-                
+
                 return;
             }
 
@@ -2282,7 +2283,7 @@ private void fireRemoveTargetVillageEvent(java.awt.event.MouseEvent evt) {//GEN-
             message = rows.length + " Ziele entfernen?";
         }
 
-        
+
         if (JOptionPaneHelper.showQuestionConfirmBox(this, message, "Ziel entfernen", "Nein", "Ja") != JOptionPane.YES_OPTION) {
             return;
         }
@@ -2389,8 +2390,6 @@ private void fireChooseSourceRegionEvent(java.awt.event.MouseEvent evt) {//GEN-F
 
 private void fireChooseTargetRegionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireChooseTargetRegionEvent
     //select target villages on map
-    MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_SELECTION);
-    MapPanel.getSingleton().setVillageSelectionListener(this);
     Tribe victim = null;
     try {
         victim = (Tribe) jTargetTribeList.getSelectedValue();
@@ -2399,10 +2398,10 @@ private void fireChooseTargetRegionEvent(java.awt.event.MouseEvent evt) {//GEN-F
     if (victim == null) {
         JOptionPaneHelper.showInformationBox(this, "Kein gültiger Spieler ausgewählt.", "Fehler");
         return;
-
     }
     //calculate mass of villages and center to it
-
+    MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_SELECTION);
+    MapPanel.getSingleton().setVillageSelectionListener(this);
     Point com = DSCalculator.calculateCenterOfMass(victim.getVillageList());
     DSWorkbenchMainFrame.getSingleton().centerPosition(com.x, com.y);
     DSWorkbenchMainFrame.getSingleton().toFront();
@@ -2748,7 +2747,7 @@ private void fireFilterSourceByAttackPlansEvent(java.awt.event.MouseEvent evt) {
         }
     }
 
-    
+
     String message = "";
     if (toRemove.size() == 0) {
         JOptionPaneHelper.showInformationBox(this, "Keine Herkunftsdörfer zu entfernen.", "Information");

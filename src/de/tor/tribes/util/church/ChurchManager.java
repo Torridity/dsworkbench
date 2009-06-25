@@ -233,10 +233,19 @@ public class ChurchManager {
             c.setVillageId(pVillage.getId());
             c.setRange(pRange);
             Tribe t = pVillage.getTribe();
+
             Marker m = MarkerManager.getSingleton().getMarker(t);
             if (m == null && t != null) {
                 m = MarkerManager.getSingleton().getMarker(t.getAlly());
             }
+            try {
+                if (t != null && t.equals(DSWorkbenchMainFrame.getSingleton().getCurrentUser())) {
+                    //set marker null again if own village
+                    m = null;
+                }
+            } catch (Exception ignore) {
+            }
+            
             if (m != null) {
                 //set range to marker color
                 c.setRangeColor(m.getMarkerColor());
@@ -249,13 +258,10 @@ public class ChurchManager {
                             DEFAULT = Color.RED;
                         }
                         try {
-                            Village v = DataHolder.getSingleton().getVillagesById().get(c.getVillageId());
-                            if (v != null) {
-                                Tribe tr = v.getTribe();
+                                Tribe tr = pVillage.getTribe();
                                 if (tr != null && tr.equals(DSWorkbenchMainFrame.getSingleton().getCurrentUser())) {
                                     DEFAULT = Color.YELLOW;
                                 }
-                            }
                         } catch (Exception ignore) {
                         }
                     } catch (Exception inner) {

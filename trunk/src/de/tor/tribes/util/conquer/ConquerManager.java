@@ -10,6 +10,7 @@ import de.tor.tribes.types.Ally;
 import de.tor.tribes.types.Conquer;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
+import de.tor.tribes.ui.DSWorkbenchSettingsDialog;
 import de.tor.tribes.ui.MapPanel;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.xml.JaxenUtils;
@@ -233,7 +234,8 @@ public class ConquerManager {
 
     protected void updateConquers() {
         logger.debug("Updating conquers from server");
-        InputStream is = null;
+        BufferedReader r = null;
+        boolean error = false;
         try {
             if (lastUpdate == -1) {
                 //not yet loaded
@@ -248,9 +250,8 @@ public class ConquerManager {
 
             URL u = new URL(baseUrl + "/interface.php?func=get_conquer&since=" + (int) Math.rint(lastUpdate / 1000));
             logger.debug("Querying " + u.toString());
-            URLConnection uc = u.openConnection();
-            is = uc.getInputStream();
-            BufferedReader r = new BufferedReader(new InputStreamReader(is));
+            URLConnection uc = u.openConnection(DSWorkbenchSettingsDialog.getSingleton().getWebProxy());
+            r = new BufferedReader(new InputStreamReader(uc.getInputStream()));
             String line = "";
             while ((line = r.readLine()) != null) {
                 if (line.indexOf("ONLY_ONE_DAY_AGO") != -1) {
@@ -309,19 +310,22 @@ public class ConquerManager {
                 }
             }
             //enforce full map update
-            is.close();
+            r.close();
         } catch (Exception e) {
             logger.error("An error occured while updating conquers", e);
+            error = true;
         } finally {
             try {
-                if (is != null) {
-                    is.close();
+                if (r != null) {
+                    r.close();
                 }
             } catch (Exception inner) {
             }
         }
-        lastUpdate = System.currentTimeMillis() + 1000;
-        logger.debug("Setting lastUpdate to NOW (" + lastUpdate + ")");
+        if (!error) {
+            lastUpdate = System.currentTimeMillis() + 1000;
+            logger.debug("Setting lastUpdate to NOW (" + lastUpdate + ")");
+        }
         updateAcceptance();
     }
 

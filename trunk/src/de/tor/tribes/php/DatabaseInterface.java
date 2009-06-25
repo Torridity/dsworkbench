@@ -506,13 +506,21 @@ public class DatabaseInterface {
         return ID_UNKNOWN_ERROR;
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception{
         DOMConfigurator.configure("log4j.xml");
-        /* System.setProperty("proxyUse", "true");
+        System.setProperty("proxyUse", "true");
         System.setProperty("proxyHost", "proxy.fzk.de");
         System.setProperty("proxyPort", "8000");
-         */
-        System.out.println(DatabaseInterface.getAcceptanceRiseSpeed());
+
+        URL u = new URL("http://de37.die-staemme.de/interface.php?func=get_conquer&since=1245912202");
+        URLConnection con = u.openConnection();
+        BufferedReader r = new BufferedReader(new InputStreamReader(con.getInputStream()));
+        String line = "";
+        while((line = r.readLine()) != null){
+            System.out.println(line);
+        }
+
+        //System.out.println(DatabaseInterface.getAcceptanceRiseSpeed());
     //System.out.println(DatabaseInterface.listServers());
     //System.out.println(DatabaseInterface.checkUser("Torridity", "cfcaef487fc66a6d8295e8e3f68b4db9"));
     //System.out.println(DatabaseInterface.addUser("Torridity", "cfcaef487fc66a6d8295e8e3f68b4db9"));

@@ -959,7 +959,20 @@ public class MapPanel extends javax.swing.JPanel {
                     if (jCopyOwnAlly.isSelected()) {
                         if (v.getTribe() != null && own.getAlly() != null && v.getTribe().getAlly() != null && v.getTribe().getAlly().equals(own.getAlly())) {
                             //no barbarian, own ally not null, village ally not null, village ally equals own
-                            doExport = true;
+                            if (!jCopyOwn.isSelected()) {
+                                //if own is not selected don't use own villages!
+                                if (v.getTribe().equals(own)) {
+                                    //ignore own villages
+                                    doExport = false;
+                                } else {
+                                    //do export
+                                    doExport = true;
+
+                                }
+                            } else {
+                                //do export 
+                                doExport = true;
+                            }
                         }
                     }
 
@@ -1003,7 +1016,7 @@ public class MapPanel extends javax.swing.JPanel {
                     int cnt = t.countTokens();
                     boolean doExport = true;
                     if (cnt > 500) {
-                        if (JOptionPaneHelper.showQuestionConfirmBox(this, "Die ausgewählten Dörfer benötigen mehr als 500 BB-Codes\n" +
+                        if (JOptionPaneHelper.showQuestionConfirmBox(jCopyVillagesDialog, "Die ausgewählten Dörfer benötigen mehr als 500 BB-Codes\n" +
                                 "und können daher im Spiel (Forum/IGM/Notizen) nicht auf einmal dargestellt werden.\nTrotzdem exportieren?", "Zu viele BB-Codes", "Nein", "Ja") == JOptionPane.NO_OPTION) {
                             doExport = false;
                         }
@@ -1041,7 +1054,7 @@ public class MapPanel extends javax.swing.JPanel {
 
 
                     if (jCopyEnemyAlly.isSelected()) {
-                        if (v.getTribe() != null && v.getTribe().getAlly() == null || !v.getTribe().getAlly().equals(own.getAlly())) {
+                        if ((v.getTribe() != null && v.getTribe().getAlly() == null) || (v.getTribe() != null && v.getTribe().getAlly() != null && !v.getTribe().getAlly().equals(own.getAlly()))) {
                             //no barbarien, no ally or ally not equal own ally
                             doExport = true;
                         }
@@ -1084,6 +1097,7 @@ public class MapPanel extends javax.swing.JPanel {
                 }
             }
         } catch (Exception e) {
+            logger.error("Failed to copy data to clipboard", e);
             JOptionPaneHelper.showErrorBox(jCopyVillagesDialog, "Fehler beim Kopieren der Daten.", "Fehler");
         }
 
@@ -1308,7 +1322,6 @@ public class MapPanel extends javax.swing.JPanel {
     }
 
     public synchronized void fireVillageAtMousePosChangedEvents(Village pVillage) {
-       
     }
 
     public synchronized void fireScrollEvents(double pX, double pY) {

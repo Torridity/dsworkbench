@@ -36,11 +36,11 @@ public class DSWorkbenchTreeExpansionListener implements TreeExpansionListener {
             AbstractTreeNode lastNode = (AbstractTreeNode) event.getPath().getLastPathComponent();
             if (lastNode.isTribeNode()) {
                 lastNode.removeAllChildren();
-                expandTribe((TribeNode) lastNode);
+              ///  expandTribe((TribeNode) lastNode);
             } else if (lastNode.isAllyNode()) {
                 //remove dummy
                 lastNode.removeAllChildren();
-                expandAlly((AllyNode) lastNode);
+              // expandAlly((AllyNode) lastNode);
             } 
         } catch (Exception e) {
         }

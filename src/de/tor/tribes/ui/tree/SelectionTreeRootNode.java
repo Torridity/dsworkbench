@@ -4,7 +4,6 @@
  */
 package de.tor.tribes.ui.tree;
 
-import de.tor.tribes.types.Tribe;
 import java.util.Enumeration;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
@@ -14,17 +13,17 @@ import javax.swing.tree.TreeNode;
  *
  * @author Charon
  */
-public class TribeNode extends DefaultMutableTreeNode {
+public class SelectionTreeRootNode extends DefaultMutableTreeNode {
 
-    public TribeNode() {
+    public SelectionTreeRootNode() {
         super();
     }
 
-    public TribeNode(Tribe pUserObject) {
+    public SelectionTreeRootNode(Object pUserObject) {
         super(pUserObject);
     }
 
-    public TribeNode(Object pUserObject, boolean pAllowsChildren) {
+    public SelectionTreeRootNode(Object pUserObject, boolean pAllowsChildren) {
         super(pUserObject, pAllowsChildren);
     }
 
@@ -46,13 +45,9 @@ public class TribeNode extends DefaultMutableTreeNode {
     //recalc elem count
     }
 
-    public void setUserObject(Tribe object) {
-        super.setUserObject(userObject);
-    }
-
     @Override
-    public Tribe getUserObject() {
-        return (Tribe) super.getUserObject();
+    public void setUserObject(Object object) {
+        super.setUserObject(userObject);
     }
 
     @Override

@@ -1164,13 +1164,11 @@ public class MapPanel extends javax.swing.JPanel {
     /**Update map to new position -> needs fully update*/
     protected synchronized void updateMapPosition(double pX, double pY) {
         dCenterX = pX;
-        dCenterY =
-                pY;
+        dCenterY = pY;
 
         if (mMapRenderer == null) {
             logger.info("Creating MapRenderer");
-            mMapRenderer =
-                    new MapRenderer();
+            mMapRenderer = new MapRenderer();
             mMapRenderer.start();
         }
 

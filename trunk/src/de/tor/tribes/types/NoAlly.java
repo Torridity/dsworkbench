@@ -6,25 +6,25 @@ package de.tor.tribes.types;
 
 /**
  *
- * @author Charon
+ * @author Jejkal
  */
-public class BarbarianAlly extends Ally {
+public class NoAlly extends Ally {
 
-    private static BarbarianAlly SINGLETON = null;
+    private static NoAlly SINGLETON = null;
 
-    public static synchronized BarbarianAlly getSingleton() {
+    public static synchronized NoAlly getSingleton() {
         if (SINGLETON == null) {
-            SINGLETON = new BarbarianAlly();
+            SINGLETON = new NoAlly();
         }
         return SINGLETON;
     }
 
     public int getId() {
-        return 0;
+        return -1;
     }
 
     public String getName() {
-        return "Barbaren";
+        return "Kein Stamm";
     }
 
     public String getTag() {
@@ -35,15 +35,18 @@ public class BarbarianAlly extends Ally {
         return 0;
     }
 
+    @Override
     public double getPoints() {
         return 0;
     }
 
+    @Override
     public int getRank() {
         return 0;
     }
 
+    @Override
     public String toString() {
-        return "Barbaren";
+        return "Kein Stamm";
     }
 }

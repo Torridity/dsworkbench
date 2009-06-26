@@ -223,10 +223,10 @@ public class MapRenderer extends Thread {
                 }
             } catch (Throwable t) {
                 logger.error("Redrawing map failed", t);
-                /*logger.info("Memstat");
-                logger.info("  Free: " + Runtime.getRuntime().freeMemory());
-                logger.info("  Max: " + Runtime.getRuntime().maxMemory());
-                logger.info("  Total: " + Runtime.getRuntime().totalMemory());*/
+            /*logger.info("Memstat");
+            logger.info("  Free: " + Runtime.getRuntime().freeMemory());
+            logger.info("  Max: " + Runtime.getRuntime().maxMemory());
+            logger.info("  Total: " + Runtime.getRuntime().totalMemory());*/
             }
             try {
                 Thread.sleep(60);
@@ -1558,17 +1558,19 @@ public class MapRenderer extends Thread {
             villageRect.setLocation(villageRect.x - delta, villageRect.y);
         }
 
+        int xc = (int) villageRect.getCenterX();
+        int yc = (int) villageRect.getCenterY();
         //Village name rect
         int dy = 19;
         g2d.setColor(Constants.DS_BACK);
-        g2d.fillRect(villageRect.getLocation().x, villageRect.getLocation().y, width, 19);
-        g2d.drawRect(villageRect.getLocation().x, villageRect.getLocation().y, width, 19);
+        g2d.fillRect(xc, yc, width, 19);
+        g2d.drawRect(xc, yc, width, 19);
         g2d.setColor(Color.BLACK);
         Rectangle2D bounds = metrics.getStringBounds(mouseVillage.getName(), g2d);
-        g2d.drawString(mouseVillage.toString(), villageRect.getLocation().x + 2, villageRect.getLocation().y - (int) Math.rint(bounds.getY()) + 2);
+        g2d.drawString(mouseVillage.toString(), xc + 17, yc - (int) Math.rint(bounds.getY()) + 2);
         String bonus = getBonusType(mouseVillage);
         if (bonus != null) {
-            drawPopupField(g2d, metrics, villageRect, null, bonus, width, dy);
+            drawPopupField(g2d, metrics, xc, yc, null, bonus, width, dy);
             dy += 19;
         }
 
@@ -1578,7 +1580,7 @@ public class MapRenderer extends Thread {
 
         //Points rect
         String value = nf.format(mouseVillage.getPoints());
-        drawPopupField(g2d, metrics, villageRect, "Punkte", value, width, dy);
+        drawPopupField(g2d, metrics, xc, yc, "Punkte", value, width, dy);
         dy += 19;
 
         //tags
@@ -1608,19 +1610,19 @@ public class MapRenderer extends Thread {
                     line = line.substring(0, line.lastIndexOf(","));
                 }
 
-                drawPopupField(g2d, metrics, villageRect, "Tags", line, width, dy);
+                drawPopupField(g2d, metrics, xc, yc, "Tags", line, width, dy);
 
                 int lines = tagLines.size();
                 for (int i = 0; i < lines - 1; i++) {
                     dy += 19;
-                    drawPopupField(g2d, metrics, villageRect, "", tagLines.remove(0), width, dy);
+                    drawPopupField(g2d, metrics, xc, yc, "", tagLines.remove(0), width, dy);
                 }
 
                 if (!tagLines.isEmpty()) {
                     dy += 19;
                     line = tagLines.remove(0);
                     line = line.substring(0, line.lastIndexOf(","));
-                    drawPopupField(g2d, metrics, villageRect, "", line, width, dy);
+                    drawPopupField(g2d, metrics, xc, yc, "", line, width, dy);
                 }
                 dy += 19;
             }
@@ -1631,20 +1633,20 @@ public class MapRenderer extends Thread {
         if (t != null) {
             if (showRanks) {
                 value = t.getName() + " (" + nf.format(t.getPoints()) + " | " + t.getRank() + ")";
-                drawPopupField(g2d, metrics, villageRect, "Besitzer (Punkte | Rang)", value, width, dy);
+                drawPopupField(g2d, metrics, xc, yc, "Besitzer (Punkte | Rang)", value, width, dy);
             } else {
                 value = t.getName() + " (" + nf.format(t.getPoints()) + ")";
-                drawPopupField(g2d, metrics, villageRect, "Besitzer (Punkte)", value, width, dy);
+                drawPopupField(g2d, metrics, xc, yc, "Besitzer (Punkte)", value, width, dy);
             }
 
             dy += 19;
             if (showConquers) {
                 if (showRanks) {
                     value = nf.format(t.getKillsAtt()) + " (" + nf.format(t.getRankAtt()) + "), " + nf.format(t.getKillsDef()) + " (" + nf.format(t.getRankDef()) + ")";
-                    drawPopupField(g2d, metrics, villageRect, "Besiegte Gegner (Off, Def)", value, width, dy);
+                    drawPopupField(g2d, metrics, xc, yc, "Besiegte Gegner (Off, Def)", value, width, dy);
                 } else {
                     value = nf.format(t.getKillsAtt()) + ", " + nf.format(t.getKillsDef()) + ")";
-                    drawPopupField(g2d, metrics, villageRect, "Besiegte Gegner (Off, Def)", value, width, dy);
+                    drawPopupField(g2d, metrics, xc, yc, "Besiegte Gegner (Off, Def)", value, width, dy);
                 }
 
                 dy += 19;
@@ -1654,10 +1656,10 @@ public class MapRenderer extends Thread {
             if (a != null) {
                 if (showRanks) {
                     value = a.getTag() + " (" + nf.format(a.getAll_points()) + " | " + a.getRank() + ")";
-                    drawPopupField(g2d, metrics, villageRect, "Stamm (Punkte | Rang)", value, width, dy);
+                    drawPopupField(g2d, metrics, xc, yc, "Stamm (Punkte | Rang)", value, width, dy);
                 } else {
                     value = a.getTag() + " (" + nf.format(a.getAll_points()) + ")";
-                    drawPopupField(g2d, metrics, villageRect, "Stamm (Punkte)", value, width, dy);
+                    drawPopupField(g2d, metrics, xc, yc, "Stamm (Punkte)", value, width, dy);
                 }
 
                 dy += 19;
@@ -1666,7 +1668,7 @@ public class MapRenderer extends Thread {
             if (showMoral) {
                 double moral = ((mouseVillage.getTribe().getPoints() / currentUserVillage.getTribe().getPoints()) * 3 + 0.3) * 100;
                 moral = (moral > 100) ? 100 : moral;
-                drawPopupField(g2d, metrics, villageRect, "Moral", nf.format(moral) + "%", width, dy);
+                drawPopupField(g2d, metrics, xc, yc, "Moral", nf.format(moral) + "%", width, dy);
                 dy += 19;
             }
 
@@ -1675,14 +1677,14 @@ public class MapRenderer extends Thread {
             if (c != null) {
                 Calendar cal = Calendar.getInstance();
                 cal.setTimeInMillis((long) c.getTimestamp() * 1000);
-                drawPopupField(g2d, metrics, villageRect, "Adelung am", f.format(cal.getTime()), width, dy);
+                drawPopupField(g2d, metrics, xc, yc, "Adelung am", f.format(cal.getTime()), width, dy);
                 dy += 19;
-                drawPopupField(g2d, metrics, villageRect, "Zustimmung", Integer.toString(c.getCurrentAcceptance()), width, dy);
+                drawPopupField(g2d, metrics, xc, yc, "Zustimmung", Integer.toString(c.getCurrentAcceptance()), width, dy);
                 dy += 19;
             }
         } else {
             value = "verlassen";
-            drawPopupField(g2d, metrics, villageRect, null, value, width, dy);
+            drawPopupField(g2d, metrics, xc, yc, null, value, width, dy);
             dy += 19;
         }
 
@@ -1790,25 +1792,25 @@ public class MapRenderer extends Thread {
     }
 
     /**Draw one single field of map popup*/
-    private void drawPopupField(Graphics2D g2d, FontMetrics pMetrics, Rectangle pRect, String pName, String pValue, int pWidth, int pDy) {
+    private void drawPopupField(Graphics2D g2d, FontMetrics pMetrics, int pX, int pY, String pName, String pValue, int pWidth, int pDy) {
         g2d.setColor(Constants.DS_BACK_LIGHT);
-        g2d.fillRect(pRect.getLocation().x, pRect.getLocation().y + pDy, pWidth, 19);
+        g2d.fillRect(pX, pY + pDy, pWidth, 19);
         g2d.setColor(Constants.DS_BACK);
-        g2d.drawRect(pRect.getLocation().x, pRect.getLocation().y + pDy, pWidth, 19);
+        g2d.drawRect(pX, pY + pDy, pWidth, 19);
 
         int dx = 0;
         if (pName != null) {
             dx = 150;
-            g2d.drawRect(pRect.getLocation().x, pRect.getLocation().y + pDy, dx, 19);
+            g2d.drawRect(pX, pY + pDy, dx, 19);
             g2d.setColor(Color.BLACK);
             Rectangle2D bounds = pMetrics.getStringBounds(pName, g2d);
-            g2d.drawString(pName, pRect.getLocation().x + 2, pRect.getLocation().y + pDy - (int) Math.rint(bounds.getY()) + 2);
+            g2d.drawString(pName, pX + 2, pY + pDy - (int) Math.rint(bounds.getY()) + 2);
         } else {
             g2d.setColor(Color.BLACK);
         }
 
         Rectangle2D bounds = pMetrics.getStringBounds(pValue, g2d);
-        g2d.drawString(pValue, pRect.getLocation().x + dx + 2, pRect.getLocation().y + pDy - (int) Math.rint(bounds.getY()) + 2);
+        g2d.drawString(pValue, pX + dx + 2, pY + pDy - (int) Math.rint(bounds.getY()) + 2);
     }
 
     /**Render extended information to map popup e.g. troop information*/

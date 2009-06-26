@@ -116,7 +116,7 @@ public class MapPanel extends javax.swing.JPanel {
         jCopyEnemyAlly.setSelected(true);
         jCopyBarbarian.setSelected(true);
         jCopyVillagesDialog.pack();
-
+        mVillageSelectionListener = DSWorkbenchSelectionFrame.getSingleton();
         initListeners();
     }
 
@@ -472,10 +472,10 @@ public class MapPanel extends javax.swing.JPanel {
                             int ys = (int) Math.floor(selectionRect.getYPos());
                             int xe = (int) Math.floor(selectionRect.getXPosEnd());
                             int ye = (int) Math.floor(selectionRect.getYPosEnd());
-                            if (mVillageSelectionListener != null) {
+                            //if (mVillageSelectionListener != null) {
                                 //if a selectionlistener is registered notify it
                                 mVillageSelectionListener.fireSelectionFinishedEvent(new Point(xs, ys), new Point(xe, ye));
-                            } else {
+                           /* } else {
                                 exportVillageList = getSelectedVillages(new Point(xs, ys), new Point(xe, ye));
                                 if (exportVillageList.size() > 0) {
                                     //do selection handling by ourself
@@ -488,9 +488,9 @@ public class MapPanel extends javax.swing.JPanel {
                                     jCopyVillagesDialog.setLocationRelativeTo(MapPanel.getSingleton());
                                     jCopyVillagesDialog.setVisible(true);
                                 }
-                            }
+                            }*/
                             selectionRect = null;
-                            mVillageSelectionListener = null;
+                           // mVillageSelectionListener = null;
                             break;
                         }
                         case ImageManager.CURSOR_MEASURE: {
@@ -776,6 +776,9 @@ public class MapPanel extends javax.swing.JPanel {
     public void setCurrentCursor(int pCurrentCursor) {
         iCurrentCursor = pCurrentCursor;
         setCursor(ImageManager.getCursor(iCurrentCursor));
+        if (pCurrentCursor == ImageManager.CURSOR_SELECTION) {
+            DSWorkbenchSelectionFrame.getSingleton().setVisible(true);
+        }
         fireToolChangedEvents(iCurrentCursor);
     }
 
@@ -1189,7 +1192,7 @@ public class MapPanel extends javax.swing.JPanel {
     }
 
     public void setVillageSelectionListener(VillageSelectionListener pListener) {
-        mVillageSelectionListener = pListener;
+        // mVillageSelectionListener = pListener;
     }
 
     public Point.Double getCurrentVirtualPosition() {

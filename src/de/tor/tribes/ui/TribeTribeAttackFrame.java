@@ -75,7 +75,7 @@ import javax.swing.table.TableColumn;
  * @TODO (1.6) Handle "mark on map" via selection frame
  * @author Jejkal
  */
-public class TribeTribeAttackFrame extends javax.swing.JFrame implements VillageSelectionListener {
+public class TribeTribeAttackFrame extends javax.swing.JFrame {
 
     private static Logger logger = Logger.getLogger("AttackPlanner");
     private boolean bChooseSourceRegionMode = false;
@@ -2382,7 +2382,7 @@ private void fireCancelTransferEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST
 private void fireChooseSourceRegionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireChooseSourceRegionEvent
     //select source villages on map
     MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_SELECTION);
-    MapPanel.getSingleton().setVillageSelectionListener(this);
+    //MapPanel.getSingleton().setVillageSelectionListener(this);
     DSWorkbenchMainFrame.getSingleton().toFront();
     DSWorkbenchMainFrame.getSingleton().requestFocus();
     bChooseSourceRegionMode = true;
@@ -2390,20 +2390,20 @@ private void fireChooseSourceRegionEvent(java.awt.event.MouseEvent evt) {//GEN-F
 
 private void fireChooseTargetRegionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireChooseTargetRegionEvent
     //select target villages on map
-    Tribe victim = null;
+    /*Tribe victim = null;
     try {
-        victim = (Tribe) jTargetTribeList.getSelectedValue();
+    victim = (Tribe) jTargetTribeList.getSelectedValue();
     } catch (Exception e) {
     }
     if (victim == null) {
-        JOptionPaneHelper.showInformationBox(this, "Kein gültiger Spieler ausgewählt.", "Fehler");
-        return;
+    JOptionPaneHelper.showInformationBox(this, "Kein gültiger Spieler ausgewählt.", "Fehler");
+    return;
     }
     //calculate mass of villages and center to it
     MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_SELECTION);
     MapPanel.getSingleton().setVillageSelectionListener(this);
     Point com = DSCalculator.calculateCenterOfMass(victim.getVillageList());
-    DSWorkbenchMainFrame.getSingleton().centerPosition(com.x, com.y);
+    DSWorkbenchMainFrame.getSingleton().centerPosition(com.x, com.y);*/
     DSWorkbenchMainFrame.getSingleton().toFront();
     DSWorkbenchMainFrame.getSingleton().requestFocus();
     bChooseTargetRegionMode = true;
@@ -3040,53 +3040,88 @@ private void fireSourceRelationChangedEvent(java.awt.event.ItemEvent evt) {//GEN
     //</editor-fold>
     }
 
-    @Override
-    public void fireSelectionFinishedEvent(Point pStart, Point pEnd) {
-        int xStart = (pStart.x < pEnd.x) ? pStart.x : pEnd.x;
-        int xEnd = (pEnd.x > pStart.x) ? pEnd.x : pStart.x;
-        int yStart = (pStart.y < pEnd.y) ? pStart.y : pEnd.y;
-        int yEnd = (pEnd.y > pStart.y) ? pEnd.y : pStart.y;
+    public void fireSelectionTransferEvent(List<Village> pSelection) {
+
+        UnitHolder uSource = (UnitHolder) jTroopsList.getSelectedItem();
         if (bChooseSourceRegionMode) {
-            Tribe you = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage().getTribe();
-            UnitHolder uSource = (UnitHolder) jTroopsList.getSelectedItem();
             jAttacksTable.invalidate();
-            List<Village> groupFiltered = getGroupFilteredSourceVillages();
-            for (int x = xStart; x <= xEnd; x++) {
-                for (int y = yStart; y <= yEnd; y++) {
-                    Village v = DataHolder.getSingleton().getVillages()[x][y];
-                    if (v != null) {
-                        Tribe t = v.getTribe();
-                        if (t != null) {
-                            if (t.equals(you)) {
-                                if (groupFiltered.contains(v)) {
-                                    //add only villages which are currently allowed
-                                    ((DefaultTableModel) jAttacksTable.getModel()).addRow(new Object[]{v, uSource});
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            jAttacksTable.revalidate();
         } else if (bChooseTargetRegionMode) {
-            Tribe victim = (Tribe) jTargetTribeList.getSelectedValue();
             jVictimTable.invalidate();
-            for (int x = xStart; x <= xEnd; x++) {
-                for (int y = yStart; y <= yEnd; y++) {
-                    Village v = DataHolder.getSingleton().getVillages()[x][y];
-                    if (v != null) {
-                        Tribe t = v.getTribe();
-                        if (t != null) {
-                            if (t.equals(victim)) {
-                                ((DefaultTableModel) jVictimTable.getModel()).addRow(new Object[]{t, v});
-                            }
-                        }
-                    }
-                }
-            }
-            jVictimTable.revalidate();
-            jVictimTable.repaint();//.updateUI();
         }
+
+        for (Village v : pSelection.toArray(new Village[]{})) {
+            if (bChooseSourceRegionMode) {
+                ((DefaultTableModel) jAttacksTable.getModel()).addRow(new Object[]{v, uSource});
+            } else if (bChooseTargetRegionMode) {
+                ((DefaultTableModel) jAttacksTable.getModel()).addRow(new Object[]{v, uSource});
+            }
+        }
+
+        if (bChooseSourceRegionMode) {
+            jAttacksTable.revalidate();
+            jAttacksTable.repaint();
+        } else if (bChooseTargetRegionMode) {
+            jVictimTable.revalidate();
+            jVictimTable.repaint();
+        }
+        
+        // <editor-fold defaultstate="collapsed" desc=" OLD HANDLING">
+       /*    if (bChooseSourceRegionMode) {
+        UnitHolder uSource = (UnitHolder) jTroopsList.getSelectedItem();
+        // Tribe you = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage().getTribe();
+        jAttacksTable.invalidate();
+        // List<Village> groupFiltered = getGroupFilteredSourceVillages();
+        for (Village v : pSelection.toArray(new Village[]{})) {
+        //  if (v != null && v.getTribe() != null && v.getTribe().equals(you) && groupFiltered.contains(v)) {
+        ((DefaultTableModel) jAttacksTable.getModel()).addRow(new Object[]{v, uSource});
+        //                }
+        }
+        jAttacksTable.revalidate();
+        /*  Tribe you = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage().getTribe();
+        UnitHolder uSource = (UnitHolder) jTroopsList.getSelectedItem();
+        jAttacksTable.invalidate();
+        List<Village> groupFiltered = getGroupFilteredSourceVillages();
+        for (int x = xStart; x <= xEnd; x++) {
+        for (int y = yStart; y <= yEnd; y++) {
+        Village v = DataHolder.getSingleton().getVillages()[x][y];
+        if (v != null) {
+        Tribe t = v.getTribe();
+        if (t != null) {
+        if (t.equals(you)) {
+        if (groupFiltered.contains(v)) {
+        //add only villages which are currently allowed
+        ((DefaultTableModel) jAttacksTable.getModel()).addRow(new Object[]{v, uSource});
+        }
+        }
+        }
+        }
+        }
+        }
+        jAttacksTable.revalidate();*/
+        /*       } else if (bChooseTargetRegionMode) {
+        Tribe victim = (Tribe) jTargetTribeList.getSelectedValue();
+        jVictimTable.invalidate();
+        /* Tribe victim = (Tribe) jTargetTribeList.getSelectedValue();
+        jVictimTable.invalidate();
+        for (int x = xStart; x <= xEnd; x++) {
+        for (int y = yStart; y <= yEnd; y++) {
+        Village v = DataHolder.getSingleton().getVillages()[x][y];
+        if (v != null) {
+        Tribe t = v.getTribe();
+        if (t != null) {
+        if (t.equals(victim)) {
+        ((DefaultTableModel) jVictimTable.getModel()).addRow(new Object[]{t, v});
+        }
+        }
+        }
+        }
+        }
+        jVictimTable.revalidate();
+        jVictimTable.repaint();//.updateUI();*/
+        //   }
+
+        //</editor-fold>
+
         bChooseSourceRegionMode = false;
         bChooseTargetRegionMode = false;
 

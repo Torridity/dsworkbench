@@ -63,13 +63,13 @@ public class DSWorkbenchTreeExpansionListener implements TreeExpansionListener {
      * |-Tribe
      */
     private void expandAlly(AllyNode pNode) {
-        Ally a = pNode.getDSUserObject();
+       /* Ally a = pNode.getDSUserObject();
         for (Tribe t : a.getTribes()) {
             TribeNode tNode = new TribeNode(t);
             tNode.add(new DefaultMutableTreeNode());
             pNode.add(tNode);
         }
-        mModel.nodeStructureChanged(pNode);
+        mModel.nodeStructureChanged(pNode);*/
     }
 
     /**Expand tribe node
@@ -81,7 +81,7 @@ public class DSWorkbenchTreeExpansionListener implements TreeExpansionListener {
      *         |-Village
      */
     private void expandTribe(TribeNode pNode) {
-        Tribe t = pNode.getDSUserObject();
+      /*  Tribe t = pNode.getDSUserObject();
         List<Tag> tags = new LinkedList<Tag>();
         Hashtable<String, TagNode> tagNodes = new Hashtable<String, TagNode>();
         Hashtable<TagNode, List<String>> tagContMappings = new Hashtable<TagNode, List<String>>();
@@ -146,6 +146,6 @@ public class DSWorkbenchTreeExpansionListener implements TreeExpansionListener {
             }
 
         }
-        mModel.nodeStructureChanged(pNode);
+        mModel.nodeStructureChanged(pNode);*/
     }
 }

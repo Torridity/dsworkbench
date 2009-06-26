@@ -11,21 +11,44 @@
 package de.tor.tribes.ui;
 
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.types.Ally;
+import de.tor.tribes.types.BarbarianAlly;
+import de.tor.tribes.types.Barbarians;
+import de.tor.tribes.types.NoAlly;
+import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
+import de.tor.tribes.ui.tree.AllyNode;
 import de.tor.tribes.ui.tree.NodeCellRenderer;
 import de.tor.tribes.ui.tree.SelectionTreeRootNode;
+import de.tor.tribes.ui.tree.TribeNode;
+import de.tor.tribes.ui.tree.VillageNode;
+import de.tor.tribes.util.GlobalOptions;
+import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.VillageSelectionListener;
 import java.awt.Point;
+import java.awt.Toolkit;
+import java.awt.datatransfer.StringSelection;
+import java.text.NumberFormat;
+import java.util.Collections;
+import java.util.Hashtable;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.StringTokenizer;
+import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
+import org.apache.log4j.Logger;
 
 /**
  *
  * @author Charon
  */
-public class DSWorkbenchSelectionFrame extends javax.swing.JFrame implements VillageSelectionListener {
+public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implements VillageSelectionListener {
 
+    private static Logger logger = Logger.getLogger("SelectionFrame");
     private static DSWorkbenchSelectionFrame SINGLETON = null;
     private SelectionTreeRootNode mRoot = null;
+    private List<Village> treeData = null;
 
     public static synchronized DSWorkbenchSelectionFrame getSingleton() {
         if (SINGLETON == null) {
@@ -37,9 +60,53 @@ public class DSWorkbenchSelectionFrame extends javax.swing.JFrame implements Vil
     /** Creates new form DSWorkbenchSelectionFrame */
     DSWorkbenchSelectionFrame() {
         initComponents();
-        mRoot = new SelectionTreeRootNode("Auswahl");
-        ((DefaultTreeModel) jSelectionTree.getModel()).setRoot(mRoot);
+        try {
+            jAlwaysOnTopBox.setSelected(Boolean.parseBoolean(GlobalOptions.getProperty("selection.frame.alwaysOnTop")));
+            setAlwaysOnTop(jAlwaysOnTopBox.isSelected());
+        } catch (Exception e) {
+            //setting not available
+        }
+        treeData = new LinkedList<Village>();
         jSelectionTree.setCellRenderer(new NodeCellRenderer());
+        buildTree();
+    }
+
+    private void buildTree() {
+        mRoot = new SelectionTreeRootNode("Auswahl");
+        //add all villages
+        Hashtable<Ally, AllyNode> allyNodes = new Hashtable<Ally, AllyNode>();
+        Hashtable<Tribe, TribeNode> tribeNodes = new Hashtable<Tribe, TribeNode>();
+        List<Village> used = new LinkedList<Village>();
+
+        for (Village v : treeData) {
+            Tribe t = v.getTribe();
+            if (t == null) {
+                t = Barbarians.getSingleton();
+            }
+            Ally a = t.getAlly();
+            if (a == null) {
+                a = NoAlly.getSingleton();
+            }
+
+            AllyNode aNode = allyNodes.get(a);
+            if (aNode == null) {
+                //new ally
+                aNode = new AllyNode(a);
+                allyNodes.put(a, aNode);
+                mRoot.add(aNode);
+            }
+            TribeNode tNode = tribeNodes.get(t);
+            if (tNode == null) {
+                //new tribe
+                tNode = new TribeNode(t);
+                tribeNodes.put(t, tNode);
+                aNode.add(tNode);
+            }
+            tNode.add(new VillageNode(v));
+            used.add(v);
+        }
+        ((DefaultTreeModel) jSelectionTree.getModel()).setRoot(mRoot);
+        //jSelectionTree.setCellRenderer(new NodeCellRenderer());
     }
 
     /** This method is called from within the constructor to
@@ -56,15 +123,15 @@ public class DSWorkbenchSelectionFrame extends javax.swing.JFrame implements Vil
         jSelectionTree = new javax.swing.JTree();
         jButton1 = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
-        jCheckBox2 = new javax.swing.JCheckBox();
-        jCheckBox3 = new javax.swing.JCheckBox();
-        jCheckBox4 = new javax.swing.JCheckBox();
+        jExportUnformattedButton = new javax.swing.JButton();
+        jExportBBButton = new javax.swing.JButton();
+        jExportOwnerBox = new javax.swing.JCheckBox();
+        jExportAllyBox = new javax.swing.JCheckBox();
+        jExportPointsBox = new javax.swing.JCheckBox();
         jButton4 = new javax.swing.JButton();
-        jCheckBox1 = new javax.swing.JCheckBox();
+        jAlwaysOnTopBox = new javax.swing.JCheckBox();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Auswahl");
 
         jPanel1.setBackground(new java.awt.Color(239, 235, 223));
 
@@ -99,29 +166,44 @@ public class DSWorkbenchSelectionFrame extends javax.swing.JFrame implements Vil
         jButton1.setBackground(new java.awt.Color(239, 235, 223));
         jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_remove.png"))); // NOI18N
         jButton1.setToolTipText("Gewählte Elemente löschen");
+        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireRemoveNodeEvent(evt);
+            }
+        });
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Export"));
         jPanel2.setOpaque(false);
 
-        jButton2.setBackground(new java.awt.Color(239, 235, 223));
-        jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_clipboard.png"))); // NOI18N
-        jButton2.setToolTipText("Markierte Elemente unformatiert in die Zwischenablage kopieren");
+        jExportUnformattedButton.setBackground(new java.awt.Color(239, 235, 223));
+        jExportUnformattedButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_clipboard.png"))); // NOI18N
+        jExportUnformattedButton.setToolTipText("Markierte Elemente unformatiert in die Zwischenablage kopieren");
+        jExportUnformattedButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireExportEvent(evt);
+            }
+        });
 
-        jButton3.setBackground(new java.awt.Color(239, 235, 223));
-        jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_clipboardBB.png"))); // NOI18N
-        jButton3.setToolTipText("Markierte Elemente als BB-Codes in die Zwischenablage kopieren");
+        jExportBBButton.setBackground(new java.awt.Color(239, 235, 223));
+        jExportBBButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_clipboardBB.png"))); // NOI18N
+        jExportBBButton.setToolTipText("Markierte Elemente als BB-Codes in die Zwischenablage kopieren");
+        jExportBBButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireExportEvent(evt);
+            }
+        });
 
-        jCheckBox2.setText("Besitzer");
-        jCheckBox2.setToolTipText("Besitzer exportieren");
-        jCheckBox2.setOpaque(false);
+        jExportOwnerBox.setText("Besitzer");
+        jExportOwnerBox.setToolTipText("Besitzer exportieren");
+        jExportOwnerBox.setOpaque(false);
 
-        jCheckBox3.setText("Stamm");
-        jCheckBox3.setToolTipText("Stammname exportieren");
-        jCheckBox3.setOpaque(false);
+        jExportAllyBox.setText("Stamm");
+        jExportAllyBox.setToolTipText("Stammname exportieren");
+        jExportAllyBox.setOpaque(false);
 
-        jCheckBox4.setText("Dorfpunkte");
-        jCheckBox4.setToolTipText("Dorfpunkte exportieren");
-        jCheckBox4.setOpaque(false);
+        jExportPointsBox.setText("Dorfpunkte");
+        jExportPointsBox.setToolTipText("Dorfpunkte exportieren");
+        jExportPointsBox.setOpaque(false);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -129,34 +211,38 @@ public class DSWorkbenchSelectionFrame extends javax.swing.JFrame implements Vil
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jCheckBox2)
+                .addComponent(jExportOwnerBox)
                 .addGap(18, 18, 18)
-                .addComponent(jCheckBox3)
+                .addComponent(jExportAllyBox)
                 .addGap(18, 18, 18)
-                .addComponent(jCheckBox4)
+                .addComponent(jExportPointsBox)
                 .addGap(29, 29, 29)
-                .addComponent(jButton2)
+                .addComponent(jExportUnformattedButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jExportBBButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jCheckBox2, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jCheckBox4, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(jButton2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(jCheckBox3, javax.swing.GroupLayout.DEFAULT_SIZE, 39, Short.MAX_VALUE))
+                        .addComponent(jExportOwnerBox, javax.swing.GroupLayout.DEFAULT_SIZE, 35, Short.MAX_VALUE)
+                        .addComponent(jExportPointsBox, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jExportUnformattedButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jExportBBButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jExportAllyBox, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
         jButton4.setBackground(new java.awt.Color(239, 235, 223));
         jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_overview.png"))); // NOI18N
         jButton4.setToolTipText("Markierte Elemente in Angriffsplaner übertragen");
+        jButton4.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireSelectionToAttackPlannerEvent(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -192,7 +278,13 @@ public class DSWorkbenchSelectionFrame extends javax.swing.JFrame implements Vil
                 .addContainerGap())
         );
 
-        jCheckBox1.setText("Immer im Vordergrund");
+        jAlwaysOnTopBox.setText("Immer im Vordergrund");
+        jAlwaysOnTopBox.setOpaque(false);
+        jAlwaysOnTopBox.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                fireAlwaysOnTopChangedEvent(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -201,7 +293,7 @@ public class DSWorkbenchSelectionFrame extends javax.swing.JFrame implements Vil
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jCheckBox1)
+                    .addComponent(jAlwaysOnTopBox)
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -211,12 +303,223 @@ public class DSWorkbenchSelectionFrame extends javax.swing.JFrame implements Vil
                 .addContainerGap()
                 .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jCheckBox1)
+                .addComponent(jAlwaysOnTopBox)
                 .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void fireRemoveNodeEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireRemoveNodeEvent
+
+        if (JOptionPaneHelper.showQuestionConfirmBox(this, "Alle markierten Einträge und ihre untergeordneten Einträge löschen?", "Löschen", "Nein", "Ja") == JOptionPane.NO_OPTION) {
+            return;
+        }
+
+        /* TreePath[] paths = jSelectionTree.getSelectionModel().getSelectionPaths();
+
+        for (TreePath p : paths) {
+        Object o = p.getLastPathComponent();
+        if (o instanceof AllyNode) {
+        Ally a = ((AllyNode) o).getUserObject();
+        Village[] copy = treeData.toArray(new Village[]{});
+        for (Village v : copy) {
+        if (v.getTribe() == null && a.equals(BarbarianAlly.getSingleton())) {
+        //remove barbarian ally member
+        treeData.remove(v);
+        } else if (v.getTribe() != null && v.getTribe().getAlly() == null && a.equals(NoAlly.getSingleton())) {
+        //remove no-ally member
+        treeData.remove(v);
+        } else if (v.getTribe() != null && v.getTribe().getAlly() != null && a.equals(v.getTribe().getAlly())) {
+        //remove if ally is equal
+        treeData.remove(v);
+        }
+        }
+        } else if (o instanceof TribeNode) {
+        Tribe t = ((TribeNode) o).getUserObject();
+        Village[] copy = treeData.toArray(new Village[]{});
+        for (Village v : copy) {
+        if (v.getTribe() == null && t.equals(Barbarians.getSingleton())) {
+        //if village is barbarian village and selected tribe are barbs, remove village
+        treeData.remove(v);
+        } else if (v.getTribe() != null && v.getTribe().equals(t)) {
+        //selected tribe are no barbs, so check tribes to be equal
+        treeData.remove(v);
+        }
+        }
+        } else if (o instanceof VillageNode) {
+        Village v = ((VillageNode) o).getUserObject();
+        treeData.remove(v);
+        } else if (o != null && o.equals(mRoot)) {
+        //remove all
+        treeData.clear();
+        } else {
+        //remove nothing
+        }
+         */
+
+        for (Village v : getSelectedElements()) {
+            treeData.remove(v);
+        }
+        buildTree();
+    }//GEN-LAST:event_fireRemoveNodeEvent
+
+    private void fireExportEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireExportEvent
+
+        try {
+            NumberFormat nf = NumberFormat.getInstance();
+            nf.setMinimumFractionDigits(0);
+            nf.setMaximumFractionDigits(0);
+            boolean exported = false;
+            if (evt.getSource() == jExportBBButton) {
+                String result = "";
+
+                for (Village v : getSelectedElements()) {
+                    exported = true;
+                    result += v.toBBCode();
+                    if (jExportPointsBox.isSelected()) {
+                        result += " (" + nf.format(v.getPoints()) + ") ";
+                    } else {
+                        result += "\t";
+                    }
+                    if (jExportOwnerBox.isSelected() && v.getTribe() != null) {
+                        result += v.getTribe().toBBCode() + " ";
+                    } else {
+                        if (jExportOwnerBox.isSelected()) {
+                            result += "Barbaren ";
+                        } else {
+                            result += "\t";
+                        }
+                    }
+                    if (jExportAllyBox.isSelected() && v.getTribe() != null && v.getTribe().getAlly() != null) {
+                        result += v.getTribe().getAlly().toBBCode() + "\n";
+                    } else {
+                        if (jExportAllyBox.isSelected()) {
+                            result += "(kein Stamm)\n";
+                        } else {
+                            result += "\n";
+                        }
+                    }
+
+                }
+                if (exported) {
+                    StringTokenizer t = new StringTokenizer(result, "[");
+                    int cnt = t.countTokens();
+                    boolean doExport = true;
+                    if (cnt > 500) {
+                        if (JOptionPaneHelper.showQuestionConfirmBox(this, "Die ausgewählten Dörfer benötigen mehr als 500 BB-Codes\n" +
+                                "und können daher im Spiel (Forum/IGM/Notizen) nicht auf einmal dargestellt werden.\nTrotzdem exportieren?", "Zu viele BB-Codes", "Nein", "Ja") == JOptionPane.NO_OPTION) {
+                            doExport = false;
+                        }
+                    }
+                    if (doExport) {
+                        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(result), null);
+                        JOptionPaneHelper.showInformationBox(this, "Dorfdaten in die Zwischenablage kopiert.", "Daten kopiert");
+                    }
+                } else {
+                    JOptionPaneHelper.showInformationBox(this, "Mit den gewählten Einstellungen werden keine Dörfer kopiert.", "Information");
+                    return;
+                }
+            } else if (evt.getSource() == jExportUnformattedButton) {
+                String result = "";
+                for (Village v : getSelectedElements()) {
+
+
+                    exported = true;
+                    result += v + "\t";
+                    if (jExportPointsBox.isSelected()) {
+                        result += nf.format(v.getPoints()) + "\t";
+                    } else {
+                        result += "\t";
+                    }
+                    if (jExportOwnerBox.isSelected() && v.getTribe() != null) {
+                        result += v.getTribe() + "\t";
+                    } else {
+                        if (jExportOwnerBox.isSelected()) {
+                            result += "Barbaren\t";
+                        } else {
+                            result += "\t";
+                        }
+                    }
+                    if (jExportAllyBox.isSelected() && v.getTribe() != null && v.getTribe().getAlly() != null) {
+                        result += v.getTribe().getAlly() + "\n";
+                    } else {
+                        if (jExportAllyBox.isSelected()) {
+                            result += "(kein Stamm)\n";
+                        } else {
+                            result += "\n";
+                        }
+
+                    }
+                }
+                if (exported) {
+                    Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(result), null);
+                    JOptionPaneHelper.showInformationBox(this, "Dorfdaten in die Zwischenablage kopiert.", "Daten kopiert");
+                } else {
+                    JOptionPaneHelper.showInformationBox(this, "Mit den gewählten Einstellungen werden keine Dörfer kopiert.", "Information");
+                    return;
+                }
+            }
+        } catch (Exception e) {
+            logger.error("Failed to copy data to clipboard", e);
+            JOptionPaneHelper.showErrorBox(this, "Fehler beim Kopieren der Daten.", "Fehler");
+        }
+    }//GEN-LAST:event_fireExportEvent
+
+    private void fireAlwaysOnTopChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireAlwaysOnTopChangedEvent
+        setAlwaysOnTop(!isAlwaysOnTop());
+    }//GEN-LAST:event_fireAlwaysOnTopChangedEvent
+
+    private void fireSelectionToAttackPlannerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSelectionToAttackPlannerEvent
+        DSWorkbenchMainFrame.getSingleton().getAttackPlaner().fireSelectionTransferEvent(getSelectedElements());
+    }//GEN-LAST:event_fireSelectionToAttackPlannerEvent
+
+    public List<Village> getSelectedElements() {
+        TreePath[] paths = jSelectionTree.getSelectionModel().getSelectionPaths();
+        List<Village> result = new LinkedList<Village>();
+        for (TreePath p : paths) {
+            Object o = p.getLastPathComponent();
+            if (o instanceof AllyNode) {
+                Ally a = ((AllyNode) o).getUserObject();
+                Village[] copy = treeData.toArray(new Village[]{});
+                for (Village v : copy) {
+                    if (v.getTribe() == null && a.equals(BarbarianAlly.getSingleton())) {
+                        //remove barbarian ally member
+                        result.add(v);
+                    } else if (v.getTribe() != null && v.getTribe().getAlly() == null && a.equals(NoAlly.getSingleton())) {
+                        //remove no-ally member
+                        result.add(v);
+                    } else if (v.getTribe() != null && v.getTribe().getAlly() != null && a.equals(v.getTribe().getAlly())) {
+                        //remove if ally is equal
+                        result.add(v);
+                    }
+                }
+            } else if (o instanceof TribeNode) {
+                Tribe t = ((TribeNode) o).getUserObject();
+                Village[] copy = treeData.toArray(new Village[]{});
+                for (Village v : copy) {
+                    if (v.getTribe() == null && t.equals(Barbarians.getSingleton())) {
+                        //if village is barbarian village and selected tribe are barbs, remove village
+                        result.add(v);
+                    } else if (v.getTribe() != null && v.getTribe().equals(t)) {
+                        //selected tribe are no barbs, so check tribes to be equal
+                        result.add(v);
+                    }
+                }
+            } else if (o instanceof VillageNode) {
+                Village v = ((VillageNode) o).getUserObject();
+                result.add(v);
+            } else if (o != null && o.equals(mRoot)) {
+                //remove all
+                result = new LinkedList<Village>(treeData);
+                //nothing more than everything can be removed
+                return result;
+            } else {
+                //remove nothing
+            }
+        }
+        return result;
+    }
 
     /**
      * @param args the command line arguments
@@ -231,14 +534,14 @@ public class DSWorkbenchSelectionFrame extends javax.swing.JFrame implements Vil
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JCheckBox jAlwaysOnTopBox;
     private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
-    private javax.swing.JCheckBox jCheckBox1;
-    private javax.swing.JCheckBox jCheckBox2;
-    private javax.swing.JCheckBox jCheckBox3;
-    private javax.swing.JCheckBox jCheckBox4;
+    private javax.swing.JCheckBox jExportAllyBox;
+    private javax.swing.JButton jExportBBButton;
+    private javax.swing.JCheckBox jExportOwnerBox;
+    private javax.swing.JCheckBox jExportPointsBox;
+    private javax.swing.JButton jExportUnformattedButton;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
@@ -255,9 +558,21 @@ public class DSWorkbenchSelectionFrame extends javax.swing.JFrame implements Vil
         for (int x = xStart; x <= xEnd; x++) {
             for (int y = yStart; y <= yEnd; y++) {
                 Village v = DataHolder.getSingleton().getVillages()[x][y];
-                if (v != null) {
+                if (v != null && !treeData.contains(v)) {
+                    treeData.add(v);
                 }
             }
         }
+        Collections.sort(treeData, Village.ALLY_TRIBE_VILLAGE_COMPARATOR);
+        buildTree();
     }
 }
+
+
+
+
+
+
+
+
+

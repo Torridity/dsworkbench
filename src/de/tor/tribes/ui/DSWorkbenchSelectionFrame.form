@@ -2,7 +2,7 @@
 
 <Form version="1.7" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
   <Properties>
-    <Property name="defaultCloseOperation" type="int" value="3"/>
+    <Property name="title" type="java.lang.String" value="Auswahl"/>
   </Properties>
   <SyntheticProperties>
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
@@ -25,7 +25,7 @@
           <Group type="102" alignment="1" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="1" attributes="0">
-                  <Component id="jCheckBox1" alignment="1" min="-2" max="-2" attributes="0"/>
+                  <Component id="jAlwaysOnTopBox" alignment="1" min="-2" max="-2" attributes="0"/>
                   <Component id="jPanel1" alignment="1" max="32767" attributes="0"/>
               </Group>
               <EmptySpace min="-2" max="-2" attributes="0"/>
@@ -38,7 +38,7 @@
               <EmptySpace max="-2" attributes="0"/>
               <Component id="jPanel1" max="32767" attributes="0"/>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
-              <Component id="jCheckBox1" min="-2" max="-2" attributes="0"/>
+              <Component id="jAlwaysOnTopBox" min="-2" max="-2" attributes="0"/>
               <EmptySpace min="-2" max="-2" attributes="0"/>
           </Group>
       </Group>
@@ -123,6 +123,9 @@
             </Property>
             <Property name="toolTipText" type="java.lang.String" value="Gew&#xe4;hlte Elemente l&#xf6;schen"/>
           </Properties>
+          <Events>
+            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fireRemoveNodeEvent"/>
+          </Events>
         </Component>
         <Container class="javax.swing.JPanel" name="jPanel2">
           <Properties>
@@ -139,15 +142,15 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jCheckBox2" min="-2" max="-2" attributes="0"/>
+                      <Component id="jExportOwnerBox" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
-                      <Component id="jCheckBox3" min="-2" max="-2" attributes="0"/>
+                      <Component id="jExportAllyBox" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
-                      <Component id="jCheckBox4" min="-2" max="-2" attributes="0"/>
+                      <Component id="jExportPointsBox" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="29" max="-2" attributes="0"/>
-                      <Component id="jButton2" min="-2" max="-2" attributes="1"/>
+                      <Component id="jExportUnformattedButton" min="-2" max="-2" attributes="1"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jButton3" max="32767" attributes="1"/>
+                      <Component id="jExportBBButton" max="32767" attributes="1"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -155,16 +158,14 @@
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
-                      <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
                           <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="jCheckBox2" alignment="3" min="-2" pref="39" max="-2" attributes="0"/>
-                              <Component id="jCheckBox4" alignment="3" min="-2" pref="34" max="-2" attributes="0"/>
+                              <Component id="jExportOwnerBox" alignment="0" pref="35" max="32767" attributes="1"/>
+                              <Component id="jExportPointsBox" alignment="3" min="-2" pref="34" max="-2" attributes="0"/>
                           </Group>
-                          <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
-                              <Component id="jButton2" alignment="0" max="32767" attributes="1"/>
-                              <Component id="jButton3" alignment="0" max="32767" attributes="1"/>
-                          </Group>
-                          <Component id="jCheckBox3" alignment="0" pref="39" max="32767" attributes="0"/>
+                          <Component id="jExportUnformattedButton" alignment="0" max="32767" attributes="1"/>
+                          <Component id="jExportBBButton" alignment="0" max="32767" attributes="1"/>
+                          <Component id="jExportAllyBox" alignment="1" max="32767" attributes="1"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -172,7 +173,7 @@
             </DimensionLayout>
           </Layout>
           <SubComponents>
-            <Component class="javax.swing.JButton" name="jButton2">
+            <Component class="javax.swing.JButton" name="jExportUnformattedButton">
               <Properties>
                 <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="df" green="eb" red="ef" type="rgb"/>
@@ -182,8 +183,11 @@
                 </Property>
                 <Property name="toolTipText" type="java.lang.String" value="Markierte Elemente unformatiert in die Zwischenablage kopieren"/>
               </Properties>
+              <Events>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fireExportEvent"/>
+              </Events>
             </Component>
-            <Component class="javax.swing.JButton" name="jButton3">
+            <Component class="javax.swing.JButton" name="jExportBBButton">
               <Properties>
                 <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="df" green="eb" red="ef" type="rgb"/>
@@ -193,22 +197,25 @@
                 </Property>
                 <Property name="toolTipText" type="java.lang.String" value="Markierte Elemente als BB-Codes in die Zwischenablage kopieren"/>
               </Properties>
+              <Events>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fireExportEvent"/>
+              </Events>
             </Component>
-            <Component class="javax.swing.JCheckBox" name="jCheckBox2">
+            <Component class="javax.swing.JCheckBox" name="jExportOwnerBox">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Besitzer"/>
                 <Property name="toolTipText" type="java.lang.String" value="Besitzer exportieren"/>
                 <Property name="opaque" type="boolean" value="false"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JCheckBox" name="jCheckBox3">
+            <Component class="javax.swing.JCheckBox" name="jExportAllyBox">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Stamm"/>
                 <Property name="toolTipText" type="java.lang.String" value="Stammname exportieren"/>
                 <Property name="opaque" type="boolean" value="false"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JCheckBox" name="jCheckBox4">
+            <Component class="javax.swing.JCheckBox" name="jExportPointsBox">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Dorfpunkte"/>
                 <Property name="toolTipText" type="java.lang.String" value="Dorfpunkte exportieren"/>
@@ -227,13 +234,20 @@
             </Property>
             <Property name="toolTipText" type="java.lang.String" value="Markierte Elemente in Angriffsplaner &#xfc;bertragen"/>
           </Properties>
+          <Events>
+            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fireSelectionToAttackPlannerEvent"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>
-    <Component class="javax.swing.JCheckBox" name="jCheckBox1">
+    <Component class="javax.swing.JCheckBox" name="jAlwaysOnTopBox">
       <Properties>
         <Property name="text" type="java.lang.String" value="Immer im Vordergrund"/>
+        <Property name="opaque" type="boolean" value="false"/>
       </Properties>
+      <Events>
+        <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="fireAlwaysOnTopChangedEvent"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>

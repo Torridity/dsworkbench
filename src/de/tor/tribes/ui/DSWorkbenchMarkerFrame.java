@@ -211,8 +211,8 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
 
         jMarkerFrameAlwaysOnTop.setText(bundle.getString("DSWorkbenchMarkerFrame.jMarkerFrameAlwaysOnTop.text")); // NOI18N
         jMarkerFrameAlwaysOnTop.setOpaque(false);
-        jMarkerFrameAlwaysOnTop.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+        jMarkerFrameAlwaysOnTop.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 fireMarkerFrameOnTopEvent(evt);
             }
         });
@@ -268,15 +268,15 @@ private void fireRemoveMarkerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
     }
 }//GEN-LAST:event_fireRemoveMarkerEvent
 
-private void fireMarkerFrameOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireMarkerFrameOnTopEvent
-    setAlwaysOnTop(!isAlwaysOnTop());
-}//GEN-LAST:event_fireMarkerFrameOnTopEvent
-
 private void fireDrawFilterClickedEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireDrawFilterClickedEvent
     GlobalOptions.addProperty("draw.marked.only", Boolean.toString(jToggleDrawFilterButton.isSelected()));
     MinimapPanel.getSingleton().redraw();
     MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.ALL_LAYERS);
 }//GEN-LAST:event_fireDrawFilterClickedEvent
+
+private void fireMarkerFrameOnTopEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireMarkerFrameOnTopEvent
+    setAlwaysOnTop(!isAlwaysOnTop());
+}//GEN-LAST:event_fireMarkerFrameOnTopEvent
 
     public void firePublicDrawMarkedOnlyChangedEvent() {
         boolean v = jToggleDrawFilterButton.isSelected();

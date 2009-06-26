@@ -28,6 +28,7 @@ import java.util.StringTokenizer;
 public class Village implements Comparable {
 
     public static final Comparator<Village> CASE_INSENSITIVE_ORDER = new CaseInsensitiveComparator();
+    public static final Comparator<Village> ALLY_TRIBE_VILLAGE_COMPARATOR = new AllyTribeVillageComparator();
     public final static int ORDER_ALPHABETICALLY = 0;
     public final static int ORDER_BY_COORDINATES = 1;
     private static int orderType = ORDER_ALPHABETICALLY;
@@ -422,6 +423,69 @@ public class Village implements Comparable {
             } else {
                 return s1.compareTo(s2);
             }
+        }
+    }
+
+    private static class AllyTribeVillageComparator implements Comparator<Village>, java.io.Serializable {
+        // use serialVersionUID from JDK 1.2.2 for interoperability
+
+        private static final long serialVersionUID = 8575799808933029326L;
+
+        @Override
+        public int compare(Village s1, Village s2) {
+
+            Tribe t1 = s1.getTribe();
+            Tribe t2 = s2.getTribe();
+
+            if (t1 == null) {
+                t1 = Barbarians.getSingleton();
+            }
+
+            if (t2 == null) {
+                t2 = Barbarians.getSingleton();
+            }
+            Ally a1 = t1.getAlly();
+            Ally a2 = t2.getAlly();
+            if (a1 == null) {
+                a1 = NoAlly.getSingleton();
+            }
+            if (a2 == null) {
+                a2 = NoAlly.getSingleton();
+            }
+
+            int result = Ally.CASE_INSENSITIVE_ORDER.compare(a1, a2);
+
+            if (result == 0) {
+                result = Tribe.CASE_INSENSITIVE_ORDER.compare(t1, t2);
+                if (result == 0) {
+                    return Village.CASE_INSENSITIVE_ORDER.compare(s1, s2);
+                } else {
+                    return result;
+                }
+            } else {
+                return result;
+            }
+        /* if (Village.getOrderType() == ORDER_ALPHABETICALLY) {
+        int n1 = s1.toString().length(), n2 = s2.toString().length();
+        for (int i1 = 0, i2 = 0; i1 < n1 && i2 < n2; i1++, i2++) {
+        char c1 = s1.toString().charAt(i1);
+        char c2 = s2.toString().charAt(i2);
+        if (c1 != c2) {
+        c1 = Character.toUpperCase(c1);
+        c2 = Character.toUpperCase(c2);
+        if (c1 != c2) {
+        c1 = Character.toLowerCase(c1);
+        c2 = Character.toLowerCase(c2);
+        if (c1 != c2) {
+        return c1 - c2;
+        }
+        }
+        }
+        }
+        return n1 - n2;
+        } else {
+        return s1.compareTo(s2);
+        }*/
         }
     }
 }

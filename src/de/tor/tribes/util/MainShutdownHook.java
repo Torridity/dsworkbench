@@ -15,6 +15,7 @@ import de.tor.tribes.ui.DSWorkbenchTroopsFrame;
 import de.tor.tribes.ui.FormConfigFrame;
 import org.apache.log4j.Logger;
 import de.tor.tribes.ui.DSWorkbenchFormFrame;
+import de.tor.tribes.ui.DSWorkbenchSelectionFrame;
 
 /**
  *
@@ -50,6 +51,7 @@ public class MainShutdownHook extends Thread {
             GlobalOptions.addProperty("form.frame.alwaysOnTop", Boolean.toString(DSWorkbenchFormFrame.getSingleton().isAlwaysOnTop()));
             GlobalOptions.addProperty("form.config.frame.alwaysOnTop", Boolean.toString(FormConfigFrame.getSingleton().isAlwaysOnTop()));
             GlobalOptions.addProperty("search.frame.alwaysOnTop", Boolean.toString(DSWorkbenchSearchFrame.getSingleton().isAlwaysOnTop()));
+            GlobalOptions.addProperty("selection.frame.alwaysOnTop", Boolean.toString(DSWorkbenchSelectionFrame.getSingleton().isAlwaysOnTop()));
             logger.debug("Saving global properties");
             GlobalOptions.saveProperties();
             logger.debug("Shutdown finished");

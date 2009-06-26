@@ -325,8 +325,8 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
         jConquersTable.setRowSorter(sorter);
         sorter.setModel(ConquersTableModel.getSingleton());
         sorter.setComparator(0, Village.CASE_INSENSITIVE_ORDER);
-        sorter.setComparator(2, Tribe.CASE_INSENSITIVE_ORDER);
         sorter.setComparator(3, Tribe.CASE_INSENSITIVE_ORDER);
+        sorter.setComparator(4, Tribe.CASE_INSENSITIVE_ORDER);
         
         jConquersTable.revalidate();
         jConquersTable.repaint();

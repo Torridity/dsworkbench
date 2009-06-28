@@ -16,6 +16,7 @@ import de.tor.tribes.util.church.ChurchManager;
 import de.tor.tribes.util.conquer.ConquerManager;
 import de.tor.tribes.util.map.FormManager;
 import de.tor.tribes.util.mark.MarkerManager;
+import de.tor.tribes.util.note.NoteManager;
 import de.tor.tribes.util.roi.ROIManager;
 import de.tor.tribes.util.tag.TagManager;
 import de.tor.tribes.util.troops.TroopsManager;
@@ -75,6 +76,8 @@ public class GlobalOptions {
         ImageManager.loadCursors();
         logger.debug("Loading unit icons");
         ImageManager.loadUnitIcons();
+        logger.debug("Loading note icons");
+        ImageManager.loadNoteIcons();
         logger.debug("Loading graphic pack");
         loadSkin();
         logger.debug("Loading world.dat");
@@ -230,6 +233,8 @@ public class GlobalOptions {
             ROIManager.getSingleton().loadROIsFromFile(DataHolder.getSingleton().getDataDirectory() + "/rois.xml");
             logger.debug("Loading conquers");
             ConquerManager.getSingleton().loadConquersFromFile(DataHolder.getSingleton().getDataDirectory() + "/conquers.xml");
+            logger.debug("Loading notes");
+            NoteManager.getSingleton().loadNotesFromFile(DataHolder.getSingleton().getDataDirectory() + "/notes.xml");
 
             logger.debug("Removing temporary data");
             DataHolder.getSingleton().removeTempData();
@@ -255,6 +260,9 @@ public class GlobalOptions {
             ROIManager.getSingleton().saveROIsToFile(DataHolder.getSingleton().getDataDirectory() + "/rois.xml");
             logger.debug("Saving conquers");
             ConquerManager.getSingleton().saveConquersToFile(DataHolder.getSingleton().getDataDirectory() + "/conquers.xml");
+            logger.debug("Saving notes");
+            NoteManager.getSingleton().saveNotesToFile(DataHolder.getSingleton().getDataDirectory() + "/notes.xml");
+
             logger.debug("User data saved");
         } else {
             if (isInternatDataDamaged()) {

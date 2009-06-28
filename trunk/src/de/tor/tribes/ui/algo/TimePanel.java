@@ -24,6 +24,7 @@ import javax.swing.JSpinner.DateEditor;
 import javax.swing.UIManager;
 
 /**
+ * @TODO (1.6) Add different night bonus times to server, php interface and this panel
  * @author Jejkal
  */
 public class TimePanel extends javax.swing.JPanel {
@@ -121,12 +122,12 @@ public class TimePanel extends javax.swing.JPanel {
         }
 
         //check min arrive time
-        c.setTimeInMillis(arrive.getTime() - arrivalTolerance);
+        c.setTimeInMillis(arrive.getTime() - (jToleranceField.isEnabled() ? arrivalTolerance : 0));
         if (c.get(Calendar.HOUR_OF_DAY) >= 0 && c.get(Calendar.HOUR_OF_DAY) < 8) {
             mightBeInNightBonus = true;
         } else {
             //check max arrive time
-            c.setTimeInMillis(arrive.getTime() + arrivalTolerance);
+            c.setTimeInMillis(arrive.getTime() + (jToleranceField.isEnabled() ? arrivalTolerance : 0));
             if (c.get(Calendar.HOUR_OF_DAY) >= 0 && c.get(Calendar.HOUR_OF_DAY) < 8) {
                 mightBeInNightBonus = true;
             }

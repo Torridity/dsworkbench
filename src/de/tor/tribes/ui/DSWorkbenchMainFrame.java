@@ -774,6 +774,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jShowFormsFrame = new javax.swing.JCheckBoxMenuItem();
         jShowChurchFrame = new javax.swing.JCheckBoxMenuItem();
         jShowConquersFrame = new javax.swing.JCheckBoxMenuItem();
+        jShowNotepadFrame = new javax.swing.JCheckBoxMenuItem();
         jMenu4 = new javax.swing.JMenu();
         jHelpItem = new javax.swing.JMenuItem();
         jAboutItem = new javax.swing.JMenuItem();
@@ -1769,6 +1770,15 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         });
         jMenu2.add(jShowConquersFrame);
 
+        jShowNotepadFrame.setBackground(new java.awt.Color(239, 235, 223));
+        jShowNotepadFrame.setText(bundle.getString("DSWorkbenchMainFrame.jShowNotepadFrame.text")); // NOI18N
+        jShowNotepadFrame.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fireShowNotepadEvent(evt);
+            }
+        });
+        jMenu2.add(jShowNotepadFrame);
+
         jMenuBar1.add(jMenu2);
 
         jMenu4.setBackground(new java.awt.Color(225, 213, 190));
@@ -2527,6 +2537,10 @@ private void fireShowTroopDensityEvent(javax.swing.event.ChangeEvent evt) {//GEN
     GlobalOptions.addProperty("show.troops.density", Boolean.toString(jShowTroopDensity.isSelected()));
 }//GEN-LAST:event_fireShowTroopDensityEvent
 
+private void fireShowNotepadEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireShowNotepadEvent
+    DSWorkbenchNotepad.getSingleton().setVisible(true);
+}//GEN-LAST:event_fireShowNotepadEvent
+
     private void centerROI(int pId) {
         try {
             String item = (String) jROIBox.getItemAt(pId);
@@ -2903,6 +2917,7 @@ private void fireShowTroopDensityEvent(javax.swing.event.ChangeEvent evt) {//GEN
     private javax.swing.JCheckBoxMenuItem jShowFormsFrame;
     private javax.swing.JCheckBox jShowMapPopup;
     private javax.swing.JCheckBoxMenuItem jShowMarkerFrame;
+    private javax.swing.JCheckBoxMenuItem jShowNotepadFrame;
     private javax.swing.JCheckBoxMenuItem jShowRankFrame;
     private javax.swing.JCheckBox jShowTroopDensity;
     private javax.swing.JCheckBoxMenuItem jShowTroopsFrame;

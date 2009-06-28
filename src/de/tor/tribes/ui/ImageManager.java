@@ -67,10 +67,16 @@ public class ImageManager {
     public final static int CURSOR_CHURCH_2 = 25;
     public final static int CURSOR_CHURCH_3 = 26;
     public final static int CURSOR_REMOVE_CHURCH = 27;
+    private static final int ID_NOTE_ICON_0 = 0;
+    private static final int ID_NOTE_ICON_1 = 1;
+    private static final int ID_NOTE_ICON_2 = 2;
+    private static final int ID_NOTE_ICON_3 = 3;
+    private static final int ID_NOTE_ICON_4 = 4;
     private static final List<Cursor> CURSORS = new LinkedList<Cursor>();
     private static final List<ImageIcon> CURSOR_IMAGES = new LinkedList<ImageIcon>();
     private static final List<BufferedImage> UNIT_IMAGES = new LinkedList<BufferedImage>();
     private static final List<ImageIcon> UNIT_ICONS = new LinkedList<ImageIcon>();
+    private static final List<BufferedImage> NOTE_ICONS = new LinkedList<BufferedImage>();
     private static boolean cursorSupported = true;
 
     /**Load the list of cursors*/
@@ -127,6 +133,23 @@ public class ImageManager {
         Image im = Toolkit.getDefaultToolkit().getImage(pImagePath);
         CURSORS.add(Toolkit.getDefaultToolkit().createCustomCursor(im, new Point(0, 0), pName));
         CURSOR_IMAGES.add(new ImageIcon(im));
+    }
+
+    public static void loadNoteIcons() throws Exception {
+        try {
+            NOTE_ICONS.add(ImageIO.read(new File("src/res/marker.png")));//0
+            NOTE_ICONS.add(ImageIO.read(new File("src/res/marker.png")));//1
+            NOTE_ICONS.add(ImageIO.read(new File("src/res/marker.png")));//2
+            NOTE_ICONS.add(ImageIO.read(new File("src/res/marker.png")));//3
+            NOTE_ICONS.add(ImageIO.read(new File("src/res/marker.png")));//4
+        } catch (Exception e) {
+            logger.error("Failed to load note icons", e);
+            throw new Exception("Failed to load note icons");
+        }
+    }
+
+    public static BufferedImage getNoteIcon(int v) {
+        return NOTE_ICONS.get(v);
     }
 
     /**Get the cursor for the provided ID*/

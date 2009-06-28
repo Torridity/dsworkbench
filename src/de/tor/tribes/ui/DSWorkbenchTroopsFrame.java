@@ -37,6 +37,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
 /**
+ * @TODO (1.6) Check manual setValue behavior depending on selected troop location
  * @author  Jejkal
  */
 public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements TroopsManagerListener {

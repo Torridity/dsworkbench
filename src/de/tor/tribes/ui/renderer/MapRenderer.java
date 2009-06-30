@@ -13,6 +13,7 @@ import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.Church;
 import de.tor.tribes.types.Conquer;
 import de.tor.tribes.types.Marker;
+import de.tor.tribes.types.Note;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
@@ -33,6 +34,7 @@ import de.tor.tribes.util.church.ChurchManager;
 import de.tor.tribes.util.conquer.ConquerManager;
 import de.tor.tribes.util.map.FormManager;
 import de.tor.tribes.util.mark.MarkerManager;
+import de.tor.tribes.util.note.NoteManager;
 import de.tor.tribes.util.tag.TagManager;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
@@ -42,7 +44,6 @@ import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Font;
 import java.awt.FontMetrics;
-import java.awt.GradientPaint;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Paint;
@@ -52,6 +53,7 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Stroke;
 import java.awt.Toolkit;
+import java.awt.color.ICC_ColorSpace;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
@@ -98,6 +100,7 @@ public class MapRenderer extends Thread {
     public static final int ATTACK_LAYER = 4;
     public static final int TAG_MARKER_LAYER = 5;
     public static final int LIVE_LAYER = 6;
+    public static final int NOTE_LAYER = 7;
     private boolean mapRedrawRequired = true;
     private Village[][] mVisibleVillages = null;
     private Hashtable<Village, Rectangle> villagePositions = null;
@@ -200,6 +203,8 @@ public class MapRenderer extends Thread {
                     g2d.drawImage(mLayers.get(TAG_MARKER_LAYER), 0, 0, null);
                     //render other layers (active village, troop type)
                     renderBasicDecoration(g2d);
+                    renderNoteMarkers();
+                    g2d.drawImage(mLayers.get(NOTE_LAYER), 0, 0, null);
                     //attacks layer
                     renderAttacks(g2d);
                     //forms, churches
@@ -873,6 +878,63 @@ public class MapRenderer extends Thread {
         g2d.dispose();
     }
 
+    private void renderNoteMarkers() {
+        int wb = MapPanel.getSingleton().getWidth();
+        int hb = MapPanel.getSingleton().getHeight();
+        if (wb == 0 || hb == 0) {
+            //both are 0 if map was not drawn yet
+            return;
+        }
+
+        BufferedImage layer = null;
+        Graphics2D g2d = null;
+        //prepare drawing buffer
+        if (mLayers.get(NOTE_LAYER) == null) {
+            layer = new BufferedImage(wb, hb, BufferedImage.TYPE_INT_ARGB);
+            mLayers.put(NOTE_LAYER, layer);
+            g2d = layer.createGraphics();
+            prepareGraphics(g2d);
+        } else {
+            layer = mLayers.get(NOTE_LAYER);
+            if (layer.getWidth() != wb || layer.getHeight() != hb) {
+                layer = new BufferedImage(wb, hb, BufferedImage.TYPE_INT_ARGB);
+                mLayers.put(NOTE_LAYER, layer);
+                g2d = layer.createGraphics();
+                prepareGraphics(g2d);
+            } else {
+                g2d = (Graphics2D) layer.getGraphics();
+                Composite c = g2d.getComposite();
+                g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.CLEAR, 1.0f));
+                g2d.fillRect(0, 0, wb, hb);
+                g2d.setComposite(c);
+            }
+        }
+
+        //render note icons
+        Enumeration<Village> keys = villagePositions.keys();
+        Hashtable<Integer, Rectangle> markPositions = new Hashtable<Integer, Rectangle>();
+        while (keys.hasMoreElements()) {
+            Village v = keys.nextElement();
+            Rectangle villageRect = villagePositions.get(v);
+            Note n = NoteManager.getSingleton().getNoteForVillage(v);
+            if (n != null) {
+                int nodeIcon = n.getMapMarker();
+                int markX = villageRect.x + (int) Math.round(villageRect.width / 2);
+                int markY = villageRect.y + (int) Math.round(villageRect.height / 2);
+                Rectangle rect = markPositions.get(nodeIcon);
+
+                if (rect == null) {
+                    BufferedImage icon = ImageManager.getNoteIcon(nodeIcon);
+                    rect = new Rectangle(markX - 10, markY - icon.getHeight() + 10, icon.getWidth(), icon.getHeight());
+                    markPositions.put(nodeIcon, rect);
+                    g2d.drawImage(icon, rect.x, rect.y, null);
+                } else {
+                    g2d.copyArea(rect.x, rect.y, rect.width, rect.height, markX + 10 - rect.x, markY + rect.height - rect.y - 10);
+                }
+            }
+        }
+    }
+
     /**Render marker layer -> drawn on same buffer as map*/
     private void renderMarkers(Graphics2D g2d) {
         int wb = MapPanel.getSingleton().getWidth();
@@ -1033,32 +1095,29 @@ public class MapRenderer extends Thread {
             }
         }
 
-        if (!showTroopDensity) {
-            //skip density drawing
-            return;
-        }
+        if (showTroopDensity) {
+            Enumeration<Village> keys = values.keys();
+            while (keys.hasMoreElements()) {
+                Village v = keys.nextElement();
+                Rectangle villageRect = villagePositions.get(v);
+                double perc = values.get(v) / maxDef;
+                int alpha = (int) Math.rint(perc * 60);
+                alpha = (alpha > 80) ? 80 : alpha;
+                alpha = 110 - alpha;
 
-        Enumeration<Village> keys = values.keys();
-        while (keys.hasMoreElements()) {
-            Village v = keys.nextElement();
-            Rectangle villageRect = villagePositions.get(v);
-            double perc = values.get(v) / maxDef;
-            int alpha = (int) Math.rint(perc * 60);
-            alpha = (alpha > 80) ? 80 : alpha;
-            alpha = 110 - alpha;
+                int r = (int) Math.rint((float) 255 * (1.0f - perc) + (float) 180 * perc);
+                int g = (int) Math.rint((float) 0 * (1.0f - perc) + (float) 255 * perc);
+                int b = (int) Math.rint((float) 0 * (1.0f - perc) + (float) 0 * perc);
 
-            int r = (int) Math.rint((float) 255 * (1.0f - perc) + (float) 180 * perc);
-            int g = (int) Math.rint((float) 0 * (1.0f - perc) + (float) 255 * perc);
-            int b = (int) Math.rint((float) 0 * (1.0f - perc) + (float) 0 * perc);
-
-            //Color c = new Color(0, 255, 0, alpha);
-            Color c = new Color(r, g, b, alpha);
-            int size = (int) Math.rint(perc * 5 * villageRect.width);
-            if (size > 0) {
-                Color cb = g2d.getColor();
-                g2d.setColor(c);
-                g2d.fillOval(villageRect.x - (int) Math.rint((size - villageRect.width) / 2), villageRect.y - (int) Math.rint((size - villageRect.height) / 2), size, size);// 3 * villageRect.width, 3 * villageRect.height);
-                g2d.setColor(cb);
+                //Color c = new Color(0, 255, 0, alpha);
+                Color c = new Color(r, g, b, alpha);
+                int size = (int) Math.rint(perc * 5 * villageRect.width);
+                if (size > 0) {
+                    Color cb = g2d.getColor();
+                    g2d.setColor(c);
+                    g2d.fillOval(villageRect.x - (int) Math.rint((size - villageRect.width) / 2), villageRect.y - (int) Math.rint((size - villageRect.height) / 2), size, size);// 3 * villageRect.width, 3 * villageRect.height);
+                    g2d.setColor(cb);
+                }
             }
         }
     }

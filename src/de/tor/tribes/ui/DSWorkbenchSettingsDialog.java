@@ -2976,15 +2976,26 @@ private void fireCancelChangePasswordEvent(java.awt.event.MouseEvent evt) {//GEN
             String name = GlobalOptions.getProperty("account.name");
             String password = GlobalOptions.getProperty("account.password");
 
+            boolean noValues = false;
             if (name == null) {
                 name = jAccountName.getText();
+                if (name == null || name.length() < 1) {
+                    noValues = true;
+                }
             }
             if (password == null) {
                 password = new String(jAccountPassword.getPassword());
+                if (password == null || password.length() < 1) {
+                    noValues = true;
+                }
             }
 
-            int result = DatabaseInterface.checkUser(name, password);
-
+            //set default to 'user not exist' to get correct message for first start
+            int result = DatabaseInterface.ID_USER_NOT_EXIST;
+            if (!noValues) {
+                //no values set -> should only occur on first start
+                result = DatabaseInterface.checkUser(name, password);
+            }
             if (result == DatabaseInterface.ID_USER_NOT_EXIST) {
                 logger.info("Account check failed (account error)");
                 String message = "Die Accountvalidierung ist fehlgeschlagen.\n";

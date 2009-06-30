@@ -156,14 +156,14 @@ public class NoteManager {
 
     public Note getFirstNote() {
         //iterator = notes.listIterator();
-        if(notes.isEmpty()){
+        if (notes.isEmpty()) {
             return null;
         }
         return notes.get(0);
     }
 
     public Note getLastNote() {
-         if(notes.isEmpty()){
+        if (notes.isEmpty()) {
             return null;
         }
         return notes.get(notes.size() - 1);
@@ -183,7 +183,12 @@ public class NoteManager {
 
     public Note findNote(Note pStart, String pText) {
         if (pStart == null) {
-            return null;
+            if (notes.size() >= 1) {
+                pStart = notes.get(0);
+            } else {
+                //no notes available
+                return null;
+            }
         }
         Note[] aNotes = notes.toArray(new Note[]{});
         if (aNotes == null) {
@@ -201,6 +206,7 @@ public class NoteManager {
                 n = aNotes[i];
                 i++;
             }
+            //@TODO (1.6) REMOVE DEBUG OUTPUT
             System.out.println("not " + i);
             if (n.getNoteText().indexOf(pText) > -1) {
                 //search in note text
@@ -217,6 +223,20 @@ public class NoteManager {
             }
             if (i == notes.indexOf(pStart) + 1) {
                 break;
+            }
+        }
+        return null;
+    }
+
+    public Note getNoteForVillage(Village pVillage) {
+        if (pVillage == null) {
+            return null;
+        }
+        for (Note n : notes) {
+            for (Integer id : n.getVillageIds()) {
+                if (id == pVillage.getId()) {
+                    return n;
+                }
             }
         }
         return null;

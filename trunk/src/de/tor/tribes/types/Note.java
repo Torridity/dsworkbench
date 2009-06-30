@@ -21,6 +21,7 @@ public class Note {
     private String sNoteText = null;
     private List<Integer> villageIds = null;
     private long timestamp = -1;
+    private int mapMarker = 0;
 
     public Note() {
         villageIds = new LinkedList<Integer>();
@@ -30,6 +31,7 @@ public class Note {
     public static Note fromXml(Element e) throws Exception {
         Note n = new Note();
         n.setTimestamp(Long.parseLong(e.getChild("timestamp").getText()));
+        n.setMapMarker(Integer.parseInt(e.getChild("mapMarker").getText()));
         n.setNoteText(URLDecoder.decode(e.getChild("text").getText(), "UTF-8"));
         for (Element elem : (List<Element>) JaxenUtils.getNodes(e, "villages/village")) {
             n.getVillageIds().add(Integer.parseInt(elem.getValue()));
@@ -40,6 +42,7 @@ public class Note {
     public String toXml() throws Exception {
         String result = "<note>\n";
         result += "<timestamp>" + getTimestamp() + "</timestamp>\n";
+        result += "<mapMarker>" + getMapMarker() + "</mapMarker>\n";
         result += "<text>" + URLEncoder.encode(getNoteText(), "UTF-8") + "</text>\n";
         result += "<villages>\n";
         for (Integer id : getVillageIds()) {
@@ -106,5 +109,19 @@ public class Note {
      */
     public void setVillageIds(List<Integer> villageIds) {
         this.villageIds = villageIds;
+    }
+
+    /**
+     * @return the mapMarker
+     */
+    public int getMapMarker() {
+        return mapMarker;
+    }
+
+    /**
+     * @param mapMarker the mapMarker to set
+     */
+    public void setMapMarker(int mapMarker) {
+        this.mapMarker = mapMarker;
     }
 }

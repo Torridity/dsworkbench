@@ -67,11 +67,12 @@ public class ImageManager {
     public final static int CURSOR_CHURCH_2 = 25;
     public final static int CURSOR_CHURCH_3 = 26;
     public final static int CURSOR_REMOVE_CHURCH = 27;
-    private static final int ID_NOTE_ICON_0 = 0;
-    private static final int ID_NOTE_ICON_1 = 1;
-    private static final int ID_NOTE_ICON_2 = 2;
-    private static final int ID_NOTE_ICON_3 = 3;
-    private static final int ID_NOTE_ICON_4 = 4;
+    public static final int ID_NOTE_ICON_0 = 0;
+    public static final int ID_NOTE_ICON_1 = 1;
+    public static final int ID_NOTE_ICON_2 = 2;
+    public static final int ID_NOTE_ICON_3 = 3;
+    public static final int ID_NOTE_ICON_4 = 4;
+    public static final int ID_NOTE_ICON_5 = 5;
     private static final List<Cursor> CURSORS = new LinkedList<Cursor>();
     private static final List<ImageIcon> CURSOR_IMAGES = new LinkedList<ImageIcon>();
     private static final List<BufferedImage> UNIT_IMAGES = new LinkedList<BufferedImage>();
@@ -137,11 +138,12 @@ public class ImageManager {
 
     public static void loadNoteIcons() throws Exception {
         try {
-            NOTE_ICONS.add(ImageIO.read(new File("src/res/marker.png")));//0
-            NOTE_ICONS.add(ImageIO.read(new File("src/res/marker.png")));//1
-            NOTE_ICONS.add(ImageIO.read(new File("src/res/marker.png")));//2
-            NOTE_ICONS.add(ImageIO.read(new File("src/res/marker.png")));//3
-            NOTE_ICONS.add(ImageIO.read(new File("src/res/marker.png")));//4
+            NOTE_ICONS.add(ImageIO.read(new File("graphics/icons/pin_blue.png")));//0
+            NOTE_ICONS.add(ImageIO.read(new File("graphics/icons/pin_green.png")));//1
+            NOTE_ICONS.add(ImageIO.read(new File("graphics/icons/pin_grey.png")));//2
+            NOTE_ICONS.add(ImageIO.read(new File("graphics/icons/pin_orange.png")));//3
+            NOTE_ICONS.add(ImageIO.read(new File("graphics/icons/pin_red.png")));//4
+            NOTE_ICONS.add(ImageIO.read(new File("graphics/icons/pin_yellow.png")));//4
         } catch (Exception e) {
             logger.error("Failed to load note icons", e);
             throw new Exception("Failed to load note icons");

@@ -20,6 +20,7 @@ import de.tor.tribes.util.note.NoteManager;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.image.BufferedImage;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -35,7 +36,6 @@ import javax.swing.JOptionPane;
 import javax.swing.ListCellRenderer;
 import javax.swing.plaf.ComboBoxUI;
 import javax.swing.plaf.ComponentUI;
-import javax.swing.plaf.basic.BasicArrowButton;
 import javax.swing.plaf.basic.BasicComboBoxUI;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledEditorKit;
@@ -106,34 +106,17 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame {
         jRightButton.setText("");
         jRightButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/text_align_right.png")));
 
-        jIconBox.addItem(new Integer(0));
-        jIconBox.addItem(new Integer(1));
-        jIconBox.addItem(new Integer(2));
-        jIconBox.addItem(new Integer(3));
-        jIconBox.addItem(new Integer(4));
-        jIconBox.setUI((ComboBoxUI) MyComboBoxUI.createUI(jIconBox));
-
-    }
-
-    static class MyComboBoxUI extends BasicComboBoxUI {
-
-        public static ComponentUI createUI(JComponent c) {
-            return new MyComboBoxUI();
+        jIconBox.addItem(ImageManager.ID_NOTE_ICON_0);
+        jIconBox.addItem(ImageManager.ID_NOTE_ICON_1);
+        jIconBox.addItem(ImageManager.ID_NOTE_ICON_2);
+        jIconBox.addItem(ImageManager.ID_NOTE_ICON_3);
+        jIconBox.addItem(ImageManager.ID_NOTE_ICON_4);
+        jIconBox.addItem(ImageManager.ID_NOTE_ICON_5);
+        try {
+            ImageManager.loadNoteIcons();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
-        protected JButton createArrowButton() {
-            JButton button = new BasicArrowButton(BasicArrowButton.EAST);
-            button.setMinimumSize(new Dimension(10,36));
-            button.setMaximumSize(new Dimension(10,36));
-            button.setPreferredSize(new Dimension(10,36));
-            return button;
-        }
-    }
-
-    public void setCurrentNote(Note pNote) {
-        currentNote = pNote;
-        showCurrentNote();
-
         ListCellRenderer r = new ListCellRenderer() {
 
             @Override
@@ -142,13 +125,19 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame {
                 Component c = new DefaultListCellRenderer().getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
                 try {
                     JLabel label = ((JLabel) c);
-                    label.setIcon(new ImageIcon(ImageManager.getNoteIcon((Integer) value)));
+                    label.setText("");
+                    label.setIcon(new ImageIcon(ImageManager.getNoteIcon((Integer) value).getScaledInstance(21, 21, BufferedImage.SCALE_FAST)));
                 } catch (Exception e) {
                 }
                 return c;
             }
         };
         jIconBox.setRenderer(r);
+    }
+
+    public void setCurrentNote(Note pNote) {
+        currentNote = pNote;
+        showCurrentNote();
     }
 
     /** This method is called from within the constructor to
@@ -202,6 +191,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame {
         jLastModified = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         jIconBox = new javax.swing.JComboBox();
+        jLabel2 = new javax.swing.JLabel();
         jCheckBox1 = new javax.swing.JCheckBox();
 
         setTitle("Notizen");
@@ -225,134 +215,142 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame {
 
         jBlackColorButton.setBackground(new java.awt.Color(0, 0, 0));
         jBlackColorButton.setMargin(new java.awt.Insets(2, 10, 2, 10));
-        jBlackColorButton.setMaximumSize(new java.awt.Dimension(23, 23));
-        jBlackColorButton.setMinimumSize(new java.awt.Dimension(23, 23));
-        jBlackColorButton.setPreferredSize(new java.awt.Dimension(23, 23));
+        jBlackColorButton.setMaximumSize(new java.awt.Dimension(25, 25));
+        jBlackColorButton.setMinimumSize(new java.awt.Dimension(25, 25));
+        jBlackColorButton.setPreferredSize(new java.awt.Dimension(25, 25));
         jPanel2.add(jBlackColorButton);
 
         jRedColorButton.setBackground(new java.awt.Color(255, 0, 0));
         jRedColorButton.setMargin(new java.awt.Insets(2, 10, 2, 10));
-        jRedColorButton.setMaximumSize(new java.awt.Dimension(23, 23));
-        jRedColorButton.setMinimumSize(new java.awt.Dimension(23, 23));
-        jRedColorButton.setPreferredSize(new java.awt.Dimension(23, 23));
+        jRedColorButton.setMaximumSize(new java.awt.Dimension(25, 25));
+        jRedColorButton.setMinimumSize(new java.awt.Dimension(25, 25));
+        jRedColorButton.setPreferredSize(new java.awt.Dimension(25, 25));
         jPanel2.add(jRedColorButton);
 
         jGreenColorButton.setBackground(new java.awt.Color(0, 255, 0));
         jGreenColorButton.setMargin(new java.awt.Insets(2, 10, 2, 10));
-        jGreenColorButton.setMaximumSize(new java.awt.Dimension(23, 23));
-        jGreenColorButton.setMinimumSize(new java.awt.Dimension(23, 23));
-        jGreenColorButton.setPreferredSize(new java.awt.Dimension(23, 23));
+        jGreenColorButton.setMaximumSize(new java.awt.Dimension(25, 25));
+        jGreenColorButton.setMinimumSize(new java.awt.Dimension(25, 25));
+        jGreenColorButton.setPreferredSize(new java.awt.Dimension(25, 25));
         jPanel2.add(jGreenColorButton);
 
         jBlueColorButton.setBackground(new java.awt.Color(0, 0, 255));
         jBlueColorButton.setMargin(new java.awt.Insets(2, 10, 2, 10));
-        jBlueColorButton.setMaximumSize(new java.awt.Dimension(23, 23));
-        jBlueColorButton.setMinimumSize(new java.awt.Dimension(23, 23));
-        jBlueColorButton.setPreferredSize(new java.awt.Dimension(23, 23));
+        jBlueColorButton.setMaximumSize(new java.awt.Dimension(25, 25));
+        jBlueColorButton.setMinimumSize(new java.awt.Dimension(25, 25));
+        jBlueColorButton.setPreferredSize(new java.awt.Dimension(25, 25));
         jPanel2.add(jBlueColorButton);
 
         jOrangeColorButton.setBackground(new java.awt.Color(255, 102, 0));
         jOrangeColorButton.setMargin(new java.awt.Insets(2, 10, 2, 10));
-        jOrangeColorButton.setMaximumSize(new java.awt.Dimension(23, 23));
-        jOrangeColorButton.setMinimumSize(new java.awt.Dimension(23, 23));
-        jOrangeColorButton.setPreferredSize(new java.awt.Dimension(23, 23));
+        jOrangeColorButton.setMaximumSize(new java.awt.Dimension(25, 25));
+        jOrangeColorButton.setMinimumSize(new java.awt.Dimension(25, 25));
+        jOrangeColorButton.setPreferredSize(new java.awt.Dimension(25, 25));
         jPanel2.add(jOrangeColorButton);
 
         jVioletColorButton.setBackground(new java.awt.Color(153, 153, 255));
         jVioletColorButton.setMargin(new java.awt.Insets(2, 10, 2, 10));
-        jVioletColorButton.setMaximumSize(new java.awt.Dimension(23, 23));
-        jVioletColorButton.setMinimumSize(new java.awt.Dimension(23, 23));
-        jVioletColorButton.setPreferredSize(new java.awt.Dimension(23, 23));
+        jVioletColorButton.setMaximumSize(new java.awt.Dimension(25, 25));
+        jVioletColorButton.setMinimumSize(new java.awt.Dimension(25, 25));
+        jVioletColorButton.setPreferredSize(new java.awt.Dimension(25, 25));
         jPanel2.add(jVioletColorButton);
 
         jPinkColorButton.setBackground(new java.awt.Color(255, 0, 204));
         jPinkColorButton.setMargin(new java.awt.Insets(2, 10, 2, 10));
-        jPinkColorButton.setMaximumSize(new java.awt.Dimension(23, 23));
-        jPinkColorButton.setMinimumSize(new java.awt.Dimension(23, 23));
-        jPinkColorButton.setPreferredSize(new java.awt.Dimension(23, 23));
+        jPinkColorButton.setMaximumSize(new java.awt.Dimension(25, 25));
+        jPinkColorButton.setMinimumSize(new java.awt.Dimension(25, 25));
+        jPinkColorButton.setPreferredSize(new java.awt.Dimension(25, 25));
         jPanel2.add(jPinkColorButton);
 
         jCyanColorButton.setBackground(new java.awt.Color(51, 255, 255));
         jCyanColorButton.setMargin(new java.awt.Insets(2, 10, 2, 10));
-        jCyanColorButton.setMaximumSize(new java.awt.Dimension(23, 23));
-        jCyanColorButton.setMinimumSize(new java.awt.Dimension(23, 23));
-        jCyanColorButton.setPreferredSize(new java.awt.Dimension(23, 23));
+        jCyanColorButton.setMaximumSize(new java.awt.Dimension(25, 25));
+        jCyanColorButton.setMinimumSize(new java.awt.Dimension(25, 25));
+        jCyanColorButton.setPreferredSize(new java.awt.Dimension(25, 25));
         jPanel2.add(jCyanColorButton);
 
+        jPanel3.setMaximumSize(new java.awt.Dimension(121, 48));
         jPanel3.setLayout(new java.awt.GridLayout(2, 2, 2, 2));
 
         jSize10Button.setBackground(new java.awt.Color(239, 235, 223));
+        jSize10Button.setFont(new java.awt.Font("SansSerif", 0, 11)); // NOI18N
         jSize10Button.setText("10");
         jSize10Button.setMargin(new java.awt.Insets(2, 10, 2, 10));
         jPanel3.add(jSize10Button);
 
         jSize12Button.setBackground(new java.awt.Color(239, 235, 223));
+        jSize12Button.setFont(new java.awt.Font("SansSerif", 0, 11)); // NOI18N
         jSize12Button.setText("12");
         jSize12Button.setMargin(new java.awt.Insets(2, 10, 2, 10));
         jPanel3.add(jSize12Button);
 
         jSize14Button.setBackground(new java.awt.Color(239, 235, 223));
+        jSize14Button.setFont(new java.awt.Font("SansSerif", 0, 11)); // NOI18N
         jSize14Button.setText("14");
         jSize14Button.setMargin(new java.awt.Insets(2, 10, 2, 10));
         jPanel3.add(jSize14Button);
 
         jSize18Button.setBackground(new java.awt.Color(239, 235, 223));
+        jSize18Button.setFont(new java.awt.Font("SansSerif", 0, 11)); // NOI18N
         jSize18Button.setText("18");
         jSize18Button.setMargin(new java.awt.Insets(2, 10, 2, 10));
         jPanel3.add(jSize18Button);
 
         jSize20Button.setBackground(new java.awt.Color(239, 235, 223));
+        jSize20Button.setFont(new java.awt.Font("SansSerif", 0, 11)); // NOI18N
         jSize20Button.setText("20");
         jSize20Button.setMargin(new java.awt.Insets(2, 10, 2, 10));
         jPanel3.add(jSize20Button);
 
         jSize28Button.setBackground(new java.awt.Color(239, 235, 223));
+        jSize28Button.setFont(new java.awt.Font("SansSerif", 0, 11)); // NOI18N
         jSize28Button.setText("28");
         jSize28Button.setMargin(new java.awt.Insets(2, 10, 2, 10));
         jPanel3.add(jSize28Button);
 
+        jPanel4.setMaximumSize(new java.awt.Dimension(121, 48));
         jPanel4.setLayout(new java.awt.GridLayout(2, 3, 2, 2));
 
         jBoldButton.setBackground(new java.awt.Color(239, 235, 223));
         jBoldButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/text_bold.png"))); // NOI18N
-        jBoldButton.setMaximumSize(new java.awt.Dimension(39, 23));
-        jBoldButton.setMinimumSize(new java.awt.Dimension(39, 23));
-        jBoldButton.setPreferredSize(new java.awt.Dimension(39, 23));
+        jBoldButton.setMaximumSize(new java.awt.Dimension(39, 25));
+        jBoldButton.setMinimumSize(new java.awt.Dimension(39, 25));
+        jBoldButton.setPreferredSize(new java.awt.Dimension(39, 25));
         jPanel4.add(jBoldButton);
 
         jItalicButton.setBackground(new java.awt.Color(239, 235, 223));
         jItalicButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/text_italics.png"))); // NOI18N
-        jItalicButton.setMaximumSize(new java.awt.Dimension(39, 23));
-        jItalicButton.setMinimumSize(new java.awt.Dimension(39, 23));
-        jItalicButton.setPreferredSize(new java.awt.Dimension(39, 23));
+        jItalicButton.setMaximumSize(new java.awt.Dimension(39, 25));
+        jItalicButton.setMinimumSize(new java.awt.Dimension(39, 25));
+        jItalicButton.setPreferredSize(new java.awt.Dimension(39, 25));
         jPanel4.add(jItalicButton);
 
         jUnderlineButton.setBackground(new java.awt.Color(239, 235, 223));
         jUnderlineButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/text_underlined.png"))); // NOI18N
-        jUnderlineButton.setMaximumSize(new java.awt.Dimension(39, 23));
-        jUnderlineButton.setMinimumSize(new java.awt.Dimension(39, 23));
-        jUnderlineButton.setPreferredSize(new java.awt.Dimension(39, 23));
+        jUnderlineButton.setMaximumSize(new java.awt.Dimension(39, 25));
+        jUnderlineButton.setMinimumSize(new java.awt.Dimension(39, 25));
+        jUnderlineButton.setPreferredSize(new java.awt.Dimension(39, 25));
         jPanel4.add(jUnderlineButton);
 
         jLeftButton.setBackground(new java.awt.Color(239, 235, 223));
         jLeftButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/text_align_left.png"))); // NOI18N
-        jLeftButton.setMaximumSize(new java.awt.Dimension(39, 23));
-        jLeftButton.setMinimumSize(new java.awt.Dimension(39, 23));
-        jLeftButton.setPreferredSize(new java.awt.Dimension(39, 23));
+        jLeftButton.setMaximumSize(new java.awt.Dimension(39, 25));
+        jLeftButton.setMinimumSize(new java.awt.Dimension(39, 25));
+        jLeftButton.setPreferredSize(new java.awt.Dimension(39, 25));
         jPanel4.add(jLeftButton);
 
         jCenterButton.setBackground(new java.awt.Color(239, 235, 223));
         jCenterButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/text_align_center.png"))); // NOI18N
-        jCenterButton.setMaximumSize(new java.awt.Dimension(39, 23));
-        jCenterButton.setMinimumSize(new java.awt.Dimension(39, 23));
-        jCenterButton.setPreferredSize(new java.awt.Dimension(39, 23));
+        jCenterButton.setMaximumSize(new java.awt.Dimension(39, 25));
+        jCenterButton.setMinimumSize(new java.awt.Dimension(39, 25));
+        jCenterButton.setPreferredSize(new java.awt.Dimension(39, 25));
         jPanel4.add(jCenterButton);
 
         jRightButton.setBackground(new java.awt.Color(239, 235, 223));
         jRightButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/text_align_right.png"))); // NOI18N
-        jRightButton.setMaximumSize(new java.awt.Dimension(39, 23));
-        jRightButton.setMinimumSize(new java.awt.Dimension(39, 23));
-        jRightButton.setPreferredSize(new java.awt.Dimension(39, 23));
+        jRightButton.setMaximumSize(new java.awt.Dimension(39, 25));
+        jRightButton.setMinimumSize(new java.awt.Dimension(39, 25));
+        jRightButton.setPreferredSize(new java.awt.Dimension(39, 25));
         jPanel4.add(jRightButton);
 
         jButton1.setBackground(new java.awt.Color(239, 235, 223));
@@ -465,8 +463,19 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame {
 
         jLastModified.setEditable(false);
 
+        jLabel1.setFont(new java.awt.Font("SansSerif", 0, 11)); // NOI18N
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("Letzte Änderung");
+
+        jIconBox.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                fireMapMarkerChangedEvent(evt);
+            }
+        });
+
+        jLabel2.setFont(new java.awt.Font("SansSerif", 0, 11)); // NOI18N
+        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel2.setText("Symbol");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -475,17 +484,18 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 140, Short.MAX_VALUE)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 136, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jAddVillageField, javax.swing.GroupLayout.DEFAULT_SIZE, 78, Short.MAX_VALUE)
+                        .addComponent(jAddVillageField, javax.swing.GroupLayout.DEFAULT_SIZE, 74, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 140, Short.MAX_VALUE)
-                    .addComponent(jLastModified, javax.swing.GroupLayout.DEFAULT_SIZE, 140, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 136, Short.MAX_VALUE)
+                    .addComponent(jLastModified, javax.swing.GroupLayout.DEFAULT_SIZE, 136, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 433, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -509,27 +519,31 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jIconBox, 0, 71, Short.MAX_VALUE))
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 429, Short.MAX_VALUE))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 67, Short.MAX_VALUE)
+                            .addComponent(jIconBox, 0, 67, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLastModified, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jIconBox, javax.swing.GroupLayout.Alignment.LEADING))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jIconBox, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jPanel4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 258, Short.MAX_VALUE)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 258, Short.MAX_VALUE))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 254, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 254, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -585,14 +599,6 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame {
 
             }
 
-
-
-
-
-
-
-
-
             String[] split = text.trim().split("[\\:]");
             if (split == null || split.length != 3) {
                 logger.warn("Invalid value '" + text + "'");
@@ -601,16 +607,8 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame {
 
             }
 
-
-
-
-
-
-
-
             int[] xy = DSCalculator.hierarchicalToXy(Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2]));
-            v =
-                    DataHolder.getSingleton().getVillages()[xy[0]][xy[1]];
+            v = DataHolder.getSingleton().getVillages()[xy[0]][xy[1]];
         } else {
             if (!text.trim().matches("\\([0-9]{1,3}\\|[0-9]{1,3}\\)")) {
                 JOptionPaneHelper.showWarningBox(this, "Koordinaten müssen im Format (X|Y) angegeben werden.", "Fehler");
@@ -618,27 +616,12 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame {
 
             }
 
-
-
-
-
-
-
-
             String[] split = text.replaceAll("\\(", "").replaceAll("\\)", "").trim().split("[\\|]");
             logger.warn("Invalid value '" + text + "'");
             if (split == null || split.length != 2) {
                 JOptionPaneHelper.showWarningBox(this, "Koordinaten müssen im Format (X|Y) angegeben werden.", "Fehler");
                 return;
-
             }
-
-
-
-
-
-
-
 
             v = DataHolder.getSingleton().getVillages()[Integer.parseInt(split[0])][Integer.parseInt(split[1])];
         }
@@ -650,7 +633,6 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame {
         }
 
         //add village to note
-
         if (currentNote != null) {
             if (currentNote.addVillage(v)) {
                 showCurrentNote();
@@ -666,8 +648,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame {
     private void fireNewNoteEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireNewNoteEvent
         Note n = new Note();
         NoteManager.getSingleton().addNote(n);
-        currentNote =
-                n;
+        currentNote = n;
         showCurrentNote();
     }//GEN-LAST:event_fireNewNoteEvent
 
@@ -695,15 +676,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame {
         if (NoteManager.getSingleton().getNotes().size() <= 0) {
             JOptionPaneHelper.showWarningBox(this, "Keine Notizen vorhanden.", "Fehler");
             return;
-
         }
-
-
-
-
-
-
-
 
         String text = jSearchField.getText();
         if (text.length() <= 0) {
@@ -727,7 +700,6 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame {
             if (jNotePane.hasFocus()) {
                 currentNote.setNoteText(jNotePane.getText());
             }
-
         }
     }//GEN-LAST:event_fireCaretUpdateEvent
 
@@ -735,10 +707,8 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame {
         if (currentNote != null) {
             if (JOptionPaneHelper.showQuestionConfirmBox(this, "Notiz wirklich löschen?", "Löschen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
                 NoteManager.getSingleton().removeNote(currentNote);
-                currentNote =
-                        NoteManager.getSingleton().getFirstNote();
+                currentNote = NoteManager.getSingleton().getFirstNote();
             }
-
             showCurrentNote();
         }
     }//GEN-LAST:event_fireDeleteNoteEvent
@@ -760,8 +730,15 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame {
 
     }//GEN-LAST:event_fireRemoveVillageEvent
 
-    private void showCurrentNote() {
+    private void fireMapMarkerChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireMapMarkerChangedEvent
+        if (evt.getStateChange() == java.awt.event.ItemEvent.SELECTED) {
+            if (currentNote != null) {
+                currentNote.setMapMarker((Integer) jIconBox.getSelectedItem());
+            }
+        }
+    }//GEN-LAST:event_fireMapMarkerChangedEvent
 
+    private void showCurrentNote() {
         if (currentNote == null) {
             jVillageList.setModel(new DefaultListModel());
             jNotePane.setDocument(new HTMLDocument());
@@ -775,6 +752,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame {
             jVillageList.setModel(model);
             jNotePane.setText(currentNote.getNoteText());
             jLastModified.setText(new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss").format(new Date(currentNote.getTimestamp())));
+            jIconBox.setSelectedItem(currentNote.getMapMarker());
         }
 
         List<Note> n = NoteManager.getSingleton().getNotes();
@@ -818,6 +796,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame {
     private javax.swing.JComboBox jIconBox;
     private javax.swing.JButton jItalicButton;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JTextField jLastModified;
     private javax.swing.JButton jLeftButton;
     private javax.swing.JEditorPane jNotePane;

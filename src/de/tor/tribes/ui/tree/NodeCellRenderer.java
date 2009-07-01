@@ -5,6 +5,7 @@
 package de.tor.tribes.ui.tree;
 
 import de.tor.tribes.types.Ally;
+import de.tor.tribes.types.Tag;
 import java.awt.Component;
 import javax.swing.ImageIcon;
 import javax.swing.JTree;
@@ -22,11 +23,13 @@ public class NodeCellRenderer extends DefaultTreeCellRenderer {
     private ImageIcon ally = null;
     private ImageIcon tribe = null;
     private ImageIcon village = null;
+    private ImageIcon tag = null;
 
     public NodeCellRenderer() {
         ally = new ImageIcon("./graphics/icons/def.png");
         tribe = new ImageIcon("./graphics/icons/troops.png");
         village = new ImageIcon("./graphics/icons/village.png");
+        tag = new ImageIcon("./graphics/icons/tag16.png");
     }
 
     public Component getTreeCellRendererComponent(
@@ -53,11 +56,16 @@ public class NodeCellRenderer extends DefaultTreeCellRenderer {
                 setIcon(tribe);
                 Tribe t = ((TribeNode) node).getUserObject();
                 int cnt = node.getChildCount();
-                setText(t.toString() + " [" + cnt + " " + ((cnt == 1) ? "Dorf]" : "Dörfer]"));
+                setText(t.toString() + " [" + cnt + " " + ((cnt == 1) ? "Dorf/Tag]" : "Dörfer/Tags]"));
             } else if (node instanceof VillageNode) {
                 setIcon(village);
                 Village v = ((VillageNode) node).getUserObject();
                 setText(v.toString());
+            } else if (node instanceof TagNode) {
+                setIcon(tag);
+                Tag v = ((TagNode) node).getUserObject();
+                int cnt = node.getChildCount();
+                 setText(v.toString() + " [" + cnt + " " + ((cnt == 1) ? "Dorf]" : "Dörfer]"));
             } else if (node instanceof SelectionTreeRootNode) {
                 int cnt = node.getChildCount();
                 setText(((SelectionTreeRootNode) node).getUserObject() + " [" + cnt + " " + ((cnt == 1) ? "Stamm]" : "Stämme]"));

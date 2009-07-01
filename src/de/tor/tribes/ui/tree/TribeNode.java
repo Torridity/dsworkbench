@@ -5,6 +5,8 @@
 package de.tor.tribes.ui.tree;
 
 import de.tor.tribes.types.Tribe;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Enumeration;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
@@ -31,7 +33,22 @@ public class TribeNode extends DefaultMutableTreeNode {
     @Override
     public void insert(MutableTreeNode child, int index) {
         super.insert(child, index);
-    //recalc elem count
+        Collections.sort(this.children, new Comparator() {
+
+            public int compare(Object o1, Object o2) {
+                if (o1 instanceof TagNode) {
+                    return -1;
+                }
+                if (o2 instanceof TagNode) {
+                    return 1;
+                }
+                return o1.toString().compareToIgnoreCase(o2.toString());
+            }
+
+            public boolean equals(Object obj) {
+                return false;
+            }
+        });
     }
 
     @Override
@@ -66,7 +83,8 @@ public class TribeNode extends DefaultMutableTreeNode {
     }
 
     @Override
-    public TreeNode getChildAt(int childIndex) {
+    public TreeNode getChildAt(
+            int childIndex) {
         return super.getChildAt(childIndex);
     }
 

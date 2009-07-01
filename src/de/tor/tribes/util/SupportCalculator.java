@@ -114,7 +114,7 @@ public class SupportCalculator {
         while (allowedKeys.hasMoreElements()) {
             UnitHolder unit = allowedKeys.nextElement();
             //int index = pUnitTable.get(unit);
-            int availCount = troops.getTroopsInVillage().get(unit);
+            int availCount = troops.getOwnTroops().get(unit);
             if (availCount > pMinNumber) {
                 long ms = (long) (DSCalculator.calculateMoveTimeInSeconds(pSource, pTarget, unit.getSpeed()) * 1000);
                 if (pArrive.getTime() - ms > System.currentTimeMillis()) {

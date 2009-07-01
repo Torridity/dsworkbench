@@ -34,7 +34,7 @@ import javax.swing.table.TableRowSorter;
 import org.apache.log4j.Logger;
 
 /**
- *
+ *@TODO (1.6) Check help for better explanation
  * @author Charon
  */
 public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implements ConquerManagerListener {
@@ -70,7 +70,7 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
         TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>();
         jConquersTable.setRowSorter(sorter);
 
-        for (int i = 0; i < 6; i++) {
+        for (int i = 0; i < 7; i++) {
             mHeaderRenderers.add(headerRenderer);
         }
 
@@ -282,11 +282,11 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
                 Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 
                 try {
-                    Tribe loser = (Tribe) table.getValueAt(row, 2);
+                    Tribe loser = (Tribe) table.getValueAt(row, 3);
                     if (loser.getId() == 0) {
                         c.setBackground(Color.PINK);
                     } else {
-                        Tribe winner = (Tribe) table.getValueAt(row, 3);
+                        Tribe winner = (Tribe) table.getValueAt(row, 4);
                         if (loser != null && winner != null) {
                             if (loser.getId() == winner.getId()) {
                                 c.setBackground(Color.GREEN);
@@ -315,6 +315,7 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
         };
 
         jConquersTable.setDefaultRenderer(Object.class, renderer);
+        jConquersTable.setDefaultRenderer(Double.class, renderer);
         jConquersTable.setDefaultRenderer(Integer.class, renderer);
         for (int i = 0; i < jConquersTable.getColumnCount(); i++) {
             TableColumn c = jConquersTable.getColumnModel().getColumn(i);

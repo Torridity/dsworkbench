@@ -479,7 +479,10 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jChurchRangeBox.setEnabled(ServerSettings.getSingleton().isChurch());
         jROIBox.setModel(new DefaultComboBoxModel(ROIManager.getSingleton().getROIs()));
 
+        DSWorkbenchSelectionFrame.getSingleton().clear();
+        DSWorkbenchNotepad.getSingleton().setup();
         ConquerManager.getSingleton().forceUpdate();
+
         MapPanel.getSingleton().getMapRenderer().initiateRedraw(0);
         logger.info("Server settings updated");
     }
@@ -2053,6 +2056,7 @@ private void fireCurrentPlayerVillagePopupEvent(javax.swing.event.PopupMenuEvent
         return;
     }
     centerVillage((Village) jCurrentPlayerVillages.getSelectedItem());
+    DSWorkbenchConquersFrame.getSingleton().repaint();
 }//GEN-LAST:event_fireCurrentPlayerVillagePopupEvent
 
 private void fireShowRangFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireShowRangFrameEvent

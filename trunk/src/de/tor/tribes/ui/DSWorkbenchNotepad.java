@@ -129,6 +129,11 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame {
         jIconBox.setRenderer(r);
     }
 
+    public void setup() {
+        currentNote = NoteManager.getSingleton().getFirstNote();
+        showCurrentNote();
+    }
+
     public void setCurrentNote(Note pNote) {
         currentNote = pNote;
         showCurrentNote();

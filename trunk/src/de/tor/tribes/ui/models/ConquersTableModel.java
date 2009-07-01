@@ -9,9 +9,11 @@ import de.tor.tribes.types.Barbarians;
 import de.tor.tribes.types.Conquer;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
+import de.tor.tribes.ui.DSWorkbenchMainFrame;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.conquer.ConquerManager;
 import de.tor.tribes.util.conquer.ConquerManagerListener;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import javax.swing.table.AbstractTableModel;
 
@@ -34,10 +36,10 @@ public class ConquersTableModel extends AbstractTableModel {
 
     public void setup() {
         types = new Class[]{
-                    Village.class, String.class, String.class, Tribe.class, Tribe.class, Integer.class
+                    Village.class, String.class, String.class, Tribe.class, Tribe.class, Integer.class, Double.class
                 };
         colNames = new String[]{
-                    "Dorf", "Kontinent", "Geadelt am", "Verlierer", "Gewinner", "Zustimmung"
+                    "Dorf", "Kontinent", "Geadelt am", "Verlierer", "Gewinner", "Zustimmung", "Entfernung"
                 };
     }
 
@@ -110,8 +112,23 @@ public class ConquersTableModel extends AbstractTableModel {
                     return t;
                 }
             }
-            default:
+            case 5: {
                 return c.getCurrentAcceptance();
+            }default:{
+                 Village v = DataHolder.getSingleton().getVillagesById().get(c.getVillageID());
+                 Village vUser = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage();
+                 if(vUser != null){
+                     double dist = DSCalculator.calculateDistance(v, vUser);
+                     NumberFormat nf = NumberFormat.getInstance();
+                     nf.setMinimumFractionDigits(2);
+                     nf.setMaximumFractionDigits(2);
+                     return nf.format(dist);
+                 }else{
+                     return 0;
+                 }
+
+
+            }
         }
     }
 }

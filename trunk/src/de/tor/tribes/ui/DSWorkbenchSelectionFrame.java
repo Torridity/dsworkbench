@@ -15,16 +15,19 @@ import de.tor.tribes.types.Ally;
 import de.tor.tribes.types.BarbarianAlly;
 import de.tor.tribes.types.Barbarians;
 import de.tor.tribes.types.NoAlly;
+import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.tree.AllyNode;
 import de.tor.tribes.ui.tree.NodeCellRenderer;
 import de.tor.tribes.ui.tree.SelectionTreeRootNode;
+import de.tor.tribes.ui.tree.TagNode;
 import de.tor.tribes.ui.tree.TribeNode;
 import de.tor.tribes.ui.tree.VillageNode;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.VillageSelectionListener;
+import de.tor.tribes.util.tag.TagManager;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
@@ -71,11 +74,17 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
         buildTree();
     }
 
+    public void clear(){
+        treeData.clear();
+        buildTree();
+    }
+
     private void buildTree() {
         mRoot = new SelectionTreeRootNode("Auswahl");
         //add all villages
         Hashtable<Ally, AllyNode> allyNodes = new Hashtable<Ally, AllyNode>();
         Hashtable<Tribe, TribeNode> tribeNodes = new Hashtable<Tribe, TribeNode>();
+        Hashtable<Tag, TagNode> tagNodes = new Hashtable<Tag, TagNode>();
         List<Village> used = new LinkedList<Village>();
 
         for (Village v : treeData) {
@@ -102,11 +111,27 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
                 tribeNodes.put(t, tNode);
                 aNode.add(tNode);
             }
-            tNode.add(new VillageNode(v));
+            boolean hasTag = false;
+            for (Tag tag : TagManager.getSingleton().getTags(v)) {
+                hasTag = true;
+                TagNode tagNode = tagNodes.get(tag);
+                if (tagNode == null) {
+                    //new tribe
+                    tagNode = new TagNode(tag);
+                    tagNodes.put(tag, tagNode);
+                    tNode.add(tagNode);
+                }
+                tagNode.add(new VillageNode(v));
+            }
+
+            if (!hasTag) {
+                //only add directly if not added to any tag node
+                tNode.add(new VillageNode(v));
+            }
             used.add(v);
         }
         ((DefaultTreeModel) jSelectionTree.getModel()).setRoot(mRoot);
-        //jSelectionTree.setCellRenderer(new NodeCellRenderer());
+    //jSelectionTree.setCellRenderer(new NodeCellRenderer());
     }
 
     /** This method is called from within the constructor to
@@ -316,48 +341,6 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
             return;
         }
 
-        /* TreePath[] paths = jSelectionTree.getSelectionModel().getSelectionPaths();
-
-        for (TreePath p : paths) {
-        Object o = p.getLastPathComponent();
-        if (o instanceof AllyNode) {
-        Ally a = ((AllyNode) o).getUserObject();
-        Village[] copy = treeData.toArray(new Village[]{});
-        for (Village v : copy) {
-        if (v.getTribe() == null && a.equals(BarbarianAlly.getSingleton())) {
-        //remove barbarian ally member
-        treeData.remove(v);
-        } else if (v.getTribe() != null && v.getTribe().getAlly() == null && a.equals(NoAlly.getSingleton())) {
-        //remove no-ally member
-        treeData.remove(v);
-        } else if (v.getTribe() != null && v.getTribe().getAlly() != null && a.equals(v.getTribe().getAlly())) {
-        //remove if ally is equal
-        treeData.remove(v);
-        }
-        }
-        } else if (o instanceof TribeNode) {
-        Tribe t = ((TribeNode) o).getUserObject();
-        Village[] copy = treeData.toArray(new Village[]{});
-        for (Village v : copy) {
-        if (v.getTribe() == null && t.equals(Barbarians.getSingleton())) {
-        //if village is barbarian village and selected tribe are barbs, remove village
-        treeData.remove(v);
-        } else if (v.getTribe() != null && v.getTribe().equals(t)) {
-        //selected tribe are no barbs, so check tribes to be equal
-        treeData.remove(v);
-        }
-        }
-        } else if (o instanceof VillageNode) {
-        Village v = ((VillageNode) o).getUserObject();
-        treeData.remove(v);
-        } else if (o != null && o.equals(mRoot)) {
-        //remove all
-        treeData.clear();
-        } else {
-        //remove nothing
-        }
-         */
-
         for (Village v : getSelectedElements()) {
             treeData.remove(v);
         }
@@ -550,6 +533,7 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
 
     @Override
     public void fireSelectionFinishedEvent(Point pStart, Point pEnd) {
+        try{
         int xStart = (pStart.x < pEnd.x) ? pStart.x : pEnd.x;
         int xEnd = (pEnd.x > pStart.x) ? pEnd.x : pStart.x;
         int yStart = (pStart.y < pEnd.y) ? pStart.y : pEnd.y;
@@ -565,6 +549,9 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
         }
         Collections.sort(treeData, Village.ALLY_TRIBE_VILLAGE_COMPARATOR);
         buildTree();
+        }catch(Exception e){
+            //occurs if no rect was opened by selection tool -> ignore
+        }
     }
 }
 

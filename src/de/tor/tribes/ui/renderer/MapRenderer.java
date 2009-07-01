@@ -925,11 +925,15 @@ public class MapRenderer extends Thread {
 
                 if (rect == null) {
                     BufferedImage icon = ImageManager.getNoteIcon(nodeIcon);
-                    rect = new Rectangle(markX - 10, markY - icon.getHeight() + 10, icon.getWidth(), icon.getHeight());
-                    markPositions.put(nodeIcon, rect);
-                    g2d.drawImage(icon, rect.x, rect.y, null);
+
+                    if (MapPanel.getSingleton().getBounds().contains(new Rectangle(markX - 10, markY - icon.getHeight() + 10, icon.getWidth() + 2, icon.getHeight() + 2))) {
+                        rect = new Rectangle(markX, markY, icon.getWidth(), icon.getHeight());
+                        markPositions.put(nodeIcon, rect);
+                    }
+
+                    g2d.drawImage(icon, rect.x - 10, rect.y - icon.getHeight() + 10, null);
                 } else {
-                    g2d.copyArea(rect.x, rect.y, rect.width, rect.height, markX + 10 - rect.x, markY + rect.height - rect.y - 10);
+                    g2d.copyArea(rect.x - 10, rect.y - rect.height + 10, rect.width, rect.height, markX - rect.x, markY - rect.y);
                 }
             }
         }

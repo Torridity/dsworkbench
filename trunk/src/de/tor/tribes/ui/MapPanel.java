@@ -7,6 +7,7 @@ package de.tor.tribes.ui;
 
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Church;
+import de.tor.tribes.types.Note;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.util.BrowserCommandSender;
@@ -36,6 +37,7 @@ import de.tor.tribes.util.MapShotListener;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.VillageSelectionListener;
 import de.tor.tribes.util.church.ChurchManager;
+import de.tor.tribes.util.note.NoteManager;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.FontMetrics;
@@ -51,7 +53,6 @@ import java.util.Hashtable;
 import java.util.StringTokenizer;
 import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
-import javax.swing.UIManager;
 
 /**
  * @TODO (1.X) Add flag-marker for single villages/notes? -> notes as forms? (Version 2.0)
@@ -192,6 +193,18 @@ public class MapPanel extends javax.swing.JPanel {
                                 DSWorkbenchMainFrame.getSingleton().setCurrentUserVillage(current);
                             }
                             DSWorkbenchMainFrame.getSingleton().centerVillage(current);
+                            if (DSWorkbenchNotepad.getSingleton().isVisible()) {
+                                //show first note for village if notepad is open
+                                Note n = NoteManager.getSingleton().getNoteForVillage(current);
+                                if (n != null) {
+                                    DSWorkbenchNotepad.getSingleton().setCurrentNote(n);
+                                    //set search term to village name to allow to find additional notes
+                                    DSWorkbenchNotepad.getSingleton().setSearchTermByVillageExternally(current);
+                                }else{
+                                    //set current village to add field to allow to add note immediately
+                                    DSWorkbenchNotepad.getSingleton().setVillageFieldExternally(current);
+                                }
+                            }
                         }
                         break;
                     }
@@ -473,24 +486,24 @@ public class MapPanel extends javax.swing.JPanel {
                             int xe = (int) Math.floor(selectionRect.getXPosEnd());
                             int ye = (int) Math.floor(selectionRect.getYPosEnd());
                             //if (mVillageSelectionListener != null) {
-                                //if a selectionlistener is registered notify it
-                                mVillageSelectionListener.fireSelectionFinishedEvent(new Point(xs, ys), new Point(xe, ye));
-                           /* } else {
-                                exportVillageList = getSelectedVillages(new Point(xs, ys), new Point(xe, ye));
-                                if (exportVillageList.size() > 0) {
-                                    //do selection handling by ourself
-                                    if (exportVillageList.size() == 1) {
-                                        jVillageExportDetails.setText("Es wurde 1 Dorf zum Kopieren in die Zwischenablage ausgewählt.");
-                                    } else {
-                                        jVillageExportDetails.setText("Es wurden " + exportVillageList.size() + " Dörfer zum Kopieren in die Zwischenablage ausgewählt.");
-                                    }
+                            //if a selectionlistener is registered notify it
+                            mVillageSelectionListener.fireSelectionFinishedEvent(new Point(xs, ys), new Point(xe, ye));
+                            /* } else {
+                            exportVillageList = getSelectedVillages(new Point(xs, ys), new Point(xe, ye));
+                            if (exportVillageList.size() > 0) {
+                            //do selection handling by ourself
+                            if (exportVillageList.size() == 1) {
+                            jVillageExportDetails.setText("Es wurde 1 Dorf zum Kopieren in die Zwischenablage ausgewählt.");
+                            } else {
+                            jVillageExportDetails.setText("Es wurden " + exportVillageList.size() + " Dörfer zum Kopieren in die Zwischenablage ausgewählt.");
+                            }
 
-                                    jCopyVillagesDialog.setLocationRelativeTo(MapPanel.getSingleton());
-                                    jCopyVillagesDialog.setVisible(true);
-                                }
+                            jCopyVillagesDialog.setLocationRelativeTo(MapPanel.getSingleton());
+                            jCopyVillagesDialog.setVisible(true);
+                            }
                             }*/
                             selectionRect = null;
-                           // mVillageSelectionListener = null;
+                            // mVillageSelectionListener = null;
                             break;
                         }
                         case ImageManager.CURSOR_MEASURE: {

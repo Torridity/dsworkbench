@@ -19,7 +19,6 @@ import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.note.NoteManager;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -28,15 +27,10 @@ import javax.swing.Action;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.ListCellRenderer;
-import javax.swing.plaf.ComboBoxUI;
-import javax.swing.plaf.ComponentUI;
-import javax.swing.plaf.basic.BasicComboBoxUI;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledEditorKit;
 import javax.swing.text.html.HTMLDocument;
@@ -138,6 +132,25 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame {
     public void setCurrentNote(Note pNote) {
         currentNote = pNote;
         showCurrentNote();
+    }
+
+    public void setVillageFieldExternally(Village pVillage) {
+        if (pVillage == null) {
+            return;
+        }
+        if (ServerSettings.getSingleton().getCoordType() != 2) {
+            int[] coord = DSCalculator.xyToHierarchical(pVillage.getX(), pVillage.getY());
+            jAddVillageField.setText(coord[0] + ":" + coord[1] + ":" + coord[2]);
+        } else {
+            jAddVillageField.setText("(" + pVillage.getX() + "|" + pVillage.getY() + ")");
+        }
+    }
+
+    public void setSearchTermByVillageExternally(Village pVillage) {
+        if (pVillage == null) {
+            return;
+        }
+        jSearchField.setText(pVillage.toString());
     }
 
     /** This method is called from within the constructor to
@@ -563,6 +576,11 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame {
 
         jCheckBox1.setText("Immer im Vordergrund");
         jCheckBox1.setOpaque(false);
+        jCheckBox1.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                fireAlwaysOnTopChangedEvent(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -737,6 +755,10 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame {
             }
         }
     }//GEN-LAST:event_fireMapMarkerChangedEvent
+
+    private void fireAlwaysOnTopChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireAlwaysOnTopChangedEvent
+        setAlwaysOnTop(!isAlwaysOnTop());
+    }//GEN-LAST:event_fireAlwaysOnTopChangedEvent
 
     private void showCurrentNote() {
         if (currentNote == null) {

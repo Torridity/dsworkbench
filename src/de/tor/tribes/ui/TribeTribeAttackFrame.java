@@ -191,6 +191,8 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame {
         jScrollPane2.getViewport().setBackground(Constants.DS_BACK_LIGHT);
         jScrollPane3.getViewport().setBackground(Constants.DS_BACK_LIGHT);
 
+        jAttackPlanSelectionDialog.getContentPane().setBackground(Constants.DS_BACK_LIGHT);
+        jAttackPlanSelectionDialog.pack();
         try {
 
             // <editor-fold defaultstate="collapsed" desc=" Build target allies list ">
@@ -358,6 +360,11 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame {
         jScrollPane12 = new javax.swing.JScrollPane();
         jTargetDetailsTable = new javax.swing.JTable();
         jHideTargetDetailsButton = new javax.swing.JButton();
+        jAttackPlanSelectionDialog = new javax.swing.JDialog();
+        jScrollPane13 = new javax.swing.JScrollPane();
+        jAttackPlanTable = new javax.swing.JTable();
+        jDoSyncButton = new javax.swing.JButton();
+        jCancelSyncButton = new javax.swing.JButton();
         jCalculateButton = new javax.swing.JButton();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jSourcePanel = new javax.swing.JPanel();
@@ -1098,6 +1105,70 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame {
                 .addComponent(jScrollPane12, javax.swing.GroupLayout.DEFAULT_SIZE, 328, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jHideTargetDetailsButton)
+                .addContainerGap())
+        );
+
+        jAttackPlanSelectionDialog.setTitle(bundle.getString("TribeTribeAttackFrame.jAttackPlanSelectionDialog.title")); // NOI18N
+        jAttackPlanSelectionDialog.setAlwaysOnTop(true);
+        jAttackPlanSelectionDialog.setModal(true);
+
+        jAttackPlanTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Angriffsplan", "Abgleichen"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.Boolean.class
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+        });
+        jScrollPane13.setViewportView(jAttackPlanTable);
+
+        jDoSyncButton.setBackground(new java.awt.Color(239, 235, 223));
+        jDoSyncButton.setText(bundle.getString("TribeTribeAttackFrame.jDoSyncButton.text")); // NOI18N
+        jDoSyncButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireSynchWithAttackPlansEvent(evt);
+            }
+        });
+
+        jCancelSyncButton.setBackground(new java.awt.Color(239, 235, 223));
+        jCancelSyncButton.setText(bundle.getString("TribeTribeAttackFrame.jCancelSyncButton.text")); // NOI18N
+        jCancelSyncButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireSynchWithAttackPlansEvent(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jAttackPlanSelectionDialogLayout = new javax.swing.GroupLayout(jAttackPlanSelectionDialog.getContentPane());
+        jAttackPlanSelectionDialog.getContentPane().setLayout(jAttackPlanSelectionDialogLayout);
+        jAttackPlanSelectionDialogLayout.setHorizontalGroup(
+            jAttackPlanSelectionDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jAttackPlanSelectionDialogLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jAttackPlanSelectionDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jAttackPlanSelectionDialogLayout.createSequentialGroup()
+                        .addComponent(jCancelSyncButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jDoSyncButton))
+                    .addComponent(jScrollPane13, javax.swing.GroupLayout.DEFAULT_SIZE, 375, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        jAttackPlanSelectionDialogLayout.setVerticalGroup(
+            jAttackPlanSelectionDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jAttackPlanSelectionDialogLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane13, javax.swing.GroupLayout.DEFAULT_SIZE, 275, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jAttackPlanSelectionDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jDoSyncButton)
+                    .addComponent(jCancelSyncButton))
                 .addContainerGap())
         );
 
@@ -2725,11 +2796,98 @@ private void fireGetTargetVillagesFromClipboardEvent(java.awt.event.MouseEvent e
 
 private void fireFilterSourceByAttackPlansEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireFilterSourceByAttackPlansEvent
 
+    DefaultTableModel model = new javax.swing.table.DefaultTableModel(
+            new Object[][]{},
+            new String[]{
+                "Angriffsplan", "Abgleichen"}) {
+
+        Class[] types = new Class[]{
+            String.class, Boolean.class
+        };
+
+        @Override
+        public Class getColumnClass(int columnIndex) {
+            return types[columnIndex];
+        }
+
+        @Override
+        public boolean isCellEditable(int row, int col) {
+            if (col == 0) {
+                return false;
+            }
+            return true;
+        }
+    };
+
+    jAttackPlanTable.invalidate();
     Enumeration<String> plans = AttackManager.getSingleton().getPlans();
+    List<String> planList = new LinkedList<String>();
+    while (plans.hasMoreElements()) {
+        planList.add(plans.nextElement());
+    }
+    Collections.sort(planList);
+    for (String plan : planList) {
+        model.addRow(new Object[]{plan, false});
+    }
+    jAttackPlanTable.setModel(model);
+    jAttackPlanTable.revalidate();
+    DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
+
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
+            String t = ((DefaultTableCellRenderer) c).getText();
+            ((DefaultTableCellRenderer) c).setText(t);
+            c.setBackground(Constants.DS_BACK);
+            DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
+            r.setText("<html><b>" + r.getText() + "</b></html>");
+            return c;
+        }
+    };
+    for (int i = 0; i < jAttackPlanTable.getColumnCount(); i++) {
+        jAttackPlanTable.getColumn(jAttackPlanTable.getColumnName(i)).setHeaderRenderer(headerRenderer);
+    }
+    jAttackPlanSelectionDialog.setLocationRelativeTo(this);
+    jAttackPlanSelectionDialog.setVisible(true);
+
+}//GEN-LAST:event_fireFilterSourceByAttackPlansEvent
+
+private void fireShowPlayerSourcesOnlyChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireShowPlayerSourcesOnlyChangedEvent
+    fireFilterSourceVillagesByGroupEvent();
+}//GEN-LAST:event_fireShowPlayerSourcesOnlyChangedEvent
+
+private void fireSourceRelationChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireSourceRelationChangedEvent
+    if (jSourceGroupRelation.isSelected()) {
+        jSourceGroupRelation.setText("Verknüpfung (ODER)");
+    } else {
+        jSourceGroupRelation.setText("Verknüpfung (UND)");
+    }
+    fireFilterSourceVillagesByGroupEvent();
+}//GEN-LAST:event_fireSourceRelationChangedEvent
+
+private void fireSynchWithAttackPlansEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSynchWithAttackPlansEvent
+
+    jAttackPlanSelectionDialog.setVisible(false);
+    if (evt.getSource() == jCancelSyncButton) {
+        return;
+    }
+
+    DefaultTableModel model = (DefaultTableModel) jAttackPlanTable.getModel();
+
+    List<String> selectedPlans = new LinkedList<String>();
+    for (int i = 0; i < jAttackPlanTable.getRowCount(); i++) {
+        int row = jAttackPlanTable.convertRowIndexToModel(i);
+        if ((Boolean) model.getValueAt(row, 1)) {
+            selectedPlans.add((String) model.getValueAt(row, 0));
+        }
+    }
+
+    // Enumeration<String> plans = AttackManager.getSingleton().getPlans();
     List<Integer> toRemove = new LinkedList<Integer>();
     //process all plans
-    while (plans.hasMoreElements()) {
-        String plan = plans.nextElement();
+    //  while (plans.hasMoreElements()) {
+    for (String plan : selectedPlans) {
+        //String plan = plans.nextElement();
         logger.debug("Checking plan '" + plan + "'");
         List<Attack> attacks = AttackManager.getSingleton().getAttackPlan(plan);
 
@@ -2746,7 +2904,6 @@ private void fireFilterSourceByAttackPlansEvent(java.awt.event.MouseEvent evt) {
             }
         }
     }
-
 
     String message = "";
     if (toRemove.size() == 0) {
@@ -2770,20 +2927,8 @@ private void fireFilterSourceByAttackPlansEvent(java.awt.event.MouseEvent evt) {
             logger.error("Removal failed", e);
         }
     }
-}//GEN-LAST:event_fireFilterSourceByAttackPlansEvent
 
-private void fireShowPlayerSourcesOnlyChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireShowPlayerSourcesOnlyChangedEvent
-    fireFilterSourceVillagesByGroupEvent();
-}//GEN-LAST:event_fireShowPlayerSourcesOnlyChangedEvent
-
-private void fireSourceRelationChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireSourceRelationChangedEvent
-    if (jSourceGroupRelation.isSelected()) {
-        jSourceGroupRelation.setText("Verknüpfung (ODER)");
-    } else {
-        jSourceGroupRelation.setText("Verknüpfung (UND)");
-    }
-    fireFilterSourceVillagesByGroupEvent();
-}//GEN-LAST:event_fireSourceRelationChangedEvent
+}//GEN-LAST:event_fireSynchWithAttackPlansEvent
 
     private void showResults(List<Attack> pAttacks) {
         jResultsTable.invalidate();
@@ -3064,7 +3209,7 @@ private void fireSourceRelationChangedEvent(java.awt.event.ItemEvent evt) {//GEN
             jVictimTable.revalidate();
             jVictimTable.repaint();
         }
-        
+
         // <editor-fold defaultstate="collapsed" desc=" OLD HANDLING">
        /*    if (bChooseSourceRegionMode) {
         UnitHolder uSource = (UnitHolder) jTroopsList.getSelectedItem();
@@ -3448,6 +3593,8 @@ private void fireSourceRelationChangedEvent(java.awt.event.ItemEvent evt) {//GEN
     private javax.swing.JButton jAddToAttacksButton;
     private javax.swing.JPanel jAlgoPanel;
     private javax.swing.JRadioButton jAllInOneAlgorithm;
+    private javax.swing.JDialog jAttackPlanSelectionDialog;
+    private javax.swing.JTable jAttackPlanTable;
     private javax.swing.JComboBox jAttackPlansBox;
     private javax.swing.JFrame jAttackResultDetailsFrame;
     private javax.swing.JProgressBar jAttacksBar;
@@ -3474,11 +3621,13 @@ private void fireSourceRelationChangedEvent(java.awt.event.ItemEvent evt) {//GEN
     private javax.swing.JButton jButton8;
     private javax.swing.JButton jButton9;
     private javax.swing.JButton jCalculateButton;
+    private javax.swing.JButton jCancelSyncButton;
     private javax.swing.JTextField jCataField;
     private javax.swing.JTextField jCataRange;
     private javax.swing.JButton jCloseResultsButton;
     private javax.swing.JButton jCopyToClipboardAsBBButton;
     private javax.swing.JButton jCopyToClipboardButton;
+    private javax.swing.JButton jDoSyncButton;
     private javax.swing.JProgressBar jEnoblementsBar;
     private javax.swing.JProgressBar jFullOffsBar;
     private javax.swing.JTextField jHeavyField;
@@ -3530,6 +3679,7 @@ private void fireSourceRelationChangedEvent(java.awt.event.ItemEvent evt) {//GEN
     private javax.swing.JScrollPane jScrollPane10;
     private javax.swing.JScrollPane jScrollPane11;
     private javax.swing.JScrollPane jScrollPane12;
+    private javax.swing.JScrollPane jScrollPane13;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;

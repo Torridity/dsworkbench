@@ -53,7 +53,6 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Stroke;
 import java.awt.Toolkit;
-import java.awt.color.ICC_ColorSpace;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
@@ -62,6 +61,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.Raster;
+import java.awt.image.VolatileImage;
 import java.awt.image.WritableRaster;
 import java.io.File;
 import java.text.NumberFormat;
@@ -116,7 +116,7 @@ public class MapRenderer extends Thread {
     private Point2D.Double viewStartPoint = null;
     private double currentZoom = 0.0;
     private Village currentUserVillage = null;
-    private Image mMainBuffer = null;
+    private VolatileImage mMainBuffer = null;
     private BufferedImage mConquerWarning = null;
 
     public MapRenderer() {
@@ -143,14 +143,17 @@ public class MapRenderer extends Thread {
     public void run() {
         logger.debug("Entering render loop");
         while (true) {
+            boolean completeRedraw = false;
             try {
+
                 int w = MapPanel.getSingleton().getWidth();
                 int h = MapPanel.getSingleton().getHeight();
                 if ((w != 0) && (h != 0)) {
                     Graphics2D g2d = null;
                     if (mMainBuffer == null) {
                         //create main buffer during first iteration
-                        mMainBuffer = MapPanel.getSingleton().createImage(w, h);
+                        //mMainBuffer = MapPanel.getSingleton().createImage(w, h);
+                        mMainBuffer = MapPanel.getSingleton().createVolatileImage(w, h);
                         g2d = (Graphics2D) mMainBuffer.getGraphics();
                         prepareGraphics(g2d);
                         //set redraw required flag if nothin was drawn yet
@@ -160,7 +163,8 @@ public class MapRenderer extends Thread {
                         //if not re-create main buffer
                         if (mMainBuffer.getWidth(null) != w || mMainBuffer.getHeight(null) != h) {
                             //map panel has resized
-                            mMainBuffer = MapPanel.getSingleton().createImage(w, h);
+                            mMainBuffer = MapPanel.getSingleton().createVolatileImage(w, h);
+
                             g2d = (Graphics2D) mMainBuffer.getGraphics();
                             prepareGraphics(g2d);
                             //set redraw required flag if size has changed
@@ -177,6 +181,7 @@ public class MapRenderer extends Thread {
                     //get currently selected user village for marking -> one call reduces sync effort
                     currentUserVillage = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage();
                     if (mapRedrawRequired) {
+                        completeRedraw = true;
                         //complete redraw is required
                         calculateVisibleVillages();
                         if (viewStartPoint == null) {
@@ -234,7 +239,11 @@ public class MapRenderer extends Thread {
             logger.info("  Total: " + Runtime.getRuntime().totalMemory());*/
             }
             try {
-                Thread.sleep(60);
+                //if (completeRedraw) {
+                    Thread.sleep(60);
+                /*} else {
+                    Thread.sleep(250);
+                }*/
             } catch (InterruptedException ie) {
             }
         }

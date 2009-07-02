@@ -118,7 +118,7 @@ public class TroopsManagerTableModel extends AbstractTableModel {
 
     @Override
     public boolean isCellEditable(int row, int col) {
-        if ((col > 1) && (col <= 2 + DataHolder.getSingleton().getUnits().size())) {
+        if ((col > 1) && (col <= 2 + DataHolder.getSingleton().getUnits().size())&&viewType != SHOW_TROOPS_IN_VILLAGE && viewType != SHOW_FORGEIGN_TROOPS) {
             return true;
         }
         return false;
@@ -161,7 +161,7 @@ public class TroopsManagerTableModel extends AbstractTableModel {
                                 double res = inVillage - own;
                                 return (res >= 0) ? res : 0;
                             default:
-                                return TroopsManager.getSingleton().getTroopsForVillage(row).getTroopsInVillage().get(unit);
+                              return TroopsManager.getSingleton().getTroopsForVillage(row).getTroopsInVillage().get(unit);
                         }
                     //    return TroopsManager.getSingleton().getTroopsForVillage(row).getTroops().get(troopIndex);
                     } catch (Exception e) {
@@ -223,15 +223,10 @@ public class TroopsManagerTableModel extends AbstractTableModel {
                         TroopsManager.getSingleton().getTroopsForVillage(row).getTroopsOnTheWay().put(unit, value);
                         break;
                     default:
-                        TroopsManager.getSingleton().getTroopsForVillage(row).getTroopsInVillage().put(unit, value);
+                        //not allowed due to troops in village are calculated
+                        //TroopsManager.getSingleton().getTroopsForVillage(row).getTroopsInVillageWithoutSupport().put(unit, value);
                 }
 
-
-                //    TroopsManager.getSingleton().getTroopsForVillage(row).getTroops().set(troopIndex, (Integer) pValue);
-                /*try {
-                TroopsManager.getSingleton().getTroopsForVillage(row).recalculateTroopsPower();
-                } catch (Exception e) {
-                }*/
                 //refresh time
                 TroopsManager.getSingleton().getTroopsForVillage(row).setState(Calendar.getInstance().getTime());
                 fireTableDataChanged();

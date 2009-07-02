@@ -232,6 +232,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
+        jScrollPane4 = new javax.swing.JScrollPane();
         jTaskPane1 = new com.l2fprod.common.swing.JTaskPane();
         jTaskPaneGroup1 = new com.l2fprod.common.swing.JTaskPaneGroup();
         jRemoveAttackButton = new javax.swing.JButton();
@@ -1011,8 +1012,14 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         });
 
         jTaskPane1.setOpaque(false);
+        com.l2fprod.common.swing.PercentLayout percentLayout1 = new com.l2fprod.common.swing.PercentLayout();
+        percentLayout1.setOrientation(1);
+        jTaskPane1.setLayout(percentLayout1);
 
         jTaskPaneGroup1.setTitle(bundle.getString("DSWorkbenchAttackFrame.jTaskPaneGroup1.title")); // NOI18N
+        com.l2fprod.common.swing.PercentLayout percentLayout2 = new com.l2fprod.common.swing.PercentLayout();
+        percentLayout2.setOrientation(1);
+        jTaskPaneGroup1.getContentPane().setLayout(percentLayout2);
 
         jRemoveAttackButton.setBackground(new java.awt.Color(239, 235, 223));
         jRemoveAttackButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_remove.png"))); // NOI18N
@@ -1061,6 +1068,9 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         jTaskPane1.add(jTaskPaneGroup1);
 
         jTaskPaneGroup2.setTitle(bundle.getString("DSWorkbenchAttackFrame.jTaskPaneGroup2.title")); // NOI18N
+        com.l2fprod.common.swing.PercentLayout percentLayout3 = new com.l2fprod.common.swing.PercentLayout();
+        percentLayout3.setOrientation(1);
+        jTaskPaneGroup2.getContentPane().setLayout(percentLayout3);
 
         jMarkAllButton.setBackground(new java.awt.Color(239, 235, 223));
         jMarkAllButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_selectAllOrNone.gif"))); // NOI18N
@@ -1120,6 +1130,9 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         jTaskPane1.add(jTaskPaneGroup2);
 
         jTaskPaneGroup3.setTitle(bundle.getString("DSWorkbenchAttackFrame.jTaskPaneGroup3.title")); // NOI18N
+        com.l2fprod.common.swing.PercentLayout percentLayout4 = new com.l2fprod.common.swing.PercentLayout();
+        percentLayout4.setOrientation(1);
+        jTaskPaneGroup3.getContentPane().setLayout(percentLayout4);
 
         jCopyUnformattedToClipboardButton.setBackground(new java.awt.Color(239, 235, 223));
         jCopyUnformattedToClipboardButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_clipboard.png"))); // NOI18N
@@ -1159,6 +1172,9 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         jTaskPane1.add(jTaskPaneGroup3);
 
         jTaskPaneGroup4.setTitle(bundle.getString("DSWorkbenchAttackFrame.jTaskPaneGroup4.title")); // NOI18N
+        com.l2fprod.common.swing.PercentLayout percentLayout5 = new com.l2fprod.common.swing.PercentLayout();
+        percentLayout5.setOrientation(1);
+        jTaskPaneGroup4.getContentPane().setLayout(percentLayout5);
 
         jNotifyButton.setBackground(new java.awt.Color(239, 235, 223));
         jNotifyButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_alert.png"))); // NOI18N
@@ -1173,6 +1189,8 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
 
         jTaskPane1.add(jTaskPaneGroup4);
 
+        jScrollPane4.setViewportView(jTaskPane1);
+
         javax.swing.GroupLayout jAttackPanelLayout = new javax.swing.GroupLayout(jAttackPanel);
         jAttackPanel.setLayout(jAttackPanelLayout);
         jAttackPanelLayout.setHorizontalGroup(
@@ -1183,16 +1201,16 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
                     .addGroup(jAttackPanelLayout.createSequentialGroup()
                         .addComponent(jLabel9)
                         .addGap(18, 18, 18)
-                        .addComponent(jActiveAttackPlan, 0, 371, Short.MAX_VALUE)
+                        .addComponent(jActiveAttackPlan, 0, 0, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 587, Short.MAX_VALUE))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 641, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTaskPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         jAttackPanelLayout.setVerticalGroup(
@@ -1208,7 +1226,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
                         .addComponent(jActiveAttackPlan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jAttackPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jTaskPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 703, Short.MAX_VALUE)
+                    .addComponent(jScrollPane4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 703, Short.MAX_VALUE)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 703, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -1228,7 +1246,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jAttackPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 737, Short.MAX_VALUE)
+                    .addComponent(jAttackPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jAttackFrameAlwaysOnTop))
                 .addContainerGap())
         );
@@ -2287,6 +2305,7 @@ private void fireAttackFrameAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) 
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JSpinner jSecondsField;
     private javax.swing.JDialog jSelectionFilterDialog;
     private javax.swing.JButton jSendAttackButton;

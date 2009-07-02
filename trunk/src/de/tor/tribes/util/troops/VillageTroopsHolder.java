@@ -162,7 +162,7 @@ public class VillageTroopsHolder {
     }
 
     public Hashtable<UnitHolder, Integer> getTroopsInVillage() {
-        Hashtable<UnitHolder, Integer> troops = (Hashtable<UnitHolder, Integer>) troopsInVillage.clone();
+        Hashtable<UnitHolder, Integer> troops = (Hashtable<UnitHolder, Integer>) ownTroops.clone();
         Enumeration<Village> keys = supports.keys();
         while (keys.hasMoreElements()) {
             Village v = keys.nextElement();
@@ -172,6 +172,10 @@ public class VillageTroopsHolder {
             }
         }
         return troops;
+    }
+
+    public Hashtable<UnitHolder, Integer> getTroopsInVillageWithoutSupport() {
+        return troopsInVillage;
     }
 
     public Hashtable<UnitHolder, Integer> getTroopsOutside() {

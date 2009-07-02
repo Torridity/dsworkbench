@@ -46,6 +46,7 @@ import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
+import java.awt.image.VolatileImage;
 import java.io.File;
 import java.text.NumberFormat;
 import java.util.Enumeration;
@@ -62,7 +63,7 @@ public class MapPanel extends javax.swing.JPanel {
 
     // <editor-fold defaultstate="collapsed" desc=" Member variables ">
     private static Logger logger = Logger.getLogger("MapCanvas");
-    private Image mBuffer = null;
+    private VolatileImage mBuffer = null;
     private double dCenterX = 500.0;
     private double dCenterY = 500.0;
     private Rectangle2D.Double mVirtualBounds = null;
@@ -1268,7 +1269,7 @@ public class MapPanel extends javax.swing.JPanel {
     }
 
     /**Update operation perfomed by the RepaintThread was completed*/
-    public void updateComplete(Hashtable<Village, Rectangle> pPositions, Image pBuffer) {
+    public void updateComplete(Hashtable<Village, Rectangle> pPositions, VolatileImage pBuffer) {
         mBuffer = pBuffer;
         mVillagePositions = pPositions;
         if (bMapSHotPlaned) {

@@ -45,7 +45,7 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
     private static Logger logger = Logger.getLogger("TroopsDialog");
     private static DSWorkbenchTroopsFrame SINGLETON = null;
     private List<DefaultTableCellRenderer> renderers = new LinkedList<DefaultTableCellRenderer>();
-    private List<ImageIcon> mPowerIcons = new LinkedList<ImageIcon>();
+    private List<ImageIcon> mColumnIcons = new LinkedList<ImageIcon>();
     private TroopInfoChartPanel infoPanel = null;
 
     public static synchronized DSWorkbenchTroopsFrame getSingleton() {
@@ -94,10 +94,12 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
         });
 
         try {
-            mPowerIcons.add(new ImageIcon("graphics/icons/att.png"));
-            mPowerIcons.add(new ImageIcon("graphics/icons/def.png"));
-            mPowerIcons.add(new ImageIcon("graphics/icons/def_cav.png"));
-            mPowerIcons.add(new ImageIcon("graphics/icons/def_archer.png"));
+            mColumnIcons.add(new ImageIcon("graphics/icons/att.png"));
+            mColumnIcons.add(new ImageIcon("graphics/icons/def.png"));
+            mColumnIcons.add(new ImageIcon("graphics/icons/def_cav.png"));
+            mColumnIcons.add(new ImageIcon("graphics/icons/def_archer.png"));
+            mColumnIcons.add(new ImageIcon("graphics/icons/move_out.png"));
+            mColumnIcons.add(new ImageIcon("graphics/icons/move_in.png"));
         } catch (Exception e) {
             logger.error("Failed to read table header icons", e);
         }
@@ -565,8 +567,7 @@ private void fireChangeViewTypeEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:
         DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
 
             @Override
-            public Component getTableCellRendererComponent(
-                    JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
                 Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
                 c.setBackground(Constants.DS_BACK);
                 DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
@@ -584,18 +585,23 @@ private void fireChangeViewTypeEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:
                 } else {
                     if (column == unitCount + 3) {
                         //off col
-                        r.setIcon(mPowerIcons.get(0));
+                        r.setIcon(mColumnIcons.get(0));
                     } else if (column == unitCount + 4) {
                         //def col
-                        r.setIcon(mPowerIcons.get(1));
+                        r.setIcon(mColumnIcons.get(1));
                     } else if (column == unitCount + 5) {
                         //def cav col
-                        r.setIcon(mPowerIcons.get(2));
-                    } else {
+                        r.setIcon(mColumnIcons.get(2));
+                    } else if (column == unitCount + 6) {
                         //def archer col
-                        r.setIcon(mPowerIcons.get(3));
+                        r.setIcon(mColumnIcons.get(3));
+                    } else if (column == unitCount + 7) {
+                        //target villages
+                        r.setIcon(mColumnIcons.get(4));
+                    } else {
+                        //source villages
+                        r.setIcon(mColumnIcons.get(5));
                     }
-
                 }
                 return r;
             }
@@ -623,8 +629,7 @@ private void fireChangeViewTypeEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:
             jTroopsTable.invalidate();
             jTroopsTable.getTableHeader().setReorderingAllowed(false);
 
-            for (int i = 0; i <
-                    jTroopsTable.getColumnCount(); i++) {
+            for (int i = 0; i < jTroopsTable.getColumnCount(); i++) {
                 jTroopsTable.getColumnModel().getColumn(i).setHeaderRenderer(renderers.get(i));
             }
 

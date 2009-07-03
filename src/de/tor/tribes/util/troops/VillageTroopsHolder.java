@@ -161,6 +161,8 @@ public class VillageTroopsHolder {
         return ownTroops;
     }
 
+    /**Returns own troops in village plus supports
+     */
     public Hashtable<UnitHolder, Integer> getTroopsInVillage() {
         Hashtable<UnitHolder, Integer> troops = (Hashtable<UnitHolder, Integer>) ownTroops.clone();
         Enumeration<Village> keys = supports.keys();
@@ -174,6 +176,8 @@ public class VillageTroopsHolder {
         return troops;
     }
 
+    /**Supports only own troops in village without supports
+     */
     public Hashtable<UnitHolder, Integer> getTroopsInVillageWithoutSupport() {
         return troopsInVillage;
     }

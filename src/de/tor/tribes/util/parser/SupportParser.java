@@ -79,7 +79,10 @@ public class SupportParser {
                                 TroopsManager.getSingleton().addTroopsForVillageFast(v, new LinkedList<Integer>());
                                 holder = TroopsManager.getSingleton().getTroopsForVillage(v);
                             }
+
+                            //add support target for source village
                             holder.addSupportTarget(supportTarget);
+                            //add suppporting troops to target
                             holder = TroopsManager.getSingleton().getTroopsForVillage(supportTarget);
                             if (holder == null) {
                                 TroopsManager.getSingleton().addTroopsForVillageFast(supportTarget, new LinkedList<Integer>());

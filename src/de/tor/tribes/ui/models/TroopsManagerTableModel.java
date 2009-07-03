@@ -65,6 +65,12 @@ public class TroopsManagerTableModel extends AbstractTableModel {
         typesList.add(Double.class);
         namesList.add("");
         typesList.add(Double.class);
+        //troops in/out cols
+        namesList.add("");
+        typesList.add(Integer.class);
+        namesList.add("");
+        typesList.add(Integer.class);
+
         types = typesList.toArray(new Class[]{});
         colNames = namesList.toArray(new String[]{});
         nf = NumberFormat.getInstance();
@@ -118,7 +124,7 @@ public class TroopsManagerTableModel extends AbstractTableModel {
 
     @Override
     public boolean isCellEditable(int row, int col) {
-        if ((col > 1) && (col <= 2 + DataHolder.getSingleton().getUnits().size())&&viewType != SHOW_TROOPS_IN_VILLAGE && viewType != SHOW_FORGEIGN_TROOPS) {
+        if ((col > 1) && (col <= 2 + DataHolder.getSingleton().getUnits().size()) && viewType != SHOW_TROOPS_IN_VILLAGE && viewType != SHOW_FORGEIGN_TROOPS) {
             return true;
         }
         return false;
@@ -161,7 +167,7 @@ public class TroopsManagerTableModel extends AbstractTableModel {
                                 double res = inVillage - own;
                                 return (res >= 0) ? res : 0;
                             default:
-                              return TroopsManager.getSingleton().getTroopsForVillage(row).getTroopsInVillage().get(unit);
+                                return TroopsManager.getSingleton().getTroopsForVillage(row).getTroopsInVillage().get(unit);
                         }
                     //    return TroopsManager.getSingleton().getTroopsForVillage(row).getTroops().get(troopIndex);
                     } catch (Exception e) {
@@ -175,8 +181,13 @@ public class TroopsManagerTableModel extends AbstractTableModel {
                         return TroopsManager.getSingleton().getTroopsForVillage(row).getDefValue(viewType);
                     } else if (columnIndex == unitCount + 5) {
                         return TroopsManager.getSingleton().getTroopsForVillage(row).getDefCavalryValue(viewType);
-                    } else {
+                    } else if (columnIndex == unitCount + 6) {
                         return TroopsManager.getSingleton().getTroopsForVillage(row).getDefArcherValue(viewType);
+                    } //in/out count
+                    else if (columnIndex == unitCount + 7) {
+                        return TroopsManager.getSingleton().getTroopsForVillage(row).getSupportTargets().size();
+                    } else {
+                        return TroopsManager.getSingleton().getTroopsForVillage(row).getSupports().size();
                     }
                 }
             }
@@ -223,8 +234,8 @@ public class TroopsManagerTableModel extends AbstractTableModel {
                         TroopsManager.getSingleton().getTroopsForVillage(row).getTroopsOnTheWay().put(unit, value);
                         break;
                     default:
-                        //not allowed due to troops in village are calculated
-                        //TroopsManager.getSingleton().getTroopsForVillage(row).getTroopsInVillageWithoutSupport().put(unit, value);
+                    //not allowed due to troops in village are calculated
+                    //TroopsManager.getSingleton().getTroopsForVillage(row).getTroopsInVillageWithoutSupport().put(unit, value);
                 }
 
                 //refresh time

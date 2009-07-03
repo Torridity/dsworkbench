@@ -51,6 +51,7 @@ import javax.swing.table.TableRowSorter;
 import org.apache.log4j.Logger;
 
 /**
+ * @TODO (DIFF) Max. 10 attacks sendable to browser
  * @author  Charon
  */
 public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements AttackManagerListener {
@@ -1286,14 +1287,22 @@ private void fireRemoveAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
 }//GEN-LAST:event_fireRemoveAttackEvent
 
 private void fireSendAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSendAttackEvent
-    int selectedRow = jAttackTable.getSelectedRow();
-    if (selectedRow < 0) {
+    int[] selectedRows = jAttackTable.getSelectedRows();
+    if (selectedRows != null && selectedRows.length < 1) {
         return;
     }
-    selectedRow = jAttackTable.convertRowIndexToModel(selectedRow);
-    Village source = (Village) AttackManagerTableModel.getSingleton().getValueAt(selectedRow, 0);
-    Village target = (Village) AttackManagerTableModel.getSingleton().getValueAt(selectedRow, 1);
-    BrowserCommandSender.sendTroops(source, target);
+
+    if (selectedRows.length > 10) {
+        JOptionPaneHelper.showInformationBox(this, "Es dürfen maximal 10 Angriffe auf einmal in den Browser übertragen werden.", "Maximum überschritten");
+        return;
+    }
+
+    for (Integer selectedRow : selectedRows) {
+        int row = jAttackTable.convertRowIndexToModel(selectedRow);
+        Village source = (Village) AttackManagerTableModel.getSingleton().getValueAt(row, 0);
+        Village target = (Village) AttackManagerTableModel.getSingleton().getValueAt(row, 1);
+        BrowserCommandSender.sendTroops(source, target);
+    }
 }//GEN-LAST:event_fireSendAttackEvent
 
 private void fireMarkAllEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireMarkAllEvent

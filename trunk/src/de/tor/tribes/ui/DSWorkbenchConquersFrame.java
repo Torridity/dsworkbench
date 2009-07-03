@@ -34,7 +34,8 @@ import javax.swing.table.TableRowSorter;
 import org.apache.log4j.Logger;
 
 /**
- *@TODO (1.6) Check help for better explanation
+ * @TODO (1.6) Check help for better explanation
+ * 
  * @author Charon
  */
 public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implements ConquerManagerListener {

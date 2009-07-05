@@ -28,17 +28,20 @@ import de.tor.tribes.ui.editors.UnitCellEditor;
 import de.tor.tribes.ui.editors.VillageCellEditor;
 import de.tor.tribes.ui.renderer.AttackTypeCellRenderer;
 import de.tor.tribes.ui.renderer.ColoredDateCellRenderer;
+import de.tor.tribes.util.AttackPlanHTMLExporter;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.JOptionPaneHelper;
 import java.awt.Component;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ItemEvent;
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.StringTokenizer;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JSpinner.DateEditor;
 import javax.swing.JTable;
@@ -249,6 +252,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         jTaskPaneGroup3 = new com.l2fprod.common.swing.JTaskPaneGroup();
         jCopyUnformattedToClipboardButton = new javax.swing.JButton();
         jCopyBBCodeToClipboardButton = new javax.swing.JButton();
+        jCopyBBCodeToClipboardButton1 = new javax.swing.JButton();
         jSendAttackButton = new javax.swing.JButton();
         jTaskPaneGroup4 = new com.l2fprod.common.swing.JTaskPaneGroup();
         jNotifyButton = new javax.swing.JToggleButton();
@@ -1159,6 +1163,18 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         });
         jTaskPaneGroup3.getContentPane().add(jCopyBBCodeToClipboardButton);
 
+        jCopyBBCodeToClipboardButton1.setBackground(new java.awt.Color(239, 235, 223));
+        jCopyBBCodeToClipboardButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_HTML.png"))); // NOI18N
+        jCopyBBCodeToClipboardButton1.setText(bundle.getString("DSWorkbenchAttackFrame.jCopyBBCodeToClipboardButton1.text")); // NOI18N
+        jCopyBBCodeToClipboardButton1.setToolTipText(bundle.getString("DSWorkbenchAttackFrame.jCopyBBCodeToClipboardButton1.toolTipText")); // NOI18N
+        jCopyBBCodeToClipboardButton1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jCopyBBCodeToClipboardButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireWriteToHTMLEvent(evt);
+            }
+        });
+        jTaskPaneGroup3.getContentPane().add(jCopyBBCodeToClipboardButton1);
+
         jSendAttackButton.setBackground(new java.awt.Color(239, 235, 223));
         jSendAttackButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_browser.png"))); // NOI18N
         jSendAttackButton.setText(bundle.getString("DSWorkbenchAttackFrame.jSendAttackButton.text")); // NOI18N
@@ -1408,6 +1424,7 @@ private void fireCopyUnformatedToClipboardEvent(java.awt.event.MouseEvent evt) {
 }//GEN-LAST:event_fireCopyUnformatedToClipboardEvent
 
 private void fireCopyAsBBCodeToClipboardEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCopyAsBBCodeToClipboardEvent
+
     try {
         UIManager.put("OptionPane.noButtonText", "Nein");
         UIManager.put("OptionPane.yesButtonText", "Ja");
@@ -1527,8 +1544,6 @@ private void fireCopyAsBBCodeToClipboardEvent(java.awt.event.MouseEvent evt) {//
             if (cnt > 500) {
                 if (JOptionPaneHelper.showQuestionConfirmBox(this, "Die ausgewählten Angriffe benötigen mehr als 500 BB-Codes\n" +
                         "und können daher im Spiel (Forum/IGM/Notizen) nicht auf einmal dargestellt werden.\nTrotzdem exportieren?", "Zu viele BB-Codes", "Nein", "Ja") == JOptionPane.NO_OPTION) {
-                    UIManager.put("OptionPane.noButtonText", "No");
-                    UIManager.put("OptionPane.yesButtonText", "Yes");
                     return;
                 }
             }
@@ -2124,6 +2139,69 @@ private void fireAttackFrameAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) 
     setAlwaysOnTop(!isAlwaysOnTop());
 }//GEN-LAST:event_fireAttackFrameAlwaysOnTopEvent
 
+private void fireWriteToHTMLEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireWriteToHTMLEvent
+
+    String dir = GlobalOptions.getProperty("screen.dir");
+    if (dir == null) {
+        dir = ".";
+    }
+
+    String selectedPlan = AttackManagerTableModel.getSingleton().getActiveAttackPlan();
+    JFileChooser chooser = new JFileChooser(dir);
+    chooser.setDialogTitle("Datei auswählen");
+
+    chooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
+
+        @Override
+        public boolean accept(File f) {
+            if ((f != null) && (f.isDirectory() || f.getName().endsWith(".html"))) {
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        public String getDescription() {
+            return "*.html";
+        }
+    });
+    chooser.setSelectedFile(new File(dir + "/" + selectedPlan + ".html"));
+    int ret = chooser.showSaveDialog(this);
+    if (ret == JFileChooser.APPROVE_OPTION) {
+        try {
+            File f = chooser.getSelectedFile();
+            String file = f.getCanonicalPath();
+            if (!file.endsWith(".html")) {
+                file += ".html";
+            }
+
+            File target = new File(file);
+            if (target.exists()) {
+                if (JOptionPaneHelper.showQuestionConfirmBox(this, "Bestehende Datei überschreiben?", "Überschreiben", "Nein", "Ja") == JOptionPane.NO_OPTION) {
+                    //do not overwrite
+                    return;
+                }
+            }
+            int[] rows = jAttackTable.getSelectedRows();
+            List<Attack> attacks = AttackManager.getSingleton().getAttackPlan(selectedPlan);
+            List<Attack> toExport = new LinkedList<Attack>();
+            for (int i : rows) {
+                int row = jAttackTable.convertRowIndexToModel(i);
+                toExport.add(attacks.get(row));
+            }
+            AttackPlanHTMLExporter.doExport(target, selectedPlan, toExport);
+            //store current directory
+            GlobalOptions.addProperty("screen.dir", target.getParent());
+            if (JOptionPaneHelper.showQuestionConfirmBox(this, "Angriffe erfolgreich gespeichert.\nWillst du die erstellte Datei jetzt im Browser betrachten?", "Information", "Nein", "Ja") == JOptionPane.YES_OPTION) {
+                BrowserCommandSender.openPage(target.toURI().toURL().toString());
+            }
+        } catch (Exception e) {
+            logger.error("Failed to write attacks to HTML", e);
+            JOptionPaneHelper.showErrorBox(this, "Fehler beim Speichern.", "Fehler");
+        }
+    }
+}//GEN-LAST:event_fireWriteToHTMLEvent
+
     /**Set table model for filteres selection*/
     private void setTableModel(JTable pTable, Hashtable<Village, Boolean> pVillages) {
         //create default table model
@@ -2258,6 +2336,7 @@ private void fireAttackFrameAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) 
     private javax.swing.JButton jChangeArrivalButton;
     private javax.swing.JButton jCopyAttackButton;
     private javax.swing.JButton jCopyBBCodeToClipboardButton;
+    private javax.swing.JButton jCopyBBCodeToClipboardButton1;
     private javax.swing.JButton jCopyButton;
     private javax.swing.JComboBox jCopyTargetBox;
     private javax.swing.JDialog jCopyToPlanDialog;

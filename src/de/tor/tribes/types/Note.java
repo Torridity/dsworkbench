@@ -26,6 +26,7 @@ public class Note {
     public Note() {
         villageIds = new LinkedList<Integer>();
         setTimestamp(System.currentTimeMillis());
+        sNoteText = "";
     }
 
     public static Note fromXml(Element e) throws Exception {
@@ -75,7 +76,11 @@ public class Note {
     }
 
     public String getNoteText() {
-        return sNoteText;
+        if (sNoteText == null) {
+            return "";
+        } else {
+            return sNoteText;
+        }
     }
 
     public static void main(String[] args) throws Exception {

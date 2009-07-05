@@ -301,12 +301,48 @@ public class VillageTroopsHolder {
                 double res = inVillage - own;
                 return (res >= 0) ? res : 0;
             default:
-                active = troopsInVillage;
+                active = getTroopsInVillage();
         }
         Enumeration<UnitHolder> units = active.keys();
         int result = 0;
         while (units.hasMoreElements()) {
             UnitHolder unit = units.nextElement();
+            result += unit.getAttack() * active.get(unit);
+        }
+
+        return result;
+    }
+
+    public double getRealOffValue(int type) {
+        Hashtable<UnitHolder, Integer> active = null;
+        switch (type) {
+            case TroopsManagerTableModel.SHOW_OWN_TROOPS:
+                active = ownTroops;
+                break;
+            case TroopsManagerTableModel.SHOW_TROOPS_OUTSIDE:
+                active = troopsOutside;
+                break;
+            case TroopsManagerTableModel.SHOW_TROOPS_ON_THE_WAY:
+                active = troopsOnTheWay;
+                break;
+            case TroopsManagerTableModel.SHOW_FORGEIGN_TROOPS:
+                double own = getOffValue(TroopsManagerTableModel.SHOW_OWN_TROOPS);
+                double inVillage = getOffValue(TroopsManagerTableModel.SHOW_TROOPS_IN_VILLAGE);
+                double res = inVillage - own;
+                return (res >= 0) ? res : 0;
+            default:
+                active = getTroopsInVillage();
+        }
+        Enumeration<UnitHolder> units = active.keys();
+        int result = 0;
+        while (units.hasMoreElements()) {
+            UnitHolder unit = units.nextElement();
+            if(unit.getPlainName().equals("axe") ||
+                    unit.getPlainName().equals("light") ||
+                    unit.getPlainName().equals("marcher") ||
+                    unit.getPlainName().equals("heavy") ||
+                    unit.getPlainName().equals("ram") ||
+                    unit.getPlainName().equals("catapult"))
             result += unit.getAttack() * active.get(unit);
         }
 
@@ -331,7 +367,7 @@ public class VillageTroopsHolder {
                 double res = inVillage - own;
                 return (res >= 0) ? res : 0;
             default:
-                active = troopsInVillage;
+                active = getTroopsInVillage();
         }
         Enumeration<UnitHolder> units = active.keys();
         int result = 0;
@@ -361,7 +397,7 @@ public class VillageTroopsHolder {
                 double res = inVillage - own;
                 return (res >= 0) ? res : 0;
             default:
-                active = troopsInVillage;
+                active = getTroopsInVillage();
         }
         Enumeration<UnitHolder> units = active.keys();
         int result = 0;
@@ -391,7 +427,7 @@ public class VillageTroopsHolder {
                 double res = inVillage - own;
                 return (res >= 0) ? res : 0;
             default:
-                active = troopsInVillage;
+                active = getTroopsInVillage();
         }
         Enumeration<UnitHolder> units = active.keys();
         int result = 0;

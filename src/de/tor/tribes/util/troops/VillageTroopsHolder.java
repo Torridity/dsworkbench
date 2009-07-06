@@ -164,21 +164,16 @@ public class VillageTroopsHolder {
     /**Returns own troops in village plus supports
      */
     public Hashtable<UnitHolder, Integer> getTroopsInVillage() {
-        Hashtable<UnitHolder, Integer> troops = (Hashtable<UnitHolder, Integer>) ownTroops.clone();
+        /* Hashtable<UnitHolder, Integer> troops = (Hashtable<UnitHolder, Integer>) ownTroops.clone();
         Enumeration<Village> keys = supports.keys();
         while (keys.hasMoreElements()) {
-            Village v = keys.nextElement();
-            Hashtable<UnitHolder, Integer> support = supports.get(v);
-            for (UnitHolder u : DataHolder.getSingleton().getUnits()) {
-                troops.put(u, troops.get(u) + support.get(u));
-            }
+        Village v = keys.nextElement();
+        Hashtable<UnitHolder, Integer> support = supports.get(v);
+        for (UnitHolder u : DataHolder.getSingleton().getUnits()) {
+        troops.put(u, troops.get(u) + support.get(u));
         }
-        return troops;
-    }
-
-    /**Supports only own troops in village without supports
-     */
-    public Hashtable<UnitHolder, Integer> getTroopsInVillageWithoutSupport() {
+        }
+        return troops;*/
         return troopsInVillage;
     }
 
@@ -228,41 +223,31 @@ public class VillageTroopsHolder {
         supports.put(pTarget, (Hashtable<UnitHolder, Integer>) pUnits.clone());
     }
 
+    /**Merge own troops with supports if no in-village information is available
+     */
     public void updateSupportValues() {
         try {
-            //set own to invillage if no invillage information available
+            //set own to invillage if no in-village information available
             Hashtable<UnitHolder, Integer> own = getOwnTroops();
             Enumeration<UnitHolder> keys = own.keys();
             while (keys.hasMoreElements()) {
                 UnitHolder unit = keys.nextElement();
                 int inVillage = getTroopsOfUnitInVillage(unit);
                 int ownValue = own.get(unit);
+                //no troops of unit in this village -> check supports
                 if (inVillage == 0) {
-                    getTroopsInVillage().put(unit, ownValue);
+                    //add own troops
+                    int cntInVillage = ownValue;
+                    //add all known supports
+                    Enumeration<Village> supportKeys = getSupports().keys();
+                    while (supportKeys.hasMoreElements()) {
+                        Village source = supportKeys.nextElement();
+                        Integer amount = getSupports().get(source).get(unit);
+                        cntInVillage += amount;
+                    }
+                    getTroopsInVillage().put(unit, cntInVillage);
                 }
             }
-
-        /*
-        Hashtable<UnitHolder, Integer> outside = new Hashtable<UnitHolder, Integer>();
-        for (UnitHolder u : DataHolder.getSingleton().getUnits()) {
-        outside.put(u, 0);
-        }
-        Enumeration<Village> supportVillages = supports.keys();
-        while (supportVillages.hasMoreElements()) {
-        Village supportVillage = supportVillages.nextElement();
-        Hashtable<UnitHolder, Integer> supportingUnits = supports.get(supportVillage);
-        Enumeration<UnitHolder> units = supportingUnits.keys();
-        while (units.hasMoreElements()) {
-        UnitHolder unit = units.nextElement();
-        int cnt = supportingUnits.get(unit);
-        Integer oldCnt = outside.get(unit);
-        if (oldCnt == null) {
-        oldCnt = 0;
-        }
-        outside.put(unit, oldCnt + cnt);
-        }
-        }
-        setTroopsInVillage(outside);*/
         } catch (Exception e) {
         }
     }
@@ -337,13 +322,14 @@ public class VillageTroopsHolder {
         int result = 0;
         while (units.hasMoreElements()) {
             UnitHolder unit = units.nextElement();
-            if(unit.getPlainName().equals("axe") ||
+            if (unit.getPlainName().equals("axe") ||
                     unit.getPlainName().equals("light") ||
                     unit.getPlainName().equals("marcher") ||
                     unit.getPlainName().equals("heavy") ||
                     unit.getPlainName().equals("ram") ||
-                    unit.getPlainName().equals("catapult"))
-            result += unit.getAttack() * active.get(unit);
+                    unit.getPlainName().equals("catapult")) {
+                result += unit.getAttack() * active.get(unit);
+            }
         }
 
         return result;

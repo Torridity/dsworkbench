@@ -254,17 +254,17 @@ public class MapRenderer extends Thread {
                 }
             } catch (Throwable t) {
                 logger.error("Redrawing map failed", t);
-                /*logger.info("Memstat");
-                logger.info("  Free: " + Runtime.getRuntime().freeMemory());
-                logger.info("  Max: " + Runtime.getRuntime().maxMemory());
-                logger.info("  Total: " + Runtime.getRuntime().totalMemory());*/
+            /*logger.info("Memstat");
+            logger.info("  Free: " + Runtime.getRuntime().freeMemory());
+            logger.info("  Max: " + Runtime.getRuntime().maxMemory());
+            logger.info("  Total: " + Runtime.getRuntime().totalMemory());*/
             }
             try {
                 //if (completeRedraw) {
                 Thread.sleep(60);
-                /*} else {
-                Thread.sleep(250);
-                }*/
+            /*} else {
+            Thread.sleep(250);
+            }*/
             } catch (InterruptedException ie) {
             }
         }
@@ -894,7 +894,7 @@ public class MapRenderer extends Thread {
                                 }
                             }
                         }
-                        // </editor-fold>
+                    // </editor-fold>
                     }
                 }
                 if (c != null) {
@@ -1110,7 +1110,14 @@ public class MapRenderer extends Thread {
 
         Hashtable<Village, VillageTroopsHolder> values = new Hashtable<Village, VillageTroopsHolder>();
         Enumeration<Village> villages = villagePositions.keys();
-        double maxDef = 0;
+
+        int maxDef = 650000;
+        try {
+            maxDef = Integer.parseInt(GlobalOptions.getProperty("max.density.troops"));
+        } catch (Exception e) {
+            maxDef = 650000;
+        }
+
         while (villages.hasMoreElements()) {
             Village v = villages.nextElement();
             Rectangle villageRect = villagePositions.get(v);
@@ -1129,9 +1136,6 @@ public class MapRenderer extends Thread {
                 if (holder != null) {
                     double def = holder.getDefValue(TroopsManagerTableModel.SHOW_TROOPS_IN_VILLAGE);
                     values.put(v, holder);
-                    if (def > maxDef) {
-                        maxDef = def;
-                    }
                 }
             }
 
@@ -1156,6 +1160,8 @@ public class MapRenderer extends Thread {
                 double defIn = holder.getDefValue(TroopsManagerTableModel.SHOW_TROOPS_IN_VILLAGE);
                 double defOwn = holder.getDefValue(TroopsManagerTableModel.SHOW_OWN_TROOPS);
                 double perc = defIn / maxDef;
+                //limit to 100%
+                perc = (perc > 1) ? 1 : perc;
                 double percOwn = defOwn / defIn;
                 int alpha = (int) Math.rint(perc * 60);
                 alpha = (alpha > 80) ? 80 : alpha;
@@ -1279,68 +1285,68 @@ public class MapRenderer extends Thread {
         }
 //</editor-fold>
 
-        // <editor-fold defaultstate="collapsed" desc=" Support drawing (not used)">
+    // <editor-fold defaultstate="collapsed" desc=" Support drawing (not used)">
     /*     Color b = g2d.getColor();
-        Stroke s = g2d.getStroke();
-        g2d.setStroke(new BasicStroke(2.5f));
-        Point2D.Double error = GlobalOptions.getSkin().getError();
-        try {
-        Rectangle2D.Double bounds = new Rectangle2D.Double(viewStartPoint.x, viewStartPoint.y, iVillagesX, iVillagesY);
+    Stroke s = g2d.getStroke();
+    g2d.setStroke(new BasicStroke(2.5f));
+    Point2D.Double error = GlobalOptions.getSkin().getError();
+    try {
+    Rectangle2D.Double bounds = new Rectangle2D.Double(viewStartPoint.x, viewStartPoint.y, iVillagesX, iVillagesY);
 
-        for (Village v : DSWorkbenchTroopsFrame.getSingleton().getSelectedTroopsVillages()) {
-        List<Village> drawnTargets = new LinkedList<Village>();
-        //process source villages
-        for (Village target : TroopsManager.getSingleton().getTroopsForVillage(v).getSupportTargets()) {
-        drawnTargets.add(target);
-        Line2D.Double supportLine = new Line2D.Double(v.getX(), v.getY(), target.getX(), target.getY());
-        width += error.x;
-        height += error.y;
-        double xStart = (supportLine.getX1() - viewStartPoint.x) * width + width / 2;
-        double yStart = (supportLine.getY1() - viewStartPoint.y) * height + height / 2;
-        double xEnd = (supportLine.getX2() - viewStartPoint.x) * width + width / 2;
-        double yEnd = (supportLine.getY2() - viewStartPoint.y) * height + height / 2;
+    for (Village v : DSWorkbenchTroopsFrame.getSingleton().getSelectedTroopsVillages()) {
+    List<Village> drawnTargets = new LinkedList<Village>();
+    //process source villages
+    for (Village target : TroopsManager.getSingleton().getTroopsForVillage(v).getSupportTargets()) {
+    drawnTargets.add(target);
+    Line2D.Double supportLine = new Line2D.Double(v.getX(), v.getY(), target.getX(), target.getY());
+    width += error.x;
+    height += error.y;
+    double xStart = (supportLine.getX1() - viewStartPoint.x) * width + width / 2;
+    double yStart = (supportLine.getY1() - viewStartPoint.y) * height + height / 2;
+    double xEnd = (supportLine.getX2() - viewStartPoint.x) * width + width / 2;
+    double yEnd = (supportLine.getY2() - viewStartPoint.y) * height + height / 2;
 
-        g2d.setColor(Color.MAGENTA);
-        g2d.drawLine((int) Math.rint(xStart), (int) Math.rint(yStart), (int) Math.rint(xEnd), (int) Math.rint(yEnd));
-        if (bounds.contains(supportLine.getP1())) {
-        //drawArrow(xStart, yStart, xEnd, yEnd, g2d);
-        }
+    g2d.setColor(Color.MAGENTA);
+    g2d.drawLine((int) Math.rint(xStart), (int) Math.rint(yStart), (int) Math.rint(xEnd), (int) Math.rint(yEnd));
+    if (bounds.contains(supportLine.getP1())) {
+    //drawArrow(xStart, yStart, xEnd, yEnd, g2d);
+    }
 
-        if (bounds.contains(supportLine.getP2())) {
-        }
-        }
-
-
-        //process target villages
-        Enumeration<Village> supportKeys = TroopsManager.getSingleton().getTroopsForVillage(v).getSupports().keys();
-        while (supportKeys.hasMoreElements()) {
-        Village source = supportKeys.nextElement();
-        if (!drawnTargets.contains(source)) {
-        Line2D.Double supportLine = new Line2D.Double(source.getX(), source.getY(), v.getX(), v.getY());
-        double xStart = (supportLine.getX1() - viewStartPoint.x) * width + width / 2;
-        double yStart = (supportLine.getY1() - viewStartPoint.y) * height + height / 2;
-        double xEnd = (supportLine.getX2() - viewStartPoint.x) * width + width / 2;
-        double yEnd = (supportLine.getY2() - viewStartPoint.y) * height + height / 2;
-
-        g2d.setColor(Color.MAGENTA);
-        g2d.drawLine((int) Math.rint(xStart), (int) Math.rint(yStart), (int) Math.rint(xEnd), (int) Math.rint(yEnd));
-        if (bounds.contains(supportLine.getP1())) {
-        // drawArrow(xEnd, yEnd, xStart, yStart, g2d);
-        }
-
-        if (bounds.contains(supportLine.getP2())) {
-        }
-        }
-        }
+    if (bounds.contains(supportLine.getP2())) {
+    }
+    }
 
 
-        }
-        g2d.setStroke(s);
-        } catch (Exception e) {
-        g2d.setStroke(s);
-        }
-        g2d.setColor(b);*/
-        // </editor-fold>
+    //process target villages
+    Enumeration<Village> supportKeys = TroopsManager.getSingleton().getTroopsForVillage(v).getSupports().keys();
+    while (supportKeys.hasMoreElements()) {
+    Village source = supportKeys.nextElement();
+    if (!drawnTargets.contains(source)) {
+    Line2D.Double supportLine = new Line2D.Double(source.getX(), source.getY(), v.getX(), v.getY());
+    double xStart = (supportLine.getX1() - viewStartPoint.x) * width + width / 2;
+    double yStart = (supportLine.getY1() - viewStartPoint.y) * height + height / 2;
+    double xEnd = (supportLine.getX2() - viewStartPoint.x) * width + width / 2;
+    double yEnd = (supportLine.getY2() - viewStartPoint.y) * height + height / 2;
+
+    g2d.setColor(Color.MAGENTA);
+    g2d.drawLine((int) Math.rint(xStart), (int) Math.rint(yStart), (int) Math.rint(xEnd), (int) Math.rint(yEnd));
+    if (bounds.contains(supportLine.getP1())) {
+    // drawArrow(xEnd, yEnd, xStart, yStart, g2d);
+    }
+
+    if (bounds.contains(supportLine.getP2())) {
+    }
+    }
+    }
+
+
+    }
+    g2d.setStroke(s);
+    } catch (Exception e) {
+    g2d.setStroke(s);
+    }
+    g2d.setColor(b);*/
+    // </editor-fold>
 
     }
 
@@ -1549,7 +1555,7 @@ public class MapRenderer extends Thread {
                 g2d.setComposite(com);
                 g2d.setColor(cb);
             }
-            //</editor-fold>
+        //</editor-fold>
         }
     }
 
@@ -1597,23 +1603,23 @@ public class MapRenderer extends Thread {
                 int x2 = (int) dragLine.getX2();
                 int y2 = (int) dragLine.getY2();
                 g2d.drawLine(x1, y1, x2, y2);
-                /* boolean drawDistance = false;
-                try {
-                drawDistance = Boolean.parseBoolean(GlobalOptions.getProperty("draw.distance"));
-                } catch (Exception e) {
-                }
-                if (drawDistance) {
-                if (mouseVillage != null) {
-                double d = DSCalculator.calculateDistance(mSourceVillage, mouseVillage);
-                String dist = nf.format(d);
+            /* boolean drawDistance = false;
+            try {
+            drawDistance = Boolean.parseBoolean(GlobalOptions.getProperty("draw.distance"));
+            } catch (Exception e) {
+            }
+            if (drawDistance) {
+            if (mouseVillage != null) {
+            double d = DSCalculator.calculateDistance(mSourceVillage, mouseVillage);
+            String dist = nf.format(d);
 
-                double hf = PatchFontMetrics.patch(g2d.getFontMetrics()).getStringBounds(dist, g2d).getHeight();
+            double hf = PatchFontMetrics.patch(g2d.getFontMetrics()).getStringBounds(dist, g2d).getHeight();
 
-                g2d.drawImage(mDistBorder, null, targetRect.x, targetRect.y);
-                g2d.drawString(dist, targetRect.x + 6, targetRect.y + (int) Math.rint(hf));
-                }
+            g2d.drawImage(mDistBorder, null, targetRect.x, targetRect.y);
+            g2d.drawString(dist, targetRect.x + 6, targetRect.y + (int) Math.rint(hf));
+            }
 
-                }*/
+            }*/
             }
         }
         //</editor-fold>

@@ -96,6 +96,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         mTagColorChooser = new ColorChooser();
         jTagColorPanel.add(mTagColorChooser);
         jTagMapMarkerDialog.pack();
+        jTroopDensitySelectionDialog.pack();
         // </editor-fold>
 
         // <editor-fold defaultstate="collapsed" desc="Skin Setup">
@@ -393,6 +394,17 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         } catch (Exception e) {
         }
 
+        //check for version updates
+        try {
+            String val = GlobalOptions.getProperty("max.density.troops");
+            if (val != null) {
+                jMaxTroopDensity.setText(val);
+            }
+        } catch (Exception e) {
+            jMaxTroopDensity.setText("650000");
+            GlobalOptions.addProperty("max.density.troops", "650000");
+        }
+
         //overwrite markers on import
         try {
             String val = GlobalOptions.getProperty("import.replace.markers");
@@ -669,6 +681,17 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jButton10 = new javax.swing.JButton();
         jLabel38 = new javax.swing.JLabel();
         jPasswordChangeAccount = new javax.swing.JTextField();
+        jTroopDensitySelectionDialog = new javax.swing.JDialog();
+        jLabel40 = new javax.swing.JLabel();
+        jLabel41 = new javax.swing.JLabel();
+        jLabel42 = new javax.swing.JLabel();
+        jLabel43 = new javax.swing.JLabel();
+        jSpearAmount = new javax.swing.JTextField();
+        jSwordAmount = new javax.swing.JTextField();
+        jArcherAmount = new javax.swing.JTextField();
+        jHeavyAmount = new javax.swing.JTextField();
+        jDeffStrengthOKButton = new javax.swing.JButton();
+        jButton12 = new javax.swing.JButton();
         jSettingsTabbedPane = new javax.swing.JTabbedPane();
         jLoginPanel = new javax.swing.JPanel();
         jAccountNameLabel = new javax.swing.JLabel();
@@ -759,6 +782,9 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jReplaceMarkers = new javax.swing.JCheckBox();
         jReplaceTagMarkers = new javax.swing.JCheckBox();
         jLabel39 = new javax.swing.JLabel();
+        jLabel16 = new javax.swing.JLabel();
+        jMaxTroopDensity = new javax.swing.JTextField();
+        jButton8 = new javax.swing.JButton();
         jOKButton = new javax.swing.JButton();
         jCancelButton = new javax.swing.JButton();
         jCreateAccountButton = new javax.swing.JButton();
@@ -1263,6 +1289,118 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 .addContainerGap())
         );
 
+        jTroopDensitySelectionDialog.setTitle(bundle.getString("DSWorkbenchSettingsDialog.jTroopDensitySelectionDialog.title")); // NOI18N
+        jTroopDensitySelectionDialog.setAlwaysOnTop(true);
+        jTroopDensitySelectionDialog.setModal(true);
+
+        jLabel40.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/spear.png"))); // NOI18N
+        jLabel40.setText(bundle.getString("DSWorkbenchSettingsDialog.jLabel40.text")); // NOI18N
+
+        jLabel41.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/sword.png"))); // NOI18N
+        jLabel41.setText(bundle.getString("DSWorkbenchSettingsDialog.jLabel41.text")); // NOI18N
+
+        jLabel42.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/archer.png"))); // NOI18N
+        jLabel42.setText(bundle.getString("DSWorkbenchSettingsDialog.jLabel42.text")); // NOI18N
+
+        jLabel43.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/heavy.png"))); // NOI18N
+        jLabel43.setText(bundle.getString("DSWorkbenchSettingsDialog.jLabel43.text")); // NOI18N
+
+        jSpearAmount.setText(bundle.getString("DSWorkbenchSettingsDialog.jSpearAmount.text")); // NOI18N
+        jSpearAmount.setMaximumSize(new java.awt.Dimension(50, 20));
+        jSpearAmount.setMinimumSize(new java.awt.Dimension(50, 20));
+        jSpearAmount.setPreferredSize(new java.awt.Dimension(50, 20));
+
+        jSwordAmount.setText(bundle.getString("DSWorkbenchSettingsDialog.jSwordAmount.text")); // NOI18N
+        jSwordAmount.setMaximumSize(new java.awt.Dimension(50, 20));
+        jSwordAmount.setMinimumSize(new java.awt.Dimension(50, 20));
+        jSwordAmount.setPreferredSize(new java.awt.Dimension(50, 20));
+
+        jArcherAmount.setText(bundle.getString("DSWorkbenchSettingsDialog.jArcherAmount.text")); // NOI18N
+        jArcherAmount.setMaximumSize(new java.awt.Dimension(50, 20));
+        jArcherAmount.setMinimumSize(new java.awt.Dimension(50, 20));
+        jArcherAmount.setPreferredSize(new java.awt.Dimension(50, 20));
+
+        jHeavyAmount.setText(bundle.getString("DSWorkbenchSettingsDialog.jHeavyAmount.text")); // NOI18N
+        jHeavyAmount.setMaximumSize(new java.awt.Dimension(50, 20));
+        jHeavyAmount.setMinimumSize(new java.awt.Dimension(50, 20));
+        jHeavyAmount.setPreferredSize(new java.awt.Dimension(50, 20));
+
+        jDeffStrengthOKButton.setText(bundle.getString("DSWorkbenchSettingsDialog.jDeffStrengthOKButton.text")); // NOI18N
+        jDeffStrengthOKButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireAcceptDeffStrengthEvent(evt);
+            }
+        });
+
+        jButton12.setText(bundle.getString("DSWorkbenchSettingsDialog.jButton12.text")); // NOI18N
+        jButton12.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireAcceptDeffStrengthEvent(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jTroopDensitySelectionDialogLayout = new javax.swing.GroupLayout(jTroopDensitySelectionDialog.getContentPane());
+        jTroopDensitySelectionDialog.getContentPane().setLayout(jTroopDensitySelectionDialogLayout);
+        jTroopDensitySelectionDialogLayout.setHorizontalGroup(
+            jTroopDensitySelectionDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jTroopDensitySelectionDialogLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jTroopDensitySelectionDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jTroopDensitySelectionDialogLayout.createSequentialGroup()
+                        .addGroup(jTroopDensitySelectionDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jTroopDensitySelectionDialogLayout.createSequentialGroup()
+                                .addComponent(jLabel40)
+                                .addGap(10, 10, 10)
+                                .addComponent(jSpearAmount, javax.swing.GroupLayout.DEFAULT_SIZE, 50, Short.MAX_VALUE))
+                            .addGroup(jTroopDensitySelectionDialogLayout.createSequentialGroup()
+                                .addComponent(jLabel41)
+                                .addGap(10, 10, 10)
+                                .addComponent(jSwordAmount, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jTroopDensitySelectionDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(jTroopDensitySelectionDialogLayout.createSequentialGroup()
+                                .addComponent(jLabel43)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jHeavyAmount, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(jTroopDensitySelectionDialogLayout.createSequentialGroup()
+                                .addComponent(jLabel42)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jArcherAmount, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jTroopDensitySelectionDialogLayout.createSequentialGroup()
+                        .addComponent(jButton12)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jDeffStrengthOKButton)))
+                .addContainerGap())
+        );
+        jTroopDensitySelectionDialogLayout.setVerticalGroup(
+            jTroopDensitySelectionDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jTroopDensitySelectionDialogLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jTroopDensitySelectionDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jTroopDensitySelectionDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jTroopDensitySelectionDialogLayout.createSequentialGroup()
+                            .addComponent(jArcherAmount, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jHeavyAmount, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jTroopDensitySelectionDialogLayout.createSequentialGroup()
+                            .addGroup(jTroopDensitySelectionDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(jLabel42)
+                                .addComponent(jSpearAmount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addGroup(jTroopDensitySelectionDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(jSwordAmount, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel43))))
+                    .addGroup(jTroopDensitySelectionDialogLayout.createSequentialGroup()
+                        .addComponent(jLabel40)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel41)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jTroopDensitySelectionDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jDeffStrengthOKButton)
+                    .addComponent(jButton12))
+                .addContainerGap())
+        );
+
         setTitle(bundle.getString("DSWorkbenchSettingsDialog.title")); // NOI18N
         setAlwaysOnTop(true);
         setModal(true);
@@ -1340,7 +1478,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                     .addComponent(jAccountPasswordLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jCheckAccountButton)
-                .addContainerGap(137, Short.MAX_VALUE))
+                .addContainerGap(121, Short.MAX_VALUE))
         );
 
         jSettingsTabbedPane.addTab(bundle.getString("DSWorkbenchSettingsDialog.jLoginPanel.TabConstraints.tabTitle"), new javax.swing.ImageIcon(getClass().getResource("/res/login.png")), jLoginPanel); // NOI18N
@@ -2043,6 +2181,19 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
 
         jLabel39.setText(bundle.getString("DSWorkbenchSettingsDialog.jLabel39.text")); // NOI18N
 
+        jLabel16.setText(bundle.getString("DSWorkbenchSettingsDialog.jLabel16.text")); // NOI18N
+
+        jMaxTroopDensity.setText(bundle.getString("DSWorkbenchSettingsDialog.jMaxTroopDensity.text")); // NOI18N
+
+        jButton8.setBackground(new java.awt.Color(239, 235, 223));
+        jButton8.setText(bundle.getString("DSWorkbenchSettingsDialog.jButton8.text")); // NOI18N
+        jButton8.setToolTipText(bundle.getString("DSWorkbenchSettingsDialog.jButton8.toolTipText")); // NOI18N
+        jButton8.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireSelectTroopsDensityEvent(evt);
+            }
+        });
+
         javax.swing.GroupLayout jMiscSettingsLayout = new javax.swing.GroupLayout(jMiscSettings);
         jMiscSettings.setLayout(jMiscSettingsLayout);
         jMiscSettingsLayout.setHorizontalGroup(
@@ -2050,20 +2201,29 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             .addGroup(jMiscSettingsLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jMiscSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel14, javax.swing.GroupLayout.DEFAULT_SIZE, 170, Short.MAX_VALUE)
-                    .addComponent(jLabel13, javax.swing.GroupLayout.DEFAULT_SIZE, 170, Short.MAX_VALUE)
-                    .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, 170, Short.MAX_VALUE)
-                    .addGroup(jMiscSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(jLabel39, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel34, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addGroup(jMiscSettingsLayout.createSequentialGroup()
+                        .addGroup(jMiscSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel14, javax.swing.GroupLayout.DEFAULT_SIZE, 170, Short.MAX_VALUE)
+                            .addComponent(jLabel13, javax.swing.GroupLayout.DEFAULT_SIZE, 170, Short.MAX_VALUE)
+                            .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, 170, Short.MAX_VALUE)
+                            .addGroup(jMiscSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addComponent(jLabel39, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jLabel34, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
+                    .addGroup(jMiscSettingsLayout.createSequentialGroup()
+                        .addComponent(jLabel16)
+                        .addGap(25, 25, 25)))
                 .addGroup(jMiscSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jMiscSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                         .addComponent(jNotifyDurationBox, 0, 109, Short.MAX_VALUE)
                         .addComponent(jVillageSortTypeChooser, 0, 109, Short.MAX_VALUE)
                         .addComponent(jInformOnUpdates, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jMiscSettingsLayout.createSequentialGroup()
+                        .addComponent(jMaxTroopDensity, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton8)))
                 .addContainerGap())
         );
         jMiscSettingsLayout.setVerticalGroup(
@@ -2089,7 +2249,12 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 .addGroup(jMiscSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel39, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(132, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addGroup(jMiscSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel16)
+                    .addComponent(jMaxTroopDensity, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton8))
+                .addContainerGap(82, Short.MAX_VALUE))
         );
 
         jSettingsTabbedPane.addTab(bundle.getString("DSWorkbenchSettingsDialog.jMiscSettings.TabConstraints.tabTitle"), new javax.swing.ImageIcon(getClass().getResource("/res/checkbox.png")), jMiscSettings); // NOI18N
@@ -2866,6 +3031,41 @@ private void fireCancelChangePasswordEvent(java.awt.event.MouseEvent evt) {//GEN
     jChangePasswordDialog.setVisible(false);
 }//GEN-LAST:event_fireCancelChangePasswordEvent
 
+private void fireAcceptDeffStrengthEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireAcceptDeffStrengthEvent
+    if (evt.getSource() == jDeffStrengthOKButton) {
+        try {
+            double def = 0;
+            UnitHolder h = DataHolder.getSingleton().getUnitByPlainName("spear");
+            int spear = Integer.parseInt(jSpearAmount.getText());
+            def += h.getDefense() * spear;
+            int sword = Integer.parseInt(jSwordAmount.getText());
+            h = DataHolder.getSingleton().getUnitByPlainName("sword");
+            def += h.getDefense() * sword;
+            int archer = Integer.parseInt(jArcherAmount.getText());
+            h = DataHolder.getSingleton().getUnitByPlainName("archer");
+            if (h != null) {
+                def += h.getDefense() * archer;
+            }
+            int heavy = Integer.parseInt(jHeavyAmount.getText());
+            h = DataHolder.getSingleton().getUnitByPlainName("heavy");
+            def += h.getDefense() * heavy;
+            String result = Integer.toString((int) def);
+            GlobalOptions.addProperty("max.density.troops", result);
+            jMaxTroopDensity.setText(result);
+        } catch (Exception e) {
+            JOptionPaneHelper.showErrorBox(jTroopDensitySelectionDialog, "Bitte überprüfe deine Eingaben.", "Fehler");
+            return;
+        }
+    }
+
+    jTroopDensitySelectionDialog.setVisible(false);
+}//GEN-LAST:event_fireAcceptDeffStrengthEvent
+
+private void fireSelectTroopsDensityEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSelectTroopsDensityEvent
+    jTroopDensitySelectionDialog.setLocationRelativeTo(this);
+    jTroopDensitySelectionDialog.setVisible(true);
+}//GEN-LAST:event_fireSelectTroopsDensityEvent
+
     // </editor-fold>
     /**Update the server list*/
     private boolean updateServerList() {
@@ -3109,6 +3309,7 @@ private void fireCancelChangePasswordEvent(java.awt.event.MouseEvent evt) {//GEN
     private javax.swing.JLabel jAccountNameLabel;
     private javax.swing.JPasswordField jAccountPassword;
     private javax.swing.JLabel jAccountPasswordLabel;
+    private javax.swing.JTextField jArcherAmount;
     private javax.swing.JRadioButton jArcherIcon;
     private javax.swing.JTable jAttackColorTable;
     private javax.swing.JLabel jAttackMovementLabel;
@@ -3119,12 +3320,14 @@ private void fireCancelChangePasswordEvent(java.awt.event.MouseEvent evt) {//GEN
     private javax.swing.JRadioButton jAxeIcon;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton10;
+    private javax.swing.JButton jButton12;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
     private javax.swing.JButton jButton7;
+    private javax.swing.JButton jButton8;
     private javax.swing.JButton jButton9;
     private javax.swing.JButton jCancelButton;
     private javax.swing.JButton jCancelRegistrationButton;
@@ -3136,6 +3339,7 @@ private void fireCancelChangePasswordEvent(java.awt.event.MouseEvent evt) {//GEN
     private javax.swing.JButton jCreateAccountButton;
     private javax.swing.JDialog jCreateAccountDialog;
     private javax.swing.JComboBox jDefaultMarkBox;
+    private javax.swing.JButton jDeffStrengthOKButton;
     private javax.swing.JRadioButton jDirectConnectOption;
     private javax.swing.JButton jDownloadDataButton;
     private javax.swing.JCheckBox jDrawAttacksByDefaultBox;
@@ -3144,6 +3348,7 @@ private void fireCancelChangePasswordEvent(java.awt.event.MouseEvent evt) {//GEN
     private javax.swing.JCheckBox jExportTribeNames;
     private javax.swing.JCheckBox jExportUnit;
     private javax.swing.JComboBox jGraphicPacks;
+    private javax.swing.JTextField jHeavyAmount;
     private javax.swing.JRadioButton jHeavyIcon;
     private javax.swing.JCheckBox jInformOnUpdates;
     private javax.swing.JRadioButton jKnightIcon;
@@ -3154,6 +3359,7 @@ private void fireCancelChangePasswordEvent(java.awt.event.MouseEvent evt) {//GEN
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
+    private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel19;
@@ -3180,6 +3386,10 @@ private void fireCancelChangePasswordEvent(java.awt.event.MouseEvent evt) {//GEN
     private javax.swing.JLabel jLabel38;
     private javax.swing.JLabel jLabel39;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel40;
+    private javax.swing.JLabel jLabel41;
+    private javax.swing.JLabel jLabel42;
+    private javax.swing.JLabel jLabel43;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
@@ -3191,6 +3401,7 @@ private void fireCancelChangePasswordEvent(java.awt.event.MouseEvent evt) {//GEN
     private javax.swing.JRadioButton jMarcherIcon;
     private javax.swing.JCheckBox jMarkActiveVillageBox;
     private javax.swing.JCheckBox jMarkOwnVillagesOnMinimapBox;
+    private javax.swing.JTextField jMaxTroopDensity;
     private javax.swing.JPanel jMiscSettings;
     private javax.swing.JPanel jNetworkSettings;
     private javax.swing.JPasswordField jNewPassword;
@@ -3246,9 +3457,11 @@ private void fireCancelChangePasswordEvent(java.awt.event.MouseEvent evt) {//GEN
     private javax.swing.JCheckBox jShowSectorsBox;
     private javax.swing.JLabel jSkinPackLabel;
     private javax.swing.JRadioButton jSnobIcon;
+    private javax.swing.JTextField jSpearAmount;
     private javax.swing.JRadioButton jSpearIcon;
     private javax.swing.JRadioButton jSpyIcon;
     private javax.swing.JTextArea jStatusArea;
+    private javax.swing.JTextField jSwordAmount;
     private javax.swing.JRadioButton jSwordIcon;
     private javax.swing.JDialog jTagAddDialog;
     private javax.swing.JPanel jTagColorPanel;
@@ -3258,6 +3471,7 @@ private void fireCancelChangePasswordEvent(java.awt.event.MouseEvent evt) {//GEN
     private javax.swing.JTable jTagTable;
     private javax.swing.JPanel jTagsSettings;
     private javax.swing.JComboBox jTribeNames;
+    private javax.swing.JDialog jTroopDensitySelectionDialog;
     private javax.swing.JCheckBox jTroopsTypeBox;
     private javax.swing.JComboBox jVillageSortTypeChooser;
     private javax.swing.ButtonGroup tagMarkerGroup;

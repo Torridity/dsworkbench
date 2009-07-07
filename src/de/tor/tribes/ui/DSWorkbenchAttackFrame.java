@@ -55,6 +55,7 @@ import org.apache.log4j.Logger;
 
 /**
  * @TODO (DIFF) Max. 10 attacks sendable to browser
+ * @TODO (DIFF) Cleanup-Button
  * @author  Charon
  */
 public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements AttackManagerListener {
@@ -239,6 +240,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         jScrollPane4 = new javax.swing.JScrollPane();
         jTaskPane1 = new com.l2fprod.common.swing.JTaskPane();
         jTaskPaneGroup1 = new com.l2fprod.common.swing.JTaskPaneGroup();
+        jCleanupAttacksButton = new javax.swing.JButton();
         jRemoveAttackButton = new javax.swing.JButton();
         jCopyAttackButton = new javax.swing.JButton();
         jMoveAttacksButton = new javax.swing.JButton();
@@ -1026,6 +1028,17 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         percentLayout2.setOrientation(1);
         jTaskPaneGroup1.getContentPane().setLayout(percentLayout2);
 
+        jCleanupAttacksButton.setBackground(new java.awt.Color(239, 235, 223));
+        jCleanupAttacksButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/garbage.png"))); // NOI18N
+        jCleanupAttacksButton.setText(bundle.getString("DSWorkbenchAttackFrame.jCleanupAttacksButton.text")); // NOI18N
+        jCleanupAttacksButton.setToolTipText(bundle.getString("DSWorkbenchAttackFrame.jCleanupAttacksButton.toolTipText")); // NOI18N
+        jCleanupAttacksButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireCleanUpAttacksEvent(evt);
+            }
+        });
+        jTaskPaneGroup1.getContentPane().add(jCleanupAttacksButton);
+
         jRemoveAttackButton.setBackground(new java.awt.Color(239, 235, 223));
         jRemoveAttackButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_remove.png"))); // NOI18N
         jRemoveAttackButton.setText(bundle.getString("DSWorkbenchAttackFrame.jRemoveAttackButton.text")); // NOI18N
@@ -1225,9 +1238,9 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
                         .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 641, Short.MAX_VALUE))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 636, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         jAttackPanelLayout.setVerticalGroup(
@@ -2202,6 +2215,28 @@ private void fireWriteToHTMLEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
     }
 }//GEN-LAST:event_fireWriteToHTMLEvent
 
+private void fireCleanUpAttacksEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCleanUpAttacksEvent
+    String selectedPlan = AttackManagerTableModel.getSingleton().getActiveAttackPlan();
+    List<Attack> attacks = AttackManager.getSingleton().getAttackPlan(selectedPlan);
+    List<Attack> toRemove = new LinkedList<Attack>();
+    for (Attack a : attacks) {
+        long sendTime = a.getArriveTime().getTime() - ((long) DSCalculator.calculateMoveTimeInSeconds(a.getSource(), a.getTarget(), a.getUnit().getSpeed()) * 1000);
+        if (sendTime < System.currentTimeMillis()) {
+            toRemove.add(a);
+        }
+    }
+
+    logger.debug("Cleaning up " + toRemove.size() + " attacks");
+
+    for (Attack a : toRemove) {
+        AttackManager.getSingleton().getAttackPlan(selectedPlan).remove(a);
+    }
+
+    AttackManager.getSingleton().forceUpdate(selectedPlan);
+
+
+}//GEN-LAST:event_fireCleanUpAttacksEvent
+
     /**Set table model for filteres selection*/
     private void setTableModel(JTable pTable, Hashtable<Village, Boolean> pVillages) {
         //create default table model
@@ -2334,6 +2369,7 @@ private void fireWriteToHTMLEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
     private javax.swing.JButton jCancelButton;
     private javax.swing.JButton jCancelCopyButton;
     private javax.swing.JButton jChangeArrivalButton;
+    private javax.swing.JButton jCleanupAttacksButton;
     private javax.swing.JButton jCopyAttackButton;
     private javax.swing.JButton jCopyBBCodeToClipboardButton;
     private javax.swing.JButton jCopyBBCodeToClipboardButton1;

@@ -18,7 +18,6 @@ import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.DSWorkbenchMainFrame;
-import de.tor.tribes.ui.DSWorkbenchTroopsFrame;
 import de.tor.tribes.ui.FormConfigFrame;
 import de.tor.tribes.ui.ImageManager;
 import de.tor.tribes.ui.MapPanel;
@@ -45,16 +44,21 @@ import java.awt.Composite;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Paint;
 import java.awt.PaintContext;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
-import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.Toolkit;
+import java.awt.Transparency;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Arc2D;
+import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
@@ -63,7 +67,6 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.Raster;
-import java.awt.image.VolatileImage;
 import java.awt.image.WritableRaster;
 import java.io.File;
 import java.text.NumberFormat;
@@ -118,7 +121,7 @@ public class MapRenderer extends Thread {
     private Point2D.Double viewStartPoint = null;
     private double currentZoom = 0.0;
     private Village currentUserVillage = null;
-    private VolatileImage mMainBuffer = null;
+    private BufferedImage mMainBuffer = null;
     private BufferedImage mConquerWarning = null;
     //private Path2D.Double ARROW = createArrow(0);
     private List<Integer> drawOrder = null;
@@ -146,6 +149,14 @@ public class MapRenderer extends Thread {
         drawOrder = new LinkedList<Integer>(pDrawOrder);
     }
 
+    public BufferedImage getBufferedImage(int w, int h, int trans) {
+        GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsDevice device = env.getDefaultScreenDevice();
+        GraphicsConfiguration config = device.getDefaultConfiguration();
+        BufferedImage buffy = config.createCompatibleImage(w, h, trans);
+        return buffy;
+    }
+
     /**Complete redraw on resize or scroll*/
     public void initiateRedraw(int pType) {
         mapRedrawRequired = true;
@@ -164,7 +175,7 @@ public class MapRenderer extends Thread {
                     if (mMainBuffer == null) {
                         //create main buffer during first iteration
                         //mMainBuffer = MapPanel.getSingleton().createImage(w, h);
-                        mMainBuffer = MapPanel.getSingleton().createVolatileImage(w, h);
+                        mMainBuffer = getBufferedImage(w, h, Transparency.TRANSLUCENT);//MapPanel.getSingleton().createImage(w, h);
                         g2d = (Graphics2D) mMainBuffer.getGraphics();
                         prepareGraphics(g2d);
                         //set redraw required flag if nothin was drawn yet
@@ -174,7 +185,7 @@ public class MapRenderer extends Thread {
                         //if not re-create main buffer
                         if (mMainBuffer.getWidth(null) != w || mMainBuffer.getHeight(null) != h) {
                             //map panel has resized
-                            mMainBuffer = MapPanel.getSingleton().createVolatileImage(w, h);
+                            mMainBuffer = getBufferedImage(w, h, Transparency.TRANSLUCENT);//MapPanel.getSingleton().createImage(w, h);
 
                             g2d = (Graphics2D) mMainBuffer.getGraphics();
                             prepareGraphics(g2d);
@@ -192,6 +203,7 @@ public class MapRenderer extends Thread {
                     //get currently selected user village for marking -> one call reduces sync effort
                     currentUserVillage = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage();
                     if (mapRedrawRequired) {
+                        mapRedrawRequired = false;
                         //complete redraw is required
                         calculateVisibleVillages();
                         if (viewStartPoint == null) {
@@ -200,6 +212,7 @@ public class MapRenderer extends Thread {
                         renderMap();
                         renderTagMarkers();
                     }
+
                     //render misc map elements needed  to be redrawn in every iteration
                     boolean markOnTop = Boolean.parseBoolean(GlobalOptions.getProperty("mark.on.top"));
                     if (markOnTop) {
@@ -229,9 +242,10 @@ public class MapRenderer extends Thread {
                             //attacks layer
                             renderAttacks(g2d);
                         } else if (layer == 4) {
-                            //forms, churches
+                            //forms
                             renderForms(g2d);
                         } else if (layer == 5) {
+                            //curches
                             renderChurches(g2d);
                         }
                     }
@@ -373,7 +387,7 @@ public class MapRenderer extends Thread {
         Graphics2D g2d = null;
         //prepare drawing buffer
         if (mLayers.get(MAP_LAYER) == null) {
-            layer = new BufferedImage(wb, hb, BufferedImage.TYPE_INT_ARGB);
+            layer = getBufferedImage(wb, hb, Transparency.TRANSLUCENT);//new BufferedImage(wb, hb, BufferedImage.TYPE_INT_ARGB);
             mLayers.put(MAP_LAYER, layer);
             g2d = layer.createGraphics();
             prepareGraphics(g2d);
@@ -382,7 +396,7 @@ public class MapRenderer extends Thread {
             layer = mLayers.get(MAP_LAYER);
             if (layer.getWidth() != wb || layer.getHeight() != hb) {
                 //mappanel has resized
-                layer = new BufferedImage(wb, hb, BufferedImage.TYPE_INT_ARGB);
+                layer = getBufferedImage(wb, hb, Transparency.TRANSLUCENT);//new BufferedImage(wb, hb, BufferedImage.TYPE_INT_ARGB);
                 mLayers.put(MAP_LAYER, layer);
                 g2d = layer.createGraphics();
                 prepareGraphics(g2d);
@@ -792,7 +806,6 @@ public class MapRenderer extends Thread {
         }*/
 
         g2d.dispose();
-        mapRedrawRequired = false;
     }
 
     /**Render tag markers*/
@@ -810,14 +823,14 @@ public class MapRenderer extends Thread {
         Graphics2D g2d = null;
         //prepare drawing buffer
         if (mLayers.get(TAG_MARKER_LAYER) == null) {
-            layer = new BufferedImage(wb, hb, BufferedImage.TYPE_INT_ARGB);
+            layer = getBufferedImage(wb, hb, Transparency.TRANSLUCENT);//new BufferedImage(wb, hb, BufferedImage.TYPE_INT_ARGB);
             mLayers.put(TAG_MARKER_LAYER, layer);
             g2d = layer.createGraphics();
             prepareGraphics(g2d);
         } else {
             layer = mLayers.get(TAG_MARKER_LAYER);
             if (layer.getWidth() != wb || layer.getHeight() != hb) {
-                layer = new BufferedImage(wb, hb, BufferedImage.TYPE_INT_ARGB);
+                layer = getBufferedImage(wb, hb, Transparency.TRANSLUCENT);//new BufferedImage(wb, hb, BufferedImage.TYPE_INT_ARGB);
                 mLayers.put(TAG_MARKER_LAYER, layer);
                 g2d = layer.createGraphics();
                 prepareGraphics(g2d);
@@ -937,14 +950,14 @@ public class MapRenderer extends Thread {
         Graphics2D g2d = null;
         //prepare drawing buffer
         if (mLayers.get(NOTE_LAYER) == null) {
-            layer = new BufferedImage(wb, hb, BufferedImage.TYPE_INT_ARGB);
+            layer = getBufferedImage(wb, hb, Transparency.TRANSLUCENT);//new BufferedImage(wb, hb, BufferedImage.TYPE_INT_ARGB);
             mLayers.put(NOTE_LAYER, layer);
             g2d = layer.createGraphics();
             prepareGraphics(g2d);
         } else {
             layer = mLayers.get(NOTE_LAYER);
             if (layer.getWidth() != wb || layer.getHeight() != hb) {
-                layer = new BufferedImage(wb, hb, BufferedImage.TYPE_INT_ARGB);
+                layer = getBufferedImage(wb, hb, Transparency.TRANSLUCENT);//new BufferedImage(wb, hb, BufferedImage.TYPE_INT_ARGB);
                 mLayers.put(NOTE_LAYER, layer);
                 g2d = layer.createGraphics();
                 prepareGraphics(g2d);
@@ -1134,7 +1147,6 @@ public class MapRenderer extends Thread {
             if (showTroopDensity) {
                 VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(v);
                 if (holder != null) {
-                    double def = holder.getDefValue(TroopsManagerTableModel.SHOW_TROOPS_IN_VILLAGE);
                     values.put(v, holder);
                 }
             }
@@ -1149,43 +1161,66 @@ public class MapRenderer extends Thread {
                 }
             }
         }
-
         if (showTroopDensity) {
             Enumeration<Village> keys = values.keys();
             while (keys.hasMoreElements()) {
                 Village v = keys.nextElement();
-
                 Rectangle villageRect = villagePositions.get(v);
                 VillageTroopsHolder holder = values.get(v);
                 double defIn = holder.getDefValue(TroopsManagerTableModel.SHOW_TROOPS_IN_VILLAGE);
                 double defOwn = holder.getDefValue(TroopsManagerTableModel.SHOW_OWN_TROOPS);
-                double perc = defIn / maxDef;
-                //limit to 100%
-                perc = (perc > 1) ? 1 : perc;
+                double percOfMax = defIn / maxDef;
                 double percOwn = defOwn / defIn;
-                int alpha = (int) Math.rint(perc * 60);
-                alpha = (alpha > 80) ? 80 : alpha;
-                alpha = 110 - alpha;
+                double percForeign = 1 - percOwn;
+                //limit to 100%
+                percOfMax = (percOfMax > 1) ? 1 : percOfMax;
 
-                int r = (int) Math.rint((float) 255 * (1.0f - perc) + (float) 180 * perc);
-                int g = (int) Math.rint((float) 0 * (1.0f - perc) + (float) 255 * perc);
-                int b = (int) Math.rint((float) 0 * (1.0f - perc) + (float) 0 * perc);
+                //calculate density color
+                int r = (int) Math.rint((1 - percOfMax) * 255);
+                int g = (int) Math.rint(percOfMax * 255);
+                //the less the densit is the more alpha comes to its full value
+                int alpha2 = (int) Math.rint((1 - percOfMax) * 255);
+                if (alpha2 < 60) {
+                    //limit alpha min to 60
+                    alpha2 = 60;
+                }
+                Color c = new Color(r, g, 0, alpha2);
 
-                //Color c = new Color(0, 255, 0, alpha);
-                Color c = new Color(r, g, b, alpha);
-                int size = (int) Math.rint(perc * 5 * villageRect.width);
+                //calculate circle size
+                int size = (int) Math.rint(percOfMax * 3 * villageRect.width);
+                if (size < 0.5 * villageRect.width) {
+                    //limit min. size to half a village size
+                    size = (int) Math.rint(0.5 * villageRect.width);
+                }
                 if (size > 0) {
                     Color cb = g2d.getColor();
-                    g2d.setColor(c);
+                    g2d.setColor(Color.BLACK);
+                    int partOwn = (int) Math.rint(360 * percOwn);
+                    int partForeign = (int) Math.rint(360 * percForeign);
+                   // if (partOwn != 360) {
+                        //fill part dark (own) or light (foreign)
+                        //g2d.setColor(new Color(0, 0, 0, 60));
+                        g2d.setColor(new Color(0, 0, 0, 60));
+                        g2d.fill(new Arc2D.Double(villageRect.x - (int) Math.rint((size - villageRect.width) / 2), villageRect.y - (int) Math.rint((size - villageRect.height) / 2), size, size, 0, partOwn, Arc2D.PIE));
+                        g2d.setColor(c);
+                        g2d.fill(new Arc2D.Double(villageRect.x - (int) Math.rint((size - villageRect.width) / 2), villageRect.y - (int) Math.rint((size - villageRect.height) / 2), size, size, partOwn, partForeign, Arc2D.PIE));
+                    //g2d.setColor(blacl);
+                    //g2d.fill(new Arc2D.Double(villageRect.x - (int) Math.rint((size - villageRect.width) / 2), villageRect.y - (int) Math.rint((size - villageRect.height) / 2), size, size, 0, partOwn, Arc2D.PIE));
+                   // }
+                    //fill with density color
 
-                    g2d.fillArc(villageRect.x - (int) Math.rint((size - villageRect.width) / 2), villageRect.y - (int) Math.rint((size - villageRect.height) / 2), size, size, 0, (int) (360 * percOwn));
-                    g2d.setColor(Color.GREEN);
-                    g2d.fillArc(villageRect.x - (int) Math.rint((size - villageRect.width) / 2), villageRect.y - (int) Math.rint((size - villageRect.height) / 2), size, size, 0, (int) (1 - 360 * percOwn));
-//                    g2d.fillOval(villageRect.x - (int) Math.rint((size - villageRect.width) / 2), villageRect.y - (int) Math.rint((size - villageRect.height) / 2), size, size);// 3 * villageRect.width, 3 * villageRect.height);
+
+
+                    Ellipse2D.Double ed = new Ellipse2D.Double(villageRect.x - (int) Math.rint((size - villageRect.width) / 2), villageRect.y - (int) Math.rint((size - villageRect.height) / 2), size, size);
+                    g2d.setColor(Color.BLACK);
+                    g2d.draw(ed);
+                   // g2d.setColor(c);
+                   // g2d.fill(ed);
                     g2d.setColor(cb);
                 }
             }
         }
+    // System.out.println("DecoDraw " + (System.currentTimeMillis() - s));
     }
 
     /**Render attack vectors*/

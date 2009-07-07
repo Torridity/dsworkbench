@@ -67,7 +67,6 @@ public class TroopInfoChartPanel extends javax.swing.JPanel {
             double percOnTheWay = (ontheway != 0) ? ((double) ontheway / (double) overall) : 0;
 
             g2d.setColor(Color.GREEN);
-
             g2d.fillArc(0, 0, getWidth(), getWidth(), 0, (int) Math.rint(360 * percInVillage));
             g2d.setColor(Color.BLUE);
             g2d.fillArc(0, 0, getWidth(), getWidth(), 0, (int) Math.rint(360 * percOwn));

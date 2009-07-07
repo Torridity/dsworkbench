@@ -167,12 +167,14 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel1 = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jVillageList = new javax.swing.JList();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        jNotePane = new javax.swing.JEditorPane();
-        jPanel2 = new javax.swing.JPanel();
+        jFormatPanel = new javax.swing.JPanel();
+        jBoldButton = new javax.swing.JButton();
+        jItalicButton = new javax.swing.JButton();
+        jUnderlineButton = new javax.swing.JButton();
+        jLeftButton = new javax.swing.JButton();
+        jCenterButton = new javax.swing.JButton();
+        jRightButton = new javax.swing.JButton();
+        jColorPanel = new javax.swing.JPanel();
         jBlackColorButton = new javax.swing.JButton();
         jRedColorButton = new javax.swing.JButton();
         jGreenColorButton = new javax.swing.JButton();
@@ -181,20 +183,18 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame {
         jVioletColorButton = new javax.swing.JButton();
         jPinkColorButton = new javax.swing.JButton();
         jCyanColorButton = new javax.swing.JButton();
-        jPanel3 = new javax.swing.JPanel();
+        jSizePanel = new javax.swing.JPanel();
         jSize10Button = new javax.swing.JButton();
         jSize12Button = new javax.swing.JButton();
         jSize14Button = new javax.swing.JButton();
         jSize18Button = new javax.swing.JButton();
         jSize20Button = new javax.swing.JButton();
         jSize28Button = new javax.swing.JButton();
-        jPanel4 = new javax.swing.JPanel();
-        jBoldButton = new javax.swing.JButton();
-        jItalicButton = new javax.swing.JButton();
-        jUnderlineButton = new javax.swing.JButton();
-        jLeftButton = new javax.swing.JButton();
-        jCenterButton = new javax.swing.JButton();
-        jRightButton = new javax.swing.JButton();
+        jPanel1 = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jVillageList = new javax.swing.JList();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jNotePane = new javax.swing.JEditorPane();
         jButton1 = new javax.swing.JButton();
         jAddVillageField = new javax.swing.JTextField();
         jButton2 = new javax.swing.JButton();
@@ -212,6 +212,148 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame {
         jLabel2 = new javax.swing.JLabel();
         jCheckBox1 = new javax.swing.JCheckBox();
 
+        jFormatPanel.setMaximumSize(new java.awt.Dimension(121, 48));
+        jFormatPanel.setLayout(new java.awt.GridLayout(2, 3, 2, 2));
+
+        jBoldButton.setBackground(new java.awt.Color(239, 235, 223));
+        jBoldButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/text_bold.png"))); // NOI18N
+        jBoldButton.setMaximumSize(new java.awt.Dimension(39, 25));
+        jBoldButton.setMinimumSize(new java.awt.Dimension(39, 25));
+        jBoldButton.setPreferredSize(new java.awt.Dimension(39, 25));
+        jFormatPanel.add(jBoldButton);
+
+        jItalicButton.setBackground(new java.awt.Color(239, 235, 223));
+        jItalicButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/text_italics.png"))); // NOI18N
+        jItalicButton.setMaximumSize(new java.awt.Dimension(39, 25));
+        jItalicButton.setMinimumSize(new java.awt.Dimension(39, 25));
+        jItalicButton.setPreferredSize(new java.awt.Dimension(39, 25));
+        jFormatPanel.add(jItalicButton);
+
+        jUnderlineButton.setBackground(new java.awt.Color(239, 235, 223));
+        jUnderlineButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/text_underlined.png"))); // NOI18N
+        jUnderlineButton.setMaximumSize(new java.awt.Dimension(39, 25));
+        jUnderlineButton.setMinimumSize(new java.awt.Dimension(39, 25));
+        jUnderlineButton.setPreferredSize(new java.awt.Dimension(39, 25));
+        jFormatPanel.add(jUnderlineButton);
+
+        jLeftButton.setBackground(new java.awt.Color(239, 235, 223));
+        jLeftButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/text_align_left.png"))); // NOI18N
+        jLeftButton.setMaximumSize(new java.awt.Dimension(39, 25));
+        jLeftButton.setMinimumSize(new java.awt.Dimension(39, 25));
+        jLeftButton.setPreferredSize(new java.awt.Dimension(39, 25));
+        jFormatPanel.add(jLeftButton);
+
+        jCenterButton.setBackground(new java.awt.Color(239, 235, 223));
+        jCenterButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/text_align_center.png"))); // NOI18N
+        jCenterButton.setMaximumSize(new java.awt.Dimension(39, 25));
+        jCenterButton.setMinimumSize(new java.awt.Dimension(39, 25));
+        jCenterButton.setPreferredSize(new java.awt.Dimension(39, 25));
+        jFormatPanel.add(jCenterButton);
+
+        jRightButton.setBackground(new java.awt.Color(239, 235, 223));
+        jRightButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/text_align_right.png"))); // NOI18N
+        jRightButton.setMaximumSize(new java.awt.Dimension(39, 25));
+        jRightButton.setMinimumSize(new java.awt.Dimension(39, 25));
+        jRightButton.setPreferredSize(new java.awt.Dimension(39, 25));
+        jFormatPanel.add(jRightButton);
+
+        jColorPanel.setLayout(new java.awt.GridLayout(2, 2, 2, 2));
+
+        jBlackColorButton.setBackground(new java.awt.Color(0, 0, 0));
+        jBlackColorButton.setMargin(new java.awt.Insets(2, 10, 2, 10));
+        jBlackColorButton.setMaximumSize(new java.awt.Dimension(25, 25));
+        jBlackColorButton.setMinimumSize(new java.awt.Dimension(25, 25));
+        jBlackColorButton.setPreferredSize(new java.awt.Dimension(25, 25));
+        jColorPanel.add(jBlackColorButton);
+
+        jRedColorButton.setBackground(new java.awt.Color(255, 0, 0));
+        jRedColorButton.setMargin(new java.awt.Insets(2, 10, 2, 10));
+        jRedColorButton.setMaximumSize(new java.awt.Dimension(25, 25));
+        jRedColorButton.setMinimumSize(new java.awt.Dimension(25, 25));
+        jRedColorButton.setPreferredSize(new java.awt.Dimension(25, 25));
+        jColorPanel.add(jRedColorButton);
+
+        jGreenColorButton.setBackground(new java.awt.Color(0, 255, 0));
+        jGreenColorButton.setMargin(new java.awt.Insets(2, 10, 2, 10));
+        jGreenColorButton.setMaximumSize(new java.awt.Dimension(25, 25));
+        jGreenColorButton.setMinimumSize(new java.awt.Dimension(25, 25));
+        jGreenColorButton.setPreferredSize(new java.awt.Dimension(25, 25));
+        jColorPanel.add(jGreenColorButton);
+
+        jBlueColorButton.setBackground(new java.awt.Color(0, 0, 255));
+        jBlueColorButton.setMargin(new java.awt.Insets(2, 10, 2, 10));
+        jBlueColorButton.setMaximumSize(new java.awt.Dimension(25, 25));
+        jBlueColorButton.setMinimumSize(new java.awt.Dimension(25, 25));
+        jBlueColorButton.setPreferredSize(new java.awt.Dimension(25, 25));
+        jColorPanel.add(jBlueColorButton);
+
+        jOrangeColorButton.setBackground(new java.awt.Color(255, 102, 0));
+        jOrangeColorButton.setMargin(new java.awt.Insets(2, 10, 2, 10));
+        jOrangeColorButton.setMaximumSize(new java.awt.Dimension(25, 25));
+        jOrangeColorButton.setMinimumSize(new java.awt.Dimension(25, 25));
+        jOrangeColorButton.setPreferredSize(new java.awt.Dimension(25, 25));
+        jColorPanel.add(jOrangeColorButton);
+
+        jVioletColorButton.setBackground(new java.awt.Color(153, 153, 255));
+        jVioletColorButton.setMargin(new java.awt.Insets(2, 10, 2, 10));
+        jVioletColorButton.setMaximumSize(new java.awt.Dimension(25, 25));
+        jVioletColorButton.setMinimumSize(new java.awt.Dimension(25, 25));
+        jVioletColorButton.setPreferredSize(new java.awt.Dimension(25, 25));
+        jColorPanel.add(jVioletColorButton);
+
+        jPinkColorButton.setBackground(new java.awt.Color(255, 0, 204));
+        jPinkColorButton.setMargin(new java.awt.Insets(2, 10, 2, 10));
+        jPinkColorButton.setMaximumSize(new java.awt.Dimension(25, 25));
+        jPinkColorButton.setMinimumSize(new java.awt.Dimension(25, 25));
+        jPinkColorButton.setPreferredSize(new java.awt.Dimension(25, 25));
+        jColorPanel.add(jPinkColorButton);
+
+        jCyanColorButton.setBackground(new java.awt.Color(51, 255, 255));
+        jCyanColorButton.setMargin(new java.awt.Insets(2, 10, 2, 10));
+        jCyanColorButton.setMaximumSize(new java.awt.Dimension(25, 25));
+        jCyanColorButton.setMinimumSize(new java.awt.Dimension(25, 25));
+        jCyanColorButton.setPreferredSize(new java.awt.Dimension(25, 25));
+        jColorPanel.add(jCyanColorButton);
+
+        jSizePanel.setMaximumSize(new java.awt.Dimension(121, 48));
+        jSizePanel.setLayout(new java.awt.GridLayout(2, 2, 2, 2));
+
+        jSize10Button.setBackground(new java.awt.Color(239, 235, 223));
+        jSize10Button.setFont(new java.awt.Font("SansSerif", 0, 11));
+        jSize10Button.setText("10");
+        jSize10Button.setMargin(new java.awt.Insets(2, 10, 2, 10));
+        jSizePanel.add(jSize10Button);
+
+        jSize12Button.setBackground(new java.awt.Color(239, 235, 223));
+        jSize12Button.setFont(new java.awt.Font("SansSerif", 0, 11));
+        jSize12Button.setText("12");
+        jSize12Button.setMargin(new java.awt.Insets(2, 10, 2, 10));
+        jSizePanel.add(jSize12Button);
+
+        jSize14Button.setBackground(new java.awt.Color(239, 235, 223));
+        jSize14Button.setFont(new java.awt.Font("SansSerif", 0, 11));
+        jSize14Button.setText("14");
+        jSize14Button.setMargin(new java.awt.Insets(2, 10, 2, 10));
+        jSizePanel.add(jSize14Button);
+
+        jSize18Button.setBackground(new java.awt.Color(239, 235, 223));
+        jSize18Button.setFont(new java.awt.Font("SansSerif", 0, 11));
+        jSize18Button.setText("18");
+        jSize18Button.setMargin(new java.awt.Insets(2, 10, 2, 10));
+        jSizePanel.add(jSize18Button);
+
+        jSize20Button.setBackground(new java.awt.Color(239, 235, 223));
+        jSize20Button.setFont(new java.awt.Font("SansSerif", 0, 11));
+        jSize20Button.setText("20");
+        jSize20Button.setMargin(new java.awt.Insets(2, 10, 2, 10));
+        jSizePanel.add(jSize20Button);
+
+        jSize28Button.setBackground(new java.awt.Color(239, 235, 223));
+        jSize28Button.setFont(new java.awt.Font("SansSerif", 0, 11));
+        jSize28Button.setText("28");
+        jSize28Button.setMargin(new java.awt.Insets(2, 10, 2, 10));
+        jSizePanel.add(jSize28Button);
+
         setTitle("Notizen");
 
         jPanel1.setBackground(new java.awt.Color(239, 235, 223));
@@ -220,156 +362,12 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame {
         jScrollPane1.setViewportView(jVillageList);
 
         jNotePane.setBackground(new java.awt.Color(255, 255, 204));
-        jNotePane.setContentType("text/html");
-        jNotePane.setText("<html>\r\n  <head>\r\n\r\n  </head>\r\n  <body>\r\n    <p style=\"margin-top: 0\">\r\n    </p>\r\n  </body>\r\n</html>\r\n");
         jNotePane.addCaretListener(new javax.swing.event.CaretListener() {
             public void caretUpdate(javax.swing.event.CaretEvent evt) {
                 fireCaretUpdateEvent(evt);
             }
         });
         jScrollPane2.setViewportView(jNotePane);
-
-        jPanel2.setLayout(new java.awt.GridLayout(2, 2, 2, 2));
-
-        jBlackColorButton.setBackground(new java.awt.Color(0, 0, 0));
-        jBlackColorButton.setMargin(new java.awt.Insets(2, 10, 2, 10));
-        jBlackColorButton.setMaximumSize(new java.awt.Dimension(25, 25));
-        jBlackColorButton.setMinimumSize(new java.awt.Dimension(25, 25));
-        jBlackColorButton.setPreferredSize(new java.awt.Dimension(25, 25));
-        jPanel2.add(jBlackColorButton);
-
-        jRedColorButton.setBackground(new java.awt.Color(255, 0, 0));
-        jRedColorButton.setMargin(new java.awt.Insets(2, 10, 2, 10));
-        jRedColorButton.setMaximumSize(new java.awt.Dimension(25, 25));
-        jRedColorButton.setMinimumSize(new java.awt.Dimension(25, 25));
-        jRedColorButton.setPreferredSize(new java.awt.Dimension(25, 25));
-        jPanel2.add(jRedColorButton);
-
-        jGreenColorButton.setBackground(new java.awt.Color(0, 255, 0));
-        jGreenColorButton.setMargin(new java.awt.Insets(2, 10, 2, 10));
-        jGreenColorButton.setMaximumSize(new java.awt.Dimension(25, 25));
-        jGreenColorButton.setMinimumSize(new java.awt.Dimension(25, 25));
-        jGreenColorButton.setPreferredSize(new java.awt.Dimension(25, 25));
-        jPanel2.add(jGreenColorButton);
-
-        jBlueColorButton.setBackground(new java.awt.Color(0, 0, 255));
-        jBlueColorButton.setMargin(new java.awt.Insets(2, 10, 2, 10));
-        jBlueColorButton.setMaximumSize(new java.awt.Dimension(25, 25));
-        jBlueColorButton.setMinimumSize(new java.awt.Dimension(25, 25));
-        jBlueColorButton.setPreferredSize(new java.awt.Dimension(25, 25));
-        jPanel2.add(jBlueColorButton);
-
-        jOrangeColorButton.setBackground(new java.awt.Color(255, 102, 0));
-        jOrangeColorButton.setMargin(new java.awt.Insets(2, 10, 2, 10));
-        jOrangeColorButton.setMaximumSize(new java.awt.Dimension(25, 25));
-        jOrangeColorButton.setMinimumSize(new java.awt.Dimension(25, 25));
-        jOrangeColorButton.setPreferredSize(new java.awt.Dimension(25, 25));
-        jPanel2.add(jOrangeColorButton);
-
-        jVioletColorButton.setBackground(new java.awt.Color(153, 153, 255));
-        jVioletColorButton.setMargin(new java.awt.Insets(2, 10, 2, 10));
-        jVioletColorButton.setMaximumSize(new java.awt.Dimension(25, 25));
-        jVioletColorButton.setMinimumSize(new java.awt.Dimension(25, 25));
-        jVioletColorButton.setPreferredSize(new java.awt.Dimension(25, 25));
-        jPanel2.add(jVioletColorButton);
-
-        jPinkColorButton.setBackground(new java.awt.Color(255, 0, 204));
-        jPinkColorButton.setMargin(new java.awt.Insets(2, 10, 2, 10));
-        jPinkColorButton.setMaximumSize(new java.awt.Dimension(25, 25));
-        jPinkColorButton.setMinimumSize(new java.awt.Dimension(25, 25));
-        jPinkColorButton.setPreferredSize(new java.awt.Dimension(25, 25));
-        jPanel2.add(jPinkColorButton);
-
-        jCyanColorButton.setBackground(new java.awt.Color(51, 255, 255));
-        jCyanColorButton.setMargin(new java.awt.Insets(2, 10, 2, 10));
-        jCyanColorButton.setMaximumSize(new java.awt.Dimension(25, 25));
-        jCyanColorButton.setMinimumSize(new java.awt.Dimension(25, 25));
-        jCyanColorButton.setPreferredSize(new java.awt.Dimension(25, 25));
-        jPanel2.add(jCyanColorButton);
-
-        jPanel3.setMaximumSize(new java.awt.Dimension(121, 48));
-        jPanel3.setLayout(new java.awt.GridLayout(2, 2, 2, 2));
-
-        jSize10Button.setBackground(new java.awt.Color(239, 235, 223));
-        jSize10Button.setFont(new java.awt.Font("SansSerif", 0, 11)); // NOI18N
-        jSize10Button.setText("10");
-        jSize10Button.setMargin(new java.awt.Insets(2, 10, 2, 10));
-        jPanel3.add(jSize10Button);
-
-        jSize12Button.setBackground(new java.awt.Color(239, 235, 223));
-        jSize12Button.setFont(new java.awt.Font("SansSerif", 0, 11)); // NOI18N
-        jSize12Button.setText("12");
-        jSize12Button.setMargin(new java.awt.Insets(2, 10, 2, 10));
-        jPanel3.add(jSize12Button);
-
-        jSize14Button.setBackground(new java.awt.Color(239, 235, 223));
-        jSize14Button.setFont(new java.awt.Font("SansSerif", 0, 11)); // NOI18N
-        jSize14Button.setText("14");
-        jSize14Button.setMargin(new java.awt.Insets(2, 10, 2, 10));
-        jPanel3.add(jSize14Button);
-
-        jSize18Button.setBackground(new java.awt.Color(239, 235, 223));
-        jSize18Button.setFont(new java.awt.Font("SansSerif", 0, 11)); // NOI18N
-        jSize18Button.setText("18");
-        jSize18Button.setMargin(new java.awt.Insets(2, 10, 2, 10));
-        jPanel3.add(jSize18Button);
-
-        jSize20Button.setBackground(new java.awt.Color(239, 235, 223));
-        jSize20Button.setFont(new java.awt.Font("SansSerif", 0, 11)); // NOI18N
-        jSize20Button.setText("20");
-        jSize20Button.setMargin(new java.awt.Insets(2, 10, 2, 10));
-        jPanel3.add(jSize20Button);
-
-        jSize28Button.setBackground(new java.awt.Color(239, 235, 223));
-        jSize28Button.setFont(new java.awt.Font("SansSerif", 0, 11)); // NOI18N
-        jSize28Button.setText("28");
-        jSize28Button.setMargin(new java.awt.Insets(2, 10, 2, 10));
-        jPanel3.add(jSize28Button);
-
-        jPanel4.setMaximumSize(new java.awt.Dimension(121, 48));
-        jPanel4.setLayout(new java.awt.GridLayout(2, 3, 2, 2));
-
-        jBoldButton.setBackground(new java.awt.Color(239, 235, 223));
-        jBoldButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/text_bold.png"))); // NOI18N
-        jBoldButton.setMaximumSize(new java.awt.Dimension(39, 25));
-        jBoldButton.setMinimumSize(new java.awt.Dimension(39, 25));
-        jBoldButton.setPreferredSize(new java.awt.Dimension(39, 25));
-        jPanel4.add(jBoldButton);
-
-        jItalicButton.setBackground(new java.awt.Color(239, 235, 223));
-        jItalicButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/text_italics.png"))); // NOI18N
-        jItalicButton.setMaximumSize(new java.awt.Dimension(39, 25));
-        jItalicButton.setMinimumSize(new java.awt.Dimension(39, 25));
-        jItalicButton.setPreferredSize(new java.awt.Dimension(39, 25));
-        jPanel4.add(jItalicButton);
-
-        jUnderlineButton.setBackground(new java.awt.Color(239, 235, 223));
-        jUnderlineButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/text_underlined.png"))); // NOI18N
-        jUnderlineButton.setMaximumSize(new java.awt.Dimension(39, 25));
-        jUnderlineButton.setMinimumSize(new java.awt.Dimension(39, 25));
-        jUnderlineButton.setPreferredSize(new java.awt.Dimension(39, 25));
-        jPanel4.add(jUnderlineButton);
-
-        jLeftButton.setBackground(new java.awt.Color(239, 235, 223));
-        jLeftButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/text_align_left.png"))); // NOI18N
-        jLeftButton.setMaximumSize(new java.awt.Dimension(39, 25));
-        jLeftButton.setMinimumSize(new java.awt.Dimension(39, 25));
-        jLeftButton.setPreferredSize(new java.awt.Dimension(39, 25));
-        jPanel4.add(jLeftButton);
-
-        jCenterButton.setBackground(new java.awt.Color(239, 235, 223));
-        jCenterButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/text_align_center.png"))); // NOI18N
-        jCenterButton.setMaximumSize(new java.awt.Dimension(39, 25));
-        jCenterButton.setMinimumSize(new java.awt.Dimension(39, 25));
-        jCenterButton.setPreferredSize(new java.awt.Dimension(39, 25));
-        jPanel4.add(jCenterButton);
-
-        jRightButton.setBackground(new java.awt.Color(239, 235, 223));
-        jRightButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/text_align_right.png"))); // NOI18N
-        jRightButton.setMaximumSize(new java.awt.Dimension(39, 25));
-        jRightButton.setMinimumSize(new java.awt.Dimension(39, 25));
-        jRightButton.setPreferredSize(new java.awt.Dimension(39, 25));
-        jPanel4.add(jRightButton);
 
         jButton1.setBackground(new java.awt.Color(239, 235, 223));
         jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/add.gif"))); // NOI18N
@@ -481,7 +479,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame {
 
         jLastModified.setEditable(false);
 
-        jLabel1.setFont(new java.awt.Font("SansSerif", 0, 11)); // NOI18N
+        jLabel1.setFont(new java.awt.Font("SansSerif", 0, 11));
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("Letzte Änderung");
 
@@ -491,7 +489,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame {
             }
         });
 
-        jLabel2.setFont(new java.awt.Font("SansSerif", 0, 11)); // NOI18N
+        jLabel2.setFont(new java.awt.Font("SansSerif", 0, 11));
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setText("Symbol");
 
@@ -531,12 +529,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGap(366, 366, 366)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 67, Short.MAX_VALUE)
                             .addComponent(jIconBox, 0, 67, Short.MAX_VALUE))))
@@ -554,10 +547,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame {
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jIconBox, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jIconBox, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 254, Short.MAX_VALUE)
@@ -818,7 +808,9 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame {
     private javax.swing.JButton jButton9;
     private javax.swing.JButton jCenterButton;
     private javax.swing.JCheckBox jCheckBox1;
+    private javax.swing.JPanel jColorPanel;
     private javax.swing.JButton jCyanColorButton;
+    private javax.swing.JPanel jFormatPanel;
     private javax.swing.JButton jGreenColorButton;
     private javax.swing.JComboBox jIconBox;
     private javax.swing.JButton jItalicButton;
@@ -829,9 +821,6 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame {
     private javax.swing.JEditorPane jNotePane;
     private javax.swing.JButton jOrangeColorButton;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
-    private javax.swing.JPanel jPanel4;
     private javax.swing.JButton jPinkColorButton;
     private javax.swing.JButton jRedColorButton;
     private javax.swing.JButton jRightButton;
@@ -844,6 +833,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame {
     private javax.swing.JButton jSize18Button;
     private javax.swing.JButton jSize20Button;
     private javax.swing.JButton jSize28Button;
+    private javax.swing.JPanel jSizePanel;
     private javax.swing.JButton jUnderlineButton;
     private javax.swing.JList jVillageList;
     private javax.swing.JButton jVioletColorButton;

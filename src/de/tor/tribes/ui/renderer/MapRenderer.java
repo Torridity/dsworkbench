@@ -61,7 +61,6 @@ import java.awt.geom.Arc2D;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
-import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -72,11 +71,13 @@ import java.io.File;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.StringTokenizer;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import org.apache.log4j.Logger;
@@ -157,6 +158,19 @@ public class MapRenderer extends Thread {
         return buffy;
     }
 
+    /* public static BufferedImage optimizeImage(BufferedImage img) {
+    GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+    GraphicsConfiguration gc = gd.getDefaultConfiguration();
+
+    boolean istransparent = img.getColorModel().hasAlpha();
+
+    BufferedImage img2 = gc.createCompatibleImage(img.getWidth(), img.getHeight(), istransparent ? Transparency.BITMASK : Transparency.OPAQUE);
+    Graphics2D g = img2.createGraphics();
+    g.drawImage(img, 0, 0, null);
+    g.dispose();
+
+    return img2;
+    }*/
     /**Complete redraw on resize or scroll*/
     public void initiateRedraw(int pType) {
         mapRedrawRequired = true;
@@ -175,7 +189,7 @@ public class MapRenderer extends Thread {
                     if (mMainBuffer == null) {
                         //create main buffer during first iteration
                         //mMainBuffer = MapPanel.getSingleton().createImage(w, h);
-                        mMainBuffer = getBufferedImage(w, h, Transparency.TRANSLUCENT);//MapPanel.getSingleton().createImage(w, h);
+                        mMainBuffer = getBufferedImage(w, h, Transparency.TRANSLUCENT);//MapPanel.getSingleton().createImage(w, h)
                         g2d = (Graphics2D) mMainBuffer.getGraphics();
                         prepareGraphics(g2d);
                         //set redraw required flag if nothin was drawn yet
@@ -195,8 +209,9 @@ public class MapRenderer extends Thread {
                             //only clear graphics
                             g2d = (Graphics2D) mMainBuffer.getGraphics();
                             Composite c = g2d.getComposite();
-                            g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.CLEAR, 1.0f));
-                            g2d.fillRect(0, 0, w, h);
+                            g2d.clearRect(0, 0, w, h);
+                            //g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.CLEAR, 1.0f));
+                            //g2d.fillRect(0, 0, w, h);
                             g2d.setComposite(c);
                         }
                     }
@@ -283,23 +298,24 @@ public class MapRenderer extends Thread {
             }
         }
     }
-
+    /*
     private Path2D.Double createArrow(int l) {
-        int length = l;
-        int barb = 15;
-        double angle = Math.toRadians(20);
-        Path2D.Double path = new Path2D.Double();
-        path.moveTo(-length / 2, 0);
-        path.lineTo(length / 2, 0);
-        double x = length / 2 - barb * Math.cos(angle);
-        double y = barb * Math.sin(angle);
-        path.lineTo(x, y);
-        x = length / 2 - barb * Math.cos(-angle);
-        y = barb * Math.sin(-angle);
-        path.moveTo(length / 2, 0);
-        path.lineTo(x, y);
-        return path;
+    int length = l;
+    int barb = 15;
+    double angle = Math.toRadians(20);
+    Path2D.Double path = new Path2D.Double();
+    path.moveTo(-length / 2, 0);
+    path.lineTo(length / 2, 0);
+    double x = length / 2 - barb * Math.cos(angle);
+    double y = barb * Math.sin(angle);
+    path.lineTo(x, y);
+    x = length / 2 - barb * Math.cos(-angle);
+    y = barb * Math.sin(-angle);
+    path.moveTo(length / 2, 0);
+    path.lineTo(x, y);
+    return path;
     }
+     */
 
     /**Set the drag line externally (done by MapPanel class)*/
     public void setDragLine(int pXS, int pYS, int pXE, int pYE) {
@@ -1161,10 +1177,18 @@ public class MapRenderer extends Thread {
                 }
             }
         }
+
         if (showTroopDensity) {
             Enumeration<Village> keys = values.keys();
+            List<Village> keyV = new LinkedList<Village>();
             while (keys.hasMoreElements()) {
-                Village v = keys.nextElement();
+                keyV.add(keys.nextElement());
+            }
+            int order = Village.getOrderType();
+            Village.setOrderType(Village.ORDER_BY_COORDINATES);
+            Collections.sort(keyV);
+            Village.setOrderType(order);
+            for (Village v : keyV) {
                 Rectangle villageRect = villagePositions.get(v);
                 VillageTroopsHolder holder = values.get(v);
                 double defIn = holder.getDefValue(TroopsManagerTableModel.SHOW_TROOPS_IN_VILLAGE);
@@ -1185,7 +1209,7 @@ public class MapRenderer extends Thread {
                     alpha2 = 60;
                 }
                 Color c = new Color(r, g, 0, alpha2);
-
+                Color cc = new Color(0, r, g, alpha2);
                 //calculate circle size
                 int size = (int) Math.rint(percOfMax * 3 * villageRect.width);
                 if (size < 0.5 * villageRect.width) {
@@ -1197,30 +1221,19 @@ public class MapRenderer extends Thread {
                     g2d.setColor(Color.BLACK);
                     int partOwn = (int) Math.rint(360 * percOwn);
                     int partForeign = (int) Math.rint(360 * percForeign);
-                   // if (partOwn != 360) {
-                        //fill part dark (own) or light (foreign)
-                        //g2d.setColor(new Color(0, 0, 0, 60));
-                        g2d.setColor(new Color(0, 0, 0, 60));
-                        g2d.fill(new Arc2D.Double(villageRect.x - (int) Math.rint((size - villageRect.width) / 2), villageRect.y - (int) Math.rint((size - villageRect.height) / 2), size, size, 0, partOwn, Arc2D.PIE));
-                        g2d.setColor(c);
-                        g2d.fill(new Arc2D.Double(villageRect.x - (int) Math.rint((size - villageRect.width) / 2), villageRect.y - (int) Math.rint((size - villageRect.height) / 2), size, size, partOwn, partForeign, Arc2D.PIE));
-                    //g2d.setColor(blacl);
-                    //g2d.fill(new Arc2D.Double(villageRect.x - (int) Math.rint((size - villageRect.width) / 2), villageRect.y - (int) Math.rint((size - villageRect.height) / 2), size, size, 0, partOwn, Arc2D.PIE));
-                   // }
-                    //fill with density color
-
-
+                    //fill part blue (own) or other color (foreign)
+                    g2d.setColor(c);
+                    g2d.fill(new Arc2D.Double(villageRect.x - (int) Math.rint((size - villageRect.width) / 2), villageRect.y - (int) Math.rint((size - villageRect.height) / 2), size, size, 0, partOwn, Arc2D.PIE));
+                    g2d.setColor(cc);
+                    g2d.fill(new Arc2D.Double(villageRect.x - (int) Math.rint((size - villageRect.width) / 2), villageRect.y - (int) Math.rint((size - villageRect.height) / 2), size, size, partOwn, partForeign, Arc2D.PIE));
 
                     Ellipse2D.Double ed = new Ellipse2D.Double(villageRect.x - (int) Math.rint((size - villageRect.width) / 2), villageRect.y - (int) Math.rint((size - villageRect.height) / 2), size, size);
                     g2d.setColor(Color.BLACK);
                     g2d.draw(ed);
-                   // g2d.setColor(c);
-                   // g2d.fill(ed);
                     g2d.setColor(cb);
                 }
             }
         }
-    // System.out.println("DecoDraw " + (System.currentTimeMillis() - s));
     }
 
     /**Render attack vectors*/
@@ -1883,6 +1896,52 @@ public class MapRenderer extends Thread {
             dy += 19;
         }
 
+        Note n = NoteManager.getSingleton().getNoteForVillage(mouseVillage);
+        if (n != null) {
+            String text = n.getNoteText();
+            if (text != null) {
+                StringTokenizer to = new StringTokenizer(text, " ");
+                List<String> lines = new LinkedList<String>();
+                String line = "";
+                while (to.hasMoreTokens()) {
+                    String token = to.nextToken();
+                    if ((int) Math.floor(metrics.getStringBounds(token, g2d).getWidth()) > width - 30) {
+                        //shorten token to adequate length
+                        token = token.substring(0, 80) + "...";
+                    }
+
+                    String tmp = line + " " + token;
+                    int size = (int) Math.floor(metrics.getStringBounds(tmp, g2d).getWidth());
+                    if (size > width - 30) {
+                        lines.add(line);
+                        line = token;
+                    } else {
+                        line += " " + token;
+                    }
+                }
+                //add last line if valid
+                if (line.length() >= 1) {
+                    lines.add(line);
+                }
+
+                //draw note lines
+                boolean first = true;
+                for (String l : lines) {
+                    if (l.length() > 0) {
+                        //only add valid lines
+                        if (first) {
+                            //draw icon for first line if exists
+                            drawNoteField(g2d, metrics, xc, yc, ImageManager.getUnitImage(ImageManager.ICON_AXE), l, width, dy);
+                            first = false;
+                        } else {
+                            drawNoteField(g2d, metrics, xc, yc, null, l, width, dy);
+                        }
+                        dy += 19;
+                    }
+                }
+            }
+        }
+
         //render troop/runtime information
         renderExtendedInformation(g2d, mouseVillage, rect, xc, yc, width, dy);
         g2d.setFont(before);
@@ -2000,6 +2059,28 @@ public class MapRenderer extends Thread {
             g2d.setColor(Color.BLACK);
             Rectangle2D bounds = pMetrics.getStringBounds(pName, g2d);
             g2d.drawString(pName, pX + 2, pY + pDy - (int) Math.rint(bounds.getY()) + 2);
+        } else {
+            g2d.setColor(Color.BLACK);
+        }
+
+        Rectangle2D bounds = pMetrics.getStringBounds(pValue, g2d);
+        g2d.drawString(pValue, pX + dx + 2, pY + pDy - (int) Math.rint(bounds.getY()) + 2);
+    }
+
+    private void drawNoteField(Graphics2D g2d, FontMetrics pMetrics, int pX, int pY, Image pIcon, String pValue, int pWidth, int pDy) {
+        g2d.setColor(new Color(255, 255, 204));
+        g2d.fillRect(pX, pY + pDy, pWidth, 19);
+        g2d.setColor(Constants.DS_BACK);
+        g2d.drawRect(pX, pY + pDy, pWidth, 19);
+        //remove line between note fields
+        g2d.setColor(new Color(255, 255, 204));
+        g2d.drawLine(pX, pY + pDy, pX + pWidth, pY + pDy);
+        int dx = 0;
+        if (pIcon != null) {
+            dx = 20;
+            // g2d.drawRect(pX, pY + pDy, dx, 19);
+            g2d.setColor(Color.BLACK);
+            g2d.drawImage(pIcon, pX + 2, pY + pDy, null);
         } else {
             g2d.setColor(Color.BLACK);
         }

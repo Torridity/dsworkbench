@@ -260,7 +260,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
             String name = GlobalOptions.getProperty("account.name");
             String password = GlobalOptions.getProperty("account.password");
             if (DatabaseInterface.checkUser(name, password) != DatabaseInterface.ID_SUCCESS) {
-                 JOptionPaneHelper.showErrorBox(this, "Die Accountvalidierung ist fehlgeschlagen.\n" +
+                JOptionPaneHelper.showErrorBox(this, "Die Accountvalidierung ist fehlgeschlagen.\n" +
                         "Bitte überprüfe deine Account- und Netzwerkeinstellungen und versuches es erneut.",
                         "Fehler");
                 checkForUpdates = false;
@@ -334,7 +334,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
             return true;
         } catch (Throwable th) {
             logger.fatal("Fatal error while running DS Workbench", th);
-             JOptionPaneHelper.showErrorBox(self, "Ein schwerwiegender Fehler ist aufgetreten.\nMöglicherweise ist deine DS Workbench Installation defekt. Bitte kontaktiere den Entwickler.", "Fehler");
+            JOptionPaneHelper.showErrorBox(self, "Ein schwerwiegender Fehler ist aufgetreten.\nMöglicherweise ist deine DS Workbench Installation defekt. Bitte kontaktiere den Entwickler.", "Fehler");
             return false;
 
         }
@@ -345,6 +345,8 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
      */
     public static void main(String args[]) {
         // Locale.setDefault(Locale.US);
+       /* System.setProperty("sun.java2d.d3d", "true");
+        System.setProperty("sun.java2d.opengl", "false");*/
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {

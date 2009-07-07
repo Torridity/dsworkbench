@@ -10,6 +10,7 @@ import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.TroopsManagerListener;
+import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.text.NumberFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -225,7 +226,10 @@ public class TroopsManagerTableModel extends AbstractTableModel {
                 //set current troops
                 switch (viewType) {
                     case SHOW_OWN_TROOPS:
-                        TroopsManager.getSingleton().getTroopsForVillage(row).getOwnTroops().put(unit, value);
+                        VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(row);
+                        holder.getOwnTroops().put(unit, value);
+                        //own changed, so update in-village troops
+                        holder.updateSupportValues();
                         break;
                     case SHOW_TROOPS_OUTSIDE:
                         TroopsManager.getSingleton().getTroopsForVillage(row).getTroopsOutside().put(unit, value);

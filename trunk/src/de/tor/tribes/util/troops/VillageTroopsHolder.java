@@ -232,10 +232,10 @@ public class VillageTroopsHolder {
             Enumeration<UnitHolder> keys = own.keys();
             while (keys.hasMoreElements()) {
                 UnitHolder unit = keys.nextElement();
-                int inVillage = getTroopsOfUnitInVillage(unit);
+              //  int inVillage = getTroopsOfUnitInVillage(unit);
                 int ownValue = own.get(unit);
                 //no troops of unit in this village -> check supports
-                if (inVillage == 0) {
+                //if (inVillage == 0) {
                     //add own troops
                     int cntInVillage = ownValue;
                     //add all known supports
@@ -246,7 +246,7 @@ public class VillageTroopsHolder {
                         cntInVillage += amount;
                     }
                     getTroopsInVillage().put(unit, cntInVillage);
-                }
+                //}
             }
         } catch (Exception e) {
         }

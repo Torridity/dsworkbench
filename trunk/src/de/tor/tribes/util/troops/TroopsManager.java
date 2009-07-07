@@ -175,6 +175,7 @@ public class TroopsManager {
         } else {
             logger.info("No troops found under '" + pFile + "'");
         }
+
     }
 
     public boolean importTroops(File pFile) {

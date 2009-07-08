@@ -1926,12 +1926,15 @@ public class MapRenderer extends Thread {
 
                 //draw note lines
                 boolean first = true;
+                if (n.getNoteSymbol() == -1) {
+                    first = false;
+                }
                 for (String l : lines) {
                     if (l.length() > 0) {
                         //only add valid lines
                         if (first) {
                             //draw icon for first line if exists
-                            drawNoteField(g2d, metrics, xc, yc, ImageManager.getUnitImage(ImageManager.ICON_AXE), l, width, dy);
+                            drawNoteField(g2d, metrics, xc, yc, ImageManager.getNoteSymbol(n.getNoteSymbol()), l, width, dy);
                             first = false;
                         } else {
                             drawNoteField(g2d, metrics, xc, yc, null, l, width, dy);

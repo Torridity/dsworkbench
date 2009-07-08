@@ -65,6 +65,7 @@ import javax.swing.table.DefaultTableModel;
  * @TODO (1.5?) Add min number to troop filter in attack planer????
  * @TODO (DIFF) Added scrollbar to task menu
  * @TODO (DIFF) Added selection view to tools
+ * @TODO (1.6) F9 = Notepad -> Docu
  * @author  Charon
  */
 public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
@@ -268,9 +269,11 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                             DSWorkbenchChurchFrame.getSingleton().setVisible(!DSWorkbenchChurchFrame.getSingleton().isVisible());
                         }
                     } else if (e.getKeyCode() == KeyEvent.VK_F8) {
-                        if (jShowConquersFrame.isEnabled()) {
-                            DSWorkbenchConquersFrame.getSingleton().setVisible(!DSWorkbenchConquersFrame.getSingleton().isVisible());
-                        }
+                        DSWorkbenchConquersFrame.getSingleton().setVisible(!DSWorkbenchConquersFrame.getSingleton().isVisible());
+                    } else if (e.getKeyCode() == KeyEvent.VK_F9) {
+                        DSWorkbenchNotepad.getSingleton().setVisible(!DSWorkbenchNotepad.getSingleton().isVisible());
+                    } else if (e.getKeyCode() == KeyEvent.VK_F10) {
+                        DSWorkbenchTagFrame.getSingleton().setVisible(!DSWorkbenchTagFrame.getSingleton().isVisible());
                     } else if (e.getKeyCode() == KeyEvent.VK_F12) {
                         DSWorkbenchSettingsDialog.getSingleton().setVisible(true);
                     } else if ((e.getKeyCode() == KeyEvent.VK_1) && e.isControlDown() && e.isAltDown() && !e.isShiftDown()) {
@@ -306,10 +309,15 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                     }
                 }
             }
-        }, AWTEvent.KEY_EVENT_MASK);
+        },
+                AWTEvent.KEY_EVENT_MASK);
         // </editor-fold>
 
         // <editor-fold defaultstate="collapsed" desc=" Load UI Icons ">
+
+
+
+
 
         try {
             jOnlineLabel.setIcon(new ImageIcon("./graphics/icons/online.png"));
@@ -368,7 +376,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             jShowMapPopup.setSelected(true);
             GlobalOptions.addProperty("show.map.popup", Boolean.toString(true));
         }
-
         try {
             String val = GlobalOptions.getProperty("mark.on.top");
             if (val == null) {
@@ -381,7 +388,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             jMarkOnTopBox.setSelected(false);
             GlobalOptions.addProperty("mark.on.top", Boolean.toString(false));
         }
-
         try {
             String val = GlobalOptions.getProperty("show.church.range");
             if (val == null) {
@@ -394,7 +400,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             jChurchRangeBox.setSelected(false);
             GlobalOptions.addProperty("show.church.range", Boolean.toString(false));
         }
-
         try {
             String val = GlobalOptions.getProperty("show.troops.density");
             if (val == null) {
@@ -407,7 +412,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             jShowTroopDensity.setSelected(false);
             GlobalOptions.addProperty("show.troops.density", Boolean.toString(false));
         }
-
         try {
             jRadarSpinner.setEditor(new JSpinner.DateEditor(jRadarSpinner, "HH'h' mm'min'"));
             String val = GlobalOptions.getProperty("radar.size");
@@ -473,6 +477,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         DSWorkbenchMarkerFrame.getSingleton().setupMarkerPanel();
         DSWorkbenchChurchFrame.getSingleton().setupChurchPanel();
         DSWorkbenchAttackFrame.getSingleton().setupAttackPanel();
+        DSWorkbenchTagFrame.getSingleton().setup();
         ConquersTableModel.getSingleton().setup();
         DSWorkbenchConquersFrame.getSingleton().setupConquersPanel();
         //update troops table and troops view
@@ -564,6 +569,8 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         DSWorkbenchChurchFrame.getSingleton().addFrameListener(this);
         ConquersTableModel.getSingleton().setup();
         DSWorkbenchConquersFrame.getSingleton().addFrameListener(this);
+        DSWorkbenchNotepad.getSingleton().addFrameListener(this);
+        DSWorkbenchTagFrame.getSingleton().addFrameListener(this);
         TroopsManagerTableModel.getSingleton().setup();
         DSWorkbenchTroopsFrame.getSingleton().addFrameListener(this);
         DSWorkbenchRankFrame.getSingleton().addFrameListener(this);
@@ -645,6 +652,28 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                         jShowConquersFrame.setSelected(true);
                         logger.info("Restoring conquers frame");
                         DSWorkbenchConquersFrame.getSingleton().setVisible(true);
+                    }
+                }
+            } catch (Exception e) {
+            }
+
+            try {
+                if (jShowNotepadFrame.isEnabled()) {
+                    if (Boolean.parseBoolean(GlobalOptions.getProperty("notepad.frame.visible"))) {
+                        jShowNotepadFrame.setSelected(true);
+                        logger.info("Restoring notepad frame");
+                        DSWorkbenchNotepad.getSingleton().setVisible(true);
+                    }
+                }
+            } catch (Exception e) {
+            }
+
+              try {
+                if (jShowTagFrame.isEnabled()) {
+                    if (Boolean.parseBoolean(GlobalOptions.getProperty("tag.frame.visible"))) {
+                        jShowTagFrame.setSelected(true);
+                        logger.info("Restoring tag frame");
+                        DSWorkbenchTagFrame.getSingleton().setVisible(true);
                     }
                 }
             } catch (Exception e) {
@@ -805,6 +834,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jShowChurchFrame = new javax.swing.JCheckBoxMenuItem();
         jShowConquersFrame = new javax.swing.JCheckBoxMenuItem();
         jShowNotepadFrame = new javax.swing.JCheckBoxMenuItem();
+        jShowTagFrame = new javax.swing.JCheckBoxMenuItem();
         jMenu4 = new javax.swing.JMenu();
         jHelpItem = new javax.swing.JMenuItem();
         jAboutItem = new javax.swing.JMenuItem();
@@ -1267,7 +1297,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                 .addGroup(jNavigationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jRefreshButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jCenterCoordinateIngame, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(12, Short.MAX_VALUE))
         );
         jNavigationPanelLayout.setVerticalGroup(
             jNavigationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1389,13 +1419,13 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jInformationPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jCurrentPlayer, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jCurrentPlayerVillages, javax.swing.GroupLayout.Alignment.LEADING, 0, 155, Short.MAX_VALUE)
+                    .addComponent(jCurrentPlayer, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 218, Short.MAX_VALUE)
+                    .addComponent(jCurrentPlayerVillages, javax.swing.GroupLayout.Alignment.LEADING, 0, 218, Short.MAX_VALUE)
                     .addGroup(jInformationPanelLayout.createSequentialGroup()
                         .addComponent(jCurrentToolLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 90, Short.MAX_VALUE)
                         .addComponent(jCenterIngameButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jOnlineLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -1617,7 +1647,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(jLabel6)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jROIBox, 0, 200, Short.MAX_VALUE))
+                        .addComponent(jROIBox, 0, 18, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                         .addComponent(jRemoveROIButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -1677,7 +1707,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addComponent(jLabel4)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jUVIDField, javax.swing.GroupLayout.DEFAULT_SIZE, 202, Short.MAX_VALUE))
+                        .addComponent(jUVIDField))
                     .addComponent(jUVModeButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
@@ -1874,6 +1904,15 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             }
         });
         jMenu2.add(jShowNotepadFrame);
+
+        jShowTagFrame.setBackground(new java.awt.Color(239, 235, 223));
+        jShowTagFrame.setText(bundle.getString("DSWorkbenchMainFrame.jShowTagFrame.text")); // NOI18N
+        jShowTagFrame.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fireShowTagFrameEvent(evt);
+            }
+        });
+        jMenu2.add(jShowTagFrame);
 
         jMenuBar1.add(jMenu2);
 
@@ -2635,7 +2674,8 @@ private void fireShowTroopDensityEvent(javax.swing.event.ChangeEvent evt) {//GEN
 }//GEN-LAST:event_fireShowTroopDensityEvent
 
 private void fireShowNotepadEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireShowNotepadEvent
-    DSWorkbenchNotepad.getSingleton().setVisible(true);
+    DSWorkbenchNotepad.getSingleton().setVisible(DSWorkbenchNotepad.getSingleton().isVisible());
+    jShowNotepadFrame.setSelected(DSWorkbenchNotepad.getSingleton().isVisible());
 }//GEN-LAST:event_fireShowNotepadEvent
 
 private void fireChangeDrawOrderEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireChangeDrawOrderEvent
@@ -2668,6 +2708,11 @@ private void fireChangeDrawOrderEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
     propagateLayerOrder();
 }//GEN-LAST:event_fireChangeDrawOrderEvent
 
+private void fireShowTagFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireShowTagFrameEvent
+    DSWorkbenchTagFrame.getSingleton().setVisible(!DSWorkbenchTagFrame.getSingleton().isVisible());
+    jShowTagFrame.setSelected(DSWorkbenchTagFrame.getSingleton().isVisible());
+}//GEN-LAST:event_fireShowTagFrameEvent
+
     private void propagateLayerOrder() {
         DefaultListModel model = ((DefaultListModel) jLayerList.getModel());
 
@@ -2682,8 +2727,7 @@ private void fireChangeDrawOrderEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
     private void centerROI(int pId) {
         try {
             String item = (String) jROIBox.getItemAt(pId);
-            item =
-                    item.substring(item.lastIndexOf("(") + 1, item.lastIndexOf(")"));
+            item = item.substring(item.lastIndexOf("(") + 1, item.lastIndexOf(")"));
             String[] pos = item.trim().split("\\|");
             jCenterX.setText(pos[0]);
             jCenterY.setText(pos[1]);
@@ -3062,6 +3106,7 @@ private void fireChangeDrawOrderEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
     private javax.swing.JCheckBoxMenuItem jShowMarkerFrame;
     private javax.swing.JCheckBoxMenuItem jShowNotepadFrame;
     private javax.swing.JCheckBoxMenuItem jShowRankFrame;
+    private javax.swing.JCheckBoxMenuItem jShowTagFrame;
     private javax.swing.JCheckBox jShowTroopDensity;
     private javax.swing.JCheckBoxMenuItem jShowTroopsFrame;
     private com.l2fprod.common.swing.JTaskPane jTaskPane1;

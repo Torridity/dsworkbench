@@ -5,7 +5,6 @@
 package de.tor.tribes.util.note;
 
 import de.tor.tribes.io.DataHolder;
-import de.tor.tribes.types.Marker;
 import de.tor.tribes.types.Note;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.DSWorkbenchNotepad;

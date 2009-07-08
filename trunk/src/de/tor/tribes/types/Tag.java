@@ -31,9 +31,9 @@ public class Tag implements Comparable<Tag> {
     public static final Comparator<Tag> CASE_INSENSITIVE_ORDER = new CaseInsensitiveTagComparator();
     private String sName = null;
     private List<Integer> mVillageIDs = new LinkedList<Integer>();
-    private Color tagColor = null;
+    //private Color tagColor = null;
     //-1 means no icon
-    private int tagIcon = -1;
+    private TagMapMarker mapMarker = null;//; int tagIcon = -1;
     private boolean showOnMap = true;
 
     public static Tag fromXml(Element pElement) throws Exception {
@@ -66,6 +66,7 @@ public class Tag implements Comparable<Tag> {
     public Tag(String pName, boolean pShowOnMap) {
         setName(pName);
         setShowOnMap(pShowOnMap);
+        mapMarker = new TagMapMarker();
     }
 
     public String getName() {
@@ -74,6 +75,10 @@ public class Tag implements Comparable<Tag> {
 
     public void setName(String pName) {
         this.sName = pName;
+    }
+
+    public TagMapMarker getMapMarker(){
+        return mapMarker;
     }
 
     public void tagVillage(Integer pVillageID) {
@@ -140,28 +145,28 @@ public class Tag implements Comparable<Tag> {
      * @return the tagColor
      */
     public Color getTagColor() {
-        return tagColor;
+        return mapMarker.getTagColor();
     }
 
     /**
      * @param tagColor the tagColor to set
      */
     public void setTagColor(Color tagColor) {
-        this.tagColor = tagColor;
+        mapMarker.setTagColor(tagColor);
     }
 
     /**
      * @return the tagIcon
      */
     public int getTagIcon() {
-        return tagIcon;
+        return mapMarker.getTagIcon();
     }
 
     /**
      * @param tagIcon the tagIcon to set
      */
     public void setTagIcon(int tagIcon) {
-        this.tagIcon = tagIcon;
+        mapMarker.setTagIcon(tagIcon);
     }
 
     private static class CaseInsensitiveTagComparator implements Comparator<Tag>, java.io.Serializable {

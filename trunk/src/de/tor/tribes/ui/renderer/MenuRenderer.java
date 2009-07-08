@@ -85,10 +85,11 @@ public class MenuRenderer implements MouseListener, MouseMotionListener {
             mIcons.add(ImageIO.read(new File("./graphics/icons/church2.png")));
             mIcons.add(ImageIO.read(new File("./graphics/icons/church3.png")));
             mIcons.add(ImageIO.read(new File("./graphics/icons/no_church.png")));
-            //28-30 misc
+            //28-31 misc
             mIcons.add(ImageIO.read(new File("./graphics/icons/search.png")));
             mIcons.add(ImageIO.read(new File("./graphics/icons/settings.png")));
             mIcons.add(ImageIO.read(new File("./graphics/icons/clock.png")));
+            mIcons.add(ImageIO.read(new File("./graphics/icons/note.png")));
         } catch (Exception e) {
         }
         menuRegions = new Hashtable<Integer, Rectangle>();
@@ -155,7 +156,7 @@ public class MenuRenderer implements MouseListener, MouseMotionListener {
             menuRegions.put(pos, new Rectangle(menuLocation.x + space + (pos - lastPos) * iconw + (pos - lastPos) * space, menuLocation.y + space + iconh + space + iconh + space + iconh + space + iconh + space, iconw, iconh));
         }
         lastPos = pos;
-        for (; pos < 31; pos++) {
+        for (; pos < 32; pos++) {
             menuRegions.put(pos, new Rectangle(menuLocation.x + space + (pos - lastPos) * iconw + (pos - lastPos) * space, menuLocation.y + space + iconh + space + iconh + space + iconh + space + iconh + space + iconh + space, iconw, iconh));
         }
         Enumeration<Integer> regions = menuRegions.keys();
@@ -304,6 +305,8 @@ public class MenuRenderer implements MouseListener, MouseMotionListener {
             }
             case 30: {
                 return "Uhr öffnen";
+            }case 31: {
+                return "Notiz erstellen";
             }
         }
         return "";
@@ -461,6 +464,9 @@ public class MenuRenderer implements MouseListener, MouseMotionListener {
                             }
                             case 30: {
                                 ClockFrame.getSingleton().setVisible(true);
+                                break;
+                            }case 31: {
+                                MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_NOTE);
                                 break;
                             }
                         }

@@ -15,7 +15,9 @@ import de.tor.tribes.ui.DSWorkbenchTroopsFrame;
 import de.tor.tribes.ui.FormConfigFrame;
 import org.apache.log4j.Logger;
 import de.tor.tribes.ui.DSWorkbenchFormFrame;
+import de.tor.tribes.ui.DSWorkbenchNotepad;
 import de.tor.tribes.ui.DSWorkbenchSelectionFrame;
+import de.tor.tribes.ui.DSWorkbenchTagFrame;
 
 /**
  *
@@ -38,6 +40,8 @@ public class MainShutdownHook extends Thread {
             GlobalOptions.addProperty("marker.frame.visible", Boolean.toString(DSWorkbenchMarkerFrame.getSingleton().isVisible()));
             GlobalOptions.addProperty("church.frame.visible", Boolean.toString(DSWorkbenchChurchFrame.getSingleton().isVisible()));
             GlobalOptions.addProperty("conquers.frame.visible", Boolean.toString(DSWorkbenchConquersFrame.getSingleton().isVisible()));
+            GlobalOptions.addProperty("notepad.frame.visible", Boolean.toString(DSWorkbenchNotepad.getSingleton().isVisible()));
+            GlobalOptions.addProperty("tag.frame.visible", Boolean.toString(DSWorkbenchTagFrame.getSingleton().isVisible()));
             GlobalOptions.addProperty("troops.frame.visible", Boolean.toString(DSWorkbenchTroopsFrame.getSingleton().isVisible()));
             GlobalOptions.addProperty("rank.frame.visible", Boolean.toString(DSWorkbenchRankFrame.getSingleton().isVisible()));
             GlobalOptions.addProperty("form.frame.visible", Boolean.toString(DSWorkbenchFormFrame.getSingleton().isVisible()));
@@ -46,12 +50,15 @@ public class MainShutdownHook extends Thread {
             GlobalOptions.addProperty("marker.frame.alwaysOnTop", Boolean.toString(DSWorkbenchMarkerFrame.getSingleton().isAlwaysOnTop()));
             GlobalOptions.addProperty("church.frame.alwaysOnTop", Boolean.toString(DSWorkbenchChurchFrame.getSingleton().isAlwaysOnTop()));
             GlobalOptions.addProperty("conquers.frame.alwaysOnTop", Boolean.toString(DSWorkbenchConquersFrame.getSingleton().isAlwaysOnTop()));
+            GlobalOptions.addProperty("notepad.frame.alwaysOnTop", Boolean.toString(DSWorkbenchNotepad.getSingleton().isAlwaysOnTop()));
+            GlobalOptions.addProperty("tag.frame.alwaysOnTop", Boolean.toString(DSWorkbenchTagFrame.getSingleton().isAlwaysOnTop()));
             GlobalOptions.addProperty("troops.frame.alwaysOnTop", Boolean.toString(DSWorkbenchTroopsFrame.getSingleton().isAlwaysOnTop()));
             GlobalOptions.addProperty("rank.frame.alwaysOnTop", Boolean.toString(DSWorkbenchRankFrame.getSingleton().isAlwaysOnTop()));
             GlobalOptions.addProperty("form.frame.alwaysOnTop", Boolean.toString(DSWorkbenchFormFrame.getSingleton().isAlwaysOnTop()));
             GlobalOptions.addProperty("form.config.frame.alwaysOnTop", Boolean.toString(FormConfigFrame.getSingleton().isAlwaysOnTop()));
             GlobalOptions.addProperty("search.frame.alwaysOnTop", Boolean.toString(DSWorkbenchSearchFrame.getSingleton().isAlwaysOnTop()));
             GlobalOptions.addProperty("selection.frame.alwaysOnTop", Boolean.toString(DSWorkbenchSelectionFrame.getSingleton().isAlwaysOnTop()));
+
             logger.debug("Saving global properties");
             GlobalOptions.saveProperties();
             logger.debug("Shutdown finished");

@@ -29,7 +29,7 @@ public class SupportParser {
     [002]PICO (78|424) K40 	eigene	5549	4381	0	4375	2	0	0	364	0	0	0	0	Truppen
     [004]PICO (70|468) K40 	eigene	404	28	0	1842	2	0	0	0	0	0	0	4	Truppen
 
-     @TODO (1.6) Check if "troops in village" which where imported before are corrected or if they are too large afterwards
+    @TODO (1.6) Check if "troops in village" which where imported before are corrected or if they are too large afterwards
      */
     public static boolean parse(String pTroopsString) {
         StringTokenizer lineTok = new StringTokenizer(pTroopsString, "\n\r");
@@ -88,9 +88,10 @@ public class SupportParser {
                                 TroopsManager.getSingleton().addTroopsForVillageFast(supportTarget, new LinkedList<Integer>());
                                 holder = TroopsManager.getSingleton().getTroopsForVillage(supportTarget);
                                 holder.addSupport(v, support);
-                            }else{
+                            } else {
                                 holder.addSupport(v, support);
                             }
+                            holder.updateSupportValues();
                         }
                     }//end parsed troops == null
                 }//end host == null
@@ -204,13 +205,13 @@ public class SupportParser {
         System.out.println("SB " + s);
         System.out.println(s.replaceAll(v, ""));
 
-        /*  String token = "(120|192)";
-        System.out.println(token.matches("\\(*[0-9]{1,3}\\|[0-9]{1,3}\\)*"));
-        token = "(12:23:12)";
-        System.out.println(token.matches("\\(*[0-9]{1,2}\\:[0-9]{1,2}\\:[0-9]{1,2}\\)*"));
-         */
+    /*  String token = "(120|192)";
+    System.out.println(token.matches("\\(*[0-9]{1,3}\\|[0-9]{1,3}\\)*"));
+    token = "(12:23:12)";
+    System.out.println(token.matches("\\(*[0-9]{1,2}\\:[0-9]{1,2}\\:[0-9]{1,2}\\)*"));
+     */
 
-        // TroopsParser.parse(pTroopsString);
+    // TroopsParser.parse(pTroopsString);
     }
     /*
     kirscheye3	435|447 FaNtAsY wOrLd ... <3	Schwere Kavallerie	Torridity	436|444 FaNtAsY wOrLd ... 12	02.10.08 23:06:46

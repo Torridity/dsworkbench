@@ -6,10 +6,13 @@ package de.tor.tribes.ui.renderer;
 
 import de.tor.tribes.types.TagMapMarker;
 import de.tor.tribes.ui.ImageManager;
+import de.tor.tribes.ui.editors.TagMapMarkerEditorImpl;
 import java.awt.Color;
 import java.awt.Component;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JTable;
+import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 
@@ -20,6 +23,7 @@ import javax.swing.table.TableCellRenderer;
 public class TagMapMarkerRenderer implements TableCellRenderer {
 
     private DefaultTableCellRenderer renderer = new DefaultTableCellRenderer();
+    final private ImageIcon no_tag = new ImageIcon(TagMapMarkerEditorImpl.class.getResource("/res/remove.gif"));
 
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
@@ -27,17 +31,26 @@ public class TagMapMarkerRenderer implements TableCellRenderer {
         TagMapMarker tagMarker = (TagMapMarker) value;
         Color selectColor = tagMarker.getTagColor();
         if (selectColor == null) {
-            selectColor = c.getBackground();
+            if (isSelected) {
+                c.setForeground(table.getSelectionForeground());
+                c.setBackground(table.getSelectionBackground());
+            } else {
+                c.setForeground(Color.BLACK);
+                c.setBackground(Color.WHITE);
+            }
         } else {
             if (isSelected) {
                 selectColor = selectColor.darker();
             }
+            c.setBackground(selectColor);
         }
 
-        c.setBackground(selectColor);
         ((JLabel) c).setText("");
+        ((JLabel) c).setHorizontalAlignment(SwingConstants.CENTER);
         if (tagMarker.getTagIcon() >= 0) {
             ((JLabel) c).setIcon(ImageManager.getUnitIcon(tagMarker.getTagIcon(), false));
+        } else {
+            ((JLabel) c).setIcon(no_tag);
         }
         return c;
     }

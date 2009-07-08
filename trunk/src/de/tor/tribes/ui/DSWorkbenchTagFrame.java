@@ -10,17 +10,26 @@
  */
 package de.tor.tribes.ui;
 
+import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.TagMapMarker;
+import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.editors.TagMapMarkerCellEditor;
 import de.tor.tribes.ui.models.TagTableModel;
 import de.tor.tribes.ui.renderer.TagMapMarkerRenderer;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
-import de.tor.tribes.util.conquer.ConquerManager;
+import de.tor.tribes.util.JOptionPaneHelper;
+import de.tor.tribes.util.tag.TagManager;
 import java.awt.Component;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import javax.swing.DefaultListModel;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
@@ -30,7 +39,7 @@ import javax.swing.table.TableRowSorter;
 import org.apache.log4j.Logger;
 
 /**
- *
+ *@TODO (DIFF) Tag view added
  * @author Jejkal
  */
 public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
@@ -78,6 +87,14 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
         //GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.conquers_view", GlobalOptions.getHelpBroker().getHelpSet());
         // </editor-fold>
 
+        jAddTagDialog.pack();
+        jTagTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                updateTaggedVillageList();
+            }
+        });
         pack();
     }
 
@@ -120,12 +137,74 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jAddTagDialog = new javax.swing.JDialog();
+        jLabel1 = new javax.swing.JLabel();
+        jNewTagName = new javax.swing.JTextField();
+        jCreateTagButton = new javax.swing.JButton();
+        jButton5 = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTagTable = new javax.swing.JTable();
+        jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jTaggedVillageList = new javax.swing.JList();
+        jButton4 = new javax.swing.JButton();
+        jButton6 = new javax.swing.JButton();
         jAlwaysOnTopBox = new javax.swing.JCheckBox();
 
-        setTitle("Tag Übersicht");
+        jAddTagDialog.setTitle("Neuer Tag");
+        jAddTagDialog.setAlwaysOnTop(true);
+
+        jLabel1.setText("Name");
+
+        jCreateTagButton.setText("OK");
+        jCreateTagButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireNewTagEvent(evt);
+            }
+        });
+
+        jButton5.setText("Abbrechen");
+        jButton5.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireNewTagEvent(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jAddTagDialogLayout = new javax.swing.GroupLayout(jAddTagDialog.getContentPane());
+        jAddTagDialog.getContentPane().setLayout(jAddTagDialogLayout);
+        jAddTagDialogLayout.setHorizontalGroup(
+            jAddTagDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jAddTagDialogLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jAddTagDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jAddTagDialogLayout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jNewTagName, javax.swing.GroupLayout.DEFAULT_SIZE, 144, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jAddTagDialogLayout.createSequentialGroup()
+                        .addComponent(jButton5)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jCreateTagButton)))
+                .addContainerGap())
+        );
+        jAddTagDialogLayout.setVerticalGroup(
+            jAddTagDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jAddTagDialogLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jAddTagDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(jNewTagName, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jAddTagDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jCreateTagButton)
+                    .addComponent(jButton5))
+                .addContainerGap())
+        );
+
+        setTitle("Tags");
 
         jPanel1.setBackground(new java.awt.Color(239, 235, 223));
 
@@ -142,24 +221,99 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
         ));
         jScrollPane1.setViewportView(jTagTable);
 
+        jButton1.setBackground(new java.awt.Color(239, 235, 223));
+        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_remove.png"))); // NOI18N
+        jButton1.setToolTipText("Löscht die markierten Tags");
+        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireRemoveTagsEvent(evt);
+            }
+        });
+
+        jButton2.setBackground(new java.awt.Color(239, 235, 223));
+        jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/color_remove.png"))); // NOI18N
+        jButton2.setToolTipText("Farbmarkierung der markierten Tags löschen");
+        jButton2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireRemoveColorEvent(evt);
+            }
+        });
+
+        jButton3.setBackground(new java.awt.Color(239, 235, 223));
+        jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/add.png"))); // NOI18N
+        jButton3.setToolTipText("Neuen Tag hinzufügen");
+        jButton3.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireAddTagEvent(evt);
+            }
+        });
+
+        jTaggedVillageList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jScrollPane2.setViewportView(jTaggedVillageList);
+
+        jButton4.setBackground(new java.awt.Color(239, 235, 223));
+        jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/center.png"))); // NOI18N
+        jButton4.setToolTipText("Markiertes Dorf auf der Karte zentrieren");
+        jButton4.setMaximumSize(new java.awt.Dimension(59, 35));
+        jButton4.setMinimumSize(new java.awt.Dimension(59, 35));
+        jButton4.setPreferredSize(new java.awt.Dimension(59, 35));
+        jButton4.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireCenterVillageEvent(evt);
+            }
+        });
+
+        jButton6.setBackground(new java.awt.Color(239, 235, 223));
+        jButton6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_remove.png"))); // NOI18N
+        jButton6.setToolTipText("Alle markierten Tags für das gewählte Dorf löschen");
+        jButton6.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireUntagVillage(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 454, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(14, Short.MAX_VALUE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 423, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 423, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jButton3)
+                    .addComponent(jButton1)
+                    .addComponent(jButton2)
+                    .addComponent(jButton6)
+                    .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 302, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 189, Short.MAX_VALUE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jButton3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton2)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jButton6)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jAlwaysOnTopBox.setText("Immer im Vordergrund");
+        jAlwaysOnTopBox.setOpaque(false);
         jAlwaysOnTopBox.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 fireAlwaysOnTopEvent(evt);
@@ -194,6 +348,128 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
         setAlwaysOnTop(!isAlwaysOnTop());
     }//GEN-LAST:event_fireAlwaysOnTopEvent
 
+    private void fireRemoveTagsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireRemoveTagsEvent
+        int[] rows = jTagTable.getSelectedRows();
+        if (rows == null || rows.length == 0) {
+            return;
+        }
+        String message = (rows.length == 1) ? "Tag " : rows.length + " Tags ";
+        message += "wirklich löschen?";
+        if (JOptionPaneHelper.showQuestionConfirmBox(this, message, "Tags löschen", "Nein", "Ja") == JOptionPane.NO_OPTION) {
+            //return if no delete was requested
+            return;
+        }
+
+        List<String> toRemove = new LinkedList<String>();
+        for (int row : rows) {
+            row = jTagTable.convertRowIndexToModel(row);
+            toRemove.add((String) TagTableModel.getSingleton().getValueAt(row, 0));
+        }
+        for (String tag : toRemove) {
+            TagManager.getSingleton().removeTagByName(tag);
+        }
+        //update map
+        MapPanel.getSingleton().getMapRenderer().initiateRedraw(0);
+    }//GEN-LAST:event_fireRemoveTagsEvent
+
+    private void fireRemoveColorEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireRemoveColorEvent
+        int[] rows = jTagTable.getSelectedRows();
+        if (rows == null || rows.length == 0) {
+            return;
+        }
+
+        for (int row : rows) {
+            row = jTagTable.convertRowIndexToModel(row);
+            String name = (String) TagTableModel.getSingleton().getValueAt(row, 0);
+            TagManager.getSingleton().getTagByName(name).setTagColor(null);
+        }
+        jTagTable.repaint();
+        MapPanel.getSingleton().getMapRenderer().initiateRedraw(0);
+    }//GEN-LAST:event_fireRemoveColorEvent
+
+    private void fireAddTagEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireAddTagEvent
+        jAddTagDialog.setLocationRelativeTo(this);
+        jAddTagDialog.setVisible(true);
+    }//GEN-LAST:event_fireAddTagEvent
+
+    private void fireNewTagEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireNewTagEvent
+        if (evt.getSource() != jCreateTagButton) {
+            //cancel pressed  
+            jAddTagDialog.setVisible(false);
+            return;
+        }
+        String name = jNewTagName.getText();
+        if (name.length() < 1) {
+            JOptionPaneHelper.showWarningBox(jAddTagDialog, "Kein Name angegeben.", "Warnung");
+            return;
+        }
+        Tag t = TagManager.getSingleton().getTagByName(name);
+        if (t != null) {
+            JOptionPaneHelper.showWarningBox(jAddTagDialog, "Ein Tag mit dem Namen existiert bereits.", "Warnung");
+            return;
+        }
+        TagManager.getSingleton().addTag(name);
+        jAddTagDialog.setVisible(false);
+    }//GEN-LAST:event_fireNewTagEvent
+
+    private void fireCenterVillageEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCenterVillageEvent
+        Village selection = (Village) jTaggedVillageList.getSelectedValue();
+        if (selection != null) {
+            DSWorkbenchMainFrame.getSingleton().centerVillage(selection);
+        }
+    }//GEN-LAST:event_fireCenterVillageEvent
+
+    private void fireUntagVillage(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireUntagVillage
+        Village selection = (Village) jTaggedVillageList.getSelectedValue();
+        if (selection != null) {
+            int[] rows = jTagTable.getSelectedRows();
+            if (rows == null || rows.length == 0) {
+                return;
+            }
+
+            String message = (rows.length == 1) ? "Tag " : rows.length + " Tags ";
+            message += "für das Dorf '" + selection + "' wirklich löschen?";
+            if (JOptionPaneHelper.showQuestionConfirmBox(this, message, "Tags löschen", "Nein", "Ja") == JOptionPane.NO_OPTION) {
+                //return if no delete was requested
+                return;
+            }
+
+            for (int row : rows) {
+                row = jTagTable.convertRowIndexToModel(row);
+                String name = (String) TagTableModel.getSingleton().getValueAt(row, 0);
+                Tag t = TagManager.getSingleton().getTagByName(name);
+                if (t != null) {
+                    t.untagVillage(selection.getId());
+                }
+            }
+        }
+        updateTaggedVillageList();
+    }//GEN-LAST:event_fireUntagVillage
+
+    private void updateTaggedVillageList() {
+        int[] rows = jTagTable.getSelectedRows();
+        if (rows == null || rows.length == 0) {
+            return;
+        }
+        DefaultListModel model = new DefaultListModel();
+        List<Village> villages = new LinkedList<Village>();
+        for (int row : rows) {
+            row = jTagTable.convertRowIndexToModel(row);
+            String name = (String) TagTableModel.getSingleton().getValueAt(row, 0);
+            for (Integer i : TagManager.getSingleton().getTagByName(name).getVillageIDs()) {
+                Village v = DataHolder.getSingleton().getVillagesById().get(i);
+                if (v != null && !villages.contains(v)) {
+                    villages.add(v);
+                }
+            }
+        }
+        Collections.sort(villages);
+        for (Village v : villages) {
+            model.addElement(v);
+        }
+        jTaggedVillageList.setModel(model);
+    }
+
     /**
      * @param args the command line arguments
      */
@@ -207,9 +483,21 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JDialog jAddTagDialog;
     private javax.swing.JCheckBox jAlwaysOnTopBox;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton4;
+    private javax.swing.JButton jButton5;
+    private javax.swing.JButton jButton6;
+    private javax.swing.JButton jCreateTagButton;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JTextField jNewTagName;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable jTagTable;
+    private javax.swing.JList jTaggedVillageList;
     // End of variables declaration//GEN-END:variables
 }

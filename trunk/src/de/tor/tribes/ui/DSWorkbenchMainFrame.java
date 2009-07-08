@@ -668,7 +668,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             } catch (Exception e) {
             }
 
-              try {
+            try {
                 if (jShowTagFrame.isEnabled()) {
                     if (Boolean.parseBoolean(GlobalOptions.getProperty("tag.frame.visible"))) {
                         jShowTagFrame.setSelected(true);
@@ -2680,6 +2680,7 @@ private void fireShowNotepadEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:e
 
 private void fireChangeDrawOrderEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireChangeDrawOrderEvent
     int idx = jLayerList.getSelectedIndex();
+    Object o = jLayerList.getSelectedValue();
     DefaultListModel model = ((DefaultListModel) jLayerList.getModel());
     if (evt.getSource() == jLayerUpButton) {
         if (idx == 0) {
@@ -2692,6 +2693,8 @@ private void fireChangeDrawOrderEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
         idx -= 1;
         jLayerList.invalidate();
         model.add(idx, elem);
+        jLayerList.setSelectedIndex(idx);
+        jLayerList.revalidate();
     } else {
         if (idx == model.getSize() - 1) {
             //already on last position
@@ -2702,10 +2705,12 @@ private void fireChangeDrawOrderEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
         String elem = (String) model.remove(idx);
         idx += 1;
         model.add(idx, elem);
+        jLayerList.setSelectedIndex(idx);
         jLayerList.revalidate();
     }
     jLayerList.updateUI();
     propagateLayerOrder();
+
 }//GEN-LAST:event_fireChangeDrawOrderEvent
 
 private void fireShowTagFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireShowTagFrameEvent
@@ -2952,8 +2957,6 @@ private void fireShowTagFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:
                 //add villages to group
                 List<Village> villagesForGroup = pParserResult.get(group);
                 if (villagesForGroup != null) {
-                    //remove all tags
-
                     //set new tags
                     for (Village v : villagesForGroup) {
                         t.tagVillage(v.getId());
@@ -2961,10 +2964,7 @@ private void fireShowTagFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:
 
                 }
             }
-            //update tag panel in settings
-            DSWorkbenchSettingsDialog.getSingleton().setupTagsPanel();
         }
-
     }
 
     @Override

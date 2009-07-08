@@ -132,13 +132,11 @@ public class TagManager {
 
             logger.debug("Tags imported successfully");
             VillageTagFrame.getSingleton().updateUserTags();
-            DSWorkbenchSettingsDialog.getSingleton().setupTagsPanel();
             MinimapPanel.getSingleton().redraw();
             return true;
         } catch (Exception e) {
             logger.error("Failed to load tags", e);
             VillageTagFrame.getSingleton().updateUserTags();
-            DSWorkbenchSettingsDialog.getSingleton().setupTagsPanel();
             MinimapPanel.getSingleton().redraw();
             return false;
         }
@@ -297,9 +295,6 @@ public class TagManager {
         if (pVillage == null) {
             return;
         }
-        /*if (logger.isDebugEnabled()) {
-        logger.debug("Removing all tags for village " + pVillage);
-        }*/
 
         for (Tag t : mTags) {
             t.untagVillage(pVillage.getId());

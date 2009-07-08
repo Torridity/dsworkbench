@@ -18,6 +18,7 @@ import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.DSWorkbenchMainFrame;
+import de.tor.tribes.ui.DSWorkbenchTroopsFrame;
 import de.tor.tribes.ui.FormConfigFrame;
 import de.tor.tribes.ui.ImageManager;
 import de.tor.tribes.ui.MapPanel;
@@ -1333,67 +1334,139 @@ public class MapRenderer extends Thread {
         }
 //</editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc=" Support drawing (not used)">
-    /*     Color b = g2d.getColor();
-    Stroke s = g2d.getStroke();
-    g2d.setStroke(new BasicStroke(2.5f));
-    Point2D.Double error = GlobalOptions.getSkin().getError();
-    try {
-    Rectangle2D.Double bounds = new Rectangle2D.Double(viewStartPoint.x, viewStartPoint.y, iVillagesX, iVillagesY);
+        // <editor-fold defaultstate="collapsed" desc=" Support drawing (not used)">
+        Color b = g2d.getColor();
+        Stroke s = g2d.getStroke();
+        g2d.setStroke(new BasicStroke(2.5f));
+        Point2D.Double error = GlobalOptions.getSkin().getError();
+        try {
+            //Rectangle2D.Double bounds = new Rectangle2D.Double(viewStartPoint.x, viewStartPoint.y, iVillagesX, iVillagesY);
+            List<Village> drawnTargets = new LinkedList<Village>();
+            for (Village v : DSWorkbenchTroopsFrame.getSingleton().getSelectedTroopsVillages()) {
+                //process source villages
+                for (Village target : TroopsManager.getSingleton().getTroopsForVillage(v).getSupportTargets()) {
+                    drawnTargets.add(target);
+                    double rise = (double) (target.getY() - v.getY()) / (double) (target.getX() - v.getX());
+                    Line2D.Double supportLine = new Line2D.Double(v.getX(), v.getY(), target.getX(), target.getY());
 
-    for (Village v : DSWorkbenchTroopsFrame.getSingleton().getSelectedTroopsVillages()) {
-    List<Village> drawnTargets = new LinkedList<Village>();
-    //process source villages
-    for (Village target : TroopsManager.getSingleton().getTroopsForVillage(v).getSupportTargets()) {
-    drawnTargets.add(target);
-    Line2D.Double supportLine = new Line2D.Double(v.getX(), v.getY(), target.getX(), target.getY());
-    width += error.x;
-    height += error.y;
-    double xStart = (supportLine.getX1() - viewStartPoint.x) * width + width / 2;
-    double yStart = (supportLine.getY1() - viewStartPoint.y) * height + height / 2;
-    double xEnd = (supportLine.getX2() - viewStartPoint.x) * width + width / 2;
-    double yEnd = (supportLine.getY2() - viewStartPoint.y) * height + height / 2;
+                    width += error.x;
+                    height += error.y;
 
-    g2d.setColor(Color.MAGENTA);
-    g2d.drawLine((int) Math.rint(xStart), (int) Math.rint(yStart), (int) Math.rint(xEnd), (int) Math.rint(yEnd));
-    if (bounds.contains(supportLine.getP1())) {
-    //drawArrow(xStart, yStart, xEnd, yEnd, g2d);
-    }
+                    if (villagePositions.containsKey(v) && villagePositions.containsKey(target)) {
+                        //draw full line
+                        double xStart = (supportLine.getX1() - viewStartPoint.x) * width + width / 2;
+                        double yStart = (supportLine.getY1() - viewStartPoint.y) * height + height / 2;
+                        double xEnd = (supportLine.getX2() - viewStartPoint.x) * width + width / 2;
+                        double yEnd = (supportLine.getY2() - viewStartPoint.y) * height + height / 2;
+                        g2d.setColor(Color.RED);
+                        g2d.drawLine((int) Math.rint(xStart), (int) Math.rint(yStart), (int) Math.rint(xEnd), (int) Math.rint(yEnd));
 
-    if (bounds.contains(supportLine.getP2())) {
-    }
-    }
+                    } else if (villagePositions.containsKey(v) && !villagePositions.containsKey(target)) {
+                        //draw only source
+                        double inc = v.getY() - (rise * v.getX());
+                        int side = (v.getX() > target.getX()) ? -1 : 1;
+                        int ty = (int) ((v.getX() + side) * rise + inc);
+                        double xStart = (supportLine.getX1() - viewStartPoint.x) * width + width / 2;
+                        double yStart = (supportLine.getY1() - viewStartPoint.y) * height + height / 2;
+                        double xEnd = (v.getX() + side - viewStartPoint.x) * width + width / 2;
+                        double yEnd = (ty - viewStartPoint.y) * height + height / 2;
+                        g2d.setColor(Color.RED);
+                        g2d.drawLine((int) Math.rint(xStart), (int) Math.rint(yStart), (int) Math.rint(xEnd), (int) Math.rint(yEnd));
+                        double dist = DSCalculator.calculateDistance(v, target);
+                        String d = NumberFormat.getInstance().format(dist);
+                        Rectangle2D bb = g2d.getFontMetrics().getStringBounds(d, g2d);
+                        g2d.fillRect((int) (xEnd + bb.getX()), (int) (yEnd + bb.getY()), (int) bb.getWidth(), (int) bb.getHeight());
+                        g2d.setColor(Color.BLACK);
+                        g2d.drawString(d, (int) xEnd, (int) yEnd);
+                    } else if (!villagePositions.containsKey(v) && villagePositions.containsKey(target)) {
+                        //draw only target
+                        //draw only source
+                        double inc = target.getY() - (rise * target.getX());
+                        int side = (target.getX() > v.getX()) ? -1 : 1;
+                        int ty = (int) ((target.getX() + side) * rise + inc);
+                        double xStart = (target.getX() + side - viewStartPoint.x) * width + width / 2;
+                        double yStart = (ty - viewStartPoint.y) * height + height / 2;
+                        double xEnd = (supportLine.getX2() - viewStartPoint.x) * width + width / 2;
+                        double yEnd = (supportLine.getY2() - viewStartPoint.y) * height + height / 2;
+                        g2d.setColor(Color.RED);
+                        g2d.drawLine((int) Math.rint(xStart), (int) Math.rint(yStart), (int) Math.rint(xEnd), (int) Math.rint(yEnd));
+                        double dist = DSCalculator.calculateDistance(v, target);
+                        String d = NumberFormat.getInstance().format(dist);
+                        Rectangle2D bb = g2d.getFontMetrics().getStringBounds(d, g2d);
+                        g2d.fillRect((int) (xEnd + bb.getX()), (int) (yEnd + bb.getY()), (int) bb.getWidth(), (int) bb.getHeight());
+                        g2d.setColor(Color.BLACK);
+                        g2d.drawString(d, (int) xEnd, (int) yEnd);
+                    } else {
+                        //draw nothing
+                    }
+                }
 
 
-    //process target villages
-    Enumeration<Village> supportKeys = TroopsManager.getSingleton().getTroopsForVillage(v).getSupports().keys();
-    while (supportKeys.hasMoreElements()) {
-    Village source = supportKeys.nextElement();
-    if (!drawnTargets.contains(source)) {
-    Line2D.Double supportLine = new Line2D.Double(source.getX(), source.getY(), v.getX(), v.getY());
-    double xStart = (supportLine.getX1() - viewStartPoint.x) * width + width / 2;
-    double yStart = (supportLine.getY1() - viewStartPoint.y) * height + height / 2;
-    double xEnd = (supportLine.getX2() - viewStartPoint.x) * width + width / 2;
-    double yEnd = (supportLine.getY2() - viewStartPoint.y) * height + height / 2;
+                //process target villages
+                Enumeration<Village> supportKeys = TroopsManager.getSingleton().getTroopsForVillage(v).getSupports().keys();
+                while (supportKeys.hasMoreElements()) {
+                    Village source = supportKeys.nextElement();
+                    if (!drawnTargets.contains(v) && !drawnTargets.contains(source)) {
+                        double rise = (double) (source.getY() - v.getY()) / (double) (source.getX() - v.getX());
+                        Line2D.Double supportLine = new Line2D.Double(v.getX(), v.getY(), source.getX(), source.getY());
 
-    g2d.setColor(Color.MAGENTA);
-    g2d.drawLine((int) Math.rint(xStart), (int) Math.rint(yStart), (int) Math.rint(xEnd), (int) Math.rint(yEnd));
-    if (bounds.contains(supportLine.getP1())) {
-    // drawArrow(xEnd, yEnd, xStart, yStart, g2d);
-    }
+                        width += error.x;
+                        height += error.y;
 
-    if (bounds.contains(supportLine.getP2())) {
-    }
-    }
-    }
-
-
-    }
-    g2d.setStroke(s);
-    } catch (Exception e) {
-    g2d.setStroke(s);
-    }
-    g2d.setColor(b);*/
+                        if (villagePositions.containsKey(v) && villagePositions.containsKey(source)) {
+                            //draw full line
+                            double xStart = (supportLine.getX1() - viewStartPoint.x) * width + width / 2;
+                            double yStart = (supportLine.getY1() - viewStartPoint.y) * height + height / 2;
+                            double xEnd = (supportLine.getX2() - viewStartPoint.x) * width + width / 2;
+                            double yEnd = (supportLine.getY2() - viewStartPoint.y) * height + height / 2;
+                            g2d.setColor(Color.GREEN);
+                            g2d.drawLine((int) Math.rint(xStart), (int) Math.rint(yStart), (int) Math.rint(xEnd), (int) Math.rint(yEnd));
+                        } else if (villagePositions.containsKey(v) && !villagePositions.containsKey(source)) {
+                            //draw only source
+                            double inc = v.getY() - (rise * v.getX());
+                            int side = (v.getX() > source.getX()) ? -1 : 1;
+                            int ty = (int) ((v.getX() + side) * rise + inc);
+                            double xStart = (supportLine.getX1() - viewStartPoint.x) * width + width / 2;
+                            double yStart = (supportLine.getY1() - viewStartPoint.y) * height + height / 2;
+                            double xEnd = (v.getX() + side - viewStartPoint.x) * width + width / 2;
+                            double yEnd = (ty - viewStartPoint.y) * height + height / 2;
+                            g2d.setColor(Color.GREEN);
+                            g2d.drawLine((int) Math.rint(xStart), (int) Math.rint(yStart), (int) Math.rint(xEnd), (int) Math.rint(yEnd));
+                            double dist = DSCalculator.calculateDistance(v, source);
+                            String d = NumberFormat.getInstance().format(dist);
+                            Rectangle2D bb = g2d.getFontMetrics().getStringBounds(d, g2d);
+                            g2d.fillRect((int) (xEnd + bb.getX()), (int) (yEnd + bb.getY()), (int) bb.getWidth(), (int) bb.getHeight());
+                            g2d.setColor(Color.BLACK);
+                            g2d.drawString(d, (int) xEnd, (int) yEnd);
+                        } else if (!villagePositions.containsKey(v) && villagePositions.containsKey(source)) {
+                            //draw only target
+                            //draw only source
+                            double inc = source.getY() - (rise * source.getX());
+                            int side = (source.getX() > v.getX()) ? -1 : 1;
+                            int ty = (int) ((source.getX() + side) * rise + inc);
+                            double xStart = (source.getX() + side - viewStartPoint.x) * width + width / 2;
+                            double yStart = (ty - viewStartPoint.y) * height + height / 2;
+                            double xEnd = (supportLine.getX2() - viewStartPoint.x) * width + width / 2;
+                            double yEnd = (supportLine.getY2() - viewStartPoint.y) * height + height / 2;
+                            g2d.setColor(Color.GREEN);
+                            g2d.drawLine((int) Math.rint(xStart), (int) Math.rint(yStart), (int) Math.rint(xEnd), (int) Math.rint(yEnd));
+                            double dist = DSCalculator.calculateDistance(v, source);
+                            String d = NumberFormat.getInstance().format(dist);
+                            Rectangle2D bb = g2d.getFontMetrics().getStringBounds(d, g2d);
+                            g2d.fillRect((int) (xEnd + bb.getX()), (int) (yEnd + bb.getY()), (int) bb.getWidth(), (int) bb.getHeight());
+                            g2d.setColor(Color.BLACK);
+                            g2d.drawString(d, (int) xEnd, (int) yEnd);
+                        } else {
+                            //draw nothing
+                        }
+                    }
+                }
+            }
+            g2d.setStroke(s);
+        } catch (Exception e) {
+            g2d.setStroke(s);
+        }
+        g2d.setColor(b);
     // </editor-fold>
 
     }

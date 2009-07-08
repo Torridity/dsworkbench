@@ -78,6 +78,8 @@ public class GlobalOptions {
         ImageManager.loadUnitIcons();
         logger.debug("Loading note icons");
         ImageManager.loadNoteIcons();
+        logger.debug("Loading note symbols");
+        ImageManager.loadNoteSymbols();
         logger.debug("Loading graphic pack");
         loadSkin();
         logger.debug("Loading world.dat");

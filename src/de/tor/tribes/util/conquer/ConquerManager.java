@@ -287,7 +287,7 @@ public class ConquerManager {
                     Tribe winner = DataHolder.getSingleton().getTribes().get(newOwner);
                     Village v = DataHolder.getSingleton().getVillagesById().get(villageID);
 
-                    if (v.getTribeID() != winner.getId()) {
+                    if (winner != null && v != null && v.getTribeID() != winner.getId()) {
                         //conquer not yet in world data
                         if (loser != null && loser.getVillageList().remove(v)) {
                             loser.setVillages((short) (loser.getVillages() - 1));

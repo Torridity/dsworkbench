@@ -201,7 +201,7 @@ public class MapPanel extends javax.swing.JPanel {
                                     DSWorkbenchNotepad.getSingleton().setCurrentNote(n);
                                     //set search term to village name to allow to find additional notes
                                     DSWorkbenchNotepad.getSingleton().setSearchTermByVillageExternally(current);
-                                }else{
+                                } else {
                                     //set current village to add field to allow to add note immediately
                                     DSWorkbenchNotepad.getSingleton().setVillageFieldExternally(current);
                                 }
@@ -341,6 +341,16 @@ public class MapPanel extends javax.swing.JPanel {
                         Village v = getVillageAtMousePos();
                         if (v != null) {
                             ChurchManager.getSingleton().removeChurch(v);
+                        }
+                        break;
+                    }
+                    case ImageManager.CURSOR_NOTE: {
+                        Village v = getVillageAtMousePos();
+                        if (v != null) {
+                            DSWorkbenchNotepad.getSingleton().addNoteForVillage(v);
+                            if (!DSWorkbenchNotepad.getSingleton().isVisible()) {
+                                DSWorkbenchNotepad.getSingleton().setVisible(true);
+                            }
                         }
                         break;
                     }
@@ -707,7 +717,7 @@ public class MapPanel extends javax.swing.JPanel {
 
         addMouseMotionListener(MenuRenderer.getSingleton());
 
-    //<editor-fold>
+        //<editor-fold>
     }
 
     protected void resetServerDependendSettings() {

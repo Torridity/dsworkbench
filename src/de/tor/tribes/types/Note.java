@@ -21,6 +21,7 @@ public class Note {
     private String sNoteText = null;
     private List<Integer> villageIds = null;
     private long timestamp = -1;
+    private int noteSymbol = -1;
     private int mapMarker = 0;
 
     public Note() {
@@ -33,6 +34,7 @@ public class Note {
         Note n = new Note();
         n.setTimestamp(Long.parseLong(e.getChild("timestamp").getText()));
         n.setMapMarker(Integer.parseInt(e.getChild("mapMarker").getText()));
+        n.setNoteSymbol(Integer.parseInt(e.getChild("noteSymbol").getText()));
         n.setNoteText(URLDecoder.decode(e.getChild("text").getText(), "UTF-8"));
         for (Element elem : (List<Element>) JaxenUtils.getNodes(e, "villages/village")) {
             n.getVillageIds().add(Integer.parseInt(elem.getValue()));
@@ -44,6 +46,7 @@ public class Note {
         String result = "<note>\n";
         result += "<timestamp>" + getTimestamp() + "</timestamp>\n";
         result += "<mapMarker>" + getMapMarker() + "</mapMarker>\n";
+        result += "<noteSymbol>" + getNoteSymbol() + "</noteSymbol>\n";
         result += "<text>" + URLEncoder.encode(getNoteText(), "UTF-8") + "</text>\n";
         result += "<villages>\n";
         for (Integer id : getVillageIds()) {
@@ -63,7 +66,6 @@ public class Note {
     }
 
     public void setNoteText(String pText) {
-
         if (sNoteText != null) {
             if (!sNoteText.equals(pText)) {
                 sNoteText = pText;
@@ -128,5 +130,19 @@ public class Note {
      */
     public void setMapMarker(int mapMarker) {
         this.mapMarker = mapMarker;
+    }
+
+    /**
+     * @return the noteSymbol
+     */
+    public int getNoteSymbol() {
+        return noteSymbol;
+    }
+
+    /**
+     * @param noteSymbol the noteSymbol to set
+     */
+    public void setNoteSymbol(int noteSymbol) {
+        this.noteSymbol = noteSymbol;
     }
 }

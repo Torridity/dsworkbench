@@ -5,6 +5,8 @@
 package de.tor.tribes.ui.models;
 
 import de.tor.tribes.types.Tag;
+import de.tor.tribes.types.TagMapMarker;
+import de.tor.tribes.ui.MapPanel;
 import de.tor.tribes.util.tag.TagManager;
 import de.tor.tribes.util.tag.TagManagerListener;
 import javax.swing.table.AbstractTableModel;
@@ -16,10 +18,10 @@ import javax.swing.table.AbstractTableModel;
 public class TagTableModel extends AbstractTableModel {
 
     Class[] types = new Class[]{
-        Tag.class, Boolean.class
+        String.class, Integer.class, TagMapMarker.class, Boolean.class
     };
     String[] colNames = new String[]{
-        "Tag", "Einzeichnen"
+        "Name", "Dörfer", "Kartenmarkierung", "Einzeichnen"
     };
     private static TagTableModel SINGLETON = null;
 
@@ -48,7 +50,7 @@ public class TagTableModel extends AbstractTableModel {
 
     @Override
     public int getColumnCount() {
-        return 2;
+        return colNames.length;
     }
 
     public void addRow(Object[] row) {
@@ -72,7 +74,10 @@ public class TagTableModel extends AbstractTableModel {
 
     @Override
     public boolean isCellEditable(int row, int col) {
-        return true;
+        if (col != 1) {
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -80,6 +85,12 @@ public class TagTableModel extends AbstractTableModel {
         switch (columnIndex) {
             case 0: {
                 return TagManager.getSingleton().getTags().get(rowIndex).getName();
+            }
+            case 1: {
+                return TagManager.getSingleton().getTags().get(rowIndex).getVillageIDs().size();
+            }
+            case 2: {
+                return TagManager.getSingleton().getTags().get(rowIndex).getMapMarker();
             }
             default: {
                 return TagManager.getSingleton().getTags().get(rowIndex).isShowOnMap();
@@ -93,9 +104,23 @@ public class TagTableModel extends AbstractTableModel {
             case 0: {
                 TagManager.getSingleton().getTags().get(rowIndex).setName((String) value);
                 break;
-            }default: {
+            }
+            case 1: {
+                //do nothing
+                break;
+            }
+            case 2: {
+                TagMapMarker m = (TagMapMarker) value;
+                Tag t = TagManager.getSingleton().getTags().get(rowIndex);
+                t.setTagColor(m.getTagColor());
+                t.setTagIcon(m.getTagIcon());
+                break;
+            }
+            default: {
                 TagManager.getSingleton().getTags().get(rowIndex).setShowOnMap((Boolean) value);
             }
         }
+        //repaint map
+        MapPanel.getSingleton().getMapRenderer().initiateRedraw(0);
     }
 }

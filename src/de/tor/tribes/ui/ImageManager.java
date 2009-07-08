@@ -24,13 +24,15 @@ import org.apache.log4j.Logger;
 public class ImageManager {
 
     private static Logger logger = Logger.getLogger("TextureManager");    //mappanel default
+    // <editor-fold defaultstate="collapsed" desc="Basic map tool IDs">
     public final static int CURSOR_DEFAULT = 0;
     public final static int CURSOR_MARK = 1;
     public final static int CURSOR_MEASURE = 2;
     public final static int CURSOR_TAG = 3;
     public final static int CURSOR_ATTACK_INGAME = 4;
     public final static int CURSOR_SEND_RES_INGAME = 5;
-    //mappanel attack
+    //</editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Attack cursor IDs">
     public final static int CURSOR_ATTACK_RAM = 6;
     public final static int CURSOR_ATTACK_AXE = 7;
     public final static int CURSOR_ATTACK_SNOB = 8;
@@ -38,7 +40,8 @@ public class ImageManager {
     public final static int CURSOR_ATTACK_SWORD = 10;
     public final static int CURSOR_ATTACK_LIGHT = 11;
     public final static int CURSOR_ATTACK_HEAVY = 12;
-    //unit icons
+    //</editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Unit icon IDs">
     public final static int ICON_SPEAR = 0;
     public final static int ICON_SWORD = 1;
     public final static int ICON_AXE = 2;
@@ -51,10 +54,13 @@ public class ImageManager {
     public final static int ICON_CATA = 9;
     public final static int ICON_KNIGHT = 10;
     public final static int ICON_SNOB = 11;
-    //minimap
+    //</editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Minimap cursor IDs">
     public final static int CURSOR_MOVE = 13;
     public final static int CURSOR_ZOOM = 14;
     public final static int CURSOR_SHOT = 15;
+    //</editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Misc cursor IDs (draw, support, church, radar)">
     public final static int CURSOR_SUPPORT = 16;
     public final static int CURSOR_DRAW_LINE = 17;
     public final static int CURSOR_DRAW_RECT = 18;
@@ -67,17 +73,57 @@ public class ImageManager {
     public final static int CURSOR_CHURCH_2 = 25;
     public final static int CURSOR_CHURCH_3 = 26;
     public final static int CURSOR_REMOVE_CHURCH = 27;
+    public final static int CURSOR_NOTE = 28;
+    //</editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Note map icon IDs">
     public static final int ID_NOTE_ICON_0 = 0;
     public static final int ID_NOTE_ICON_1 = 1;
     public static final int ID_NOTE_ICON_2 = 2;
     public static final int ID_NOTE_ICON_3 = 3;
     public static final int ID_NOTE_ICON_4 = 4;
     public static final int ID_NOTE_ICON_5 = 5;
+    //</editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Note symbol IDs">
+    public final static int NOTE_SYMBOL_SPEAR = 0;
+    public final static int NOTE_SYMBOL_SWORD = 1;
+    public final static int NOTE_SYMBOL_AXE = 2;
+    public final static int NOTE_SYMBOL_ARCHER = 3;
+    public final static int NOTE_SYMBOL_SPY = 4;
+    public final static int NOTE_SYMBOL_LKAV = 5;
+    public final static int NOTE_SYMBOL_MARCHER = 6;
+    public final static int NOTE_SYMBOL_HEAVY = 7;
+    public final static int NOTE_SYMBOL_RAM = 8;
+    public final static int NOTE_SYMBOL_CATA = 9;
+    public final static int NOTE_SYMBOL_KNIGHT = 10;
+    public final static int NOTE_SYMBOL_SNOB = 11;
+    public final static int NOTE_SYMBOL_DEF = 12;
+    public final static int NOTE_SYMBOL_DEF_CAV = 13;
+    public final static int NOTE_SYMBOL_DEF_ARCH = 14;
+    public final static int NOTE_SYMBOL_FAKE = 15;
+    public final static int NOTE_SYMBOL_ALLY = 16;
+    public final static int NOTE_SYMBOL_ATTACK = 17;
+    public final static int NOTE_SYMBOL_OUT = 18;
+    public final static int NOTE_SYMBOL_IN = 19;
+    public final static int NOTE_SYMBOL_BALL_BLUE = 20;
+    public final static int NOTE_SYMBOL_BALL_GREEN = 21;
+    public final static int NOTE_SYMBOL_BALL_YELLOW = 22;
+    public final static int NOTE_SYMBOL_BALL_RED = 23;
+    public final static int NOTE_SYMBOL_BALL_GREY = 24;
+    public final static int NOTE_SYMBOL_WARN = 25;
+    public final static int NOTE_SYMBOL_DIE = 26;
+    public final static int NOTE_SYMBOL_ADD = 27;
+    public final static int NOTE_SYMBOL_REMOVE = 28;
+    public final static int NOTE_SYMBOL_CHECK = 29;
+    public final static int NOTE_SYMBOL_EYE = 30;
+    public final static int NOTE_SYMBOL_NO_EYE = 31;
+
+    //</editor-fold>
     private static final List<Cursor> CURSORS = new LinkedList<Cursor>();
     private static final List<ImageIcon> CURSOR_IMAGES = new LinkedList<ImageIcon>();
     private static final List<BufferedImage> UNIT_IMAGES = new LinkedList<BufferedImage>();
     private static final List<ImageIcon> UNIT_ICONS = new LinkedList<ImageIcon>();
     private static final List<BufferedImage> NOTE_ICONS = new LinkedList<BufferedImage>();
+    private static final List<BufferedImage> NOTE_SYMBOLS = new LinkedList<BufferedImage>();
     private static boolean cursorSupported = true;
 
     /**Load the list of cursors*/
@@ -118,7 +164,7 @@ public class ImageManager {
             loadCursor("graphics/cursors/church2.png", "church2");
             loadCursor("graphics/cursors/church3.png", "church3");
             loadCursor("graphics/cursors/no_church.png", "church0");
-
+            loadCursor("graphics/cursors/note.png", "note");
         } catch (Exception e) {
             logger.error("Failed to load cursor images", e);
             throw new Exception("Failed to load cursors");
@@ -150,8 +196,35 @@ public class ImageManager {
         }
     }
 
+    public static void loadNoteSymbols() throws Exception {
+        NOTE_SYMBOLS.add(ImageIO.read(new File("graphics/icons/def.png")));
+        NOTE_SYMBOLS.add(ImageIO.read(new File("graphics/icons/def_cav.png")));
+        NOTE_SYMBOLS.add(ImageIO.read(new File("graphics/icons/def_archer.png")));
+        NOTE_SYMBOLS.add(ImageIO.read(ImageManager.class.getResourceAsStream("/res/ui/fake.png")));
+        NOTE_SYMBOLS.add(ImageIO.read(ImageManager.class.getResourceAsStream("/res/ally.png")));
+        NOTE_SYMBOLS.add(ImageIO.read(ImageManager.class.getResourceAsStream("/res/barracks.png")));
+        NOTE_SYMBOLS.add(ImageIO.read(new File("graphics/icons/move_out.png")));
+        NOTE_SYMBOLS.add(ImageIO.read(new File("graphics/icons/move_in.png")));
+        NOTE_SYMBOLS.add(ImageIO.read(ImageManager.class.getResourceAsStream("/res/ui/bullet_ball_blue.png")));
+        NOTE_SYMBOLS.add(ImageIO.read(ImageManager.class.getResourceAsStream("/res/ui/bullet_ball_green.png")));
+        NOTE_SYMBOLS.add(ImageIO.read(ImageManager.class.getResourceAsStream("/res/ui/bullet_ball_yellow.png")));
+        NOTE_SYMBOLS.add(ImageIO.read(ImageManager.class.getResourceAsStream("/res/ui/bullet_ball_red.png")));
+        NOTE_SYMBOLS.add(ImageIO.read(ImageManager.class.getResourceAsStream("/res/ui/bullet_ball_grey.png")));
+        NOTE_SYMBOLS.add(ImageIO.read(new File("graphics/icons/warning.png")));
+        NOTE_SYMBOLS.add(ImageIO.read(ImageManager.class.getResourceAsStream("/res/die.png")));
+        NOTE_SYMBOLS.add(ImageIO.read(ImageManager.class.getResourceAsStream("/res/add.gif")));
+        NOTE_SYMBOLS.add(ImageIO.read(ImageManager.class.getResourceAsStream("/res/remove.gif")));
+        NOTE_SYMBOLS.add(ImageIO.read(ImageManager.class.getResourceAsStream("/res/checkbox.png")));
+        NOTE_SYMBOLS.add(ImageIO.read(ImageManager.class.getResourceAsStream("/res/ui/eye.png")));
+        NOTE_SYMBOLS.add(ImageIO.read(ImageManager.class.getResourceAsStream("/res/ui/eye_forbidden.png")));
+    }
+
     public static BufferedImage getNoteIcon(int v) {
         return NOTE_ICONS.get(v);
+    }
+
+    public static BufferedImage getNoteSymbol(int v) {
+        return NOTE_SYMBOLS.get(v);
     }
 
     /**Get the cursor for the provided ID*/
@@ -184,6 +257,9 @@ public class ImageManager {
             UNIT_IMAGES.add(ImageIO.read(new File("graphics/icons/snob.png")));//11
 
             for (BufferedImage i : UNIT_IMAGES) {
+                //add unit icon to note symbol
+                NOTE_SYMBOLS.add(i);
+                //add scaled icon to icon list
                 UNIT_ICONS.add(new ImageIcon(i.getScaledInstance(i.getWidth(), i.getHeight(), BufferedImage.SCALE_DEFAULT)));
             }
         } catch (Exception e) {
@@ -191,24 +267,41 @@ public class ImageManager {
             throw new Exception("Failed to load unit icons");
         }
     }
-    /*
-     *  public final static int ICON_SPEAR = 0;
-    public final static int ICON_SWORD = 1;
-    public final static int ICON_AXE = 2;
-    public final static int ICON_ARCHER = 3;
-    public final static int ICON_SPY = 4;
-    public final static int ICON_LKAV = 5;
-    public final static int ICON_MARCHER = 6;
-    public final static int ICON_HEAVY = 7;
-    public final static int ICON_RAM = 8;
-    public final static int ICON_CATA = 9;
-    public final static int ICON_KNIGHT = 10;
-    public final static int ICON_SNOB = 11;
-     */
 
     /**Get thr unit icon for the provided ID*/
     public static ImageIcon getUnitIcon(int pId) {
         if (DataHolder.getSingleton().getUnits().size() == 9) {
+            //old style
+            switch (pId) {
+                case 0:
+                    return UNIT_ICONS.get(0);
+                case 1:
+                    return UNIT_ICONS.get(1);
+                case 2:
+                    return UNIT_ICONS.get(2);
+                case 3:
+                    return UNIT_ICONS.get(4);
+                case 4:
+                    return UNIT_ICONS.get(5);
+                case 5:
+                    return UNIT_ICONS.get(7);
+                case 6:
+                    return UNIT_ICONS.get(8);
+                case 7:
+                    return UNIT_ICONS.get(9);
+                case 8:
+                    return UNIT_ICONS.get(11);
+                default:
+                    return null;
+            }
+        } else {
+            return UNIT_ICONS.get(pId);
+        }
+    }
+
+      /**Get thr unit icon for the provided ID*/
+    public static ImageIcon getUnitIcon(int pId, boolean pChecked) {
+        if (DataHolder.getSingleton().getUnits().size() == 9 && pChecked) {
             //old style
             switch (pId) {
                 case 0:

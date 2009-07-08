@@ -669,6 +669,19 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fireShowNotepadEvent"/>
               </Events>
             </MenuItem>
+            <MenuItem class="javax.swing.JCheckBoxMenuItem" name="jShowTagFrame">
+              <Properties>
+                <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                  <Color blue="df" green="eb" red="ef" type="rgb"/>
+                </Property>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchMainFrame.jShowTagFrame.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                </Property>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fireShowTagFrameEvent"/>
+              </Events>
+            </MenuItem>
           </SubComponents>
         </Menu>
         <Menu class="javax.swing.JMenu" name="jMenu4">
@@ -879,7 +892,7 @@
                                   <Component id="jRefreshButton" min="-2" max="-2" attributes="1"/>
                                   <Component id="jCenterCoordinateIngame" min="-2" max="-2" attributes="1"/>
                               </Group>
-                              <EmptySpace max="32767" attributes="0"/>
+                              <EmptySpace pref="12" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -1365,13 +1378,13 @@
                           <Group type="102" alignment="1" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="1" attributes="0">
-                                  <Component id="jCurrentPlayer" alignment="0" max="32767" attributes="0"/>
-                                  <Component id="jCurrentPlayerVillages" alignment="0" pref="155" max="32767" attributes="0"/>
+                                  <Component id="jCurrentPlayer" alignment="0" pref="218" max="32767" attributes="0"/>
+                                  <Component id="jCurrentPlayerVillages" alignment="0" pref="218" max="32767" attributes="0"/>
                                   <Group type="102" alignment="1" attributes="0">
                                       <Component id="jCurrentToolLabel" min="-2" max="-2" attributes="1"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="jButton1" min="-2" max="-2" attributes="1"/>
-                                      <EmptySpace pref="27" max="32767" attributes="0"/>
+                                      <EmptySpace pref="90" max="32767" attributes="0"/>
                                       <Component id="jCenterIngameButton" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="jOnlineLabel" min="-2" max="-2" attributes="0"/>
@@ -1937,7 +1950,7 @@
                                   <Group type="102" alignment="0" attributes="0">
                                       <Component id="jLabel6" min="-2" max="-2" attributes="1"/>
                                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                      <Component id="jROIBox" pref="200" max="32767" attributes="0"/>
+                                      <Component id="jROIBox" pref="18" max="32767" attributes="0"/>
                                   </Group>
                                   <Group type="102" alignment="1" attributes="0">
                                       <Component id="jRemoveROIButton" min="-2" pref="23" max="-2" attributes="1"/>
@@ -2130,7 +2143,7 @@
                                   <Group type="102" alignment="0" attributes="0">
                                       <Component id="jLabel4" min="-2" max="-2" attributes="1"/>
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="jUVIDField" pref="202" max="32767" attributes="0"/>
+                                      <Component id="jUVIDField" max="32767" attributes="0"/>
                                   </Group>
                                   <Component id="jUVModeButton" alignment="1" min="-2" max="-2" attributes="1"/>
                               </Group>

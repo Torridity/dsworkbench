@@ -19,6 +19,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
+import javax.swing.SwingConstants;
 import net.java.dev.colorchooser.ColorChooser;
 
 /**
@@ -36,20 +37,29 @@ public class TagMapMarkerEditorImpl extends javax.swing.JPanel {
         add(c);
 
         //setup note symbol box
+        jComboBox1.addItem(-1);
         for (int i = 0; i <= ImageManager.ICON_SNOB; i++) {
             jComboBox1.addItem(i);
         }
 
+        final ImageIcon no_tag = new ImageIcon(TagMapMarkerEditorImpl.class.getResource("/res/remove.gif"));
+
         ListCellRenderer rSymbol = new ListCellRenderer() {
 
             @Override
-            public Component getListCellRendererComponent( JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+            public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
                 Component c = new DefaultListCellRenderer().getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
                 try {
                     JLabel label = ((JLabel) c);
                     label.setText("");
-                    BufferedImage symbol = ImageManager.getNoteSymbol((Integer) value);
-                    label.setIcon(new ImageIcon(symbol.getScaledInstance(18, 18, BufferedImage.SCALE_FAST)));
+                    int v = (Integer) value;
+                    label.setHorizontalAlignment(SwingConstants.CENTER);
+                    if (v != -1) {
+                        BufferedImage symbol = ImageManager.getUnitImage(v, false);
+                        label.setIcon(new ImageIcon(symbol.getScaledInstance(16, 16, BufferedImage.SCALE_FAST)));
+                    } else {
+                        label.setIcon(no_tag);
+                    }
                 } catch (Exception e) {
                 }
                 return c;
@@ -69,11 +79,11 @@ public class TagMapMarkerEditorImpl extends javax.swing.JPanel {
     }
 
     public void setIcon(int pIcon) {
-        jComboBox1.setSelectedIndex(pIcon);
+        jComboBox1.setSelectedItem(pIcon);
     }
 
     public int getIcon() {
-        return jComboBox1.getSelectedIndex();
+        return (Integer)jComboBox1.getSelectedItem();
     }
 
     /** This method is called from within the constructor to

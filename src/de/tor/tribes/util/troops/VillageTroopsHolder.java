@@ -164,16 +164,6 @@ public class VillageTroopsHolder {
     /**Returns own troops in village plus supports
      */
     public Hashtable<UnitHolder, Integer> getTroopsInVillage() {
-        /* Hashtable<UnitHolder, Integer> troops = (Hashtable<UnitHolder, Integer>) ownTroops.clone();
-        Enumeration<Village> keys = supports.keys();
-        while (keys.hasMoreElements()) {
-        Village v = keys.nextElement();
-        Hashtable<UnitHolder, Integer> support = supports.get(v);
-        for (UnitHolder u : DataHolder.getSingleton().getUnits()) {
-        troops.put(u, troops.get(u) + support.get(u));
-        }
-        }
-        return troops;*/
         return troopsInVillage;
     }
 
@@ -232,21 +222,21 @@ public class VillageTroopsHolder {
             Enumeration<UnitHolder> keys = own.keys();
             while (keys.hasMoreElements()) {
                 UnitHolder unit = keys.nextElement();
-              //  int inVillage = getTroopsOfUnitInVillage(unit);
+                //  int inVillage = getTroopsOfUnitInVillage(unit);
                 int ownValue = own.get(unit);
                 //no troops of unit in this village -> check supports
                 //if (inVillage == 0) {
-                    //add own troops
-                    int cntInVillage = ownValue;
-                    //add all known supports
-                    Enumeration<Village> supportKeys = getSupports().keys();
-                    while (supportKeys.hasMoreElements()) {
-                        Village source = supportKeys.nextElement();
-                        Integer amount = getSupports().get(source).get(unit);
-                        cntInVillage += amount;
-                    }
-                    getTroopsInVillage().put(unit, cntInVillage);
-                //}
+                //add own troops
+                int cntInVillage = ownValue;
+                //add all known supports
+                Enumeration<Village> supportKeys = getSupports().keys();
+                while (supportKeys.hasMoreElements()) {
+                    Village source = supportKeys.nextElement();
+                    Integer amount = getSupports().get(source).get(unit);
+                    cntInVillage += amount;
+                }
+                getTroopsInVillage().put(unit, cntInVillage);
+            //}
             }
         } catch (Exception e) {
         }

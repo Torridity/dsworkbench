@@ -35,6 +35,7 @@ import de.tor.tribes.util.GlobalOptions;
 
 /**
  *@TODO (DIFF) Note feature
+ * @TODO (1.6) Add NO_SYMBOL
  * @author Charon
  */
 public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame {
@@ -552,6 +553,8 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame {
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel3.setText("Notizsymbol");
 
+        jScrollPane3.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+
         jNotePane.setBackground(new java.awt.Color(255, 255, 204));
         jNotePane.addCaretListener(new javax.swing.event.CaretListener() {
             public void caretUpdate(javax.swing.event.CaretEvent evt) {
@@ -859,6 +862,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame {
             jNotePane.setText(currentNote.getNoteText());
             jLastModified.setText(new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss").format(new Date(currentNote.getTimestamp())));
             jIconBox.setSelectedItem(currentNote.getMapMarker());
+            jNoteSymbolBox.setSelectedItem(currentNote.getNoteSymbol());
         }
 
         List<Note> n = NoteManager.getSingleton().getNotes();

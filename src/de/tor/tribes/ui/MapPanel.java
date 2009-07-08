@@ -229,10 +229,10 @@ public class MapPanel extends javax.swing.JPanel {
                                 //empty village
                                 return;
                             }
+                            VillageTagFrame.getSingleton().setLocation(e.getPoint());
+                            VillageTagFrame.getSingleton().showTagsFrame(current);
+                            break;
                         }
-                        VillageTagFrame.getSingleton().setLocation(e.getPoint());
-                        VillageTagFrame.getSingleton().showTagsFrame(current);
-                        break;
                     }
                     case ImageManager.CURSOR_SUPPORT: {
                         Village current = getVillageAtMousePos();
@@ -717,7 +717,7 @@ public class MapPanel extends javax.swing.JPanel {
 
         addMouseMotionListener(MenuRenderer.getSingleton());
 
-        //<editor-fold>
+    //<editor-fold>
     }
 
     protected void resetServerDependendSettings() {

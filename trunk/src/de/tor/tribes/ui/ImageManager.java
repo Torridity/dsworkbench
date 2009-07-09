@@ -97,26 +97,25 @@ public class ImageManager {
     public final static int NOTE_SYMBOL_CATA = 9;
     public final static int NOTE_SYMBOL_KNIGHT = 10;
     public final static int NOTE_SYMBOL_SNOB = 11;
-    public final static int NOTE_SYMBOL_DEF = 12;
-    public final static int NOTE_SYMBOL_DEF_CAV = 13;
-    public final static int NOTE_SYMBOL_DEF_ARCH = 14;
-    public final static int NOTE_SYMBOL_FAKE = 15;
-    public final static int NOTE_SYMBOL_ALLY = 16;
-    public final static int NOTE_SYMBOL_ATTACK = 17;
-    public final static int NOTE_SYMBOL_OUT = 18;
-    public final static int NOTE_SYMBOL_IN = 19;
-    public final static int NOTE_SYMBOL_BALL_BLUE = 20;
-    public final static int NOTE_SYMBOL_BALL_GREEN = 21;
-    public final static int NOTE_SYMBOL_BALL_YELLOW = 22;
-    public final static int NOTE_SYMBOL_BALL_RED = 23;
-    public final static int NOTE_SYMBOL_BALL_GREY = 24;
-    public final static int NOTE_SYMBOL_WARN = 25;
-    public final static int NOTE_SYMBOL_DIE = 26;
-    public final static int NOTE_SYMBOL_ADD = 27;
-    public final static int NOTE_SYMBOL_REMOVE = 28;
-    public final static int NOTE_SYMBOL_CHECK = 29;
-    public final static int NOTE_SYMBOL_EYE = 30;
-    public final static int NOTE_SYMBOL_NO_EYE = 31;
+    public final static int NOTE_SYMBOL_DEF_CAV = 12;
+    public final static int NOTE_SYMBOL_DEF_ARCH = 13;
+    public final static int NOTE_SYMBOL_FAKE = 14;
+    public final static int NOTE_SYMBOL_ALLY = 15;
+    public final static int NOTE_SYMBOL_ATTACK = 16;
+    public final static int NOTE_SYMBOL_OUT = 17;
+    public final static int NOTE_SYMBOL_IN = 18;
+    public final static int NOTE_SYMBOL_BALL_BLUE = 19;
+    public final static int NOTE_SYMBOL_BALL_GREEN = 20;
+    public final static int NOTE_SYMBOL_BALL_YELLOW = 21;
+    public final static int NOTE_SYMBOL_BALL_RED = 22;
+    public final static int NOTE_SYMBOL_BALL_GREY = 23;
+    public final static int NOTE_SYMBOL_WARN = 24;
+    public final static int NOTE_SYMBOL_DIE = 25;
+    public final static int NOTE_SYMBOL_ADD = 26;
+    public final static int NOTE_SYMBOL_REMOVE = 27;
+    public final static int NOTE_SYMBOL_CHECK = 28;
+    public final static int NOTE_SYMBOL_EYE = 29;
+    public final static int NOTE_SYMBOL_NO_EYE = 30;
 
     //</editor-fold>
     private static final List<Cursor> CURSORS = new LinkedList<Cursor>();
@@ -196,9 +195,7 @@ public class ImageManager {
             throw new Exception("Failed to load note icons");
         }
     }
-
     public static void loadNoteSymbols() throws Exception {
-        NOTE_SYMBOLS.add(ImageIO.read(new File("graphics/icons/def.png")));
         NOTE_SYMBOLS.add(ImageIO.read(new File("graphics/icons/def_cav.png")));
         NOTE_SYMBOLS.add(ImageIO.read(new File("graphics/icons/def_archer.png")));
         NOTE_SYMBOLS.add(ImageIO.read(ImageManager.class.getResourceAsStream("/res/ui/fake.png")));

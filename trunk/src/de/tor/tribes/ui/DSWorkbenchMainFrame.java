@@ -50,6 +50,7 @@ import javax.swing.JFileChooser;
 import de.tor.tribes.util.troops.TroopsManager;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Rectangle;
 import java.awt.datatransfer.StringSelection;
 import java.io.FileWriter;
 import java.util.Arrays;
@@ -73,6 +74,7 @@ import javax.swing.table.DefaultTableModel;
  * @TODO (DIFF) Added scrollbar to task menu
  * @TODO (DIFF) Added selection view to tools
  * @TODO (1.6) F9 = Notepad -> Docu
+ * @TODO (1.6) Remove MarkOnTop and ChurchRange shortcuts from docu
  * @author  Charon
  */
 public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
@@ -115,8 +117,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         // </editor-fold>
 
         // <editor-fold defaultstate="collapsed" desc=" General UI setup ">
-
-
         Vector<String> v = new Vector<String>(Constants.LAYER_COUNT);
         for (int i = 0; i < Constants.LAYER_COUNT; i++) {
             v.add("");
@@ -141,8 +141,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                 Component c = new DefaultListCellRenderer().getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
                 try {
                     JLabel label = ((JLabel) c);
-                    label.setHorizontalAlignment(SwingConstants.CENTER);
-
                     if (value.equals("Dörfer")) {
                         //map layer is red
                         if (!isSelected) {
@@ -297,10 +295,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                         }
                     } else if ((e.getKeyCode() == KeyEvent.VK_F) && e.isAltDown() && !e.isShiftDown() && !e.isControlDown()) {
                         DSWorkbenchMarkerFrame.getSingleton().firePublicDrawMarkedOnlyChangedEvent();
-                    } else if ((e.getKeyCode() == KeyEvent.VK_M) && e.isAltDown() && !e.isShiftDown() && !e.isControlDown()) {
-                        switchMarkOnTop();
-                    } else if ((e.getKeyCode() == KeyEvent.VK_C) && e.isAltDown() && !e.isShiftDown() && !e.isControlDown()) {
-                        switchShowChurchRange();
                     } else if ((e.getKeyCode() == KeyEvent.VK_S) && e.isAltDown() && !e.isShiftDown() && !e.isControlDown()) {
                         fireCreateMapShotEvent(null);
                     } else if (e.getKeyCode() == KeyEvent.VK_F2) {
@@ -425,42 +419,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             jShowMapPopup.setSelected(true);
             GlobalOptions.addProperty("show.map.popup", Boolean.toString(true));
         }
-        try {
-            String val = GlobalOptions.getProperty("mark.on.top");
-            if (val == null) {
-                jMarkOnTopBox.setSelected(false);
-                GlobalOptions.addProperty("mark.on.top", Boolean.toString(false));
-            } else {
-                jMarkOnTopBox.setSelected(Boolean.parseBoolean(val));
-            }
-        } catch (Exception e) {
-            jMarkOnTopBox.setSelected(false);
-            GlobalOptions.addProperty("mark.on.top", Boolean.toString(false));
-        }
-        try {
-            String val = GlobalOptions.getProperty("show.church.range");
-            if (val == null) {
-                jChurchRangeBox.setSelected(false);
-                GlobalOptions.addProperty("show.church.range", Boolean.toString(false));
-            } else {
-                jChurchRangeBox.setSelected(Boolean.parseBoolean(val));
-            }
-        } catch (Exception e) {
-            jChurchRangeBox.setSelected(false);
-            GlobalOptions.addProperty("show.church.range", Boolean.toString(false));
-        }
-        try {
-            String val = GlobalOptions.getProperty("show.troops.density");
-            if (val == null) {
-                jShowTroopDensity.setSelected(false);
-                GlobalOptions.addProperty("show.troops.density", Boolean.toString(false));
-            } else {
-                jShowTroopDensity.setSelected(Boolean.parseBoolean(val));
-            }
-        } catch (Exception e) {
-            jShowTroopDensity.setSelected(false);
-            GlobalOptions.addProperty("show.troops.density", Boolean.toString(false));
-        }
+
         try {
             jRadarSpinner.setEditor(new JSpinner.DateEditor(jRadarSpinner, "HH'h' mm'min'"));
             String val = GlobalOptions.getProperty("radar.size");
@@ -552,7 +511,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         }
 
         jShowChurchFrame.setEnabled(ServerSettings.getSingleton().isChurch());
-        jChurchRangeBox.setEnabled(ServerSettings.getSingleton().isChurch());
         jROIBox.setModel(new DefaultComboBoxModel(ROIManager.getSingleton().getROIs()));
 
         DSWorkbenchSelectionFrame.getSingleton().clear();
@@ -839,16 +797,15 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jTaskPaneGroup5 = new com.l2fprod.common.swing.JTaskPaneGroup();
         jPanel2 = new javax.swing.JPanel();
         jShowMapPopup = new javax.swing.JCheckBox();
-        jMarkOnTopBox = new javax.swing.JCheckBox();
-        jChurchRangeBox = new javax.swing.JCheckBox();
         jLabel5 = new javax.swing.JLabel();
         jRadarSpinner = new javax.swing.JSpinner();
-        jShowTroopDensity = new javax.swing.JCheckBox();
         jScrollPane3 = new javax.swing.JScrollPane();
         jLayerList = new javax.swing.JList();
         jLabel10 = new javax.swing.JLabel();
         jLayerUpButton = new javax.swing.JButton();
         jLayerDownButton = new javax.swing.JButton();
+        jLabel11 = new javax.swing.JLabel();
+        jPopupTroops = new javax.swing.JComboBox();
         jTaskPaneGroup2 = new com.l2fprod.common.swing.JTaskPaneGroup();
         jPanel3 = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
@@ -1346,7 +1303,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                 .addGroup(jNavigationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jRefreshButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jCenterCoordinateIngame, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(12, Short.MAX_VALUE))
         );
         jNavigationPanelLayout.setVerticalGroup(
             jNavigationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1468,13 +1425,13 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jInformationPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jCurrentPlayer, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jCurrentPlayerVillages, javax.swing.GroupLayout.Alignment.LEADING, 0, 155, Short.MAX_VALUE)
+                    .addComponent(jCurrentPlayer, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 218, Short.MAX_VALUE)
+                    .addComponent(jCurrentPlayerVillages, javax.swing.GroupLayout.Alignment.LEADING, 0, 218, Short.MAX_VALUE)
                     .addGroup(jInformationPanelLayout.createSequentialGroup()
                         .addComponent(jCurrentToolLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 90, Short.MAX_VALUE)
                         .addComponent(jCenterIngameButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jOnlineLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -1506,33 +1463,17 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jTaskPaneGroup5.getContentPane().setLayout(percentLayout4);
 
         jPanel2.setBackground(new java.awt.Color(239, 235, 223));
-        jPanel2.setMaximumSize(new java.awt.Dimension(293, 281));
-        jPanel2.setMinimumSize(new java.awt.Dimension(293, 281));
-        jPanel2.setPreferredSize(new java.awt.Dimension(293, 281));
+        jPanel2.setMaximumSize(new java.awt.Dimension(100, 281));
+        jPanel2.setMinimumSize(new java.awt.Dimension(100, 281));
+        jPanel2.setPreferredSize(new java.awt.Dimension(100, 281));
 
         jShowMapPopup.setText(bundle.getString("DSWorkbenchMainFrame.jShowMapPopup.text")); // NOI18N
         jShowMapPopup.setToolTipText(bundle.getString("DSWorkbenchMainFrame.jShowMapPopup.toolTipText")); // NOI18N
+        jShowMapPopup.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         jShowMapPopup.setOpaque(false);
         jShowMapPopup.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 fireShowMapPopupChangedEvent(evt);
-            }
-        });
-
-        jMarkOnTopBox.setText(bundle.getString("DSWorkbenchMainFrame.jMarkOnTopBox.text")); // NOI18N
-        jMarkOnTopBox.setToolTipText(bundle.getString("DSWorkbenchMainFrame.jMarkOnTopBox.toolTipText")); // NOI18N
-        jMarkOnTopBox.setOpaque(false);
-        jMarkOnTopBox.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                fireMarkOnTopChangedEvent(evt);
-            }
-        });
-
-        jChurchRangeBox.setText(bundle.getString("DSWorkbenchMainFrame.jChurchRangeBox.text")); // NOI18N
-        jChurchRangeBox.setOpaque(false);
-        jChurchRangeBox.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                fireShowChurchRangeChangedEvent(evt);
             }
         });
 
@@ -1542,14 +1483,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jRadarSpinner.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 fireRadarSpinnerChangedEvent(evt);
-            }
-        });
-
-        jShowTroopDensity.setText(bundle.getString("DSWorkbenchMainFrame.jShowTroopDensity.text")); // NOI18N
-        jShowTroopDensity.setOpaque(false);
-        jShowTroopDensity.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                fireShowTroopDensityEvent(evt);
             }
         });
 
@@ -1588,55 +1521,67 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             }
         });
 
+        jLabel11.setText(bundle.getString("DSWorkbenchMainFrame.jLabel11.text")); // NOI18N
+
+        jPopupTroops.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Im Dorf", "Eigene", "Außerhalb", "Unterwegs", "Unterstützung" }));
+        jPopupTroops.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                firePopupTroopsChangedEvent(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addGap(10, 10, 10)
+                .addComponent(jShowMapPopup, javax.swing.GroupLayout.DEFAULT_SIZE, 222, Short.MAX_VALUE)
+                .addContainerGap())
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, 118, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jRadarSpinner, javax.swing.GroupLayout.DEFAULT_SIZE, 145, Short.MAX_VALUE))
-                    .addComponent(jMarkOnTopBox, javax.swing.GroupLayout.DEFAULT_SIZE, 273, Short.MAX_VALUE)
-                    .addComponent(jShowMapPopup, javax.swing.GroupLayout.DEFAULT_SIZE, 273, Short.MAX_VALUE)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jLabel10)
-                        .addGap(18, 18, 18)
-                        .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 190, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 14, Short.MAX_VALUE)
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLayerUpButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLayerDownButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(jChurchRangeBox, javax.swing.GroupLayout.DEFAULT_SIZE, 273, Short.MAX_VALUE)
-                    .addComponent(jShowTroopDensity, javax.swing.GroupLayout.DEFAULT_SIZE, 273, Short.MAX_VALUE))
-                .addContainerGap())
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel5)
+                            .addComponent(jLabel11))
+                        .addGap(10, 10, 10)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jPopupTroops, 0, 105, Short.MAX_VALUE)
+                            .addComponent(jRadarSpinner, javax.swing.GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE))
+                        .addGap(30, 30, 30)))
+                .addGap(16, 16, 16))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jShowMapPopup)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jMarkOnTopBox)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jShowTroopDensity)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jChurchRangeBox)
-                .addGap(10, 10, 10)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel11)
+                    .addComponent(jPopupTroops, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
                     .addComponent(jRadarSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel10)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jLayerUpButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLayerDownButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jLabel10)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 138, Short.MAX_VALUE))
+                .addGap(38, 38, 38))
         );
 
         jTaskPaneGroup5.getContentPane().add(jPanel2);
@@ -2254,10 +2199,6 @@ private void fireShowMapPopupChangedEvent(javax.swing.event.ChangeEvent evt) {//
     GlobalOptions.addProperty("show.map.popup", Boolean.toString(jShowMapPopup.isSelected()));
 }//GEN-LAST:event_fireShowMapPopupChangedEvent
 
-private void fireMarkOnTopChangedEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireMarkOnTopChangedEvent
-    GlobalOptions.addProperty("mark.on.top", Boolean.toString(jMarkOnTopBox.isSelected()));
-}//GEN-LAST:event_fireMarkOnTopChangedEvent
-
 private void fireCreateMapShotEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCreateMapShotEvent
     Component parent = fullscreenFrame;
     if (parent == null) {
@@ -2609,14 +2550,6 @@ private void fireShowChurchFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIR
     }
 }//GEN-LAST:event_fireShowChurchFrameEvent
 
-private void fireShowChurchRangeChangedEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireShowChurchRangeChangedEvent
-    if (!jChurchRangeBox.isEnabled()) {
-        return;
-    }
-
-    GlobalOptions.addProperty("show.church.range", Boolean.toString(jChurchRangeBox.isSelected()));
-}//GEN-LAST:event_fireShowChurchRangeChangedEvent
-
 private void fireChangeROIEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireChangeROIEvent
     if (evt.getSource() == jAddROIButton) {
         try {
@@ -2718,10 +2651,6 @@ private void fireShowConquersFrameEvent(java.awt.event.ActionEvent evt) {//GEN-F
     }
 }//GEN-LAST:event_fireShowConquersFrameEvent
 
-private void fireShowTroopDensityEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireShowTroopDensityEvent
-    GlobalOptions.addProperty("show.troops.density", Boolean.toString(jShowTroopDensity.isSelected()));
-}//GEN-LAST:event_fireShowTroopDensityEvent
-
 private void fireShowNotepadEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireShowNotepadEvent
     if (jShowNotepadFrame.isEnabled()) {
         DSWorkbenchNotepad.getSingleton().setVisible(!DSWorkbenchNotepad.getSingleton().isVisible());
@@ -2744,6 +2673,12 @@ private void fireChangeDrawOrderEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
         jLayerList.invalidate();
         model.add(idx, elem);
         jLayerList.setSelectedIndex(idx);
+        try {
+            //scroll element to be visible
+            Rectangle g = jLayerList.getCellBounds(idx, idx);
+            jLayerList.scrollRectToVisible(g);
+        } catch (Exception e) {
+        }
         jLayerList.revalidate();
     } else {
         if (idx == model.getSize() - 1) {
@@ -2756,6 +2691,12 @@ private void fireChangeDrawOrderEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
         idx += 1;
         model.add(idx, elem);
         jLayerList.setSelectedIndex(idx);
+        try {
+            //scroll element to be visible
+            Rectangle g = jLayerList.getCellBounds(idx, idx);
+            jLayerList.scrollRectToVisible(g);
+        } catch (Exception e) {
+        }
         jLayerList.revalidate();
     }
     jLayerList.updateUI();
@@ -2769,6 +2710,12 @@ private void fireShowTagFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:
         jShowTagFrame.setSelected(DSWorkbenchTagFrame.getSingleton().isVisible());
     }
 }//GEN-LAST:event_fireShowTagFrameEvent
+
+private void firePopupTroopsChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_firePopupTroopsChangedEvent
+    if (evt.getStateChange() == java.awt.event.ItemEvent.SELECTED) {
+        MapPanel.getSingleton().getMapRenderer().setPopupTroopType(jPopupTroops.getSelectedIndex());
+    }
+}//GEN-LAST:event_firePopupTroopsChangedEvent
 
     private void propagateLayerOrder() {
         DefaultListModel model = ((DefaultListModel) jLayerList.getModel());
@@ -2791,18 +2738,6 @@ private void fireShowTagFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:
             fireRefreshMapEvent(null);
         } catch (Exception e) {
         }
-    }
-
-    protected void switchMarkOnTop() {
-        jMarkOnTopBox.setSelected(!jMarkOnTopBox.isSelected());
-    }
-
-    /**(Don't) show church ranges on map*/
-    protected void switchShowChurchRange() {
-        if (!jChurchRangeBox.isEnabled()) {
-            return;
-        }
-        jChurchRangeBox.setSelected(!jChurchRangeBox.isSelected());
     }
 
     /**Check if zoom factor is valid and correct if needed*/
@@ -3082,7 +3017,6 @@ private void fireShowTagFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:
     private javax.swing.JButton jCenterIngameButton;
     private javax.swing.JTextField jCenterX;
     private javax.swing.JTextField jCenterY;
-    private javax.swing.JCheckBox jChurchRangeBox;
     private javax.swing.JMenuItem jClockItem;
     private javax.swing.JLabel jCurrentPlayer;
     private javax.swing.JComboBox jCurrentPlayerVillages;
@@ -3098,6 +3032,7 @@ private void fireShowTagFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:
     private javax.swing.JPanel jInformationPanel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -3110,7 +3045,6 @@ private void fireShowTagFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:
     private javax.swing.JList jLayerList;
     private javax.swing.JButton jLayerUpButton;
     private javax.swing.JDialog jMapShotDialog;
-    private javax.swing.JCheckBox jMarkOnTopBox;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu3;
@@ -3136,6 +3070,7 @@ private void fireShowTagFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
+    private javax.swing.JComboBox jPopupTroops;
     private javax.swing.JComboBox jROIBox;
     private javax.swing.JComboBox jROIPosition;
     private javax.swing.JTextField jROIRegion;
@@ -3159,7 +3094,6 @@ private void fireShowTagFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:
     private javax.swing.JCheckBoxMenuItem jShowNotepadFrame;
     private javax.swing.JCheckBoxMenuItem jShowRankFrame;
     private javax.swing.JCheckBoxMenuItem jShowTagFrame;
-    private javax.swing.JCheckBox jShowTroopDensity;
     private javax.swing.JCheckBoxMenuItem jShowTroopsFrame;
     private com.l2fprod.common.swing.JTaskPane jTaskPane1;
     private com.l2fprod.common.swing.JTaskPaneGroup jTaskPaneGroup1;

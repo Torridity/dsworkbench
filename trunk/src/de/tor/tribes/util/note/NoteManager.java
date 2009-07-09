@@ -207,7 +207,7 @@ public class NoteManager {
             }
             //@TODO (1.6) REMOVE DEBUG OUTPUT
             System.out.println("not " + i);
-            if (n.getNoteText().indexOf(pText) > -1) {
+            if (n.getNoteText().toLowerCase().indexOf(pText.toLowerCase()) > -1) {
                 //search in note text
                 return n;
             }
@@ -215,7 +215,7 @@ public class NoteManager {
             for (Integer id : n.getVillageIds()) {
                 Village v = DataHolder.getSingleton().getVillagesById().get(id);
                 if (v != null) {
-                    if (v.toString().indexOf(pText) > -1) {
+                    if (v.toString().toLowerCase().indexOf(pText.toLowerCase()) > -1) {
                         return n;
                     }
                 }

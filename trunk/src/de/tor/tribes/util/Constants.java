@@ -26,7 +26,7 @@ public class Constants {
         LAYERS = new Hashtable<String, Integer>();
         LAYERS.put("Markierungen", 0);
         LAYERS.put("Dörfer", 1);
-        LAYERS.put("Tagmarkierungen", 2);
+        LAYERS.put("Dorfsymbole", 2);
         LAYERS.put("Dorfinformation", 3);
         LAYERS.put("Truppendichte", 4);
         LAYERS.put("Notizmarkierungen", 5);

@@ -62,7 +62,6 @@ import java.awt.geom.Arc2D;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
-import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -80,6 +79,7 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
+import java.util.Vector;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import org.apache.log4j.Logger;
@@ -128,6 +128,7 @@ public class MapRenderer extends Thread {
     private BufferedImage mConquerWarning = null;
     // private Path2D.Double ARROW = createArrow(0);
     private List<Integer> drawOrder = null;
+    private int iPopupTroopType = 0;
 
     public MapRenderer() {
         mVisibleVillages = new Village[iVillagesX][iVillagesY];
@@ -142,10 +143,24 @@ public class MapRenderer extends Thread {
 
         mLayers = new Hashtable<Integer, BufferedImage>();
         drawOrder = new LinkedList<Integer>();
-        Enumeration<String> keys = Constants.LAYERS.keys();
-        while (keys.hasMoreElements()) {
-            drawOrder.add(Constants.LAYERS.get(keys.nextElement()));
+        Vector<String> v = new Vector<String>(Constants.LAYER_COUNT);
+        for (int i = 0; i < Constants.LAYER_COUNT; i++) {
+            v.add("");
         }
+
+        Enumeration<String> values = Constants.LAYERS.keys();
+        while (values.hasMoreElements()) {
+            String layer = values.nextElement();
+            v.set(Constants.LAYERS.get(layer), layer);
+        }
+
+        for (String s : v) {
+            drawOrder.add(Constants.LAYERS.get(s));
+        }
+    }
+
+    public void setPopupTroopType(int pValue) {
+        iPopupTroopType = pValue;
     }
 
     public void setDrawOrder(List<Integer> pDrawOrder) {
@@ -202,7 +217,6 @@ public class MapRenderer extends Thread {
                         if (mMainBuffer.getWidth(null) != w || mMainBuffer.getHeight(null) != h) {
                             //map panel has resized
                             mMainBuffer = getBufferedImage(w, h, Transparency.TRANSLUCENT);//MapPanel.getSingleton().createImage(w, h);
-
                             g2d = (Graphics2D) mMainBuffer.getGraphics();
                             prepareGraphics(g2d);
                             //set redraw required flag if size has changed
@@ -219,13 +233,14 @@ public class MapRenderer extends Thread {
                     }
                     //get currently selected user village for marking -> one call reduces sync effort
                     currentUserVillage = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage();
+                    //check if redraw required
                     if (mapRedrawRequired) {
-                        mapRedrawRequired = false;
                         //complete redraw is required
                         calculateVisibleVillages();
                         if (viewStartPoint == null) {
                             throw new Exception("View position is 'null', skip redraw");
                         }
+                        mapRedrawRequired = false;
                         renderMap();
                         renderTagMarkers();
                     }
@@ -1054,13 +1069,12 @@ public class MapRenderer extends Thread {
                 if (rect == null) {
                     //sometimes the icons seemed to be null
                     BufferedImage icon = ImageManager.getNoteIcon(nodeIcon);
-                    if (icon != null && rect != null) {
+                    if (icon != null) {
                         if (MapPanel.getSingleton().getBounds().contains(new Rectangle(markX - 10, markY - icon.getHeight() + 10, icon.getWidth() + 2, icon.getHeight() + 2))) {
                             rect = new Rectangle(markX, markY, icon.getWidth(), icon.getHeight());
                             markPositions.put(nodeIcon, rect);
                         }
-
-                        g2d.drawImage(icon, rect.x - 10, rect.y - icon.getHeight() + 10, null);
+                        g2d.drawImage(icon, markX - 10, markY - icon.getHeight() + 10, null);
                     }
                 } else {
                     g2d.copyArea(rect.x - 10, rect.y - rect.height + 10, rect.width, rect.height, markX - rect.x, markY - rect.y);
@@ -2006,7 +2020,6 @@ public class MapRenderer extends Thread {
                 }
                 dy += 19;
             }
-
         }
 
         //Tribe rect
@@ -2277,13 +2290,34 @@ public class MapRenderer extends Thread {
             }
 
         }
-        //if no runtime drawing, check troops
         if (!drawDist) {
-            if ((troops == null) || (troops.getTroopsInVillage().isEmpty())) {
+            if (troops == null) {
                 return;
             }
-
         }
+        //if no runtime drawing, check troops
+        Hashtable<UnitHolder, Integer> activeTroops = null;
+        switch (iPopupTroopType) {
+            case TroopsManagerTableModel.SHOW_OWN_TROOPS: {
+                activeTroops = troops.getOwnTroops();
+                break;
+            }
+            case TroopsManagerTableModel.SHOW_TROOPS_OUTSIDE: {
+                activeTroops = troops.getTroopsOutside();
+                break;
+            }
+            case TroopsManagerTableModel.SHOW_TROOPS_ON_THE_WAY: {
+                activeTroops = troops.getTroopsOnTheWay();
+                break;
+            }
+            case TroopsManagerTableModel.SHOW_FORGEIGN_TROOPS: {
+                activeTroops = troops.getForeignTroops();
+                break;
+            }
+            default:
+                activeTroops = troops.getTroopsInVillage();//TroopsManagerTableModel.SHOW_TROOPS_IN_VILLAGE
+            }
+
         g2d.setFont(current);
         FontMetrics metrics = g2d.getFontMetrics(current);
         NumberFormat nf = NumberFormat.getInstance();
@@ -2302,7 +2336,7 @@ public class MapRenderer extends Thread {
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
             if (!drawDist) {
                 //draw troop information
-                int cnt = troops.getTroopsInVillage().get(unit);
+                int cnt = activeTroops.get(unit);
                 if (cnt > 0) {
                     if (unitCount % 2 == 0) {
                         g2d.setColor(Constants.DS_BACK);
@@ -2319,7 +2353,6 @@ public class MapRenderer extends Thread {
                     x += w;
                     unitCount++;
                 }
-
             } else {
                 //draw runtime
                 double runtime = DSCalculator.calculateMoveTimeInMinutes(mSourceVillage, pMouseVillage, unit.getSpeed());

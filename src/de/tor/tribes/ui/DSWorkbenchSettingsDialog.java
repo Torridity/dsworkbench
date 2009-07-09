@@ -36,11 +36,9 @@ import de.tor.tribes.types.Tag;
 import de.tor.tribes.ui.editors.ColorChooserCellEditor;
 import de.tor.tribes.util.ServerChangeListener;
 import de.tor.tribes.types.Village;
-import de.tor.tribes.ui.models.TagTableModel;
 import de.tor.tribes.ui.renderer.MapRenderer;
 import de.tor.tribes.util.JOptionPaneHelper;
 import java.awt.Component;
-import java.awt.MouseInfo;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.net.Authenticator;
@@ -56,9 +54,9 @@ import net.java.dev.colorchooser.ColorChooser;
 /**
  * @TODO (1.X) Integrate browser access for linux
  * @TODO (1.X) Shortcuts editable
- * @TODO (1.6) Add option to change shown troops of popup
- * @TODO (1.6) Add setting to set max. value of troop density
- * @TODO (1.6) Move tags to own view
+ * @TODO (DIFF) Add option to change shown troops of popup
+ * @TODO (DIFF) Add setting to set max. value of troop density
+ * @TODO (DIFF) Move tags to own view
  * @author Jejkal
  */
 public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements

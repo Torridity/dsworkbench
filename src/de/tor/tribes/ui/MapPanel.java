@@ -46,7 +46,6 @@ import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
-import java.awt.image.VolatileImage;
 import java.io.File;
 import java.text.NumberFormat;
 import java.util.Enumeration;
@@ -56,7 +55,6 @@ import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
 
 /**
- * @TODO (1.X) Add flag-marker for single villages/notes? -> notes as forms? (Version 2.0)
  * @author Charon
  */
 public class MapPanel extends javax.swing.JPanel {

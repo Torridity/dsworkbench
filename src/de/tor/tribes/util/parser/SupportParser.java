@@ -28,9 +28,7 @@ public class SupportParser {
     [070]PICO (80|476) K40 	152	172	0	261	0	0	0	0	0	0	0	0
     [002]PICO (78|424) K40 	eigene	5549	4381	0	4375	2	0	0	364	0	0	0	0	Truppen
     [004]PICO (70|468) K40 	eigene	404	28	0	1842	2	0	0	0	0	0	0	4	Truppen
-
-    @TODO (1.6) Check if "troops in village" which where imported before are corrected or if they are too large afterwards
-     */
+  */
     public static boolean parse(String pTroopsString) {
         StringTokenizer lineTok = new StringTokenizer(pTroopsString, "\n\r");
         Village v = null;

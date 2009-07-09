@@ -175,6 +175,18 @@ public class VillageTroopsHolder {
         return troopsOnTheWay;
     }
 
+    public Hashtable<UnitHolder, Integer> getForeignTroops() {
+        Hashtable<UnitHolder, Integer> foreign = new Hashtable<UnitHolder, Integer>();
+        for (UnitHolder u : DataHolder.getSingleton().getUnits()) {
+            Integer own = getOwnTroops().get(u);
+            Integer inVillage = getTroopsInVillage().get(u);
+            int result = inVillage - own;
+            result = (result < 0) ? 0 : result;
+            foreign.put(u, result);
+        }
+        return foreign;
+    }
+
     public int getTroopsOfUnitInVillage(UnitHolder pUnit) {
         return troopsInVillage.get(pUnit);
     }
@@ -222,11 +234,7 @@ public class VillageTroopsHolder {
             Enumeration<UnitHolder> keys = own.keys();
             while (keys.hasMoreElements()) {
                 UnitHolder unit = keys.nextElement();
-                //  int inVillage = getTroopsOfUnitInVillage(unit);
                 int ownValue = own.get(unit);
-                //no troops of unit in this village -> check supports
-                //if (inVillage == 0) {
-                //add own troops
                 int cntInVillage = ownValue;
                 //add all known supports
                 Enumeration<Village> supportKeys = getSupports().keys();
@@ -236,7 +244,6 @@ public class VillageTroopsHolder {
                     cntInVillage += amount;
                 }
                 getTroopsInVillage().put(unit, cntInVillage);
-            //}
             }
         } catch (Exception e) {
         }

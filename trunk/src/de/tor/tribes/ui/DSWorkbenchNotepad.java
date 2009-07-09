@@ -32,6 +32,7 @@ import javax.swing.ListCellRenderer;
 import javax.swing.text.html.HTMLDocument;
 import org.apache.log4j.Logger;
 import de.tor.tribes.util.GlobalOptions;
+import javax.swing.SwingConstants;
 
 /**
  *@TODO (DIFF) Note feature
@@ -133,11 +134,11 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame {
         jIconBox.setRenderer(r);
 
         //setup note symbol box
-        for (int i = 0; i <= ImageManager.NOTE_SYMBOL_NO_EYE; i++) {
+        for (int i = -1; i <= ImageManager.NOTE_SYMBOL_NO_EYE; i++) {
             jNoteSymbolBox.addItem(i);
         }
 
-        ListCellRenderer rSymbol = new ListCellRenderer() {
+        jNoteSymbolBox.setRenderer(new ListCellRenderer() {
 
             @Override
             public Component getListCellRendererComponent(
@@ -145,15 +146,23 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame {
                 Component c = new DefaultListCellRenderer().getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
                 try {
                     JLabel label = ((JLabel) c);
+                    label.setHorizontalAlignment(SwingConstants.CENTER);
                     label.setText("");
-                    BufferedImage symbol = ImageManager.getNoteSymbol((Integer) value);
-                    label.setIcon(new ImageIcon(symbol.getScaledInstance(18, 18, BufferedImage.SCALE_FAST)));
+                    int val = (Integer) value;
+                    if (val != -1) {
+                        BufferedImage symbol = ImageManager.getNoteSymbol(val);
+                        label.setIcon(new ImageIcon(symbol.getScaledInstance(18, 18, BufferedImage.SCALE_FAST)));
+                    } else {
+                        //no symbol
+                        label.setIcon(null);
+                        label.setText("-");
+                    }
                 } catch (Exception e) {
+                    e.printStackTrace();
                 }
                 return c;
             }
-        };
-        jNoteSymbolBox.setRenderer(rSymbol);
+        });
 
     //@TODO (1.6) Integrate Help for note system
     // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
@@ -883,11 +892,11 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame {
         String text = ".77:98:15 - !DC!	77:98:15";
         //System.out.println(text.matches("\\([0-9]{1,3}\\|[0-9]{1,3}\\)"));
         //System.out.println(text.matches("[0-9]{1,3}\\:[0-9]{1,3}:[0-9]{1,3}"));
-        String[] t= text.split("[0-9]{1,3}");
+        String[] t = text.split("[0-9]{1,3}");
         System.out.println(t.length);
-        System.out.println(t[t.length-3]);
-        System.out.println(t[t.length-2]);
-        System.out.println(t[t.length-1]);
+        System.out.println(t[t.length - 3]);
+        System.out.println(t[t.length - 2]);
+        System.out.println(t[t.length - 1]);
 
         System.out.println(text.trim().matches(".+[0-9]{1,3}\\:[0-9]{1,3}:[0-9]{1,3}"));
     }

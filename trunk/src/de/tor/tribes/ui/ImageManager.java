@@ -84,6 +84,7 @@ public class ImageManager {
     public static final int ID_NOTE_ICON_5 = 5;
     //</editor-fold>
     // <editor-fold defaultstate="collapsed" desc="Note symbol IDs">
+    public final static int NOTE_SYMBOL_NONE = -1;
     public final static int NOTE_SYMBOL_SPEAR = 0;
     public final static int NOTE_SYMBOL_SWORD = 1;
     public final static int NOTE_SYMBOL_AXE = 2;

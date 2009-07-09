@@ -12,7 +12,6 @@ import de.tor.tribes.util.tag.TagManagerListener;
 import javax.swing.table.AbstractTableModel;
 
 /**
- *
  * @author Jejkal
  */
 public class TagTableModel extends AbstractTableModel {

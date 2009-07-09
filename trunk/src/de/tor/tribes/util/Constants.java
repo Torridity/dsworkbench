@@ -19,15 +19,20 @@ public class Constants {
     public final static Color DS_BACK_LIGHT = new Color(239, 235, 223);
     public final static String SERVER_DIR = "./servers";
     public static Hashtable<String, Integer> LAYERS = null;
-    public final static int LAYER_COUNT = 6;
+    public final static int LAYER_COUNT = 10;
+
 
     static {
         LAYERS = new Hashtable<String, Integer>();
-        LAYERS.put("Tagmarkierungen",0);
-        LAYERS.put("Dorfinfos",1);
-        LAYERS.put("Notizmarkierungen",2);
-        LAYERS.put("Angriffsvektoren",3);
-        LAYERS.put("Formen",4);
-        LAYERS.put("Kirchenradien",5);
+        LAYERS.put("Markierungen", 0);
+        LAYERS.put("Dörfer", 1);
+        LAYERS.put("Tagmarkierungen", 2);
+        LAYERS.put("Dorfinformation", 3);
+        LAYERS.put("Truppendichte", 4);
+        LAYERS.put("Notizmarkierungen", 5);
+        LAYERS.put("Angriffe", 6);
+        LAYERS.put("Unterstützungen", 7);
+        LAYERS.put("Formen", 8);
+        LAYERS.put("Kirchenradien", 9);
     }
 }

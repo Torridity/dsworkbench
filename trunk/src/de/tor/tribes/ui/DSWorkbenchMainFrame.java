@@ -29,6 +29,7 @@ import java.util.LinkedList;
 import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import org.apache.log4j.Logger;
 import de.tor.tribes.types.Tag;
@@ -47,6 +48,7 @@ import de.tor.tribes.util.roi.ROIManager;
 import java.io.File;
 import javax.swing.JFileChooser;
 import de.tor.tribes.util.troops.TroopsManager;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.datatransfer.StringSelection;
 import java.io.FileWriter;
@@ -54,10 +56,15 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.Vector;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
+import javax.swing.JLabel;
 import javax.swing.JSpinner;
 import javax.swing.JTable;
+import javax.swing.ListCellRenderer;
+import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
@@ -109,14 +116,56 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
 
         // <editor-fold defaultstate="collapsed" desc=" General UI setup ">
 
-        DefaultListModel model = new DefaultListModel();
+
+        Vector<String> v = new Vector<String>(Constants.LAYER_COUNT);
+        for (int i = 0; i < Constants.LAYER_COUNT; i++) {
+            v.add("");
+        }
+
         Enumeration<String> values = Constants.LAYERS.keys();
         while (values.hasMoreElements()) {
-            model.addElement(values.nextElement());
+            String layer = values.nextElement();
+            v.set(Constants.LAYERS.get(layer), layer);
         }
+
+        DefaultListModel model = new DefaultListModel();
+        for (String s : v) {
+            model.addElement(s);
+        }
+
         jLayerList.setModel(model);
+        jLayerList.setCellRenderer(new ListCellRenderer() {
 
+            @Override
+            public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+                Component c = new DefaultListCellRenderer().getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                try {
+                    JLabel label = ((JLabel) c);
+                    label.setHorizontalAlignment(SwingConstants.CENTER);
 
+                    if (value.equals("Dörfer")) {
+                        //map layer is red
+                        if (!isSelected) {
+                            label.setBackground(Color.RED);
+                        }
+                    } else if (value.equals("Markierungen")) {
+                        //marker layer is not influenced by map layer
+                        //so it gets a special color
+                        if (!isSelected) {
+                            label.setBackground(Color.LIGHT_GRAY);
+                        }
+                    } else {
+                        //layers which are "behind" map are dark
+                        int villageIndex = ((DefaultListModel) list.getModel()).indexOf("Dörfer");
+                        if (index < villageIndex && !isSelected) {
+                            label.setBackground(Color.DARK_GRAY);
+                        }
+                    }
+                } catch (Exception e) {
+                }
+                return c;
+            }
+        });
         /*
          *
         g2d.drawImage(mLayers.get(TAG_MARKER_LAYER), 0, 0, null);
@@ -1297,7 +1346,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                 .addGroup(jNavigationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jRefreshButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jCenterCoordinateIngame, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(12, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jNavigationPanelLayout.setVerticalGroup(
             jNavigationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1419,13 +1468,13 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jInformationPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jCurrentPlayer, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 218, Short.MAX_VALUE)
-                    .addComponent(jCurrentPlayerVillages, javax.swing.GroupLayout.Alignment.LEADING, 0, 218, Short.MAX_VALUE)
+                    .addComponent(jCurrentPlayer, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jCurrentPlayerVillages, javax.swing.GroupLayout.Alignment.LEADING, 0, 155, Short.MAX_VALUE)
                     .addGroup(jInformationPanelLayout.createSequentialGroup()
                         .addComponent(jCurrentToolLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 90, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27, Short.MAX_VALUE)
                         .addComponent(jCenterIngameButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jOnlineLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -1547,21 +1596,21 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, 90, Short.MAX_VALUE)
+                        .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, 118, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jRadarSpinner, javax.swing.GroupLayout.DEFAULT_SIZE, 118, Short.MAX_VALUE))
-                    .addComponent(jMarkOnTopBox, javax.swing.GroupLayout.DEFAULT_SIZE, 218, Short.MAX_VALUE)
-                    .addComponent(jShowMapPopup, javax.swing.GroupLayout.DEFAULT_SIZE, 218, Short.MAX_VALUE)
+                        .addComponent(jRadarSpinner, javax.swing.GroupLayout.DEFAULT_SIZE, 145, Short.MAX_VALUE))
+                    .addComponent(jMarkOnTopBox, javax.swing.GroupLayout.DEFAULT_SIZE, 273, Short.MAX_VALUE)
+                    .addComponent(jShowMapPopup, javax.swing.GroupLayout.DEFAULT_SIZE, 273, Short.MAX_VALUE)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jLabel10)
                         .addGap(18, 18, 18)
-                        .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 135, Short.MAX_VALUE)
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 190, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jLayerUpButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLayerDownButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(jChurchRangeBox, javax.swing.GroupLayout.DEFAULT_SIZE, 218, Short.MAX_VALUE)
-                    .addComponent(jShowTroopDensity, javax.swing.GroupLayout.DEFAULT_SIZE, 218, Short.MAX_VALUE))
+                    .addComponent(jChurchRangeBox, javax.swing.GroupLayout.DEFAULT_SIZE, 273, Short.MAX_VALUE)
+                    .addComponent(jShowTroopDensity, javax.swing.GroupLayout.DEFAULT_SIZE, 273, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -2674,13 +2723,14 @@ private void fireShowTroopDensityEvent(javax.swing.event.ChangeEvent evt) {//GEN
 }//GEN-LAST:event_fireShowTroopDensityEvent
 
 private void fireShowNotepadEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireShowNotepadEvent
-    DSWorkbenchNotepad.getSingleton().setVisible(DSWorkbenchNotepad.getSingleton().isVisible());
-    jShowNotepadFrame.setSelected(DSWorkbenchNotepad.getSingleton().isVisible());
+    if (jShowNotepadFrame.isEnabled()) {
+        DSWorkbenchNotepad.getSingleton().setVisible(!DSWorkbenchNotepad.getSingleton().isVisible());
+        jShowNotepadFrame.setSelected(DSWorkbenchNotepad.getSingleton().isVisible());
+    }
 }//GEN-LAST:event_fireShowNotepadEvent
 
 private void fireChangeDrawOrderEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireChangeDrawOrderEvent
     int idx = jLayerList.getSelectedIndex();
-    Object o = jLayerList.getSelectedValue();
     DefaultListModel model = ((DefaultListModel) jLayerList.getModel());
     if (evt.getSource() == jLayerUpButton) {
         if (idx == 0) {
@@ -2714,8 +2764,10 @@ private void fireChangeDrawOrderEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
 }//GEN-LAST:event_fireChangeDrawOrderEvent
 
 private void fireShowTagFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireShowTagFrameEvent
-    DSWorkbenchTagFrame.getSingleton().setVisible(!DSWorkbenchTagFrame.getSingleton().isVisible());
-    jShowTagFrame.setSelected(DSWorkbenchTagFrame.getSingleton().isVisible());
+    if (jShowTagFrame.isEnabled()) {
+        DSWorkbenchTagFrame.getSingleton().setVisible(!DSWorkbenchTagFrame.getSingleton().isVisible());
+        jShowTagFrame.setSelected(DSWorkbenchTagFrame.getSingleton().isVisible());
+    }
 }//GEN-LAST:event_fireShowTagFrameEvent
 
     private void propagateLayerOrder() {

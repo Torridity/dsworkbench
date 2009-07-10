@@ -200,7 +200,62 @@ public class DatabaseInterface {
         return ID_SUCCESS;
     }
 
-    public static List<DatabaseServerEntry> listServers() {
+    public static List<DatabaseServerEntry> getServerInfo() {
+        Object result = null;
+        try {
+            result = callWebInterface("getServerInfo", null);
+            String[] lines = (String[]) result;
+            List<DatabaseServerEntry> entries = new LinkedList<DatabaseServerEntry>();
+            try {
+                for (String line : lines) {
+                    StringTokenizer t = new StringTokenizer(line, "[,]");
+
+                    if (t.countTokens() < 3) {
+                        //invalid entry, probably a status code!?
+                        try {
+                            int status = Integer.parseInt(line);
+                            processStatus("get server info ", status);
+                            return null;
+                        } catch (Exception noStatus) {
+                            logger.error("Server entry in invalid format. Dropping '" + line + "'");
+                        }
+
+                    } else {
+                        DatabaseServerEntry entry = new DatabaseServerEntry();
+                        entry.setServerID(t.nextToken());
+                        entry.setServerURL(t.nextToken());
+                        entry.setAcceptanceRiseSpeed(Double.parseDouble(t.nextToken()));
+                        entry.setNightBonus(Byte.parseByte(t.nextToken()));
+                        entries.add(entry);
+                    }
+                }
+            /*logger.debug("Merging acceptance increments");
+            Hashtable<String, Double> riseSpeeds = getAcceptanceRiseSpeed();
+            if (riseSpeeds != null) {
+            for (DatabaseServerEntry e : entries) {
+            Double speed = riseSpeeds.get(e.getServerID());
+            if (speed != null) {
+            e.setAcceptanceRiseSpeed(speed);
+            }
+            }
+            }*/
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                logger.error("Failed to proceed reading server data", e);
+            }
+
+            return entries;
+        } catch (Exception outer) {
+            outer.printStackTrace();
+            //typecast or connection failed
+            logger.error("Failed getting list of servers. Result is " + result);
+        }
+
+        return null;
+    }
+
+ /*   public static List<DatabaseServerEntry> listServers() {
         Object result = null;
         try {
             result = callWebInterface("listServers", null);
@@ -284,7 +339,7 @@ public class DatabaseInterface {
         }
         return null;
     }
-
+*/
     public static int checkUser(String pUser, String pPassword) {
         Hashtable<String, String> arguments = new Hashtable<String, String>();
         String password = SecurityAdapter.hashStringMD5(pPassword);
@@ -506,25 +561,33 @@ public class DatabaseInterface {
         return ID_UNKNOWN_ERROR;
     }
 
-    public static void main(String[] args) throws Exception{
+    public static void main(String[] args) throws Exception {
         DOMConfigurator.configure("log4j.xml");
         System.setProperty("proxyUse", "true");
         System.setProperty("proxyHost", "proxy.fzk.de");
         System.setProperty("proxyPort", "8000");
 
-        URL u = new URL("http://de37.die-staemme.de/interface.php?func=get_conquer&since=1245912202");
+        /* URL u = new URL("http://de37.die-staemme.de/interface.php?func=get_conquer&since=1245912202");
         URLConnection con = u.openConnection();
         BufferedReader r = new BufferedReader(new InputStreamReader(con.getInputStream()));
         String line = "";
-        while((line = r.readLine()) != null){
-            System.out.println(line);
-        }
+        while ((line = r.readLine()) != null) {
+        System.out.println(line);
+        }*/
 
-        //System.out.println(DatabaseInterface.getAcceptanceRiseSpeed());
+
+        List<DatabaseServerEntry> info = DatabaseInterface.getServerInfo();
+        for (DatabaseServerEntry in : info) {
+            System.out.println("ID: " + in.getServerID());
+            System.out.println("URL: " + in.getServerURL());
+            System.out.println("Rise: " + in.getAcceptanceRiseSpeed());
+            System.out.println("Night: " + in.getNightBonus());
+            System.out.println("--------");
+        }
     //System.out.println(DatabaseInterface.listServers());
-    //System.out.println(DatabaseInterface.checkUser("Torridity", "cfcaef487fc66a6d8295e8e3f68b4db9"));
+  //  System.out.println(DatabaseInterface.checkUser("Torridity", "cfcaef487fc66a6d8295e8e3f68b4db9"));
     //System.out.println(DatabaseInterface.addUser("Torridity", "cfcaef487fc66a6d8295e8e3f68b4db9"));
-    //System.out.println(DatabaseInterface.getProperty("min.version"));
+    System.out.println(DatabaseInterface.getProperty("min_version"));
     //System.out.println(DatabaseInterface.getDownloadURL("de26"));
         /*long versionU = DatabaseInterface.getUserDataVersion("Torridity", "de8");
     if (versionU > 0) {

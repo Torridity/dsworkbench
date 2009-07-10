@@ -217,7 +217,7 @@ public class DatabaseAdapter {
         return DatabaseInterface.getProperty(pKey);
     }
 
-    public static List<DatabaseServerEntry> getServerList() {
+   public static List<DatabaseServerEntry> getServerList() {
         /*if (!openConnection()) {
         return null;
         }
@@ -243,7 +243,7 @@ public class DatabaseAdapter {
         }
         closeConnection();
         return retVal;*/
-        return DatabaseInterface.listServers();
+        return DatabaseInterface.getServerInfo();
     }
 
     public static long getDataVersion(String pServerID) {

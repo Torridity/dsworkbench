@@ -36,7 +36,7 @@ public class ServerManager {
             //don't reload servers every time
             return;
         }
-        SERVERS = DatabaseInterface.listServers();
+        SERVERS = DatabaseInterface.getServerInfo();
         if (SERVERS != null && !SERVERS.isEmpty()) {
             SERVERS_UPDATED = true;
         }
@@ -79,5 +79,14 @@ public class ServerManager {
             }
         }
         return 1;
+    }
+
+     public static byte getNightBonusRange(String pServerID) {
+        for (DatabaseServerEntry entry : SERVERS) {
+            if (entry.getServerID().equals(pServerID)) {
+                return entry.getNightBonus();
+            }
+        }
+        return DatabaseServerEntry.NIGHT_BONUS_0to8;
     }
 }

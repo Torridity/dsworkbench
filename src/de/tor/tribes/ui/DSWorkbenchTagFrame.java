@@ -107,7 +107,6 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
 
     public void setup() {
         //load tags on server change
-        System.out.println("updating table");
         jTagTable.invalidate();
         jTagTable.setModel(new DefaultTableModel());
         jTagTable.revalidate();

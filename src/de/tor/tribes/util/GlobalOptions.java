@@ -264,7 +264,6 @@ public class GlobalOptions {
             ConquerManager.getSingleton().saveConquersToFile(DataHolder.getSingleton().getDataDirectory() + "/conquers.xml");
             logger.debug("Saving notes");
             NoteManager.getSingleton().saveNotesToFile(DataHolder.getSingleton().getDataDirectory() + "/notes.xml");
-
             logger.debug("User data saved");
         } else {
             if (isInternatDataDamaged()) {

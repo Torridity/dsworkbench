@@ -2,7 +2,6 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 /*
  * SendTimePanel.java
  *
@@ -10,7 +9,10 @@
  */
 package de.tor.tribes.ui.algo;
 
+import de.tor.tribes.db.DatabaseServerEntry;
+import de.tor.tribes.io.ServerManager;
 import de.tor.tribes.util.Constants;
+import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.algo.TimeFrame;
 import java.awt.geom.Line2D;
@@ -21,10 +23,9 @@ import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JSpinner.DateEditor;
-import javax.swing.UIManager;
 
 /**
- * @TODO (1.6) Add different night bonus times to server, php interface and this panel
+ * @TODO (DIFF) Added different night bonus times
  * @author Jejkal
  */
 public class TimePanel extends javax.swing.JPanel {
@@ -116,25 +117,55 @@ public class TimePanel extends javax.swing.JPanel {
         c.setTimeInMillis(arrive.getTime());
         boolean mightBeInNightBonus = false;
         //check for night bonus
-        if (c.get(Calendar.HOUR_OF_DAY) >= 0 && c.get(Calendar.HOUR_OF_DAY) < 8) {
-            //in night bonus
-            mightBeInNightBonus = true;
-        }
+        int nightBonus = ServerManager.getNightBonusRange(GlobalOptions.getSelectedServer());
+        String nightTime = "(0 - 8 Uhr)";
+        switch (nightBonus) {
+            case DatabaseServerEntry.NO_NIGHT_BONUS: {
+                mightBeInNightBonus = false;
+                break;
+            }
+            case DatabaseServerEntry.NIGHT_BONUS_0to7: {
+                if (c.get(Calendar.HOUR_OF_DAY) >= 0 && c.get(Calendar.HOUR_OF_DAY) < 7) {
+                    //in night bonus
+                    mightBeInNightBonus = true;
+                }
+                //check min arrive time
+                c.setTimeInMillis(arrive.getTime() - (jToleranceField.isEnabled() ? arrivalTolerance : 0));
+                if (c.get(Calendar.HOUR_OF_DAY) >= 0 && c.get(Calendar.HOUR_OF_DAY) < 7) {
+                    mightBeInNightBonus = true;
+                } else {
+                    //check max arrive time
+                    c.setTimeInMillis(arrive.getTime() + (jToleranceField.isEnabled() ? arrivalTolerance : 0));
+                    if (c.get(Calendar.HOUR_OF_DAY) >= 0 && c.get(Calendar.HOUR_OF_DAY) < 7) {
+                        mightBeInNightBonus = true;
+                    }
+                }
+                nightTime = "(0 - 7 Uhr)";
+                break;
+            }
+            default: {
+                if (c.get(Calendar.HOUR_OF_DAY) >= 0 && c.get(Calendar.HOUR_OF_DAY) < 8) {
+                    //in night bonus
+                    mightBeInNightBonus = true;
+                }
 
-        //check min arrive time
-        c.setTimeInMillis(arrive.getTime() - (jToleranceField.isEnabled() ? arrivalTolerance : 0));
-        if (c.get(Calendar.HOUR_OF_DAY) >= 0 && c.get(Calendar.HOUR_OF_DAY) < 8) {
-            mightBeInNightBonus = true;
-        } else {
-            //check max arrive time
-            c.setTimeInMillis(arrive.getTime() + (jToleranceField.isEnabled() ? arrivalTolerance : 0));
-            if (c.get(Calendar.HOUR_OF_DAY) >= 0 && c.get(Calendar.HOUR_OF_DAY) < 8) {
-                mightBeInNightBonus = true;
+                //check min arrive time
+                c.setTimeInMillis(arrive.getTime() - (jToleranceField.isEnabled() ? arrivalTolerance : 0));
+                if (c.get(Calendar.HOUR_OF_DAY) >= 0 && c.get(Calendar.HOUR_OF_DAY) < 8) {
+                    mightBeInNightBonus = true;
+                } else {
+                    //check max arrive time
+                    c.setTimeInMillis(arrive.getTime() + (jToleranceField.isEnabled() ? arrivalTolerance : 0));
+                    if (c.get(Calendar.HOUR_OF_DAY) >= 0 && c.get(Calendar.HOUR_OF_DAY) < 8) {
+                        mightBeInNightBonus = true;
+                    }
+                }
+                break;
             }
         }
 
         if (mightBeInNightBonus) {
-            if (JOptionPaneHelper.showQuestionConfirmBox(this, "Die angegebene Ankunftszeit kann unter Umständen im Nachbonus (0 - 8 Uhr) liegen.\n" +
+            if (JOptionPaneHelper.showQuestionConfirmBox(this, "Die angegebene Ankunftszeit kann unter Umständen im Nachbonus " + nightTime + " liegen.\n" +
                     "Willst du die Ankunftszeit entsprechend korrigieren?", "Nachtbonus", "Nein", "Ja") == JOptionPane.YES_OPTION) {
                 //correction requested
                 result = false;
@@ -285,14 +316,18 @@ public class TimePanel extends javax.swing.JPanel {
             //start == end
             JOptionPaneHelper.showWarningBox(this, "Der angegebene Zeitrahmen ist ungültig", "Warnung");
             return;
+
         }
+
+
 
         Line2D.Double newFrame = new Line2D.Double((double) min, 0, (double) max - 0.1, 0);
         //check if timeframe exists or intersects with other existing frame
         int intersection = -1;
 
         DefaultListModel model = (DefaultListModel) jSendTimeFramesList.getModel();
-        for (int i = 0; i < model.getSize(); i++) {
+        for (int i = 0; i <
+                model.getSize(); i++) {
             String frame = (String) model.getElementAt(i);
             String[] split = frame.split("-");
             double start = Double.parseDouble(split[0].replaceAll("Uhr", "").trim());
@@ -301,7 +336,10 @@ public class TimePanel extends javax.swing.JPanel {
             if (currentFrame.intersectsLine(newFrame)) {
                 intersection = i + 1;
                 break;
+
             }
+
+
         }
 
         if (intersection == -1) {
@@ -317,6 +355,7 @@ public class TimePanel extends javax.swing.JPanel {
         if (selection == null || selection.length == 0) {
             return;
         }
+
         String message = "Zeitrahmen wirklich entfernen?";
         if (selection.length > 1) {
             message = selection.length + " " + message;
@@ -327,6 +366,7 @@ public class TimePanel extends javax.swing.JPanel {
             for (Object o : selection) {
                 model.removeElement(o);
             }
+
         }
     }//GEN-LAST:event_fireRemoveTimeFrameEvent
 

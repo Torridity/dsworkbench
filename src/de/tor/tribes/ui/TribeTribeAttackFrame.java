@@ -3268,6 +3268,11 @@ private void fireFilterByAttackPlansEvent(java.awt.event.MouseEvent evt) {//GEN-
             jAttacksTable.invalidate();
         } else if (bChooseTargetRegionMode) {
             jVictimTable.invalidate();
+        } else {
+            //none selected
+            JOptionPaneHelper.showWarningBox(DSWorkbenchSelectionFrame.getSingleton(), "Bitte wähle im Angriffsplaner zuerst aus, ob du die Auswahl als\n" +
+                    "Herkunfts- oder als Zieldörfer einfügen möchtest.", "Fehler");
+            return;
         }
 
         for (Village v : pSelection.toArray(new Village[]{})) {

@@ -59,6 +59,7 @@ import java.awt.Toolkit;
 import java.awt.Transparency;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Arc2D;
+import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
@@ -244,21 +245,6 @@ public class MapRenderer extends Thread {
                         renderMap();
                         renderTagMarkers();
                     }
-
-                    //render misc map elements needed  to be redrawn in every iteration
-                    boolean markOnTop = Boolean.parseBoolean(GlobalOptions.getProperty("mark.on.top"));
-                    /* if (markOnTop) {
-                    //draw markers above map layer
-                    g2d.drawImage(mLayers.get(MAP_LAYER), 0, 0, null);
-                    Composite gg = g2d.getComposite();
-                    g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
-                    renderMarkers(g2d);
-                    g2d.setComposite(gg);
-                    } else {
-                    //draw markers below map layer
-                    renderMarkers(g2d);
-                    g2d.drawImage(mLayers.get(MAP_LAYER), 0, 0, null);
-                    }*/
 
                     boolean mapDrawn = false;
                     for (Integer layer : drawOrder) {
@@ -1235,87 +1221,94 @@ public class MapRenderer extends Thread {
             //both are 0 if map was not drawn yet
             return;
         }
-        boolean showTroopDensity = false;
+        Enumeration<Village> villages = villagePositions.keys();
+        Hashtable<Village, VillageTroopsHolder> values = new Hashtable<Village, VillageTroopsHolder>();
+
+        int maxDef = 650000;
         try {
-            showTroopDensity = Boolean.parseBoolean(GlobalOptions.getProperty("show.troops.density"));
+            maxDef = Integer.parseInt(GlobalOptions.getProperty("max.density.troops"));
         } catch (Exception e) {
-            showTroopDensity = false;
+            maxDef = 650000;
         }
-        if (showTroopDensity) {
-            Enumeration<Village> villages = villagePositions.keys();
-            Hashtable<Village, VillageTroopsHolder> values = new Hashtable<Village, VillageTroopsHolder>();
 
-            int maxDef = 650000;
-            try {
-                maxDef = Integer.parseInt(GlobalOptions.getProperty("max.density.troops"));
-            } catch (Exception e) {
-                maxDef = 650000;
-            }
-
-            while (villages.hasMoreElements()) {
-                Village v = villages.nextElement();
-                VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(v);
-                if (holder != null) {
-                    values.put(v, holder);
-                }
-            }
-
-
-            Enumeration<Village> keys = values.keys();
-            List<Village> keyV = new LinkedList<Village>();
-            while (keys.hasMoreElements()) {
-                keyV.add(keys.nextElement());
-            }
-            int order = Village.getOrderType();
-            Village.setOrderType(Village.ORDER_BY_COORDINATES);
-            Collections.sort(keyV);
-            Village.setOrderType(order);
-            for (Village v : keyV) {
-                Rectangle villageRect = villagePositions.get(v);
-                VillageTroopsHolder holder = values.get(v);
-                double defIn = holder.getDefValue(TroopsManagerTableModel.SHOW_TROOPS_IN_VILLAGE);
-                double defOwn = holder.getDefValue(TroopsManagerTableModel.SHOW_OWN_TROOPS);
-                double percOfMax = defIn / maxDef;
-                double percOwn = defOwn / defIn;
-                double percForeign = 1 - percOwn;
-                //limit to 100%
-                percOfMax = (percOfMax > 1) ? 1 : percOfMax;
-
-                //calculate density color
-                int r = (int) Math.rint((1 - percOfMax) * 255);
-                int g = (int) Math.rint(percOfMax * 255);
-                //the less the densit is the more alpha comes to its full value
-                int alpha2 = (int) Math.rint((1 - percOfMax) * 255);
-                if (alpha2 < 60) {
-                    //limit alpha min to 60
-                    alpha2 = 60;
-                }
-                Color c = new Color(r, g, 0, alpha2);
-                Color cc = new Color(0, r, g, alpha2);
-                //calculate circle size
-                int size = (int) Math.rint(percOfMax * 3 * villageRect.width);
-                if (size < 0.5 * villageRect.width) {
-                    //limit min. size to half a village size
-                    size = (int) Math.rint(0.5 * villageRect.width);
-                }
-                if (size > 0) {
-                    Color cb = g2d.getColor();
-                    g2d.setColor(Color.BLACK);
-                    int partOwn = (int) Math.rint(360 * percOwn);
-                    int partForeign = (int) Math.rint(360 * percForeign);
-                    //fill part blue (own) or other color (foreign)
-                    g2d.setColor(c);
-                    g2d.fill(new Arc2D.Double(villageRect.x - (int) Math.rint((size - villageRect.width) / 2), villageRect.y - (int) Math.rint((size - villageRect.height) / 2), size, size, 0, partOwn, Arc2D.PIE));
-                    g2d.setColor(cc);
-                    g2d.fill(new Arc2D.Double(villageRect.x - (int) Math.rint((size - villageRect.width) / 2), villageRect.y - (int) Math.rint((size - villageRect.height) / 2), size, size, partOwn, partForeign, Arc2D.PIE));
-
-                    Ellipse2D.Double ed = new Ellipse2D.Double(villageRect.x - (int) Math.rint((size - villageRect.width) / 2), villageRect.y - (int) Math.rint((size - villageRect.height) / 2), size, size);
-                    g2d.setColor(Color.BLACK);
-                    g2d.draw(ed);
-                    g2d.setColor(cb);
-                }
+        while (villages.hasMoreElements()) {
+            Village v = villages.nextElement();
+            VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(v);
+            if (holder != null) {
+                values.put(v, holder);
             }
         }
+
+        Enumeration<Village> keys = values.keys();
+        List<Village> keyV = new LinkedList<Village>();
+        while (keys.hasMoreElements()) {
+            keyV.add(keys.nextElement());
+        }
+        int order = Village.getOrderType();
+        Village.setOrderType(Village.ORDER_BY_COORDINATES);
+        Collections.sort(keyV);
+        Village.setOrderType(order);
+
+      //  long sum = 0;
+       // int cnt = 0;
+        Arc2D.Double arc = new Arc2D.Double();
+        Ellipse2D.Double ellipse = new Ellipse2D.Double();
+        Color cb = g2d.getColor();
+        for (Village v : keyV) {
+            long s = System.currentTimeMillis();
+            Rectangle villageRect = villagePositions.get(v);
+            VillageTroopsHolder holder = values.get(v);
+            double defIn = holder.getDefValue(TroopsManagerTableModel.SHOW_TROOPS_IN_VILLAGE);
+            double defOwn = holder.getDefValue(TroopsManagerTableModel.SHOW_OWN_TROOPS);
+            double percOfMax = defIn / maxDef;
+            double percOwn = defOwn / defIn;
+            double percForeign = 1 - percOwn;
+            //limit to 100%
+            percOfMax = (percOfMax > 1) ? 1 : percOfMax;
+
+            //calculate density color
+            int r = (int) Math.rint((1 - percOfMax) * 255);
+            int g = (int) Math.rint(percOfMax * 255);
+            //the less the densit is the more alpha comes to its full value
+            int alpha2 = (int) Math.rint((1 - percOfMax) * 255);
+            if (alpha2 < 60) {
+                //limit alpha min to 60
+                alpha2 = 60;
+            }
+            Color c = new Color(r, g, 0, alpha2);
+            Color cc = new Color(0, r, g, alpha2);
+            //calculate circle size
+            int size = (int) Math.rint(percOfMax * 3 * villageRect.width);
+            if (size < 0.5 * villageRect.width) {
+                //limit min. size to half a village size
+                size = (int) Math.rint(0.5 * villageRect.width);
+            }
+
+            if (size > 0) {
+                g2d.setColor(Color.BLACK);
+                int partOwn = (int) Math.rint(360 * percOwn);
+                int partForeign = (int) Math.rint(360 * percForeign);
+                //fill part blue (own) or other color (foreign)
+                g2d.setColor(c);
+                arc.setArc(villageRect.x - (int) Math.rint((size - villageRect.width) / 2), villageRect.y - (int) Math.rint((size - villageRect.height) / 2), size, size, 0, partOwn, Arc2D.PIE);
+                g2d.fill(arc);
+                g2d.setColor(cc);
+                arc.setArc(new Arc2D.Double(villageRect.x - (int) Math.rint((size - villageRect.width) / 2), villageRect.y - (int) Math.rint((size - villageRect.height) / 2), size, size, partOwn, partForeign, Arc2D.PIE));
+                g2d.fill(arc);
+                //draw border
+                ellipse.setFrame(villageRect.x - (int) Math.rint((size - villageRect.width) / 2), villageRect.y - (int) Math.rint((size - villageRect.height) / 2), size, size);
+                g2d.setColor(Color.BLACK);
+                g2d.draw(ellipse);
+                g2d.setColor(cb);
+            }
+
+           // sum += System.currentTimeMillis() - s;
+            //cnt++;
+        }
+
+       /* System.out.println("Sum: " + sum);
+        System.out.println("Cnt: " + cnt);
+        System.out.println("Mean: " + (sum / cnt));*/
     }
 
     /**Render attack vectors*/
@@ -1615,11 +1608,7 @@ public class MapRenderer extends Thread {
             //both are 0 if map was not drawn yet
             return;
         }
-        boolean drawChurchRange = Boolean.parseBoolean(GlobalOptions.getProperty("show.church.range"));
-        if (!drawChurchRange) {
-            //do not draw
-            return;
-        }
+
         Rectangle g = null;
         boolean markedOnly = false;
         try {
@@ -1634,6 +1623,7 @@ public class MapRenderer extends Thread {
         } catch (Exception e) {
             showBarbarian = true;
         }
+
         List<Village> churchVillages = ChurchManager.getSingleton().getChurchVillages();
         for (Village v : churchVillages) {
             boolean drawVillage = true;
@@ -1754,33 +1744,6 @@ public class MapRenderer extends Thread {
                 Composite com = g2d.getComposite();
                 g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f));
                 Color radiusColor = c.getRangeColor();
-                /*  try {
-                if (v.getTribe().equals(currentUserVillage.getTribe())) {
-                radiusColor = Color.YELLOW;
-                }
-                } catch (Exception e) {
-                if (v.getTribe() == null) {
-                radiusColor = Color.LIGHT_GRAY;
-                } else {
-                radiusColor = null;
-                }
-                }
-                if (radiusColor == null) {
-                Marker m = MarkerManager.getSingleton().getMarker(v.getTribe());
-                if (m != null) {
-                radiusColor = m.getMarkerColor();
-                } else {
-                try {
-                if (Integer.parseInt(GlobalOptions.getProperty("default.mark")) == 1) {
-                radiusColor = Color.RED;
-                } else {
-                radiusColor = Color.WHITE;
-                }
-                } catch (Exception e) {
-                radiusColor = Color.WHITE;
-                }
-                }
-                }*/
                 g2d.setColor(radiusColor);
                 //g2d.setPaint(new RoundGradientPaint(g.getCenterX(), g.getCenterY(), new Color(0, 0, 255, 155), new Point2D.Double(rad * g.getWidth() + g.getWidth(), rad * g.getHeight() + g.getHeight()), new Color(0, 0, 255, 0)));
                 g2d.setStroke(new BasicStroke(10.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
@@ -2377,12 +2340,12 @@ public class MapRenderer extends Thread {
     /**Prepare any g2d object with same parameters*/
     private void prepareGraphics(Graphics2D pG2d) {
         pG2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
-        pG2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+        pG2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
         // Speed
         pG2d.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED);
         pG2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
         pG2d.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_SPEED);
-        pG2d.setRenderingHint(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_DISABLE);
+        pG2d.setRenderingHint(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_ENABLE);
         pG2d.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_OFF);
         pG2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
     }

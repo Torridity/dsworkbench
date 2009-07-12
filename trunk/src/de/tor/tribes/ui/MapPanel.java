@@ -45,6 +45,7 @@ import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 import java.awt.geom.Point2D;
+import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.text.NumberFormat;
@@ -53,11 +54,12 @@ import java.util.Hashtable;
 import java.util.StringTokenizer;
 import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 /**
  * @author Charon
  */
-public class MapPanel extends javax.swing.JPanel {
+public class MapPanel extends JPanel {
 
     // <editor-fold defaultstate="collapsed" desc=" Member variables ">
     private static Logger logger = Logger.getLogger("MapCanvas");
@@ -102,7 +104,9 @@ public class MapPanel extends javax.swing.JPanel {
 
     /** Creates new form MapPanel */
     MapPanel() {
+        super();
         initComponents();
+
         logger.info("Creating MapPanel");
         mMapPanelListeners = new LinkedList<MapPanelListener>();
         mToolChangeListeners = new LinkedList<ToolChangeListener>();
@@ -118,6 +122,12 @@ public class MapPanel extends javax.swing.JPanel {
         jCopyVillagesDialog.pack();
         mVillageSelectionListener = DSWorkbenchSelectionFrame.getSingleton();
         initListeners();
+    }
+
+    public void initBuffer() {
+        
+       // createBufferStrategy(1);
+        
     }
 
     public synchronized void addMapPanelListener(MapPanelListener pListener) {
@@ -945,16 +955,6 @@ public class MapPanel extends javax.swing.JPanel {
                 .addContainerGap())
         );
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 392, Short.MAX_VALUE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 155, Short.MAX_VALUE)
-        );
     }// </editor-fold>//GEN-END:initComponents
 
     private void fireVillageExportEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireVillageExportEvent
@@ -1132,7 +1132,7 @@ public class MapPanel extends javax.swing.JPanel {
 
     /**Draw buffer into panel*/
     @Override
-    public void paintComponent(Graphics g) {
+    public void paint(Graphics g) {
         try {
             //clean map
             g.fillRect(0, 0, getWidth(), getHeight());
@@ -1290,6 +1290,10 @@ public class MapPanel extends javax.swing.JPanel {
 
         positionUpdate = false;
     }
+
+   /* public BufferStrategy getStrategy() {
+        return getBufferStrategy();
+    }*/
 
     protected void planMapShot(String pType, File pLocation, MapShotListener pListener) {
         sMapShotType = pType;

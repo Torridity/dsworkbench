@@ -205,8 +205,7 @@ public class NoteManager {
                 n = aNotes[i];
                 i++;
             }
-            //@TODO (1.6) REMOVE DEBUG OUTPUT
-            System.out.println("not " + i);
+
             if (n.getNoteText().toLowerCase().indexOf(pText.toLowerCase()) > -1) {
                 //search in note text
                 return n;

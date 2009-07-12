@@ -24,19 +24,23 @@ import de.tor.tribes.ui.tree.SelectionTreeRootNode;
 import de.tor.tribes.ui.tree.TagNode;
 import de.tor.tribes.ui.tree.TribeNode;
 import de.tor.tribes.ui.tree.VillageNode;
+import de.tor.tribes.util.BrowserCommandSender;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.VillageSelectionListener;
+import de.tor.tribes.util.html.SelectionHTMLExporter;
 import de.tor.tribes.util.tag.TagManager;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
+import java.io.File;
 import java.text.NumberFormat;
 import java.util.Collections;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
@@ -72,9 +76,12 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
         treeData = new LinkedList<Village>();
         jSelectionTree.setCellRenderer(new NodeCellRenderer());
         buildTree();
+        //<editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
+        GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.selection_tool", GlobalOptions.getHelpBroker().getHelpSet());
+    //</editor-fold>
     }
 
-    public void clear(){
+    public void clear() {
         treeData.clear();
         buildTree();
     }
@@ -153,6 +160,7 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
         jExportOwnerBox = new javax.swing.JCheckBox();
         jExportAllyBox = new javax.swing.JCheckBox();
         jExportPointsBox = new javax.swing.JCheckBox();
+        jExportHTMLButton = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
         jAlwaysOnTopBox = new javax.swing.JCheckBox();
 
@@ -230,21 +238,35 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
         jExportPointsBox.setToolTipText("Dorfpunkte exportieren");
         jExportPointsBox.setOpaque(false);
 
+        jExportHTMLButton.setBackground(new java.awt.Color(239, 235, 223));
+        jExportHTMLButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_HTML.png"))); // NOI18N
+        jExportHTMLButton.setToolTipText("Markierte Elemente als HTML in einer Datei speichern");
+        jExportHTMLButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireExportEvent(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jExportOwnerBox)
-                .addGap(18, 18, 18)
-                .addComponent(jExportAllyBox)
-                .addGap(18, 18, 18)
-                .addComponent(jExportPointsBox)
-                .addGap(29, 29, 29)
-                .addComponent(jExportUnformattedButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jExportBBButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jExportOwnerBox)
+                        .addGap(18, 18, 18)
+                        .addComponent(jExportAllyBox)
+                        .addGap(18, 18, 18)
+                        .addComponent(jExportPointsBox)
+                        .addGap(29, 29, 29)
+                        .addComponent(jExportUnformattedButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jExportBBButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                        .addGap(335, 335, 335)
+                        .addComponent(jExportHTMLButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -252,10 +274,12 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jExportOwnerBox, javax.swing.GroupLayout.DEFAULT_SIZE, 35, Short.MAX_VALUE)
-                    .addComponent(jExportPointsBox, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jExportUnformattedButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jExportBBButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jExportAllyBox, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jExportAllyBox, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jExportPointsBox, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jExportHTMLButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -296,7 +320,7 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jButton4))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 298, Short.MAX_VALUE)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 299, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
@@ -347,104 +371,172 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
     }//GEN-LAST:event_fireRemoveNodeEvent
 
     private void fireExportEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireExportEvent
+        List<Village> selection = new LinkedList<Village>();
+        for (Village v : getSelectedElements()) {
+            selection.add(v);
+        }
 
-        try {
-            NumberFormat nf = NumberFormat.getInstance();
-            nf.setMinimumFractionDigits(0);
-            nf.setMaximumFractionDigits(0);
-            boolean exported = false;
-            if (evt.getSource() == jExportBBButton) {
-                String result = "";
+        if (selection.isEmpty()) {
+            JOptionPaneHelper.showInformationBox(this, "Keine Elemente ausgewählt.", "Fehler");
+            return;
+        }
+        if (evt.getSource() == jExportHTMLButton) {
 
-                for (Village v : getSelectedElements()) {
-                    exported = true;
-                    result += v.toBBCode();
-                    if (jExportPointsBox.isSelected()) {
-                        result += " (" + nf.format(v.getPoints()) + ") ";
-                    } else {
-                        result += "\t";
-                    }
-                    if (jExportOwnerBox.isSelected() && v.getTribe() != null) {
-                        result += v.getTribe().toBBCode() + " ";
-                    } else {
-                        if (jExportOwnerBox.isSelected()) {
-                            result += "Barbaren ";
-                        } else {
-                            result += "\t";
-                        }
-                    }
-                    if (jExportAllyBox.isSelected() && v.getTribe() != null && v.getTribe().getAlly() != null) {
-                        result += v.getTribe().getAlly().toBBCode() + "\n";
-                    } else {
-                        if (jExportAllyBox.isSelected()) {
-                            result += "(kein Stamm)\n";
-                        } else {
-                            result += "\n";
-                        }
-                    }
+            String dir = GlobalOptions.getProperty("screen.dir");
+            if (dir == null) {
+                dir = ".";
+            }
 
+            JFileChooser chooser = null;
+            try {
+                chooser = new JFileChooser(dir);
+            } catch (Exception e) {
+                JOptionPaneHelper.showErrorBox(this, "Konnte Dateiauswahldialog nicht öffnen.\nMöglicherweise verwendest du Windows Vista. Ist dies der Fall, beende DS Workbench, klicke mit der rechten Maustaste auf DSWorkbench.exe,\n" +
+                        "wähle 'Eigenschaften' und deaktiviere dort unter 'Kompatibilität' den Windows XP Kompatibilitätsmodus.", "Fehler");
+                return;
+            }
+            chooser.setDialogTitle("Datei auswählen");
+
+            chooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
+
+                @Override
+                public boolean accept(File f) {
+                    if ((f != null) && (f.isDirectory() || f.getName().endsWith(".html"))) {
+                        return true;
+                    }
+                    return false;
                 }
-                if (exported) {
-                    StringTokenizer t = new StringTokenizer(result, "[");
-                    int cnt = t.countTokens();
-                    boolean doExport = true;
-                    if (cnt > 500) {
-                        if (JOptionPaneHelper.showQuestionConfirmBox(this, "Die ausgewählten Dörfer benötigen mehr als 500 BB-Codes\n" +
-                                "und können daher im Spiel (Forum/IGM/Notizen) nicht auf einmal dargestellt werden.\nTrotzdem exportieren?", "Zu viele BB-Codes", "Nein", "Ja") == JOptionPane.NO_OPTION) {
-                            doExport = false;
-                        }
-                    }
-                    if (doExport) {
-                        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(result), null);
-                        JOptionPaneHelper.showInformationBox(this, "Dorfdaten in die Zwischenablage kopiert.", "Daten kopiert");
-                    }
-                } else {
-                    JOptionPaneHelper.showInformationBox(this, "Mit den gewählten Einstellungen werden keine Dörfer kopiert.", "Information");
-                    return;
+
+                @Override
+                public String getDescription() {
+                    return "*.html";
                 }
-            } else if (evt.getSource() == jExportUnformattedButton) {
-                String result = "";
-                for (Village v : getSelectedElements()) {
-
-
-                    exported = true;
-                    result += v + "\t";
-                    if (jExportPointsBox.isSelected()) {
-                        result += nf.format(v.getPoints()) + "\t";
-                    } else {
-                        result += "\t";
+            });
+            chooser.setSelectedFile(new File(dir + "/Dorfliste.html"));
+            int ret = chooser.showSaveDialog(this);
+            if (ret == JFileChooser.APPROVE_OPTION) {
+                try {
+                    File f = chooser.getSelectedFile();
+                    String file = f.getCanonicalPath();
+                    if (!file.endsWith(".html")) {
+                        file += ".html";
                     }
-                    if (jExportOwnerBox.isSelected() && v.getTribe() != null) {
-                        result += v.getTribe() + "\t";
-                    } else {
-                        if (jExportOwnerBox.isSelected()) {
-                            result += "Barbaren\t";
-                        } else {
-                            result += "\t";
+
+                    File target = new File(file);
+                    if (target.exists()) {
+                        if (JOptionPaneHelper.showQuestionConfirmBox(this, "Bestehende Datei überschreiben?", "Überschreiben", "Nein", "Ja") == JOptionPane.NO_OPTION) {
+                            //do not overwrite
+                            return;
                         }
                     }
-                    if (jExportAllyBox.isSelected() && v.getTribe() != null && v.getTribe().getAlly() != null) {
-                        result += v.getTribe().getAlly() + "\n";
-                    } else {
-                        if (jExportAllyBox.isSelected()) {
-                            result += "(kein Stamm)\n";
-                        } else {
-                            result += "\n";
-                        }
-
+                    SelectionHTMLExporter.doExport(target, selection);
+                    GlobalOptions.addProperty("screen.dir", target.getParent());
+                    if (JOptionPaneHelper.showQuestionConfirmBox(this, "Auswahl erfolgreich gespeichert.\nWillst du die erstellte Datei jetzt im Browser betrachten?", "Information", "Nein", "Ja") == JOptionPane.YES_OPTION) {
+                        BrowserCommandSender.openPage(target.toURI().toURL().toString());
                     }
-                }
-                if (exported) {
-                    Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(result), null);
-                    JOptionPaneHelper.showInformationBox(this, "Dorfdaten in die Zwischenablage kopiert.", "Daten kopiert");
-                } else {
-                    JOptionPaneHelper.showInformationBox(this, "Mit den gewählten Einstellungen werden keine Dörfer kopiert.", "Information");
-                    return;
+                } catch (Exception inner) {
+                    logger.error("Failed to write selection to HTML", inner);
+                    JOptionPaneHelper.showErrorBox(this, "Fehler beim Speichern.", "Fehler");
                 }
             }
-        } catch (Exception e) {
-            logger.error("Failed to copy data to clipboard", e);
-            JOptionPaneHelper.showErrorBox(this, "Fehler beim Kopieren der Daten.", "Fehler");
+        } else {
+            //export to clipboard
+            try {
+                NumberFormat nf = NumberFormat.getInstance();
+                nf.setMinimumFractionDigits(0);
+                nf.setMaximumFractionDigits(0);
+                boolean exported = false;
+                if (evt.getSource() == jExportBBButton) {
+                    String result = "";
+
+                    for (Village v : selection) {
+                        exported = true;
+                        result += v.toBBCode();
+                        if (jExportPointsBox.isSelected()) {
+                            result += " (" + nf.format(v.getPoints()) + ") ";
+                        } else {
+                            result += "\t";
+                        }
+                        if (jExportOwnerBox.isSelected() && v.getTribe() != null) {
+                            result += v.getTribe().toBBCode() + " ";
+                        } else {
+                            if (jExportOwnerBox.isSelected()) {
+                                result += "Barbaren ";
+                            } else {
+                                result += "\t";
+                            }
+                        }
+                        if (jExportAllyBox.isSelected() && v.getTribe() != null && v.getTribe().getAlly() != null) {
+                            result += v.getTribe().getAlly().toBBCode() + "\n";
+                        } else {
+                            if (jExportAllyBox.isSelected()) {
+                                result += "(kein Stamm)\n";
+                            } else {
+                                result += "\n";
+                            }
+                        }
+
+                    }
+                    if (exported) {
+                        StringTokenizer t = new StringTokenizer(result, "[");
+                        int cnt = t.countTokens();
+                        boolean doExport = true;
+                        if (cnt > 500) {
+                            if (JOptionPaneHelper.showQuestionConfirmBox(this, "Die ausgewählten Dörfer benötigen mehr als 500 BB-Codes\n" +
+                                    "und können daher im Spiel (Forum/IGM/Notizen) nicht auf einmal dargestellt werden.\nTrotzdem exportieren?", "Zu viele BB-Codes", "Nein", "Ja") == JOptionPane.NO_OPTION) {
+                                doExport = false;
+                            }
+                        }
+                        if (doExport) {
+                            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(result), null);
+                            JOptionPaneHelper.showInformationBox(this, "Dorfdaten in die Zwischenablage kopiert.", "Daten kopiert");
+                        }
+                    } else {
+                        JOptionPaneHelper.showInformationBox(this, "Mit den gewählten Einstellungen werden keine Dörfer kopiert.", "Information");
+                        return;
+                    }
+                } else if (evt.getSource() == jExportUnformattedButton) {
+                    String result = "";
+                    for (Village v : selection) {
+                        exported = true;
+                        result += v + "\t";
+                        if (jExportPointsBox.isSelected()) {
+                            result += nf.format(v.getPoints()) + "\t";
+                        } else {
+                            result += "\t";
+                        }
+                        if (jExportOwnerBox.isSelected() && v.getTribe() != null) {
+                            result += v.getTribe() + "\t";
+                        } else {
+                            if (jExportOwnerBox.isSelected()) {
+                                result += "Barbaren\t";
+                            } else {
+                                result += "\t";
+                            }
+                        }
+                        if (jExportAllyBox.isSelected() && v.getTribe() != null && v.getTribe().getAlly() != null) {
+                            result += v.getTribe().getAlly() + "\n";
+                        } else {
+                            if (jExportAllyBox.isSelected()) {
+                                result += "(kein Stamm)\n";
+                            } else {
+                                result += "\n";
+                            }
+
+                        }
+                    }
+                    if (exported) {
+                        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(result), null);
+                        JOptionPaneHelper.showInformationBox(this, "Dorfdaten in die Zwischenablage kopiert.", "Daten kopiert");
+                    } else {
+                        JOptionPaneHelper.showInformationBox(this, "Mit den gewählten Einstellungen werden keine Dörfer kopiert.", "Information");
+                        return;
+                    }
+                }
+            } catch (Exception e) {
+                logger.error("Failed to copy data to clipboard", e);
+                JOptionPaneHelper.showErrorBox(this, "Fehler beim Kopieren der Daten.", "Fehler");
+            }
         }
     }//GEN-LAST:event_fireExportEvent
 
@@ -459,6 +551,9 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
     public List<Village> getSelectedElements() {
         TreePath[] paths = jSelectionTree.getSelectionModel().getSelectionPaths();
         List<Village> result = new LinkedList<Village>();
+        if (paths == null) {
+            return result;
+        }
         for (TreePath p : paths) {
             Object o = p.getLastPathComponent();
             if (o instanceof AllyNode) {
@@ -485,6 +580,14 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
                         result.add(v);
                     } else if (v.getTribe() != null && v.getTribe().equals(t)) {
                         //selected tribe are no barbs, so check tribes to be equal
+                        result.add(v);
+                    }
+                }
+            } else if (o instanceof TagNode) {
+                Tag t = ((TagNode) o).getUserObject();
+                Village[] copy = treeData.toArray(new Village[]{});
+                for (Village v : copy) {
+                    if (v != null && t != null && t.tagsVillage(v.getId())) {
                         result.add(v);
                     }
                 }
@@ -521,6 +624,7 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
     private javax.swing.JButton jButton4;
     private javax.swing.JCheckBox jExportAllyBox;
     private javax.swing.JButton jExportBBButton;
+    private javax.swing.JButton jExportHTMLButton;
     private javax.swing.JCheckBox jExportOwnerBox;
     private javax.swing.JCheckBox jExportPointsBox;
     private javax.swing.JButton jExportUnformattedButton;
@@ -532,23 +636,23 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
 
     @Override
     public void fireSelectionFinishedEvent(Point pStart, Point pEnd) {
-        try{
-        int xStart = (pStart.x < pEnd.x) ? pStart.x : pEnd.x;
-        int xEnd = (pEnd.x > pStart.x) ? pEnd.x : pStart.x;
-        int yStart = (pStart.y < pEnd.y) ? pStart.y : pEnd.y;
-        int yEnd = (pEnd.y > pStart.y) ? pEnd.y : pStart.y;
+        try {
+            int xStart = (pStart.x < pEnd.x) ? pStart.x : pEnd.x;
+            int xEnd = (pEnd.x > pStart.x) ? pEnd.x : pStart.x;
+            int yStart = (pStart.y < pEnd.y) ? pStart.y : pEnd.y;
+            int yEnd = (pEnd.y > pStart.y) ? pEnd.y : pStart.y;
 
-        for (int x = xStart; x <= xEnd; x++) {
-            for (int y = yStart; y <= yEnd; y++) {
-                Village v = DataHolder.getSingleton().getVillages()[x][y];
-                if (v != null && !treeData.contains(v)) {
-                    treeData.add(v);
+            for (int x = xStart; x <= xEnd; x++) {
+                for (int y = yStart; y <= yEnd; y++) {
+                    Village v = DataHolder.getSingleton().getVillages()[x][y];
+                    if (v != null && !treeData.contains(v)) {
+                        treeData.add(v);
+                    }
                 }
             }
-        }
-        Collections.sort(treeData, Village.ALLY_TRIBE_VILLAGE_COMPARATOR);
-        buildTree();
-        }catch(Exception e){
+            Collections.sort(treeData, Village.ALLY_TRIBE_VILLAGE_COMPARATOR);
+            buildTree();
+        } catch (Exception e) {
             //occurs if no rect was opened by selection tool -> ignore
         }
     }

@@ -82,9 +82,9 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
 
         jTagTable.setDefaultRenderer(TagMapMarker.class, new TagMapMarkerRenderer());
         jTagTable.setDefaultEditor(TagMapMarker.class, new TagMapMarkerCellEditor());
-        //@TODO (1.6) Tag view help system!
+       
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
-        //GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.conquers_view", GlobalOptions.getHelpBroker().getHelpSet());
+        GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.tag_view", GlobalOptions.getHelpBroker().getHelpSet());
         // </editor-fold>
 
         jAddTagDialog.pack();

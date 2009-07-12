@@ -892,7 +892,7 @@
                                   <Component id="jRefreshButton" min="-2" max="-2" attributes="1"/>
                                   <Component id="jCenterCoordinateIngame" min="-2" max="-2" attributes="1"/>
                               </Group>
-                              <EmptySpace pref="12" max="32767" attributes="0"/>
+                              <EmptySpace max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -1378,13 +1378,13 @@
                           <Group type="102" alignment="1" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="1" attributes="0">
-                                  <Component id="jCurrentPlayer" alignment="0" pref="218" max="32767" attributes="0"/>
-                                  <Component id="jCurrentPlayerVillages" alignment="0" pref="218" max="32767" attributes="0"/>
+                                  <Component id="jCurrentPlayer" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="jCurrentPlayerVillages" alignment="0" pref="155" max="32767" attributes="0"/>
                                   <Group type="102" alignment="1" attributes="0">
                                       <Component id="jCurrentToolLabel" min="-2" max="-2" attributes="1"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="jButton1" min="-2" max="-2" attributes="1"/>
-                                      <EmptySpace pref="90" max="32767" attributes="0"/>
+                                      <EmptySpace pref="27" max="32767" attributes="0"/>
                                       <Component id="jCenterIngameButton" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="jOnlineLabel" min="-2" max="-2" attributes="0"/>
@@ -1697,9 +1697,9 @@
                                       <Component id="jLayerDownButton" min="-2" max="-2" attributes="0"/>
                                   </Group>
                                   <Component id="jLabel10" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jScrollPane3" alignment="1" pref="138" max="32767" attributes="0"/>
+                                  <Component id="jScrollPane3" alignment="0" pref="165" max="32767" attributes="0"/>
                               </Group>
-                              <EmptySpace min="-2" pref="38" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>

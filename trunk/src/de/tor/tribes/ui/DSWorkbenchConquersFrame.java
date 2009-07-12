@@ -34,7 +34,6 @@ import javax.swing.table.TableRowSorter;
 import org.apache.log4j.Logger;
 
 /**
- * @TODO (1.6) Check help for better explanation
  * @TODO (DIFF) Added cols for continent and distance
  * @author Charon
  */

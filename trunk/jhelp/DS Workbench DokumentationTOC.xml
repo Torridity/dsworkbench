@@ -10,8 +10,6 @@
 
    <tocitem text="Karten " target="pages.map_settings" image="images.tictac_grey"/>
 
-   <tocitem text="Tags " target="pages.tag_settings" image="images.tictac_grey"/>
-
    <tocitem text="Angriffe " target="pages.attack_settings" image="images.tictac_grey"/>
 
    <tocitem text="Netzwerk " target="pages.network_settings" image="images.tictac_grey"/>
@@ -77,6 +75,8 @@
     </tocitem>
     <tocitem text="Laufzeit&#252;bersicht " target="pages.runtime_tool" image="images.tictac_grey"/>
 
+    <tocitem text="Auswahl&#252;bersicht " target="pages.selection_tool" image="images.tictac_grey"/>
+
    </tocitem>
   </tocitem>
   <tocitem text="Ansichten " target="pages.views" image="images.tictac_orange">
@@ -97,6 +97,10 @@
    <tocitem text="Kirchen&#252;bersicht " target="pages.church_view" image="images.tictac_grey"/>
 
    <tocitem text="Eroberungen " target="pages.conquers_view" image="images.tictac_grey"/>
+
+   <tocitem text="Notizblock " target="pages.notes_view" image="images.tictac_grey"/>
+
+   <tocitem text="Tag&#252;bersicht " target="pages.tag_view" image="images.tictac_grey"/>
 
   </tocitem>
   <tocitem text="Shortcuts " target="pages.shortcuts" image="images.tictac_orange"/>

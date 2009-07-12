@@ -28,7 +28,7 @@ import de.tor.tribes.ui.editors.UnitCellEditor;
 import de.tor.tribes.ui.editors.VillageCellEditor;
 import de.tor.tribes.ui.renderer.AttackTypeCellRenderer;
 import de.tor.tribes.ui.renderer.ColoredDateCellRenderer;
-import de.tor.tribes.util.AttackPlanHTMLExporter;
+import de.tor.tribes.util.html.AttackPlanHTMLExporter;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.JOptionPaneHelper;
 import java.awt.Component;
@@ -1039,6 +1039,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
             }
         });
         jTaskPaneGroup1.getContentPane().add(jCleanupAttacksButton);
+        jCleanupAttacksButton.getAccessibleContext().setAccessibleDescription(bundle.getString("DSWorkbenchAttackFrame.jCleanupAttacksButton.AccessibleContext.accessibleDescription")); // NOI18N
 
         jRemoveAttackButton.setBackground(new java.awt.Color(239, 235, 223));
         jRemoveAttackButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_remove.png"))); // NOI18N
@@ -1050,6 +1051,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
             }
         });
         jTaskPaneGroup1.getContentPane().add(jRemoveAttackButton);
+        jRemoveAttackButton.getAccessibleContext().setAccessibleDescription(bundle.getString("DSWorkbenchAttackFrame.jRemoveAttackButton.AccessibleContext.accessibleDescription")); // NOI18N
 
         jCopyAttackButton.setBackground(new java.awt.Color(239, 235, 223));
         jCopyAttackButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_copy.png"))); // NOI18N
@@ -1061,6 +1063,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
             }
         });
         jTaskPaneGroup1.getContentPane().add(jCopyAttackButton);
+        jCopyAttackButton.getAccessibleContext().setAccessibleDescription(bundle.getString("DSWorkbenchAttackFrame.jCopyAttackButton.AccessibleContext.accessibleDescription")); // NOI18N
 
         jMoveAttacksButton.setBackground(new java.awt.Color(239, 235, 223));
         jMoveAttacksButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/replace2.png"))); // NOI18N
@@ -1072,6 +1075,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
             }
         });
         jTaskPaneGroup1.getContentPane().add(jMoveAttacksButton);
+        jMoveAttacksButton.getAccessibleContext().setAccessibleDescription(bundle.getString("DSWorkbenchAttackFrame.jMoveAttacksButton.AccessibleContext.accessibleDescription")); // NOI18N
 
         jChangeArrivalButton.setBackground(new java.awt.Color(239, 235, 223));
         jChangeArrivalButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_changeTime.png"))); // NOI18N
@@ -1083,6 +1087,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
             }
         });
         jTaskPaneGroup1.getContentPane().add(jChangeArrivalButton);
+        jChangeArrivalButton.getAccessibleContext().setAccessibleDescription(bundle.getString("DSWorkbenchAttackFrame.jChangeArrivalButton.AccessibleContext.accessibleDescription")); // NOI18N
 
         jTaskPane1.add(jTaskPaneGroup1);
 
@@ -1101,6 +1106,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
             }
         });
         jTaskPaneGroup2.getContentPane().add(jMarkAllButton);
+        jMarkAllButton.getAccessibleContext().setAccessibleDescription(bundle.getString("DSWorkbenchAttackFrame.jMarkAllButton.AccessibleContext.accessibleDescription")); // NOI18N
 
         jMarkFilteredButton.setBackground(new java.awt.Color(239, 235, 223));
         jMarkFilteredButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_selectSome.png"))); // NOI18N
@@ -1112,6 +1118,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
             }
         });
         jTaskPaneGroup2.getContentPane().add(jMarkFilteredButton);
+        jMarkFilteredButton.getAccessibleContext().setAccessibleDescription(bundle.getString("DSWorkbenchAttackFrame.jMarkFilteredButton.AccessibleContext.accessibleDescription")); // NOI18N
 
         jFlipMarkButton.setBackground(new java.awt.Color(239, 235, 223));
         jFlipMarkButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_selectInv.gif"))); // NOI18N
@@ -1123,6 +1130,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
             }
         });
         jTaskPaneGroup2.getContentPane().add(jFlipMarkButton);
+        jFlipMarkButton.getAccessibleContext().setAccessibleDescription(bundle.getString("DSWorkbenchAttackFrame.jFlipMarkButton.AccessibleContext.accessibleDescription")); // NOI18N
 
         jDrawMarkedButton.setBackground(new java.awt.Color(239, 235, 223));
         jDrawMarkedButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_selectDraw.png"))); // NOI18N
@@ -1134,6 +1142,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
             }
         });
         jTaskPaneGroup2.getContentPane().add(jDrawMarkedButton);
+        jDrawMarkedButton.getAccessibleContext().setAccessibleDescription(bundle.getString("DSWorkbenchAttackFrame.jDrawMarkedButton.AccessibleContext.accessibleDescription")); // NOI18N
 
         jNotDrawMarkedButton.setBackground(new java.awt.Color(239, 235, 223));
         jNotDrawMarkedButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_selectNoDraw.png"))); // NOI18N
@@ -1145,6 +1154,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
             }
         });
         jTaskPaneGroup2.getContentPane().add(jNotDrawMarkedButton);
+        jNotDrawMarkedButton.getAccessibleContext().setAccessibleDescription(bundle.getString("DSWorkbenchAttackFrame.jNotDrawMarkedButton.AccessibleContext.accessibleDescription")); // NOI18N
 
         jTaskPane1.add(jTaskPaneGroup2);
 
@@ -1164,6 +1174,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
             }
         });
         jTaskPaneGroup3.getContentPane().add(jCopyUnformattedToClipboardButton);
+        jCopyUnformattedToClipboardButton.getAccessibleContext().setAccessibleDescription(bundle.getString("DSWorkbenchAttackFrame.jCopyUnformattedToClipboardButton.AccessibleContext.accessibleDescription")); // NOI18N
 
         jCopyBBCodeToClipboardButton.setBackground(new java.awt.Color(239, 235, 223));
         jCopyBBCodeToClipboardButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_clipboardBB.png"))); // NOI18N
@@ -1176,6 +1187,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
             }
         });
         jTaskPaneGroup3.getContentPane().add(jCopyBBCodeToClipboardButton);
+        jCopyBBCodeToClipboardButton.getAccessibleContext().setAccessibleDescription(bundle.getString("DSWorkbenchAttackFrame.jCopyBBCodeToClipboardButton.AccessibleContext.accessibleDescription")); // NOI18N
 
         jCopyBBCodeToClipboardButton1.setBackground(new java.awt.Color(239, 235, 223));
         jCopyBBCodeToClipboardButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_HTML.png"))); // NOI18N
@@ -1188,6 +1200,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
             }
         });
         jTaskPaneGroup3.getContentPane().add(jCopyBBCodeToClipboardButton1);
+        jCopyBBCodeToClipboardButton1.getAccessibleContext().setAccessibleDescription(bundle.getString("DSWorkbenchAttackFrame.jCopyBBCodeToClipboardButton1.AccessibleContext.accessibleDescription")); // NOI18N
 
         jSendAttackButton.setBackground(new java.awt.Color(239, 235, 223));
         jSendAttackButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_browser.png"))); // NOI18N
@@ -1199,6 +1212,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
             }
         });
         jTaskPaneGroup3.getContentPane().add(jSendAttackButton);
+        jSendAttackButton.getAccessibleContext().setAccessibleDescription(bundle.getString("DSWorkbenchAttackFrame.jSendAttackButton.AccessibleContext.accessibleDescription")); // NOI18N
 
         jTaskPane1.add(jTaskPaneGroup3);
 
@@ -1217,6 +1231,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
             }
         });
         jTaskPaneGroup4.getContentPane().add(jNotifyButton);
+        jNotifyButton.getAccessibleContext().setAccessibleDescription(bundle.getString("DSWorkbenchAttackFrame.jNotifyButton.AccessibleContext.accessibleDescription")); // NOI18N
 
         jTaskPane1.add(jTaskPaneGroup4);
 
@@ -2154,14 +2169,20 @@ private void fireAttackFrameAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) 
 }//GEN-LAST:event_fireAttackFrameAlwaysOnTopEvent
 
 private void fireWriteToHTMLEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireWriteToHTMLEvent
-
     String dir = GlobalOptions.getProperty("screen.dir");
     if (dir == null) {
         dir = ".";
     }
-
     String selectedPlan = AttackManagerTableModel.getSingleton().getActiveAttackPlan();
-    JFileChooser chooser = new JFileChooser(dir);
+    JFileChooser chooser = null;
+    try {
+        chooser = new JFileChooser(dir);
+    } catch (Exception e) {
+        JOptionPaneHelper.showErrorBox(this, "Konnte Dateiauswahldialog nicht öffnen.\nMöglicherweise verwendest du Windows Vista. Ist dies der Fall, beende DS Workbench, klicke mit der rechten Maustaste auf DSWorkbench.exe,\n" +
+                "wähle 'Eigenschaften' und deaktiviere dort unter 'Kompatibilität' den Windows XP Kompatibilitätsmodus.", "Fehler");
+        return;
+    }
+
     chooser.setDialogTitle("Datei auswählen");
 
     chooser.setFileFilter(new javax.swing.filechooser.FileFilter() {

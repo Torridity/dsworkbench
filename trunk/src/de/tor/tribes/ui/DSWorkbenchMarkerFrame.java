@@ -209,6 +209,9 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
                 .addContainerGap())
         );
 
+        jRemoveMarkerButton.getAccessibleContext().setAccessibleDescription(bundle.getString("DSWorkbenchMarkerFrame.jRemoveMarkerButton.AccessibleContext.accessibleDescription")); // NOI18N
+        jToggleDrawFilterButton.getAccessibleContext().setAccessibleDescription(bundle.getString("DSWorkbenchMarkerFrame.jToggleDrawFilterButton.AccessibleContext.accessibleDescription")); // NOI18N
+
         jMarkerFrameAlwaysOnTop.setText(bundle.getString("DSWorkbenchMarkerFrame.jMarkerFrameAlwaysOnTop.text")); // NOI18N
         jMarkerFrameAlwaysOnTop.setOpaque(false);
         jMarkerFrameAlwaysOnTop.addItemListener(new java.awt.event.ItemListener() {

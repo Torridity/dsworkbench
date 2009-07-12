@@ -8,7 +8,6 @@ import de.tor.tribes.io.ServerManager;
 import de.tor.tribes.types.Village;
 import java.awt.Desktop;
 import java.net.URI;
-import javax.swing.JOptionPane;
 import org.apache.log4j.Logger;
 
 /**
@@ -23,7 +22,7 @@ public class BrowserCommandSender {
     public static void sendTroops(Village pSource, Village pTarget) {
         try {
             String baseURL = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
-            
+
             String url = baseURL + "/game.php?village=";
             int uvID = GlobalOptions.getUVID();
             if (uvID >= 0) {
@@ -43,7 +42,12 @@ public class BrowserCommandSender {
             A.insertUnit(A.document.forms['units'].elements['y'],472);
             A.insertUnit(A.document.forms['units'].elements['attack'].click());    
              */
-            Desktop.getDesktop().browse(new URI(url));
+            String browser = GlobalOptions.getProperty("default.browser");
+            if (browser == null || browser.length() < 1) {
+                Desktop.getDesktop().browse(new URI(url));
+            } else {
+                Runtime.getRuntime().exec(new String[]{browser, url});
+            }
         } catch (Throwable t) {
             JOptionPaneHelper.showErrorBox(null, "Fehler beim Öffnen des Browsers", "Fehler");
             logger.error("Failed to open browser window", t);
@@ -51,11 +55,40 @@ public class BrowserCommandSender {
     }
 
     public static void openPage(String pUrl) {
-        try {
-            Desktop.getDesktop().browse(new URI(pUrl));
-        } catch (Throwable t) {
-            logger.error("Failed opening URL " + pUrl);
+        String browser = GlobalOptions.getProperty("default.browser");
+        if (browser == null || browser.length() < 1) {
+            try {
+                Desktop.getDesktop().browse(new URI(pUrl));
+            } catch (Throwable t) {
+                logger.error("Failed opening URL " + pUrl);
+            }
+        } else {
+            try {
+                Runtime.getRuntime().exec(new String[]{browser, pUrl});
+            } catch (Throwable t) {
+                logger.error("Failed opening URL " + pUrl);
+            }
         }
+    }
+
+    public static boolean openTestPage(String pUrl) {
+        String browser = GlobalOptions.getProperty("default.browser");
+        if (browser == null || browser.length() < 1) {
+            try {
+                Desktop.getDesktop().browse(new URI(pUrl));
+            } catch (Throwable t) {
+                logger.error("Failed opening URL " + pUrl);
+                return false;
+            }
+        } else {
+            try {
+                Runtime.getRuntime().exec(new String[]{browser, pUrl});
+            } catch (Throwable t) {
+                logger.error("Failed opening URL " + pUrl);
+                return false;
+            }
+        }
+        return true;
     }
 
     public static void centerVillage(Village pSource) {
@@ -67,7 +100,12 @@ public class BrowserCommandSender {
                 url = baseURL + "/game.php?t=" + uvID + "&village=";
             }
             url += pSource.getId() + "&screen=map&x=" + pSource.getX() + "&y=" + pSource.getY();
-            Desktop.getDesktop().browse(new URI(url));
+            String browser = GlobalOptions.getProperty("default.browser");
+            if (browser == null || browser.length() < 1) {
+                Desktop.getDesktop().browse(new URI(url));
+            } else {
+                Runtime.getRuntime().exec(new String[]{browser, url});
+            }
         } catch (Throwable t) {
             JOptionPaneHelper.showErrorBox(null, "Fehler beim Öffnen des Browsers", "Fehler");
             logger.error("Failed to open browser window", t);
@@ -83,7 +121,12 @@ public class BrowserCommandSender {
                 url = baseURL + "/game.php?t=" + uvID + "&village=";
             }
             url += "&screen=map&x=" + pX + "&y=" + pY;
-            Desktop.getDesktop().browse(new URI(url));
+            String browser = GlobalOptions.getProperty("default.browser");
+            if (browser == null || browser.length() < 1) {
+                Desktop.getDesktop().browse(new URI(url));
+            } else {
+                Runtime.getRuntime().exec(new String[]{browser, url});
+            }
         } catch (Throwable t) {
             JOptionPaneHelper.showErrorBox(null, "Fehler beim Öffnen des Browsers", "Fehler");
             logger.error("Failed to open browser window", t);
@@ -99,7 +142,12 @@ public class BrowserCommandSender {
                 url = baseURL + "/game.php?t=" + uvID + "&village=";
             }
             url += pSource.getId() + "&screen=market&mode=send&target=" + pTarget.getId();
-            Desktop.getDesktop().browse(new URI(url));
+            String browser = GlobalOptions.getProperty("default.browser");
+            if (browser == null || browser.length() < 1) {
+                Desktop.getDesktop().browse(new URI(url));
+            } else {
+                Runtime.getRuntime().exec(new String[]{browser, url});
+            }
         } catch (Throwable t) {
             JOptionPaneHelper.showErrorBox(null, "Fehler beim Öffnen des Browsers", "Fehler");
             logger.error("Failed to open browser window", t);

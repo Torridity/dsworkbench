@@ -61,11 +61,12 @@ import java.util.Vector;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JSpinner;
 import javax.swing.JTable;
+import javax.swing.KeyStroke;
 import javax.swing.ListCellRenderer;
-import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
@@ -73,8 +74,6 @@ import javax.swing.table.DefaultTableModel;
  * @TODO (1.5?) Add min number to troop filter in attack planer????
  * @TODO (DIFF) Added scrollbar to task menu
  * @TODO (DIFF) Added selection view to tools
- * @TODO (1.6) F9 = Notepad -> Docu
- * @TODO (1.6) Remove MarkOnTop and ChurchRange shortcuts from docu
  * @author  Charon
  */
 public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
@@ -153,10 +152,10 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                             label.setBackground(Color.LIGHT_GRAY);
                         }
                     } else {
-                        //layers which are "behind" map are dark
+                        //layers which are "behind" map are disabled
                         int villageIndex = ((DefaultListModel) list.getModel()).indexOf("Dörfer");
                         if (index < villageIndex && !isSelected) {
-                            label.setBackground(Color.DARK_GRAY);
+                            label.setForeground(Color.LIGHT_GRAY);
                         }
                     }
                 } catch (Exception e) {
@@ -183,7 +182,8 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         // </editor-fold>        
 
         // <editor-fold defaultstate="collapsed" desc=" Add global KeyListener ">
-
+        jMenuBar1.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+                KeyStroke.getKeyStroke(KeyEvent.VK_F10, 0), "none");
         Toolkit.getDefaultToolkit().addAWTEventListener(new AWTEventListener() {
 
             @Override
@@ -729,6 +729,8 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             ClipboardWatch.getSingleton();
             //draw map the first time
             fireRefreshMapEvent(null);
+            MapPanel.getSingleton().addNotify();
+            MapPanel.getSingleton().initBuffer();
         }
     }
 
@@ -1303,7 +1305,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                 .addGroup(jNavigationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jRefreshButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jCenterCoordinateIngame, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(12, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jNavigationPanelLayout.setVerticalGroup(
             jNavigationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1425,13 +1427,13 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jInformationPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jCurrentPlayer, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 218, Short.MAX_VALUE)
-                    .addComponent(jCurrentPlayerVillages, javax.swing.GroupLayout.Alignment.LEADING, 0, 218, Short.MAX_VALUE)
+                    .addComponent(jCurrentPlayer, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jCurrentPlayerVillages, javax.swing.GroupLayout.Alignment.LEADING, 0, 155, Short.MAX_VALUE)
                     .addGroup(jInformationPanelLayout.createSequentialGroup()
                         .addComponent(jCurrentToolLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 90, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27, Short.MAX_VALUE)
                         .addComponent(jCenterIngameButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jOnlineLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -1580,8 +1582,8 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLayerDownButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jLabel10)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 138, Short.MAX_VALUE))
-                .addGap(38, 38, 38))
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 165, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         jTaskPaneGroup5.getContentPane().add(jPanel2);
@@ -2214,7 +2216,14 @@ private void fireCreateMapShotEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
         if (dir == null) {
             dir = ".";
         }
-        JFileChooser chooser = new JFileChooser(dir);
+        JFileChooser chooser = null;
+        try {
+            chooser = new JFileChooser(dir);
+        } catch (Exception e) {
+            JOptionPaneHelper.showErrorBox(this, "Konnte Dateiauswahldialog nicht öffnen.\nMöglicherweise verwendest du Windows Vista. Ist dies der Fall, beende DS Workbench, klicke mit der rechten Maustaste auf DSWorkbench.exe,\n" +
+                    "wähle 'Eigenschaften' und deaktiviere dort unter 'Kompatibilität' den Windows XP Kompatibilitätsmodus.", "Fehler");
+            return;
+        }
         chooser.setDialogTitle("Speichern unter...");
         chooser.setSelectedFile(new File("map"));
         chooser.addChoosableFileFilter(new javax.swing.filechooser.FileFilter() {
@@ -2293,8 +2302,14 @@ private void fireShowImportDialogEvent(java.awt.event.ActionEvent evt) {//GEN-FI
     if (dir == null) {
         dir = ".";
     }
-
-    JFileChooser chooser = new JFileChooser(dir);
+    JFileChooser chooser = null;
+    try {
+        chooser = new JFileChooser(dir);
+    } catch (Exception e) {
+        JOptionPaneHelper.showErrorBox(this, "Konnte Dateiauswahldialog nicht öffnen.\nMöglicherweise verwendest du Windows Vista. Ist dies der Fall, beende DS Workbench, klicke mit der rechten Maustaste auf DSWorkbench.exe,\n" +
+                "wähle 'Eigenschaften' und deaktiviere dort unter 'Kompatibilität' den Windows XP Kompatibilitätsmodus.", "Fehler");
+        return;
+    }
     chooser.setDialogTitle("Datei auswählen");
 
     chooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
@@ -2407,7 +2422,14 @@ private void fireExportEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_f
             dir = ".";
         }
 
-        JFileChooser chooser = new JFileChooser(dir);
+       JFileChooser chooser = null;
+     try {
+            chooser = new JFileChooser(dir);
+        } catch (Exception e) {
+            JOptionPaneHelper.showErrorBox(this, "Konnte Dateiauswahldialog nicht öffnen.\nMöglicherweise verwendest du Windows Vista. Ist dies der Fall, beende DS Workbench, klicke mit der rechten Maustaste auf DSWorkbench.exe,\n" +
+                    "wähle 'Eigenschaften' und deaktiviere dort unter 'Kompatibilität' den Windows XP Kompatibilitätsmodus.", "Fehler");
+            return;
+        }
         chooser.setDialogTitle("Datei auswählen");
         chooser.setSelectedFile(new File("export.xml"));
         chooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
@@ -2904,6 +2926,10 @@ private void firePopupTroopsChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FI
             jShowChurchFrame.setSelected(DSWorkbenchChurchFrame.getSingleton().isVisible());
         } else if (pSource == DSWorkbenchConquersFrame.getSingleton()) {
             jShowConquersFrame.setSelected(DSWorkbenchConquersFrame.getSingleton().isVisible());
+        } else if (pSource == DSWorkbenchNotepad.getSingleton()) {
+            jShowNotepadFrame.setSelected(DSWorkbenchNotepad.getSingleton().isVisible());
+        } else if (pSource == DSWorkbenchTagFrame.getSingleton()) {
+            jShowTagFrame.setSelected(DSWorkbenchTagFrame.getSingleton().isVisible());
         }
 
     }

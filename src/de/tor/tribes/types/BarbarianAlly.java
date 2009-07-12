@@ -4,6 +4,9 @@
  */
 package de.tor.tribes.types;
 
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  *
  * @author Charon
@@ -41,6 +44,10 @@ public class BarbarianAlly extends Ally {
 
     public int getRank() {
         return 0;
+    }
+
+    public List<Tribe> getTribes() {
+        return new LinkedList<Tribe>();
     }
 
     public String toString() {

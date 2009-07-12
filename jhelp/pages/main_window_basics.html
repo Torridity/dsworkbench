@@ -6,6 +6,14 @@
 <style type="text/css">
 <!--
 .style2 {font-size: 12px}
+.style5 {
+	background-color:#FF0000;
+	font-weight: bold;
+}
+.style6 {
+	background-color: #999999;
+	font-weight: bold;
+}
 -->
 </style>
 </head>
@@ -73,10 +81,24 @@
         <td colspan="2">&nbsp;</td>
       </tr>
 	        <tr>
-        <td colspan="2">Die darin enthaltenen Funktionen dienen der Modifikation der Kartendarstellung. So kann das Kartenpopup, welches erscheint wenn man mit der Maus &uuml;ber ein Dorf auf der Karte f&auml;hrt, (de-)aktiviert werden, Kirchenradien k&ouml;nnen ein- und ausgeblendet werden, sofern der aktuelle Server Kirchen unterst&uuml;tzt, und es ist m&ouml;glich, &uuml;ber den <em><a name="MarkOnTop"></a>MarkOnTop-Modus</em> Markierungen halbtransparent &uuml;ber den D&ouml;rfern anzuzeigen, um einen schnellen &Uuml;berblick &uuml;ber die Lage von D&ouml;rfern zu erhalten. Au&szlig;erdem kann die Truppendichte f&uuml;r D&ouml;rfer eingeblendet werden, f&uuml;r welche Truppeninformationen importiert wurden. Als Grundlage f&uuml;r die Bestimmung der Truppendichte dient dabei das Dorf im sichbaren Kartenausschnitt, welches die gr&ouml;&szlig;te Truppenst&auml;rke in der Verteididung besitzt. Alle anderen D&ouml;rfer werden, je nach ihrer Def-St&auml;rke, mit einem entsprechend kleineren Kreis und einer F&auml;rbung hin zu Rot gekennzeichnet.<br>
-          Weiterhin enth&auml;lt diese Aufgabengruppe die Einstellung des Laufzeitradius, der &uuml;ber das <a href="map_tools.html#radar"><em>entsprechende Werkzeug</em></a> auf ein Dorf gesetzt werden kann, um D&ouml;rfer in der Reichweite des angegebenen Radius zu finden. </td>
+        <td colspan="2">Die darin enthaltenen Funktionen dienen der Modifikation der Kartendarstellung. So kann das Kartenpopup, welches erscheint wenn man mit der Maus &uuml;ber ein Dorf auf der Karte f&auml;hrt, (de-)aktiviert werden.
+          Au&szlig;erdem kann man angeben, welche Art von Truppen eines Dorfes im Popup dargestellt werden. Weiterhin enth&auml;lt diese Aufgabengruppe die Einstellung des Laufzeitradars, das &uuml;ber das <a href="map_tools.html#radar"><em>entsprechende Werkzeug</em></a> auf ein Dorf gesetzt werden kann, um D&ouml;rfer in der Reichweite des angegebenen Radius zu finden. <br>
+          Zuletzt bietet dieser Bereich die M&ouml;glichkeit, die Reihenfolge der gezeichneten Ebenen zu bestimmen:</td>
       </tr>
 	  <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+	   <tr>
+        <td colspan="2"><img src="../images/screens/layers.gif" width="213" height="162"></td>
+      </tr>
+	   <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+	   <tr>
+        <td colspan="2"><a name="layers"></a>Hier kann man &uuml;ber die Buttons auf der rechten Seite die verschiedenen zu zeichnenden Ebenen in den Hintergrund (weiter oben) oder den Vordergrund (weiter unten) verschieben. Eine besondere Rolle spielen dabei die Ebene mit dem Namen 'D&ouml;rfer', die <span class="style5">rot unterlegt</span> gekennzeichnet ist und die Ebene 'Markierungen ', die <span class="style6">grau unterlegt</span> ist. Diese beiden Ebenen werden immer gezeichnet. Verschiebt man die Ebene 'Markierungen' unter die Ebene 'D&ouml;rfer', so erreicht man, dass Markierungen &uuml;ber den D&ouml;rfern gezeichnet werden, was dem fr&uuml;heren <em>MarkOnTop Modus</em> entspricht, der dazu dient, eine schnelle &Uuml;bersicht &uuml;ber Stammes- und Spielerverteilungen zu erhalten.<br>
+          Alle anderen Ebenen werden nur gezeichnet, wenn sie unterhalb der 'D&ouml;rfer' Ebene liegen. Im oberen Berispiel w&uuml;rde die Ebene 'Truppendichte' nicht gezeichnet werden. Das Verschieben der Ebenen kann man zum einen verwenden, um einzelne Ebenen deutlicher darzustellen indem man sie in den Vordergrund verschiebt. Zum anderen kann man eine oder mehrere Ebenen, durch ihre Positionierung oberhalb der 'D&ouml;rfer' Ebene, 'unsichtbar' machen und so die Zeichengeschwindigkeit in <em>DS Workbench</em> erh&ouml;hen, besonders wie oben gezeigt f&uuml;r das Zeichnen der Truppendichte. </td>
+      </tr>
+	   <tr>
         <td colspan="2">&nbsp;</td>
       </tr>
 	    <tr>

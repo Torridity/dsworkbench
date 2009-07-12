@@ -549,7 +549,14 @@ private void fireSaveScreenshotEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST
     if (dir == null) {
         dir = ".";
     }
-    JFileChooser chooser = new JFileChooser(dir);
+    JFileChooser chooser = null;
+    try {
+        chooser = new JFileChooser(dir);
+    } catch (Exception e) {
+        JOptionPaneHelper.showErrorBox(this, "Konnte Dateiauswahldialog nicht öffnen.\nMöglicherweise verwendest du Windows Vista. Ist dies der Fall, beende DS Workbench, klicke mit der rechten Maustaste auf DSWorkbench.exe,\n" +
+                "wähle 'Eigenschaften' und deaktiviere dort unter 'Kompatibilität' den Windows XP Kompatibilitätsmodus.", "Fehler");
+        return;
+    }
     chooser.setDialogTitle("Speichern unter...");
     chooser.setSelectedFile(new File("map"));
 

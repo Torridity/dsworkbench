@@ -59,10 +59,10 @@ import java.awt.Toolkit;
 import java.awt.Transparency;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Arc2D;
-import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
+import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -127,12 +127,13 @@ public class MapRenderer extends Thread {
     private Village currentUserVillage = null;
     private BufferedImage mMainBuffer = null;
     private BufferedImage mConquerWarning = null;
-    // private Path2D.Double ARROW = createArrow(0);
+    private Path2D.Double ARROW = createArrow(0);
     private List<Integer> drawOrder = null;
     private int iPopupTroopType = 0;
 
     public MapRenderer() {
         mVisibleVillages = new Village[iVillagesX][iVillagesY];
+        setPriority(Thread.MIN_PRIORITY);
         setDaemon(true);
         try {
             //load flag marker
@@ -333,6 +334,8 @@ public class MapRenderer extends Thread {
                     Hashtable<Village, Rectangle> pos = (Hashtable<Village, Rectangle>) villagePositions.clone();
                     MapPanel.getSingleton().updateComplete(pos, mMainBuffer);
                     MapPanel.getSingleton().repaint();
+                    /*   MapPanel.getSingleton().getBufferStrategy().getDrawGraphics().drawImage(mMainBuffer, 0, 0, null);
+                    MapPanel.getSingleton().getBufferStrategy().show();*/
                     g2d.dispose();
 
                 }
@@ -345,7 +348,7 @@ public class MapRenderer extends Thread {
             }
             try {
                 //if (completeRedraw) {
-                Thread.sleep(60);
+                Thread.sleep(40);
             /*} else {
             Thread.sleep(250);
             }*/
@@ -354,22 +357,23 @@ public class MapRenderer extends Thread {
         }
     }
 
-    /*private Path2D.Double createArrow(int l) {
-    int length = l;
-    int barb = 15;
-    double angle = Math.toRadians(20);
-    Path2D.Double path = new Path2D.Double();
-    path.moveTo(-length / 2, 0);
-    path.lineTo(length / 2, 0);
-    double x = length / 2 - barb * Math.cos(angle);
-    double y = barb * Math.sin(angle);
-    path.lineTo(x, y);
-    x = length / 2 - barb * Math.cos(-angle);
-    y = barb * Math.sin(-angle);
-    path.moveTo(length / 2, 0);
-    path.lineTo(x, y);
-    return path;
-    }*/
+    private Path2D.Double createArrow(int l) {
+        int length = l;
+        int barb = 15;
+        double angle = Math.toRadians(20);
+        Path2D.Double path = new Path2D.Double();
+        path.moveTo(-length / 2, 0);
+        path.lineTo(length / 2, 0);
+        double x = length / 2 - barb * Math.cos(angle);
+        double y = barb * Math.sin(angle);
+        path.lineTo(x, y);
+        x = length / 2 - barb * Math.cos(-angle);
+        y = barb * Math.sin(-angle);
+        path.moveTo(length / 2, 0);
+        path.lineTo(x, y);
+        return path;
+    }
+
     /**Set the drag line externally (done by MapPanel class)*/
     public void setDragLine(int pXS, int pYS, int pXE, int pYE) {
         if (pXS == -1 && pYS == -1 && pXE == -1 && pYE == -1) {
@@ -1249,8 +1253,6 @@ public class MapRenderer extends Thread {
         Collections.sort(keyV);
         Village.setOrderType(order);
 
-      //  long sum = 0;
-       // int cnt = 0;
         Arc2D.Double arc = new Arc2D.Double();
         Ellipse2D.Double ellipse = new Ellipse2D.Double();
         Color cb = g2d.getColor();
@@ -1269,7 +1271,7 @@ public class MapRenderer extends Thread {
             //calculate density color
             int r = (int) Math.rint((1 - percOfMax) * 255);
             int g = (int) Math.rint(percOfMax * 255);
-            //the less the densit is the more alpha comes to its full value
+            //the less the density is the more alpha comes to its full value
             int alpha2 = (int) Math.rint((1 - percOfMax) * 255);
             if (alpha2 < 60) {
                 //limit alpha min to 60
@@ -1301,14 +1303,7 @@ public class MapRenderer extends Thread {
                 g2d.draw(ellipse);
                 g2d.setColor(cb);
             }
-
-           // sum += System.currentTimeMillis() - s;
-            //cnt++;
         }
-
-       /* System.out.println("Sum: " + sum);
-        System.out.println("Cnt: " + cnt);
-        System.out.println("Mean: " + (sum / cnt));*/
     }
 
     /**Render attack vectors*/
@@ -1420,8 +1415,8 @@ public class MapRenderer extends Thread {
         }
         // <editor-fold defaultstate="collapsed" desc=" Support drawing">
         Stroke s = g2d.getStroke();
-        int width = GlobalOptions.getSkin().getCurrentFieldWidth();
-        int height = GlobalOptions.getSkin().getCurrentFieldHeight();
+        double width = GlobalOptions.getSkin().getCurrentFieldWidth();
+        double height = GlobalOptions.getSkin().getCurrentFieldHeight();
         Color b = g2d.getColor();
         g2d.setStroke(new BasicStroke(2.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
         Point2D.Double error = GlobalOptions.getSkin().getError();
@@ -1437,30 +1432,39 @@ public class MapRenderer extends Thread {
 
                     width += error.x;
                     height += error.y;
-
-                    /*   AffineTransform t = null;
-                    double d = DSCalculator.calculateDistance(target, v);
-                    double theta = (double) (target.getX() - v.getX()) / d;
+                    /*
+                    AffineTransform t = null;
+                    double dx = target.getX()*width - v.getX()*width;
+                    double dy = target.getY()*height - v.getY()*height;
+                    double dis = Math.sqrt(dx * dx + dy * dy);
+                    double theta = (double) (target.getX() * width - v.getX() * width) / dis;
                     if (target.getY() >= v.getY() && target.getX() <= v.getX()) {
                     //1.Quad
-                    t = AffineTransform.getRotateInstance(theta + Math.toRadians(180));
+                    t = AffineTransform.getTranslateInstance((v.getX() - viewStartPoint.x) * width + width / 2, (v.getY() - viewStartPoint.y) * height + height / 2);
+
                     } else if (target.getY() >= v.getY() && target.getX() >= v.getX()) {
                     //2.Quad
                     t = AffineTransform.getTranslateInstance((v.getX() - viewStartPoint.x) * width + width / 2, (v.getY() - viewStartPoint.y) * height + height / 2);
+                    theta = Math.toRadians(90) - theta;
                     } else if (target.getY() <= v.getY() && target.getX() >= v.getX()) {
                     //3.Quad
-                    t = AffineTransform.getRotateInstance(theta + Math.toRadians(90));
+                    t = AffineTransform.getTranslateInstance((v.getX() - viewStartPoint.x) * width + width / 2, (v.getY() - viewStartPoint.y) * height + height / 2);
+                    System.out.println("HERE");
+                    theta = Math.toRadians(180) - theta;
                     } else {
                     //4.Quad
-                    t = AffineTransform.getRotateInstance(theta);
+                    t = AffineTransform.getTranslateInstance((v.getX() - viewStartPoint.x) * width + width / 2, (v.getY() - viewStartPoint.y) * height + height / 2);
+                    System.out.println("GERE!");
+                    theta = Math.toRadians(270) - theta;
                     }
+                    t.rotate(theta);
                     g2d.setColor(Color.RED);
                     g2d.draw(ARROW);
                     g2d.setColor(Color.MAGENTA);
-                    t.rotate(theta + Math.toRadians(90));
-                    g2d.draw(t.createTransformedShape(ARROW));
-                     */
 
+                    g2d.draw(t.createTransformedShape(ARROW));
+
+                     */
                     if (villagePositions.containsKey(v) && villagePositions.containsKey(target)) {
                         //draw full line
                         double xStart = (supportLine.getX1() - viewStartPoint.x) * width + width / 2;
@@ -1469,6 +1473,7 @@ public class MapRenderer extends Thread {
                         double yEnd = (supportLine.getY2() - viewStartPoint.y) * height + height / 2;
                         g2d.setColor(Color.RED);
                         g2d.drawLine((int) Math.rint(xStart), (int) Math.rint(yStart), (int) Math.rint(xEnd), (int) Math.rint(yEnd));
+                        g2d.drawOval((int) xEnd - 2, (int) yEnd - 2, 4, 4);
                     } else if (villagePositions.containsKey(v) && !villagePositions.containsKey(target)) {
                         //draw only source
                         double inc = v.getY() - (rise * v.getX());
@@ -1501,6 +1506,7 @@ public class MapRenderer extends Thread {
                         String d = NumberFormat.getInstance().format(dist);
                         Rectangle2D bb = g2d.getFontMetrics().getStringBounds(d, g2d);
                         g2d.fillRect((int) (xStart + bb.getX()), (int) (yStart + bb.getY()), (int) bb.getWidth(), (int) bb.getHeight());
+                        g2d.drawOval((int) xEnd - 2, (int) yEnd - 2, 4, 4);
                         g2d.setColor(Color.BLACK);
                         g2d.drawString(d, (int) xStart, (int) yStart);
                     } else {
@@ -1529,6 +1535,7 @@ public class MapRenderer extends Thread {
                             double yEnd = (supportLine.getY2() - viewStartPoint.y) * height + height / 2;
                             g2d.setColor(Color.GREEN);
                             g2d.drawLine((int) Math.rint(xStart), (int) Math.rint(yStart), (int) Math.rint(xEnd), (int) Math.rint(yEnd));
+                             g2d.drawOval((int) xStart - 2, (int) yStart - 2, 4, 4);
                         } else if (villagePositions.containsKey(v) && !villagePositions.containsKey(source)) {
                             //draw only source
                             double inc = v.getY() - (rise * v.getX());
@@ -1544,6 +1551,7 @@ public class MapRenderer extends Thread {
                             String d = NumberFormat.getInstance().format(dist);
                             Rectangle2D bb = g2d.getFontMetrics().getStringBounds(d, g2d);
                             g2d.fillRect((int) (xEnd + bb.getX()), (int) (yEnd + bb.getY()), (int) bb.getWidth(), (int) bb.getHeight());
+                            g2d.drawOval((int) xStart - 2, (int) yStart - 2, 4, 4);
                             g2d.setColor(Color.BLACK);
                             g2d.drawString(d, (int) xEnd, (int) yEnd);
                         } else if (!villagePositions.containsKey(v) && villagePositions.containsKey(source)) {
@@ -2095,7 +2103,7 @@ public class MapRenderer extends Thread {
         }
 
         //render troop/runtime information
-        renderExtendedInformation(g2d, mouseVillage, rect, xc, yc, width, dy);
+        renderExtendedInformation(g2d, mouseVillage, xc, yc, width, dy);
         g2d.setFont(before);
         g2d.setStroke(sBefore);
     }
@@ -2242,7 +2250,7 @@ public class MapRenderer extends Thread {
     }
 
     /**Render extended information to map popup e.g. troop information*/
-    private void renderExtendedInformation(Graphics2D g2d, Village pMouseVillage, Rectangle pRect, int pX, int pY, int pWidth, int pDy) {
+    private void renderExtendedInformation(Graphics2D g2d, Village pMouseVillage, int pX, int pY, int pWidth, int pDy) {
         VillageTroopsHolder troops = TroopsManager.getSingleton().getTroopsForVillage(pMouseVillage);
         Font current = new Font(Font.SANS_SERIF, Font.PLAIN, 10);
         boolean drawDist = false;
@@ -2253,33 +2261,40 @@ public class MapRenderer extends Thread {
             }
 
         }
+        Hashtable<UnitHolder, Integer> activeTroops = null;
         if (!drawDist) {
+            //if no runtime drawing, check troops
             if (troops == null) {
                 return;
             }
+
+            switch (iPopupTroopType) {
+                case TroopsManagerTableModel.SHOW_OWN_TROOPS: {
+                    activeTroops = troops.getOwnTroops();
+                    break;
+                }
+                case TroopsManagerTableModel.SHOW_TROOPS_OUTSIDE: {
+                    activeTroops = troops.getTroopsOutside();
+                    break;
+                }
+                case TroopsManagerTableModel.SHOW_TROOPS_ON_THE_WAY: {
+                    activeTroops = troops.getTroopsOnTheWay();
+                    break;
+                }
+                case TroopsManagerTableModel.SHOW_FORGEIGN_TROOPS: {
+                    activeTroops = troops.getForeignTroops();
+                    break;
+                }
+                default: {
+                    activeTroops = troops.getTroopsInVillage();//TroopsManagerTableModel.SHOW_TROOPS_IN_VILLAGE
+                }
+            }
+
+            if (activeTroops == null) {
+                //no active troops found
+                return;
+            }
         }
-        //if no runtime drawing, check troops
-        Hashtable<UnitHolder, Integer> activeTroops = null;
-        switch (iPopupTroopType) {
-            case TroopsManagerTableModel.SHOW_OWN_TROOPS: {
-                activeTroops = troops.getOwnTroops();
-                break;
-            }
-            case TroopsManagerTableModel.SHOW_TROOPS_OUTSIDE: {
-                activeTroops = troops.getTroopsOutside();
-                break;
-            }
-            case TroopsManagerTableModel.SHOW_TROOPS_ON_THE_WAY: {
-                activeTroops = troops.getTroopsOnTheWay();
-                break;
-            }
-            case TroopsManagerTableModel.SHOW_FORGEIGN_TROOPS: {
-                activeTroops = troops.getForeignTroops();
-                break;
-            }
-            default:
-                activeTroops = troops.getTroopsInVillage();//TroopsManagerTableModel.SHOW_TROOPS_IN_VILLAGE
-            }
 
         g2d.setFont(current);
         FontMetrics metrics = g2d.getFontMetrics(current);
@@ -2325,7 +2340,7 @@ public class MapRenderer extends Thread {
                     g2d.setColor(Constants.DS_BACK_LIGHT);
                 }
 
-                g2d.fillRect(pY + x + 2, pY + pDy, w, 35);
+                g2d.fillRect(pX + x + 2, pY + pDy, w, 35);
                 g2d.drawImage(ImageManager.getUnitImage(unit), pX + x + 2 + (int) Math.rint(w / 2.0 - 9), pY + pDy + 2, null);
                 String runtimeValue = DSCalculator.formatTimeInMinutes(runtime);
                 Rectangle2D troopBounds = metrics.getStringBounds(runtimeValue, g2d);

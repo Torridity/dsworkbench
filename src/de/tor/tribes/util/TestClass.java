@@ -22,6 +22,15 @@ public class TestClass {
 
     public static void main(String[] args) throws Exception {
 
+
+        Runtime.getRuntime().exec(new String[]{"C:/Programme/Internet Explorer/iexplore.exe", "http://www.heise.de"});
+        
+        if(true){
+            return;
+        }
+
+
+
         String url = "http://www.s213116505.online.de/village_interface.php?pw=a402daabeb2a1c861266544ef56c161c&villages=";
         BufferedReader fr = new BufferedReader(new FileReader(new File("H:/Software/DSWorkbench/servers/de28/serverdata")));
         String line = fr.readLine();

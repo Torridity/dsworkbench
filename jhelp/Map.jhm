@@ -18,6 +18,8 @@
 
 <mapID target="pages.settings" url="pages/settings.html"/>
 
+<mapID target="pages.main_window_basics_layers" url="pages/main_window_basics.html#layers"/>
+
 <mapID target="pages.map_tools_selection_tool" url="pages/map_tools.html#selection_tool"/>
 
 <mapID target="pages.bb_export" url="pages/bb_export.html"/>
@@ -34,13 +36,15 @@
 
 <mapID target="pages.conquers_view" url="pages/conquers_view.html"/>
 
+<mapID target="pages.map_tools_create_note" url="pages/map_tools.html#create_note"/>
+
 <mapID target="pages.attack_planer_type" url="pages/attack_planer_type.html"/>
 
 <mapID target="pages.tools" url="pages/tools.html"/>
 
-<mapID target="pages.map_settings_show_continents" url="pages/map_settings.html#show_continents"/>
+<mapID target="pages.notes_view" url="pages/notes_view.html"/>
 
-<mapID target="pages.tag_settings" url="pages/tag_settings.html"/>
+<mapID target="pages.map_settings_show_continents" url="pages/map_settings.html#show_continents"/>
 
 <mapID target="index" url="index.html"/>
 
@@ -73,8 +77,6 @@
 <mapID target="pages.attack_planer_allinone" url="pages/attack_planer_allinone.html"/>
 
 <mapID target="pages.form_setup" url="pages/form_setup.html"/>
-
-<mapID target="pages.main_window_basics_MarkOnTop" url="pages/main_window_basics.html#MarkOnTop"/>
 
 <mapID target="pages.main_window_basics" url="pages/main_window_basics.html"/>
 
@@ -118,6 +120,8 @@
 
 <mapID target="pages.map_tools" url="pages/map_tools.html"/>
 
+<mapID target="pages.selection_tool" url="pages/selection_tool.html"/>
+
 <mapID target="pages.shortcuts_no_tool" url="pages/shortcuts.html#no_tool"/>
 
 <mapID target="pages.attack_planer_results" url="pages/attack_planer_results.html"/>
@@ -130,7 +134,11 @@
 
 <mapID target="pages.data_handling" url="pages/data_handling.html"/>
 
+<mapID target="pages.tag_view" url="pages/tag_view.html"/>
+
 <mapID target="pages.map_tools_church" url="pages/map_tools.html#church"/>
+
+<mapID target="pages.import_ingame_groups" url="pages/import_ingame.html#groups"/>
 
 <mapID target="pages.template" url="pages/template.html"/>
 
@@ -146,7 +154,11 @@
 
 <mapID target="images.tools.draw_line" url="images/tools/draw_line.png"/>
 
+<mapID target="images.att_HTML" url="images/att_HTML.png"/>
+
 <mapID target="images.tools.no_church" url="images/tools/no_church.png"/>
+
+<mapID target="images.garbage" url="images/garbage.png"/>
 
 <mapID target="images.ll" url="images/ll.gif"/>
 
@@ -166,9 +178,9 @@
 
 <mapID target="images.r" url="images/r.gif"/>
 
-<mapID target="images.shortcuts.F8" url="images/shortcuts/F8.gif"/>
+<mapID target="images.shortcuts.F9" url="images/shortcuts/F9.gif"/>
 
-<mapID target="images.att_validate" url="images/att_validate.png"/>
+<mapID target="images.shortcuts.F8" url="images/shortcuts/F8.gif"/>
 
 <mapID target="images.shortcuts.F7" url="images/shortcuts/F7.gif"/>
 
@@ -278,6 +290,8 @@
 
 <mapID target="images.tools.zoom" url="images/tools/zoom.png"/>
 
+<mapID target="images.tools.note" url="images/tools/note.png"/>
+
 <mapID target="images.support_type" url="images/support_type.png"/>
 
 <mapID target="images.camera" url="images/camera.png"/>
@@ -339,6 +353,8 @@
 <mapID target="images.tools.measure" url="images/tools/measure.png"/>
 
 <mapID target="images.att_remove" url="images/att_remove.png"/>
+
+<mapID target="images.shortcuts.F10" url="images/shortcuts/F10.gif"/>
 
 <mapID target="images.information" url="images/information.png"/>
 

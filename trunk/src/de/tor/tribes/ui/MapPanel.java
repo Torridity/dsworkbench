@@ -499,7 +499,9 @@ public class MapPanel extends JPanel {
                             break;
                         }
                         case ImageManager.CURSOR_SELECTION: {
-
+if(selectionRect == null){
+    return;
+}
                             int xs = (int) Math.floor(selectionRect.getXPos());
                             int ys = (int) Math.floor(selectionRect.getYPos());
                             int xe = (int) Math.floor(selectionRect.getXPosEnd());

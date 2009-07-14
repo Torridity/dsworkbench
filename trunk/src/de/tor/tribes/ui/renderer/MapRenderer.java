@@ -59,6 +59,7 @@ import java.awt.Toolkit;
 import java.awt.Transparency;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Arc2D;
+import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
@@ -459,7 +460,7 @@ public class MapRenderer extends Thread {
         Graphics2D g2d = null;
         //prepare drawing buffer
         if (mLayers.get(MAP_LAYER) == null) {
-            layer = getBufferedImage(wb, hb, Transparency.TRANSLUCENT);//new BufferedImage(wb, hb, BufferedImage.TYPE_INT_ARGB);
+            layer = getBufferedImage(wb, hb, Transparency.TRANSLUCENT);//new BufferedImage(wb, hb, BufferedImage.TYPE_BYTE_GRAY);
             mLayers.put(MAP_LAYER, layer);
             g2d = layer.createGraphics();
             prepareGraphics(g2d);
@@ -1294,7 +1295,7 @@ public class MapRenderer extends Thread {
                 arc.setArc(villageRect.x - (int) Math.rint((size - villageRect.width) / 2), villageRect.y - (int) Math.rint((size - villageRect.height) / 2), size, size, 0, partOwn, Arc2D.PIE);
                 g2d.fill(arc);
                 g2d.setColor(cc);
-                arc.setArc(new Arc2D.Double(villageRect.x - (int) Math.rint((size - villageRect.width) / 2), villageRect.y - (int) Math.rint((size - villageRect.height) / 2), size, size, partOwn, partForeign, Arc2D.PIE));
+                arc.setArc(villageRect.x - (int) Math.rint((size - villageRect.width) / 2), villageRect.y - (int) Math.rint((size - villageRect.height) / 2), size, size, partOwn, partForeign, Arc2D.PIE);
                 g2d.fill(arc);
                 //draw border
                 ellipse.setFrame(villageRect.x - (int) Math.rint((size - villageRect.width) / 2), villageRect.y - (int) Math.rint((size - villageRect.height) / 2), size, size);
@@ -1534,7 +1535,7 @@ public class MapRenderer extends Thread {
                             double yEnd = (supportLine.getY2() - viewStartPoint.y) * height + height / 2;
                             g2d.setColor(Color.GREEN);
                             g2d.drawLine((int) Math.rint(xStart), (int) Math.rint(yStart), (int) Math.rint(xEnd), (int) Math.rint(yEnd));
-                             g2d.drawOval((int) xStart - 2, (int) yStart - 2, 4, 4);
+                            g2d.drawOval((int) xStart - 2, (int) yStart - 2, 4, 4);
                         } else if (villagePositions.containsKey(v) && !villagePositions.containsKey(source)) {
                             //draw only source
                             double inc = v.getY() - (rise * v.getX());
@@ -1752,7 +1753,6 @@ public class MapRenderer extends Thread {
                 g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f));
                 Color radiusColor = c.getRangeColor();
                 g2d.setColor(radiusColor);
-                //g2d.setPaint(new RoundGradientPaint(g.getCenterX(), g.getCenterY(), new Color(0, 0, 255, 155), new Point2D.Double(rad * g.getWidth() + g.getWidth(), rad * g.getHeight() + g.getHeight()), new Color(0, 0, 255, 0)));
                 g2d.setStroke(new BasicStroke(10.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
                 g2d.draw(p);
                 g2d.fill(p);

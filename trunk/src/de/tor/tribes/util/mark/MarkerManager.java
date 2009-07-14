@@ -7,20 +7,23 @@ package de.tor.tribes.util.mark;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Ally;
 import de.tor.tribes.types.Marker;
+import de.tor.tribes.types.MarkerSet;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.ui.DSWorkbenchMarkerFrame;
 import de.tor.tribes.ui.MapPanel;
-import de.tor.tribes.ui.MarkerCell;
 import de.tor.tribes.ui.MinimapPanel;
+import de.tor.tribes.ui.models.MarkerTableModel;
 import de.tor.tribes.ui.renderer.MapRenderer;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.awt.Color;
 import java.io.File;
 import java.io.FileWriter;
+import java.net.URLEncoder;
+import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
-import javax.swing.table.DefaultTableModel;
 import org.apache.log4j.Logger;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -35,9 +38,8 @@ public class MarkerManager {
 
     private static Logger logger = Logger.getLogger("MarkerManager");
     private static MarkerManager SINGLETON = null;
-    private List<Marker> lMarkers = null;
+    private Hashtable<String, MarkerSet> markers = null;
     private List<MarkerManagerListener> mManagerListeners = null;
-    private DefaultTableModel model = null;
 
     public static synchronized MarkerManager getSingleton() {
         if (SINGLETON == null) {
@@ -48,31 +50,9 @@ public class MarkerManager {
 
     /**Internal constructor*/
     MarkerManager() {
-        lMarkers = new LinkedList<Marker>();
         mManagerListeners = new LinkedList<MarkerManagerListener>();
-        model = new javax.swing.table.DefaultTableModel(
-                new Object[][]{},
-                new String[]{
-                    "Name", "Markierung"
-                }) {
-
-            Class[] types = new Class[]{
-                MarkerCell.class, Color.class
-            };
-            boolean[] canEdit = new boolean[]{
-                false, true
-            };
-
-            @Override
-            public Class getColumnClass(int columnIndex) {
-                return types[columnIndex];
-            }
-
-            @Override
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit[columnIndex];
-            }
-        };
+        markers = new Hashtable<String, MarkerSet>();
+        markers.put("default", new MarkerSet("default"));
     }
 
     public synchronized void addMarkerManagerListener(MarkerManagerListener pListener) {
@@ -91,7 +71,8 @@ public class MarkerManager {
     /**Load markers from file
      */
     public void loadMarkersFromFile(String pFile) {
-        lMarkers.clear();
+        markers.clear();
+        markers.put("default", new MarkerSet("default"));
         if (pFile == null) {
             logger.error("File argument is 'null'");
             return;
@@ -103,21 +84,10 @@ public class MarkerManager {
             }
             try {
                 Document d = JaxenUtils.getDocument(markerFile);
-                for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//markers/marker")) {
-                    try {
-                        Marker m = new Marker(e);
-                        // check if tribe/ally still exists
-                        if (m.getMarkerType() == Marker.ALLY_MARKER_TYPE) {
-                            if (DataHolder.getSingleton().getAllies().get(m.getMarkerID()) != null) {
-                                lMarkers.add(m);
-                            }
-                        } else if (m.getMarkerType() == Marker.TRIBE_MARKER_TYPE) {
-                            if (DataHolder.getSingleton().getTribes().get(m.getMarkerID()) != null) {
-                                lMarkers.add(m);
-                            }
-                        }
-                    } catch (Exception inner) {
-                        //ignored, marker invalid
+                for (Element setElement : (List<Element>) JaxenUtils.getNodes(d, "//markerSets/markerSet")) {
+                    MarkerSet set = MarkerSet.fromXml(setElement);
+                    if (set != null) {
+                        markers.put(set.getSetName(), set);
                     }
                 }
                 logger.debug("Markers successfully loaded");
@@ -141,36 +111,13 @@ public class MarkerManager {
         try {
             boolean overwriteMarkers = Boolean.parseBoolean(GlobalOptions.getProperty("import.replace.markers"));
             Document d = JaxenUtils.getDocument(pFile);
-            for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//markers/marker")) {
+            for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//markerSets/markerSet")) {
                 try {
-                    Marker m = new Marker(e);
+                    MarkerSet m = MarkerSet.fromXml(e);
                     // check if tribe/ally still exists
-                    if (m.getMarkerType() == Marker.ALLY_MARKER_TYPE) {
-                        Ally a = DataHolder.getSingleton().getAllies().get(m.getMarkerID());
-                        if (a != null) {
-                            //don't overwrite existing markers
-                            if (getMarker(a) == null) {
-                                lMarkers.add(m);
-                            } else {
-                                //if overwrite requested, overwrite current color
-                                if (overwriteMarkers) {
-                                    getMarker(a).setMarkerColor(m.getMarkerColor());
-                                }
-                            }
-                        }
-                    } else if (m.getMarkerType() == Marker.TRIBE_MARKER_TYPE) {
-                        Tribe t = DataHolder.getSingleton().getTribes().get(m.getMarkerID());
-                        if (t != null) {
-                            //don't overwrite existing markers
-                            if (getMarker(t) == null) {
-                                lMarkers.add(m);
-                            } else {
-                                //if overwrite requested, overwrite current color
-                                if (overwriteMarkers) {
-                                    getMarker(t).setMarkerColor(m.getMarkerColor());
-                                }
-                            }
-                        }
+                    MarkerSet exist = markers.get(m.getSetName());
+                    if (exist == null || overwriteMarkers) {
+                        markers.put(m.getSetName(), m);
                     }
                 } catch (Exception inner) {
                     //ignored, marker invalid
@@ -188,18 +135,21 @@ public class MarkerManager {
         }
     }
 
-    public String getExportData() {
+    public String getExportData(String[] pSets) {
         logger.debug("Generating marker export data");
 
-        String result = "<markers>\n";
-        Marker[] markers = getMarkers();
-        for (Marker m : markers) {
-            String xml = m.toXml();
-            if (xml != null) {
-                result += xml + "\n";
+        String result = "<markerSets>\n";
+        for (String set : pSets) {
+            MarkerSet m = markers.get(set);
+            try {
+                String xml = m.toXml();
+                if (xml != null) {
+                    result += xml + "\n";
+                }
+            } catch (Exception e) {
             }
         }
-        result += "</markers>\n";
+        result += "</markerSets>\n";
         logger.debug("Export data generated successfully");
         return result;
     }
@@ -223,15 +173,13 @@ public class MarkerManager {
         }
         try {
             FileWriter w = new FileWriter(pFile);
-            w.write("<markers>\n");
-            Marker[] markers = getMarkers();
-            for (Marker m : markers) {
-                String xml = m.toXml();
-                if (xml != null) {
-                    w.write(xml + "\n");
-                }
+            w.write("<markerSets>\n");
+            Enumeration<String> setKeys = markers.keys();
+            while (setKeys.hasMoreElements()) {
+                MarkerSet set = markers.get(setKeys.nextElement());
+                w.write(set.toXml());
             }
-            w.write("</markers>");
+            w.write("</markerSets>");
             w.flush();
             w.close();
             logger.debug("Markers successfully saved");
@@ -252,9 +200,37 @@ public class MarkerManager {
         logger.info("Not implemented yet");
     }
 
+    public MarkerSet removeSet(String pSet) {
+        return markers.remove(pSet);
+    }
+
+    public String[] getMarkerSets() {
+        return markers.keySet().toArray(new String[]{});
+    }
+
+    public Marker[] getMarkerSet(String pSet) {
+        if (!markers.containsKey(pSet)) {
+            return new Marker[]{};
+        }
+        return markers.get(pSet).getMarkers().toArray(new Marker[]{});
+    }
+
+    public Marker[] getMarkerSet() {
+        return markers.get(MarkerTableModel.getSingleton().getActiveSet()).getMarkers().toArray(new Marker[]{});
+    }
+
     /**Get all markers as array to avaid concurrent modifications*/
     public Marker[] getMarkers() {
-        return lMarkers.toArray(new Marker[]{});
+        return getMarkerSet();
+    }
+
+    public void addMarkerSet(String pName) {
+        MarkerSet set = new MarkerSet(pName);
+        markers.put(pName, set);
+    }
+
+    public void addMarkerSet(MarkerSet pSet) {
+        markers.put(pSet.getSetName(), pSet);
     }
 
     /**Add an ally marker*/
@@ -297,7 +273,8 @@ public class MarkerManager {
             m.setMarkerType((pType == 0) ? Marker.TRIBE_MARKER_TYPE : Marker.ALLY_MARKER_TYPE);
             m.setMarkerID(pId);
             m.setMarkerColor(pColor);
-            lMarkers.add(m);
+            List<Marker> set = markers.get(MarkerTableModel.getSingleton().getActiveSet()).getMarkers();
+            set.add(m);
         }
     }
 
@@ -341,7 +318,7 @@ public class MarkerManager {
         if (pValue == null) {
             return;
         }
-        lMarkers.remove(pValue);
+        markers.get(MarkerTableModel.getSingleton().getActiveSet()).getMarkers().remove(pValue);
         fireMarkerChangedEvents();
     }
 
@@ -350,8 +327,9 @@ public class MarkerManager {
         if (pValues == null) {
             return;
         }
+        List<Marker> set = markers.get(MarkerTableModel.getSingleton().getActiveSet()).getMarkers();
         for (Marker v : pValues) {
-            lMarkers.remove(v);
+            set.remove(v);
         }
         fireMarkerChangedEvents();
     }
@@ -360,29 +338,14 @@ public class MarkerManager {
         fireMarkerChangedEvents();
     }
 
-    /**Get the table model which contains all markers*/
-    public DefaultTableModel getTableModel() {
-
-        //remove former rows
-        while (model.getRowCount() > 0) {
-            model.removeRow(0);
-        }
-
-        Marker[] markers = getMarkers();
-        if (markers.length > 0) {
-            for (int i = 0; i < markers.length; i++) {
-                model.addRow(new Object[]{markers[i].getView(), markers[i].getMarkerColor()});
-            }
-        }
-        return model;
-    }
-
     public Marker getMarker(Tribe pTribe) {
         if (pTribe == null) {
             return null;
         }
 
-        for (Marker m : lMarkers) {
+        Marker[] set = getMarkerSet();
+
+        for (Marker m : set) {
             if ((m.getMarkerType() == Marker.TRIBE_MARKER_TYPE) && (m.getMarkerID() == pTribe.getId())) {
                 return m;
             }
@@ -395,8 +358,9 @@ public class MarkerManager {
         if (pAlly == null) {
             return null;
         }
+        Marker[] set = getMarkerSet();
 
-        for (Marker m : lMarkers) {
+        for (Marker m : set) {
             if ((m.getMarkerType() == Marker.ALLY_MARKER_TYPE) && (m.getMarkerID() == pAlly.getId())) {
                 return m;
             }
@@ -408,8 +372,8 @@ public class MarkerManager {
     /**Get markers by their type (Tribe = 0, Ally = 1)*/
     public Marker[] getMarkersByType(int pType) {
         List<Marker> markList = new LinkedList<Marker>();
-        Marker[] markers = getMarkers();
-        for (Marker m : markers) {
+        Marker[] set = getMarkerSet();
+        for (Marker m : set) {
             if (m.getMarkerType() == pType) {
                 markList.add(m);
             }

@@ -229,25 +229,12 @@ public class DatabaseInterface {
                         entries.add(entry);
                     }
                 }
-            /*logger.debug("Merging acceptance increments");
-            Hashtable<String, Double> riseSpeeds = getAcceptanceRiseSpeed();
-            if (riseSpeeds != null) {
-            for (DatabaseServerEntry e : entries) {
-            Double speed = riseSpeeds.get(e.getServerID());
-            if (speed != null) {
-            e.setAcceptanceRiseSpeed(speed);
-            }
-            }
-            }*/
-
             } catch (Exception e) {
-                e.printStackTrace();
                 logger.error("Failed to proceed reading server data", e);
             }
 
             return entries;
         } catch (Exception outer) {
-            outer.printStackTrace();
             //typecast or connection failed
             logger.error("Failed getting list of servers. Result is " + result);
         }
@@ -255,91 +242,91 @@ public class DatabaseInterface {
         return null;
     }
 
- /*   public static List<DatabaseServerEntry> listServers() {
-        Object result = null;
-        try {
-            result = callWebInterface("listServers", null);
-            String[] lines = (String[]) result;
-            List<DatabaseServerEntry> entries = new LinkedList<DatabaseServerEntry>();
-            try {
-                for (String line : lines) {
-                    StringTokenizer t = new StringTokenizer(line, "[,]");
-                    if (t.countTokens() != 2) {
-                        //invalid entry, probably a status code!?
-                        try {
-                            int status = Integer.parseInt(line);
-                            processStatus("list servers", status);
-                            return null;
-                        } catch (Exception noStatus) {
-                            throw new Exception("Invalid entry '" + line + "'");
-                        }
+    /*   public static List<DatabaseServerEntry> listServers() {
+    Object result = null;
+    try {
+    result = callWebInterface("listServers", null);
+    String[] lines = (String[]) result;
+    List<DatabaseServerEntry> entries = new LinkedList<DatabaseServerEntry>();
+    try {
+    for (String line : lines) {
+    StringTokenizer t = new StringTokenizer(line, "[,]");
+    if (t.countTokens() != 2) {
+    //invalid entry, probably a status code!?
+    try {
+    int status = Integer.parseInt(line);
+    processStatus("list servers", status);
+    return null;
+    } catch (Exception noStatus) {
+    throw new Exception("Invalid entry '" + line + "'");
+    }
 
-                    }
-                    DatabaseServerEntry entry = new DatabaseServerEntry();
-                    entry.setServerID(t.nextToken());
-                    entry.setServerURL(t.nextToken());
-                    entries.add(entry);
-                }
-                logger.debug("Merging acceptance increments");
-                Hashtable<String, Double> riseSpeeds = getAcceptanceRiseSpeed();
-                if (riseSpeeds != null) {
-                    for (DatabaseServerEntry e : entries) {
-                        Double speed = riseSpeeds.get(e.getServerID());
-                        if (speed != null) {
-                            e.setAcceptanceRiseSpeed(speed);
-                        }
-                    }
-                }
+    }
+    DatabaseServerEntry entry = new DatabaseServerEntry();
+    entry.setServerID(t.nextToken());
+    entry.setServerURL(t.nextToken());
+    entries.add(entry);
+    }
+    logger.debug("Merging acceptance increments");
+    Hashtable<String, Double> riseSpeeds = getAcceptanceRiseSpeed();
+    if (riseSpeeds != null) {
+    for (DatabaseServerEntry e : entries) {
+    Double speed = riseSpeeds.get(e.getServerID());
+    if (speed != null) {
+    e.setAcceptanceRiseSpeed(speed);
+    }
+    }
+    }
 
-            } catch (Exception e) {
-                logger.error("Server entry in invalid format? Dropping.", e);
-            }
+    } catch (Exception e) {
+    logger.error("Server entry in invalid format? Dropping.", e);
+    }
 
-            return entries;
-        } catch (Exception outer) {
-            //typecast or connection failed 
-            logger.error("Failed getting list of servers. Result is " + result);
-        }
+    return entries;
+    } catch (Exception outer) {
+    //typecast or connection failed
+    logger.error("Failed getting list of servers. Result is " + result);
+    }
 
-        return null;
+    return null;
     }
 
     public static Hashtable<String, Double> getAcceptanceRiseSpeed() {
-        Object result = null;
-        try {
-            result = callWebInterface("getAcceptanceRiseSpeed", null);
-            String[] lines = (String[]) result;
-            Hashtable<String, Double> entries = new Hashtable<String, Double>();
-            try {
-                for (String line : lines) {
-                    StringTokenizer t = new StringTokenizer(line, "[,]");
-                    if (t.countTokens() != 2) {
-                        //invalid entry, probably a status code!?
-                        try {
-                            int status = Integer.parseInt(line);
-                            processStatus("get acceptance rise speed", status);
-                            return null;
-                        } catch (Exception noStatus) {
-                            throw new Exception("Invalid entry '" + line + "'");
-                        }
-
-                    }
-
-                    entries.put(t.nextToken(), Double.parseDouble(t.nextToken()));
-                }
-
-            } catch (Exception e) {
-                logger.error("Server entry in invalid format? Dropping.", e);
-            }
-
-            return entries;
-        } catch (Exception outer) {
-            //typecast or connection failed
-            logger.error("Failed getting list of servers. Result is " + result);
-        }
-        return null;
+    Object result = null;
+    try {
+    result = callWebInterface("getAcceptanceRiseSpeed", null);
+    String[] lines = (String[]) result;
+    Hashtable<String, Double> entries = new Hashtable<String, Double>();
+    try {
+    for (String line : lines) {
+    StringTokenizer t = new StringTokenizer(line, "[,]");
+    if (t.countTokens() != 2) {
+    //invalid entry, probably a status code!?
+    try {
+    int status = Integer.parseInt(line);
+    processStatus("get acceptance rise speed", status);
+    return null;
+    } catch (Exception noStatus) {
+    throw new Exception("Invalid entry '" + line + "'");
     }
-*/
+
+    }
+
+    entries.put(t.nextToken(), Double.parseDouble(t.nextToken()));
+    }
+
+    } catch (Exception e) {
+    logger.error("Server entry in invalid format? Dropping.", e);
+    }
+
+    return entries;
+    } catch (Exception outer) {
+    //typecast or connection failed
+    logger.error("Failed getting list of servers. Result is " + result);
+    }
+    return null;
+    }
+     */
     public static int checkUser(String pUser, String pPassword) {
         Hashtable<String, String> arguments = new Hashtable<String, String>();
         String password = SecurityAdapter.hashStringMD5(pPassword);
@@ -584,10 +571,10 @@ public class DatabaseInterface {
             System.out.println("Night: " + in.getNightBonus());
             System.out.println("--------");
         }
-    //System.out.println(DatabaseInterface.listServers());
-  //  System.out.println(DatabaseInterface.checkUser("Torridity", "cfcaef487fc66a6d8295e8e3f68b4db9"));
-    //System.out.println(DatabaseInterface.addUser("Torridity", "cfcaef487fc66a6d8295e8e3f68b4db9"));
-    System.out.println(DatabaseInterface.getProperty("min_version"));
+        //System.out.println(DatabaseInterface.listServers());
+        //  System.out.println(DatabaseInterface.checkUser("Torridity", "cfcaef487fc66a6d8295e8e3f68b4db9"));
+        //System.out.println(DatabaseInterface.addUser("Torridity", "cfcaef487fc66a6d8295e8e3f68b4db9"));
+        System.out.println(DatabaseInterface.getProperty("min_version"));
     //System.out.println(DatabaseInterface.getDownloadURL("de26"));
         /*long versionU = DatabaseInterface.getUserDataVersion("Torridity", "de8");
     if (versionU > 0) {

@@ -20,8 +20,6 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 /**
- * @TODO (DIFF) Fix to new troop structure
- * @TODO (DIFF) If troops exist only losses are substracted
  * @author Jejkal
  */
 public class ReportParser {

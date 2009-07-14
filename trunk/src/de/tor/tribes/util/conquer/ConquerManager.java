@@ -13,15 +13,17 @@ import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.DSWorkbenchSettingsDialog;
 import de.tor.tribes.ui.MapPanel;
 import de.tor.tribes.util.GlobalOptions;
+import de.tor.tribes.util.troops.TroopsManager;
+import de.tor.tribes.util.troops.VillageTroopsHolder;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import org.apache.log4j.Logger;
@@ -29,6 +31,7 @@ import org.jdom.Document;
 import org.jdom.Element;
 
 /**
+ * @TODO (DIFF) Troop information removed for conquered villages
  * @author Charon
  */
 public class ConquerManager {
@@ -286,6 +289,20 @@ public class ConquerManager {
                     Tribe loser = DataHolder.getSingleton().getTribes().get(oldOwner);
                     Tribe winner = DataHolder.getSingleton().getTribes().get(newOwner);
                     Village v = DataHolder.getSingleton().getVillagesById().get(villageID);
+
+                    try {
+                        //remove troop information for conquered village
+                        VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(v);
+                        if (holder != null) {
+                            //check if troop holder state lays is before conquer
+                            if (holder.getState().getTime() < timestamp) {
+                                //clear troops information for this village due to troop informations are outdated
+                                holder.clear();
+                                holder.setState(new Date(timestamp));
+                            }
+                        }
+                    } catch (Exception ignored) {
+                    }
 
                     if (winner != null && v != null && v.getTribeID() != winner.getId()) {
                         //conquer not yet in world data

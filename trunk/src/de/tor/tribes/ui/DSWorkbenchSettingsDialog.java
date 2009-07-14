@@ -54,9 +54,6 @@ import net.java.dev.colorchooser.ColorChooser;
 /**
  * @TODO (1.X) Integrate browser access for linux
  * @TODO (1.X) Shortcuts editable
- * @TODO (DIFF) Add option to change shown troops of popup
- * @TODO (DIFF) Add setting to set max. value of troop density
- * @TODO (DIFF) Move tags to own view
  * @author Jejkal
  */
 public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements

@@ -40,8 +40,6 @@ import org.jdom.Document;
 import org.jdom.Element;
 
 /**
- * @TODO (DIFF) Load local copy if download fails
- * @TODO (DIFF) "internal data damaged" marker added to avoid saving user data on error
  * @author Charon
  */
 public class DataHolder {

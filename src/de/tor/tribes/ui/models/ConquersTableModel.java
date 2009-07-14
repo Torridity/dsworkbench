@@ -18,7 +18,6 @@ import java.text.SimpleDateFormat;
 import javax.swing.table.AbstractTableModel;
 
 /**
- *@TODO (DIFF) Continent added
  * @author Charon
  */
 public class ConquersTableModel extends AbstractTableModel {

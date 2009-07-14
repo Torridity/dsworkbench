@@ -71,8 +71,6 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumn;
 
 /**
- * @TODO (DIFF) Handle "mark on map" via selection frame
- * @TODO (DIFF) Now using real off value for filtering strength
  * @author Jejkal
  */
 public class TribeTribeAttackFrame extends javax.swing.JFrame {
@@ -2269,12 +2267,8 @@ private void fireAttacksToClipboardEvent(java.awt.event.MouseEvent evt) {//GEN-F
 
             if (JOptionPaneHelper.showQuestionConfirmBox(jResultFrame, "Die ausgewählten Angriffe benötigen mehr als 500 BB-Codes\n" +
                     "und können daher im Spiel (Forum/IGM/Notizen) nicht auf einmal dargestellt werden.\nTrotzdem exportieren?", "Zu viele BB-Codes", "Nein", "Ja") == JOptionPane.NO_OPTION) {
-
                 return;
             }
-
-            UIManager.put("OptionPane.noButtonText", "No");
-            UIManager.put("OptionPane.yesButtonText", "Yes");
         }
 
         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(b), null);
@@ -2471,28 +2465,12 @@ private void fireCancelTransferEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST
 private void fireChooseSourceRegionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireChooseSourceRegionEvent
     //select source villages on map
     MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_SELECTION);
-    //MapPanel.getSingleton().setVillageSelectionListener(this);
     DSWorkbenchMainFrame.getSingleton().toFront();
     DSWorkbenchMainFrame.getSingleton().requestFocus();
     bChooseSourceRegionMode = true;
 }//GEN-LAST:event_fireChooseSourceRegionEvent
 
 private void fireChooseTargetRegionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireChooseTargetRegionEvent
-    //select target villages on map
-    /*Tribe victim = null;
-    try {
-    victim = (Tribe) jTargetTribeList.getSelectedValue();
-    } catch (Exception e) {
-    }
-    if (victim == null) {
-    JOptionPaneHelper.showInformationBox(this, "Kein gültiger Spieler ausgewählt.", "Fehler");
-    return;
-    }
-    //calculate mass of villages and center to it
-    MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_SELECTION);
-    MapPanel.getSingleton().setVillageSelectionListener(this);
-    Point com = DSCalculator.calculateCenterOfMass(victim.getVillageList());
-    DSWorkbenchMainFrame.getSingleton().centerPosition(com.x, com.y);*/
     DSWorkbenchMainFrame.getSingleton().toFront();
     DSWorkbenchMainFrame.getSingleton().requestFocus();
     bChooseTargetRegionMode = true;
@@ -3262,7 +3240,6 @@ private void fireFilterByAttackPlansEvent(java.awt.event.MouseEvent evt) {//GEN-
     }
 
     public void fireSelectionTransferEvent(List<Village> pSelection) {
-
         UnitHolder uSource = (UnitHolder) jTroopsList.getSelectedItem();
         if (bChooseSourceRegionMode) {
             jAttacksTable.invalidate();

@@ -149,6 +149,15 @@ public class VillageTroopsHolder {
         return result;
     }
 
+    public void clear() {
+        ownTroops.clear();
+        troopsInVillage.clear();
+        troopsOutside.clear();
+        troopsOnTheWay.clear();
+        clearSupportTargets();
+        clearSupports();
+    }
+
     public Village getVillage() {
         return village;
     }
@@ -203,11 +212,30 @@ public class VillageTroopsHolder {
         troopsOutside = (Hashtable<UnitHolder, Integer>) mTroops.clone();
     }
 
-    public void removeSupportTargets() {
+    public void clearSupports() {
+        //remove supports to this village
+        Enumeration<Village> supportKeys = supports.keys();
+        while (supportKeys.hasMoreElements()) {
+            Village v = supportKeys.nextElement();
+            VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(v);
+            if (holder != null) {
+                holder.getSupportTargets().remove(v);
+            }
+        }
         supports.clear();
     }
 
     public void clearSupportTargets() {
+        //remove this village as troop source
+        for (Village v : supportTargets) {
+            VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(v);
+            if (holder != null) {
+                //remove support from this village
+                holder.getSupports().remove(this);
+                holder.updateSupportValues();
+            }
+        }
+        //clear targets list
         supportTargets.clear();
     }
 

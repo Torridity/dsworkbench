@@ -39,7 +39,6 @@ import javax.swing.table.TableRowSorter;
 import org.apache.log4j.Logger;
 
 /**
- *@TODO (DIFF) Tag view added
  * @author Jejkal
  */
 public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {

@@ -55,8 +55,6 @@ import org.apache.log4j.Logger;
 
 // -Dsun.java2d.d3d=true -Dsun.java2d.translaccel=true -Dsun.java2d.ddforcevram=true
 /**
- * @TODO (DIFF) Max. 10 attacks sendable to browser
- * @TODO (DIFF) Cleanup-Button
  * @author  Charon
  */
 public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements AttackManagerListener {

@@ -34,7 +34,6 @@ import javax.swing.table.TableRowSorter;
 import org.apache.log4j.Logger;
 
 /**
- * @TODO (DIFF) Added cols for continent and distance
  * @author Charon
  */
 public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implements ConquerManagerListener {

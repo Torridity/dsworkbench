@@ -35,7 +35,6 @@ import de.tor.tribes.util.GlobalOptions;
 import javax.swing.SwingConstants;
 
 /**
- *@TODO (DIFF) Note feature
  * @author Charon
  */
 public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame {

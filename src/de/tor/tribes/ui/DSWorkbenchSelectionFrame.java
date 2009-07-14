@@ -376,12 +376,14 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
             selection.add(v);
         }
 
+        //check if sth is selected
         if (selection.isEmpty()) {
             JOptionPaneHelper.showInformationBox(this, "Keine Elemente ausgewählt.", "Fehler");
             return;
         }
-        if (evt.getSource() == jExportHTMLButton) {
 
+        if (evt.getSource() == jExportHTMLButton) {
+            //do HTML export
             String dir = GlobalOptions.getProperty("screen.dir");
             if (dir == null) {
                 dir = ".";
@@ -389,14 +391,15 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
 
             JFileChooser chooser = null;
             try {
+                //handle vista problem
                 chooser = new JFileChooser(dir);
             } catch (Exception e) {
                 JOptionPaneHelper.showErrorBox(this, "Konnte Dateiauswahldialog nicht öffnen.\nMöglicherweise verwendest du Windows Vista. Ist dies der Fall, beende DS Workbench, klicke mit der rechten Maustaste auf DSWorkbench.exe,\n" +
                         "wähle 'Eigenschaften' und deaktiviere dort unter 'Kompatibilität' den Windows XP Kompatibilitätsmodus.", "Fehler");
                 return;
             }
-            chooser.setDialogTitle("Datei auswählen");
 
+            chooser.setDialogTitle("Datei auswählen");
             chooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
 
                 @Override
@@ -412,16 +415,19 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
                     return "*.html";
                 }
             });
+            //open dialog
             chooser.setSelectedFile(new File(dir + "/Dorfliste.html"));
             int ret = chooser.showSaveDialog(this);
             if (ret == JFileChooser.APPROVE_OPTION) {
                 try {
+                    //check extension
                     File f = chooser.getSelectedFile();
                     String file = f.getCanonicalPath();
                     if (!file.endsWith(".html")) {
                         file += ".html";
                     }
 
+                    //check overwrite
                     File target = new File(file);
                     if (target.exists()) {
                         if (JOptionPaneHelper.showQuestionConfirmBox(this, "Bestehende Datei überschreiben?", "Überschreiben", "Nein", "Ja") == JOptionPane.NO_OPTION) {
@@ -429,6 +435,7 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
                             return;
                         }
                     }
+                    //do export
                     SelectionHTMLExporter.doExport(target, selection);
                     GlobalOptions.addProperty("screen.dir", target.getParent());
                     if (JOptionPaneHelper.showQuestionConfirmBox(this, "Auswahl erfolgreich gespeichert.\nWillst du die erstellte Datei jetzt im Browser betrachten?", "Information", "Nein", "Ja") == JOptionPane.YES_OPTION) {
@@ -447,38 +454,38 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
                 nf.setMaximumFractionDigits(0);
                 boolean exported = false;
                 if (evt.getSource() == jExportBBButton) {
-                    String result = "";
+                    StringBuffer result = new StringBuffer();
 
                     for (Village v : selection) {
                         exported = true;
-                        result += v.toBBCode();
+                        result.append(v.toBBCode());
                         if (jExportPointsBox.isSelected()) {
-                            result += " (" + nf.format(v.getPoints()) + ") ";
+                            result.append(" (" + nf.format(v.getPoints()) + ") ");
                         } else {
-                            result += "\t";
+                            result.append("\t");
                         }
                         if (jExportOwnerBox.isSelected() && v.getTribe() != null) {
-                            result += v.getTribe().toBBCode() + " ";
+                            result.append(v.getTribe().toBBCode() + " ");
                         } else {
                             if (jExportOwnerBox.isSelected()) {
-                                result += "Barbaren ";
+                                result.append("Barbaren ");
                             } else {
-                                result += "\t";
+                                result.append("\t");
                             }
                         }
                         if (jExportAllyBox.isSelected() && v.getTribe() != null && v.getTribe().getAlly() != null) {
-                            result += v.getTribe().getAlly().toBBCode() + "\n";
+                            result.append(v.getTribe().getAlly().toBBCode() + "\n");
                         } else {
                             if (jExportAllyBox.isSelected()) {
-                                result += "(kein Stamm)\n";
+                                result.append("(kein Stamm)\n");
                             } else {
-                                result += "\n";
+                                result.append("\n");
                             }
                         }
-
                     }
                     if (exported) {
-                        StringTokenizer t = new StringTokenizer(result, "[");
+                        String res = result.toString();
+                        StringTokenizer t = new StringTokenizer(res, "[");
                         int cnt = t.countTokens();
                         boolean doExport = true;
                         if (cnt > 500) {
@@ -488,7 +495,7 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
                             }
                         }
                         if (doExport) {
-                            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(result), null);
+                            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(res), null);
                             JOptionPaneHelper.showInformationBox(this, "Dorfdaten in die Zwischenablage kopiert.", "Daten kopiert");
                         }
                     } else {
@@ -496,37 +503,36 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
                         return;
                     }
                 } else if (evt.getSource() == jExportUnformattedButton) {
-                    String result = "";
+                    StringBuffer result = new StringBuffer();
                     for (Village v : selection) {
                         exported = true;
-                        result += v + "\t";
+                        result.append(v + "\t");
                         if (jExportPointsBox.isSelected()) {
-                            result += nf.format(v.getPoints()) + "\t";
+                            result.append(nf.format(v.getPoints()) + "\t");
                         } else {
-                            result += "\t";
+                            result.append("\t");
                         }
                         if (jExportOwnerBox.isSelected() && v.getTribe() != null) {
-                            result += v.getTribe() + "\t";
+                            result.append(v.getTribe() + "\t");
                         } else {
                             if (jExportOwnerBox.isSelected()) {
-                                result += "Barbaren\t";
+                                result.append("Barbaren\t");
                             } else {
-                                result += "\t";
+                                result.append("\t");
                             }
                         }
                         if (jExportAllyBox.isSelected() && v.getTribe() != null && v.getTribe().getAlly() != null) {
-                            result += v.getTribe().getAlly() + "\n";
+                            result.append(v.getTribe().getAlly() + "\n");
                         } else {
                             if (jExportAllyBox.isSelected()) {
-                                result += "(kein Stamm)\n";
+                                result.append("(kein Stamm)\n");
                             } else {
-                                result += "\n";
+                                result.append("\n");
                             }
-
                         }
                     }
                     if (exported) {
-                        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(result), null);
+                        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(result.toString()), null);
                         JOptionPaneHelper.showInformationBox(this, "Dorfdaten in die Zwischenablage kopiert.", "Daten kopiert");
                     } else {
                         JOptionPaneHelper.showInformationBox(this, "Mit den gewählten Einstellungen werden keine Dörfer kopiert.", "Information");

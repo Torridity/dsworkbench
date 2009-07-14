@@ -51,7 +51,6 @@ import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.attack.AttackManager;
 
 /**
- * @TODO (DIFF) Use only own troops for support calc
  * @author Charon
  */
 public class VillageSupportFrame extends javax.swing.JFrame {

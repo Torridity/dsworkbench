@@ -25,7 +25,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JSpinner.DateEditor;
 
 /**
- * @TODO (DIFF) Added different night bonus times
  * @author Jejkal
  */
 public class TimePanel extends javax.swing.JPanel {

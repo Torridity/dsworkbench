@@ -245,6 +245,7 @@ public class MapRenderer extends Thread {
                         mapRedrawRequired = false;
                         renderMap();
                         renderTagMarkers();
+                       // renderMarkers();
                     }
 
                     boolean mapDrawn = false;
@@ -255,9 +256,11 @@ public class MapRenderer extends Thread {
                                 Composite gg = g2d.getComposite();
                                 g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
                                 renderMarkers(g2d);
+                              //  g2d.drawImage(mLayers.get(MARKER_LAYER), 0, 0, null);
                                 g2d.setComposite(gg);
                             } else {
-                                renderMarkers(g2d);
+                              //  g2d.drawImage(mLayers.get(MARKER_LAYER), 0, 0, null);
+                               renderMarkers(g2d);
                             }
                         } else if (layer == 1) {
                             g2d.drawImage(mLayers.get(MAP_LAYER), 0, 0, null);
@@ -337,7 +340,6 @@ public class MapRenderer extends Thread {
                     /*   MapPanel.getSingleton().getBufferStrategy().getDrawGraphics().drawImage(mMainBuffer, 0, 0, null);
                     MapPanel.getSingleton().getBufferStrategy().show();*/
                     g2d.dispose();
-
                 }
             } catch (Throwable t) {
                 logger.error("Redrawing map failed", t);
@@ -1082,6 +1084,38 @@ public class MapRenderer extends Thread {
             return;
         }
 
+
+       /* int wb = MapPanel.getSingleton().getWidth();
+        int hb = MapPanel.getSingleton().getHeight();
+        if (wb == 0 || hb == 0) {
+            //both are 0 if map was not drawn yet
+            return;
+        }
+
+        BufferedImage layer = null;
+        Graphics2D g2d = null;
+        //prepare drawing buffer
+        if (mLayers.get(MARKER_LAYER) == null) {
+            layer = getBufferedImage(wb, hb, Transparency.TRANSLUCENT);//new BufferedImage(wb, hb, BufferedImage.TYPE_INT_ARGB);
+            mLayers.put(MARKER_LAYER, layer);
+            g2d = layer.createGraphics();
+            prepareGraphics(g2d);
+        } else {
+            layer = mLayers.get(MARKER_LAYER);
+            if (layer.getWidth() != wb || layer.getHeight() != hb) {
+                layer = getBufferedImage(wb, hb, Transparency.TRANSLUCENT);//new BufferedImage(wb, hb, BufferedImage.TYPE_INT_ARGB);
+                mLayers.put(MARKER_LAYER, layer);
+                g2d = layer.createGraphics();
+                prepareGraphics(g2d);
+            } else {
+                g2d = (Graphics2D) layer.getGraphics();
+                Composite c = g2d.getComposite();
+                g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.CLEAR, 1.0f));
+                g2d.fillRect(0, 0, wb, hb);
+                g2d.setComposite(c);
+            }
+        }
+*/
         Color DEFAULT = Color.WHITE;
         try {
             if (Integer.parseInt(GlobalOptions.getProperty("default.mark")) == 1) {
@@ -1126,6 +1160,7 @@ public class MapRenderer extends Thread {
                 Rectangle vRect = villagePositions.get(v);
 
                 if (tribe != null && ally != null && !own) {
+                    //draw two-part marker
                     GeneralPath p = new GeneralPath();
                     p.moveTo(vRect.getX(), vRect.getY());
                     p.lineTo(vRect.getX() + vRect.getWidth(), vRect.getY() + vRect.getHeight());
@@ -1141,12 +1176,15 @@ public class MapRenderer extends Thread {
                     g2d.setColor(ally.getMarkerColor());
                     g2d.fill(p);
                 } else if (tribe != null && !own) {
+                    //draw tribe marker
                     g2d.setColor(tribe.getMarkerColor());
                     g2d.fillRect(vRect.x, vRect.y, vRect.width, vRect.height);
                 } else if (ally != null && !own) {
+                    //draw ally marker
                     g2d.setColor(ally.getMarkerColor());
                     g2d.fillRect(vRect.x, vRect.y, vRect.width, vRect.height);
                 } else {
+                    //draw misc marker
                     g2d.setColor(markerColor);
                     g2d.fillRect(vRect.x, vRect.y, vRect.width, vRect.height);
                 }

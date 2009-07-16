@@ -33,10 +33,16 @@ public class MarkerTableModel extends AbstractTableModel {
     }
 
     public String getActiveSet() {
+        if (activeSet == null || MarkerManager.getSingleton().getMarkerSet(activeSet) == null) {
+            activeSet = "default";
+        }
         return activeSet;
     }
 
     public void setActiveSet(String pSet) {
+        if (activeSet == null || MarkerManager.getSingleton().getMarkerSet(activeSet) == null) {
+            activeSet = "default";
+        }
         activeSet = pSet;
     }
 
@@ -60,7 +66,7 @@ public class MarkerTableModel extends AbstractTableModel {
 
     @Override
     public int getRowCount() {
-        return MarkerManager.getSingleton().getMarkerSet(activeSet).length;
+        return MarkerManager.getSingleton().getMarkerSet(activeSet).getMarkers().size();
     }
 
     @Override
@@ -73,10 +79,10 @@ public class MarkerTableModel extends AbstractTableModel {
 
         switch (columnIndex) {
             case 0: {
-                return MarkerManager.getSingleton().getMarkerSet(activeSet)[rowIndex].getView();
+                return MarkerManager.getSingleton().getMarkerSetMarkers(activeSet)[rowIndex].getView();
             }
             case 1: {
-                return MarkerManager.getSingleton().getMarkerSet(activeSet)[rowIndex].getMarkerColor();
+                return MarkerManager.getSingleton().getMarkerSetMarkers(activeSet)[rowIndex].getMarkerColor();
             }
         }
         return null;

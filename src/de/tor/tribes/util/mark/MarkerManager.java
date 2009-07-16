@@ -102,7 +102,6 @@ public class MarkerManager {
     }
 
     public boolean importMarkers(File pFile) {
-
         if (pFile == null) {
             logger.error("File argument is 'null'");
             return false;
@@ -204,11 +203,20 @@ public class MarkerManager {
         return markers.remove(pSet);
     }
 
-    public String[] getMarkerSets() {
-        return markers.keySet().toArray(new String[]{});
+    public MarkerSet getMarkerSet(String pName) {
+        return markers.get(pName);
     }
 
-    public Marker[] getMarkerSet(String pSet) {
+    public String[] getMarkerSets() {
+        Enumeration<String> keys = markers.keys();
+        List<String> names = new LinkedList<String>();
+        while (keys.hasMoreElements()) {
+            names.add(keys.nextElement());
+        }
+        return names.toArray(new String[]{});
+    }
+
+    public Marker[] getMarkerSetMarkers(String pSet) {
         if (!markers.containsKey(pSet)) {
             return new Marker[]{};
         }
@@ -216,7 +224,12 @@ public class MarkerManager {
     }
 
     public Marker[] getMarkerSet() {
-        return markers.get(MarkerTableModel.getSingleton().getActiveSet()).getMarkers().toArray(new Marker[]{});
+        MarkerSet set = markers.get(MarkerTableModel.getSingleton().getActiveSet());
+        if (set == null) {
+            MarkerTableModel.getSingleton().setActiveSet("default");
+            set = markers.get("default");
+        }
+        return set.getMarkers().toArray(new Marker[]{});
     }
 
     /**Get all markers as array to avaid concurrent modifications*/

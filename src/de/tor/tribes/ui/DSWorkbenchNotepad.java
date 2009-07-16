@@ -35,6 +35,7 @@ import de.tor.tribes.util.GlobalOptions;
 import javax.swing.SwingConstants;
 
 /**
+ * @TODO (1.7) Take village coordinates from clipboard and add tool to insert village to note list?
  * @author Charon
  */
 public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame {

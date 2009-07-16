@@ -11,7 +11,6 @@ import de.tor.tribes.util.Constants;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.JOptionPane;
-import javax.swing.table.DefaultTableModel;
 import de.tor.tribes.util.mark.MarkerManager;
 import de.tor.tribes.util.mark.MarkerManagerListener;
 import java.awt.Color;
@@ -133,7 +132,6 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
-        jDrawSetOnMap = new javax.swing.JCheckBox();
         jMarkerFrameAlwaysOnTop = new javax.swing.JCheckBox();
 
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("de/tor/tribes/ui/Bundle"); // NOI18N
@@ -256,6 +254,7 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
         jButton1.setBackground(new java.awt.Color(239, 235, 223));
         jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/add.gif"))); // NOI18N
         jButton1.setText(bundle.getString("DSWorkbenchMarkerFrame.jButton1.text")); // NOI18N
+        jButton1.setToolTipText(bundle.getString("DSWorkbenchMarkerFrame.jButton1.toolTipText")); // NOI18N
         jButton1.setMaximumSize(new java.awt.Dimension(27, 25));
         jButton1.setMinimumSize(new java.awt.Dimension(27, 25));
         jButton1.setPreferredSize(new java.awt.Dimension(27, 25));
@@ -268,6 +267,7 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
         jButton2.setBackground(new java.awt.Color(239, 235, 223));
         jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/remove.gif"))); // NOI18N
         jButton2.setText(bundle.getString("DSWorkbenchMarkerFrame.jButton2.text")); // NOI18N
+        jButton2.setToolTipText(bundle.getString("DSWorkbenchMarkerFrame.jButton2.toolTipText")); // NOI18N
         jButton2.setMaximumSize(new java.awt.Dimension(27, 25));
         jButton2.setMinimumSize(new java.awt.Dimension(27, 25));
         jButton2.setPreferredSize(new java.awt.Dimension(27, 25));
@@ -280,6 +280,7 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
         jButton3.setBackground(new java.awt.Color(239, 235, 223));
         jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/refresh.png"))); // NOI18N
         jButton3.setText(bundle.getString("DSWorkbenchMarkerFrame.jButton3.text")); // NOI18N
+        jButton3.setToolTipText(bundle.getString("DSWorkbenchMarkerFrame.jButton3.toolTipText")); // NOI18N
         jButton3.setMaximumSize(new java.awt.Dimension(27, 25));
         jButton3.setMinimumSize(new java.awt.Dimension(27, 25));
         jButton3.setPreferredSize(new java.awt.Dimension(27, 25));
@@ -288,9 +289,6 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
                 fireRenameSetEvent(evt);
             }
         });
-
-        jDrawSetOnMap.setText(bundle.getString("DSWorkbenchMarkerFrame.jDrawSetOnMap.text")); // NOI18N
-        jDrawSetOnMap.setOpaque(false);
 
         javax.swing.GroupLayout jMarkerPanelLayout = new javax.swing.GroupLayout(jMarkerPanel);
         jMarkerPanel.setLayout(jMarkerPanelLayout);
@@ -302,9 +300,7 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
                     .addGroup(jMarkerPanelLayout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jMarkerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(jDrawSetOnMap, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jMarkerSetList, javax.swing.GroupLayout.Alignment.LEADING, 0, 222, Short.MAX_VALUE))
+                        .addComponent(jMarkerSetList, javax.swing.GroupLayout.PREFERRED_SIZE, 222, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -329,15 +325,13 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
                         .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(2, 2, 2)
-                .addComponent(jDrawSetOnMap)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jMarkerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jMarkerPanelLayout.createSequentialGroup()
                         .addComponent(jRemoveMarkerButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jToggleDrawFilterButton))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 226, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 252, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -389,7 +383,7 @@ private void fireRemoveMarkerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
         for (int i = rows.length - 1; i >= 0; i--) {
             jMarkerTable.invalidate();
             int row = jMarkerTable.convertRowIndexToModel(rows[i]);
-            MarkerCell cell = ((MarkerCell) ((DefaultTableModel) jMarkerTable.getModel()).getValueAt(row, 0));
+            MarkerCell cell = (MarkerCell) MarkerTableModel.getSingleton().getValueAt(row, 0);
             if (cell.getType() == Marker.TRIBE_MARKER_TYPE) {
                 toRemove.add(MarkerManager.getSingleton().getMarker(cell.getTribe()));
             } else {
@@ -427,6 +421,7 @@ private void fireActiveMarkerSetChangedEvent(java.awt.event.ItemEvent evt) {//GE
 
         jMarkerTable.repaint();//.updateUI();
         jMarkerTable.revalidate();
+        MinimapPanel.getSingleton().redraw();
     }
 }//GEN-LAST:event_fireActiveMarkerSetChangedEvent
 
@@ -442,6 +437,10 @@ private void fireRenameSetEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:even
     if (set == null) {
         return;
     }
+    if (set.equals("default")) {
+        JOptionPaneHelper.showInformationBox(this, "Das Standard Markierungsset kann nicht umgenannt werden.", "Information");
+        return;
+    }
     jSetName.setText(set);
     jAddRenameDialog.setTitle("Umbenennen");
     jAddRenameDialog.setLocationRelativeTo(this);
@@ -454,7 +453,7 @@ private void fireRemoveSetEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:even
         return;
     }
     if (set.equals("default")) {
-        JOptionPaneHelper.showInformationBox(this, "Standardset kann nicht entfernt werden.", "Information");
+        JOptionPaneHelper.showInformationBox(this, "Das Standard Markierungsset kann nicht entfernt werden.", "Information");
     } else {
         if (JOptionPaneHelper.showQuestionConfirmBox(this, "Markierungsset '" + set + "' entfernen?", "Set entfernen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
             MarkerManager.getSingleton().removeSet(set);
@@ -465,26 +464,26 @@ private void fireRemoveSetEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:even
 
 private void fireCloseAddRenameDialogEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCloseAddRenameDialogEvent
     if (evt.getSource() == jOKButton) {
-        String name = jSetName.getText();
-        if (name.length() < 0) {
+        String newName = jSetName.getText();
+        if (newName.length() < 0) {
             JOptionPaneHelper.showWarningBox(jAddRenameDialog, "Ungültiger Set Name", "Fehler");
             return;
         }
         if (jAddRenameDialog.getTitle().equals("Umbenennen")) {
-            String newName = (String) jMarkerSetList.getSelectedItem();
-            if (MarkerManager.getSingleton().getMarkerSet(name) == null) {
+            String oldName = (String) jMarkerSetList.getSelectedItem();
+            if (MarkerManager.getSingleton().getMarkerSet(newName) != null) {
                 JOptionPaneHelper.showWarningBox(jAddRenameDialog, "Ein Set mit dem angegebenen Namen existiert bereits", "Fehler");
                 return;
             }
-            MarkerSet set = MarkerManager.getSingleton().removeSet(name);
+            MarkerSet set = MarkerManager.getSingleton().removeSet(oldName);
             set.setSetName(newName);
-            MarkerManager.getSingleton().addMarkerSet(name);
+            MarkerManager.getSingleton().addMarkerSet(set);
         } else {
-            if (MarkerManager.getSingleton().getMarkerSet(name) == null) {
+            if (MarkerManager.getSingleton().getMarkerSet(newName) != null) {
                 JOptionPaneHelper.showWarningBox(jAddRenameDialog, "Ein Set mit dem angegebenen Namen existiert bereits", "Fehler");
                 return;
             }
-            MarkerManager.getSingleton().addMarkerSet(name);
+            MarkerManager.getSingleton().addMarkerSet(newName);
         }
     }
     jAddRenameDialog.setVisible(false);
@@ -492,8 +491,21 @@ private void fireCloseAddRenameDialogEvent(java.awt.event.MouseEvent evt) {//GEN
 }//GEN-LAST:event_fireCloseAddRenameDialogEvent
 
     private void rebuildSetList() {
+        String item = (String) jMarkerSetList.getSelectedItem();
+        if (item == null || MarkerManager.getSingleton().getMarkerSet(item) == null) {
+            //item will be not in list any longer
+            item = "default";
+            //set item immediately and redraw minimap
+            MarkerTableModel.getSingleton().setActiveSet(item);
+            MinimapPanel.getSingleton().redraw();
+        } else {
+            MarkerTableModel.getSingleton().setActiveSet(item);
+        }
         jMarkerSetList.setModel(new DefaultComboBoxModel(MarkerManager.getSingleton().getMarkerSets()));
-        jMarkerSetList.setSelectedIndex(0);
+        jMarkerSetList.setSelectedItem(item);
+        MarkerTableModel.getSingleton().fireTableDataChanged();
+
+    //jMarkerTable.repaint();
     }
 
     public void firePublicDrawMarkedOnlyChangedEvent() {
@@ -568,6 +580,7 @@ private void fireCloseAddRenameDialogEvent(java.awt.event.MouseEvent evt) {//GEN
         TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(MarkerTableModel.getSingleton());
         jMarkerTable.setRowSorter(sorter);
         jMarkerTable.revalidate();
+        rebuildSetList();
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JDialog jAddRenameDialog;
@@ -575,7 +588,6 @@ private void fireCloseAddRenameDialogEvent(java.awt.event.MouseEvent evt) {//GEN
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton5;
-    private javax.swing.JCheckBox jDrawSetOnMap;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JCheckBox jMarkerFrameAlwaysOnTop;

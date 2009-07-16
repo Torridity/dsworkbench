@@ -748,12 +748,13 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jExportDialog = new javax.swing.JDialog();
         jScrollPane1 = new javax.swing.JScrollPane();
         jAttackExportTable = new javax.swing.JTable();
-        jExportMarks = new javax.swing.JCheckBox();
         jExportTags = new javax.swing.JCheckBox();
         jExportTroops = new javax.swing.JCheckBox();
         jExportForms = new javax.swing.JCheckBox();
         jExportButton = new javax.swing.JButton();
         jCancelExportButton = new javax.swing.JButton();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        jMarkerSetExportTable = new javax.swing.JTable();
         jAddROIDialog = new javax.swing.JDialog();
         jLabel7 = new javax.swing.JLabel();
         jROIRegion = new javax.swing.JTextField();
@@ -922,9 +923,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jAttackExportTable.setOpaque(false);
         jScrollPane1.setViewportView(jAttackExportTable);
 
-        jExportMarks.setText(bundle.getString("DSWorkbenchMainFrame.jExportMarks.text")); // NOI18N
-        jExportMarks.setOpaque(false);
-
         jExportTags.setText(bundle.getString("DSWorkbenchMainFrame.jExportTags.text")); // NOI18N
         jExportTags.setOpaque(false);
 
@@ -948,6 +946,27 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             }
         });
 
+        jScrollPane4.setOpaque(false);
+
+        jMarkerSetExportTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Markierungsset", "Exportieren"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.Boolean.class
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+        });
+        jMarkerSetExportTable.setOpaque(false);
+        jScrollPane4.setViewportView(jMarkerSetExportTable);
+
         javax.swing.GroupLayout jExportDialogLayout = new javax.swing.GroupLayout(jExportDialog.getContentPane());
         jExportDialog.getContentPane().setLayout(jExportDialogLayout);
         jExportDialogLayout.setHorizontalGroup(
@@ -955,34 +974,32 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             .addGroup(jExportDialogLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jExportDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 301, Short.MAX_VALUE)
                     .addGroup(jExportDialogLayout.createSequentialGroup()
-                        .addGroup(jExportDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jExportMarks)
-                            .addComponent(jExportTags))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27, Short.MAX_VALUE)
-                        .addGroup(jExportDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jExportForms)
-                            .addComponent(jExportTroops)))
+                        .addComponent(jExportTroops)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 55, Short.MAX_VALUE)
+                        .addComponent(jExportForms))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 301, Short.MAX_VALUE)
+                    .addComponent(jExportTags)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jExportDialogLayout.createSequentialGroup()
                         .addComponent(jCancelExportButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jExportButton)))
+                        .addComponent(jExportButton))
+                    .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 301, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jExportDialogLayout.setVerticalGroup(
             jExportDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jExportDialogLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jExportDialogLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 144, Short.MAX_VALUE)
-                .addGap(18, 18, 18)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 5, Short.MAX_VALUE)
                 .addGroup(jExportDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jExportMarks)
-                    .addComponent(jExportTroops))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jExportDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jExportTags)
+                    .addComponent(jExportTroops)
                     .addComponent(jExportForms))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jExportTags)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jExportDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jExportButton)
@@ -2393,8 +2410,7 @@ private void fireExportEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_f
         logger.debug("Building export data");
 
         List<String> plansToExport = new LinkedList<String>();
-        for (int i = 0; i <
-                jAttackExportTable.getRowCount(); i++) {
+        for (int i = 0; i < jAttackExportTable.getRowCount(); i++) {
             String plan = (String) jAttackExportTable.getValueAt(i, 0);
             Boolean export = (Boolean) jAttackExportTable.getValueAt(i, 1);
             if (export) {
@@ -2404,9 +2420,20 @@ private void fireExportEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_f
 
         }
 
+        List<String> setsToExport = new LinkedList<String>();
+        for (int i = 0; i < jMarkerSetExportTable.getRowCount(); i++) {
+            String set = (String) jMarkerSetExportTable.getValueAt(i, 0);
+            Boolean export = (Boolean) jMarkerSetExportTable.getValueAt(i, 1);
+            if (export) {
+                logger.debug("Selecting marker set '" + set + "' to export list");
+                setsToExport.add(set);
+            }
+
+        }
+
         boolean needExport = false;
-        needExport = (plansToExport.size() > 0);
-        needExport |= jExportMarks.isSelected();
+        needExport = !plansToExport.isEmpty();
+        needExport |= !setsToExport.isEmpty();
         needExport |= jExportTags.isSelected();
         needExport |= jExportTroops.isSelected();
         needExport |= jExportForms.isSelected();
@@ -2420,8 +2447,8 @@ private void fireExportEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_f
             dir = ".";
         }
 
-       JFileChooser chooser = null;
-     try {
+        JFileChooser chooser = null;
+        try {
             chooser = new JFileChooser(dir);
         } catch (Exception e) {
             JOptionPaneHelper.showErrorBox(this, "Konnte Dateiauswahldialog nicht öffnen.\nMöglicherweise verwendest du Windows Vista. Ist dies der Fall, beende DS Workbench, klicke mit der rechten Maustaste auf DSWorkbench.exe,\n" +
@@ -2464,10 +2491,11 @@ private void fireExportEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_f
                 }
 
                 String exportString = "<export>\n";
-                exportString +=
-                        AttackManager.getSingleton().getExportData(plansToExport);
-                if (jExportMarks.isSelected()) {
-                    exportString += MarkerManager.getSingleton().getExportData();
+                if (!plansToExport.isEmpty()) {
+                    exportString += AttackManager.getSingleton().getExportData(plansToExport);
+                }
+                if (!setsToExport.isEmpty()) {
+                    exportString += MarkerManager.getSingleton().getExportData(setsToExport.toArray(new String[]{}));
                 }
 
                 if (jExportTags.isSelected()) {
@@ -2506,10 +2534,10 @@ private void fireExportEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_f
 }//GEN-LAST:event_fireExportEvent
 
 private void fireOpenExportDialogEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireOpenExportDialogEvent
+    //build attack plan table
     Enumeration<String> plans = AttackManager.getSingleton().getPlans();
     jAttackExportTable.invalidate();
-    for (int i = 0; i <
-            jAttackExportTable.getColumnCount(); i++) {
+    for (int i = 0; i < jAttackExportTable.getColumnCount(); i++) {
         DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
 
             @Override
@@ -2536,8 +2564,37 @@ private void fireOpenExportDialogEvent(java.awt.event.ActionEvent evt) {//GEN-FI
     }
 
     jAttackExportTable.revalidate();
-    jAttackExportTable.repaint();//.updateUI();
+    jAttackExportTable.repaint();
+    //build marker set table
+    String[] sets = MarkerManager.getSingleton().getMarkerSets();
+    jMarkerSetExportTable.invalidate();
+    for (int i = 0; i < jMarkerSetExportTable.getColumnCount(); i++) {
+        DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
 
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
+                c.setBackground(Constants.DS_BACK);
+                DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
+                r.setText("<html><b>" + r.getText() + "</b></html>");
+                return c;
+            }
+        };
+        jAttackExportTable.getColumn(jAttackExportTable.getColumnName(i)).setHeaderRenderer(headerRenderer);
+    }
+
+    model = (DefaultTableModel) jMarkerSetExportTable.getModel();
+    rows = model.getRowCount();
+    for (int i = 0; i < rows; i++) {
+        model.removeRow(0);
+    }
+
+    for (String set : sets) {
+        model.addRow(new Object[]{set, Boolean.FALSE});
+    }
+
+    jMarkerSetExportTable.revalidate();
+    jMarkerSetExportTable.repaint();//.updateUI();
     jExportDialog.setVisible(true);
 }//GEN-LAST:event_fireOpenExportDialogEvent
 
@@ -3048,7 +3105,6 @@ private void firePopupTroopsChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FI
     private javax.swing.JButton jExportButton;
     private javax.swing.JDialog jExportDialog;
     private javax.swing.JCheckBox jExportForms;
-    private javax.swing.JCheckBox jExportMarks;
     private javax.swing.JCheckBox jExportTags;
     private javax.swing.JCheckBox jExportTroops;
     private javax.swing.JComboBox jFileTypeChooser;
@@ -3069,6 +3125,7 @@ private void firePopupTroopsChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FI
     private javax.swing.JList jLayerList;
     private javax.swing.JButton jLayerUpButton;
     private javax.swing.JDialog jMapShotDialog;
+    private javax.swing.JTable jMarkerSetExportTable;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu3;
@@ -3105,6 +3162,7 @@ private void firePopupTroopsChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FI
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JMenuItem jSearchItem;
     private javax.swing.JMenuItem jSelectionOverviewItem;
     private javax.swing.JSeparator jSeparator1;

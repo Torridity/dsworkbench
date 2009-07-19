@@ -39,6 +39,7 @@ import de.tor.tribes.util.VillageSelectionListener;
 import de.tor.tribes.util.church.ChurchManager;
 import de.tor.tribes.util.note.NoteManager;
 import java.awt.AlphaComposite;
+import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Rectangle;
@@ -125,9 +126,7 @@ public class MapPanel extends JPanel {
     }
 
     public void initBuffer() {
-        
-       // createBufferStrategy(1);
-        
+        //  createBufferStrategy(2);
     }
 
     public synchronized void addMapPanelListener(MapPanelListener pListener) {
@@ -499,9 +498,9 @@ public class MapPanel extends JPanel {
                             break;
                         }
                         case ImageManager.CURSOR_SELECTION: {
-if(selectionRect == null){
-    return;
-}
+                            if (selectionRect == null) {
+                                return;
+                            }
                             int xs = (int) Math.floor(selectionRect.getXPos());
                             int ys = (int) Math.floor(selectionRect.getYPos());
                             int xe = (int) Math.floor(selectionRect.getXPosEnd());
@@ -1135,6 +1134,7 @@ if(selectionRect == null){
     /**Draw buffer into panel*/
     @Override
     public void paint(Graphics g) {
+        System.out.println("paint");
         try {
             //clean map
             g.fillRect(0, 0, getWidth(), getHeight());
@@ -1178,7 +1178,7 @@ if(selectionRect == null){
                 fireScrollEvents(sx, sy);
             }
 
-//draw off-screen image of map
+            //draw off-screen image of map
             Graphics2D g2d = (Graphics2D) g;
             g2d.drawImage(mBuffer, 0, 0, null);
             g2d.dispose();
@@ -1293,10 +1293,9 @@ if(selectionRect == null){
         positionUpdate = false;
     }
 
-   /* public BufferStrategy getStrategy() {
-        return getBufferStrategy();
+    /*public BufferStrategy getStrategy() {
+    return getBufferStrategy();
     }*/
-
     protected void planMapShot(String pType, File pLocation, MapShotListener pListener) {
         sMapShotType = pType;
         mMapShotFile = pLocation;

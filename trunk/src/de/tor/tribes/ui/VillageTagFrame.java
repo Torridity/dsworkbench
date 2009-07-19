@@ -10,12 +10,13 @@ import de.tor.tribes.types.Village;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.util.tag.TagManager;
+import java.util.Collections;
 import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 
 /**
- *
+ *@TODO (DIFF) Sort village list as set in properties
  * @author  Charon
  */
 public class VillageTagFrame extends javax.swing.JFrame {
@@ -46,7 +47,9 @@ public class VillageTagFrame extends javax.swing.JFrame {
         }
         jPlayerName.setText(t.getName());
         DefaultComboBoxModel model = new DefaultComboBoxModel();
-        for (Village v : t.getVillageList()) {
+        List<Village> list = t.getVillageList();
+        Collections.sort(list);
+        for (Village v : list) {
             model.addElement(v);
         }
         jVillageList.setModel(model);

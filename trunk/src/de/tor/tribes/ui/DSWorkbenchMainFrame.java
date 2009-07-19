@@ -72,6 +72,7 @@ import javax.swing.table.DefaultTableModel;
 
 /**
  * @TODO (1.5?) Add min number to troop filter in attack planer????
+ * @TODO (DIFF) Layer positions stored
  * @author  Charon
  */
 public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
@@ -119,10 +120,31 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             v.add("");
         }
 
-        Enumeration<String> values = Constants.LAYERS.keys();
-        while (values.hasMoreElements()) {
-            String layer = values.nextElement();
-            v.set(Constants.LAYERS.get(layer), layer);
+        String layerOrder = GlobalOptions.getProperty("layer.order");
+        if (layerOrder == null) {
+            Enumeration<String> values = Constants.LAYERS.keys();
+            while (values.hasMoreElements()) {
+                String layer = values.nextElement();
+                v.set(Constants.LAYERS.get(layer), layer);
+            }
+        } else {
+            //try to use stored layers
+            String[] layers = layerOrder.split(";");
+            if (layers.length == Constants.LAYER_COUNT) {
+                //layer sizes are equal, so set layers in stored order
+                int cnt = 0;
+                for (String layer : layers) {
+                    v.set(cnt, layer);
+                    cnt++;
+                }
+            } else {
+                //layer number has changed since value was stored, so rebuild
+                Enumeration<String> values = Constants.LAYERS.keys();
+                while (values.hasMoreElements()) {
+                    String layer = values.nextElement();
+                    v.set(Constants.LAYERS.get(layer), layer);
+                }
+            }
         }
 
         DefaultListModel model = new DefaultListModel();
@@ -131,6 +153,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         }
 
         jLayerList.setModel(model);
+
         jLayerList.setCellRenderer(new ListCellRenderer() {
 
             @Override
@@ -161,19 +184,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                 return c;
             }
         });
-        /*
-         *
-        g2d.drawImage(mLayers.get(TAG_MARKER_LAYER), 0, 0, null);
-        //render other layers (active village, troop type)
-        renderBasicDecoration(g2d);
-        renderNoteMarkers();
-        g2d.drawImage(mLayers.get(NOTE_LAYER), 0, 0, null);
-        //attacks layer
-        renderAttacks(g2d);
-        //forms, churches
-        renderForms(g2d);
-        renderChurches(g2d);
-         */
+
         getContentPane().setBackground(Constants.DS_BACK);
         pack();
 
@@ -514,7 +525,8 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         DSWorkbenchSelectionFrame.getSingleton().clear();
         DSWorkbenchNotepad.getSingleton().setup();
         ConquerManager.getSingleton().forceUpdate();
-
+        //relevant for first start
+        propagateLayerOrder();
         MapPanel.getSingleton().getMapRenderer().initiateRedraw(0);
         logger.info("Server settings updated");
     }
@@ -2803,6 +2815,15 @@ private void firePopupTroopsChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FI
             layerOrder.add(Constants.LAYERS.get(value));
         }
         MapPanel.getSingleton().getMapRenderer().setDrawOrder(layerOrder);
+    }
+
+    public String getLayerOrder() {
+        DefaultListModel model = ((DefaultListModel) jLayerList.getModel());
+        String res = "";
+        for (int i = 0; i < model.size(); i++) {
+            res += (String) model.get(i) + ";";
+        }
+        return res;
     }
 
     private void centerROI(int pId) {

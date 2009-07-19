@@ -59,7 +59,6 @@ import de.tor.tribes.util.tag.TagManager;
 import de.tor.tribes.util.troops.TroopsManager;
 import java.awt.Color;
 import java.util.StringTokenizer;
-import javax.swing.UIManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -2734,7 +2733,6 @@ private void fireUpdateSelectionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
             end = jSourceVillageList.getModel().getSize();
             start = end - diff + 1;
         }
-
 
         jSelectionEndButton.setEnabled(!(end == jSourceVillageList.getModel().getSize()));
         jSelectionBeginButton.setEnabled(!(start == 1));

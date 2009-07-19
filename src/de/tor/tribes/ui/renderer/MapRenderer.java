@@ -59,7 +59,6 @@ import java.awt.Toolkit;
 import java.awt.Transparency;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Arc2D;
-import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
@@ -95,6 +94,7 @@ import org.apache.log4j.Logger;
  * 4: Misc. Extended Map Decoration: e.g. troop qualification or active village marker
  * 5: Live Layer: Redraw in every drawing cycle e.g. Drag line, tool popup(?), (troop movement?)
  * 6-16: Free assignable
+ * @TODO (DIFF) Better MarkOnTop visibility
  * @author Charon
  */
 /**Thread for updating after scroll operations
@@ -245,7 +245,6 @@ public class MapRenderer extends Thread {
                         mapRedrawRequired = false;
                         renderMap();
                         renderTagMarkers();
-                       // renderMarkers();
                     }
 
                     boolean mapDrawn = false;
@@ -255,12 +254,12 @@ public class MapRenderer extends Thread {
                                 //map already drawn, so this is MarkOnTop
                                 Composite gg = g2d.getComposite();
                                 g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
-                                renderMarkers(g2d);
-                              //  g2d.drawImage(mLayers.get(MARKER_LAYER), 0, 0, null);
+                                renderMarkers(false);
+                                g2d.drawImage(mLayers.get(MARKER_LAYER), 0, 0, null);
                                 g2d.setComposite(gg);
                             } else {
-                              //  g2d.drawImage(mLayers.get(MARKER_LAYER), 0, 0, null);
-                               renderMarkers(g2d);
+                                renderMarkers(true);
+                                g2d.drawImage(mLayers.get(MARKER_LAYER), 0, 0, null);
                             }
                         } else if (layer == 1) {
                             g2d.drawImage(mLayers.get(MAP_LAYER), 0, 0, null);
@@ -337,8 +336,8 @@ public class MapRenderer extends Thread {
                     Hashtable<Village, Rectangle> pos = (Hashtable<Village, Rectangle>) villagePositions.clone();
                     MapPanel.getSingleton().updateComplete(pos, mMainBuffer);
                     MapPanel.getSingleton().repaint();
-                    /*   MapPanel.getSingleton().getBufferStrategy().getDrawGraphics().drawImage(mMainBuffer, 0, 0, null);
-                    MapPanel.getSingleton().getBufferStrategy().show();*/
+                    //MapPanel.getSingleton().getBufferStrategy().getDrawGraphics().drawImage(mMainBuffer, 0, 0, null);
+                    // MapPanel.getSingleton().getBufferStrategy().show();
                     g2d.dispose();
                 }
             } catch (Throwable t) {
@@ -1076,16 +1075,8 @@ public class MapRenderer extends Thread {
     }
 
     /**Render marker layer -> drawn on same buffer as map*/
-    private void renderMarkers(Graphics2D g2d) {
+    private void renderMarkers(boolean pDrawStandard) {
         int wb = MapPanel.getSingleton().getWidth();
-        int hb = MapPanel.getSingleton().getHeight();
-        if (wb == 0 || hb == 0) {
-            //both are 0 if map was not drawn yet
-            return;
-        }
-
-
-       /* int wb = MapPanel.getSingleton().getWidth();
         int hb = MapPanel.getSingleton().getHeight();
         if (wb == 0 || hb == 0) {
             //both are 0 if map was not drawn yet
@@ -1115,16 +1106,18 @@ public class MapRenderer extends Thread {
                 g2d.setComposite(c);
             }
         }
-*/
-        Color DEFAULT = Color.WHITE;
-        try {
-            if (Integer.parseInt(GlobalOptions.getProperty("default.mark")) == 1) {
-                DEFAULT = Color.RED;
-            }
-        } catch (Exception e) {
-            DEFAULT = Color.WHITE;
-        }
 
+
+        Color DEFAULT = null;
+        if (pDrawStandard) {
+            try {
+                if (Integer.parseInt(GlobalOptions.getProperty("default.mark")) == 1) {
+                    DEFAULT = Color.RED;
+                }
+            } catch (Exception e) {
+                DEFAULT = Color.WHITE;
+            }
+        }
         g2d.setColor(new Color(0, 0, 0, 0));
         g2d.fillRect(0, 0, wb, hb);
 
@@ -1133,6 +1126,8 @@ public class MapRenderer extends Thread {
         boolean own = false;
         Color before = g2d.getColor();
         Enumeration<Village> villages = villagePositions.keys();
+        Rectangle emptyRect = null;
+        boolean minimapSkin = GlobalOptions.getSkin().isMinimapSkin();
         while (villages.hasMoreElements()) {
             Village v = villages.nextElement();
             own = false;
@@ -1191,11 +1186,29 @@ public class MapRenderer extends Thread {
             } else {
                 Rectangle vRect = villagePositions.get(v);
                 if (t != null) {
-                    g2d.setColor(DEFAULT);
+                    if (DEFAULT != null) {
+                        g2d.setColor(DEFAULT);
+                        g2d.fillRect(vRect.x, vRect.y, vRect.width, vRect.height);
+                    } else {
+                        if (!minimapSkin) {
+                            if (emptyRect == null) {
+                                Image du = GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, currentZoom);
+                                g2d.drawImage(du, vRect.x, vRect.y, null);
+                                if (MapPanel.getSingleton().getBounds().contains(new Rectangle(vRect.x - 10, vRect.y - du.getHeight(null) + 10, du.getWidth(null) + 2, du.getHeight(null) + 2))) {
+                                    emptyRect = (Rectangle) vRect.clone();
+                                }
+                            } else {
+                                g2d.copyArea(emptyRect.x, emptyRect.y, emptyRect.width, emptyRect.height, vRect.x - emptyRect.x, vRect.y - emptyRect.y);
+                            }
+                        } else {
+                            g2d.setColor(new Color(35, 125, 0));
+                            g2d.fillRect(vRect.x, vRect.y, vRect.width, vRect.height);
+                        }
+                    }
                 } else {
                     g2d.setColor(Color.LIGHT_GRAY);
+                    g2d.fillRect(vRect.x, vRect.y, vRect.width, vRect.height);
                 }
-                g2d.fillRect(vRect.x, vRect.y, vRect.width, vRect.height);
             }
         }
         g2d.setColor(before);

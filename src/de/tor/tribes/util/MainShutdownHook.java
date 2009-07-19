@@ -59,6 +59,8 @@ public class MainShutdownHook extends Thread {
             GlobalOptions.addProperty("search.frame.alwaysOnTop", Boolean.toString(DSWorkbenchSearchFrame.getSingleton().isAlwaysOnTop()));
             GlobalOptions.addProperty("selection.frame.alwaysOnTop", Boolean.toString(DSWorkbenchSelectionFrame.getSingleton().isAlwaysOnTop()));
 
+            GlobalOptions.addProperty("layer.order", DSWorkbenchMainFrame.getSingleton().getLayerOrder());
+
             logger.debug("Saving global properties");
             GlobalOptions.saveProperties();
             logger.debug("Shutdown finished");

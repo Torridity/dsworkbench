@@ -49,10 +49,8 @@ import java.util.Comparator;
 import javax.swing.JFileChooser;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
-import net.java.dev.colorchooser.ColorChooser;
 
 /**
- * @TODO (1.X) Integrate browser access for linux
  * @TODO (1.X) Shortcuts editable
  * @author Jejkal
  */
@@ -65,7 +63,6 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
     private boolean updating = false;
     private Proxy webProxy;
     private boolean INITIALIZED = false;
-    private ColorChooser mTagColorChooser = null;
 
     public static synchronized DSWorkbenchSettingsDialog getSingleton() {
         if (SINGLETON == null) {
@@ -87,7 +84,6 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         getContentPane().setBackground(Constants.DS_BACK);
         jCreateAccountDialog.getContentPane().setBackground(Constants.DS_BACK);
         setAlwaysOnTop(true);
-        mTagColorChooser = new ColorChooser();
         jTroopDensitySelectionDialog.pack();
         // </editor-fold>
 

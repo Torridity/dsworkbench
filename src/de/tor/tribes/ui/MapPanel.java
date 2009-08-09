@@ -1134,7 +1134,6 @@ public class MapPanel extends JPanel {
     /**Draw buffer into panel*/
     @Override
     public void paint(Graphics g) {
-        System.out.println("paint");
         try {
             //clean map
             g.fillRect(0, 0, getWidth(), getHeight());
@@ -1156,7 +1155,7 @@ public class MapPanel extends JPanel {
                     yDir += 1;
                 }
 
-//lower scroll speed
+            //lower scroll speed
                 int sx = 0;
                 int sy = 0;
                 if (xDir >= 1) {

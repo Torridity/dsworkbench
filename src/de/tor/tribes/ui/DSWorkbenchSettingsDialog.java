@@ -87,21 +87,6 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jTroopDensitySelectionDialog.pack();
         // </editor-fold>
 
-        // <editor-fold defaultstate="collapsed" desc="Skin Setup">
-        DefaultComboBoxModel model = new DefaultComboBoxModel(GlobalOptions.getAvailableSkins());
-        jGraphicPacks.setModel(model);
-        String skin = GlobalOptions.getProperty("default.skin");
-        if (skin != null) {
-            if (model.getIndexOf(skin) != -1) {
-                jGraphicPacks.setSelectedItem(skin);
-            } else {
-                jGraphicPacks.setSelectedItem("default");
-            }
-        } else {
-            jGraphicPacks.setSelectedItem("default");
-        }
-        //</editor-fold>
-
         // <editor-fold defaultstate="collapsed" desc="Network Setup">
         boolean useProxy = false;
 
@@ -649,10 +634,6 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jDownloadDataButton = new javax.swing.JButton();
         jCheckForUpdatesBox = new javax.swing.JCheckBox();
         jMapSettings = new javax.swing.JPanel();
-        jSkinPackLabel = new javax.swing.JLabel();
-        jGraphicPacks = new javax.swing.JComboBox();
-        jSelectSkinButton = new javax.swing.JButton();
-        jPreviewSkinButton = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         jShowContinents = new javax.swing.JCheckBox();
         jShowSectorsBox = new javax.swing.JCheckBox();
@@ -1078,7 +1059,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                     .addComponent(jAccountPasswordLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jCheckAccountButton)
-                .addContainerGap(121, Short.MAX_VALUE))
+                .addContainerGap(151, Short.MAX_VALUE))
         );
 
         jSettingsTabbedPane.addTab(bundle.getString("DSWorkbenchSettingsDialog.jLoginPanel.TabConstraints.tabTitle"), new javax.swing.ImageIcon(getClass().getResource("/res/login.png")), jLoginPanel); // NOI18N
@@ -1169,30 +1150,6 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jSettingsTabbedPane.addTab(bundle.getString("DSWorkbenchSettingsDialog.jPlayerServerSettings.TabConstraints.tabTitle"), new javax.swing.ImageIcon(getClass().getResource("/res/face.png")), jPlayerServerSettings); // NOI18N
 
         jMapSettings.setBackground(new java.awt.Color(239, 235, 223));
-
-        jSkinPackLabel.setText(bundle.getString("DSWorkbenchSettingsDialog.jSkinPackLabel.text")); // NOI18N
-
-        jGraphicPacks.setMaximumSize(new java.awt.Dimension(114, 22));
-        jGraphicPacks.setMinimumSize(new java.awt.Dimension(114, 22));
-        jGraphicPacks.setPreferredSize(new java.awt.Dimension(114, 22));
-
-        jSelectSkinButton.setBackground(new java.awt.Color(239, 235, 223));
-        jSelectSkinButton.setText(bundle.getString("DSWorkbenchSettingsDialog.jSelectSkinButton.text")); // NOI18N
-        jSelectSkinButton.setToolTipText(bundle.getString("DSWorkbenchSettingsDialog.jSelectSkinButton.toolTipText")); // NOI18N
-        jSelectSkinButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireSelectGraphicPackEvent(evt);
-            }
-        });
-
-        jPreviewSkinButton.setBackground(new java.awt.Color(239, 235, 223));
-        jPreviewSkinButton.setText(bundle.getString("DSWorkbenchSettingsDialog.jPreviewSkinButton.text")); // NOI18N
-        jPreviewSkinButton.setToolTipText(bundle.getString("DSWorkbenchSettingsDialog.jPreviewSkinButton.toolTipText")); // NOI18N
-        jPreviewSkinButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireShowSkinPreviewEvent(evt);
-            }
-        });
 
         jPanel1.setOpaque(false);
         jPanel1.setLayout(new javax.swing.BoxLayout(jPanel1, javax.swing.BoxLayout.Y_AXIS));
@@ -1324,7 +1281,6 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             .addGroup(jMapSettingsLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jMapSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jSkinPackLabel)
                     .addComponent(jLabel4)
                     .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3))
@@ -1332,31 +1288,19 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 .addGroup(jMapSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jMapSettingsLayout.createSequentialGroup()
                         .addComponent(jDefaultMarkBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap())
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jMapSettingsLayout.createSequentialGroup()
-                        .addGroup(jMapSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jPanel5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 167, Short.MAX_VALUE)
-                            .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 167, Short.MAX_VALUE)
-                            .addComponent(jGraphicPacks, 0, 167, Short.MAX_VALUE))
-                        .addGap(25, 25, 25)
-                        .addGroup(jMapSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jPreviewSkinButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jSelectSkinButton, javax.swing.GroupLayout.Alignment.TRAILING))
-                        .addGap(41, 41, 41))))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 125, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jMapSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(jPanel5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 175, Short.MAX_VALUE)
+                        .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 175, Short.MAX_VALUE)))
+                .addGap(145, 145, 145))
         );
         jMapSettingsLayout.setVerticalGroup(
             jMapSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jMapSettingsLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jMapSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jSelectSkinButton)
-                    .addComponent(jSkinPackLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jGraphicPacks, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jMapSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jPreviewSkinButton)
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jMapSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
@@ -1365,7 +1309,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 .addGroup(jMapSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel3)
                     .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(108, Short.MAX_VALUE))
+                .addContainerGap(137, Short.MAX_VALUE))
         );
 
         jSettingsTabbedPane.addTab(bundle.getString("DSWorkbenchSettingsDialog.jMapSettings.TabConstraints.tabTitle"), new javax.swing.ImageIcon(getClass().getResource("/res/ui/map.gif")), jMapSettings); // NOI18N
@@ -1429,13 +1373,13 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jAttackSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jAttackSettingsLayout.createSequentialGroup()
-                        .addGroup(jAttackSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jShowAttackMovementBox, javax.swing.GroupLayout.DEFAULT_SIZE, 265, Short.MAX_VALUE)
-                            .addComponent(jScrollPane2, 0, 0, Short.MAX_VALUE))
-                        .addGap(13, 13, 13))
-                    .addGroup(jAttackSettingsLayout.createSequentialGroup()
                         .addComponent(jDrawAttacksByDefaultBox, javax.swing.GroupLayout.DEFAULT_SIZE, 272, Short.MAX_VALUE)
-                        .addContainerGap())))
+                        .addContainerGap())
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jAttackSettingsLayout.createSequentialGroup()
+                        .addGroup(jAttackSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING, 0, 0, Short.MAX_VALUE)
+                            .addComponent(jShowAttackMovementBox, javax.swing.GroupLayout.DEFAULT_SIZE, 265, Short.MAX_VALUE))
+                        .addGap(13, 13, 13))))
         );
         jAttackSettingsLayout.setVerticalGroup(
             jAttackSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -2113,23 +2057,6 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.ALL_LAYERS);
     }//GEN-LAST:event_fireOkEvent
 
-    private void fireSelectGraphicPackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSelectGraphicPackEvent
-        GlobalOptions.addProperty("default.skin", (String) jGraphicPacks.getSelectedItem());
-        try {
-            GlobalOptions.loadSkin();
-        } catch (Exception e) {
-            logger.error("Failed to load skin '" + jGraphicPacks.getSelectedItem() + "'", e);
-            JOptionPaneHelper.showErrorBox(this, "Fehler beim laden des Grafikpaketes.", "Fehler");
-            //load default
-            GlobalOptions.addProperty("default.skin", "default");
-            try {
-                GlobalOptions.loadSkin();
-            } catch (Exception ie) {
-                logger.error("Failed to load default skin", ie);
-            }
-        }
-    }//GEN-LAST:event_fireSelectGraphicPackEvent
-
 private void fireCreateAccountEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCreateAccountEvent
     if (!jCreateAccountButton.isEnabled()) {
         return;
@@ -2338,17 +2265,6 @@ private void fireDownloadDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
 private void fireChangeShowAttackMovementEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireChangeShowAttackMovementEvent
         GlobalOptions.addProperty("attack.movement", Boolean.toString(jShowAttackMovementBox.isSelected()));
 }//GEN-LAST:event_fireChangeShowAttackMovementEvent
-
-private void fireShowSkinPreviewEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireShowSkinPreviewEvent
-    String selection = (String) jGraphicPacks.getSelectedItem();
-    try {
-        if (selection != null) {
-            Skin.showPreview(selection, evt.getLocationOnScreen());
-        }
-    } catch (Exception e) {
-        logger.error("No preview available for selected skin '" + selection + "'");
-    }
-}//GEN-LAST:event_fireShowSkinPreviewEvent
 
 private void fireChangeMarkOwnVillagesOnMinimapEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireChangeMarkOwnVillagesOnMinimapEvent
     GlobalOptions.addProperty("mark.villages.on.minimap", Boolean.toString(jMarkOwnVillagesOnMinimapBox.isSelected()));
@@ -2822,7 +2738,6 @@ private void fireChangeDefaultBrowserEvent(java.awt.event.ItemEvent evt) {//GEN-
     private javax.swing.JCheckBox jExportArriveTime;
     private javax.swing.JCheckBox jExportTribeNames;
     private javax.swing.JCheckBox jExportUnit;
-    private javax.swing.JComboBox jGraphicPacks;
     private javax.swing.JTextField jHeavyAmount;
     private javax.swing.JCheckBox jInformOnUpdates;
     private javax.swing.JLabel jLabel1;
@@ -2871,7 +2786,6 @@ private void fireChangeDefaultBrowserEvent(java.awt.event.ItemEvent evt) {//GEN-
     private javax.swing.JPanel jPanel6;
     private javax.swing.JTextField jPasswordChangeAccount;
     private javax.swing.JPanel jPlayerServerSettings;
-    private javax.swing.JButton jPreviewSkinButton;
     private javax.swing.JLabel jProxyAdressLabel;
     private javax.swing.JRadioButton jProxyConnectOption;
     private javax.swing.JTextField jProxyHost;
@@ -2894,7 +2808,6 @@ private void fireChangeDefaultBrowserEvent(java.awt.event.ItemEvent evt) {//GEN-
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JButton jSelectServerButton;
-    private javax.swing.JButton jSelectSkinButton;
     private javax.swing.JComboBox jServerList;
     private javax.swing.JTabbedPane jSettingsTabbedPane;
     private javax.swing.JCheckBox jShowAttackMovementBox;
@@ -2905,7 +2818,6 @@ private void fireChangeDefaultBrowserEvent(java.awt.event.ItemEvent evt) {//GEN-
     private javax.swing.JCheckBox jShowPopupMoral;
     private javax.swing.JCheckBox jShowPopupRanks;
     private javax.swing.JCheckBox jShowSectorsBox;
-    private javax.swing.JLabel jSkinPackLabel;
     private javax.swing.JTextField jSpearAmount;
     private javax.swing.JTextArea jStatusArea;
     private javax.swing.JTextField jSwordAmount;

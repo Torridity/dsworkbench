@@ -16,6 +16,7 @@ import java.util.LinkedList;
 import java.util.StringTokenizer;
 
 /**
+ * @TODO (DIFF) Swiss server import supported
  * @author Charon
  */
 public class TroopsParser {
@@ -43,14 +44,14 @@ public class TroopsParser {
             //parse single line for village
             String line = lineTok.nextToken();
             //tokenize line by tab and space
-          //  StringTokenizer elemTok = new StringTokenizer(line, " \t");
+            //  StringTokenizer elemTok = new StringTokenizer(line, " \t");
             //parse single line for village
             if (v != null) {
                 //parse 4 village lines!
                 line = line.trim();
-                if (line.trim().startsWith("eigene")) {
+                if (line.trim().startsWith("eigene") || line.trim().startsWith("eigeni")) {
                     int cnt = 0;
-                    for (int i : parseUnits(line.replaceAll("eigene", "").trim())) {
+                    for (int i : parseUnits(line.replaceAll("eigene", "").replaceAll("eigeni", "").trim())) {
                         //own units in village
                         //troops.add(i);
                         ownTroops.put(DataHolder.getSingleton().getUnits().get(cnt), i);
@@ -63,18 +64,18 @@ public class TroopsParser {
                         troopsInVillage.put(DataHolder.getSingleton().getUnits().get(cnt), i);
                         cnt++;
                     }
-                } else if (line.trim().startsWith("auswärts")) {
+                } else if (line.trim().startsWith("auswärts") || line.trim().startsWith("uswärts")) {
                     int cnt = 0;
-                    for (int i : parseUnits(line.replaceAll("auswärts", "").trim())) {
+                    for (int i : parseUnits(line.replaceAll("auswärts", "").replaceAll("uswärts", "").trim())) {
                         //own units in other village  
                         troopsOutside.put(DataHolder.getSingleton().getUnits().get(cnt), i);
                         cnt++;
                     }
-                } else if (line.trim().startsWith("unterwegs")) {
+                } else if (line.trim().startsWith("unterwegs") || line.trim().startsWith("untrwägs")) {
                     // int[] underway = parseUnits(line.replaceAll("unterwegs", "").trim());
                     int cnt = 0;
                     //own units on the way
-                    for (int i : parseUnits(line.replaceAll("unterwegs", "").trim())) {
+                    for (int i : parseUnits(line.replaceAll("unterwegs", "").replaceAll("untrwägs", "").trim())) {
                         //troops.set(i, troops.get(i) + underway[i]);
                         troopsOnTheWay.put(DataHolder.getSingleton().getUnits().get(cnt), i);
                         cnt++;
@@ -152,7 +153,7 @@ public class TroopsParser {
                 }
             }
         }
-        if(retValue){
+        if (retValue) {
             TroopsManager.getSingleton().forceUpdate();
         }
         return retValue;
@@ -195,7 +196,7 @@ public class TroopsParser {
     }
 
     private static int[] parseUnits(String pLine) {
-        String line = pLine.replaceAll("eigene", "").replaceAll("Befehle", "").replaceAll("Truppen", "");
+        String line = pLine.replaceAll("eigene", "").replaceAll("Befehle", "").replaceAll("Truppen", "").replaceAll("Befäu", "").replaceAll("Truppe", "");
         StringTokenizer t = new StringTokenizer(line, " \t");
         int uCount = DataHolder.getSingleton().getUnits().size();
         int[] units = new int[uCount];

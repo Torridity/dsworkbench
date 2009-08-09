@@ -95,6 +95,7 @@ import org.apache.log4j.Logger;
  * 5: Live Layer: Redraw in every drawing cycle e.g. Drag line, tool popup(?), (troop movement?)
  * 6-16: Free assignable
  * @TODO (DIFF) Better MarkOnTop visibility
+ * @TODO (DIFF) Popup now always on screen
  * @author Charon
  */
 /**Thread for updating after scroll operations
@@ -1936,7 +1937,7 @@ public class MapRenderer extends Thread {
     }
 
     /**Rendering map popup (called by renderLiveLayer())*/
-    private void renderVillageInfo(Graphics2D g2d, Village mouseVillage) {
+    private void renderVillageInfo(Graphics2D pG2d, Village mouseVillage) {
         if (mouseVillage == null) {
             return;
         }
@@ -1955,7 +1956,8 @@ public class MapRenderer extends Thread {
         if (rect == null) {
             return;
         }
-
+        BufferedImage popupBuffer = new BufferedImage(500, 500, BufferedImage.TYPE_INT_RGB);
+        Graphics2D g2d = (Graphics2D) popupBuffer.getGraphics();
         Font before = g2d.getFont();
         Stroke sBefore = g2d.getStroke();
         g2d.setStroke(new BasicStroke(0.5f));
@@ -1966,20 +1968,16 @@ public class MapRenderer extends Thread {
         nf.setMaximumFractionDigits(0);
         g2d.setFont(current);
         int width = 500;
-        Rectangle villageRect = (Rectangle) rect.clone();
-        int delta = 500 + villageRect.getLocation().x - MapPanel.getSingleton().getWidth();
-        if (delta > 20) {
-            //relevant part of popup might be outside the FOV
-            villageRect.setLocation(villageRect.x - delta, villageRect.y);
-        }
 
-        int xc = (int) villageRect.getCenterX();
-        int yc = (int) villageRect.getCenterY();
+        Rectangle villageRect = new Rectangle(0, 0, 0, 0);
+
+        int xc = (int) 0;//villageRect.getCenterX();
+        int yc = (int) 0;//villageRect.getCenterY();
         //Village name rect
         int dy = 19;
         g2d.setColor(Constants.DS_BACK);
-        g2d.fillRect(xc, yc, width, 19);
-        g2d.drawRect(xc, yc, width, 19);
+        g2d.fillRect(xc, yc, width, dy);
+        g2d.drawRect(xc, yc, width, dy);
         g2d.setColor(Color.BLACK);
         Rectangle2D bounds = metrics.getStringBounds(mouseVillage.getName(), g2d);
         g2d.drawString(mouseVillage.toString(), xc + 17, yc - (int) Math.rint(bounds.getY()) + 2);
@@ -2153,7 +2151,26 @@ public class MapRenderer extends Thread {
         }
 
         //render troop/runtime information
-        renderExtendedInformation(g2d, mouseVillage, xc, yc, width, dy);
+        boolean renderedExt = renderExtendedInformation(g2d, mouseVillage, xc, yc, width, dy);
+
+        villageRect = (Rectangle) rect.clone();
+        int height = dy + ((renderedExt) ? 35 : 0);
+        int delta = 500 + villageRect.getLocation().x - MapPanel.getSingleton().getWidth();
+
+        if (delta > 20) {
+            //relevant part of popup might be outside the FOV
+            villageRect.setLocation(villageRect.x - delta, villageRect.y);
+        }
+
+        delta = height + villageRect.getLocation().y - MapPanel.getSingleton().getHeight() + (int) (GlobalOptions.getSkin().getCurrentFieldHeight() / 2);
+
+        if (delta > 0) {
+            //relevant part of popup might be outside the FOV
+            villageRect.setLocation(villageRect.x, villageRect.y - delta - 5);
+        }
+
+        BufferedImage sub = popupBuffer.getSubimage(0, 0, 500, height);
+        pG2d.drawImage(sub, (int) villageRect.getCenterX(), (int) villageRect.getCenterY(), null);
         g2d.setFont(before);
         g2d.setStroke(sBefore);
     }
@@ -2300,7 +2317,7 @@ public class MapRenderer extends Thread {
     }
 
     /**Render extended information to map popup e.g. troop information*/
-    private void renderExtendedInformation(Graphics2D g2d, Village pMouseVillage, int pX, int pY, int pWidth, int pDy) {
+    private boolean renderExtendedInformation(Graphics2D g2d, Village pMouseVillage, int pX, int pY, int pWidth, int pDy) {
         VillageTroopsHolder troops = TroopsManager.getSingleton().getTroopsForVillage(pMouseVillage);
         Font current = new Font(Font.SANS_SERIF, Font.PLAIN, 10);
         boolean drawDist = false;
@@ -2315,7 +2332,7 @@ public class MapRenderer extends Thread {
         if (!drawDist) {
             //if no runtime drawing, check troops
             if (troops == null) {
-                return;
+                return false;
             }
 
             switch (iPopupTroopType) {
@@ -2342,7 +2359,7 @@ public class MapRenderer extends Thread {
 
             if (activeTroops == null) {
                 //no active troops found
-                return;
+                return false;
             }
         }
 
@@ -2400,6 +2417,7 @@ public class MapRenderer extends Thread {
                 unitCount++;
             }
         }
+        return true;
     }
 
     /**Prepare any g2d object with same parameters*/

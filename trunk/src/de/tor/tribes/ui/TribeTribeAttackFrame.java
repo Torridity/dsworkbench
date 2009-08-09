@@ -194,29 +194,7 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame {
         try {
 
             // <editor-fold defaultstate="collapsed" desc=" Build target allies list ">
-            Enumeration<Integer> allyKeys = DataHolder.getSingleton().getAllies().keys();
-            List<Ally> allies = new LinkedList();
-            while (allyKeys.hasMoreElements()) {
-                allies.add(DataHolder.getSingleton().getAllies().get(allyKeys.nextElement()));
-            }
-
-            Ally[] aAllies = allies.toArray(new Ally[]{});
-            allies = null;
-            Arrays.sort(aAllies, Ally.CASE_INSENSITIVE_ORDER);
-            DefaultListModel targetAllyModel = new DefaultListModel();
-            targetAllyModel.addElement("<Kein Stamm>");
-            for (Ally a : aAllies) {
-                targetAllyModel.addElement(a);
-            }
-
-            jTargetAllyList.setModel(targetAllyModel);
-            jTargetAllyList.addListSelectionListener(new ListSelectionListener() {
-
-                @Override
-                public void valueChanged(ListSelectionEvent e) {
-                    fireFilterTargetByAllyEvent();
-                }
-            });
+            fireTargetAllyFilterChangedEvent(null);
 
             jTargetTribeList.addListSelectionListener(new ListSelectionListener() {
 
@@ -416,6 +394,8 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame {
         jLabel24 = new javax.swing.JLabel();
         jScrollPane10 = new javax.swing.JScrollPane();
         jTargetVillageList = new javax.swing.JList();
+        jLabel11 = new javax.swing.JLabel();
+        jTargetTribeFilter = new javax.swing.JTextField();
         jScrollPane3 = new javax.swing.JScrollPane();
         jVictimTable = new javax.swing.JTable();
         jButton4 = new javax.swing.JButton();
@@ -1008,7 +988,7 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame {
                     .addGroup(jOffStrengthFrameLayout.createSequentialGroup()
                         .addGap(6, 6, 6)
                         .addGroup(jOffStrengthFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jToleranceSlider, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jToleranceSlider, javax.swing.GroupLayout.DEFAULT_SIZE, 33, Short.MAX_VALUE)
                             .addComponent(jLabel18, javax.swing.GroupLayout.DEFAULT_SIZE, 33, Short.MAX_VALUE)))
                     .addGroup(jOffStrengthFrameLayout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -1572,7 +1552,7 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame {
                         .addComponent(jSetNoFakeButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jSetFakeButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 263, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 301, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -1626,18 +1606,31 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame {
 
         jScrollPane10.setViewportView(jTargetVillageList);
 
+        jLabel11.setText(bundle.getString("TribeTribeAttackFrame.jLabel11.text")); // NOI18N
+
+        jTargetTribeFilter.setText(bundle.getString("TribeTribeAttackFrame.jTargetTribeFilter.text")); // NOI18N
+        jTargetTribeFilter.addCaretListener(new javax.swing.event.CaretListener() {
+            public void caretUpdate(javax.swing.event.CaretEvent evt) {
+                fireTargetAllyFilterChangedEvent(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
         jPanel6Layout.setHorizontalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jTargetAllyLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jTargetAllyLabel)
+                    .addComponent(jLabel11))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jTargetTribeFilter, javax.swing.GroupLayout.DEFAULT_SIZE, 167, Short.MAX_VALUE)
+                    .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 167, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane8, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel23)
@@ -1646,22 +1639,28 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel24)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane10, javax.swing.GroupLayout.DEFAULT_SIZE, 207, Short.MAX_VALUE)
+                .addComponent(jScrollPane10, javax.swing.GroupLayout.DEFAULT_SIZE, 218, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addComponent(jScrollPane10, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel24, javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane9, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel23, javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane7, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTargetAllyLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jScrollPane8, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane8, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jTargetAllyLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 114, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel11)
+                            .addComponent(jTargetTribeFilter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap())
         );
 
@@ -1766,7 +1765,7 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jTargetPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jFilterTargetButton)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 347, Short.MAX_VALUE))
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -1837,7 +1836,7 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame {
                 .addComponent(jAllInOneAlgorithm)
                 .addGap(18, 18, 18)
                 .addComponent(jBlitzkriegAlgorithm)
-                .addContainerGap(351, Short.MAX_VALUE))
+                .addContainerGap(389, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab(bundle.getString("TribeTribeAttackFrame.jAlgoPanel.TabConstraints.tabTitle"), new javax.swing.ImageIcon(getClass().getResource("/res/die.png")), jAlgoPanel); // NOI18N
@@ -1857,7 +1856,7 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 602, Short.MAX_VALUE)
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 640, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jCalculateButton)
                 .addContainerGap())
@@ -2982,6 +2981,63 @@ private void fireFilterByAttackPlansEvent(java.awt.event.MouseEvent evt) {//GEN-
 
 }//GEN-LAST:event_fireFilterByAttackPlansEvent
 
+private void fireTargetAllyFilterChangedEvent(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_fireTargetAllyFilterChangedEvent
+    String text = jTargetTribeFilter.getText();
+    if (text.length() > 0) {
+        text = text.toLowerCase();
+        Enumeration<Integer> allyKeys = DataHolder.getSingleton().getAllies().keys();
+        List<Ally> allies = new LinkedList();
+        while (allyKeys.hasMoreElements()) {
+            Ally a = DataHolder.getSingleton().getAllies().get(allyKeys.nextElement());
+            if (a.getName() != null && a.getTag() != null) {
+                if (a.getName().toLowerCase().indexOf(text) >= 0 || a.getTag().toLowerCase().indexOf(text) >= 0) {
+                    allies.add(a);
+                }
+            }
+        }
+        Ally[] aAllies = allies.toArray(new Ally[]{});
+        allies = null;
+        Arrays.sort(aAllies, Ally.CASE_INSENSITIVE_ORDER);
+        DefaultListModel targetAllyModel = new DefaultListModel();
+        for (Ally a : aAllies) {
+            targetAllyModel.addElement(a);
+        }
+
+        jTargetAllyList.setModel(targetAllyModel);
+        jTargetAllyList.addListSelectionListener(new ListSelectionListener() {
+
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                fireFilterTargetByAllyEvent();
+            }
+        });
+    } else {
+        Enumeration<Integer> allyKeys = DataHolder.getSingleton().getAllies().keys();
+        List<Ally> allies = new LinkedList();
+        while (allyKeys.hasMoreElements()) {
+            allies.add(DataHolder.getSingleton().getAllies().get(allyKeys.nextElement()));
+        }
+
+        Ally[] aAllies = allies.toArray(new Ally[]{});
+        allies = null;
+        Arrays.sort(aAllies, Ally.CASE_INSENSITIVE_ORDER);
+        DefaultListModel targetAllyModel = new DefaultListModel();
+        targetAllyModel.addElement("<Kein Stamm>");
+        for (Ally a : aAllies) {
+            targetAllyModel.addElement(a);
+        }
+
+        jTargetAllyList.setModel(targetAllyModel);
+        jTargetAllyList.addListSelectionListener(new ListSelectionListener() {
+
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                fireFilterTargetByAllyEvent();
+            }
+        });
+    }
+}//GEN-LAST:event_fireTargetAllyFilterChangedEvent
+
     private void showResults(List<Attack> pAttacks) {
         jResultsTable.invalidate();
         DefaultTableModel resultModel = new javax.swing.table.DefaultTableModel(
@@ -3693,6 +3749,7 @@ private void fireFilterByAttackPlansEvent(java.awt.event.MouseEvent evt) {//GEN-
     private javax.swing.JButton jHideTargetDetailsButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
@@ -3767,6 +3824,7 @@ private void fireFilterByAttackPlansEvent(java.awt.event.MouseEvent evt) {//GEN-
     private javax.swing.JTable jTargetDetailsTable;
     private javax.swing.JPanel jTargetPanel;
     private javax.swing.JFrame jTargetResultDetailsFrame;
+    private javax.swing.JTextField jTargetTribeFilter;
     private javax.swing.JList jTargetTribeList;
     private javax.swing.JList jTargetVillageList;
     private javax.swing.JProgressBar jTargetsBar;

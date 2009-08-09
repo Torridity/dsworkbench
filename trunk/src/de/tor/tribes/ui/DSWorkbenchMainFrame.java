@@ -73,6 +73,7 @@ import javax.swing.table.DefaultTableModel;
 /**
  * @TODO (1.5?) Add min number to troop filter in attack planer????
  * @TODO (DIFF) Layer positions stored
+ * @TODO (DIFF) Skin selectable in main frame (Update settings docu!)
  * @author  Charon
  */
 public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
@@ -453,6 +454,21 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
 
         // </editor-fold>
 
+        // <editor-fold defaultstate="collapsed" desc="Skin Setup">
+        DefaultComboBoxModel gpModel = new DefaultComboBoxModel(GlobalOptions.getAvailableSkins());
+        jGraphicPacks.setModel(gpModel);
+        String skin = GlobalOptions.getProperty("default.skin");
+        if (skin != null) {
+            if (gpModel.getIndexOf(skin) != -1) {
+                jGraphicPacks.setSelectedItem(skin);
+            } else {
+                jGraphicPacks.setSelectedItem("default");
+            }
+        } else {
+            jGraphicPacks.setSelectedItem("default");
+        }
+        //</editor-fold>
+
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
         GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "index", GlobalOptions.getHelpBroker().getHelpSet());
         jHelpItem.addActionListener(GlobalOptions.getHelpDisplay());
@@ -819,6 +835,8 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jLayerDownButton = new javax.swing.JButton();
         jLabel11 = new javax.swing.JLabel();
         jPopupTroops = new javax.swing.JComboBox();
+        jLabel12 = new javax.swing.JLabel();
+        jGraphicPacks = new javax.swing.JComboBox();
         jTaskPaneGroup2 = new com.l2fprod.common.swing.JTaskPaneGroup();
         jPanel3 = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
@@ -1559,25 +1577,21 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             }
         });
 
+        jLabel12.setText(bundle.getString("DSWorkbenchMainFrame.jLabel12.text")); // NOI18N
+
+        jGraphicPacks.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                fireGraphicPackChangedEvent(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addGap(10, 10, 10)
-                .addComponent(jShowMapPopup, javax.swing.GroupLayout.DEFAULT_SIZE, 222, Short.MAX_VALUE)
-                .addContainerGap())
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel10)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 14, Short.MAX_VALUE)
-                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLayerUpButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLayerDownButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel5)
@@ -1586,13 +1600,33 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jPopupTroops, 0, 105, Short.MAX_VALUE)
                             .addComponent(jRadarSpinner, javax.swing.GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE))
-                        .addGap(30, 30, 30)))
-                .addGap(16, 16, 16))
+                        .addGap(40, 40, 40))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
+                                .addComponent(jLabel12)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jGraphicPacks, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
+                                .addComponent(jLabel10)
+                                .addGap(14, 14, 14)
+                                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLayerUpButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLayerDownButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(jShowMapPopup, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel12)
+                    .addComponent(jGraphicPacks, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jShowMapPopup)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -1604,13 +1638,13 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                     .addComponent(jRadarSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel10)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 184, Short.MAX_VALUE)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jLayerUpButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLayerDownButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jLabel10)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 165, Short.MAX_VALUE))
-                .addContainerGap())
+                        .addComponent(jLayerDownButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(12, 12, 12))
         );
 
         jTaskPaneGroup5.getContentPane().add(jPanel2);
@@ -2806,6 +2840,26 @@ private void firePopupTroopsChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FI
     }
 }//GEN-LAST:event_firePopupTroopsChangedEvent
 
+private void fireGraphicPackChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireGraphicPackChangedEvent
+    GlobalOptions.addProperty("default.skin", (String) jGraphicPacks.getSelectedItem());
+    try {
+        GlobalOptions.loadSkin();
+    } catch (Exception e) {
+        logger.error("Failed to load skin '" + jGraphicPacks.getSelectedItem() + "'", e);
+        JOptionPaneHelper.showErrorBox(this, "Fehler beim laden des Grafikpaketes.", "Fehler");
+        //load default
+        GlobalOptions.addProperty("default.skin", "default");
+        try {
+            GlobalOptions.loadSkin();
+        } catch (Exception ie) {
+            logger.error("Failed to load default skin", ie);
+        }
+    }
+    if (isInitialized()) {
+        MapPanel.getSingleton().getMapRenderer().initiateRedraw(0);
+    }
+}//GEN-LAST:event_fireGraphicPackChangedEvent
+
     private void propagateLayerOrder() {
         DefaultListModel model = ((DefaultListModel) jLayerList.getModel());
 
@@ -3129,11 +3183,13 @@ private void firePopupTroopsChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FI
     private javax.swing.JCheckBox jExportTags;
     private javax.swing.JCheckBox jExportTroops;
     private javax.swing.JComboBox jFileTypeChooser;
+    private javax.swing.JComboBox jGraphicPacks;
     private javax.swing.JMenuItem jHelpItem;
     private javax.swing.JPanel jInformationPanel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;

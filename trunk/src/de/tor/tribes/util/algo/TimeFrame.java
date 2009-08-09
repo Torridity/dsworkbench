@@ -4,6 +4,7 @@
  */
 package de.tor.tribes.util.algo;
 
+import de.tor.tribes.types.TimeSpan;
 import java.awt.Point;
 import java.util.Calendar;
 import java.util.Date;
@@ -11,7 +12,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- *
+ * @TODO (1.7) Check day dependent time frame again
  * @author Jejkal
  */
 public class TimeFrame {
@@ -19,18 +20,21 @@ public class TimeFrame {
     private long start = 0;
     private long end = 0;
     private List<Point> mFrames = null;
+    private List<TimeSpan> timeSpans = null;
     private long arriveTolerance = 0;
 
     public TimeFrame(Date pStart, Date pEnd, int pMinHour, int pMaxHour) {
         start = pStart.getTime();
         end = pEnd.getTime();
         mFrames = new LinkedList<Point>();
+        timeSpans = new LinkedList<TimeSpan>();
         mFrames.add(new Point(pMinHour, pMaxHour));
     }
 
     public TimeFrame(Date pStart, Date pEnd) {
         start = pStart.getTime();
         end = pEnd.getTime();
+        timeSpans = new LinkedList<TimeSpan>();
         mFrames = new LinkedList<Point>();
     }
 
@@ -42,6 +46,39 @@ public class TimeFrame {
         mFrames.add(new Point(pMinHour, pMaxHour));
     }
 
+    public void addTimeSpan(TimeSpan pSpan) {
+        timeSpans.add(pSpan);
+    }
+
+    /* public boolean inside(Date pDate) {
+    long t = pDate.getTime();
+    Calendar c = Calendar.getInstance();
+    c.setTime(pDate);
+    int hour = c.get(Calendar.HOUR_OF_DAY);
+    int minute = c.get(Calendar.MINUTE);
+    int second = c.get(Calendar.SECOND);
+    boolean inFrame = false;
+    //check if time is in time frame
+    //use max. arrive time
+    //if ((t > start) && (t < end + arriveTolerance * 1000)) {
+    if ((t > start) && (t < end)) {
+    //general time is ok
+    for (Point p : mFrames) {
+    //check time frame parts
+    inFrame = ((hour >= p.x) && ((hour <= p.y) && (minute <= 59) && (second <= 59)));
+    if (inFrame) {
+    break;
+    }
+    }
+    //check end frame
+    /*if (!inFrame) {
+    //if not yet in frame check end frame
+    inFrame = ((t > (end - arriveTolerance * 1000)) && (t < (end + arriveTolerance * 1000)));
+    }*/
+    /*        }
+    return inFrame;
+    }
+     */
     public boolean inside(Date pDate) {
         long t = pDate.getTime();
         Calendar c = Calendar.getInstance();
@@ -49,24 +86,34 @@ public class TimeFrame {
         int hour = c.get(Calendar.HOUR_OF_DAY);
         int minute = c.get(Calendar.MINUTE);
         int second = c.get(Calendar.SECOND);
+        int day = c.get(Calendar.DAY_OF_MONTH);
+        int month = c.get(Calendar.MONTH);
+        int year = c.get(Calendar.YEAR);
         boolean inFrame = false;
-        //check if time is in time frame
-        //use max. arrive time
-        //if ((t > start) && (t < end + arriveTolerance * 1000)) {
         if ((t > start) && (t < end)) {
-            //general time is ok
-            for (Point p : mFrames) {
-                //check time frame parts
-                inFrame = ((hour >= p.x) && ((hour <= p.y) && (minute <= 59) && (second <= 59)));
-                if (inFrame) {
-                    break;
+            for (TimeSpan span : timeSpans) {
+                Date d = span.getAtDate();
+                if (d != null) {
+                    //check day
+                    Calendar c2 = Calendar.getInstance();
+                    c2.setTime(d);
+                    if (c2.get(Calendar.DAY_OF_MONTH) == day && c2.get(Calendar.MONTH) == month && c2.get(Calendar.YEAR) == year) {
+                        //date is the same, so check span
+                        Point p = span.getSpan();
+                        inFrame = ((hour >= p.x) && ((hour <= p.y) && (minute <= 59) && (second <= 59)));
+                        if (inFrame) {
+                            break;
+                        }
+                    }
+                } else {
+                    //"every day" span, so only check time
+                    Point p = span.getSpan();
+                    inFrame = ((hour >= p.x) && ((hour <= p.y) && (minute <= 59) && (second <= 59)));
+                    if (inFrame) {
+                        break;
+                    }
                 }
             }
-        //check end frame
-            /*if (!inFrame) {
-        //if not yet in frame check end frame
-        inFrame = ((t > (end - arriveTolerance * 1000)) && (t < (end + arriveTolerance * 1000)));
-        }*/
         }
         return inFrame;
     }
@@ -82,6 +129,10 @@ public class TimeFrame {
             int sendHour = sendCal.get(Calendar.HOUR_OF_DAY);
             int sendMinute = sendCal.get(Calendar.MINUTE);
             int sendSecond = sendCal.get(Calendar.SECOND);
+            int day = sendCal.get(Calendar.DAY_OF_MONTH);
+            int month = sendCal.get(Calendar.MONTH);
+            int year = sendCal.get(Calendar.YEAR);
+
             Calendar arriveCal = Calendar.getInstance();
             arriveCal.setTimeInMillis(arriveTime);
             int arriveHour = arriveCal.get(Calendar.HOUR_OF_DAY);
@@ -91,12 +142,40 @@ public class TimeFrame {
             } else if (Math.abs(arriveTime - end) > TOLERANCE) {
                 //too far away
             } else {
-                for (Point p : mFrames) {
-                    //check time frame parts
-                    inFrame = ((sendHour >= p.x) && ((sendHour <= p.y) && (sendMinute <= 59) && (sendSecond <= 59)));
-                    if (inFrame) {
-                        arriveCal.setTimeInMillis(arriveTime);
-                        return arriveCal.getTime();
+
+
+                /*  for (Point p : mFrames) {
+                //check time frame parts
+                inFrame = ((sendHour >= p.x) && ((sendHour <= p.y) && (sendMinute <= 59) && (sendSecond <= 59)));
+                if (inFrame) {
+                arriveCal.setTimeInMillis(arriveTime);
+                return arriveCal.getTime();
+                }
+                }*/
+
+                for (TimeSpan span : timeSpans) {
+                    Date d = span.getAtDate();
+                    if (d != null) {
+                        //check day
+                        Calendar c2 = Calendar.getInstance();
+                        c2.setTime(d);
+                        if (c2.get(Calendar.DAY_OF_MONTH) == day && c2.get(Calendar.MONTH) == month && c2.get(Calendar.YEAR) == year) {
+                            //date is the same, so check span
+                            Point p = span.getSpan();
+                            inFrame = ((sendHour >= p.x) && ((sendHour <= p.y) && (sendMinute <= 59) && (sendMinute <= 59)));
+                            if (inFrame) {
+                                arriveCal.setTimeInMillis(arriveTime);
+                                return arriveCal.getTime();
+                            }
+                        }
+                    } else {
+                        //"every day" span, so only check time
+                        Point p = span.getSpan();
+                        inFrame = ((sendHour >= p.x) && ((sendHour <= p.y) && (sendMinute <= 59) && (sendMinute <= 59)));
+                        if (inFrame) {
+                            arriveCal.setTimeInMillis(arriveTime);
+                            return arriveCal.getTime();
+                        }
                     }
                 }
             }

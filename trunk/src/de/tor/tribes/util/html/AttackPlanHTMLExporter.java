@@ -7,6 +7,7 @@ package de.tor.tribes.util.html;
 import de.tor.tribes.util.html.*;
 import de.tor.tribes.util.*;
 import de.tor.tribes.io.ServerManager;
+import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Ally;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.Tribe;
@@ -22,7 +23,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 /**
- *
+ *@TODO (DIFF) Unit type in attack export
  * @author Charon
  */
 public class AttackPlanHTMLExporter {
@@ -38,8 +39,9 @@ public class AttackPlanHTMLExporter {
     private static final String PLANNAME = "\\$PLANNAME";
     private static final String ATTACK_COUNT = "\\$ATTACK_COUNT";
     //block variables
-      private static final String ID = "\\$ID";
+    private static final String ID = "\\$ID";
     private static final String TYPE = "\\$TYPE";
+    private static final String UNIT = "\\$UNIT";
     private static final String DIV_CLASS = "\\$DIV_CLASS";
     private static final String SOURCE_TRIBE = "\\$SOURCE_TRIBE";
     private static final String TARGET_TRIBE = "\\$TARGET_TRIBE";
@@ -127,6 +129,9 @@ public class AttackPlanHTMLExporter {
             } else {
                 b = b.replaceAll(DIV_CLASS, "even_div");
             }
+            UnitHolder unit = a.getUnit();
+            b = b.replaceAll(UNIT, "<img src=\"http://www.dsworkbench.de/DSWorkbench/export/" + unit.getPlainName() + ".png\">");
+
             switch (a.getType()) {
                 case Attack.CLEAN_TYPE: {
                     b = b.replaceAll(TYPE, "<img src=\"http://www.dsworkbench.de/DSWorkbench/export/att.png\">");

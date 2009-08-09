@@ -26,6 +26,7 @@ import de.tor.tribes.util.attack.AttackManagerListener;
 import de.tor.tribes.ui.editors.DateSpinEditor;
 import de.tor.tribes.ui.editors.UnitCellEditor;
 import de.tor.tribes.ui.editors.VillageCellEditor;
+import de.tor.tribes.ui.models.StandardAttackTableModel;
 import de.tor.tribes.ui.renderer.AttackTypeCellRenderer;
 import de.tor.tribes.ui.renderer.ColoredDateCellRenderer;
 import de.tor.tribes.util.html.AttackPlanHTMLExporter;
@@ -147,7 +148,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         GlobalOptions.getHelpBroker().enableHelpKey(jTimeChangeDialog.getRootPane(), "pages.change_attack_times", GlobalOptions.getHelpBroker().getHelpSet());
         GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.attack_view", GlobalOptions.getHelpBroker().getHelpSet());
 // </editor-fold>
-
+        jStandardAttackDialog.pack();
         pack();
     }
 
@@ -228,6 +229,11 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         jCopyTargetBox = new javax.swing.JComboBox();
         jCopyButton = new javax.swing.JButton();
         jCancelCopyButton = new javax.swing.JButton();
+        jStandardAttackDialog = new javax.swing.JDialog();
+        jScrollPane5 = new javax.swing.JScrollPane();
+        jStandardAttackTable = new javax.swing.JTable();
+        jButton11 = new javax.swing.JButton();
+        jCancelApplyStandardAttacksButton = new javax.swing.JButton();
         jAttackPanel = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jAttackTable = new javax.swing.JTable();
@@ -255,6 +261,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         jCopyBBCodeToClipboardButton = new javax.swing.JButton();
         jCopyBBCodeToClipboardButton1 = new javax.swing.JButton();
         jSendAttackButton = new javax.swing.JButton();
+        jSendAttackButton1 = new javax.swing.JButton();
         jTaskPaneGroup4 = new com.l2fprod.common.swing.JTaskPaneGroup();
         jNotifyButton = new javax.swing.JToggleButton();
         jAttackFrameAlwaysOnTop = new javax.swing.JCheckBox();
@@ -942,6 +949,63 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        jStandardAttackDialog.setTitle(bundle.getString("DSWorkbenchAttackFrame.jStandardAttackDialog.title")); // NOI18N
+        jStandardAttackDialog.setAlwaysOnTop(true);
+        jStandardAttackDialog.setModal(true);
+
+        jStandardAttackTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane5.setViewportView(jStandardAttackTable);
+
+        jButton11.setText(bundle.getString("DSWorkbenchAttackFrame.jButton11.text")); // NOI18N
+        jButton11.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireApplyStandardAttacksEvent(evt);
+            }
+        });
+
+        jCancelApplyStandardAttacksButton.setText(bundle.getString("DSWorkbenchAttackFrame.jCancelApplyStandardAttacksButton.text")); // NOI18N
+        jCancelApplyStandardAttacksButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireApplyStandardAttacksEvent(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jStandardAttackDialogLayout = new javax.swing.GroupLayout(jStandardAttackDialog.getContentPane());
+        jStandardAttackDialog.getContentPane().setLayout(jStandardAttackDialogLayout);
+        jStandardAttackDialogLayout.setHorizontalGroup(
+            jStandardAttackDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jStandardAttackDialogLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jStandardAttackDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 472, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jStandardAttackDialogLayout.createSequentialGroup()
+                        .addComponent(jCancelApplyStandardAttacksButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jButton11)))
+                .addContainerGap())
+        );
+        jStandardAttackDialogLayout.setVerticalGroup(
+            jStandardAttackDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jStandardAttackDialogLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 305, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jStandardAttackDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton11)
+                    .addComponent(jCancelApplyStandardAttacksButton))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
         setTitle(bundle.getString("DSWorkbenchAttackFrame.title")); // NOI18N
 
         jAttackPanel.setBackground(new java.awt.Color(239, 235, 223));
@@ -1211,6 +1275,17 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         });
         jTaskPaneGroup3.getContentPane().add(jSendAttackButton);
         jSendAttackButton.getAccessibleContext().setAccessibleDescription(bundle.getString("DSWorkbenchAttackFrame.jSendAttackButton.AccessibleContext.accessibleDescription")); // NOI18N
+
+        jSendAttackButton1.setBackground(new java.awt.Color(239, 235, 223));
+        jSendAttackButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/standard_attacks.png"))); // NOI18N
+        jSendAttackButton1.setText(bundle.getString("DSWorkbenchAttackFrame.jSendAttackButton1.text")); // NOI18N
+        jSendAttackButton1.setToolTipText(bundle.getString("DSWorkbenchAttackFrame.jSendAttackButton1.toolTipText")); // NOI18N
+        jSendAttackButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireSetStandardAttacksEvent(evt);
+            }
+        });
+        jTaskPaneGroup3.getContentPane().add(jSendAttackButton1);
 
         jTaskPane1.add(jTaskPaneGroup3);
 
@@ -2257,6 +2332,30 @@ private void fireCleanUpAttacksEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST
 
 }//GEN-LAST:event_fireCleanUpAttacksEvent
 
+private void fireSetStandardAttacksEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSetStandardAttacksEvent
+    //build table
+    try{
+        System.out.println("setup");
+    StandardAttackTableModel.getSingleton().setup();
+        System.out.println("set model");
+    jStandardAttackTable.setModel(StandardAttackTableModel.getSingleton());
+     jStandardAttackDialog.setLocationRelativeTo(this);
+    System.out.println("show");
+    jStandardAttackDialog.setVisible(true);
+    }catch(Exception e){
+        e.printStackTrace();
+    }
+
+   
+}//GEN-LAST:event_fireSetStandardAttacksEvent
+
+private void fireApplyStandardAttacksEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireApplyStandardAttacksEvent
+    if (evt.getSource() != jCancelApplyStandardAttacksButton) {
+        //set standard attacks
+    }
+    jStandardAttackDialog.setVisible(false);
+}//GEN-LAST:event_fireApplyStandardAttacksEvent
+
     /**Set table model for filteres selection*/
     private void setTableModel(JTable pTable, Hashtable<Village, Boolean> pVillages) {
         //create default table model
@@ -2378,6 +2477,7 @@ private void fireCleanUpAttacksEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST
     private javax.swing.JTable jAttackTable;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton10;
+    private javax.swing.JButton jButton11;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
@@ -2386,6 +2486,7 @@ private void fireCleanUpAttacksEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST
     private javax.swing.JButton jButton7;
     private javax.swing.JButton jButton8;
     private javax.swing.JButton jButton9;
+    private javax.swing.JButton jCancelApplyStandardAttacksButton;
     private javax.swing.JButton jCancelButton;
     private javax.swing.JButton jCancelCopyButton;
     private javax.swing.JButton jChangeArrivalButton;
@@ -2450,11 +2551,15 @@ private void fireCleanUpAttacksEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JSpinner jSecondsField;
     private javax.swing.JDialog jSelectionFilterDialog;
     private javax.swing.JButton jSendAttackButton;
+    private javax.swing.JButton jSendAttackButton1;
     private javax.swing.JComboBox jSourceTribeBox;
     private javax.swing.JTable jSourceVillageTable;
+    private javax.swing.JDialog jStandardAttackDialog;
+    private javax.swing.JTable jStandardAttackTable;
     private javax.swing.JComboBox jTargetTribeBox;
     private javax.swing.JTable jTargetVillageTable;
     private com.l2fprod.common.swing.JTaskPane jTaskPane1;

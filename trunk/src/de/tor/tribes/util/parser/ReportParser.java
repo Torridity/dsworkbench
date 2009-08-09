@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 /**
+ *@TODO (DIFF) Swiss server import supported
  * @author Jejkal
  */
 public class ReportParser {
@@ -88,15 +89,15 @@ public class ReportParser {
                 if (v != null) {
                     //parse 2 village lines!
                     line = line.trim();
-                    if (line.trim().startsWith("Anzahl:")) {
-                        for (int i : parseUnits(line.replaceAll("Anzahl:", "").trim())) {
+                    if (line.trim().startsWith("Anzahl:") || line.trim().startsWith("Azau:")) {
+                        for (int i : parseUnits(line.replaceAll("Anzahl:", "").replaceAll("Azau", "").trim())) {
                             //own units in village
                             troops.add(i);
                         }
                         villageLines--;
-                    } else if (line.trim().startsWith("Verluste:")) {
+                    } else if (line.trim().startsWith("Verluste:") || line.trim().startsWith("Verlust:")) {
                         int cnt = 0;
-                        for (int i : parseUnits(line.replaceAll("Verluste:", "").trim())) {
+                        for (int i : parseUnits(line.replaceAll("Verluste:", "").replaceAll("Verlust", "").trim())) {
                             //lost troops
                             troopsLost.add(i);
                             cnt++;
@@ -155,7 +156,7 @@ public class ReportParser {
     }
 
     private static int[] parseUnits(String pLine) {
-        String line = pLine.replaceAll("eigene", "").replaceAll("Befehle", "").replaceAll("Truppen", "");
+        String line = pLine.replaceAll("eigene", "").replaceAll("Befehle", "").replaceAll("Truppen", "").replaceAll("Befäu", "").replaceAll("Truppe", "");
         StringTokenizer t = new StringTokenizer(line, " \t");
         int uCount = t.countTokens();
         int[] units = new int[uCount];

@@ -268,13 +268,7 @@ public class AttackManager {
         if (pSource == null || pTarget == null || pUnit == null || pArriveTime == null) {
             logger.error("Invalid attack");
             return;
-
         }
-
-
-
-
-
         Attack a = new Attack();
         a.setSource(pSource);
         a.setTarget(pTarget);
@@ -318,12 +312,7 @@ public class AttackManager {
         if (pSource == null || pTarget == null || pUnit == null || pArriveTime == null) {
             logger.error("Invalid attack");
             return;
-
         }
-
-
-
-
 
         Attack a = new Attack();
         a.setSource(pSource);

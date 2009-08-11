@@ -8,6 +8,7 @@ import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.Hashtable;
 import org.jdom.Element;
@@ -40,7 +41,7 @@ public class StandardAttackElement {
         Integer fixed = e.getAttribute("fixAmount").getIntValue();
         String dyn = null;
         try {
-            dyn = e.getAttributeValue("dynAmount");
+            dyn = URLDecoder.decode(e.getAttributeValue("dynAmount"), "UTF-8");
         } catch (Exception ignored) {
         }
         if (dyn == null) {
@@ -100,6 +101,11 @@ public class StandardAttackElement {
         dynamicAmount = pPercent + "%";
     }
 
+    public void setAll() {
+        fixedAmount = -1;
+        dynamicAmount = ALL_TROOPS;
+    }
+
     public int getTroopsAmount(Village pVillage) {
         VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(pVillage);
         if (holder == null) {
@@ -156,6 +162,46 @@ public class StandardAttackElement {
             }
         }
         return 0;
+    }
+
+    public boolean trySettingAmount(String pValue) {
+        try {
+            //check for fixed value
+            int fix = Integer.parseInt(pValue);
+            if (fix >= 0) {
+                setFixedAmount(fix);
+            }
+            return true;
+        } catch (Exception e) {
+            //no fixed value
+        }
+
+        if (pValue.equals(ALL_TROOPS)) {
+            setAll();
+            return true;
+        }
+
+        try {
+            //check for ALL - X
+            int remain = Integer.parseInt(pValue.replaceAll(ALL_TROOPS, "").replaceAll("-", "").trim());
+            if (remain >= 0) {
+                setDynamicBySubstraction(remain);
+            }
+            return true;
+        } catch (Exception e) {
+            //no ALL - X
+        }
+        try {
+            //try X%
+            int percent = Integer.parseInt(pValue.replaceAll("%", "").trim());
+            if (percent >= 0) {
+                setDynamicByPercent(percent);
+            }
+            return true;
+        } catch (Exception e) {
+            //no percent
+        }
+        return false;
     }
 
     @Override

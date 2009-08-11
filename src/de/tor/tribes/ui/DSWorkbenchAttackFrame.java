@@ -8,6 +8,7 @@ package de.tor.tribes.ui;
 import de.tor.tribes.io.ServerManager;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Attack;
+import de.tor.tribes.types.StandardAttackElement;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.editors.AttackTypeCellEditor;
@@ -24,11 +25,13 @@ import de.tor.tribes.util.attack.AttackManager;
 import java.util.List;
 import de.tor.tribes.util.attack.AttackManagerListener;
 import de.tor.tribes.ui.editors.DateSpinEditor;
+import de.tor.tribes.ui.editors.StandardAttackElementEditor;
 import de.tor.tribes.ui.editors.UnitCellEditor;
 import de.tor.tribes.ui.editors.VillageCellEditor;
 import de.tor.tribes.ui.models.StandardAttackTableModel;
 import de.tor.tribes.ui.renderer.AttackTypeCellRenderer;
 import de.tor.tribes.ui.renderer.ColoredDateCellRenderer;
+import de.tor.tribes.ui.renderer.UnitTableHeaderRenderer;
 import de.tor.tribes.util.html.AttackPlanHTMLExporter;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.JOptionPaneHelper;
@@ -42,6 +45,7 @@ import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.StringTokenizer;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JSpinner.DateEditor;
@@ -233,7 +237,6 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         jScrollPane5 = new javax.swing.JScrollPane();
         jStandardAttackTable = new javax.swing.JTable();
         jButton11 = new javax.swing.JButton();
-        jCancelApplyStandardAttacksButton = new javax.swing.JButton();
         jAttackPanel = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jAttackTable = new javax.swing.JTable();
@@ -973,13 +976,6 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
             }
         });
 
-        jCancelApplyStandardAttacksButton.setText(bundle.getString("DSWorkbenchAttackFrame.jCancelApplyStandardAttacksButton.text")); // NOI18N
-        jCancelApplyStandardAttacksButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireApplyStandardAttacksEvent(evt);
-            }
-        });
-
         javax.swing.GroupLayout jStandardAttackDialogLayout = new javax.swing.GroupLayout(jStandardAttackDialog.getContentPane());
         jStandardAttackDialog.getContentPane().setLayout(jStandardAttackDialogLayout);
         jStandardAttackDialogLayout.setHorizontalGroup(
@@ -988,10 +984,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
                 .addContainerGap()
                 .addGroup(jStandardAttackDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 472, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jStandardAttackDialogLayout.createSequentialGroup()
-                        .addComponent(jCancelApplyStandardAttacksButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton11)))
+                    .addComponent(jButton11, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addContainerGap())
         );
         jStandardAttackDialogLayout.setVerticalGroup(
@@ -1000,9 +993,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
                 .addContainerGap()
                 .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 305, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jStandardAttackDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton11)
-                    .addComponent(jCancelApplyStandardAttacksButton))
+                .addComponent(jButton11)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -1419,7 +1410,8 @@ private void fireSendAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:eve
         int row = jAttackTable.convertRowIndexToModel(selectedRow);
         Village source = (Village) AttackManagerTableModel.getSingleton().getValueAt(row, 0);
         Village target = (Village) AttackManagerTableModel.getSingleton().getValueAt(row, 1);
-        BrowserCommandSender.sendTroops(source, target);
+        int type = (Integer) AttackManagerTableModel.getSingleton().getValueAt(row, 6);
+        BrowserCommandSender.sendTroops(source, target, type);
     }
 }//GEN-LAST:event_fireSendAttackEvent
 
@@ -2334,27 +2326,27 @@ private void fireCleanUpAttacksEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST
 
 private void fireSetStandardAttacksEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSetStandardAttacksEvent
     //build table
-    try{
-        System.out.println("setup");
-    StandardAttackTableModel.getSingleton().setup();
-        System.out.println("set model");
-    jStandardAttackTable.setModel(StandardAttackTableModel.getSingleton());
-     jStandardAttackDialog.setLocationRelativeTo(this);
-    System.out.println("show");
-    jStandardAttackDialog.setVisible(true);
-    }catch(Exception e){
-        e.printStackTrace();
-    }
+    try {
+        StandardAttackTableModel.getSingleton().setup();
 
-   
+        jStandardAttackTable.setModel(StandardAttackTableModel.getSingleton());
+        for (int i = 0; i < jStandardAttackTable.getColumnCount(); i++) {
+            jStandardAttackTable.getColumnModel().getColumn(i).setHeaderRenderer(new UnitTableHeaderRenderer());
+        }
+        jStandardAttackTable.setDefaultEditor(StandardAttackElement.class, new StandardAttackElementEditor());
+        jStandardAttackDialog.setLocationRelativeTo(this);
+        jStandardAttackDialog.setVisible(true);
+    } catch (Exception e) {
+    }
 }//GEN-LAST:event_fireSetStandardAttacksEvent
 
 private void fireApplyStandardAttacksEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireApplyStandardAttacksEvent
-    if (evt.getSource() != jCancelApplyStandardAttacksButton) {
-        //set standard attacks
-    }
     jStandardAttackDialog.setVisible(false);
 }//GEN-LAST:event_fireApplyStandardAttacksEvent
+
+    public JDialog getStandardAttackDialog() {
+        return jStandardAttackDialog;
+    }
 
     /**Set table model for filteres selection*/
     private void setTableModel(JTable pTable, Hashtable<Village, Boolean> pVillages) {
@@ -2399,8 +2391,7 @@ private void fireApplyStandardAttacksEvent(java.awt.event.MouseEvent evt) {//GEN
         DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
 
             @Override
-            public Component getTableCellRendererComponent(
-                    JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
                 Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
                 c.setBackground(Constants.DS_BACK);
                 DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
@@ -2409,8 +2400,7 @@ private void fireApplyStandardAttacksEvent(java.awt.event.MouseEvent evt) {//GEN
             }
         };
 
-        for (int i = 0; i <
-                pTable.getColumnCount(); i++) {
+        for (int i = 0; i < pTable.getColumnCount(); i++) {
             pTable.getColumn(pTable.getColumnName(i)).setHeaderRenderer(headerRenderer);
         }
 
@@ -2486,7 +2476,6 @@ private void fireApplyStandardAttacksEvent(java.awt.event.MouseEvent evt) {//GEN
     private javax.swing.JButton jButton7;
     private javax.swing.JButton jButton8;
     private javax.swing.JButton jButton9;
-    private javax.swing.JButton jCancelApplyStandardAttacksButton;
     private javax.swing.JButton jCancelButton;
     private javax.swing.JButton jCancelCopyButton;
     private javax.swing.JButton jChangeArrivalButton;

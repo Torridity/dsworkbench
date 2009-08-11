@@ -6,7 +6,10 @@ package de.tor.tribes.ui.models;
 
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
+import de.tor.tribes.types.StandardAttackElement;
 import de.tor.tribes.types.Village;
+import de.tor.tribes.ui.DSWorkbenchAttackFrame;
+import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.attack.StandardAttackManager;
 import java.util.Date;
 import java.util.LinkedList;
@@ -46,39 +49,10 @@ public class StandardAttackTableModel extends AbstractTableModel {
         classes.add(String.class);
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
             names.add(unit.getPlainName());
-            classes.add(UnitHolder.class);
+            classes.add(StandardAttackElement.class);
         }
         colNames = names.toArray(new String[]{});
         types = classes.toArray(new Class[]{});
-    /*    System.out.println(colNames.length);
-    List<Object> row = new LinkedList<Object>();
-    row.add("Keiner");
-    for (StandardAttackElement element : StandardAttackManager.getSingleton().getStandardAttacks().get("Keiner")) {
-    row.add(element);
-    }
-    System.out.println(row);
-    addRow(row.toArray(new Object[]{}));
-    row.clear();
-    row.add("Fake");
-    for (StandardAttackElement element : StandardAttackManager.getSingleton().getStandardAttacks().get("Fake")) {
-    row.add(element);
-    }
-    addRow(row.toArray());
-    row.add("Off");
-    for (StandardAttackElement element : StandardAttackManager.getSingleton().getStandardAttacks().get("Off")) {
-    row.add(element);
-    }
-    addRow(row.toArray());
-    row.add("AG");
-    for (StandardAttackElement element : StandardAttackManager.getSingleton().getStandardAttacks().get("AG")) {
-    row.add(element);
-    }
-    addRow(row.toArray());
-    row.add("Unterstützung");
-    for (StandardAttackElement element : StandardAttackManager.getSingleton().getStandardAttacks().get("Unterstützung")) {
-    row.add(element);
-    }
-    addRow(row.toArray());*/
     }
 
     @Override
@@ -146,5 +120,30 @@ public class StandardAttackTableModel extends AbstractTableModel {
 
     @Override
     public void setValueAt(Object pValue, int pRow, int pCol) {
+        int typeId = 0;
+        if (pRow == 0) {
+            typeId = StandardAttackManager.NO_TYPE_ROW;
+        } else if (pRow == 1) {
+            typeId = StandardAttackManager.FAKE_TYPE_ROW;
+        } else if (pRow == 2) {
+            typeId = StandardAttackManager.OFF_TYPE_ROW;
+        } else if (pRow == 3) {
+            typeId = StandardAttackManager.SNOB_TYPE_ROW;
+        } else if (pRow == 4) {
+            typeId = StandardAttackManager.SUPPORT_TYPE_ROW;
+        }
+
+        String col = getColumnName(pCol);
+        UnitHolder unit = DataHolder.getSingleton().getUnitByPlainName(col);
+        StandardAttackElement elem = StandardAttackManager.getSingleton().getElementForUnit(typeId, unit);
+        if (!elem.trySettingAmount((String) pValue)) {
+            String message = "Ungültiger Wert. Zulässige Werte sind:\n";
+            message += "- Alle\n";
+            message += "- Anzahl (z.B. 100)\n";
+            message += "- Alle - Anzahl (z.B. Alle - 100)\n";
+            message += "- Anzahl% (z.B. 10%)\n";
+
+            JOptionPaneHelper.showInformationBox(DSWorkbenchAttackFrame.getSingleton().getStandardAttackDialog(), message, "Information");
+        }
     }
 }

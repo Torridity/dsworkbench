@@ -1,37 +1,32 @@
 // ==UserScript==
-// @name DS - Stammespunkteverlauf
-// @namespace none
-// @include http://de*.die-staemme.de/*screen=place*
+// @name           DS Workbench Scripts
+// @namespace      none
+// @include        http://de*.die-staemme.de/game.php?*screen=place*
+// @include        http://de*.die-staemme.de/game.php?screen=place*
+// @include        http://de*.die-staemme.de/game.php?*screen=place
+// @exclude        http://de*.die-staemme.de/game.php?*screen=place&mode=units
+// @exclude        http://de*.die-staemme.de/game.php?*screen=place&mode=sim
+// @exclude        http://de*.die-staemme.de/game.php?*screen=place&mode=neighbor
+// @exclude        http://de*.die-staemme.de/game.php?*screen=place&try=confirm
 // ==/UserScript==
 
-var args = getArgs(); 
-if (args.type){
-		type = parseInt(args.type);
-}else{
-	 type = -1;
-}
-	
-if(type == 0){
-   //all available units
-   units = new Array("spear", "sword", "axe", "archer", "spy", "light", "marcher", "heavy", "ram", "catapult", "knight", "snob");
-   //go through all units
 
-   alert(document.getElementsByName("support")[0]);
-   for (var i = 0; i < units.length; ++i){
-	    //get field for unit
-	    field = document.getElementsByName(units[i])[0];
-	    //if field is valid and arguments contain value for field
-	    if(field != null && args[units[i]] != null){
-	       //insert valid value
-         insertUnit(field, parseInt(args[units[i]]));
-      }
-   }
+
+if(window.navigator.userAgent.indexOf("Firefox") > -1){
+window.addEventListener('load', function()
+{ getArgs(); }, false);
+}else{
+addLoadEvent(function() {
+  getArgs();
+});
 }
 
 //parse arguments
 function getArgs() { 
-   var args = new Object(); 
+   args = new Object();
+
    var query = location.search.substring(1); 
+
    var pairs = query.split("&"); 
    for(var i = 0; i < pairs.length; i++) { 
       var pos = pairs[i].indexOf('='); 
@@ -40,11 +35,54 @@ function getArgs() {
          var value = pairs[i].substring(pos+1); 
          args[argname] = unescape(value); 
       } 
-   return args; 
+   //return args; 
+   if (args.type){
+		type = parseInt(args.type);
+}else{
+	 type = -1;
+}
+if(type == 0){
+  doInsertUnitsAction();
+}
 } 
 
+function doInsertUnitsAction(){
 
 
+ //all available units
+   units = new Array("spear", "sword", "axe", "archer", "spy", "light", "marcher", "heavy", "ram", "catapult", "knight", "snob");
+   //go through all units
+
+   for (var i = 0; i < units.length; ++i){
+	    //get field for unit	    
+	    field = document.getElementsByName(units[i])[0];
+	   
+	    //if field is valid and arguments contain value for field
+	    if(field != null && args[units[i]] != null){
+	       //insert valid value
+if(window.navigator.userAgent.indexOf("Firefox") > -1){
+         unsafeWindow.insertUnit(field, parseInt(args[units[i]]));
+}else{
+insertUnit(field, parseInt(args[units[i]]));
+}
+      }
+   }
+}
+
+function addLoadEvent(func) {
+var oldonload = unsafeWindow.onload;
+
+  if (typeof window.onload != 'function') {
+    window.onload = func;
+  } else {
+    window.onload = function() {
+      if (oldonload) {
+        oldonload();
+      }
+      func();
+    }
+  }
+}
 
 /**helper function**/
 
@@ -57,18 +95,4 @@ function getArgs() {
 
 function attack(){
 	document.forms.units.attack.click();
-}
-
-function getGameDoc() {
-    getdoc = window.document;
-    
-    if(!getdoc.URL.match('game\.php')) {
-        for(var i=0; i<window.frames.length; i++) {
-            if(window.frames[i].document.URL.match('game\.php')) {
-                getdoc = window.frames[i].document;
-            }
-        }
-    }
-    
-    return getdoc;
 }

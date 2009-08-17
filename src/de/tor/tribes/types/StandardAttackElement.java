@@ -107,6 +107,7 @@ public class StandardAttackElement {
     }
 
     public int getTroopsAmount(Village pVillage) {
+        System.out.println(dynamicAmount);
         VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(pVillage);
         if (holder == null) {
             //no info available

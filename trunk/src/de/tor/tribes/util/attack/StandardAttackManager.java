@@ -174,6 +174,7 @@ public class StandardAttackManager {
                 break;
             }
             case Attack.FAKE_TYPE: {
+                System.out.println("Get Fake type");
                 activeList = standardAttacks.get("Fake");
                 break;
             }
@@ -193,6 +194,8 @@ public class StandardAttackManager {
 
         for (StandardAttackElement elem : activeList) {
             if (elem.affectsUnit(pUnit)) {
+                System.out.println("UNit " + pUnit);
+                System.out.println("Amount " + elem.getTroopsAmount(pVillage));
                 return elem.getTroopsAmount(pVillage);
             }
         }

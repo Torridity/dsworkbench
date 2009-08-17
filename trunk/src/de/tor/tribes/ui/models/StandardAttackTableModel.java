@@ -84,13 +84,13 @@ public class StandardAttackTableModel extends AbstractTableModel {
         if (pRow == 0) {
             typeId = StandardAttackManager.NO_TYPE_ROW;
         } else if (pRow == 1) {
-            typeId = StandardAttackManager.FAKE_TYPE_ROW;
-        } else if (pRow == 2) {
             typeId = StandardAttackManager.OFF_TYPE_ROW;
-        } else if (pRow == 3) {
+        } else if (pRow == 2) {
             typeId = StandardAttackManager.SNOB_TYPE_ROW;
-        } else if (pRow == 4) {
+        } else if (pRow == 3) {
             typeId = StandardAttackManager.SUPPORT_TYPE_ROW;
+        } else if (pRow == 4) {
+            typeId = StandardAttackManager.FAKE_TYPE_ROW;
         }
 
         if (pCol == 0) {
@@ -124,13 +124,13 @@ public class StandardAttackTableModel extends AbstractTableModel {
         if (pRow == 0) {
             typeId = StandardAttackManager.NO_TYPE_ROW;
         } else if (pRow == 1) {
-            typeId = StandardAttackManager.FAKE_TYPE_ROW;
-        } else if (pRow == 2) {
             typeId = StandardAttackManager.OFF_TYPE_ROW;
-        } else if (pRow == 3) {
+        } else if (pRow == 2) {
             typeId = StandardAttackManager.SNOB_TYPE_ROW;
-        } else if (pRow == 4) {
+        } else if (pRow == 3) {
             typeId = StandardAttackManager.SUPPORT_TYPE_ROW;
+        } else if (pRow == 4) {
+            typeId = StandardAttackManager.FAKE_TYPE_ROW;
         }
 
         String col = getColumnName(pCol);

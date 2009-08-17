@@ -92,7 +92,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         jScrollPane1.getViewport().setBackground(Constants.DS_BACK_LIGHT);
         jScrollPane2.getViewport().setBackground(Constants.DS_BACK_LIGHT);
         jScrollPane3.getViewport().setBackground(Constants.DS_BACK_LIGHT);
-
+        jScrollPane6.getViewport().setBackground(Constants.DS_BACK_LIGHT);
         TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>();
         jAttackTable.setRowSorter(sorter);
         jAttackTable.setColumnSelectionAllowed(false);
@@ -237,6 +237,8 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         jScrollPane5 = new javax.swing.JScrollPane();
         jStandardAttackTable = new javax.swing.JTable();
         jButton11 = new javax.swing.JButton();
+        jScrollPane6 = new javax.swing.JScrollPane();
+        jTextPane1 = new javax.swing.JTextPane();
         jAttackPanel = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jAttackTable = new javax.swing.JTable();
@@ -976,25 +978,42 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
             }
         });
 
+        jScrollPane6.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        jScrollPane6.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        jScrollPane6.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+        jScrollPane6.setMaximumSize(new java.awt.Dimension(472, 159));
+        jScrollPane6.setMinimumSize(new java.awt.Dimension(472, 159));
+        jScrollPane6.setOpaque(false);
+        jScrollPane6.setPreferredSize(new java.awt.Dimension(472, 159));
+
+        jTextPane1.setContentType(bundle.getString("DSWorkbenchAttackFrame.jTextPane1.contentType")); // NOI18N
+        jTextPane1.setEditable(false);
+        jTextPane1.setText(bundle.getString("DSWorkbenchAttackFrame.jTextPane1.text")); // NOI18N
+        jTextPane1.setOpaque(false);
+        jScrollPane6.setViewportView(jTextPane1);
+
         javax.swing.GroupLayout jStandardAttackDialogLayout = new javax.swing.GroupLayout(jStandardAttackDialog.getContentPane());
         jStandardAttackDialog.getContentPane().setLayout(jStandardAttackDialogLayout);
         jStandardAttackDialogLayout.setHorizontalGroup(
             jStandardAttackDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jStandardAttackDialogLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jStandardAttackDialogLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jStandardAttackDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 472, Short.MAX_VALUE)
-                    .addComponent(jButton11, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addGroup(jStandardAttackDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jScrollPane6, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 472, Short.MAX_VALUE)
+                    .addComponent(jScrollPane5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 472, Short.MAX_VALUE)
+                    .addComponent(jButton11))
                 .addContainerGap())
         );
         jStandardAttackDialogLayout.setVerticalGroup(
             jStandardAttackDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jStandardAttackDialogLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 305, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jButton11)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         setTitle(bundle.getString("DSWorkbenchAttackFrame.title")); // NOI18N
@@ -2541,6 +2560,7 @@ private void fireApplyStandardAttacksEvent(java.awt.event.MouseEvent evt) {//GEN
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
+    private javax.swing.JScrollPane jScrollPane6;
     private javax.swing.JSpinner jSecondsField;
     private javax.swing.JDialog jSelectionFilterDialog;
     private javax.swing.JButton jSendAttackButton;
@@ -2556,6 +2576,7 @@ private void fireApplyStandardAttacksEvent(java.awt.event.MouseEvent evt) {//GEN
     private com.l2fprod.common.swing.JTaskPaneGroup jTaskPaneGroup2;
     private com.l2fprod.common.swing.JTaskPaneGroup jTaskPaneGroup3;
     private com.l2fprod.common.swing.JTaskPaneGroup jTaskPaneGroup4;
+    private javax.swing.JTextPane jTextPane1;
     private javax.swing.JDialog jTimeChangeDialog;
     // End of variables declaration//GEN-END:variables
 }

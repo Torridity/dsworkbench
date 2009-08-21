@@ -98,7 +98,10 @@ public class StandardAttackElement {
 
     public void setDynamicByPercent(int pPercent) {
         fixedAmount = -1;
-        dynamicAmount = pPercent + "%";
+        //catch values smaller 0 and larger 100
+        int percent = (pPercent > 100) ? 100 : pPercent;
+        percent = (percent < 0) ? 0 : percent;
+        dynamicAmount = percent + "%";
     }
 
     public void setAll() {

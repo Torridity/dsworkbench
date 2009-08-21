@@ -46,13 +46,13 @@ public class VillageTagFrame extends javax.swing.JFrame {
             return;
         }
         jPlayerName.setText(t.getName());
-        DefaultComboBoxModel model = new DefaultComboBoxModel();
         List<Village> list = t.getVillageList();
         Collections.sort(list);
         for (Village v : list) {
-            model.addElement(v);
+            list.add(v);
         }
-        jVillageList.setModel(model);
+        Collections.sort(list);
+        jVillageList.setModel(new DefaultComboBoxModel(list.toArray(new Village[]{})));
         jVillageList.setSelectedItem(pVillage);
 
         List<Tag> tags = TagManager.getSingleton().getTags(pVillage);
@@ -259,12 +259,14 @@ private void fireVillageSelectionChangedEvent(java.awt.event.ItemEvent evt) {//G
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        java.awt.EventQueue.invokeLater(new Runnable() {
+       /* java.awt.EventQueue.invokeLater(new Runnable() {
 
             public void run() {
                 new VillageTagFrame().setVisible(true);
             }
-        });
+        });*/
+
+        System.out.println(Math.round(4.496529606));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

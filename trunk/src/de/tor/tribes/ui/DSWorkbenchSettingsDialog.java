@@ -52,6 +52,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 
 /**
  * @TODO (1.X) Shortcuts editable
+ * @TODO (1.7) More information about troop density in help, misc settings screes has no troop density information?
  * @author Jejkal
  */
 public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements

@@ -70,7 +70,13 @@ insertUnit(field, parseInt(args[units[i]]));
 }
 
 function addLoadEvent(func) {
-var oldonload = unsafeWindow.onload;
+var oldonload;
+if(window.navigator.userAgent.indexOf("Firefox") > -1){
+oldonload = unsafeWindow.onload;
+}else{
+oldonload = window.onload
+}
+
 
   if (typeof window.onload != 'function') {
     window.onload = func;

@@ -50,6 +50,8 @@ import javax.swing.JFileChooser;
 import de.tor.tribes.util.troops.TroopsManager;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.datatransfer.StringSelection;
 import java.io.FileWriter;
@@ -95,6 +97,8 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
     private ImageIcon uvModeOn = null;
     private ImageIcon uvModeOff = null;
     private boolean putOnline = false;
+    private Image mPopup = null;
+    private Rectangle mPopupPos = null;
 
     public static synchronized DSWorkbenchMainFrame getSingleton() {
         if (SINGLETON == null) {
@@ -107,6 +111,8 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
     DSWorkbenchMainFrame() {
         initComponents();
         setTitle("DS Workbench " + Constants.VERSION + Constants.VERSION_ADDITION);
+
+
         jExportDialog.pack();
         jAddROIDialog.pack();
         // <editor-fold defaultstate="collapsed" desc=" Register ShutdownHook ">
@@ -477,6 +483,12 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         //update online state
         onlineStateChanged();
     }
+    
+   /* public void setPopup(Image pPopup, Rectangle pPopupPosition) {
+        mPopup = pPopup;
+        mPopupPos = pPopupPosition;
+        ((Graphics2D)getGlassPane().getGraphics()).drawImage(mPopup, mPopupPos.x, mPopupPos.y,null);
+    }*/
 
     public String[] getCurrentPosition() {
         return new String[]{jCenterX.getText(), jCenterY.getText()};
@@ -3023,6 +3035,15 @@ private void fireGraphicPackChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FI
         }
         return null;
     }
+
+ /*   public void repaint() {
+        if (mPopup == null) {
+            System.out.println("null");
+            return;
+        }
+        ((Graphics2D) getBufferStrategy().getDrawGraphics()).drawImage(mPopup, mPopupPos.x, mPopupPos.y, null);
+        getBufferStrategy().show();
+    }*/
 
 // <editor-fold defaultstate="collapsed" desc=" Listener EventHandlers ">
     @Override

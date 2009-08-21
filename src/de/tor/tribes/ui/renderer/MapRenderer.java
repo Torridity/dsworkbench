@@ -1942,6 +1942,8 @@ public class MapRenderer extends Thread {
             return;
         }
 
+       /* BufferedImage im = new BufferedImage(500, 300, BufferedImage.TYPE_INT_RGB);
+        Graphics2D g2d = (Graphics2D)im.getGraphics();*/
         Tribe t = mouseVillage.getTribe();
         Ally a = null;
         if (t != null) {
@@ -2173,6 +2175,7 @@ public class MapRenderer extends Thread {
         pG2d.drawImage(sub, (int) villageRect.getCenterX(), (int) villageRect.getCenterY(), null);
         g2d.setFont(before);
         g2d.setStroke(sBefore);
+        //DSWorkbenchMainFrame.getSingleton().setPopup(im.getScaledInstance(500, 300, BufferedImage.SCALE_DEFAULT), rect);
     }
 
     /**Get bonus text, depending on server version*/

@@ -5,6 +5,7 @@
  */
 package de.tor.tribes.ui;
 
+import de.tor.tribes.dssim.ui.DSWorkbenchSimulatorFrame;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.php.ScreenUploadInterface;
 import de.tor.tribes.types.Tribe;
@@ -34,6 +35,7 @@ import javax.swing.JOptionPane;
 import org.apache.log4j.Logger;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.ui.models.ConquersTableModel;
+import de.tor.tribes.ui.models.StandardAttackTableModel;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.MainShutdownHook;
@@ -50,7 +52,6 @@ import javax.swing.JFileChooser;
 import de.tor.tribes.util.troops.TroopsManager;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.datatransfer.StringSelection;
@@ -76,6 +77,7 @@ import javax.swing.table.DefaultTableModel;
  * @TODO (1.5?) Add min number to troop filter in attack planer????
  * @TODO (DIFF) Layer positions stored
  * @TODO (DIFF) Skin selectable in main frame (Update settings docu!)
+ * @TODO (DIFF) Added A*Star to tools
  * @author  Charon
  */
 public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
@@ -483,13 +485,12 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         //update online state
         onlineStateChanged();
     }
-    
-   /* public void setPopup(Image pPopup, Rectangle pPopupPosition) {
-        mPopup = pPopup;
-        mPopupPos = pPopupPosition;
-        ((Graphics2D)getGlassPane().getGraphics()).drawImage(mPopup, mPopupPos.x, mPopupPos.y,null);
-    }*/
 
+    /* public void setPopup(Image pPopup, Rectangle pPopupPosition) {
+    mPopup = pPopup;
+    mPopupPos = pPopupPosition;
+    ((Graphics2D)getGlassPane().getGraphics()).drawImage(mPopup, mPopupPos.x, mPopupPos.y,null);
+    }*/
     public String[] getCurrentPosition() {
         return new String[]{jCenterX.getText(), jCenterY.getText()};
     }
@@ -527,6 +528,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         DSWorkbenchConquersFrame.getSingleton().setupConquersPanel();
         //update troops table and troops view
         TroopsManagerTableModel.getSingleton().setup();
+        StandardAttackTableModel.getSingleton().setup();
         DSWorkbenchTroopsFrame.getSingleton().setupTroopsPanel();
         //update attack planner
         if (mTribeTribeAttackFrame != null) {
@@ -552,6 +554,9 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
 
         DSWorkbenchSelectionFrame.getSingleton().clear();
         DSWorkbenchNotepad.getSingleton().setup();
+        if (DSWorkbenchSimulatorFrame.getSingleton().isVisible()) {
+            DSWorkbenchSimulatorFrame.getSingleton().showIntegratedVersion(GlobalOptions.getSelectedServer());
+        }
         ConquerManager.getSingleton().forceUpdate();
         //relevant for first start
         propagateLayerOrder();
@@ -874,6 +879,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jTribeTribeAttackItem = new javax.swing.JMenuItem();
         jUnitOverviewItem = new javax.swing.JMenuItem();
         jSelectionOverviewItem = new javax.swing.JMenuItem();
+        jStartAStarItem = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
         jShowAttackFrame = new javax.swing.JCheckBoxMenuItem();
         jShowMarkerFrame = new javax.swing.JCheckBoxMenuItem();
@@ -1610,25 +1616,23 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                             .addComponent(jLabel11))
                         .addGap(10, 10, 10)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jPopupTroops, 0, 105, Short.MAX_VALUE)
-                            .addComponent(jRadarSpinner, javax.swing.GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE))
+                            .addComponent(jPopupTroops, 0, 111, Short.MAX_VALUE)
+                            .addComponent(jRadarSpinner, javax.swing.GroupLayout.DEFAULT_SIZE, 111, Short.MAX_VALUE))
                         .addGap(40, 40, 40))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
-                                .addComponent(jLabel12)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jGraphicPacks, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
-                                .addComponent(jLabel10)
-                                .addGap(14, 14, 14)
-                                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLayerUpButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLayerDownButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addComponent(jShowMapPopup, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
+                            .addComponent(jLabel12)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addComponent(jGraphicPacks, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
+                            .addComponent(jLabel10)
+                            .addGap(14, 14, 14)
+                            .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(jLayerUpButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLayerDownButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jShowMapPopup, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -1651,7 +1655,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel10)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 184, Short.MAX_VALUE)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 131, Short.MAX_VALUE)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jLayerUpButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -1895,6 +1899,15 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             }
         });
         jMenu3.add(jSelectionOverviewItem);
+
+        jStartAStarItem.setBackground(new java.awt.Color(239, 235, 223));
+        jStartAStarItem.setText(bundle.getString("DSWorkbenchMainFrame.jStartAStarItem.text_1")); // NOI18N
+        jStartAStarItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fireToolsActionEvent(evt);
+            }
+        });
+        jMenu3.add(jStartAStarItem);
 
         jMenuBar1.add(jMenu3);
 
@@ -2230,6 +2243,8 @@ private void fireToolsActionEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:e
         UnitOrderBuilder.showUnitOrder(null, null);
     } else if (evt.getSource() == jSelectionOverviewItem) {
         DSWorkbenchSelectionFrame.getSingleton().setVisible(true);
+    } else if (evt.getSource() == jStartAStarItem) {
+        DSWorkbenchSimulatorFrame.getSingleton().showIntegratedVersion(GlobalOptions.getSelectedServer());
     }
 }//GEN-LAST:event_fireToolsActionEvent
 
@@ -3036,13 +3051,13 @@ private void fireGraphicPackChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FI
         return null;
     }
 
- /*   public void repaint() {
-        if (mPopup == null) {
-            System.out.println("null");
-            return;
-        }
-        ((Graphics2D) getBufferStrategy().getDrawGraphics()).drawImage(mPopup, mPopupPos.x, mPopupPos.y, null);
-        getBufferStrategy().show();
+    /*   public void repaint() {
+    if (mPopup == null) {
+    System.out.println("null");
+    return;
+    }
+    ((Graphics2D) getBufferStrategy().getDrawGraphics()).drawImage(mPopup, mPopupPos.x, mPopupPos.y, null);
+    getBufferStrategy().show();
     }*/
 
 // <editor-fold defaultstate="collapsed" desc=" Listener EventHandlers ">
@@ -3275,6 +3290,7 @@ private void fireGraphicPackChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FI
     private javax.swing.JCheckBoxMenuItem jShowRankFrame;
     private javax.swing.JCheckBoxMenuItem jShowTagFrame;
     private javax.swing.JCheckBoxMenuItem jShowTroopsFrame;
+    private javax.swing.JMenuItem jStartAStarItem;
     private com.l2fprod.common.swing.JTaskPane jTaskPane1;
     private com.l2fprod.common.swing.JTaskPaneGroup jTaskPaneGroup1;
     private com.l2fprod.common.swing.JTaskPaneGroup jTaskPaneGroup2;

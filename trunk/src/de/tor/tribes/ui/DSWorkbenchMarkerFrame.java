@@ -36,7 +36,7 @@ import javax.swing.table.TableCellRenderer;
 import org.apache.log4j.Logger;
 
 /**
- *
+ *@TODO (DIFF) Fixed change marker color problem
  * @author  Charon
  */
 public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements MarkerManagerListener {
@@ -542,10 +542,8 @@ private void fireCloseAddRenameDialogEvent(java.awt.event.MouseEvent evt) {//GEN
                     } else {
                         m = MarkerManager.getSingleton().getMarker(cell.getAlly());
                     }
-
-                    Color color = (Color) jMarkerTable.getModel().getValueAt(jMarkerTable.getSelectedRow(), 1);
+                    Color color = (Color) MarkerTableModel.getSingleton().getValueAt(jMarkerTable.getSelectedRow(), 1);
                     if (m != null && color != null) {
-
                         m.setMarkerColor(color);
                         MarkerManager.getSingleton().markerUpdatedExternally();
                     }

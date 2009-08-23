@@ -373,6 +373,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
         UIManager.put("PopupMenu.font", f);
         UIManager.put("ProgressBar.font", f);
         UIManager.put("RadioButton.font", f);
+        UIManager.put("ToggleButton.font", f);
         UIManager.put("ScrollPane.font", f);
         UIManager.put("Table.font", f);
         UIManager.put("TableHeader.font", f);
@@ -387,7 +388,8 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
         UIManager.put("Label.background", Constants.DS_BACK);
         UIManager.put("MenuBar.background", Constants.DS_BACK);
         UIManager.put("ScrollPane.background", Constants.DS_BACK);
-        UIManager.put("Button.background", Constants.DS_BACK);
+        UIManager.put("Button.background", Constants.DS_BACK_LIGHT);
+        UIManager.put("ToggleButton.background", Constants.DS_BACK_LIGHT);
         UIManager.put("TabbedPane.background", Constants.DS_BACK);
         UIManager.put("SplitPane.background", Constants.DS_BACK);
         UIManager.put("Separator.background", Constants.DS_BACK);

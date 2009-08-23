@@ -2346,13 +2346,16 @@ private void fireCleanUpAttacksEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST
 private void fireSetStandardAttacksEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSetStandardAttacksEvent
     //build table
     try {
-        StandardAttackTableModel.getSingleton().setup();
+        jStandardAttackTable.invalidate();
+        jStandardAttackTable.setModel(new DefaultTableModel());
+        jStandardAttackTable.revalidate();
 
         jStandardAttackTable.setModel(StandardAttackTableModel.getSingleton());
-        for (int i = 0; i < jStandardAttackTable.getColumnCount(); i++) {
+        for (int i = 0; i < StandardAttackTableModel.getSingleton().getColumnCount(); i++) {
             jStandardAttackTable.getColumnModel().getColumn(i).setHeaderRenderer(new UnitTableHeaderRenderer());
         }
         jStandardAttackTable.setDefaultEditor(StandardAttackElement.class, new StandardAttackElementEditor());
+
         jStandardAttackDialog.setLocationRelativeTo(this);
         jStandardAttackDialog.setVisible(true);
     } catch (Exception e) {

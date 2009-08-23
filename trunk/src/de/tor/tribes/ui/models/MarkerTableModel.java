@@ -87,4 +87,19 @@ public class MarkerTableModel extends AbstractTableModel {
         }
         return null;
     }
+
+    @Override
+    public void setValueAt(Object pValue, int rowIndex, int columnIndex) {
+
+        switch (columnIndex) {
+            case 0: {
+                // view can't be set
+                break;
+            }
+            case 1: {
+                //set color
+                MarkerManager.getSingleton().getMarkerSetMarkers(activeSet)[rowIndex].setMarkerColor((Color) pValue);
+            }
+        }
+    }
 }

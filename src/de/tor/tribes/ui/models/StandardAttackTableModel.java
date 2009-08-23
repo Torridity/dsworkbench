@@ -51,8 +51,8 @@ public class StandardAttackTableModel extends AbstractTableModel {
             names.add(unit.getPlainName());
             classes.add(StandardAttackElement.class);
         }
-        colNames = names.toArray(new String[]{});
         types = classes.toArray(new Class[]{});
+        colNames = names.toArray(new String[]{});
     }
 
     @Override

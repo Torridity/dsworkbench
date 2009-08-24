@@ -11,7 +11,6 @@ import de.tor.tribes.types.Village;
 import de.tor.tribes.util.attack.StandardAttackManager;
 import java.awt.Desktop;
 import java.net.URI;
-import java.util.Hashtable;
 import org.apache.log4j.Logger;
 
 /**
@@ -34,11 +33,11 @@ public class BrowserCommandSender {
                 url = baseURL + "/game.php?t=" + uvID + "&village=";
             }
             url += pSource.getId() + "&screen=place&mode=command&target=" + pTarget.getId();
-            url +="&type=0";
-            System.out.println("Type is " + pType);
+            url += "&type=0";
             for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
                 url += "&" + unit.getPlainName() + "=" + StandardAttackManager.getSingleton().getAmountForVillage(pType, unit, pSource);
             }
+            url += "&ts=" + System.currentTimeMillis();
             String browser = GlobalOptions.getProperty("default.browser");
             if (browser == null || browser.length() < 1) {
                 Desktop.getDesktop().browse(new URI(url));
@@ -61,6 +60,7 @@ public class BrowserCommandSender {
                 url = baseURL + "/game.php?t=" + uvID + "&village=";
             }
             url += pSource.getId() + "&screen=place&mode=command&target=" + pTarget.getId();
+            url += "&ts=" + System.currentTimeMillis();
             String browser = GlobalOptions.getProperty("default.browser");
             if (browser == null || browser.length() < 1) {
                 Desktop.getDesktop().browse(new URI(url));

@@ -40,7 +40,8 @@ public class BruteForce extends AbstractAttackAlgorithm {
             int pMaxAttacksPerVillage,
             int pMaxCleanPerSnob,
             TimeFrame pTimeFrame,
-            boolean pRandomize) {
+            boolean pRandomize,
+            boolean pUse5Snobs) {
         Enumeration<UnitHolder> unitKeys = pSources.keys();
         Hashtable<Village, Hashtable<UnitHolder, List<Village>>> attacks = new Hashtable<Village, Hashtable<UnitHolder, List<Village>>>();
         notAssignedSources = new LinkedList<Village>();

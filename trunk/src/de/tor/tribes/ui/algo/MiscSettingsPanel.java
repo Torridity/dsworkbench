@@ -44,6 +44,12 @@ public class MiscSettingsPanel extends javax.swing.JPanel {
         jCleanOffsPerEnoblement.setEnabled(pValue);
     }
 
+    public void setSnobCountEnabled(boolean pValue) {
+        jLabel3.setEnabled(pValue);
+        jUse4Snobs.setEnabled(pValue);
+        jUse5Snobs.setEnabled(pValue);
+    }
+
     public int getMaxAttacksPerVillage() {
         return Integer.parseInt(jAttacksPerTarget.getText());
     }
@@ -54,6 +60,10 @@ public class MiscSettingsPanel extends javax.swing.JPanel {
 
     public boolean isRandomize() {
         return (jRandomizeBox.getSelectedIndex() == 1);
+    }
+
+    public boolean use5Snobs() {
+        return jUse5Snobs.isSelected();
     }
 
     public boolean validatePanel() {
@@ -121,12 +131,16 @@ public class MiscSettingsPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        snobButtonGroup = new javax.swing.ButtonGroup();
         jLabel1 = new javax.swing.JLabel();
         jAttacksPerTarget = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
         jCleanOffsPerEnoblement = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
         jRandomizeBox = new javax.swing.JComboBox();
+        jLabel3 = new javax.swing.JLabel();
+        jUse4Snobs = new javax.swing.JRadioButton();
+        jUse5Snobs = new javax.swing.JRadioButton();
 
         jLabel1.setText("Wieviele Angriffe sollen einem einzelnen Zieldorf maximal zugeordnet werden?");
         jLabel1.setMaximumSize(new java.awt.Dimension(374, 14));
@@ -152,6 +166,20 @@ public class MiscSettingsPanel extends javax.swing.JPanel {
 
         jRandomizeBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Alphabetisch, entsprechend der Dorfliste", "Zufällig" }));
 
+        jLabel3.setText("Wieviele AGs sollen für eine Adelung verwendet werden?");
+        jLabel3.setEnabled(false);
+
+        snobButtonGroup.add(jUse4Snobs);
+        jUse4Snobs.setSelected(true);
+        jUse4Snobs.setText("4");
+        jUse4Snobs.setEnabled(false);
+        jUse4Snobs.setOpaque(false);
+
+        snobButtonGroup.add(jUse5Snobs);
+        jUse5Snobs.setText("5");
+        jUse5Snobs.setEnabled(false);
+        jUse5Snobs.setOpaque(false);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -160,11 +188,17 @@ public class MiscSettingsPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
+                        .addComponent(jUse4Snobs)
+                        .addGap(18, 18, 18)
+                        .addComponent(jUse5Snobs)
+                        .addGap(391, 391, 391))
+                    .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jAttacksPerTarget, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 408, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jCleanOffsPerEnoblement, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel2))
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel3))
                         .addContainerGap(63, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -184,10 +218,16 @@ public class MiscSettingsPanel extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jCleanOffsPerEnoblement, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jUse4Snobs)
+                    .addComponent(jUse5Snobs))
+                .addGap(18, 18, 18)
                 .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jRandomizeBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(133, Short.MAX_VALUE))
+                .addContainerGap(71, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 //
@@ -196,8 +236,12 @@ public class MiscSettingsPanel extends javax.swing.JPanel {
     private javax.swing.JTextField jCleanOffsPerEnoblement;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JComboBox jRandomizeBox;
+    private javax.swing.JRadioButton jUse4Snobs;
+    private javax.swing.JRadioButton jUse5Snobs;
+    private javax.swing.ButtonGroup snobButtonGroup;
     // End of variables declaration//GEN-END:variables
 
     public static void main(String[] args) {

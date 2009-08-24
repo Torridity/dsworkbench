@@ -2009,6 +2009,7 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
 
     int minCleanForSnob = mMiscPanel.getCleanOffsPerEnoblement();
     boolean randomize = mMiscPanel.isRandomize();
+    boolean use5Snobs = mMiscPanel.use5Snobs();
     TimeFrame timeFrame = mTimePanel.getTimeFrame();
     //</editor-fold>
 
@@ -2052,7 +2053,8 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
             maxAttacksPerVillage,
             minCleanForSnob,
             timeFrame,
-            randomize);
+            randomize,
+            use5Snobs);
 
     List<Attack> attackList = new LinkedList<Attack>();
     List<Village> targets = new LinkedList<Village>();
@@ -2686,14 +2688,17 @@ private void fireAlgorithmChangedEvent(javax.swing.event.ChangeEvent evt) {//GEN
     if (evt.getSource() == jBruteForceAlgorithm && jBruteForceAlgorithm.isSelected()) {
         mMiscPanel.setCleanOffsEnabled(false);
         mMiscPanel.setRandomizeEnabled(true);
+        mMiscPanel.setSnobCountEnabled(false);
         mTimePanel.activateTolerance(false);
     } else if (evt.getSource() == jAllInOneAlgorithm && jAllInOneAlgorithm.isSelected()) {
         mMiscPanel.setCleanOffsEnabled(true);
         mMiscPanel.setRandomizeEnabled(false);
+        mMiscPanel.setSnobCountEnabled(true);
         mTimePanel.activateTolerance(false);
     } else if (evt.getSource() == jBlitzkriegAlgorithm && jBlitzkriegAlgorithm.isSelected()) {
         mMiscPanel.setCleanOffsEnabled(false);
         mMiscPanel.setRandomizeEnabled(false);
+        mMiscPanel.setSnobCountEnabled(false);
         mTimePanel.activateTolerance(true);
     }
 }//GEN-LAST:event_fireAlgorithmChangedEvent

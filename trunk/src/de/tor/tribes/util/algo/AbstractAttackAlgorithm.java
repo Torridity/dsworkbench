@@ -29,7 +29,8 @@ public abstract class AbstractAttackAlgorithm {
             int pMaxAttacksPerVillage,
             int pMaxCleanPerSnob,
             TimeFrame pTimeFrame,
-            boolean pRandomize);
+            boolean pRandomize,
+            boolean pUse5Snobs);
 
     /**
      * @return the validEnoblements

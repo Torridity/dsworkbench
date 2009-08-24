@@ -29,10 +29,12 @@ public class AllInOne extends AbstractAttackAlgorithm {
     private static Logger logger = Logger.getLogger("Algorithm_AllInOne");
     private List<Village> notAssignedSources = null;
 
+    @Override
     public List<Village> getNotAssignedSources() {
         return notAssignedSources;
     }
 
+    @Override
     public List<AbstractTroopMovement> calculateAttacks(
             Hashtable<UnitHolder, List<Village>> pSources,
             Hashtable<UnitHolder, List<Village>> pFakes,
@@ -40,7 +42,8 @@ public class AllInOne extends AbstractAttackAlgorithm {
             int pMaxAttacksPerVillage,
             int pCleanPerSnob,
             TimeFrame pTimeFrame,
-            boolean pRandomize) {
+            boolean pRandomize,
+            boolean pUse5Snobs) {
 
         //get snob villages
         notAssignedSources = new LinkedList<Village>();
@@ -57,7 +60,7 @@ public class AllInOne extends AbstractAttackAlgorithm {
 
         //generate enoblements with minimum runtime
         logger.debug("Generating enoblements");
-        generateEnoblements(snobVillages, pTargets, pTimeFrame, finalEnoblements);
+        generateEnoblements(snobVillages, pTargets, pTimeFrame, finalEnoblements, pUse5Snobs);
         logger.debug("Getting off sources");
         // <editor-fold defaultstate="collapsed" desc="Get off villages">
         UnitHolder ramUnit = DataHolder.getSingleton().getUnitByPlainName("ram");
@@ -102,7 +105,7 @@ public class AllInOne extends AbstractAttackAlgorithm {
         Enoblement[] aEnoblements = finalEnoblements.toArray(new Enoblement[]{});
         logger.debug("Checking for fully valid enoblements");
         for (Enoblement e : aEnoblements) {
-            if (e.offDone() && e.snobDone()) {
+            if (e.offDone() && e.snobDone(pUse5Snobs)) {
                 fullyValid++;
                 double maxDist = 0;
                 for (Village v : e.getSnobSources()) {
@@ -133,7 +136,6 @@ public class AllInOne extends AbstractAttackAlgorithm {
                             minDist = dist;
                         }
                     }
-
                 }
             } else {
                 if (e.getOffCount() == 0) {
@@ -199,7 +201,7 @@ public class AllInOne extends AbstractAttackAlgorithm {
         return movements;
     }
 
-    private static void generateEnoblements(List<Village> pSnobSources, List<Village> pTargets, TimeFrame pTimeFrame, List<Enoblement> pFinalEnoblements) {
+    private static void generateEnoblements(List<Village> pSnobSources, List<Village> pTargets, TimeFrame pTimeFrame, List<Enoblement> pFinalEnoblements, boolean pUse5SNobs) {
         List<Enoblement> tmpEno = new LinkedList<Enoblement>();
 
         for (Village target : pTargets) {
@@ -212,7 +214,8 @@ public class AllInOne extends AbstractAttackAlgorithm {
             UnitHolder snob = DataHolder.getSingleton().getUnitByPlainName("snob");
             if (snobMappings.size() > 3) {
                 //at least 4 snobs left
-                for (int i = 0; i < 4; i++) {
+                int snobCount = (pUse5SNobs) ? 5 : 4;
+                for (int i = 0; i < snobCount; i++) {
                     long dur = (long) (snobMappings.get(i).getDistance() * snob.getSpeed() * 60000.0);
                     Date send = new Date(pTimeFrame.getEnd() - dur);
                     //check if needed snob can arrive village in time frame
@@ -230,7 +233,8 @@ public class AllInOne extends AbstractAttackAlgorithm {
             if (valid) {
                 //add new temp enoblement
                 Enoblement e = new Enoblement(target, 0, 0);
-                for (int j = 0; j < 4; j++) {
+                int snobCount = (pUse5SNobs) ? 5 : 4;
+                for (int j = 0; j < snobCount; j++) {
                     Village snobVillage = snobMappings.get(j).getTarget();
                     e.addSnob(snobVillage);
                 }
@@ -250,7 +254,7 @@ public class AllInOne extends AbstractAttackAlgorithm {
         for (Village source : e.getSnobSources()) {
             pSnobSources.remove(source);
         }
-        generateEnoblements(pSnobSources, pTargets, pTimeFrame, pFinalEnoblements);
+        generateEnoblements(pSnobSources, pTargets, pTimeFrame, pFinalEnoblements, pUse5SNobs);
     }
 
     private static void assignOffsToEnoblements(List<Enoblement> pInOutEnoblements, List<Village> pOffSources, TimeFrame pTimeFrame) {

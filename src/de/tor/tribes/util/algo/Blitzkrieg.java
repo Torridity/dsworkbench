@@ -46,7 +46,8 @@ public class Blitzkrieg extends AbstractAttackAlgorithm {
             int pMaxAttacksPerVillage,
             int pMaxCleanPerSnob,
             TimeFrame pTimeFrame,
-            boolean pRandomize) {
+            boolean pRandomize,
+            boolean pUse5Snobs) {
         //get snob villages
 
         //build timeframe

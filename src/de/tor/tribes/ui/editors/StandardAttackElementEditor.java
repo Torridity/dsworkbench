@@ -26,7 +26,6 @@ public class StandardAttackElementEditor extends AbstractCellEditor implements T
 
     @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-        System.out.println("get editor");
         editor.setText(((StandardAttackElement) value).toString());
         return editor;
     }

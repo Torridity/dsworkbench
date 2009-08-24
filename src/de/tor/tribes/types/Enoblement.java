@@ -40,8 +40,12 @@ public class Enoblement extends AbstractTroopMovement {
         snobSources.add(pSource);
     }
 
-    public boolean snobDone() {
+    public boolean snobDone(boolean pUser5Snobs) {
+        if (pUser5Snobs) {
+            return (snobSources.size() == 5);
+        }
         return (snobSources.size() == 4);
+
     }
 
     public boolean offDone() {

@@ -81,16 +81,10 @@ public class TimePanel extends javax.swing.JPanel {
         DefaultListModel model = (DefaultListModel) jSendTimeFramesList.getModel();
         for (int i = 0; i < model.getSize(); i++) {
             TimeSpan span = (TimeSpan) model.getElementAt(i);
-            /*String[] split = frame.split("-");
-            int start = Integer.parseInt(split[0].replaceAll("Uhr", "").trim());
-            int end = Integer.parseInt(split[1].replaceAll("Uhr", "").trim());
-            //reduce end because following calculations use 59 minutes for the last hour
-            end -= 1;*/
-            Point s = span.getSpan();
+            Point s = new Point(span.getSpan().x, span.getSpan().y);
             s.setLocation(s.getX(), s.getY() - 1);
-            span.setSpan(s);
-            //result.addFrame(start, end);
-            result.addTimeSpan(span);
+            TimeSpan tmp = new TimeSpan(s);
+            result.addTimeSpan(tmp);
         }
         return result;
     }

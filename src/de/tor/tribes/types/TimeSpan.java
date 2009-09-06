@@ -23,8 +23,7 @@ public class TimeSpan {
 
     public TimeSpan(Date pAtDate, Point pSpan) {
         atDate = pAtDate;
-        span =
-                pSpan;
+        span = pSpan;
     }
 
     public Date getAtDate() {

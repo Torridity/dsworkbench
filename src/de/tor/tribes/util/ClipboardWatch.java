@@ -5,6 +5,7 @@
 package de.tor.tribes.util;
 
 import de.tor.tribes.util.parser.GroupParser;
+import de.tor.tribes.util.parser.NonPAPlaceParser;
 import de.tor.tribes.util.parser.ReportParser;
 import de.tor.tribes.util.parser.SupportParser;
 import de.tor.tribes.util.parser.TroopsParser;
@@ -63,6 +64,9 @@ public class ClipboardWatch extends Thread {
                         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(""), null);
                     } else if (SupportParser.parse(data)) {
                         logger.info("Support successfully parsed. Cleaning up clipboard");
+                        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(""), null);
+                    } else if (NonPAPlaceParser.parse(data)) {
+                        logger.info("Place info successfully parsed. Cleaning up clipboard");
                         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(""), null);
                     } else {
                         //store last length to avoid parsing the same data more than once

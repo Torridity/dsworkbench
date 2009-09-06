@@ -13,6 +13,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
+ * @TODO (DIFF) Target assignment corrected for Blitzkrieg and ALlInOne
  * @author Jejkal
  */
 public abstract class AbstractAttackAlgorithm {

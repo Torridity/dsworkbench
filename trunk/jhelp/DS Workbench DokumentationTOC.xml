@@ -30,6 +30,8 @@
 
    <tocitem text="Import von Spielinformationen " target="pages.import_ingame" image="images.tictac_grey"/>
 
+   <tocitem text="Truppendichte " target="pages.troop_density" image="images.tictac_grey"/>
+
   </tocitem>
   <tocitem text="Werkzeuge " target="pages.tools" image="images.tictac_orange">
    <tocitem text="Kartenwerkzeuge " target="pages.map_tools" image="images.tictac_orange">
@@ -84,6 +86,8 @@
     <tocitem text="Gefilterte Auswahl von Angriffen " target="pages.attack_select_filter" image="images.tictac_grey"/>
 
     <tocitem text="Angriffszeiten ver&#228;ndern " target="pages.change_attack_times" image="images.tictac_grey"/>
+
+    <tocitem text="Standardangriffe " target="pages.standard_attacks" image="images.tictac_grey"/>
 
    </tocitem>
    <tocitem text="Markierungen " target="pages.markers_view" image="images.tictac_grey"/>

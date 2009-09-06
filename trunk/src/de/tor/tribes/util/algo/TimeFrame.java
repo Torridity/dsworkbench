@@ -12,7 +12,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * @TODO (1.7) Check day dependent time frame again
  * @author Jejkal
  */
 public class TimeFrame {
@@ -50,35 +49,6 @@ public class TimeFrame {
         timeSpans.add(pSpan);
     }
 
-    /* public boolean inside(Date pDate) {
-    long t = pDate.getTime();
-    Calendar c = Calendar.getInstance();
-    c.setTime(pDate);
-    int hour = c.get(Calendar.HOUR_OF_DAY);
-    int minute = c.get(Calendar.MINUTE);
-    int second = c.get(Calendar.SECOND);
-    boolean inFrame = false;
-    //check if time is in time frame
-    //use max. arrive time
-    //if ((t > start) && (t < end + arriveTolerance * 1000)) {
-    if ((t > start) && (t < end)) {
-    //general time is ok
-    for (Point p : mFrames) {
-    //check time frame parts
-    inFrame = ((hour >= p.x) && ((hour <= p.y) && (minute <= 59) && (second <= 59)));
-    if (inFrame) {
-    break;
-    }
-    }
-    //check end frame
-    /*if (!inFrame) {
-    //if not yet in frame check end frame
-    inFrame = ((t > (end - arriveTolerance * 1000)) && (t < (end + arriveTolerance * 1000)));
-    }*/
-    /*        }
-    return inFrame;
-    }
-     */
     public boolean inside(Date pDate) {
         long t = pDate.getTime();
         Calendar c = Calendar.getInstance();

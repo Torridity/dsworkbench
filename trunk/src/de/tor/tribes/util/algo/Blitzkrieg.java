@@ -16,7 +16,9 @@ import java.util.List;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.Off;
+import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.DSCalculator;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import org.apache.log4j.Logger;
 
@@ -170,12 +172,12 @@ public class Blitzkrieg extends AbstractAttackAlgorithm {
                 Date send = new Date(pTimeFrame.getEnd() - dur);
 
                 //check if needed off can arrive village in time frame
-                if (!pTimeFrame.inside(send) || (tmpMap.size() == pMaxAttacks)) {
+                if ((tmpMap.size() == pMaxAttacks)) {
                     //break if at least one is not in time or max number of attacks was reached
                     break;
                 } else {
                     //add valid distance to map of send time was not used yet
-                    if (!sends.contains(send.getTime())) {
+                    if (pTimeFrame.inside(send) && !sends.contains(send.getTime())) {
                         tmpMap.add(mapping);
                     }
                 }
@@ -263,12 +265,12 @@ public class Blitzkrieg extends AbstractAttackAlgorithm {
                 long dur = (long) (mapping.getDistance() * ram.getSpeed() * 60000l);
                 Date send = new Date(pTimeFrame.getEnd() - dur);
                 //check if needed off can arrive village in time frame
-                if (!pTimeFrame.inside(send) || (tmpMap.size() == pMaxAttacks)) {
+                if (tmpMap.size() == pMaxAttacks) {
                     //break if at least one is not in time or max number of attacks was reached
                     break;
                 } else {
                     //add valid distance to map
-                    if (!sends.contains(send.getTime())) {
+                    if (pTimeFrame.inside(send) && !sends.contains(send.getTime())) {
                         tmpMap.add(mapping);
                     }
                 }

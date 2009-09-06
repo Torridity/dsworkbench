@@ -70,6 +70,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumn;
 
 /**
+ * @TODO(DIFF) Mark on map for targets fails!?
  * @author Jejkal
  */
 public class TribeTribeAttackFrame extends javax.swing.JFrame {
@@ -3315,7 +3316,7 @@ private void fireTargetAllyFilterChangedEvent(javax.swing.event.CaretEvent evt) 
             if (bChooseSourceRegionMode) {
                 ((DefaultTableModel) jAttacksTable.getModel()).addRow(new Object[]{v, uSource});
             } else if (bChooseTargetRegionMode) {
-                ((DefaultTableModel) jAttacksTable.getModel()).addRow(new Object[]{v, uSource});
+                ((DefaultTableModel) jVictimTable.getModel()).addRow(new Object[]{v, uSource});
             }
         }
 

@@ -239,10 +239,12 @@ public class VillageTroopsHolder {
         supportTargets.clear();
     }
 
-    public void addSupportTarget(Village pTarget) {
+    public boolean addSupportTarget(Village pTarget) {
         if (!supportTargets.contains(pTarget)) {
             supportTargets.add(pTarget);
+            return true;
         }
+        return false;
     }
 
     public List<Village> getSupportTargets() {

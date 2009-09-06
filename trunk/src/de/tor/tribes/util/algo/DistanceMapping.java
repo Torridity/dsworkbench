@@ -44,4 +44,9 @@ public class DistanceMapping implements Comparable<DistanceMapping> {
         }
         return 0;
     }
+
+    public String toString(){
+        String result = source + " -> " + target + " (" + distance + ")";
+        return result;
+    }
 }

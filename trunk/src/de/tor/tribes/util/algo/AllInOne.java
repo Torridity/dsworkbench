@@ -270,16 +270,25 @@ public class AllInOne extends AbstractAttackAlgorithm {
                 //expect target to be valid
                 boolean valid = true;
                 //check distances for first (fastest) possible off
+                List<DistanceMapping> validMappings = new LinkedList<DistanceMapping>();
                 if (pOffSources.size() > enoblement.getNumberOfCleanOffs()) {
                     //at least 4 snobs left
-                    for (int i = 0; i <= enoblement.getNumberOfCleanOffs(); i++) {
-                        long dur = (long) (offMappings.get(i).getDistance() * ram.getSpeed() * 60000.0);
+                    //                   for (int i = 0; i <= enoblement.getNumberOfCleanOffs(); i++) {
+                    for (DistanceMapping mapping : offMappings) {
+                        //                       long dur = (long) (offMappings.get(i).getDistance() * ram.getSpeed() * 60000.0);
+                        long dur = (long) (mapping.getDistance() * ram.getSpeed() * 60000.0);
                         Date send = new Date(pTimeFrame.getEnd() - dur);
                         //check if needed off can arrive village in time frame
-                        if (!pTimeFrame.inside(send)) {
+                        //                       if (!pTimeFrame.inside(send)) {
+                        if (pTimeFrame.inside(send)) {
                             //break if at least one of the fastest is not in time
-                            valid = false;
-                            break;
+                            //                           valid = false;
+                            //                           break;
+                            validMappings.add(mapping);
+                            if (validMappings.size() == enoblement.getNumberOfCleanOffs()) {
+                                valid = true;
+                                break;
+                            }
                         }
                     }
                 } else {
@@ -289,11 +298,12 @@ public class AllInOne extends AbstractAttackAlgorithm {
                 //if all off villages are in time, create enoblement
                 if (valid) {
                     //add new temp off mapping list
-                    List<DistanceMapping> tmpDistances = new LinkedList<DistanceMapping>();
-                    for (int j = 0; j < enoblement.getNumberOfCleanOffs(); j++) {
-                        tmpDistances.add(offMappings.get(j));
-                    }
-                    tmpMappings.put(enoblement, tmpDistances);
+//                    List<DistanceMapping> tmpDistances = new LinkedList<DistanceMapping>();
+//                    for (int j = 0; j < enoblement.getNumberOfCleanOffs(); j++) {
+//                        tmpDistances.add(offMappings.get(j));
+//                    }
+//                    tmpMappings.put(enoblement, tmpDistances);
+                    tmpMappings.put(enoblement, validMappings);
                 }
             }
         }
@@ -351,12 +361,14 @@ public class AllInOne extends AbstractAttackAlgorithm {
                 long dur = (long) (mapping.getDistance() * ram.getSpeed() * 60000.0);
                 Date send = new Date(pTimeFrame.getEnd() - dur);
                 //check if needed off can arrive village in time frame
-                if (!pTimeFrame.inside(send) || (tmpMap.size() == pMaxAttacks)) {
+                if (tmpMap.size() == pMaxAttacks) {
                     //break if at least one is not in time or max number of attacks was reached
                     break;
                 } else {
                     //add valid distance to map
-                    tmpMap.add(mapping);
+                    if (pTimeFrame.inside(send)) {
+                        tmpMap.add(mapping);
+                    }
                 }
             }
             //if all off villages are in time, create enoblement
@@ -440,12 +452,14 @@ public class AllInOne extends AbstractAttackAlgorithm {
                 long dur = (long) (mapping.getDistance() * ram.getSpeed() * 60000.0);
                 Date send = new Date(pTimeFrame.getEnd() - dur);
                 //check if needed off can arrive village in time frame
-                if (!pTimeFrame.inside(send) || (tmpMap.size() == pMaxAttacks)) {
+                if ((tmpMap.size() == pMaxAttacks)) {
                     //break if at least one is not in time or max number of attacks was reached
                     break;
                 } else {
                     //add valid distance to map
-                    tmpMap.add(mapping);
+                    if (pTimeFrame.inside(send)) {
+                        tmpMap.add(mapping);
+                    }
                 }
             }
             //if all off villages are in time, create enoblement

@@ -367,6 +367,19 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                     } else if ((e.getKeyCode() == KeyEvent.VK_0) && e.isControlDown() && e.isAltDown() && !e.isShiftDown()) {
                         //ROI 10
                         centerROI(9);
+                    } else if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+                        MapPanel.getSingleton().requestFocusInWindow();
+                        MapPanel.getSingleton().setSpaceDown(true);
+                    }else if (e.getKeyCode() == KeyEvent.VK_SHIFT) {
+                        MapPanel.getSingleton().requestFocusInWindow();
+                        MapPanel.getSingleton().setShiftDown(true);
+                    }
+                } else if (((KeyEvent) event).getID() == KeyEvent.KEY_RELEASED) {
+                    KeyEvent e = (KeyEvent) event;
+                    if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+                        MapPanel.getSingleton().setSpaceDown(false);
+                    }else if (e.getKeyCode() == KeyEvent.VK_SHIFT) {
+                        MapPanel.getSingleton().setShiftDown(false);
                     }
                 }
             }
@@ -2244,6 +2257,7 @@ private void fireToolsActionEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:e
     } else if (evt.getSource() == jSelectionOverviewItem) {
         DSWorkbenchSelectionFrame.getSingleton().setVisible(true);
     } else if (evt.getSource() == jStartAStarItem) {
+        DSWorkbenchSimulatorFrame.getSingleton().setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
         DSWorkbenchSimulatorFrame.getSingleton().showIntegratedVersion(GlobalOptions.getSelectedServer());
     }
 }//GEN-LAST:event_fireToolsActionEvent

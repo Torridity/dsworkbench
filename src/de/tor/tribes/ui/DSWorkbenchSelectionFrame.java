@@ -48,6 +48,7 @@ import org.apache.log4j.Logger;
 
 /**
  *@TODO (DIFF) Manual region selection added
+ *@TODO (DIFF) Barbarians are not selected if not visible
  * @author Charon
  */
 public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implements VillageSelectionListener {
@@ -56,6 +57,7 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
     private static DSWorkbenchSelectionFrame SINGLETON = null;
     private SelectionTreeRootNode mRoot = null;
     private List<Village> treeData = null;
+    private boolean treeMode = true;
 
     public static synchronized DSWorkbenchSelectionFrame getSingleton() {
         if (SINGLETON == null) {
@@ -88,54 +90,63 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
 
     private void buildTree() {
         mRoot = new SelectionTreeRootNode("Auswahl");
-        //add all villages
-        Hashtable<Ally, AllyNode> allyNodes = new Hashtable<Ally, AllyNode>();
-        Hashtable<Tribe, TribeNode> tribeNodes = new Hashtable<Tribe, TribeNode>();
-        Hashtable<Tag, TagNode> tagNodes = new Hashtable<Tag, TagNode>();
-        List<Village> used = new LinkedList<Village>();
+        if (treeMode) {
+            //tree view
+            //add all villages
+            Hashtable<Ally, AllyNode> allyNodes = new Hashtable<Ally, AllyNode>();
+            Hashtable<Tribe, TribeNode> tribeNodes = new Hashtable<Tribe, TribeNode>();
+            Hashtable<Tag, TagNode> tagNodes = new Hashtable<Tag, TagNode>();
+            List<Village> used = new LinkedList<Village>();
 
-        for (Village v : treeData) {
-            Tribe t = v.getTribe();
-            if (t == null) {
-                t = Barbarians.getSingleton();
-            }
-            Ally a = t.getAlly();
-            if (a == null) {
-                a = NoAlly.getSingleton();
-            }
-
-            AllyNode aNode = allyNodes.get(a);
-            if (aNode == null) {
-                //new ally
-                aNode = new AllyNode(a);
-                allyNodes.put(a, aNode);
-                mRoot.add(aNode);
-            }
-            TribeNode tNode = tribeNodes.get(t);
-            if (tNode == null) {
-                //new tribe
-                tNode = new TribeNode(t);
-                tribeNodes.put(t, tNode);
-                aNode.add(tNode);
-            }
-            boolean hasTag = false;
-            for (Tag tag : TagManager.getSingleton().getTags(v)) {
-                hasTag = true;
-                TagNode tagNode = tagNodes.get(tag);
-                if (tagNode == null) {
-                    //new tribe
-                    tagNode = new TagNode(tag);
-                    tagNodes.put(tag, tagNode);
-                    tNode.add(tagNode);
+            for (Village v : treeData) {
+                Tribe t = v.getTribe();
+                if (t == null) {
+                    t = Barbarians.getSingleton();
                 }
-                tagNode.add(new VillageNode(v));
+                Ally a = t.getAlly();
+                if (a == null) {
+                    a = NoAlly.getSingleton();
+                }
+
+                AllyNode aNode = allyNodes.get(a);
+                if (aNode == null) {
+                    //new ally
+                    aNode = new AllyNode(a);
+                    allyNodes.put(a, aNode);
+                    mRoot.add(aNode);
+                }
+                TribeNode tNode = tribeNodes.get(t);
+                if (tNode == null) {
+                    //new tribe
+                    tNode = new TribeNode(t);
+                    tribeNodes.put(t, tNode);
+                    aNode.add(tNode);
+                }
+                boolean hasTag = false;
+                for (Tag tag : TagManager.getSingleton().getTags(v)) {
+                    hasTag = true;
+                    TagNode tagNode = tagNodes.get(tag);
+                    if (tagNode == null) {
+                        //new tribe
+                        tagNode = new TagNode(tag);
+                        tagNodes.put(tag, tagNode);
+                        tNode.add(tagNode);
+                    }
+                    tagNode.add(new VillageNode(v));
+                }
+
+                if (!hasTag) {
+                    //only add directly if not added to any tag node
+                    tNode.add(new VillageNode(v));
+                }
+                used.add(v);
             }
 
-            if (!hasTag) {
-                //only add directly if not added to any tag node
-                tNode.add(new VillageNode(v));
+        } else {
+            //simple view
+            for (Village v : treeData) {
+                mRoot.add(new VillageNode(v));
             }
-            used.add(v);
         }
         ((DefaultTreeModel) jSelectionTree.getModel()).setRoot(mRoot);
     //jSelectionTree.setCellRenderer(new NodeCellRenderer());
@@ -172,6 +183,7 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
         jXEnd = new javax.swing.JSpinner();
         jYEnd = new javax.swing.JSpinner();
         jButton2 = new javax.swing.JButton();
+        jViewTypeButton = new javax.swing.JButton();
         jAlwaysOnTopBox = new javax.swing.JCheckBox();
 
         setTitle("Auswahl");
@@ -314,23 +326,15 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
 
         jXStart.setModel(new javax.swing.SpinnerNumberModel(0, 0, 1000, 1));
         jXStart.setMaximumSize(new java.awt.Dimension(60, 18));
-        jXStart.setMinimumSize(new java.awt.Dimension(60, 18));
-        jXStart.setPreferredSize(new java.awt.Dimension(60, 18));
 
         jYStart.setModel(new javax.swing.SpinnerNumberModel(0, 0, 1000, 1));
         jYStart.setMaximumSize(new java.awt.Dimension(60, 18));
-        jYStart.setMinimumSize(new java.awt.Dimension(60, 18));
-        jYStart.setPreferredSize(new java.awt.Dimension(60, 18));
 
         jXEnd.setModel(new javax.swing.SpinnerNumberModel(0, 0, 1000, 1));
         jXEnd.setMaximumSize(new java.awt.Dimension(60, 18));
-        jXEnd.setMinimumSize(new java.awt.Dimension(60, 18));
-        jXEnd.setPreferredSize(new java.awt.Dimension(60, 18));
 
         jYEnd.setModel(new javax.swing.SpinnerNumberModel(0, 0, 1000, 1));
         jYEnd.setMaximumSize(new java.awt.Dimension(60, 18));
-        jYEnd.setMinimumSize(new java.awt.Dimension(60, 18));
-        jYEnd.setPreferredSize(new java.awt.Dimension(60, 18));
 
         jButton2.setBackground(new java.awt.Color(239, 235, 223));
         jButton2.setText("Wählen");
@@ -395,6 +399,15 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        jViewTypeButton.setBackground(new java.awt.Color(239, 235, 223));
+        jViewTypeButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/branch.png"))); // NOI18N
+        jViewTypeButton.setToolTipText("Baumstruktur an/aus");
+        jViewTypeButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireSwitchViewEvent(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -408,7 +421,8 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jButton1)
-                    .addComponent(jButton4))
+                    .addComponent(jButton4)
+                    .addComponent(jViewTypeButton))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -419,7 +433,9 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jButton1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton4))
+                        .addComponent(jButton4)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jViewTypeButton))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 268, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -670,6 +686,11 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
 
     }//GEN-LAST:event_fireSelectRegionEvent
 
+    private void fireSwitchViewEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSwitchViewEvent
+        treeMode = !treeMode;
+        buildTree();
+    }//GEN-LAST:event_fireSwitchViewEvent
+
     public List<Village> getSelectedElements() {
         TreePath[] paths = jSelectionTree.getSelectionModel().getSelectionPaths();
         List<Village> result = new LinkedList<Village>();
@@ -760,6 +781,7 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTree jSelectionTree;
+    private javax.swing.JButton jViewTypeButton;
     private javax.swing.JSpinner jXEnd;
     private javax.swing.JSpinner jXStart;
     private javax.swing.JSpinner jYEnd;
@@ -773,12 +795,22 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
             int xEnd = (pEnd.x > pStart.x) ? pEnd.x : pStart.x;
             int yStart = (pStart.y < pEnd.y) ? pStart.y : pEnd.y;
             int yEnd = (pEnd.y > pStart.y) ? pEnd.y : pStart.y;
+            boolean showBarbarian = true;
+            try {
+                showBarbarian = Boolean.parseBoolean(GlobalOptions.getProperty("show.barbarian"));
+            } catch (Exception e) {
+                showBarbarian = true;
+            }
 
             for (int x = xStart; x <= xEnd; x++) {
                 for (int y = yStart; y <= yEnd; y++) {
                     Village v = DataHolder.getSingleton().getVillages()[x][y];
-                    if (v != null && !treeData.contains(v)) {
-                        treeData.add(v);
+                    if ((v != null && v.getTribe() == null) && !showBarbarian) {
+                        //dont select barbarians if they are not visible
+                    } else {
+                        if (v != null && !treeData.contains(v)) {
+                            treeData.add(v);
+                        }
                     }
                 }
             }

@@ -32,7 +32,6 @@ import javax.swing.JSpinner.DateEditor;
  */
 public class TimePanel extends javax.swing.JPanel {
 
-
     /** Creates new form TimePanel */
     public TimePanel() {
         initComponents();
@@ -116,6 +115,23 @@ public class TimePanel extends javax.swing.JPanel {
         long arrivalTolerance = (Long) jToleranceField.getValue() * 60 * 60 * 1000;
         //check min case
         Date arrive = (Date) jArriveTime.getValue();
+
+        if (sendTime.getTime() >= arrive.getTime()) {
+            //check if start is after arrive
+            JOptionPaneHelper.showWarningBox(this, "Die Startzeit ist größer als/identisch mit der Ankunftszeit.\n" +
+                    "Du musst dies korrigieren bevor du fortfahren kannst.", "Startzeit in nach Ankunftszeit");
+            result = false;
+        } else {
+            //check difference between start and arrive
+            if (Math.abs(sendTime.getTime() - arrive.getTime()) < 30 * 60 * 1000) {
+                if (JOptionPaneHelper.showQuestionConfirmBox(this, "Der Abstand zwischen Start- und Ankunftszeit ist extrem klein (< 30 Minuten).\n" +
+                        "Höchstwahrscheinlich werden keine Ergebnisse gefunden. Trotzdem fortfahren?", "Start- und Endzeit zu dicht beieinander", "Nein", "Ja") == JOptionPane.YES_OPTION) {
+                } else {
+                    result = false;
+                }
+            }
+        }
+
         Calendar c = Calendar.getInstance();
         c.setTimeInMillis(arrive.getTime());
         boolean mightBeInNightBonus = false;

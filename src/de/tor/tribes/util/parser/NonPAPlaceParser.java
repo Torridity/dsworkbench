@@ -108,6 +108,11 @@ public class NonPAPlaceParser {
             }
         }
 
+        if(ownTroops.isEmpty()){
+            //no troops found!?
+            return false;
+        }
+
         if (v != null) {
             int troopsCount = DataHolder.getSingleton().getUnits().size();
             if ((v != null) &&

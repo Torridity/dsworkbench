@@ -212,6 +212,38 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame {
         showCurrentNote();
     }
 
+    public void addNoteForVillages(List<Village> pVillages) {
+        Note n = new Note();
+        for (Village v : pVillages) {
+            n.addVillage(v);
+        }
+        n.setNoteText("(kein Text)");
+        n.setMapMarker(0);
+        NoteManager.getSingleton().addNote(n);
+        currentNote = n;
+        showCurrentNote();
+    }
+
+    public boolean addVillageToCurrentNote(Village pVillage) {
+        if (currentNote != null) {
+            currentNote.addVillage(pVillage);
+            showCurrentNote();
+            return true;
+        }
+        return false;
+    }
+
+    public boolean addVillagesToCurrentNote(List<Village> pVillages) {
+        if (currentNote != null) {
+            for (Village v : pVillages) {
+                currentNote.addVillage(v);
+            }
+            showCurrentNote();
+            return true;
+        }
+        return false;
+    }
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -842,7 +874,10 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame {
         if (villages == null || villages.isEmpty()) {
             JOptionPaneHelper.showInformationBox(this, "Keine Dorfkoordinaten gefunden.", "Information");
             return;
+
         }
+
+
         boolean added = false;
         if (currentNote != null) {
             //add village to note
@@ -850,6 +885,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame {
                 if (currentNote != null) {
                     added = (currentNote.addVillage(v)) ? true : added;
                 }
+
             }
         } else {
             JOptionPaneHelper.showWarningBox(this, "Es ist keine Notiz ausgewählt.", "Fehler");
@@ -865,7 +901,8 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame {
     private void fireNewNoteEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireNewNoteEvent
         Note n = new Note();
         NoteManager.getSingleton().addNote(n);
-        currentNote = n;
+        currentNote =
+                n;
         showCurrentNote();
     }//GEN-LAST:event_fireNewNoteEvent
 
@@ -893,7 +930,10 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame {
         if (NoteManager.getSingleton().getNotes().size() <= 0) {
             JOptionPaneHelper.showWarningBox(this, "Keine Notizen vorhanden.", "Fehler");
             return;
+
         }
+
+
 
         String text = jSearchField.getText();
         if (text.length() <= 0) {
@@ -915,8 +955,10 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame {
         if (currentNote != null) {
             if (JOptionPaneHelper.showQuestionConfirmBox(this, "Notiz wirklich löschen?", "Löschen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
                 NoteManager.getSingleton().removeNote(currentNote);
-                currentNote = NoteManager.getSingleton().getFirstNote();
+                currentNote =
+                        NoteManager.getSingleton().getFirstNote();
             }
+
             showCurrentNote();
         }
     }//GEN-LAST:event_fireDeleteNoteEvent
@@ -943,6 +985,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame {
             if (currentNote != null) {
                 currentNote.setMapMarker((Integer) jIconBox.getSelectedItem());
             }
+
         }
     }//GEN-LAST:event_fireMapMarkerChangedEvent
 
@@ -955,6 +998,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame {
             if (currentNote != null) {
                 currentNote.setNoteSymbol((Integer) jNoteSymbolBox.getSelectedItem());
             }
+
         }
     }//GEN-LAST:event_fireNoteSymbolChangedEvent
 
@@ -964,6 +1008,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame {
             if (selection != null) {
                 DSWorkbenchMainFrame.getSingleton().centerVillage(selection);
             }
+
         } catch (Exception e) {
             logger.error("Failed to center village", e);
         }
@@ -983,12 +1028,15 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame {
             if (villages == null || villages.isEmpty()) {
                 JOptionPaneHelper.showInformationBox(this, "Es konnten keine Dorfkoodinaten in der Zwischenablage gefunden werden.", "Information");
                 return;
+
             } else {
                 for (Village v : villages) {
                     currentNote.addVillage(v);
                 }
+
                 setCurrentNote(currentNote);
             }
+
         } catch (Exception e) {
             logger.error("Failed to parse source villages from clipboard", e);
             JOptionPaneHelper.showErrorBox(this, "Fehler beim Lesen der Zwischenablage.", "Fehler");

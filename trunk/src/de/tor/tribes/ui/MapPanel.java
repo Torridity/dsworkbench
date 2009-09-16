@@ -56,6 +56,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 /**
+ * @TODO (DIFF) Added village popup menu
  * @author Charon
  */
 public class MapPanel extends JPanel {
@@ -92,6 +93,10 @@ public class MapPanel extends JPanel {
     private Hashtable<Village, Rectangle> mVillagePositions = null;
     private List<Village> exportVillageList = null;
     private Village radarVillage = null;
+    private boolean spaceDown = false;
+    private boolean shiftDown = false;
+    private List<Village> markedVillages = null;
+    private Village actionMenuVillage = null;
     // </editor-fold>
 
     public static synchronized MapPanel getSingleton() {
@@ -120,7 +125,20 @@ public class MapPanel extends JPanel {
         jCopyBarbarian.setSelected(true);
         jCopyVillagesDialog.pack();
         mVillageSelectionListener = DSWorkbenchSelectionFrame.getSingleton();
+        markedVillages = new LinkedList<Village>();
         initListeners();
+    }
+
+    public void setSpaceDown(boolean pValue) {
+        spaceDown = pValue;
+    }
+
+    public void setShiftDown(boolean pValue) {
+        shiftDown = pValue;
+    }
+
+    public List<Village> getMarkedVillages() {
+        return markedVillages;
     }
 
     public void initBuffer() {
@@ -170,9 +188,34 @@ public class MapPanel extends JPanel {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getButton() != MouseEvent.BUTTON1) {
-                    MenuRenderer.getSingleton().setMenuLocation(e.getX(), e.getY());
-                    MenuRenderer.getSingleton().switchVisibility();
+                    //second button might show village menu
+                    Village v = getVillageAtMousePos();
+                    if (v == null) {
+                        //show menu
+                        MenuRenderer.getSingleton().setMenuLocation(e.getX(), e.getY());
+                        MenuRenderer.getSingleton().switchVisibility();
+                    } else {
+                        //show village menu
+                        actionMenuVillage = v;
+                        jVillageActionsMenu.show(MapPanel.getSingleton(), e.getX(), e.getY());
+                    }
                     return;
+                }
+
+                if (e.getButton() == MouseEvent.BUTTON1 && shiftDown) {
+                    Village v = getVillageAtMousePos();
+                    if (v != null) {
+                        if (!markedVillages.contains(v)) {
+                            markedVillages.add(v);
+                        } else {
+                            markedVillages.remove(v);
+                        }
+                    } else {
+                        markedVillages.clear();
+                    }
+                    return;
+                } else if (!shiftDown) {
+                    markedVillages.clear();
                 }
 
                 if (MenuRenderer.getSingleton().isVisible()) {
@@ -180,16 +223,21 @@ public class MapPanel extends JPanel {
                 }
                 int unit = -1;
                 boolean isAttack = false;
-                if ((iCurrentCursor == ImageManager.CURSOR_ATTACK_AXE) ||
-                        (iCurrentCursor == ImageManager.CURSOR_ATTACK_SWORD) ||
-                        (iCurrentCursor == ImageManager.CURSOR_ATTACK_SPY) ||
-                        (iCurrentCursor == ImageManager.CURSOR_ATTACK_LIGHT) ||
-                        (iCurrentCursor == ImageManager.CURSOR_ATTACK_HEAVY) ||
-                        (iCurrentCursor == ImageManager.CURSOR_ATTACK_RAM) ||
-                        (iCurrentCursor == ImageManager.CURSOR_ATTACK_SNOB)) {
-                    isAttack = true;
+                if (!spaceDown) {
+                    if ((iCurrentCursor == ImageManager.CURSOR_ATTACK_AXE) ||
+                            (iCurrentCursor == ImageManager.CURSOR_ATTACK_SWORD) ||
+                            (iCurrentCursor == ImageManager.CURSOR_ATTACK_SPY) ||
+                            (iCurrentCursor == ImageManager.CURSOR_ATTACK_LIGHT) ||
+                            (iCurrentCursor == ImageManager.CURSOR_ATTACK_HEAVY) ||
+                            (iCurrentCursor == ImageManager.CURSOR_ATTACK_RAM) ||
+                            (iCurrentCursor == ImageManager.CURSOR_ATTACK_SNOB)) {
+                        isAttack = true;
+                    }
                 }
-                switch (iCurrentCursor) {
+
+                int tmpCursor = (spaceDown) ? ImageManager.CURSOR_DEFAULT : iCurrentCursor;
+
+                switch (tmpCursor) {
                     case ImageManager.CURSOR_DEFAULT: {
                         //center village on click with default cursor
                         Village current = getVillageAtMousePos();
@@ -381,17 +429,20 @@ public class MapPanel extends JPanel {
                 }
                 boolean isAttack = false;
                 mouseDown = true;
-                if ((iCurrentCursor == ImageManager.CURSOR_ATTACK_AXE) ||
-                        (iCurrentCursor == ImageManager.CURSOR_ATTACK_SWORD) ||
-                        (iCurrentCursor == ImageManager.CURSOR_ATTACK_SPY) ||
-                        (iCurrentCursor == ImageManager.CURSOR_ATTACK_LIGHT) ||
-                        (iCurrentCursor == ImageManager.CURSOR_ATTACK_HEAVY) ||
-                        (iCurrentCursor == ImageManager.CURSOR_ATTACK_RAM) ||
-                        (iCurrentCursor == ImageManager.CURSOR_ATTACK_SNOB)) {
-                    isAttack = true;
+                if (!spaceDown) {
+                    if ((iCurrentCursor == ImageManager.CURSOR_ATTACK_AXE) ||
+                            (iCurrentCursor == ImageManager.CURSOR_ATTACK_SWORD) ||
+                            (iCurrentCursor == ImageManager.CURSOR_ATTACK_SPY) ||
+                            (iCurrentCursor == ImageManager.CURSOR_ATTACK_LIGHT) ||
+                            (iCurrentCursor == ImageManager.CURSOR_ATTACK_HEAVY) ||
+                            (iCurrentCursor == ImageManager.CURSOR_ATTACK_RAM) ||
+                            (iCurrentCursor == ImageManager.CURSOR_ATTACK_SNOB)) {
+                        isAttack = true;
+                    }
                 }
+                int tmpCursor = (spaceDown) ? ImageManager.CURSOR_DEFAULT : iCurrentCursor;
 
-                switch (iCurrentCursor) {
+                switch (tmpCursor) {
                     case ImageManager.CURSOR_DEFAULT: {
                         mouseDownPoint = MouseInfo.getPointerInfo().getLocation();
                         break;
@@ -473,24 +524,26 @@ public class MapPanel extends JPanel {
                 xDir = 0;
                 yDir = 0;
                 boolean isAttack = false;
-                if ((iCurrentCursor == ImageManager.CURSOR_DRAW_LINE) ||
-                        (iCurrentCursor == ImageManager.CURSOR_DRAW_RECT) ||
-                        (iCurrentCursor == ImageManager.CURSOR_DRAW_CIRCLE) ||
-                        (iCurrentCursor == ImageManager.CURSOR_DRAW_TEXT) ||
-                        (iCurrentCursor == ImageManager.CURSOR_DRAW_FREEFORM)) {
+                int tmpCursor = (spaceDown) ? ImageManager.CURSOR_DEFAULT : iCurrentCursor;
+
+                if ((tmpCursor == ImageManager.CURSOR_DRAW_LINE) ||
+                        (tmpCursor == ImageManager.CURSOR_DRAW_RECT) ||
+                        (tmpCursor == ImageManager.CURSOR_DRAW_CIRCLE) ||
+                        (tmpCursor == ImageManager.CURSOR_DRAW_TEXT) ||
+                        (tmpCursor == ImageManager.CURSOR_DRAW_FREEFORM)) {
                     FormConfigFrame.getSingleton().purge();
                 } else {
-                    if ((iCurrentCursor == ImageManager.CURSOR_ATTACK_AXE) ||
-                            (iCurrentCursor == ImageManager.CURSOR_ATTACK_SWORD) ||
-                            (iCurrentCursor == ImageManager.CURSOR_ATTACK_SPY) ||
-                            (iCurrentCursor == ImageManager.CURSOR_ATTACK_LIGHT) ||
-                            (iCurrentCursor == ImageManager.CURSOR_ATTACK_HEAVY) ||
-                            (iCurrentCursor == ImageManager.CURSOR_ATTACK_RAM) ||
-                            (iCurrentCursor == ImageManager.CURSOR_ATTACK_SNOB)) {
+                    if ((tmpCursor == ImageManager.CURSOR_ATTACK_AXE) ||
+                            (tmpCursor == ImageManager.CURSOR_ATTACK_SWORD) ||
+                            (tmpCursor == ImageManager.CURSOR_ATTACK_SPY) ||
+                            (tmpCursor == ImageManager.CURSOR_ATTACK_LIGHT) ||
+                            (tmpCursor == ImageManager.CURSOR_ATTACK_HEAVY) ||
+                            (tmpCursor == ImageManager.CURSOR_ATTACK_RAM) ||
+                            (tmpCursor == ImageManager.CURSOR_ATTACK_SNOB)) {
                         isAttack = true;
                     }
 
-                    switch (iCurrentCursor) {
+                    switch (tmpCursor) {
                         case ImageManager.CURSOR_DEFAULT: {
                             mouseDownPoint = null;
                             break;
@@ -608,17 +661,21 @@ public class MapPanel extends JPanel {
                 }
                 // fireVillageAtMousePosChangedEvents(getVillageAtMousePos());
                 boolean isAttack = false;
-                if ((iCurrentCursor == ImageManager.CURSOR_ATTACK_AXE) ||
-                        (iCurrentCursor == ImageManager.CURSOR_ATTACK_SWORD) ||
-                        (iCurrentCursor == ImageManager.CURSOR_ATTACK_SPY) ||
-                        (iCurrentCursor == ImageManager.CURSOR_ATTACK_LIGHT) ||
-                        (iCurrentCursor == ImageManager.CURSOR_ATTACK_HEAVY) ||
-                        (iCurrentCursor == ImageManager.CURSOR_ATTACK_RAM) ||
-                        (iCurrentCursor == ImageManager.CURSOR_ATTACK_SNOB)) {
-                    isAttack = true;
+                if (!spaceDown) {
+                    if ((iCurrentCursor == ImageManager.CURSOR_ATTACK_AXE) ||
+                            (iCurrentCursor == ImageManager.CURSOR_ATTACK_SWORD) ||
+                            (iCurrentCursor == ImageManager.CURSOR_ATTACK_SPY) ||
+                            (iCurrentCursor == ImageManager.CURSOR_ATTACK_LIGHT) ||
+                            (iCurrentCursor == ImageManager.CURSOR_ATTACK_HEAVY) ||
+                            (iCurrentCursor == ImageManager.CURSOR_ATTACK_RAM) ||
+                            (iCurrentCursor == ImageManager.CURSOR_ATTACK_SNOB)) {
+                        isAttack = true;
+                    }
                 }
+                int tmpCursor = (spaceDown) ? ImageManager.CURSOR_DEFAULT : iCurrentCursor;
 
-                switch (iCurrentCursor) {
+
+                switch (tmpCursor) {
                     case ImageManager.CURSOR_DEFAULT: {
                         if (isOutside) {
                             return;
@@ -630,10 +687,7 @@ public class MapPanel extends JPanel {
                         double dx = (double) location.getX() - (double) mouseDownPoint.getX();
                         double dy = (double) location.getY() - (double) mouseDownPoint.getY();
                         mouseDownPoint = location;
-                        double zoom = DSWorkbenchMainFrame.getSingleton().getZoomFactor();
-                        /*Image i = GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, zoom);
-                        double w = (double) i.getWidth(null);
-                        double h = (double) i.getHeight(null);*/
+
                         double w = GlobalOptions.getSkin().getCurrentFieldWidth();
                         double h = GlobalOptions.getSkin().getCurrentFieldHeight();
                         fireScrollEvents(-dx / w, -dy / h);
@@ -729,6 +783,8 @@ public class MapPanel extends JPanel {
 
     protected void resetServerDependendSettings() {
         radarVillage = null;
+        markedVillages.clear();
+        actionMenuVillage = null;
     }
     //return bounds without border
    /* public Rectangle getCorrectedBounds() {
@@ -839,6 +895,29 @@ public class MapPanel extends JPanel {
         jCopyOwnAlly = new javax.swing.JCheckBox();
         jCopyEnemyAlly = new javax.swing.JCheckBox();
         jCopyBarbarian = new javax.swing.JCheckBox();
+        jVillageActionsMenu = new javax.swing.JPopupMenu();
+        jTitledSeparatorCurrent = new javax.swing.JSeparator();
+        jCurrentCoordToClipboardItem = new javax.swing.JMenuItem();
+        jCurrentCoordAsBBToClipboardItem = new javax.swing.JMenuItem();
+        jSeparator1 = new javax.swing.JSeparator();
+        jCenterItem = new javax.swing.JMenuItem();
+        jSeparator2 = new javax.swing.JSeparator();
+        jCurrentToAttackPlanerAsSourceItem = new javax.swing.JMenuItem();
+        jCurrentToAttackPlanerAsTargetItem = new javax.swing.JMenuItem();
+        jSeparator3 = new javax.swing.JSeparator();
+        jCurrentCreateNoteItem = new javax.swing.JMenuItem();
+        jCurrentAddToNoteItem = new javax.swing.JMenuItem();
+        jSeparator4 = new javax.swing.JSeparator();
+        jVillageInfoIngame = new javax.swing.JMenuItem();
+        jTitledSeparatorAll = new javax.swing.JSeparator();
+        jAllCoordToClipboardItem = new javax.swing.JMenuItem();
+        jAllCoordAsBBToClipboardItem = new javax.swing.JMenuItem();
+        jSeparator5 = new javax.swing.JSeparator();
+        jAllToAttackPlanerAsSourceItem = new javax.swing.JMenuItem();
+        jAllToAttackPlanerAsTargetItem = new javax.swing.JMenuItem();
+        jSeparator6 = new javax.swing.JSeparator();
+        jAllCreateNoteItem = new javax.swing.JMenuItem();
+        jAllAddToNoteItem = new javax.swing.JMenuItem();
 
         jCopyVillagesDialog.setTitle("Dorfinformationen kopieren");
         jCopyVillagesDialog.setAlwaysOnTop(true);
@@ -954,6 +1033,133 @@ public class MapPanel extends JPanel {
                 .addContainerGap())
         );
 
+        jTitledSeparatorCurrent.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEmptyBorder(5, 1, 5, 1), "Aktuelles Dorf", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.BELOW_TOP, new java.awt.Font("Tahoma", 1, 11))); // NOI18N
+        jTitledSeparatorCurrent.setPreferredSize(new java.awt.Dimension(0, 30));
+        jVillageActionsMenu.add(jTitledSeparatorCurrent);
+
+        jCurrentCoordToClipboardItem.setText("Koordinaten in Zwischenablage");
+        jCurrentCoordToClipboardItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fireVillagePopupActionEvent(evt);
+            }
+        });
+        jVillageActionsMenu.add(jCurrentCoordToClipboardItem);
+
+        jCurrentCoordAsBBToClipboardItem.setText("BB-Code in Zwischenablage");
+        jCurrentCoordAsBBToClipboardItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fireVillagePopupActionEvent(evt);
+            }
+        });
+        jVillageActionsMenu.add(jCurrentCoordAsBBToClipboardItem);
+        jVillageActionsMenu.add(jSeparator1);
+
+        jCenterItem.setText("Zentrieren");
+        jCenterItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fireVillagePopupActionEvent(evt);
+            }
+        });
+        jVillageActionsMenu.add(jCenterItem);
+        jVillageActionsMenu.add(jSeparator2);
+
+        jCurrentToAttackPlanerAsSourceItem.setText("In Angriffsplaner (Herkunft)");
+        jCurrentToAttackPlanerAsSourceItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fireVillagePopupActionEvent(evt);
+            }
+        });
+        jVillageActionsMenu.add(jCurrentToAttackPlanerAsSourceItem);
+
+        jCurrentToAttackPlanerAsTargetItem.setText("In Angriffsplaner (Ziel)");
+        jCurrentToAttackPlanerAsTargetItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fireVillagePopupActionEvent(evt);
+            }
+        });
+        jVillageActionsMenu.add(jCurrentToAttackPlanerAsTargetItem);
+        jVillageActionsMenu.add(jSeparator3);
+
+        jCurrentCreateNoteItem.setText("Notiz erstellen");
+        jCurrentCreateNoteItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fireVillagePopupActionEvent(evt);
+            }
+        });
+        jVillageActionsMenu.add(jCurrentCreateNoteItem);
+
+        jCurrentAddToNoteItem.setText("Der gewählten Notiz hinzufügen");
+        jCurrentAddToNoteItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fireVillagePopupActionEvent(evt);
+            }
+        });
+        jVillageActionsMenu.add(jCurrentAddToNoteItem);
+        jVillageActionsMenu.add(jSeparator4);
+
+        jVillageInfoIngame.setText("Im Spiel zentrieren");
+        jVillageInfoIngame.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fireVillagePopupActionEvent(evt);
+            }
+        });
+        jVillageActionsMenu.add(jVillageInfoIngame);
+
+        jTitledSeparatorAll.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEmptyBorder(5, 1, 5, 1), "Ausgewählte  Dörfer", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.BELOW_TOP, new java.awt.Font("Tahoma", 1, 11))); // NOI18N
+        jTitledSeparatorAll.setPreferredSize(new java.awt.Dimension(0, 30));
+        jVillageActionsMenu.add(jTitledSeparatorAll);
+
+        jAllCoordToClipboardItem.setText("Koordinaten in Zwischenablage");
+        jAllCoordToClipboardItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fireVillagePopupActionEvent(evt);
+            }
+        });
+        jVillageActionsMenu.add(jAllCoordToClipboardItem);
+
+        jAllCoordAsBBToClipboardItem.setText("BB-Code in Zwischenablage");
+        jAllCoordAsBBToClipboardItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fireVillagePopupActionEvent(evt);
+            }
+        });
+        jVillageActionsMenu.add(jAllCoordAsBBToClipboardItem);
+        jVillageActionsMenu.add(jSeparator5);
+
+        jAllToAttackPlanerAsSourceItem.setText("In Angriffsplaner (Herkunft)");
+        jAllToAttackPlanerAsSourceItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fireVillagePopupActionEvent(evt);
+            }
+        });
+        jVillageActionsMenu.add(jAllToAttackPlanerAsSourceItem);
+
+        jAllToAttackPlanerAsTargetItem.setText("In Angriffsplaner (Ziel)");
+        jAllToAttackPlanerAsTargetItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fireVillagePopupActionEvent(evt);
+            }
+        });
+        jVillageActionsMenu.add(jAllToAttackPlanerAsTargetItem);
+        jVillageActionsMenu.add(jSeparator6);
+
+        jAllCreateNoteItem.setText("Notiz erstellen");
+        jAllCreateNoteItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fireVillagePopupActionEvent(evt);
+            }
+        });
+        jVillageActionsMenu.add(jAllCreateNoteItem);
+
+        jAllAddToNoteItem.setText("Der gewählten Notiz hinzufügen");
+        jAllAddToNoteItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fireVillagePopupActionEvent(evt);
+            }
+        });
+        jVillageActionsMenu.add(jAllAddToNoteItem);
+
+        setLayout(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void fireVillageExportEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireVillageExportEvent
@@ -1129,6 +1335,184 @@ public class MapPanel extends JPanel {
 
     }//GEN-LAST:event_fireVillageExportEvent
 
+    private void fireVillagePopupActionEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireVillagePopupActionEvent
+
+        if (evt.getSource() == jCurrentCoordToClipboardItem) {
+            //copy current village coordinates to clipboard
+            Village v = actionMenuVillage;
+            if (v != null) {
+                try {
+                    String text = "";
+                    if (ServerSettings.getSingleton().getCoordType() != 2) {
+                        int[] hier = DSCalculator.xyToHierarchical((int) v.getX(), (int) v.getY());
+                        text = hier[0] + ":" + hier[1] + ":" + hier[2];
+                    } else {
+                        text = v.getX() + "|" + v.getY();
+                    }
+                    Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(text), null);
+                    JOptionPaneHelper.showInformationBox(this, "Koordinaten in die Zwischenablage kopiert", "Information");
+                } catch (Exception e) {
+                    JOptionPaneHelper.showErrorBox(this, "Fehler beim Kopieren in die Zwischenablage", "Fehler");
+                }
+            }
+        } else if (evt.getSource() == jCurrentCoordAsBBToClipboardItem) {
+            //copy current village as bb-code to clipboard
+            Village v = actionMenuVillage;
+            if (v != null) {
+                try {
+                    String text = v.toBBCode();
+                    Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(text), null);
+                    JOptionPaneHelper.showInformationBox(this, "BB-Code in die Zwischenablage kopiert", "Information");
+                } catch (Exception e) {
+                    JOptionPaneHelper.showErrorBox(this, "Fehler beim Kopieren in die Zwischenablage", "Fehler");
+                }
+            }
+        } else if (evt.getSource() == jCenterItem) {
+            //center current village on map
+            Village v = actionMenuVillage;
+            if (v != null) {
+                DSWorkbenchMainFrame.getSingleton().centerVillage(v);
+            }
+        } else if (evt.getSource() == jCurrentToAttackPlanerAsSourceItem) {
+            Village v = actionMenuVillage;
+            if (v != null) {
+                if (v.getTribe() == null) {
+                    JOptionPaneHelper.showInformationBox(this, "Angriffe von Barbarendörfern können nicht geplant werden.", "Information");
+                    return;
+                }
+                List<Village> toAdd = new LinkedList<Village>();
+                toAdd.add(v);
+                if (!DSWorkbenchMainFrame.getSingleton().getAttackPlaner().isVisible()) {
+                    //show attack planer to allow adding data
+                    DSWorkbenchMainFrame.getSingleton().getAttackPlaner().setup();
+                    DSWorkbenchMainFrame.getSingleton().getAttackPlaner().setVisible(true);
+                }
+                DSWorkbenchMainFrame.getSingleton().getAttackPlaner().fireAddSourcesEvent(toAdd);
+                JOptionPaneHelper.showInformationBox(this, "Dorf in Angriffsplaner eingefügt", "Information");
+            }
+        } else if (evt.getSource() == jCurrentToAttackPlanerAsTargetItem) {
+            Village v = actionMenuVillage;
+            if (v != null) {
+                if (v.getTribe() == null) {
+                    JOptionPaneHelper.showInformationBox(this, "Angriffe auf Barbarendörfer können nicht geplant werden.", "Information");
+                    return;
+                }
+                List<Village> toAdd = new LinkedList<Village>();
+                toAdd.add(v);
+                if (!DSWorkbenchMainFrame.getSingleton().getAttackPlaner().isVisible()) {
+                    //show attack planer to allow adding data
+                    DSWorkbenchMainFrame.getSingleton().getAttackPlaner().setup();
+                    DSWorkbenchMainFrame.getSingleton().getAttackPlaner().setVisible(true);
+                }
+                DSWorkbenchMainFrame.getSingleton().getAttackPlaner().fireAddTargetsEvent(toAdd);
+                JOptionPaneHelper.showInformationBox(this, "Dorf in Angriffsplaner eingefügt", "Information");
+            }
+        } else if (evt.getSource() == jCurrentCreateNoteItem) {
+            Village v = actionMenuVillage;
+            if (v != null) {
+                DSWorkbenchNotepad.getSingleton().addNoteForVillage(actionMenuVillage);
+                JOptionPaneHelper.showInformationBox(this, "Notiz erstellt", "Information");
+            }
+        } else if (evt.getSource() == jCurrentAddToNoteItem) {
+            Village v = actionMenuVillage;
+            if (v != null) {
+                if (DSWorkbenchNotepad.getSingleton().addVillageToCurrentNote(actionMenuVillage)) {
+                    JOptionPaneHelper.showInformationBox(this, "Dorf hinzugefügt", "Information");
+                } else {
+                    JOptionPaneHelper.showWarningBox(this, "Es ist keine Notiz ausgewählt.", "Warnung");
+                }
+            }
+        } else if (evt.getSource() == jVillageInfoIngame) {
+            //center village ingame
+            Village v = actionMenuVillage;
+            if (v != null) {
+                BrowserCommandSender.centerVillage(v);
+            }
+
+        } else if (evt.getSource() == jAllCoordToClipboardItem) {
+            //copy selected villages coordinates to clipboard
+            if (markedVillages.isEmpty()) {
+                JOptionPaneHelper.showInformationBox(this, "Keine Dörfer markiert.", "Information");
+                return;
+            }
+            try {
+                String text = "";
+                for (Village v : markedVillages) {
+                    if (ServerSettings.getSingleton().getCoordType() != 2) {
+                        int[] hier = DSCalculator.xyToHierarchical((int) v.getX(), (int) v.getY());
+                        text += hier[0] + ":" + hier[1] + ":" + hier[2] + "\n";
+                    } else {
+                        text += v.getX() + "|" + v.getY() + "\n";
+                    }
+                }
+                Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(text), null);
+                JOptionPaneHelper.showInformationBox(this, "Koordinaten in die Zwischenablage kopiert", "Information");
+            } catch (Exception e) {
+                JOptionPaneHelper.showErrorBox(this, "Fehler beim Kopieren in die Zwischenablage", "Fehler");
+            }
+        } else if (evt.getSource() == jAllCoordAsBBToClipboardItem) {
+            //copy selected villages as bb-code to clipboard
+            if (markedVillages.isEmpty()) {
+                JOptionPaneHelper.showInformationBox(this, "Keine Dörfer markiert.", "Information");
+                return;
+            }
+            try {
+                String text = "";
+                for (Village v : markedVillages) {
+                    text += v.toBBCode() + "\n";
+                }
+                Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(text), null);
+                JOptionPaneHelper.showInformationBox(this, "BB-Code in die Zwischenablage kopiert", "Information");
+            } catch (Exception e) {
+                JOptionPaneHelper.showErrorBox(this, "Fehler beim Kopieren in die Zwischenablage", "Fehler");
+            }
+        } else if (evt.getSource() == jAllToAttackPlanerAsSourceItem) {
+            if (markedVillages.isEmpty()) {
+                JOptionPaneHelper.showInformationBox(this, "Keine Dörfer markiert.", "Information");
+                return;
+            }
+            if (!DSWorkbenchMainFrame.getSingleton().getAttackPlaner().isVisible()) {
+                //show attack planer to allow adding data
+                DSWorkbenchMainFrame.getSingleton().getAttackPlaner().setup();
+                DSWorkbenchMainFrame.getSingleton().getAttackPlaner().setVisible(true);
+            }
+            DSWorkbenchMainFrame.getSingleton().getAttackPlaner().fireAddSourcesEvent(markedVillages);
+            JOptionPaneHelper.showInformationBox(this, "Dörfer in Angriffsplaner eingefügt", "Information");
+        } else if (evt.getSource() == jAllToAttackPlanerAsTargetItem) {
+            if (markedVillages.isEmpty()) {
+                JOptionPaneHelper.showInformationBox(this, "Keine Dörfer markiert.", "Information");
+                return;
+            }
+            if (!DSWorkbenchMainFrame.getSingleton().getAttackPlaner().isVisible()) {
+                //show attack planer to allow adding data
+                DSWorkbenchMainFrame.getSingleton().getAttackPlaner().setup();
+                DSWorkbenchMainFrame.getSingleton().getAttackPlaner().setVisible(true);
+            }
+            DSWorkbenchMainFrame.getSingleton().getAttackPlaner().fireAddTargetsEvent(markedVillages);
+            JOptionPaneHelper.showInformationBox(this, "Dörfer in Angriffsplaner eingefügt", "Information");
+        } else if (evt.getSource() == jAllCreateNoteItem) {
+            if (markedVillages.isEmpty()) {
+                JOptionPaneHelper.showInformationBox(this, "Keine Dörfer markiert.", "Information");
+                return;
+            }
+            Village v = actionMenuVillage;
+            if (v != null) {
+                DSWorkbenchNotepad.getSingleton().addNoteForVillages(markedVillages);
+                JOptionPaneHelper.showInformationBox(this, "Notiz erstellt", "Information");
+            }
+        } else if (evt.getSource() == jAllAddToNoteItem) {
+            if (markedVillages.isEmpty()) {
+                JOptionPaneHelper.showInformationBox(this, "Keine Dörfer markiert.", "Information");
+                return;
+            }
+            if (DSWorkbenchNotepad.getSingleton().addVillagesToCurrentNote(markedVillages)) {
+                JOptionPaneHelper.showInformationBox(this, "Dörfer hinzugefügt", "Information");
+            } else {
+                JOptionPaneHelper.showWarningBox(this, "Es ist keine Notiz ausgewählt.", "Warnung");
+            }
+        }
+    }//GEN-LAST:event_fireVillagePopupActionEvent
+
     /**Draw buffer into panel*/
     @Override
     public void paint(Graphics g) {
@@ -1153,7 +1537,7 @@ public class MapPanel extends JPanel {
                     yDir += 1;
                 }
 
-            //lower scroll speed
+                //lower scroll speed
                 int sx = 0;
                 int sy = 0;
                 if (xDir >= 1) {
@@ -1212,10 +1596,6 @@ public class MapPanel extends JPanel {
         return new Point2D.Double(dCenterX, dCenterY);
     }
 
-    public void setVillageSelectionListener(VillageSelectionListener pListener) {
-        // mVillageSelectionListener = pListener;
-    }
-
     public Point.Double getCurrentVirtualPosition() {
         return new Point.Double(mVirtualBounds.getX(), mVirtualBounds.getY());
     }
@@ -1264,6 +1644,32 @@ public class MapPanel extends JPanel {
             while (villages.hasMoreElements()) {
                 Village current = villages.nextElement();
                 if (mVillagePositions.get(current).contains(mouse)) {
+                    return current;
+                }
+
+            }
+        } catch (Exception e) {
+            //failed getting village (probably getting mousepos failed)
+        }
+
+        return null;
+    }
+
+    public Village getVillageAtPoint(Point pPos) {
+        if (MenuRenderer.getSingleton().isVisible()) {
+            return null;
+        }
+
+        if (mVillagePositions == null) {
+            return null;
+        }
+
+        try {
+            Enumeration<Village> villages = mVillagePositions.keys();
+
+            while (villages.hasMoreElements()) {
+                Village current = villages.nextElement();
+                if (mVillagePositions.get(current).contains(pPos)) {
                     return current;
                 }
 
@@ -1356,12 +1762,25 @@ public class MapPanel extends JPanel {
 
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuItem jAllAddToNoteItem;
+    private javax.swing.JMenuItem jAllCoordAsBBToClipboardItem;
+    private javax.swing.JMenuItem jAllCoordToClipboardItem;
+    private javax.swing.JMenuItem jAllCreateNoteItem;
+    private javax.swing.JMenuItem jAllToAttackPlanerAsSourceItem;
+    private javax.swing.JMenuItem jAllToAttackPlanerAsTargetItem;
     private javax.swing.JButton jCancelExportButton;
+    private javax.swing.JMenuItem jCenterItem;
     private javax.swing.JCheckBox jCopyBarbarian;
     private javax.swing.JCheckBox jCopyEnemyAlly;
     private javax.swing.JCheckBox jCopyOwn;
     private javax.swing.JCheckBox jCopyOwnAlly;
     private javax.swing.JDialog jCopyVillagesDialog;
+    private javax.swing.JMenuItem jCurrentAddToNoteItem;
+    private javax.swing.JMenuItem jCurrentCoordAsBBToClipboardItem;
+    private javax.swing.JMenuItem jCurrentCoordToClipboardItem;
+    private javax.swing.JMenuItem jCurrentCreateNoteItem;
+    private javax.swing.JMenuItem jCurrentToAttackPlanerAsSourceItem;
+    private javax.swing.JMenuItem jCurrentToAttackPlanerAsTargetItem;
     private javax.swing.JCheckBox jExportAllyName;
     private javax.swing.JButton jExportBBButton;
     private javax.swing.JButton jExportPlainButton;
@@ -1369,7 +1788,17 @@ public class MapPanel extends JPanel {
     private javax.swing.JCheckBox jExportTribeName;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JSeparator jSeparator2;
+    private javax.swing.JSeparator jSeparator3;
+    private javax.swing.JSeparator jSeparator4;
+    private javax.swing.JSeparator jSeparator5;
+    private javax.swing.JSeparator jSeparator6;
+    private javax.swing.JSeparator jTitledSeparatorAll;
+    private javax.swing.JSeparator jTitledSeparatorCurrent;
+    private javax.swing.JPopupMenu jVillageActionsMenu;
     private javax.swing.JLabel jVillageExportDetails;
+    private javax.swing.JMenuItem jVillageInfoIngame;
     // End of variables declaration//GEN-END:variables
 
     public static void main(String[] args) {

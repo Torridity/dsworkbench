@@ -1930,6 +1930,20 @@ public class MapRenderer extends Thread {
             }
         }
 // </editor-fold>
+        List<Village> marked = MapPanel.getSingleton().getMarkedVillages();
+        if (!marked.isEmpty()) {
+            Enumeration<Village> villages = villagePositions.keys();
+            Color cBefore = g2d.getColor();
+            while (villages.hasMoreElements()) {
+                Village v = villages.nextElement();
+                Rectangle villageRect = villagePositions.get(v);
+                if (marked.contains(v)) {
+                    g2d.setColor(Color.YELLOW);
+                    g2d.fillOval(villageRect.x + villageRect.width - 10, villageRect.y, 10, 10);
+                }
+            }
+            g2d.setColor(cBefore);
+        }
 
         if (Boolean.parseBoolean(GlobalOptions.getProperty("show.map.popup"))) {
             renderVillageInfo(g2d, mouseVillage);
@@ -1942,7 +1956,7 @@ public class MapRenderer extends Thread {
             return;
         }
 
-       /* BufferedImage im = new BufferedImage(500, 300, BufferedImage.TYPE_INT_RGB);
+        /* BufferedImage im = new BufferedImage(500, 300, BufferedImage.TYPE_INT_RGB);
         Graphics2D g2d = (Graphics2D)im.getGraphics();*/
         Tribe t = mouseVillage.getTribe();
         Ally a = null;
@@ -2175,7 +2189,7 @@ public class MapRenderer extends Thread {
         pG2d.drawImage(sub, (int) villageRect.getCenterX(), (int) villageRect.getCenterY(), null);
         g2d.setFont(before);
         g2d.setStroke(sBefore);
-        //DSWorkbenchMainFrame.getSingleton().setPopup(im.getScaledInstance(500, 300, BufferedImage.SCALE_DEFAULT), rect);
+    //DSWorkbenchMainFrame.getSingleton().setPopup(im.getScaledInstance(500, 300, BufferedImage.SCALE_DEFAULT), rect);
     }
 
     /**Get bonus text, depending on server version*/

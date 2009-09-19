@@ -26,6 +26,8 @@
 
 <mapID target="pages.attack_planer_settings_not_assigned" url="pages/attack_planer_settings.html#not_assigned"/>
 
+<mapID target="pages.dswb_script" url="pages/dswb_script.html"/>
+
 <mapID target="pages.map_tools_mapshot_tool" url="pages/map_tools.html#mapshot_tool"/>
 
 <mapID target="pages.runtime_tool" url="pages/runtime_tool.html"/>
@@ -77,6 +79,8 @@
 <mapID target="pages.attack_planer_allinone" url="pages/attack_planer_allinone.html"/>
 
 <mapID target="pages.form_setup" url="pages/form_setup.html"/>
+
+<mapID target="pages.extended_map_functions" url="pages/extended_map_functions.html"/>
 
 <mapID target="pages.main_window_basics" url="pages/main_window_basics.html"/>
 

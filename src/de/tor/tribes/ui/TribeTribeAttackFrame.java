@@ -2549,17 +2549,17 @@ private void fireCancelTransferEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST
 private void fireChooseSourceRegionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireChooseSourceRegionEvent
     //select source villages on map
     MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_SELECTION);
+    DSWorkbenchSelectionFrame.getSingleton().setVisible(true);
     DSWorkbenchMainFrame.getSingleton().toFront();
     DSWorkbenchMainFrame.getSingleton().requestFocus();
-    bChooseSourceRegionMode =
-            true;
+    bChooseSourceRegionMode = true;
 }//GEN-LAST:event_fireChooseSourceRegionEvent
 
 private void fireChooseTargetRegionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireChooseTargetRegionEvent
+    DSWorkbenchSelectionFrame.getSingleton().setVisible(true);
     DSWorkbenchMainFrame.getSingleton().toFront();
     DSWorkbenchMainFrame.getSingleton().requestFocus();
-    bChooseTargetRegionMode =
-            true;
+    bChooseTargetRegionMode = true;
 }//GEN-LAST:event_fireChooseTargetRegionEvent
 
 private void fireUseSnobEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireUseSnobEvent
@@ -3482,7 +3482,9 @@ private void fireTargetAllyFilterChangedEvent(javax.swing.event.CaretEvent evt) 
             if (bChooseSourceRegionMode) {
                 ((DefaultTableModel) jAttacksTable.getModel()).addRow(new Object[]{v, uSource});
             } else if (bChooseTargetRegionMode) {
-                ((DefaultTableModel) jVictimTable.getModel()).addRow(new Object[]{v, uSource});
+                if (v.getTribe() != null) {
+                    ((DefaultTableModel) jVictimTable.getModel()).addRow(new Object[]{v.getTribe(), v});
+                }
             }
         }
 
@@ -3494,7 +3496,7 @@ private void fireTargetAllyFilterChangedEvent(javax.swing.event.CaretEvent evt) 
             jVictimTable.repaint();
         }
 
-        // <editor-fold defaultstate="collapsed" desc=" OLD HANDLING">
+// <editor-fold defaultstate="collapsed" desc=" OLD HANDLING">
        /*    if (bChooseSourceRegionMode) {
         UnitHolder uSource = (UnitHolder) jTroopsList.getSelectedItem();
         // Tribe you = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage().getTribe();
@@ -3547,15 +3549,17 @@ private void fireTargetAllyFilterChangedEvent(javax.swing.event.CaretEvent evt) 
         }
         jVictimTable.revalidate();
         jVictimTable.repaint();//.updateUI();*/
-        //   }
+//   }
 
-        //</editor-fold>
-
+//</editor-fold>
         bChooseSourceRegionMode = false;
-        bChooseTargetRegionMode = false;
+        bChooseTargetRegionMode =
+                false;
 
         toFront();
+
         requestFocus();
+
     }
 
 // <editor-fold defaultstate="collapsed" desc="Source selection handlers">
@@ -3568,6 +3572,7 @@ private void fireTargetAllyFilterChangedEvent(javax.swing.event.CaretEvent evt) 
             if (!continentList.contains(cont)) {
                 continentList.add(cont);
             }
+
         }
 
         Collections.sort(continentList, String.CASE_INSENSITIVE_ORDER);
@@ -3643,6 +3648,7 @@ private void fireTargetAllyFilterChangedEvent(javax.swing.event.CaretEvent evt) 
                     //no-tag villages contained
                     useNoTag = true;
                 }
+
             }
             boolean onlyPlayerVillages = jPlayerSourcesOnlyBox.isSelected();
             Tribe current = DSWorkbenchMainFrame.getSingleton().getCurrentUser();
@@ -3659,6 +3665,7 @@ private void fireTargetAllyFilterChangedEvent(javax.swing.event.CaretEvent evt) 
                                 //use village if all villages are allowed or if owner is current player
                                 villageList.add(v);
                             }
+
                         }
 
                     }
@@ -3673,6 +3680,7 @@ private void fireTargetAllyFilterChangedEvent(javax.swing.event.CaretEvent evt) 
                                 //use village if all villages are allowed or if owner is current player
                                 villageList.add(v);
                             }
+
                         }
 
                     }
@@ -3692,6 +3700,7 @@ private void fireTargetAllyFilterChangedEvent(javax.swing.event.CaretEvent evt) 
                                     //use village if all villages are allowed or if owner is current player
                                     villageList.add(v);
                                 }
+
                             }
 
                         }
@@ -3705,6 +3714,7 @@ private void fireTargetAllyFilterChangedEvent(javax.swing.event.CaretEvent evt) 
                             if (!villageIds.contains(i)) {
                                 villageIds.add(i);
                             }
+
                         }
                     }
                     //check for all villages, if they are tagged by all selected tags
@@ -3715,7 +3725,12 @@ private void fireTargetAllyFilterChangedEvent(javax.swing.event.CaretEvent evt) 
                                 //at least one tag does not tag current village
                                 use = false;
                                 break;
+
                             }
+
+
+
+
                         }
                         if (use) {
                             //all tags tag current village, so use them
@@ -3725,6 +3740,7 @@ private void fireTargetAllyFilterChangedEvent(javax.swing.event.CaretEvent evt) 
                                     //use village if all villages are allowed or if owner is current player
                                     villageList.add(v);
                                 }
+
                             }
                         }
                     }
@@ -3737,6 +3753,7 @@ private void fireTargetAllyFilterChangedEvent(javax.swing.event.CaretEvent evt) 
                 //use village if all villages are allowed or if owner is current player
                 villageList.add(v);
             }
+
         }
         return villageList;
     }
@@ -3775,6 +3792,7 @@ private void fireTargetAllyFilterChangedEvent(javax.swing.event.CaretEvent evt) 
                     //only add tribes which are attackable
                     noAlly.add(t);
                 }
+
             }
             Tribe[] noAllyTribes = noAlly.toArray(new Tribe[]{});
             Arrays.sort(noAllyTribes, Tribe.CASE_INSENSITIVE_ORDER);
@@ -3834,7 +3852,8 @@ private void fireTargetAllyFilterChangedEvent(javax.swing.event.CaretEvent evt) 
         List<Integer> validConts = new LinkedList<Integer>();
         for (Object cont : conts) {
             String c = (String) cont;
-            c = c.replaceAll("K", "").trim();
+            c =
+                    c.replaceAll("K", "").trim();
             validConts.add(Integer.parseInt(c));
         }
 

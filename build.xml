@@ -10,6 +10,13 @@
 <project name="DSWorkbench" default="default" basedir=".">
     <description>Builds, tests, and runs the project DSWorkbench.</description>
     <import file="nbproject/build-impl.xml"/>
+ <target name="-post-jar">
+     <taskdef resource="proguard/ant/task.properties"
+           classpath="lib/proguard.jar" />
+    <proguard configuration="proguard.pro" />
+    <copy file="Release/core.jar" tofile="dist/DSWorkbench.jar"/>
+        </target>
+        
     <!--
 
     There exist several targets which are by default empty and which can be 

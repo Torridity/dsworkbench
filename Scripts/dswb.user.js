@@ -24,7 +24,6 @@ addLoadEvent(function() {
 //parse arguments
 function getArgs() { 
    args = new Object();
-
    var query = location.search.substring(1); 
 
    var pairs = query.split("&"); 
@@ -67,6 +66,7 @@ insertUnit(field, parseInt(args[units[i]]));
 }
       }
    }
+   attack();
 }
 
 function addLoadEvent(func) {
@@ -100,5 +100,9 @@ oldonload = window.onload
 }*/
 
 function attack(){
-	document.forms.units.attack.click();
+if(window.navigator.userAgent.indexOf("Firefox") > -1){
+         unsafeWindow.document.forms.units.attack.click();
+}else{
+document.forms.units.attack.click();
+}	
 }

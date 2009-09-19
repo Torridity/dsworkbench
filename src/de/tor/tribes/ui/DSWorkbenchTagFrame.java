@@ -39,6 +39,7 @@ import javax.swing.table.TableRowSorter;
 import org.apache.log4j.Logger;
 
 /**
+ * @TODO (DIFF) Multi selection for removing villages
  * @author Jejkal
  */
 public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
@@ -81,7 +82,7 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
 
         jTagTable.setDefaultRenderer(TagMapMarker.class, new TagMapMarkerRenderer());
         jTagTable.setDefaultEditor(TagMapMarker.class, new TagMapMarkerCellEditor());
-       
+
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
         GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.tag_view", GlobalOptions.getHelpBroker().getHelpSet());
         // </editor-fold>
@@ -246,7 +247,6 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
             }
         });
 
-        jTaggedVillageList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane2.setViewportView(jTaggedVillageList);
 
         jButton4.setBackground(new java.awt.Color(239, 235, 223));
@@ -418,7 +418,7 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
     }//GEN-LAST:event_fireCenterVillageEvent
 
     private void fireUntagVillage(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireUntagVillage
-        Village selection = (Village) jTaggedVillageList.getSelectedValue();
+        Object[] selection = (Object[]) jTaggedVillageList.getSelectedValues();
         if (selection != null) {
             int[] rows = jTagTable.getSelectedRows();
             if (rows == null || rows.length == 0) {
@@ -426,7 +426,7 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
             }
 
             String message = (rows.length == 1) ? "Tag " : rows.length + " Tags ";
-            message += "für das Dorf '" + selection + "' wirklich löschen?";
+            message += "für alle markierten Dörfer löschen?";
             if (JOptionPaneHelper.showQuestionConfirmBox(this, message, "Tags löschen", "Nein", "Ja") == JOptionPane.NO_OPTION) {
                 //return if no delete was requested
                 return;
@@ -437,11 +437,14 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
                 String name = (String) TagTableModel.getSingleton().getValueAt(row, 0);
                 Tag t = TagManager.getSingleton().getTagByName(name);
                 if (t != null) {
-                    t.untagVillage(selection.getId());
+                    for (Object o : selection) {
+                        t.untagVillage(((Village) o).getId());
+                    }
                 }
             }
         }
         updateTaggedVillageList();
+        MapPanel.getSingleton().getMapRenderer().initiateRedraw(0);
     }//GEN-LAST:event_fireUntagVillage
 
     private void updateTaggedVillageList() {

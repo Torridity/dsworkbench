@@ -20,6 +20,8 @@
   <tocitem text="Grundlagen " target="pages.basics" image="images.tictac_orange">
    <tocitem text="Navigation auf der Karte " target="pages.map_navigation" image="images.tictac_grey"/>
 
+   <tocitem text="Erweiterte Kartenfunktionen " target="pages.extended_map_functions" image="images.tictac_grey"/>
+
    <tocitem text="Funktionen im Hauptfenster " target="pages.main_window_basics" image="images.tictac_grey"/>
 
    <tocitem text="Datenhaltung " target="pages.data_handling" image="images.tictac_grey"/>
@@ -31,6 +33,8 @@
    <tocitem text="Import von Spielinformationen " target="pages.import_ingame" image="images.tictac_grey"/>
 
    <tocitem text="Truppendichte " target="pages.troop_density" image="images.tictac_grey"/>
+
+   <tocitem text="Das DS Workbench Userscript " target="pages.dswb_script" image="images.tictac_grey"/>
 
   </tocitem>
   <tocitem text="Werkzeuge " target="pages.tools" image="images.tictac_orange">

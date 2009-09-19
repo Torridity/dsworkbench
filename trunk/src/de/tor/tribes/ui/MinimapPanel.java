@@ -320,7 +320,6 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
                 mBuffer = mBuffer.getScaledInstance(getWidth(), getHeight(), BufferedImage.SCALE_SMOOTH);
             } else if ((mBuffer.getWidth(null) != getWidth()) || (mBuffer.getHeight(null) != getHeight())) {
                 mZoomFrame.setMinimap(pBuffer);
-                mBuffer = pBuffer;
                 mBuffer = mBuffer.getScaledInstance(getWidth(), getHeight(), BufferedImage.SCALE_SMOOTH);
             } else if (doRedraw) {
                 mZoomFrame.setMinimap(pBuffer);

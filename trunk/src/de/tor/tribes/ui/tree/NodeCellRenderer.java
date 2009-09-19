@@ -65,10 +65,20 @@ public class NodeCellRenderer extends DefaultTreeCellRenderer {
                 setIcon(tag);
                 Tag v = ((TagNode) node).getUserObject();
                 int cnt = node.getChildCount();
-                 setText(v.toString() + " [" + cnt + " " + ((cnt == 1) ? "Dorf]" : "Dörfer]"));
+                setText(v.toString() + " [" + cnt + " " + ((cnt == 1) ? "Dorf]" : "Dörfer]"));
             } else if (node instanceof SelectionTreeRootNode) {
                 int cnt = node.getChildCount();
-                setText(((SelectionTreeRootNode) node).getUserObject() + " [" + cnt + " " + ((cnt == 1) ? "Stamm]" : "Stämme]"));
+                boolean flat = false;
+                try {
+                    AllyNode n = (AllyNode) node.getChildAt(0);
+                } catch (Exception e) {
+                    flat = true;
+                }
+                if (flat) {
+                    setText(((SelectionTreeRootNode) node).getUserObject() + " [" + cnt + " " + ((cnt == 1) ? "Dorf]" : "Dörfer]"));
+                } else {
+                    setText(((SelectionTreeRootNode) node).getUserObject() + " [" + cnt + " " + ((cnt == 1) ? "Stamm]" : "Stämme]"));
+                }
             } else {
             }
         } catch (Exception e) {

@@ -432,7 +432,7 @@ private void fireAddTroopsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:even
     try {
         String playerID = GlobalOptions.getProperty("player." + GlobalOptions.getSelectedServer());
         Tribe t = DataHolder.getSingleton().getTribeByName(playerID);
-        Village[] villages = t.getVillageList().toArray(new Village[]{});
+        Village[] villages = t.getVillageList();
         Arrays.sort(villages, Village.CASE_INSENSITIVE_ORDER);
         for (Village v : villages) {
             if (TroopsManager.getSingleton().getTroopsForVillage(v) == null) {

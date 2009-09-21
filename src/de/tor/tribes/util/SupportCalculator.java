@@ -70,7 +70,7 @@ public class SupportCalculator {
             return new LinkedList<SupportMovement>();
         }
         List<SupportMovement> movements = new LinkedList<SupportMovement>();
-        Village[] villageList = own.getVillageList().toArray(new Village[]{});
+        Village[] villageList = own.getVillageList();
         List<Village> villages = new LinkedList<Village>();
         //buid list of allowed villages
         for (Village v : villageList) {

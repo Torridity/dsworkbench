@@ -153,12 +153,28 @@ public class Tribe implements Comparable {
         }
     }
 
-    public List<Village> getVillageList() {
+    public boolean removeVillage(Village pVillage) {
         if (villageList == null) {
             villageList = new LinkedList<Village>();
         }
 
-        return villageList;
+        return villageList.remove(pVillage);
+
+    }
+
+    public boolean ownsVillage(Village pVillage) {
+        if (villageList == null) {
+            villageList = new LinkedList<Village>();
+        }
+
+        return villageList.contains(pVillage);
+    }
+
+    public Village[] getVillageList() {
+        if (villageList == null) {
+            villageList = new LinkedList<Village>();
+        }
+        return villageList.toArray(new Village[]{});
     }
 
     public String getHTMLInfo() {

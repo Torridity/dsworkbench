@@ -3672,7 +3672,7 @@ private void fireTargetAllyFilterChangedEvent(javax.swing.event.CaretEvent evt) 
                 }
                 if (useNoTag) {
                     //use villages of current user which are not tagged
-                    List<Village> villages = DSWorkbenchMainFrame.getSingleton().getCurrentUser().getVillageList();
+                    Village[] villages = DSWorkbenchMainFrame.getSingleton().getCurrentUser().getVillageList();
                     for (Village v : villages) {
                         List<Tag> vtags = TagManager.getSingleton().getTags(v);
                         if (vtags == null || vtags.isEmpty() && !villageList.contains(v)) {
@@ -3692,7 +3692,7 @@ private void fireTargetAllyFilterChangedEvent(javax.swing.event.CaretEvent evt) 
                     //-> if one tag is selected for AND relation, ignore non-tagged due to logical error
                     if (useNoTag) {
                         //use villages of current user which are not tagged
-                        List<Village> villages = DSWorkbenchMainFrame.getSingleton().getCurrentUser().getVillageList();
+                        Village[] villages = DSWorkbenchMainFrame.getSingleton().getCurrentUser().getVillageList();
                         for (Village v : villages) {
                             List<Tag> vtags = TagManager.getSingleton().getTags(v);
                             if (vtags == null || vtags.isEmpty() && !villageList.contains(v)) {
@@ -3748,7 +3748,7 @@ private void fireTargetAllyFilterChangedEvent(javax.swing.event.CaretEvent evt) 
             }
         } else {
             //no tags available, take current users villages
-            List<Village> villages = DSWorkbenchMainFrame.getSingleton().getCurrentUser().getVillageList();
+            Village[] villages = DSWorkbenchMainFrame.getSingleton().getCurrentUser().getVillageList();
             for (Village v : villages) {
                 //use village if all villages are allowed or if owner is current player
                 villageList.add(v);
@@ -3788,7 +3788,7 @@ private void fireTargetAllyFilterChangedEvent(javax.swing.event.CaretEvent evt) 
             List<Tribe> noAlly = new LinkedList<Tribe>();
             while (tribeIDs.hasMoreElements()) {
                 Tribe t = DataHolder.getSingleton().getTribes().get(tribeIDs.nextElement());
-                if (t.getAlly() == null && t.getVillageList() != null && !t.getVillageList().isEmpty()) {
+                if (t.getAlly() == null && t.getVillageList() != null && t.getVillageList().length > 0) {
                     //only add tribes which are attackable
                     noAlly.add(t);
                 }
@@ -3805,8 +3805,8 @@ private void fireTargetAllyFilterChangedEvent(javax.swing.event.CaretEvent evt) 
     private void fireFilterTargetByTribeEvent() {
         try {
             Tribe t = (Tribe) jTargetTribeList.getSelectedValue();
-            if (t != null && t.getVillageList() != null && t.getVillageList().size() > 0) {
-                Village[] villages = t.getVillageList().toArray(new Village[]{});
+            if (t != null && t.getVillageList() != null && t.getVillageList().length > 0) {
+                Village[] villages = t.getVillageList();
                 List<String> continents = new LinkedList<String>();
 
                 for (Village v : villages) {
@@ -3858,7 +3858,7 @@ private void fireTargetAllyFilterChangedEvent(javax.swing.event.CaretEvent evt) 
         }
 
         Tribe t = (Tribe) jTargetTribeList.getSelectedValue();
-        Village[] villages = t.getVillageList().toArray(new Village[]{});
+        Village[] villages = t.getVillageList();
         Arrays.sort(villages, Village.CASE_INSENSITIVE_ORDER);
         DefaultListModel villageModel = new DefaultListModel();
         for (Village v : villages) {

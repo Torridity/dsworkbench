@@ -129,15 +129,15 @@ public class ConquerManager {
                     Tribe winner = DataHolder.getSingleton().getTribes().get(c.getWinner());
                     if (v.getTribeID() != winner.getId()) {
                         //conquer not yet in world data
-                        if (loser != null && loser.getVillageList().remove(v)) {
+                        if (loser != null && loser.removeVillage(v)) {
                             loser.setVillages((short) (loser.getVillages() - 1));
                             Ally loserAlly = loser.getAlly();
                             if (loserAlly != null) {
                                 loserAlly.setVillages(loserAlly.getVillages() - 1);
                             }
                         }
-                        if (winner != null && !winner.getVillageList().contains(v)) {
-                            winner.getVillageList().add(v);
+                        if (winner != null && !winner.ownsVillage(v)) {
+                            winner.addVillage(v);
                             winner.setVillages((short) (winner.getVillages() + 1));
                             v.setTribe(winner);
                             v.setTribeID(winner.getId());
@@ -306,15 +306,15 @@ public class ConquerManager {
 
                     if (winner != null && v != null && v.getTribeID() != winner.getId()) {
                         //conquer not yet in world data
-                        if (loser != null && loser.getVillageList().remove(v)) {
+                        if (loser != null && loser.removeVillage(v)) {
                             loser.setVillages((short) (loser.getVillages() - 1));
                             Ally loserAlly = loser.getAlly();
                             if (loserAlly != null) {
                                 loserAlly.setVillages(loserAlly.getVillages() - 1);
                             }
                         }
-                        if (winner != null && !winner.getVillageList().contains(v)) {
-                            winner.getVillageList().add(v);
+                        if (winner != null && !winner.ownsVillage(v)) {
+                            winner.addVillage(v);
                             winner.setVillages((short) (winner.getVillages() + 1));
                             v.setTribe(winner);
                             v.setTribeID(winner.getId());

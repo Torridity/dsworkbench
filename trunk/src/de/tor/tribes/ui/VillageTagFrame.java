@@ -10,7 +10,7 @@ import de.tor.tribes.types.Village;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.util.tag.TagManager;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
@@ -46,13 +46,10 @@ public class VillageTagFrame extends javax.swing.JFrame {
             return;
         }
         jPlayerName.setText(t.getName());
-        List<Village> list = t.getVillageList();
-        Collections.sort(list);
-        for (Village v : list) {
-            list.add(v);
-        }
-        Collections.sort(list);
-        jVillageList.setModel(new DefaultComboBoxModel(list.toArray(new Village[]{})));
+        Village[] list = t.getVillageList();
+        Arrays.sort(list);
+
+        jVillageList.setModel(new DefaultComboBoxModel(list));
         jVillageList.setSelectedItem(pVillage);
 
         List<Tag> tags = TagManager.getSingleton().getTags(pVillage);

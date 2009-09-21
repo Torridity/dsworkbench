@@ -35,7 +35,8 @@ public class TroopsParser50 {
 
             //parse single line for village
             String line = lines.nextToken();
-            for (Village v : userTribe.getVillageList()) {
+            Village[] villageList = userTribe.getVillageList();
+            for (Village v : villageList) {
                 String village = "(" + v.getX() + "|" + v.getY() + ")";
                 if (line.indexOf(village) > -1) {
                     if (line.indexOf("Übersichten") == -1) {

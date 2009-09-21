@@ -318,7 +318,7 @@ private void fireValueChangedEvent(javax.swing.event.CaretEvent evt) {//GEN-FIRS
 private void fireTribeSelectionChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireTribeSelectionChangedEvent
     try {
         if (evt.getStateChange() == ItemEvent.SELECTED) {
-            Village[] v = ((Tribe) evt.getItem()).getVillageList().toArray(new Village[0]);
+            Village[] v = ((Tribe) evt.getItem()).getVillageList();
             Arrays.sort(v);
             DefaultComboBoxModel model = new DefaultComboBoxModel(v);
             jVillageList.setModel(model);
@@ -337,7 +337,7 @@ private void fireAllySelectionChangedEvent(java.awt.event.ItemEvent evt) {//GEN-
             jTribesList.setModel(model);
             jTribesList.setSelectedIndex(0);
             Tribe t = (Tribe) jTribesList.getItemAt(0);
-            model = new DefaultComboBoxModel(t.getVillageList().toArray(new Village[0]));
+            model = new DefaultComboBoxModel(t.getVillageList());
             jVillageList.setModel(model);
         }
     } catch (Exception e) {
@@ -353,7 +353,7 @@ private void fireAddMarkerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:even
             if (selection instanceof String) {
                 //no ally selected
             } else {
-                f.setVillage(((Ally) selection).getTribes().get(0).getVillageList().get(0));
+                f.setVillage(((Ally) selection).getTribes().get(0).getVillageList()[0]);
                 f.setAllyOnly();
                 f.setVisible(true);
             }
@@ -363,7 +363,7 @@ private void fireAddMarkerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:even
             if (selection instanceof String) {
                 //no tribe selected
             } else {
-                f.setVillage(((Tribe) selection).getVillageList().get(0));
+                f.setVillage(((Tribe) selection).getVillageList()[0]);
                 f.setTribeOnly();
                 f.setVisible(true);
             }

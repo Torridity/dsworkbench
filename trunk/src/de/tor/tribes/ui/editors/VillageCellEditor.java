@@ -106,15 +106,15 @@ public class VillageCellEditor extends AbstractCellEditor implements TableCellEd
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
         Village current = (Village) value;
         Tribe t = current.getTribe();
-        List<Village> villages = new LinkedList<Village>();
+        Village[] villages = null;
         if (t != null) {
             //use tribes villages
             villages = t.getVillageList();
         } else {
             //use single village (barbarian)
-            villages.add(current);
+            villages = new Village[]{current};
         }
-        DefaultComboBoxModel model = new DefaultComboBoxModel(villages.toArray(new Village[]{}));
+        DefaultComboBoxModel model = new DefaultComboBoxModel(villages);
         comboComponent.setModel(model);
         comboComponent.setSelectedItem(value);
         //comboComponent.setSelectedItem(value);

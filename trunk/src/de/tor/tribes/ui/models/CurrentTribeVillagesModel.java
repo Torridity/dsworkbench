@@ -25,7 +25,7 @@ public class CurrentTribeVillagesModel {
             DefaultComboBoxModel model = new DefaultComboBoxModel();
             String playerID = GlobalOptions.getProperty("player." + GlobalOptions.getSelectedServer());
             Tribe t = DataHolder.getSingleton().getTribeByName(playerID);
-            Village[] villages = t.getVillageList().toArray(new Village[]{});
+            Village[] villages = t.getVillageList();
             Arrays.sort(villages, Village.CASE_INSENSITIVE_ORDER);
             for (Village v : villages) {
                 model.addElement(v);

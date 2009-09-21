@@ -237,7 +237,6 @@ public class MapPanel extends JPanel {
                 }
 
                 int tmpCursor = (spaceDown) ? ImageManager.CURSOR_DEFAULT : iCurrentCursor;
-
                 switch (tmpCursor) {
                     case ImageManager.CURSOR_DEFAULT: {
                         //center village on click with default cursor
@@ -247,8 +246,8 @@ public class MapPanel extends JPanel {
                             if ((current != null) && (current.getTribe() != null) && (t != null) && (t.equals(current.getTribe()))) {
                                 DSWorkbenchMainFrame.getSingleton().setCurrentUserVillage(current);
                             }
-                            DSWorkbenchMainFrame.getSingleton().centerVillage(current);
-                            if (DSWorkbenchNotepad.getSingleton().isVisible()) {
+                          //  DSWorkbenchMainFrame.getSingleton().centerVillage(current);
+                          /*  if (DSWorkbenchNotepad.getSingleton().isVisible()) {
                                 //show first note for village if notepad is open
                                 Note n = NoteManager.getSingleton().getNoteForVillage(current);
                                 if (n != null) {
@@ -259,7 +258,7 @@ public class MapPanel extends JPanel {
                                     //set current village to add field to allow to add note immediately
                                     DSWorkbenchNotepad.getSingleton().setVillageFieldExternally(current);
                                 }
-                            }
+                            }*/
                         }
                         break;
                     }

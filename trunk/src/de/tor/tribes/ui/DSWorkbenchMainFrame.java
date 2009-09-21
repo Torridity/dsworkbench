@@ -518,7 +518,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         try {
             DefaultComboBoxModel model = new DefaultComboBoxModel();
             Tribe t = DataHolder.getSingleton().getTribeByName(playerName);
-            Village[] villages = t.getVillageList().toArray(new Village[]{});
+            Village[] villages = t.getVillageList();
             Arrays.sort(villages, Village.CASE_INSENSITIVE_ORDER);
             for (Village v : villages) {
                 model.addElement(v);

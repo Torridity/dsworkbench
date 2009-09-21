@@ -520,7 +520,7 @@ private void fireSourceAllyChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIR
 
 private void fireSourceTribeChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireSourceTribeChangedEvent
     Tribe tSource = (Tribe) jSourceTribeList.getSelectedItem();
-    DefaultComboBoxModel model = new DefaultComboBoxModel(tSource.getVillageList().toArray(new Village[]{}));
+    DefaultComboBoxModel model = new DefaultComboBoxModel(tSource.getVillageList());
     jSourceVillageList.setModel(model);
     jSourceVillageList.setSelectedIndex(0);
 }//GEN-LAST:event_fireSourceTribeChangedEvent

@@ -66,7 +66,6 @@ insertUnit(field, parseInt(args[units[i]]));
 }
       }
    }
-   attack();
 }
 
 function addLoadEvent(func) {

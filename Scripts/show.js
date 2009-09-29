@@ -48,10 +48,16 @@ var attacks = new Array({
 	function doAction() {
 		//Place processing
 		var formNode = document.getElementsByName("units")[0];
-		var titleNode = document.createElement("h3");
-		titleNode.appendChild(document.createTextNode('Geplante Angriffe'));
-		formNode.appendChild(titleNode);
-		formNode.appendChild(buildTable(getVillageID(formNode)));
+		if(formNode != null && !isSimulator(formNode)){
+			//place view
+			var titleNode = document.createElement("h3");
+			titleNode.appendChild(document.createTextNode('Geplante Angriffe'));
+			formNode.appendChild(titleNode);
+			formNode.appendChild(buildTable(getVillageID(formNode)));
+		}else{
+			//overview
+			modifyOverviewTable();
+		}
 		//View processing
 	}
 	
@@ -98,60 +104,112 @@ var attacks = new Array({
 	function buildRows(body, villageID){
 		for (var i = 0; i < attacks.length; i++){
 			if(attacks[i].source == villageID){
-			var line = document.createElement("tr");
-			var rowData = '';
-			var typeNode = document.createElement("td");
-			if(attacks[i].type == 0){
+				var line = document.createElement("tr");
+				var rowData = '';
+				var typeNode = document.createElement("td");
+				if(attacks[i].type == 0){
+					var img = document.createElement("img");
+					img.setAttribute('src', 'http://www.dsworkbench.de/DSWorkbench/export/fake.png');
+					img.setAttribute('title', 'Fake');
+					img.setAttribute('alt', '');
+					typeNode.appendChild(img);
+		  	}else{
+		  		//rowData +=  "<td>-</td>";
+		  		typeNode.appendChild(document.createTextNode('-'));
+				}
+				line.appendChild(typeNode);
+				var targetNode = document.createElement("td");
+				targetNode.appendChild(document.createTextNode(attacks[i].target));
+				line.appendChild(targetNode);
+				//rowData += "<td>" + attacks[i].target + "</td>";
+				var unitNode =  document.createElement("td");
 				var img = document.createElement("img");
-				img.setAttribute('src', 'http://www.dsworkbench.de/DSWorkbench/export/fake.png');
-				img.setAttribute('title', 'Fake');
+				img.setAttribute('src', 'graphic/unit/unit_ram.png?1');
+				img.setAttribute('title', 'Rammbock');
 				img.setAttribute('alt', '');
-				typeNode.appendChild(img);
-		  }else{
-		  	//rowData +=  "<td>-</td>";
-		  	typeNode.appendChild(document.createTextNode('-'));
-			}
-			line.appendChild(typeNode);
-			var targetNode = document.createElement("td");
-			targetNode.appendChild(document.createTextNode(attacks[i].target));
-			line.appendChild(targetNode);
-			//rowData += "<td>" + attacks[i].target + "</td>";
-			var unitNode =  document.createElement("td");
-			var img = document.createElement("img");
-			img.setAttribute('src', 'graphic/unit/unit_ram.png?1');
-			img.setAttribute('title', 'Rammbock');
-			img.setAttribute('alt', '');
-			unitNode.appendChild(img);
-			line.appendChild(unitNode);
-			var sendNode = document.createElement("td");
+				unitNode.appendChild(img);
+				line.appendChild(unitNode);
+				var sendNode = document.createElement("td");
 		
-			var spanNode = document.createElement("span");
-			spanNode.setAttribute('class', 'timer');
-			spanNode.appendChild(document.createTextNode('Warte...'));
-			var altNode = document.createElement("td");
-			var tn = document.createTextNode('Abgelaufen');
-			altNode.appendChild(tn);
-			altNode.setAttribute('style', 'display:none');
-			altNode.setAttribute('class', 'warn');
-			sendNode.appendChild(spanNode);
-			/**Set send time in seconds relative to current time*/
-			var sendTime = 23*60*60 + 20*60;
-			sendTime += 15*60 + 50;
-			//var serverTime = getTime(document.getElementById("serverTime"));
-			//var startTime = getTime(spanNode);
-			addTimer(spanNode, sendTime, false);
-			line.appendChild(sendNode);
-			line.appendChild(altNode);
+				var spanNode = document.createElement("span");
+				spanNode.setAttribute('class', 'timer');
+				spanNode.appendChild(document.createTextNode('Warte...'));
+				var altNode = document.createElement("td");
+				var tn = document.createTextNode('Abgelaufen');
+				altNode.appendChild(tn);
+				altNode.setAttribute('style', 'display:none');
+				altNode.setAttribute('class', 'warn');
+				sendNode.appendChild(spanNode);
+				/**Set send time in seconds relative to current time*/
+				var sendTime = 23*60*60 + 20*60;
+				sendTime += 15*60 + 50;
+				//var serverTime = getTime(document.getElementById("serverTime"));
+				//var startTime = getTime(spanNode);
+				addTimer(spanNode, sendTime, false);
+				line.appendChild(sendNode);
+				line.appendChild(altNode);
 		
-			var arriveNode = document.createElement("td");
-			arriveNode.appendChild(document.createTextNode(attacks[i].arrive));
-			line.appendChild(arriveNode);
-			body.appendChild(line);
+				var arriveNode = document.createElement("td");
+				arriveNode.appendChild(document.createTextNode(attacks[i].arrive));
+				line.appendChild(arriveNode);
+				body.appendChild(line);
+				}
 			}
-		}
 	}
 	
- 
+	/**Check if simulator page is shown. If true do not show planned attacks*/
+ 	function isSimulator(formNode){
+		var attrib = formNode.getAttribute('action');
+		return attrib.contains('mode=sim');
+	}
+	
+	Array.prototype.contains = function (element) {
+		for (var i = 0; i < this.length; i++) {
+			if (this[i] == element) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+ 	function modifyOverviewTable(attack){
+ 		var doneElems = new Array();
+ 		var allElems = new Array();
+ 		var attackedElems = new Array();
+ 		var spans = document.getElementsByTagName('span');
+ 		for(var i = 0;i<spans.length;i++){
+ 			var attrib = spans[i].getAttribute('id');
+ 			if(attrib != null && attrib.contains('label_') && !attrib.contains('label_text_')){
+ 				allElems.push(attrib.replace('label_', ''));
+ 			}
+ 		}
+ 	//	alert(emptyElems);
+ 		for (var i = 0; i < attacks.length; i++){
+			var node = document.getElementById('label_' + attacks[i].source);
+			if(node != null && !doneElems.contains(attacks[i].source)){
+				//element visible
+				doneElems.push(attacks[i].source);
+				attackedElems.push(attacks[i].source);
+				var img = document.createElement("img");
+				img.setAttribute('src', 'graphic/dots/green.png?1');
+				img.setAttribute('title', 'attack');
+				img.setAttribute('alt', '');
+				node.insertBefore(img, node.getElementsByTagName('a')[0]);
+		}
+	}
+	//alert(attackedElems);
+	for (var i = 0; i < allElems.length; i++){
+		if(!attackedElems.contains(allElems[i])){
+			//alert('cont ' + allElems[i]);
+			var node = document.getElementById('label_' + allElems[i]);
+			var img = document.createElement("img");
+			img.setAttribute('src', 'graphic/overview/prod_avail.png?1');
+			img.setAttribute('title', 'attack');
+			img.setAttribute('alt', '');
+			node.insertBefore(img, node.getElementsByTagName('a')[0]);
+		}
+	}
+}
  /*  // Function to add event listener to t
    function load() { 
      var el = document.getElementById("t"); 

@@ -46,8 +46,7 @@ if(type == 0){
 } 
 
 function doInsertUnitsAction(){
-
-
+                             
  //all available units
    units = new Array("spear", "sword", "axe", "archer", "spy", "light", "marcher", "heavy", "ram", "catapult", "knight", "snob");
    //go through all units

@@ -991,7 +991,7 @@
                     <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                       <Image iconType="3" name="/res/clipboard_empty.png"/>
                     </Property>
-                    <Property name="toolTipText" type="java.lang.String" value="Ausgew&#xe4;hltes Dorf auf der Karte zentrieren"/>
+                    <Property name="toolTipText" type="java.lang.String" value="Dorfliste aus der Zwischenablage lesen"/>
                     <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                       <Dimension value="[25, 25]"/>
                     </Property>

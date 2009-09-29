@@ -14,12 +14,14 @@ import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.attack.AttackManager;
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.awt.event.ItemEvent;
 import java.text.NumberFormat;
 import java.util.Date;
 import java.util.Enumeration;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JOptionPane;
 import javax.swing.JSpinner.DateEditor;
 import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
@@ -141,6 +143,12 @@ public class AttackAddFrame extends javax.swing.JFrame {
             jAttackPlanBox.setSelectedItem(lastSelection);
         } else {
             jAttackPlanBox.setSelectedIndex(0);
+        }
+        Rectangle bounds = getBounds();
+        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+        int delta = dim.width - (bounds.x + bounds.width);
+        if (delta < 0) {
+            setLocation(bounds.x + delta, bounds.y);
         }
         setVisible(true);
         skipValidation = false;
@@ -344,6 +352,7 @@ private void fireUnitChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:eve
         if (((Date) jTimeSpinner.getValue()).getTime() < arriveTime) {
             //only set new arrive time if unit could not arrive at the current time
             jTimeSpinner.setValue(new Date(arriveTime));
+
         }
     }
 }//GEN-LAST:event_fireUnitChangedEvent

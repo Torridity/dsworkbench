@@ -13,11 +13,7 @@ package de.tor.tribes.ui.algo;
 
 import de.tor.tribes.ui.TimePicker;
 import de.tor.tribes.util.Constants;
-import java.awt.Color;
-import java.util.Calendar;
-import java.util.Locale;
 import javax.swing.JFrame;
-import org.jdesktop.swingx.JXDatePicker;
 
 /**
  *
@@ -35,10 +31,10 @@ public class NewTimePanel extends javax.swing.JPanel {
         p.setSelectInterval(10);
         p.setWatch(true);
         jPanel2.add(p);
-        JXDatePicker picker = new JXDatePicker();
+        /*JXDatePicker picker = new JXDatePicker();
         picker.setDate(Calendar.getInstance().getTime());
         picker.setLocale(Locale.getDefault());
-        jPanel3.add(picker);
+        jPanel3.add(picker);*/
     }
 
     /** This method is called from within the constructor to

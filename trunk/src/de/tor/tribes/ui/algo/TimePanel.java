@@ -80,10 +80,14 @@ public class TimePanel extends javax.swing.JPanel {
         DefaultListModel model = (DefaultListModel) jSendTimeFramesList.getModel();
         for (int i = 0; i < model.getSize(); i++) {
             TimeSpan span = (TimeSpan) model.getElementAt(i);
+            
             Point s = new Point(span.getSpan().x, span.getSpan().y);
             s.setLocation(s.getX(), s.getY() - 1);
-            TimeSpan tmp = new TimeSpan(s);
+            TimeSpan tmp = new TimeSpan(span.getAtDate(), s);
+
+            System.out.println("Adding span " + tmp);
             result.addTimeSpan(tmp);
+
         }
         return result;
     }

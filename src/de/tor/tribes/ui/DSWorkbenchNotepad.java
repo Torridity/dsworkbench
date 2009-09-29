@@ -561,7 +561,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame {
             }
         });
 
-        jLabel1.setFont(new java.awt.Font("SansSerif", 0, 11)); // NOI18N
+        jLabel1.setFont(new java.awt.Font("SansSerif", 0, 11));
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("Letzte Änderung");
 
@@ -571,7 +571,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame {
         jLastModified.setMinimumSize(new java.awt.Dimension(150, 25));
         jLastModified.setPreferredSize(new java.awt.Dimension(150, 25));
 
-        jLabel2.setFont(new java.awt.Font("SansSerif", 0, 11)); // NOI18N
+        jLabel2.setFont(new java.awt.Font("SansSerif", 0, 11));
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setText("Kartensymbol");
         jLabel2.setMaximumSize(new java.awt.Dimension(66, 20));
@@ -598,7 +598,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame {
             }
         });
 
-        jLabel3.setFont(new java.awt.Font("SansSerif", 0, 11)); // NOI18N
+        jLabel3.setFont(new java.awt.Font("SansSerif", 0, 11));
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel3.setText("Notizsymbol");
 
@@ -697,7 +697,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame {
 
         jButton11.setBackground(new java.awt.Color(239, 235, 223));
         jButton11.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/clipboard_empty.png"))); // NOI18N
-        jButton11.setToolTipText("Ausgewähltes Dorf auf der Karte zentrieren");
+        jButton11.setToolTipText("Dorfliste aus der Zwischenablage lesen");
         jButton11.setMaximumSize(new java.awt.Dimension(25, 25));
         jButton11.setMinimumSize(new java.awt.Dimension(25, 25));
         jButton11.setPreferredSize(new java.awt.Dimension(25, 25));

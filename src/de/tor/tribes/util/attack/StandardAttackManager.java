@@ -72,6 +72,7 @@ public class StandardAttackManager {
                 Document d = JaxenUtils.getDocument(attackFile);
                 for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//stdAttacks/type")) {
                     String type = URLDecoder.decode(e.getAttributeValue("name"), "UTF-8");
+                    logger.debug(" * loading standard attacks for type '" + type + "'");
                     List<StandardAttackElement> elements = new LinkedList<StandardAttackElement>();
                     standardAttacks.put(type, elements);
                     for (Element elem : (List<Element>) JaxenUtils.getNodes(e, "attackElement")) {
@@ -82,6 +83,7 @@ public class StandardAttackManager {
                         }
 
                         if (element != null) {
+                            logger.debug("   * adding element for unit '" + element.getUnit() + "'");
                             elements.add(element);
                         }
                     }
@@ -115,7 +117,7 @@ public class StandardAttackManager {
             standardAttacks.put("Off", new LinkedList<StandardAttackElement>());
             standardAttacks.put("AG", new LinkedList<StandardAttackElement>());
             standardAttacks.put("Unterstützung", new LinkedList<StandardAttackElement>());
-            for (int type = NO_TYPE_ROW; type <= SUPPORT_TYPE_ROW; type++) {
+            for (int type = NO_TYPE_ROW; type <= FAKE_TYPE_ROW; type++) {
                 for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
                     String typeName = "";
                     if (type == NO_TYPE_ROW) {
@@ -129,7 +131,6 @@ public class StandardAttackManager {
                     } else if (type == SUPPORT_TYPE_ROW) {
                         typeName = "Unterstützung";
                     }
-
                     if (!containsElementForUnit(type, unit)) {
                         standardAttacks.get(typeName).add(new StandardAttackElement(unit, 0));
                     }
@@ -150,6 +151,7 @@ public class StandardAttackManager {
             while (keys.hasMoreElements()) {
                 String key = keys.nextElement();
                 List<StandardAttackElement> elements = standardAttacks.get(key);
+                logger.debug(" * writing type '" + key + "'");
                 w.write("<type name=\"" + URLEncoder.encode(key, "UTF-8") + "\">\n");
                 for (StandardAttackElement elem : elements) {
                     w.write(elem.toXml());
@@ -163,7 +165,6 @@ public class StandardAttackManager {
         } catch (Exception e) {
             logger.error("Failed to store standard attacks", e);
         }
-
     }
 
     public int getAmountForVillage(int pType, UnitHolder pUnit, Village pVillage) {

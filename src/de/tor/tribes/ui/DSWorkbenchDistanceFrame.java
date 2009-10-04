@@ -10,15 +10,24 @@
  */
 package de.tor.tribes.ui;
 
-import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Village;
+import de.tor.tribes.ui.models.DistanceTableModel;
+import de.tor.tribes.ui.renderer.DistanceTableCellRenderer;
+import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.parser.VillageParser;
+import java.awt.Component;
 import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
+import java.util.LinkedList;
 import java.util.List;
-import javax.swing.table.DefaultTableModel;
+import javax.swing.JLabel;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 import org.apache.log4j.Logger;
 
 /**
@@ -29,6 +38,8 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame {
 
     private static Logger logger = Logger.getLogger("DistanceFrame");
     private static DSWorkbenchDistanceFrame SINGLETON = null;
+    private List<DefaultTableCellRenderer> renderers = new LinkedList<DefaultTableCellRenderer>();
+    private DistanceTableCellRenderer cellRenderer = null;
 
     public static synchronized DSWorkbenchDistanceFrame getSingleton() {
         if (SINGLETON == null) {
@@ -40,6 +51,40 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame {
     /** Creates new form DSWorkbenchDistanceFrame */
     DSWorkbenchDistanceFrame() {
         initComponents();
+        jDistanceTable.setModel(DistanceTableModel.getSingleton());
+        cellRenderer = new DistanceTableCellRenderer();
+        jDistanceTable.setDefaultRenderer(Double.class, cellRenderer);
+    }
+
+    public void setup() {
+        jDistanceTable.setColumnSelectionAllowed(true);
+        TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(DistanceTableModel.getSingleton());
+        jDistanceTable.setRowSorter(sorter);
+        DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
+
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
+                c.setBackground(Constants.DS_BACK);
+                DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
+                r.setHorizontalAlignment(JLabel.CENTER);
+                return r;
+            }
+        };
+        for (int i = 0; i < jDistanceTable.getColumnCount(); i++) {
+            TableColumn column = jDistanceTable.getColumnModel().getColumn(i);
+            column.setHeaderRenderer(headerRenderer);
+            if (i == 0) {
+                column.setWidth(60);
+                column.setPreferredWidth(60);
+            } else {
+                column.setWidth(60);
+                column.setPreferredWidth(60);
+            }
+            renderers.add(headerRenderer);
+        }
+
+        jDistanceTable.setModel(DistanceTableModel.getSingleton());
     }
 
     /** This method is called from within the constructor to
@@ -61,6 +106,8 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame {
         setTitle("Entfernungsbestimmung");
 
         jPanel1.setBackground(new java.awt.Color(239, 235, 223));
+
+        jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
 
         jDistanceTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -90,6 +137,11 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame {
         jCopyFromClipboardEvent1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_remove.png"))); // NOI18N
         jCopyFromClipboardEvent1.setText(bundle.getString("DSWorkbenchAttackFrame.jCleanupAttacksButton.text")); // NOI18N
         jCopyFromClipboardEvent1.setToolTipText(bundle.getString("DSWorkbenchAttackFrame.jCleanupAttacksButton.toolTipText")); // NOI18N
+        jCopyFromClipboardEvent1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireRemoveColumnEvent(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -97,12 +149,12 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 473, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 473, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jCopyFromClipboardEvent)
                     .addComponent(jCopyFromClipboardEvent1))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -113,11 +165,12 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame {
                         .addComponent(jCopyFromClipboardEvent)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jCopyFromClipboardEvent1))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 383, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 383, Short.MAX_VALUE))
                 .addContainerGap(78, Short.MAX_VALUE))
         );
 
         jCheckBox1.setText("Immer im Vordergrund");
+        jCheckBox1.setOpaque(false);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -144,7 +197,6 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void fireCopyVillagesFromClipboardEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCopyVillagesFromClipboardEvent
-
         try {
             Transferable t = (Transferable) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
             List<Village> villages = VillageParser.parse((String) t.getTransferData(DataFlavor.stringFlavor));
@@ -152,19 +204,29 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame {
                 JOptionPaneHelper.showInformationBox(this, "Es konnten keine Dorfkoodinaten in der Zwischenablage gefunden werden.", "Information");
                 return;
             } else {
+                jDistanceTable.invalidate();
                 for (Village v : villages) {
-
-                
-
-
+                    DistanceTableModel.getSingleton().addVillage(v);
                 }
+                DistanceTableModel.getSingleton().fireTableStructureChanged();
+                jDistanceTable.revalidate();
+                setup();
             }
         } catch (Exception e) {
             logger.error("Failed to parse source villages from clipboard", e);
         }
-
-
     }//GEN-LAST:event_fireCopyVillagesFromClipboardEvent
+
+    private void fireRemoveColumnEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireRemoveColumnEvent
+        int[] cols = jDistanceTable.getSelectedColumns();
+        if (cols == null) {
+            return;
+        }
+        jDistanceTable.invalidate();
+        DistanceTableModel.getSingleton().removeVillages(cols);
+        jDistanceTable.revalidate();
+        setup();
+    }//GEN-LAST:event_fireRemoveColumnEvent
 
     /**
      * @param args the command line arguments

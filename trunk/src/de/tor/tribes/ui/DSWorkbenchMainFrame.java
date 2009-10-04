@@ -543,6 +543,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         TroopsManagerTableModel.getSingleton().setup();
         StandardAttackTableModel.getSingleton().setup();
         DSWorkbenchTroopsFrame.getSingleton().setupTroopsPanel();
+        DSWorkbenchDistanceFrame.getSingleton().setup();
         //update attack planner
         if (mTribeTribeAttackFrame != null) {
             mTribeTribeAttackFrame.setup();
@@ -893,6 +894,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jUnitOverviewItem = new javax.swing.JMenuItem();
         jSelectionOverviewItem = new javax.swing.JMenuItem();
         jStartAStarItem = new javax.swing.JMenuItem();
+        jDistanceItem = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
         jShowAttackFrame = new javax.swing.JCheckBoxMenuItem();
         jShowMarkerFrame = new javax.swing.JCheckBoxMenuItem();
@@ -1922,6 +1924,15 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         });
         jMenu3.add(jStartAStarItem);
 
+        jDistanceItem.setBackground(new java.awt.Color(239, 235, 223));
+        jDistanceItem.setText(bundle.getString("DSWorkbenchMainFrame.jDistanceItem.text_1")); // NOI18N
+        jDistanceItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fireToolsActionEvent(evt);
+            }
+        });
+        jMenu3.add(jDistanceItem);
+
         jMenuBar1.add(jMenu3);
 
         jMenu2.setBackground(new java.awt.Color(225, 213, 190));
@@ -2259,7 +2270,9 @@ private void fireToolsActionEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:e
     } else if (evt.getSource() == jStartAStarItem) {
         DSWorkbenchSimulatorFrame.getSingleton().setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
         DSWorkbenchSimulatorFrame.getSingleton().showIntegratedVersion(GlobalOptions.getSelectedServer());
-    }
+     } else if (evt.getSource() == jDistanceItem) {
+         DSWorkbenchDistanceFrame.getSingleton().setVisible(true);
+     }
 }//GEN-LAST:event_fireToolsActionEvent
 
 private void fireShowAboutEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireShowAboutEvent
@@ -3227,6 +3240,7 @@ private void fireGraphicPackChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FI
     private javax.swing.JLabel jCurrentPlayer;
     private javax.swing.JComboBox jCurrentPlayerVillages;
     private javax.swing.JLabel jCurrentToolLabel;
+    private javax.swing.JMenuItem jDistanceItem;
     private javax.swing.JButton jExportButton;
     private javax.swing.JDialog jExportDialog;
     private javax.swing.JCheckBox jExportForms;

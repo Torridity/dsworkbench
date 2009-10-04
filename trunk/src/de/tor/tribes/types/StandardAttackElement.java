@@ -80,6 +80,10 @@ public class StandardAttackElement {
         return unit.getPlainName().equals(pUnit.getPlainName());
     }
 
+    public UnitHolder getUnit() {
+        return unit;
+    }
+
     public StandardAttackElement(UnitHolder pUnit) {
         unit = pUnit;
         fixedAmount = -1;

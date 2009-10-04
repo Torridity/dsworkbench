@@ -26,7 +26,7 @@ public class BrowserCommandSender {
     public static void sendTroops(Village pSource, Village pTarget, int pType) {
         try {
             String baseURL = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
-
+            logger.debug("Transfer troops to browser for ville '" + pSource + "' to '" + pTarget + "' with type '" + pType + "'");
             String url = baseURL + "/game.php?village=";
             int uvID = GlobalOptions.getUVID();
             if (uvID >= 0) {
@@ -53,7 +53,7 @@ public class BrowserCommandSender {
     public static void sendTroops(Village pSource, Village pTarget) {
         try {
             String baseURL = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
-
+            logger.debug("Transfer troops to browser for ville '" + pSource + "' to '" + pTarget + "'");
             String url = baseURL + "/game.php?village=";
             int uvID = GlobalOptions.getUVID();
             if (uvID >= 0) {

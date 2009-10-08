@@ -39,7 +39,6 @@ import java.awt.datatransfer.Transferable;
 import javax.swing.SwingConstants;
 
 /**
- * @TODO (DIFF) Take village coordinates from clipboard and add tool to insert village to note list
  * @author Charon
  */
 public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame {

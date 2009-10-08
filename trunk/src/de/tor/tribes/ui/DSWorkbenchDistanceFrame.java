@@ -58,6 +58,7 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame {
 
     public void setup() {
         jDistanceTable.setColumnSelectionAllowed(true);
+        jDistanceTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(DistanceTableModel.getSingleton());
         jDistanceTable.setRowSorter(sorter);
         DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
@@ -71,15 +72,33 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame {
                 return r;
             }
         };
+
+        int w0 = 100;
+        try {
+            for (Village v : DSWorkbenchMainFrame.getSingleton().getCurrentUser().getVillageList()) {
+                int w = getGraphics().getFontMetrics().stringWidth(v.toString());
+                if (w > w0) {
+                    w0 = w;
+                }
+            }
+        } catch (Exception e) {
+        }
         for (int i = 0; i < jDistanceTable.getColumnCount(); i++) {
             TableColumn column = jDistanceTable.getColumnModel().getColumn(i);
             column.setHeaderRenderer(headerRenderer);
             if (i == 0) {
-                column.setWidth(60);
-                column.setPreferredWidth(60);
+                column.setWidth(w0);
+                column.setPreferredWidth(w0);
             } else {
-                column.setWidth(60);
-                column.setPreferredWidth(60);
+                try {
+                    String v = (String) column.getHeaderValue();
+                    int w = getGraphics().getFontMetrics().stringWidth(v);
+                    column.setWidth(w);
+                    column.setPreferredWidth(w);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            // column.setPreferredWidth(w);
             }
             renderers.add(headerRenderer);
         }
@@ -101,6 +120,13 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame {
         jDistanceTable = new javax.swing.JTable();
         jCopyFromClipboardEvent = new javax.swing.JButton();
         jCopyFromClipboardEvent1 = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
+        jMinValue = new javax.swing.JTextField();
+        jLabel2 = new javax.swing.JLabel();
+        jMaxValue = new javax.swing.JTextField();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        jCopyFromClipboardEvent2 = new javax.swing.JButton();
         jCheckBox1 = new javax.swing.JCheckBox();
 
         setTitle("Entfernungsbestimmung");
@@ -143,17 +169,71 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame {
             }
         });
 
+        jLabel1.setBackground(new java.awt.Color(0, 0, 0));
+        jLabel1.setForeground(new java.awt.Color(0, 255, 0));
+        jLabel1.setText("Minimale Entfernung");
+        jLabel1.setOpaque(true);
+
+        jMinValue.setText("10");
+        jMinValue.setToolTipText("Gibt die Entfernung an, ab der Werte in der Tabelle grün eingezeichnet werden");
+        jMinValue.setMaximumSize(new java.awt.Dimension(80, 20));
+        jMinValue.setMinimumSize(new java.awt.Dimension(80, 20));
+        jMinValue.setPreferredSize(new java.awt.Dimension(80, 20));
+
+        jLabel2.setBackground(new java.awt.Color(0, 0, 0));
+        jLabel2.setForeground(new java.awt.Color(255, 0, 0));
+        jLabel2.setText("Maximale Entfernung");
+        jLabel2.setOpaque(true);
+
+        jMaxValue.setText("20");
+        jMaxValue.setToolTipText("Gibt die Entfernung an, ab der Werte in der Tabelle rot eingezeichnet werden");
+        jMaxValue.setMaximumSize(new java.awt.Dimension(80, 20));
+        jMaxValue.setMinimumSize(new java.awt.Dimension(80, 20));
+        jMaxValue.setPreferredSize(new java.awt.Dimension(80, 20));
+
+        jLabel3.setText("Felder");
+
+        jLabel4.setText("Felder");
+
+        jCopyFromClipboardEvent2.setBackground(new java.awt.Color(239, 235, 223));
+        jCopyFromClipboardEvent2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/replace2.png"))); // NOI18N
+        jCopyFromClipboardEvent2.setText(bundle.getString("DSWorkbenchAttackFrame.jCleanupAttacksButton.text")); // NOI18N
+        jCopyFromClipboardEvent2.setToolTipText(bundle.getString("DSWorkbenchAttackFrame.jCleanupAttacksButton.toolTipText")); // NOI18N
+        jCopyFromClipboardEvent2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireUpdateEvent(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 473, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jCopyFromClipboardEvent)
-                    .addComponent(jCopyFromClipboardEvent1))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 473, Short.MAX_VALUE)
+                        .addGap(10, 10, 10)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(jCopyFromClipboardEvent)
+                                .addComponent(jCopyFromClipboardEvent1))
+                            .addComponent(jCopyFromClipboardEvent2)))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel2))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jMinValue, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel3))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jMaxValue, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel4)))))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -164,9 +244,21 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jCopyFromClipboardEvent)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jCopyFromClipboardEvent1))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 383, Short.MAX_VALUE))
-                .addContainerGap(78, Short.MAX_VALUE))
+                        .addComponent(jCopyFromClipboardEvent1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jCopyFromClipboardEvent2))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 381, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(jMinValue, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(jMaxValue, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel4))
+                .addContainerGap())
         );
 
         jCheckBox1.setText("Immer im Vordergrund");
@@ -228,6 +320,32 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame {
         setup();
     }//GEN-LAST:event_fireRemoveColumnEvent
 
+    private void fireUpdateEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireUpdateEvent
+        int min = 10;
+        int max = 20;
+        try {
+            min = Integer.parseInt(jMinValue.getText());
+        } catch (Exception e) {
+            JOptionPaneHelper.showWarningBox(this, "Der Eintrag für den minimalen Wert ist ungültig.", "Fehler");
+            return;
+        }
+        try {
+            max = Integer.parseInt(jMaxValue.getText());
+        } catch (Exception e) {
+            JOptionPaneHelper.showWarningBox(this, "Der Eintrag für den maximalen Wert ist ungültig.", "Fehler");
+            return;
+        }
+
+        if (min >= max) {
+            JOptionPaneHelper.showWarningBox(this, "Der minimale Wert muss kleiner als der maximale Wert sein.", "Fehler");
+            return;
+        }
+
+        cellRenderer.setMarkerMin(min);
+        cellRenderer.setMarkerMax(max);
+        jDistanceTable.repaint();
+    }//GEN-LAST:event_fireUpdateEvent
+
     /**
      * @param args the command line arguments
      */
@@ -244,7 +362,14 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame {
     private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JButton jCopyFromClipboardEvent;
     private javax.swing.JButton jCopyFromClipboardEvent1;
+    private javax.swing.JButton jCopyFromClipboardEvent2;
     private javax.swing.JTable jDistanceTable;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JTextField jMaxValue;
+    private javax.swing.JTextField jMinValue;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables

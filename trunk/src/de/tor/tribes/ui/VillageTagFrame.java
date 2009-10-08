@@ -16,7 +16,6 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 
 /**
- *@TODO (DIFF) Sort village list as set in properties
  * @author  Charon
  */
 public class VillageTagFrame extends javax.swing.JFrame {

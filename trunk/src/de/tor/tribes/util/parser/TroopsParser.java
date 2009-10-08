@@ -16,7 +16,6 @@ import java.util.LinkedList;
 import java.util.StringTokenizer;
 
 /**
- * @TODO (DIFF) Swiss server import supported
  * @author Charon
  */
 public class TroopsParser {

@@ -75,9 +75,6 @@ import javax.swing.table.DefaultTableModel;
 
 /**
  * @TODO (1.5?) Add min number to troop filter in attack planer????
- * @TODO (DIFF) Layer positions stored
- * @TODO (DIFF) Skin selectable in main frame
- * @TODO (DIFF) Added A*Star to tools
  * @author  Charon
  */
 public class DSWorkbenchMainFrame extends javax.swing.JFrame implements

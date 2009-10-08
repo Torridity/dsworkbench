@@ -56,8 +56,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 /**
- * @TODO (DIFF) Added village popup menu
- * @TODO (DIFF) Better visibility for MarkOnTop
  * @author Charon
  */
 public class MapPanel extends JPanel {

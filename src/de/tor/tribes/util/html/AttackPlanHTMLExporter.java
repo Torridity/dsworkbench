@@ -4,7 +4,6 @@
  */
 package de.tor.tribes.util.html;
 
-import de.tor.tribes.util.html.*;
 import de.tor.tribes.util.*;
 import de.tor.tribes.io.ServerManager;
 import de.tor.tribes.io.UnitHolder;
@@ -14,6 +13,7 @@ import de.tor.tribes.types.Tribe;
 import de.tor.tribes.ui.DSWorkbenchMainFrame;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.InputStreamReader;
 import java.text.NumberFormat;
@@ -23,7 +23,6 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 /**
- *@TODO (DIFF) Unit type in attack export
  * @author Charon
  */
 public class AttackPlanHTMLExporter {
@@ -56,9 +55,77 @@ public class AttackPlanHTMLExporter {
     private static final String VERSION = "\\$VERSION";
     private static final String CREATION_DATE = "\\$CREATION_DATE";
 
-
     static {
+        loadCustomTemplate();
+    }
+
+    public static void loadCustomTemplate() {
         try {
+            HEADER = "";
+            BLOCK = "";
+            FOOTER = "";
+
+            String header = GlobalOptions.getProperty("attack.template.header");
+            String block = GlobalOptions.getProperty("attack.template.block");
+            String footer = GlobalOptions.getProperty("attack.template.footer");
+            if (header == null) {
+                header = "ThisFileDoesNotExist";
+            }
+            if (block == null) {
+                block = "ThisFileDoesNotExist";
+            }
+            if (footer == null) {
+                footer = "ThisFileDoesNotExist";
+            }
+            File fHeader = new File(header);
+            File fBlock = new File(block);
+            File fFooter = new File(footer);
+
+            BufferedReader r = null;
+            if (!fHeader.exists()) {
+                r = new BufferedReader(new InputStreamReader(AttackPlanHTMLExporter.class.getResourceAsStream("/de/tor/tribes/tmpl/attack_header.tmpl")));
+            } else {
+                r = new BufferedReader(new InputStreamReader(new FileInputStream(header)));
+            }
+
+            String line = "";
+            while ((line = r.readLine()) != null) {
+                HEADER += line + "\n";
+            }
+            r.close();
+
+            if (!fBlock.exists()) {
+                r = new BufferedReader(new InputStreamReader(AttackPlanHTMLExporter.class.getResourceAsStream("/de/tor/tribes/tmpl/attack_block.tmpl")));
+            } else {
+                r = new BufferedReader(new InputStreamReader(new FileInputStream(block)));
+            }
+            line = "";
+            while ((line = r.readLine()) != null) {
+                BLOCK += line + "\n";
+            }
+            r.close();
+
+            if (!fFooter.exists()) {
+                r = new BufferedReader(new InputStreamReader(AttackPlanHTMLExporter.class.getResourceAsStream("/de/tor/tribes/tmpl/attack_footer.tmpl")));
+            } else {
+                r = new BufferedReader(new InputStreamReader(new FileInputStream(footer)));
+            }
+            line = "";
+            while ((line = r.readLine()) != null) {
+                FOOTER += line + "\n";
+            }
+            r.close();
+        } catch (Exception e) {
+            logger.error("Failed to read custom templates. Switch to default template.", e);
+            loadDefaultTemplate();
+        }
+    }
+
+    private static void loadDefaultTemplate() {
+        try {
+            HEADER = "";
+            BLOCK = "";
+            FOOTER = "";
             BufferedReader r = new BufferedReader(new InputStreamReader(AttackPlanHTMLExporter.class.getResourceAsStream("/de/tor/tribes/tmpl/attack_header.tmpl")));
             String line = "";
             while ((line = r.readLine()) != null) {

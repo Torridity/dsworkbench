@@ -47,8 +47,6 @@ import javax.swing.tree.TreePath;
 import org.apache.log4j.Logger;
 
 /**
- *@TODO (DIFF) Manual region selection added
- *@TODO (DIFF) Barbarians are not selected if not visible
  * @author Charon
  */
 public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implements VillageSelectionListener {

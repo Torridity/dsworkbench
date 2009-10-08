@@ -31,7 +31,6 @@ import org.jdom.Document;
 import org.jdom.Element;
 
 /**
- * @TODO (DIFF) Troop information removed for conquered villages
  * @author Charon
  */
 public class ConquerManager {

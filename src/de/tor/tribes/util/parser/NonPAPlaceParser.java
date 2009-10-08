@@ -20,7 +20,6 @@ import java.util.LinkedList;
 import java.util.StringTokenizer;
 
 /**
- *@TODO (DIFF) Added troop import for non-PA users
  * @author Charon
  */
 public class NonPAPlaceParser {

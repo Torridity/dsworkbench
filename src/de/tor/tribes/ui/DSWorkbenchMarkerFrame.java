@@ -36,7 +36,6 @@ import javax.swing.table.TableCellRenderer;
 import org.apache.log4j.Logger;
 
 /**
- *@TODO (DIFF) Fixed change marker color problem
  * @author  Charon
  */
 public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements MarkerManagerListener {

@@ -27,7 +27,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JSpinner.DateEditor;
 
 /**
- * @TODO (DIFF) Day dependent time frame added
  * @author Jejkal
  */
 public class TimePanel extends javax.swing.JPanel {

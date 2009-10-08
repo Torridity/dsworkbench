@@ -36,6 +36,7 @@ import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.renderer.MapRenderer;
 import de.tor.tribes.util.BrowserCommandSender;
 import de.tor.tribes.util.JOptionPaneHelper;
+import de.tor.tribes.util.html.AttackPlanHTMLExporter;
 import java.awt.Component;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -52,7 +53,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 
 /**
  * @TODO (1.X) Shortcuts editable
- * @TODO (1.7) More information about troop density in help, misc settings screes has no troop density information?
+ * @TODO (DIFF) Attack plan export template added
  * @author Jejkal
  */
 public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
@@ -251,6 +252,40 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             }
         } catch (Exception e) {
         }
+
+        //attack template paths
+        try {
+            String path = GlobalOptions.getProperty("attack.template.header");
+            if (path == null) {
+                jHeaderPath.setText("<Standard>");
+            } else {
+                jHeaderPath.setText(path);
+            }
+        } catch (Exception e) {
+            jHeaderPath.setText("<Standard>");
+        }
+        try {
+            String path = GlobalOptions.getProperty("attack.template.block");
+            if (path == null) {
+                jBlockPath.setText("<Standard>");
+            } else {
+                jBlockPath.setText(path);
+            }
+        } catch (Exception e) {
+            jBlockPath.setText("<Standard>");
+        }
+        try {
+            String path = GlobalOptions.getProperty("attack.template.footer");
+            if (path == null) {
+                jFooterPath.setText("<Standard>");
+            } else {
+                jFooterPath.setText(path);
+            }
+        } catch (Exception e) {
+            jFooterPath.setText("<Standard>");
+        }
+        //reload templates
+        AttackPlanHTMLExporter.loadCustomTemplate();
 
         //own villages on minmap
         try {
@@ -664,6 +699,19 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jAttackMovementLabel3 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
         jDrawAttacksByDefaultBox = new javax.swing.JCheckBox();
+        jPanel7 = new javax.swing.JPanel();
+        jLabel6 = new javax.swing.JLabel();
+        jLabel18 = new javax.swing.JLabel();
+        jLabel19 = new javax.swing.JLabel();
+        jHeaderPath = new javax.swing.JTextField();
+        jBlockPath = new javax.swing.JTextField();
+        jFooterPath = new javax.swing.JTextField();
+        jSelectHeaderButton = new javax.swing.JButton();
+        jSelectBlockButton = new javax.swing.JButton();
+        jSelectFooterButton = new javax.swing.JButton();
+        jRestoreHeaderButton = new javax.swing.JButton();
+        jRestoreBlockButton = new javax.swing.JButton();
+        jRestoreFooterButton = new javax.swing.JButton();
         jNetworkSettings = new javax.swing.JPanel();
         jDirectConnectOption = new javax.swing.JRadioButton();
         jProxyConnectOption = new javax.swing.JRadioButton();
@@ -707,26 +755,25 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jCreateAccountButton = new javax.swing.JButton();
         jChangePasswordButton = new javax.swing.JButton();
 
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("de/tor/tribes/ui/Bundle"); // NOI18N
-        jCreateAccountDialog.setTitle(bundle.getString("DSWorkbenchSettingsDialog.jCreateAccountDialog.title")); // NOI18N
+        jCreateAccountDialog.setTitle("Registrierung");
         jCreateAccountDialog.setAlwaysOnTop(true);
         jCreateAccountDialog.setBackground(new java.awt.Color(239, 235, 223));
         jCreateAccountDialog.setModal(true);
 
-        jRegisterNameLabel.setText(bundle.getString("DSWorkbenchSettingsDialog.jRegisterNameLabel.text")); // NOI18N
+        jRegisterNameLabel.setText("Name");
 
         jRegistrationAccountName.setMaximumSize(new java.awt.Dimension(200, 20));
         jRegistrationAccountName.setMinimumSize(new java.awt.Dimension(200, 20));
         jRegistrationAccountName.setPreferredSize(new java.awt.Dimension(200, 20));
 
-        jRegisterPasswordLabel.setText(bundle.getString("DSWorkbenchSettingsDialog.jRegisterPasswordLabel.text")); // NOI18N
+        jRegisterPasswordLabel.setText("Passwort");
 
         jRegistrationPassword.setMaximumSize(new java.awt.Dimension(200, 20));
         jRegistrationPassword.setMinimumSize(new java.awt.Dimension(200, 20));
         jRegistrationPassword.setPreferredSize(new java.awt.Dimension(200, 20));
 
         jRegisterButton.setBackground(new java.awt.Color(239, 235, 223));
-        jRegisterButton.setText(bundle.getString("DSWorkbenchSettingsDialog.jRegisterButton.text")); // NOI18N
+        jRegisterButton.setText("Registrieren");
         jRegisterButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireRegisterEvent(evt);
@@ -734,14 +781,14 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         });
 
         jCancelRegistrationButton.setBackground(new java.awt.Color(239, 235, 223));
-        jCancelRegistrationButton.setText(bundle.getString("DSWorkbenchSettingsDialog.jCancelRegistrationButton.text")); // NOI18N
+        jCancelRegistrationButton.setText("Abbrechen");
         jCancelRegistrationButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireCancelRegistrationEvent(evt);
             }
         });
 
-        jRepeatPasswordLabel.setText(bundle.getString("DSWorkbenchSettingsDialog.jRepeatPasswordLabel.text")); // NOI18N
+        jRepeatPasswordLabel.setText("Passwort wiederholen");
 
         javax.swing.GroupLayout jCreateAccountDialogLayout = new javax.swing.GroupLayout(jCreateAccountDialog.getContentPane());
         jCreateAccountDialog.getContentPane().setLayout(jCreateAccountDialogLayout);
@@ -787,40 +834,33 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jChangePasswordDialog.setTitle(bundle.getString("DSWorkbenchSettingsDialog.jChangePasswordDialog.title")); // NOI18N
+        jChangePasswordDialog.setTitle("Passwort ändern");
         jChangePasswordDialog.setAlwaysOnTop(true);
         jChangePasswordDialog.setModal(true);
 
-        jLabel35.setText(bundle.getString("DSWorkbenchSettingsDialog.jLabel35.text")); // NOI18N
+        jLabel35.setText("Altes Passwort");
 
-        jLabel36.setText(bundle.getString("DSWorkbenchSettingsDialog.jLabel36.text")); // NOI18N
+        jLabel36.setText("Neues Passwort");
 
-        jLabel37.setText(bundle.getString("DSWorkbenchSettingsDialog.jLabel37.text")); // NOI18N
+        jLabel37.setText("Passwort wiederholen");
 
-        jNewPassword2.setText(bundle.getString("DSWorkbenchSettingsDialog.jNewPassword2.text")); // NOI18N
-
-        jNewPassword.setText(bundle.getString("DSWorkbenchSettingsDialog.jNewPassword.text")); // NOI18N
-
-        jOldPassword.setText(bundle.getString("DSWorkbenchSettingsDialog.jOldPassword.text")); // NOI18N
-
-        jButton9.setText(bundle.getString("DSWorkbenchSettingsDialog.jButton9.text")); // NOI18N
+        jButton9.setText("Passwort ändern");
         jButton9.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireDoChangePasswordEvent(evt);
             }
         });
 
-        jButton10.setText(bundle.getString("DSWorkbenchSettingsDialog.jButton10.text")); // NOI18N
+        jButton10.setText("Abbrechen");
         jButton10.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireCancelChangePasswordEvent(evt);
             }
         });
 
-        jLabel38.setText(bundle.getString("DSWorkbenchSettingsDialog.jLabel38.text")); // NOI18N
+        jLabel38.setText("Accountname");
 
         jPasswordChangeAccount.setEditable(false);
-        jPasswordChangeAccount.setText(bundle.getString("DSWorkbenchSettingsDialog.jPasswordChangeAccount.text")); // NOI18N
 
         javax.swing.GroupLayout jChangePasswordDialogLayout = new javax.swing.GroupLayout(jChangePasswordDialog.getContentPane());
         jChangePasswordDialog.getContentPane().setLayout(jChangePasswordDialogLayout);
@@ -871,50 +911,46 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 .addContainerGap())
         );
 
-        jTroopDensitySelectionDialog.setTitle(bundle.getString("DSWorkbenchSettingsDialog.jTroopDensitySelectionDialog.title")); // NOI18N
+        jTroopDensitySelectionDialog.setTitle("Deff-Anzahl angeben");
         jTroopDensitySelectionDialog.setAlwaysOnTop(true);
         jTroopDensitySelectionDialog.setModal(true);
 
         jLabel40.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/spear.png"))); // NOI18N
-        jLabel40.setText(bundle.getString("DSWorkbenchSettingsDialog.jLabel40.text")); // NOI18N
 
         jLabel41.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/sword.png"))); // NOI18N
-        jLabel41.setText(bundle.getString("DSWorkbenchSettingsDialog.jLabel41.text")); // NOI18N
 
         jLabel42.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/archer.png"))); // NOI18N
-        jLabel42.setText(bundle.getString("DSWorkbenchSettingsDialog.jLabel42.text")); // NOI18N
 
         jLabel43.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/heavy.png"))); // NOI18N
-        jLabel43.setText(bundle.getString("DSWorkbenchSettingsDialog.jLabel43.text")); // NOI18N
 
-        jSpearAmount.setText(bundle.getString("DSWorkbenchSettingsDialog.jSpearAmount.text")); // NOI18N
+        jSpearAmount.setText("8000");
         jSpearAmount.setMaximumSize(new java.awt.Dimension(50, 20));
         jSpearAmount.setMinimumSize(new java.awt.Dimension(50, 20));
         jSpearAmount.setPreferredSize(new java.awt.Dimension(50, 20));
 
-        jSwordAmount.setText(bundle.getString("DSWorkbenchSettingsDialog.jSwordAmount.text")); // NOI18N
+        jSwordAmount.setText("7000");
         jSwordAmount.setMaximumSize(new java.awt.Dimension(50, 20));
         jSwordAmount.setMinimumSize(new java.awt.Dimension(50, 20));
         jSwordAmount.setPreferredSize(new java.awt.Dimension(50, 20));
 
-        jArcherAmount.setText(bundle.getString("DSWorkbenchSettingsDialog.jArcherAmount.text")); // NOI18N
+        jArcherAmount.setText("0");
         jArcherAmount.setMaximumSize(new java.awt.Dimension(50, 20));
         jArcherAmount.setMinimumSize(new java.awt.Dimension(50, 20));
         jArcherAmount.setPreferredSize(new java.awt.Dimension(50, 20));
 
-        jHeavyAmount.setText(bundle.getString("DSWorkbenchSettingsDialog.jHeavyAmount.text")); // NOI18N
+        jHeavyAmount.setText("1000");
         jHeavyAmount.setMaximumSize(new java.awt.Dimension(50, 20));
         jHeavyAmount.setMinimumSize(new java.awt.Dimension(50, 20));
         jHeavyAmount.setPreferredSize(new java.awt.Dimension(50, 20));
 
-        jDeffStrengthOKButton.setText(bundle.getString("DSWorkbenchSettingsDialog.jDeffStrengthOKButton.text")); // NOI18N
+        jDeffStrengthOKButton.setText("OK");
         jDeffStrengthOKButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireAcceptDeffStrengthEvent(evt);
             }
         });
 
-        jButton12.setText(bundle.getString("DSWorkbenchSettingsDialog.jButton12.text")); // NOI18N
+        jButton12.setText("Abbrechen");
         jButton12.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireAcceptDeffStrengthEvent(evt);
@@ -983,7 +1019,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 .addContainerGap())
         );
 
-        setTitle(bundle.getString("DSWorkbenchSettingsDialog.title")); // NOI18N
+        setTitle("Einstellungen");
         setAlwaysOnTop(true);
         setModal(true);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -996,32 +1032,32 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
 
         jLoginPanel.setBackground(new java.awt.Color(239, 235, 223));
 
-        jAccountNameLabel.setText(bundle.getString("DSWorkbenchSettingsDialog.jAccountNameLabel.text")); // NOI18N
+        jAccountNameLabel.setText("Name");
 
-        jAccountPasswordLabel.setText(bundle.getString("DSWorkbenchSettingsDialog.jAccountPasswordLabel.text")); // NOI18N
+        jAccountPasswordLabel.setText("Passwort");
 
-        jAccountPassword.setToolTipText(bundle.getString("DSWorkbenchSettingsDialog.jAccountPassword.toolTipText")); // NOI18N
+        jAccountPassword.setToolTipText("DS Workbench Accountpasswort");
         jAccountPassword.setMaximumSize(new java.awt.Dimension(200, 20));
         jAccountPassword.setMinimumSize(new java.awt.Dimension(200, 20));
         jAccountPassword.setPreferredSize(new java.awt.Dimension(200, 20));
 
-        jAccountName.setToolTipText(bundle.getString("DSWorkbenchSettingsDialog.jAccountName.toolTipText")); // NOI18N
+        jAccountName.setToolTipText("DS Workbench Accountname");
         jAccountName.setMaximumSize(new java.awt.Dimension(200, 20));
         jAccountName.setMinimumSize(new java.awt.Dimension(200, 20));
         jAccountName.setPreferredSize(new java.awt.Dimension(200, 20));
 
         jCheckAccountButton.setBackground(new java.awt.Color(239, 235, 223));
-        jCheckAccountButton.setText(bundle.getString("DSWorkbenchSettingsDialog.jCheckAccountButton.text")); // NOI18N
-        jCheckAccountButton.setToolTipText(bundle.getString("DSWorkbenchSettingsDialog.jCheckAccountButton.toolTipText")); // NOI18N
+        jCheckAccountButton.setText("Prüfen");
+        jCheckAccountButton.setToolTipText("Daten prüfen");
         jCheckAccountButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireLoginIntoAccountEvent(evt);
             }
         });
 
-        jEditorPane1.setContentType(bundle.getString("DSWorkbenchSettingsDialog.jEditorPane1.contentType")); // NOI18N
+        jEditorPane1.setContentType("text/html");
         jEditorPane1.setEditable(false);
-        jEditorPane1.setText(bundle.getString("DSWorkbenchSettingsDialog.jEditorPane1.text")); // NOI18N
+        jEditorPane1.setText("<html><head></head><body><h3 style=\"margin-top: 0; color: #FF0000\">Achtung!</h3>Der für<i> DS Workbench</i> benötigte Account hängt in <b>keiner Weise</b> mit dem Spielaccount für <i>Die Stämme</i> zusammen!<BR/>Es wird <u>dringend empfohlen</u>, für <i>DS Workbench</i> einen <u>anderen Benutzernamen und/oder Passwort</u> als im Spiel zu verwenden, um Rückschlüsse zwischen den Accounts zu verhindern.<BR/><BR/>Im Zusammenhang mit <i>DS Workbench</i> werden <b>niemals</b> die Accountdaten deines <i>Die Stämme</i> Accounts benötigt!</body></html>");
         jEditorPane1.setOpaque(false);
         jScrollPane3.setViewportView(jEditorPane1);
 
@@ -1060,23 +1096,23 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                     .addComponent(jAccountPasswordLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jCheckAccountButton)
-                .addContainerGap(151, Short.MAX_VALUE))
+                .addContainerGap(146, Short.MAX_VALUE))
         );
 
-        jSettingsTabbedPane.addTab(bundle.getString("DSWorkbenchSettingsDialog.jLoginPanel.TabConstraints.tabTitle"), new javax.swing.ImageIcon(getClass().getResource("/res/login.png")), jLoginPanel); // NOI18N
+        jSettingsTabbedPane.addTab("Login", new javax.swing.ImageIcon(getClass().getResource("/res/login.png")), jLoginPanel); // NOI18N
 
         jPlayerServerSettings.setBackground(new java.awt.Color(239, 235, 223));
 
-        jLabel1.setText(bundle.getString("DSWorkbenchSettingsDialog.jLabel1.text")); // NOI18N
+        jLabel1.setText("Server");
 
-        jServerList.setToolTipText(bundle.getString("DSWorkbenchSettingsDialog.jServerList.toolTipText")); // NOI18N
+        jServerList.setToolTipText("Gewählter Server");
 
-        jLabel2.setText(bundle.getString("DSWorkbenchSettingsDialog.jLabel2.text")); // NOI18N
+        jLabel2.setText("Spieler");
 
-        jTribeNames.setToolTipText(bundle.getString("DSWorkbenchSettingsDialog.jTribeNames.toolTipText")); // NOI18N
+        jTribeNames.setToolTipText("Eigener In-Game Name");
 
         jSelectServerButton.setBackground(new java.awt.Color(239, 235, 223));
-        jSelectServerButton.setText(bundle.getString("DSWorkbenchSettingsDialog.jSelectServerButton.text")); // NOI18N
+        jSelectServerButton.setText("Server auswählen");
         jSelectServerButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireSelectServerEvent(evt);
@@ -1089,15 +1125,15 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jScrollPane1.setViewportView(jStatusArea);
 
         jDownloadDataButton.setBackground(new java.awt.Color(239, 235, 223));
-        jDownloadDataButton.setText(bundle.getString("DSWorkbenchSettingsDialog.jDownloadDataButton.text")); // NOI18N
+        jDownloadDataButton.setText("Daten aktualisieren");
         jDownloadDataButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireDownloadDataEvent(evt);
             }
         });
 
-        jCheckForUpdatesBox.setText(bundle.getString("DSWorkbenchSettingsDialog.jCheckForUpdatesBox.text")); // NOI18N
-        jCheckForUpdatesBox.setToolTipText(bundle.getString("DSWorkbenchSettingsDialog.jCheckForUpdatesBox.toolTipText")); // NOI18N
+        jCheckForUpdatesBox.setText("Beim Start auf Updates prüfen");
+        jCheckForUpdatesBox.setToolTipText("Prüft bei jedem Start von DS Workbench auf aktuelle Weltdaten");
         jCheckForUpdatesBox.setOpaque(false);
         jCheckForUpdatesBox.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
@@ -1145,17 +1181,17 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 274, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jCheckForUpdatesBox)
-                .addContainerGap(12, Short.MAX_VALUE))
+                .addContainerGap(37, Short.MAX_VALUE))
         );
 
-        jSettingsTabbedPane.addTab(bundle.getString("DSWorkbenchSettingsDialog.jPlayerServerSettings.TabConstraints.tabTitle"), new javax.swing.ImageIcon(getClass().getResource("/res/face.png")), jPlayerServerSettings); // NOI18N
+        jSettingsTabbedPane.addTab("Spieler/Server", new javax.swing.ImageIcon(getClass().getResource("/res/face.png")), jPlayerServerSettings); // NOI18N
 
         jMapSettings.setBackground(new java.awt.Color(239, 235, 223));
 
         jPanel1.setOpaque(false);
         jPanel1.setLayout(new javax.swing.BoxLayout(jPanel1, javax.swing.BoxLayout.Y_AXIS));
 
-        jShowContinents.setToolTipText(bundle.getString("DSWorkbenchSettingsDialog.jShowContinents.toolTipText")); // NOI18N
+        jShowContinents.setToolTipText("Anzeiger der Kontinente auf der Minimap");
         jShowContinents.setContentAreaFilled(false);
         jShowContinents.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
@@ -1164,7 +1200,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         });
         jPanel1.add(jShowContinents);
 
-        jShowSectorsBox.setToolTipText(bundle.getString("DSWorkbenchSettingsDialog.jShowSectorsBox.toolTipText")); // NOI18N
+        jShowSectorsBox.setToolTipText("Sektoren in Hauptkarte einzeichnen");
         jShowSectorsBox.setOpaque(false);
         jShowSectorsBox.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
@@ -1173,7 +1209,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         });
         jPanel1.add(jShowSectorsBox);
 
-        jMarkOwnVillagesOnMinimapBox.setToolTipText(bundle.getString("DSWorkbenchSettingsDialog.jMarkOwnVillagesOnMinimapBox.toolTipText")); // NOI18N
+        jMarkOwnVillagesOnMinimapBox.setToolTipText("Markiert die Dörfer des aktuellen Spielers auf der Minimap");
         jMarkOwnVillagesOnMinimapBox.setOpaque(false);
         jMarkOwnVillagesOnMinimapBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1182,7 +1218,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         });
         jPanel1.add(jMarkOwnVillagesOnMinimapBox);
 
-        jMarkActiveVillageBox.setToolTipText(bundle.getString("DSWorkbenchSettingsDialog.jMarkActiveVillageBox.toolTipText")); // NOI18N
+        jMarkActiveVillageBox.setToolTipText("Markiert das momentan gewählte Dorf des aktuellen Spielers auf der Hauptkarte");
         jMarkActiveVillageBox.setOpaque(false);
         jMarkActiveVillageBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1191,7 +1227,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         });
         jPanel1.add(jMarkActiveVillageBox);
 
-        jTroopsTypeBox.setToolTipText(bundle.getString("DSWorkbenchSettingsDialog.jTroopsTypeBox.toolTipText")); // NOI18N
+        jTroopsTypeBox.setToolTipText("Anzeige der Eignung von Dörfern abhängig von den darin vorhandenen Truppen");
         jTroopsTypeBox.setOpaque(false);
         jTroopsTypeBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1200,7 +1236,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         });
         jPanel1.add(jTroopsTypeBox);
 
-        jShowBarbarianBox.setToolTipText(bundle.getString("DSWorkbenchSettingsDialog.jShowBarbarianBox.toolTipText")); // NOI18N
+        jShowBarbarianBox.setToolTipText("Anzeige der Eignung von Dörfern abhängig von den darin vorhandenen Truppen");
         jShowBarbarianBox.setOpaque(false);
         jShowBarbarianBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1212,66 +1248,66 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jPanel2.setOpaque(false);
         jPanel2.setLayout(new javax.swing.BoxLayout(jPanel2, javax.swing.BoxLayout.Y_AXIS));
 
-        jShowContinentsLabel.setText(bundle.getString("DSWorkbenchSettingsDialog.jShowContinentsLabel.text")); // NOI18N
+        jShowContinentsLabel.setText("Kontinente anzeigen");
         jShowContinentsLabel.setMaximumSize(new java.awt.Dimension(150, 21));
         jShowContinentsLabel.setMinimumSize(new java.awt.Dimension(150, 21));
         jShowContinentsLabel.setPreferredSize(new java.awt.Dimension(150, 21));
         jPanel2.add(jShowContinentsLabel);
 
-        jLabel7.setText(bundle.getString("DSWorkbenchSettingsDialog.jLabel7.text")); // NOI18N
+        jLabel7.setText("Sektoren anzeigen");
         jLabel7.setMaximumSize(new java.awt.Dimension(150, 21));
         jLabel7.setMinimumSize(new java.awt.Dimension(150, 21));
         jLabel7.setPreferredSize(new java.awt.Dimension(150, 21));
         jPanel2.add(jLabel7);
 
-        jAttackMovementLabel2.setText(bundle.getString("DSWorkbenchSettingsDialog.jAttackMovementLabel2.text")); // NOI18N
+        jAttackMovementLabel2.setText("Eigene Dörfer auf Minimap");
         jAttackMovementLabel2.setMaximumSize(new java.awt.Dimension(150, 21));
         jAttackMovementLabel2.setMinimumSize(new java.awt.Dimension(150, 21));
         jAttackMovementLabel2.setPreferredSize(new java.awt.Dimension(150, 21));
         jPanel2.add(jAttackMovementLabel2);
 
-        jAttackMovementLabel1.setText(bundle.getString("DSWorkbenchSettingsDialog.jAttackMovementLabel1.text")); // NOI18N
+        jAttackMovementLabel1.setText("Aktives Dorf markieren");
         jAttackMovementLabel1.setMaximumSize(new java.awt.Dimension(150, 21));
         jAttackMovementLabel1.setMinimumSize(new java.awt.Dimension(150, 21));
         jAttackMovementLabel1.setPreferredSize(new java.awt.Dimension(150, 21));
         jPanel2.add(jAttackMovementLabel1);
 
-        jLabel8.setText(bundle.getString("DSWorkbenchSettingsDialog.jLabel8.text")); // NOI18N
+        jLabel8.setText("Truppeneignung anzeigen");
         jLabel8.setMaximumSize(new java.awt.Dimension(150, 21));
         jLabel8.setMinimumSize(new java.awt.Dimension(150, 21));
         jLabel8.setPreferredSize(new java.awt.Dimension(150, 21));
         jPanel2.add(jLabel8);
 
-        jLabel17.setText(bundle.getString("DSWorkbenchSettingsDialog.jLabel17.text")); // NOI18N
+        jLabel17.setText("Barbarendörfer anzeigen");
         jLabel17.setMaximumSize(new java.awt.Dimension(150, 21));
         jLabel17.setMinimumSize(new java.awt.Dimension(150, 21));
         jLabel17.setPreferredSize(new java.awt.Dimension(150, 21));
         jPanel2.add(jLabel17);
 
-        jLabel4.setText(bundle.getString("DSWorkbenchSettingsDialog.jLabel4.text")); // NOI18N
+        jLabel4.setText("Standardmarkierung");
 
         jDefaultMarkBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Weiß", "Rot" }));
-        jDefaultMarkBox.setToolTipText(bundle.getString("DSWorkbenchSettingsDialog.jDefaultMarkBox.toolTipText")); // NOI18N
+        jDefaultMarkBox.setToolTipText("Standardfarbe von Dorfmarkierungen");
         jDefaultMarkBox.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 fireStandardMarkChangedEvent(evt);
             }
         });
 
-        jLabel3.setText(bundle.getString("DSWorkbenchSettingsDialog.jLabel3.text")); // NOI18N
+        jLabel3.setText("Popupoptionen");
 
         jPanel5.setOpaque(false);
         jPanel5.setLayout(new javax.swing.BoxLayout(jPanel5, javax.swing.BoxLayout.Y_AXIS));
 
-        jShowPopupMoral.setText(bundle.getString("DSWorkbenchSettingsDialog.jShowPopupMoral.text")); // NOI18N
+        jShowPopupMoral.setText("Moral anzeigen");
         jShowPopupMoral.setOpaque(false);
         jPanel5.add(jShowPopupMoral);
 
-        jShowPopupConquers.setText(bundle.getString("DSWorkbenchSettingsDialog.jShowPopupConquers.text")); // NOI18N
+        jShowPopupConquers.setText("Besiegte Gegner anzeigen");
         jShowPopupConquers.setOpaque(false);
         jPanel5.add(jShowPopupConquers);
 
-        jShowPopupRanks.setText(bundle.getString("DSWorkbenchSettingsDialog.jShowPopupRanks.text")); // NOI18N
+        jShowPopupRanks.setText("Ränge anzeigen");
         jShowPopupRanks.setOpaque(false);
         jPanel5.add(jShowPopupRanks);
 
@@ -1310,19 +1346,19 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 .addGroup(jMapSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel3)
                     .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(137, Short.MAX_VALUE))
+                .addContainerGap(162, Short.MAX_VALUE))
         );
 
-        jSettingsTabbedPane.addTab(bundle.getString("DSWorkbenchSettingsDialog.jMapSettings.TabConstraints.tabTitle"), new javax.swing.ImageIcon(getClass().getResource("/res/ui/map.gif")), jMapSettings); // NOI18N
+        jSettingsTabbedPane.addTab("Karten", new javax.swing.ImageIcon(getClass().getResource("/res/ui/map.gif")), jMapSettings); // NOI18N
 
         jAttackSettings.setBackground(new java.awt.Color(239, 235, 223));
 
-        jAttackMovementLabel.setText(bundle.getString("DSWorkbenchSettingsDialog.jAttackMovementLabel.text")); // NOI18N
+        jAttackMovementLabel.setText("Angriffsbewegung anzeigen");
         jAttackMovementLabel.setMaximumSize(new java.awt.Dimension(150, 21));
         jAttackMovementLabel.setMinimumSize(new java.awt.Dimension(150, 21));
         jAttackMovementLabel.setPreferredSize(new java.awt.Dimension(150, 21));
 
-        jShowAttackMovementBox.setToolTipText(bundle.getString("DSWorkbenchSettingsDialog.jShowAttackMovementBox.toolTipText")); // NOI18N
+        jShowAttackMovementBox.setToolTipText("Anzeige der Truppenbewegungen von Angriffen im Angriffsplan");
         jShowAttackMovementBox.setOpaque(false);
         jShowAttackMovementBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1344,21 +1380,172 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jAttackColorTable.setOpaque(false);
         jScrollPane2.setViewportView(jAttackColorTable);
 
-        jAttackMovementLabel3.setText(bundle.getString("DSWorkbenchSettingsDialog.jAttackMovementLabel3.text")); // NOI18N
+        jAttackMovementLabel3.setText("Färbung der Angriffsvektoren");
         jAttackMovementLabel3.setMaximumSize(new java.awt.Dimension(150, 21));
         jAttackMovementLabel3.setMinimumSize(new java.awt.Dimension(150, 21));
         jAttackMovementLabel3.setPreferredSize(new java.awt.Dimension(150, 21));
 
-        jLabel9.setText(bundle.getString("DSWorkbenchSettingsDialog.jLabel9.text")); // NOI18N
+        jLabel9.setText("Angriffsvektoren für neue Angriffe einzeichnen");
 
-        jDrawAttacksByDefaultBox.setText(bundle.getString("DSWorkbenchSettingsDialog.jDrawAttacksByDefaultBox.text")); // NOI18N
-        jDrawAttacksByDefaultBox.setToolTipText(bundle.getString("DSWorkbenchSettingsDialog.jDrawAttacksByDefaultBox.toolTipText")); // NOI18N
+        jDrawAttacksByDefaultBox.setToolTipText("Neue erstellte Angriffe sofort auf der Karte einzeichnen");
         jDrawAttacksByDefaultBox.setOpaque(false);
         jDrawAttacksByDefaultBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 fireDrawAttacksByDefaultChangedEvent(evt);
             }
         });
+
+        jPanel7.setBorder(javax.swing.BorderFactory.createTitledBorder("HTML Templates"));
+        jPanel7.setOpaque(false);
+
+        jLabel6.setText("Header");
+
+        jLabel18.setText("Angriffsblock");
+
+        jLabel19.setText("Footer");
+
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("de/tor/tribes/ui/Bundle"); // NOI18N
+        jHeaderPath.setText(bundle.getString("DSWorkbenchSettingsDialog.jTextField3.text")); // NOI18N
+        jHeaderPath.setEnabled(false);
+
+        jBlockPath.setText(bundle.getString("DSWorkbenchSettingsDialog.jTextField3.text")); // NOI18N
+        jBlockPath.setEnabled(false);
+
+        jFooterPath.setText("<Standard>");
+        jFooterPath.setEnabled(false);
+
+        jSelectHeaderButton.setBackground(new java.awt.Color(239, 235, 223));
+        jSelectHeaderButton.setText("...");
+        jSelectHeaderButton.setToolTipText("Template wählen");
+        jSelectHeaderButton.setMaximumSize(new java.awt.Dimension(20, 20));
+        jSelectHeaderButton.setMinimumSize(new java.awt.Dimension(20, 20));
+        jSelectHeaderButton.setPreferredSize(new java.awt.Dimension(20, 20));
+        jSelectHeaderButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireSelectTemplateEvent(evt);
+            }
+        });
+
+        jSelectBlockButton.setBackground(new java.awt.Color(239, 235, 223));
+        jSelectBlockButton.setText("...");
+        jSelectBlockButton.setToolTipText("Template wählen");
+        jSelectBlockButton.setMaximumSize(new java.awt.Dimension(20, 20));
+        jSelectBlockButton.setMinimumSize(new java.awt.Dimension(20, 20));
+        jSelectBlockButton.setPreferredSize(new java.awt.Dimension(20, 20));
+        jSelectBlockButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireSelectTemplateEvent(evt);
+            }
+        });
+
+        jSelectFooterButton.setBackground(new java.awt.Color(239, 235, 223));
+        jSelectFooterButton.setText("...");
+        jSelectFooterButton.setToolTipText("Template wählen");
+        jSelectFooterButton.setMaximumSize(new java.awt.Dimension(20, 20));
+        jSelectFooterButton.setMinimumSize(new java.awt.Dimension(20, 20));
+        jSelectFooterButton.setPreferredSize(new java.awt.Dimension(20, 20));
+        jSelectFooterButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireSelectTemplateEvent(evt);
+            }
+        });
+
+        jRestoreHeaderButton.setBackground(new java.awt.Color(239, 235, 223));
+        jRestoreHeaderButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/refresh.png"))); // NOI18N
+        jRestoreHeaderButton.setToolTipText("Standard wiederherstellen");
+        jRestoreHeaderButton.setAlignmentY(0.0F);
+        jRestoreHeaderButton.setMaximumSize(new java.awt.Dimension(20, 20));
+        jRestoreHeaderButton.setMinimumSize(new java.awt.Dimension(20, 20));
+        jRestoreHeaderButton.setPreferredSize(new java.awt.Dimension(20, 20));
+        jRestoreHeaderButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireRestoreTemplateEvent(evt);
+            }
+        });
+
+        jRestoreBlockButton.setBackground(new java.awt.Color(239, 235, 223));
+        jRestoreBlockButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/refresh.png"))); // NOI18N
+        jRestoreBlockButton.setToolTipText("Standard wiederherstellen");
+        jRestoreBlockButton.setMaximumSize(new java.awt.Dimension(20, 20));
+        jRestoreBlockButton.setMinimumSize(new java.awt.Dimension(20, 20));
+        jRestoreBlockButton.setPreferredSize(new java.awt.Dimension(20, 20));
+        jRestoreBlockButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireRestoreTemplateEvent(evt);
+            }
+        });
+
+        jRestoreFooterButton.setBackground(new java.awt.Color(239, 235, 223));
+        jRestoreFooterButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/refresh.png"))); // NOI18N
+        jRestoreFooterButton.setToolTipText("Standard wiederherstellen");
+        jRestoreFooterButton.setMaximumSize(new java.awt.Dimension(20, 20));
+        jRestoreFooterButton.setMinimumSize(new java.awt.Dimension(20, 20));
+        jRestoreFooterButton.setPreferredSize(new java.awt.Dimension(20, 20));
+        jRestoreFooterButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireRestoreTemplateEvent(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
+        jPanel7.setLayout(jPanel7Layout);
+        jPanel7Layout.setHorizontalGroup(
+            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel7Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabel18, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel19, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jFooterPath, javax.swing.GroupLayout.DEFAULT_SIZE, 330, Short.MAX_VALUE)
+                    .addComponent(jBlockPath, javax.swing.GroupLayout.DEFAULT_SIZE, 330, Short.MAX_VALUE)
+                    .addComponent(jHeaderPath, javax.swing.GroupLayout.DEFAULT_SIZE, 330, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jSelectBlockButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jSelectFooterButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jSelectHeaderButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jRestoreBlockButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jRestoreFooterButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jRestoreHeaderButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
+        );
+        jPanel7Layout.setVerticalGroup(
+            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel7Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel7Layout.createSequentialGroup()
+                        .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel6)
+                            .addComponent(jHeaderPath, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel18)
+                            .addComponent(jBlockPath, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel19)
+                            .addComponent(jFooterPath, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addGroup(jPanel7Layout.createSequentialGroup()
+                            .addComponent(jRestoreHeaderButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addComponent(jRestoreBlockButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addComponent(jRestoreFooterButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(jPanel7Layout.createSequentialGroup()
+                            .addComponent(jSelectHeaderButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addComponent(jSelectBlockButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addComponent(jSelectFooterButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(20, Short.MAX_VALUE))
+        );
 
         javax.swing.GroupLayout jAttackSettingsLayout = new javax.swing.GroupLayout(jAttackSettings);
         jAttackSettings.setLayout(jAttackSettingsLayout);
@@ -1367,20 +1554,26 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             .addGroup(jAttackSettingsLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jAttackSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jAttackSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(jAttackMovementLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(jAttackMovementLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 226, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jAttackSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jAttackSettingsLayout.createSequentialGroup()
-                        .addComponent(jDrawAttacksByDefaultBox, javax.swing.GroupLayout.DEFAULT_SIZE, 272, Short.MAX_VALUE)
+                        .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addContainerGap())
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jAttackSettingsLayout.createSequentialGroup()
-                        .addGroup(jAttackSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING, 0, 0, Short.MAX_VALUE)
-                            .addComponent(jShowAttackMovementBox, javax.swing.GroupLayout.DEFAULT_SIZE, 265, Short.MAX_VALUE))
-                        .addGap(13, 13, 13))))
+                    .addGroup(jAttackSettingsLayout.createSequentialGroup()
+                        .addGroup(jAttackSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jAttackSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(jAttackMovementLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(jAttackMovementLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 227, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jAttackSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jAttackSettingsLayout.createSequentialGroup()
+                                .addComponent(jDrawAttacksByDefaultBox, javax.swing.GroupLayout.DEFAULT_SIZE, 271, Short.MAX_VALUE)
+                                .addContainerGap())
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jAttackSettingsLayout.createSequentialGroup()
+                                .addComponent(jShowAttackMovementBox, javax.swing.GroupLayout.DEFAULT_SIZE, 264, Short.MAX_VALUE)
+                                .addGap(13, 13, 13))
+                            .addGroup(jAttackSettingsLayout.createSequentialGroup()
+                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 267, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap())))))
         );
         jAttackSettingsLayout.setVerticalGroup(
             jAttackSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1396,17 +1589,19 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 .addGap(9, 9, 9)
                 .addGroup(jAttackSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jAttackMovementLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 311, Short.MAX_VALUE))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 179, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
-        jSettingsTabbedPane.addTab(bundle.getString("DSWorkbenchSettingsDialog.jAttackSettings.TabConstraints.tabTitle"), new javax.swing.ImageIcon(getClass().getResource("/res/barracks.png")), jAttackSettings); // NOI18N
+        jSettingsTabbedPane.addTab("Angriffe", new javax.swing.ImageIcon(getClass().getResource("/res/barracks.png")), jAttackSettings); // NOI18N
 
         jNetworkSettings.setBackground(new java.awt.Color(239, 235, 223));
 
         connectionTypeGroup.add(jDirectConnectOption);
         jDirectConnectOption.setSelected(true);
-        jDirectConnectOption.setText(bundle.getString("DSWorkbenchSettingsDialog.jDirectConnectOption.text")); // NOI18N
+        jDirectConnectOption.setText("Ich bin direkt mit dem Internet verbunden");
         jDirectConnectOption.setOpaque(false);
         jDirectConnectOption.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
@@ -1415,7 +1610,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         });
 
         connectionTypeGroup.add(jProxyConnectOption);
-        jProxyConnectOption.setText(bundle.getString("DSWorkbenchSettingsDialog.jProxyConnectOption.text")); // NOI18N
+        jProxyConnectOption.setText("Ich benutze einen Proxy für den Internetzugang");
         jProxyConnectOption.setOpaque(false);
         jProxyConnectOption.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
@@ -1423,60 +1618,58 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             }
         });
 
-        jProxyAdressLabel.setText(bundle.getString("DSWorkbenchSettingsDialog.jProxyAdressLabel.text")); // NOI18N
+        jProxyAdressLabel.setText("Proxy Adresse");
 
-        jProxyHost.setToolTipText(bundle.getString("DSWorkbenchSettingsDialog.jProxyHost.toolTipText")); // NOI18N
+        jProxyHost.setToolTipText("Adresse des Proxy Servers");
         jProxyHost.setEnabled(false);
 
-        jProxyPortLabel.setText(bundle.getString("DSWorkbenchSettingsDialog.jProxyPortLabel.text")); // NOI18N
+        jProxyPortLabel.setText("Proxy Port");
 
-        jProxyPort.setToolTipText(bundle.getString("DSWorkbenchSettingsDialog.jProxyPort.toolTipText")); // NOI18N
+        jProxyPort.setToolTipText("Port des Proxy Servers");
         jProxyPort.setEnabled(false);
         jProxyPort.setMaximumSize(new java.awt.Dimension(40, 20));
         jProxyPort.setMinimumSize(new java.awt.Dimension(40, 20));
         jProxyPort.setPreferredSize(new java.awt.Dimension(40, 20));
 
         jRefeshNetworkButton.setBackground(new java.awt.Color(239, 235, 223));
-        jRefeshNetworkButton.setText(bundle.getString("DSWorkbenchSettingsDialog.jRefeshNetworkButton.text")); // NOI18N
-        jRefeshNetworkButton.setToolTipText(bundle.getString("DSWorkbenchSettingsDialog.jRefeshNetworkButton.toolTipText")); // NOI18N
+        jRefeshNetworkButton.setText("Aktualisieren");
+        jRefeshNetworkButton.setToolTipText("Netzwerkeinstellungen aktualisieren und prüfen");
         jRefeshNetworkButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireUpdateProxySettingsEvent(evt);
             }
         });
 
-        jLabel10.setText(bundle.getString("DSWorkbenchSettingsDialog.jLabel10.text")); // NOI18N
+        jLabel10.setText("Proxy Typ");
 
         jProxyTypeChooser.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "HTTP", "SOCKS" }));
-        jProxyTypeChooser.setToolTipText(bundle.getString("DSWorkbenchSettingsDialog.jProxyTypeChooser.toolTipText")); // NOI18N
+        jProxyTypeChooser.setToolTipText("Art des Proxy Servers");
         jProxyTypeChooser.setEnabled(false);
 
-        jLabel11.setText(bundle.getString("DSWorkbenchSettingsDialog.jLabel11.text")); // NOI18N
+        jLabel11.setText("Benutzername");
 
-        jProxyUser.setText(bundle.getString("DSWorkbenchSettingsDialog.jProxyUser.text")); // NOI18N
-        jProxyUser.setToolTipText(bundle.getString("DSWorkbenchSettingsDialog.jProxyUser.toolTipText")); // NOI18N
+        jProxyUser.setToolTipText("Benutzername zur Authentifizierung beim Proxy Server");
         jProxyUser.setEnabled(false);
         jProxyUser.setMaximumSize(new java.awt.Dimension(150, 20));
         jProxyUser.setMinimumSize(new java.awt.Dimension(150, 20));
         jProxyUser.setPreferredSize(new java.awt.Dimension(150, 20));
 
-        jLabel12.setText(bundle.getString("DSWorkbenchSettingsDialog.jLabel12.text")); // NOI18N
+        jLabel12.setText("Passwort");
 
-        jProxyPassword.setText(bundle.getString("DSWorkbenchSettingsDialog.jProxyPassword.text")); // NOI18N
-        jProxyPassword.setToolTipText(bundle.getString("DSWorkbenchSettingsDialog.jProxyPassword.toolTipText")); // NOI18N
+        jProxyPassword.setToolTipText("Passwort zur Authentifizierung beim Proxy Server");
         jProxyPassword.setEnabled(false);
         jProxyPassword.setMaximumSize(new java.awt.Dimension(150, 20));
         jProxyPassword.setMinimumSize(new java.awt.Dimension(150, 20));
         jProxyPassword.setPreferredSize(new java.awt.Dimension(150, 20));
 
-        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder(bundle.getString("DSWorkbenchSettingsDialog.jPanel4.border.title"))); // NOI18N
+        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("Browser"));
         jPanel4.setMaximumSize(new java.awt.Dimension(400, 126));
         jPanel4.setMinimumSize(new java.awt.Dimension(400, 126));
         jPanel4.setOpaque(false);
         jPanel4.setPreferredSize(new java.awt.Dimension(400, 126));
 
         jUseStandardBrowser.setSelected(true);
-        jUseStandardBrowser.setText(bundle.getString("DSWorkbenchSettingsDialog.jUseStandardBrowser.text")); // NOI18N
+        jUseStandardBrowser.setText("Standardbrowser verwenden");
         jUseStandardBrowser.setOpaque(false);
         jUseStandardBrowser.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
@@ -1484,14 +1677,13 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             }
         });
 
-        jLabel5.setText(bundle.getString("DSWorkbenchSettingsDialog.jLabel5.text")); // NOI18N
+        jLabel5.setText("Alternativer Browser");
         jLabel5.setEnabled(false);
 
-        jBrowserPath.setText(bundle.getString("DSWorkbenchSettingsDialog.jBrowserPath.text")); // NOI18N
         jBrowserPath.setEnabled(false);
 
         jButton1.setBackground(new java.awt.Color(239, 235, 223));
-        jButton1.setText(bundle.getString("DSWorkbenchSettingsDialog.jButton1.text")); // NOI18N
+        jButton1.setText("...");
         jButton1.setEnabled(false);
         jButton1.setMaximumSize(new java.awt.Dimension(23, 23));
         jButton1.setMinimumSize(new java.awt.Dimension(23, 23));
@@ -1594,44 +1786,43 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 .addComponent(jRefeshNetworkButton)
                 .addGap(18, 18, 18)
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(47, Short.MAX_VALUE))
+                .addContainerGap(72, Short.MAX_VALUE))
         );
 
-        jSettingsTabbedPane.addTab(bundle.getString("DSWorkbenchSettingsDialog.jNetworkSettings.TabConstraints.tabTitle"), new javax.swing.ImageIcon(getClass().getResource("/res/proxy.png")), jNetworkSettings); // NOI18N
+        jSettingsTabbedPane.addTab("Netzwerk", new javax.swing.ImageIcon(getClass().getResource("/res/proxy.png")), jNetworkSettings); // NOI18N
 
         jMiscSettings.setBackground(new java.awt.Color(239, 235, 223));
 
         jVillageSortTypeChooser.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Alphabetisch", "Nach Koordinaten" }));
-        jVillageSortTypeChooser.setToolTipText(bundle.getString("DSWorkbenchSettingsDialog.jVillageSortTypeChooser.toolTipText")); // NOI18N
+        jVillageSortTypeChooser.setToolTipText("Art der Dorfsortierung in DS Workbench");
         jVillageSortTypeChooser.setMaximumSize(new java.awt.Dimension(105, 18));
         jVillageSortTypeChooser.setPreferredSize(new java.awt.Dimension(105, 18));
 
-        jLabel13.setText(bundle.getString("DSWorkbenchSettingsDialog.jLabel13.text")); // NOI18N
+        jLabel13.setText("Dorfsortierung");
         jLabel13.setMaximumSize(new java.awt.Dimension(138, 18));
         jLabel13.setMinimumSize(new java.awt.Dimension(138, 18));
         jLabel13.setPreferredSize(new java.awt.Dimension(138, 18));
 
-        jLabel14.setText(bundle.getString("DSWorkbenchSettingsDialog.jLabel14.text")); // NOI18N
+        jLabel14.setText("Anzeigedauer von Hinweisen");
         jLabel14.setMaximumSize(new java.awt.Dimension(138, 18));
         jLabel14.setMinimumSize(new java.awt.Dimension(138, 18));
         jLabel14.setPreferredSize(new java.awt.Dimension(138, 18));
 
         jNotifyDurationBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Unbegrenzt", "10 Sekunden", "20 Sekunden", "30 Sekunden" }));
         jNotifyDurationBox.setSelectedIndex(1);
-        jNotifyDurationBox.setToolTipText(bundle.getString("DSWorkbenchSettingsDialog.jNotifyDurationBox.toolTipText")); // NOI18N
+        jNotifyDurationBox.setToolTipText("Zeitdauer nach der Hinweise in der rechten unteren Bildschirmecke automatisch ausgeblendet werden");
         jNotifyDurationBox.setMaximumSize(new java.awt.Dimension(105, 18));
         jNotifyDurationBox.setMinimumSize(new java.awt.Dimension(105, 18));
         jNotifyDurationBox.setPreferredSize(new java.awt.Dimension(105, 18));
 
         jInformOnUpdates.setSelected(true);
-        jInformOnUpdates.setText(bundle.getString("DSWorkbenchSettingsDialog.jInformOnUpdates.text")); // NOI18N
-        jInformOnUpdates.setToolTipText(bundle.getString("DSWorkbenchSettingsDialog.jInformOnUpdates.toolTipText")); // NOI18N
+        jInformOnUpdates.setToolTipText("Prüfung auf DS Workbench Updates bei jedem Programmstart\\n");
         jInformOnUpdates.setMaximumSize(new java.awt.Dimension(105, 18));
         jInformOnUpdates.setMinimumSize(new java.awt.Dimension(105, 18));
         jInformOnUpdates.setOpaque(false);
         jInformOnUpdates.setPreferredSize(new java.awt.Dimension(105, 18));
 
-        jLabel15.setText(bundle.getString("DSWorkbenchSettingsDialog.jLabel15.text")); // NOI18N
+        jLabel15.setText("Über Updates  informieren");
         jLabel15.setMaximumSize(new java.awt.Dimension(138, 18));
         jLabel15.setMinimumSize(new java.awt.Dimension(138, 18));
         jLabel15.setPreferredSize(new java.awt.Dimension(138, 18));
@@ -1639,13 +1830,13 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jPanel3.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jPanel3.setOpaque(false);
 
-        jExportTribeNames.setText(bundle.getString("DSWorkbenchSettingsDialog.jExportTribeNames.text")); // NOI18N
+        jExportTribeNames.setText("Spielernamen exportieren");
         jExportTribeNames.setOpaque(false);
 
-        jExportArriveTime.setText(bundle.getString("DSWorkbenchSettingsDialog.jExportArriveTime.text")); // NOI18N
+        jExportArriveTime.setText("Ankunfszeit exportieren");
         jExportArriveTime.setOpaque(false);
 
-        jExportUnit.setText(bundle.getString("DSWorkbenchSettingsDialog.jExportUnit.text")); // NOI18N
+        jExportUnit.setText("Einheit exportieren");
         jExportUnit.setOpaque(false);
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
@@ -1674,15 +1865,15 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jLabel34.setText(bundle.getString("DSWorkbenchSettingsDialog.jLabel34.text")); // NOI18N
+        jLabel34.setText("BB-Export Optionen");
 
         jPanel6.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jPanel6.setOpaque(false);
 
-        jReplaceMarkers.setText(bundle.getString("DSWorkbenchSettingsDialog.jReplaceMarkers.text")); // NOI18N
+        jReplaceMarkers.setText("Stammes-/Spielermarkierungen ersetzen");
         jReplaceMarkers.setOpaque(false);
 
-        jReplaceTagMarkers.setText(bundle.getString("DSWorkbenchSettingsDialog.jReplaceTagMarkers.text")); // NOI18N
+        jReplaceTagMarkers.setText("Kartenmarkierungen ersetzen");
         jReplaceTagMarkers.setOpaque(false);
 
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
@@ -1706,15 +1897,15 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jLabel39.setText(bundle.getString("DSWorkbenchSettingsDialog.jLabel39.text")); // NOI18N
+        jLabel39.setText("Import Optionen");
 
-        jLabel16.setText(bundle.getString("DSWorkbenchSettingsDialog.jLabel16.text")); // NOI18N
+        jLabel16.setText("<HTML>Max. Deff-Anzahl für die<BR/>Berechnung der Truppendichte</HTML>");
 
-        jMaxTroopDensity.setText(bundle.getString("DSWorkbenchSettingsDialog.jMaxTroopDensity.text")); // NOI18N
+        jMaxTroopDensity.setText("650000");
 
         jButton8.setBackground(new java.awt.Color(239, 235, 223));
-        jButton8.setText(bundle.getString("DSWorkbenchSettingsDialog.jButton8.text")); // NOI18N
-        jButton8.setToolTipText(bundle.getString("DSWorkbenchSettingsDialog.jButton8.toolTipText")); // NOI18N
+        jButton8.setText("Auswählen");
+        jButton8.setToolTipText("Setzt die Truppenstärke anhand angegebener Deff-Werte");
         jButton8.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireSelectTroopsDensityEvent(evt);
@@ -1781,13 +1972,13 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                     .addComponent(jLabel16)
                     .addComponent(jMaxTroopDensity, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton8))
-                .addContainerGap(82, Short.MAX_VALUE))
+                .addContainerGap(107, Short.MAX_VALUE))
         );
 
-        jSettingsTabbedPane.addTab(bundle.getString("DSWorkbenchSettingsDialog.jMiscSettings.TabConstraints.tabTitle"), new javax.swing.ImageIcon(getClass().getResource("/res/checkbox.png")), jMiscSettings); // NOI18N
+        jSettingsTabbedPane.addTab("Sonstiges", new javax.swing.ImageIcon(getClass().getResource("/res/checkbox.png")), jMiscSettings); // NOI18N
 
         jOKButton.setBackground(new java.awt.Color(239, 235, 223));
-        jOKButton.setText(bundle.getString("DSWorkbenchSettingsDialog.jOKButton.text")); // NOI18N
+        jOKButton.setText("OK");
         jOKButton.setMaximumSize(new java.awt.Dimension(85, 23));
         jOKButton.setMinimumSize(new java.awt.Dimension(85, 23));
         jOKButton.setPreferredSize(new java.awt.Dimension(85, 23));
@@ -1798,7 +1989,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         });
 
         jCancelButton.setBackground(new java.awt.Color(239, 235, 223));
-        jCancelButton.setText(bundle.getString("DSWorkbenchSettingsDialog.jCancelButton.text")); // NOI18N
+        jCancelButton.setText("Abbrechen");
         jCancelButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireCloseEvent(evt);
@@ -1806,8 +1997,8 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         });
 
         jCreateAccountButton.setBackground(new java.awt.Color(239, 235, 223));
-        jCreateAccountButton.setText(bundle.getString("DSWorkbenchSettingsDialog.jCreateAccountButton.text")); // NOI18N
-        jCreateAccountButton.setToolTipText(bundle.getString("DSWorkbenchSettingsDialog.jCreateAccountButton.toolTipText")); // NOI18N
+        jCreateAccountButton.setText("Neuen Account erstellen");
+        jCreateAccountButton.setToolTipText("DS Workbench Account erstellen");
         jCreateAccountButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireCreateAccountEvent(evt);
@@ -1815,7 +2006,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         });
 
         jChangePasswordButton.setBackground(new java.awt.Color(239, 235, 223));
-        jChangePasswordButton.setText(bundle.getString("DSWorkbenchSettingsDialog.jChangePasswordButton.text")); // NOI18N
+        jChangePasswordButton.setText("Passwort ändern");
         jChangePasswordButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireChangePasswordEvent(evt);
@@ -1839,14 +2030,14 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                         .addComponent(jOKButton, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(20, 20, 20)
-                        .addComponent(jSettingsTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 523, Short.MAX_VALUE)))
+                        .addComponent(jSettingsTabbedPane)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jSettingsTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 419, Short.MAX_VALUE)
+                .addComponent(jSettingsTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 444, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jCreateAccountButton)
@@ -2417,14 +2608,14 @@ private void fireSelectBrowserEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
         dir = ".";
     }
 
-   JFileChooser chooser = null;
-     try {
-            chooser = new JFileChooser(dir);
-        } catch (Exception e) {
-            JOptionPaneHelper.showErrorBox(this, "Konnte Dateiauswahldialog nicht öffnen.\nMöglicherweise verwendest du Windows Vista. Ist dies der Fall, beende DS Workbench, klicke mit der rechten Maustaste auf DSWorkbench.exe,\n" +
-                    "wähle 'Eigenschaften' und deaktiviere dort unter 'Kompatibilität' den Windows XP Kompatibilitätsmodus.", "Fehler");
-            return;
-        }
+    JFileChooser chooser = null;
+    try {
+        chooser = new JFileChooser(dir);
+    } catch (Exception e) {
+        JOptionPaneHelper.showErrorBox(this, "Konnte Dateiauswahldialog nicht öffnen.\nMöglicherweise verwendest du Windows Vista. Ist dies der Fall, beende DS Workbench, klicke mit der rechten Maustaste auf DSWorkbench.exe,\n" +
+                "wähle 'Eigenschaften' und deaktiviere dort unter 'Kompatibilität' den Windows XP Kompatibilitätsmodus.", "Fehler");
+        return;
+    }
     chooser.setDialogTitle("Browser auswählen...");
 
     chooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
@@ -2468,6 +2659,92 @@ private void fireChangeDefaultBrowserEvent(java.awt.event.ItemEvent evt) {//GEN-
     jBrowserPath.setEnabled(!value);
     jButton1.setEnabled(!value);
 }//GEN-LAST:event_fireChangeDefaultBrowserEvent
+
+private void fireSelectTemplateEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSelectTemplateEvent
+    String dir = null;
+    int templateID = -1;
+    if (evt.getSource() == jSelectHeaderButton) {
+        dir = GlobalOptions.getProperty("attack.template.header");
+        templateID = 0;
+    } else if (evt.getSource() == jSelectBlockButton) {
+        dir = GlobalOptions.getProperty("attack.template.block");
+        templateID = 1;
+    } else if (evt.getSource() == jSelectFooterButton) {
+        dir = GlobalOptions.getProperty("attack.template.footer");
+        templateID = 2;
+    }
+    if (templateID < 0) {
+        //unknown event source
+        return;
+    }
+    if (dir == null) {
+        dir = ".";
+    }
+
+    JFileChooser chooser = null;
+    try {
+        chooser = new JFileChooser(dir);
+    } catch (Exception e) {
+        JOptionPaneHelper.showErrorBox(this, "Konnte Dateiauswahldialog nicht öffnen.\nMöglicherweise verwendest du Windows Vista. Ist dies der Fall, beende DS Workbench, klicke mit der rechten Maustaste auf DSWorkbench.exe,\n" +
+                "wähle 'Eigenschaften' und deaktiviere dort unter 'Kompatibilität' den Windows XP Kompatibilitätsmodus.", "Fehler");
+        return;
+    }
+    chooser.setDialogTitle("Template auswählen...");
+
+    chooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
+
+        @Override
+        public boolean accept(File f) {
+            return true;
+        }
+
+        @Override
+        public String getDescription() {
+            return "*.tmpl";
+        }
+    });
+    int ret = chooser.showOpenDialog(this);
+    if (ret == JFileChooser.APPROVE_OPTION) {
+        File f = chooser.getSelectedFile();
+        if (f != null && f.isFile() && f.exists()) {
+            switch (templateID) {
+                case 0: {
+                    GlobalOptions.addProperty("attack.template.header", f.getPath());
+                    jHeaderPath.setText(f.getPath());
+                    break;
+                }
+                case 1: {
+                    GlobalOptions.addProperty("attack.template.block", f.getPath());
+                    jBlockPath.setText(f.getPath());
+                    break;
+                }
+                default: {
+                    GlobalOptions.addProperty("attack.template.footer", f.getPath());
+                    jFooterPath.setText(f.getPath());
+                    break;
+                }
+            }
+        } else {
+            JOptionPaneHelper.showErrorBox(this, "Die ausgewählte Datei scheint keine gültige Datei zu sein.", "Fehler");
+        }
+        AttackPlanHTMLExporter.loadCustomTemplate();
+    }
+}//GEN-LAST:event_fireSelectTemplateEvent
+
+private void fireRestoreTemplateEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireRestoreTemplateEvent
+
+    if (evt.getSource() == jRestoreHeaderButton) {
+        jHeaderPath.setText("<Standard>");
+        GlobalOptions.removeProperty("attack.template.header");
+    } else if (evt.getSource() == jRestoreBlockButton) {
+        jBlockPath.setText("<Standard>");
+        GlobalOptions.removeProperty("attack.template.block");
+    } else if (evt.getSource() == jRestoreFooterButton) {
+        jFooterPath.setText("<Standard>");
+        GlobalOptions.removeProperty("attack.template.footer");
+    }
+    AttackPlanHTMLExporter.loadCustomTemplate();
+}//GEN-LAST:event_fireRestoreTemplateEvent
 
     // </editor-fold>
     /**Update the server list*/
@@ -2716,6 +2993,7 @@ private void fireChangeDefaultBrowserEvent(java.awt.event.ItemEvent evt) {//GEN-
     private javax.swing.JLabel jAttackMovementLabel2;
     private javax.swing.JLabel jAttackMovementLabel3;
     private javax.swing.JPanel jAttackSettings;
+    private javax.swing.JTextField jBlockPath;
     private javax.swing.JTextField jBrowserPath;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton10;
@@ -2739,6 +3017,8 @@ private void fireChangeDefaultBrowserEvent(java.awt.event.ItemEvent evt) {//GEN-
     private javax.swing.JCheckBox jExportArriveTime;
     private javax.swing.JCheckBox jExportTribeNames;
     private javax.swing.JCheckBox jExportUnit;
+    private javax.swing.JTextField jFooterPath;
+    private javax.swing.JTextField jHeaderPath;
     private javax.swing.JTextField jHeavyAmount;
     private javax.swing.JCheckBox jInformOnUpdates;
     private javax.swing.JLabel jLabel1;
@@ -2750,6 +3030,8 @@ private void fireChangeDefaultBrowserEvent(java.awt.event.ItemEvent evt) {//GEN-
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel17;
+    private javax.swing.JLabel jLabel18;
+    private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel34;
@@ -2764,6 +3046,7 @@ private void fireChangeDefaultBrowserEvent(java.awt.event.ItemEvent evt) {//GEN-
     private javax.swing.JLabel jLabel42;
     private javax.swing.JLabel jLabel43;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
@@ -2785,6 +3068,7 @@ private void fireChangeDefaultBrowserEvent(java.awt.event.ItemEvent evt) {//GEN-
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
+    private javax.swing.JPanel jPanel7;
     private javax.swing.JTextField jPasswordChangeAccount;
     private javax.swing.JPanel jPlayerServerSettings;
     private javax.swing.JLabel jProxyAdressLabel;
@@ -2805,9 +3089,15 @@ private void fireChangeDefaultBrowserEvent(java.awt.event.ItemEvent evt) {//GEN-
     private javax.swing.JLabel jRepeatPasswordLabel;
     private javax.swing.JCheckBox jReplaceMarkers;
     private javax.swing.JCheckBox jReplaceTagMarkers;
+    private javax.swing.JButton jRestoreBlockButton;
+    private javax.swing.JButton jRestoreFooterButton;
+    private javax.swing.JButton jRestoreHeaderButton;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JButton jSelectBlockButton;
+    private javax.swing.JButton jSelectFooterButton;
+    private javax.swing.JButton jSelectHeaderButton;
     private javax.swing.JButton jSelectServerButton;
     private javax.swing.JComboBox jServerList;
     private javax.swing.JTabbedPane jSettingsTabbedPane;

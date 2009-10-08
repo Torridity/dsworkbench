@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 /**
- *@TODO (DIFF) Swiss server import supported
  * @author Jejkal
  */
 public class ReportParser {

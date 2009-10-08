@@ -71,7 +71,6 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumn;
 
 /**
- * @TODO(DIFF) Mark on map for targets fails!?
  * @author Jejkal
  */
 public class TribeTribeAttackFrame extends javax.swing.JFrame {

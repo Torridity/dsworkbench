@@ -204,6 +204,11 @@ public class GlobalOptions {
         GLOBAL_PROPERTIES.put(pKey, pValue);
     }
 
+    /**Remove a property*/
+    public static void removeProperty(String pKey) {
+        GLOBAL_PROPERTIES.remove(pKey);
+    }
+
     /**Get the value of a property*/
     public static String getProperty(String pKey) {
         return GLOBAL_PROPERTIES.getProperty(pKey);

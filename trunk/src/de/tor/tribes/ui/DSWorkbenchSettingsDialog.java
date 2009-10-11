@@ -287,6 +287,19 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         //reload templates
         AttackPlanHTMLExporter.loadCustomTemplate();
 
+
+        try {
+            String template = GlobalOptions.getProperty("attack.bbexport.template");
+            if (template == null) {
+                jAttackBBExportTemplate.setText("%TYPE% von %ATTACKER% aus %SOURCE% mit %UNIT% auf %DEFENDER% in %TARGET% startet am [color=red]%SEND%[/color] und kommt am [color=green]%ARRIVE%[/color] an");
+            } else {
+                jAttackBBExportTemplate.setText(template);
+            }
+        } catch (Exception e) {
+            jFooterPath.setText("%TYPE% von %ATTACKER% aus %SOURCE% mit %UNIT% auf %DEFENDER% in %TARGET% startet am [color=red]%SEND%[/color] und kommt am [color=green]%ARRIVE%[/color] an");
+        }
+
+
         //own villages on minmap
         try {
             if (Boolean.parseBoolean(GlobalOptions.getProperty("mark.villages.on.minimap"))) {
@@ -338,52 +351,6 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             villageOrder = (villageOrder == 0 || villageOrder == 1) ? villageOrder : 0;
             Village.setOrderType(villageOrder);
             jVillageSortTypeChooser.setSelectedIndex(villageOrder);
-        } catch (Exception e) {
-        }
-
-        //export tribes
-        try {
-            String prop = GlobalOptions.getProperty("export.tribe.names");
-            if (prop == null) {
-                //not set yet, so set true
-                GlobalOptions.addProperty("export.tribe.names", "true");
-                jExportTribeNames.setSelected(true);
-            } else {
-                if (Boolean.parseBoolean(prop)) {
-                    jExportTribeNames.setSelected(true);
-                }
-            }
-        } catch (Exception e) {
-        }
-
-        //export unit
-        try {
-            String prop = GlobalOptions.getProperty("export.units");
-            if (prop == null) {
-                //not set yet, so set true
-                GlobalOptions.addProperty("export.units", "true");
-                jExportUnit.setSelected(true);
-            } else {
-                if (Boolean.parseBoolean(prop)) {
-
-                    jExportUnit.setSelected(true);
-                }
-            }
-        } catch (Exception e) {
-        }
-
-        //export arrive time
-        try {
-            String prop = GlobalOptions.getProperty("export.arrive.time");
-            if (prop == null) {
-                //not set yet, so set true
-                GlobalOptions.addProperty("export.arrive.time", "true");
-                jExportArriveTime.setSelected(true);
-            } else {
-                if (Boolean.parseBoolean(prop)) {
-                    jExportArriveTime.setSelected(true);
-                }
-            }
         } catch (Exception e) {
         }
 
@@ -699,19 +666,6 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jAttackMovementLabel3 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
         jDrawAttacksByDefaultBox = new javax.swing.JCheckBox();
-        jPanel7 = new javax.swing.JPanel();
-        jLabel6 = new javax.swing.JLabel();
-        jLabel18 = new javax.swing.JLabel();
-        jLabel19 = new javax.swing.JLabel();
-        jHeaderPath = new javax.swing.JTextField();
-        jBlockPath = new javax.swing.JTextField();
-        jFooterPath = new javax.swing.JTextField();
-        jSelectHeaderButton = new javax.swing.JButton();
-        jSelectBlockButton = new javax.swing.JButton();
-        jSelectFooterButton = new javax.swing.JButton();
-        jRestoreHeaderButton = new javax.swing.JButton();
-        jRestoreBlockButton = new javax.swing.JButton();
-        jRestoreFooterButton = new javax.swing.JButton();
         jNetworkSettings = new javax.swing.JPanel();
         jDirectConnectOption = new javax.swing.JRadioButton();
         jProxyConnectOption = new javax.swing.JRadioButton();
@@ -731,6 +685,24 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jLabel5 = new javax.swing.JLabel();
         jBrowserPath = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
+        jTemplateSettings = new javax.swing.JPanel();
+        jPanel7 = new javax.swing.JPanel();
+        jLabel6 = new javax.swing.JLabel();
+        jLabel18 = new javax.swing.JLabel();
+        jLabel19 = new javax.swing.JLabel();
+        jHeaderPath = new javax.swing.JTextField();
+        jBlockPath = new javax.swing.JTextField();
+        jFooterPath = new javax.swing.JTextField();
+        jSelectHeaderButton = new javax.swing.JButton();
+        jSelectBlockButton = new javax.swing.JButton();
+        jSelectFooterButton = new javax.swing.JButton();
+        jRestoreHeaderButton = new javax.swing.JButton();
+        jRestoreBlockButton = new javax.swing.JButton();
+        jRestoreFooterButton = new javax.swing.JButton();
+        jPanel8 = new javax.swing.JPanel();
+        jLabel20 = new javax.swing.JLabel();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        jAttackBBExportTemplate = new javax.swing.JTextPane();
         jMiscSettings = new javax.swing.JPanel();
         jVillageSortTypeChooser = new javax.swing.JComboBox();
         jLabel13 = new javax.swing.JLabel();
@@ -738,11 +710,6 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jNotifyDurationBox = new javax.swing.JComboBox();
         jInformOnUpdates = new javax.swing.JCheckBox();
         jLabel15 = new javax.swing.JLabel();
-        jPanel3 = new javax.swing.JPanel();
-        jExportTribeNames = new javax.swing.JCheckBox();
-        jExportArriveTime = new javax.swing.JCheckBox();
-        jExportUnit = new javax.swing.JCheckBox();
-        jLabel34 = new javax.swing.JLabel();
         jPanel6 = new javax.swing.JPanel();
         jReplaceMarkers = new javax.swing.JCheckBox();
         jReplaceTagMarkers = new javax.swing.JCheckBox();
@@ -1068,7 +1035,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             .addGroup(jLoginPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jLoginPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 498, Short.MAX_VALUE)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 519, Short.MAX_VALUE)
                     .addGroup(jLoginPanelLayout.createSequentialGroup()
                         .addGroup(jLoginPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jAccountNameLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -1149,7 +1116,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 .addContainerGap()
                 .addGroup(jPlayerServerSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jCheckForUpdatesBox)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 498, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 519, Short.MAX_VALUE)
                     .addGroup(jPlayerServerSettingsLayout.createSequentialGroup()
                         .addGroup(jPlayerServerSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1)
@@ -1160,8 +1127,8 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                             .addComponent(jServerList, 0, 262, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPlayerServerSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jDownloadDataButton, javax.swing.GroupLayout.DEFAULT_SIZE, 190, Short.MAX_VALUE)
-                            .addComponent(jSelectServerButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 190, Short.MAX_VALUE))))
+                            .addComponent(jDownloadDataButton, javax.swing.GroupLayout.DEFAULT_SIZE, 211, Short.MAX_VALUE)
+                            .addComponent(jSelectServerButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 211, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         jPlayerServerSettingsLayout.setVerticalGroup(
@@ -1329,7 +1296,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jMapSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                         .addComponent(jPanel5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 175, Short.MAX_VALUE)
                         .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 175, Short.MAX_VALUE)))
-                .addGap(145, 145, 145))
+                .addGap(166, 166, 166))
         );
         jMapSettingsLayout.setVerticalGroup(
             jMapSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1395,158 +1362,6 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             }
         });
 
-        jPanel7.setBorder(javax.swing.BorderFactory.createTitledBorder("HTML Templates"));
-        jPanel7.setOpaque(false);
-
-        jLabel6.setText("Header");
-
-        jLabel18.setText("Angriffsblock");
-
-        jLabel19.setText("Footer");
-
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("de/tor/tribes/ui/Bundle"); // NOI18N
-        jHeaderPath.setText(bundle.getString("DSWorkbenchSettingsDialog.jTextField3.text")); // NOI18N
-        jHeaderPath.setEnabled(false);
-
-        jBlockPath.setText(bundle.getString("DSWorkbenchSettingsDialog.jTextField3.text")); // NOI18N
-        jBlockPath.setEnabled(false);
-
-        jFooterPath.setText("<Standard>");
-        jFooterPath.setEnabled(false);
-
-        jSelectHeaderButton.setBackground(new java.awt.Color(239, 235, 223));
-        jSelectHeaderButton.setText("...");
-        jSelectHeaderButton.setToolTipText("Template wählen");
-        jSelectHeaderButton.setMaximumSize(new java.awt.Dimension(20, 20));
-        jSelectHeaderButton.setMinimumSize(new java.awt.Dimension(20, 20));
-        jSelectHeaderButton.setPreferredSize(new java.awt.Dimension(20, 20));
-        jSelectHeaderButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireSelectTemplateEvent(evt);
-            }
-        });
-
-        jSelectBlockButton.setBackground(new java.awt.Color(239, 235, 223));
-        jSelectBlockButton.setText("...");
-        jSelectBlockButton.setToolTipText("Template wählen");
-        jSelectBlockButton.setMaximumSize(new java.awt.Dimension(20, 20));
-        jSelectBlockButton.setMinimumSize(new java.awt.Dimension(20, 20));
-        jSelectBlockButton.setPreferredSize(new java.awt.Dimension(20, 20));
-        jSelectBlockButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireSelectTemplateEvent(evt);
-            }
-        });
-
-        jSelectFooterButton.setBackground(new java.awt.Color(239, 235, 223));
-        jSelectFooterButton.setText("...");
-        jSelectFooterButton.setToolTipText("Template wählen");
-        jSelectFooterButton.setMaximumSize(new java.awt.Dimension(20, 20));
-        jSelectFooterButton.setMinimumSize(new java.awt.Dimension(20, 20));
-        jSelectFooterButton.setPreferredSize(new java.awt.Dimension(20, 20));
-        jSelectFooterButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireSelectTemplateEvent(evt);
-            }
-        });
-
-        jRestoreHeaderButton.setBackground(new java.awt.Color(239, 235, 223));
-        jRestoreHeaderButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/refresh.png"))); // NOI18N
-        jRestoreHeaderButton.setToolTipText("Standard wiederherstellen");
-        jRestoreHeaderButton.setAlignmentY(0.0F);
-        jRestoreHeaderButton.setMaximumSize(new java.awt.Dimension(20, 20));
-        jRestoreHeaderButton.setMinimumSize(new java.awt.Dimension(20, 20));
-        jRestoreHeaderButton.setPreferredSize(new java.awt.Dimension(20, 20));
-        jRestoreHeaderButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireRestoreTemplateEvent(evt);
-            }
-        });
-
-        jRestoreBlockButton.setBackground(new java.awt.Color(239, 235, 223));
-        jRestoreBlockButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/refresh.png"))); // NOI18N
-        jRestoreBlockButton.setToolTipText("Standard wiederherstellen");
-        jRestoreBlockButton.setMaximumSize(new java.awt.Dimension(20, 20));
-        jRestoreBlockButton.setMinimumSize(new java.awt.Dimension(20, 20));
-        jRestoreBlockButton.setPreferredSize(new java.awt.Dimension(20, 20));
-        jRestoreBlockButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireRestoreTemplateEvent(evt);
-            }
-        });
-
-        jRestoreFooterButton.setBackground(new java.awt.Color(239, 235, 223));
-        jRestoreFooterButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/refresh.png"))); // NOI18N
-        jRestoreFooterButton.setToolTipText("Standard wiederherstellen");
-        jRestoreFooterButton.setMaximumSize(new java.awt.Dimension(20, 20));
-        jRestoreFooterButton.setMinimumSize(new java.awt.Dimension(20, 20));
-        jRestoreFooterButton.setPreferredSize(new java.awt.Dimension(20, 20));
-        jRestoreFooterButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireRestoreTemplateEvent(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
-        jPanel7.setLayout(jPanel7Layout);
-        jPanel7Layout.setHorizontalGroup(
-            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel7Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel18, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel19, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jFooterPath, javax.swing.GroupLayout.DEFAULT_SIZE, 330, Short.MAX_VALUE)
-                    .addComponent(jBlockPath, javax.swing.GroupLayout.DEFAULT_SIZE, 330, Short.MAX_VALUE)
-                    .addComponent(jHeaderPath, javax.swing.GroupLayout.DEFAULT_SIZE, 330, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jSelectBlockButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jSelectFooterButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jSelectHeaderButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jRestoreBlockButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jRestoreFooterButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jRestoreHeaderButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
-        );
-        jPanel7Layout.setVerticalGroup(
-            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel7Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel7Layout.createSequentialGroup()
-                        .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel6)
-                            .addComponent(jHeaderPath, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel18)
-                            .addComponent(jBlockPath, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel19)
-                            .addComponent(jFooterPath, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addGroup(jPanel7Layout.createSequentialGroup()
-                            .addComponent(jRestoreHeaderButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                            .addComponent(jRestoreBlockButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                            .addComponent(jRestoreFooterButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGroup(jPanel7Layout.createSequentialGroup()
-                            .addComponent(jSelectHeaderButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                            .addComponent(jSelectBlockButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                            .addComponent(jSelectFooterButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(20, Short.MAX_VALUE))
-        );
-
         javax.swing.GroupLayout jAttackSettingsLayout = new javax.swing.GroupLayout(jAttackSettings);
         jAttackSettings.setLayout(jAttackSettingsLayout);
         jAttackSettingsLayout.setHorizontalGroup(
@@ -1554,26 +1369,22 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             .addGroup(jAttackSettingsLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jAttackSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jAttackSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(jAttackMovementLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jAttackMovementLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 238, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jAttackSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jAttackSettingsLayout.createSequentialGroup()
-                        .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 267, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addContainerGap())
-                    .addGroup(jAttackSettingsLayout.createSequentialGroup()
-                        .addGroup(jAttackSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jAttackSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(jAttackMovementLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addComponent(jAttackMovementLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 227, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jAttackSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jAttackSettingsLayout.createSequentialGroup()
-                                .addComponent(jDrawAttacksByDefaultBox, javax.swing.GroupLayout.DEFAULT_SIZE, 271, Short.MAX_VALUE)
-                                .addContainerGap())
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jAttackSettingsLayout.createSequentialGroup()
-                                .addComponent(jShowAttackMovementBox, javax.swing.GroupLayout.DEFAULT_SIZE, 264, Short.MAX_VALUE)
-                                .addGap(13, 13, 13))
-                            .addGroup(jAttackSettingsLayout.createSequentialGroup()
-                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 267, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addContainerGap())))))
+                    .addGroup(jAttackSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jAttackSettingsLayout.createSequentialGroup()
+                            .addComponent(jDrawAttacksByDefaultBox, javax.swing.GroupLayout.DEFAULT_SIZE, 281, Short.MAX_VALUE)
+                            .addContainerGap())
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jAttackSettingsLayout.createSequentialGroup()
+                            .addComponent(jShowAttackMovementBox, javax.swing.GroupLayout.DEFAULT_SIZE, 274, Short.MAX_VALUE)
+                            .addGap(13, 13, 13)))))
         );
         jAttackSettingsLayout.setVerticalGroup(
             jAttackSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1589,9 +1400,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 .addGap(9, 9, 9)
                 .addGroup(jAttackSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jAttackMovementLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 179, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 336, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -1704,7 +1513,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addComponent(jLabel5)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jBrowserPath, javax.swing.GroupLayout.DEFAULT_SIZE, 324, Short.MAX_VALUE)
+                        .addComponent(jBrowserPath, javax.swing.GroupLayout.DEFAULT_SIZE, 345, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jUseStandardBrowser))
@@ -1731,7 +1540,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 .addContainerGap()
                 .addGroup(jNetworkSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jNetworkSettingsLayout.createSequentialGroup()
-                        .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, 498, Short.MAX_VALUE)
+                        .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, 519, Short.MAX_VALUE)
                         .addContainerGap())
                     .addGroup(jNetworkSettingsLayout.createSequentialGroup()
                         .addGroup(jNetworkSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1745,10 +1554,10 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                                     .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                 .addGap(20, 20, 20)
                                 .addGroup(jNetworkSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jProxyPassword, javax.swing.GroupLayout.DEFAULT_SIZE, 172, Short.MAX_VALUE)
-                                    .addComponent(jProxyUser, javax.swing.GroupLayout.DEFAULT_SIZE, 172, Short.MAX_VALUE)
-                                    .addComponent(jProxyTypeChooser, 0, 172, Short.MAX_VALUE)
-                                    .addComponent(jProxyHost, javax.swing.GroupLayout.DEFAULT_SIZE, 172, Short.MAX_VALUE)
+                                    .addComponent(jProxyPassword, javax.swing.GroupLayout.DEFAULT_SIZE, 193, Short.MAX_VALUE)
+                                    .addComponent(jProxyUser, javax.swing.GroupLayout.DEFAULT_SIZE, 193, Short.MAX_VALUE)
+                                    .addComponent(jProxyTypeChooser, 0, 193, Short.MAX_VALUE)
+                                    .addComponent(jProxyHost, javax.swing.GroupLayout.DEFAULT_SIZE, 193, Short.MAX_VALUE)
                                     .addComponent(jRefeshNetworkButton, javax.swing.GroupLayout.Alignment.TRAILING))
                                 .addGap(18, 18, 18)
                                 .addComponent(jProxyPortLabel)
@@ -1791,6 +1600,216 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
 
         jSettingsTabbedPane.addTab("Netzwerk", new javax.swing.ImageIcon(getClass().getResource("/res/proxy.png")), jNetworkSettings); // NOI18N
 
+        jTemplateSettings.setBackground(new java.awt.Color(239, 235, 223));
+
+        jPanel7.setBorder(javax.swing.BorderFactory.createTitledBorder("HTML Templates (Angriffsexport)"));
+        jPanel7.setOpaque(false);
+
+        jLabel6.setText("Header");
+
+        jLabel18.setText("Angriffsblock");
+
+        jLabel19.setText("Footer");
+
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("de/tor/tribes/ui/Bundle"); // NOI18N
+        jHeaderPath.setText(bundle.getString("DSWorkbenchSettingsDialog.jTextField3.text")); // NOI18N
+        jHeaderPath.setEnabled(false);
+
+        jBlockPath.setText(bundle.getString("DSWorkbenchSettingsDialog.jTextField3.text")); // NOI18N
+        jBlockPath.setEnabled(false);
+
+        jFooterPath.setText("<Standard>");
+        jFooterPath.setEnabled(false);
+
+        jSelectHeaderButton.setBackground(new java.awt.Color(239, 235, 223));
+        jSelectHeaderButton.setText("...");
+        jSelectHeaderButton.setToolTipText("Template wählen");
+        jSelectHeaderButton.setMaximumSize(new java.awt.Dimension(20, 20));
+        jSelectHeaderButton.setMinimumSize(new java.awt.Dimension(20, 20));
+        jSelectHeaderButton.setPreferredSize(new java.awt.Dimension(20, 20));
+        jSelectHeaderButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireSelectTemplateEvent(evt);
+            }
+        });
+
+        jSelectBlockButton.setBackground(new java.awt.Color(239, 235, 223));
+        jSelectBlockButton.setText("...");
+        jSelectBlockButton.setToolTipText("Template wählen");
+        jSelectBlockButton.setMaximumSize(new java.awt.Dimension(20, 20));
+        jSelectBlockButton.setMinimumSize(new java.awt.Dimension(20, 20));
+        jSelectBlockButton.setPreferredSize(new java.awt.Dimension(20, 20));
+        jSelectBlockButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireSelectTemplateEvent(evt);
+            }
+        });
+
+        jSelectFooterButton.setBackground(new java.awt.Color(239, 235, 223));
+        jSelectFooterButton.setText("...");
+        jSelectFooterButton.setToolTipText("Template wählen");
+        jSelectFooterButton.setMaximumSize(new java.awt.Dimension(20, 20));
+        jSelectFooterButton.setMinimumSize(new java.awt.Dimension(20, 20));
+        jSelectFooterButton.setPreferredSize(new java.awt.Dimension(20, 20));
+        jSelectFooterButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireSelectTemplateEvent(evt);
+            }
+        });
+
+        jRestoreHeaderButton.setBackground(new java.awt.Color(239, 235, 223));
+        jRestoreHeaderButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/refresh.png"))); // NOI18N
+        jRestoreHeaderButton.setToolTipText("Standard wiederherstellen");
+        jRestoreHeaderButton.setAlignmentY(0.0F);
+        jRestoreHeaderButton.setMaximumSize(new java.awt.Dimension(20, 20));
+        jRestoreHeaderButton.setMinimumSize(new java.awt.Dimension(20, 20));
+        jRestoreHeaderButton.setPreferredSize(new java.awt.Dimension(20, 20));
+        jRestoreHeaderButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireRestoreTemplateEvent(evt);
+            }
+        });
+
+        jRestoreBlockButton.setBackground(new java.awt.Color(239, 235, 223));
+        jRestoreBlockButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/refresh.png"))); // NOI18N
+        jRestoreBlockButton.setToolTipText("Standard wiederherstellen");
+        jRestoreBlockButton.setMaximumSize(new java.awt.Dimension(20, 20));
+        jRestoreBlockButton.setMinimumSize(new java.awt.Dimension(20, 20));
+        jRestoreBlockButton.setPreferredSize(new java.awt.Dimension(20, 20));
+        jRestoreBlockButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireRestoreTemplateEvent(evt);
+            }
+        });
+
+        jRestoreFooterButton.setBackground(new java.awt.Color(239, 235, 223));
+        jRestoreFooterButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/refresh.png"))); // NOI18N
+        jRestoreFooterButton.setToolTipText("Standard wiederherstellen");
+        jRestoreFooterButton.setMaximumSize(new java.awt.Dimension(20, 20));
+        jRestoreFooterButton.setMinimumSize(new java.awt.Dimension(20, 20));
+        jRestoreFooterButton.setPreferredSize(new java.awt.Dimension(20, 20));
+        jRestoreFooterButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireRestoreTemplateEvent(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
+        jPanel7.setLayout(jPanel7Layout);
+        jPanel7Layout.setHorizontalGroup(
+            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel7Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabel18, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel19, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jFooterPath, javax.swing.GroupLayout.DEFAULT_SIZE, 351, Short.MAX_VALUE)
+                    .addComponent(jBlockPath, javax.swing.GroupLayout.DEFAULT_SIZE, 351, Short.MAX_VALUE)
+                    .addComponent(jHeaderPath, javax.swing.GroupLayout.DEFAULT_SIZE, 351, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jSelectBlockButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jSelectFooterButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jSelectHeaderButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jRestoreBlockButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jRestoreFooterButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jRestoreHeaderButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
+        );
+        jPanel7Layout.setVerticalGroup(
+            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel7Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel7Layout.createSequentialGroup()
+                        .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel6)
+                            .addComponent(jHeaderPath, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel18)
+                            .addComponent(jBlockPath, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel19)
+                            .addComponent(jFooterPath, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addGroup(jPanel7Layout.createSequentialGroup()
+                            .addComponent(jRestoreHeaderButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addComponent(jRestoreBlockButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addComponent(jRestoreFooterButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(jPanel7Layout.createSequentialGroup()
+                            .addComponent(jSelectHeaderButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addComponent(jSelectBlockButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addComponent(jSelectFooterButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(20, Short.MAX_VALUE))
+        );
+
+        jPanel8.setBorder(javax.swing.BorderFactory.createTitledBorder("Angriffsexport als BB-Code"));
+        jPanel8.setOpaque(false);
+
+        jLabel20.setText("Template");
+
+        jScrollPane4.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+
+        jAttackBBExportTemplate.setText("%TYPE% von %ATTACKER% aus %SOURCE% mit %UNIT% auf %DEFENDER% in %TARGET% startet am %SEND% und kommt am %ARRIVE% an");
+        jAttackBBExportTemplate.setMinimumSize(new java.awt.Dimension(80, 60));
+        jAttackBBExportTemplate.setPreferredSize(new java.awt.Dimension(469, 60));
+        jScrollPane4.setViewportView(jAttackBBExportTemplate);
+
+        javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
+        jPanel8.setLayout(jPanel8Layout);
+        jPanel8Layout.setHorizontalGroup(
+            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel8Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel20)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 433, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        jPanel8Layout.setVerticalGroup(
+            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel8Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(jLabel20, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jScrollPane4, javax.swing.GroupLayout.Alignment.LEADING))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        javax.swing.GroupLayout jTemplateSettingsLayout = new javax.swing.GroupLayout(jTemplateSettings);
+        jTemplateSettings.setLayout(jTemplateSettingsLayout);
+        jTemplateSettingsLayout.setHorizontalGroup(
+            jTemplateSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jTemplateSettingsLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jTemplateSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jPanel8, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel7, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        jTemplateSettingsLayout.setVerticalGroup(
+            jTemplateSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jTemplateSettingsLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(147, 147, 147))
+        );
+
+        jSettingsTabbedPane.addTab("Templates", new javax.swing.ImageIcon(getClass().getResource("/res/ui/component.png")), jTemplateSettings); // NOI18N
+
         jMiscSettings.setBackground(new java.awt.Color(239, 235, 223));
 
         jVillageSortTypeChooser.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Alphabetisch", "Nach Koordinaten" }));
@@ -1827,46 +1846,6 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jLabel15.setMinimumSize(new java.awt.Dimension(138, 18));
         jLabel15.setPreferredSize(new java.awt.Dimension(138, 18));
 
-        jPanel3.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        jPanel3.setOpaque(false);
-
-        jExportTribeNames.setText("Spielernamen exportieren");
-        jExportTribeNames.setOpaque(false);
-
-        jExportArriveTime.setText("Ankunfszeit exportieren");
-        jExportArriveTime.setOpaque(false);
-
-        jExportUnit.setText("Einheit exportieren");
-        jExportUnit.setOpaque(false);
-
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jExportTribeNames)
-                        .addGap(18, 18, 18)
-                        .addComponent(jExportArriveTime))
-                    .addComponent(jExportUnit))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jExportTribeNames)
-                    .addComponent(jExportArriveTime))
-                .addGap(18, 18, 18)
-                .addComponent(jExportUnit)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        jLabel34.setText("BB-Export Optionen");
-
         jPanel6.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jPanel6.setOpaque(false);
 
@@ -1885,7 +1864,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jReplaceMarkers)
                     .addComponent(jReplaceTagMarkers))
-                .addContainerGap(95, Short.MAX_VALUE))
+                .addContainerGap(117, Short.MAX_VALUE))
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1921,28 +1900,27 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 .addGroup(jMiscSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jMiscSettingsLayout.createSequentialGroup()
                         .addGroup(jMiscSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel14, javax.swing.GroupLayout.DEFAULT_SIZE, 170, Short.MAX_VALUE)
-                            .addComponent(jLabel13, javax.swing.GroupLayout.DEFAULT_SIZE, 170, Short.MAX_VALUE)
-                            .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, 170, Short.MAX_VALUE)
-                            .addGroup(jMiscSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addComponent(jLabel39, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jLabel34, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
-                    .addGroup(jMiscSettingsLayout.createSequentialGroup()
-                        .addComponent(jLabel16)
-                        .addGap(25, 25, 25)))
-                .addGroup(jMiscSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jMiscSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(jNotifyDurationBox, 0, 109, Short.MAX_VALUE)
-                        .addComponent(jVillageSortTypeChooser, 0, 109, Short.MAX_VALUE)
-                        .addComponent(jInformOnUpdates, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(jMiscSettingsLayout.createSequentialGroup()
-                        .addComponent(jMaxTroopDensity, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel14, javax.swing.GroupLayout.DEFAULT_SIZE, 249, Short.MAX_VALUE)
+                            .addComponent(jLabel13, javax.swing.GroupLayout.DEFAULT_SIZE, 249, Short.MAX_VALUE)
+                            .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, 249, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton8)))
-                .addContainerGap())
+                        .addGroup(jMiscSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jNotifyDurationBox, 0, 109, Short.MAX_VALUE)
+                            .addComponent(jVillageSortTypeChooser, 0, 109, Short.MAX_VALUE)
+                            .addComponent(jInformOnUpdates, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addContainerGap(167, Short.MAX_VALUE))
+                    .addGroup(jMiscSettingsLayout.createSequentialGroup()
+                        .addGroup(jMiscSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel16)
+                            .addComponent(jLabel39))
+                        .addGap(25, 25, 25)
+                        .addGroup(jMiscSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(jMiscSettingsLayout.createSequentialGroup()
+                                .addComponent(jMaxTroopDensity, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButton8)))
+                        .addContainerGap())))
         );
         jMiscSettingsLayout.setVerticalGroup(
             jMiscSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1959,20 +1937,19 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 .addGroup(jMiscSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jInformOnUpdates, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jMiscSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel34, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jMiscSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel39, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jMiscSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel16)
-                    .addComponent(jMaxTroopDensity, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton8))
-                .addContainerGap(107, Short.MAX_VALUE))
+                .addGap(11, 11, 11)
+                .addGroup(jMiscSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addGroup(jMiscSettingsLayout.createSequentialGroup()
+                        .addComponent(jLabel39, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel16))
+                    .addGroup(jMiscSettingsLayout.createSequentialGroup()
+                        .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addGroup(jMiscSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jMaxTroopDensity, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButton8))))
+                .addContainerGap(209, Short.MAX_VALUE))
         );
 
         jSettingsTabbedPane.addTab("Sonstiges", new javax.swing.ImageIcon(getClass().getResource("/res/checkbox.png")), jMiscSettings); // NOI18N
@@ -2024,13 +2001,13 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                         .addComponent(jCreateAccountButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jChangePasswordButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 83, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 104, Short.MAX_VALUE)
                         .addComponent(jCancelButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jOKButton, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(20, 20, 20)
-                        .addComponent(jSettingsTabbedPane)))
+                        .addComponent(jSettingsTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 544, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -2233,13 +2210,12 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         GlobalOptions.addProperty("village.order", Integer.toString(sortType));
         GlobalOptions.addProperty("notify.duration", Integer.toString(jNotifyDurationBox.getSelectedIndex()));
         GlobalOptions.addProperty("inform.on.updates", Boolean.toString(jInformOnUpdates.isSelected()));
-        GlobalOptions.addProperty("export.tribe.names", Boolean.toString(jExportTribeNames.isSelected()));
-        GlobalOptions.addProperty("export.units", Boolean.toString(jExportUnit.isSelected()));
-        GlobalOptions.addProperty("export.arrive.time", Boolean.toString(jExportArriveTime.isSelected()));
         GlobalOptions.addProperty("show.popup.moral", Boolean.toString(jShowPopupMoral.isSelected()));
         GlobalOptions.addProperty("show.popup.conquers", Boolean.toString(jShowPopupConquers.isSelected()));
         GlobalOptions.addProperty("show.popup.ranks", Boolean.toString(jShowPopupRanks.isSelected()));
         GlobalOptions.addProperty("max.density.troops", jMaxTroopDensity.getText());
+        GlobalOptions.addProperty("attack.bbexport.template", jAttackBBExportTemplate.getText());
+
         GlobalOptions.saveProperties();
         if (!checkSettings()) {
             return;
@@ -2987,6 +2963,7 @@ private void fireRestoreTemplateEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
     private javax.swing.JPasswordField jAccountPassword;
     private javax.swing.JLabel jAccountPasswordLabel;
     private javax.swing.JTextField jArcherAmount;
+    private javax.swing.JTextPane jAttackBBExportTemplate;
     private javax.swing.JTable jAttackColorTable;
     private javax.swing.JLabel jAttackMovementLabel;
     private javax.swing.JLabel jAttackMovementLabel1;
@@ -3014,9 +2991,6 @@ private void fireRestoreTemplateEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
     private javax.swing.JButton jDownloadDataButton;
     private javax.swing.JCheckBox jDrawAttacksByDefaultBox;
     private javax.swing.JEditorPane jEditorPane1;
-    private javax.swing.JCheckBox jExportArriveTime;
-    private javax.swing.JCheckBox jExportTribeNames;
-    private javax.swing.JCheckBox jExportUnit;
     private javax.swing.JTextField jFooterPath;
     private javax.swing.JTextField jHeaderPath;
     private javax.swing.JTextField jHeavyAmount;
@@ -3033,8 +3007,8 @@ private void fireRestoreTemplateEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
     private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel34;
     private javax.swing.JLabel jLabel35;
     private javax.swing.JLabel jLabel36;
     private javax.swing.JLabel jLabel37;
@@ -3064,11 +3038,11 @@ private void fireRestoreTemplateEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
     private javax.swing.JPasswordField jOldPassword;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
+    private javax.swing.JPanel jPanel8;
     private javax.swing.JTextField jPasswordChangeAccount;
     private javax.swing.JPanel jPlayerServerSettings;
     private javax.swing.JLabel jProxyAdressLabel;
@@ -3095,6 +3069,7 @@ private void fireRestoreTemplateEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JButton jSelectBlockButton;
     private javax.swing.JButton jSelectFooterButton;
     private javax.swing.JButton jSelectHeaderButton;
@@ -3112,6 +3087,7 @@ private void fireRestoreTemplateEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
     private javax.swing.JTextField jSpearAmount;
     private javax.swing.JTextArea jStatusArea;
     private javax.swing.JTextField jSwordAmount;
+    private javax.swing.JPanel jTemplateSettings;
     private javax.swing.JComboBox jTribeNames;
     private javax.swing.JDialog jTroopDensitySelectionDialog;
     private javax.swing.JCheckBox jTroopsTypeBox;

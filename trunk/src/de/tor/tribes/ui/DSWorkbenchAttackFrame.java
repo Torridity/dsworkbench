@@ -32,6 +32,7 @@ import de.tor.tribes.ui.models.StandardAttackTableModel;
 import de.tor.tribes.ui.renderer.AttackTypeCellRenderer;
 import de.tor.tribes.ui.renderer.ColoredDateCellRenderer;
 import de.tor.tribes.ui.renderer.UnitTableHeaderRenderer;
+import de.tor.tribes.util.AttackToBBCodeFormater;
 import de.tor.tribes.util.html.AttackPlanHTMLExporter;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.JOptionPaneHelper;
@@ -1560,84 +1561,9 @@ private void fireCopyAsBBCodeToClipboardEvent(java.awt.event.MouseEvent evt) {//
             jAttackTable.invalidate();
             for (int i : rows) {
                 int row = jAttackTable.convertRowIndexToModel(i);
-                Village sVillage = attacks.get(row).getSource();
-                Village tVillage = attacks.get(row).getTarget();
-                UnitHolder sUnit = attacks.get(row).getUnit();
-                Date aTime = attacks.get(row).getArriveTime();
-                Date sTime = new Date(aTime.getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(sVillage, tVillage, sUnit.getSpeed()) * 1000));
-                int type = attacks.get(row).getType();
-                String sendtime = null;
-                String arrivetime = null;
-                if (extended) {
-                    sendtime = new SimpleDateFormat("'[color=red]'dd.MM.yy 'um' HH:mm:ss.'[size=8]'SSS'[/size][/color]'").format(sTime);
-                    arrivetime = new SimpleDateFormat("'[color=green]'dd.MM.yy 'um' HH:mm:ss.'[size=8]'SSS'[/size][/color]'").format(aTime);
-                } else {
-                    sendtime = new SimpleDateFormat("'[color=red]'dd.MM.yy 'um' HH:mm:ss.SSS'[/color]'").format(sTime);
-                    arrivetime = new SimpleDateFormat("'[color=green]'dd.MM.yy 'um' HH:mm:ss.SSS'[/color]'").format(aTime);
-                }
-
-                switch (type) {
-                    case Attack.CLEAN_TYPE: {
-                        buffer.append("Angriff (Clean-Off) ");
-                        break;
-                    }
-                    case Attack.FAKE_TYPE: {
-                        buffer.append("Angriff (Fake) ");
-                        break;
-                    }
-                    case Attack.SNOB_TYPE: {
-                        buffer.append("Angriff (AG) ");
-                        break;
-                    }
-                    case Attack.SUPPORT_TYPE: {
-                        buffer.append("Unterstützung ");
-                        break;
-                    }
-                    default: {
-                        buffer.append("Angriff ");
-                    }
-                }
-
-                if (Boolean.parseBoolean(GlobalOptions.getProperty("export.tribe.names"))) {
-                    buffer.append(" von ");
-                    if (sVillage.getTribe() != null) {
-                        buffer.append(sVillage.getTribe().toBBCode());
-                    } else {
-                        buffer.append("Barbaren");
-                    }
-                }
-                buffer.append(" aus ");
-                buffer.append(sVillage.toBBCode());
-                if (Boolean.parseBoolean(GlobalOptions.getProperty("export.units"))) {
-                    buffer.append(" mit ");
-                    if (extended) {
-                        buffer.append("[img]" + sUrl + "/graphic/unit/unit_" + sUnit.getPlainName() + ".png[/img]");
-                    } else {
-                        buffer.append(sUnit.getName());
-                    }
-                }
-                buffer.append(" auf ");
-
-                if (Boolean.parseBoolean(GlobalOptions.getProperty("export.tribe.names"))) {
-                    if (tVillage.getTribe() != null) {
-                        buffer.append(tVillage.getTribe().toBBCode());
-                    } else {
-                        buffer.append("Barbaren");
-                    }
-                    buffer.append(" in ");
-                }
-
-                buffer.append(tVillage.toBBCode());
-                buffer.append(" startet am ");
-                buffer.append(sendtime);
-                if (Boolean.parseBoolean(GlobalOptions.getProperty("export.arrive.time"))) {
-                    buffer.append(" und kommt am ");
-                    buffer.append(arrivetime);
-                    buffer.append(" an\n");
-                } else {
-                    buffer.append("\n");
-                }
+                buffer.append(AttackToBBCodeFormater.formatAttack(attacks.get(row), sUrl, extended));
             }
+
             jAttackTable.revalidate();
             if (extended) {
                 buffer.append("\n[size=8]Erstellt am ");

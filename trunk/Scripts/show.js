@@ -23,7 +23,8 @@ var attacks = new Array({
 		'target':123456,
 		'unit':0,
 		'send':'02:00:00',
-		'arrive':'27.09.2009 12:00:00'
+		'arrive':'27.09.2009 12:00:00',
+		'finished':1255168681
 		},
 		{
 		'type':0,
@@ -31,7 +32,8 @@ var attacks = new Array({
 		'target':123456,
 		'unit':0,
 		'send':'27.09.2009 02:00:00',
-		'arrive':'27.09.2009 12:00:00'
+		'arrive':'27.09.2009 12:00:00',
+		'finished':1255168681
 		},
 		{
 		'type':2,
@@ -39,7 +41,8 @@ var attacks = new Array({
 		'target':123456,
 		'unit':0,
 		'send':'27.09.2009 02:00:00',
-		'arrive':'27.09.2009 12:00:00'
+		'arrive':'27.09.2009 12:00:00',
+		'finished':1255168681
 		}
 	);
 	
@@ -114,7 +117,6 @@ var attacks = new Array({
 					img.setAttribute('alt', '');
 					typeNode.appendChild(img);
 		  	}else{
-		  		//rowData +=  "<td>-</td>";
 		  		typeNode.appendChild(document.createTextNode('-'));
 				}
 				line.appendChild(typeNode);
@@ -131,22 +133,33 @@ var attacks = new Array({
 				line.appendChild(unitNode);
 				var sendNode = document.createElement("td");
 		
-				var spanNode = document.createElement("span");
-				spanNode.setAttribute('class', 'timer');
-				spanNode.appendChild(document.createTextNode('Warte...'));
+				var spanNode = document.createElement("span");			
 				var altNode = document.createElement("td");
 				var tn = document.createTextNode('Abgelaufen');
 				altNode.appendChild(tn);
-				altNode.setAttribute('style', 'display:none');
+				
 				altNode.setAttribute('class', 'warn');
 				sendNode.appendChild(spanNode);
 				/**Set send time in seconds relative to current time*/
-				var sendTime = 23*60*60 + 20*60;
-				sendTime += 15*60 + 50;
+				var sendTime = 20*60*60 + 34*60;
+				//sendTime += 15*60 + 50;			
+				if(getRealServerTime(document.getElementById('serverTime')) > attacks[i].finished){
+					altNode.setAttribute('style', 'display:inline');
+			}else{
+				spanNode.setAttribute('class', 'timer');
+				spanNode.appendChild(document.createTextNode('Warte...'));
+				altNode.setAttribute('style', 'display:none');
+				//alert(getRealServerTime(document.getElementById('serverTime')));
 				//var serverTime = getTime(document.getElementById("serverTime"));
 				//var startTime = getTime(spanNode);
-				addTimer(spanNode, sendTime, false);
+				if(window.navigator.userAgent.indexOf("Firefox") > -1){
+					unsafeWindow.addTimer(spanNode, sendTime, false);
+				}else{
+					addTimer(spanNode, sendTime, false);
+				}
 				line.appendChild(sendNode);
+				}
+				
 				line.appendChild(altNode);
 		
 				var arriveNode = document.createElement("td");
@@ -160,7 +173,7 @@ var attacks = new Array({
 	/**Check if simulator page is shown. If true do not show planned attacks*/
  	function isSimulator(formNode){
 		var attrib = formNode.getAttribute('action');
-		return attrib.contains('mode=sim');
+		return (formNode.action.indexOf('mode=sim') > -1);
 	}
 	
 	Array.prototype.contains = function (element) {
@@ -179,11 +192,12 @@ var attacks = new Array({
  		var spans = document.getElementsByTagName('span');
  		for(var i = 0;i<spans.length;i++){
  			var attrib = spans[i].getAttribute('id');
- 			if(attrib != null && attrib.contains('label_') && !attrib.contains('label_text_')){
+ 			
+ 			if(spans[i].id != null && spans[i].id.indexOf('label_')>-1 && spans[i].id.indexOf('label_text_') < 0){
  				allElems.push(attrib.replace('label_', ''));
  			}
  		}
- 	//	alert(emptyElems);
+ 
  		for (var i = 0; i < attacks.length; i++){
 			var node = document.getElementById('label_' + attacks[i].source);
 			if(node != null && !doneElems.contains(attacks[i].source)){
@@ -210,11 +224,7 @@ var attacks = new Array({
 		}
 	}
 }
- /*  // Function to add event listener to t
-   function load() { 
-     var el = document.getElementById("t"); 
-     el.addEventListener("click", modifyText, false); 
-   } */
+
 	/**********HELPER FUNCTIONS***********/
 	/**Get ID of current village*/
 	function getVillageID(formNode){
@@ -223,6 +233,33 @@ var attacks = new Array({
 		var idEnd = villageURL.indexOf('&', idStart);
 		return villageURL.substring(idStart, idEnd);
 	}
+	
+	function getRealServerTime(element) {
+	currentDate = document.getElementById('serverDate').firstChild.nodeValue;
+	splitDate = currentDate.split('/');
+ 
+	date = splitDate[0];
+	month = splitDate[1]-1;
+	year = splitDate[2];
+ 
+	// Zeit auslesen
+	if(element.firstChild.nodeValue == null) return -1;
+	var part = element.firstChild.nodeValue.split(":");
+ 
+	// Führende Nullen entfernen
+	for(var j=1; j<3; j++) {
+		if(part[j].charAt(0) == "0")
+			part[j] = part[j].substring(1, part[j].length);
+	}
+ 
+	// Zusammenfassen
+	var hours = parseInt(part[0]);
+	var minutes = parseInt(part[1]);
+	var seconds = parseInt(part[2]);
+	var time = hours*60*60+minutes*60+seconds;
+	var dateObject = new Date(year, month, date,hours, minutes,seconds);
+	return dateObject.getTime()/1000;
+}
 	
 	/**Adding function to onload listener*/
 	function addLoadEvent(func) {

@@ -184,6 +184,7 @@ var attacks = new Array({
  				allElems.push(attrib.replace('label_', ''));
  			}
  		}
+ 		
  		for (var i = 0; i < attacks.length; i++){
 			var node = document.getElementById('label_' + attacks[i].source);
 			if(node != null && !doneElems.contains(attacks[i].source)){

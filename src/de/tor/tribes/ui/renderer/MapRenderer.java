@@ -247,6 +247,7 @@ public class MapRenderer extends Thread {
                     }
 
                     boolean mapDrawn = false;
+
                     for (Integer layer : drawOrder) {
                         if (layer == 0) {
                             if (mapDrawn) {
@@ -275,7 +276,6 @@ public class MapRenderer extends Thread {
                                 //only draw layer if map is drawn
                                 //If not, this layer is hidden behind the map
                                 renderDecoration(g2d);
-
                             }
                         } else if (layer == 4) {
                             //render troop density
@@ -1928,6 +1928,7 @@ public class MapRenderer extends Thread {
             }
         }
 // </editor-fold>
+
         List<Village> marked = MapPanel.getSingleton().getMarkedVillages();
         if (!marked.isEmpty()) {
             Enumeration<Village> villages = villagePositions.keys();
@@ -2167,6 +2168,7 @@ public class MapRenderer extends Thread {
         //render troop/runtime information
         boolean renderedExt = renderExtendedInformation(g2d, mouseVillage, xc, yc, width, dy);
 
+        //calculate draw location to position popup inside mappanel
         villageRect = (Rectangle) rect.clone();
         int height = dy + ((renderedExt) ? 35 : 0);
         int delta = 500 + villageRect.getLocation().x - MapPanel.getSingleton().getWidth();
@@ -2335,15 +2337,22 @@ public class MapRenderer extends Thread {
     private boolean renderExtendedInformation(Graphics2D g2d, Village pMouseVillage, int pX, int pY, int pWidth, int pDy) {
         VillageTroopsHolder troops = TroopsManager.getSingleton().getTroopsForVillage(pMouseVillage);
         Font current = new Font(Font.SANS_SERIF, Font.PLAIN, 10);
+        Hashtable<UnitHolder, Integer> activeTroops = null;
+        //check which extended information should be drawn (runtime, troop information or attack information)
         boolean drawDist = false;
+        //  if (MapPanel.getSingleton().isAttackCursor()) {
+        //draw attack information
+
+
+        // } else {
+        //draw distance or troops availability information
         if (MapPanel.getSingleton().getCurrentCursor() == ImageManager.CURSOR_MEASURE) {
             if (mSourceVillage != null) {
                 current = new Font(Font.SANS_SERIF, Font.PLAIN, 9);
                 drawDist = true;
             }
-
         }
-        Hashtable<UnitHolder, Integer> activeTroops = null;
+
         if (!drawDist) {
             //if no runtime drawing, check troops
             if (troops == null) {
@@ -2432,6 +2441,7 @@ public class MapRenderer extends Thread {
                 unitCount++;
             }
         }
+        //  }
         return true;
     }
 

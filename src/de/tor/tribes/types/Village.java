@@ -37,7 +37,7 @@ public class Village implements Comparable {
     private short x;
     private short y;
     private int tribeID;
-    private transient Tribe tribe = null;
+    private Tribe tribe = null;
     private int points;
     private byte type;
     private String stringRepresentation = null;

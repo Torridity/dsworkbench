@@ -223,15 +223,7 @@ public class MapPanel extends JPanel {
                 int unit = -1;
                 boolean isAttack = false;
                 if (!spaceDown) {
-                    if ((iCurrentCursor == ImageManager.CURSOR_ATTACK_AXE) ||
-                            (iCurrentCursor == ImageManager.CURSOR_ATTACK_SWORD) ||
-                            (iCurrentCursor == ImageManager.CURSOR_ATTACK_SPY) ||
-                            (iCurrentCursor == ImageManager.CURSOR_ATTACK_LIGHT) ||
-                            (iCurrentCursor == ImageManager.CURSOR_ATTACK_HEAVY) ||
-                            (iCurrentCursor == ImageManager.CURSOR_ATTACK_RAM) ||
-                            (iCurrentCursor == ImageManager.CURSOR_ATTACK_SNOB)) {
-                        isAttack = true;
-                    }
+                    isAttack = isAttackCursor();
                 }
 
                 int tmpCursor = (spaceDown) ? ImageManager.CURSOR_DEFAULT : iCurrentCursor;
@@ -244,19 +236,6 @@ public class MapPanel extends JPanel {
                             if ((current != null) && (current.getTribe() != null) && (t != null) && (t.equals(current.getTribe()))) {
                                 DSWorkbenchMainFrame.getSingleton().setCurrentUserVillage(current);
                             }
-                          //  DSWorkbenchMainFrame.getSingleton().centerVillage(current);
-                          /*  if (DSWorkbenchNotepad.getSingleton().isVisible()) {
-                                //show first note for village if notepad is open
-                                Note n = NoteManager.getSingleton().getNoteForVillage(current);
-                                if (n != null) {
-                                    DSWorkbenchNotepad.getSingleton().setCurrentNote(n);
-                                    //set search term to village name to allow to find additional notes
-                                    DSWorkbenchNotepad.getSingleton().setSearchTermByVillageExternally(current);
-                                } else {
-                                    //set current village to add field to allow to add note immediately
-                                    DSWorkbenchNotepad.getSingleton().setVillageFieldExternally(current);
-                                }
-                            }*/
                         }
                         break;
                     }
@@ -428,15 +407,7 @@ public class MapPanel extends JPanel {
                 boolean isAttack = false;
                 mouseDown = true;
                 if (!spaceDown) {
-                    if ((iCurrentCursor == ImageManager.CURSOR_ATTACK_AXE) ||
-                            (iCurrentCursor == ImageManager.CURSOR_ATTACK_SWORD) ||
-                            (iCurrentCursor == ImageManager.CURSOR_ATTACK_SPY) ||
-                            (iCurrentCursor == ImageManager.CURSOR_ATTACK_LIGHT) ||
-                            (iCurrentCursor == ImageManager.CURSOR_ATTACK_HEAVY) ||
-                            (iCurrentCursor == ImageManager.CURSOR_ATTACK_RAM) ||
-                            (iCurrentCursor == ImageManager.CURSOR_ATTACK_SNOB)) {
-                        isAttack = true;
-                    }
+                    isAttack = isAttackCursor();
                 }
                 int tmpCursor = (spaceDown) ? ImageManager.CURSOR_DEFAULT : iCurrentCursor;
 
@@ -660,15 +631,7 @@ public class MapPanel extends JPanel {
                 // fireVillageAtMousePosChangedEvents(getVillageAtMousePos());
                 boolean isAttack = false;
                 if (!spaceDown) {
-                    if ((iCurrentCursor == ImageManager.CURSOR_ATTACK_AXE) ||
-                            (iCurrentCursor == ImageManager.CURSOR_ATTACK_SWORD) ||
-                            (iCurrentCursor == ImageManager.CURSOR_ATTACK_SPY) ||
-                            (iCurrentCursor == ImageManager.CURSOR_ATTACK_LIGHT) ||
-                            (iCurrentCursor == ImageManager.CURSOR_ATTACK_HEAVY) ||
-                            (iCurrentCursor == ImageManager.CURSOR_ATTACK_RAM) ||
-                            (iCurrentCursor == ImageManager.CURSOR_ATTACK_SNOB)) {
-                        isAttack = true;
-                    }
+                    isAttack = isAttackCursor();
                 }
                 int tmpCursor = (spaceDown) ? ImageManager.CURSOR_DEFAULT : iCurrentCursor;
 
@@ -777,6 +740,16 @@ public class MapPanel extends JPanel {
         addMouseMotionListener(MenuRenderer.getSingleton());
 
     //<editor-fold>
+    }
+
+    public boolean isAttackCursor() {
+        return ((iCurrentCursor == ImageManager.CURSOR_ATTACK_AXE) ||
+                (iCurrentCursor == ImageManager.CURSOR_ATTACK_SWORD) ||
+                (iCurrentCursor == ImageManager.CURSOR_ATTACK_SPY) ||
+                (iCurrentCursor == ImageManager.CURSOR_ATTACK_LIGHT) ||
+                (iCurrentCursor == ImageManager.CURSOR_ATTACK_HEAVY) ||
+                (iCurrentCursor == ImageManager.CURSOR_ATTACK_RAM) ||
+                (iCurrentCursor == ImageManager.CURSOR_ATTACK_SNOB));
     }
 
     protected void resetServerDependendSettings() {

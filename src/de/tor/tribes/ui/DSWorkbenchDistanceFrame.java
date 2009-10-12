@@ -305,7 +305,7 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame {
                 setup();
             }
         } catch (Exception e) {
-            logger.error("Failed to parse source villages from clipboard", e);
+            logger.error("Failed to parse villages from clipboard", e);
         }
     }//GEN-LAST:event_fireCopyVillagesFromClipboardEvent
 

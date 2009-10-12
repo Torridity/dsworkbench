@@ -8,11 +8,12 @@
  *
  * Created on 19.09.2009, 21:30:23
  */
-
 package de.tor.tribes.ui.algo;
 
-import de.tor.tribes.ui.TimePicker;
-import de.tor.tribes.util.Constants;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.Point;
 import javax.swing.JFrame;
 
 /**
@@ -23,18 +24,43 @@ public class NewTimePanel extends javax.swing.JPanel {
 
     /** Creates new form NewTimePanel */
     public NewTimePanel() {
-        initComponents();
+        /*  initComponents();
         TimePicker p = new TimePicker();
-        p.setInterval(0, 24);
+        p.setInterval(0, 60);
         p.setMonoValue(true);
         p.setBackground(Constants.DS_BACK_LIGHT);
-        p.setSelectInterval(10);
+        //p.setSelectInterval(10);
         p.setWatch(true);
-        jPanel2.add(p);
-        /*JXDatePicker picker = new JXDatePicker();
+        p.addTimePickerListener(new TimePickerListener() {
+
+        @Override
+        public void TimeChanged(TimePicker timepicker) {
+        System.out.println("H: " + timepicker.getFirstHour());
+        System.out.println("M: " + timepicker.getFirstMinute());
+        System.out.println("P: " + timepicker.getFirstPeriod());
+
+        }
+        });
+        jPanel2.add(p);*/
+        /*    JXDatePicker picker = new JXDatePicker();
         picker.setDate(Calendar.getInstance().getTime());
         picker.setLocale(Locale.getDefault());
         jPanel3.add(picker);*/
+    }
+
+    public Point hoursToLocation(int hours, Point center, int scale) {
+        Point result = new Point();
+        result.x = (int) Math.round(Math.sin(hours / 24 * 2 * Math.PI) * scale) + center.x;
+        result.y = (int) (center.y - Math.round(Math.cos(hours / 24 * 2 * Math.PI) * scale));
+        return result;
+    }
+
+    public void paint(Graphics g) {
+        Point c = new Point((int) (getSize().getWidth() / 2), (int) (getSize().getHeight() / 2));
+        Point e  = hoursToLocation(2, c, 50);
+        Graphics2D g2d = (Graphics2D)g;
+        g2d.drawLine(c.x, c.y, e.x, e.y);
+
     }
 
     /** This method is called from within the constructor to
@@ -97,7 +123,8 @@ public class NewTimePanel extends javax.swing.JPanel {
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
-public static void main(String[] args) {
+
+    public static void main(String[] args) {
         JFrame f = new JFrame();
         f.add(new NewTimePanel());
         f.pack();
@@ -110,5 +137,4 @@ public static void main(String[] args) {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     // End of variables declaration//GEN-END:variables
-
 }

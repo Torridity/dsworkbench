@@ -404,7 +404,6 @@ public class DataHolder {
     private boolean createLocalDataCopy(String pServerDir) {
         try {
             BufferedWriter bout = new BufferedWriter(new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(pServerDir + "/serverdata.bin"))));
-
             logger.info("Writing villages to " + pServerDir + "/serverdata.bin");
             bout.write("<villages>\n");
             for (int i = 0; i < 1000; i++) {
@@ -493,6 +492,7 @@ public class DataHolder {
                 }
 
             }
+         
             if (vc == 0 || ac == 0 || tc == 0) {
                 //data obviously invalid
                 logger.error("#villages | #allies | #tribes is 0");

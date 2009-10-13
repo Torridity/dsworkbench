@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 /**
+ * @TODO (DIFF) More tolerant parsing, also for copied DSWB table data!
  *Parses villages, separated by space or tab, from a string
  * @author Charon
  */
@@ -24,7 +25,7 @@ public class VillageParser {
             return villages;
         }
         if (ServerSettings.getSingleton().getCoordType() != 2) {
-            StringTokenizer t = new StringTokenizer(pVillagesString, " \t");
+            StringTokenizer t = new StringTokenizer(pVillagesString, " \t\n\r");
             while (t.hasMoreTokens()) {
                 try {
                     String token = t.nextToken();
@@ -41,9 +42,8 @@ public class VillageParser {
                     //skip token
                 }
             }
-
         } else {
-            StringTokenizer t = new StringTokenizer(pVillagesString, " \t");
+            StringTokenizer t = new StringTokenizer(pVillagesString, " \t\r\n");
             while (t.hasMoreTokens()) {
                 try {
                     String token = t.nextToken();
@@ -60,13 +60,12 @@ public class VillageParser {
                 }
             }
         }
-
         return villages;
     }
 
     public static void main(String[] args) throws Exception {
-     /*   Transferable t = (Transferable) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
-        VillageParser.parse((String) t.getTransferData(DataFlavor.stringFlavor));*/
-       
+        /*   Transferable t = (Transferable) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
+        System.out.println(VillageParser.parse((String) t.getTransferData(DataFlavor.stringFlavor)));
+         */
     }
 }

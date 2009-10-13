@@ -11,7 +11,6 @@ import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.AbstractTroopMovement;
 import de.tor.tribes.types.Ally;
 import de.tor.tribes.types.Attack;
-import de.tor.tribes.types.Barbarians;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
@@ -3423,7 +3422,7 @@ private void fireTargetAllyFilterChangedEvent(javax.swing.event.CaretEvent evt) 
 
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-                Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
+                Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, isSelected, hasFocus, row, row);
                 String t = ((DefaultTableCellRenderer) c).getText();
                 ((DefaultTableCellRenderer) c).setText(t);
                 DefaultTableModel model = (DefaultTableModel) table.getModel();
@@ -3447,7 +3446,9 @@ private void fireTargetAllyFilterChangedEvent(javax.swing.event.CaretEvent evt) 
                     back = new Color(red, green, blue);
                 }
                 DefaultTableCellRenderer renderer = ((DefaultTableCellRenderer) c);
-                renderer.setBackground(back);
+                if (!isSelected) {
+                    renderer.setBackground(back);
+                }
                 return c;
             }
         };

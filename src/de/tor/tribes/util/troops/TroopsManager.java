@@ -226,17 +226,6 @@ public class TroopsManager {
                 //write village information
                 Village v = villages.nextElement();
                 VillageTroopsHolder holder = mTroops.get(v);
-                /* result += "<village>\n";
-                result += "<id>" + v.getId() + "</id>\n";
-                result += "<state>" + holder.getState().getTime() + "</state>\n";
-                result += "<troops>\n";
-                for (Integer i : holder.getTroops()) {
-                //write troop information
-                result += "<troop>" + i + "</troop>\n";
-                }
-                //close troops for village
-                result += "</troops>\n";
-                result += "</village>\n";*/
                 result += holder.toXml() + "\n";
             }
             result += "</villages>\n</troops>\n";

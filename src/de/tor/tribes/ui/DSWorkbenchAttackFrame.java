@@ -36,6 +36,7 @@ import de.tor.tribes.util.AttackToBBCodeFormater;
 import de.tor.tribes.util.html.AttackPlanHTMLExporter;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.JOptionPaneHelper;
+import de.tor.tribes.util.js.AttackScriptWriter;
 import java.awt.Component;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
@@ -2270,6 +2271,15 @@ private void fireCleanUpAttacksEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST
 }//GEN-LAST:event_fireCleanUpAttacksEvent
 
 private void fireSetStandardAttacksEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSetStandardAttacksEvent
+    String selectedPlan = AttackManagerTableModel.getSingleton().getActiveAttackPlan();
+    List<Attack> attacks = AttackManager.getSingleton().getAttackPlan(selectedPlan);
+    AttackScriptWriter.writeAttackScript(attacks);
+
+
+    if (true) {
+        return;
+    }
+
     //build table
     try {
         jStandardAttackTable.invalidate();
@@ -2323,7 +2333,7 @@ private void fireApplyStandardAttacksEvent(java.awt.event.MouseEvent evt) {//GEN
             }
         };
 
-        //walk villages for row values
+//walk villages for row values
         if (pVillages.size() != 0) {
             Enumeration<Village> villages = pVillages.keys();
             while (villages.hasMoreElements()) {
@@ -2339,7 +2349,8 @@ private void fireApplyStandardAttacksEvent(java.awt.event.MouseEvent evt) {//GEN
         DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
 
             @Override
-            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            public Component getTableCellRendererComponent(
+                    JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
                 Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
                 c.setBackground(Constants.DS_BACK);
                 DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
@@ -2348,11 +2359,12 @@ private void fireApplyStandardAttacksEvent(java.awt.event.MouseEvent evt) {//GEN
             }
         };
 
-        for (int i = 0; i < pTable.getColumnCount(); i++) {
+        for (int i = 0; i <
+                pTable.getColumnCount(); i++) {
             pTable.getColumn(pTable.getColumnName(i)).setHeaderRenderer(headerRenderer);
         }
 
-        //set max width
+//set max width
         pTable.getColumnModel().getColumn(1).setMaxWidth(75);
         //set sorter
         TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(model);
@@ -2362,7 +2374,11 @@ private void fireApplyStandardAttacksEvent(java.awt.event.MouseEvent evt) {//GEN
     protected void setupAttackPanel() {
         AttackManager.getSingleton().addAttackManagerListener(this);
         //setup renderer and general view
-        jAttackTable.setDefaultRenderer(Date.class, new ColoredDateCellRenderer());
+        jAttackTable.setDefaultRenderer(Date.class,
+                new ColoredDateCellRenderer());
+
+
+
 
         jAttackTable.setDefaultEditor(Date.class, new DateSpinEditor());
         jAttackTable.setDefaultEditor(UnitHolder.class, new UnitCellEditor());

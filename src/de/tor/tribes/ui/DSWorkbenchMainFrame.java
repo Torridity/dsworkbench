@@ -35,6 +35,7 @@ import javax.swing.JOptionPane;
 import org.apache.log4j.Logger;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.ui.models.ConquersTableModel;
+import de.tor.tribes.ui.models.DistanceTableModel;
 import de.tor.tribes.ui.models.StandardAttackTableModel;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.JOptionPaneHelper;
@@ -43,9 +44,11 @@ import de.tor.tribes.util.MapShotListener;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.attack.AttackManager;
 import de.tor.tribes.util.conquer.ConquerManager;
+import de.tor.tribes.util.dist.DistanceManager;
 import de.tor.tribes.util.dsreal.DSRealManager;
 import de.tor.tribes.util.map.FormManager;
 import de.tor.tribes.util.mark.MarkerManager;
+import de.tor.tribes.util.note.NoteManager;
 import de.tor.tribes.util.roi.ROIManager;
 import java.io.File;
 import javax.swing.JFileChooser;
@@ -75,6 +78,7 @@ import javax.swing.table.DefaultTableModel;
 
 /**
  * @TODO (1.5?) Add min number to troop filter in attack planer????
+ * @TODO (DIFF) Note import added
  * @author  Charon
  */
 public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
@@ -367,7 +371,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                     } else if (e.getKeyCode() == KeyEvent.VK_SPACE) {
                         MapPanel.getSingleton().requestFocusInWindow();
                         MapPanel.getSingleton().setSpaceDown(true);
-                    }else if (e.getKeyCode() == KeyEvent.VK_SHIFT) {
+                    } else if (e.getKeyCode() == KeyEvent.VK_SHIFT) {
                         MapPanel.getSingleton().requestFocusInWindow();
                         MapPanel.getSingleton().setShiftDown(true);
                     }
@@ -375,7 +379,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                     KeyEvent e = (KeyEvent) event;
                     if (e.getKeyCode() == KeyEvent.VK_SPACE) {
                         MapPanel.getSingleton().setSpaceDown(false);
-                    }else if (e.getKeyCode() == KeyEvent.VK_SHIFT) {
+                    } else if (e.getKeyCode() == KeyEvent.VK_SHIFT) {
                         MapPanel.getSingleton().setShiftDown(false);
                     }
                 }
@@ -540,6 +544,8 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         TroopsManagerTableModel.getSingleton().setup();
         StandardAttackTableModel.getSingleton().setup();
         DSWorkbenchTroopsFrame.getSingleton().setupTroopsPanel();
+        DistanceManager.getSingleton().clear();
+         DistanceTableModel.getSingleton().fireTableStructureChanged();
         DSWorkbenchDistanceFrame.getSingleton().setup();
         //update attack planner
         if (mTribeTribeAttackFrame != null) {
@@ -811,6 +817,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jCancelExportButton = new javax.swing.JButton();
         jScrollPane4 = new javax.swing.JScrollPane();
         jMarkerSetExportTable = new javax.swing.JTable();
+        jExportNotes = new javax.swing.JCheckBox();
         jAddROIDialog = new javax.swing.JDialog();
         jLabel7 = new javax.swing.JLabel();
         jROIRegion = new javax.swing.JTextField();
@@ -1027,6 +1034,9 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jMarkerSetExportTable.setOpaque(false);
         jScrollPane4.setViewportView(jMarkerSetExportTable);
 
+        jExportNotes.setText(bundle.getString("DSWorkbenchMainFrame.jExportNotes.text")); // NOI18N
+        jExportNotes.setOpaque(false);
+
         javax.swing.GroupLayout jExportDialogLayout = new javax.swing.GroupLayout(jExportDialog.getContentPane());
         jExportDialog.getContentPane().setLayout(jExportDialogLayout);
         jExportDialogLayout.setHorizontalGroup(
@@ -1039,7 +1049,10 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 55, Short.MAX_VALUE)
                         .addComponent(jExportForms))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 301, Short.MAX_VALUE)
-                    .addComponent(jExportTags)
+                    .addGroup(jExportDialogLayout.createSequentialGroup()
+                        .addComponent(jExportTags)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 73, Short.MAX_VALUE)
+                        .addComponent(jExportNotes))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jExportDialogLayout.createSequentialGroup()
                         .addComponent(jCancelExportButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -1051,15 +1064,17 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             jExportDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jExportDialogLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 119, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 5, Short.MAX_VALUE)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 119, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jExportDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jExportTroops)
                     .addComponent(jExportForms))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jExportTags)
+                .addGroup(jExportDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jExportTags)
+                    .addComponent(jExportNotes))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jExportDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jExportButton)
@@ -2267,9 +2282,9 @@ private void fireToolsActionEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:e
     } else if (evt.getSource() == jStartAStarItem) {
         DSWorkbenchSimulatorFrame.getSingleton().setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
         DSWorkbenchSimulatorFrame.getSingleton().showIntegratedVersion(GlobalOptions.getSelectedServer());
-     } else if (evt.getSource() == jDistanceItem) {
-         DSWorkbenchDistanceFrame.getSingleton().setVisible(true);
-     }
+    } else if (evt.getSource() == jDistanceItem) {
+        DSWorkbenchDistanceFrame.getSingleton().setVisible(true);
+    }
 }//GEN-LAST:event_fireToolsActionEvent
 
 private void fireShowAboutEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireShowAboutEvent
@@ -2467,6 +2482,7 @@ private void fireShowImportDialogEvent(java.awt.event.ActionEvent evt) {//GEN-FI
                 boolean tagImported = TagManager.getSingleton().importTags(target, extension);
                 boolean troopsImported = TroopsManager.getSingleton().importTroops(target);
                 boolean formsImported = FormManager.getSingleton().importForms(target);
+                boolean notesImported = NoteManager.getSingleton().importNotes(target);
 
                 String message = "Import beendet.\n";
                 if (!attackImported) {
@@ -2488,7 +2504,9 @@ private void fireShowImportDialogEvent(java.awt.event.ActionEvent evt) {//GEN-FI
                 if (!formsImported) {
                     message += "  * Fehler beim Import der Formen\n";
                 }
-
+                if (!notesImported) {
+                    message += "  * Fehler beim Import der Notizen\n";
+                }
                 JOptionPaneHelper.showInformationBox(this, message, "Import");
             }
 
@@ -2534,6 +2552,7 @@ private void fireExportEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_f
         needExport |= jExportTags.isSelected();
         needExport |= jExportTroops.isSelected();
         needExport |= jExportForms.isSelected();
+        needExport |= jExportNotes.isSelected();
         if (!needExport) {
             JOptionPaneHelper.showWarningBox(jExportDialog, "Keine Daten für den Export gewählt", "Export");
             return;
@@ -2607,6 +2626,10 @@ private void fireExportEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_f
                     exportString += FormManager.getSingleton().getExportData();
                 }
 
+                if (jExportNotes.isSelected()) {
+                    exportString += NoteManager.getSingleton().getExportData();
+                }
+
                 exportString += "</export>";
                 logger.debug("Writing data to disk");
                 FileWriter w = new FileWriter(target);
@@ -2677,7 +2700,7 @@ private void fireOpenExportDialogEvent(java.awt.event.ActionEvent evt) {//GEN-FI
                 return c;
             }
         };
-        jAttackExportTable.getColumn(jAttackExportTable.getColumnName(i)).setHeaderRenderer(headerRenderer);
+        jMarkerSetExportTable.getColumn(jMarkerSetExportTable.getColumnName(i)).setHeaderRenderer(headerRenderer);
     }
 
     model = (DefaultTableModel) jMarkerSetExportTable.getModel();
@@ -3241,6 +3264,7 @@ private void fireGraphicPackChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FI
     private javax.swing.JButton jExportButton;
     private javax.swing.JDialog jExportDialog;
     private javax.swing.JCheckBox jExportForms;
+    private javax.swing.JCheckBox jExportNotes;
     private javax.swing.JCheckBox jExportTags;
     private javax.swing.JCheckBox jExportTroops;
     private javax.swing.JComboBox jFileTypeChooser;

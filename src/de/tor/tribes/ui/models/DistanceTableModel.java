@@ -7,9 +7,7 @@ package de.tor.tribes.ui.models;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.DSWorkbenchMainFrame;
 import de.tor.tribes.util.DSCalculator;
-import java.text.NumberFormat;
-import java.util.LinkedList;
-import java.util.List;
+import de.tor.tribes.util.dist.DistanceManager;
 import javax.swing.table.AbstractTableModel;
 
 /**
@@ -18,7 +16,6 @@ import javax.swing.table.AbstractTableModel;
  */
 public class DistanceTableModel extends AbstractTableModel {
 
-    private List<Village> columns = null;
     private static DistanceTableModel SINGLETON = null;
 
     public static synchronized DistanceTableModel getSingleton() {
@@ -29,9 +26,10 @@ public class DistanceTableModel extends AbstractTableModel {
     }
 
     DistanceTableModel() {
-        columns = new LinkedList<Village>();
-        columns.add(DSWorkbenchMainFrame.getSingleton().getCurrentUser().getVillageList()[0]);
-        columns.add(DSWorkbenchMainFrame.getSingleton().getCurrentUser().getVillageList()[1]);
+    }
+
+    public void clear() {
+        DistanceManager.getSingleton().clear();
     }
 
     @Override
@@ -49,7 +47,8 @@ public class DistanceTableModel extends AbstractTableModel {
 
     @Override
     public int getColumnCount() {
-        return columns.size() + 1;
+        int res = DistanceManager.getSingleton().getVillages().length + 1;
+        return res;
     }
 
     @Override
@@ -57,7 +56,7 @@ public class DistanceTableModel extends AbstractTableModel {
         if (col == 0) {
             return "Eigene";
         }
-        return columns.get(col - 1).toString();
+        return DistanceManager.getSingleton().getVillages()[col - 1].toString();
     }
 
     @Override
@@ -65,24 +64,8 @@ public class DistanceTableModel extends AbstractTableModel {
         return false;
     }
 
-    public void addVillage(Village pVillage) {
-        if (!columns.contains(pVillage)) {
-            columns.add(pVillage);
-        }
-    }
-
-    public void removeVillages(int[] pColumns) {
-        List<Village> tmp = new LinkedList<Village>();
-        for (int col : pColumns) {
-            col = col - 1;
-            if (col >= 0) {
-                tmp.add(columns.get(col));
-            }
-        }
-        for (Village v : tmp) {
-            columns.remove(v);
-        }
-        fireTableStructureChanged();
+    public Village[] getColumns() {
+        return DistanceManager.getSingleton().getVillages();
     }
 
     @Override
@@ -91,7 +74,7 @@ public class DistanceTableModel extends AbstractTableModel {
         if (columnIndex == 0) {
             return v1;
         }
-        Village v2 = columns.get(columnIndex - 1);
+        Village v2 = DistanceManager.getSingleton().getVillages()[columnIndex - 1];
         return DSCalculator.calculateDistance(v1, v2);
     }
 }

@@ -119,6 +119,50 @@ public class NoteManager {
         logger.info("Not implemented yet");
     }
 
+    public String getExportData() {
+        try {
+            logger.debug("Generating notes export data");
+            String result = "<notes>\n";
+
+            Note[] aNotes = notes.toArray(new Note[]{});
+            for (Note note : aNotes) {
+                result += note.toXml();
+            }
+            result += "</notes>\n";
+            logger.debug("Export data generated successfully");
+            return result;
+        } catch (Exception e) {
+            logger.error("Failed to generate notes export data", e);
+            return "";
+        }
+    }
+
+    public boolean importNotes(File pFile) {
+        if (pFile == null) {
+            logger.error("File argument is 'null'");
+            return false;
+        }
+
+        logger.info("Loading notes");
+
+        try {
+            Document d = JaxenUtils.getDocument(pFile);
+            for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//notes/note")) {
+                Note note = Note.fromXml(e);
+                if (note != null) {
+                    notes.add(note);
+                }
+            }
+            logger.debug("Notes imported successfully");
+            DSWorkbenchNotepad.getSingleton().setup();
+            return true;
+        } catch (Exception e) {
+            logger.error("Failed to import notes", e);
+            DSWorkbenchNotepad.getSingleton().setup();
+            return false;
+        }
+    }
+
     public Note getNextNote(Note pCurrent) {
         if (notes.isEmpty()) {
             //no element

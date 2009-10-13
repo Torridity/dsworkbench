@@ -15,6 +15,7 @@ import de.tor.tribes.ui.models.DistanceTableModel;
 import de.tor.tribes.ui.renderer.DistanceTableCellRenderer;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.JOptionPaneHelper;
+import de.tor.tribes.util.dist.DistanceManager;
 import de.tor.tribes.util.parser.VillageParser;
 import java.awt.Component;
 import java.awt.Toolkit;
@@ -57,6 +58,7 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame {
     }
 
     public void setup() {
+        jDistanceTable.invalidate();
         jDistanceTable.setColumnSelectionAllowed(true);
         jDistanceTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(DistanceTableModel.getSingleton());
@@ -298,7 +300,7 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame {
             } else {
                 jDistanceTable.invalidate();
                 for (Village v : villages) {
-                    DistanceTableModel.getSingleton().addVillage(v);
+                    DistanceManager.getSingleton().addVillage(v);
                 }
                 DistanceTableModel.getSingleton().fireTableStructureChanged();
                 jDistanceTable.revalidate();
@@ -315,7 +317,13 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame {
             return;
         }
         jDistanceTable.invalidate();
-        DistanceTableModel.getSingleton().removeVillages(cols);
+        int[] correctedCols = new int[cols.length];
+        for(int i=0;i<cols.length;i++){
+            correctedCols[i] = jDistanceTable.convertColumnIndexToModel(cols[i]);
+        }
+        
+        DistanceManager.getSingleton().removeVillages(correctedCols);
+         DistanceTableModel.getSingleton().fireTableStructureChanged();
         jDistanceTable.revalidate();
         setup();
     }//GEN-LAST:event_fireRemoveColumnEvent

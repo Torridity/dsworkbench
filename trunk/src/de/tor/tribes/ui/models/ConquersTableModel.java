@@ -82,7 +82,6 @@ public class ConquersTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        //Conquer c = ConquerManager.getSingleton().getConquers().get(rowIndex);
         Conquer c = ConquerManager.getSingleton().getConquer(rowIndex);
         switch (columnIndex) {
             case 0:
@@ -113,18 +112,19 @@ public class ConquersTableModel extends AbstractTableModel {
             }
             case 5: {
                 return c.getCurrentAcceptance();
-            }default:{
-                 Village v = DataHolder.getSingleton().getVillagesById().get(c.getVillageID());
-                 Village vUser = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage();
-                 if(vUser != null){
-                     double dist = DSCalculator.calculateDistance(v, vUser);
-                     NumberFormat nf = NumberFormat.getInstance();
-                     nf.setMinimumFractionDigits(2);
-                     nf.setMaximumFractionDigits(2);
-                     return nf.format(dist);
-                 }else{
-                     return 0;
-                 }
+            }
+            default: {
+                Village v = DataHolder.getSingleton().getVillagesById().get(c.getVillageID());
+                Village vUser = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage();
+                if (vUser != null) {
+                    double dist = DSCalculator.calculateDistance(v, vUser);
+                    NumberFormat nf = NumberFormat.getInstance();
+                    nf.setMinimumFractionDigits(2);
+                    nf.setMaximumFractionDigits(2);
+                    return nf.format(dist);
+                } else {
+                    return 0;
+                }
 
 
             }

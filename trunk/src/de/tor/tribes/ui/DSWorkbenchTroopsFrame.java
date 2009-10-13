@@ -6,6 +6,7 @@
 package de.tor.tribes.ui;
 
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.io.ServerManager;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.models.TroopsManagerTableModel;
@@ -23,11 +24,15 @@ import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import de.tor.tribes.ui.renderer.NumberFormatCellRenderer;
 import de.tor.tribes.util.JOptionPaneHelper;
+import de.tor.tribes.util.TroopInformationToBBCodeFormater;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.awt.Component;
+import java.awt.Toolkit;
+import java.awt.datatransfer.StringSelection;
 import java.text.NumberFormat;
 import java.util.Arrays;
+import java.util.StringTokenizer;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JLabel;
 import javax.swing.JTable;
@@ -153,6 +158,7 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
         jLabel8 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
+        jButton5 = new javax.swing.JButton();
 
         jAddTroopsDialog.setTitle("Dorf  hinzufügen");
         jAddTroopsDialog.setAlwaysOnTop(true);
@@ -300,6 +306,15 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
 
         jLabel10.setText("Unterwegs");
 
+        jButton5.setBackground(new java.awt.Color(239, 235, 223));
+        jButton5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_clipboardBB.png"))); // NOI18N
+        jButton5.setToolTipText("Truppeninformationen als BB-Code in die Zwischenablage kopieren");
+        jButton5.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireCopyTroopInformationToClipboardEvent(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -333,11 +348,11 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
                         .addComponent(jTroopsViewTypeBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 531, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton1))
-                    .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(jButton2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButton5, javax.swing.GroupLayout.DEFAULT_SIZE, 59, Short.MAX_VALUE)
+                    .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -349,7 +364,9 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
                         .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 359, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -489,6 +506,7 @@ private void fireCenterSelectionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
     } catch (Exception e) {
         logger.error("Failed to center village", e);
     }
+
 }//GEN-LAST:event_fireCenterSelectionEvent
 
 private void fireChangeViewTypeEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireChangeViewTypeEvent
@@ -502,6 +520,51 @@ private void fireChangeViewTypeEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:
         TroopsManagerTableModel.getSingleton().setViewType(index);
     }
 }//GEN-LAST:event_fireChangeViewTypeEvent
+
+private void fireCopyTroopInformationToClipboardEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCopyTroopInformationToClipboardEvent
+    try {
+        int[] rows = jTroopsTable.getSelectedRows();
+        if (rows.length == 0) {
+            return;
+        }
+
+        boolean copyAll = true;
+        int index = jTroopsViewTypeBox.getSelectedIndex();
+        if (index == -1) {
+            jTroopsViewTypeBox.setSelectedIndex(0);
+            index = 0;
+        }
+        if (JOptionPaneHelper.showQuestionConfirmBox(this, "Welche Informationen möchtest du kopieren?", "Datenauswahl", "Aktuelle Ansicht", "Alle") == JOptionPane.NO_OPTION) {
+            copyAll = false;
+
+        }
+        boolean extended = (JOptionPaneHelper.showQuestionConfirmBox(this, "Erweiterte BB-Codes verwenden (nur für Forum und Notizen geeignet)?", "Erweiterter BB-Code", "Nein", "Ja") == JOptionPane.YES_OPTION);
+        String sUrl = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
+
+        String result = "";
+        for (int row : rows) {
+            int r = jTroopsTable.convertRowIndexToModel(row);
+            Village v = (Village) jTroopsTable.getModel().getValueAt(r, 1);
+            result += TroopInformationToBBCodeFormater.formatTroopInformation(v, index, copyAll, sUrl, extended) + "\n";
+        }
+
+        StringTokenizer t = new StringTokenizer(result, "[");
+        int cnt = t.countTokens();
+        if (cnt > 500) {
+            if (JOptionPaneHelper.showQuestionConfirmBox(this, "Die ausgewählten Truppeninformationen benötigen mehr als 500 BB-Codes\n" +
+                    "und können daher im Spiel (Forum/IGM/Notizen) nicht auf einmal dargestellt werden.\nTrotzdem exportieren?", "Zu viele BB-Codes", "Nein", "Ja") == JOptionPane.NO_OPTION) {
+                return;
+            }
+        }
+
+        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(result), null);
+        JOptionPaneHelper.showInformationBox(this, "Daten in Zwischenablage kopiert.", "Information");
+    } catch (Exception e) {
+        logger.error("Failed to copy troop information to clipboard", e);
+        String result = "Fehler beim Kopieren in die Zwischenablage.";
+        JOptionPaneHelper.showErrorBox(this, result, "Fehler");
+    }
+}//GEN-LAST:event_fireCopyTroopInformationToClipboardEvent
 
     public List<Village> getSelectedTroopsVillages() {
         List<Village> villages = new LinkedList<Village>();
@@ -646,6 +709,7 @@ private void fireChangeViewTypeEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
+    private javax.swing.JButton jButton5;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;

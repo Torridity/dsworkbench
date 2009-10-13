@@ -23,6 +23,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 /**
+ * @TODO (DIFF) Included UV mode
  * @author Charon
  */
 public class AttackPlanHTMLExporter {
@@ -54,6 +55,7 @@ public class AttackPlanHTMLExporter {
     //footer variables
     private static final String VERSION = "\\$VERSION";
     private static final String CREATION_DATE = "\\$CREATION_DATE";
+
 
     static {
         loadCustomTemplate();
@@ -290,6 +292,10 @@ public class AttackPlanHTMLExporter {
             b = b.replaceAll(SEND_TIME, f.format(new Date(send)));
             //replace place link
             String placeURL = baseURL + "game.php?village=";
+            int uvID = GlobalOptions.getUVID();
+            if (uvID >= 0) {
+                placeURL = baseURL + "game.php?t=" + uvID + "&village=";
+            }
             placeURL += a.getSource().getId() + "&screen=place&mode=command&target=" + a.getTarget().getId();
             b = b.replaceAll(PLACE, "<a href=\"" + placeURL + "\" target=\"_blank\">Versammlungsplatz</a>");
             result.append(b);

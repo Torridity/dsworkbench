@@ -13,7 +13,12 @@ package de.tor.tribes.ui.algo;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Point;
+import java.awt.Polygon;
+import java.awt.Shape;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.GeneralPath;
 import javax.swing.JFrame;
 
 /**
@@ -46,20 +51,114 @@ public class NewTimePanel extends javax.swing.JPanel {
         picker.setDate(Calendar.getInstance().getTime());
         picker.setLocale(Locale.getDefault());
         jPanel3.add(picker);*/
+        addMouseListener(new MouseListener() {
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getButton() == 1) {
+                    Point c = new Point((int) (getSize().getWidth() / 2), (int) (getSize().getHeight() / 2));
+                    Point p = e.getPoint();
+                    double dist = c.distance(p);
+                    System.out.println(c);
+                    System.out.println(p);
+                    System.out.println(dist);
+                    double alpha = Math.acos((p.x - c.x) / dist);
+                    double adeg = Math.toDegrees(alpha);
+                    System.out.println("a: " + adeg);
+                    alpha = (alpha - Math.PI / 2d) / (Math.PI / 180d * -1);
+                    double hours = alpha / (360 / 12);
+
+                    if (adeg > 0 && adeg <= 90) {
+                        hours = 6 - hours;
+                    } else if (adeg > 90 && adeg <= 180) {
+                        System.out.println("here " + hours);
+                        hours = 6 + Math.abs(hours);
+                    } else if (adeg > 180 && adeg <= 270) {
+                        
+                      //  hours = 12 - hours;
+                    }else{
+                        
+                        hours = 12 - hours;
+                    }
+
+                    //alpha = (alpha - Math.PI/2d) / (Math.PI/180d * -1);
+
+                    ///alpha = -alpha * Math.PI / 180d + Math.PI / 2d;
+                    //alpha = -alpha + Math.toRadians(90);
+
+                   System.out.println("H: " + hours);
+                } else {
+                }
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+            }
+        });
     }
 
-    public Point hoursToLocation(int hours, Point center, int scale) {
-        Point result = new Point();
-        result.x = (int) Math.round(Math.sin(hours / 24 * 2 * Math.PI) * scale) + center.x;
-        result.y = (int) (center.y - Math.round(Math.cos(hours / 24 * 2 * Math.PI) * scale));
-        return result;
+    public double[] hoursToLocation(double hours, double minutes, double seconds, Point center, double scale) {
+        // alpha is the angle of the hour hand
+
+        double alpha = hours * (360 / 12) + minutes / 2;
+        //beta is the angle of the minute hand
+        double beta = minutes * 6 + seconds / 10;
+        //gama is the angle of the second hand
+        double gamma = seconds;
+        alpha = -alpha * Math.PI / 180d + Math.PI / 2d;
+        //alpha - Math.PI / 2d = -alpha * Math.PI / 180d;
+        //-1 * (alpha - Math.PI / 2d ) / Math.PI / 180d = alpha
+        beta = -beta * Math.PI / 180d + Math.PI / 2d;
+        gamma = -gamma * Math.PI / 180d + Math.PI / 2d;
+
+        /*        Point hPoint = new Point((int) (scale/2 * Math.cos(alpha) + center.x + .5), (int) (-scale/2 * Math.sin(alpha) + center.y + .5));
+        Point mPoint = new Point((int) (scale * Math.cos(beta) + center.x + .5), (int) (-scale * Math.sin(beta) + center.y + .5));
+        Point sPoint = new Point((int) (scale * Math.cos(gamma) + center.x + .5), (int) (-scale * Math.sin(gamma) + center.y + .5));
+        return new Point[]{hPoint, mPoint, sPoint};*/
+        return new double[]{alpha, beta, gamma};
+
     }
 
     public void paint(Graphics g) {
         Point c = new Point((int) (getSize().getWidth() / 2), (int) (getSize().getHeight() / 2));
-        Point e  = hoursToLocation(2, c, 50);
-        Graphics2D g2d = (Graphics2D)g;
-        g2d.drawLine(c.x, c.y, e.x, e.y);
+        double[] hands = hoursToLocation(13, 22, 0, c, 50.0);
+        Graphics2D g2d = (Graphics2D) g;
+        AffineTransform t = g2d.getTransform();
+        g2d.setTransform(AffineTransform.getRotateInstance(-hands[0] + Math.toRadians(90), c.x + .5, c.y + .5));
+        GeneralPath p = new GeneralPath();
+        p.moveTo(c.x, c.y);
+        p.lineTo(c.x + 5, c.y - 5);
+        p.lineTo(c.x, c.y - 30);
+        p.lineTo(c.x - 5, c.y - 5);
+        p.closePath();
+        g2d.fill(p);
+        g2d.setTransform(AffineTransform.getRotateInstance(-hands[1] + Math.toRadians(90), c.x + .5, c.y + .5));
+        p = new GeneralPath();
+        p.moveTo(c.x, c.y);
+        p.lineTo(c.x + 5, c.y - 5);
+        p.lineTo(c.x, c.y - 80);
+        p.lineTo(c.x - 5, c.y - 5);
+        p.closePath();
+        g2d.fill(p);
+        g2d.setTransform(t);
+        Point sPoint = new Point((int) (50.0 * Math.cos(hands[2]) + c.x + .5), (int) (-50.0 * Math.sin(hands[2]) + c.y + .5));
+        g2d.drawLine(c.x, c.y, sPoint.x, sPoint.y);
+
+    //g2d.drawLine(c.x, c.y, hands[0].x, hands[0].y);
+    //g2d.drawLine(c.x, c.y, hands[1].x, hands[1].y);
+    //  g2d.drawLine(c.x, c.y, hands[2].x, hands[2].y);
 
     }
 

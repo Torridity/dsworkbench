@@ -84,7 +84,6 @@ public class TimePanel extends javax.swing.JPanel {
             s.setLocation(s.getX(), s.getY() - 1);
             TimeSpan tmp = new TimeSpan(span.getAtDate(), s);
 
-            System.out.println("Adding span " + tmp);
             result.addTimeSpan(tmp);
 
         }

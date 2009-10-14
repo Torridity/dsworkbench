@@ -96,9 +96,11 @@ public class Enoblement extends AbstractTroopMovement {
 
         @Override
         public int compare(Enoblement e1, Enoblement e2) {
+            int lastIndex1 = e1.getSnobSources().size() - 1;
+            int lastIndex2 = e1.getSnobSources().size() - 1;
 
-            double d1 = DSCalculator.calculateDistance(e1.getSnobSources().get(3), e1.getTarget());
-            double d2 = DSCalculator.calculateDistance(e2.getSnobSources().get(3), e2.getTarget());
+            double d1 = DSCalculator.calculateDistance(e1.getSnobSources().get(lastIndex1), e1.getTarget());
+            double d2 = DSCalculator.calculateDistance(e2.getSnobSources().get(lastIndex2), e2.getTarget());
             return Double.compare(d1, d2);
         }
     }

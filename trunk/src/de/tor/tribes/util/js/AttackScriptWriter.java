@@ -5,10 +5,14 @@
 package de.tor.tribes.util.js;
 
 import de.tor.tribes.types.Attack;
+import de.tor.tribes.util.DSCalculator;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -58,9 +62,36 @@ public class AttackScriptWriter {
             //unit
             block += "'unit':'" + a.getUnit().getPlainName() + ".png',\n";
             //times
-            block += "'send':'" + "02:00:00" + "',\n";
-            block += "'arrive':'" + "12.12.2111 12:32:12" + "',\n";
-            block += "'expired':" + (int)(System.currentTimeMillis()/1000) + "\n";
+            long sendTime = a.getArriveTime().getTime() - ((long) DSCalculator.calculateMoveTimeInSeconds(a.getSource(), a.getTarget(), a.getUnit().getSpeed()) * 1000);
+            //long remaining = Math.round((sendTime - System.currentTimeMillis()) / 1000);
+            Calendar c = Calendar.getInstance();
+            c.setTimeInMillis(sendTime);
+            int hours = c.get(Calendar.HOUR_OF_DAY);
+            int minutes = c.get(Calendar.MINUTE);
+            int seconds = c.get(Calendar.SECOND);
+
+
+            block += "'timerValue':'" + (hours * 3600 + minutes * 60 + seconds) + "',\n";
+            SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+           /* if (isToday(sendTime)) {
+                df = new SimpleDateFormat("'heute, 'HH:mm:ss");
+            } else if (isTomorrow(sendTime)) {
+                df = new SimpleDateFormat("'morgen, 'HH:mm:ss");
+            } else {
+                df = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+            }*/
+
+            block += "'send':'" + df.format(new Date(sendTime)) + "',\n";
+
+            /*if (isToday(a.getArriveTime().getTime())) {
+                df = new SimpleDateFormat("'heute, 'HH:mm:ss");
+            } else if (isTomorrow(a.getArriveTime().getTime())) {
+                df = new SimpleDateFormat("'morgen, 'HH:mm:ss");
+            } else {
+                df = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+            }*/
+            block += "'arrive':'" + df.format(a.getArriveTime()) + "',\n";
+            block += "'expired':" + (long) Math.floor((long) sendTime / 1000) + "\n";
             block += "},\n";
             data += block;
         }
@@ -70,12 +101,12 @@ public class AttackScriptWriter {
         data += ");\n";
 
         tmpl = tmpl.replaceAll("//DATA_LOCATION", data);
-        try{
-        FileWriter f = new FileWriter("show.js");
-        f.write(tmpl);
-        f.flush();
-        f.close();
-        }catch(Exception e){
+        try {
+            FileWriter f = new FileWriter("show.js");
+            f.write(tmpl);
+            f.flush();
+            f.close();
+        } catch (Exception e) {
             e.printStackTrace();
         }
         System.out.println("Done");
@@ -107,6 +138,31 @@ public class AttackScriptWriter {
     'finished':1255168681
     }
     );*/
+
+    }
+
+    private static boolean isToday(long pTime) {
+        Calendar c = Calendar.getInstance();
+        int thisDay = c.get(Calendar.DAY_OF_MONTH);
+        int thisMonth = c.get(Calendar.MONTH);
+        int thisYear = c.get(Calendar.YEAR);
+        c.setTimeInMillis(pTime);
+        int theOtherDay = c.get(Calendar.DAY_OF_MONTH);
+        int theOtherMonth = c.get(Calendar.MONTH);
+        int theOtherYear = c.get(Calendar.YEAR);
+        return ((thisDay == theOtherDay) && (thisMonth == theOtherMonth) && (thisYear == theOtherYear));
+    }
+
+    private static boolean isTomorrow(long pTime) {
+        Calendar c = Calendar.getInstance();
+        int thisDay = c.get(Calendar.DAY_OF_MONTH);
+        int thisMonth = c.get(Calendar.MONTH);
+        int thisYear = c.get(Calendar.YEAR);
+        c.setTimeInMillis(pTime);
+        int theOtherDay = c.get(Calendar.DAY_OF_MONTH);
+        int theOtherMonth = c.get(Calendar.MONTH);
+        int theOtherYear = c.get(Calendar.YEAR);
+        return ((thisDay + 1 == theOtherDay) && (thisMonth == theOtherMonth) && (thisYear == theOtherYear));
 
     }
 }

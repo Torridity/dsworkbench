@@ -10,20 +10,27 @@
  */
 package de.tor.tribes.ui;
 
+import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Ally;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.models.ConquersTableModel;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
+import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.conquer.ConquerManager;
 import de.tor.tribes.util.conquer.ConquerManagerListener;
 import java.awt.Color;
 import java.awt.Component;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListModel;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -96,6 +103,32 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jFilterDialog = new javax.swing.JDialog();
+        jPanel2 = new javax.swing.JPanel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jAllyList = new javax.swing.JList();
+        jRemoveAllyButton = new javax.swing.JButton();
+        jAllySelection = new javax.swing.JComboBox();
+        jAddAllyButton = new javax.swing.JButton();
+        jAllyFilter = new javax.swing.JTextField();
+        jShowAllAllies = new javax.swing.JCheckBox();
+        jPanel3 = new javax.swing.JPanel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        jTribeList = new javax.swing.JList();
+        jRemoveTribeButton = new javax.swing.JButton();
+        jTribeSelection = new javax.swing.JComboBox();
+        jAddTribeButton = new javax.swing.JButton();
+        jTribeFilter = new javax.swing.JTextField();
+        jShowAllTribes = new javax.swing.JCheckBox();
+        jPanel4 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        jStartContinent = new javax.swing.JTextField();
+        jLabel2 = new javax.swing.JLabel();
+        jEndContinent = new javax.swing.JTextField();
+        jShowInternalEnoblements = new javax.swing.JCheckBox();
+        jShowOwnEnoblements = new javax.swing.JCheckBox();
+        jApplyFiltersButton = new javax.swing.JButton();
+        jButton7 = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jConquersTable = new javax.swing.JTable();
@@ -103,7 +136,288 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
         jLastUpdateLabel = new javax.swing.JLabel();
         jGreyConquersLabel = new javax.swing.JLabel();
         jFriendlyConquersLabel = new javax.swing.JLabel();
+        jButton2 = new javax.swing.JButton();
         jConquersFrameAlwaysOnTop = new javax.swing.JCheckBox();
+
+        jFilterDialog.setTitle("Eroberungen filtern");
+        jFilterDialog.setAlwaysOnTop(true);
+
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Filtern nach Stämmen"));
+
+        jAllyList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jAllyList.setEnabled(false);
+        jScrollPane2.setViewportView(jAllyList);
+
+        jRemoveAllyButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/remove.gif"))); // NOI18N
+        jRemoveAllyButton.setToolTipText("Stamm entfernen");
+        jRemoveAllyButton.setEnabled(false);
+        jRemoveAllyButton.setMaximumSize(new java.awt.Dimension(25, 25));
+        jRemoveAllyButton.setMinimumSize(new java.awt.Dimension(25, 25));
+        jRemoveAllyButton.setPreferredSize(new java.awt.Dimension(25, 25));
+        jRemoveAllyButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireChangeAllyListEvent(evt);
+            }
+        });
+
+        jAllySelection.setToolTipText("Stammesauswahl");
+        jAllySelection.setEnabled(false);
+
+        jAddAllyButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/add.gif"))); // NOI18N
+        jAddAllyButton.setToolTipText("Stamm hinzufügen");
+        jAddAllyButton.setEnabled(false);
+        jAddAllyButton.setMaximumSize(new java.awt.Dimension(25, 25));
+        jAddAllyButton.setMinimumSize(new java.awt.Dimension(25, 25));
+        jAddAllyButton.setPreferredSize(new java.awt.Dimension(25, 25));
+        jAddAllyButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireChangeAllyListEvent(evt);
+            }
+        });
+
+        jAllyFilter.setToolTipText("Angezeigte Stämme filtern");
+        jAllyFilter.setEnabled(false);
+        jAllyFilter.addCaretListener(new javax.swing.event.CaretListener() {
+            public void caretUpdate(javax.swing.event.CaretEvent evt) {
+                fireFilterChangedEvent(evt);
+            }
+        });
+
+        jShowAllAllies.setSelected(true);
+        jShowAllAllies.setText("Alle Stämme anzeigen");
+        jShowAllAllies.setOpaque(false);
+        jShowAllAllies.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                fireShowAllChangedEvent(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jShowAllAllies)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jAllyFilter)
+                            .addComponent(jAllySelection, 0, 158, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jAddAllyButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(10, 10, 10)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE)
+                        .addGap(10, 10, 10)
+                        .addComponent(jRemoveAllyButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addComponent(jShowAllAllies)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jRemoveAllyButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 104, Short.MAX_VALUE)
+                    .addComponent(jAddAllyButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jAllySelection, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jAllyFilter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
+        );
+
+        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Filtern nach Spielern"));
+
+        jTribeList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jTribeList.setEnabled(false);
+        jScrollPane3.setViewportView(jTribeList);
+
+        jRemoveTribeButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/remove.gif"))); // NOI18N
+        jRemoveTribeButton.setToolTipText("Spieler entfernen");
+        jRemoveTribeButton.setEnabled(false);
+        jRemoveTribeButton.setMaximumSize(new java.awt.Dimension(25, 25));
+        jRemoveTribeButton.setMinimumSize(new java.awt.Dimension(25, 25));
+        jRemoveTribeButton.setPreferredSize(new java.awt.Dimension(25, 25));
+        jRemoveTribeButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireChangeTribeListEvent(evt);
+            }
+        });
+
+        jTribeSelection.setToolTipText("Spielerauswahl");
+        jTribeSelection.setEnabled(false);
+
+        jAddTribeButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/add.gif"))); // NOI18N
+        jAddTribeButton.setToolTipText("Spieler hinzufügen");
+        jAddTribeButton.setEnabled(false);
+        jAddTribeButton.setMaximumSize(new java.awt.Dimension(25, 25));
+        jAddTribeButton.setMinimumSize(new java.awt.Dimension(25, 25));
+        jAddTribeButton.setPreferredSize(new java.awt.Dimension(25, 25));
+        jAddTribeButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireChangeTribeListEvent(evt);
+            }
+        });
+
+        jTribeFilter.setToolTipText("Angezeigte Spieler filtern");
+        jTribeFilter.setEnabled(false);
+        jTribeFilter.addCaretListener(new javax.swing.event.CaretListener() {
+            public void caretUpdate(javax.swing.event.CaretEvent evt) {
+                fireFilterChangedEvent(evt);
+            }
+        });
+
+        jShowAllTribes.setSelected(true);
+        jShowAllTribes.setText("Alle Spieler anzeigen");
+        jShowAllTribes.setOpaque(false);
+        jShowAllTribes.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                fireShowAllChangedEvent(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jShowAllTribes)
+                        .addGap(247, 247, 247))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jTribeFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jTribeSelection, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jAddTribeButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(10, 10, 10)
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jRemoveTribeButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())))
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addComponent(jShowAllTribes)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 114, Short.MAX_VALUE)
+                    .addComponent(jRemoveTribeButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jAddTribeButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jTribeSelection, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jTribeFilter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
+        );
+
+        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("Sonstige Filter"));
+
+        jLabel1.setText("Kontinent");
+
+        jStartContinent.setMaximumSize(new java.awt.Dimension(60, 20));
+        jStartContinent.setMinimumSize(new java.awt.Dimension(60, 20));
+        jStartContinent.setPreferredSize(new java.awt.Dimension(60, 20));
+
+        jLabel2.setText("bis");
+
+        jEndContinent.setMaximumSize(new java.awt.Dimension(60, 20));
+        jEndContinent.setMinimumSize(new java.awt.Dimension(60, 20));
+        jEndContinent.setPreferredSize(new java.awt.Dimension(60, 20));
+
+        jShowInternalEnoblements.setSelected(true);
+        jShowInternalEnoblements.setText("Aufadelungen anzeigen");
+        jShowInternalEnoblements.setOpaque(false);
+
+        jShowOwnEnoblements.setSelected(true);
+        jShowOwnEnoblements.setText("Überadelungen anzeigen");
+        jShowOwnEnoblements.setOpaque(false);
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jShowOwnEnoblements)
+                    .addComponent(jShowInternalEnoblements)
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jStartContinent, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jEndContinent, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(167, Short.MAX_VALUE))
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(jStartContinent, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2)
+                    .addComponent(jEndContinent, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(jShowInternalEnoblements)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jShowOwnEnoblements)
+                .addContainerGap(17, Short.MAX_VALUE))
+        );
+
+        jApplyFiltersButton.setText("OK");
+        jApplyFiltersButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireCloseFilterDialogEvent(evt);
+            }
+        });
+
+        jButton7.setText("Abbrechen");
+        jButton7.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireCloseFilterDialogEvent(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jFilterDialogLayout = new javax.swing.GroupLayout(jFilterDialog.getContentPane());
+        jFilterDialog.getContentPane().setLayout(jFilterDialogLayout);
+        jFilterDialogLayout.setHorizontalGroup(
+            jFilterDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jFilterDialogLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jFilterDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jPanel4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jFilterDialogLayout.createSequentialGroup()
+                        .addComponent(jButton7)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jApplyFiltersButton))
+                    .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        jFilterDialogLayout.setVerticalGroup(
+            jFilterDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jFilterDialogLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jFilterDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jApplyFiltersButton)
+                    .addComponent(jButton7))
+                .addContainerGap())
+        );
 
         setTitle("Eroberungen");
 
@@ -142,6 +456,18 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
         jFriendlyConquersLabel.setText("Aufadelungen:");
         jFriendlyConquersLabel.setOpaque(true);
 
+        jButton2.setBackground(new java.awt.Color(239, 235, 223));
+        jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/filter_off.png"))); // NOI18N
+        jButton2.setToolTipText("Gewähltes Dorf auf der Karte zentrieren");
+        jButton2.setMaximumSize(new java.awt.Dimension(59, 35));
+        jButton2.setMinimumSize(new java.awt.Dimension(59, 35));
+        jButton2.setPreferredSize(new java.awt.Dimension(59, 35));
+        jButton2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireShowFilterDialogEvent(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -152,7 +478,9 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 454, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addContainerGap())
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -166,8 +494,11 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 326, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 355, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLastUpdateLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -223,6 +554,93 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
         DSWorkbenchMainFrame.getSingleton().centerVillage(v);
     }//GEN-LAST:event_fireCenterConqueredVillageEvent
 
+    private void fireCloseFilterDialogEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCloseFilterDialogEvent
+        int startConti = 0;
+        int endConti = 100;
+        try {
+            startConti = Integer.parseInt(jStartContinent.getText());
+            endConti = Integer.parseInt(jStartContinent.getText());
+        } catch (Exception e) {
+            jStartContinent.setText("0");
+            jEndContinent.setText("100");
+        }
+
+        jFilterDialog.setVisible(false);
+    }//GEN-LAST:event_fireCloseFilterDialogEvent
+
+    private void fireShowAllChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireShowAllChangedEvent
+        if (evt.getSource() == jShowAllAllies) {
+            jAllyFilter.setEnabled(!jShowAllAllies.isSelected());
+            jAllySelection.setEnabled(!jShowAllAllies.isSelected());
+            jAllyList.setEnabled(!jShowAllAllies.isSelected());
+            jAddAllyButton.setEnabled(!jShowAllAllies.isSelected());
+            jRemoveAllyButton.setEnabled(!jShowAllAllies.isSelected());
+        } else {
+            //show all tribes
+            jTribeFilter.setEnabled(!jShowAllTribes.isSelected());
+            jTribeSelection.setEnabled(!jShowAllTribes.isSelected());
+            jTribeList.setEnabled(!jShowAllTribes.isSelected());
+            jAddTribeButton.setEnabled(!jShowAllTribes.isSelected());
+            jRemoveTribeButton.setEnabled(!jShowAllTribes.isSelected());
+        }
+    }//GEN-LAST:event_fireShowAllChangedEvent
+
+    private void fireChangeAllyListEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireChangeAllyListEvent
+        if (evt.getSource() == jAddAllyButton) {
+            //add ally
+            jAllySelection.firePopupMenuCanceled();
+            Ally a = (Ally) jAllySelection.getSelectedItem();
+            if (a != null) {
+                if (((DefaultListModel) jAllyList.getModel()).indexOf(a) < 0) {
+                    ((DefaultListModel) jAllyList.getModel()).addElement(a);
+                }
+            }
+        } else {
+            //remove ally
+            Ally a = (Ally) jAllyList.getSelectedValue();
+            if (a != null) {
+                if (JOptionPaneHelper.showQuestionConfirmBox(jFilterDialog, "Gewählten Stamm entfernen?", "Stamm entfernen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
+                    ((DefaultListModel) jAllyList.getModel()).removeElement(a);
+                }
+            }
+        }
+    }//GEN-LAST:event_fireChangeAllyListEvent
+
+    private void fireChangeTribeListEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireChangeTribeListEvent
+        if (evt.getSource() == jAddTribeButton) {
+            //add tribe
+            jTribeSelection.firePopupMenuCanceled();
+            Tribe t = (Tribe) jTribeSelection.getSelectedItem();
+            if (t != null) {
+                if (((DefaultListModel) jTribeList.getModel()).indexOf(t) < 0) {
+                    ((DefaultListModel) jTribeList.getModel()).addElement(t);
+                }
+            }
+        } else {
+            //remove tribe
+            Tribe t = (Tribe) jTribeList.getSelectedValue();
+            if (t != null) {
+                if (JOptionPaneHelper.showQuestionConfirmBox(jFilterDialog, "Gewählten Spieler entfernen?", "Spieler entfernen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
+                    ((DefaultListModel) jTribeList.getModel()).removeElement(t);
+                }
+            }
+        }
+    }//GEN-LAST:event_fireChangeTribeListEvent
+
+    private void fireShowFilterDialogEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireShowFilterDialogEvent
+        jFilterDialog.pack();
+        jFilterDialog.setLocationRelativeTo(this);
+        jFilterDialog.setVisible(true);
+    }//GEN-LAST:event_fireShowFilterDialogEvent
+
+    private void fireFilterChangedEvent(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_fireFilterChangedEvent
+        if (evt.getSource() == jAllyFilter) {
+            buildAllyList(jAllyFilter.getText());
+        } else {
+            buildTribesList(jTribeFilter.getText());
+        }
+    }//GEN-LAST:event_fireFilterChangedEvent
+
     protected void setupConquersPanel() {
         jConquersTable.invalidate();
         jConquersTable.setModel(new DefaultTableModel());
@@ -242,7 +660,67 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
             column.setHeaderRenderer(mHeaderRenderers.get(i));
         }
         jConquersTable.revalidate();
+        setupFilterDialog();
+        ConquerManager.getSingleton().updateFilter();
         ConquerManager.getSingleton().conquersUpdatedExternally();
+    }
+
+    private void setupFilterDialog() {
+        jAllyList.setModel(new DefaultListModel());
+        jTribeList.setModel(new DefaultListModel());
+        buildAllyList(null);
+        buildTribesList(null);
+
+        jShowAllAllies.setSelected(true);
+        jAllyFilter.setEnabled(!jShowAllAllies.isSelected());
+        jAllySelection.setEnabled(!jShowAllAllies.isSelected());
+        jAllyList.setEnabled(!jShowAllAllies.isSelected());
+        jAddAllyButton.setEnabled(!jShowAllAllies.isSelected());
+        jRemoveAllyButton.setEnabled(!jShowAllAllies.isSelected());
+        jShowAllTribes.setSelected(true);
+        jTribeFilter.setEnabled(!jShowAllTribes.isSelected());
+        jTribeSelection.setEnabled(!jShowAllTribes.isSelected());
+        jTribeList.setEnabled(!jShowAllTribes.isSelected());
+        jAddTribeButton.setEnabled(!jShowAllTribes.isSelected());
+        jRemoveTribeButton.setEnabled(!jShowAllTribes.isSelected());
+
+        jStartContinent.setText("0");
+        jEndContinent.setText("100");
+        jShowInternalEnoblements.setSelected(true);
+        jShowOwnEnoblements.setSelected(true);
+    }
+
+    private void buildAllyList(String pFilter) {
+        Enumeration<Integer> allyIds = DataHolder.getSingleton().getAllies().keys();
+        List<Ally> allies = new LinkedList<Ally>();
+        while (allyIds.hasMoreElements()) {
+            Ally a = DataHolder.getSingleton().getAllies().get(allyIds.nextElement());
+            if (a != null &&
+                    (pFilter == null ||
+                    (pFilter.length() == 0) ||
+                    (a.getName().toLowerCase().indexOf(pFilter.toLowerCase()) >= 0) ||
+                    (a.getTag().toLowerCase().indexOf(pFilter.toLowerCase()) >= 0))) {
+                allies.add(a);
+            }
+            Collections.sort(allies);
+            jAllySelection.setModel(new DefaultComboBoxModel(allies.toArray(new Ally[]{})));
+        }
+    }
+
+    private void buildTribesList(String pFilter) {
+        Enumeration<Integer> tribeIds = DataHolder.getSingleton().getTribes().keys();
+        List<Tribe> tribes = new LinkedList<Tribe>();
+        while (tribeIds.hasMoreElements()) {
+            Tribe t = DataHolder.getSingleton().getTribes().get(tribeIds.nextElement());
+            if (t != null &&
+                    (pFilter == null ||
+                    (pFilter.length() == 0) ||
+                    (t.getName().toLowerCase().indexOf(pFilter.toLowerCase()) >= 0))) {
+                tribes.add(t);
+            }
+        }
+        Collections.sort(tribes);
+        jTribeSelection.setModel(new DefaultComboBoxModel(tribes.toArray(new Tribe[]{})));
     }
 
     /**
@@ -258,14 +736,41 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jAddAllyButton;
+    private javax.swing.JButton jAddTribeButton;
+    private javax.swing.JTextField jAllyFilter;
+    private javax.swing.JList jAllyList;
+    private javax.swing.JComboBox jAllySelection;
+    private javax.swing.JButton jApplyFiltersButton;
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton7;
     private javax.swing.JCheckBox jConquersFrameAlwaysOnTop;
     private javax.swing.JTable jConquersTable;
+    private javax.swing.JTextField jEndContinent;
+    private javax.swing.JDialog jFilterDialog;
     private javax.swing.JLabel jFriendlyConquersLabel;
     private javax.swing.JLabel jGreyConquersLabel;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLastUpdateLabel;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JButton jRemoveAllyButton;
+    private javax.swing.JButton jRemoveTribeButton;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JCheckBox jShowAllAllies;
+    private javax.swing.JCheckBox jShowAllTribes;
+    private javax.swing.JCheckBox jShowInternalEnoblements;
+    private javax.swing.JCheckBox jShowOwnEnoblements;
+    private javax.swing.JTextField jStartContinent;
+    private javax.swing.JTextField jTribeFilter;
+    private javax.swing.JList jTribeList;
+    private javax.swing.JComboBox jTribeSelection;
     // End of variables declaration//GEN-END:variables
 
     @Override
@@ -327,7 +832,7 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
         sorter.setComparator(0, Village.CASE_INSENSITIVE_ORDER);
         sorter.setComparator(3, Tribe.CASE_INSENSITIVE_ORDER);
         sorter.setComparator(4, Tribe.CASE_INSENSITIVE_ORDER);
-        
+
         jConquersTable.revalidate();
         jConquersTable.repaint();
         Calendar c = Calendar.getInstance();

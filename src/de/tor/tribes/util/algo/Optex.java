@@ -95,7 +95,7 @@ public class Optex extends AbstractAttackAlgorithm {
 
 
 
-        
+
         List<Assignment> result = new LinkedList<Assignment>();
         //get all assignments which are already done
         for (Assignment a : assi) {
@@ -119,6 +119,69 @@ public class Optex extends AbstractAttackAlgorithm {
 
         return null;
     }
+
+    public List<AbstractTroopMovement> calculate(
+            List<Village> pOffSources,
+            List<Village> pSnobSources,
+            List<Village> pEnoblementTargets,
+            List<Village> pFakeSources,
+            List<Village> pTargets,
+            int pMaxAttacksPerVillage,
+            int pCleanPerSnob,
+            TimeFrame pTimeFrame,
+            boolean pRandomize,
+            boolean pUse5Snobs) {
+
+
+        int maxEnoblements = (int) Math.floor(pSnobSources.size() / ((pUse5Snobs) ? 5 : 4));
+        UnitHolder snob = DataHolder.getSingleton().getUnitByPlainName("snob");
+        //build mappings between targets and potential sources
+        Hashtable<Village, List<DistanceMapping>> targetMappings = new Hashtable<Village, List<DistanceMapping>>();
+        List<Village> usedSources = new LinkedList<Village>();
+        List<Village> usedTargets = new LinkedList<Village>();
+        for (Village target : pEnoblementTargets) {
+            List<DistanceMapping> mappings = buildSourceTargetsMapping(target, pSnobSources);
+            for (int i = 0; i < mappings.size(); i++) {
+                long dur = (long) (mappings.get(i).getDistance() * snob.getSpeed() * 60000.0);
+                Date send = new Date(pTimeFrame.getEnd() - dur);
+                if (!pTimeFrame.inside(send)) {
+                    mappings = mappings.subList(0, i - 1);
+                    break;
+                }
+            }
+            if (mappings.size() >= ((pUse5Snobs) ? 5 : 4)) {
+                //use only targets which can be reached by enough sources
+                targetMappings.put(target, mappings);
+                //store list of used sources and targets so sort out later
+                usedTargets.add(target);
+                for (DistanceMapping mapping : mappings) {
+                    Village source = mapping.getTarget();
+                    if (!usedSources.contains(source)) {
+                        usedSources.add(source);
+                    }
+                }
+            }
+        }
+
+        Hashtable<Village, List<DistanceMapping>> result = new Hashtable<Village, List<DistanceMapping>>();
+        sortOutEnoblements(targetMappings, usedTargets, usedSources, ((pUse5Snobs) ? 5 : 4), result);
+
+
+        return null;
+    }
+
+
+    private void sortOutEnoblements(Hashtable<Village, List<DistanceMapping>> pTargetMappings, List<Village> pTargets, List<Village> pSources, int pSnobs, Hashtable<Village, List<DistanceMapping>> pResult){
+       Village target = pTargets.remove(0);
+       List<DistanceMapping> mappings = pTargetMappings.get(target);
+       if(mappings.size() == pSnobs){
+           
+       }
+    }
+
+
+
+
 
     private void solveAssignments(
             List<Assignment> pInitialAssignments,

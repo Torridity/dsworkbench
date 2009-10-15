@@ -12,6 +12,7 @@ import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.DSWorkbenchSettingsDialog;
 import de.tor.tribes.ui.MapPanel;
+import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
@@ -41,6 +42,7 @@ public class ConquerManager {
     private List<Conquer> conquers = null;
     private ConquerUpdateThread updateThread = null;
     private List<ConquerManagerListener> mManagerListeners = null;
+    private Conquer[] filteredList = null;
 
     public static synchronized ConquerManager getSingleton() {
         if (SINGLETON == null) {
@@ -70,11 +72,11 @@ public class ConquerManager {
     }
 
     public int getConquerCount() {
-        return conquers.size();
+        return filteredList.length;
     }
 
     public Conquer getConquer(int id) {
-        return conquers.get(id);
+        return filteredList[id];
     }
 
     public void forceUpdate() {
@@ -83,6 +85,19 @@ public class ConquerManager {
             updateThread.interrupt();
         } catch (Exception e) {
         }
+    }
+
+    public void updateFilter() {
+        Conquer[] aConquers = conquers.toArray(new Conquer[]{});
+        List<Conquer> filtered = new LinkedList<Conquer>();
+        for (Conquer c : aConquers) {
+            Village v = DataHolder.getSingleton().getVillagesById().get(c.getVillageID());
+            int cont = v.getContinent();
+            if (cont > 10 && cont < 20) {
+                filtered.add(c);
+            }
+        }
+        filteredList = filtered.toArray(new Conquer[]{});
     }
 
     public void loadConquersFromFile(String pFile) {
@@ -152,6 +167,7 @@ public class ConquerManager {
                 lastUpdate = 0;
             }
             updateAcceptance();
+            updateFilter();
             MapPanel.getSingleton().getMapRenderer().initiateRedraw(0);
         } else {
             lastUpdate = 0;

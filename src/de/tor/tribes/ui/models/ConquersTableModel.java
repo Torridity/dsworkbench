@@ -54,7 +54,8 @@ public class ConquersTableModel extends AbstractTableModel {
 
     @Override
     public int getRowCount() {
-        return ConquerManager.getSingleton().getConquerCount();
+        int cnt = ConquerManager.getSingleton().getConquerCount();
+        return cnt;
     }
 
     @Override

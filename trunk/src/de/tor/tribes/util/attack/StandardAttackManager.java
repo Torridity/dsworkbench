@@ -72,7 +72,7 @@ public class StandardAttackManager {
                 Document d = JaxenUtils.getDocument(attackFile);
                 for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//stdAttacks/type")) {
                     String type = URLDecoder.decode(e.getAttributeValue("name"), "UTF-8");
-                    logger.debug(" * loading standard attacks for type '" + type + "'");
+                    //logger.debug(" * loading standard attacks for type '" + type + "'");
                     List<StandardAttackElement> elements = new LinkedList<StandardAttackElement>();
                     standardAttacks.put(type, elements);
                     for (Element elem : (List<Element>) JaxenUtils.getNodes(e, "attackElement")) {
@@ -83,7 +83,7 @@ public class StandardAttackManager {
                         }
 
                         if (element != null) {
-                            logger.debug("   * adding element for unit '" + element.getUnit() + "'");
+                           // logger.debug("   * adding element for unit '" + element.getUnit() + "'");
                             elements.add(element);
                         }
                     }

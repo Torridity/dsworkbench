@@ -545,7 +545,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         StandardAttackTableModel.getSingleton().setup();
         DSWorkbenchTroopsFrame.getSingleton().setupTroopsPanel();
         DistanceManager.getSingleton().clear();
-         DistanceTableModel.getSingleton().fireTableStructureChanged();
+        DistanceTableModel.getSingleton().fireTableStructureChanged();
         DSWorkbenchDistanceFrame.getSingleton().setup();
         //update attack planner
         if (mTribeTribeAttackFrame != null) {

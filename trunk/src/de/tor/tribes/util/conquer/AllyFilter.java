@@ -7,6 +7,7 @@ package de.tor.tribes.util.conquer;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Ally;
 import de.tor.tribes.types.Conquer;
+import de.tor.tribes.types.NoAlly;
 import de.tor.tribes.types.Tribe;
 import java.util.List;
 
@@ -30,13 +31,16 @@ public class AllyFilter implements ConquerFilterInterface {
     @Override
     public boolean isValid(Conquer pConquer) {
         if (validAllies == null) {
-            return true;
+            return false;
         }
         Tribe t = DataHolder.getSingleton().getTribes().get(pConquer.getWinner());
         if (t == null) {
             return false;
         }
-
-        return validAllies.contains(t.getAlly());
+        if (t.getAlly() == null) {
+            return validAllies.contains(NoAlly.getSingleton());
+        } else {
+            return validAllies.contains(t.getAlly());
+        }
     }
 }

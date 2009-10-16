@@ -43,9 +43,9 @@ public class InternalEnoblementFilter implements ConquerFilterInterface {
 
         boolean internal = false;
 
-        if (winnerAlly.getTag().toLowerCase().equals(loserAlly.getTag().toLowerCase()) ||
-                winnerAlly.getTag().toLowerCase().indexOf(loserAlly.getTag().toLowerCase()) >= 0 ||
-                loserAlly.getTag().toLowerCase().indexOf(winnerAlly.getTag().toLowerCase()) >= 0) {
+        if ((winnerAlly.getId() == loserAlly.getId()) ||
+                (loserAlly.getName().toLowerCase().indexOf(winnerAlly.getName().toLowerCase()) > -1 ||
+                winnerAlly.getName().toLowerCase().indexOf(loserAlly.getName().toLowerCase()) > -1)) {
             internal = true;
         }
         if (!internal) {

@@ -12,16 +12,24 @@ package de.tor.tribes.ui;
 
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Ally;
+import de.tor.tribes.types.NoAlly;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.models.ConquersTableModel;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
+import de.tor.tribes.util.conquer.AllyFilter;
+import de.tor.tribes.util.conquer.ConquerFilterInterface;
 import de.tor.tribes.util.conquer.ConquerManager;
 import de.tor.tribes.util.conquer.ConquerManagerListener;
+import de.tor.tribes.util.conquer.ContinentFilter;
+import de.tor.tribes.util.conquer.InternalEnoblementFilter;
+import de.tor.tribes.util.conquer.OwnEnoblementFilter;
+import de.tor.tribes.util.conquer.TribeFilter;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Point;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collections;
@@ -41,6 +49,7 @@ import javax.swing.table.TableRowSorter;
 import org.apache.log4j.Logger;
 
 /**
+ * @TODO (DIFF) Added various filters
  * @author Charon
  */
 public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implements ConquerManagerListener {
@@ -112,6 +121,7 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
         jAddAllyButton = new javax.swing.JButton();
         jAllyFilter = new javax.swing.JTextField();
         jShowAllAllies = new javax.swing.JCheckBox();
+        jShowNoAllyTribes = new javax.swing.JCheckBox();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         jTribeList = new javax.swing.JList();
@@ -192,6 +202,10 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
             }
         });
 
+        jShowNoAllyTribes.setSelected(true);
+        jShowNoAllyTribes.setText("Stammlose Spieler anzeigen");
+        jShowNoAllyTribes.setOpaque(false);
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -199,23 +213,28 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jShowAllAllies)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jAllyFilter)
                             .addComponent(jAllySelection, 0, 158, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jAddAllyButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(10, 10, 10)
+                        .addComponent(jAddAllyButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jShowAllAllies))
+                .addGap(10, 10, 10)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE)
                         .addGap(10, 10, 10)
-                        .addComponent(jRemoveAllyButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jRemoveAllyButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jShowNoAllyTribes, javax.swing.GroupLayout.DEFAULT_SIZE, 163, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addComponent(jShowAllAllies)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jShowAllAllies)
+                    .addComponent(jShowNoAllyTribes))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jRemoveAllyButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -555,17 +574,87 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
     }//GEN-LAST:event_fireCenterConqueredVillageEvent
 
     private void fireCloseFilterDialogEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCloseFilterDialogEvent
-        int startConti = 0;
-        int endConti = 100;
-        try {
-            startConti = Integer.parseInt(jStartContinent.getText());
-            endConti = Integer.parseInt(jStartContinent.getText());
-        } catch (Exception e) {
-            jStartContinent.setText("0");
-            jEndContinent.setText("100");
-        }
+        if (evt.getSource() == jApplyFiltersButton) {
+            List<ConquerFilterInterface> filters = new LinkedList<ConquerFilterInterface>();
+            //setup continent filter
+            int startConti = 0;
+            int endConti = 100;
+            try {
+                startConti = Integer.parseInt(jStartContinent.getText());
+                endConti = Integer.parseInt(jEndContinent.getText());
 
+                if (startConti > endConti) {
+                    int tmp = startConti;
+                    startConti = endConti;
+                    endConti = tmp;
+                    jStartContinent.setText(Integer.toString(startConti));
+                    jEndContinent.setText(Integer.toString(endConti));
+                }
+
+                ContinentFilter filter = new ContinentFilter();
+                filter.setup(new Point(startConti, endConti));
+                filters.add(filter);
+            } catch (Exception e) {
+                jStartContinent.setText("0");
+                jEndContinent.setText("100");
+                startConti = 0;
+                endConti = 100;
+                ContinentFilter filter = new ContinentFilter();
+                filter.setup(new Point(startConti, endConti));
+                filters.add(filter);
+            }
+
+            //set ally and tribe filters
+            if (!jShowAllAllies.isSelected()) {
+
+                if (((DefaultListModel) jAllyList.getModel()).getSize() == 0 && !jShowNoAllyTribes.isSelected()) {
+                    JOptionPaneHelper.showInformationBox(jFilterDialog, "Es wurde kein anzuzeigender Stamm ausgewählt.\nDaher werden alle Stämme angezeigt.", "Information");
+                } else {
+                    List<Ally> shownAllies = new LinkedList<Ally>();
+                    if (jShowNoAllyTribes.isSelected()) {
+                        //show tribed which belong to no ally
+                        shownAllies.add(NoAlly.getSingleton());
+                    }
+                    for (int i = 0; i < ((DefaultListModel) jAllyList.getModel()).getSize(); i++) {
+                        shownAllies.add((Ally) ((DefaultListModel) jAllyList.getModel()).get(i));
+                    }
+                    AllyFilter allyFilter = new AllyFilter();
+                    allyFilter.setup(shownAllies);
+                    filters.add(allyFilter);
+                }
+            }
+
+            if (!jShowAllTribes.isSelected()) {
+                if (((DefaultListModel) jTribeList.getModel()).getSize() == 0) {
+                    JOptionPaneHelper.showInformationBox(jFilterDialog, "Es wurde kein anzuzeigender Spieler ausgewählt.\nDaher werden alle Spieler angezeigt.", "Information");
+                } else {
+                    List<Tribe> shownTribes = new LinkedList<Tribe>();
+                    for (int i = 0; i < ((DefaultListModel) jTribeList.getModel()).getSize(); i++) {
+                        shownTribes.add((Tribe) ((DefaultListModel) jTribeList.getModel()).get(i));
+                    }
+                    TribeFilter tribeFilter = new TribeFilter();
+                    tribeFilter.setup(shownTribes);
+                    filters.add(tribeFilter);
+                }
+            }
+
+            if (!jShowInternalEnoblements.isSelected()) {
+                InternalEnoblementFilter filter = new InternalEnoblementFilter();
+                filter.setup(false);
+                filters.add(filter);
+            }
+
+            if (!jShowOwnEnoblements.isSelected()) {
+                OwnEnoblementFilter filter = new OwnEnoblementFilter();
+                filter.setup(false);
+                filters.add(filter);
+            }
+
+            ConquerManager.getSingleton().setFilters(filters);
+            fireConquersChangedEvent();
+        }
         jFilterDialog.setVisible(false);
+
     }//GEN-LAST:event_fireCloseFilterDialogEvent
 
     private void fireShowAllChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireShowAllChangedEvent
@@ -661,7 +750,7 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
         }
         jConquersTable.revalidate();
         setupFilterDialog();
-        ConquerManager.getSingleton().updateFilter();
+        ConquerManager.getSingleton().updateFilters();
         ConquerManager.getSingleton().conquersUpdatedExternally();
     }
 
@@ -766,6 +855,7 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
     private javax.swing.JCheckBox jShowAllAllies;
     private javax.swing.JCheckBox jShowAllTribes;
     private javax.swing.JCheckBox jShowInternalEnoblements;
+    private javax.swing.JCheckBox jShowNoAllyTribes;
     private javax.swing.JCheckBox jShowOwnEnoblements;
     private javax.swing.JTextField jStartContinent;
     private javax.swing.JTextField jTribeFilter;

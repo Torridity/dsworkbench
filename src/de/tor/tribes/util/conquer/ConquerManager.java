@@ -12,7 +12,6 @@ import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.DSWorkbenchSettingsDialog;
 import de.tor.tribes.ui.MapPanel;
-import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
@@ -43,6 +42,7 @@ public class ConquerManager {
     private ConquerUpdateThread updateThread = null;
     private List<ConquerManagerListener> mManagerListeners = null;
     private Conquer[] filteredList = null;
+    private List<ConquerFilterInterface> filters = null;
 
     public static synchronized ConquerManager getSingleton() {
         if (SINGLETON == null) {
@@ -54,6 +54,7 @@ public class ConquerManager {
     ConquerManager() {
         conquers = Collections.synchronizedList(new LinkedList<Conquer>());
         mManagerListeners = new LinkedList<ConquerManagerListener>();
+        filters = new LinkedList<ConquerFilterInterface>();
         updateThread = new ConquerUpdateThread();
         updateThread.start();
     }
@@ -87,14 +88,33 @@ public class ConquerManager {
         }
     }
 
-    public void updateFilter() {
+    public void setFilters(List<ConquerFilterInterface> pFilters) {
+        filters.clear();
+        filters = new LinkedList<ConquerFilterInterface>(pFilters);
+        updateFilters();
+    }
+
+    public void updateFilters() {
         Conquer[] aConquers = conquers.toArray(new Conquer[]{});
         List<Conquer> filtered = new LinkedList<Conquer>();
         for (Conquer c : aConquers) {
-            Village v = DataHolder.getSingleton().getVillagesById().get(c.getVillageID());
-            int cont = v.getContinent();
-            if (cont > 10 && cont < 20) {
+            if (filters == null || filters.isEmpty()) {
+                //no filters defined        
                 filtered.add(c);
+            } else {
+                //use all filters
+                boolean valid = true;
+                for (ConquerFilterInterface f : filters) {
+                    if (!f.isValid(c)) {
+                        //conquer is invalid for the current filter
+                        valid = false;
+                        break;
+                    }
+                }
+                if (valid) {
+                    //only add if conquer is valid for all filters
+                    filtered.add(c);
+                }
             }
         }
         filteredList = filtered.toArray(new Conquer[]{});
@@ -102,6 +122,7 @@ public class ConquerManager {
 
     public void loadConquersFromFile(String pFile) {
         conquers.clear();
+        filteredList = new Conquer[]{};
         if (pFile == null) {
             logger.error("File argument is 'null'");
             return;
@@ -167,10 +188,11 @@ public class ConquerManager {
                 lastUpdate = 0;
             }
             updateAcceptance();
-            updateFilter();
+            updateFilters();
             MapPanel.getSingleton().getMapRenderer().initiateRedraw(0);
         } else {
             lastUpdate = 0;
+            updateFilters();
             if (logger.isInfoEnabled()) {
                 logger.info("Conquers file not found under '" + pFile + "'");
             }
@@ -359,6 +381,7 @@ public class ConquerManager {
             logger.debug("Setting lastUpdate to NOW (" + lastUpdate + ")");
         }
         updateAcceptance();
+        updateFilters();
     }
 
     public Conquer getConquer(Village pVillage) {
@@ -397,11 +420,11 @@ public class ConquerManager {
     }
 
     public int[] getConquersStats() {
-
         int grey = 0;
         int friendly = 0;
-        Conquer[] conquerA = conquers.toArray(new Conquer[]{});
-        for (Conquer c : conquerA) {
+        //Conquer[] conquerA = conquers.toArray(new Conquer[]{});
+
+        for (Conquer c : filteredList) {
             if (c.getLoser() == 0) {
                 grey++;
             } else {

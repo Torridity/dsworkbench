@@ -4,6 +4,7 @@
  */
 package de.tor.tribes.ui.models;
 
+import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.DSWorkbenchMainFrame;
 import de.tor.tribes.util.DSCalculator;
@@ -34,7 +35,11 @@ public class DistanceTableModel extends AbstractTableModel {
 
     @Override
     public int getRowCount() {
-        return DSWorkbenchMainFrame.getSingleton().getCurrentUser().getVillages();
+        Tribe currentUser = DSWorkbenchMainFrame.getSingleton().getCurrentUser();
+        if(currentUser == null){
+            return 0;
+        }
+        return currentUser.getVillages();
     }
 
     @Override

@@ -2921,7 +2921,7 @@ private void fireRestoreTemplateEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
             Arrays.sort(ta, Tribe.CASE_INSENSITIVE_ORDER);
             DefaultComboBoxModel model = new DefaultComboBoxModel();
 
-            model.addElement("Bitte wählen");
+            //model.addElement("Bitte wählen");
 
             for (Tribe tribe : ta) {
                 model.addElement(tribe.toString());
@@ -2933,9 +2933,11 @@ private void fireRestoreTemplateEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
                     jTribeNames.setSelectedItem(GlobalOptions.getProperty("player." + GlobalOptions.getSelectedServer()));
                 } else {
                     jTribeNames.setSelectedIndex(0);
+                    GlobalOptions.addProperty("player." + GlobalOptions.getSelectedServer(), ((Tribe) jTribeNames.getSelectedItem()).getName());
                 }
             } else {
                 jTribeNames.setSelectedIndex(0);
+                GlobalOptions.addProperty("player." + GlobalOptions.getSelectedServer(), ((Tribe) jTribeNames.getSelectedItem()).getName());
             }
             if (DSWorkbenchMainFrame.getSingleton().isInitialized()) {
                 DSWorkbenchMainFrame.getSingleton().serverSettingsChangedEvent();

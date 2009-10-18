@@ -2374,12 +2374,7 @@ private void fireApplyStandardAttacksEvent(java.awt.event.MouseEvent evt) {//GEN
     protected void setupAttackPanel() {
         AttackManager.getSingleton().addAttackManagerListener(this);
         //setup renderer and general view
-        jAttackTable.setDefaultRenderer(Date.class,
-                new ColoredDateCellRenderer());
-
-
-
-
+        jAttackTable.setDefaultRenderer(Date.class, new ColoredDateCellRenderer());
         jAttackTable.setDefaultEditor(Date.class, new DateSpinEditor());
         jAttackTable.setDefaultEditor(UnitHolder.class, new UnitCellEditor());
         jAttackTable.setDefaultEditor(Village.class, new VillageCellEditor());

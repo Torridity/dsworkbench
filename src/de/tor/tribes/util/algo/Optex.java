@@ -4,289 +4,230 @@
  */
 package de.tor.tribes.util.algo;
 
-import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.AbstractTroopMovement;
-import de.tor.tribes.types.Enoblement;
-import de.tor.tribes.types.Fake;
-import de.tor.tribes.types.Off;
-import de.tor.tribes.types.Village;
-import de.tor.tribes.util.DSCalculator;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Enumeration;
+import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.LinkedList;
+import java.util.Iterator;
 import java.util.List;
-import org.apache.log4j.Logger;
 
-/**
+/*
+ * Its constructor takes sources, destinations and costs (an array of Hashtables).
+ * Each element of the array is related to a source. E.g. the element at position 0
+ * is related to the source at index 0 (sources.get(0)). Therefore every source
+ * 'owns' a hashtable, which maps all destinations to the according costs (think
+ * of distances) in terms of the transport problem.
+ * Example:
+ * 	costs[0].get(2) is the cost for transports from source 0 to destination 2.
  *
- * @author Jejkal
+ * @author Robert Nitsch <dev@robertnitsch.de>
+ *
+ * @param <S>
+ * @param <D>
  */
-public class Optex extends AbstractAttackAlgorithm {
+public class Optex<S extends Source, D extends Destination> {
 
-    private static Logger logger = Logger.getLogger("Algorithm_Optex");
-    private List<Village> notAssignedSources = null;
+    protected ArrayList<S> sources;
+    protected ArrayList<D> destinations;
+    protected Hashtable<Destination, Double> costs[];
+    protected boolean executed = false;
 
-    @Override
-    public List<Village> getNotAssignedSources() {
-        return notAssignedSources;
+    /**
+     * @see Optex
+     *
+     * @param sources The sources.
+     * @param destinations The destinations.
+     * @param costs The costs.
+     */
+    public Optex(ArrayList<S> sources, ArrayList<D> destinations, Hashtable<Destination, Double> costs[]) {
+        this.sources = sources;
+        this.destinations = destinations;
+        this.costs = costs;
     }
 
-    @Override
-    public List<AbstractTroopMovement> calculateAttacks(
-            Hashtable<UnitHolder, List<Village>> pSources,
-            Hashtable<UnitHolder, List<Village>> pFakes,
-            List<Village> pTargets,
-            int pMaxAttacksPerVillage,
-            int pCleanPerSnob,
-            TimeFrame pTimeFrame,
-            boolean pRandomize,
-            boolean pUse5Snobs) {
-
-
-        List<Assignment> assi = new LinkedList<Assignment>();
-
-        List<Village> sources = new LinkedList<Village>();
-
-        for (Village target : pTargets) {
-            Assignment a = new Assignment(target, (pUse5Snobs) ? 5 : 4, pCleanPerSnob, pMaxAttacksPerVillage);
-            //assign offs
-            UnitHolder ram = DataHolder.getSingleton().getUnitByPlainName("ram");
-            List<Village> ramSources = pSources.get(ram);
-            for (Village source : ramSources) {
-                double dist = DSCalculator.calculateDistance(source, target);
-                long dur = (long) (dist * ram.getSpeed() * 60000.0);
-                Date send = new Date(pTimeFrame.getEnd() - dur);
-                if (pTimeFrame.inside(send)) {
-                    a.addOff(source);
-                    sources.add(source);
-                }
-            }
-
-            //assign fakes
-            List<Village> ramSourcesFake = pFakes.get(ram);
-            for (Village source : ramSourcesFake) {
-                double dist = DSCalculator.calculateDistance(source, target);
-                long dur = (long) (dist * ram.getSpeed() * 60000.0);
-                Date send = new Date(pTimeFrame.getEnd() - dur);
-                if (pTimeFrame.inside(send)) {
-                    a.addFake(source);
-                    sources.add(source);
-                }
-            }
-
-            //assign snobs
-            UnitHolder snob = DataHolder.getSingleton().getUnitByPlainName("snob");
-            List<Village> snobSources = pSources.get(ram);
-            for (Village source : snobSources) {
-                double dist = DSCalculator.calculateDistance(source, target);
-                long dur = (long) (dist * snob.getSpeed() * 60000.0);
-                Date send = new Date(pTimeFrame.getEnd() - dur);
-                if (pTimeFrame.inside(send)) {
-                    a.addSnob(source);
-                    sources.add(source);
-                }
-            }
-        }//all assignments done...start solving
-
-
-
-
-
-
-        List<Assignment> result = new LinkedList<Assignment>();
-        //get all assignments which are already done
-        for (Assignment a : assi) {
-            if (a.isEnoblement()) {
-                System.out.println("Done Enoblement");
-                result.add(a);
-            } else if (a.isOff()) {
-                System.out.println("Done Off");
-                result.add(a);
-            } else if (a.isFake()) {
-                System.out.println("Done Fake");
-                result.add(a);
-            }
+    /**
+     * Executes the algorithm, which consists of an approximation method and
+     * an optimization.
+     *
+     * Only one call per instance!
+     *
+     * @throws Exception The exception is thrown whenever you try to execute the algorithm a second time.
+     */
+    public void run() throws Exception {
+        if (this.executed) {
+            throw new Exception("The algorithm mustn't be executed more than once per instance!");
         }
 
-        for (Assignment a : result) {
-            assi.remove(a);
-        }
+   //     System.out.println("Approximation...");
+        this.vam();
+    //    System.out.println("Approximation complete...");
 
-        solveAssignments(assi, result, sources, 0);
+    //    System.out.println("Optimization...");
+        this.optimize();
+     //   System.out.println("Optimization complete...");
 
-        return null;
+        this.executed = true;
     }
 
-    public List<AbstractTroopMovement> calculate(
-            List<Village> pOffSources,
-            List<Village> pSnobSources,
-            List<Village> pEnoblementTargets,
-            List<Village> pFakeSources,
-            List<Village> pTargets,
-            int pMaxAttacksPerVillage,
-            int pCleanPerSnob,
-            TimeFrame pTimeFrame,
-            boolean pRandomize,
-            boolean pUse5Snobs) {
+    /**
+     * Optimizes the current solution by swapping orders if
+     * swapping results into an improvement. The optimization ends
+     * when no improvement could be made anymore.
+     */
+    protected void optimize() {
+        boolean improvement = true;
+        int count = 1;
 
+        while (improvement) {
+            improvement = false;
 
-        int maxEnoblements = (int) Math.floor(pSnobSources.size() / ((pUse5Snobs) ? 5 : 4));
-        UnitHolder snob = DataHolder.getSingleton().getUnitByPlainName("snob");
-        //build mappings between targets and potential sources
-        Hashtable<Village, List<DistanceMapping>> targetMappings = new Hashtable<Village, List<DistanceMapping>>();
-        List<Village> usedSources = new LinkedList<Village>();
-        List<Village> usedTargets = new LinkedList<Village>();
-        for (Village target : pEnoblementTargets) {
-            List<DistanceMapping> mappings = buildSourceTargetsMapping(target, pSnobSources);
-            for (int i = 0; i < mappings.size(); i++) {
-                long dur = (long) (mappings.get(i).getDistance() * snob.getSpeed() * 60000.0);
-                Date send = new Date(pTimeFrame.getEnd() - dur);
-                if (!pTimeFrame.inside(send)) {
-                    mappings = mappings.subList(0, i - 1);
-                    break;
-                }
+        //    System.out.println("  Round " + count);
+            count += 1;
+
+            if (count == 102) {
+                System.err.println("Cancelling optimization after 100 rounds...");
+                break;
             }
-            if (mappings.size() >= ((pUse5Snobs) ? 5 : 4)) {
-                //use only targets which can be reached by enough sources
-                targetMappings.put(target, mappings);
-                //store list of used sources and targets so sort out later
-                usedTargets.add(target);
-                for (DistanceMapping mapping : mappings) {
-                    Village source = mapping.getTarget();
-                    if (!usedSources.contains(source)) {
-                        usedSources.add(source);
+
+
+            for (S s1 : this.sources) {
+                if (s1.waresAvailable() > 0) {
+                    for (S s2 : this.sources) {
+                        if (s2.getOrdered() > 0) {
+                            Iterator<Order> i = s2.getOrders().iterator();
+                            while (i.hasNext()) {
+                                Order o = i.next();
+                                Destination o_d = o.getDestination();
+                                if (this._getCosts(s1, o_d) < this._getCosts(s2, o_d)) {
+                                    int swap_amount = 0;
+                                    swap_amount = Math.min(s1.waresAvailable(), o.amount);
+
+                                    s2.removeOrder(o_d, swap_amount);
+                                    s1.addOrder(o_d, swap_amount);
+
+                                    improvement = true;
+                                }
+                            }
+                        }
                     }
                 }
             }
         }
-
-        Hashtable<Village, List<DistanceMapping>> result = new Hashtable<Village, List<DistanceMapping>>();
-        sortOutEnoblements(targetMappings, usedTargets, usedSources, ((pUse5Snobs) ? 5 : 4), result);
-
-
-        return null;
     }
 
+    /**
+     * Vogel's approximation method (slightly extended).
+     *
+     * Sometimes already generates optimal solutions.
+     *
+     * @throws Exception
+     */
+    protected void vam() throws Exception {
+        if (this.sources.size() == 0 || this.destinations.size() == 0) {
+            throw new Exception("Either sources or destinations are missing!");
+        }
 
-    private void sortOutEnoblements(Hashtable<Village, List<DistanceMapping>> pTargetMappings, List<Village> pTargets, List<Village> pSources, int pSnobs, Hashtable<Village, List<DistanceMapping>> pResult){
-       Village target = pTargets.remove(0);
-       List<DistanceMapping> mappings = pTargetMappings.get(target);
-       if(mappings.size() == pSnobs){
-           
-       }
-    }
+        /*
+         * Make copies of the sources and destinations lists.
+         * The algorithm will work with those copies.
+         */
+        ArrayList<Source> _sources = new ArrayList<Source>(this.sources.size());
+        _sources.addAll(this.sources);
+        ArrayList<Destination> _destinations = new ArrayList<Destination>(this.destinations.size());
+        _destinations.addAll(this.destinations);
 
+        while (_sources.size() > 0 && _destinations.size() > 0) {
+            /*
+             * For each source calculate the difference of the distance to
+             * the closest and the second closest destination.
+             * In other words, this is the distance that would be added if
+             * we choose the source to cope with its second closest destination
+             * instead of its closest one (so called 'opportunity costs').
+             */
+            double opportunityCosts = 0;
+            double biggest = -1;
+            Source biggest_s = _sources.get(0);
+            Destination biggest_s_d = _destinations.get(0);
 
+            Iterator<Source> it = _sources.iterator();
+            while (it.hasNext()) {
+                Source _source = it.next();
+                if (_source.waresAvailable() == 0) {
+                    continue;
+                }
 
+                /* calculate shortest and second shortest costs */
+                double _costs = 999999.0;
+                Double lowest_cost = (Double) 99999.0;
+                Double lowest_cost2 = (Double) 999999.0;
+                Destination lowest_cost_d = _destinations.get(0);
+                for (Destination _dest : _destinations) {
+                    _costs = this._getCosts(_source, _dest);
+                    if (_costs < lowest_cost) {
+                        lowest_cost2 = lowest_cost;
+                        lowest_cost = _costs;
+                        lowest_cost_d = _dest;
+                    } else if (_costs < lowest_cost2) {
+                        lowest_cost2 = _costs;
+                    }
+                }
 
-
-    private void solveAssignments(
-            List<Assignment> pInitialAssignments,
-            List<Assignment> pFinalAssigments,
-            List<Village> pSources,
-            int removeIndex) {
-
-
-        Village current = null;
-        if (pSources.size() == 0 || pInitialAssignments.size() == 0) {
-            return;
-        } else {
-            if (removeIndex > pSources.size() - 1) {
-                removeIndex = 0;
+                /* calculate opportunity costs */
+                opportunityCosts = lowest_cost2 - lowest_cost;
+                if (opportunityCosts > biggest) {
+                    biggest = opportunityCosts;
+                    biggest_s = _source;
+                    biggest_s_d = lowest_cost_d;
+                } else if (opportunityCosts == biggest) {
+                    /* If there are more than one source having the biggest
+                     * opportunityCosts, prefer the sources having a higher minimal cost.
+                     * This results in a lesser distribution of costs among the sources.
+                     *
+                     * This does not seem to be part of the normal approximation method
+                     * by Vogel.
+                     */
+                    if (this._getCosts(_source, lowest_cost_d) > this._getCosts(biggest_s, biggest_s_d)) {
+                        biggest_s = _source;
+                        biggest_s_d = lowest_cost_d;
+                    }
+                }
             }
-            current = pSources.remove(removeIndex);
+
+            int amountOrdered = Math.min(biggest_s.waresAvailable(), biggest_s_d.remainingNeeds());
+            if (amountOrdered > 0) {
+                biggest_s.addOrder(biggest_s_d, amountOrdered);
+                biggest_s_d.addOrdered(amountOrdered);
+            }
+
+            if (biggest_s.waresAvailable() == 0) {
+                if (_sources.remove(biggest_s)) {
+         //           System.out.println("Removed source " + biggest_s.toString());
+                }
+            }
+            if (biggest_s_d.remainingNeeds() == 0) {
+                if (_destinations.remove(biggest_s_d)) {
+             //       System.out.println("Removed destination " + biggest_s_d.toString());
+                }
+            }
         }
+    }
 
-
-
-
-        for (Assignment a : pInitialAssignments) {
-            if (a.isEnoblement()) {
-                System.out.println("Done Enoblement");
-                pFinalAssigments.add(a);
-            } else if (a.isOff()) {
-                System.out.println("Done Off");
-                pFinalAssigments.add(a);
-            } else if (a.isFake()) {
-                System.out.println("Done Fake");
-                pFinalAssigments.add(a);
+    protected static int _arrayIndexOf(double[] array, double d) {
+        for (int i = 0; i < array.length; i++) {
+            if (array[i] == d) {
+                return i;
             }
         }
 
-        for (Assignment a : pFinalAssigments) {
-            pInitialAssignments.remove(a);
-        }
-
-        solveAssignments(pInitialAssignments, pFinalAssigments, pSources, removeIndex);
+        return -1;
     }
 
-    private class Assignment {
+    protected double _getCosts(Source s, Destination d) {
+        return this.costs[this.sources.indexOf(s)].get(d);
+    }
 
-        private Village target = null;
-        private List<Village> snobs = new LinkedList<Village>();
-        private List<Village> offs = new LinkedList<Village>();
-        private List<Village> fakes = new LinkedList<Village>();
-        int snobCount = 0;
-        int cleanPerSnob = 0;
-        int maxOffs = 0;
-
-        public Assignment(Village pTarget, int pSnobCount, int pCleanPerSnob, int pMaxOffs) {
-            target = pTarget;
-            snobCount = pSnobCount;
-            cleanPerSnob = pCleanPerSnob;
-            maxOffs = pMaxOffs;
-        }
-
-        public boolean isEnoblement() {
-            return (snobs.size() >= snobCount) && (offs.size() >= cleanPerSnob);
-        }
-
-        public boolean isOff() {
-            return (snobs.size() < snobCount) && (offs.size() > 0 && offs.size() <= maxOffs);
-        }
-
-        public boolean isFake() {
-            return (fakes.size() <= maxOffs);
-        }
-
-        public List<Village> getSnobList() {
-            return snobs;
-        }
-
-        public List<Village> getOffList() {
-            return offs;
-        }
-
-        public List<Village> getFakeList() {
-            return fakes;
-        }
-
-        public void addSnob(Village pVillage) {
-            snobs.add(pVillage);
-        }
-
-        public void addOff(Village pVillage) {
-            offs.add(pVillage);
-        }
-
-        public void addFake(Village pVillage) {
-            fakes.add(pVillage);
-        }
-
-        public void removeSnob(Village pVillage) {
-            snobs.remove(pVillage);
-        }
-
-        public void removeOff(Village pVillage) {
-            offs.remove(pVillage);
-        }
-
-        public void removeFake(Village pVillage) {
-            fakes.remove(pVillage);
-        }
+    protected double _getCosts(int source_index, Destination d) {
+        return this.costs[source_index].get(d);
     }
 }
 

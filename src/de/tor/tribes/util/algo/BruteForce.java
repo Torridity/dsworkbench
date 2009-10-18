@@ -163,7 +163,7 @@ public class BruteForce extends AbstractAttackAlgorithm {
                     //TimeFrame t = new TimeFrame(pStartTime, pArriveTime, pTimeFrameStartHour, pTimeFrameEndHour);
                     //search all tribes and villages for targets
                     for (Village v : pTargets) {
-                        if (!attacks.contains(v)) {
+                        if (!attacks.containsKey(v)) {
                             double time = DSCalculator.calculateMoveTimeInSeconds(source, v, unit.getSpeed());
                             Date sendTime = new Date(arrive - (long) time * 1000);
                             //check if attack is somehow possible

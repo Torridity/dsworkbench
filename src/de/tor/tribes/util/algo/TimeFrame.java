@@ -38,6 +38,10 @@ public class TimeFrame {
         mFrames = new LinkedList<Point>();
     }
 
+    public void setEnd(long pTime){
+        end = pTime;
+    }
+
     public void setArriveTolerance(long pHours) {
         arriveTolerance = pHours;
     }

@@ -33,6 +33,7 @@ import de.tor.tribes.util.algo.AbstractAttackAlgorithm;
 import de.tor.tribes.util.algo.AllInOne;
 import de.tor.tribes.util.algo.Blitzkrieg;
 import de.tor.tribes.util.algo.BruteForce;
+import de.tor.tribes.util.algo.OptexWrapper;
 import de.tor.tribes.util.algo.TimeFrame;
 import de.tor.tribes.util.attack.AttackManager;
 import de.tor.tribes.util.parser.VillageParser;
@@ -2057,18 +2058,26 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
 
     if (type == 0) {
         logger.info("Using 'BruteForce' algorithm");
-        algo =
-                new BruteForce();
-        supportMiscUnits =
-                true;
+        //   algo = new BruteForce();
+        new OptexWrapper().calculateAttacks(sources,
+                fakes,
+                victimVillages,
+                maxAttacksPerVillage,
+                minCleanForSnob,
+                timeFrame,
+                randomize,
+                use5Snobs);
+
+        supportMiscUnits = true;
+        if (true) {
+            return;
+        }
     } else if (type == 1) {
         logger.info("Using 'AllInOne' algorithm");
-        algo =
-                new AllInOne();
+        algo = new AllInOne();
     } else if (type == 2) {
         logger.info("Using 'Blitzkrieg' algorithm");
-        algo =
-                new Blitzkrieg();
+        algo = new Blitzkrieg();
     }
 //postprocessing = calculating optimal snob locations
 

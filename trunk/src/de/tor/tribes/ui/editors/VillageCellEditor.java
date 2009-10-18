@@ -14,8 +14,7 @@ import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.Arrays;
 import javax.swing.AbstractCellEditor;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
@@ -114,6 +113,7 @@ public class VillageCellEditor extends AbstractCellEditor implements TableCellEd
             //use single village (barbarian)
             villages = new Village[]{current};
         }
+        Arrays.sort(villages);
         DefaultComboBoxModel model = new DefaultComboBoxModel(villages);
         comboComponent.setModel(model);
         comboComponent.setSelectedItem(value);

@@ -1541,13 +1541,9 @@ private void fireCopyUnformatedToClipboardEvent(java.awt.event.MouseEvent evt) {
 private void fireCopyAsBBCodeToClipboardEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCopyAsBBCodeToClipboardEvent
 
     try {
-        UIManager.put("OptionPane.noButtonText", "Nein");
-        UIManager.put("OptionPane.yesButtonText", "Ja");
-
+       
         boolean extended = (JOptionPaneHelper.showQuestionConfirmBox(this, "Erweiterte BB-Codes verwenden (nur für Forum und Notizen geeignet)?", "Erweiterter BB-Code", "Nein", "Ja") == JOptionPane.YES_OPTION);
-        UIManager.put("OptionPane.noButtonText", "No");
-        UIManager.put("OptionPane.yesButtonText", "Yes");
-
+       
         int[] rows = jAttackTable.getSelectedRows();
         if ((rows != null) && (rows.length > 0)) {
             StringBuffer buffer = new StringBuffer();

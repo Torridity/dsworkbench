@@ -11,6 +11,7 @@
 package de.tor.tribes.ui;
 
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.io.ServerManager;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.TagMapMarker;
 import de.tor.tribes.types.Village;
@@ -20,8 +21,11 @@ import de.tor.tribes.ui.renderer.TagMapMarkerRenderer;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
+import de.tor.tribes.util.TagToBBCodeFormater;
 import de.tor.tribes.util.tag.TagManager;
 import java.awt.Component;
+import java.awt.Toolkit;
+import java.awt.datatransfer.StringSelection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -39,7 +43,7 @@ import javax.swing.table.TableRowSorter;
 import org.apache.log4j.Logger;
 
 /**
- * @TODO (DIFF) Introduce tag export as BB-Code
+ * @TODO (DIFF) Introduced tag export as BB-Code
  * @author Jejkal
  */
 public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
@@ -151,6 +155,7 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
         jTaggedVillageList = new javax.swing.JList();
         jButton4 = new javax.swing.JButton();
         jButton6 = new javax.swing.JButton();
+        jButton7 = new javax.swing.JButton();
         jAlwaysOnTopBox = new javax.swing.JCheckBox();
 
         jAddTagDialog.setTitle("Neuer Tag");
@@ -270,6 +275,15 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
             }
         });
 
+        jButton7.setBackground(new java.awt.Color(239, 235, 223));
+        jButton7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_clipboardBB.png"))); // NOI18N
+        jButton7.setToolTipText("Markierte Tags als BB-Codes in die Zwischenablage kopieren");
+        jButton7.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireCopyTagsAsBBCodeToClipboardEvent(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -280,12 +294,14 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 423, Short.MAX_VALUE)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 423, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton3)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2)
-                    .addComponent(jButton6)
-                    .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jButton3)
+                        .addComponent(jButton1)
+                        .addComponent(jButton2)
+                        .addComponent(jButton6)
+                        .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jButton7))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -299,7 +315,9 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton2)))
+                        .addComponent(jButton2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton7)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -447,6 +465,35 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
         MapPanel.getSingleton().getMapRenderer().initiateRedraw(0);
     }//GEN-LAST:event_fireUntagVillage
 
+    private void fireCopyTagsAsBBCodeToClipboardEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCopyTagsAsBBCodeToClipboardEvent
+
+        int[] rows = jTagTable.getSelectedRows();
+        if (rows == null || rows.length == 0) {
+            return;
+        }
+
+        boolean extended = (JOptionPaneHelper.showQuestionConfirmBox(this, "Erweiterte BB-Codes verwenden (nur für Forum und Notizen geeignet)?", "Erweiterter BB-Code", "Nein", "Ja") == JOptionPane.YES_OPTION);
+
+        String sUrl = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
+        String result = "";
+        for (int row : rows) {
+            int r = jTagTable.convertRowIndexToModel(row);
+            String name = (String) TagTableModel.getSingleton().getValueAt(r, 0);
+            Tag t = TagManager.getSingleton().getTagByName(name);
+            if (t != null) {
+                result += TagToBBCodeFormater.formatTag(t, sUrl, extended);
+            }
+        }
+
+        try {
+            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(result), null);
+            JOptionPaneHelper.showInformationBox(this, "Daten in Zwischenablage kopiert.", "Information");
+        } catch (Exception e) {
+            logger.error("Failed to copy data to clipboard", e);
+            JOptionPaneHelper.showErrorBox(this, "Fehler beim Kopieren in die Zwischenablage.", "Fehler");
+        }
+    }//GEN-LAST:event_fireCopyTagsAsBBCodeToClipboardEvent
+
     private void updateTaggedVillageList() {
         int[] rows = jTagTable.getSelectedRows();
         if (rows == null || rows.length == 0) {
@@ -492,6 +539,7 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
+    private javax.swing.JButton jButton7;
     private javax.swing.JButton jCreateTagButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JTextField jNewTagName;

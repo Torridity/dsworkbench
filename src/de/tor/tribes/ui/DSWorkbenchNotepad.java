@@ -453,6 +453,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame {
 
         jSplitPane1.setDividerLocation(200);
         jSplitPane1.setDividerSize(10);
+        jSplitPane1.setToolTipText("");
         jSplitPane1.setOpaque(false);
 
         jRightPanel.setOpaque(false);
@@ -677,7 +678,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame {
         jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel4.setText("Zugehörige Dörfer");
 
-        jAddVillageField.setToolTipText("Dorf, das der Notizliste hinzugefügt werden soll");
+        jAddVillageField.setToolTipText("Koordinate des Dorfes, das der Notizliste hinzugefügt werden soll");
         jAddVillageField.setMaximumSize(new java.awt.Dimension(6, 25));
         jAddVillageField.setMinimumSize(new java.awt.Dimension(6, 25));
         jAddVillageField.setPreferredSize(new java.awt.Dimension(6, 25));

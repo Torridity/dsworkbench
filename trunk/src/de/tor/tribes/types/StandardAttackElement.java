@@ -14,7 +14,7 @@ import java.util.Hashtable;
 import org.jdom.Element;
 
 /**
- *
+ *@TODO (DIFF) ALLE now only takes all own troops
  * @author Charon
  */
 public class StandardAttackElement {
@@ -120,13 +120,13 @@ public class StandardAttackElement {
             return 0;
         }
 
-        Hashtable<UnitHolder, Integer> inVillage = holder.getTroopsInVillage();
-        if (inVillage == null) {
+        Hashtable<UnitHolder, Integer> ownTroops = holder.getOwnTroops();
+        if (ownTroops == null) {
             //no troops in village
             return 0;
         }
 
-        Integer availableAmount = inVillage.get(unit);
+        Integer availableAmount = ownTroops.get(unit);
         if (availableAmount == 0) {
             //no troops in village
             return 0;

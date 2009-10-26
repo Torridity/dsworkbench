@@ -52,7 +52,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JSpinner.DateEditor;
 import javax.swing.JTable;
-import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -62,6 +61,7 @@ import org.apache.log4j.Logger;
 
 // -Dsun.java2d.d3d=true -Dsun.java2d.translaccel=true -Dsun.java2d.ddforcevram=true
 /**
+ * @TODO (DIFF) Added attack info script export
  * @author  Charon
  */
 public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements AttackManagerListener {
@@ -268,7 +268,8 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         jCopyBBCodeToClipboardButton = new javax.swing.JButton();
         jCopyBBCodeToClipboardButton1 = new javax.swing.JButton();
         jSendAttackButton = new javax.swing.JButton();
-        jSendAttackButton1 = new javax.swing.JButton();
+        jAttacksToScriptButton = new javax.swing.JButton();
+        jDefaultTroopsButton = new javax.swing.JButton();
         jTaskPaneGroup4 = new com.l2fprod.common.swing.JTaskPaneGroup();
         jNotifyButton = new javax.swing.JToggleButton();
         jAttackFrameAlwaysOnTop = new javax.swing.JCheckBox();
@@ -1288,16 +1289,27 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         jTaskPaneGroup3.getContentPane().add(jSendAttackButton);
         jSendAttackButton.getAccessibleContext().setAccessibleDescription(bundle.getString("DSWorkbenchAttackFrame.jSendAttackButton.AccessibleContext.accessibleDescription")); // NOI18N
 
-        jSendAttackButton1.setBackground(new java.awt.Color(239, 235, 223));
-        jSendAttackButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/standard_attacks.png"))); // NOI18N
-        jSendAttackButton1.setText(bundle.getString("DSWorkbenchAttackFrame.jSendAttackButton1.text")); // NOI18N
-        jSendAttackButton1.setToolTipText(bundle.getString("DSWorkbenchAttackFrame.jSendAttackButton1.toolTipText")); // NOI18N
-        jSendAttackButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+        jAttacksToScriptButton.setBackground(new java.awt.Color(239, 235, 223));
+        jAttacksToScriptButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/export_js.png"))); // NOI18N
+        jAttacksToScriptButton.setText(bundle.getString("DSWorkbenchAttackFrame.jAttacksToScriptButton.text")); // NOI18N
+        jAttacksToScriptButton.setToolTipText(bundle.getString("DSWorkbenchAttackFrame.jAttacksToScriptButton.toolTipText")); // NOI18N
+        jAttacksToScriptButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireWriteAttacksToScriptEvent(evt);
+            }
+        });
+        jTaskPaneGroup3.getContentPane().add(jAttacksToScriptButton);
+
+        jDefaultTroopsButton.setBackground(new java.awt.Color(239, 235, 223));
+        jDefaultTroopsButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/standard_attacks.png"))); // NOI18N
+        jDefaultTroopsButton.setText(bundle.getString("DSWorkbenchAttackFrame.jDefaultTroopsButton.text")); // NOI18N
+        jDefaultTroopsButton.setToolTipText(bundle.getString("DSWorkbenchAttackFrame.jDefaultTroopsButton.toolTipText")); // NOI18N
+        jDefaultTroopsButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireSetStandardAttacksEvent(evt);
             }
         });
-        jTaskPaneGroup3.getContentPane().add(jSendAttackButton1);
+        jTaskPaneGroup3.getContentPane().add(jDefaultTroopsButton);
 
         jTaskPane1.add(jTaskPaneGroup3);
 
@@ -1541,9 +1553,9 @@ private void fireCopyUnformatedToClipboardEvent(java.awt.event.MouseEvent evt) {
 private void fireCopyAsBBCodeToClipboardEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCopyAsBBCodeToClipboardEvent
 
     try {
-       
+
         boolean extended = (JOptionPaneHelper.showQuestionConfirmBox(this, "Erweiterte BB-Codes verwenden (nur für Forum und Notizen geeignet)?", "Erweiterter BB-Code", "Nein", "Ja") == JOptionPane.YES_OPTION);
-       
+
         int[] rows = jAttackTable.getSelectedRows();
         if ((rows != null) && (rows.length > 0)) {
             StringBuffer buffer = new StringBuffer();
@@ -2267,15 +2279,6 @@ private void fireCleanUpAttacksEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST
 }//GEN-LAST:event_fireCleanUpAttacksEvent
 
 private void fireSetStandardAttacksEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSetStandardAttacksEvent
-    String selectedPlan = AttackManagerTableModel.getSingleton().getActiveAttackPlan();
-    List<Attack> attacks = AttackManager.getSingleton().getAttackPlan(selectedPlan);
-    AttackScriptWriter.writeAttackScript(attacks);
-
-
-    if (true) {
-        return;
-    }
-
     //build table
     try {
         jStandardAttackTable.invalidate();
@@ -2297,6 +2300,27 @@ private void fireSetStandardAttacksEvent(java.awt.event.MouseEvent evt) {//GEN-F
 private void fireApplyStandardAttacksEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireApplyStandardAttacksEvent
     jStandardAttackDialog.setVisible(false);
 }//GEN-LAST:event_fireApplyStandardAttacksEvent
+
+private void fireWriteAttacksToScriptEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireWriteAttacksToScriptEvent
+    int[] selectedRows = jAttackTable.getSelectedRows();
+    if (selectedRows != null && selectedRows.length < 1) {
+        return;
+    }
+
+    String selectedPlan = AttackManagerTableModel.getSingleton().getActiveAttackPlan();
+    List<Attack> attacks = new LinkedList<Attack>();
+    for (Integer selectedRow : selectedRows) {
+        int row = jAttackTable.convertRowIndexToModel(selectedRow);
+        Attack a = AttackManager.getSingleton().getAttackPlan(selectedPlan).get(row);
+        attacks.add(a);
+    }
+
+    if (AttackScriptWriter.writeAttackScript(attacks)) {
+        JOptionPaneHelper.showInformationBox(this, "Script erfolgreich nach 'attack_info.user.js' geschrieben.\nDenke bitte daran, das Script in deinem Browser einzufügen/zu aktualisieren!", "Information");
+    } else {
+        JOptionPaneHelper.showErrorBox(this, "Fehler beim Schreiben des Scripts.", "Fehler");
+    }
+}//GEN-LAST:event_fireWriteAttacksToScriptEvent
 
     public JDialog getStandardAttackDialog() {
         return jStandardAttackDialog;
@@ -2420,6 +2444,7 @@ private void fireApplyStandardAttacksEvent(java.awt.event.MouseEvent evt) {//GEN
     private javax.swing.JPanel jAttackPanel;
     private javax.swing.JTextField jAttackPlanName;
     private javax.swing.JTable jAttackTable;
+    private javax.swing.JButton jAttacksToScriptButton;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton10;
     private javax.swing.JButton jButton11;
@@ -2445,6 +2470,7 @@ private void fireApplyStandardAttacksEvent(java.awt.event.MouseEvent evt) {//GEN
     private javax.swing.JTextField jCurrentPlanBox;
     private javax.swing.JTextField jCurrentPlanField;
     private javax.swing.JSpinner jDayField;
+    private javax.swing.JButton jDefaultTroopsButton;
     private javax.swing.JButton jDrawMarkedButton;
     private javax.swing.JButton jFlipMarkButton;
     private javax.swing.JSpinner jHourField;
@@ -2500,7 +2526,6 @@ private void fireApplyStandardAttacksEvent(java.awt.event.MouseEvent evt) {//GEN
     private javax.swing.JSpinner jSecondsField;
     private javax.swing.JDialog jSelectionFilterDialog;
     private javax.swing.JButton jSendAttackButton;
-    private javax.swing.JButton jSendAttackButton1;
     private javax.swing.JComboBox jSourceTribeBox;
     private javax.swing.JTable jSourceVillageTable;
     private javax.swing.JDialog jStandardAttackDialog;

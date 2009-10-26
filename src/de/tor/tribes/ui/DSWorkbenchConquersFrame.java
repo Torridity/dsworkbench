@@ -885,7 +885,9 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
                             if (loser.getId() == winner.getId()) {
                                 c.setBackground(Color.GREEN);
                             } else if (loser.getAllyID() == winner.getAllyID()) {
-                                c.setBackground(Color.CYAN);
+                                if (loser.getAllyID() != 0 && winner.getAllyID() != 0) {
+                                    c.setBackground(Color.CYAN);
+                                }
                             } else {
                                 Ally loserAlly = loser.getAlly();
                                 Ally winnerAlly = winner.getAlly();

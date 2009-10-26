@@ -10,6 +10,7 @@ import de.tor.tribes.types.Village;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.util.tag.TagManager;
+import de.tor.tribes.util.tag.TagManagerListener;
 import java.util.Arrays;
 import java.util.List;
 import javax.swing.DefaultComboBoxModel;
@@ -18,13 +19,14 @@ import javax.swing.DefaultListModel;
 /**
  * @author  Charon
  */
-public class VillageTagFrame extends javax.swing.JFrame {
+public class VillageTagFrame extends javax.swing.JFrame implements TagManagerListener {
 
     private static VillageTagFrame SINGLETON = null;
 
     public static synchronized VillageTagFrame getSingleton() {
         if (SINGLETON == null) {
             SINGLETON = new VillageTagFrame();
+            TagManager.getSingleton().addTagManagerListener(SINGLETON);
         }
         return SINGLETON;
     }
@@ -255,11 +257,11 @@ private void fireVillageSelectionChangedEvent(java.awt.event.ItemEvent evt) {//G
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-       /* java.awt.EventQueue.invokeLater(new Runnable() {
+        /* java.awt.EventQueue.invokeLater(new Runnable() {
 
-            public void run() {
-                new VillageTagFrame().setVisible(true);
-            }
+        public void run() {
+        new VillageTagFrame().setVisible(true);
+        }
         });*/
 
         System.out.println(Math.round(4.496529606));
@@ -279,4 +281,9 @@ private void fireVillageSelectionChangedEvent(java.awt.event.ItemEvent evt) {//G
     private javax.swing.JLabel jVillageLabel;
     private javax.swing.JComboBox jVillageList;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void fireTagsChangedEvent() {
+        updateUserTags();
+    }
 }

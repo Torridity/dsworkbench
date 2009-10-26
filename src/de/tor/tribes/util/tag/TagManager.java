@@ -91,7 +91,7 @@ public class TagManager {
                 logger.info("No tags found under '" + pFile + "'");
             }
         }
-        VillageTagFrame.getSingleton().updateUserTags();
+        fireTagsChangedEvents();
     }
 
     public boolean importTags(File pFile, String pExtension) {
@@ -131,12 +131,12 @@ public class TagManager {
             }
 
             logger.debug("Tags imported successfully");
-            VillageTagFrame.getSingleton().updateUserTags();
+            fireTagsChangedEvents();
             MinimapPanel.getSingleton().redraw();
             return true;
         } catch (Exception e) {
             logger.error("Failed to load tags", e);
-            VillageTagFrame.getSingleton().updateUserTags();
+            fireTagsChangedEvents();
             MinimapPanel.getSingleton().redraw();
             return false;
         }
@@ -312,6 +312,5 @@ public class TagManager {
         for (TagManagerListener listener : listeners) {
             listener.fireTagsChangedEvent();
         }
-        VillageTagFrame.getSingleton().updateUserTags();
     }
 }

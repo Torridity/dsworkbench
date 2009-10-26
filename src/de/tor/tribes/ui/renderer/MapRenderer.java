@@ -62,7 +62,6 @@ import java.awt.geom.Arc2D;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
-import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -96,7 +95,9 @@ import org.apache.log4j.Logger;
  * 6-16: Free assignable
  * @author Charon
  */
-/**Thread for updating after scroll operations
+/**
+ * @TODO (DIFF) Initial troop movement position set to half the way
+ * Thread for updating after scroll operations
  */
 public class MapRenderer extends Thread {
 
@@ -126,7 +127,6 @@ public class MapRenderer extends Thread {
     private Village currentUserVillage = null;
     private BufferedImage mMainBuffer = null;
     private BufferedImage mConquerWarning = null;
-    private Path2D.Double ARROW = createArrow(0);
     private List<Integer> drawOrder = null;
     private int iPopupTroopType = 0;
 
@@ -357,23 +357,6 @@ public class MapRenderer extends Thread {
         }
     }
 
-    private Path2D.Double createArrow(int l) {
-        int length = l;
-        int barb = 15;
-        double angle = Math.toRadians(20);
-        Path2D.Double path = new Path2D.Double();
-        path.moveTo(-length / 2, 0);
-        path.lineTo(length / 2, 0);
-        double x = length / 2 - barb * Math.cos(angle);
-        double y = barb * Math.sin(angle);
-        path.lineTo(x, y);
-        x = length / 2 - barb * Math.cos(-angle);
-        y = barb * Math.sin(-angle);
-        path.moveTo(length / 2, 0);
-        path.lineTo(x, y);
-        return path;
-    }
-
     /**Set the drag line externally (done by MapPanel class)*/
     public void setDragLine(int pXS, int pYS, int pXE, int pYE) {
         if (pXS == -1 && pYS == -1 && pXE == -1 && pYE == -1) {
@@ -476,6 +459,7 @@ public class MapRenderer extends Thread {
             } else {
                 //only clear image
                 g2d = (Graphics2D) layer.getGraphics();
+                prepareGraphics(g2d);
                 Composite c = g2d.getComposite();
                 g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.CLEAR, 1.0f));
                 g2d.fillRect(0, 0, wb, hb);
@@ -1422,9 +1406,12 @@ public class MapRenderer extends Thread {
                                 unitXPos = (int) xTar - unitIcon.getIconWidth() / 2;
                                 unitYPos = (int) yTar - unitIcon.getIconHeight() / 2;
                             } else if ((start > System.currentTimeMillis()) && (arrive > current)) {
-                                //attack not running, draw unit in source village
-                                unitXPos = (int) xStart - unitIcon.getIconWidth() / 2;
-                                unitYPos = (int) yStart - unitIcon.getIconHeight() / 2;
+                                //attack not running, draw unit between source and target
+                                double perc = .5;
+                                double xTar = xStart + (xEnd - xStart) * perc;
+                                double yTar = yStart + (yEnd - yStart) * perc;
+                                unitXPos = (int) xTar - unitIcon.getIconWidth() / 2;
+                                unitYPos = (int) yTar - unitIcon.getIconHeight() / 2;
                             } else {
                                 //attack arrived
                                 unitXPos = (int) xEnd - unitIcon.getIconWidth() / 2;
@@ -2342,8 +2329,6 @@ public class MapRenderer extends Thread {
         boolean drawDist = false;
         //  if (MapPanel.getSingleton().isAttackCursor()) {
         //draw attack information
-
-
         // } else {
         //draw distance or troops availability information
         if (MapPanel.getSingleton().getCurrentCursor() == ImageManager.CURSOR_MEASURE) {
@@ -2447,15 +2432,15 @@ public class MapRenderer extends Thread {
 
     /**Prepare any g2d object with same parameters*/
     private void prepareGraphics(Graphics2D pG2d) {
-        pG2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
-        pG2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+        pG2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        pG2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
         // Speed
-        pG2d.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED);
-        pG2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
-        pG2d.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_SPEED);
-        pG2d.setRenderingHint(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_ENABLE);
-        pG2d.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_OFF);
-        pG2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
+        pG2d.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_DEFAULT);
+        pG2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_DEFAULT);
+        pG2d.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_DEFAULT);
+        pG2d.setRenderingHint(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_DISABLE);
+        pG2d.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_DEFAULT);
+        pG2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_DEFAULT);
     }
 }
 

@@ -79,11 +79,11 @@ import javax.swing.table.DefaultTableModel;
 /**
  * @TODO (1.5?) Add min number to troop filter in attack planer????
  * @TODO (DIFF) Note import added
+ * @TODO (DIFF) DIstance tool added
  * @author  Charon
  */
 public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         MapPanelListener,
-        MinimapListener,
         ToolChangeListener,
         DSWorkbenchFrameListener,
         MapShotListener {
@@ -100,8 +100,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
     private ImageIcon uvModeOn = null;
     private ImageIcon uvModeOff = null;
     private boolean putOnline = false;
-    private Image mPopup = null;
-    private Rectangle mPopupPos = null;
 
     public static synchronized DSWorkbenchMainFrame getSingleton() {
         if (SINGLETON == null) {
@@ -500,11 +498,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         onlineStateChanged();
     }
 
-    /* public void setPopup(Image pPopup, Rectangle pPopupPosition) {
-    mPopup = pPopup;
-    mPopupPos = pPopupPosition;
-    ((Graphics2D)getGlassPane().getGraphics()).drawImage(mPopup, mPopupPos.x, mPopupPos.y,null);
-    }*/
     public String[] getCurrentPosition() {
         return new String[]{jCenterX.getText(), jCenterY.getText()};
     }
@@ -612,8 +605,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         fireToolChangedEvent(ImageManager.CURSOR_DEFAULT);
         logger.info(" * Setting up attack planner");
         //setup frames
-        /*mAllyAllyAttackFrame = new AllyAllyAttackFrame();
-        mAllyAllyAttackFrame.pack();*/
         mTribeTribeAttackFrame = new TribeTribeAttackFrame();
         mTribeTribeAttackFrame.pack();
         mAbout = new AboutDialog(this, true);
@@ -652,8 +643,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         } catch (Exception e) {
             dZoomFactor = 1.0;
         }
-//build the map panel
-
+        //build the map panel
         logger.info("Adding MapListener");
         MapPanel.getSingleton().addMapPanelListener(this);
         MapPanel.getSingleton().addToolChangeListener(this);
@@ -661,8 +651,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         logger.info("Adding MapPanel");
         jPanel1.add(MapPanel.getSingleton());
         //build the minimap
-
-        MinimapPanel.getSingleton().addMinimapListener(this);
         logger.info("Adding MinimapPanel");
         /*MinimapPanel.getSingleton().setMinimumSize(jMinimapPanel.getMinimumSize());
         MapPanel.getSingleton().setMinimumSize(jPanel1.getMinimumSize());*/
@@ -2980,30 +2968,6 @@ private void fireGraphicPackChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FI
         }
     }
 
-    /**Update the MapPanel when dragging the ROI at the MiniMap
-     */
-    private void updateLocationByMinimap(int pX, int pY) {
-        double dx = ServerSettings.getSingleton().getMapDimension().getWidth() / (double) MinimapPanel.getSingleton().getWidth() * (double) pX;
-        double dy = ServerSettings.getSingleton().getMapDimension().getHeight() / (double) MinimapPanel.getSingleton().getHeight() * (double) pY;
-        if (ServerSettings.getSingleton().getCoordType() != 2) {
-            int[] hier = DSCalculator.xyToHierarchical((int) dx, (int) dy);
-            if (hier != null) {
-                jCenterX.setText(Integer.toString(hier[0]));
-                jCenterY.setText(Integer.toString(hier[1]));
-            }
-        } else {
-            jCenterX.setText(Integer.toString((int) Math.floor(dx)));
-            jCenterY.setText(Integer.toString((int) Math.floor(dy)));
-        }
-
-        dCenterX = dx;
-        dCenterY = dy;
-        MapPanel.getSingleton().updateMapPosition(dCenterX, dCenterY);
-        double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getBasicFieldWidth() * dZoomFactor;
-        double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getBasicFieldHeight() * dZoomFactor;
-        MinimapPanel.getSingleton().setSelection((int) Math.floor(dx), (int) Math.floor(dy), (int) Math.rint(w), (int) Math.rint(h));
-    }
-
     /**Scroll the map*/
     public void scroll(double pXDir, double pYDir) {
         dCenterX = dCenterX + pXDir;
@@ -3098,15 +3062,6 @@ private void fireGraphicPackChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FI
         return null;
     }
 
-    /*   public void repaint() {
-    if (mPopup == null) {
-    System.out.println("null");
-    return;
-    }
-    ((Graphics2D) getBufferStrategy().getDrawGraphics()).drawImage(mPopup, mPopupPos.x, mPopupPos.y, null);
-    getBufferStrategy().show();
-    }*/
-
 // <editor-fold defaultstate="collapsed" desc=" Listener EventHandlers ">
     @Override
     public void fireToolChangedEvent(int pTool) {
@@ -3116,11 +3071,6 @@ private void fireGraphicPackChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FI
     @Override
     public void fireScrollEvent(double pX, double pY) {
         scroll(pX, pY);
-    }
-
-    @Override
-    public void fireUpdateLocationByMinimap(int pX, int pY) {
-        updateLocationByMinimap(pX, pY);
     }
 
     @Override

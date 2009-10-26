@@ -8,6 +8,7 @@ import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
+import de.tor.tribes.util.troops.TroopsFilterInterface;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.TroopsManagerListener;
 import de.tor.tribes.util.troops.VillageTroopsHolder;

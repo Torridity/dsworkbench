@@ -7,7 +7,6 @@ package de.tor.tribes.ui;
 
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Church;
-import de.tor.tribes.types.Note;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.util.BrowserCommandSender;
@@ -37,7 +36,6 @@ import de.tor.tribes.util.MapShotListener;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.VillageSelectionListener;
 import de.tor.tribes.util.church.ChurchManager;
-import de.tor.tribes.util.note.NoteManager;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.FontMetrics;

@@ -24,6 +24,8 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.MouseEvent;
@@ -43,6 +45,7 @@ import javax.swing.filechooser.FileFilter;
 import org.apache.log4j.Logger;
 
 /**
+ * @TODO (DIFF) Added possibility to change visible part of minimap
  * @author  jejkal
  */
 public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerListener {
@@ -63,6 +66,8 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
     private int iXDown = 0;
     private int iYDown = 0;
     private Rectangle2D rDrag = null;
+    private Rectangle rVisiblePart = null;
+    boolean zoomed = false;
 
     public static synchronized MinimapPanel getSingleton() {
         if (SINGLETON == null) {
@@ -80,14 +85,22 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
         setCursor(ImageManager.getCursor(iCurrentCursor));
         mScreenshotPanel = new ScreenshotPanel();
         jPanel1.add(mScreenshotPanel);
+        int mapWidth = (int) ServerSettings.getSingleton().getMapDimension().getWidth();
+        int mapHeight = (int) ServerSettings.getSingleton().getMapDimension().getHeight();
+        rVisiblePart = new Rectangle(0, 0, mapWidth, mapHeight);
+        zoomed = false;
         MarkerManager.getSingleton().addMarkerManagerListener(this);
+        MinimapRepaintThread.getSingleton().setVisiblePart(rVisiblePart);
         MinimapRepaintThread.getSingleton().start();
+
 
         addMouseListener(new MouseListener() {
 
             @Override
             public void mouseClicked(MouseEvent e) {
-                fireUpdateLocationByMinimapEvents(e.getX(), e.getY());
+                Point p = mousePosToMapPosition(e.getX(), e.getY());
+                DSWorkbenchMainFrame.getSingleton().centerPosition(p.x, p.y);
+
                 if (mZoomFrame != null) {
                     if (mZoomFrame.isVisible()) {
                         mZoomFrame.toFront();
@@ -97,7 +110,7 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
 
             @Override
             public void mousePressed(MouseEvent e) {
-                if (iCurrentCursor == ImageManager.CURSOR_SHOT) {
+                if (iCurrentCursor == ImageManager.CURSOR_SHOT || iCurrentCursor == ImageManager.CURSOR_ZOOM) {
                     iXDown = e.getX();
                     iYDown = e.getY();
                 }
@@ -130,6 +143,29 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
                     } catch (Exception ie) {
                         logger.error("Failed to initialize mapshot", ie);
                     }
+                } else if (iCurrentCursor == ImageManager.CURSOR_ZOOM) {
+                    if (!zoomed) {
+                        int mapWidth = (int) ServerSettings.getSingleton().getMapDimension().getWidth();
+                        int mapHeight = (int) ServerSettings.getSingleton().getMapDimension().getHeight();
+                        int x = (int) Math.rint((double) mapWidth / (double) getWidth() * (double) rDrag.getX());
+                        int y = (int) Math.rint((double) mapHeight / (double) getHeight() * (double) rDrag.getY());
+                        int w = (int) Math.rint((double) mapWidth / (double) getWidth() * (double) (rDrag.getWidth() - rDrag.getX()));
+
+                        if (w >= 10) {
+                            rVisiblePart = new Rectangle(x, y, w, w);
+                            MinimapRepaintThread.getSingleton().setVisiblePart(rVisiblePart);
+                            redraw();
+                            zoomed = true;
+                        }
+                    } else {
+                        int mapWidth = (int) ServerSettings.getSingleton().getMapDimension().getWidth();
+                        int mapHeight = (int) ServerSettings.getSingleton().getMapDimension().getHeight();
+                        rVisiblePart = new Rectangle(0, 0, mapWidth, mapHeight);
+                        MinimapRepaintThread.getSingleton().setVisiblePart(rVisiblePart);
+                        redraw();
+                        zoomed = false;
+                    }
+                    mZoomFrame.setVisible(false);
                 }
                 iXDown = 0;
                 iYDown = 0;
@@ -166,11 +202,16 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
             public void mouseDragged(MouseEvent e) {
                 switch (iCurrentCursor) {
                     case ImageManager.CURSOR_MOVE: {
-                        fireUpdateLocationByMinimapEvents(e.getX(), e.getY());
+                        Point p = mousePosToMapPosition(e.getX(), e.getY());
+                        DSWorkbenchMainFrame.getSingleton().centerPosition(p.x, p.y);
                         rDrag = null;
                         break;
                     }
                     case ImageManager.CURSOR_SHOT: {
+                        rDrag = new Rectangle2D.Double(iXDown, iYDown, e.getX(), e.getY());
+                        break;
+                    }
+                    case ImageManager.CURSOR_ZOOM: {
                         rDrag = new Rectangle2D.Double(iXDown, iYDown, e.getX(), e.getY());
                         break;
                     }
@@ -254,6 +295,17 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
         mToolChangeListeners.remove(pListener);
     }
 
+    public Point mousePosToMapPosition(double pX, double pY) {
+        int x = rVisiblePart.x;
+        int y = rVisiblePart.y;
+        //calc dots per village
+        double dpvx = (double) getWidth() / (double) rVisiblePart.width;
+        double dpvy = (double) getHeight() / (double) rVisiblePart.height;
+        x += (int) Math.round(pX / dpvx);
+        y += (int) Math.round(pY / dpvy);
+        return new Point(x, y);
+    }
+
     public void setCurrentCursor(int pCurrentCursor) {
         iCurrentCursor = pCurrentCursor;
         setCursor(ImageManager.getCursor(iCurrentCursor));
@@ -273,7 +325,7 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
             Graphics2D g2d = (Graphics2D) g;
             g2d.drawImage(mBuffer, 0, 0, null);
             g2d.setColor(Color.YELLOW);
-            int mapWidth = (int) ServerSettings.getSingleton().getMapDimension().getWidth();
+            /*int mapWidth = (int) ServerSettings.getSingleton().getMapDimension().getWidth();
             int mapHeight = (int) ServerSettings.getSingleton().getMapDimension().getHeight();
 
             int w = (int) Math.rint(((double) getWidth() / mapWidth) * (double) iWidth);
@@ -282,11 +334,29 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
             double posX = ((double) getWidth() / mapWidth * (double) iX) - w / 2;
             double posY = ((double) getHeight() / mapHeight * (double) iY) - h / 2;
 
+            g2d.drawRect((int) Math.rint(posX), (int) Math.rint(posY), w, h);*/
+
+            int mapWidth = rVisiblePart.width;
+            int mapHeight = rVisiblePart.height;
+
+            int w = (int) Math.rint(((double) getWidth() / mapWidth) * (double) iWidth);
+            int h = (int) Math.rint(((double) getHeight() / mapHeight) * (double) iHeight);
+
+            double posX = ((double) getWidth() / mapWidth * (double) (iX - rVisiblePart.x)) - w / 2;
+            double posY = ((double) getHeight() / mapHeight * (double) (iY - rVisiblePart.y)) - h / 2;
+
             g2d.drawRect((int) Math.rint(posX), (int) Math.rint(posY), w, h);
+
+
             if (iCurrentCursor == ImageManager.CURSOR_SHOT) {
                 if (rDrag != null) {
-                    g2d.setColor(Color.YELLOW);
+                    g2d.setColor(Color.ORANGE);
                     g2d.drawRect((int) rDrag.getMinX(), (int) rDrag.getMinY(), (int) (rDrag.getWidth() - rDrag.getX()), (int) (rDrag.getHeight() - rDrag.getY()));
+                }
+            } else if (iCurrentCursor == ImageManager.CURSOR_ZOOM) {
+                if (rDrag != null) {
+                    g2d.setColor(Color.CYAN);
+                    g2d.drawRect((int) rDrag.getMinX(), (int) rDrag.getMinY(), (int) (rDrag.getWidth() - rDrag.getX()), (int) (rDrag.getWidth() - rDrag.getX()));
                 }
             }
             g2d.dispose();
@@ -329,6 +399,7 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
             doRedraw = false;
             repaint();
         } catch (Exception e) {
+            System.out.println("ERROR");
             logger.error("Exception while updating Minimap", e);
         //ignore
         }
@@ -345,12 +416,6 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
     @Override
     public void fireMarkersChangedEvent() {
         redraw();
-    }
-
-    public synchronized void fireUpdateLocationByMinimapEvents(int pX, int pY) {
-        for (MinimapListener l : mMinimapListeners) {
-            l.fireUpdateLocationByMinimap(pX, pY);
-        }
     }
 
     public synchronized void fireToolChangedEvents(int pTool) {
@@ -656,6 +721,7 @@ class MinimapRepaintThread extends Thread {
     private boolean drawn = false;
     private Dimension mapDim = null;
     private static MinimapRepaintThread SINGLETON = null;
+    private Rectangle visiblePart = null;
 
     public static synchronized MinimapRepaintThread getSingleton() {
         if (SINGLETON == null) {
@@ -670,6 +736,10 @@ class MinimapRepaintThread extends Thread {
     }
 
     MinimapRepaintThread() {
+    }
+
+    public void setVisiblePart(Rectangle pVisible) {
+        visiblePart = (Rectangle) pVisible.clone();
     }
 
     public void update() {
@@ -699,6 +769,7 @@ class MinimapRepaintThread extends Thread {
                 if (!drawn) {
                     drawn = redraw();
                 }
+
                 MinimapPanel.getSingleton().updateComplete(mBuffer);
                 try {
                     Thread.sleep(100);
@@ -757,8 +828,13 @@ class MinimapRepaintThread extends Thread {
             DEFAULT = Color.WHITE;
         }
 
-        for (int i = 0; i < ServerSettings.getSingleton().getMapDimension().getWidth(); i++) {
-            for (int j = 0; j < ServerSettings.getSingleton().getMapDimension().getHeight(); j++) {
+        double wField = ServerSettings.getSingleton().getMapDimension().getWidth() / (double) visiblePart.width;
+        double hField = ServerSettings.getSingleton().getMapDimension().getHeight() / (double) visiblePart.height;
+
+        //  for (int i = 0; i < ServerSettings.getSingleton().getMapDimension().getWidth(); i++) {
+        //  for (int j = 0; j < ServerSettings.getSingleton().getMapDimension().getHeight(); j++) {
+        for (int i = visiblePart.x; i < (visiblePart.width + visiblePart.x); i++) {
+            for (int j = visiblePart.y; j < (visiblePart.height + visiblePart.y); j++) {
                 Village v = mVisibleVillages[i][j];
                 if (v != null) {
                     Color mark = null;
@@ -799,11 +875,13 @@ class MinimapRepaintThread extends Thread {
                                 g2d.setColor(new Color(35, 125, 0));
                             }
                         }
-                        g2d.fillRect(i, j, 1, 1);
+                        // g2d.fillRect(i, j, 1, 1);
+                        g2d.fillRect((int) Math.round((i - visiblePart.x) * wField), (int) Math.round((j - visiblePart.y) * hField), (int) Math.round(wField), (int) Math.round(hField));
                     } else {
                         if (showBarbarian) {
                             g2d.setColor(Color.BLACK);
-                            g2d.fillRect(i, j, 1, 1);
+                            //  g2d.fillRect(i, j, 1, 1);
+                            g2d.fillRect((int) Math.round((i - visiblePart.x) * wField), (int) Math.round((j - visiblePart.y) * hField), (int) Math.round(wField), (int) Math.round(hField));
                         }
                     }
                 }
@@ -816,7 +894,7 @@ class MinimapRepaintThread extends Thread {
                 Composite c = g2d.getComposite();
                 Composite a = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f);
                 Font f = g2d.getFont();
-                Font t = new Font("Serif", Font.BOLD, 30);
+                Font t = new Font("Serif", Font.BOLD, (int) Math.round(30 * hField));
                 int coordType = ServerSettings.getSingleton().getCoordType();
                 if (coordType != 2) {
                     t = new Font("Serif", Font.BOLD, 20);
@@ -829,17 +907,23 @@ class MinimapRepaintThread extends Thread {
                     mid = 25;
                 }
 
+                mid = (int) Math.round(mid * wField);
+
                 for (int i = 0; i < 10; i++) {
                     for (int j = 0; j < 10; j++) {
                         g2d.setComposite(a);
 
                         String conti = "K" + (j * 10 + i);
                         Rectangle2D bounds = g2d.getFontMetrics(t).getStringBounds(conti, g2d);
-
-                        g2d.drawString(conti, (int) Math.rint(i * fact * 10 + mid - bounds.getWidth() / 2), (int) Math.rint(j * fact * 10 + mid + bounds.getHeight() / 2));
+                        int cx = i * fact * 10 - visiblePart.x;
+                        int cy = j * fact * 10 - visiblePart.y;
+                        cx = (int) Math.round(cx * wField);
+                        cy = (int) Math.round(cy * hField);
+                        g2d.drawString(conti, (int) Math.rint(cx + mid - bounds.getWidth() / 2), (int) Math.rint(cy + mid + bounds.getHeight() / 2));
                         g2d.setComposite(c);
                         int wk = 100;
                         int hk = 100;
+
                         if (coordType != 2) {
                             wk = 50;
                             hk = 50;
@@ -851,9 +935,39 @@ class MinimapRepaintThread extends Thread {
                             hk -= 1;
                         }
 
-                        g2d.drawRect(i * fact * 10, j * fact * 10, wk, hk);
+
+
+                        g2d.drawRect(cx, cy, (int) Math.round(wk * wField), (int) Math.round(hk * hField));
                     }
                 }
+                /*  for (int i = 0; i < 10; i++) {
+                for (int j = 0; j < 10; j++) {
+                g2d.setComposite(a);
+
+                String conti = "K" + (j * 10 + i);
+                Rectangle2D bounds = g2d.getFontMetrics(t).getStringBounds(conti, g2d);
+
+                g2d.drawString(conti, (int) Math.rint(i * fact * 10 + mid - bounds.getWidth() / 2), (int) Math.rint(j * fact * 10 + mid + bounds.getHeight() / 2));
+                g2d.setComposite(c);
+                int wk = 100;
+                int hk = 100;
+
+                if (coordType != 2) {
+                wk = 50;
+                hk = 50;
+                }
+                if (i == 9) {
+                wk -= 1;
+                }
+                if (j == 9) {
+                hk -= 1;
+                }
+
+                int cx = (i * fact * 10);
+                int cy = (j * fact * 10);
+                g2d.drawRect(cx, cy, wk, hk);
+                }
+                }*/
                 g2d.setFont(f);
             }
         } catch (Exception e) {

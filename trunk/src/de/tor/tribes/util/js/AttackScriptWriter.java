@@ -14,6 +14,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import org.apache.log4j.Logger;
 
 /**
  *
@@ -21,9 +22,13 @@ import java.util.List;
  */
 public class AttackScriptWriter {
 
-    public static void writeAttackScript(List<Attack> pAttacks) {
+    private static Logger logger = Logger.getLogger("AttackScriptWriter");
+
+    public static boolean writeAttackScript(List<Attack> pAttacks) {
+        logger.debug("Start writing attack script");
         String tmpl = "";
         try {
+            logger.debug(" - reading template");
             BufferedReader r = new BufferedReader(new InputStreamReader(new FileInputStream("./Scripts/show.tmpl")));
             String line = "";
             while ((line = r.readLine()) != null) {
@@ -31,9 +36,11 @@ public class AttackScriptWriter {
             }
             r.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Failed to read template", e);
+            return false;
         }
 
+        logger.debug(" - building data array");
         String data = "var attacks = new Array(";
         for (Attack a : pAttacks) {
             //set type
@@ -58,38 +65,21 @@ public class AttackScriptWriter {
             //set source and target
             block += "'source':" + a.getSource().getId() + ",\n";
             block += "'target':" + a.getTarget().getId() + ",\n";
-            block += "'targetName':'" + a.getTarget().toString() + "',\n";
+            block += "'targetName':'" + toUnicode(a.getTarget().toString()) + "',\n";
             //unit
             block += "'unit':'" + a.getUnit().getPlainName() + ".png',\n";
             //times
             long sendTime = a.getArriveTime().getTime() - ((long) DSCalculator.calculateMoveTimeInSeconds(a.getSource(), a.getTarget(), a.getUnit().getSpeed()) * 1000);
-            //long remaining = Math.round((sendTime - System.currentTimeMillis()) / 1000);
             Calendar c = Calendar.getInstance();
             c.setTimeInMillis(sendTime);
             int hours = c.get(Calendar.HOUR_OF_DAY);
             int minutes = c.get(Calendar.MINUTE);
             int seconds = c.get(Calendar.SECOND);
-
-
-            block += "'timerValue':'" + (hours * 3600 + minutes * 60 + seconds) + "',\n";
+            long diff = sendTime - System.currentTimeMillis();
+            long days = (long) Math.floor(diff / (24 * 60 * 60 * 1000));
+            block += "'timerValue':'" + (days * (24 * 60 * 60) + hours * 3600 + minutes * 60 + seconds) + "',\n";
             SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
-           /* if (isToday(sendTime)) {
-                df = new SimpleDateFormat("'heute, 'HH:mm:ss");
-            } else if (isTomorrow(sendTime)) {
-                df = new SimpleDateFormat("'morgen, 'HH:mm:ss");
-            } else {
-                df = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
-            }*/
-
             block += "'send':'" + df.format(new Date(sendTime)) + "',\n";
-
-            /*if (isToday(a.getArriveTime().getTime())) {
-                df = new SimpleDateFormat("'heute, 'HH:mm:ss");
-            } else if (isTomorrow(a.getArriveTime().getTime())) {
-                df = new SimpleDateFormat("'morgen, 'HH:mm:ss");
-            } else {
-                df = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
-            }*/
             block += "'arrive':'" + df.format(a.getArriveTime()) + "',\n";
             block += "'expired':" + (long) Math.floor((long) sendTime / 1000) + "\n";
             block += "},\n";
@@ -102,14 +92,18 @@ public class AttackScriptWriter {
 
         tmpl = tmpl.replaceAll("//DATA_LOCATION", data);
         try {
-            FileWriter f = new FileWriter("show.js");
+            logger.debug(" - writing data to 'attack_info.user.js'");
+            FileWriter f = new FileWriter("attack_info.user.js");
             f.write(tmpl);
             f.flush();
             f.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Failed to write script to target file 'attack_info.user.js'", e);
+            return false;
+
         }
-        System.out.println("Done");
+        logger.info("Script written successfully");
+        return true;
     /*var attacks = new Array({
     'type':0,
     'source':111217,
@@ -141,28 +135,41 @@ public class AttackScriptWriter {
 
     }
 
-    private static boolean isToday(long pTime) {
-        Calendar c = Calendar.getInstance();
-        int thisDay = c.get(Calendar.DAY_OF_MONTH);
-        int thisMonth = c.get(Calendar.MONTH);
-        int thisYear = c.get(Calendar.YEAR);
-        c.setTimeInMillis(pTime);
-        int theOtherDay = c.get(Calendar.DAY_OF_MONTH);
-        int theOtherMonth = c.get(Calendar.MONTH);
-        int theOtherYear = c.get(Calendar.YEAR);
-        return ((thisDay == theOtherDay) && (thisMonth == theOtherMonth) && (thisYear == theOtherYear));
+    public static String char2Unicode(char c) {
+        StringBuffer sb = new StringBuffer(Integer.toHexString(c));
+        int len = sb.length();
+        switch (len) {
+            case 0:
+                sb.insert(0, "\\u0000");
+                break;
+            case 1:
+                sb.insert(0, "\\u000");
+                break;
+            case 2:
+                sb.insert(0, "\\u00");
+                break;
+            case 3:
+                sb.insert(0, "\\u0");
+                break;
+            case 4:
+                sb.insert(0, "\\u");
+        }
+        return sb.toString();
     }
 
-    private static boolean isTomorrow(long pTime) {
-        Calendar c = Calendar.getInstance();
-        int thisDay = c.get(Calendar.DAY_OF_MONTH);
-        int thisMonth = c.get(Calendar.MONTH);
-        int thisYear = c.get(Calendar.YEAR);
-        c.setTimeInMillis(pTime);
-        int theOtherDay = c.get(Calendar.DAY_OF_MONTH);
-        int theOtherMonth = c.get(Calendar.MONTH);
-        int theOtherYear = c.get(Calendar.YEAR);
-        return ((thisDay + 1 == theOtherDay) && (thisMonth == theOtherMonth) && (thisYear == theOtherYear));
+    private static String toUnicode(String pString) {
+        String res = "";
+        for (char c : pString.toCharArray()) {
+            res += "\\" + char2Unicode(c);
+        }
+        return res;
+    }
 
+    public static void main(String[] args) {
+        int v = 136628250;
+        int w = 24 * 60 * 60 * 1000;
+        System.out.println(v);
+        System.out.println(w);
+        System.out.println(Math.floor(v / (24 * 60 * 60 * 1000)));
     }
 }

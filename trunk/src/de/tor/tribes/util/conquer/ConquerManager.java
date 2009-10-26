@@ -432,7 +432,9 @@ public class ConquerManager {
                 Tribe winner = DataHolder.getSingleton().getTribes().get(c.getWinner());
                 if (loser != null && winner != null) {
                     if (loser.getAllyID() == winner.getAllyID()) {
-                        friendly++;
+                        if (loser.getAllyID() != 0 && winner.getAllyID() != 0) {
+                            friendly++;
+                        }
                     } else {
                         Ally loserAlly = loser.getAlly();
                         Ally winnerAlly = winner.getAlly();

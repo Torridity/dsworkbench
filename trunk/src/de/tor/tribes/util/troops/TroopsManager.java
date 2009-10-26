@@ -33,7 +33,7 @@ public class TroopsManager {
     private Hashtable<Village, VillageTroopsHolder> mTroops = null;
     private List<TroopsManagerListener> mManagerListeners = null;
     private List<Image> mTroopMarkImages = new LinkedList<Image>();
-
+   
     public static synchronized TroopsManager getSingleton() {
         if (SINGLETON == null) {
             SINGLETON = new TroopsManager();

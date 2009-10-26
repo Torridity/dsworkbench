@@ -77,7 +77,7 @@ public class Tag implements Comparable<Tag> {
         this.sName = pName;
     }
 
-    public TagMapMarker getMapMarker(){
+    public TagMapMarker getMapMarker() {
         return mapMarker;
     }
 

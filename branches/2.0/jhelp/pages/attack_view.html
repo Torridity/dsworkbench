@@ -1,0 +1,163 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>DS Workbench Dokumentation</title>
+<style type="text/css">
+<!--
+.style1 {
+color: #00FF00;
+	background-color:#000000;
+	font-weight: bold;}
+.style2 {
+	color: #FFFF00;
+	background-color:#000000;
+	font-weight: bold;
+}
+.style3 {color: #FF0000;
+	background-color:#000000;
+	font-weight: bold;}
+.style4 {color: #FF9933;
+	background-color:#000000;
+	font-weight: bold;}
+.style6 {color: #666666;
+	background-color:#000000;
+	font-weight: bold;}
+-->
+</style>
+</head>
+
+<body style="background-color:#E1E1E1">
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><img src="../images/ul.gif"></td>
+    <td style="background-image:url(../images/t.gif);background-repeat:repeat" width="100%"/>
+    <td><img src="../images/ur.gif"></td>
+  </tr>
+   <tr valign="top">
+    <td style="background-image:url(../images/l.gif);background-repeat:repeat-y">&nbsp;</td>
+    <td style="background-image:url(../images/c.gif);background-repeat:repeat" width="100%">
+	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td colspan="2"><h2 style="color:#953333">Angriffsübersicht</h2></td>
+      </tr>
+      <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+      <tr>
+        <td colspan="2"><img src="../images/screens/attack_view.gif" width="846" height="890"></td>
+      </tr>
+      <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+      <tr>
+        <td colspan="2"><p>Die <em>Angriffs&uuml;bersicht</em> dient der Verwaltung von und dem Umgang mit erstellten Angriffen. Sie ist somit mehr oder weniger der Dreh- und Angelpunkt von <em>DS Workbench</em>. Angriffe sind in <em>DS Workbench</em> in <em>Angriffspl&auml;nen</em> organisiert. Beim ersten Start existiert lediglich der Standardangriffsplan mit dem Namen <em>'default'. </em>Dieser Plan besitzt einen besonderen Status und kann weder umbenannt noch gel&ouml;scht werden. F&uuml;r alle selbst erstellten Pl&auml;ne kann dies &uuml;ber die drei kleineren Buttons &uuml;ber der Tabelle, neben der Liste der Angriffspl&auml;ne, durchgef&uuml;hrt werden. </p>
+          <p>F&uuml;r einzelne Angriffe besteht die M&ouml;glichkeit, die Art des Angriffs festzulegen. Dies wird dann durch ein entsprechendes Symbol in der letzten Spalte dargestellt. Hier gibt es die folgenden M&ouml;glichkeiten: AG <img src="../images/snob_type.png" width="18" height="18">, Off <img src="../images/off_type.png" width="18" height="18">, Unterst&uuml;tzung <img src="../images/support_type.png" width="16" height="16">, Fake <img src="../images/fake_type.png" width="18" height="18"><br>
+              <br>
+          Die Buttons auf der rechten Seite der Tabelle dienen Aktionen, die in einzelne Aufgabenbereiche untergliedert sind. Diese Bereiche lassen sich einzeln auf- und zuklappen. Die Aktionen der Buttons beziehen sich auf die Angriffe im momentan gew&auml;hlten Angriffsplan und haben die folgenden Aufgaben:</p></td>
+      </tr>
+      <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+      <tr>
+        <td width="10%"><div align="center"><img src="../images/garbage.png" width="24" height="24"></div></td>
+        <td>Alle Angriffe, deren Abschichzeit &uuml;berschritten ist, werden <u>ohne R&uuml;ckfrage</u> entfernt.</td>
+      </tr>
+	  <tr>
+        <td width="10%"><div align="center"><img src="../images/att_remove.png" width="25" height="25"></div></td>
+        <td>Alle markierten Angriffe werden gel&ouml;scht. </td>
+      </tr>
+	   <tr>
+        <td width="10%"><div align="center"><img src="../images/att_copy.png" width="25" height="25"></div></td>
+        <td>Kopieren der markierten Angriffe.</td>
+      </tr>
+	  <tr>
+        <td width="10%"><div align="center"><img src="../images/replace2.png" width="24" height="24"></div></td>
+        <td>Alle markierten Angriffe werden in einen anderen Angriffsplan verschoben. </td>
+      </tr>
+	    <tr>
+        <td width="10%"><div align="center"><img src="../images/att_changeTime.png" width="25" height="25"></div></td>
+        <td>Zeiten f&uuml;r die ausgew&auml;hlten Angriffe &auml;ndern. (<a href="change_attack_times.html"><em>mehr...</em></a>) </td>
+      </tr>
+	
+	  <tr>
+        <td width="10%">&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+	  <tr>
+        <td width="10%"><div align="center"><img src="../images/att_selectAllOrNone.gif" width="25" height="25"></div></td>
+        <td>Alle Angriffe im gew&auml;hlten Angriffsplan ausw&auml;hlen bzw. abw&auml;hlen. </td>
+      </tr><tr>
+        <td width="10%"><div align="center"><img src="../images/att_selectSome.png" width="25" height="25"></div></td>
+        <td>Angriffe nach Spielern oder D&ouml;rfern gefiltert markieren. (<a href="attack_select_filter.html"><em>mehr...</em></a>)</td>
+      </tr>
+	  <tr>
+        <td width="10%"><div align="center"><img src="../images/att_selectInv.gif" width="25" height="25"></div></td>
+        <td>Die aktuelle Auswahl umkehren. </td>
+      </tr>
+	  <tr>
+        <td width="10%"><div align="center"><img src="../images/att_selectDraw.png" width="25" height="25"></div></td>
+        <td>Aktiviert die <em>Einzeichnen</em> Spalte f&uuml;r alle markierten Angriffe, wodurch diese auf der Hauptkarte dargestellt werden. </td>
+      </tr>
+	  <tr>
+        <td width="10%"><div align="center"><img src="../images/att_selectNoDraw.png" width="25" height="25"></div></td>
+        <td>Deaktiviert die <em>Einzeichnen</em> Spalte f&uuml;r alle markierten Angriffe. </td>
+      </tr>
+	  <tr>
+        <td width="10%">&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+	  <tr>
+        <td width="10%"><div align="center"><img src="../images/att_clipboard.png" width="25" height="25"></div></td>
+        <td>Markierte Angriffe werden unformatiert bzw. durch Tabs getrennt in die Zwischenablage kopiert. Anschlie&szlig;end k&ouml;nnen sie &uuml;ber den Shortcut <em>Strg + V</em> in Tabellenkalkulationen wie z.B. <em>Excel</em> oder <em>OpenOffice Calc</em> spaltenweise eingef&uuml;gt werden.</td>
+      </tr>
+	   <tr>
+        <td width="10%"><div align="center"><img src="../images/att_clipboardBB.png" width="25" height="25"></div></td>
+        <td>Markierte Angriffe werden als BB-Codes in die Zwischenablage kopiert und k&ouml;nnen in Stammesforen, IGMs und Notizen eingef&uuml;gt werden. (<a href="bb_export.html"><em>mehr...</em></a>) </td>
+      </tr>
+	   <tr>
+        <td width="10%"><div align="center"><img src="../images/att_HTML.png" width="25" height="25"></div></td>
+        <td>Markierte Angriffe werden als HTML Datei gespeichert. Diese Datei enth&auml;lt neben allen Informationen zu den Angriffen Verlinkungen zum Gastzugang sowie zum Versammlungsplatz des Herkunftsdorfes eines Angriffs. Zus&auml;tzlich zeigt ein Counter live an, wieviel Zeit bis zum Abschicken des Angriffs noch bleibt. </td>
+      </tr>
+	    <tr>
+        <td width="10%"><div align="center"><img src="../images/att_browser.png" width="25" height="25"></div></td>
+        <td>F&uuml;r den gew&auml;hlten Angriff wird der Versammlungsplatz des Herkunftsdorfes im Standardbrowser des Systems ge&ouml;ffnet und die Koordinaten des Zieldorfes werden dort direkt eingetragen. Die Bedingungen f&uuml;r diese Option sind bei den dem Werkzeug f&uuml;r <a href="map_tools.html#ingame_troops"><em>In-Game Truppenbewegungen</em></a> in in der Kategorie <em><a href="map_tools.html">Kartenwerkzeuge</a></em> erw&auml;hnt.</td>
+      </tr>
+	   <tr>
+        <td width="10%"><div align="center"><img src="../images/standard_attacks.png"></div></td>
+        <td>Festlegung der Truppen die bei der &Uuml;bertragung des Angriffs in den Browser f&uuml;r die einzelnen Angriffstype verwendet werden. F&uuml;r die Auswahl wird ein <a href="standard_attacks.html"><em>separater Dialog</em></a> ge&ouml;ffnet, in dem die Truppenanteile festgelegt werden k&ouml;nnen. </td>
+      </tr>
+	  <tr>
+        <td width="10%">&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+	   <tr>
+        <td width="10%"><div align="center"><img src="../images/att_alert.png" width="25" height="25"></div></td>
+        <td><a name="attack_alert"></a>Aktiviert die <em>Benachrichtigung</em> bei anstehenden Angriffen. Ist diese Option aktiviert wird im Hintergrund &uuml;berpr&uuml;ft, ob Angriffe in den n&auml;chsten 10 Minuten abgeschickt werden m&uuml;ssen. Ist dies der Fall, erscheint ein <em>Hinweis</em> f&uuml;r eine<em> </em><a href="misc_settings.html"><em>einstellbare Dauer</em></a> und man kann dar&uuml;ber direkt in die Angriffs&uuml;bersicht wechseln. Die <em>Angriffsbenachrichtigung</em> pr&uuml;ft dabei alle Angriffe in allen Angriffspl&auml;ne und bezieht sich <u>nicht</u> auf die aktuelle Markierung. </td>
+      </tr>
+	   <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+	   <tr>
+        <td colspan="2">Zur besseren &Uuml;bersicht werden die Abschickzeitpunkt farbig markiert, sofern sie 10 Minuten und weniger in der Zukunft liegen. Angriffe die in den n&auml;chsten 10 Minuten abgeschickt werden m&uuml;ssen sind <span class="style1">Gr&uuml;n</span> gekennzeichnet. Sind es weniger als 5 Minuten bis zum Abschickzeitpunkt f&auml;rbt sich der Angriff <span class="style2">Gelb</span>. Betr&auml;gt die verbleibende Zeit weniger als 3 Minuten wird der Angriff <span class="style4">Orange</span> gef&auml;rbt, bei weniger als einer Minute <span class="style3">Rot</span>. Die Farben werden alle 10 Sekunden aktualisiert. Bei  <span class="style6">Dunkelgrau</span> markierten Angriffen ist die notwendige Abschickzeit &uuml;berschritten. </td>
+      </tr>
+	   <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+	   <tr valign="middle">
+        <td style="padding:10px 10px 10px 10px;background-color:#E1D5BE" width="10%"><div align="center"><img src="../images/information.png" width="24" height="24"></div></td>
+        <td style="padding:10px 10px 10px 10px;background-color:#E1D5BE">Die Tabelle kann, wie alle Tabellen in <em>DS Workbench, </em>spaltenweise sortiert werden. Klickt daf&uuml;r einfach auf den Spaltenkopf der Spalte, nach der ihr sortieren wollt. Exportfunktionen werden dann in der aktuellen Sortierung, wie etwa aufsteigend nach der Abschickzeit, vorgenommen. </td>
+      </tr>
+    </table>
+	</td>
+</td>
+    <td style="background-image:url(../images/r.gif);background-repeat:repeat-y">&nbsp;</td>
+  </tr>
+  <tr>
+    <td><img src="../images/ll.gif" width="20" height="20"></td>
+    <td style="background-image:url(../images/b.gif);background-repeat:repeat-x" width="100%">&nbsp;</td>
+    <td><img src="../images/lr.gif" width="20" height="20"></td>
+  </tr>
+</table>
+</body>
+</html>

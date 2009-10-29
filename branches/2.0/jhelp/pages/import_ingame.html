@@ -1,0 +1,134 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>DS Workbench Dokumentation</title>
+</head>
+
+<body style="background-color:#E1E1E1">
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><img src="../images/ul.gif"></td>
+    <td style="background-image:url(../images/t.gif);background-repeat:repeat" width="100%"/>
+    <td><img src="../images/ur.gif"></td>
+  </tr>
+   <tr valign="top">
+    <td style="background-image:url(../images/l.gif);background-repeat:repeat-y">&nbsp;</td>
+    <td style="background-image:url(../images/c.gif);background-repeat:repeat" width="100%"><table width="100%"  border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td colspan="2"><h2 style="color:#953333">Import von Spielinformationen</h2></td>
+      </tr>
+      <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+     <tr>
+        <td colspan="2">Das Problem, was ein externes Tool wie <em>DS Workbench</em> im Vergleich zu Scripten immer haben wird, ist seine Entfernung zum eigentlichen Spiel und somit das Fehlen von wichtigen, spielrelevanten Daten, sogenannten InGame Daten. In <em>DS Workbench</em> wird dieser Nachteil durch die M&ouml;glichkeit, Daten aus dem Spiel &uuml;ber die Zwischenablage in das Tool zu importieren , ein wenig aufgehoben. Da dieser Datenabgleich aus regeltechnischen Gr&uuml;nden manuell erledigt werden muss, wurde versucht, dies so einfach wie m&ouml;glich zu halten.<br>
+          Importiert werden k&ouml;nnen sowohl Truppeninformationen, also auch vorhandene Gruppen und die ihnen zugewiesenen D&ouml;rfer. Da diese Informationen  nur f&uuml;r Premium Account Benutzer verf&uuml;gbar sind, ist das <em>Vorhandensein eines PA</em> f&uuml;r den Import <u>zwingend</u> erforderlich. Weiterhin muss w&auml;hrend des Imports <em>DS Workbench</em> gestartet sein und der Server, auf dem ihr im Spiel angemeldet seid, muss dem Server entsprechen, der in <em>DS Workbench </em>ausgew&auml;hlt ist.</td>
+      </tr>
+      <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+      <tr>
+        <td colspan="2"><h3 style="color:#953333">Import von InGame Truppeninformationen (PA) </h3></td>
+      </tr>
+ <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+	   <tr>
+        <td colspan="2">Um die Information, welche Truppenzahlen in welchem eurer D&ouml;rfer vorhanden ist, nach <em>DS Workbench</em> zu &uuml;bertragen, klickt ihr im Spiel auf <em>&Uuml;bersichten</em> und anschlie&szlig;end auf <em>Truppen</em>, um in die Truppen&uuml;bersicht zu wechseln. Nun w&auml;hlt ihr, der Einfachheit halber, bei <em>Gruppen</em> das Feld <em>[alle]</em> an, um die Informationen aller eurer D&ouml;rfer auf Einmal zu &uuml;bertragen. Nat&uuml;rlich k&ouml;nnt ihr auch nur die Truppeninformationen aus einzelnen Gruppen &uuml;bertragen, das bleibt euch freigestellt.<br>
+          Achtet auch darauf, dass als <em>Filter</em> der Standardwert <em><strong>alle</strong></em> eingestellt ist, wo f&uuml;r jedes Dorf die Werte <em>eigene</em>, <em>im Dorf</em>, <em>ausw&auml;rts</em> und <em>unterwegs</em> angezeigt werden.<br>
+          Nun dr&uuml;ckt ihr <em><strong>Strg + A</strong></em>, um die komplette Seite zu markieren. Anschlie&szlig;end kopiert ihr per <em><strong>Strg + C</strong></em> die komplette Markierung in die Zwischenablage.<br>
+          <em>DS Workbench</em> &uuml;berpr&uuml;ft automatisch in regelm&auml;&szlig;igen Abst&auml;nden den Inhalt der Zwischenablage und wird die Daten sp&auml;testens nach einigen Sekunden von dort einlesen. Wenn das Einlesen erfolgreich war, tauchen die Truppeninformationen in der <a href="troops_view.html"><em>Truppen&uuml;bersicht</em></a> auf. <br>
+          <br>
+          Weiterhin ist es m&ouml;glich, als Filter <em><strong>Unterst&uuml;tzungen</strong></em> zu w&auml;hlen und diese Informationen, wie eben beschrieben, zu kopieren. Daraufhin werden auch diese Daten von <em>DS Workbench</em> eingelesen und k&ouml;nnen im Programm verwendet werden. </td>
+      </tr>
+	   <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+	   <tr valign="middle">
+        <td style="padding:10px 10px 10px 10px;background-color:#E1D5BE" width="10%"><div align="center"><img src="../images/information.png" width="24" height="24"></div></td>
+        <td style="padding:10px 10px 10px 10px;background-color:#E1D5BE">Falls ihr sowohl die Truppen&uuml;bersicht als auch Unterst&uuml;tzungen importiert solltet ihr immer darauf achten, <u><strong>zuerst</strong> die Truppen&uuml;bersich</u> und <u><strong>danach</strong> die Unterst&uuml;tzungen</u> zu importieren, niemals nur die Unterst&uuml;tzungen! Grund daf&uuml;r ist, dass in beiden &Uuml;bersichten &auml;hnliche Informationen enthalten sind, aus dem Import der &Uuml;bersichten jedoch keine 'Truppen im Dorf' oder 'Truppen au&szlig;erhalb' errechnet werden. </td>
+       </tr>
+	   <tr valign="middle">
+        <td style="padding:10px 10px 10px 10px;background-color:#E1D5BE" width="10%"><div align="center"><img src="../images/help.png" width="24" height="24"></div></td>
+        <td style="padding:10px 10px 10px 10px;background-color:#E1D5BE">Seid ihr in der Situation, dass ihr mehr als 1000 D&ouml;rfer besitzt, werdet ihr auf eine Beschr&auml;nkung von <em>Die St&auml;mme</em> treffen, da dort nur max. 1000 D&ouml;rfer bei der Auswahl der Gruppe [alle] angezeigt werden. In diesem Fall m&uuml;sst ihr den Truppenimport einfach f&uuml;r jede der Seiten nacheinander durchf&uuml;hren. Mit 1001 D&ouml;rfern w&auml;r das f&uuml;r zwei Seiten das Vorgehen, wie es oben beschrieben ist.</td>
+       </tr>
+	    <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+<tr>
+        <td colspan="2"><h3 style="color:#953333">Import von InGame Truppeninformationen (Kein PA) </h3></td>
+      </tr>
+	   <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+	   <tr>
+        <td colspan="2">Seid ihr nicht im Besitz eines PAs besteht dennoch die M&ouml;glichkeit, Truppeninformationen eurer D&ouml;rfer zu importieren. Wechselt hierf&uuml;r einfach in den Versammlungsplatz eines eurer D&ouml;rfer und w&auml;hlt dann auf der linken Seite 'Truppen'. <br>
+          Anschlie&szlig;end markiert ihr auch hier die komplette Seite per <strong><em>Strg + A</em></strong> und kopiert sie per <strong><em>Strg + C</em></strong>. Die Truppen sollten nun in <em>DS Workbench</em> eingef&uuml;gt werden. </td>
+      </tr> 
+	  <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+	  <tr valign="middle">
+        <td style="padding:10px 10px 10px 10px;background-color:#E1D5BE" width="10%"><div align="center"><img src="../images/forbidden.png" width="24" height="24"></div></td>
+        <td style="padding:10px 10px 10px 10px;background-color:#E1D5BE">Momentan werden Truppen in anderen D&ouml;rfern und Truppen aus anderen D&ouml;rfern beim Non-PA Import <u><em>nicht aktualisiert</em></u>! Daher wird empfohlen, die Truppeninformationen vor einem erneuten Import zu l&ouml;schen und f&uuml;r alle D&ouml;rfer neu zu importieren, damit keine Differenzen zwischen den Truppen im Spiel und in <em>DS Workbench</em> auftreten. </td>
+       </tr>
+	  
+	   <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+	  <tr>
+        <td colspan="2"><h3 style="color:#953333">Import von Kampfberichten</h3></td>
+      </tr>
+	   <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+	   <tr>
+        <td colspan="2">Neben der M&ouml;glichkeit, Truppen &uuml;ber die entsprechende &Uuml;bersicht zu importieren, kann man Truppeninformationen aus Berichten nach <em>DS Workbench </em>&uuml;bertragen. Markiert hief&uuml;r einfach einen Bericht, beginnend bei <strong>Angreifer: </strong>und endend nach den Truppenangaben des Verteidigers. Nach Bet&auml;tigung von <em><strong>Strg + C</strong></em> werden die Truppeninformationen von <em>Angreifer und Verteidiger</em> von <em>DS Workbench</em> eingelesen. <br>
+          Alternativ kann auch nur die Daten beginnend bei <strong>Verteidiger:</strong> kopieren, um die eigenen Truppeninformationen nicht zu &uuml;berschreiben. </td>
+      </tr>
+	   <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+	  <tr valign="middle">
+        <td style="padding:10px 10px 10px 10px;background-color:#E1D5BE" width="10%"><div align="center"><img src="../images/forbidden.png" width="24" height="24"></div></td>
+        <td style="padding:10px 10px 10px 10px;background-color:#E1D5BE">Informationen aus Kampfberichten k&ouml;nnen von den tats&auml;chlichen Truppeninformationen eines Dorfes stark abweichen. Bestehende (eigene) Truppeninformationen werden von den Informationen aus einem Bericht <u>&uuml;berschrieben</u>! Verluste im Bericht werden diese direkt verrechnet und erst dann einem Dorf zugewiesen. </td>
+       </tr>
+	   <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+	  <tr>
+        <td colspan="2"><h3 style="color:#953333">Import von InGame Gruppen</h3></td>
+      </tr>
+	   <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+	   <tr>
+        <td colspan="2"><a name="groups"></a>Der Import von Gruppen, die in <em>DS Workbench</em> als <em>Tags</em> bezeichnet werden, funktioniert genauso wie der Import von Truppeninformationen. Wechselt hierf&uuml;r einfach in die <em>Gruppen&uuml;bersicht</em>, w&auml;hlt dort als Gruppen wieder <em>[alle]</em> aus und kopiert die Seite per <em><strong>Strg + A</strong></em> und anschlie&szlig;endem <em><strong>Strg + C</strong></em> in die Zwischenablage. Nach kurzer Zeit wird im <em>DS Workbench</em> Fenster ein Popup erscheinen, in dem euch das Programm informiert, welche Gruppen und wieviele D&ouml;rfer in jeder der Gruppen gefunden wurden. Klickt ihr nun auf <em>&Uuml;bernehmen</em>, werden diese Informationen in <em>DS Workbench</em> eingef&uuml;gt. </td>
+      </tr>
+	  <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+	  	    <tr valign="middle">
+        <td style="padding:10px 10px 10px 10px;background-color:#E1D5BE" width="10%"><div align="center"><img src="../images/information.png" width="24" height="24"></div></td>
+        <td style="padding:10px 10px 10px 10px;background-color:#E1D5BE">Solltet ihr im Spiel eine Gruppe umbenennen, so taucht sowohl ihr alter als auch ihr neuer Name in <em>DS Workbench</em> auf, da beim Import keine Gruppen automatisch gel&ouml;scht werden. Dies k&ouml;nnt ihr nach dem Import in den <a href="tag_settings.html"><em>entsprechenden Einstellungen</em></a> manuell selbst durchf&uuml;hren. </td>
+       </tr>
+	    <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+	   <tr valign="middle">
+        <td style="padding:10px 10px 10px 10px;background-color:#E1D5BE" width="10%"><div align="center"><img src="../images/forbidden.png" width="24" height="24"></div></td>
+        <td style="padding:10px 10px 10px 10px;background-color:#E1D5BE">Beim  Import von Gruppen gibt es die Beschr&auml;nkung, dass in <u>keinem</u> Gruppennamen ein Semikolon (;) vorkommen darf, da der Import sonst fehlschl&auml;gt. Weiterhin ist ein Import aus dem <em>Internet Explorer</em>, aufgrund seiner Art der Seitenformatierung, technisch nicht m&ouml;glich. </td>
+       </tr>
+    </table></td>
+</td>
+    <td style="background-image:url(../images/r.gif);background-repeat:repeat-y">&nbsp;</td>
+  </tr>
+  <tr>
+    <td><img src="../images/ll.gif" width="20" height="20"></td>
+    <td style="background-image:url(../images/b.gif);background-repeat:repeat-x" width="100%">&nbsp;</td>
+    <td><img src="../images/lr.gif" width="20" height="20"></td>
+  </tr>
+</table>
+</body>
+</html>

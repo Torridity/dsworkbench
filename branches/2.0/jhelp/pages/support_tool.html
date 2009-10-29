@@ -1,0 +1,86 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>DS Workbench Dokumentation</title>
+</head>
+
+<body style="background-color:#E1E1E1">
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><img src="../images/ul.gif"></td>
+    <td style="background-image:url(../images/t.gif);background-repeat:repeat" width="100%"/>
+    <td><img src="../images/ur.gif"></td>
+  </tr>
+   <tr height="600px" valign="top">
+    <td style="background-image:url(../images/l.gif);background-repeat:repeat-y">&nbsp;</td>
+    <td style="background-image:url(../images/c.gif);background-repeat:repeat" width="100%"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td colspan="2"><h2 style="color:#953333">Das Unterstützungswerkzeug</h2></td>
+      </tr>
+      <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+      <tr>
+        <td colspan="2"><img src="../images/screens/support_tool.gif" width="417" height="306"></td>
+      </tr>
+	        <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+	        <tr>
+        <td colspan="2">Die Anzahl der Einstellungen des <em>Unterst&uuml;tzungswerkzeuges</em> ist recht &uuml;berschaubar. Nat&uuml;rlich muss zuerst die gew&uuml;nschte Ankunftzeit angegebene werden. Die Option <em>Nur Deff ber&uuml;cksichtigen</em> hat den Hintergrund, dass man im Notfall durchaus mal mit LKav oder sonstiger Off ein AG blocken kann, daher ist es f&uuml;r diese F&auml;lle m&ouml;glich, auch Off-Einheiten als potentielle Unterst&uuml;tzung zu ber&uuml;cksichtigen, indem man den Haken entfernt.<br>          <br>
+          Soll nur Deff verwendet werden, ignoriert der <em>Unterst&uuml;tzungsrechner</em> alle Einheiten au&szlig;er <em>Speertr&auml;ger</em>, <em>Schwertk&auml;mpfer</em>, <em>Bogensch&uuml;tze</em>, <em>Schwere Kavallerie</em> und den <em>Paladin</em>. Ansonsten werden nur <em>Sp&auml;her</em>, <em>Rammen</em> und <em>AGs</em> ignoriert, da sie entweder keine oder kaum Verteidigungswirkung haben.
+          &Auml;hnlich verh&auml;lt es sich mit der <em>Liste der ber&uuml;cksichtigten Tags</em>. Hier kann man D&ouml;rfer mit bestimmten Tags von Anfang an ausklammern. So k&ouml;nnen etwa Sp&auml;hd&ouml;rfer abgew&auml;hlt werden, da der Unterst&uuml;tzungsrechner ihre Einheiten ohnehin ignoriert. <br>          <br>
+          Letztendlich gibt das Feld <em>Min. Anzahl Einheiten</em> die Mindestanzahl der <u>langsamsten, m&ouml;glichen Einheit</u> an. Dies dient dazu, dass man nicht Unmengen an Truppenbewegungen aufgelistet bekommt, die am Ende f&uuml;r nur 500 Einheiten im Zieldorf sorgen.</td>
+      </tr>
+	   <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+	  <tr valign="middle">
+        <td style="padding:10px 10px 10px 10px;background-color:#E1D5BE" width="10%"><div align="center"><img src="../images/help.png" width="24" height="24"></div></td>
+        <td style="padding:10px 10px 10px 10px;background-color:#E1D5BE"> Wie bereits im Text hervorgehoben, bezieht sich der Wert der minimalen Anzahl Einheiten auf die langsamste, m&ouml;gliche Einheit. Nehmen wir beispielsweise ein Dorf, in dem 300 Speertr&auml;ger und 9000 Schwertk&auml;mpfer stehen. Die Unterst&uuml;tzung muss in 20 Minuten am Ziel sein, die minimale Anzahl Einheiten ist auf 500 eingestellt. Demnach wird das eben genannte Dorf f&uuml;r eine m&ouml;gliche Unterst&uuml;tzung komplett ignoriert, da die 9000 Schwertk&auml;mpfer nicht rechtzeitig ankommen w&uuml;rden und  die 300 Speertr&auml;ger die 500 Einheiten Grenze nicht &uuml;bersteigen.
+          </td>
+       </tr>
+	   <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+	  <tr>
+        <td colspan="2"><h3 style="color:#953333">Mögliche Unterstützungen</h3></td>
+      </tr>
+	  <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+	  <tr>
+        <td colspan="2"><img src="../images/screens/support_tool_results.gif" width="475" height="250"></td>
+      </tr>
+	  <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+	   <tr>
+        <td colspan="2">Nach einem Klick auf <em>Berechnen</em> wird <em>DS Workbench</em> die mit den angegebenen Einstellungen m&ouml;glichen Unterst&uuml;tzungen aus eigenen D&ouml;rfern bestimmen. Nach kurzer Zeit erscheint entweder eine Meldung, dass keine Unterst&uuml;tzung m&ouml;glich ist, oder es wird der oben gezeigte Ergebnisdialog ge&ouml;ffnet. Hier findet man in einer Tabelle die D&ouml;rfer, aus denen Unterst&uuml;tzung m&ouml;glich ist und welche Einheit dabei die Langsamste sein darf. Ebenso wird die Abschickzeit angezeigt, zu der die Truppen aus dem jeweiligen Dorf sp&auml;testens abgeschickt werden m&uuml;ssen. In der letzten Spalte findet man die Anzahl der bisherigen Verwendungen, wie sie in der Angriffs&uuml;bersicht auftauchen. Ist dieser Wert ungleich 0 sollte man entscheiden, ob man das entsprechende Dorf noch einmal verwenden und die vorhandene Deff ggf. aufteilen m&ouml;chte oder nicht. <br>          
+          <br>
+          Der erste Button im mittleren Bereich dient dazu, die <em>maximale Kampfkraft</em> zu berechnen. Es wird die tats&auml;chliche Truppenst&auml;rke angezeigt, die zur angegebenen Zeit im Zieldorf sein kann. Hier werden die m&ouml;glichen Einheiten der Herkunftsd&ouml;rfer und die <em>Einheiten des Zieldorfes</em>, sofern bekannt, zusammengerechnet und angezeigt. <br>          <br>
+          Der zweite Button &ouml;ffnet  die <a href="runtime_tool.html"><em>Laufzeit&uuml;bersicht</em></a> und markiert die langsamste Einheit der in der Tabelle ausgew&auml;hlten Zeile. So kann man schnell &uuml;berpr&uuml;fen, welche gleichschnellen oder schnelleren Einheiten als Unterst&uuml;tzung in Frage kommen. <br>          <br>
+          Der dritte Button f&uuml;gt die markierten Unterst&uuml;tzungen in die <a href="attack_view.html"><em>Angriffs&uuml;bersicht</em></a> ein.
+          Die letzten beiden Buttons dienen dem Export aller markierten Zeilen in die Zwischenablage. Daf&uuml;r stehen wie gewohnt die beiden M&ouml;glichkeiten <em>unformatiert </em>und <em>als BB-Codes</em> zur Verf&uuml;gung. </td>
+      </tr>
+	  <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+	  <tr valign="middle">
+        <td style="padding:10px 10px 10px 10px;background-color:#E1D5BE" width="10%"><div align="center"><img src="../images/forbidden.png" width="24" height="24"></div></td>
+        <td style="padding:10px 10px 10px 10px;background-color:#E1D5BE"> Der Sonderfall der Unterst&uuml;tzung mit Paladin ist momentan <u>nicht</u> ber&uuml;cksichtigt. Der Paladin z&auml;hlt als eine normale Einheit mit der Laufzeit von 10 Minuten pro Feld. Daher w&uuml;rde das oben erw&auml;hnte Dorf mit den verwendeten Einstellungen auch wegfallen, wenn dort ein Paladin stationiert w&auml;re.</td>
+       </tr>
+    </table>
+	</td>
+</td>
+    <td style="background-image:url(../images/r.gif);background-repeat:repeat-y">&nbsp;</td>
+  </tr>
+  <tr>
+    <td><img src="../images/ll.gif" width="20" height="20"></td>
+    <td style="background-image:url(../images/b.gif);background-repeat:repeat-x" width="100%">&nbsp;</td>
+    <td><img src="../images/lr.gif" width="20" height="20"></td>
+  </tr>
+</table>
+</body>
+</html>

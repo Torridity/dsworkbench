@@ -33,28 +33,46 @@ public class AttackPlanHTMLExporter {
     private static String FOOTER = "";
     private static String BLOCK = "";
     private static boolean TEMPLATE_ERROR = false;
-    //header variables
+    //header and footer variables
     private static final String CREATOR = "\\$CREATOR";
     private static final String SERVER = "\\$SERVER";
     private static final String PLANNAME = "\\$PLANNAME";
     private static final String ATTACK_COUNT = "\\$ATTACK_COUNT";
+    private static final String VERSION = "\\$VERSION";
+    private static final String CREATION_DATE = "\\$CREATION_DATE";
     //block variables
     private static final String ID = "\\$ID";
+    private static final String DIV_CLASS = "\\$DIV_CLASS";
     private static final String TYPE = "\\$TYPE";
     private static final String UNIT = "\\$UNIT";
-    private static final String DIV_CLASS = "\\$DIV_CLASS";
+    private static final String SEND_TIME = "\\$SEND_TIME";
+    private static final String ARRIVE_TIME = "\\$ARRIVE_TIME";
+    private static final String PLACE = "\\$PLACE";
+    //source variables
     private static final String SOURCE_TRIBE = "\\$SOURCE_TRIBE";
+    private static final String SOURCE_PLAYER_LINK = "\\$SOURCE_PLAYER_LINK";
+    private static final String SOURCE_PLAYER_NAME = "\\$SOURCE_PLAYER_NAME";
+    private static final String SOURCE_ALLY_LINK = "\\$SOURCE_ALLY_LINK";
+    private static final String SOURCE_ALLY_NAME = "\\$SOURCE_ALLY_NAME";
+    private static final String SOURCE_ALLY_TAG = "\\$SOURCE_ALLY_TAG";
+    private static final String SOURCE_VILLAGE_LINK = "\\$SOURCE_VILLAGE_LINK";
+    private static final String SOURCE_VILLAGE_NAME = "\\$SOURCE_VILLAGE_NAME";
+    private static final String SOURCE_VILLAGE_COORD = "\\$SOURCE_VILLAGE_COORD";
+    //target variables
+    private static final String TARGET_PLAYER_LINK = "\\$TARGET_PLAYER_LINK";
+    private static final String TARGET_PLAYER_NAME = "\\$TARGET_PLAYER_NAME";
+    private static final String TARGET_ALLY_LINK = "\\$TARGET_ALLY_LINK";
+    private static final String TARGET_ALLY_NAME = "\\$TARGET_ALLY_NAME";
+    private static final String TARGET_ALLY_TAG = "\\$TARGET_ALLY_TAG";
+    private static final String TARGET_VILLAGE_LINK = "\\$TARGET_VILLAGE_LINK";
+    private static final String TARGET_VILLAGE_NAME = "\\$TARGET_VILLAGE_NAME";
+    private static final String TARGET_VILLAGE_COORD = "\\$TARGET_VILLAGE_COORD";
+    //old
     private static final String TARGET_TRIBE = "\\$TARGET_TRIBE";
     private static final String SOURCE_ALLY = "\\$SOURCE_ALLY";
     private static final String TARGET_ALLY = "\\$TARGET_ALLY";
     private static final String SOURCE_VILLAGE = "\\$SOURCE_VILLAGE";
     private static final String TARGET_VILLAGE = "\\$TARGET_VILLAGE";
-    private static final String SEND_TIME = "\\$SEND_TIME";
-    private static final String ARRIVE_TIME = "\\$ARRIVE_TIME";
-    private static final String PLACE = "\\$PLACE";
-    //footer variables
-    private static final String VERSION = "\\$VERSION";
-    private static final String CREATION_DATE = "\\$CREATION_DATE";
 
 
     static {
@@ -159,36 +177,8 @@ public class AttackPlanHTMLExporter {
         }
         SimpleDateFormat f = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
         StringBuffer result = new StringBuffer();
-        // <editor-fold defaultstate="collapsed" desc=" build header">
-        String h = HEADER;
-        //set creator
-        Tribe user = DSWorkbenchMainFrame.getSingleton().getCurrentUser();
-        if (user != null) {
-            h = h.replaceAll(CREATOR, user.toString());
-        } else {
-            h = h.replaceAll(CREATOR, "-");
-        }
-        //set planname
-        if (pPlanName != null) {
-            h = h.replaceAll(PLANNAME, EscapeChars.forHTML(pPlanName));
-        } else {
-            h = h.replaceAll(PLANNAME, "-");
-        }
-        //set attack count
-        NumberFormat nf = NumberFormat.getInstance();
-        nf.setMinimumFractionDigits(0);
-        nf.setMinimumFractionDigits(0);
-        h = h.replaceAll(ATTACK_COUNT, nf.format(pAttacks.size()));
-        //set attack count
-        String server = GlobalOptions.getSelectedServer();
-        if (server != null) {
-            h = h.replaceAll(SERVER, server);
-        } else {
-            h = h.replaceAll(SERVER, "-");
-        }
-
-        result.append(h);
-        // </editor-fold>
+        //append header
+        result.append(replaceHeadFootVariables(HEADER, pPlanName, pAttacks));
 
         int cnt = 0;
         for (Attack a : pAttacks) {
@@ -226,7 +216,7 @@ public class AttackPlanHTMLExporter {
 
             b = b.replaceAll(ID, Integer.toString(cnt));
 
-            String baseURL = ServerManager.getServerURL(server) + "/";
+            String baseURL = ServerManager.getServerURL(GlobalOptions.getSelectedServer()) + "/";
             // <editor-fold defaultstate="collapsed" desc=" replace source tribe and ally">
             Tribe sourceTribe = a.getSource().getTribe();
             if (sourceTribe == null) {
@@ -301,6 +291,10 @@ public class AttackPlanHTMLExporter {
             result.append(b);
             cnt++;
         }
+
+
+        /*
+
         // <editor-fold defaultstate="collapsed" desc=" build footer">
         String foot = FOOTER;
         foot = foot.replaceAll(VERSION, Double.toString(Constants.VERSION) + Constants.VERSION_ADDITION);
@@ -309,7 +303,10 @@ public class AttackPlanHTMLExporter {
 
         foot = foot.replaceAll(CREATION_DATE, f.format(new Date(System.currentTimeMillis())));
         result.append(foot);
-        // </editor-fold>
+        // </editor-fold>*/
+
+        //append footer
+        result.append(replaceHeadFootVariables(FOOTER, pPlanName, pAttacks));
         try {
             FileWriter w = new FileWriter(pHtmlFile);
             w.write(result.toString());
@@ -318,5 +315,41 @@ public class AttackPlanHTMLExporter {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private static String replaceHeadFootVariables(String pBlock, String pPlanName, List<Attack> pAttacks) {
+        String result = pBlock;
+        //set creator
+        Tribe user = DSWorkbenchMainFrame.getSingleton().getCurrentUser();
+        if (user != null) {
+            result = result.replaceAll(CREATOR, user.toString());
+        } else {
+            result = result.replaceAll(CREATOR, "-");
+        }
+        //set planname
+        if (pPlanName != null) {
+            result = result.replaceAll(PLANNAME, EscapeChars.forHTML(pPlanName));
+        } else {
+            result = result.replaceAll(PLANNAME, "-");
+        }
+        //set attack count
+        NumberFormat nf = NumberFormat.getInstance();
+        nf.setMinimumFractionDigits(0);
+        nf.setMinimumFractionDigits(0);
+        result = result.replaceAll(ATTACK_COUNT, nf.format(pAttacks.size()));
+        //set attack count
+        String server = GlobalOptions.getSelectedServer();
+        if (server != null) {
+            result = result.replaceAll(SERVER, server);
+        } else {
+            result = result.replaceAll(SERVER, "-");
+        }
+        //replace version
+        result = result.replaceAll(VERSION, Double.toString(Constants.VERSION) + Constants.VERSION_ADDITION);
+        //replace creation date
+        SimpleDateFormat f = new SimpleDateFormat("dd.MM.yyyy 'um' HH:mm:ss 'Uhr'");
+        result = result.replaceAll(CREATION_DATE, f.format(new Date(System.currentTimeMillis())));
+
+        return result;
     }
 }

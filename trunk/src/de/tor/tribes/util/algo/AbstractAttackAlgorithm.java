@@ -13,6 +13,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
+ * @TOTO (1.8) Check max. snob runtime (add field to settings and check during calculation)
  * @author Jejkal
  */
 public abstract class AbstractAttackAlgorithm {

@@ -2916,32 +2916,36 @@ private void fireRestoreTemplateEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
     @Override
     public void fireDataLoadedEvent(boolean pSuccess) {
         if (pSuccess) {
-            Collection<Tribe> tribes = DataHolder.getSingleton().getTribes().values();
-            Tribe[] ta = tribes.toArray(new Tribe[]{});
-            Arrays.sort(ta, Tribe.CASE_INSENSITIVE_ORDER);
-            DefaultComboBoxModel model = new DefaultComboBoxModel();
+            try {
+                Collection<Tribe> tribes = DataHolder.getSingleton().getTribes().values();
+                Tribe[] ta = tribes.toArray(new Tribe[]{});
+                Arrays.sort(ta, Tribe.CASE_INSENSITIVE_ORDER);
+                DefaultComboBoxModel model = new DefaultComboBoxModel();
 
-            //model.addElement("Bitte wählen");
+                for (Tribe tribe : ta) {
+                    model.addElement(tribe.toString());
+                }
+                jTribeNames.setModel(model);
 
-            for (Tribe tribe : ta) {
-                model.addElement(tribe.toString());
-            }
-            jTribeNames.setModel(model);
-
-            if (GlobalOptions.getProperty("player." + GlobalOptions.getSelectedServer()) != null) {
-                if (model.getIndexOf(GlobalOptions.getProperty("player." + GlobalOptions.getSelectedServer())) != -1) {
-                    jTribeNames.setSelectedItem(GlobalOptions.getProperty("player." + GlobalOptions.getSelectedServer()));
+                if (GlobalOptions.getProperty("player." + GlobalOptions.getSelectedServer()) != null) {
+                    if (model.getIndexOf(GlobalOptions.getProperty("player." + GlobalOptions.getSelectedServer())) != -1) {
+                        jTribeNames.setSelectedItem(GlobalOptions.getProperty("player." + GlobalOptions.getSelectedServer()));
+                    } else {
+                        jTribeNames.setSelectedIndex(0);
+                        GlobalOptions.addProperty("player." + GlobalOptions.getSelectedServer(), (String) jTribeNames.getSelectedItem());
+                    }
                 } else {
                     jTribeNames.setSelectedIndex(0);
-                    GlobalOptions.addProperty("player." + GlobalOptions.getSelectedServer(), ((Tribe) jTribeNames.getSelectedItem()).getName());
+                    GlobalOptions.addProperty("player." + GlobalOptions.getSelectedServer(), (String) jTribeNames.getSelectedItem());
                 }
-            } else {
-                jTribeNames.setSelectedIndex(0);
-                GlobalOptions.addProperty("player." + GlobalOptions.getSelectedServer(), ((Tribe) jTribeNames.getSelectedItem()).getName());
+                if (DSWorkbenchMainFrame.getSingleton().isInitialized()) {
+                    DSWorkbenchMainFrame.getSingleton().serverSettingsChangedEvent();
+                }
+            } catch (Exception e) {
+                logger.error("Failed to setup tribe list", e);
             }
-            if (DSWorkbenchMainFrame.getSingleton().isInitialized()) {
-                DSWorkbenchMainFrame.getSingleton().serverSettingsChangedEvent();
-            }
+
+            logger.info("Loading user data");
             GlobalOptions.loadUserData();
         }
 

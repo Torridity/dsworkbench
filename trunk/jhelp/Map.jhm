@@ -16,9 +16,11 @@
 
 <mapID target="pages.settings" url="pages/settings.html"/>
 
-<mapID target="pages.main_window_basics_layers" url="pages/main_window_basics.html#layers"/>
-
 <mapID target="pages.map_tools_selection_tool" url="pages/map_tools.html#selection_tool"/>
+
+<mapID target="pages.attack_info_script" url="pages/attack_info_script.html"/>
+
+<mapID target="pages.main_window_basics_layers" url="pages/main_window_basics.html#layers"/>
 
 <mapID target="pages.bb_export" url="pages/bb_export.html"/>
 
@@ -27,6 +29,8 @@
 <mapID target="pages.attack_planer_settings_not_assigned" url="pages/attack_planer_settings.html#not_assigned"/>
 
 <mapID target="pages.dswb_script" url="pages/dswb_script.html"/>
+
+<mapID target="pages.template_settings" url="pages/template_settings.html"/>
 
 <mapID target="pages.map_tools_mapshot_tool" url="pages/map_tools.html#mapshot_tool"/>
 
@@ -56,9 +60,9 @@
 
 <mapID target="pages.misc_settings" url="pages/misc_settings.html"/>
 
-<mapID target="pages.attack_planer_bruteforce" url="pages/attack_planer_bruteforce.html"/>
-
 <mapID target="pages.attack_planer_target" url="pages/attack_planer_target.html"/>
+
+<mapID target="pages.attack_planer_bruteforce" url="pages/attack_planer_bruteforce.html"/>
 
 <mapID target="pages.attack_view_attack_alert" url="pages/attack_view.html#attack_alert"/>
 
@@ -88,13 +92,19 @@
 
 <mapID target="pages.attack_view" url="pages/attack_view.html"/>
 
+<mapID target="pages.astar" url="pages/astar.html"/>
+
 <mapID target="pages.troop_density" url="pages/troop_density.html"/>
 
 <mapID target="pages.map_tools_marker" url="pages/map_tools.html#marker"/>
 
 <mapID target="pages.login_settings" url="pages/login_settings.html"/>
 
+<mapID target="pages.distance_overview" url="pages/distance_overview.html"/>
+
 <mapID target="pages.map_navigation" url="pages/map_navigation.html"/>
+
+<mapID target="pages.attack_template_settings" url="pages/attack_template_settings.html"/>
 
 <mapID target="pages.form_view" url="pages/form_view.html"/>
 
@@ -171,6 +181,8 @@
 <mapID target="images.tools.attack_light" url="images/tools/attack_light.png"/>
 
 <mapID target="images.lr" url="images/lr.gif"/>
+
+<mapID target="images.export_js" url="images/export_js.png"/>
 
 <mapID target="images.att_selectAllOrNone" url="images/att_selectAllOrNone.gif"/>
 

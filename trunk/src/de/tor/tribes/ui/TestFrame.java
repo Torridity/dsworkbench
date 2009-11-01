@@ -5,8 +5,14 @@
  */
 package de.tor.tribes.ui;
 
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
+import java.net.URL;
+import javax.swing.ImageIcon;
 
 /**
  *
@@ -14,11 +20,33 @@ import java.awt.event.WindowEvent;
  */
 public class TestFrame extends javax.swing.JFrame {
 
-  
+    public static String icons[] = new String[]{
+        "res/ui/archer.png", "res/ui/axe.png", "res/ui/ram.png", "res/ui/snob.png"};
+
     /** Creates new form TestFrame */
     public TestFrame() {
         initComponents();
-     
+        DockBar dockBar = new DockBar();
+        for (int i = 0; i < 10; ++i) {
+            URL url = DockBar.class.getResource("/" + icons[i % icons.length]);
+            Image img = Toolkit.getDefaultToolkit().getImage(url);
+            ImageIcon imageIcon = new ImageIcon(img);
+            Image image = imageIcon.getImage();
+            BufferedImage b = new BufferedImage(image.getHeight(null), image.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+            Graphics g = b.getGraphics();
+            g.drawImage(image, 0, 0, null);
+            g.dispose();
+
+            b = new BufferedImage(image.getHeight(null), image.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+            g = b.getGraphics();
+            g.drawImage(image, 0, 0, null);
+            g.dispose();
+            dockBar.addApplication("App " + i, b, null);
+        }
+
+        jPanel1.add(dockBar);
+        dockBar.setVisible(true);
+        dockBar.setFrameParent();
     }
 
     /** This method is called from within the constructor to
@@ -30,35 +58,21 @@ public class TestFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jPanel1 = new javax.swing.JPanel();
+        jPanel2 = new javax.swing.JPanel();
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setUndecorated(true);
+        getContentPane().setLayout(new java.awt.BorderLayout(0, 1));
+
+        jPanel1.setMinimumSize(new java.awt.Dimension(100, 10));
+        getContentPane().add(jPanel1, java.awt.BorderLayout.PAGE_END);
+        getContentPane().add(jPanel2, java.awt.BorderLayout.CENTER);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    /**
-     * @param args the command line arguments
-     */
-    /*public static void main(String args[]) throws Exception {
-
-    try {
-    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-    } catch (Exception e) {
-    }
-    java.awt.EventQueue.invokeLater(new Runnable() {
-
-    public void run() {
-    new TestFrame().setVisible(true);
-    }
-    });
-
-    }*/
     public static void main(String args[]) {
-        /*try {
-        UIManager.setLookAndFeel("com.sun.java.swing.plaf.motif.MotifLookAndFeel");
-        } catch (Exception ex) {
-        System.err.println("Error loading L&F: " + ex);
-        }*/
+
 
         TestFrame f = new TestFrame();
         f.addWindowListener(new WindowAdapter() {
@@ -67,7 +81,7 @@ public class TestFrame extends javax.swing.JFrame {
                 System.exit(0);
             }
         });
-       
+
         f.setSize(300, 100);
         f.setVisible(true);
 
@@ -75,5 +89,7 @@ public class TestFrame extends javax.swing.JFrame {
 
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     // End of variables declaration//GEN-END:variables
 }

@@ -3250,7 +3250,6 @@ private void fireTargetAllyFilterChangedEvent(javax.swing.event.CaretEvent evt) 
 
                 DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
                 r.setText((value == null) ? "" : f.format(value));
-                // r.setText(r.getText());
                 return c;
             }
         };
@@ -3260,8 +3259,7 @@ private void fireTargetAllyFilterChangedEvent(javax.swing.event.CaretEvent evt) 
 
 
 
-        jResultsTable.setDefaultRenderer(Boolean.class,
-                invis);
+        jResultsTable.setDefaultRenderer(Boolean.class, invis);
         jResultsTable.setDefaultRenderer(Integer.class, new AttackTypeCellRenderer());
         jResultsTable.setDefaultEditor(Integer.class, new AttackTypeCellEditor());
 

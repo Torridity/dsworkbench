@@ -63,10 +63,13 @@
                       <Component id="jScrollPane1" alignment="1" pref="416" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace min="-2" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="1" attributes="0">
-                      <Component id="jButton1" min="-2" max="-2" attributes="1"/>
-                      <Component id="jButton4" alignment="1" min="-2" max="-2" attributes="1"/>
-                      <Component id="jViewTypeButton" alignment="1" min="-2" max="-2" attributes="1"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="103" groupAlignment="1" attributes="0">
+                          <Component id="jButton1" min="-2" max="-2" attributes="1"/>
+                          <Component id="jButton4" alignment="1" min="-2" max="-2" attributes="1"/>
+                          <Component id="jViewTypeButton" alignment="1" min="-2" max="-2" attributes="1"/>
+                      </Group>
+                      <Component id="jViewTypeButton1" min="-2" max="-2" attributes="1"/>
                   </Group>
                   <EmptySpace min="-2" max="-2" attributes="0"/>
               </Group>
@@ -83,6 +86,8 @@
                           <Component id="jButton4" min="-2" max="-2" attributes="0"/>
                           <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
                           <Component id="jViewTypeButton" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
+                          <Component id="jViewTypeButton1" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <Component id="jScrollPane1" pref="268" max="32767" attributes="0"/>
                   </Group>
@@ -426,6 +431,20 @@
           </Properties>
           <Events>
             <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fireSwitchViewEvent"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="jViewTypeButton1">
+          <Properties>
+            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="df" green="eb" red="ef" type="rgb"/>
+            </Property>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+              <Image iconType="3" name="/res/ui/clipboard.png"/>
+            </Property>
+            <Property name="toolTipText" type="java.lang.String" value="D&#xf6;rfer in der Zwischenablage suchen"/>
+          </Properties>
+          <Events>
+            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fireFindVillageInClipboardEvent"/>
           </Events>
         </Component>
       </SubComponents>

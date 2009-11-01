@@ -40,21 +40,25 @@ public class AttackTypeCellRenderer implements TableCellRenderer {
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         Component c = renderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-        Integer type = (Integer) value;
-        ((JLabel) c).setHorizontalAlignment(SwingConstants.CENTER);
-        if (type == 0) {
-            //no icon!?
-            ((JLabel) c).setText("-");
-            ((JLabel) c).setIcon(null);
-        } else {
-            int pos = type - 1;
-            if (pos >= 0) {
-                ((JLabel) c).setText("");
-                ((JLabel) c).setIcon(icons.get(pos));
-            } else {
+        try {
+            Integer type = (Integer) value;
+            ((JLabel) c).setHorizontalAlignment(SwingConstants.CENTER);
+            if (type == 0) {
+                //no icon!?
                 ((JLabel) c).setText("-");
                 ((JLabel) c).setIcon(null);
+            } else {
+                int pos = type - 1;
+                if (pos >= 0) {
+                    ((JLabel) c).setText("");
+                    ((JLabel) c).setIcon(icons.get(pos));
+                } else {
+                    ((JLabel) c).setText("-");
+                    ((JLabel) c).setIcon(null);
+                }
             }
+        } catch (Exception e) {
+            //cast problem
         }
         return c;
     }

@@ -1311,8 +1311,8 @@ public class MapRenderer extends Thread {
                 //limit alpha min to 60
                 alpha2 = 60;
             }
-            Color c = new Color(r, g, 0, alpha2);
-            Color cc = new Color(0, r, g, alpha2);
+            Color cc = new Color(r, g, 0, alpha2);
+            Color c = new Color(0, r, g, alpha2);
             //calculate circle size
             int size = (int) Math.rint(percOfMax * 3 * villageRect.width);
             if (size < 0.5 * villageRect.width) {

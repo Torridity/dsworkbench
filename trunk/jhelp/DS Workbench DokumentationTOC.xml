@@ -14,6 +14,10 @@
 
    <tocitem text="Netzwerk " target="pages.network_settings" image="images.tictac_grey"/>
 
+   <tocitem text="Templates " target="pages.template_settings" image="images.tictac_orange">
+    <tocitem text="HTML Template erstellen " target="pages.attack_template_settings" image="images.tictac_grey"/>
+
+   </tocitem>
    <tocitem text="Sonstiges " target="pages.misc_settings" image="images.tictac_grey"/>
 
   </tocitem>
@@ -83,6 +87,10 @@
 
     <tocitem text="Auswahl&#252;bersicht " target="pages.selection_tool" image="images.tictac_grey"/>
 
+    <tocitem text="A*Star " target="pages.astar" image="images.tictac_grey"/>
+
+    <tocitem text="Entfernungs&#252;bersicht " target="pages.distance_overview" image="images.tictac_grey"/>
+
    </tocitem>
   </tocitem>
   <tocitem text="Ansichten " target="pages.views" image="images.tictac_orange">
@@ -92,6 +100,8 @@
     <tocitem text="Angriffszeiten ver&#228;ndern " target="pages.change_attack_times" image="images.tictac_grey"/>
 
     <tocitem text="Standardangriffe " target="pages.standard_attacks" image="images.tictac_grey"/>
+
+    <tocitem text="Userscript - Angriffsinformationen " target="pages.attack_info_script" image="images.tictac_grey"/>
 
    </tocitem>
    <tocitem text="Markierungen " target="pages.markers_view" image="images.tictac_grey"/>

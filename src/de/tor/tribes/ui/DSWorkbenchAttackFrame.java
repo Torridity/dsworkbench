@@ -70,6 +70,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
     private static DSWorkbenchAttackFrame SINGLETON = null;
     private List<DefaultTableCellRenderer> renderers = new LinkedList<DefaultTableCellRenderer>();
     private NotifyThread mNotifyThread = null;
+    private CountdownThread mCountdownThread = null;
 
     public static synchronized DSWorkbenchAttackFrame getSingleton() {
         if (SINGLETON == null) {
@@ -147,6 +148,10 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         mNotifyThread = new NotifyThread();
         new ColorUpdateThread().start();
         mNotifyThread.start();
+        mCountdownThread = new CountdownThread();
+        mCountdownThread.setDaemon(true);
+        mCountdownThread.start();
+
         jArriveDateField.setEditor(new DateEditor(jArriveDateField, "dd.MM.yy HH:mm:ss"));
 
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
@@ -156,6 +161,11 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
 // </editor-fold>
         jStandardAttackDialog.pack();
         pack();
+    }
+
+    protected void updateCountdownSettings() {
+        mCountdownThread.updateSettings();
+        AttackManagerTableModel.getSingleton().updateCountdownSettings();
     }
 
     /** This method is called from within the constructor to
@@ -2426,10 +2436,14 @@ private void fireWriteAttacksToScriptEvent(java.awt.event.MouseEvent evt) {//GEN
                 jAttackTable.getColumn(jAttackTable.getColumnName(i)).setHeaderRenderer(renderers.get(i));
             }
             jAttackTable.revalidate();
-            jAttackTable.repaint();//.updateUI();
+            jAttackTable.repaint();
         } catch (Exception e) {
             logger.error("Failed to update attacks table", e);
         }
+    }
+
+    protected void updateCountdown() {
+        jAttackTable.repaint();
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -2648,3 +2662,29 @@ class ColorUpdateThread extends Thread {
 }
 
 //</editor-fold>
+class CountdownThread extends Thread {
+
+    private boolean showCountdown = false;
+
+    public CountdownThread() {
+    }
+
+    public void updateSettings() {
+        showCountdown = Boolean.parseBoolean(GlobalOptions.getProperty("show.live.countdown"));
+    }
+
+    @Override
+    public void run() {
+        while (true) {
+            try {
+                if (showCountdown && DSWorkbenchAttackFrame.getSingleton().isVisible()) {
+                    DSWorkbenchAttackFrame.getSingleton().updateCountdown();
+                    sleep(100);
+                } else {
+                    sleep(1000);
+                }
+            } catch (Exception e) {
+            }
+        }
+    }
+}

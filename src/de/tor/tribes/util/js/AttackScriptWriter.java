@@ -70,14 +70,14 @@ public class AttackScriptWriter {
             block += "'unit':'" + a.getUnit().getPlainName() + ".png',\n";
             //times
             long sendTime = a.getArriveTime().getTime() - ((long) DSCalculator.calculateMoveTimeInSeconds(a.getSource(), a.getTarget(), a.getUnit().getSpeed()) * 1000);
-            Calendar c = Calendar.getInstance();
-            c.setTimeInMillis(sendTime);
-            int hours = c.get(Calendar.HOUR_OF_DAY);
-            int minutes = c.get(Calendar.MINUTE);
-            int seconds = c.get(Calendar.SECOND);
-            long diff = sendTime - System.currentTimeMillis();
-            long days = (long) Math.floor(diff / (24 * 60 * 60 * 1000));
-            block += "'timerValue':'" + (days * (24 * 60 * 60) + hours * 3600 + minutes * 60 + seconds) + "',\n";
+            Calendar midnight = Calendar.getInstance();
+            midnight.set(Calendar.HOUR_OF_DAY, 0);
+            midnight.set(Calendar.MINUTE, 0);
+            midnight.set(Calendar.SECOND, 0);
+            midnight.set(Calendar.MILLISECOND, 0);
+            //calculate difference from today midnight
+            long diff = sendTime - midnight.getTimeInMillis();
+            block += "'timerValue':'" + (int) Math.round((double) diff / 1000.0) + "',\n";
             SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
             block += "'send':'" + df.format(new Date(sendTime)) + "',\n";
             block += "'arrive':'" + df.format(a.getArriveTime()) + "',\n";

@@ -131,7 +131,7 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame {
         jCopyFromClipboardEvent2 = new javax.swing.JButton();
         jCheckBox1 = new javax.swing.JCheckBox();
 
-        setTitle("Entfernungsbestimmung");
+        setTitle("Entfernungsübersicht");
 
         jPanel1.setBackground(new java.awt.Color(239, 235, 223));
 

@@ -246,7 +246,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
                 DSWorkbenchSettingsDialog.getSingleton().setVisible(true);
             }
         } catch (Exception e) {
-            logger.warn("Failed to open profile manager");
+            logger.warn("Failed to open profile manager", e);
         }
 
         // <editor-fold defaultstate="collapsed" desc=" Check for data updates ">

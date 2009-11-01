@@ -29,10 +29,13 @@ import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.VillageSelectionListener;
 import de.tor.tribes.util.html.SelectionHTMLExporter;
+import de.tor.tribes.util.parser.VillageParser;
 import de.tor.tribes.util.tag.TagManager;
 import java.awt.Point;
 import java.awt.Toolkit;
+import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
 import java.io.File;
 import java.text.NumberFormat;
 import java.util.Collections;
@@ -78,7 +81,7 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
         buildTree();
         //<editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
         GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.selection_tool", GlobalOptions.getHelpBroker().getHelpSet());
-    //</editor-fold>
+        //</editor-fold>
     }
 
     public void clear() {
@@ -147,7 +150,7 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
             }
         }
         ((DefaultTreeModel) jSelectionTree.getModel()).setRoot(mRoot);
-    //jSelectionTree.setCellRenderer(new NodeCellRenderer());
+        //jSelectionTree.setCellRenderer(new NodeCellRenderer());
     }
 
     /** This method is called from within the constructor to
@@ -182,6 +185,7 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
         jYEnd = new javax.swing.JSpinner();
         jButton2 = new javax.swing.JButton();
         jViewTypeButton = new javax.swing.JButton();
+        jViewTypeButton1 = new javax.swing.JButton();
         jAlwaysOnTopBox = new javax.swing.JCheckBox();
 
         setTitle("Auswahl");
@@ -406,6 +410,15 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
             }
         });
 
+        jViewTypeButton1.setBackground(new java.awt.Color(239, 235, 223));
+        jViewTypeButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/clipboard.png"))); // NOI18N
+        jViewTypeButton1.setToolTipText("Dörfer in der Zwischenablage suchen");
+        jViewTypeButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireFindVillageInClipboardEvent(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -417,10 +430,12 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
                     .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 416, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jButton1)
-                    .addComponent(jButton4)
-                    .addComponent(jViewTypeButton))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(jButton1)
+                        .addComponent(jButton4)
+                        .addComponent(jViewTypeButton))
+                    .addComponent(jViewTypeButton1))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -433,7 +448,9 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jButton4)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jViewTypeButton))
+                        .addComponent(jViewTypeButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jViewTypeButton1))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 268, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -679,7 +696,7 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
 
             fireSelectionFinishedEvent(new Point(xs, ys), new Point(xe, ye));
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Error during selection", e);
         }
 
     }//GEN-LAST:event_fireSelectRegionEvent
@@ -688,6 +705,21 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
         treeMode = !treeMode;
         buildTree();
     }//GEN-LAST:event_fireSwitchViewEvent
+
+    private void fireFindVillageInClipboardEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireFindVillageInClipboardEvent
+        try {
+            Transferable t = (Transferable) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
+            List<Village> villages = VillageParser.parse((String) t.getTransferData(DataFlavor.stringFlavor));
+            if (villages == null || villages.isEmpty()) {
+                JOptionPaneHelper.showInformationBox(this, "Es konnten keine Dorfkoodinaten in der Zwischenablage gefunden werden.", "Information");
+                return;
+            } else {
+                addVillages(villages);
+            }
+        } catch (Exception e) {
+            logger.error("Failed to parse villages from clipboard", e);
+        }
+    }//GEN-LAST:event_fireFindVillageInClipboardEvent
 
     public List<Village> getSelectedElements() {
         TreePath[] paths = jSelectionTree.getSelectionModel().getSelectionPaths();
@@ -780,6 +812,7 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTree jSelectionTree;
     private javax.swing.JButton jViewTypeButton;
+    private javax.swing.JButton jViewTypeButton1;
     private javax.swing.JSpinner jXEnd;
     private javax.swing.JSpinner jXStart;
     private javax.swing.JSpinner jYEnd;
@@ -817,6 +850,26 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
         } catch (Exception e) {
             //occurs if no rect was opened by selection tool -> ignore
         }
+    }
+
+    public void addVillages(List<Village> pVillages) {
+        boolean showBarbarian = true;
+        try {
+            showBarbarian = Boolean.parseBoolean(GlobalOptions.getProperty("show.barbarian"));
+        } catch (Exception e) {
+            showBarbarian = true;
+        }
+        for (Village v : pVillages) {
+            if ((v != null && v.getTribe() == null) && !showBarbarian) {
+                //dont select barbarians if they are not visible
+            } else {
+                if (v != null && !treeData.contains(v)) {
+                    treeData.add(v);
+                }
+            }
+        }
+        Collections.sort(treeData, Village.ALLY_TRIBE_VILLAGE_COMPARATOR);
+        buildTree();
     }
 }
 

@@ -24,6 +24,8 @@ import org.apache.log4j.Logger;
 
 /**
  * @TODO (DIFF) Included UV mode
+ * @TODO (DIFF) Included new template vars
+ * @TODO (1.8) Add standard/sample templates to 'template' dir
  * @author Charon
  */
 public class AttackPlanHTMLExporter {
@@ -49,7 +51,6 @@ public class AttackPlanHTMLExporter {
     private static final String ARRIVE_TIME = "\\$ARRIVE_TIME";
     private static final String PLACE = "\\$PLACE";
     //source variables
-    private static final String SOURCE_TRIBE = "\\$SOURCE_TRIBE";
     private static final String SOURCE_PLAYER_LINK = "\\$SOURCE_PLAYER_LINK";
     private static final String SOURCE_PLAYER_NAME = "\\$SOURCE_PLAYER_NAME";
     private static final String SOURCE_ALLY_LINK = "\\$SOURCE_ALLY_LINK";
@@ -67,14 +68,7 @@ public class AttackPlanHTMLExporter {
     private static final String TARGET_VILLAGE_LINK = "\\$TARGET_VILLAGE_LINK";
     private static final String TARGET_VILLAGE_NAME = "\\$TARGET_VILLAGE_NAME";
     private static final String TARGET_VILLAGE_COORD = "\\$TARGET_VILLAGE_COORD";
-    //old
-    private static final String TARGET_TRIBE = "\\$TARGET_TRIBE";
-    private static final String SOURCE_ALLY = "\\$SOURCE_ALLY";
-    private static final String TARGET_ALLY = "\\$TARGET_ALLY";
-    private static final String SOURCE_VILLAGE = "\\$SOURCE_VILLAGE";
-    private static final String TARGET_VILLAGE = "\\$TARGET_VILLAGE";
-
-
+   
     static {
         loadCustomTemplate();
     }
@@ -183,11 +177,16 @@ public class AttackPlanHTMLExporter {
         int cnt = 0;
         for (Attack a : pAttacks) {
             String b = BLOCK;
+            // <editor-fold defaultstate="collapsed" desc="Replace DIV-IDs">
             if (cnt % 2 == 0) {
                 b = b.replaceAll(DIV_CLASS, "odd_div");
             } else {
                 b = b.replaceAll(DIV_CLASS, "even_div");
             }
+            b = b.replaceAll(ID, Integer.toString(cnt));
+            // </editor-fold>
+
+            // <editor-fold defaultstate="collapsed" desc="Replace Unit Icons">
             UnitHolder unit = a.getUnit();
             b = b.replaceAll(UNIT, "<img src=\"http://www.dsworkbench.de/DSWorkbench/export/" + unit.getPlainName() + ".png\">");
 
@@ -213,67 +212,113 @@ public class AttackPlanHTMLExporter {
                     break;
                 }
             }
-
-            b = b.replaceAll(ID, Integer.toString(cnt));
+            // </editor-fold>
 
             String baseURL = ServerManager.getServerURL(GlobalOptions.getSelectedServer()) + "/";
+
             // <editor-fold defaultstate="collapsed" desc=" replace source tribe and ally">
             Tribe sourceTribe = a.getSource().getTribe();
+            String sourceTribeName = "";
+            String sourceTribeLink = "";
+            String sourceAllyName = "";
+            String sourceAllyTag = "";
+            String sourceAllyLink = "";
+            String sourceVillageName = "";
+            String sourceVillageCoord = "";
+            String sourceVillageLink = "";
+
             if (sourceTribe == null) {
                 //tribe is null, so it is a barbarian village
-                b = b.replaceAll(SOURCE_TRIBE, "Barbaren");
-                b = b.replaceAll(SOURCE_ALLY, "Barbaren");
+                sourceTribeName = "Barbaren";
+                sourceAllyName = "Barbaren";
             } else {
-                String tribeGuest = baseURL;
-                tribeGuest += "guest.php?screen=info_player&id=" + sourceTribe.getId();
-                b = b.replaceAll(SOURCE_TRIBE, "<a href=\"" + tribeGuest + "\" target=\"_blank\">" + EscapeChars.forHTML(sourceTribe.getName()) + "</a>");
+                sourceTribeLink = baseURL;
+                sourceTribeLink += "guest.php?screen=info_player&id=" + sourceTribe.getId();
+                sourceTribeName = sourceTribe.getName();
+
                 //replace source tribe
                 Ally sourceAlly = sourceTribe.getAlly();
                 if (sourceAlly == null) {
                     //tribe has no ally
-                    b = b.replaceAll(SOURCE_ALLY, "Kein Stamm");
+                    sourceAllyName = "Kein Stamm";
                 } else {
                     //ally valid
-                    String allyGuest = baseURL;
-                    allyGuest += "guest.php?screen=info_ally&id=" + sourceAlly.getId();
-                    b = b.replaceAll(SOURCE_ALLY, "<a href=\"" + allyGuest + "\" target=\"_blank\">" + EscapeChars.forHTML(sourceAlly.getName()) + " (" + EscapeChars.forHTML(sourceAlly.getTag()) + ")" + "</a>");
+                    sourceAllyName = sourceAlly.getName();
+                    sourceAllyTag = sourceAlly.getTag();
+                    sourceAllyLink = baseURL;
+                    sourceAllyLink += "guest.php?screen=info_ally&id=" + sourceAlly.getId();
                 }
             }
             //replace source village
-            String villageGuest = baseURL;
-            villageGuest += "guest.php?screen=info_village&id=" + a.getSource().getId();
-            b = b.replaceAll(SOURCE_VILLAGE, "<a href=\"" + villageGuest + "\" target=\"_blank\">" + EscapeChars.forHTML(a.getSource().getName()) + "</a>");
+            sourceVillageLink = baseURL;
+            sourceVillageLink += "guest.php?screen=info_village&id=" + a.getSource().getId();
+            sourceVillageName = a.getSource().getFullName();
+            sourceVillageCoord = a.getSource().getCoordAsString();
+
+            //replace values
+            b = b.replaceAll(SOURCE_PLAYER_NAME, sourceTribeName);
+            b = b.replaceAll(SOURCE_PLAYER_LINK, sourceTribeLink);
+            b = b.replaceAll(SOURCE_ALLY_NAME, sourceAllyName);
+            b = b.replaceAll(SOURCE_ALLY_TAG, sourceAllyTag);
+            b = b.replaceAll(SOURCE_ALLY_LINK, sourceAllyLink);
+            b = b.replaceAll(SOURCE_VILLAGE_NAME, sourceVillageName);
+            b = b.replaceAll(SOURCE_VILLAGE_COORD, sourceVillageCoord);
+            b = b.replaceAll(SOURCE_VILLAGE_LINK, sourceVillageLink);
+
             //</editor-fold>
 
             // <editor-fold defaultstate="collapsed" desc=" replace target tribe and ally">
             Tribe targetTribe = a.getTarget().getTribe();
+            String targetTribeName = "";
+            String targetTribeLink = "";
+            String targetAllyName = "";
+            String targetAllyTag = "";
+            String targetAllyLink = "";
+            String targetVillageName = "";
+            String targetVillageCoord = "";
+            String targetVillageLink = "";
+
             if (targetTribe == null) {
                 //tribe is null, so it is a barbarian village
-                b = b.replaceAll(TARGET_TRIBE, "Barbaren");
-                b = b.replaceAll(TARGET_ALLY, "Barbaren");
+                targetTribeName = "Barbaren";
+                targetAllyName = "Barbaren";
             } else {
-                String tribeGuest = baseURL;
-                tribeGuest += "guest.php?screen=info_player&id=" + targetTribe.getId();
-                b = b.replaceAll(TARGET_TRIBE, "<a href=\"" + tribeGuest + "\" target=\"_blank\">" + EscapeChars.forHTML(targetTribe.getName()) + "</a>");
+                targetTribeLink = baseURL;
+                targetTribeLink += "guest.php?screen=info_player&id=" + targetTribe.getId();
+                targetTribeName = targetTribe.getName();
+
                 //replace source tribe
                 Ally targetAlly = targetTribe.getAlly();
                 if (targetAlly == null) {
                     //tribe has no ally
-                    b = b.replaceAll(TARGET_ALLY, "Kein Stamm");
+                    targetAllyName = "Kein Stamm";
                 } else {
                     //ally valid
-                    String allyGuest = baseURL;
-                    allyGuest += "guest.php?screen=info_ally&id=" + targetAlly.getId();
-                    b = b.replaceAll(TARGET_ALLY, "<a href=\"" + allyGuest + "\" target=\"_blank\">" + EscapeChars.forHTML(targetAlly.getName()) + " (" + EscapeChars.forHTML(targetAlly.getTag()) + ")" + "</a>");
+                    targetAllyName = targetAlly.getName();
+                    targetAllyTag = targetAlly.getTag();
+                    targetAllyLink = baseURL;
+                    targetAllyLink += "guest.php?screen=info_ally&id=" + targetAlly.getId();
                 }
             }
-            //replace target village
-            villageGuest = baseURL;
-            villageGuest += "guest.php?screen=info_village&id=" + a.getTarget().getId();
-            b = b.replaceAll(TARGET_VILLAGE, "<a href=\"" + villageGuest + "\" target=\"_blank\">" + EscapeChars.forHTML(a.getTarget().getName()) + "</a>");
+            //replace source village
+            targetVillageLink = baseURL;
+            targetVillageLink += "guest.php?screen=info_village&id=" + a.getTarget().getId();
+            targetVillageName = a.getTarget().getFullName();
+            targetVillageCoord = a.getTarget().getCoordAsString();
+
+            //replace values
+            b = b.replaceAll(TARGET_PLAYER_NAME, targetTribeName);
+            b = b.replaceAll(TARGET_PLAYER_LINK, targetTribeLink);
+            b = b.replaceAll(TARGET_ALLY_NAME, targetAllyName);
+            b = b.replaceAll(TARGET_ALLY_TAG, targetAllyTag);
+            b = b.replaceAll(TARGET_ALLY_LINK, targetAllyLink);
+            b = b.replaceAll(TARGET_VILLAGE_NAME, targetVillageName);
+            b = b.replaceAll(TARGET_VILLAGE_COORD, targetVillageCoord);
+            b = b.replaceAll(TARGET_VILLAGE_LINK, targetVillageLink);
+
             //</editor-fold>
 
-
+            // <editor-fold defaultstate="collapsed" desc="Replace times and place URL">
             //replace arrive time
             String arrive = f.format(a.getArriveTime());
             b = b.replaceAll(ARRIVE_TIME, arrive);
@@ -287,23 +332,14 @@ public class AttackPlanHTMLExporter {
                 placeURL = baseURL + "game.php?t=" + uvID + "&village=";
             }
             placeURL += a.getSource().getId() + "&screen=place&mode=command&target=" + a.getTarget().getId();
-            b = b.replaceAll(PLACE, "<a href=\"" + placeURL + "\" target=\"_blank\">Versammlungsplatz</a>");
+
+            //b = b.replaceAll(PLACE, "<a href=\"" + placeURL + "\" target=\"_blank\">Versammlungsplatz</a>");
+            b = b.replaceAll(PLACE, placeURL);
+            // </editor-fold>
+
             result.append(b);
             cnt++;
         }
-
-
-        /*
-
-        // <editor-fold defaultstate="collapsed" desc=" build footer">
-        String foot = FOOTER;
-        foot = foot.replaceAll(VERSION, Double.toString(Constants.VERSION) + Constants.VERSION_ADDITION);
-
-        f = new SimpleDateFormat("dd.MM.yyyy 'um' HH:mm:ss 'Uhr'");
-
-        foot = foot.replaceAll(CREATION_DATE, f.format(new Date(System.currentTimeMillis())));
-        result.append(foot);
-        // </editor-fold>*/
 
         //append footer
         result.append(replaceHeadFootVariables(FOOTER, pPlanName, pAttacks));

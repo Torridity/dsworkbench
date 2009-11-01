@@ -119,6 +119,29 @@ public class Village implements Comparable {
         return name;
     }
 
+    public String getCoordAsString() {
+        String coord = "";
+        if (ServerSettings.getSingleton().getCoordType() != 2) {
+            int[] hier = DSCalculator.xyToHierarchical((int) getX(), (int) getY());
+            coord = "(" + hier[0] + ":" + hier[1] + ":" + hier[2] + ")";
+        } else {
+            coord = "(" + getX() + "|" + getY() + ")";
+        }
+        return coord;
+    }
+
+    public String getFullName() {
+        String res = getName();
+        res += " " + getCoordAsString();
+        int cont = getContinent();
+        if (cont < 10) {
+            res += " K0" + cont;
+        } else {
+            res += " K" + cont;
+        }
+        return res;
+    }
+
     public void setName(String name) {
         this.name = name;
         stringRepresentation = null;

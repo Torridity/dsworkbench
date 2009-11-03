@@ -8,13 +8,13 @@ import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
-import de.tor.tribes.util.troops.TroopsFilterInterface;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.TroopsManagerListener;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.text.NumberFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
@@ -72,6 +72,8 @@ public class TroopsManagerTableModel extends AbstractTableModel {
         typesList.add(Integer.class);
         namesList.add("");
         typesList.add(Integer.class);
+        namesList.add("");
+        typesList.add(Float.class);
 
         types = typesList.toArray(new Class[]{});
         colNames = namesList.toArray(new String[]{});
@@ -171,7 +173,6 @@ public class TroopsManagerTableModel extends AbstractTableModel {
                             default:
                                 return TroopsManager.getSingleton().getTroopsForVillage(row).getTroopsInVillage().get(unit);
                         }
-                    //    return TroopsManager.getSingleton().getTroopsForVillage(row).getTroops().get(troopIndex);
                     } catch (Exception e) {
                         return 0;
                     }
@@ -188,8 +189,15 @@ public class TroopsManagerTableModel extends AbstractTableModel {
                     } //in/out count
                     else if (columnIndex == unitCount + 7) {
                         return TroopsManager.getSingleton().getTroopsForVillage(row).getSupportTargets().size();
-                    } else {
+                    } else if (columnIndex == unitCount + 8) {
                         return TroopsManager.getSingleton().getTroopsForVillage(row).getSupports().size();
+                    }//Farm space
+                    else {
+                        try {
+                            return TroopsManager.getSingleton().getTroopsForVillage(row).getFarmSpace();
+                        } catch (Exception e) {
+                            return 0.0f;
+                        }
                     }
                 }
             }
@@ -203,14 +211,17 @@ public class TroopsManagerTableModel extends AbstractTableModel {
                 //not allowed
                 break;
             }
+
             case 1: {
                 //not allowed
                 break;
             }
+
             case 2: {
                 //not allowed
                 break;
             }
+
             default: {
                 int troopIndex = pCol - 3;
                 Village row = TroopsManager.getSingleton().getVillages()[pRow];
@@ -221,6 +232,7 @@ public class TroopsManagerTableModel extends AbstractTableModel {
                 } catch (Exception e) {
                     return;
                 }
+
                 if (viewType == SHOW_FORGEIGN_TROOPS) {
                     return;
                 }
@@ -232,21 +244,25 @@ public class TroopsManagerTableModel extends AbstractTableModel {
                         //own changed, so update in-village troops
                         holder.updateSupportValues();
                         break;
+
                     case SHOW_TROOPS_OUTSIDE:
                         TroopsManager.getSingleton().getTroopsForVillage(row).getTroopsOutside().put(unit, value);
                         break;
+
                     case SHOW_TROOPS_ON_THE_WAY:
                         TroopsManager.getSingleton().getTroopsForVillage(row).getTroopsOnTheWay().put(unit, value);
                         break;
+
                     default:
                     //not allowed due to troops in village are calculated
-                    //TroopsManager.getSingleton().getTroopsForVillage(row).getTroopsInVillageWithoutSupport().put(unit, value);
                 }
 
                 //refresh time
                 TroopsManager.getSingleton().getTroopsForVillage(row).setState(Calendar.getInstance().getTime());
                 fireTableDataChanged();
+
             }
+
         }
     }
 }

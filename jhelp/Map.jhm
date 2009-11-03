@@ -16,6 +16,8 @@
 
 <mapID target="pages.settings" url="pages/settings.html"/>
 
+<mapID target="pages.map_tools_zoom_minimap" url="pages/map_tools.html#zoom_minimap"/>
+
 <mapID target="pages.map_tools_selection_tool" url="pages/map_tools.html#selection_tool"/>
 
 <mapID target="pages.attack_info_script" url="pages/attack_info_script.html"/>
@@ -69,6 +71,8 @@
 <mapID target="pages.player_server_settings" url="pages/player_server_settings.html"/>
 
 <mapID target="pages.attack_planer_source" url="pages/attack_planer_source.html"/>
+
+<mapID target="pages.attack_view_export_attack_info" url="pages/attack_view.html#export_attack_info"/>
 
 <mapID target="pages.search_tool" url="pages/search_tool.html"/>
 

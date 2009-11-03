@@ -833,14 +833,12 @@
                       </Group>
                       <EmptySpace min="-2" pref="36" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="jPanel5" pref="175" max="32767" attributes="0"/>
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="jDefaultMarkBox" min="-2" max="-2" attributes="0"/>
                               <EmptySpace pref="125" max="-2" attributes="0"/>
                           </Group>
-                          <Group type="103" alignment="1" groupAlignment="1" attributes="0">
-                              <Component id="jPanel5" alignment="0" pref="175" max="32767" attributes="0"/>
-                              <Component id="jPanel1" alignment="0" pref="175" max="32767" attributes="0"/>
-                          </Group>
+                          <Component id="jPanel1" alignment="1" pref="175" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace min="-2" pref="166" max="-2" attributes="0"/>
                   </Group>
@@ -862,9 +860,9 @@
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jPanel5" min="-2" pref="72" max="-2" attributes="0"/>
+                          <Component id="jPanel5" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="151" max="32767" attributes="0"/>
+                      <EmptySpace pref="131" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -1078,6 +1076,12 @@
                 <Component class="javax.swing.JCheckBox" name="jShowPopupRanks">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="R&#xe4;nge anzeigen"/>
+                    <Property name="opaque" type="boolean" value="false"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JCheckBox" name="jShowPopupFarmSpace">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Bauernhof F&#xfc;llstand anzeigen"/>
                     <Property name="opaque" type="boolean" value="false"/>
                   </Properties>
                 </Component>

@@ -25,7 +25,7 @@ import org.apache.log4j.Logger;
 /**
  * @TODO (DIFF) Included UV mode
  * @TODO (DIFF) Included new template vars
- * @TODO (1.8) Add standard/sample templates to 'template' dir
+ * @TODO (DIFF) Add standard/sample templates to 'template' dir
  * @author Charon
  */
 public class AttackPlanHTMLExporter {

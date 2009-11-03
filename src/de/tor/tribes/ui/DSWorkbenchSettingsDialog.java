@@ -251,6 +251,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             if (v == null) {
                 //activate by default on first startup
                 jShowLiveCountdown.setSelected(true);
+                GlobalOptions.addProperty("show.live.countdown", Boolean.toString(true));
             } else {
                 if (Boolean.parseBoolean(v)) {
                     jShowLiveCountdown.setSelected(true);

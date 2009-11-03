@@ -3,6 +3,13 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <title>DS Workbench Dokumentation</title>
+<style type="text/css">
+<!--
+.Stil1 {color: #FF0000}
+.Stil2 {color: #33FF00}
+.Stil4 {color: #966E56}
+-->
+</style>
 </head>
 
 <body style="background-color:#E1E1E1">
@@ -23,15 +30,91 @@
         <td colspan="2">&nbsp;</td>
       </tr>
       <tr>
-        <td colspan="2">&nbsp;</td>
+        <td colspan="2">Dieses Userscript bietet euch die M&ouml;glichkeit, in <em>DS Workbench</em> geplante Angriffe im Spiel anzeigen zu lassen, um auch dort den &Uuml;berblick zu behalten. Die Erstellung des Scripts funktioniert &uuml;ber den in der <a href="attack_view.html#export_attack_info"><em>Angriffs&uuml;bersicht</em></a> beschriebenen Button. &Uuml;ber diesen Button werden alle markierten Angriffe verwendet und das Script '<strong><em>attack_info.user.js</em></strong>' wird direkt im <em>DS Workbench</em> Verzeichnis erstellt. Nun m&uuml;sst ihr das Script noch in euren Browser einf&uuml;gen. </td>
       </tr>
       <tr>
         <td colspan="2">&nbsp;</td>
       </tr>
+	   <tr>
+        <td colspan="2"><h3 style="color:#953333">Installation unter Firefox</h3></td>
+      </tr>
+	  <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+	  <tr>
+        <td colspan="2">Um das Script unter Firefox zu verwenden wird die Erweiterung <em>Greasemonkey</em> ben&ouml;tigt. Einen entsprechenden Download findet man einfach &uuml;ber Google. Anschlie&szlig;end zieht man das Script mit gedr&uuml;ckter linker Maustaste in den ge&ouml;ffneten Browser. Es sollte sich ein Fenster &ouml;ffnen, in dem &uuml;ber die Installation des Scripts informiert wird. Die Installation best&auml;tigt man abschlie&szlig;end &uuml;ber den Button <em>Installieren</em>. Im Anschluss sollte das Script, bei aktiviertem Greasemonkey, verf&uuml;gbar sein. </td>
+      </tr>
+	   <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+	   <tr>
+        <td colspan="2"><h3 style="color:#953333">Installation unter Opera</h3></td>
+      </tr>
+	  <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+	  <tr>
+        <td colspan="2">Um das Script in Opera einzuf&uuml;gen muss man, sofern noch nicht geschehen, in den Opera-Einstellungen das Verzeichnis festlegen, in dem nach Userscripten gesucht werden soll. Diese Einstellung findet man unter <em>Extras -&gt; Einstellungen -&gt; Inhalte</em> und dort hinter dem Button <em>JavaScript-Optionen</em>. Es &ouml;ffnet sich ein Fenster wo man im unteren Bereich das Verzeichnis f&uuml;r <em>User-JavaScript-Dateien</em> festlegen kann. Ist dies erledigt kopiert man dasUserscript 'Angriffsinformationen' einfach in dieses Verzeichnis, woraufhin das Script verf&uuml;gbar ist.</td>
+      </tr>
+	   <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+	  <tr valign="middle">
+         <td style="padding:10px 10px 10px 10px;background-color:#E1D5BE" width="10%"><div align="center"><img src="../images/help.png" width="24" height="24"></div></td>
+        <td style="padding:10px 10px 10px 10px;background-color:#E1D5BE">Weiterf&uuml;hrende Informationen dar&uuml;ber, was Userscripte sind und wie sie bei den jeweiligen Browsern installiert werden, findet ihr auch im Die St&auml;mme Forum unter <em>Spielerprojekte -&gt; Scripte &amp; Tools</em>. </td>
+        <td>&nbsp;</td>
+      </tr>
+
+	   <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+	   <tr>
+        <td colspan="2"><h3 style="color:#953333">Funktion des Scripts </h3></td>
+      </tr>
+	   <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+	    <tr>
+        <td colspan="2">Das Script greift an mehreren Stellen in die Darstellung im Spiel ein. Zum einen werden in den &Uuml;bersichten <em>Kombiniert, Produktion, Truppen, Geb&auml;ude, Forschung und Gruppen</em> (alle nur PA) bzw. in der <em>&Uuml;bersicht aller D&ouml;rfer</em> (non-PA) farbige Symbole vor den Dorfnamen eingeblendet die angeben, ob aus einem Dorf Angriffe geplant sind oder nicht und ob noch Angriffe ausstehen. Ein Beispiel daf&uuml;r seht ihr im folgenden Screenshot: </td>
+      </tr>
+	   <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+	   <tr>
+        <td colspan="2"><img src="file:///D|/GRID/src/DSWorkbench/jhelp/images/screens/info_script_overview.gif" width="78" height="159"></td>
+      </tr>
+	   <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+	   <tr>
+        <td colspan="2">Die Bedeutungen der Symbole ist wiefolgt:<br>
+          <br>
+          <span class="Stil1">Rot</span>: Geplanten Angriffe, die bereits alle abgeschickt sein sollen <br>
+          <span class="Stil2">Gr&uuml;n</span>:  Geplante Angriffe, die noch abgeschickt werden m&uuml;ssen<br>
+          <span class="Stil4">Braun</span>: Keine geplanten Angriffe <br>
+          <br></td>
+      </tr>
       <tr>
-        <td colspan="2"><p><br>
-        </p>
-          </td>
+        <td colspan="2">Wenn ihr mit der Maus &uuml;ber ein Symbol fahrt wird zudem einen Tooltip angezeigt der euch sagt, wieviele Angriffe aus einem Dorf noch abgeschickt werden m&uuml;ssen. Klickt ihr auf das Symbol werden ihr direkt zum Versammlungsplatz des Dorfes weitergeleitet, bei dem euch die zweite &Auml;nderung der Darstellung erwartet, wie sie im folgenden gezeigt ist: </td>
+      </tr>
+	   <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+	   <tr>
+        <td colspan="2"><img src="file:///D|/GRID/src/DSWorkbench/jhelp/images/screens/info_script_place.gif" width="869" height="190"></td>
+      </tr>
+	   <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+	   <tr>
+        <td colspan="2">Das Userscript blendet Im Versammlungsplatz jeden Dorfes, aus dem Angriffe geplant wurden, eine zus&auml;tzliche Tabelle &uuml;ber der Tabelle der Truppenbewegungen ein. In dieser Tabelle seht ihr die Angriffe die noch abgeschickt werden, sowie die Angriffe die bereits abgelaufen sind. Eine automatische L&ouml;schung wird momentan <u>nicht</u> durchgef&uuml;hrt! </td>
+      </tr>
+	   <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+	   <tr valign="middle">
+        <td style="padding:10px 10px 10px 10px;background-color:#E1D5BE" width="10%"><div align="center"><img src="../images/information.png" width="24" height="24"></div></td>
+        <td style="padding:10px 10px 10px 10px;background-color:#E1D5BE">Die Daten die dieses Userscript enth&auml;lt werden statisch und ausschlie&szlig;lich durch <em>DS Workbench</em> eingef&uuml;gt. Es findet <u>keinerlei Kommunikation</u> mit <em>DS Workbench</em> oder einem externen Server statt. Dies bedeutet, dass ihr das Script <u>jedes Mal neu im Browser installieren</u> m&uuml;sst wenn ihr Angriffe in <em>DS Workbench</em> &auml;ndert oder abgelaufene Angriffe entfernen wollt. </td>
       </tr>
     </table>
 	</td>

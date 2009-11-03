@@ -7,13 +7,14 @@ package de.tor.tribes.util.algo;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.AbstractTroopMovement;
 import de.tor.tribes.types.Village;
+import de.tor.tribes.util.ServerSettings;
 import java.util.Collections;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 
 /**
- * @TOTO (1.8) Check max. snob runtime (add field to settings and check during calculation)
+ * @TOTO (DIFF) Check max. snob runtime
  * @author Jejkal
  */
 public abstract class AbstractAttackAlgorithm {
@@ -61,12 +62,19 @@ public abstract class AbstractAttackAlgorithm {
         this.fullOffs = fullOffs;
     }
 
-    public static List<DistanceMapping> buildSourceTargetsMapping(Village pSource, List<Village> pTargets) {
+    public static List<DistanceMapping> buildSourceTargetsMapping(Village pSource, List<Village> pTargets, boolean pIsSnob) {
         List<DistanceMapping> mappings = new LinkedList<DistanceMapping>();
 
         for (Village target : pTargets) {
             DistanceMapping mapping = new DistanceMapping(pSource, target);
-            mappings.add(mapping);
+            if (pIsSnob) {
+                if (mapping.getDistance() < ServerSettings.getSingleton().getSnobRange()) {
+                    //do not add snob distance if it is too large
+                    mappings.add(mapping);
+                }
+            } else {
+                mappings.add(mapping);
+            }
         }
 
         Collections.sort(mappings);

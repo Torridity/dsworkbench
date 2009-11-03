@@ -1,0 +1,53 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<script src="http://www.dsworkbench.de/DSWorkbench/export/mootools.js" type="text/javascript"></script>
+<script src="http://www.dsworkbench.de/DSWorkbench/export/mooRainbow.js" type="text/javascript"></script>
+<script type="text/javascript" src="http://www.dsworkbench.de/DSWorkbench/export/countdown.js"></script>
+<link rel="stylesheet" type="text/css" href="http://www.dsworkbench.de/DSWorkbench/export/attack.css" />
+<title>Angriffsplan</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<script language="JavaScript">
+
+function SwitchMenu(obj){
+if(document.getElementById){
+var el = document.getElementById(obj);
+var ar = document.getElementById("cont").getElementsByTagName("DIV");
+if(el.style.display == "none"){
+for (var i=0; i<ar.length; i++){
+ar[i].style.display = "none";
+}
+el.style.display = "block";
+}else{
+el.style.display = "none";
+}
+}
+}
+
+</script>
+</head>
+<body>
+<div class="even_div">
+ <table width="100%" cellspacing="0" cellpadding="0">
+   <tr>
+     <td colspan="4"><div align="center" style="font-size:140%; font-weight: bold;text-decoration:underline;">Angriffsplan</div></td>
+    </tr>
+	  <tr style="font-size:70%;">
+		<td colspan="4">&nbsp;</td>
+	 </tr>
+   <tr style="font-size:70%;">
+     <td class="head_left" style="text-align:right;"><strong>Ersteller:</strong></td>
+     <td width="249" class="head_left"> <div align="left">$CREATOR</div></td>
+     <td width="249" class="head_left" style="text-align:right;"><strong>Welt:</strong></td>
+     <td width="70" class="head_right">$SERVER</td>
+    </tr>
+   <tr style="font-size:70%;">
+      <td width="70" class="head_left"><strong>Planname:</strong></td>
+      <td class="head_left"><div align="left">$PLANNAME</div></td>
+      <td class="head_left"><strong>Angriffe:</strong></td>
+      <td class="head_right">$ATTACK_COUNT</td>
+    </tr >
+
+  </table>
+</div>

@@ -26,7 +26,7 @@ public class TestFrame extends javax.swing.JFrame {
     /** Creates new form TestFrame */
     public TestFrame() {
         initComponents();
-        DockBar dockBar = new DockBar();
+      /*  DockBar dockBar = new DockBar();
         for (int i = 0; i < 10; ++i) {
             URL url = DockBar.class.getResource("/" + icons[i % icons.length]);
             Image img = Toolkit.getDefaultToolkit().getImage(url);
@@ -46,7 +46,7 @@ public class TestFrame extends javax.swing.JFrame {
 
         jPanel1.add(dockBar);
         dockBar.setVisible(true);
-        dockBar.setFrameParent();
+        dockBar.setFrameParent();*/
     }
 
     /** This method is called from within the constructor to

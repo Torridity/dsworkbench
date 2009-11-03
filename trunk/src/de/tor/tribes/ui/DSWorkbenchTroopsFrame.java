@@ -23,6 +23,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import de.tor.tribes.ui.renderer.NumberFormatCellRenderer;
+import de.tor.tribes.ui.renderer.PercentCellRenderer;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.TroopInformationToBBCodeFormater;
 import de.tor.tribes.util.troops.TroopsManager;
@@ -82,7 +83,7 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
         jTroopsTable.setRowSorter(sorter);
         jTroopsTable.setDefaultRenderer(Integer.class, new NumberFormatCellRenderer());
         jTroopsTable.setDefaultRenderer(Double.class, new NumberFormatCellRenderer());
-
+        jTroopsTable.setDefaultRenderer(Float.class, new PercentCellRenderer());
         jTroopsTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 
             @Override
@@ -105,6 +106,7 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
             mColumnIcons.add(new ImageIcon("graphics/icons/def_archer.png"));
             mColumnIcons.add(new ImageIcon("graphics/icons/move_out.png"));
             mColumnIcons.add(new ImageIcon("graphics/icons/move_in.png"));
+            mColumnIcons.add(new ImageIcon("graphics/icons/farm.png"));
         } catch (Exception e) {
             logger.error("Failed to read table header icons", e);
         }
@@ -123,7 +125,7 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
 
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
         GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.troops_view", GlobalOptions.getHelpBroker().getHelpSet());
-// </editor-fold>
+        // </editor-fold>
         pack();
     }
 
@@ -664,9 +666,12 @@ private void fireCopyTroopInformationToClipboardEvent(java.awt.event.MouseEvent 
                     } else if (column == unitCount + 7) {
                         //target villages
                         r.setIcon(mColumnIcons.get(4));
-                    } else {
+                    } else if (column == unitCount + 8) {
                         //source villages
                         r.setIcon(mColumnIcons.get(5));
+                    } else if (column == unitCount + 9) {
+                        //farm place
+                        r.setIcon(mColumnIcons.get(6));
                     }
                 }
                 return r;
@@ -706,8 +711,6 @@ private void fireCopyTroopInformationToClipboardEvent(java.awt.event.MouseEvent 
         }
 
     }
-
-  
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jAddButton;
     private javax.swing.JDialog jAddTroopsDialog;

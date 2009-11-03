@@ -24,7 +24,6 @@ import java.util.LinkedList;
 public class VillageTroopsHolder {
 
     private Village village = null;
-    //  private List<Integer> troops = null;
     private Hashtable<UnitHolder, Integer> ownTroops = null;
     private Hashtable<UnitHolder, Integer> troopsInVillage = null;
     private Hashtable<UnitHolder, Integer> troopsOutside = null;
@@ -32,11 +31,6 @@ public class VillageTroopsHolder {
     private List<Village> supportTargets = null;
     private Hashtable<Village, Hashtable<UnitHolder, Integer>> supports = null;
     private Date state = null;
-    /* private int iOffPower = -1;
-    private int iDefPower = -1;
-    private int iArchDefPower = -1;
-    private int iCavDefPower = -1;
-     */
 
     public static VillageTroopsHolder fromXml(Element e) throws Exception {
         Village v = DataHolder.getSingleton().getVillagesById().get(Integer.parseInt(e.getChild("id").getText()));
@@ -210,6 +204,19 @@ public class VillageTroopsHolder {
 
     public void setTroopsOutside(Hashtable<UnitHolder, Integer> mTroops) {
         troopsOutside = (Hashtable<UnitHolder, Integer>) mTroops.clone();
+    }
+
+    public float getFarmSpace() {
+        Hashtable<UnitHolder, Integer> own = getOwnTroops();
+        Hashtable<UnitHolder, Integer> outside = getTroopsOutside();
+        Hashtable<UnitHolder, Integer> onTheWay = getTroopsOnTheWay();
+        double farmSpace = 0;
+        for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
+            farmSpace += own.get(unit) * unit.getPop();
+            farmSpace += outside.get(unit) * unit.getPop();
+            farmSpace += onTheWay.get(unit) * unit.getPop();
+        }
+        return (float) (farmSpace / 24000);
     }
 
     public void clearSupports() {

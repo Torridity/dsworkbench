@@ -183,7 +183,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         } catch (Exception e) {
         }
 
-        //show popup moral
+        //show popup conquers
         try {
             String v = GlobalOptions.getProperty("show.popup.conquers");
             if (v == null) {
@@ -206,6 +206,20 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             } else {
                 if (Boolean.parseBoolean(v)) {
                     jShowPopupRanks.setSelected(true);
+                }
+            }
+        } catch (Exception e) {
+        }
+
+        //show popup farm space
+        try {
+            String v = GlobalOptions.getProperty("show.popup.farm.space");
+            if (v == null) {
+                jShowPopupFarmSpace.setSelected(true);
+                GlobalOptions.addProperty("show.popup.farm.space", Boolean.toString(true));
+            } else {
+                if (Boolean.parseBoolean(v)) {
+                    jShowPopupFarmSpace.setSelected(true);
                 }
             }
         } catch (Exception e) {
@@ -437,6 +451,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         GlobalOptions.getHelpBroker().enableHelp(jMapSettings, "pages.map_settings", GlobalOptions.getHelpBroker().getHelpSet());
         GlobalOptions.getHelpBroker().enableHelp(jAttackSettings, "pages.attack_settings", GlobalOptions.getHelpBroker().getHelpSet());
         GlobalOptions.getHelpBroker().enableHelp(jNetworkSettings, "pages.network_settings", GlobalOptions.getHelpBroker().getHelpSet());
+        GlobalOptions.getHelpBroker().enableHelp(jTemplateSettings, "pages.template_settings", GlobalOptions.getHelpBroker().getHelpSet());
         GlobalOptions.getHelpBroker().enableHelp(jMiscSettings, "pages.misc_settings", GlobalOptions.getHelpBroker().getHelpSet());
         GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.settings", GlobalOptions.getHelpBroker().getHelpSet());
     // </editor-fold>
@@ -674,6 +689,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jShowPopupMoral = new javax.swing.JCheckBox();
         jShowPopupConquers = new javax.swing.JCheckBox();
         jShowPopupRanks = new javax.swing.JCheckBox();
+        jShowPopupFarmSpace = new javax.swing.JCheckBox();
         jAttackSettings = new javax.swing.JPanel();
         jAttackMovementLabel = new javax.swing.JLabel();
         jShowAttackMovementBox = new javax.swing.JCheckBox();
@@ -1081,7 +1097,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                     .addComponent(jAccountPasswordLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jCheckAccountButton)
-                .addContainerGap(165, Short.MAX_VALUE))
+                .addContainerGap(135, Short.MAX_VALUE))
         );
 
         jSettingsTabbedPane.addTab("Login", new javax.swing.ImageIcon(getClass().getResource("/res/login.png")), jLoginPanel); // NOI18N
@@ -1296,6 +1312,10 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jShowPopupRanks.setOpaque(false);
         jPanel5.add(jShowPopupRanks);
 
+        jShowPopupFarmSpace.setText("Bauernhof Füllstand anzeigen");
+        jShowPopupFarmSpace.setOpaque(false);
+        jPanel5.add(jShowPopupFarmSpace);
+
         javax.swing.GroupLayout jMapSettingsLayout = new javax.swing.GroupLayout(jMapSettings);
         jMapSettings.setLayout(jMapSettingsLayout);
         jMapSettingsLayout.setHorizontalGroup(
@@ -1308,12 +1328,11 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                     .addComponent(jLabel3))
                 .addGap(36, 36, 36)
                 .addGroup(jMapSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, 175, Short.MAX_VALUE)
                     .addGroup(jMapSettingsLayout.createSequentialGroup()
                         .addComponent(jDefaultMarkBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 125, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jMapSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addComponent(jPanel5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 175, Short.MAX_VALUE)
-                        .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 175, Short.MAX_VALUE)))
+                    .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 175, Short.MAX_VALUE))
                 .addGap(166, 166, 166))
         );
         jMapSettingsLayout.setVerticalGroup(
@@ -1330,8 +1349,8 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jMapSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel3)
-                    .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(151, Short.MAX_VALUE))
+                    .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(131, Short.MAX_VALUE))
         );
 
         jSettingsTabbedPane.addTab("Karten", new javax.swing.ImageIcon(getClass().getResource("/res/ui/map.gif")), jMapSettings); // NOI18N
@@ -1783,7 +1802,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                             .addComponent(jSelectBlockButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                             .addComponent(jSelectFooterButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(20, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jPanel8.setBorder(javax.swing.BorderFactory.createTitledBorder("Angriffsexport als BB-Code"));
@@ -2245,6 +2264,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         GlobalOptions.addProperty("show.popup.moral", Boolean.toString(jShowPopupMoral.isSelected()));
         GlobalOptions.addProperty("show.popup.conquers", Boolean.toString(jShowPopupConquers.isSelected()));
         GlobalOptions.addProperty("show.popup.ranks", Boolean.toString(jShowPopupRanks.isSelected()));
+        GlobalOptions.addProperty("show.popup.farm.space", Boolean.toString(jShowPopupFarmSpace.isSelected()));
         GlobalOptions.addProperty("max.density.troops", jMaxTroopDensity.getText());
         GlobalOptions.addProperty("attack.bbexport.template", jAttackBBExportTemplate.getText());
         GlobalOptions.addProperty("show.live.countdown", Boolean.toString(jShowLiveCountdown.isSelected()));
@@ -3122,6 +3142,7 @@ private void fireRestoreTemplateEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
     private javax.swing.JLabel jShowContinentsLabel;
     private javax.swing.JCheckBox jShowLiveCountdown;
     private javax.swing.JCheckBox jShowPopupConquers;
+    private javax.swing.JCheckBox jShowPopupFarmSpace;
     private javax.swing.JCheckBox jShowPopupMoral;
     private javax.swing.JCheckBox jShowPopupRanks;
     private javax.swing.JCheckBox jShowSectorsBox;

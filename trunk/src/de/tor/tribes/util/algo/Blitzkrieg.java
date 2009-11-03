@@ -163,8 +163,8 @@ public class Blitzkrieg extends AbstractAttackAlgorithm {
         Hashtable<Village, List<DistanceMapping>> tmpMappings = new Hashtable<Village, List<DistanceMapping>>();
         UnitHolder ram = DataHolder.getSingleton().getUnitByPlainName("ram");
         for (Village target : pTargets) {
-            //calculate snob distances for current enoblement target village
-            List<DistanceMapping> offMappings = AbstractAttackAlgorithm.buildSourceTargetsMapping(target, pOffSources);
+            //calculate off distances for current enoblement target village
+            List<DistanceMapping> offMappings = AbstractAttackAlgorithm.buildSourceTargetsMapping(target, pOffSources, false);
             //temp map for valid distances
             List<DistanceMapping> tmpMap = new LinkedList<DistanceMapping>();
             for (DistanceMapping mapping : offMappings) {
@@ -257,7 +257,7 @@ public class Blitzkrieg extends AbstractAttackAlgorithm {
         UnitHolder ram = DataHolder.getSingleton().getUnitByPlainName("ram");
         for (Village target : pTargets) {
             //calculate snob distances for current enoblement target village
-            List<DistanceMapping> offMappings = AbstractAttackAlgorithm.buildSourceTargetsMapping(target, pFakeSources);
+            List<DistanceMapping> offMappings = AbstractAttackAlgorithm.buildSourceTargetsMapping(target, pFakeSources, false);
 
             //temp map for valid distances
             List<DistanceMapping> tmpMap = new LinkedList<DistanceMapping>();

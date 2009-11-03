@@ -206,7 +206,7 @@ public class AllInOne extends AbstractAttackAlgorithm {
 
         for (Village target : pTargets) {
             //calculate snob distances for current target village
-            List<DistanceMapping> snobMappings = buildSourceTargetsMapping(target, pSnobSources);
+            List<DistanceMapping> snobMappings = buildSourceTargetsMapping(target, pSnobSources, true);
 
             //expect target to be valid
             boolean valid = true;
@@ -265,7 +265,7 @@ public class AllInOne extends AbstractAttackAlgorithm {
             //use enoblement if offs where not assigned yet
             if (!enoblement.offDone()) {
                 //calculate snob distances for current enoblement target village
-                List<DistanceMapping> offMappings = buildSourceTargetsMapping(enoblement.getTarget(), pOffSources);
+                List<DistanceMapping> offMappings = buildSourceTargetsMapping(enoblement.getTarget(), pOffSources, false);
 
                 //expect target to be valid
                 boolean valid = true;
@@ -351,7 +351,7 @@ public class AllInOne extends AbstractAttackAlgorithm {
         UnitHolder ram = DataHolder.getSingleton().getUnitByPlainName("ram");
         for (Village target : pTargets) {
             //calculate snob distances for current enoblement target village
-            List<DistanceMapping> offMappings = buildSourceTargetsMapping(target, pOffSources);
+            List<DistanceMapping> offMappings = buildSourceTargetsMapping(target, pOffSources, false);
 
             //check distances for first (fastest) possible off
 
@@ -442,7 +442,7 @@ public class AllInOne extends AbstractAttackAlgorithm {
         UnitHolder ram = DataHolder.getSingleton().getUnitByPlainName("ram");
         for (Village target : pTargets) {
             //calculate snob distances for current enoblement target village
-            List<DistanceMapping> offMappings = buildSourceTargetsMapping(target, pFakeSources);
+            List<DistanceMapping> offMappings = buildSourceTargetsMapping(target, pFakeSources, false);
 
             //check distances for first (fastest) possible off
 

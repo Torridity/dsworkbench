@@ -2058,20 +2058,17 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
 
     if (type == 0) {
         logger.info("Using 'BruteForce' algorithm");
-        //   algo = new BruteForce();
-        new OptexWrapper().calculateAttacks(sources,
-                fakes,
-                victimVillages,
-                maxAttacksPerVillage,
-                minCleanForSnob,
-                timeFrame,
-                randomize,
-                use5Snobs);
-
+        algo = new BruteForce();
+        /*new OptexWrapper().calculateAttacks(sources,
+        fakes,
+        victimVillages,
+        maxAttacksPerVillage,
+        minCleanForSnob,
+        timeFrame,
+        randomize,
+        use5Snobs);
+         */
         supportMiscUnits = true;
-        if (true) {
-            return;
-        }
     } else if (type == 1) {
         logger.info("Using 'AllInOne' algorithm");
         algo = new AllInOne();

@@ -54,7 +54,6 @@ import javax.swing.table.DefaultTableCellRenderer;
 
 /**
  * @TODO (1.X) Shortcuts editable
- * @TODO (DIFF) Attack plan export template added
  * @author Jejkal
  */
 public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements

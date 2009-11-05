@@ -95,11 +95,6 @@ import org.apache.log4j.Logger;
  * 6-16: Free assignable
  * @author Charon
  */
-/**
- * @TODO (DIFF) Initial troop movement position set to half the way
- * @TODO (DIFF) Farm capacity and marker colors in map popup
- * Thread for updating after scroll operations
- */
 public class MapRenderer extends Thread {
 
     private static Logger logger = Logger.getLogger("MapRenderer");
@@ -177,19 +172,6 @@ public class MapRenderer extends Thread {
         return buffy;
     }
 
-    /* public static BufferedImage optimizeImage(BufferedImage img) {
-    GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
-    GraphicsConfiguration gc = gd.getDefaultConfiguration();
-
-    boolean istransparent = img.getColorModel().hasAlpha();
-
-    BufferedImage img2 = gc.createCompatibleImage(img.getWidth(), img.getHeight(), istransparent ? Transparency.BITMASK : Transparency.OPAQUE);
-    Graphics2D g = img2.createGraphics();
-    g.drawImage(img, 0, 0, null);
-    g.dispose();
-
-    return img2;
-    }*/
     /**Complete redraw on resize or scroll*/
     public void initiateRedraw(int pType) {
         mapRedrawRequired = true;
@@ -207,7 +189,6 @@ public class MapRenderer extends Thread {
                     Graphics2D g2d = null;
                     if (mMainBuffer == null) {
                         //create main buffer during first iteration
-                        //mMainBuffer = MapPanel.getSingleton().createImage(w, h);
                         mMainBuffer = getBufferedImage(w, h, Transparency.TRANSLUCENT);//MapPanel.getSingleton().createImage(w, h)
                         g2d = (Graphics2D) mMainBuffer.getGraphics();
                         prepareGraphics(g2d);
@@ -228,8 +209,6 @@ public class MapRenderer extends Thread {
                             g2d = (Graphics2D) mMainBuffer.getGraphics();
                             Composite c = g2d.getComposite();
                             g2d.clearRect(0, 0, w, h);
-                            //g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.CLEAR, 1.0f));
-                            //g2d.fillRect(0, 0, w, h);
                             g2d.setComposite(c);
                         }
                     }
@@ -336,23 +315,14 @@ public class MapRenderer extends Thread {
                     Hashtable<Village, Rectangle> pos = (Hashtable<Village, Rectangle>) villagePositions.clone();
                     MapPanel.getSingleton().updateComplete(pos, mMainBuffer);
                     MapPanel.getSingleton().repaint();
-                    //MapPanel.getSingleton().getBufferStrategy().getDrawGraphics().drawImage(mMainBuffer, 0, 0, null);
-                    // MapPanel.getSingleton().getBufferStrategy().show();
                     g2d.dispose();
                 }
             } catch (Throwable t) {
                 logger.error("Redrawing map failed", t);
-            /*logger.info("Memstat");
-            logger.info("  Free: " + Runtime.getRuntime().freeMemory());
-            logger.info("  Max: " + Runtime.getRuntime().maxMemory());
-            logger.info("  Total: " + Runtime.getRuntime().totalMemory());*/
             }
             try {
-                //if (completeRedraw) {
+
                 Thread.sleep(40);
-            /*} else {
-            Thread.sleep(250);
-            }*/
             } catch (InterruptedException ie) {
             }
         }
@@ -532,8 +502,8 @@ public class MapRenderer extends Thread {
         }
         //de.tor.tribes.types.Rectangle selection = MapPanel.getSingleton().getSelectionRect();
         boolean minimapSkin = GlobalOptions.getSkin().isMinimapSkin();
-        // <editor-fold defaultstate="collapsed" desc="Village drawing">
 
+        // <editor-fold defaultstate="collapsed" desc="Village drawing">
         for (int i = 0; i < iVillagesX; i++) {
             for (int j = 0; j < iVillagesY; j++) {
                 Village v = mVisibleVillages[i][j];
@@ -754,8 +724,10 @@ public class MapRenderer extends Thread {
                     Point p = copyRegions.get(type);
 
                     if (p == null) {
+
                         int xp = (int) Math.floor(x + dx);
                         int yp = (int) Math.floor(y + dy);
+
                         if (!minimapSkin) {
                             g2d.drawImage(GlobalOptions.getSkin().getImage(type, currentZoom), xp, yp, null);
                             //check containment using size tolerance
@@ -763,7 +735,6 @@ public class MapRenderer extends Thread {
                                 copyRegions.put(type, new Point(xp, yp));
                             }
                         } else {
-
                             Color cb = g2d.getColor();
                             if (!drawVillage) {
                                 g2d.setColor(new Color(35, 125, 0));
@@ -777,6 +748,7 @@ public class MapRenderer extends Thread {
                             }
                             g2d.setColor(cb);
                         }
+
                     } else {
                         g2d.copyArea(p.x, p.y, width, height, (int) Math.floor(x + dx - p.x), (int) Math.floor(y + dy - p.y));
                     }
@@ -842,27 +814,6 @@ public class MapRenderer extends Thread {
         }
         g2d.setStroke(s);
         //</editor-fold>
-
-        /* Enumeration<Integer> keys1 = copyRegions.keys();
-        g2d.setColor(Color.MAGENTA);
-        while (keys1.hasMoreElements()) {
-        Point2D.Double p = copyRegionsMap.get(keys1.nextElement());
-        try {
-        g2d.drawRect((int) p.x, (int) p.y, width, height);
-        } catch (Exception e) {
-        }
-        }
-
-        Enumeration<Integer> keys2 = copyRegionsMap.keys();
-        g2d.setColor(Color.MAGENTA);
-        while (keys2.hasMoreElements()) {
-        Point2D.Double p = copyRegionsMap.get(keys2.nextElement());
-        try {
-        g2d.drawRect((int) p.x, (int) p.y, width, height);
-        } catch (Exception e) {
-        }
-        }*/
-
         g2d.dispose();
     }
 

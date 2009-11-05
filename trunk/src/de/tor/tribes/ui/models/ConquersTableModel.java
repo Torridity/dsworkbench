@@ -118,11 +118,7 @@ public class ConquersTableModel extends AbstractTableModel {
                 Village v = DataHolder.getSingleton().getVillagesById().get(c.getVillageID());
                 Village vUser = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage();
                 if (vUser != null) {
-                    double dist = DSCalculator.calculateDistance(v, vUser);
-                    NumberFormat nf = NumberFormat.getInstance();
-                    nf.setMinimumFractionDigits(2);
-                    nf.setMaximumFractionDigits(2);
-                    return nf.format(dist);
+                   return DSCalculator.calculateDistance(v, vUser);
                 } else {
                     return 0;
                 }

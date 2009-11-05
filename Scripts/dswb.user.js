@@ -96,11 +96,3 @@ oldonload = window.onload
 	else
 		input.value='';
 }*/
-
-function attack(){
-if(window.navigator.userAgent.indexOf("Firefox") > -1){
-         unsafeWindow.document.forms.units.attack.click();
-}else{
-document.forms.units.attack.click();
-}	
-}

@@ -14,7 +14,6 @@ import java.util.Hashtable;
 import org.jdom.Element;
 
 /**
- *@TODO (DIFF) ALLE now only takes all own troops
  * @author Charon
  */
 public class StandardAttackElement {

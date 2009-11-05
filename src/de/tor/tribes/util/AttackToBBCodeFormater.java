@@ -12,8 +12,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * @TODO (DIFF) Template based BB attack export
- * @TODO (DIFF) PLACE variable included
  * @author Charon
  */
 public class AttackToBBCodeFormater {

@@ -30,6 +30,7 @@ import de.tor.tribes.util.conquer.TribeFilter;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Point;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collections;
@@ -38,6 +39,7 @@ import java.util.LinkedList;
 import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -49,7 +51,6 @@ import javax.swing.table.TableRowSorter;
 import org.apache.log4j.Logger;
 
 /**
- * @TODO (DIFF) Added various filters
  * @author Charon
  */
 public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implements ConquerManagerListener {
@@ -76,7 +77,7 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
                 c.setBackground(Constants.DS_BACK);
                 DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
                 r.setText("<html><b>" + r.getText() + "</b></html>");
-                return c;
+                return r;
             }
         };
 
@@ -791,9 +792,11 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
                     (a.getTag().toLowerCase().indexOf(pFilter.toLowerCase()) >= 0))) {
                 allies.add(a);
             }
+
             Collections.sort(allies);
             jAllySelection.setModel(new DefaultComboBoxModel(allies.toArray(new Ally[]{})));
         }
+
     }
 
     private void buildTribesList(String pFilter) {
@@ -807,6 +810,7 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
                     (t.getName().toLowerCase().indexOf(pFilter.toLowerCase()) >= 0))) {
                 tribes.add(t);
             }
+
         }
         Collections.sort(tribes);
         jTribeSelection.setModel(new DefaultComboBoxModel(tribes.toArray(new Tribe[]{})));
@@ -872,7 +876,8 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
         DefaultTableCellRenderer renderer = new DefaultTableCellRenderer() {
 
             @Override
-            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            public Component getTableCellRendererComponent(
+                    JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
                 Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 
                 try {
@@ -888,6 +893,7 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
                                 if (loser.getAllyID() != 0 && winner.getAllyID() != 0) {
                                     c.setBackground(Color.CYAN);
                                 }
+
                             } else {
                                 Ally loserAlly = loser.getAlly();
                                 Ally winnerAlly = winner.getAlly();
@@ -897,6 +903,7 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
                                     if (lAllyName.indexOf(wAllyName) > -1 || wAllyName.indexOf(lAllyName) > -1) {
                                         c.setBackground(Color.CYAN);
                                     }
+
                                 }
                             }
                         }
@@ -904,16 +911,31 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
 
                 } catch (Exception e) {
                 }
+                if (column == 6) {
+                    //format dist col
+                    double v = (Double) value;
+                    NumberFormat nf = NumberFormat.getInstance();
+                    nf.setMinimumFractionDigits(2);
+                    nf.setMaximumFractionDigits(2);
+                    ((JLabel) c).setText(nf.format(v));
+                }
+
                 DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
-                // r.setText(r.getText());
                 return c;
             }
         };
 
-        jConquersTable.setDefaultRenderer(Object.class, renderer);
+        jConquersTable.setDefaultRenderer(Object.class,
+                renderer);
+
+
+
         jConquersTable.setDefaultRenderer(Double.class, renderer);
         jConquersTable.setDefaultRenderer(Integer.class, renderer);
-        for (int i = 0; i < jConquersTable.getColumnCount(); i++) {
+
+        for (int i = 0;
+                i < jConquersTable.getColumnCount();
+                i++) {
             TableColumn c = jConquersTable.getColumnModel().getColumn(i);
             c.setHeaderRenderer(mHeaderRenderers.get(i));
         }
@@ -921,23 +943,29 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
         TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>();
         jConquersTable.setRowSorter(sorter);
         sorter.setModel(ConquersTableModel.getSingleton());
-        sorter.setComparator(0, Village.CASE_INSENSITIVE_ORDER);
-        sorter.setComparator(3, Tribe.CASE_INSENSITIVE_ORDER);
-        sorter.setComparator(4, Tribe.CASE_INSENSITIVE_ORDER);
+        sorter.setComparator(
+                0, Village.CASE_INSENSITIVE_ORDER);
+        sorter.setComparator(
+                3, Tribe.CASE_INSENSITIVE_ORDER);
+        sorter.setComparator(
+                4, Tribe.CASE_INSENSITIVE_ORDER);
 
         jConquersTable.revalidate();
         jConquersTable.repaint();
         Calendar c = Calendar.getInstance();
         c.setTimeInMillis(ConquerManager.getSingleton().getLastUpdate());
         SimpleDateFormat f = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+
         jLastUpdateLabel.setText("<html><b>Letzte Aktualisierung:</b> " + f.format(c.getTime()) + "</html>");
 
         int[] conquerStats = ConquerManager.getSingleton().getConquersStats();
         int conquers = ConquerManager.getSingleton().getConquerCount();
         int percGrey = (int) Math.rint(100.0 * (double) conquerStats[0] / (double) conquers);
         int percFriendly = (int) Math.rint(100.0 * (double) conquerStats[1] / (double) conquers);
+
         jGreyConquersLabel.setText("<html><b>Grau-Adelungen:</b> " + conquerStats[0] + " von " + conquers + " (" + percGrey + "%)" + "</html>");
-        jFriendlyConquersLabel.setText("<html><b>Aufadelungen:</b> " + conquerStats[1] + " von " + conquers + " (" + percFriendly + "%)" + "</html>");
+        jFriendlyConquersLabel.setText(
+                "<html><b>Aufadelungen:</b> " + conquerStats[1] + " von " + conquers + " (" + percFriendly + "%)" + "</html>");
 
     }
 }

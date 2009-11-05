@@ -13,8 +13,6 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 /**
- * @TODO (DIFF) More tolerant parsing, also for copied DSWB table data!
- *Parses villages, separated by space or tab, from a string
  * @author Charon
  */
 public class VillageParser {

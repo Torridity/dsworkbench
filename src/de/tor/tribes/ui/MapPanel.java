@@ -1665,9 +1665,6 @@ public class MapPanel extends JPanel {
         positionUpdate = false;
     }
 
-    /*public BufferStrategy getStrategy() {
-    return getBufferStrategy();
-    }*/
     protected void planMapShot(String pType, File pLocation, MapShotListener pListener) {
         sMapShotType = pType;
         mMapShotFile = pLocation;

@@ -45,7 +45,6 @@ import javax.swing.filechooser.FileFilter;
 import org.apache.log4j.Logger;
 
 /**
- * @TODO (DIFF) Added possibility to change visible part of minimap
  * @author  jejkal
  */
 public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerListener {

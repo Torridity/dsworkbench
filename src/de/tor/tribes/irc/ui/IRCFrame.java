@@ -208,7 +208,7 @@ public class IRCFrame extends javax.swing.JFrame implements IRCHandlerListener {
     }// </editor-fold>//GEN-END:initComponents
 
 private void fireConnectEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireConnectEvent
-    mHandler.connect("dsworkbench.de");
+    mHandler.connect("irc.quakenet.org");
 //System.out.println(mHandler.isConnected());
 }//GEN-LAST:event_fireConnectEvent
 

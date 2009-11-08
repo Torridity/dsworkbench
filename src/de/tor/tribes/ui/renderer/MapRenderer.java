@@ -1042,7 +1042,6 @@ public class MapRenderer extends Thread {
             }
         }
 
-
         Color DEFAULT = null;
         if (pDrawStandard) {
             try {

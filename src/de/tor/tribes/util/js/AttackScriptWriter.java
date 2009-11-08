@@ -19,6 +19,7 @@ import org.apache.log4j.Logger;
 /**
  *
  * @author Charon
+ * @TODO (DIFF) Added milliseconds to exported times
  */
 public class AttackScriptWriter {
 
@@ -78,7 +79,7 @@ public class AttackScriptWriter {
             //calculate difference from today midnight
             long diff = sendTime - midnight.getTimeInMillis();
             block += "'timerValue':'" + (int) Math.round((double) diff / 1000.0) + "',\n";
-            SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+            SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss.SSS");
             block += "'send':'" + df.format(new Date(sendTime)) + "',\n";
             block += "'arrive':'" + df.format(a.getArriveTime()) + "',\n";
             block += "'expired':" + (long) Math.floor((long) sendTime / 1000) + "\n";

@@ -323,18 +323,8 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
         try {
             Graphics2D g2d = (Graphics2D) g;
             g2d.drawImage(mBuffer, 0, 0, null);
+
             g2d.setColor(Color.YELLOW);
-            /*int mapWidth = (int) ServerSettings.getSingleton().getMapDimension().getWidth();
-            int mapHeight = (int) ServerSettings.getSingleton().getMapDimension().getHeight();
-
-            int w = (int) Math.rint(((double) getWidth() / mapWidth) * (double) iWidth);
-            int h = (int) Math.rint(((double) getHeight() / mapHeight) * (double) iHeight);
-
-            double posX = ((double) getWidth() / mapWidth * (double) iX) - w / 2;
-            double posY = ((double) getHeight() / mapHeight * (double) iY) - h / 2;
-
-            g2d.drawRect((int) Math.rint(posX), (int) Math.rint(posY), w, h);*/
-
             int mapWidth = rVisiblePart.width;
             int mapHeight = rVisiblePart.height;
 
@@ -345,7 +335,6 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
             double posY = ((double) getHeight() / mapHeight * (double) (iY - rVisiblePart.y)) - h / 2;
 
             g2d.drawRect((int) Math.rint(posX), (int) Math.rint(posY), w, h);
-
 
             if (iCurrentCursor == ImageManager.CURSOR_SHOT) {
                 if (rDrag != null) {
@@ -398,9 +387,8 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
             doRedraw = false;
             repaint();
         } catch (Exception e) {
-            System.out.println("ERROR");
             logger.error("Exception while updating Minimap", e);
-        //ignore
+            //ignore
         }
     }
 
@@ -696,7 +684,6 @@ private void firePutScreenOnlineEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
     }
 
 }//GEN-LAST:event_firePutScreenOnlineEvent
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;

@@ -71,6 +71,7 @@ public class FormConfigFrame extends javax.swing.JFrame {
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
         GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.form_setup", GlobalOptions.getHelpBroker().getHelpSet());
     // </editor-fold>
+        
     }
 
     /** This method is called from within the constructor to

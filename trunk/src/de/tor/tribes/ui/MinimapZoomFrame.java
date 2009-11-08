@@ -6,12 +6,16 @@
 package de.tor.tribes.ui;
 
 import java.awt.Color;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.MouseInfo;
+import java.awt.event.MouseAdapter;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import javax.imageio.ImageIO;
+import org.apache.log4j.Logger;
 
 /**
  *
@@ -19,6 +23,7 @@ import javax.imageio.ImageIO;
  */
 public class MinimapZoomFrame extends javax.swing.JFrame {
 
+    private static Logger logger = Logger.getLogger("Minimap-Zoomframe");
     protected BufferedImage mMap = null;
     private DrawThread mDrawThread;
     private BufferedImage mBorder = null;
@@ -40,21 +45,43 @@ public class MinimapZoomFrame extends javax.swing.JFrame {
         mMap = pMap;
     }
 
-    public void update(Image bImage, int dx, int dy) {
-        if (isVisible()) {
-            BufferStrategy bs = getBufferStrategy();
-            if (bs != null && bImage != null) {
-                Graphics2D g2d = (Graphics2D) bs.getDrawGraphics();
-                g2d.setColor(new Color(35, 125, 0));
-                g2d.fillRect(0, 0, getWidth(), getHeight());
-                g2d.drawImage(bImage, dx, dy, null);
-                if (mBorder != null) {
-                    g2d.drawImage(mBorder, null, 0, 0);
-                }
-                g2d.dispose();
-                bs.show();
-            }
+    @Override
+    public void paint(Graphics g) {
+        if (pImage != null) {
+            Graphics2D g2d = (Graphics2D) g;
+            g2d.setColor(new Color(35, 125, 0));
+            g2d.fillRect(0, 0, getWidth(), getHeight());
+            g2d.drawImage(pImage, xp, yp, null);
+            /* if (mBorder != null) {
+            g2d.drawImage(mBorder, null, 0, 0);
+            }*/
+            g2d.dispose();
         }
+
+    }
+    private int xp = 0;
+    private int yp = 0;
+    private Image pImage = null;
+
+    public void update(Image bImage, int dx, int dy) {
+        /* if (isVisible()) {
+        BufferStrategy bs = getBufferStrategy();
+        if (bs != null && bImage != null) {
+        Graphics2D g2d = (Graphics2D) bs.getDrawGraphics();
+        g2d.setColor(new Color(35, 125, 0));
+        g2d.fillRect(0, 0, getWidth(), getHeight());
+        g2d.drawImage(bImage, dx, dy, null);
+        if (mBorder != null) {
+        g2d.drawImage(mBorder, null, 0, 0);
+        }
+        g2d.dispose();
+        bs.show();
+        }
+        }*/
+        pImage = bImage;
+        xp = dx;
+        yp = dy;
+        repaint();
     }
 
     public void updatePosition(int pXPos, int pYPos) {
@@ -92,6 +119,7 @@ public class MinimapZoomFrame extends javax.swing.JFrame {
 
 class DrawThread extends Thread {
 
+    private static Logger logger = Logger.getLogger("Minimap-Zoomframe(PaintThread)");
     private MinimapZoomFrame mParent;
     private int centerX = 0;
     private int centerY = 0;
@@ -134,6 +162,7 @@ class DrawThread extends Thread {
                 }
             } catch (Exception e) {
                 //redraw failed, ignore it
+                logger.error("Failed to draw zoomed map", e);
             }
             try {
                 Thread.sleep(100);

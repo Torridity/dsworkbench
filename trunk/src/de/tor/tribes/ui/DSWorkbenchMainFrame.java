@@ -55,7 +55,6 @@ import javax.swing.JFileChooser;
 import de.tor.tribes.util.troops.TroopsManager;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.datatransfer.StringSelection;
 import java.io.FileWriter;
@@ -492,7 +491,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jHelpItem.addActionListener(GlobalOptions.getHelpDisplay());
 
         // </editor-fold>
-        
+
         // <editor-fold defaultstate="collapsed" desc=" Init A*Star HelpSystem ">
         GlobalOptions.getHelpBroker().enableHelpKey(DSWorkbenchSimulatorFrame.getSingleton().getRootPane(), "pages.astar", GlobalOptions.getHelpBroker().getHelpSet());
         // </editor-fold>
@@ -573,6 +572,32 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         //relevant for first start
         propagateLayerOrder();
         MapPanel.getSingleton().getMapRenderer().initiateRedraw(0);
+
+        //call all frames during first execution
+        DSWorkbenchAttackFrame.getSingleton();
+        DSWorkbenchMarkerFrame.getSingleton();
+        DSWorkbenchChurchFrame.getSingleton();
+        DSWorkbenchConquersFrame.getSingleton();
+        DSWorkbenchNotepad.getSingleton();
+        DSWorkbenchTagFrame.getSingleton();
+        DSWorkbenchTroopsFrame.getSingleton();
+        DSWorkbenchRankFrame.getSingleton();
+        DSWorkbenchFormFrame.getSingleton();
+        DSWorkbenchSearchFrame.getSingleton();
+        DSWorkbenchAttackFrame.getSingleton();
+        DSWorkbenchMarkerFrame.getSingleton();
+        DSWorkbenchChurchFrame.getSingleton();
+        DSWorkbenchConquersFrame.getSingleton();
+        DSWorkbenchNotepad.getSingleton();
+        DSWorkbenchTagFrame.getSingleton();
+        DSWorkbenchTroopsFrame.getSingleton();
+        DSWorkbenchRankFrame.getSingleton();
+        DSWorkbenchFormFrame.getSingleton();
+        FormConfigFrame.getSingleton();
+        DSWorkbenchSearchFrame.getSingleton();
+        DSWorkbenchSelectionFrame.getSingleton();
+
+
         logger.info("Server settings updated");
     }
 
@@ -1157,6 +1182,9 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         setTitle(bundle.getString("DSWorkbenchMainFrame.title")); // NOI18N
         setBackground(new java.awt.Color(225, 213, 190));
         addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosed(java.awt.event.WindowEvent evt) {
+                fireClosedEvent(evt);
+            }
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 fireDSWorkbenchClosingEvent(evt);
             }
@@ -1633,8 +1661,8 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                             .addComponent(jLabel11))
                         .addGap(10, 10, 10)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jPopupTroops, 0, 111, Short.MAX_VALUE)
-                            .addComponent(jRadarSpinner, javax.swing.GroupLayout.DEFAULT_SIZE, 111, Short.MAX_VALUE))
+                            .addComponent(jPopupTroops, 0, 112, Short.MAX_VALUE)
+                            .addComponent(jRadarSpinner, javax.swing.GroupLayout.DEFAULT_SIZE, 112, Short.MAX_VALUE))
                         .addGap(40, 40, 40))
                     .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                         .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
@@ -2824,7 +2852,6 @@ private void fireDSWorkbenchClosingEvent(java.awt.event.WindowEvent evt) {//GEN-
     GlobalOptions.addProperty("zoom.factor", Double.toString(getZoomFactor()));
     GlobalOptions.addProperty("last.x", getCurrentPosition()[0]);
     GlobalOptions.addProperty("last.y", getCurrentPosition()[1]);
-    System.exit(0);
 }//GEN-LAST:event_fireDSWorkbenchClosingEvent
 
 private void firePanelMin(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_firePanelMin
@@ -2923,6 +2950,9 @@ private void fireGraphicPackChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FI
         MapPanel.getSingleton().getMapRenderer().initiateRedraw(0);
     }
 }//GEN-LAST:event_fireGraphicPackChangedEvent
+
+private void fireClosedEvent(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_fireClosedEvent
+}//GEN-LAST:event_fireClosedEvent
 
     private void propagateLayerOrder() {
         DefaultListModel model = ((DefaultListModel) jLayerList.getModel());
@@ -3188,11 +3218,8 @@ private void fireGraphicPackChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FI
 
         JOptionPaneHelper.showErrorBox(parent, "Fehler beim Speichern der Kartengrafik.", "Fehler");
     }
-
 // </editor-fold>
-
 // <editor-fold defaultstate="collapsed" desc="Generated Variables">
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem jAboutItem;
     private javax.swing.JButton jAddNewROIButton;

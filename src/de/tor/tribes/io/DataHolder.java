@@ -492,7 +492,7 @@ public class DataHolder {
                 }
 
             }
-         
+
             if (vc == 0 || ac == 0 || tc == 0) {
                 //data obviously invalid
                 logger.error("#villages | #allies | #tribes is 0");
@@ -593,6 +593,7 @@ public class DataHolder {
                 URLConnection con = u.openConnection(p);
                 BufferedReader r = new BufferedReader(new InputStreamReader(new GZIPInputStream(con.getInputStream())));
                 String line = "";
+                logger.debug(" + Start reading villages");
                 while ((line = r.readLine()) != null) {
                     line = line.replaceAll(",,", ", ,");
                     Village v = Village.parseFromPlainData(line);
@@ -602,6 +603,7 @@ public class DataHolder {
                         //ignore invalid village
                     }
                 }
+                logger.debug(" - Finished reading villages");
                 r.close();
 
                 // </editor-fold>
@@ -612,6 +614,9 @@ public class DataHolder {
                 u = new URL(downloadURL + "/tribe.txt.gz");
                 r = new BufferedReader(new InputStreamReader(new GZIPInputStream(u.openConnection(p).getInputStream())));
                 line = "";
+                logger.debug(" + Start reading tribes");
+                int cnt = 0;
+                try{
                 while ((line = r.readLine()) != null) {
                     line = line.replaceAll(",,", ", ,");
                     Tribe t = Tribe.parseFromPlainData(line);
@@ -620,7 +625,17 @@ public class DataHolder {
                     } catch (Exception e) {
                         //ignore invalid tribe
                     }
+                    cnt++;
+                  //  System.out.println(cnt);
+                   if(cnt % 1000 == 0){
+                        System.out.println("Thousend");
+                    }
+    
                 }
+                }catch(Throwable t){
+                    t.printStackTrace();
+                }
+                logger.debug(" - Finished reading tribes");
                 r.close();
 
                 // </editor-fold>
@@ -631,6 +646,7 @@ public class DataHolder {
                 u = new URL(downloadURL + "/ally.txt.gz");
                 r = new BufferedReader(new InputStreamReader(new GZIPInputStream(u.openConnection(p).getInputStream())));
                 line = "";
+                logger.debug(" + Start reading allies");
                 while ((line = r.readLine()) != null) {
                     line = line.replaceAll(",,", ", ,");
                     Ally a = Ally.parseFromPlainData(line);
@@ -640,6 +656,7 @@ public class DataHolder {
                         //ignore invalid ally
                     }
                 }
+                logger.debug(" - Finished reading allies");
                 r.close();
 
                 // </editor-fold>
@@ -648,22 +665,26 @@ public class DataHolder {
                 fireDataHolderEvents("Lese besiegte Gegner (Angriff)...");
                 target = new File(serverDir + "/kill_att.txt.gz");
                 file = new URL(downloadURL + "/kill_att.txt.gz");
+                logger.debug(" + Downloading conquers (off)");
                 downloadDataFile(file, "kill_att.tmp");
                 if (target.exists()) {
                     target.delete();
                 }
                 new File("kill_att.tmp").renameTo(target);
+                logger.debug(" - Finished downloading conquers (off)");
                 // </editor-fold>
 
                 // <editor-fold defaultstate="collapsed" desc=" Load conquers def ">
                 fireDataHolderEvents("Lese besiegte Gegner (Verteidigung)...");
                 target = new File(serverDir + "/kill_def.txt.gz");
                 file = new URL(downloadURL + "/kill_def.txt.gz");
+                logger.debug(" + Downloading conquers (def)");
                 downloadDataFile(file, "kill_def.tmp");
                 if (target.exists()) {
                     target.delete();
                 }
                 new File("kill_def.tmp").renameTo(target);
+                logger.debug(" - Finished downloading conquers (def)");
                 // </editor-fold>
 
                 //finally register user for server if not available yet

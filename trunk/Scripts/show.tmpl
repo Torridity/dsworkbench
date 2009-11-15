@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name           DS Workbench Scripts
+// @name           DS Workbench Scripts (AttackInfo)
 // @namespace      none
 // @include        http://de*.die-staemme.de/game.php?*screen=overview*
 // @include        http://de*.die-staemme.de/game.php?screen=overview*
@@ -122,7 +122,7 @@ if(window.navigator.userAgent.indexOf("Firefox") > -1){
 				
 				altNode.setAttribute('class', 'warn');
 				sendNode.appendChild(spanNode);
-				if(getRealServerTime(document.getElementById('serverTime')) > attacks[i].finished){
+				if(attacks[i].expired < getRealServerTime(document.getElementById('serverTime'))){			
 					altNode.setAttribute('style', 'display:inline');
 			}else{
 				spanNode.setAttribute('class', 'timer');

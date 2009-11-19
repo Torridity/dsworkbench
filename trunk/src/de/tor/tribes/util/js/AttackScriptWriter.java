@@ -19,7 +19,7 @@ import org.apache.log4j.Logger;
 /**
  *
  * @author Charon
- * @TODO (1.9) Check milliseconds exported times
+ * @TODO (DIFF) Milliseconds shown for exported times
  */
 public class AttackScriptWriter {
 
@@ -70,7 +70,8 @@ public class AttackScriptWriter {
             //unit
             block += "'unit':'" + a.getUnit().getPlainName() + ".png',\n";
             //times
-            long sendTime = a.getArriveTime().getTime() - ((long) DSCalculator.calculateMoveTimeInSeconds(a.getSource(), a.getTarget(), a.getUnit().getSpeed()) * 1000);
+            long sendTime = a.getArriveTime().getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(a.getSource(), a.getTarget(), a.getUnit().getSpeed()) * 1000);
+
             Calendar midnight = Calendar.getInstance();
             midnight.set(Calendar.HOUR_OF_DAY, 0);
             midnight.set(Calendar.MINUTE, 0);
@@ -79,7 +80,7 @@ public class AttackScriptWriter {
             //calculate difference from today midnight
             long diff = sendTime - midnight.getTimeInMillis();
             block += "'timerValue':'" + (int) Math.round((double) diff / 1000.0) + "',\n";
-            SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss.SSS");
+            SimpleDateFormat df = new SimpleDateFormat("dd.MM.yy HH:mm:ss.SSS");
             block += "'send':'" + df.format(new Date(sendTime)) + "',\n";
             block += "'arrive':'" + df.format(a.getArriveTime()) + "',\n";
             block += "'expired':" + (long) Math.floor((long) sendTime / 1000) + "\n";
@@ -105,34 +106,34 @@ public class AttackScriptWriter {
         }
         logger.info("Script written successfully");
         return true;
-    /*var attacks = new Array({
-    'type':0,
-    'source':111217,
-    'target':123456,
-    'unit':0,
-    'send':'02:00:00',
-    'arrive':'27.09.2009 12:00:00',
-    'finished':1255168681
-    },
-    {
-    'type':0,
-    'source':111217,
-    'target':123456,
-    'unit':0,
-    'send':'27.09.2009 02:00:00',
-    'arrive':'27.09.2009 12:00:00',
-    'finished':1255168681
-    },
-    {
-    'type':2,
-    'source':104232,
-    'target':123456,
-    'unit':0,
-    'send':'27.09.2009 02:00:00',
-    'arrive':'27.09.2009 12:00:00',
-    'finished':1255168681
-    }
-    );*/
+        /*var attacks = new Array({
+        'type':0,
+        'source':111217,
+        'target':123456,
+        'unit':0,
+        'send':'02:00:00',
+        'arrive':'27.09.2009 12:00:00',
+        'finished':1255168681
+        },
+        {
+        'type':0,
+        'source':111217,
+        'target':123456,
+        'unit':0,
+        'send':'27.09.2009 02:00:00',
+        'arrive':'27.09.2009 12:00:00',
+        'finished':1255168681
+        },
+        {
+        'type':2,
+        'source':104232,
+        'target':123456,
+        'unit':0,
+        'send':'27.09.2009 02:00:00',
+        'arrive':'27.09.2009 12:00:00',
+        'finished':1255168681
+        }
+        );*/
 
     }
 

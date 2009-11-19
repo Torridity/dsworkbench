@@ -2274,7 +2274,6 @@ public class MapRenderer extends Thread {
         g2d.setColor(Constants.DS_BACK_LIGHT);
         g2d.fillRect(pX, pY + pDy, pWidth, 19);
 
-
         int dx = 150;
         VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(pVillage);
         float fill = 0.0f;

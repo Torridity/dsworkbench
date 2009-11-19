@@ -18,7 +18,7 @@ import de.tor.tribes.ui.models.TroopsManagerTableModel;
 import java.util.LinkedList;
 
 /**
- *
+ * @TODO (DIFF) Limited farm space to 100%, included bonus villages
  * @author Jejkal
  */
 public class VillageTroopsHolder {
@@ -216,7 +216,12 @@ public class VillageTroopsHolder {
             farmSpace += outside.get(unit) * unit.getPop();
             farmSpace += onTheWay.get(unit) * unit.getPop();
         }
-        return (float) (farmSpace / 24000);
+
+        boolean isPopBonus = (getVillage().getType() == 4);
+
+        //calculate farm space depending on pop bonus
+        float res = (float) (farmSpace / ((!isPopBonus) ? 24000 : 26400));
+        return (res > 1.0f) ? 1.0f : res;
     }
 
     public void clearSupports() {

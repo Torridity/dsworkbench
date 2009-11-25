@@ -72,6 +72,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumn;
 
 /**
+ * @TODO (DIFF) Arrive time at direct export from result frame corrected
  * @author Jejkal
  */
 public class TribeTribeAttackFrame extends javax.swing.JFrame {
@@ -2221,86 +2222,7 @@ private void fireAttacksToClipboardEvent(java.awt.event.MouseEvent evt) {//GEN-F
             Village tVillage = (Village) resultModel.getValueAt(i, 2);
             Date dTime = (Date) resultModel.getValueAt(i, 3);
             int type = (Integer) resultModel.getValueAt(i, 4);
-            buffer.append(AttackToBBCodeFormater.formatAttack(sVillage, tVillage, sUnit, dTime, type, sUrl, extended));
-        /* String time = null;
-        if (extended) {
-        time = new SimpleDateFormat("'[color=red]'dd.MM.yy 'um' HH:mm:ss.'[size=8]'SSS'[/size][/color]'").format(dTime);
-        } else {
-        time = new SimpleDateFormat("'[color=red]'dd.MM.yy 'um' HH:mm:ss.SSS'[/color]'").format(dTime);
-        }
-
-        switch (type) {
-        case Attack.CLEAN_TYPE: {
-        buffer.append("Angriff (Clean-Off) ");
-        buffer.append("\n");
-        break;
-
-        }
-
-
-        case Attack.FAKE_TYPE: {
-        buffer.append("Angriff (Fake) ");
-        buffer.append("\n");
-        break;
-
-        }
-
-
-        case Attack.SNOB_TYPE: {
-        buffer.append("Angriff (AG) ");
-        buffer.append("\n");
-        break;
-
-        }
-
-
-        case Attack.SUPPORT_TYPE: {
-        buffer.append("Unterstützung ");
-        buffer.append("\n");
-        break;
-
-        }
-        default: {
-        buffer.append("Angriff ");
-        }
-
-        }
-
-        if (Boolean.parseBoolean(GlobalOptions.getProperty("export.tribe.names"))) {
-        buffer.append(" von ");
-        if (sVillage.getTribe() != null) {
-        buffer.append(sVillage.getTribe().toBBCode());
-        } else {
-        buffer.append("Barbaren");
-        }
-
-        }
-        buffer.append(" aus ");
-        buffer.append(sVillage.toBBCode());
-        if (Boolean.parseBoolean(GlobalOptions.getProperty("export.units"))) {
-        buffer.append(" mit ");
-        if (extended) {
-        buffer.append("[img]" + sUrl + "/graphic/unit/unit_" + sUnit.getPlainName() + ".png[/img]");
-        } else {
-        buffer.append(sUnit.getName());
-        }
-
-        }
-        buffer.append(" auf ");
-        if (Boolean.parseBoolean(GlobalOptions.getProperty("export.tribe.names"))) {
-        if (tVillage.getTribe() != null) {
-        buffer.append(tVillage.getTribe().toBBCode());
-        } else {
-        buffer.append("Barbaren");
-        }
-
-        buffer.append(" in ");
-        }
-
-        buffer.append(tVillage.toBBCode());
-        buffer.append(" am ");
-        buffer.append(time);
-        buffer.append("\n");*/
+            buffer.append(AttackToBBCodeFormater.formatAttack(sVillage, tVillage, sUnit, dTime, type, sUrl, extended)); 
         }
 
         if (extended) {

@@ -15,14 +15,13 @@ import javax.swing.ImageIcon;
  *
  * @author  Charon
  */
-public class MarkerCell extends javax.swing.JPanel {
+public class MarkerCell extends javax.swing.JPanel implements Comparable {
 
     private static ImageIcon PLAYER_ICON = null;
     private static ImageIcon ALLY_ICON = null;
     private int type = Marker.TRIBE_MARKER_TYPE;
     private Tribe mTribe = null;
     private Ally mAlly = null;
-    
 
     static {
         try {
@@ -131,4 +130,26 @@ public class MarkerCell extends javax.swing.JPanel {
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jMarkerLabel;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public int compareTo(Object o) {
+        try {
+            MarkerCell c = (MarkerCell) o;
+            String v1 = "";
+            if (c.getType() == Marker.ALLY_MARKER_TYPE) {
+                v1 = c.getAlly().getName();
+            } else {
+                v1 = c.getTribe().getName();
+            }
+            String v2 = "";
+            if (getType() == Marker.ALLY_MARKER_TYPE) {
+                v2 = getAlly().getName();
+            } else {
+                v2 = getTribe().getName();
+            }
+            return String.CASE_INSENSITIVE_ORDER.compare(v1, v2);
+        } catch (Exception e) {
+            return 0;
+        }
+    }
 }

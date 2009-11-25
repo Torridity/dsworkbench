@@ -54,6 +54,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 
 /**
  * @TODO (1.X) Shortcuts editable
+ * @TODO (DIFF) Added download of live data
  * @author Jejkal
  */
 public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
@@ -666,6 +667,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jStatusArea = new javax.swing.JTextArea();
         jDownloadDataButton = new javax.swing.JButton();
         jCheckForUpdatesBox = new javax.swing.JCheckBox();
+        jDownloadDataButton1 = new javax.swing.JButton();
         jMapSettings = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
         jShowContinents = new javax.swing.JCheckBox();
@@ -1096,7 +1098,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                     .addComponent(jAccountPasswordLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jCheckAccountButton)
-                .addContainerGap(135, Short.MAX_VALUE))
+                .addContainerGap(206, Short.MAX_VALUE))
         );
 
         jSettingsTabbedPane.addTab("Login", new javax.swing.ImageIcon(getClass().getResource("/res/login.png")), jLoginPanel); // NOI18N
@@ -1141,27 +1143,41 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             }
         });
 
+        jDownloadDataButton1.setBackground(new java.awt.Color(239, 235, 223));
+        jDownloadDataButton1.setText("Daten von www.die-stämme.de");
+        jDownloadDataButton1.setToolTipText("Daten direkt von den DS Servern laden");
+        jDownloadDataButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireDownloadLiveDataEvent(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPlayerServerSettingsLayout = new javax.swing.GroupLayout(jPlayerServerSettings);
         jPlayerServerSettings.setLayout(jPlayerServerSettingsLayout);
         jPlayerServerSettingsLayout.setHorizontalGroup(
             jPlayerServerSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPlayerServerSettingsLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPlayerServerSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 519, Short.MAX_VALUE)
-                    .addComponent(jCheckForUpdatesBox)
-                    .addGroup(jPlayerServerSettingsLayout.createSequentialGroup()
-                        .addGroup(jPlayerServerSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1)
-                            .addComponent(jLabel2))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPlayerServerSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jTribeNames, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jServerList, 0, 262, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+            .addGroup(jPlayerServerSettingsLayout.createSequentialGroup()
+                .addGroup(jPlayerServerSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPlayerServerSettingsLayout.createSequentialGroup()
+                        .addContainerGap()
                         .addGroup(jPlayerServerSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jDownloadDataButton, javax.swing.GroupLayout.DEFAULT_SIZE, 211, Short.MAX_VALUE)
-                            .addComponent(jSelectServerButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 211, Short.MAX_VALUE))))
+                            .addComponent(jCheckForUpdatesBox)
+                            .addGroup(jPlayerServerSettingsLayout.createSequentialGroup()
+                                .addGroup(jPlayerServerSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel1)
+                                    .addComponent(jLabel2))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPlayerServerSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(jTribeNames, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jServerList, 0, 262, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(jPlayerServerSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(jDownloadDataButton, javax.swing.GroupLayout.DEFAULT_SIZE, 211, Short.MAX_VALUE)
+                                    .addComponent(jSelectServerButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 211, Short.MAX_VALUE)))
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 519, Short.MAX_VALUE)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPlayerServerSettingsLayout.createSequentialGroup()
+                        .addGap(318, 318, 318)
+                        .addComponent(jDownloadDataButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 211, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPlayerServerSettingsLayout.setVerticalGroup(
@@ -1177,8 +1193,10 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                     .addComponent(jLabel2)
                     .addComponent(jTribeNames, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jDownloadDataButton))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jDownloadDataButton1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 293, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 333, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jCheckForUpdatesBox)
                 .addContainerGap())
@@ -1330,7 +1348,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                     .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, 175, Short.MAX_VALUE)
                     .addGroup(jMapSettingsLayout.createSequentialGroup()
                         .addComponent(jDefaultMarkBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 125, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 126, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 175, Short.MAX_VALUE))
                 .addGap(166, 166, 166))
         );
@@ -1349,7 +1367,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 .addGroup(jMapSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel3)
                     .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(131, Short.MAX_VALUE))
+                .addContainerGap(202, Short.MAX_VALUE))
         );
 
         jSettingsTabbedPane.addTab("Karten", new javax.swing.ImageIcon(getClass().getResource("/res/ui/map.gif")), jMapSettings); // NOI18N
@@ -1645,7 +1663,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 .addComponent(jRefeshNetworkButton)
                 .addGap(18, 18, 18)
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(61, Short.MAX_VALUE))
+                .addContainerGap(132, Short.MAX_VALUE))
         );
 
         jSettingsTabbedPane.addTab("Netzwerk", new javax.swing.ImageIcon(getClass().getResource("/res/proxy.png")), jNetworkSettings); // NOI18N
@@ -1855,7 +1873,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(185, 185, 185))
+                .addGap(214, 214, 214))
         );
 
         jSettingsTabbedPane.addTab("Templates", new javax.swing.ImageIcon(getClass().getResource("/res/ui/component.png")), jTemplateSettings); // NOI18N
@@ -1999,7 +2017,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                         .addGroup(jMiscSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jMaxTroopDensity, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jButton8))))
-                .addContainerGap(198, Short.MAX_VALUE))
+                .addContainerGap(267, Short.MAX_VALUE))
         );
 
         jSettingsTabbedPane.addTab("Sonstiges", new javax.swing.ImageIcon(getClass().getResource("/res/checkbox.png")), jMiscSettings); // NOI18N
@@ -2051,7 +2069,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                         .addComponent(jCreateAccountButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jChangePasswordButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 104, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 110, Short.MAX_VALUE)
                         .addComponent(jCancelButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jOKButton, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -2064,7 +2082,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jSettingsTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 433, Short.MAX_VALUE)
+                .addComponent(jSettingsTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 505, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jCreateAccountButton)
@@ -2774,6 +2792,85 @@ private void fireRestoreTemplateEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
     AttackPlanHTMLExporter.loadCustomTemplate();
 }//GEN-LAST:event_fireRestoreTemplateEvent
 
+private void fireDownloadLiveDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireDownloadLiveDataEvent
+
+     if (!jSelectServerButton.isEnabled()) {
+            return;
+        }
+
+        if (jServerList.getSelectedItem() == null) {
+            return;
+        }
+        // <editor-fold defaultstate="collapsed" desc=" Offline Mode ? ">
+
+        if (GlobalOptions.isOfflineMode()) {
+            JOptionPaneHelper.showWarningBox(this, "Du befindest dich im Offline-Modus." +
+                    "\nBitte korrigiere deine Netzwerkeinstellungen um den Download durchzuführen.",
+                    "Warnung");
+            return;
+        }
+
+        // </editor-fold>
+
+        // <editor-fold defaultstate="collapsed" desc=" Account valid, data outdated ? ">
+        String selectedServer = (String) jServerList.getSelectedItem();
+        String name = GlobalOptions.getProperty("account.name");
+        String password = GlobalOptions.getProperty("account.password");
+        if (DatabaseInterface.checkUser(name, password) != DatabaseInterface.ID_SUCCESS) {
+            JOptionPaneHelper.showErrorBox(this, "Die Accountvalidierung ist fehlgeschlagen.\n" +
+                    "Bitte überprüfe deine Account- und Netzwerkeinstellungen und versuches es erneut.",
+                    "Fehler");
+            return;
+        }
+        // </editor-fold>
+
+        //save current user data for current server
+        GlobalOptions.saveUserData();
+        GlobalOptions.setSelectedServer((String) jServerList.getSelectedItem());
+        GlobalOptions.addProperty("default.server", GlobalOptions.getSelectedServer());
+        GlobalOptions.saveProperties();
+
+        updating = true;
+        jSelectServerButton.setEnabled(false);
+        jDownloadDataButton.setEnabled(false);
+        jOKButton.setEnabled(false);
+        jCreateAccountButton.setEnabled(false);
+        jCancelButton.setEnabled(false);
+        jChangePasswordButton.setEnabled(false);
+        jTribeNames.setModel(new DefaultComboBoxModel());
+        jStatusArea.setText("");
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+
+        //clear tribes model due to data is cleared at reload
+        jTribeNames.setModel(new DefaultComboBoxModel());
+
+        Thread t = new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                try {
+                    logger.debug("Start downloading data from tribal wars servers");
+                    boolean ret = DataHolder.getSingleton().loadLiveData();
+                    logger.debug("Update finished " + ((ret) ? "successfully" : "with errors"));
+                /* if (!ret) {
+                logger.info(" - Loading local copy due to update error");
+                ret = DataHolder.getSingleton().loadData(false);
+                logger.debug("Data loaded " + ((ret) ? "successfully" : "with errors"));
+                if (!ret) {
+                throw new Exception("Unable to load local data copy");
+                }
+                }*/
+                } catch (Exception e) {
+                    logger.error("Failed to load data", e);
+                }
+            }
+        });
+
+        logger.debug("Starting update thread");
+        t.setDaemon(true);
+        t.start();
+}//GEN-LAST:event_fireDownloadLiveDataEvent
+
     // </editor-fold>
     /**Update the server list*/
     private boolean updateServerList() {
@@ -3047,6 +3144,7 @@ private void fireRestoreTemplateEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
     private javax.swing.JButton jDeffStrengthOKButton;
     private javax.swing.JRadioButton jDirectConnectOption;
     private javax.swing.JButton jDownloadDataButton;
+    private javax.swing.JButton jDownloadDataButton1;
     private javax.swing.JCheckBox jDrawAttacksByDefaultBox;
     private javax.swing.JEditorPane jEditorPane1;
     private javax.swing.JTextField jFooterPath;

@@ -7,6 +7,7 @@ package de.tor.tribes.util;
 import de.tor.tribes.ui.DSWorkbenchAttackFrame;
 import de.tor.tribes.ui.DSWorkbenchChurchFrame;
 import de.tor.tribes.ui.DSWorkbenchConquersFrame;
+import de.tor.tribes.ui.DSWorkbenchDoItYourselfAttackPlaner;
 import de.tor.tribes.ui.DSWorkbenchMainFrame;
 import de.tor.tribes.ui.DSWorkbenchMarkerFrame;
 import de.tor.tribes.ui.DSWorkbenchRankFrame;
@@ -47,6 +48,7 @@ public class MainShutdownHook extends Thread {
             GlobalOptions.addProperty("form.frame.visible", Boolean.toString(DSWorkbenchFormFrame.getSingleton().isVisible()));
             GlobalOptions.addProperty("search.frame.visible", Boolean.toString(DSWorkbenchSearchFrame.getSingleton().isVisible()));
             GlobalOptions.addProperty("attack.frame.alwaysOnTop", Boolean.toString(DSWorkbenchAttackFrame.getSingleton().isAlwaysOnTop()));
+            GlobalOptions.addProperty("doityourself.attack.frame.alwaysOnTop", Boolean.toString(DSWorkbenchDoItYourselfAttackPlaner.getSingleton().isAlwaysOnTop()));
             GlobalOptions.addProperty("marker.frame.alwaysOnTop", Boolean.toString(DSWorkbenchMarkerFrame.getSingleton().isAlwaysOnTop()));
             GlobalOptions.addProperty("church.frame.alwaysOnTop", Boolean.toString(DSWorkbenchChurchFrame.getSingleton().isAlwaysOnTop()));
             GlobalOptions.addProperty("conquers.frame.alwaysOnTop", Boolean.toString(DSWorkbenchConquersFrame.getSingleton().isAlwaysOnTop()));

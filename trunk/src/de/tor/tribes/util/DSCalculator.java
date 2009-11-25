@@ -48,6 +48,22 @@ public class DSCalculator {
         return new Point((int) xMass, (int) yMass);
     }
 
+    public static Point calculateCenterOfMass(Village[] pVillages) {
+        double mass = pVillages.length;
+        if (mass == 0) {
+            return new Point(500, 500);
+        }
+        double xMass = 0;
+        double yMass = 0;
+        for (Village v : pVillages) {
+            xMass += v.getX();
+            yMass += v.getY();
+        }
+        xMass = Math.rint(xMass / mass);
+        yMass = Math.rint(yMass / mass);
+        return new Point((int) xMass, (int) yMass);
+    }
+
     public static int[] xyToHierarchical(int x, int y) {
         if (Math.abs(x) > 499 || Math.abs(y) > 499) {
             return null; // out of range

@@ -36,6 +36,7 @@ import javax.swing.table.TableCellRenderer;
 import org.apache.log4j.Logger;
 
 /**
+ * @TODO (DIFF) Added correct sort order
  * @author  Charon
  */
 public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements MarkerManagerListener {

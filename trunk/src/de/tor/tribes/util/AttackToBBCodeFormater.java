@@ -100,7 +100,7 @@ public class AttackToBBCodeFormater {
             template = "%TYPE% von %ATTACKER% aus %SOURCE% mit %UNIT% auf %DEFENDER% in %TARGET% startet am [color=red]%SEND%[/color] und kommt am [color=green]%ARRIVE%[/color] an";
         }
 
-        Date aTime = new Date(pSendTime.getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(pSource, pTarget, pUnit.getSpeed()) * 1000));
+        Date aTime = new Date(pSendTime.getTime() + (long) (DSCalculator.calculateMoveTimeInSeconds(pSource, pTarget, pUnit.getSpeed()) * 1000));
 
         if (pExtended) {
             sendtime = new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss.'[size=8]'SSS'[/size]'").format(pSendTime);

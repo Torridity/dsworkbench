@@ -46,6 +46,7 @@ import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.text.NumberFormat;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
@@ -54,6 +55,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 /**
+ * @TODO (DIFF) Cleaned up and extended map popup
  * @author Charon
  */
 public class MapPanel extends JPanel {
@@ -737,7 +739,7 @@ public class MapPanel extends JPanel {
 
         addMouseMotionListener(MenuRenderer.getSingleton());
 
-    //<editor-fold>
+        //<editor-fold>
     }
 
     public boolean isAttackCursor() {
@@ -865,20 +867,23 @@ public class MapPanel extends JPanel {
         jCopyEnemyAlly = new javax.swing.JCheckBox();
         jCopyBarbarian = new javax.swing.JCheckBox();
         jVillageActionsMenu = new javax.swing.JPopupMenu();
-        jTitledSeparatorCurrent = new javax.swing.JSeparator();
+        jTribeSubmenu = new javax.swing.JMenu();
+        jCopyPlayerVillagesToClipboardItem = new javax.swing.JMenuItem();
+        jCopyPlayerVillagesAsBBCodeToClipboardItem = new javax.swing.JMenuItem();
+        jCurrentVillageSubmenu = new javax.swing.JMenu();
         jCurrentCoordToClipboardItem = new javax.swing.JMenuItem();
-        jCurrentCoordAsBBToClipboardItem = new javax.swing.JMenuItem();
-        jSeparator1 = new javax.swing.JSeparator();
-        jCenterItem = new javax.swing.JMenuItem();
-        jSeparator2 = new javax.swing.JSeparator();
-        jCurrentToAttackPlanerAsSourceItem = new javax.swing.JMenuItem();
-        jCurrentToAttackPlanerAsTargetItem = new javax.swing.JMenuItem();
-        jSeparator3 = new javax.swing.JSeparator();
-        jCurrentCreateNoteItem = new javax.swing.JMenuItem();
-        jCurrentAddToNoteItem = new javax.swing.JMenuItem();
-        jSeparator4 = new javax.swing.JSeparator();
         jVillageInfoIngame = new javax.swing.JMenuItem();
-        jTitledSeparatorAll = new javax.swing.JSeparator();
+        jSeparator4 = new javax.swing.JSeparator();
+        jCurrentAddToNoteItem = new javax.swing.JMenuItem();
+        jCurrentCreateNoteItem = new javax.swing.JMenuItem();
+        jSeparator3 = new javax.swing.JSeparator();
+        jCurrentToAttackPlanerAsTargetItem = new javax.swing.JMenuItem();
+        jCurrentToAttackPlanerAsSourceItem = new javax.swing.JMenuItem();
+        jSeparator2 = new javax.swing.JSeparator();
+        jCenterItem = new javax.swing.JMenuItem();
+        jSeparator1 = new javax.swing.JSeparator();
+        jCurrentCoordAsBBToClipboardItem = new javax.swing.JMenuItem();
+        jMarkedVillageSubmenu = new javax.swing.JMenu();
         jAllCoordToClipboardItem = new javax.swing.JMenuItem();
         jAllCoordAsBBToClipboardItem = new javax.swing.JMenuItem();
         jSeparator5 = new javax.swing.JSeparator();
@@ -1002,9 +1007,27 @@ public class MapPanel extends JPanel {
                 .addContainerGap())
         );
 
-        jTitledSeparatorCurrent.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEmptyBorder(5, 1, 5, 1), "Aktuelles Dorf", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.BELOW_TOP, new java.awt.Font("Tahoma", 1, 11))); // NOI18N
-        jTitledSeparatorCurrent.setPreferredSize(new java.awt.Dimension(0, 30));
-        jVillageActionsMenu.add(jTitledSeparatorCurrent);
+        jTribeSubmenu.setText("Spieler");
+
+        jCopyPlayerVillagesToClipboardItem.setText("Spielerdörfer in Zwischenablage kopieren");
+        jCopyPlayerVillagesToClipboardItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fireVillagePopupActionEvent(evt);
+            }
+        });
+        jTribeSubmenu.add(jCopyPlayerVillagesToClipboardItem);
+
+        jCopyPlayerVillagesAsBBCodeToClipboardItem.setText("Spielerdörfer als BB-Code in Zwischenablage");
+        jCopyPlayerVillagesAsBBCodeToClipboardItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fireVillagePopupActionEvent(evt);
+            }
+        });
+        jTribeSubmenu.add(jCopyPlayerVillagesAsBBCodeToClipboardItem);
+
+        jVillageActionsMenu.add(jTribeSubmenu);
+
+        jCurrentVillageSubmenu.setText("Dieses Dorf");
 
         jCurrentCoordToClipboardItem.setText("Koordinaten in Zwischenablage");
         jCurrentCoordToClipboardItem.addActionListener(new java.awt.event.ActionListener() {
@@ -1012,59 +1035,7 @@ public class MapPanel extends JPanel {
                 fireVillagePopupActionEvent(evt);
             }
         });
-        jVillageActionsMenu.add(jCurrentCoordToClipboardItem);
-
-        jCurrentCoordAsBBToClipboardItem.setText("BB-Code in Zwischenablage");
-        jCurrentCoordAsBBToClipboardItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fireVillagePopupActionEvent(evt);
-            }
-        });
-        jVillageActionsMenu.add(jCurrentCoordAsBBToClipboardItem);
-        jVillageActionsMenu.add(jSeparator1);
-
-        jCenterItem.setText("Zentrieren");
-        jCenterItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fireVillagePopupActionEvent(evt);
-            }
-        });
-        jVillageActionsMenu.add(jCenterItem);
-        jVillageActionsMenu.add(jSeparator2);
-
-        jCurrentToAttackPlanerAsSourceItem.setText("In Angriffsplaner (Herkunft)");
-        jCurrentToAttackPlanerAsSourceItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fireVillagePopupActionEvent(evt);
-            }
-        });
-        jVillageActionsMenu.add(jCurrentToAttackPlanerAsSourceItem);
-
-        jCurrentToAttackPlanerAsTargetItem.setText("In Angriffsplaner (Ziel)");
-        jCurrentToAttackPlanerAsTargetItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fireVillagePopupActionEvent(evt);
-            }
-        });
-        jVillageActionsMenu.add(jCurrentToAttackPlanerAsTargetItem);
-        jVillageActionsMenu.add(jSeparator3);
-
-        jCurrentCreateNoteItem.setText("Notiz erstellen");
-        jCurrentCreateNoteItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fireVillagePopupActionEvent(evt);
-            }
-        });
-        jVillageActionsMenu.add(jCurrentCreateNoteItem);
-
-        jCurrentAddToNoteItem.setText("Der gewählten Notiz hinzufügen");
-        jCurrentAddToNoteItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fireVillagePopupActionEvent(evt);
-            }
-        });
-        jVillageActionsMenu.add(jCurrentAddToNoteItem);
-        jVillageActionsMenu.add(jSeparator4);
+        jCurrentVillageSubmenu.add(jCurrentCoordToClipboardItem);
 
         jVillageInfoIngame.setText("Im Spiel zentrieren");
         jVillageInfoIngame.addActionListener(new java.awt.event.ActionListener() {
@@ -1072,11 +1043,63 @@ public class MapPanel extends JPanel {
                 fireVillagePopupActionEvent(evt);
             }
         });
-        jVillageActionsMenu.add(jVillageInfoIngame);
+        jCurrentVillageSubmenu.add(jVillageInfoIngame);
+        jCurrentVillageSubmenu.add(jSeparator4);
 
-        jTitledSeparatorAll.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEmptyBorder(5, 1, 5, 1), "Ausgewählte  Dörfer", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.BELOW_TOP, new java.awt.Font("Tahoma", 1, 11))); // NOI18N
-        jTitledSeparatorAll.setPreferredSize(new java.awt.Dimension(0, 30));
-        jVillageActionsMenu.add(jTitledSeparatorAll);
+        jCurrentAddToNoteItem.setText("Der gewählten Notiz hinzufügen");
+        jCurrentAddToNoteItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fireVillagePopupActionEvent(evt);
+            }
+        });
+        jCurrentVillageSubmenu.add(jCurrentAddToNoteItem);
+
+        jCurrentCreateNoteItem.setText("Notiz erstellen");
+        jCurrentCreateNoteItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fireVillagePopupActionEvent(evt);
+            }
+        });
+        jCurrentVillageSubmenu.add(jCurrentCreateNoteItem);
+        jCurrentVillageSubmenu.add(jSeparator3);
+
+        jCurrentToAttackPlanerAsTargetItem.setText("In Angriffsplaner (Ziel)");
+        jCurrentToAttackPlanerAsTargetItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fireVillagePopupActionEvent(evt);
+            }
+        });
+        jCurrentVillageSubmenu.add(jCurrentToAttackPlanerAsTargetItem);
+
+        jCurrentToAttackPlanerAsSourceItem.setText("In Angriffsplaner (Herkunft)");
+        jCurrentToAttackPlanerAsSourceItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fireVillagePopupActionEvent(evt);
+            }
+        });
+        jCurrentVillageSubmenu.add(jCurrentToAttackPlanerAsSourceItem);
+        jCurrentVillageSubmenu.add(jSeparator2);
+
+        jCenterItem.setText("Zentrieren");
+        jCenterItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fireVillagePopupActionEvent(evt);
+            }
+        });
+        jCurrentVillageSubmenu.add(jCenterItem);
+        jCurrentVillageSubmenu.add(jSeparator1);
+
+        jCurrentCoordAsBBToClipboardItem.setText("BB-Code in Zwischenablage");
+        jCurrentCoordAsBBToClipboardItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fireVillagePopupActionEvent(evt);
+            }
+        });
+        jCurrentVillageSubmenu.add(jCurrentCoordAsBBToClipboardItem);
+
+        jVillageActionsMenu.add(jCurrentVillageSubmenu);
+
+        jMarkedVillageSubmenu.setText("Markierte Dörfer");
 
         jAllCoordToClipboardItem.setText("Koordinaten in Zwischenablage");
         jAllCoordToClipboardItem.addActionListener(new java.awt.event.ActionListener() {
@@ -1084,7 +1107,7 @@ public class MapPanel extends JPanel {
                 fireVillagePopupActionEvent(evt);
             }
         });
-        jVillageActionsMenu.add(jAllCoordToClipboardItem);
+        jMarkedVillageSubmenu.add(jAllCoordToClipboardItem);
 
         jAllCoordAsBBToClipboardItem.setText("BB-Code in Zwischenablage");
         jAllCoordAsBBToClipboardItem.addActionListener(new java.awt.event.ActionListener() {
@@ -1092,8 +1115,8 @@ public class MapPanel extends JPanel {
                 fireVillagePopupActionEvent(evt);
             }
         });
-        jVillageActionsMenu.add(jAllCoordAsBBToClipboardItem);
-        jVillageActionsMenu.add(jSeparator5);
+        jMarkedVillageSubmenu.add(jAllCoordAsBBToClipboardItem);
+        jMarkedVillageSubmenu.add(jSeparator5);
 
         jAllToAttackPlanerAsSourceItem.setText("In Angriffsplaner (Herkunft)");
         jAllToAttackPlanerAsSourceItem.addActionListener(new java.awt.event.ActionListener() {
@@ -1101,7 +1124,7 @@ public class MapPanel extends JPanel {
                 fireVillagePopupActionEvent(evt);
             }
         });
-        jVillageActionsMenu.add(jAllToAttackPlanerAsSourceItem);
+        jMarkedVillageSubmenu.add(jAllToAttackPlanerAsSourceItem);
 
         jAllToAttackPlanerAsTargetItem.setText("In Angriffsplaner (Ziel)");
         jAllToAttackPlanerAsTargetItem.addActionListener(new java.awt.event.ActionListener() {
@@ -1109,8 +1132,8 @@ public class MapPanel extends JPanel {
                 fireVillagePopupActionEvent(evt);
             }
         });
-        jVillageActionsMenu.add(jAllToAttackPlanerAsTargetItem);
-        jVillageActionsMenu.add(jSeparator6);
+        jMarkedVillageSubmenu.add(jAllToAttackPlanerAsTargetItem);
+        jMarkedVillageSubmenu.add(jSeparator6);
 
         jAllCreateNoteItem.setText("Notiz erstellen");
         jAllCreateNoteItem.addActionListener(new java.awt.event.ActionListener() {
@@ -1118,7 +1141,7 @@ public class MapPanel extends JPanel {
                 fireVillagePopupActionEvent(evt);
             }
         });
-        jVillageActionsMenu.add(jAllCreateNoteItem);
+        jMarkedVillageSubmenu.add(jAllCreateNoteItem);
 
         jAllAddToNoteItem.setText("Der gewählten Notiz hinzufügen");
         jAllAddToNoteItem.addActionListener(new java.awt.event.ActionListener() {
@@ -1126,7 +1149,9 @@ public class MapPanel extends JPanel {
                 fireVillagePopupActionEvent(evt);
             }
         });
-        jVillageActionsMenu.add(jAllAddToNoteItem);
+        jMarkedVillageSubmenu.add(jAllAddToNoteItem);
+
+        jVillageActionsMenu.add(jMarkedVillageSubmenu);
 
         setLayout(null);
     }// </editor-fold>//GEN-END:initComponents
@@ -1306,7 +1331,54 @@ public class MapPanel extends JPanel {
 
     private void fireVillagePopupActionEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireVillagePopupActionEvent
 
-        if (evt.getSource() == jCurrentCoordToClipboardItem) {
+        if (evt.getSource() == jCopyPlayerVillagesToClipboardItem) {
+            Village v = actionMenuVillage;
+            if (v != null) {
+
+                if (v.getTribe() != null) {
+                    try {
+                        String text = "";
+                        Village[] list = v.getTribe().getVillageList();
+                        Arrays.sort(list);
+                        for (Village current : list) {
+                            if (ServerSettings.getSingleton().getCoordType() != 2) {
+                                int[] hier = DSCalculator.xyToHierarchical((int) current.getX(), (int) current.getY());
+                                text += hier[0] + ":" + hier[1] + ":" + hier[2] + "\n";
+                            } else {
+                                text += current.getX() + "|" + current.getY() + "\n";
+                            }
+                        }
+                        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(text), null);
+                        JOptionPaneHelper.showInformationBox(this, "Dörfer in die Zwischenablage kopiert", "Information");
+                    } catch (Exception e) {
+                        JOptionPaneHelper.showErrorBox(this, "Fehler beim Kopieren in die Zwischenablage", "Fehler");
+                    }
+                } else {
+                    JOptionPaneHelper.showWarningBox(this, "Für Barbarendörfer nicht möglich", "Warnung");
+                }
+            }
+        } else if (evt.getSource() == jCopyPlayerVillagesAsBBCodeToClipboardItem) {
+            Village v = actionMenuVillage;
+            if (v != null) {
+
+                if (v.getTribe() != null) {
+                    try {
+                        String text = "";
+                        Village[] list = v.getTribe().getVillageList();
+                        Arrays.sort(list);
+                        for (Village current : list) {
+                            text += current.toBBCode() + "\n";
+                        }
+                        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(text), null);
+                        JOptionPaneHelper.showInformationBox(this, "Dörfer in die Zwischenablage kopiert", "Information");
+                    } catch (Exception e) {
+                        JOptionPaneHelper.showErrorBox(this, "Fehler beim Kopieren in die Zwischenablage", "Fehler");
+                    }
+                } else {
+                    JOptionPaneHelper.showWarningBox(this, "Für Barbarendörfer nicht möglich", "Warnung");
+                }
+            }
+        } else if (evt.getSource() == jCurrentCoordToClipboardItem) {
             //copy current village coordinates to clipboard
             Village v = actionMenuVillage;
             if (v != null) {
@@ -1740,6 +1812,8 @@ public class MapPanel extends JPanel {
     private javax.swing.JCheckBox jCopyEnemyAlly;
     private javax.swing.JCheckBox jCopyOwn;
     private javax.swing.JCheckBox jCopyOwnAlly;
+    private javax.swing.JMenuItem jCopyPlayerVillagesAsBBCodeToClipboardItem;
+    private javax.swing.JMenuItem jCopyPlayerVillagesToClipboardItem;
     private javax.swing.JDialog jCopyVillagesDialog;
     private javax.swing.JMenuItem jCurrentAddToNoteItem;
     private javax.swing.JMenuItem jCurrentCoordAsBBToClipboardItem;
@@ -1747,6 +1821,7 @@ public class MapPanel extends JPanel {
     private javax.swing.JMenuItem jCurrentCreateNoteItem;
     private javax.swing.JMenuItem jCurrentToAttackPlanerAsSourceItem;
     private javax.swing.JMenuItem jCurrentToAttackPlanerAsTargetItem;
+    private javax.swing.JMenu jCurrentVillageSubmenu;
     private javax.swing.JCheckBox jExportAllyName;
     private javax.swing.JButton jExportBBButton;
     private javax.swing.JButton jExportPlainButton;
@@ -1754,14 +1829,14 @@ public class MapPanel extends JPanel {
     private javax.swing.JCheckBox jExportTribeName;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JMenu jMarkedVillageSubmenu;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JSeparator jSeparator3;
     private javax.swing.JSeparator jSeparator4;
     private javax.swing.JSeparator jSeparator5;
     private javax.swing.JSeparator jSeparator6;
-    private javax.swing.JSeparator jTitledSeparatorAll;
-    private javax.swing.JSeparator jTitledSeparatorCurrent;
+    private javax.swing.JMenu jTribeSubmenu;
     private javax.swing.JPopupMenu jVillageActionsMenu;
     private javax.swing.JLabel jVillageExportDetails;
     private javax.swing.JMenuItem jVillageInfoIngame;

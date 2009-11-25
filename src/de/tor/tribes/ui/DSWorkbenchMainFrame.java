@@ -109,7 +109,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
     DSWorkbenchMainFrame() {
         initComponents();
         setTitle("DS Workbench " + Constants.VERSION + Constants.VERSION_ADDITION);
-
+setAlwaysOnTop(false);
 
         jExportDialog.pack();
         jAddROIDialog.pack();
@@ -541,6 +541,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         DistanceManager.getSingleton().clear();
         DistanceTableModel.getSingleton().fireTableStructureChanged();
         DSWorkbenchDistanceFrame.getSingleton().setup();
+        DSWorkbenchDoItYourselfAttackPlaner.getSingleton().setupAttackPlaner();
         //update attack planner
         if (mTribeTribeAttackFrame != null) {
             mTribeTribeAttackFrame.setup();
@@ -914,6 +915,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jSelectionOverviewItem = new javax.swing.JMenuItem();
         jStartAStarItem = new javax.swing.JMenuItem();
         jDistanceItem = new javax.swing.JMenuItem();
+        jDoItYourselfAttackPlanerItem = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
         jShowAttackFrame = new javax.swing.JCheckBoxMenuItem();
         jShowMarkerFrame = new javax.swing.JCheckBoxMenuItem();
@@ -1662,7 +1664,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                         .addGap(10, 10, 10)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jPopupTroops, 0, 112, Short.MAX_VALUE)
-                            .addComponent(jRadarSpinner, javax.swing.GroupLayout.DEFAULT_SIZE, 112, Short.MAX_VALUE))
+                            .addComponent(jRadarSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 112, Short.MAX_VALUE))
                         .addGap(40, 40, 40))
                     .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                         .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
@@ -1962,6 +1964,15 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             }
         });
         jMenu3.add(jDistanceItem);
+
+        jDoItYourselfAttackPlanerItem.setBackground(new java.awt.Color(239, 235, 223));
+        jDoItYourselfAttackPlanerItem.setText(bundle.getString("DSWorkbenchMainFrame.jDoItYourselfAttackPlanerItem.text_1")); // NOI18N
+        jDoItYourselfAttackPlanerItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fireToolsActionEvent(evt);
+            }
+        });
+        jMenu3.add(jDoItYourselfAttackPlanerItem);
 
         jMenuBar1.add(jMenu3);
 
@@ -2302,6 +2313,8 @@ private void fireToolsActionEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:e
         DSWorkbenchSimulatorFrame.getSingleton().showIntegratedVersion(GlobalOptions.getSelectedServer());
     } else if (evt.getSource() == jDistanceItem) {
         DSWorkbenchDistanceFrame.getSingleton().setVisible(true);
+    }else if (evt.getSource() == jDoItYourselfAttackPlanerItem) {
+        DSWorkbenchDoItYourselfAttackPlaner.getSingleton().setVisible(true);
     }
 }//GEN-LAST:event_fireToolsActionEvent
 
@@ -3240,6 +3253,7 @@ private void fireClosedEvent(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_
     private javax.swing.JComboBox jCurrentPlayerVillages;
     private javax.swing.JLabel jCurrentToolLabel;
     private javax.swing.JMenuItem jDistanceItem;
+    private javax.swing.JMenuItem jDoItYourselfAttackPlanerItem;
     private javax.swing.JButton jExportButton;
     private javax.swing.JDialog jExportDialog;
     private javax.swing.JCheckBox jExportForms;

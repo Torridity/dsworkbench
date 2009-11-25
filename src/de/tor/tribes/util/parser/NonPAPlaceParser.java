@@ -14,12 +14,14 @@ import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
+import java.util.Calendar;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.StringTokenizer;
 
 /**
+ *@TODO (1.9) Update state!
  * @author Charon
  */
 public class NonPAPlaceParser {
@@ -123,6 +125,8 @@ public class NonPAPlaceParser {
                     TroopsManager.getSingleton().addTroopsForVillageFast(v, new LinkedList<Integer>());
                     holder = TroopsManager.getSingleton().getTroopsForVillage(v);
                 }
+                //set current state
+                holder.setState(Calendar.getInstance().getTime());
                 holder.setOwnTroops(ownTroops);
                 holder.setTroopsInVillage(troopsInVillage);
                 //set supports

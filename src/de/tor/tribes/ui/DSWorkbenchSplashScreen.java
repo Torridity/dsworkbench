@@ -281,22 +281,22 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
             //if (checkForUpdates) {
             //boolean ret =
             DataHolder.getSingleton().loadData(checkForUpdates);
-        /*logger.debug("Update finished " + ((ret) ? "successfully" : "with errors"));
-        if (!ret) {
-        logger.info(" - Loading local copy due to update error");
-        ret = DataHolder.getSingleton().loadData(false);
-        logger.debug("Data loaded " + ((ret) ? "successfully" : "with errors"));
-        if (!ret) {
-        throw new Exception("Unable to load local data copy");
-        }
-        }
-        } else {
-        boolean ret = DataHolder.getSingleton().loadData(true);
-        logger.debug("Data loaded " + ((ret) ? "successfully" : "with errors"));
-        if (!ret) {
-        throw new Exception("Unable to load local data copy");
-        }*/
-        // }
+            /*logger.debug("Update finished " + ((ret) ? "successfully" : "with errors"));
+            if (!ret) {
+            logger.info(" - Loading local copy due to update error");
+            ret = DataHolder.getSingleton().loadData(false);
+            logger.debug("Data loaded " + ((ret) ? "successfully" : "with errors"));
+            if (!ret) {
+            throw new Exception("Unable to load local data copy");
+            }
+            }
+            } else {
+            boolean ret = DataHolder.getSingleton().loadData(true);
+            logger.debug("Data loaded " + ((ret) ? "successfully" : "with errors"));
+            if (!ret) {
+            throw new Exception("Unable to load local data copy");
+            }*/
+            // }
         } catch (Exception e) {
             logger.error("Failed to load server data", e);
             return false;
@@ -450,7 +450,6 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
             }
         });
     }
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JList jAccountsList;
     private javax.swing.JButton jButton1;

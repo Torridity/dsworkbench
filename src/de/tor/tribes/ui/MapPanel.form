@@ -177,164 +177,167 @@
         <Property name="useNullLayout" type="boolean" value="true"/>
       </Layout>
       <SubComponents>
-        <Component class="javax.swing.JSeparator" name="jTitledSeparatorCurrent">
+        <Menu class="javax.swing.JMenu" name="jTribeSubmenu">
           <Properties>
-            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
-              <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-                <TitledBorder position="3" title="Aktuelles Dorf">
-                  <Border PropertyName="innerBorder" info="org.netbeans.modules.form.compat2.border.EmptyBorderInfo">
-                    <EmptyBorder bottom="5" left="1" right="1" top="5"/>
-                  </Border>
-                  <Font PropertyName="font" name="Tahoma" size="11" style="1"/>
-                </TitledBorder>
-              </Border>
-            </Property>
-            <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[0, 30]"/>
-            </Property>
+            <Property name="text" type="java.lang.String" value="Spieler"/>
           </Properties>
-        </Component>
-        <MenuItem class="javax.swing.JMenuItem" name="jCurrentCoordToClipboardItem">
+          <SubComponents>
+            <MenuItem class="javax.swing.JMenuItem" name="jCopyPlayerVillagesToClipboardItem">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Spielerd&#xf6;rfer in Zwischenablage kopieren"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fireVillagePopupActionEvent"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="jCopyPlayerVillagesAsBBCodeToClipboardItem">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Spielerd&#xf6;rfer als BB-Code in Zwischenablage"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fireVillagePopupActionEvent"/>
+              </Events>
+            </MenuItem>
+          </SubComponents>
+        </Menu>
+        <Menu class="javax.swing.JMenu" name="jCurrentVillageSubmenu">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Koordinaten in Zwischenablage"/>
+            <Property name="text" type="java.lang.String" value="Dieses Dorf"/>
           </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fireVillagePopupActionEvent"/>
-          </Events>
-        </MenuItem>
-        <MenuItem class="javax.swing.JMenuItem" name="jCurrentCoordAsBBToClipboardItem">
+          <SubComponents>
+            <MenuItem class="javax.swing.JMenuItem" name="jCurrentCoordToClipboardItem">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Koordinaten in Zwischenablage"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fireVillagePopupActionEvent"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="jVillageInfoIngame">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Im Spiel zentrieren"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fireVillagePopupActionEvent"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JSeparator" name="jSeparator4">
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="jCurrentAddToNoteItem">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Der gew&#xe4;hlten Notiz hinzuf&#xfc;gen"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fireVillagePopupActionEvent"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="jCurrentCreateNoteItem">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Notiz erstellen"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fireVillagePopupActionEvent"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JSeparator" name="jSeparator3">
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="jCurrentToAttackPlanerAsTargetItem">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="In Angriffsplaner (Ziel)"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fireVillagePopupActionEvent"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="jCurrentToAttackPlanerAsSourceItem">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="In Angriffsplaner (Herkunft)"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fireVillagePopupActionEvent"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JSeparator" name="jSeparator2">
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="jCenterItem">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Zentrieren"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fireVillagePopupActionEvent"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JSeparator" name="jSeparator1">
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="jCurrentCoordAsBBToClipboardItem">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="BB-Code in Zwischenablage"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fireVillagePopupActionEvent"/>
+              </Events>
+            </MenuItem>
+          </SubComponents>
+        </Menu>
+        <Menu class="javax.swing.JMenu" name="jMarkedVillageSubmenu">
           <Properties>
-            <Property name="text" type="java.lang.String" value="BB-Code in Zwischenablage"/>
+            <Property name="text" type="java.lang.String" value="Markierte D&#xf6;rfer"/>
           </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fireVillagePopupActionEvent"/>
-          </Events>
-        </MenuItem>
-        <Component class="javax.swing.JSeparator" name="jSeparator1">
-        </Component>
-        <MenuItem class="javax.swing.JMenuItem" name="jCenterItem">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Zentrieren"/>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fireVillagePopupActionEvent"/>
-          </Events>
-        </MenuItem>
-        <Component class="javax.swing.JSeparator" name="jSeparator2">
-        </Component>
-        <MenuItem class="javax.swing.JMenuItem" name="jCurrentToAttackPlanerAsSourceItem">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="In Angriffsplaner (Herkunft)"/>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fireVillagePopupActionEvent"/>
-          </Events>
-        </MenuItem>
-        <MenuItem class="javax.swing.JMenuItem" name="jCurrentToAttackPlanerAsTargetItem">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="In Angriffsplaner (Ziel)"/>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fireVillagePopupActionEvent"/>
-          </Events>
-        </MenuItem>
-        <Component class="javax.swing.JSeparator" name="jSeparator3">
-        </Component>
-        <MenuItem class="javax.swing.JMenuItem" name="jCurrentCreateNoteItem">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Notiz erstellen"/>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fireVillagePopupActionEvent"/>
-          </Events>
-        </MenuItem>
-        <MenuItem class="javax.swing.JMenuItem" name="jCurrentAddToNoteItem">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Der gew&#xe4;hlten Notiz hinzuf&#xfc;gen"/>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fireVillagePopupActionEvent"/>
-          </Events>
-        </MenuItem>
-        <Component class="javax.swing.JSeparator" name="jSeparator4">
-        </Component>
-        <MenuItem class="javax.swing.JMenuItem" name="jVillageInfoIngame">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Im Spiel zentrieren"/>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fireVillagePopupActionEvent"/>
-          </Events>
-        </MenuItem>
-        <Component class="javax.swing.JSeparator" name="jTitledSeparatorAll">
-          <Properties>
-            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
-              <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-                <TitledBorder position="3" title="Ausgew&#xe4;hlte  D&#xf6;rfer">
-                  <Border PropertyName="innerBorder" info="org.netbeans.modules.form.compat2.border.EmptyBorderInfo">
-                    <EmptyBorder bottom="5" left="1" right="1" top="5"/>
-                  </Border>
-                  <Font PropertyName="font" name="Tahoma" size="11" style="1"/>
-                </TitledBorder>
-              </Border>
-            </Property>
-            <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[0, 30]"/>
-            </Property>
-          </Properties>
-        </Component>
-        <MenuItem class="javax.swing.JMenuItem" name="jAllCoordToClipboardItem">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Koordinaten in Zwischenablage"/>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fireVillagePopupActionEvent"/>
-          </Events>
-        </MenuItem>
-        <MenuItem class="javax.swing.JMenuItem" name="jAllCoordAsBBToClipboardItem">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="BB-Code in Zwischenablage"/>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fireVillagePopupActionEvent"/>
-          </Events>
-        </MenuItem>
-        <Component class="javax.swing.JSeparator" name="jSeparator5">
-        </Component>
-        <MenuItem class="javax.swing.JMenuItem" name="jAllToAttackPlanerAsSourceItem">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="In Angriffsplaner (Herkunft)"/>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fireVillagePopupActionEvent"/>
-          </Events>
-        </MenuItem>
-        <MenuItem class="javax.swing.JMenuItem" name="jAllToAttackPlanerAsTargetItem">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="In Angriffsplaner (Ziel)"/>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fireVillagePopupActionEvent"/>
-          </Events>
-        </MenuItem>
-        <Component class="javax.swing.JSeparator" name="jSeparator6">
-        </Component>
-        <MenuItem class="javax.swing.JMenuItem" name="jAllCreateNoteItem">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Notiz erstellen"/>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fireVillagePopupActionEvent"/>
-          </Events>
-        </MenuItem>
-        <MenuItem class="javax.swing.JMenuItem" name="jAllAddToNoteItem">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Der gew&#xe4;hlten Notiz hinzuf&#xfc;gen"/>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fireVillagePopupActionEvent"/>
-          </Events>
-        </MenuItem>
+          <SubComponents>
+            <MenuItem class="javax.swing.JMenuItem" name="jAllCoordToClipboardItem">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Koordinaten in Zwischenablage"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fireVillagePopupActionEvent"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="jAllCoordAsBBToClipboardItem">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="BB-Code in Zwischenablage"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fireVillagePopupActionEvent"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JSeparator" name="jSeparator5">
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="jAllToAttackPlanerAsSourceItem">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="In Angriffsplaner (Herkunft)"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fireVillagePopupActionEvent"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="jAllToAttackPlanerAsTargetItem">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="In Angriffsplaner (Ziel)"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fireVillagePopupActionEvent"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JSeparator" name="jSeparator6">
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="jAllCreateNoteItem">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Notiz erstellen"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fireVillagePopupActionEvent"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="jAllAddToNoteItem">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Der gew&#xe4;hlten Notiz hinzuf&#xfc;gen"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fireVillagePopupActionEvent"/>
+              </Events>
+            </MenuItem>
+          </SubComponents>
+        </Menu>
       </SubComponents>
     </Container>
   </NonVisualComponents>

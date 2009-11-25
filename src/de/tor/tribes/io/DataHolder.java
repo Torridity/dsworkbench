@@ -14,24 +14,28 @@ import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.DSWorkbenchSettingsDialog;
 import de.tor.tribes.util.Constants;
+import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
@@ -282,60 +286,156 @@ public class DataHolder {
                 //setting internal data to be valid
                 GlobalOptions.setInternatDataDamaged(false);
 
-                // <editor-fold defaultstate="collapsed" desc="Older reading">
+                //parse additional data
+                logger.info("Reading conquered units");
+                BufferedReader r = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(getDataDirectory() + "/kill_att.txt.gz"))));
+                String line = "";
+                while ((line = r.readLine()) != null) {
+                    try {
+                        parseConqueredLine(line, ID_OFF);
+                    } catch (Exception e) {
+                        //ignored (should only occur on single lines)
+                    }
+                }
+                r.close();
 
-                /*             //start data loading
+                r = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(getDataDirectory() + "/kill_def.txt.gz"))));
+                line = "";
+                while ((line = r.readLine()) != null) {
+                    try {
+                        parseConqueredLine(line, ID_DEF);
+                    } catch (Exception e) {
+                        //ignored (should only occur on single lines)
+                    }
+                }
+                r.close();
 
-                //check if download was requested
-                if (pReload && !GlobalOptions.isOfflineMode()) {
-                //reload requested and possible
-                fireDataHolderEvents("Daten werden heruntergeladen...");
-                //try to download
-                if (!downloadData()) {
-                //download failed
-                fireDataHolderEvents("Download abgebrochen/fehlgeschlagen!");
-                loading = false;
-                fireDataLoadedEvents(false);
-                return false;
+                //do post processing
+                fireDataHolderEvents("Kombiniere Daten...");
+                mergeData();
+                fireDataHolderEvents("Lese Servereinstellungen...");
+                parseUnits();
+                parseBuildings();
+                fireDataHolderEvents("Daten erfolgreich gelesen");
+                if (!isDataAvailable() || recreateLocal) {
+                    fireDataHolderEvents("Erstelle lokale Kopie");
+                    if (createLocalDataCopy(getDataDirectory())) {
+                        fireDataHolderEvents("Daten erfolgreich geladen");
+                    } else {
+                        fireDataHolderEvents("Fehler beim Erstellen der lokale Kopie");
+                    }
+                }
+                logger.info("Loading finished");
+            } catch (Exception e) {
+                fireDataHolderEvents("Fehler beim Lesen der Daten.");
+                logger.error("Failed to read server data", e);
+                if (bAborted) {
+                    loading = false;
+                    fireDataLoadedEvents(false);
+                    return false;
+                }
+            }
+            loading = false;
+            fireDataLoadedEvents(true);
+        } catch (Exception e) {
+            logger.error("Global exception while loading data", e);
+            loading = false;
+            fireDataLoadedEvents(false);
+            return false;
+        }
+        return true;
+    }
+
+      public boolean loadLiveData() {
+        loading = true;
+        try {
+            String serverID = GlobalOptions.getSelectedServer();
+            logger.info("Calling 'loadLiveData()' for server " + serverID);
+            try {
+                boolean recreateLocal = false;
+                if (serverSupported()) {
+                    if (!GlobalOptions.isOfflineMode()) {
+                        fireDataHolderEvents("Download der aktuellen Weltdaten von die-staemme.de gestartet");
+                        logger.debug(" - Initiating full reload of live data");
+                        if (downloadLiveData()) {
+                            logger.debug(" - Download succeeded");
+                            fireDataHolderEvents("Download erfolgreich");
+                            recreateLocal = true;
+                        } else {
+                            logger.error(" - Download failed");
+                            fireDataHolderEvents("Download von die-staemme.de fehlgeschlagen. Versuche lokale Kopie zu laden");
+                            if (isDataAvailable()) {
+                                logger.debug(" - local data is available, try to load it");
+                                if (readLocalDataCopy(getDataDirectory())) {
+                                    logger.debug(" - Local copy successfully read");
+                                    fireDataHolderEvents("Lokale Kopie erfolgreich geladen");
+                                    recreateLocal = false;
+                                } else {
+                                    logger.error(" - Reading local copy failed");
+                                    fireDataHolderEvents("Lokale Kopie fehlerhaft. Laden wird abgebrochen!");
+                                    loading = false;
+                                    fireDataLoadedEvents(false);
+                                    GlobalOptions.setInternatDataDamaged(true);
+                                    return false;
+                                }
+                            } else {
+                                fireDataHolderEvents("Lokale Kopie nicht vorhanden. Versuche Download vom DS Workbench Server");
+                                if (downloadData()) {
+                                    logger.debug(" - Download succeeded");
+                                    fireDataHolderEvents("Download erfolgreich.");
+                                    recreateLocal = true;
+                                } else {
+                                    logger.error(" - Second try failed");
+                                    fireDataHolderEvents("Downloadversuch vom DS Workbench Server fehlgeschlagen. Laden wird abgebrochen!");
+                                    loading = false;
+                                    fireDataLoadedEvents(false);
+                                    GlobalOptions.setInternatDataDamaged(true);
+                                    return false;
+                                }
+                            }
+                        }//end of download failed branch
+                    } else {//end of download branch
+                        fireDataHolderEvents("Lesen der existierenden Weltdaten gestartet");
+                        if (isDataAvailable()) {
+                            logger.debug(" - local data is available, try to load it");
+                            if (readLocalDataCopy(getDataDirectory())) {
+                                logger.debug(" - Local copy successfully read");
+                                fireDataHolderEvents("Lokale Kopie erfolgreich geladen");
+                                recreateLocal = false;
+                            } else {
+                                logger.error(" - Reading local copy failed");
+                                fireDataHolderEvents("Lokale Kopie fehlerhaft. Laden wird abgebrochen!");
+                                loading = false;
+                                fireDataLoadedEvents(false);
+                                GlobalOptions.setInternatDataDamaged(true);
+                                return false;
+                            }
+                        } else {//end of reading available data
+                            fireDataHolderEvents("Lokale Kopie nicht vorhanden. Versuche erneuten Download");
+                            if (downloadData()) {
+                                logger.debug(" - Download succeeded");
+                                fireDataHolderEvents("Download erfolgreich.");
+                                recreateLocal = true;
+                            } else {
+                                logger.error(" - Second try failed");
+                                fireDataHolderEvents("Erneuter Downloadversuch fehlgeschlagen. Laden wird abgebrochen!");
+                                loading = false;
+                                fireDataLoadedEvents(false);
+                                GlobalOptions.setInternatDataDamaged(true);
+                                return false;
+                            }
+                        }
+                    }//end of read local data
                 } else {
-                //download succeeded, rebuild local data later
-                recreateLocal = true;
+                    logger.error("Server not supported");
+                    fireDataHolderEvents("Server nicht unterstützt");
+                    fireDataLoadedEvents(false);
+                    GlobalOptions.setInternatDataDamaged(true);
+                    return false;
                 }
-                } else {
-                //check if local loading possible
-                if (!isDataAvailable()) {
-                logger.error("Local data not available. Try to download data");
-                fireDataHolderEvents("Lokale Kopie nicht gefunden. Lade Daten vom Server");
-                if (!downloadData()) {
-                logger.fatal("Download failed. No data available at the moment");
-                fireDataHolderEvents("Download abgebrochen/fehlgeschlagen");
-                loading = false;
-                fireDataLoadedEvents(false);
-                return false;
-                } else {
-                recreateLocal = true;
-                }
-                } else {
-                //load data from local copy
-                fireDataHolderEvents("Lade lokale Kopie");
-                if (!readLocalDataCopy(getDataDirectory())) {
-                //local copy invalid, download data
-                new File(getDataDirectory() + "/" + "serverdata.bin").delete();
-                logger.error("Failed to read local copy from " + getDataDirectory() + ". Try to download data");
-                fireDataHolderEvents("Lokale Kopie nicht gefunden. Lade Daten vom Server");
-                if (!downloadData()) {
-                logger.fatal("Download failed. No data available at the moment");
-                fireDataHolderEvents("Download abgebrochen/fehlgeschlagen");
-                loading = false;
-                return false;
-                } else {
-                recreateLocal = true;
-                }
-                }
-                }
-                }
-                 */
-//</editor-fold>
+
+                //setting internal data to be valid
+                GlobalOptions.setInternatDataDamaged(false);
 
                 //parse additional data
                 logger.info("Reading conquered units");
@@ -587,13 +687,15 @@ public class DataHolder {
                 // <editor-fold defaultstate="collapsed" desc=" Load villages ">
 
                 fireDataHolderEvents("Lade Dörferliste");
-                URL u = new URL(downloadURL + "/village.txt.gz");
+                file = new URL(downloadURL + "/village.txt.gz");
 
-                Proxy p = DSWorkbenchSettingsDialog.getSingleton().getWebProxy();
-                URLConnection con = u.openConnection(p);
-                BufferedReader r = new BufferedReader(new InputStreamReader(new GZIPInputStream(con.getInputStream())));
-                String line = "";
                 logger.debug(" + Start reading villages");
+                downloadDataFile(file, "village.tmp");
+                logger.debug(" - Finished reading villages");
+
+                BufferedReader r = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream("village.tmp"))));
+                String line = "";
+                logger.debug(" + Start parsing villages");
                 while ((line = r.readLine()) != null) {
                     line = line.replaceAll(",,", ", ,");
                     Village v = Village.parseFromPlainData(line);
@@ -603,50 +705,49 @@ public class DataHolder {
                         //ignore invalid village
                     }
                 }
-                logger.debug(" - Finished reading villages");
                 r.close();
-
+                logger.debug(" - Finished parsing villages");
                 // </editor-fold>
 
                 // <editor-fold defaultstate="collapsed" desc=" Load tribes ">
 
                 fireDataHolderEvents("Lade Spielerliste");
-                u = new URL(downloadURL + "/tribe.txt.gz");
-                r = new BufferedReader(new InputStreamReader(new GZIPInputStream(u.openConnection(p).getInputStream())));
-                line = "";
-                logger.debug(" + Start reading tribes");
-                int cnt = 0;
-                try{
-                while ((line = r.readLine()) != null) {
-                    line = line.replaceAll(",,", ", ,");
-                    Tribe t = Tribe.parseFromPlainData(line);
-                    try {
-                        mTribes.put(t.getId(), t);
-                    } catch (Exception e) {
-                        //ignore invalid tribe
-                    }
-                    cnt++;
-                  //  System.out.println(cnt);
-                   if(cnt % 1000 == 0){
-                        System.out.println("Thousend");
-                    }
-    
-                }
-                }catch(Throwable t){
-                    t.printStackTrace();
-                }
-                logger.debug(" - Finished reading tribes");
-                r.close();
 
+                file = new URL(downloadURL + "/tribe.txt.gz");
+                logger.debug(" + Start reading tribes");
+                downloadDataFile(file, "tribe.tmp");
+                logger.debug(" - Finished reading tribes");
+
+                r = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream("tribe.tmp"))));
+
+                line = "";
+                logger.debug(" + Start parsing tribes");
+                try {
+                    while ((line = r.readLine()) != null) {
+                        line = line.replaceAll(",,", ", ,");
+                        Tribe t = Tribe.parseFromPlainData(line);
+                        try {
+                            mTribes.put(t.getId(), t);
+                        } catch (Exception e) {
+                            //ignore invalid tribe
+                        }
+                    }
+                } catch (Throwable t) {
+                }
+                r.close();
+                logger.debug(" - Finished parsing tribes");
                 // </editor-fold>
 
                 // <editor-fold defaultstate="collapsed" desc=" Load allies ">
-
                 fireDataHolderEvents("Lade Stämmeliste");
-                u = new URL(downloadURL + "/ally.txt.gz");
-                r = new BufferedReader(new InputStreamReader(new GZIPInputStream(u.openConnection(p).getInputStream())));
-                line = "";
+                file = new URL(downloadURL + "/ally.txt.gz");
                 logger.debug(" + Start reading allies");
+                downloadDataFile(file, "ally.tmp");
+                logger.debug(" - Finished reading allies");
+
+                r = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream("ally.tmp"))));
+                line = "";
+                logger.debug(" + Start parsing allies");
                 while ((line = r.readLine()) != null) {
                     line = line.replaceAll(",,", ", ,");
                     Ally a = Ally.parseFromPlainData(line);
@@ -656,7 +757,7 @@ public class DataHolder {
                         //ignore invalid ally
                     }
                 }
-                logger.debug(" - Finished reading allies");
+                logger.debug(" - Finished parsing allies");
                 r.close();
 
                 // </editor-fold>
@@ -726,6 +827,209 @@ public class DataHolder {
         return true;
     }
 
+     private boolean downloadLiveData() {
+        URL file = null;
+        String serverID = GlobalOptions.getSelectedServer();
+        String serverDir = getDataDirectory();
+        logger.info("Using server dir '" + serverDir + "'");
+        new File(serverDir).mkdirs();
+
+        try {
+            // <editor-fold defaultstate="collapsed" desc="Account check">
+            //check account
+            String accountName = GlobalOptions.getProperty("account.name");
+            String accountPassword = GlobalOptions.getProperty("account.password");
+            if ((accountName == null) || (accountPassword == null)) {
+                logger.error("No account name or password set");
+                fireDataHolderEvents("Account Name oder Passwort sind nicht gesetzt oder ungültig. Bitte überprüfe deine Accounteinstellungen.");
+                return false;
+            }
+            if (DatabaseInterface.checkUser(accountName, accountPassword) != DatabaseInterface.ID_SUCCESS) {
+                logger.error("Failed to validate account (Wrong username or password?)");
+                return false;
+            }
+            //</editor-fold>
+
+            // <editor-fold defaultstate="collapsed" desc="DS Workbench Version check">
+            int ret = DatabaseInterface.isVersionAllowed();
+            if (ret != DatabaseInterface.ID_SUCCESS) {
+                if (ret != DatabaseInterface.ID_VERSION_NOT_ALLOWED) {
+                    logger.error("Current version is not allowed any longer");
+                    fireDataHolderEvents("Deine DS Workbench Version ist zu alt. Bitte lade dir die aktuelle Version herunter.");
+                } else {
+                    String error = DatabaseInterface.getProperty("data_error_message");
+                    logger.error("Update currently not allowed by server (Message: '" + error + "'");
+                    fireDataHolderEvents("Momentan sind leider keine Updates möglich.");
+                    fireDataHolderEvents("Folgender Grund wurde vom Systemadministrator angegeben: '" + error + "'");
+                }
+
+                return false;
+
+            }
+            //</editor-fold>
+
+            // <editor-fold defaultstate="collapsed" desc="Server settings check">
+            //download settings.xml
+            String sURL = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
+            logger.debug("Download server settings");
+            fireDataHolderEvents("Lese Server Einstellungen");
+            File target = new File(serverDir + "/settings.xml");
+            if (target.exists()) {
+                target.delete();
+            }
+
+            file = new URL(sURL + "/interface.php?func=get_config");
+            downloadDataFile(file, "settings_tmp.xml");
+            new File("settings_tmp.xml").renameTo(target);
+
+            if (!serverSupported()) {
+                return false;
+            }
+            //</editor-fold>
+
+                //load villages
+                logger.info("Downloading new data version from " + sURL);
+                //clear all data structures
+                initialize();
+
+                // <editor-fold defaultstate="collapsed" desc=" Load villages ">
+
+                fireDataHolderEvents("Lade Dörferliste");
+                file = new URL(sURL + "/map//village.txt.gz");
+
+                logger.debug(" + Start reading villages");
+                downloadDataFile(file, "village.tmp");
+                logger.debug(" - Finished reading villages");
+
+                BufferedReader r = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream("village.tmp"))));
+                String line = "";
+                logger.debug(" + Start parsing villages");
+                while ((line = r.readLine()) != null) {
+                    line = line.replaceAll(",,", ", ,");
+                    Village v = Village.parseFromPlainData(line);
+                    try {
+                        mVillages[v.getX()][v.getY()] = v;
+                    } catch (Exception e) {
+                        //ignore invalid village
+                    }
+                }
+                r.close();
+                logger.debug(" - Finished parsing villages");
+                // </editor-fold>
+
+                // <editor-fold defaultstate="collapsed" desc=" Load tribes ">
+
+                fireDataHolderEvents("Lade Spielerliste");
+
+                file = new URL(sURL + "/map/tribe.txt.gz");
+                logger.debug(" + Start reading tribes");
+                downloadDataFile(file, "tribe.tmp");
+                logger.debug(" - Finished reading tribes");
+
+                r = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream("tribe.tmp"))));
+
+                line = "";
+                logger.debug(" + Start parsing tribes");
+                try {
+                    while ((line = r.readLine()) != null) {
+                        line = line.replaceAll(",,", ", ,");
+                        Tribe t = Tribe.parseFromPlainData(line);
+                        try {
+                            mTribes.put(t.getId(), t);
+                        } catch (Exception e) {
+                            //ignore invalid tribe
+                        }
+                    }
+                } catch (Throwable t) {
+                }
+                r.close();
+                logger.debug(" - Finished parsing tribes");
+                // </editor-fold>
+
+                // <editor-fold defaultstate="collapsed" desc=" Load allies ">
+                fireDataHolderEvents("Lade Stämmeliste");
+                file = new URL(sURL + "/map/ally.txt.gz");
+                logger.debug(" + Start reading allies");
+                downloadDataFile(file, "ally.tmp");
+                logger.debug(" - Finished reading allies");
+
+                r = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream("ally.tmp"))));
+                line = "";
+                logger.debug(" + Start parsing allies");
+                while ((line = r.readLine()) != null) {
+                    line = line.replaceAll(",,", ", ,");
+                    Ally a = Ally.parseFromPlainData(line);
+                    try {
+                        mAllies.put(a.getId(), a);
+                    } catch (Exception e) {
+                        //ignore invalid ally
+                    }
+                }
+                logger.debug(" - Finished parsing allies");
+                r.close();
+
+                // </editor-fold>
+
+                // <editor-fold defaultstate="collapsed" desc=" Load conquers off ">
+                fireDataHolderEvents("Lese besiegte Gegner (Angriff)...");
+                target = new File(serverDir + "/kill_att.txt.gz");
+                file = new URL(sURL + "/map/kill_att.txt.gz");
+                logger.debug(" + Downloading conquers (off)");
+                downloadDataFile(file, "kill_att.tmp");
+                if (target.exists()) {
+                    target.delete();
+                }
+                new File("kill_att.tmp").renameTo(target);
+                logger.debug(" - Finished downloading conquers (off)");
+                // </editor-fold>
+
+                // <editor-fold defaultstate="collapsed" desc=" Load conquers def ">
+                fireDataHolderEvents("Lese besiegte Gegner (Verteidigung)...");
+                target = new File(serverDir + "/kill_def.txt.gz");
+                file = new URL(sURL + "/map/kill_def.txt.gz");
+                logger.debug(" + Downloading conquers (def)");
+                downloadDataFile(file, "kill_def.tmp");
+                if (target.exists()) {
+                    target.delete();
+                }
+                new File("kill_def.tmp").renameTo(target);
+                logger.debug(" - Finished downloading conquers (def)");
+                // </editor-fold>
+
+
+            // <editor-fold defaultstate="collapsed" desc="Direct download from DS-Servers">
+            //download unit information, but only once
+            target = new File(serverDir + "/units.xml");
+            if (!target.exists()) {
+                logger.debug("Loading unit config file from server");
+                fireDataHolderEvents("Lade Information über Einheiten");
+                file = new URL(sURL + "/interface.php?func=get_unit_info");
+                downloadDataFile(file, "units_tmp.xml");
+
+                new File("units_tmp.xml").renameTo(target);
+            }
+
+            //download building information, but only once
+            target = new File(serverDir + "/buildings.xml");
+            if (!target.exists()) {
+                logger.debug("Loading building config file from server");
+                fireDataHolderEvents("Lade Information über Gebäude");
+                file = new URL(sURL + "/interface.php?func=get_building_info");
+                downloadDataFile(file, "buildings_tmp.xml");
+                new File("buildings_tmp.xml").renameTo(target);
+            }
+            //</editor-fold>
+
+           // DatabaseInterface.updateDataVersion(accountName, serverID);
+            fireDataHolderEvents("Download von die-staemme.de erfolgreich beendet.");
+        } catch (Throwable t) {
+            fireDataHolderEvents("Download von die-staemme.de fehlgeschlagen.");
+            logger.error("Failed to download live data", t);
+            return false;
+        }
+        return true;
+    }
+
     /**Merge all data into the village data structure to ease searching*/
     private void mergeData() {
         for (int i = 0; i < 1000; i++) {
@@ -771,16 +1075,34 @@ public class DataHolder {
     /**Download one single file from a URL*/
     private void downloadDataFile(URL pSource, String pLocalName) throws Exception {
         URLConnection ucon = pSource.openConnection(DSWorkbenchSettingsDialog.getSingleton().getWebProxy());
+        ucon.setConnectTimeout(3000);
+        ucon.setReadTimeout(20000);
         FileOutputStream tempWriter = new FileOutputStream(pLocalName);
         InputStream isr = ucon.getInputStream();
+
         int bytes = 0;
+        byte[] data = new byte[1024];
+        ByteArrayOutputStream result = new ByteArrayOutputStream();
+        int sum = 0;
         while (bytes != -1) {
-            byte[] data = new byte[1024];
-            bytes = isr.read(data);
+
             if (bytes != -1) {
-                tempWriter.write(data, 0, bytes);
+                result.write(data, 0, bytes);
+
+            }
+
+            bytes = isr.read(data);
+            sum += bytes;
+            if (sum % 500 == 0) {
+                try {
+                    Thread.sleep(50);
+                } catch (Exception e) {
+                }
             }
         }
+
+        tempWriter.write(result.toByteArray());
+        tempWriter.flush();
         try {
             isr.close();
             tempWriter.close();

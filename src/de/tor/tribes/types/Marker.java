@@ -13,7 +13,7 @@ import org.jdom.Element;
  *
  * @author Charon
  */
-public class Marker {
+public class Marker{
 
     public final static int TRIBE_MARKER_TYPE = 0;
     public final static int ALLY_MARKER_TYPE = 1;

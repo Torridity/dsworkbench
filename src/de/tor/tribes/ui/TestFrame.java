@@ -5,6 +5,7 @@
  */
 package de.tor.tribes.ui;
 
+import de.tor.tribes.ui.models.GroupableTableModel;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Toolkit;
@@ -26,22 +27,23 @@ public class TestFrame extends javax.swing.JFrame {
     /** Creates new form TestFrame */
     public TestFrame() {
         initComponents();
-      /*  DockBar dockBar = new DockBar();
+        jTable1.setModel(new GroupableTableModel());
+        /*  DockBar dockBar = new DockBar();
         for (int i = 0; i < 10; ++i) {
-            URL url = DockBar.class.getResource("/" + icons[i % icons.length]);
-            Image img = Toolkit.getDefaultToolkit().getImage(url);
-            ImageIcon imageIcon = new ImageIcon(img);
-            Image image = imageIcon.getImage();
-            BufferedImage b = new BufferedImage(image.getHeight(null), image.getHeight(null), BufferedImage.TYPE_INT_ARGB);
-            Graphics g = b.getGraphics();
-            g.drawImage(image, 0, 0, null);
-            g.dispose();
+        URL url = DockBar.class.getResource("/" + icons[i % icons.length]);
+        Image img = Toolkit.getDefaultToolkit().getImage(url);
+        ImageIcon imageIcon = new ImageIcon(img);
+        Image image = imageIcon.getImage();
+        BufferedImage b = new BufferedImage(image.getHeight(null), image.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+        Graphics g = b.getGraphics();
+        g.drawImage(image, 0, 0, null);
+        g.dispose();
 
-            b = new BufferedImage(image.getHeight(null), image.getHeight(null), BufferedImage.TYPE_INT_ARGB);
-            g = b.getGraphics();
-            g.drawImage(image, 0, 0, null);
-            g.dispose();
-            dockBar.addApplication("App " + i, b, null);
+        b = new BufferedImage(image.getHeight(null), image.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+        g = b.getGraphics();
+        g.drawImage(image, 0, 0, null);
+        g.dispose();
+        dockBar.addApplication("App " + i, b, null);
         }
 
         jPanel1.add(dockBar);
@@ -58,15 +60,40 @@ public class TestFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel1 = new javax.swing.JPanel();
-        jPanel2 = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTable1 = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        getContentPane().setLayout(new java.awt.BorderLayout(0, 1));
 
-        jPanel1.setMinimumSize(new java.awt.Dimension(100, 10));
-        getContentPane().add(jPanel1, java.awt.BorderLayout.PAGE_END);
-        getContentPane().add(jPanel2, java.awt.BorderLayout.CENTER);
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane1.setViewportView(jTable1);
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 428, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 343, Short.MAX_VALUE)
+                .addContainerGap())
+        );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -85,11 +112,11 @@ public class TestFrame extends javax.swing.JFrame {
         f.setSize(300, 100);
         f.setVisible(true);
 
-    //System.out.println(System.getProperty("user.dir"));
+        //System.out.println(System.getProperty("user.dir"));
 
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable jTable1;
     // End of variables declaration//GEN-END:variables
 }

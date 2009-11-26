@@ -10,13 +10,25 @@
  */
 package de.tor.tribes.ui;
 
+import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.io.UnitHolder;
+import de.tor.tribes.types.Village;
+import de.tor.tribes.ui.editors.DateSpinEditor;
+import de.tor.tribes.ui.editors.UnitCellEditor;
 import de.tor.tribes.ui.models.DoItYourselfAttackTableModel;
+import de.tor.tribes.ui.renderer.DateCellRenderer;
+import de.tor.tribes.ui.renderer.UnitCellRenderer;
+import de.tor.tribes.ui.renderer.VillageCellRenderer;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import java.awt.Component;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import javax.swing.DefaultCellEditor;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -61,6 +73,13 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
             mHeaderRenderers.add(headerRenderer);
         }
 
+        jAttackTable.setDefaultRenderer(Village.class, new VillageCellRenderer());
+        jAttackTable.setDefaultEditor(Village.class, new DefaultCellEditor(new JTextField("")));
+        jAttackTable.setDefaultEditor(Date.class, new DateSpinEditor());
+        jAttackTable.setDefaultRenderer(Date.class, new DateCellRenderer());
+        jAttackTable.setDefaultEditor(UnitHolder.class, new UnitCellEditor());
+        jAttackTable.setDefaultRenderer(UnitHolder.class, new UnitCellRenderer());
+        jAttackTable.setRowHeight(20);
         jAttackTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 
             @Override
@@ -75,6 +94,10 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
                 }
             }
         });
+
+        DoItYourselfCountdownThread thread = new DoItYourselfCountdownThread();
+        thread.setDaemon(true);
+        thread.start();
 
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
         //     GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.markers_view", GlobalOptions.getHelpBroker().getHelpSet());
@@ -106,6 +129,10 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
         jAttackTable.repaint();
     }
 
+    protected void updateCountdown() {
+        jAttackTable.repaint();
+    }
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -118,6 +145,7 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jAttackTable = new javax.swing.JTable();
+        jButton1 = new javax.swing.JButton();
         jAlwaysOnTopBox = new javax.swing.JCheckBox();
 
         setTitle("Manueller Angriffsplaner");
@@ -137,13 +165,22 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
         ));
         jScrollPane1.setViewportView(jAttackTable);
 
+        jButton1.setText("jButton1");
+        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireAddAttackEvent(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 509, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 509, Short.MAX_VALUE)
+                    .addComponent(jButton1))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -151,7 +188,9 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 312, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(48, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton1)
+                .addContainerGap(19, Short.MAX_VALUE))
         );
 
         jAlwaysOnTopBox.setText("Immer im Vordergrund");
@@ -190,10 +229,36 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
         setAlwaysOnTop(!isAlwaysOnTop());
     }//GEN-LAST:event_fireAttackFrameOnTopEvent
 
+    private void fireAddAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireAddAttackEvent
+        DoItYourselfAttackTableModel.getSingleton().addAttack(null, null, Calendar.getInstance().getTime(), DataHolder.getSingleton().getUnitByPlainName("ram"));
+        jAttackTable.repaint();
+    }//GEN-LAST:event_fireAddAttackEvent
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBox jAlwaysOnTopBox;
     private javax.swing.JTable jAttackTable;
+    private javax.swing.JButton jButton1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
+}
+
+class DoItYourselfCountdownThread extends Thread {
+
+    public DoItYourselfCountdownThread() {
+    }
+
+    @Override
+    public void run() {
+        while (true) {
+            try {
+                if (DSWorkbenchDoItYourselfAttackPlaner.getSingleton().isVisible()) {
+                    DSWorkbenchDoItYourselfAttackPlaner.getSingleton().updateCountdown();
+                    sleep(100);
+                } else {
+                    sleep(1000);
+                }
+            } catch (Exception e) {
+            }
+        }
+    }
 }

@@ -5,6 +5,7 @@
 package de.tor.tribes.ui.editors;
 
 import java.awt.Component;
+import java.util.Calendar;
 import java.util.Date;
 import javax.swing.AbstractCellEditor;
 import javax.swing.BorderFactory;
@@ -37,7 +38,12 @@ public class DateSpinEditor extends AbstractCellEditor implements TableCellEdito
 
     @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-        spinnerComponent.setValue((Date) value);
+        if (value == null) {
+            spinnerComponent.setValue(Calendar.getInstance().getTime());
+        } else {
+            spinnerComponent.setValue((Date) value);
+        }
+
         return spinnerComponent;
     }
 }

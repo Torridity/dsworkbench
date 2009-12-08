@@ -16,6 +16,9 @@ import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.algo.MiscSettingsPanel;
 import de.tor.tribes.ui.algo.TimePanel;
+import de.tor.tribes.ui.dnd.GhostComponentAdapter;
+import de.tor.tribes.ui.dnd.GhostGlassPane;
+import de.tor.tribes.ui.dnd.GhostMotionAdapter;
 import de.tor.tribes.ui.editors.AttackTypeCellEditor;
 import de.tor.tribes.ui.editors.DateSpinEditor;
 import de.tor.tribes.ui.editors.VillageCellEditor;
@@ -33,7 +36,6 @@ import de.tor.tribes.util.algo.AbstractAttackAlgorithm;
 import de.tor.tribes.util.algo.AllInOne;
 import de.tor.tribes.util.algo.Blitzkrieg;
 import de.tor.tribes.util.algo.BruteForce;
-import de.tor.tribes.util.algo.OptexWrapper;
 import de.tor.tribes.util.algo.TimeFrame;
 import de.tor.tribes.util.attack.AttackManager;
 import de.tor.tribes.util.parser.VillageParser;
@@ -83,6 +85,7 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame {
     private TimePanel mTimePanel = null;
     private MiscSettingsPanel mMiscPanel = null;
     private JButton filterSource = null;
+ GhostGlassPane glassPane;
 
     /** Creates new form TribeTribeAttackFrame */
     public TribeTribeAttackFrame() {
@@ -103,6 +106,15 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame {
         jAttackResultDetailsFrame.pack();
         jTargetResultDetailsFrame.pack();
 
+         glassPane = new GhostGlassPane();
+        setGlassPane(glassPane);
+
+        GhostComponentAdapter componentAdapter;
+        componentAdapter = new GhostComponentAdapter(glassPane, "button_pushed");
+        jButton15.addMouseListener(componentAdapter);
+        jButton15.addMouseMotionListener(new GhostMotionAdapter(glassPane));
+
+
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
         GlobalOptions.getHelpBroker().enableHelp(jSourcePanel, "pages.attack_planer_source", GlobalOptions.getHelpBroker().getHelpSet());
         GlobalOptions.getHelpBroker().enableHelp(jTargetPanel, "pages.attack_planer_target", GlobalOptions.getHelpBroker().getHelpSet());
@@ -114,9 +126,12 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame {
         GlobalOptions.getHelpBroker().enableHelpKey(jTargetResultDetailsFrame.getRootPane(), "pages.attack_planer_results_details_targets", GlobalOptions.getHelpBroker().getHelpSet());
         GlobalOptions.getHelpBroker().enableHelpKey(jAttackResultDetailsFrame.getRootPane(), "pages.attack_planer_results_details_sources", GlobalOptions.getHelpBroker().getHelpSet());
         GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.attack_planer", GlobalOptions.getHelpBroker().getHelpSet());
-    // </editor-fold>
+        // </editor-fold>
     }
 
+    public  GhostGlassPane getGlassPane(){
+        return glassPane;
+    }
     protected void setup() {
 
         // <editor-fold defaultstate="collapsed" desc=" Attack table setup ">
@@ -1878,6 +1893,7 @@ private void fireAddAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:even
     for (Object value : values) {
         Village vSource = (Village) value;
         ((DefaultTableModel) jAttacksTable.getModel()).addRow(new Object[]{vSource, uSource, jMarkAsFakeBox.isSelected()});
+        mTimePanel.addTribe(vSource.getTribe());
     }
 }//GEN-LAST:event_fireAddAttackEvent
 
@@ -1886,6 +1902,7 @@ private void fireAddAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:even
         for (Village v : pSources) {
             if (v.getTribe() != null) {
                 ((DefaultTableModel) jAttacksTable.getModel()).addRow(new Object[]{v, uSource, jMarkAsFakeBox.isSelected()});
+                mTimePanel.addTribe(v.getTribe());
             }
         }
     }
@@ -2222,7 +2239,7 @@ private void fireAttacksToClipboardEvent(java.awt.event.MouseEvent evt) {//GEN-F
             Village tVillage = (Village) resultModel.getValueAt(i, 2);
             Date dTime = (Date) resultModel.getValueAt(i, 3);
             int type = (Integer) resultModel.getValueAt(i, 4);
-            buffer.append(AttackToBBCodeFormater.formatAttack(sVillage, tVillage, sUnit, dTime, type, sUrl, extended)); 
+            buffer.append(AttackToBBCodeFormater.formatAttack(sVillage, tVillage, sUnit, dTime, type, sUrl, extended));
         }
 
         if (extended) {
@@ -2336,9 +2353,9 @@ private void fireAddAllPlayerVillages(java.awt.event.MouseEvent evt) {//GEN-FIRS
     jAttacksTable.invalidate();
     try {
         int size = jSourceVillageList.getModel().getSize();
-        for (int i = 0; i <
-                size; i++) {
+        for (int i = 0; i < size; i++) {
             ((DefaultTableModel) jAttacksTable.getModel()).addRow(new Object[]{jSourceVillageList.getModel().getElementAt(i), uSource, jMarkAsFakeBox.isSelected()});
+            mTimePanel.addTribe(((Village) jSourceVillageList.getModel().getElementAt(i)).getTribe());
         }
 
     } catch (Exception e) {
@@ -2637,8 +2654,7 @@ private void fireAcceptStrengthEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST
     }
 
     //remove rows
-    for (int i = toRemove.size() - 1; i >=
-            0; i--) {
+    for (int i = toRemove.size() - 1; i >= 0; i--) {
         jAttacksTable.invalidate();
         int row = jAttacksTable.convertRowIndexToModel(toRemove.get(i));
         ((DefaultTableModel) jAttacksTable.getModel()).removeRow(row);
@@ -2802,6 +2818,7 @@ private void fireGetSourceVillagesFromClipboardEvent(java.awt.event.MouseEvent e
             UnitHolder uSource = (UnitHolder) jTroopsList.getSelectedItem();
             for (Village v : villages) {
                 ((DefaultTableModel) jAttacksTable.getModel()).addRow(new Object[]{v, uSource, jMarkAsFakeBox.isSelected()});
+                mTimePanel.addTribe(v.getTribe());
             }
 
             String message = (villages.size() == 1) ? "1 Dorf " : villages.size() + " Dörfer ";
@@ -2913,7 +2930,8 @@ private void fireSynchWithAttackPlansEvent(java.awt.event.MouseEvent evt) {//GEN
 
                 while (toRemove.size() > 0) {
                     Integer row = toRemove.remove(toRemove.size() - 1);
-                    ((DefaultTableModel) jAttacksTable.getModel()).removeRow(jAttacksTable.convertRowIndexToModel(row));
+                    row = jAttacksTable.convertRowIndexToModel(row);
+                    ((DefaultTableModel) jAttacksTable.getModel()).removeRow(row);
                 }
 
                 jAttacksTable.revalidate();
@@ -3173,11 +3191,7 @@ private void fireTargetAllyFilterChangedEvent(javax.swing.event.CaretEvent evt) 
             }
         };
 
-        jResultsTable.setDefaultRenderer(Date.class,
-                renderer);
-
-
-
+        jResultsTable.setDefaultRenderer(Date.class, renderer);
         jResultsTable.setDefaultRenderer(Boolean.class, invis);
         jResultsTable.setDefaultRenderer(Integer.class, new AttackTypeCellRenderer());
         jResultsTable.setDefaultEditor(Integer.class, new AttackTypeCellEditor());
@@ -3388,7 +3402,7 @@ private void fireTargetAllyFilterChangedEvent(javax.swing.event.CaretEvent evt) 
             jTargetDetailsTable.getColumn(jTargetDetailsTable.getColumnName(i)).setHeaderRenderer(headerRenderer);
         }
         jTargetDetailsTable.revalidate();
-    //</editor-fold>
+        //</editor-fold>
     }
 
     public void fireSelectionTransferEvent(List<Village> pSelection) {
@@ -3407,6 +3421,7 @@ private void fireTargetAllyFilterChangedEvent(javax.swing.event.CaretEvent evt) 
         for (Village v : pSelection.toArray(new Village[]{})) {
             if (bChooseSourceRegionMode) {
                 ((DefaultTableModel) jAttacksTable.getModel()).addRow(new Object[]{v, uSource});
+                mTimePanel.addTribe(v.getTribe());
             } else if (bChooseTargetRegionMode) {
                 if (v.getTribe() != null) {
                     ((DefaultTableModel) jVictimTable.getModel()).addRow(new Object[]{v.getTribe(), v});
@@ -3422,62 +3437,6 @@ private void fireTargetAllyFilterChangedEvent(javax.swing.event.CaretEvent evt) 
             jVictimTable.repaint();
         }
 
-// <editor-fold defaultstate="collapsed" desc=" OLD HANDLING">
-       /*    if (bChooseSourceRegionMode) {
-        UnitHolder uSource = (UnitHolder) jTroopsList.getSelectedItem();
-        // Tribe you = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage().getTribe();
-        jAttacksTable.invalidate();
-        // List<Village> groupFiltered = getGroupFilteredSourceVillages();
-        for (Village v : pSelection.toArray(new Village[]{})) {
-        //  if (v != null && v.getTribe() != null && v.getTribe().equals(you) && groupFiltered.contains(v)) {
-        ((DefaultTableModel) jAttacksTable.getModel()).addRow(new Object[]{v, uSource});
-        //                }
-        }
-        jAttacksTable.revalidate();
-        /*  Tribe you = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage().getTribe();
-        UnitHolder uSource = (UnitHolder) jTroopsList.getSelectedItem();
-        jAttacksTable.invalidate();
-        List<Village> groupFiltered = getGroupFilteredSourceVillages();
-        for (int x = xStart; x <= xEnd; x++) {
-        for (int y = yStart; y <= yEnd; y++) {
-        Village v = DataHolder.getSingleton().getVillages()[x][y];
-        if (v != null) {
-        Tribe t = v.getTribe();
-        if (t != null) {
-        if (t.equals(you)) {
-        if (groupFiltered.contains(v)) {
-        //add only villages which are currently allowed
-        ((DefaultTableModel) jAttacksTable.getModel()).addRow(new Object[]{v, uSource});
-        }
-        }
-        }
-        }
-        }
-        }
-        jAttacksTable.revalidate();*/
-        /*       } else if (bChooseTargetRegionMode) {
-        Tribe victim = (Tribe) jTargetTribeList.getSelectedValue();
-        jVictimTable.invalidate();
-        /* Tribe victim = (Tribe) jTargetTribeList.getSelectedValue();
-        jVictimTable.invalidate();
-        for (int x = xStart; x <= xEnd; x++) {
-        for (int y = yStart; y <= yEnd; y++) {
-        Village v = DataHolder.getSingleton().getVillages()[x][y];
-        if (v != null) {
-        Tribe t = v.getTribe();
-        if (t != null) {
-        if (t.equals(victim)) {
-        ((DefaultTableModel) jVictimTable.getModel()).addRow(new Object[]{t, v});
-        }
-        }
-        }
-        }
-        }
-        jVictimTable.revalidate();
-        jVictimTable.repaint();//.updateUI();*/
-//   }
-
-//</editor-fold>
         bChooseSourceRegionMode = false;
         bChooseTargetRegionMode =
                 false;
@@ -3685,7 +3644,6 @@ private void fireTargetAllyFilterChangedEvent(javax.swing.event.CaretEvent evt) 
     }
 
 // </editor-fold>
-
 // <editor-fold defaultstate="collapsed" desc="Target selection handlers">
     private void fireFilterTargetByAllyEvent() {
         Ally a = null;
@@ -3816,7 +3774,6 @@ private void fireTargetAllyFilterChangedEvent(javax.swing.event.CaretEvent evt) 
             }
         });
     }
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup attackTypeGroup;
     private javax.swing.JButton jAddToAttacksButton;

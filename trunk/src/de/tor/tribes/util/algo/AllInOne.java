@@ -219,7 +219,7 @@ public class AllInOne extends AbstractAttackAlgorithm {
                     long dur = (long) (snobMappings.get(i).getDistance() * snob.getSpeed() * 60000.0);
                     Date send = new Date(pTimeFrame.getEnd() - dur);
                     //check if needed snob can arrive village in time frame
-                    if (!pTimeFrame.inside(send)) {
+                    if (!pTimeFrame.inside(send, snobMappings.get(i).getTarget().getTribe())) {
                         //break if at least one of the fastest is not in time
                         valid = false;
                         break;
@@ -280,7 +280,7 @@ public class AllInOne extends AbstractAttackAlgorithm {
                         Date send = new Date(pTimeFrame.getEnd() - dur);
                         //check if needed off can arrive village in time frame
                         //                       if (!pTimeFrame.inside(send)) {
-                        if (pTimeFrame.inside(send)) {
+                        if (pTimeFrame.inside(send, mapping.getTarget().getTribe())) {
                             //break if at least one of the fastest is not in time
                             //                           valid = false;
                             //                           break;
@@ -366,7 +366,7 @@ public class AllInOne extends AbstractAttackAlgorithm {
                     break;
                 } else {
                     //add valid distance to map
-                    if (pTimeFrame.inside(send)) {
+                    if (pTimeFrame.inside(send, mapping.getTarget().getTribe())) {
                         tmpMap.add(mapping);
                     }
                 }
@@ -457,7 +457,7 @@ public class AllInOne extends AbstractAttackAlgorithm {
                     break;
                 } else {
                     //add valid distance to map
-                    if (pTimeFrame.inside(send)) {
+                    if (pTimeFrame.inside(send, mapping.getTarget().getTribe())) {
                         tmpMap.add(mapping);
                     }
                 }

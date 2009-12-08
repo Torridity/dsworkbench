@@ -177,7 +177,7 @@ public class Blitzkrieg extends AbstractAttackAlgorithm {
                     break;
                 } else {
                     //add valid distance to map of send time was not used yet
-                    if (pTimeFrame.inside(send) && !sends.contains(send.getTime())) {
+                    if (pTimeFrame.inside(send, mapping.getTarget().getTribe()) && !sends.contains(send.getTime())) {
                         tmpMap.add(mapping);
                     }
                 }
@@ -270,7 +270,7 @@ public class Blitzkrieg extends AbstractAttackAlgorithm {
                     break;
                 } else {
                     //add valid distance to map
-                    if (pTimeFrame.inside(send) && !sends.contains(send.getTime())) {
+                    if (pTimeFrame.inside(send, mapping.getTarget().getTribe()) && !sends.contains(send.getTime())) {
                         tmpMap.add(mapping);
                     }
                 }

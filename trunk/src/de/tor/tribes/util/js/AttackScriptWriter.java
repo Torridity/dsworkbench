@@ -6,7 +6,9 @@ package de.tor.tribes.util.js;
 
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.util.DSCalculator;
+import java.awt.Desktop;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.InputStreamReader;
@@ -95,7 +97,7 @@ public class AttackScriptWriter {
         tmpl = tmpl.replaceAll("//DATA_LOCATION", data);
         try {
             logger.debug(" - writing data to 'attack_info.user.js'");
-            FileWriter f = new FileWriter("attack_info.user.js");
+            FileWriter f = new FileWriter("./attack_info.user.js");
             f.write(tmpl);
             f.flush();
             f.close();
@@ -104,6 +106,7 @@ public class AttackScriptWriter {
             return false;
 
         }
+
         logger.info("Script written successfully");
         return true;
         /*var attacks = new Array({

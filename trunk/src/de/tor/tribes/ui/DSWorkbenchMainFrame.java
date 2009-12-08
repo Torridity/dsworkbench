@@ -57,6 +57,9 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Rectangle;
 import java.awt.datatransfer.StringSelection;
+import java.awt.dnd.DropTarget;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.FileWriter;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -72,6 +75,7 @@ import javax.swing.JSpinner;
 import javax.swing.JTable;
 import javax.swing.KeyStroke;
 import javax.swing.ListCellRenderer;
+import javax.swing.TransferHandler;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
@@ -109,8 +113,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
     DSWorkbenchMainFrame() {
         initComponents();
         setTitle("DS Workbench " + Constants.VERSION + Constants.VERSION_ADDITION);
-setAlwaysOnTop(false);
-
+        setAlwaysOnTop(false);
         jExportDialog.pack();
         jAddROIDialog.pack();
         // <editor-fold defaultstate="collapsed" desc=" Register ShutdownHook ">
@@ -635,7 +638,8 @@ setAlwaysOnTop(false);
         //setup frames
         mTribeTribeAttackFrame = new TribeTribeAttackFrame();
         mTribeTribeAttackFrame.pack();
-        mAbout = new AboutDialog(this, true);
+  
+
         logger.info("Initialization finished");
         initialized = true;
     }
@@ -2313,7 +2317,7 @@ private void fireToolsActionEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:e
         DSWorkbenchSimulatorFrame.getSingleton().showIntegratedVersion(GlobalOptions.getSelectedServer());
     } else if (evt.getSource() == jDistanceItem) {
         DSWorkbenchDistanceFrame.getSingleton().setVisible(true);
-    }else if (evt.getSource() == jDoItYourselfAttackPlanerItem) {
+    } else if (evt.getSource() == jDoItYourselfAttackPlanerItem) {
         DSWorkbenchDoItYourselfAttackPlaner.getSingleton().setVisible(true);
     }
 }//GEN-LAST:event_fireToolsActionEvent

@@ -86,7 +86,7 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
         TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>();
         jConquersTable.setRowSorter(sorter);
 
-        for (int i = 0; i < 7; i++) {
+        for (int i = 0; i < 9; i++) {
             mHeaderRenderers.add(headerRenderer);
         }
 
@@ -876,8 +876,7 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
         DefaultTableCellRenderer renderer = new DefaultTableCellRenderer() {
 
             @Override
-            public Component getTableCellRendererComponent(
-                    JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
                 Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 
                 try {
@@ -911,7 +910,7 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
 
                 } catch (Exception e) {
                 }
-                if (column == 6) {
+                if (column == 8) {
                     //format dist col
                     double v = (Double) value;
                     NumberFormat nf = NumberFormat.getInstance();
@@ -920,22 +919,19 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
                     ((JLabel) c).setText(nf.format(v));
                 }
 
-                DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
+//                DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
                 return c;
             }
         };
 
-        jConquersTable.setDefaultRenderer(Object.class,
-                renderer);
+        jConquersTable.setDefaultRenderer(Object.class, renderer);
 
 
 
         jConquersTable.setDefaultRenderer(Double.class, renderer);
         jConquersTable.setDefaultRenderer(Integer.class, renderer);
 
-        for (int i = 0;
-                i < jConquersTable.getColumnCount();
-                i++) {
+        for (int i = 0; i < jConquersTable.getColumnCount(); i++) {
             TableColumn c = jConquersTable.getColumnModel().getColumn(i);
             c.setHeaderRenderer(mHeaderRenderers.get(i));
         }
@@ -943,13 +939,11 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
         TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>();
         jConquersTable.setRowSorter(sorter);
         sorter.setModel(ConquersTableModel.getSingleton());
-        sorter.setComparator(
-                0, Village.CASE_INSENSITIVE_ORDER);
-        sorter.setComparator(
-                3, Tribe.CASE_INSENSITIVE_ORDER);
-        sorter.setComparator(
-                4, Tribe.CASE_INSENSITIVE_ORDER);
-
+        sorter.setComparator(0, Village.CASE_INSENSITIVE_ORDER);
+        sorter.setComparator(3, Tribe.CASE_INSENSITIVE_ORDER);
+        sorter.setComparator(4, Ally.CASE_INSENSITIVE_ORDER);
+        sorter.setComparator(5, Tribe.CASE_INSENSITIVE_ORDER);
+        sorter.setComparator(6, Ally.CASE_INSENSITIVE_ORDER);
         jConquersTable.revalidate();
         jConquersTable.repaint();
         Calendar c = Calendar.getInstance();

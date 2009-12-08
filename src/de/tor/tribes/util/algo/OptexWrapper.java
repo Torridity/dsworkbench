@@ -219,7 +219,7 @@ public class OptexWrapper {
                         double dist = s.distanceTo(dest);
                         double runtime = dist * snob.getSpeed() * 60000;
                         long send = pTimeframe.getEnd() - (long) Math.round(runtime);
-                        if (pTimeframe.inside(new Date(send))) {
+                        if (pTimeframe.inside(new Date(send), null)) {
                             if (!enoblements.containsKey(dest)) {
                                 enoblements.put(dest, o.getAmount());
                             } else {
@@ -249,7 +249,7 @@ public class OptexWrapper {
                 double dist = DSCalculator.calculateDistance(v, vt);
                 double runtime = dist * pSpeed * 60000;
                 long send = pTimeFrame.getEnd() - (long) Math.round(runtime);
-                if (pTimeFrame.inside(new Date(send))) {
+                if (pTimeFrame.inside(new Date(send), null)) {
                     fail = false;
                     break;
                 }
@@ -300,7 +300,7 @@ public class OptexWrapper {
                 double runtime = dist * pSpeed * 60000;
                 long send = pTimeFrame.getEnd() - (long) Math.round(runtime);
                 double cost = dist;
-                if (!pTimeFrame.inside(new Date(send))) {
+                if (!pTimeFrame.inside(new Date(send), null)) {
                     //increase costs to max
                     cost = Double.MAX_VALUE;
                 }
@@ -336,7 +336,7 @@ public class OptexWrapper {
                     double dist = v.distanceTo(pTargets.get(j));
                     double runtime = dist * pOffSpeed * 60000;
                     long send = pTimeFrame.getEnd() - (long) Math.round(runtime);
-                    if (pTimeFrame.inside(new Date(send))) {
+                    if (pTimeFrame.inside(new Date(send), null)) {
                         offCount++;
                     }
                 }
@@ -346,7 +346,7 @@ public class OptexWrapper {
                     double dist = v.distanceTo(pTargets.get(j));
                     double runtime = dist * pSnobSpeed * 60000;
                     long send = pTimeFrame.getEnd() - (long) Math.round(runtime);
-                    if (pTimeFrame.inside(new Date(send))) {
+                    if (pTimeFrame.inside(new Date(send), null)) {
                         snobCount++;
                     }
                 }
@@ -356,7 +356,7 @@ public class OptexWrapper {
                 double runtime = dist * pSnobSpeed * 60000;
                 long send = pTimeFrame.getEnd() - (long) Math.round(runtime);
                 double cost = dist;
-                if (!pTimeFrame.inside(new Date(send))) {
+                if (!pTimeFrame.inside(new Date(send), null)) {
                     //increase costs to max if current source cannot reach target in time
                     cost = Double.MAX_VALUE;
                 } else if (offCount < pCleanOffs) {

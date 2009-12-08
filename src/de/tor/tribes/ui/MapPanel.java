@@ -125,6 +125,7 @@ public class MapPanel extends JPanel {
         jCopyVillagesDialog.pack();
         mVillageSelectionListener = DSWorkbenchSelectionFrame.getSingleton();
         markedVillages = new LinkedList<Village>();
+        
         initListeners();
     }
 

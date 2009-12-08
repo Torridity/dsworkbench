@@ -70,7 +70,7 @@ public class BruteForce extends AbstractAttackAlgorithm {
 
                         Date sendTime = new Date(arrive - (long) time * 1000);
                         //check if attack is somehow possible
-                        if (pTimeFrame.inside(sendTime) && !sendTimes.contains(sendTime.getTime())) {
+                        if (pTimeFrame.inside(sendTime, source.getTribe()) && !sendTimes.contains(sendTime.getTime())) {
                             //only calculate if time is in time frame
                             //get list of source villages for current target
                             Hashtable<UnitHolder, List<Village>> attacksForVillage = attacks.get(v);
@@ -167,7 +167,7 @@ public class BruteForce extends AbstractAttackAlgorithm {
                             double time = DSCalculator.calculateMoveTimeInSeconds(source, v, unit.getSpeed());
                             Date sendTime = new Date(arrive - (long) time * 1000);
                             //check if attack is somehow possible
-                            if (pTimeFrame.inside(sendTime)) {
+                            if (pTimeFrame.inside(sendTime, source.getTribe())) {
                                 //only calculate if time is in time frame
                                 //get list of source villages for current target
                                 Hashtable<Village, UnitHolder> attacksForVillage = fakes.get(v);

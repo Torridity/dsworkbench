@@ -5,7 +5,6 @@
  */
 package de.tor.tribes.ui;
 
-import de.tor.tribes.ui.models.GroupableTableModel;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Toolkit;
@@ -27,7 +26,7 @@ public class TestFrame extends javax.swing.JFrame {
     /** Creates new form TestFrame */
     public TestFrame() {
         initComponents();
-        jTable1.setModel(new GroupableTableModel());
+       // jTable1.setModel(new GroupableTableModel());
         /*  DockBar dockBar = new DockBar();
         for (int i = 0; i < 10; ++i) {
         URL url = DockBar.class.getResource("/" + icons[i % icons.length]);

@@ -5,8 +5,8 @@
 package de.tor.tribes.util.algo;
 
 import de.tor.tribes.types.TimeSpan;
+import de.tor.tribes.types.Tribe;
 import java.awt.Point;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
@@ -38,7 +38,7 @@ public class TimeFrame {
         mFrames = new LinkedList<Point>();
     }
 
-    public void setEnd(long pTime){
+    public void setEnd(long pTime) {
         end = pTime;
     }
 
@@ -54,7 +54,7 @@ public class TimeFrame {
         timeSpans.add(pSpan);
     }
 
-    public boolean inside(Date pDate) {
+    public boolean inside(Date pDate, Tribe pTribe) {
         long t = pDate.getTime();
         Calendar c = Calendar.getInstance();
         c.setTime(pDate);
@@ -67,25 +67,29 @@ public class TimeFrame {
         boolean inFrame = false;
         if ((t > start) && (t < end)) {
             for (TimeSpan span : timeSpans) {
-                Date d = span.getAtDate();
-                if (d != null) {
-                    //check day
-                    Calendar c2 = Calendar.getInstance();
-                    c2.setTime(d);
-                    if (c2.get(Calendar.DAY_OF_MONTH) == day && c2.get(Calendar.MONTH) == month && c2.get(Calendar.YEAR) == year) {
-                        //date is the same, so check span
+               // System.out.println("Check frame for " + pTribe);
+                if (span.isValidFor() == null || span.isValidFor() == pTribe) {
+                    //System.out.println("Tribe " + span.isValidFor() + " affected by " + span);
+                    Date d = span.getAtDate();
+                    if (d != null) {
+                        //check day
+                        Calendar c2 = Calendar.getInstance();
+                        c2.setTime(d);
+                        if (c2.get(Calendar.DAY_OF_MONTH) == day && c2.get(Calendar.MONTH) == month && c2.get(Calendar.YEAR) == year) {
+                            //date is the same, so check span
+                            Point p = span.getSpan();
+                            inFrame = ((hour >= p.x) && ((hour <= p.y) && (minute <= 59) && (second <= 59)));
+                            if (inFrame) {
+                                break;
+                            }
+                        }
+                    } else {
+                        //"every day" span, so only check time
                         Point p = span.getSpan();
                         inFrame = ((hour >= p.x) && ((hour <= p.y) && (minute <= 59) && (second <= 59)));
                         if (inFrame) {
                             break;
                         }
-                    }
-                } else {
-                    //"every day" span, so only check time
-                    Point p = span.getSpan();
-                    inFrame = ((hour >= p.x) && ((hour <= p.y) && (minute <= 59) && (second <= 59)));
-                    if (inFrame) {
-                        break;
                     }
                 }
             }

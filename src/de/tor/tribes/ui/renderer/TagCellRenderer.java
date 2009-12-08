@@ -37,23 +37,6 @@ public class TagCellRenderer extends javax.swing.JPanel implements TableCellRend
         return mCurrentTag;
     }
 
-    /*  public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-    try {
-    Tag t = (Tag) value;
-    jLabel1.setText(t.getName());
-    jLabel1.setIcon(new ImageIcon(t.getTagIcon()));
-    jCheckBox1.setSelected(t.isShowOnMap());
-    } catch (Exception e) {
-    jLabel1.setText(value.toString());
-    // defaultRenderer.setIcon(new ImageIcon(this.getClass().getResource("/res/forbidden.gif")));
-    }
-    if (isSelected) {
-    jLabel1.setBackground(de.tor.tribes.util.Constants.DS_BACK);
-    } else {
-    jLabel1.setBackground(de.tor.tribes.util.Constants.DS_BACK_LIGHT);
-    }
-    return this;
-    }*/
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         try {

@@ -17,8 +17,6 @@ import de.tor.tribes.ui.editors.DateSpinEditor;
 import de.tor.tribes.ui.editors.UnitCellEditor;
 import de.tor.tribes.ui.models.DoItYourselfAttackTableModel;
 import de.tor.tribes.ui.renderer.DateCellRenderer;
-import de.tor.tribes.ui.renderer.UnitCellRenderer;
-import de.tor.tribes.ui.renderer.VillageCellRenderer;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import java.awt.Component;
@@ -73,12 +71,12 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
             mHeaderRenderers.add(headerRenderer);
         }
 
-        jAttackTable.setDefaultRenderer(Village.class, new VillageCellRenderer());
+       // jAttackTable.setDefaultRenderer(Village.class, new VillageCellRenderer());
         jAttackTable.setDefaultEditor(Village.class, new DefaultCellEditor(new JTextField("")));
         jAttackTable.setDefaultEditor(Date.class, new DateSpinEditor());
         jAttackTable.setDefaultRenderer(Date.class, new DateCellRenderer());
         jAttackTable.setDefaultEditor(UnitHolder.class, new UnitCellEditor());
-        jAttackTable.setDefaultRenderer(UnitHolder.class, new UnitCellRenderer());
+       // jAttackTable.setDefaultRenderer(UnitHolder.class, new UnitCellRenderer());
         jAttackTable.setRowHeight(20);
         jAttackTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 

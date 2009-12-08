@@ -2325,7 +2325,17 @@ private void fireWriteAttacksToScriptEvent(java.awt.event.MouseEvent evt) {//GEN
     }
 
     if (AttackScriptWriter.writeAttackScript(attacks)) {
-        JOptionPaneHelper.showInformationBox(this, "Script erfolgreich nach 'attack_info.user.js' geschrieben.\nDenke bitte daran, das Script in deinem Browser einzufügen/zu aktualisieren!", "Information");
+        if (System.getProperty("os.name").startsWith("Windows")) {
+            if (JOptionPaneHelper.showQuestionConfirmBox(this, "Script erfolgreich nach 'attack_info.user.js' geschrieben.\nDenke bitte daran, das Script in deinem Browser einzufügen/zu aktualisieren!\nMöchtest du das Speicherverzeichnis des Scripts nun im Explorer öffnen?", "Information", "Nein", "Ja") == JOptionPane.YES_OPTION) {
+                try {
+                    Runtime.getRuntime().exec("explorer.exe .\\");
+                } catch (Exception e) {
+                    JOptionPaneHelper.showWarningBox(this, "Explorer konnte nicht geöffnet werden.", "Information");
+                }
+            }
+        } else {
+            JOptionPaneHelper.showInformationBox(this, "Script erfolgreich nach 'attack_info.user.js' geschrieben.\nDenke bitte daran, das Script in deinem Browser einzufügen/zu aktualisieren!", "Information");
+        }
     } else {
         JOptionPaneHelper.showErrorBox(this, "Fehler beim Schreiben des Scripts.", "Fehler");
     }
@@ -2444,7 +2454,6 @@ private void fireWriteAttacksToScriptEvent(java.awt.event.MouseEvent evt) {//GEN
     protected void updateCountdown() {
         jAttackTable.repaint();
     }
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JComboBox jActiveAttackPlan;

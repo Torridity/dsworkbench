@@ -582,7 +582,7 @@
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jCheckAccountButton" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="206" max="32767" attributes="0"/>
+                      <EmptySpace pref="236" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -704,7 +704,7 @@
                           </Group>
                           <Group type="102" alignment="1" attributes="0">
                               <EmptySpace min="-2" pref="318" max="-2" attributes="0"/>
-                              <Component id="jDownloadDataButton1" pref="211" max="32767" attributes="0"/>
+                              <Component id="jDownloadLiveDataButton" pref="211" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
@@ -727,7 +727,7 @@
                           <Component id="jDownloadDataButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
-                      <Component id="jDownloadDataButton1" min="-2" max="-2" attributes="0"/>
+                      <Component id="jDownloadLiveDataButton" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
                       <Component id="jScrollPane1" pref="333" max="32767" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
@@ -812,7 +812,7 @@
                 <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="fireCheckForUpdatesEvent"/>
               </Events>
             </Component>
-            <Component class="javax.swing.JButton" name="jDownloadDataButton1">
+            <Component class="javax.swing.JButton" name="jDownloadLiveDataButton">
               <Properties>
                 <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="df" green="eb" red="ef" type="rgb"/>

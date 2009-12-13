@@ -198,6 +198,15 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fireVillagePopupActionEvent"/>
               </Events>
             </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="jMonitorPlayerItem">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Spieler &#xfc;berwachen"/>
+                <Property name="toolTipText" type="java.lang.String" value="F&#xfc;gt den Spieler zu den Statistiken hinzu"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fireVillagePopupActionEvent"/>
+              </Events>
+            </MenuItem>
           </SubComponents>
         </Menu>
         <Menu class="javax.swing.JMenu" name="jCurrentVillageSubmenu">

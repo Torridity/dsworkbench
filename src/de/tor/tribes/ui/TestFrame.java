@@ -5,14 +5,8 @@
  */
 package de.tor.tribes.ui;
 
-import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.image.BufferedImage;
-import java.net.URL;
-import javax.swing.ImageIcon;
 
 /**
  *
@@ -21,11 +15,18 @@ import javax.swing.ImageIcon;
 public class TestFrame extends javax.swing.JFrame {
 
     public static String icons[] = new String[]{
-        "res/ui/archer.png", "res/ui/axe.png", "res/ui/ram.png", "res/ui/snob.png"};
+        "res/ui/icon.png", "res/ui/icon.png", "res/ui/icon.png", "res/ui/icon.png"};
 
     /** Creates new form TestFrame */
     public TestFrame() {
         initComponents();
+      /*  GroupableTableModel model = new GroupableTableModel();
+        TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(model);
+        jTable1.setModel(model);
+        jTable1.setRowSorter(sorter);
+*/
+
+        /*   DockBar dockBar = new DockBar();
        // jTable1.setModel(new GroupableTableModel());
         /*  DockBar dockBar = new DockBar();
         for (int i = 0; i < 10; ++i) {
@@ -61,6 +62,7 @@ public class TestFrame extends javax.swing.JFrame {
 
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
+        jPanel1 = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -77,21 +79,27 @@ public class TestFrame extends javax.swing.JFrame {
         ));
         jScrollPane1.setViewportView(jTable1);
 
+        jPanel1.setLayout(new java.awt.BorderLayout());
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 428, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 428, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 428, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 343, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 256, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(111, Short.MAX_VALUE))
         );
 
         pack();
@@ -115,6 +123,7 @@ public class TestFrame extends javax.swing.JFrame {
 
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
     // End of variables declaration//GEN-END:variables

@@ -36,6 +36,7 @@ import de.tor.tribes.util.MapShotListener;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.VillageSelectionListener;
 import de.tor.tribes.util.church.ChurchManager;
+import de.tor.tribes.util.stat.StatManager;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.FontMetrics;
@@ -125,7 +126,7 @@ public class MapPanel extends JPanel {
         jCopyVillagesDialog.pack();
         mVillageSelectionListener = DSWorkbenchSelectionFrame.getSingleton();
         markedVillages = new LinkedList<Village>();
-        
+
         initListeners();
     }
 
@@ -871,6 +872,7 @@ public class MapPanel extends JPanel {
         jTribeSubmenu = new javax.swing.JMenu();
         jCopyPlayerVillagesToClipboardItem = new javax.swing.JMenuItem();
         jCopyPlayerVillagesAsBBCodeToClipboardItem = new javax.swing.JMenuItem();
+        jMonitorPlayerItem = new javax.swing.JMenuItem();
         jCurrentVillageSubmenu = new javax.swing.JMenu();
         jCurrentCoordToClipboardItem = new javax.swing.JMenuItem();
         jVillageInfoIngame = new javax.swing.JMenuItem();
@@ -1025,6 +1027,15 @@ public class MapPanel extends JPanel {
             }
         });
         jTribeSubmenu.add(jCopyPlayerVillagesAsBBCodeToClipboardItem);
+
+        jMonitorPlayerItem.setText("Spieler überwachen");
+        jMonitorPlayerItem.setToolTipText("Fügt den Spieler zu den Statistiken hinzu");
+        jMonitorPlayerItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fireVillagePopupActionEvent(evt);
+            }
+        });
+        jTribeSubmenu.add(jMonitorPlayerItem);
 
         jVillageActionsMenu.add(jTribeSubmenu);
 
@@ -1378,6 +1389,11 @@ public class MapPanel extends JPanel {
                 } else {
                     JOptionPaneHelper.showWarningBox(this, "Für Barbarendörfer nicht möglich", "Warnung");
                 }
+            }
+        } else if (evt.getSource() == jMonitorPlayerItem) {
+            Village v = actionMenuVillage;
+            if (v != null && v.getTribe() != null) {
+                StatManager.getSingleton().monitorTribe(v.getTribe());
             }
         } else if (evt.getSource() == jCurrentCoordToClipboardItem) {
             //copy current village coordinates to clipboard
@@ -1831,6 +1847,7 @@ public class MapPanel extends JPanel {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JMenu jMarkedVillageSubmenu;
+    private javax.swing.JMenuItem jMonitorPlayerItem;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JSeparator jSeparator3;

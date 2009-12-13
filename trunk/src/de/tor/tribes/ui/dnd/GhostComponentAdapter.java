@@ -32,7 +32,7 @@ public class GhostComponentAdapter extends GhostDropAdapter {
         SwingUtilities.convertPointFromScreen(p, glassPane);
 
         glassPane.setPoint(p);
-        glassPane.setImage(image);
+        //glassPane.setImage(image);
         glassPane.repaint();
 
     }
@@ -48,7 +48,7 @@ public class GhostComponentAdapter extends GhostDropAdapter {
 
         glassPane.setPoint(p);
         glassPane.setVisible(false);
-        glassPane.setImage(null);
+       // glassPane.setImage(null);
 
         fireGhostDropEvent(new GhostDropEvent(action, eventPoint));
     }

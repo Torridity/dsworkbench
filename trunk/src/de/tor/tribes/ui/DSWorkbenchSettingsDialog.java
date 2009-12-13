@@ -667,7 +667,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jStatusArea = new javax.swing.JTextArea();
         jDownloadDataButton = new javax.swing.JButton();
         jCheckForUpdatesBox = new javax.swing.JCheckBox();
-        jDownloadDataButton1 = new javax.swing.JButton();
+        jDownloadLiveDataButton = new javax.swing.JButton();
         jMapSettings = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
         jShowContinents = new javax.swing.JCheckBox();
@@ -1098,7 +1098,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                     .addComponent(jAccountPasswordLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jCheckAccountButton)
-                .addContainerGap(206, Short.MAX_VALUE))
+                .addContainerGap(236, Short.MAX_VALUE))
         );
 
         jSettingsTabbedPane.addTab("Login", new javax.swing.ImageIcon(getClass().getResource("/res/login.png")), jLoginPanel); // NOI18N
@@ -1143,10 +1143,10 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             }
         });
 
-        jDownloadDataButton1.setBackground(new java.awt.Color(239, 235, 223));
-        jDownloadDataButton1.setText("Daten von www.die-stämme.de");
-        jDownloadDataButton1.setToolTipText("Daten direkt von den DS Servern laden");
-        jDownloadDataButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+        jDownloadLiveDataButton.setBackground(new java.awt.Color(239, 235, 223));
+        jDownloadLiveDataButton.setText("Daten von www.die-stämme.de");
+        jDownloadLiveDataButton.setToolTipText("Daten direkt von den DS Servern laden");
+        jDownloadLiveDataButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireDownloadLiveDataEvent(evt);
             }
@@ -1177,7 +1177,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 519, Short.MAX_VALUE)))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPlayerServerSettingsLayout.createSequentialGroup()
                         .addGap(318, 318, 318)
-                        .addComponent(jDownloadDataButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 211, Short.MAX_VALUE)))
+                        .addComponent(jDownloadLiveDataButton, javax.swing.GroupLayout.DEFAULT_SIZE, 211, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPlayerServerSettingsLayout.setVerticalGroup(
@@ -1194,7 +1194,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                     .addComponent(jTribeNames, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jDownloadDataButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jDownloadDataButton1)
+                .addComponent(jDownloadLiveDataButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 333, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -2212,6 +2212,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jCreateAccountButton.setEnabled(false);
         jCancelButton.setEnabled(false);
         jChangePasswordButton.setEnabled(false);
+        jDownloadLiveDataButton.setEnabled(false);
         jTribeNames.setModel(new DefaultComboBoxModel());
         jStatusArea.setText("");
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -2465,6 +2466,7 @@ private void fireDownloadDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
         jCreateAccountButton.setEnabled(false);
         jCancelButton.setEnabled(false);
         jChangePasswordButton.setEnabled(false);
+        jDownloadLiveDataButton.setEnabled(false);
         jTribeNames.setModel(new DefaultComboBoxModel());
         jStatusArea.setText("");
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -2837,6 +2839,7 @@ private void fireDownloadLiveDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
         jCreateAccountButton.setEnabled(false);
         jCancelButton.setEnabled(false);
         jChangePasswordButton.setEnabled(false);
+        jDownloadLiveDataButton.setEnabled(false);
         jTribeNames.setModel(new DefaultComboBoxModel());
         jStatusArea.setText("");
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -3106,6 +3109,7 @@ private void fireDownloadLiveDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
         jOKButton.setEnabled(true);
         jCancelButton.setEnabled(true);
         jChangePasswordButton.setEnabled(true);
+        jDownloadLiveDataButton.setEnabled(false);
     }
 
     @Override
@@ -3144,7 +3148,7 @@ private void fireDownloadLiveDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
     private javax.swing.JButton jDeffStrengthOKButton;
     private javax.swing.JRadioButton jDirectConnectOption;
     private javax.swing.JButton jDownloadDataButton;
-    private javax.swing.JButton jDownloadDataButton1;
+    private javax.swing.JButton jDownloadLiveDataButton;
     private javax.swing.JCheckBox jDrawAttacksByDefaultBox;
     private javax.swing.JEditorPane jEditorPane1;
     private javax.swing.JTextField jFooterPath;

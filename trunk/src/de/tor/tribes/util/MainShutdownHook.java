@@ -18,6 +18,7 @@ import org.apache.log4j.Logger;
 import de.tor.tribes.ui.DSWorkbenchFormFrame;
 import de.tor.tribes.ui.DSWorkbenchNotepad;
 import de.tor.tribes.ui.DSWorkbenchSelectionFrame;
+import de.tor.tribes.ui.DSWorkbenchStatsFrame;
 import de.tor.tribes.ui.DSWorkbenchTagFrame;
 
 /**
@@ -47,6 +48,7 @@ public class MainShutdownHook extends Thread {
             GlobalOptions.addProperty("rank.frame.visible", Boolean.toString(DSWorkbenchRankFrame.getSingleton().isVisible()));
             GlobalOptions.addProperty("form.frame.visible", Boolean.toString(DSWorkbenchFormFrame.getSingleton().isVisible()));
             GlobalOptions.addProperty("search.frame.visible", Boolean.toString(DSWorkbenchSearchFrame.getSingleton().isVisible()));
+            GlobalOptions.addProperty("stats.frame.visible", Boolean.toString(DSWorkbenchStatsFrame.getSingleton().isVisible()));
             GlobalOptions.addProperty("attack.frame.alwaysOnTop", Boolean.toString(DSWorkbenchAttackFrame.getSingleton().isAlwaysOnTop()));
             GlobalOptions.addProperty("doityourself.attack.frame.alwaysOnTop", Boolean.toString(DSWorkbenchDoItYourselfAttackPlaner.getSingleton().isAlwaysOnTop()));
             GlobalOptions.addProperty("marker.frame.alwaysOnTop", Boolean.toString(DSWorkbenchMarkerFrame.getSingleton().isAlwaysOnTop()));
@@ -57,6 +59,7 @@ public class MainShutdownHook extends Thread {
             GlobalOptions.addProperty("troops.frame.alwaysOnTop", Boolean.toString(DSWorkbenchTroopsFrame.getSingleton().isAlwaysOnTop()));
             GlobalOptions.addProperty("rank.frame.alwaysOnTop", Boolean.toString(DSWorkbenchRankFrame.getSingleton().isAlwaysOnTop()));
             GlobalOptions.addProperty("form.frame.alwaysOnTop", Boolean.toString(DSWorkbenchFormFrame.getSingleton().isAlwaysOnTop()));
+            GlobalOptions.addProperty("stats.frame.alwaysOnTop", Boolean.toString(DSWorkbenchStatsFrame.getSingleton().isAlwaysOnTop()));
             GlobalOptions.addProperty("form.config.frame.alwaysOnTop", Boolean.toString(FormConfigFrame.getSingleton().isAlwaysOnTop()));
             GlobalOptions.addProperty("search.frame.alwaysOnTop", Boolean.toString(DSWorkbenchSearchFrame.getSingleton().isAlwaysOnTop()));
             GlobalOptions.addProperty("selection.frame.alwaysOnTop", Boolean.toString(DSWorkbenchSelectionFrame.getSingleton().isAlwaysOnTop()));

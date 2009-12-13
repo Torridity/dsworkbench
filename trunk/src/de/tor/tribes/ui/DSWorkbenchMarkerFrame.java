@@ -7,6 +7,8 @@ package de.tor.tribes.ui;
 
 import de.tor.tribes.types.Marker;
 import de.tor.tribes.types.MarkerSet;
+import de.tor.tribes.ui.dnd.GhostDropEvent;
+import de.tor.tribes.ui.dnd.GhostDropListener;
 import de.tor.tribes.util.Constants;
 import java.util.LinkedList;
 import java.util.List;
@@ -39,7 +41,7 @@ import org.apache.log4j.Logger;
  * @TODO (DIFF) Added correct sort order
  * @author  Charon
  */
-public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements MarkerManagerListener {
+public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements MarkerManagerListener, GhostDropListener {
 
     private static Logger logger = Logger.getLogger("MarkerView");
     private static DSWorkbenchMarkerFrame SINGLETON = null;
@@ -55,6 +57,16 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
         } catch (Exception e) {
             //setting not available
         }
+
+      //  GhostGlassPane pane = new GhostGlassPane();
+        // DragSource dragSource = new DragSource();
+        //  DropTarget dropTarget2 = new DropTarget(jMarkerPanel, DnDConstants.ACTION_COPY, new DDropSource(pane));
+        // DragGestureRecognizer dragRecognizer1 = dragSource.createDefaultDragGestureRecognizer(jLabel1, DnDConstants.ACTION_COPY, new DDragSource(pane));
+     /*   setGlassPane(pane);
+        GhostComponentAdapter adapter = new GhostComponentAdapter(pane, "button_pushed");
+        jLabel1.addMouseMotionListener(adapter);
+        jLabel1.addMouseListener(adapter);
+        adapter.addGhostDropListener(this);*/
 
         mHeaderRenderers = new LinkedList<TableCellRenderer>();
         DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
@@ -505,7 +517,7 @@ private void fireCloseAddRenameDialogEvent(java.awt.event.MouseEvent evt) {//GEN
         jMarkerSetList.setSelectedItem(item);
         MarkerTableModel.getSingleton().fireTableDataChanged();
 
-    //jMarkerTable.repaint();
+        //jMarkerTable.repaint();
     }
 
     public void firePublicDrawMarkedOnlyChangedEvent() {
@@ -598,4 +610,10 @@ private void fireCloseAddRenameDialogEvent(java.awt.event.MouseEvent evt) {//GEN
     private javax.swing.JTextField jSetName;
     private javax.swing.JToggleButton jToggleDrawFilterButton;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void ghostDropped(GhostDropEvent e) {
+        System.out.println("DROPPED " + e.getAction());
+
+    }
 }

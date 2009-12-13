@@ -50,6 +50,7 @@ import de.tor.tribes.util.map.FormManager;
 import de.tor.tribes.util.mark.MarkerManager;
 import de.tor.tribes.util.note.NoteManager;
 import de.tor.tribes.util.roi.ROIManager;
+import de.tor.tribes.util.stat.StatManager;
 import java.io.File;
 import javax.swing.JFileChooser;
 import de.tor.tribes.util.troops.TroopsManager;
@@ -334,6 +335,8 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                         DSWorkbenchNotepad.getSingleton().setVisible(!DSWorkbenchNotepad.getSingleton().isVisible());
                     } else if (e.getKeyCode() == KeyEvent.VK_F10) {
                         DSWorkbenchTagFrame.getSingleton().setVisible(!DSWorkbenchTagFrame.getSingleton().isVisible());
+                    } else if (e.getKeyCode() == KeyEvent.VK_F11) {
+                        DSWorkbenchStatsFrame.getSingleton().setVisible(!DSWorkbenchStatsFrame.getSingleton().isVisible());
                     } else if (e.getKeyCode() == KeyEvent.VK_F12) {
                         DSWorkbenchSettingsDialog.getSingleton().setVisible(true);
                     } else if ((e.getKeyCode() == KeyEvent.VK_1) && e.isControlDown() && e.isAltDown() && !e.isShiftDown()) {
@@ -542,8 +545,10 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         StandardAttackTableModel.getSingleton().setup();
         DSWorkbenchTroopsFrame.getSingleton().setupTroopsPanel();
         DistanceManager.getSingleton().clear();
+        StatManager.getSingleton().setup();
         DistanceTableModel.getSingleton().fireTableStructureChanged();
         DSWorkbenchDistanceFrame.getSingleton().setup();
+        DSWorkbenchStatsFrame.getSingleton().setup();
         DSWorkbenchDoItYourselfAttackPlaner.getSingleton().setupAttackPlaner();
         //update attack planner
         if (mTribeTribeAttackFrame != null) {
@@ -579,6 +584,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
 
         //call all frames during first execution
         DSWorkbenchAttackFrame.getSingleton();
+        DSWorkbenchStatsFrame.getSingleton();
         DSWorkbenchMarkerFrame.getSingleton();
         DSWorkbenchChurchFrame.getSingleton();
         DSWorkbenchConquersFrame.getSingleton();
@@ -600,8 +606,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         FormConfigFrame.getSingleton();
         DSWorkbenchSearchFrame.getSingleton();
         DSWorkbenchSelectionFrame.getSingleton();
-
-
         logger.info("Server settings updated");
     }
 
@@ -638,7 +642,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         //setup frames
         mTribeTribeAttackFrame = new TribeTribeAttackFrame();
         mTribeTribeAttackFrame.pack();
-  
+
 
         logger.info("Initialization finished");
         initialized = true;
@@ -665,6 +669,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         DSWorkbenchTroopsFrame.getSingleton().addFrameListener(this);
         DSWorkbenchRankFrame.getSingleton().addFrameListener(this);
         DSWorkbenchFormFrame.getSingleton().addFrameListener(this);
+        DSWorkbenchStatsFrame.getSingleton().addFrameListener(this);
     }
 
     /**Setup main map and mini map*/
@@ -803,6 +808,15 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
 
             } catch (Exception e) {
             }
+
+            try {
+                if (Boolean.parseBoolean(GlobalOptions.getProperty("stats.frame.visible"))) {
+                    jShowStatsFrame.setSelected(true);
+                    logger.info("Restoring stats frame");
+                    DSWorkbenchStatsFrame.getSingleton().setVisible(true);
+                }
+            } catch (Exception e) {
+            }
             // </editor-fold>
 
             //start ClipboardWatch
@@ -930,6 +944,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jShowConquersFrame = new javax.swing.JCheckBoxMenuItem();
         jShowNotepadFrame = new javax.swing.JCheckBoxMenuItem();
         jShowTagFrame = new javax.swing.JCheckBoxMenuItem();
+        jShowStatsFrame = new javax.swing.JCheckBoxMenuItem();
         jMenu4 = new javax.swing.JMenu();
         jHelpItem = new javax.swing.JMenuItem();
         jAboutItem = new javax.swing.JMenuItem();
@@ -2065,6 +2080,16 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         });
         jMenu2.add(jShowTagFrame);
 
+        jShowStatsFrame.setBackground(new java.awt.Color(239, 235, 223));
+        jShowStatsFrame.setSelected(true);
+        jShowStatsFrame.setText(bundle.getString("DSWorkbenchMainFrame.jShowStatsFrame.text")); // NOI18N
+        jShowStatsFrame.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fireShowStatsFrameEvent(evt);
+            }
+        });
+        jMenu2.add(jShowStatsFrame);
+
         jMenuBar1.add(jMenu2);
 
         jMenu4.setBackground(new java.awt.Color(225, 213, 190));
@@ -2971,6 +2996,13 @@ private void fireGraphicPackChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FI
 private void fireClosedEvent(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_fireClosedEvent
 }//GEN-LAST:event_fireClosedEvent
 
+private void fireShowStatsFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireShowStatsFrameEvent
+    if (jShowStatsFrame.isEnabled()) {
+        DSWorkbenchStatsFrame.getSingleton().setVisible(!DSWorkbenchStatsFrame.getSingleton().isVisible());
+        jShowStatsFrame.setSelected(DSWorkbenchStatsFrame.getSingleton().isVisible());
+    }
+}//GEN-LAST:event_fireShowStatsFrameEvent
+
     private void propagateLayerOrder() {
         DefaultListModel model = ((DefaultListModel) jLayerList.getModel());
 
@@ -3334,6 +3366,7 @@ private void fireClosedEvent(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_
     private javax.swing.JCheckBoxMenuItem jShowMarkerFrame;
     private javax.swing.JCheckBoxMenuItem jShowNotepadFrame;
     private javax.swing.JCheckBoxMenuItem jShowRankFrame;
+    private javax.swing.JCheckBoxMenuItem jShowStatsFrame;
     private javax.swing.JCheckBoxMenuItem jShowTagFrame;
     private javax.swing.JCheckBoxMenuItem jShowTroopsFrame;
     private javax.swing.JMenuItem jStartAStarItem;

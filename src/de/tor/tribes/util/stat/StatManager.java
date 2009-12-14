@@ -38,6 +38,9 @@ public class StatManager {
     }
 
     public void setup() {
+        if (INITIALIZED) {
+            storeStats();
+        }
         INITIALIZED = false;
         String dataPath = "./servers/" + GlobalOptions.getSelectedServer() + "/stats/";
         if (!new File(dataPath).exists()) {
@@ -113,6 +116,27 @@ public class StatManager {
         return tribeStats;
     }
 
+    public void storeStats() {
+        Enumeration<Integer> allyKeys = data.keys();
+        String dataPath = "./servers/" + GlobalOptions.getSelectedServer() + "/stats";
+        while (allyKeys.hasMoreElements()) {
+            Integer allyKey = allyKeys.nextElement();
+            Hashtable<Integer, TribeStatsElement> tribes = data.get(allyKey);
+            Enumeration<Integer> tribeKeys = tribes.keys();
+            while (tribeKeys.hasMoreElements()) {
+                Integer tribeKey = tribeKeys.nextElement();
+                TribeStatsElement elem = tribes.get(tribeKey);
+                new File(dataPath + "/" + allyKey + "/").mkdirs();
+                File f = new File(dataPath + "/" + allyKey + "/" + tribeKey + ".stat");
+                try {
+                    elem.store(f);
+                } catch (Exception e) {
+                    logger.error("Failed to store stats for tribe '" + elem.getTribe() + "'");
+                }
+            }
+        }
+    }
+
     public void monitorTribe(Tribe pTribe) {
         if (pTribe == null) {
             return;
@@ -141,15 +165,23 @@ public class StatManager {
         } else {
             //tribe already exists
         }
-        takeSnapshot();
-        DSWorkbenchStatsFrame.getSingleton().setup();
+        long now = System.currentTimeMillis();
+        logger.debug("Taking initial stat snapshot from '" + now + "'");
+        elem.takeSnapshot(now);
+        logger.debug("Stat monitor successfully added");
+    }
+
+    public void monitorAlly(Ally pAlly) {
+       logger.debug("Adding stat monitor for all '" + pAlly.getName() + "'");
+        for (Tribe t : pAlly.getTribes()) {
+            monitorTribe(t);
+        }
     }
 
     public void takeSnapshot() {
         long now = System.currentTimeMillis();
         logger.debug("Taking stat snapshot from '" + now + "'");
         Enumeration<Integer> allyKeys = data.keys();
-        String dataPath = "./servers/" + GlobalOptions.getSelectedServer() + "/stats";
         while (allyKeys.hasMoreElements()) {
             Integer allyKey = allyKeys.nextElement();
             Hashtable<Integer, TribeStatsElement> tribes = data.get(allyKey);
@@ -158,13 +190,6 @@ public class StatManager {
                 Integer tribeKey = tribeKeys.nextElement();
                 TribeStatsElement elem = tribes.get(tribeKey);
                 elem.takeSnapshot(now);
-                new File(dataPath + "/" + allyKey + "/").mkdirs();
-                File f = new File(dataPath + "/" + allyKey + "/" + tribeKey + ".stat");
-                try {
-                    elem.store(f);
-                } catch (Exception e) {
-                    logger.error("Failed to update stats for tribe '" + elem.getTribe() + "'");
-                }
             }
         }
     }
@@ -302,6 +327,20 @@ public class StatManager {
         Hashtable<Integer, TribeStatsElement> tribeData = data.get(a.getId());
         TribeStatsElement elem = tribeData.get(pTribe.getId());
         elem.removeDataAfter(pTimestamp);
+    }
+
+    public void removeDataBetween(Tribe pTribe, long pStartTimestamp, long pEndTimestamp) {
+        if (pTribe == null) {
+            return;
+        }
+        Ally a = pTribe.getAlly();
+        if (a == null) {
+            a = NoAlly.getSingleton();
+        }
+
+        Hashtable<Integer, TribeStatsElement> tribeData = data.get(a.getId());
+        TribeStatsElement elem = tribeData.get(pTribe.getId());
+        elem.removeDataBetween(pStartTimestamp, pEndTimestamp);
     }
 }
 

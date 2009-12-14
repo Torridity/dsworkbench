@@ -209,6 +209,22 @@
             </MenuItem>
           </SubComponents>
         </Menu>
+        <Menu class="javax.swing.JMenu" name="jAllySubmenu">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Stamm"/>
+          </Properties>
+          <SubComponents>
+            <MenuItem class="javax.swing.JMenuItem" name="jMonitorAllyItem">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Stamm &#xfc;berwachen"/>
+                <Property name="toolTipText" type="java.lang.String" value="F&#xfc;gt alle Spieler des Stammes zu den Statistiken hinzu"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fireVillagePopupActionEvent"/>
+              </Events>
+            </MenuItem>
+          </SubComponents>
+        </Menu>
         <Menu class="javax.swing.JMenu" name="jCurrentVillageSubmenu">
           <Properties>
             <Property name="text" type="java.lang.String" value="Dieses Dorf"/>

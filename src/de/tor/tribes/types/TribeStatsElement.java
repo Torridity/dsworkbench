@@ -91,14 +91,15 @@ public class TribeStatsElement {
                     last.get(Calendar.MONTH) == current.get(Calendar.MONTH) &&
                     last.get(Calendar.YEAR) == current.get(Calendar.YEAR)) {
                 //replace last value due to it is from the same day
-                timestampList.remove(timestampList.size() - 1);
-                rankList.remove(timestampList.size() - 1);
-                pointList.remove(timestampList.size() - 1);
-                villageList.remove(timestampList.size() - 1);
-                bashOffList.remove(timestampList.size() - 1);
-                rankOffList.remove(timestampList.size() - 1);
-                bashDefList.remove(timestampList.size() - 1);
-                rankDefList.remove(timestampList.size() - 1);
+                int duplicatedIdx = timestampList.size() - 1;
+                timestampList.remove(duplicatedIdx);
+                rankList.remove(duplicatedIdx);
+                pointList.remove(duplicatedIdx);
+                villageList.remove(duplicatedIdx);
+                bashOffList.remove(duplicatedIdx);
+                rankOffList.remove(duplicatedIdx);
+                bashDefList.remove(duplicatedIdx);
+                rankDefList.remove(duplicatedIdx);
             }
         }
 
@@ -190,6 +191,27 @@ public class TribeStatsElement {
         pTimestamp += 1000;
         for (long timestamp : timestamps) {
             if (timestamp > pTimestamp) {
+                timestampList.remove(cnt);
+                rankList.remove(cnt);
+                pointList.remove(cnt);
+                villageList.remove(cnt);
+                bashOffList.remove(cnt);
+                rankOffList.remove(cnt);
+                bashDefList.remove(cnt);
+                rankDefList.remove(cnt);
+            }
+            cnt++;
+        }
+    }
+
+    public void removeDataBetween(long pStartTimestamp, long pEndTimestamp) {
+        Long[] timestamps = timestampList.toArray(new Long[]{});
+        int cnt = 0;
+        pStartTimestamp += 1000;
+        pEndTimestamp -= 1000;
+
+        for (long timestamp : timestamps) {
+            if (timestamp > pStartTimestamp && timestamp < pEndTimestamp) {
                 timestampList.remove(cnt);
                 rankList.remove(cnt);
                 pointList.remove(cnt);

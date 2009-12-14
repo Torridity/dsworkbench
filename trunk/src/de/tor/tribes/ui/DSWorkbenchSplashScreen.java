@@ -19,12 +19,12 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 import org.apache.log4j.Level;
 import org.apache.log4j.RollingFileAppender;
 import javax.swing.*;
-import javax.swing.UIManager.LookAndFeelInfo;
 
 /**
  * @author  Jejkal
@@ -345,8 +345,8 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        // Locale.setDefault(Locale.US);
-       /* System.setProperty("sun.java2d.d3d", "true");
+        Locale.setDefault(Locale.GERMAN);
+        /* System.setProperty("sun.java2d.d3d", "true");
         System.setProperty("sun.java2d.opengl", "false");*/
 
         try {

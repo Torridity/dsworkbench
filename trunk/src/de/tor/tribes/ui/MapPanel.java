@@ -6,7 +6,9 @@
 package de.tor.tribes.ui;
 
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.types.Ally;
 import de.tor.tribes.types.Church;
+import de.tor.tribes.types.NoAlly;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.util.BrowserCommandSender;
@@ -873,6 +875,8 @@ public class MapPanel extends JPanel {
         jCopyPlayerVillagesToClipboardItem = new javax.swing.JMenuItem();
         jCopyPlayerVillagesAsBBCodeToClipboardItem = new javax.swing.JMenuItem();
         jMonitorPlayerItem = new javax.swing.JMenuItem();
+        jAllySubmenu = new javax.swing.JMenu();
+        jMonitorAllyItem = new javax.swing.JMenuItem();
         jCurrentVillageSubmenu = new javax.swing.JMenu();
         jCurrentCoordToClipboardItem = new javax.swing.JMenuItem();
         jVillageInfoIngame = new javax.swing.JMenuItem();
@@ -1038,6 +1042,19 @@ public class MapPanel extends JPanel {
         jTribeSubmenu.add(jMonitorPlayerItem);
 
         jVillageActionsMenu.add(jTribeSubmenu);
+
+        jAllySubmenu.setText("Stamm");
+
+        jMonitorAllyItem.setText("Stamm überwachen");
+        jMonitorAllyItem.setToolTipText("Fügt alle Spieler des Stammes zu den Statistiken hinzu");
+        jMonitorAllyItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fireVillagePopupActionEvent(evt);
+            }
+        });
+        jAllySubmenu.add(jMonitorAllyItem);
+
+        jVillageActionsMenu.add(jAllySubmenu);
 
         jCurrentVillageSubmenu.setText("Dieses Dorf");
 
@@ -1394,6 +1411,18 @@ public class MapPanel extends JPanel {
             Village v = actionMenuVillage;
             if (v != null && v.getTribe() != null) {
                 StatManager.getSingleton().monitorTribe(v.getTribe());
+                DSWorkbenchStatsFrame.getSingleton().setup();
+            }
+        } else if (evt.getSource() == jMonitorAllyItem) {
+            Village v = actionMenuVillage;
+            if (v != null && v.getTribe() != null) {
+                Ally a = v.getTribe().getAlly();
+                if (a == null) {
+                    StatManager.getSingleton().monitorTribe(v.getTribe());
+                } else {
+                    StatManager.getSingleton().monitorAlly(a);
+                }
+                DSWorkbenchStatsFrame.getSingleton().setup();
             }
         } else if (evt.getSource() == jCurrentCoordToClipboardItem) {
             //copy current village coordinates to clipboard
@@ -1823,6 +1852,7 @@ public class MapPanel extends JPanel {
     private javax.swing.JMenuItem jAllCreateNoteItem;
     private javax.swing.JMenuItem jAllToAttackPlanerAsSourceItem;
     private javax.swing.JMenuItem jAllToAttackPlanerAsTargetItem;
+    private javax.swing.JMenu jAllySubmenu;
     private javax.swing.JButton jCancelExportButton;
     private javax.swing.JMenuItem jCenterItem;
     private javax.swing.JCheckBox jCopyBarbarian;
@@ -1847,6 +1877,7 @@ public class MapPanel extends JPanel {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JMenu jMarkedVillageSubmenu;
+    private javax.swing.JMenuItem jMonitorAllyItem;
     private javax.swing.JMenuItem jMonitorPlayerItem;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;

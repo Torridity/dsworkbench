@@ -19,6 +19,7 @@ import de.tor.tribes.util.map.FormManager;
 import de.tor.tribes.util.mark.MarkerManager;
 import de.tor.tribes.util.note.NoteManager;
 import de.tor.tribes.util.roi.ROIManager;
+import de.tor.tribes.util.stat.StatManager;
 import de.tor.tribes.util.tag.TagManager;
 import de.tor.tribes.util.troops.TroopsManager;
 import java.io.File;
@@ -273,11 +274,12 @@ public class GlobalOptions {
             NoteManager.getSingleton().saveNotesToFile(DataHolder.getSingleton().getDataDirectory() + "/notes.xml");
             logger.debug("Saving standard attacks");
             StandardAttackManager.getSingleton().saveStandardAttacksToDisk(DataHolder.getSingleton().getDataDirectory() + "/stdAttacks.xml");
-
+            logger.debug("Saving stats");
+            StatManager.getSingleton().storeStats();
             logger.debug("User data saved");
         } else {
             if (isInternatDataDamaged()) {
-                logger.warn("Internat data markes as 'damaged'. Skipped saving user data");
+                logger.warn("Internal data marked as 'damaged'. Skipped saving user data");
             }
         }
     }

@@ -104,6 +104,7 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
                 fireUpdateChartEvent(null);
             }
         });
+        pack();
     }
 
     public void setup() {
@@ -258,6 +259,13 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
         plot.getRangeAxis().setLabelPaint(plot.getLegendItems().get(plot.getDatasetCount() - 1).getLinePaint());
         plot.getRangeAxis().setTickLabelPaint(plot.getLegendItems().get(plot.getDatasetCount() - 1).getLinePaint());
         plot.getRangeAxis().setTickMarkPaint(plot.getLegendItems().get(plot.getDatasetCount() - 1).getLinePaint());
+        NumberFormat nf = NumberFormat.getInstance();
+        nf.setMinimumFractionDigits(0);
+        nf.setMaximumFractionDigits(0);
+        try {
+            ((NumberAxis) plot.getRangeAxis()).setNumberFormatOverride(nf);
+        } catch (Exception e) {
+        }
     }
 
     private void addDataset(String pId, XYDataset pDataset) {
@@ -265,9 +273,12 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
             setupChart(pId, pDataset);
         } else {
             XYPlot plot = (XYPlot) chart.getPlot();
-
             plot.setDataset(plot.getDatasetCount(), pDataset);
             NumberAxis axis = new NumberAxis(pId);
+            NumberFormat nf = NumberFormat.getInstance();
+            nf.setMinimumFractionDigits(0);
+            nf.setMaximumFractionDigits(0);
+            axis.setNumberFormatOverride(nf);
             plot.setRangeAxis(plot.getDatasetCount() - 1, axis);
             plot.setRangeAxisLocation(plot.getDatasetCount() - 1, AxisLocation.TOP_OR_LEFT);
             plot.mapDatasetToRangeAxis(plot.getDatasetCount() - 1, plot.getDatasetCount() - 1);
@@ -306,6 +317,20 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jStatsCreateFrame = new javax.swing.JFrame();
+        jPanel2 = new javax.swing.JPanel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        jList1 = new javax.swing.JList();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        jSpinner1 = new javax.swing.JSpinner();
+        jLabel5 = new javax.swing.JLabel();
+        jSpinner2 = new javax.swing.JSpinner();
+        jButton6 = new javax.swing.JButton();
+        jButton7 = new javax.swing.JButton();
+        jPanel3 = new javax.swing.JPanel();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        jTextArea1 = new javax.swing.JTextArea();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -320,6 +345,8 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
         jButton3 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
+        jButton5 = new javax.swing.JButton();
+        jExportToClipboardButton = new javax.swing.JButton();
         jTaskPaneGroup2 = new com.l2fprod.common.swing.JTaskPaneGroup();
         jShowPoints = new javax.swing.JCheckBox();
         jShowRank = new javax.swing.JCheckBox();
@@ -335,6 +362,117 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
         jShowDataPoints = new javax.swing.JCheckBox();
         jAlwaysOnTopBox = new javax.swing.JCheckBox();
 
+        jStatsCreateFrame.setTitle("Statistiken erstellen");
+
+        jPanel2.setBackground(new java.awt.Color(239, 235, 223));
+
+        jScrollPane3.setEnabled(false);
+
+        jList1.setEnabled(false);
+        jScrollPane3.setViewportView(jList1);
+
+        jLabel3.setText("Berücksichtigte Spieler");
+
+        jLabel4.setText("Zeitraum (Start)");
+
+        jSpinner1.setModel(new javax.swing.SpinnerDateModel(new java.util.Date(), null, null, java.util.Calendar.MINUTE));
+
+        jLabel5.setText("Zeitraum (Ende)");
+
+        jSpinner2.setModel(new javax.swing.SpinnerDateModel(new java.util.Date(), null, null, java.util.Calendar.MINUTE));
+
+        jButton6.setText("+ 1 Woche");
+
+        jButton7.setText("+ 1 Monat");
+
+        jTextArea1.setColumns(20);
+        jTextArea1.setRows(5);
+        jScrollPane4.setViewportView(jTextArea1);
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(254, Short.MAX_VALUE))
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(87, Short.MAX_VALUE))
+        );
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jLabel3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jLabel4)
+                        .addGap(18, 18, 18)
+                        .addComponent(jSpinner1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                                .addComponent(jButton6)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jButton7))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(jLabel5)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jSpinner2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                .addContainerGap())
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel3)
+                    .addComponent(jScrollPane3))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel4)
+                    .addComponent(jSpinner1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jSpinner2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel5))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton7)
+                    .addComponent(jButton6))
+                .addGap(113, 113, 113)
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+
+        javax.swing.GroupLayout jStatsCreateFrameLayout = new javax.swing.GroupLayout(jStatsCreateFrame.getContentPane());
+        jStatsCreateFrame.getContentPane().setLayout(jStatsCreateFrameLayout);
+        jStatsCreateFrameLayout.setHorizontalGroup(
+            jStatsCreateFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jStatsCreateFrameLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        jStatsCreateFrameLayout.setVerticalGroup(
+            jStatsCreateFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jStatsCreateFrameLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
         setTitle("Statistiken");
 
         jPanel1.setBackground(new java.awt.Color(239, 235, 223));
@@ -348,6 +486,8 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
         jLabel2.setMaximumSize(new java.awt.Dimension(100, 14));
         jLabel2.setMinimumSize(new java.awt.Dimension(100, 14));
         jLabel2.setPreferredSize(new java.awt.Dimension(100, 14));
+
+        jScrollPane1.setMinimumSize(new java.awt.Dimension(258, 130));
 
         jScrollPane1.setViewportView(jAllyList);
 
@@ -389,7 +529,7 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
         jTaskPaneGroup1.getContentPane().add(jButton3);
 
         jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/beginning.png"))); // NOI18N
-        jButton2.setToolTipText("Aktuellen Datenpunkt als Start des ausgewählten Bereichs verwenden");
+        jButton2.setToolTipText("Markierten Datenpunkt als Start des ausgewählten Bereichs verwenden");
         jButton2.setMaximumSize(new java.awt.Dimension(49, 33));
         jButton2.setMinimumSize(new java.awt.Dimension(49, 33));
         jButton2.setPreferredSize(new java.awt.Dimension(49, 33));
@@ -401,7 +541,7 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
         jTaskPaneGroup1.getContentPane().add(jButton2);
 
         jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/end.png"))); // NOI18N
-        jButton4.setToolTipText("Aktuellen Datenpunkt als Ende des ausgewählten Bereichs verwenden");
+        jButton4.setToolTipText("Markierten Datenpunkt als Ende des ausgewählten Bereichs verwenden");
         jButton4.setMaximumSize(new java.awt.Dimension(49, 33));
         jButton4.setMinimumSize(new java.awt.Dimension(49, 33));
         jButton4.setPreferredSize(new java.awt.Dimension(49, 33));
@@ -411,6 +551,30 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
             }
         });
         jTaskPaneGroup1.getContentPane().add(jButton4);
+
+        jButton5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/delete_region.png"))); // NOI18N
+        jButton5.setToolTipText("Ausgewählten Bereich löschen");
+        jButton5.setMaximumSize(new java.awt.Dimension(49, 33));
+        jButton5.setMinimumSize(new java.awt.Dimension(49, 33));
+        jButton5.setPreferredSize(new java.awt.Dimension(49, 33));
+        jButton5.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireRemoveRegionEvent(evt);
+            }
+        });
+        jTaskPaneGroup1.getContentPane().add(jButton5);
+
+        jExportToClipboardButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/medal.png"))); // NOI18N
+        jExportToClipboardButton.setToolTipText("Statistiken erzeugen");
+        jExportToClipboardButton.setMaximumSize(new java.awt.Dimension(49, 33));
+        jExportToClipboardButton.setMinimumSize(new java.awt.Dimension(49, 33));
+        jExportToClipboardButton.setPreferredSize(new java.awt.Dimension(49, 33));
+        jExportToClipboardButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireCreateStatisticsEvent(evt);
+            }
+        });
+        jTaskPaneGroup1.getContentPane().add(jExportToClipboardButton);
 
         jTaskPane1.add(jTaskPaneGroup1);
 
@@ -487,6 +651,7 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
 
         jTaskPane1.add(jTaskPaneGroup2);
 
+        jTaskPaneGroup3.setExpanded(false);
         jTaskPaneGroup3.setTitle("Diagrammoptionen");
         com.l2fprod.common.swing.PercentLayout percentLayout4 = new com.l2fprod.common.swing.PercentLayout();
         percentLayout4.setGap(2);
@@ -545,14 +710,14 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 145, Short.MAX_VALUE)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 153, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jChartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 531, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTaskPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jChartPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jTaskPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -560,16 +725,15 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jTaskPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jTaskPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 655, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jChartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 444, Short.MAX_VALUE)))
+                            .addComponent(jScrollPane2))
+                        .addGap(18, 18, 18)
+                        .addComponent(jChartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 507, Short.MAX_VALUE)))
                 .addContainerGap())
         );
 
@@ -646,25 +810,6 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
     }//GEN-LAST:event_fireUpdateChartEvent
 
     private void fireRemoveDateBeforeEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireRemoveDateBeforeEvent
-        /* try {
-        Object tribeSelection = jTribeList.getSelectedValue();
-        if (tribeSelection == null) {
-        return;
-        }
-
-        long v = (long) ((XYPlot) chart.getPlot()).getDomainCrosshairValue();
-        if (v == 0) {
-        JOptionPaneHelper.showInformationBox(this, "Kein Datenpunkt ausgewählt", "Information");
-        return;
-        }
-        String date = new SimpleDateFormat("dd.MM.yyyy 'um' HH:mm:ss").format(new Date(v));
-        if (JOptionPaneHelper.showQuestionConfirmBox(this, "Alle Werte vor dem " + date + " löschen?", "Werte löschen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
-        StatManager.getSingleton().removeDataBefore((Tribe) tribeSelection, new Date(v).getTime());
-        fireUpdateChartEvent(null);
-        }
-        } catch (Exception e) {
-        }*/
-
         XYPlot plot = ((XYPlot) chart.getPlot());
         double x = plot.getDomainCrosshairValue();
         double y = plot.getRangeCrosshairValue();
@@ -703,26 +848,6 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
     }//GEN-LAST:event_fireRemoveDateBeforeEvent
 
     private void fireRemoveDataAfterEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireRemoveDataAfterEvent
-        /*  try {
-        Object tribeSelection = jTribeList.getSelectedValue();
-        if (tribeSelection == null) {
-        return;
-        }
-
-        long v = (long) ((XYPlot) chart.getPlot()).getDomainCrosshairValue();
-
-        if (v == 0) {
-        JOptionPaneHelper.showInformationBox(this, "Kein Datenpunkt ausgewählt", "Information");
-        return;
-        }
-        String date = new SimpleDateFormat("dd.MM.yyyy 'um' HH:mm:ss").format(new Date(v));
-        if (JOptionPaneHelper.showQuestionConfirmBox(this, "Alle Werte ab dem " + date + " löschen?", "Werte löschen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
-        StatManager.getSingleton().removeDataAfter((Tribe) tribeSelection, new Date(v).getTime());
-        fireUpdateChartEvent(null);
-        }
-        } catch (Exception e) {
-        e.printStackTrace();
-        }*/
         XYPlot plot = ((XYPlot) chart.getPlot());
         double x = plot.getDomainCrosshairValue();
         double y = plot.getRangeCrosshairValue();
@@ -758,6 +883,54 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
 
         jChartPanel.repaint();
     }//GEN-LAST:event_fireRemoveDataAfterEvent
+
+    private void fireRemoveRegionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireRemoveRegionEvent
+        if (startPointer == null && endPointer == null) {
+            JOptionPaneHelper.showInformationBox(this, "Es wurde kein Bereich ausgewählt.", "Information");
+            return;
+        }
+        Object tribeSelection = jTribeList.getSelectedValue();
+        if (tribeSelection == null) {
+            return;
+        }
+
+        if (startPointer == null) {
+            //remove before end
+            long v = (long) endPointer.getX();
+            String date = new SimpleDateFormat("dd.MM.yyyy 'um' HH:mm:ss").format(new Date(v));
+            if (JOptionPaneHelper.showQuestionConfirmBox(this, "Alle Werte vor dem " + date + " löschen?", "Werte löschen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
+                StatManager.getSingleton().removeDataBefore((Tribe) tribeSelection, new Date(v).getTime());
+                fireUpdateChartEvent(null);
+            }
+        } else if (endPointer == null) {
+            //remove after start
+            long v = (long) startPointer.getX();
+            String date = new SimpleDateFormat("dd.MM.yyyy 'um' HH:mm:ss").format(new Date(v));
+            if (JOptionPaneHelper.showQuestionConfirmBox(this, "Alle Werte nach dem " + date + " löschen?", "Werte löschen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
+                StatManager.getSingleton().removeDataAfter((Tribe) tribeSelection, new Date(v).getTime());
+                fireUpdateChartEvent(null);
+            }
+        } else {
+            //remove date between
+            long vstart = (long) startPointer.getX();
+            long vend = (long) endPointer.getX();
+
+            String startDate = new SimpleDateFormat("dd.MM.yyyy 'um' HH:mm:ss").format(new Date(vstart));
+            String endDate = new SimpleDateFormat("dd.MM.yyyy 'um' HH:mm:ss").format(new Date(vend));
+
+            if (JOptionPaneHelper.showQuestionConfirmBox(this, "Alle Werte zwischen dem " + startDate + " und dem " + endDate + " löschen?", "Werte löschen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
+                StatManager.getSingleton().removeDataBetween((Tribe) tribeSelection, new Date(vstart).getTime(), new Date(vend).getTime());
+                fireUpdateChartEvent(null);
+            }
+        }
+
+        fireUpdateChartEvent(null);
+    }//GEN-LAST:event_fireRemoveRegionEvent
+
+    private void fireCreateStatisticsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCreateStatisticsEvent
+        jStatsCreateFrame.pack();
+        jStatsCreateFrame.setVisible(true);
+    }//GEN-LAST:event_fireCreateStatisticsEvent
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JList jAllyList;
     private javax.swing.JCheckBox jAlwaysOnTopBox;
@@ -765,12 +938,24 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
+    private javax.swing.JButton jButton5;
+    private javax.swing.JButton jButton6;
+    private javax.swing.JButton jButton7;
     private javax.swing.JPanel jChartPanel;
+    private javax.swing.JButton jExportToClipboardButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JList jList1;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JCheckBox jShowDataPoints;
     private javax.swing.JCheckBox jShowItemValues;
     private javax.swing.JCheckBox jShowKillsDef;
@@ -782,10 +967,14 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
     private javax.swing.JCheckBox jShowRankDef;
     private javax.swing.JCheckBox jShowRankOff;
     private javax.swing.JCheckBox jShowVillages;
+    private javax.swing.JSpinner jSpinner1;
+    private javax.swing.JSpinner jSpinner2;
+    private javax.swing.JFrame jStatsCreateFrame;
     private com.l2fprod.common.swing.JTaskPane jTaskPane1;
     private com.l2fprod.common.swing.JTaskPaneGroup jTaskPaneGroup1;
     private com.l2fprod.common.swing.JTaskPaneGroup jTaskPaneGroup2;
     private com.l2fprod.common.swing.JTaskPaneGroup jTaskPaneGroup3;
+    private javax.swing.JTextArea jTextArea1;
     private javax.swing.JList jTribeList;
     // End of variables declaration//GEN-END:variables
 }

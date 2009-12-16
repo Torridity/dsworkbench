@@ -13,12 +13,13 @@ package de.tor.tribes.ui;
 import de.tor.tribes.types.Ally;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.TribeStatsElement;
+import de.tor.tribes.types.TribeStatsElement.Stats;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
+import de.tor.tribes.util.StatTextBuilder;
 import de.tor.tribes.util.stat.StatManager;
 import java.awt.Color;
-import java.awt.Font;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -45,7 +46,6 @@ import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.ui.RectangleInsets;
-import org.jfree.ui.TextAnchor;
 
 /**
  *
@@ -320,17 +320,36 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
         jStatsCreateFrame = new javax.swing.JFrame();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
-        jList1 = new javax.swing.JList();
+        jStatsTribeList = new javax.swing.JList();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
-        jSpinner1 = new javax.swing.JSpinner();
+        jStatStartDate = new javax.swing.JSpinner();
         jLabel5 = new javax.swing.JLabel();
-        jSpinner2 = new javax.swing.JSpinner();
-        jButton6 = new javax.swing.JButton();
-        jButton7 = new javax.swing.JButton();
+        jStatEndDate = new javax.swing.JSpinner();
+        jWeeklyStats = new javax.swing.JButton();
+        jMonthlyStats = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
+        jTabbedPane1 = new javax.swing.JTabbedPane();
+        jPanel4 = new javax.swing.JPanel();
         jScrollPane4 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
+        jPointsArea = new javax.swing.JTextArea();
+        jPanel5 = new javax.swing.JPanel();
+        jScrollPane9 = new javax.swing.JScrollPane();
+        jBashOffArea = new javax.swing.JTextArea();
+        jPanel6 = new javax.swing.JPanel();
+        jScrollPane8 = new javax.swing.JScrollPane();
+        jBashDefArea = new javax.swing.JTextArea();
+        jPanel8 = new javax.swing.JPanel();
+        jScrollPane6 = new javax.swing.JScrollPane();
+        jWinnerArea = new javax.swing.JTextArea();
+        jPanel9 = new javax.swing.JPanel();
+        jScrollPane5 = new javax.swing.JScrollPane();
+        jLoserArea = new javax.swing.JTextArea();
+        jUsedTribes = new javax.swing.JComboBox();
+        jPanel10 = new javax.swing.JPanel();
+        jUseBBCodesBox = new javax.swing.JCheckBox();
+        jShowPercentBox = new javax.swing.JCheckBox();
+        jButton8 = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -366,28 +385,86 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
 
         jPanel2.setBackground(new java.awt.Color(239, 235, 223));
 
-        jScrollPane3.setEnabled(false);
+        jScrollPane3.setPreferredSize(new java.awt.Dimension(100, 130));
 
-        jList1.setEnabled(false);
-        jScrollPane3.setViewportView(jList1);
+        jScrollPane3.setViewportView(jStatsTribeList);
 
         jLabel3.setText("Berücksichtigte Spieler");
 
         jLabel4.setText("Zeitraum (Start)");
 
-        jSpinner1.setModel(new javax.swing.SpinnerDateModel(new java.util.Date(), null, null, java.util.Calendar.MINUTE));
+        jStatStartDate.setModel(new javax.swing.SpinnerDateModel(new java.util.Date(), null, null, java.util.Calendar.MINUTE));
 
         jLabel5.setText("Zeitraum (Ende)");
 
-        jSpinner2.setModel(new javax.swing.SpinnerDateModel(new java.util.Date(), null, null, java.util.Calendar.MINUTE));
+        jStatEndDate.setModel(new javax.swing.SpinnerDateModel());
 
-        jButton6.setText("+ 1 Woche");
+        jWeeklyStats.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/calendar_7.png"))); // NOI18N
+        jWeeklyStats.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
+        jWeeklyStats.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireChangeStatTimeEvent(evt);
+            }
+        });
 
-        jButton7.setText("+ 1 Monat");
+        jMonthlyStats.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/calendar_31.png"))); // NOI18N
+        jMonthlyStats.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireChangeStatTimeEvent(evt);
+            }
+        });
 
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jScrollPane4.setViewportView(jTextArea1);
+        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Auswertung"));
+
+        jPanel4.setLayout(new java.awt.BorderLayout());
+
+        jPointsArea.setColumns(20);
+        jPointsArea.setRows(5);
+        jScrollPane4.setViewportView(jPointsArea);
+
+        jPanel4.add(jScrollPane4, java.awt.BorderLayout.CENTER);
+
+        jTabbedPane1.addTab("Punkte", new javax.swing.ImageIcon(getClass().getResource("/res/goblet_gold.png")), jPanel4); // NOI18N
+
+        jPanel5.setLayout(new java.awt.BorderLayout());
+
+        jBashOffArea.setColumns(20);
+        jBashOffArea.setRows(5);
+        jScrollPane9.setViewportView(jBashOffArea);
+
+        jPanel5.add(jScrollPane9, java.awt.BorderLayout.CENTER);
+
+        jTabbedPane1.addTab("Bash (Off)", new javax.swing.ImageIcon(getClass().getResource("/res/barracks.png")), jPanel5); // NOI18N
+
+        jPanel6.setLayout(new java.awt.BorderLayout());
+
+        jBashDefArea.setColumns(20);
+        jBashDefArea.setRows(5);
+        jScrollPane8.setViewportView(jBashDefArea);
+
+        jPanel6.add(jScrollPane8, java.awt.BorderLayout.CENTER);
+
+        jTabbedPane1.addTab("Bash (Deff)", new javax.swing.ImageIcon(getClass().getResource("/res/ally.png")), jPanel6); // NOI18N
+
+        jPanel8.setLayout(new java.awt.BorderLayout());
+
+        jWinnerArea.setColumns(20);
+        jWinnerArea.setRows(5);
+        jScrollPane6.setViewportView(jWinnerArea);
+
+        jPanel8.add(jScrollPane6, java.awt.BorderLayout.CENTER);
+
+        jTabbedPane1.addTab("Gewinner", new javax.swing.ImageIcon(getClass().getResource("/res/up_plus.png")), jPanel8); // NOI18N
+
+        jPanel9.setLayout(new java.awt.BorderLayout());
+
+        jLoserArea.setColumns(20);
+        jLoserArea.setRows(5);
+        jScrollPane5.setViewportView(jLoserArea);
+
+        jPanel9.add(jScrollPane5, java.awt.BorderLayout.CENTER);
+
+        jTabbedPane1.addTab("Verlierer", new javax.swing.ImageIcon(getClass().getResource("/res/down_minus.png")), jPanel9); // NOI18N
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -395,43 +472,82 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(254, Short.MAX_VALUE))
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 406, Short.MAX_VALUE)
+                .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(87, Short.MAX_VALUE))
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 196, Short.MAX_VALUE)
+                .addContainerGap())
         );
+
+        jUsedTribes.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Alle", "Markierte", "Top 10" }));
+
+        jPanel10.setBorder(javax.swing.BorderFactory.createTitledBorder("Sonstige Einstellungen"));
+        jPanel10.setOpaque(false);
+
+        jUseBBCodesBox.setText("BB-Codes verwenden");
+        jUseBBCodesBox.setOpaque(false);
+
+        jShowPercentBox.setText("Prozente anzeigen");
+        jShowPercentBox.setOpaque(false);
+
+        javax.swing.GroupLayout jPanel10Layout = new javax.swing.GroupLayout(jPanel10);
+        jPanel10.setLayout(jPanel10Layout);
+        jPanel10Layout.setHorizontalGroup(
+            jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel10Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jUseBBCodesBox)
+                    .addComponent(jShowPercentBox))
+                .addContainerGap(291, Short.MAX_VALUE))
+        );
+        jPanel10Layout.setVerticalGroup(
+            jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel10Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jUseBBCodesBox)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jShowPercentBox))
+        );
+
+        jButton8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/select.png"))); // NOI18N
+        jButton8.setText("Erstellen");
+        jButton8.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireGenerateStatsEvent(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel3)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel4)
-                        .addGap(18, 18, 18)
-                        .addComponent(jSpinner1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                                .addComponent(jButton6)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jButton7))
+                            .addComponent(jLabel4)
+                            .addComponent(jLabel5)
+                            .addComponent(jLabel3))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jUsedTribes, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jStatStartDate, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jStatEndDate, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(jLabel5)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jSpinner2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                .addComponent(jWeeklyStats)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jMonthlyStats)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 151, Short.MAX_VALUE))
+                    .addComponent(jButton8))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -439,20 +555,29 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel3)
-                    .addComponent(jScrollPane3))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4)
-                    .addComponent(jSpinner1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jSpinner2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel5))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jUsedTribes, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel3))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel4)
+                            .addComponent(jStatStartDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel5)
+                            .addComponent(jStatEndDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jWeeklyStats)
+                            .addComponent(jMonthlyStats)))
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton7)
-                    .addComponent(jButton6))
-                .addGap(113, 113, 113)
-                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton8)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -928,19 +1053,82 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
     }//GEN-LAST:event_fireRemoveRegionEvent
 
     private void fireCreateStatisticsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCreateStatisticsEvent
+        DefaultListModel tribeModel = (DefaultListModel) jTribeList.getModel();
+        if (tribeModel.isEmpty()) {
+            JOptionPaneHelper.showInformationBox(this, "Bitte zuerst einen Stamm auswählen.", "Information");
+            return;
+        }
+        DefaultListModel statsTribeModel = new DefaultListModel();
+        for (int i = 0; i < tribeModel.getSize(); i++) {
+            statsTribeModel.addElement(tribeModel.get(i));
+        }
+        jStatsTribeList.setModel(statsTribeModel);
         jStatsCreateFrame.pack();
         jStatsCreateFrame.setVisible(true);
     }//GEN-LAST:event_fireCreateStatisticsEvent
+
+    private void fireGenerateStatsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireGenerateStatsEvent
+        long start = ((Date) jStatStartDate.getValue()).getTime();
+        long end = ((Date) jStatEndDate.getValue()).getTime();
+        List<Tribe> usedTribes = new LinkedList<Tribe>();
+        if (jUsedTribes.getSelectedIndex() == 0 || jUsedTribes.getSelectedIndex() == 2) {
+            //use all (if index == 2 select top 10 later
+            DefaultListModel tribeModel = (DefaultListModel) jStatsTribeList.getModel();
+            for (int i = 0; i < tribeModel.getSize(); i++) {
+                usedTribes.add((Tribe) tribeModel.getElementAt(i));
+            }
+        } else if (jUsedTribes.getSelectedIndex() == 1) {
+            //use selected
+            Object[] tribes = jStatsTribeList.getSelectedValues();
+            if (tribes == null || tribes.length == 0) {
+                JOptionPaneHelper.showInformationBox(jStatsCreateFrame, "Keine Spieler ausgewählt.", "Information");
+                return;
+            } else {
+                for (Object o : tribes) {
+                    usedTribes.add((Tribe) o);
+                }
+            }
+        }
+
+        List<Stats> stats = new LinkedList<Stats>();
+        for (Tribe t : usedTribes) {
+            TribeStatsElement elem = StatManager.getSingleton().getStatsForTribe(t);
+            Stats elemStat = elem.generateStats(start, end);
+            stats.add(elemStat);
+        }
+
+        jPointsArea.setText(StatTextBuilder.buildPointsList(stats, jUseBBCodesBox.isSelected(), jShowPercentBox.isSelected(), (jUsedTribes.getSelectedIndex() == 2)));
+        jBashOffArea.setText(StatTextBuilder.buildBashOffList(stats, jUseBBCodesBox.isSelected(), jShowPercentBox.isSelected(), (jUsedTribes.getSelectedIndex() == 2)));
+        jBashDefArea.setText(StatTextBuilder.buildBashDefList(stats, jUseBBCodesBox.isSelected(), jShowPercentBox.isSelected(), (jUsedTribes.getSelectedIndex() == 2)));
+
+    }//GEN-LAST:event_fireGenerateStatsEvent
+
+    private void fireChangeStatTimeEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireChangeStatTimeEvent
+        if (evt.getSource() == jWeeklyStats) {
+            //remove one week from end date
+            long oneWeek = 1000 * 60 * 60 * 24 * 7;
+            Date end = (Date) jStatEndDate.getValue();
+            long start = end.getTime() - oneWeek;
+            jStatStartDate.setValue(new Date(start));
+        } else {
+            //remove one month from end date
+            long oneMonth = 1000 * 60 * 60 * 24 * 31;
+            Date end = (Date) jStatEndDate.getValue();
+            long start = end.getTime() - oneMonth;
+            jStatStartDate.setValue(new Date(start));
+        }
+    }//GEN-LAST:event_fireChangeStatTimeEvent
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JList jAllyList;
     private javax.swing.JCheckBox jAlwaysOnTopBox;
+    private javax.swing.JTextArea jBashDefArea;
+    private javax.swing.JTextArea jBashOffArea;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
-    private javax.swing.JButton jButton6;
-    private javax.swing.JButton jButton7;
+    private javax.swing.JButton jButton8;
     private javax.swing.JPanel jChartPanel;
     private javax.swing.JButton jExportToClipboardButton;
     private javax.swing.JLabel jLabel1;
@@ -948,33 +1136,51 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JList jList1;
+    private javax.swing.JTextArea jLoserArea;
+    private javax.swing.JButton jMonthlyStats;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel10;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel6;
+    private javax.swing.JPanel jPanel8;
+    private javax.swing.JPanel jPanel9;
+    private javax.swing.JTextArea jPointsArea;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JScrollPane jScrollPane5;
+    private javax.swing.JScrollPane jScrollPane6;
+    private javax.swing.JScrollPane jScrollPane8;
+    private javax.swing.JScrollPane jScrollPane9;
     private javax.swing.JCheckBox jShowDataPoints;
     private javax.swing.JCheckBox jShowItemValues;
     private javax.swing.JCheckBox jShowKillsDef;
     private javax.swing.JCheckBox jShowKillsOff;
     private javax.swing.JCheckBox jShowLegend;
     private javax.swing.JCheckBox jShowLines;
+    private javax.swing.JCheckBox jShowPercentBox;
     private javax.swing.JCheckBox jShowPoints;
     private javax.swing.JCheckBox jShowRank;
     private javax.swing.JCheckBox jShowRankDef;
     private javax.swing.JCheckBox jShowRankOff;
     private javax.swing.JCheckBox jShowVillages;
-    private javax.swing.JSpinner jSpinner1;
-    private javax.swing.JSpinner jSpinner2;
+    private javax.swing.JSpinner jStatEndDate;
+    private javax.swing.JSpinner jStatStartDate;
     private javax.swing.JFrame jStatsCreateFrame;
+    private javax.swing.JList jStatsTribeList;
+    private javax.swing.JTabbedPane jTabbedPane1;
     private com.l2fprod.common.swing.JTaskPane jTaskPane1;
     private com.l2fprod.common.swing.JTaskPaneGroup jTaskPaneGroup1;
     private com.l2fprod.common.swing.JTaskPaneGroup jTaskPaneGroup2;
     private com.l2fprod.common.swing.JTaskPaneGroup jTaskPaneGroup3;
-    private javax.swing.JTextArea jTextArea1;
     private javax.swing.JList jTribeList;
+    private javax.swing.JCheckBox jUseBBCodesBox;
+    private javax.swing.JComboBox jUsedTribes;
+    private javax.swing.JButton jWeeklyStats;
+    private javax.swing.JTextArea jWinnerArea;
     // End of variables declaration//GEN-END:variables
 }

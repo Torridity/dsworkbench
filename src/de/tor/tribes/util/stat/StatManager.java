@@ -42,12 +42,13 @@ public class StatManager {
             storeStats();
         }
         INITIALIZED = false;
+        logger.debug("Start loading stats");
         String dataPath = "./servers/" + GlobalOptions.getSelectedServer() + "/stats/";
         if (!new File(dataPath).exists()) {
             if (!new File(dataPath).mkdir()) {
-                logger.error("Failed to create stats directory");
+                logger.error(" * Failed to create stats directory");
             } else {
-                logger.debug("Created stats directory");
+                logger.debug(" * Created stats directory");
             }
         }
         data = new Hashtable<Integer, Hashtable<Integer, TribeStatsElement>>();
@@ -60,20 +61,20 @@ public class StatManager {
             }
         });
 
-        logger.debug("Loading stats from '" + dataPath + "'");
+        logger.debug(" * Loading stats from '" + dataPath + "'");
         for (File allyDir : allyDirs) {
             try {
                 Integer allyId = Integer.parseInt(allyDir.getName());
                 Hashtable<Integer, TribeStatsElement> tribeStats = null;
                 if (allyId == -1 || DataHolder.getSingleton().getAllies().get(allyId) != null) {
                     //directory for non ally tribes or valid ally dir found
-                    logger.debug(" - Loading ally data from '" + allyDir.getPath() + "'");
+                    logger.debug("  - Loading ally data from '" + allyDir.getPath() + "'");
                     tribeStats = readTribeStats(allyDir);
                     if (tribeStats != null) {
                         data.put(allyId, tribeStats);
                     }
                 } else {
-                    logger.info("No ally with ID '" + allyId + "' was found. Removing stat dir.");
+                    logger.info(" * No ally with ID '" + allyId + "' was found. Removing stat dir.");
                     deleteDirectory(allyDir);
                 }
             } catch (Exception e) {
@@ -81,6 +82,9 @@ public class StatManager {
             }
         }
 
+        updateAllyChanges();
+
+        logger.debug("Finished loading stats");
         INITIALIZED = true;
     }
 
@@ -114,6 +118,90 @@ public class StatManager {
         }
 
         return tribeStats;
+    }
+
+    private void updateAllyChanges() {
+        logger.debug(" * Updating ally changes");
+        Enumeration<Integer> allyKeys = data.keys();
+        List<TribeStatsElement> outdatedElements = new LinkedList<TribeStatsElement>();
+        logger.debug("  - Checking " + data.size() + " allies");
+        while (allyKeys.hasMoreElements()) {
+            //check all allies
+            Integer allyKey = allyKeys.nextElement();
+            Hashtable<Integer, TribeStatsElement> tribesData = data.get(allyKey);
+            if (tribesData == null) {
+                //avoid NPE
+                tribesData = new Hashtable<Integer, TribeStatsElement>();
+            }
+            Enumeration<Integer> tribeKeys = tribesData.keys();
+            //get tribes that have changed the ally
+            List<Tribe> outdatedTribes = new LinkedList<Tribe>();
+            String allyPath = "./servers/" + GlobalOptions.getSelectedServer() + "/stats/" + allyKey;
+            logger.debug("  - Checking " + tribesData.size() + " tribes");
+            while (tribeKeys.hasMoreElements()) {
+                Integer tribeKey = tribeKeys.nextElement();
+                Tribe tribe = DataHolder.getSingleton().getTribes().get(tribeKey);
+                if (tribe.getAllyID() != allyKey) {
+                    logger.debug("  - Tribe '" + tribe + "' is outdated");
+                    //tribe has changed ally
+                    outdatedTribes.add(tribe);
+                    //remove old tribe stats file from ally dir
+                    String tribePath = allyPath + "/" + tribeKey + ".stat";
+                    logger.debug("  - Removing stats file from '" + tribePath + "'");
+                    new File(tribePath).delete();
+                }
+            }
+            //go through all tribes that are not longer in the current ally
+            logger.debug("  - removing outdated tribes");
+            for (Tribe t : outdatedTribes) {
+                //add TribeStatElement to outdated list
+                outdatedElements.add(tribesData.get(t.getId()));
+                //remove tribe id from current allies table
+                tribesData.remove(t.getId());
+            }
+        }
+
+        logger.debug("  - assigning outdated tribes to new allies");
+        //re-assign outdated elems
+        for (TribeStatsElement outdatedElem : outdatedElements) {
+            Ally a = outdatedElem.getTribe().getAlly();
+            if (a == null) {
+                a = NoAlly.getSingleton();
+            }
+            Hashtable<Integer, TribeStatsElement> tribeData = data.get(a.getId());
+            if (tribeData == null) {
+                logger.debug("  - Creating new ally stats for ally '" + a + "'");
+                //add new tribe and ally data elements
+                tribeData = new Hashtable<Integer, TribeStatsElement>();
+                tribeData.put(outdatedElem.getTribe().getId(), outdatedElem);
+                data.put(a.getId(), tribeData);
+            } else {
+                logger.debug("  - Assigning tribe to existing ally stats for ally '" + a + "'");
+                //add only tribe to existing tribe data table
+                tribeData.put(outdatedElem.getTribe().getId(), outdatedElem);
+            }
+        }
+
+        logger.debug("  - Removing empty ally stats");
+        allyKeys = data.keys();
+        while (allyKeys.hasMoreElements()) {
+            Integer allyKey = allyKeys.nextElement();
+            Hashtable<Integer, TribeStatsElement> tribesData = data.get(allyKey);
+            Ally a = NoAlly.getSingleton();
+            if (allyKey != -1) {
+                a = DataHolder.getSingleton().getAllies().get(allyKey);
+            }
+
+            String allyPath = "./servers/" + GlobalOptions.getSelectedServer() + "/stats/" + allyKey;
+            if (tribesData == null || tribesData.isEmpty()) {
+                logger.debug("  - Removing ally stats for ally '" + a + "'");
+                //remove empty ally data table
+                data.remove(allyKey);
+                //remove existing ally dir
+                deleteDirectory(new File(allyPath));
+            }
+        }
+        logger.debug(" * Finished updating ally changes");
     }
 
     public void storeStats() {
@@ -172,7 +260,7 @@ public class StatManager {
     }
 
     public void monitorAlly(Ally pAlly) {
-       logger.debug("Adding stat monitor for all '" + pAlly.getName() + "'");
+        logger.debug("Adding stat monitor for all '" + pAlly.getName() + "'");
         for (Tribe t : pAlly.getTribes()) {
             monitorTribe(t);
         }

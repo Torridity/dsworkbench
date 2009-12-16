@@ -38,33 +38,32 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" attributes="0">
+                  <Group type="102" alignment="1" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="103" groupAlignment="1" attributes="0">
                           <Component id="jPanel3" alignment="0" max="32767" attributes="0"/>
-                          <Group type="102" alignment="0" attributes="0">
-                              <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                              <Component id="jScrollPane3" min="-2" pref="151" max="-2" attributes="0"/>
-                          </Group>
-                          <Group type="102" alignment="0" attributes="0">
-                              <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace type="separate" max="-2" attributes="0"/>
-                              <Component id="jSpinner1" min="-2" max="-2" attributes="1"/>
-                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                          <Component id="jPanel10" alignment="1" max="32767" attributes="0"/>
+                          <Group type="102" alignment="1" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabel5" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabel3" alignment="0" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="1" attributes="0">
+                                  <Component id="jUsedTribes" alignment="1" min="-2" pref="166" max="-2" attributes="1"/>
+                                  <Component id="jStatStartDate" alignment="1" min="-2" pref="166" max="-2" attributes="1"/>
+                                  <Component id="jStatEndDate" alignment="1" min="-2" pref="166" max="-2" attributes="1"/>
                                   <Group type="102" alignment="1" attributes="0">
-                                      <Component id="jButton6" min="-2" max="-2" attributes="1"/>
-                                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                      <Component id="jButton7" min="-2" max="-2" attributes="1"/>
-                                  </Group>
-                                  <Group type="102" alignment="0" attributes="0">
-                                      <Component id="jLabel5" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                      <Component id="jSpinner2" min="-2" max="-2" attributes="1"/>
+                                      <Component id="jWeeklyStats" min="-2" max="-2" attributes="1"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="jMonthlyStats" min="-2" max="-2" attributes="1"/>
                                   </Group>
                               </Group>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                              <Component id="jScrollPane3" pref="151" max="32767" attributes="1"/>
                           </Group>
+                          <Component id="jButton8" alignment="1" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -75,23 +74,35 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jLabel3" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="jScrollPane3" alignment="0" max="32767" attributes="0"/>
-                      </Group>
-                      <EmptySpace type="separate" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jLabel4" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jSpinner1" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jSpinner2" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabel5" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Group type="102" attributes="0">
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="jUsedTribes" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="jLabel4" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jStatStartDate" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="jLabel5" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jStatEndDate" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="jWeeklyStats" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jMonthlyStats" alignment="0" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                          </Group>
+                          <Component id="jScrollPane3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jButton7" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jButton6" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace min="-2" pref="113" max="-2" attributes="0"/>
-                      <Component id="jPanel3" min="-2" max="-2" attributes="0"/>
+                      <Component id="jPanel10" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="jButton8" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Component id="jPanel3" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -100,7 +111,9 @@
           <SubComponents>
             <Container class="javax.swing.JScrollPane" name="jScrollPane3">
               <Properties>
-                <Property name="enabled" type="boolean" value="false"/>
+                <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                  <Dimension value="[100, 130]"/>
+                </Property>
               </Properties>
               <AuxValues>
                 <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
@@ -108,12 +121,11 @@
 
               <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
               <SubComponents>
-                <Component class="javax.swing.JList" name="jList1">
+                <Component class="javax.swing.JList" name="jStatsTribeList">
                   <Properties>
                     <Property name="model" type="javax.swing.ListModel" editor="org.netbeans.modules.form.editors2.ListModelEditor">
                       <StringArray count="0"/>
                     </Property>
-                    <Property name="enabled" type="boolean" value="false"/>
                   </Properties>
                 </Component>
               </SubComponents>
@@ -128,7 +140,7 @@
                 <Property name="text" type="java.lang.String" value="Zeitraum (Start)"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JSpinner" name="jSpinner1">
+            <Component class="javax.swing.JSpinner" name="jStatStartDate">
               <Properties>
                 <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.editors2.SpinnerModelEditor">
                   <SpinnerModel initial="now" stepSize="12" type="date"/>
@@ -140,32 +152,50 @@
                 <Property name="text" type="java.lang.String" value="Zeitraum (Ende)"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JSpinner" name="jSpinner2">
+            <Component class="javax.swing.JSpinner" name="jStatEndDate">
               <Properties>
                 <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.editors2.SpinnerModelEditor">
-                  <SpinnerModel initial="now" stepSize="12" type="date"/>
+                  <SpinnerModel initial="now" stepSize="5" type="date"/>
                 </Property>
               </Properties>
             </Component>
-            <Component class="javax.swing.JButton" name="jButton6">
+            <Component class="javax.swing.JButton" name="jWeeklyStats">
               <Properties>
-                <Property name="text" type="java.lang.String" value="+ 1 Woche"/>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/res/calendar_7.png"/>
+                </Property>
+                <Property name="horizontalTextPosition" type="int" value="2"/>
               </Properties>
+              <Events>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fireChangeStatTimeEvent"/>
+              </Events>
             </Component>
-            <Component class="javax.swing.JButton" name="jButton7">
+            <Component class="javax.swing.JButton" name="jMonthlyStats">
               <Properties>
-                <Property name="text" type="java.lang.String" value="+ 1 Monat"/>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/res/calendar_31.png"/>
+                </Property>
               </Properties>
+              <Events>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fireChangeStatTimeEvent"/>
+              </Events>
             </Component>
             <Container class="javax.swing.JPanel" name="jPanel3">
+              <Properties>
+                <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+                  <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
+                    <TitledBorder title="Auswertung"/>
+                  </Border>
+                </Property>
+              </Properties>
 
               <Layout>
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="jScrollPane4" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace pref="254" max="32767" attributes="0"/>
+                          <Component id="jTabbedPane1" pref="406" max="32767" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -173,30 +203,272 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="jScrollPane4" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace pref="87" max="32767" attributes="0"/>
+                          <Component id="jTabbedPane1" pref="196" max="32767" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
               </Layout>
               <SubComponents>
-                <Container class="javax.swing.JScrollPane" name="jScrollPane4">
-                  <AuxValues>
-                    <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
-                  </AuxValues>
+                <Container class="javax.swing.JTabbedPane" name="jTabbedPane1">
 
-                  <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+                  <Layout class="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout"/>
                   <SubComponents>
-                    <Component class="javax.swing.JTextArea" name="jTextArea1">
-                      <Properties>
-                        <Property name="columns" type="int" value="20"/>
-                        <Property name="rows" type="int" value="5"/>
-                      </Properties>
-                    </Component>
+                    <Container class="javax.swing.JPanel" name="jPanel4">
+                      <Constraints>
+                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
+                          <JTabbedPaneConstraints tabName="Punkte">
+                            <Property name="tabTitle" type="java.lang.String" value="Punkte"/>
+                            <Property name="tabIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                              <Image iconType="3" name="/res/goblet_gold.png"/>
+                            </Property>
+                          </JTabbedPaneConstraints>
+                        </Constraint>
+                      </Constraints>
+
+                      <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
+                      <SubComponents>
+                        <Container class="javax.swing.JScrollPane" name="jScrollPane4">
+                          <AuxValues>
+                            <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
+                          </AuxValues>
+                          <Constraints>
+                            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
+                              <BorderConstraints direction="Center"/>
+                            </Constraint>
+                          </Constraints>
+
+                          <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+                          <SubComponents>
+                            <Component class="javax.swing.JTextArea" name="jPointsArea">
+                              <Properties>
+                                <Property name="columns" type="int" value="20"/>
+                                <Property name="rows" type="int" value="5"/>
+                              </Properties>
+                            </Component>
+                          </SubComponents>
+                        </Container>
+                      </SubComponents>
+                    </Container>
+                    <Container class="javax.swing.JPanel" name="jPanel5">
+                      <Constraints>
+                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
+                          <JTabbedPaneConstraints tabName="Bash (Off)">
+                            <Property name="tabTitle" type="java.lang.String" value="Bash (Off)"/>
+                            <Property name="tabIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                              <Image iconType="3" name="/res/barracks.png"/>
+                            </Property>
+                          </JTabbedPaneConstraints>
+                        </Constraint>
+                      </Constraints>
+
+                      <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
+                      <SubComponents>
+                        <Container class="javax.swing.JScrollPane" name="jScrollPane9">
+                          <AuxValues>
+                            <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
+                          </AuxValues>
+                          <Constraints>
+                            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
+                              <BorderConstraints direction="Center"/>
+                            </Constraint>
+                          </Constraints>
+
+                          <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+                          <SubComponents>
+                            <Component class="javax.swing.JTextArea" name="jBashOffArea">
+                              <Properties>
+                                <Property name="columns" type="int" value="20"/>
+                                <Property name="rows" type="int" value="5"/>
+                              </Properties>
+                            </Component>
+                          </SubComponents>
+                        </Container>
+                      </SubComponents>
+                    </Container>
+                    <Container class="javax.swing.JPanel" name="jPanel6">
+                      <Constraints>
+                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
+                          <JTabbedPaneConstraints tabName="Bash (Deff)">
+                            <Property name="tabTitle" type="java.lang.String" value="Bash (Deff)"/>
+                            <Property name="tabIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                              <Image iconType="3" name="/res/ally.png"/>
+                            </Property>
+                          </JTabbedPaneConstraints>
+                        </Constraint>
+                      </Constraints>
+
+                      <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
+                      <SubComponents>
+                        <Container class="javax.swing.JScrollPane" name="jScrollPane8">
+                          <AuxValues>
+                            <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
+                          </AuxValues>
+                          <Constraints>
+                            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
+                              <BorderConstraints direction="Center"/>
+                            </Constraint>
+                          </Constraints>
+
+                          <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+                          <SubComponents>
+                            <Component class="javax.swing.JTextArea" name="jBashDefArea">
+                              <Properties>
+                                <Property name="columns" type="int" value="20"/>
+                                <Property name="rows" type="int" value="5"/>
+                              </Properties>
+                            </Component>
+                          </SubComponents>
+                        </Container>
+                      </SubComponents>
+                    </Container>
+                    <Container class="javax.swing.JPanel" name="jPanel8">
+                      <Constraints>
+                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
+                          <JTabbedPaneConstraints tabName="Gewinner">
+                            <Property name="tabTitle" type="java.lang.String" value="Gewinner"/>
+                            <Property name="tabIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                              <Image iconType="3" name="/res/up_plus.png"/>
+                            </Property>
+                          </JTabbedPaneConstraints>
+                        </Constraint>
+                      </Constraints>
+
+                      <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
+                      <SubComponents>
+                        <Container class="javax.swing.JScrollPane" name="jScrollPane6">
+                          <AuxValues>
+                            <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
+                          </AuxValues>
+                          <Constraints>
+                            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
+                              <BorderConstraints direction="Center"/>
+                            </Constraint>
+                          </Constraints>
+
+                          <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+                          <SubComponents>
+                            <Component class="javax.swing.JTextArea" name="jWinnerArea">
+                              <Properties>
+                                <Property name="columns" type="int" value="20"/>
+                                <Property name="rows" type="int" value="5"/>
+                              </Properties>
+                            </Component>
+                          </SubComponents>
+                        </Container>
+                      </SubComponents>
+                    </Container>
+                    <Container class="javax.swing.JPanel" name="jPanel9">
+                      <Constraints>
+                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
+                          <JTabbedPaneConstraints tabName="Verlierer">
+                            <Property name="tabTitle" type="java.lang.String" value="Verlierer"/>
+                            <Property name="tabIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                              <Image iconType="3" name="/res/down_minus.png"/>
+                            </Property>
+                          </JTabbedPaneConstraints>
+                        </Constraint>
+                      </Constraints>
+
+                      <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
+                      <SubComponents>
+                        <Container class="javax.swing.JScrollPane" name="jScrollPane5">
+                          <AuxValues>
+                            <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
+                          </AuxValues>
+                          <Constraints>
+                            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
+                              <BorderConstraints direction="Center"/>
+                            </Constraint>
+                          </Constraints>
+
+                          <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+                          <SubComponents>
+                            <Component class="javax.swing.JTextArea" name="jLoserArea">
+                              <Properties>
+                                <Property name="columns" type="int" value="20"/>
+                                <Property name="rows" type="int" value="5"/>
+                              </Properties>
+                            </Component>
+                          </SubComponents>
+                        </Container>
+                      </SubComponents>
+                    </Container>
                   </SubComponents>
                 </Container>
               </SubComponents>
             </Container>
+            <Component class="javax.swing.JComboBox" name="jUsedTribes">
+              <Properties>
+                <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+                  <StringArray count="3">
+                    <StringItem index="0" value="Alle"/>
+                    <StringItem index="1" value="Markierte"/>
+                    <StringItem index="2" value="Top 10"/>
+                  </StringArray>
+                </Property>
+              </Properties>
+            </Component>
+            <Container class="javax.swing.JPanel" name="jPanel10">
+              <Properties>
+                <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+                  <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
+                    <TitledBorder title="Sonstige Einstellungen"/>
+                  </Border>
+                </Property>
+                <Property name="opaque" type="boolean" value="false"/>
+              </Properties>
+
+              <Layout>
+                <DimensionLayout dim="0">
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="102" attributes="0">
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="jUseBBCodesBox" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="jShowPercentBox" alignment="0" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace pref="291" max="32767" attributes="0"/>
+                      </Group>
+                  </Group>
+                </DimensionLayout>
+                <DimensionLayout dim="1">
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="102" alignment="0" attributes="0">
+                          <EmptySpace max="32767" attributes="0"/>
+                          <Component id="jUseBBCodesBox" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                          <Component id="jShowPercentBox" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                  </Group>
+                </DimensionLayout>
+              </Layout>
+              <SubComponents>
+                <Component class="javax.swing.JCheckBox" name="jUseBBCodesBox">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="BB-Codes verwenden"/>
+                    <Property name="opaque" type="boolean" value="false"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JCheckBox" name="jShowPercentBox">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Prozente anzeigen"/>
+                    <Property name="opaque" type="boolean" value="false"/>
+                  </Properties>
+                </Component>
+              </SubComponents>
+            </Container>
+            <Component class="javax.swing.JButton" name="jButton8">
+              <Properties>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/res/ui/select.png"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="Erstellen"/>
+              </Properties>
+              <Events>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fireGenerateStatsEvent"/>
+              </Events>
+            </Component>
           </SubComponents>
         </Container>
       </SubComponents>

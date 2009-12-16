@@ -9,9 +9,10 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
-import java.io.FileWriter;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Hashtable;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -35,9 +36,9 @@ public class TribeStatsElement {
         TribeStatsElement elem = new TribeStatsElement(null);
         Integer tribeId = Integer.parseInt(pStatFile.getName().substring(0, pStatFile.getName().lastIndexOf(".")));
         elem.setTribe(DataHolder.getSingleton().getTribes().get(tribeId));
-
+        BufferedReader r = null;
         try {
-            BufferedReader r = new BufferedReader(new FileReader(pStatFile));
+            r = new BufferedReader(new FileReader(pStatFile));
             String line = "";
             while ((line = r.readLine()) != null) {
                 String[] data = line.split(";");
@@ -51,8 +52,14 @@ public class TribeStatsElement {
                 short rankDef = Short.parseShort(data[7]);
                 elem.addLoadedData(timestamp, rank, points, villages, bashOff, rankOff, bashDef, rankDef);
             }
+
         } catch (Exception e) {
             return null;
+        } finally {
+            try {
+                r.close();
+            } catch (Exception ignored) {
+            }
         }
         return elem;
     }
@@ -222,6 +229,323 @@ public class TribeStatsElement {
                 rankDefList.remove(cnt);
             }
             cnt++;
+        }
+    }
+
+    public Stats generateStats(long pStart, long pEnd) {
+        Long[] timestamps = timestampList.toArray(new Long[]{});
+        int cnt = 0;
+        int startIndex = -1;
+        int endIndex = -1;
+        for (long timestamp : timestamps) {
+            if (timestamp > pStart && startIndex == -1) {
+                startIndex = cnt;
+            }
+            if (timestamp > pEnd && endIndex == -1) {
+                endIndex = cnt - 1;
+            }
+            if (startIndex > -1 && endIndex > -1) {
+                //have both indices
+                break;
+            }
+            cnt++;
+        }
+
+        if (startIndex == -1) {
+            //no start found, obv. no data was collected
+            startIndex = 0;
+        }
+        if (endIndex == -1) {
+            //no end found, take last element
+            endIndex = cnt - 1;
+        }
+        
+        //get values
+        long pointStart = pointList.get(startIndex);
+        long pointEnd = pointList.get(endIndex);
+        int rankStart = rankList.get(startIndex);
+        int rankEnd = rankList.get(endIndex);
+        int villageStart = villageList.get(startIndex);
+        int villageEnd = villageList.get(endIndex);
+        long bashOffStart = bashOffList.get(startIndex);
+        long bashOffEnd = bashOffList.get(endIndex);
+        int rankOffStart = rankOffList.get(startIndex);
+        int rankOffEnd = rankOffList.get(endIndex);
+        long bashDefStart = bashDefList.get(startIndex);
+        long bashDefEnd = bashDefList.get(endIndex);
+        int rankDefStart = rankDefList.get(startIndex);
+        int rankDefEnd = rankDefList.get(endIndex);
+
+        Stats result = new Stats(this);
+        result.setPoints(pointStart, pointEnd);
+        result.setRank(rankStart, rankEnd);
+        result.setVillages(villageStart, villageEnd);
+        result.setBashOff(bashOffStart, bashOffEnd);
+        result.setRankOff(rankOffStart, rankOffEnd);
+        result.setBashDef(bashDefStart, bashDefEnd);
+        result.setRankDef(rankDefStart, rankDefEnd);
+        return result;
+    }
+
+    public static class Stats implements Comparable<Stats> {
+
+        private TribeStatsElement parent = null;
+        private long pointStart = 0;
+        private long pointEnd = 0;
+        private int rankStart = 0;
+        private int rankEnd = 0;
+        private int villageStart = 0;
+        private int villageEnd = 0;
+        private long bashOffStart = 0;
+        private long bashOffEnd = 0;
+        private int rankOffStart = 0;
+        private int rankOffEnd = 0;
+        private long bashDefStart = 0;
+        private long bashDefEnd = 0;
+        private int rankDefStart = 0;
+        private int rankDefEnd = 0;
+
+        public Stats(TribeStatsElement pParent) {
+            parent = pParent;
+        }
+
+        public TribeStatsElement getParent() {
+            return parent;
+        }
+        // <editor-fold defaultstate="collapsed" desc="Setters for start and end values">
+
+        public void setPoints(long pStart, long pEnd) {
+            pointStart = pStart;
+            pointEnd = pEnd;
+        }
+
+        public void setRank(int pStart, int pEnd) {
+            rankStart = pStart;
+            rankEnd = pEnd;
+        }
+
+        public void setVillages(int pStart, int pEnd) {
+            villageStart = pStart;
+            villageEnd = pEnd;
+        }
+
+        public void setBashOff(long pStart, long pEnd) {
+            bashOffStart = pStart;
+            bashOffEnd = pEnd;
+        }
+
+        public void setRankOff(int pStart, int pEnd) {
+            rankOffStart = pStart;
+            rankOffEnd = pEnd;
+        }
+
+        public void setBashDef(long pStart, long pEnd) {
+            bashDefStart = pStart;
+            bashDefEnd = pEnd;
+        }
+
+        public void setRankDef(int pStart, int pEnd) {
+            rankDefStart = pStart;
+            rankDefEnd = pEnd;
+        }
+        // </editor-fold>
+
+        // <editor-fold defaultstate="collapsed" desc="Getters for start and end values">
+        /**
+         * @return the pointStart
+         */
+        public long getPointStart() {
+            return pointStart;
+        }
+
+        /**
+         * @return the pointEnd
+         */
+        public long getPointEnd() {
+            return pointEnd;
+        }
+
+        /**
+         * @return the rankStart
+         */
+        public int getRankStart() {
+            return rankStart;
+        }
+
+        /**
+         * @return the rankEnd
+         */
+        public int getRankEnd() {
+            return rankEnd;
+        }
+
+        /**
+         * @return the villageStart
+         */
+        public int getVillageStart() {
+            return villageStart;
+        }
+
+        /**
+         * @return the villageEnd
+         */
+        public int getVillageEnd() {
+            return villageEnd;
+        }
+
+        /**
+         * @return the bashOffStart
+         */
+        public long getBashOffStart() {
+            return bashOffStart;
+        }
+
+        /**
+         * @return the bashOffEnd
+         */
+        public long getBashOffEnd() {
+            return bashOffEnd;
+        }
+
+        /**
+         * @return the rankOffStart
+         */
+        public int getRankOffStart() {
+            return rankOffStart;
+        }
+
+        /**
+         * @return the rankOffEnd
+         */
+        public int getRankOffEnd() {
+            return rankOffEnd;
+        }
+
+        /**
+         * @return the bashDefStart
+         */
+        public long getBashDefStart() {
+            return bashDefStart;
+        }
+
+        /**
+         * @return the bashDefEnd
+         */
+        public long getBashDefEnd() {
+            return bashDefEnd;
+        }
+
+        /**
+         * @return the rankDefStart
+         */
+        public int getRankDefStart() {
+            return rankDefStart;
+        }
+
+        /**
+         * @return the rankDefEnd
+         */
+        public int getRankDefEnd() {
+            return rankDefEnd;
+        }
+        // </editor-fold>
+
+        // <editor-fold defaultstate="collapsed" desc="Diff getters">
+        public Long getPointDiff() {
+            return (pointEnd - pointStart);
+        }
+
+        public Integer getRankDiff() {
+            return (rankEnd - rankStart);
+        }
+
+        public Integer getVillageDiff() {
+            return (villageEnd - villageStart);
+        }
+
+        public Long getBashOffDiff() {
+            return (bashOffEnd - bashOffStart);
+        }
+
+        public Integer getRankOffDiff() {
+            return (rankOffEnd - rankOffStart);
+        }
+
+        public Long getBashDefDiff() {
+            return (bashDefEnd - bashDefStart);
+        }
+
+        public Integer getRankDefDiff() {
+            return (rankDefEnd - rankDefStart);
+        }
+// </editor-fold>
+
+        @Override
+        public int compareTo(Stats o) {
+            return 0;
+        }
+        public static final Comparator<Stats> POINTS_COMPARATOR = new StatPointsComparator();
+
+        private static class StatPointsComparator implements Comparator<Stats>, java.io.Serializable {
+
+            @Override
+            public int compare(Stats s1, Stats s2) {
+                return s2.getPointDiff().compareTo(s1.getPointDiff());
+            }
+        }
+        public static final Comparator<Stats> RANK_COMPARATOR = new StatRankComparator();
+
+        private static class StatRankComparator implements Comparator<Stats>, java.io.Serializable {
+
+            @Override
+            public int compare(Stats s1, Stats s2) {
+                return s2.getRankDiff().compareTo(s1.getRankDiff());
+            }
+        }
+        public static final Comparator<Stats> VILLAGE_COMPARATOR = new StatVillageComparator();
+
+        private static class StatVillageComparator implements Comparator<Stats>, java.io.Serializable {
+
+            @Override
+            public int compare(Stats s1, Stats s2) {
+                return s2.getVillageDiff().compareTo(s1.getVillageDiff());
+            }
+        }
+        public static final Comparator<Stats> BASH_OFF_COMPARATOR = new StatBashOffComparator();
+
+        private static class StatBashOffComparator implements Comparator<Stats>, java.io.Serializable {
+
+            @Override
+            public int compare(Stats s1, Stats s2) {
+                return s2.getBashOffDiff().compareTo(s1.getBashOffDiff());
+            }
+        }
+        public static final Comparator<Stats> RANK_OFF_COMPARATOR = new StatRankOffComparator();
+
+        private static class StatRankOffComparator implements Comparator<Stats>, java.io.Serializable {
+
+            @Override
+            public int compare(Stats s1, Stats s2) {
+                return s2.getRankOffDiff().compareTo(s1.getRankOffDiff());
+            }
+        }
+        public static final Comparator<Stats> BASH_DEF_COMPARATOR = new StatBashDefComparator();
+
+        private static class StatBashDefComparator implements Comparator<Stats>, java.io.Serializable {
+
+            @Override
+            public int compare(Stats s1, Stats s2) {
+                return s2.getBashDefDiff().compareTo(s1.getBashDefDiff());
+            }
+        }
+        public static final Comparator<Stats> RANK_DEF_COMPARATOR = new StatRankDefComparator();
+
+        private static class StatRankDefComparator implements Comparator<Stats>, java.io.Serializable {
+
+            @Override
+            public int compare(Stats s1, Stats s2) {
+                return s2.getRankDefDiff().compareTo(s1.getRankDefDiff());
+            }
         }
     }
 }

@@ -12,6 +12,7 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.text.NumberFormat;
 import java.util.Comparator;
+import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -116,8 +117,8 @@ public class Tribe implements Comparable {
         return (short) villageList.size();
     }
 
-    public void setVillages(short villages) {
-        this.villages = villages;
+    public void setVillages(short pVillages) {
+        villages = pVillages;
     }
 
     public double getPoints() {

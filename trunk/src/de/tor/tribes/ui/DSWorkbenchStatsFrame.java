@@ -1100,7 +1100,7 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
         jPointsArea.setText(StatTextBuilder.buildPointsList(stats, jUseBBCodesBox.isSelected(), jShowPercentBox.isSelected(), (jUsedTribes.getSelectedIndex() == 2)));
         jBashOffArea.setText(StatTextBuilder.buildBashOffList(stats, jUseBBCodesBox.isSelected(), jShowPercentBox.isSelected(), (jUsedTribes.getSelectedIndex() == 2)));
         jBashDefArea.setText(StatTextBuilder.buildBashDefList(stats, jUseBBCodesBox.isSelected(), jShowPercentBox.isSelected(), (jUsedTribes.getSelectedIndex() == 2)));
-
+        jWinnerArea.setText(StatTextBuilder.buildWinnerStats(stats, jUseBBCodesBox.isSelected(), jShowPercentBox.isSelected(), (jUsedTribes.getSelectedIndex() == 2)));
     }//GEN-LAST:event_fireGenerateStatsEvent
 
     private void fireChangeStatTimeEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireChangeStatTimeEvent

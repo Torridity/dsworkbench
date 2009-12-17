@@ -259,7 +259,7 @@ public class TribeStatsElement {
             //no end found, take last element
             endIndex = cnt - 1;
         }
-        
+
         //get values
         long pointStart = pointList.get(startIndex);
         long pointEnd = pointList.get(endIndex);
@@ -493,6 +493,7 @@ public class TribeStatsElement {
                 return s2.getPointDiff().compareTo(s1.getPointDiff());
             }
         }
+      
         public static final Comparator<Stats> RANK_COMPARATOR = new StatRankComparator();
 
         private static class StatRankComparator implements Comparator<Stats>, java.io.Serializable {

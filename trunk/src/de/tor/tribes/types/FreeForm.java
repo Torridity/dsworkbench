@@ -65,6 +65,8 @@ public class FreeForm extends AbstractForm {
                 double y = Double.parseDouble(child.getAttribute("y").getValue());
                 l.addPointWithoutCheck(new Point2D.Double(x, y));
             }
+            elem = e.getChild("drawName");
+            l.setDrawName(Boolean.parseBoolean(elem.getTextTrim()));
             return l;
         } catch (Exception ex) {
             return null;
@@ -88,7 +90,7 @@ public class FreeForm extends AbstractForm {
         Font fBefore = g2d.getFont();
         //draw
         g2d.setStroke(getStroke());
-         checkShowMode(g2d, getDrawColor());
+        checkShowMode(g2d, getDrawColor());
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, getDrawAlpha()));
 
         Point2D.Double pp = MapPanel.getSingleton().virtualPosToSceenPosDouble(points.get(0).getX(), points.get(0).getY());

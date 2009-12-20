@@ -33,6 +33,7 @@ import org.jdom.Element;
  * Markers can either be hold in files as well as in a database (not implemented yet).<BR>
  * The graphical representation can be realized by a table using the getTableModel() method.
  * @author Jejkal
+ * @TODO (DIFF) Added import extension
  */
 public class MarkerManager {
 
@@ -101,23 +102,24 @@ public class MarkerManager {
         }
     }
 
-    public boolean importMarkers(File pFile) {
+    public boolean importMarkers(File pFile, String pExtension) {
         if (pFile == null) {
             logger.error("File argument is 'null'");
             return false;
         }
         logger.debug("Importing markers");
         try {
-            boolean overwriteMarkers = Boolean.parseBoolean(GlobalOptions.getProperty("import.replace.markers"));
+            //boolean overwriteMarkers = Boolean.parseBoolean(GlobalOptions.getProperty("import.replace.markers"));
             Document d = JaxenUtils.getDocument(pFile);
             for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//markerSets/markerSet")) {
                 try {
                     MarkerSet m = MarkerSet.fromXml(e);
+                    m.setSetName(m.getSetName() + pExtension);
                     // check if tribe/ally still exists
-                    MarkerSet exist = markers.get(m.getSetName());
-                    if (exist == null || overwriteMarkers) {
-                        markers.put(m.getSetName(), m);
-                    }
+                    //MarkerSet exist = markers.get(m.getSetName());
+                    // if (exist == null || overwriteMarkers) {
+                    markers.put(m.getSetName(), m);
+                    // }
                 } catch (Exception inner) {
                     //ignored, marker invalid
                     }

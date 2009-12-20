@@ -31,10 +31,12 @@ import de.tor.tribes.ui.editors.VillageCellEditor;
 import de.tor.tribes.ui.models.StandardAttackTableModel;
 import de.tor.tribes.ui.renderer.AttackTypeCellRenderer;
 import de.tor.tribes.ui.renderer.ColoredDateCellRenderer;
+import de.tor.tribes.ui.renderer.UnitCellRenderer;
 import de.tor.tribes.ui.renderer.UnitTableHeaderRenderer;
 import de.tor.tribes.util.AttackToBBCodeFormater;
 import de.tor.tribes.util.html.AttackPlanHTMLExporter;
 import de.tor.tribes.util.DSCalculator;
+import de.tor.tribes.util.IGMSender;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.js.AttackScriptWriter;
 import java.awt.Component;
@@ -101,6 +103,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         jAttackTable.getTableHeader().setReorderingAllowed(false);
         sorter.setModel(AttackManagerTableModel.getSingleton());
         jAttackTable.setModel(AttackManagerTableModel.getSingleton());
+        jAttackTable.setRowHeight(20);
         jAttackTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 
             @Override
@@ -250,6 +253,15 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         jButton11 = new javax.swing.JButton();
         jScrollPane6 = new javax.swing.JScrollPane();
         jTextPane1 = new javax.swing.JTextPane();
+        jSendAttacksIGMDialog = new javax.swing.JDialog();
+        jLabel20 = new javax.swing.JLabel();
+        jSubject = new javax.swing.JTextField();
+        jLabel22 = new javax.swing.JLabel();
+        jAPIKey = new javax.swing.JTextField();
+        jSendButton = new javax.swing.JButton();
+        jButton13 = new javax.swing.JButton();
+        jLabel23 = new javax.swing.JLabel();
+        jAttacksPerIGM = new javax.swing.JComboBox();
         jAttackPanel = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jAttackTable = new javax.swing.JTable();
@@ -276,6 +288,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         jCopyUnformattedToClipboardButton = new javax.swing.JButton();
         jCopyBBCodeToClipboardButton = new javax.swing.JButton();
         jCopyBBCodeToClipboardButton1 = new javax.swing.JButton();
+        jCopyBBCodeToClipboardButton2 = new javax.swing.JButton();
         jSendAttackButton = new javax.swing.JButton();
         jAttacksToScriptButton = new javax.swing.JButton();
         jDefaultTroopsButton = new javax.swing.JButton();
@@ -1028,6 +1041,77 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
                 .addContainerGap())
         );
 
+        jLabel20.setText(bundle.getString("DSWorkbenchAttackFrame.jLabel20.text")); // NOI18N
+
+        jSubject.setText(bundle.getString("DSWorkbenchAttackFrame.jSubject.text")); // NOI18N
+
+        jLabel22.setText(bundle.getString("DSWorkbenchAttackFrame.jLabel22.text")); // NOI18N
+
+        jAPIKey.setText(bundle.getString("DSWorkbenchAttackFrame.jAPIKey.text")); // NOI18N
+
+        jSendButton.setText(bundle.getString("DSWorkbenchAttackFrame.jSendButton.text")); // NOI18N
+        jSendButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireSendIGMsEvent(evt);
+            }
+        });
+
+        jButton13.setText(bundle.getString("DSWorkbenchAttackFrame.jButton13.text")); // NOI18N
+        jButton13.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireSendIGMsEvent(evt);
+            }
+        });
+
+        jLabel23.setText(bundle.getString("DSWorkbenchAttackFrame.jLabel23.text")); // NOI18N
+
+        jAttacksPerIGM.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "10 (empfohlen für bis zu 50 Angriffe)", "15 ", "20 (empfohlen für mehr als 50 Angriffe)", "25", "30" }));
+
+        javax.swing.GroupLayout jSendAttacksIGMDialogLayout = new javax.swing.GroupLayout(jSendAttacksIGMDialog.getContentPane());
+        jSendAttacksIGMDialog.getContentPane().setLayout(jSendAttacksIGMDialogLayout);
+        jSendAttacksIGMDialogLayout.setHorizontalGroup(
+            jSendAttacksIGMDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jSendAttacksIGMDialogLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jSendAttacksIGMDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jSendAttacksIGMDialogLayout.createSequentialGroup()
+                        .addComponent(jButton13)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jSendButton))
+                    .addGroup(jSendAttacksIGMDialogLayout.createSequentialGroup()
+                        .addGroup(jSendAttacksIGMDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel20)
+                            .addComponent(jLabel22)
+                            .addComponent(jLabel23))
+                        .addGap(51, 51, 51)
+                        .addGroup(jSendAttacksIGMDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jAPIKey, javax.swing.GroupLayout.DEFAULT_SIZE, 298, Short.MAX_VALUE)
+                            .addComponent(jSubject, javax.swing.GroupLayout.DEFAULT_SIZE, 298, Short.MAX_VALUE)
+                            .addComponent(jAttacksPerIGM, 0, 298, Short.MAX_VALUE))))
+                .addContainerGap())
+        );
+        jSendAttacksIGMDialogLayout.setVerticalGroup(
+            jSendAttacksIGMDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jSendAttacksIGMDialogLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jSendAttacksIGMDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel20)
+                    .addComponent(jSubject, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jSendAttacksIGMDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel22)
+                    .addComponent(jAPIKey, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jSendAttacksIGMDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel23)
+                    .addComponent(jAttacksPerIGM, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(17, 17, 17)
+                .addGroup(jSendAttacksIGMDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jSendButton)
+                    .addComponent(jButton13))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
         setTitle(bundle.getString("DSWorkbenchAttackFrame.title")); // NOI18N
 
         jAttackPanel.setBackground(new java.awt.Color(239, 235, 223));
@@ -1286,6 +1370,18 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         jTaskPaneGroup3.getContentPane().add(jCopyBBCodeToClipboardButton1);
         jCopyBBCodeToClipboardButton1.getAccessibleContext().setAccessibleDescription(bundle.getString("DSWorkbenchAttackFrame.jCopyBBCodeToClipboardButton1.AccessibleContext.accessibleDescription")); // NOI18N
 
+        jCopyBBCodeToClipboardButton2.setBackground(new java.awt.Color(239, 235, 223));
+        jCopyBBCodeToClipboardButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/atts_igm.png"))); // NOI18N
+        jCopyBBCodeToClipboardButton2.setText(bundle.getString("DSWorkbenchAttackFrame.jCopyBBCodeToClipboardButton2.text")); // NOI18N
+        jCopyBBCodeToClipboardButton2.setToolTipText(bundle.getString("DSWorkbenchAttackFrame.jCopyBBCodeToClipboardButton2.toolTipText")); // NOI18N
+        jCopyBBCodeToClipboardButton2.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jCopyBBCodeToClipboardButton2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireSendAttacksAsIGMEvent(evt);
+            }
+        });
+        jTaskPaneGroup3.getContentPane().add(jCopyBBCodeToClipboardButton2);
+
         jSendAttackButton.setBackground(new java.awt.Color(239, 235, 223));
         jSendAttackButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_browser.png"))); // NOI18N
         jSendAttackButton.setText(bundle.getString("DSWorkbenchAttackFrame.jSendAttackButton.text")); // NOI18N
@@ -1378,8 +1474,8 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
                         .addComponent(jActiveAttackPlan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jAttackPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 703, Short.MAX_VALUE)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 703, Short.MAX_VALUE))
+                    .addComponent(jScrollPane4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 723, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 723, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -1562,7 +1658,6 @@ private void fireCopyUnformatedToClipboardEvent(java.awt.event.MouseEvent evt) {
 private void fireCopyAsBBCodeToClipboardEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCopyAsBBCodeToClipboardEvent
 
     try {
-
         boolean extended = (JOptionPaneHelper.showQuestionConfirmBox(this, "Erweiterte BB-Codes verwenden (nur für Forum und Notizen geeignet)?", "Erweiterter BB-Code", "Nein", "Ja") == JOptionPane.YES_OPTION);
 
         int[] rows = jAttackTable.getSelectedRows();
@@ -2341,6 +2436,110 @@ private void fireWriteAttacksToScriptEvent(java.awt.event.MouseEvent evt) {//GEN
     }
 }//GEN-LAST:event_fireWriteAttacksToScriptEvent
 
+private void fireSendAttacksAsIGMEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSendAttacksAsIGMEvent
+
+    int[] selectedRows = jAttackTable.getSelectedRows();
+    if (selectedRows != null && selectedRows.length < 1) {
+        JOptionPaneHelper.showInformationBox(this, "Keine Angriffe aufgewählt.", "Information");
+        return;
+    }
+    String selectedPlan = AttackManagerTableModel.getSingleton().getActiveAttackPlan();
+    jSubject.setText("Deine Angriffe (Plan: " + selectedPlan + ")");
+    jSendAttacksIGMDialog.pack();
+    jSendAttacksIGMDialog.setVisible(true);
+
+}//GEN-LAST:event_fireSendAttacksAsIGMEvent
+
+private void fireSendIGMsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSendIGMsEvent
+    if (evt.getSource() == jSendButton) {
+        String subject = jSubject.getText();
+        String selectedPlan = AttackManagerTableModel.getSingleton().getActiveAttackPlan();
+        Hashtable<Tribe, List<Attack>> attacks = new Hashtable<Tribe, List<Attack>>();
+        int[] selectedRows = jAttackTable.getSelectedRows();
+        for (Integer selectedRow : selectedRows) {
+            int row = jAttackTable.convertRowIndexToModel(selectedRow);
+            Attack a = AttackManager.getSingleton().getAttackPlan(selectedPlan).get(row);
+            Tribe sender = a.getSource().getTribe();
+            if (sender != null) {
+                List<Attack> attacksForSender = attacks.get(sender);
+                if (attacksForSender == null) {
+                    attacksForSender = new LinkedList<Attack>();
+                    attacks.put(sender, attacksForSender);
+                }
+                attacksForSender.add(a);
+            }
+        }
+
+        int attsPerIGM = 10;
+
+        switch (jAttacksPerIGM.getSelectedIndex()) {
+            case 1:
+                attsPerIGM = 15;
+                break;
+            case 2:
+                attsPerIGM = 20;
+                break;
+            case 3:
+                attsPerIGM = 25;
+                break;
+            case 4:
+                attsPerIGM = 30;
+                break;
+            default:
+                break;
+        }
+        String apiKey = jAPIKey.getText();
+        Enumeration<Tribe> tribeKeys = attacks.keys();
+        String sUrl = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
+        String messageStart = "(Diese IGM wurde automatisch durch DS Workbench generiert)\n";
+
+        while (tribeKeys.hasMoreElements()) {
+            Tribe t = tribeKeys.nextElement();
+            List<Attack> attacksForTribe = attacks.get(t);
+            String message = messageStart;
+            List<String> messages = new LinkedList<String>();
+            int cnt = 0;
+            for (Attack a : attacksForTribe) {
+                String line = AttackToBBCodeFormater.formatAttack(a, sUrl, false);
+                if (cnt == attsPerIGM) {
+                    cnt = 0;
+                    messages.add(message);
+                    message = messageStart + line;
+                } else {
+                    message += line;
+                }
+                cnt++;
+            }
+
+            if (messages.size() > 8) {
+                //9 messages + rest
+                String warning = "An Spieler " + t + " müssten mehr als 10 IGMs verschickt werden.\n";
+                warning += "Sende entweder mehr Angriffe pro IGM oder teile das Versenden auf mehrere Vorgänge auf.";
+                JOptionPaneHelper.showWarningBox(jSendAttacksIGMDialog, warning, "Warnung");
+                return;
+            }
+
+            if (messages.size() > 0) {
+                //send multi messages
+                cnt = 1;
+                for (String m : messages) {
+                    if (!IGMSender.sendIGM(t, apiKey, subject, m)) {
+                        JOptionPaneHelper.showErrorBox(jSendAttacksIGMDialog, "Fehler beim Versenden von IGM " + cnt + " an '" + t + "'", "Fehler");
+                        return;
+                    }
+                    cnt++;
+                }
+                if (!IGMSender.sendIGM(t, apiKey, subject, message)) {
+                    JOptionPaneHelper.showErrorBox(jSendAttacksIGMDialog, "Fehler beim Versenden von IGM " + cnt + " an '" + t + "'", "Fehler");
+                    return;
+                }
+            }
+        }
+
+    }
+    jSendAttacksIGMDialog.setVisible(false);
+}//GEN-LAST:event_fireSendIGMsEvent
+
     public JDialog getStandardAttackDialog() {
         return jStandardAttackDialog;
     }
@@ -2416,6 +2615,7 @@ private void fireWriteAttacksToScriptEvent(java.awt.event.MouseEvent evt) {//GEN
         jAttackTable.setDefaultRenderer(Date.class, new ColoredDateCellRenderer());
         jAttackTable.setDefaultEditor(Date.class, new DateSpinEditor());
         jAttackTable.setDefaultEditor(UnitHolder.class, new UnitCellEditor());
+        jAttackTable.setDefaultRenderer(UnitHolder.class, new UnitCellRenderer());
         jAttackTable.setDefaultEditor(Village.class, new VillageCellEditor());
         AttackManager.getSingleton().forceUpdate(null);
         buildAttackPlanList();
@@ -2456,6 +2656,7 @@ private void fireWriteAttacksToScriptEvent(java.awt.event.MouseEvent evt) {//GEN
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.JTextField jAPIKey;
     private javax.swing.JComboBox jActiveAttackPlan;
     private javax.swing.JDialog jAddPlanDialog;
     private javax.swing.JButton jAddRemoveButton;
@@ -2466,10 +2667,12 @@ private void fireWriteAttacksToScriptEvent(java.awt.event.MouseEvent evt) {//GEN
     private javax.swing.JPanel jAttackPanel;
     private javax.swing.JTextField jAttackPlanName;
     private javax.swing.JTable jAttackTable;
+    private javax.swing.JComboBox jAttacksPerIGM;
     private javax.swing.JButton jAttacksToScriptButton;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton10;
     private javax.swing.JButton jButton11;
+    private javax.swing.JButton jButton13;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
@@ -2485,6 +2688,7 @@ private void fireWriteAttacksToScriptEvent(java.awt.event.MouseEvent evt) {//GEN
     private javax.swing.JButton jCopyAttackButton;
     private javax.swing.JButton jCopyBBCodeToClipboardButton;
     private javax.swing.JButton jCopyBBCodeToClipboardButton1;
+    private javax.swing.JButton jCopyBBCodeToClipboardButton2;
     private javax.swing.JButton jCopyButton;
     private javax.swing.JComboBox jCopyTargetBox;
     private javax.swing.JDialog jCopyToPlanDialog;
@@ -2508,6 +2712,9 @@ private void fireWriteAttacksToScriptEvent(java.awt.event.MouseEvent evt) {//GEN
     private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel20;
+    private javax.swing.JLabel jLabel22;
+    private javax.swing.JLabel jLabel23;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -2548,10 +2755,13 @@ private void fireWriteAttacksToScriptEvent(java.awt.event.MouseEvent evt) {//GEN
     private javax.swing.JSpinner jSecondsField;
     private javax.swing.JDialog jSelectionFilterDialog;
     private javax.swing.JButton jSendAttackButton;
+    private javax.swing.JDialog jSendAttacksIGMDialog;
+    private javax.swing.JButton jSendButton;
     private javax.swing.JComboBox jSourceTribeBox;
     private javax.swing.JTable jSourceVillageTable;
     private javax.swing.JDialog jStandardAttackDialog;
     private javax.swing.JTable jStandardAttackTable;
+    private javax.swing.JTextField jSubject;
     private javax.swing.JComboBox jTargetTribeBox;
     private javax.swing.JTable jTargetVillageTable;
     private com.l2fprod.common.swing.JTaskPane jTaskPane1;

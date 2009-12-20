@@ -71,7 +71,7 @@ public class FormManager {
         }
     }
 
-    public boolean importForms(File pFile) {
+    public boolean importForms(File pFile, String pExtension) {
         if (pFile == null) {
             logger.error("File argument is 'null'");
             return false;
@@ -84,6 +84,11 @@ public class FormManager {
             for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//forms/form")) {
                 AbstractForm form = AbstractForm.fromXml(e);
                 if (form != null) {
+                    if (form.getFormName() == null) {
+                        form.setFormName(pExtension);
+                    } else {
+                        form.setFormName(form.getFormName() + pExtension);
+                    }
                     forms.add(form);
                 }
             }

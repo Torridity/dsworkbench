@@ -11,7 +11,6 @@ import de.tor.tribes.io.ServerManager;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
-import de.tor.tribes.util.Skin;
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
@@ -411,15 +410,6 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             GlobalOptions.addProperty("max.density.troops", "650000");
         }
 
-        //overwrite markers on import
-        try {
-            String val = GlobalOptions.getProperty("import.replace.markers");
-            if (val != null) {
-                jReplaceMarkers.setSelected(Boolean.parseBoolean(val));
-            }
-        } catch (Exception e) {
-        }
-
         //overwrite group markers on import
         try {
             String val = GlobalOptions.getProperty("import.replace.tag.markers");
@@ -454,7 +444,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         GlobalOptions.getHelpBroker().enableHelp(jTemplateSettings, "pages.template_settings", GlobalOptions.getHelpBroker().getHelpSet());
         GlobalOptions.getHelpBroker().enableHelp(jMiscSettings, "pages.misc_settings", GlobalOptions.getHelpBroker().getHelpSet());
         GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.settings", GlobalOptions.getHelpBroker().getHelpSet());
-    // </editor-fold>
+        // </editor-fold>
     }
 
     public Proxy getWebProxy() {
@@ -746,7 +736,6 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jInformOnUpdates = new javax.swing.JCheckBox();
         jLabel15 = new javax.swing.JLabel();
         jPanel6 = new javax.swing.JPanel();
-        jReplaceMarkers = new javax.swing.JCheckBox();
         jReplaceTagMarkers = new javax.swing.JCheckBox();
         jLabel39 = new javax.swing.JLabel();
         jLabel16 = new javax.swing.JLabel();
@@ -1098,7 +1087,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                     .addComponent(jAccountPasswordLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jCheckAccountButton)
-                .addContainerGap(236, Short.MAX_VALUE))
+                .addContainerGap(211, Short.MAX_VALUE))
         );
 
         jSettingsTabbedPane.addTab("Login", new javax.swing.ImageIcon(getClass().getResource("/res/login.png")), jLoginPanel); // NOI18N
@@ -1196,7 +1185,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jDownloadLiveDataButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 333, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 338, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jCheckForUpdatesBox)
                 .addContainerGap())
@@ -1367,7 +1356,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 .addGroup(jMapSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel3)
                     .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(202, Short.MAX_VALUE))
+                .addContainerGap(207, Short.MAX_VALUE))
         );
 
         jSettingsTabbedPane.addTab("Karten", new javax.swing.ImageIcon(getClass().getResource("/res/ui/map.gif")), jMapSettings); // NOI18N
@@ -1433,22 +1422,17 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                             .addGroup(jAttackSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                 .addComponent(jAttackMovementLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addComponent(jLabel21, javax.swing.GroupLayout.DEFAULT_SIZE, 242, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jAttackSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jAttackSettingsLayout.createSequentialGroup()
-                                .addComponent(jShowAttackMovementBox, javax.swing.GroupLayout.DEFAULT_SIZE, 274, Short.MAX_VALUE)
-                                .addGap(13, 13, 13))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jAttackSettingsLayout.createSequentialGroup()
-                                .addGroup(jAttackSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jShowLiveCountdown, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 281, Short.MAX_VALUE)
-                                    .addComponent(jDrawAttacksByDefaultBox, javax.swing.GroupLayout.DEFAULT_SIZE, 281, Short.MAX_VALUE))
-                                .addContainerGap())))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jAttackSettingsLayout.createSequentialGroup()
-                        .addComponent(jAttackMovementLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 238, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 277, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap())))
+                            .addComponent(jLabel21, javax.swing.GroupLayout.DEFAULT_SIZE, 240, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
+                    .addGroup(jAttackSettingsLayout.createSequentialGroup()
+                        .addComponent(jAttackMovementLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(92, 92, 92)))
+                .addGroup(jAttackSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 272, Short.MAX_VALUE)
+                    .addComponent(jShowLiveCountdown, javax.swing.GroupLayout.DEFAULT_SIZE, 272, Short.MAX_VALUE)
+                    .addComponent(jDrawAttacksByDefaultBox, javax.swing.GroupLayout.DEFAULT_SIZE, 272, Short.MAX_VALUE)
+                    .addComponent(jShowAttackMovementBox, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 272, Short.MAX_VALUE))
+                .addContainerGap(13, Short.MAX_VALUE))
         );
         jAttackSettingsLayout.setVerticalGroup(
             jAttackSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1459,13 +1443,13 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                     .addComponent(jShowAttackMovementBox))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jAttackSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jDrawAttacksByDefaultBox)
-                    .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jDrawAttacksByDefaultBox))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jAttackSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel21, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jShowLiveCountdown))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jAttackSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jAttackMovementLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 254, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -1622,10 +1606,10 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                                     .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                 .addGap(20, 20, 20)
                                 .addGroup(jNetworkSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jProxyPassword, javax.swing.GroupLayout.DEFAULT_SIZE, 193, Short.MAX_VALUE)
-                                    .addComponent(jProxyUser, javax.swing.GroupLayout.DEFAULT_SIZE, 193, Short.MAX_VALUE)
-                                    .addComponent(jProxyTypeChooser, 0, 193, Short.MAX_VALUE)
-                                    .addComponent(jProxyHost, javax.swing.GroupLayout.DEFAULT_SIZE, 193, Short.MAX_VALUE)
+                                    .addComponent(jProxyPassword, javax.swing.GroupLayout.DEFAULT_SIZE, 194, Short.MAX_VALUE)
+                                    .addComponent(jProxyUser, javax.swing.GroupLayout.DEFAULT_SIZE, 194, Short.MAX_VALUE)
+                                    .addComponent(jProxyTypeChooser, 0, 194, Short.MAX_VALUE)
+                                    .addComponent(jProxyHost, javax.swing.GroupLayout.DEFAULT_SIZE, 194, Short.MAX_VALUE)
                                     .addComponent(jRefeshNetworkButton, javax.swing.GroupLayout.Alignment.TRAILING))
                                 .addGap(18, 18, 18)
                                 .addComponent(jProxyPortLabel)
@@ -1663,7 +1647,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 .addComponent(jRefeshNetworkButton)
                 .addGap(18, 18, 18)
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(132, Short.MAX_VALUE))
+                .addContainerGap(137, Short.MAX_VALUE))
         );
 
         jSettingsTabbedPane.addTab("Netzwerk", new javax.swing.ImageIcon(getClass().getResource("/res/proxy.png")), jNetworkSettings); // NOI18N
@@ -1873,7 +1857,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(214, 214, 214))
+                .addGap(219, 219, 219))
         );
 
         jSettingsTabbedPane.addTab("Templates", new javax.swing.ImageIcon(getClass().getResource("/res/ui/component.png")), jTemplateSettings); // NOI18N
@@ -1917,9 +1901,6 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jPanel6.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jPanel6.setOpaque(false);
 
-        jReplaceMarkers.setText("Stammes-/Spielermarkierungen ersetzen");
-        jReplaceMarkers.setOpaque(false);
-
         jReplaceTagMarkers.setText("Kartenmarkierungen ersetzen");
         jReplaceTagMarkers.setOpaque(false);
 
@@ -1929,17 +1910,13 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jReplaceMarkers)
-                    .addComponent(jReplaceTagMarkers))
-                .addContainerGap(117, Short.MAX_VALUE))
+                .addComponent(jReplaceTagMarkers)
+                .addContainerGap(67, Short.MAX_VALUE))
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jReplaceMarkers)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jReplaceTagMarkers)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -1967,57 +1944,54 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 .addContainerGap()
                 .addGroup(jMiscSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jMiscSettingsLayout.createSequentialGroup()
-                        .addGroup(jMiscSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel14, javax.swing.GroupLayout.DEFAULT_SIZE, 249, Short.MAX_VALUE)
-                            .addComponent(jLabel13, javax.swing.GroupLayout.DEFAULT_SIZE, 249, Short.MAX_VALUE)
-                            .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, 249, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jMiscSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jNotifyDurationBox, 0, 109, Short.MAX_VALUE)
-                            .addComponent(jVillageSortTypeChooser, 0, 109, Short.MAX_VALUE)
-                            .addComponent(jInformOnUpdates, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addContainerGap(167, Short.MAX_VALUE))
-                    .addGroup(jMiscSettingsLayout.createSequentialGroup()
-                        .addGroup(jMiscSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel16)
-                            .addComponent(jLabel39))
+                        .addComponent(jLabel16)
                         .addGap(25, 25, 25)
+                        .addComponent(jMaxTroopDensity, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton8))
+                    .addGroup(jMiscSettingsLayout.createSequentialGroup()
+                        .addGroup(jMiscSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel14, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel39)
+                            .addComponent(jLabel13, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(35, 35, 35)
                         .addGroup(jMiscSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(jMiscSettingsLayout.createSequentialGroup()
-                                .addComponent(jMaxTroopDensity, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton8)))
-                        .addContainerGap())))
+                            .addGroup(jMiscSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(jNotifyDurationBox, 0, 109, Short.MAX_VALUE)
+                                .addComponent(jVillageSortTypeChooser, 0, 109, Short.MAX_VALUE)
+                                .addComponent(jInformOnUpdates, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(112, Short.MAX_VALUE))
         );
         jMiscSettingsLayout.setVerticalGroup(
             jMiscSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jMiscSettingsLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jMiscSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jVillageSortTypeChooser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jMiscSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jNotifyDurationBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jMiscSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jInformOnUpdates, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(11, 11, 11)
+                    .addGroup(jMiscSettingsLayout.createSequentialGroup()
+                        .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(11, 11, 11)
+                        .addComponent(jLabel39, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jMiscSettingsLayout.createSequentialGroup()
+                        .addComponent(jVillageSortTypeChooser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jNotifyDurationBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jInformOnUpdates, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(12, 12, 12)
+                        .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jMiscSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addGroup(jMiscSettingsLayout.createSequentialGroup()
-                        .addComponent(jLabel39, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel16))
-                    .addGroup(jMiscSettingsLayout.createSequentialGroup()
-                        .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addGroup(jMiscSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jMaxTroopDensity, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jButton8))))
-                .addContainerGap(267, Short.MAX_VALUE))
+                    .addComponent(jLabel16)
+                    .addGroup(jMiscSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jMaxTroopDensity, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jButton8)))
+                .addGap(288, 288, 288))
         );
 
         jSettingsTabbedPane.addTab("Sonstiges", new javax.swing.ImageIcon(getClass().getResource("/res/checkbox.png")), jMiscSettings); // NOI18N
@@ -2082,7 +2056,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jSettingsTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 505, Short.MAX_VALUE)
+                .addComponent(jSettingsTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 510, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jCreateAccountButton)
@@ -2273,7 +2247,6 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         /**Validate misc properties*/
         int sortType = jVillageSortTypeChooser.getSelectedIndex();
         Village.setOrderType(sortType);
-        GlobalOptions.addProperty("import.replace.markers", Boolean.toString(jReplaceMarkers.isSelected()));
         GlobalOptions.addProperty("import.replace.tag.markers", Boolean.toString(jReplaceTagMarkers.isSelected()));
 
         GlobalOptions.addProperty("village.order", Integer.toString(sortType));
@@ -2291,8 +2264,8 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         if (!checkSettings()) {
             return;
         }
-        DSWorkbenchMainFrame.getSingleton().serverSettingsChangedEvent();
         setVisible(false);
+        DSWorkbenchMainFrame.getSingleton().serverSettingsChangedEvent();
         MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.ALL_LAYERS);
     }//GEN-LAST:event_fireOkEvent
 
@@ -2338,58 +2311,58 @@ private void fireClosingEvent(java.awt.event.WindowEvent evt) {//GEN-FIRST:event
 
     // <editor-fold defaultstate="collapsed" desc=" Registration EventListeners ">
 private void fireRegisterEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireRegisterEvent
-        String user = jRegistrationAccountName.getText();
-        String password = new String(jRegistrationPassword.getPassword());
-        String password2 = new String(jRegistrationPassword2.getPassword());
+    String user = jRegistrationAccountName.getText();
+    String password = new String(jRegistrationPassword.getPassword());
+    String password2 = new String(jRegistrationPassword2.getPassword());
 
-        if ((user.length() < 3) || (password.length() < 3)) {
-            JOptionPaneHelper.showErrorBox(jCreateAccountDialog, "Accountname und Passwort müssen mindestens 3 Zeichen lang sein.", "Fehler");
-            return;
+    if ((user.length() < 3) || (password.length() < 3)) {
+        JOptionPaneHelper.showErrorBox(jCreateAccountDialog, "Accountname und Passwort müssen mindestens 3 Zeichen lang sein.", "Fehler");
+        return;
+    }
+
+    if (user.length() > 20) {
+        JOptionPaneHelper.showErrorBox(jCreateAccountDialog, "Der Accountname darf höchstens 20 Zeichen lang sein.", "Fehler");
+        return;
+    }
+
+    if (!password.equals(password2)) {
+        JOptionPaneHelper.showErrorBox(jCreateAccountDialog, "Die eingegebenen Passwörter unterscheiden sich.\nBitte überprüfe deine Eingabe.", "Fehler");
+        return;
+    }
+
+    int ret = DatabaseInterface.addUser(user, password);
+    switch (ret) {
+        case DatabaseInterface.ID_DATABASE_CONNECTION_FAILED: {
+            JOptionPaneHelper.showErrorBox(jCreateAccountDialog, "Fehler beim Verbinden mit der Datenbank.\nBitte versuch es in Kürze noch einmal.", "Fehler");
+            break;
+
         }
+        case DatabaseInterface.ID_WEB_CONNECTION_FAILED: {
+            JOptionPaneHelper.showErrorBox(jCreateAccountDialog, "Es konnte keine Verbindung mit dem Server hergestellt werden.\nBitte überprüfe die Netzwerkeinstellungen und versuch es in Kürze noch einmal.", "Fehler");
+            break;
 
-        if (user.length() > 20) {
-            JOptionPaneHelper.showErrorBox(jCreateAccountDialog, "Der Accountname darf höchstens 20 Zeichen lang sein.", "Fehler");
-            return;
         }
-
-        if (!password.equals(password2)) {
-            JOptionPaneHelper.showErrorBox(jCreateAccountDialog, "Die eingegebenen Passwörter unterscheiden sich.\nBitte überprüfe deine Eingabe.", "Fehler");
-            return;
+        case DatabaseInterface.ID_USER_ALREADY_EXIST: {
+            JOptionPaneHelper.showErrorBox(jCreateAccountDialog, "Es existiert bereits ein Benutzer mit dem angegebenen Namen.\nBitte wähle einen anderen Namen.", "Fehler");
+            break;
         }
-
-        int ret = DatabaseInterface.addUser(user, password);
-        switch (ret) {
-            case DatabaseInterface.ID_DATABASE_CONNECTION_FAILED: {
-                JOptionPaneHelper.showErrorBox(jCreateAccountDialog, "Fehler beim Verbinden mit der Datenbank.\nBitte versuch es in Kürze noch einmal.", "Fehler");
-                break;
-
-            }
-            case DatabaseInterface.ID_WEB_CONNECTION_FAILED: {
-                JOptionPaneHelper.showErrorBox(jCreateAccountDialog, "Es konnte keine Verbindung mit dem Server hergestellt werden.\nBitte überprüfe die Netzwerkeinstellungen und versuch es in Kürze noch einmal.", "Fehler");
-                break;
-
-            }
-            case DatabaseInterface.ID_USER_ALREADY_EXIST: {
-                JOptionPaneHelper.showErrorBox(jCreateAccountDialog, "Es existiert bereits ein Benutzer mit dem angegebenen Namen.\nBitte wähle einen anderen Namen.", "Fehler");
-                break;
-            }
-            case DatabaseInterface.ID_QUERY_RETURNED_UNEXPECTED_RESULT: {
-                JOptionPaneHelper.showErrorBox(jCreateAccountDialog, "Der Benutzer konnte nicht in hinzugefügt werden.\nBitte wende dich an den Entwickler.", "Fehler");
-                break;
-            }
-            case DatabaseInterface.ID_UNKNOWN_ERROR: {
-                JOptionPaneHelper.showErrorBox(jCreateAccountDialog, "Ein unbekannter Fehler ist aufgetreten.\nBitte wende dich an den Entwickler.", "Fehler");
-                break;
-            }
-            default: {
-                JOptionPaneHelper.showInformationBox(jCreateAccountDialog, "Dein Account wurde erfolgreich angelegt.\nDu kannst nun DS-Serverdaten herunterladen.", "Account angelegt");
-                jAccountName.setText(jRegistrationAccountName.getText());
-                jAccountPassword.setText(new String(jRegistrationPassword.getPassword()));
-                GlobalOptions.addProperty("account.name", user);
-                GlobalOptions.addProperty("account.password", password);
-                jCreateAccountDialog.setVisible(false);
-            }
+        case DatabaseInterface.ID_QUERY_RETURNED_UNEXPECTED_RESULT: {
+            JOptionPaneHelper.showErrorBox(jCreateAccountDialog, "Der Benutzer konnte nicht in hinzugefügt werden.\nBitte wende dich an den Entwickler.", "Fehler");
+            break;
         }
+        case DatabaseInterface.ID_UNKNOWN_ERROR: {
+            JOptionPaneHelper.showErrorBox(jCreateAccountDialog, "Ein unbekannter Fehler ist aufgetreten.\nBitte wende dich an den Entwickler.", "Fehler");
+            break;
+        }
+        default: {
+            JOptionPaneHelper.showInformationBox(jCreateAccountDialog, "Dein Account wurde erfolgreich angelegt.\nDu kannst nun DS-Serverdaten herunterladen.", "Account angelegt");
+            jAccountName.setText(jRegistrationAccountName.getText());
+            jAccountPassword.setText(new String(jRegistrationPassword.getPassword()));
+            GlobalOptions.addProperty("account.name", user);
+            GlobalOptions.addProperty("account.password", password);
+            jCreateAccountDialog.setVisible(false);
+        }
+    }
 }//GEN-LAST:event_fireRegisterEvent
 
 private void fireCancelRegistrationEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCancelRegistrationEvent
@@ -2398,90 +2371,90 @@ private void fireCancelRegistrationEvent(java.awt.event.MouseEvent evt) {//GEN-F
 
     // </editor-fold>
 private void fireChangeContinentsOnMinimapEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireChangeContinentsOnMinimapEvent
-        GlobalOptions.addProperty("map.showcontinents", Boolean.toString(jShowContinents.isSelected()));
-        MinimapPanel.getSingleton().resetBuffer();
-        MinimapPanel.getSingleton().redraw();
+    GlobalOptions.addProperty("map.showcontinents", Boolean.toString(jShowContinents.isSelected()));
+    MinimapPanel.getSingleton().resetBuffer();
+    MinimapPanel.getSingleton().redraw();
 }//GEN-LAST:event_fireChangeContinentsOnMinimapEvent
 
 //Download new version of data
 private void fireDownloadDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireDownloadDataEvent
-        if (!jSelectServerButton.isEnabled()) {
-            return;
-        }
+    if (!jSelectServerButton.isEnabled()) {
+        return;
+    }
 
-        if (jServerList.getSelectedItem() == null) {
-            return;
-        }
-        // <editor-fold defaultstate="collapsed" desc=" Offline Mode ? ">
+    if (jServerList.getSelectedItem() == null) {
+        return;
+    }
+    // <editor-fold defaultstate="collapsed" desc=" Offline Mode ? ">
 
-        if (GlobalOptions.isOfflineMode()) {
-            JOptionPaneHelper.showWarningBox(this, "Du befindest dich im Offline-Modus." +
-                    "\nBitte korrigiere deine Netzwerkeinstellungen um den Download durchzuführen.",
-                    "Warnung");
-            return;
-        }
+    if (GlobalOptions.isOfflineMode()) {
+        JOptionPaneHelper.showWarningBox(this, "Du befindest dich im Offline-Modus." +
+                "\nBitte korrigiere deine Netzwerkeinstellungen um den Download durchzuführen.",
+                "Warnung");
+        return;
+    }
 
-        // </editor-fold>
+    // </editor-fold>
 
-        // <editor-fold defaultstate="collapsed" desc=" Account valid, data outdated ? ">
-        String selectedServer = (String) jServerList.getSelectedItem();
-        String name = GlobalOptions.getProperty("account.name");
-        String password = GlobalOptions.getProperty("account.password");
-        if (DatabaseInterface.checkUser(name, password) != DatabaseInterface.ID_SUCCESS) {
-            JOptionPaneHelper.showErrorBox(this, "Die Accountvalidierung ist fehlgeschlagen.\n" +
-                    "Bitte überprüfe deine Account- und Netzwerkeinstellungen und versuches es erneut.",
+    // <editor-fold defaultstate="collapsed" desc=" Account valid, data outdated ? ">
+    String selectedServer = (String) jServerList.getSelectedItem();
+    String name = GlobalOptions.getProperty("account.name");
+    String password = GlobalOptions.getProperty("account.password");
+    if (DatabaseInterface.checkUser(name, password) != DatabaseInterface.ID_SUCCESS) {
+        JOptionPaneHelper.showErrorBox(this, "Die Accountvalidierung ist fehlgeschlagen.\n" +
+                "Bitte überprüfe deine Account- und Netzwerkeinstellungen und versuches es erneut.",
+                "Fehler");
+        return;
+    } else {
+        long serverDataVersion = DatabaseInterface.getServerDataVersion(selectedServer);
+        long userDataVersion = DatabaseInterface.getUserDataVersion(name, selectedServer);
+        if (serverDataVersion < 0 || userDataVersion < 0) {
+            JOptionPaneHelper.showErrorBox(this, "Fehler bei der Überprüfung der Datenversionen.\n" +
+                    "Bitte überprüfe deine Account- und Netzwerkeinstellungen und versuches es erneut.\n" +
+                    "Sollte das Problem weiterhin bestehen, kontaktiere bitte den Entwickler.",
                     "Fehler");
             return;
-        } else {
-            long serverDataVersion = DatabaseInterface.getServerDataVersion(selectedServer);
-            long userDataVersion = DatabaseInterface.getUserDataVersion(name, selectedServer);
-            if (serverDataVersion < 0 || userDataVersion < 0) {
-                JOptionPaneHelper.showErrorBox(this, "Fehler bei der Überprüfung der Datenversionen.\n" +
-                        "Bitte überprüfe deine Account- und Netzwerkeinstellungen und versuches es erneut.\n" +
-                        "Sollte das Problem weiterhin bestehen, kontaktiere bitte den Entwickler.",
-                        "Fehler");
-                return;
-            }
-            logger.debug("User data version is " + userDataVersion);
-            logger.debug("Server data version is " + serverDataVersion);
-            if (userDataVersion == serverDataVersion) {
-                JOptionPaneHelper.showInformationBox(this, "Du besitzt bereits die aktuellsten Daten.",
-                        "Information");
-                return;
-            }
         }
+        logger.debug("User data version is " + userDataVersion);
+        logger.debug("Server data version is " + serverDataVersion);
+        if (userDataVersion == serverDataVersion) {
+            JOptionPaneHelper.showInformationBox(this, "Du besitzt bereits die aktuellsten Daten.",
+                    "Information");
+            return;
+        }
+    }
 
-        // </editor-fold>
+    // </editor-fold>
 
-        //save current user data for current server
-        GlobalOptions.saveUserData();
-        GlobalOptions.setSelectedServer((String) jServerList.getSelectedItem());
-        GlobalOptions.addProperty("default.server", GlobalOptions.getSelectedServer());
-        GlobalOptions.saveProperties();
+    //save current user data for current server
+    GlobalOptions.saveUserData();
+    GlobalOptions.setSelectedServer((String) jServerList.getSelectedItem());
+    GlobalOptions.addProperty("default.server", GlobalOptions.getSelectedServer());
+    GlobalOptions.saveProperties();
 
-        updating = true;
-        jSelectServerButton.setEnabled(false);
-        jDownloadDataButton.setEnabled(false);
-        jOKButton.setEnabled(false);
-        jCreateAccountButton.setEnabled(false);
-        jCancelButton.setEnabled(false);
-        jChangePasswordButton.setEnabled(false);
-        jDownloadLiveDataButton.setEnabled(false);
-        jTribeNames.setModel(new DefaultComboBoxModel());
-        jStatusArea.setText("");
-        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+    updating = true;
+    jSelectServerButton.setEnabled(false);
+    jDownloadDataButton.setEnabled(false);
+    jOKButton.setEnabled(false);
+    jCreateAccountButton.setEnabled(false);
+    jCancelButton.setEnabled(false);
+    jChangePasswordButton.setEnabled(false);
+    jDownloadLiveDataButton.setEnabled(false);
+    jTribeNames.setModel(new DefaultComboBoxModel());
+    jStatusArea.setText("");
+    setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
-        //clear tribes model due to data is cleared at reload
-        jTribeNames.setModel(new DefaultComboBoxModel());
+    //clear tribes model due to data is cleared at reload
+    jTribeNames.setModel(new DefaultComboBoxModel());
 
-        Thread t = new Thread(new Runnable() {
+    Thread t = new Thread(new Runnable() {
 
-            @Override
-            public void run() {
-                try {
-                    logger.debug("Start downloading data");
-                    boolean ret = DataHolder.getSingleton().loadData(true);
-                    logger.debug("Update finished " + ((ret) ? "successfully" : "with errors"));
+        @Override
+        public void run() {
+            try {
+                logger.debug("Start downloading data");
+                boolean ret = DataHolder.getSingleton().loadData(true);
+                logger.debug("Update finished " + ((ret) ? "successfully" : "with errors"));
                 /* if (!ret) {
                 logger.info(" - Loading local copy due to update error");
                 ret = DataHolder.getSingleton().loadData(false);
@@ -2490,20 +2463,20 @@ private void fireDownloadDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
                 throw new Exception("Unable to load local data copy");
                 }
                 }*/
-                } catch (Exception e) {
-                    logger.error("Failed to load data", e);
-                }
+            } catch (Exception e) {
+                logger.error("Failed to load data", e);
             }
-        });
+        }
+    });
 
-        logger.debug("Starting update thread");
-        t.setDaemon(true);
-        t.start();
+    logger.debug("Starting update thread");
+    t.setDaemon(true);
+    t.start();
 }//GEN-LAST:event_fireDownloadDataEvent
 
     // <editor-fold defaultstate="collapsed" desc=" EventListeners for settings ">
 private void fireChangeShowAttackMovementEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireChangeShowAttackMovementEvent
-        GlobalOptions.addProperty("attack.movement", Boolean.toString(jShowAttackMovementBox.isSelected()));
+    GlobalOptions.addProperty("attack.movement", Boolean.toString(jShowAttackMovementBox.isSelected()));
 }//GEN-LAST:event_fireChangeShowAttackMovementEvent
 
 private void fireChangeMarkOwnVillagesOnMinimapEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireChangeMarkOwnVillagesOnMinimapEvent
@@ -2796,65 +2769,65 @@ private void fireRestoreTemplateEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
 
 private void fireDownloadLiveDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireDownloadLiveDataEvent
 
-     if (!jSelectServerButton.isEnabled()) {
-            return;
-        }
+    if (!jDownloadLiveDataButton.isEnabled()) {
+        return;
+    }
 
-        if (jServerList.getSelectedItem() == null) {
-            return;
-        }
-        // <editor-fold defaultstate="collapsed" desc=" Offline Mode ? ">
+    if (jServerList.getSelectedItem() == null) {
+        return;
+    }
+    // <editor-fold defaultstate="collapsed" desc=" Offline Mode ? ">
 
-        if (GlobalOptions.isOfflineMode()) {
-            JOptionPaneHelper.showWarningBox(this, "Du befindest dich im Offline-Modus." +
-                    "\nBitte korrigiere deine Netzwerkeinstellungen um den Download durchzuführen.",
-                    "Warnung");
-            return;
-        }
+    if (GlobalOptions.isOfflineMode()) {
+        JOptionPaneHelper.showWarningBox(this, "Du befindest dich im Offline-Modus." +
+                "\nBitte korrigiere deine Netzwerkeinstellungen um den Download durchzuführen.",
+                "Warnung");
+        return;
+    }
 
-        // </editor-fold>
+    // </editor-fold>
 
-        // <editor-fold defaultstate="collapsed" desc=" Account valid, data outdated ? ">
-        String selectedServer = (String) jServerList.getSelectedItem();
-        String name = GlobalOptions.getProperty("account.name");
-        String password = GlobalOptions.getProperty("account.password");
-        if (DatabaseInterface.checkUser(name, password) != DatabaseInterface.ID_SUCCESS) {
-            JOptionPaneHelper.showErrorBox(this, "Die Accountvalidierung ist fehlgeschlagen.\n" +
-                    "Bitte überprüfe deine Account- und Netzwerkeinstellungen und versuches es erneut.",
-                    "Fehler");
-            return;
-        }
-        // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc=" Account valid, data outdated ? ">
+    String selectedServer = (String) jServerList.getSelectedItem();
+    String name = GlobalOptions.getProperty("account.name");
+    String password = GlobalOptions.getProperty("account.password");
+    if (DatabaseInterface.checkUser(name, password) != DatabaseInterface.ID_SUCCESS) {
+        JOptionPaneHelper.showErrorBox(this, "Die Accountvalidierung ist fehlgeschlagen.\n" +
+                "Bitte überprüfe deine Account- und Netzwerkeinstellungen und versuches es erneut.",
+                "Fehler");
+        return;
+    }
+    // </editor-fold>
 
-        //save current user data for current server
-        GlobalOptions.saveUserData();
-        GlobalOptions.setSelectedServer((String) jServerList.getSelectedItem());
-        GlobalOptions.addProperty("default.server", GlobalOptions.getSelectedServer());
-        GlobalOptions.saveProperties();
+    //save current user data for current server
+    GlobalOptions.saveUserData();
+    GlobalOptions.setSelectedServer((String) jServerList.getSelectedItem());
+    GlobalOptions.addProperty("default.server", GlobalOptions.getSelectedServer());
+    GlobalOptions.saveProperties();
 
-        updating = true;
-        jSelectServerButton.setEnabled(false);
-        jDownloadDataButton.setEnabled(false);
-        jOKButton.setEnabled(false);
-        jCreateAccountButton.setEnabled(false);
-        jCancelButton.setEnabled(false);
-        jChangePasswordButton.setEnabled(false);
-        jDownloadLiveDataButton.setEnabled(false);
-        jTribeNames.setModel(new DefaultComboBoxModel());
-        jStatusArea.setText("");
-        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+    updating = true;
+    jSelectServerButton.setEnabled(false);
+    jDownloadDataButton.setEnabled(false);
+    jOKButton.setEnabled(false);
+    jCreateAccountButton.setEnabled(false);
+    jCancelButton.setEnabled(false);
+    jChangePasswordButton.setEnabled(false);
+    jDownloadLiveDataButton.setEnabled(false);
+    jTribeNames.setModel(new DefaultComboBoxModel());
+    jStatusArea.setText("");
+    setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
-        //clear tribes model due to data is cleared at reload
-        jTribeNames.setModel(new DefaultComboBoxModel());
+    //clear tribes model due to data is cleared at reload
+    jTribeNames.setModel(new DefaultComboBoxModel());
 
-        Thread t = new Thread(new Runnable() {
+    Thread t = new Thread(new Runnable() {
 
-            @Override
-            public void run() {
-                try {
-                    logger.debug("Start downloading data from tribal wars servers");
-                    boolean ret = DataHolder.getSingleton().loadLiveData();
-                    logger.debug("Update finished " + ((ret) ? "successfully" : "with errors"));
+        @Override
+        public void run() {
+            try {
+                logger.debug("Start downloading data from tribal wars servers");
+                boolean ret = DataHolder.getSingleton().loadLiveData();
+                logger.debug("Update finished " + ((ret) ? "successfully" : "with errors"));
                 /* if (!ret) {
                 logger.info(" - Loading local copy due to update error");
                 ret = DataHolder.getSingleton().loadData(false);
@@ -2863,15 +2836,15 @@ private void fireDownloadLiveDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
                 throw new Exception("Unable to load local data copy");
                 }
                 }*/
-                } catch (Exception e) {
-                    logger.error("Failed to load data", e);
-                }
+            } catch (Exception e) {
+                logger.error("Failed to load data", e);
             }
-        });
+        }
+    });
 
-        logger.debug("Starting update thread");
-        t.setDaemon(true);
-        t.start();
+    logger.debug("Starting update thread");
+    t.setDaemon(true);
+    t.start();
 }//GEN-LAST:event_fireDownloadLiveDataEvent
 
     // </editor-fold>
@@ -3109,7 +3082,7 @@ private void fireDownloadLiveDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
         jOKButton.setEnabled(true);
         jCancelButton.setEnabled(true);
         jChangePasswordButton.setEnabled(true);
-        jDownloadLiveDataButton.setEnabled(false);
+        jDownloadLiveDataButton.setEnabled(true);
     }
 
     @Override
@@ -3222,7 +3195,6 @@ private void fireDownloadLiveDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
     private javax.swing.JPasswordField jRegistrationPassword;
     private javax.swing.JPasswordField jRegistrationPassword2;
     private javax.swing.JLabel jRepeatPasswordLabel;
-    private javax.swing.JCheckBox jReplaceMarkers;
     private javax.swing.JCheckBox jReplaceTagMarkers;
     private javax.swing.JButton jRestoreBlockButton;
     private javax.swing.JButton jRestoreFooterButton;

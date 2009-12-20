@@ -381,7 +381,8 @@ public class StatTextBuilder {
         }
         //remove last comma
         result = result.substring(0, result.lastIndexOf(","));
-
+        nf.setMinimumFractionDigits(2);
+        nf.setMaximumFractionDigits(2);
         if (pUseBBCodes) {
             result += " ([color=" + ((relVillages >= 0) ? "green]" : "red]") + ((relVillages >= 0) ? "+" : "") + nf.format(relVillages) + "%[/color])\n";
         } else {
@@ -403,7 +404,8 @@ public class StatTextBuilder {
         }
         //remove last comma
         result = result.substring(0, result.lastIndexOf(","));
-
+        nf.setMinimumFractionDigits(2);
+        nf.setMaximumFractionDigits(2);
         if (pUseBBCodes) {
             result += " ([color=" + ((relBashOff >= 0) ? "green]" : "red]") + ((relBashOff >= 0) ? "+" : "") + nf.format(relBashOff) + "%[/color])\n";
         } else {
@@ -425,7 +427,223 @@ public class StatTextBuilder {
         }
         //remove last comma
         result = result.substring(0, result.lastIndexOf(","));
+        nf.setMinimumFractionDigits(2);
+        nf.setMaximumFractionDigits(2);
+        if (pUseBBCodes) {
+            result += " ([color=" + ((relBashDef >= 0) ? "green]" : "red]") + ((relBashDef >= 0) ? "+" : "") + nf.format(relBashDef) + "%[/color])\n";
+        } else {
+            result += " (" + ((relBashDef >= 0) ? "+" : "") + nf.format(relBashDef) + "%)\n";
+        }// </editor-fold>
 
+        return result;
+    }
+
+    public static String buildLoserStats(List<Stats> pStats, boolean pUseBBCodes, boolean pShowPercent, boolean pUseTop10Only) {
+        String result = "";
+        Collections.sort(pStats, Stats.POINTS_COMPARATOR);
+        NumberFormat nf = NumberFormat.getInstance();
+        nf.setMinimumFractionDigits(0);
+        nf.setMaximumFractionDigits(0);
+
+        //get relative values
+        long absPoints = -1;
+        List<Stats> absPointsList = new LinkedList<Stats>();
+        double relPoints = 0.0;
+        List<Stats> relPointsList = new LinkedList<Stats>();
+        double relVillages = 0.0;
+        List<Stats> relVillageList = new LinkedList<Stats>();
+        double relBashOff = 0.0;
+        List<Stats> relBashOffList = new LinkedList<Stats>();
+        double relBashDef = 0.0;
+        List<Stats> relBashDefList = new LinkedList<Stats>();
+        for (Stats elem : pStats) {
+            // <editor-fold defaultstate="collapsed" desc="check abs points growing">
+            if (absPoints == -1) {
+                absPoints = elem.getPointDiff();
+                absPointsList.add(elem);
+            } else if (elem.getPointDiff() < absPoints) {
+                absPoints = elem.getPointDiff();
+                absPointsList.clear();
+                absPointsList.add(elem);
+            } else if (elem.getPointDiff() == absPoints) {
+                absPointsList.add(elem);
+            }
+            //</editor-fold>
+
+            // <editor-fold defaultstate="collapsed" desc="check rel points growing">
+            double diffBest = elem.getPointDiff();
+            double currPerc = 0;
+            if (elem.getPointStart() != 0) {
+                currPerc = (double) 100 * (double) diffBest / (double) elem.getPointStart();
+            }
+
+            if (currPerc < relPoints) {
+                relPoints = currPerc;
+                //remove all former elements and add only better elems
+                relPointsList.clear();
+                relPointsList.add(elem);
+            } else if (currPerc == relPoints) {
+                //add same value as we have
+                relPointsList.add(elem);
+            }
+
+            // </editor-fold>
+
+            // <editor-fold defaultstate="collapsed" desc="check rel village growing">
+            diffBest = elem.getVillageDiff();
+            currPerc = 0;
+            if (elem.getVillageStart() != 0) {
+                currPerc = (double) 100 * (double) diffBest / (double) elem.getVillageStart();
+            }
+
+            if (currPerc < relVillages) {
+                relVillages = currPerc;
+                //remove all former elements and add only better elems
+                relVillageList.clear();
+                relVillageList.add(elem);
+            } else if (currPerc == relPoints) {
+                //add same value as we have
+                relVillageList.add(elem);
+            }// </editor-fold>
+
+            // <editor-fold defaultstate="collapsed" desc="check rel bash off growing">
+            diffBest = elem.getBashOffDiff();
+            currPerc = 0;
+            if (elem.getBashOffStart() != 0) {
+                currPerc = (double) 100 * (double) diffBest / (double) elem.getBashOffStart();
+            }
+
+            if (currPerc < relBashOff) {
+                relBashOff = currPerc;
+                //remove all former elements and add only better elems
+                relBashOffList.clear();
+                relBashOffList.add(elem);
+            } else if (currPerc == relBashOff) {
+                //add same value as we have
+                relBashOffList.add(elem);
+            }// </editor-fold>
+
+            // <editor-fold defaultstate="collapsed" desc="check rel bash def growing">
+            diffBest = elem.getBashDefDiff();
+            currPerc = 0;
+            if (elem.getBashDefStart() != 0) {
+                currPerc = (double) 100 * (double) diffBest / (double) elem.getBashDefStart();
+            }
+            if (currPerc < relBashDef) {
+                relBashDef = currPerc;
+                //remove all former elements and add only better elems
+                relBashDefList.clear();
+                relBashDefList.add(elem);
+            } else if (currPerc == relBashDef) {
+                //add same value as we have
+                relBashDefList.add(elem);
+            }// </editor-fold>
+        }
+
+        // <editor-fold defaultstate="collapsed" desc="Add abs point diff">
+        if (pUseBBCodes) {
+            result += "[b]Größter Punktverlust(Absolut):[/b] ";
+        } else {
+            result += "Größtes Punktverlust (Absolut): ";
+        }
+
+        for (Stats s : absPointsList) {
+            result += (pUseBBCodes) ? (s.getParent().getTribe().toBBCode() + ", ") : (s.getParent().getTribe().toString() + ", ");
+        }
+        result = result.substring(0, result.lastIndexOf(","));
+
+        if (pUseBBCodes) {
+            result += " ([color=" + ((absPoints >= 0) ? "green]" : "red]") + nf.format(absPoints) + "[/color])\n";
+        } else {
+            result += " (" + nf.format(absPoints) + "\n";
+        }// </editor-fold>
+
+        // <editor-fold defaultstate="collapsed" desc="Add rel point diff">
+        if (pUseBBCodes) {
+            result += "[b]Größtes Punktverlust(Relativ):[/b] ";
+        } else {
+            result += "Größtes Punktverlust (Relativ): ";
+        }
+        nf = NumberFormat.getInstance();
+        nf.setMinimumFractionDigits(0);
+        nf.setMaximumFractionDigits(0);
+
+        for (Stats s : relPointsList) {
+            result += (pUseBBCodes) ? (s.getParent().getTribe().toBBCode() + " (" + nf.format(s.getPointDiff()) + "), ") : (s.getParent().getTribe().toString() + " (+" + nf.format(s.getPointDiff()) + "), ");
+        }
+        //remove last comma
+        result = result.substring(0, result.lastIndexOf(","));
+        nf.setMinimumFractionDigits(2);
+        nf.setMaximumFractionDigits(2);
+        if (pUseBBCodes) {
+            result += " ([color=" + ((relPoints >= 0) ? "green]" : "red]") + ((relPoints >= 0) ? "+" : "") + nf.format(relPoints) + "%[/color])\n";
+        } else {
+            result += " (" + ((relPoints >= 0) ? "+" : "") + nf.format(relPoints) + "%)\n";
+        }// </editor-fold>
+
+        // <editor-fold defaultstate="collapsed" desc="Add rel village diff">
+        if (pUseBBCodes) {
+            result += "[b]Größter Dorfverlust:[/b] ";
+        } else {
+            result += "Größtes Dorfverlust: ";
+        }
+
+        nf.setMinimumFractionDigits(0);
+        nf.setMaximumFractionDigits(0);
+
+        for (Stats s : relVillageList) {
+            result += (pUseBBCodes) ? (s.getParent().getTribe().toBBCode() + " (" + nf.format(s.getVillageDiff()) + "), ") : (s.getParent().getTribe().toString() + " (+" + nf.format(s.getVillageDiff()) + "), ");
+        }
+        //remove last comma
+        result = result.substring(0, result.lastIndexOf(","));
+        nf.setMinimumFractionDigits(2);
+        nf.setMaximumFractionDigits(2);
+        if (pUseBBCodes) {
+            result += " ([color=" + ((relVillages >= 0) ? "green]" : "red]") + ((relVillages >= 0) ? "+" : "") + nf.format(relVillages) + "%[/color])\n";
+        } else {
+            result += " (" + ((relVillages >= 0) ? "+" : "") + nf.format(relVillages) + "%)\n";
+        }// </editor-fold>
+
+        // <editor-fold defaultstate="collapsed" desc="Add attacker diff">
+        if (pUseBBCodes) {
+            result += "[b]Inaktivster Angreifer (Relativ):[/b] ";
+        } else {
+            result += "Inaktivster Angreifer (Relativ): ";
+        }
+
+        nf.setMinimumFractionDigits(0);
+        nf.setMaximumFractionDigits(0);
+
+        for (Stats s : relBashOffList) {
+            result += (pUseBBCodes) ? (s.getParent().getTribe().toBBCode() + " (+" + nf.format(s.getBashOffDiff()) + "), ") : (s.getParent().getTribe().toString() + " (+" + nf.format(s.getBashOffDiff()) + "), ");
+        }
+        //remove last comma
+        result = result.substring(0, result.lastIndexOf(","));
+        nf.setMinimumFractionDigits(2);
+        nf.setMaximumFractionDigits(2);
+        if (pUseBBCodes) {
+            result += " ([color=" + ((relBashOff >= 0) ? "green]" : "red]") + ((relBashOff >= 0) ? "+" : "") + nf.format(relBashOff) + "%[/color])\n";
+        } else {
+            result += " (" + ((relBashOff >= 0) ? "+" : "") + nf.format(relBashOff) + "%)\n";
+        }// </editor-fold>
+
+        // <editor-fold defaultstate="collapsed" desc="Add defender diff">
+        if (pUseBBCodes) {
+            result += "[b]Inaktivster Verteidiger (Relativ):[/b] ";
+        } else {
+            result += "Inaktivster Verteidiger (Relativ): ";
+        }
+
+        nf.setMinimumFractionDigits(0);
+        nf.setMaximumFractionDigits(0);
+
+        for (Stats s : relBashDefList) {
+            result += (pUseBBCodes) ? (s.getParent().getTribe().toBBCode() + " (+" + nf.format(s.getBashDefDiff()) + "), ") : (s.getParent().getTribe().toString() + " (+" + nf.format(s.getBashDefDiff()) + "), ");
+        }
+        //remove last comma
+        result = result.substring(0, result.lastIndexOf(","));
+        nf.setMinimumFractionDigits(2);
+        nf.setMaximumFractionDigits(2);
         if (pUseBBCodes) {
             result += " ([color=" + ((relBashDef >= 0) ? "green]" : "red]") + ((relBashDef >= 0) ? "+" : "") + nf.format(relBashDef) + "%[/color])\n";
         } else {

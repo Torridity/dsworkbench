@@ -6,6 +6,7 @@ package de.tor.tribes.ui.editors;
 
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
+import de.tor.tribes.ui.renderer.UnitListCellRenderer;
 import java.awt.Component;
 import java.awt.KeyboardFocusManager;
 import java.awt.event.FocusEvent;
@@ -59,7 +60,7 @@ public class UnitCellEditor extends AbstractCellEditor implements TableCellEdito
                 }
             }
         });
-
+        comboComponent.setRenderer(new UnitListCellRenderer());
         comboComponent.addKeyListener(new KeyListener() {
 
             @Override

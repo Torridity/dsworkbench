@@ -2470,8 +2470,7 @@ private void fireTransferAttacksToPlanEvent(java.awt.event.MouseEvent evt) {//GE
     } catch (Exception e) {
     }
 
-    for (int i = 0; i <
-            resultModel.getRowCount(); i++) {
+    for (int i = 0; i < resultModel.getRowCount(); i++) {
         Village source = (Village) resultModel.getValueAt(i, 0);
         UnitHolder unit = (UnitHolder) resultModel.getValueAt(i, 1);
         Village target = (Village) resultModel.getValueAt(i, 2);
@@ -3544,7 +3543,7 @@ private void fireTargetAllyFilterChangedEvent(javax.swing.event.CaretEvent evt) 
                 for (Tag t : tags) {
                     for (Integer vId : t.getVillageIDs()) {
                         Village v = DataHolder.getSingleton().getVillagesById().get(vId);
-                        if (v.getTribe() != null && !villageList.contains(v)) {
+                        if (v != null && v.getTribe() != null && !villageList.contains(v)) {
                             //add only if a players villages is tagged
                             if (!onlyPlayerVillages || (onlyPlayerVillages && v.getTribe().equals(current))) {
                                 //use village if all villages are allowed or if owner is current player
@@ -3552,7 +3551,6 @@ private void fireTargetAllyFilterChangedEvent(javax.swing.event.CaretEvent evt) 
                             }
 
                         }
-
                     }
                 }
                 if (useNoTag) {

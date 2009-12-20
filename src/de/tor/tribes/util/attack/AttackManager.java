@@ -36,6 +36,7 @@ public class AttackManager {
     private static Logger logger = Logger.getLogger("AttackManager");
     private static AttackManager SINGLETON = null;
     private Hashtable<String, List<Attack>> mAttackPlans = null;
+    private List<Attack> doItYourselfAttackPlan = null;
     public static final String DEFAULT_PLAN_ID = "default";
     private final List<AttackManagerListener> mManagerListeners = new LinkedList<AttackManagerListener>();
 
@@ -49,6 +50,7 @@ public class AttackManager {
     AttackManager() {
         mAttackPlans = new Hashtable<String, List<Attack>>();
         mAttackPlans.put(DEFAULT_PLAN_ID, new LinkedList<Attack>());
+        doItYourselfAttackPlan = new LinkedList<Attack>();
     }
 
     public synchronized void addAttackManagerListener(AttackManagerListener pListener) {
@@ -341,6 +343,16 @@ public class AttackManager {
         mAttackPlans.put(pPlan, attackPlan);
     }
 
+    public synchronized void addDoItYourselfAttack(Village pSource, Village pTarget, UnitHolder pUnit, Date pArriveTime, int pType) {
+        Attack a = new Attack();
+        a.setSource(pSource);
+        a.setTarget(pTarget);
+        a.setArriveTime(pArriveTime);
+        a.setUnit(pUnit);
+        a.setType(pType);
+        doItYourselfAttackPlan.add(a);
+    }
+
     /**Remove a complete attack plan*/
     public synchronized void removePlan(String pPlan) {
         String plan = pPlan;
@@ -398,6 +410,25 @@ public class AttackManager {
 
         }
         fireAttacksChangedEvents(plan);
+    }
+
+    public synchronized void removeDoItYourselfAttack(int pID) {
+        removeDoItYourselfAttacks(new int[]{pID});
+    }
+
+    public synchronized void removeDoItYourselfAttacks(int[] pIDs) {
+        Attack[] attacks = doItYourselfAttackPlan.toArray(new Attack[]{});
+        for (int i : pIDs) {
+            doItYourselfAttackPlan.remove(attacks[i]);
+        }
+    }
+
+    public synchronized void clearDoItYourselfAttacks() {
+        doItYourselfAttackPlan.clear();
+    }
+
+    public synchronized List<Attack> getDoItYourselfAttacks() {
+        return doItYourselfAttackPlan;
     }
 
     public List<Attack> getAttackPlan(String pPlan) {

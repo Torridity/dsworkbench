@@ -57,6 +57,8 @@ public class Circle extends AbstractForm {
             l.setFilled(Boolean.parseBoolean(elem.getTextTrim()));
             elem = e.getChild("textSize");
             l.setTextSize(Integer.parseInt(elem.getTextTrim()));
+             elem = e.getChild("drawName");
+            l.setDrawName(Boolean.parseBoolean(elem.getTextTrim()));
             return l;
         } catch (Exception ex) {
             return null;

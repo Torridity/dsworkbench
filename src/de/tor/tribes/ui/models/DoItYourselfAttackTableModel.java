@@ -4,13 +4,13 @@
  */
 package de.tor.tribes.ui.models;
 
-import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.util.DSCalculator;
-import de.tor.tribes.util.ServerSettings;
-import java.util.Calendar;
+import de.tor.tribes.util.attack.AttackManager;
+import de.tor.tribes.util.parser.VillageParser;
+import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -25,13 +25,13 @@ public class DoItYourselfAttackTableModel extends AbstractTableModel {
 
     private static Logger logger = Logger.getLogger("DoItYourselfAttackTable");
     Class[] types = new Class[]{
-        UnitHolder.class, Village.class, Village.class, Date.class, Date.class, String.class
+        Integer.class, UnitHolder.class, Village.class, Village.class, Date.class, Date.class, String.class
     };
     String[] colNames = new String[]{
-        "Einheit", "Herkunft", "Ziel", "Abschickzeit", "Ankunftzeit", "Verbleibend"
+        "Angriffstyp", "Einheit", "Herkunft", "Ziel", "Abschickzeit", "Ankunftzeit", "Verbleibend"
     };
     private static DoItYourselfAttackTableModel SINGLETON = null;
-    private List<Attack> mAttacks = null;
+    //  private List<Attack> mAttacks = null;
 
     public static synchronized DoItYourselfAttackTableModel getSingleton() {
         if (SINGLETON == null) {
@@ -40,22 +40,26 @@ public class DoItYourselfAttackTableModel extends AbstractTableModel {
         return SINGLETON;
     }
 
-    public DoItYourselfAttackTableModel() {
-        mAttacks = new LinkedList<Attack>();
+    DoItYourselfAttackTableModel() {
+        //  mAttacks = new LinkedList<Attack>();
     }
 
     public void clear() {
-        mAttacks.clear();
+        AttackManager.getSingleton().clearDoItYourselfAttacks();
     }
 
-    public void addAttack(Village pSource, Village pTarget, Date pArrive, UnitHolder pUnit) {
-        Attack a = new Attack();
-        a.setSource(pSource);
-        a.setTarget(pTarget);
-        a.setArriveTime(pArrive);
-        a.setUnit(pUnit);
-        mAttacks.add(a);
+    public void addAttack(Village pSource, Village pTarget, Date pArrive, UnitHolder pUnit, Integer pType) {
+        AttackManager.getSingleton().addDoItYourselfAttack(pSource, pTarget, pUnit, pArrive, pType);
         fireTableDataChanged();
+    }
+
+    public void removeRow(int pRow) {
+        AttackManager.getSingleton().removeDoItYourselfAttack(pRow);
+        fireTableDataChanged();
+    }
+
+    public Attack getAttack(int pRow) {
+        return AttackManager.getSingleton().getDoItYourselfAttacks().get(pRow);
     }
 
     @Override
@@ -75,7 +79,7 @@ public class DoItYourselfAttackTableModel extends AbstractTableModel {
 
     @Override
     public boolean isCellEditable(int row, int col) {
-        if (col == 5) {
+        if (col == 6 || col == 4) {
             return false;
         }
         return true;
@@ -83,16 +87,23 @@ public class DoItYourselfAttackTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int pRow, int pCol) {
-        Attack a = mAttacks.get(pRow);
-
+        Attack a = null;
+        List<Attack> attacks = AttackManager.getSingleton().getDoItYourselfAttacks();
+        if (attacks.size() > pRow) {
+            a = attacks.get(pRow);
+        } else {
+            return null;
+        }
         switch (pCol) {
             case 0:
-                return a.getUnit();
+                return a.getType();
             case 1:
-                return a.getSource();
+                return a.getUnit();
             case 2:
+                return a.getSource();
+            case 3:
                 return a.getTarget();
-            case 3: {
+            case 4: {
                 try {
                     long sendTime = a.getArriveTime().getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(a.getSource(), a.getTarget(), a.getUnit().getSpeed()) * 1000);
                     return new Date(sendTime);
@@ -100,7 +111,7 @@ public class DoItYourselfAttackTableModel extends AbstractTableModel {
                     return null;
                 }
             }
-            case 4:
+            case 5:
                 if (a.getArriveTime() != null) {
                     return a.getArriveTime();
                 } else {
@@ -145,64 +156,56 @@ public class DoItYourselfAttackTableModel extends AbstractTableModel {
 
     @Override
     public int getRowCount() {
-        return mAttacks.size();
+        List<Attack> attacks = AttackManager.getSingleton().getDoItYourselfAttacks();
+        if (attacks == null || attacks.size() == 0) {
+            return 0;
+        }
+        return attacks.size();
     }
 
     @Override
     public void setValueAt(Object pValue, int pRow, int pCol) {
+        List<Attack> attacks = AttackManager.getSingleton().getDoItYourselfAttacks();
+        if (attacks == null || attacks.size() == 0 || attacks.size() < pRow) {
+            return;
+        }
         switch (pCol) {
             case 0: {
-                mAttacks.get(pRow).setUnit((UnitHolder) pValue);
+                attacks.get(pRow).setType((Integer) pValue);
                 break;
             }
             case 1: {
-                try {
-                    String v = (String) pValue;
-                    int[] pos = null;
-                    if (ServerSettings.getSingleton().getCoordType() != 2) {
-                        v = v.replaceAll("\\(", "").replaceAll("\\)", "");
-                        v = v.trim();
-                        String[] coord = v.split(":");
-                        pos = DSCalculator.hierarchicalToXy(Integer.parseInt(coord[0]), Integer.parseInt(coord[1]), Integer.parseInt(coord[2]));
-                    } else {
-                        v = v.replaceAll("\\(", "").replaceAll("\\)", "");
-                        v = v.trim();
-                        String[] coord = v.split("\\|");
-                        pos = new int[]{Integer.parseInt(coord[0]), Integer.parseInt(coord[1])};
-                    }
-
-                    Village vil = DataHolder.getSingleton().getVillages()[pos[0]][pos[1]];
-                    mAttacks.get(pRow).setSource(vil);
-                } catch (Exception e) {
-                    mAttacks.get(pRow).setSource(null);
-                }
+                attacks.get(pRow).setUnit((UnitHolder) pValue);
                 break;
             }
             case 2: {
                 try {
                     String v = (String) pValue;
-                    int[] pos = null;
-                    if (ServerSettings.getSingleton().getCoordType() != 2) {
-                        v = v.replaceAll("\\(", "").replaceAll("\\)", "");
-                        v = v.trim();
-                        String[] coord = v.split(":");
-                        pos = DSCalculator.hierarchicalToXy(Integer.parseInt(coord[0]), Integer.parseInt(coord[1]), Integer.parseInt(coord[2]));
-                    } else {
-                        v = v.replaceAll("\\(", "").replaceAll("\\)", "");
-                        v = v.trim();
-                        String[] coord = v.split("\\|");
-                        pos = new int[]{Integer.parseInt(coord[0]), Integer.parseInt(coord[1])};
+                    List<Village> parsed = VillageParser.parse(v);
+                    Village vil = parsed.get(0);
+                    if (vil != null) {
+                        attacks.get(pRow).setSource(vil);
                     }
-
-                    Village vil = DataHolder.getSingleton().getVillages()[pos[0]][pos[1]];
-                    mAttacks.get(pRow).setTarget(vil);
                 } catch (Exception e) {
-                    mAttacks.get(pRow).setTarget(null);
+                    attacks.get(pRow).setSource(null);
                 }
                 break;
             }
-            case 4: {
-                mAttacks.get(pRow).setArriveTime((Date) pValue);
+            case 3: {
+                try {
+                    String v = (String) pValue;
+                    List<Village> parsed = VillageParser.parse(v);
+                    Village vil = parsed.get(0);
+                    if (vil != null) {
+                        attacks.get(pRow).setTarget(vil);
+                    }
+                } catch (Exception e) {
+                    attacks.get(pRow).setTarget(null);
+                }
+                break;
+            }
+            case 5: {
+                attacks.get(pRow).setArriveTime((Date) pValue);
             }
             default: {
             }

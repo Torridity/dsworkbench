@@ -59,6 +59,7 @@ import javax.swing.JPanel;
 
 /**
  * @TODO (DIFF) Cleaned up and extended map popup
+ * @TODO (DIFF) Extended village popup menu
  * @author Charon
  */
 public class MapPanel extends JPanel {

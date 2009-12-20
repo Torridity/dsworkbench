@@ -175,20 +175,26 @@ public class TribeStatsElement {
     public void removeDataBefore(long pTimestamp) {
         Long[] timestamps = timestampList.toArray(new Long[]{});
         int cnt = 0;
+        pTimestamp -= 1000;
+        List<Integer> toRemove = new LinkedList<Integer>();
         for (long timestamp : timestamps) {
             if (timestamp < pTimestamp) {
-                timestampList.remove(cnt);
-                rankList.remove(cnt);
-                pointList.remove(cnt);
-                villageList.remove(cnt);
-                bashOffList.remove(cnt);
-                rankOffList.remove(cnt);
-                bashDefList.remove(cnt);
-                rankDefList.remove(cnt);
-            } else {
-                break;
-            }
+                toRemove.add(cnt);
+            } /*else {
+            break;
+            }*/
             cnt++;
+        }
+        for (int i = toRemove.size() - 1; i >= 0; i--) {
+            int idx = toRemove.get(i);
+            timestampList.remove(idx);
+            rankList.remove(idx);
+            pointList.remove(idx);
+            villageList.remove(idx);
+            bashOffList.remove(idx);
+            rankOffList.remove(idx);
+            bashDefList.remove(idx);
+            rankDefList.remove(idx);
         }
     }
 
@@ -196,19 +202,25 @@ public class TribeStatsElement {
         Long[] timestamps = timestampList.toArray(new Long[]{});
         int cnt = 0;
         pTimestamp += 1000;
+        List<Integer> toRemove = new LinkedList<Integer>();
         for (long timestamp : timestamps) {
             if (timestamp > pTimestamp) {
-                timestampList.remove(cnt);
-                rankList.remove(cnt);
-                pointList.remove(cnt);
-                villageList.remove(cnt);
-                bashOffList.remove(cnt);
-                rankOffList.remove(cnt);
-                bashDefList.remove(cnt);
-                rankDefList.remove(cnt);
+                toRemove.add(cnt);
             }
             cnt++;
         }
+        for (int i = toRemove.size() - 1; i >= 0; i--) {
+            int idx = toRemove.get(i);
+            timestampList.remove(idx);
+            rankList.remove(idx);
+            pointList.remove(idx);
+            villageList.remove(idx);
+            bashOffList.remove(idx);
+            rankOffList.remove(idx);
+            bashDefList.remove(idx);
+            rankDefList.remove(idx);
+        }
+
     }
 
     public void removeDataBetween(long pStartTimestamp, long pEndTimestamp) {
@@ -216,19 +228,24 @@ public class TribeStatsElement {
         int cnt = 0;
         pStartTimestamp += 1000;
         pEndTimestamp -= 1000;
-
+        List<Integer> toRemove = new LinkedList<Integer>();
         for (long timestamp : timestamps) {
             if (timestamp > pStartTimestamp && timestamp < pEndTimestamp) {
-                timestampList.remove(cnt);
-                rankList.remove(cnt);
-                pointList.remove(cnt);
-                villageList.remove(cnt);
-                bashOffList.remove(cnt);
-                rankOffList.remove(cnt);
-                bashDefList.remove(cnt);
-                rankDefList.remove(cnt);
+                toRemove.add(cnt);
             }
             cnt++;
+        }
+
+        for (int i = toRemove.size() - 1; i >= 0; i--) {
+            int idx = toRemove.get(i);
+            timestampList.remove(idx);
+            rankList.remove(idx);
+            pointList.remove(idx);
+            villageList.remove(idx);
+            bashOffList.remove(idx);
+            rankOffList.remove(idx);
+            bashDefList.remove(idx);
+            rankDefList.remove(idx);
         }
     }
 
@@ -493,7 +510,6 @@ public class TribeStatsElement {
                 return s2.getPointDiff().compareTo(s1.getPointDiff());
             }
         }
-      
         public static final Comparator<Stats> RANK_COMPARATOR = new StatRankComparator();
 
         private static class StatRankComparator implements Comparator<Stats>, java.io.Serializable {

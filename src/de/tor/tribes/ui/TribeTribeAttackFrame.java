@@ -20,12 +20,11 @@ import de.tor.tribes.ui.dnd.GhostComponentAdapter;
 import de.tor.tribes.ui.dnd.GhostGlassPane;
 import de.tor.tribes.ui.dnd.GhostMotionAdapter;
 import de.tor.tribes.ui.editors.AttackTypeCellEditor;
-import de.tor.tribes.ui.editors.DateSpinEditor;
-import de.tor.tribes.ui.editors.VillageCellEditor;
-import de.tor.tribes.ui.renderer.DateCellRenderer;
 import de.tor.tribes.ui.editors.UnitCellEditor;
 import de.tor.tribes.ui.models.TroopsManagerTableModel;
 import de.tor.tribes.ui.renderer.AttackTypeCellRenderer;
+import de.tor.tribes.ui.renderer.FakeCellRenderer;
+import de.tor.tribes.ui.renderer.UnitCellRenderer;
 import de.tor.tribes.util.AttackToBBCodeFormater;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.DSCalculator;
@@ -85,7 +84,7 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame {
     private TimePanel mTimePanel = null;
     private MiscSettingsPanel mMiscPanel = null;
     private JButton filterSource = null;
- GhostGlassPane glassPane;
+    GhostGlassPane glassPane;
 
     /** Creates new form TribeTribeAttackFrame */
     public TribeTribeAttackFrame() {
@@ -106,7 +105,7 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame {
         jAttackResultDetailsFrame.pack();
         jTargetResultDetailsFrame.pack();
 
-         glassPane = new GhostGlassPane();
+        glassPane = new GhostGlassPane();
         setGlassPane(glassPane);
 
         GhostComponentAdapter componentAdapter;
@@ -129,9 +128,10 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame {
         // </editor-fold>
     }
 
-    public  GhostGlassPane getGlassPane(){
+    public GhostGlassPane getGlassPane() {
         return glassPane;
     }
+
     protected void setup() {
 
         // <editor-fold defaultstate="collapsed" desc=" Attack table setup ">
@@ -152,6 +152,7 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame {
             }
         };
         jAttacksTable.setModel(attackModel);
+
         TableRowSorter<TableModel> attackSorter = new TableRowSorter<TableModel>(jAttacksTable.getModel());
         jAttacksTable.setRowSorter(attackSorter);
         // </editor-fold>
@@ -203,6 +204,12 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame {
             jResultsTable.getColumn(jResultsTable.getColumnName(i)).setHeaderRenderer(headerRenderer);
         }
 
+        jAttacksTable.getColumn("Einheit").setWidth(60);
+        jAttacksTable.getColumn("Einheit").setPreferredWidth(60);
+        jAttacksTable.getColumn("Einheit").setMaxWidth(60);
+        jAttacksTable.getColumn("Fake").setWidth(60);
+        jAttacksTable.getColumn("Fake").setPreferredWidth(60);
+        jAttacksTable.getColumn("Fake").setMaxWidth(60);
         jScrollPane1.getViewport().setBackground(Constants.DS_BACK_LIGHT);
         jScrollPane2.getViewport().setBackground(Constants.DS_BACK_LIGHT);
         jScrollPane3.getViewport().setBackground(Constants.DS_BACK_LIGHT);
@@ -270,11 +277,14 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame {
 
             mTimePanel.reset();
             mMiscPanel.reset();
-            jAttacksTable.setDefaultRenderer(Date.class, new DateCellRenderer());
-            jAttacksTable.setDefaultEditor(Date.class, new DateSpinEditor());
+            /* jAttacksTable.setDefaultRenderer(Date.class, new DateCellRenderer());
+            jAttacksTable.setDefaultEditor(Date.class, new DateSpinEditor());*/
             jAttacksTable.setDefaultEditor(UnitHolder.class, new UnitCellEditor());
-            jAttacksTable.setDefaultEditor(Village.class, new VillageCellEditor());
-
+            jAttacksTable.setDefaultRenderer(UnitHolder.class, new UnitCellRenderer());
+            //jAttacksTable.setDefaultEditor(Village.class, new FakeC());
+            jAttacksTable.setDefaultRenderer(Boolean.class, new FakeCellRenderer());
+            jAttacksTable.setRowHeight(20);
+            jVictimTable.setRowHeight(20);
             DefaultComboBoxModel unitModel = new DefaultComboBoxModel(DataHolder.getSingleton().getUnits().toArray(new UnitHolder[]{}));
             jTroopsList.setModel(unitModel);
             jTroopsList.setSelectedItem(DataHolder.getSingleton().getUnitByPlainName("ram"));
@@ -2077,15 +2087,15 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
     if (type == 0) {
         logger.info("Using 'BruteForce' algorithm");
         algo = new BruteForce();
-        /*new OptexWrapper().calculateAttacks(sources,
+        /* algo = new OptexWrapper();/*.calculateAttacks(sources,
         fakes,
         victimVillages,
         maxAttacksPerVillage,
         minCleanForSnob,
         timeFrame,
         randomize,
-        use5Snobs);
-         */
+        use5Snobs);*/
+
         supportMiscUnits = true;
     } else if (type == 1) {
         logger.info("Using 'AllInOne' algorithm");
@@ -3062,8 +3072,7 @@ private void fireFilterByAttackPlansEvent(java.awt.event.MouseEvent evt) {//GEN-
             return c;
         }
     };
-    for (int i = 0; i <
-            jAttackPlanTable.getColumnCount(); i++) {
+    for (int i = 0; i < jAttackPlanTable.getColumnCount(); i++) {
         jAttackPlanTable.getColumn(jAttackPlanTable.getColumnName(i)).setHeaderRenderer(headerRenderer);
     }
 
@@ -3218,7 +3227,6 @@ private void fireTargetAllyFilterChangedEvent(javax.swing.event.CaretEvent evt) 
         tc.setPreferredWidth(0);
 
         tc.setMaxWidth(0);
-
         tc.setWidth(0);
 
         tc.setResizable(false);
@@ -3238,24 +3246,11 @@ private void fireTargetAllyFilterChangedEvent(javax.swing.event.CaretEvent evt) 
                 return c;
             }
         };
-        for (int i = 0;
-                i < jResultsTable.getColumnCount();
-                i++) {
+        for (int i = 0; i < jResultsTable.getColumnCount(); i++) {
             jResultsTable.getColumn(jResultsTable.getColumnName(i)).setHeaderRenderer(headerRenderer);
         }
         jResultsTable.revalidate();
-        jResultFrame.setVisible(
-                true);
-
-
-
-
-
-
-
-
-
-
+        jResultFrame.setVisible(true);
 
         if (impossibleAttacks > 0) {
             String message = "";

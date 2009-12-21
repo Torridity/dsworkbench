@@ -6,6 +6,10 @@ package de.tor.tribes.util.algo;
 
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
+import de.tor.tribes.types.AbstractTroopMovement;
+import de.tor.tribes.types.Fake;
+import de.tor.tribes.types.Off;
+import de.tor.tribes.types.Village;
 import de.tor.tribes.util.DSCalculator;
 import java.util.ArrayList;
 import java.util.Date;
@@ -19,9 +23,10 @@ import javax.swing.JFrame;
  *
  * @author Charon
  */
-public class OptexWrapper {
+public class OptexWrapper extends AbstractAttackAlgorithm {
 
-    public void calculateAttacks(
+    @Override
+    public List<AbstractTroopMovement> calculateAttacks(
             Hashtable<UnitHolder, List<de.tor.tribes.types.Village>> pSources,
             Hashtable<UnitHolder, List<de.tor.tribes.types.Village>> pFakes,
             List<de.tor.tribes.types.Village> pTargets,
@@ -31,201 +36,41 @@ public class OptexWrapper {
             boolean pRandomize,
             boolean pUse5Snobs) {
 
-            // <editor-fold defaultstate="collapsed" desc="Calculate snob destinations">
-        UnitHolder snob = DataHolder.getSingleton().getUnitByPlainName("snob");
         UnitHolder ram = DataHolder.getSingleton().getUnitByPlainName("ram");
-        List<de.tor.tribes.types.Village> snobSources = pSources.get(snob);
-        Hashtable<TargetVillage, Integer> bestSolution = null;
-        List<de.tor.tribes.types.Village> enoblementTargets = new LinkedList<de.tor.tribes.types.Village>(pTargets);
-        int noEnoblements = 0;
-        Hashtable<TargetVillage, List<Village>> bestSources = null;
-        if (snobSources != null && snobSources.size() >= ((pUse5Snobs) ? 5 : 4)) {
-            //try to find enoblements
-            int maxPossible = (int) Math.round((double) snobSources.size() / ((pUse5Snobs) ? 5.0 : 4.0));
-            while (true) {
-                noEnoblements = 0;
-                bestSolution = null;
-                List<de.tor.tribes.types.Village> targetCopy = new LinkedList<de.tor.tribes.types.Village>(enoblementTargets);
-                while (true) {
-                    System.out.println("Targets: " + targetCopy.size());
-                    Hashtable<TargetVillage, Integer> enoblements = calculateEnoblements(snobSources, pSources.get(ram), targetCopy, pTimeFrame, ((pUse5Snobs) ? 5 : 4), pMaxCleanPerSnob);
-                    Enumeration<TargetVillage> keys = enoblements.keys();
-                    TargetVillage worst = null;
-                    int worstCount = ((pUse5Snobs) ? 5 : 4);
-                    int validCount = 0;
-                    while (keys.hasMoreElements()) {
-                        TargetVillage t = keys.nextElement();
-                        if (enoblements.get(t) < worstCount) {
-                            worst = t;
-                            worstCount = enoblements.get(t);
-                            System.out.println("Worst target to remove: " + worst + " (" + worstCount + ")");
-                        } else if (enoblements.get(t) == ((pUse5Snobs) ? 5 : 4)) {
-                            validCount++;
-                        }
-                    }
+        List<de.tor.tribes.types.Village> offSources = pSources.get(ram);
+        ArrayList<OffVillage> offs = prepareSourceList(offSources, pTargets, pTimeFrame, ram.getSpeed());
 
-                    if (validCount > noEnoblements) {
-                        System.out.println("Setting best solution with " + validCount + " enoblements");
-                        bestSolution = enoblements;
-                        noEnoblements = validCount;
-                        if (noEnoblements == maxPossible) {
-                            System.out.println("Have max enoblement count");
-                            break;
-                        }
-                    }
-                    if (validCount == 0) {
-                        System.out.println("No Enoblements possible. Taking best solution");
-                        break;
-                    }
-                    if (worst != null) {
-                        targetCopy.remove(DataHolder.getSingleton().getVillages()[worst.getC().getX()][worst.getC().getY()]);
-                    } else {
-                        System.out.println("No further optimization possible");
-                        break;
-                    }
-                }
+        ArrayList<TargetVillage> offTargets = prepareTargetList(pTargets, pMaxAttacksPerVillage);
 
-            // </editor-fold>
+        Hashtable<Destination, Double>[] costs = calculateOffCosts(offs, offTargets, pTimeFrame, ram.getSpeed() * 60000);
+        Optex<OffVillage, TargetVillage> algo = new Optex<OffVillage, TargetVillage>(offs, offTargets, costs);
+        Hashtable<Village, AbstractTroopMovement> targetMappings = new Hashtable<Village, AbstractTroopMovement>();
 
-            // <editor-fold defaultstate="collapsed" desc="Calculate clean offs">
-         /*
-            if (bestSolution != null && !bestSolution.isEmpty()) {
-            Enumeration<TargetVillage> keys = bestSolution.keys();
-            ArrayList<TargetVillage> enoTargets = new ArrayList<TargetVillage>();
-            pMaxCleanPerSnob = 3;
-            while (keys.hasMoreElements()) {
-            TargetVillage t = keys.nextElement();
-            if (bestSolution.get(t) == 4) {
-            enoTargets.add(new TargetVillage(t.getC(), pMaxCleanPerSnob));
-            }
-            }
-
-
-            List<de.tor.tribes.types.Village> offSources = pSources.get(ram);
-            ArrayList<OffVillage> offs = prepareSourceList(offSources, pTargets, pTimeFrame, ram.getSpeed());
-            Hashtable<Destination, Double> costs2[] = calculateOffCosts(offs, enoTargets, pTimeFrame, pMaxCleanPerSnob);
-
-            // Create an algorithm instance
-            Optex<OffVillage, TargetVillage> algo2 = new Optex<OffVillage, TargetVillage>(offs, enoTargets, costs2);
-            Hashtable<TargetVillage, List<Village>> usedSources = new Hashtable<TargetVillage, List<Village>>();
-            // Run the algorithm
-            try {
-            algo2.run();
-            for (Source src : offs) {
-            for (Order o : src.getOrders()) {
-            Village s = (Village) src;
-            if (o.getAmount() > 0) {
-            TargetVillage dest = (TargetVillage) o.getDestination();
-            double dist = s.distanceTo(dest);
-            double runtime = dist * snob.getSpeed() * 60000;
-            long send = pTimeFrame.getEnd() - (long) Math.round(runtime);
-            if (!pTimeFrame.inside(new Date(send))) {
-            //System.out.println("Invalid Mapping: " + s.getC().getX() + "|" + s.getC().getY() + " -> " + dest.getC().getX() + "|" + dest.getC().getY());
-            } else {
-            // System.out.println("Mapping: " + s.getC().getX() + "|" + s.getC().getY() + " -> " + dest.getC().getX() + "|" + dest.getC().getY());
-            if (usedSources.containsKey(dest)) {
-            List<Village> l = usedSources.get(dest);
-            l.add(s);
-            usedSources.put(dest, l);
-            } else {
-            List<Village> l = new LinkedList<Village>();
-            l.add(s);
-            usedSources.put(dest, l);
-            }
-            }
-            }
-            }
-            }
-
-            System.out.println("Valid Enoblements ");
-            keys = usedSources.keys();
-            TargetVillage worst = null;
-            int worstCount = 3;
-            int validCount = 0;
-            while (keys.hasMoreElements()) {
-            TargetVillage t = keys.nextElement();
-            if (usedSources.get(t).size() == pMaxCleanPerSnob) {
-            System.out.println("FULLY VALID: " + t.getC().getX() + "|" + t.getC().getY());
-            validCount++;
-            } else {
-            if (usedSources.get(t).size() < worstCount) {
-            worstCount = usedSources.get(t).size();
-            worst = t;
-            System.out.println("Setting worst off target " + t + " (" + worstCount + ")");
-            }
-            }
-            }
-            if (validCount == bestSolution.size()) {
-            System.out.println("All enoblements are valid");
-            break;
-            }
-            if (validCount > validCount) {
-            bestSources = usedSources;
-            noEnoblements = validCount;
-            }
-            if (worst != null) {
-            System.out.println("Cleaning target list and removing worst");
-            enoblementTargets.remove(DataHolder.getSingleton().getVillages()[worst.getC().getX()][worst.getC().getY()]);
-            } else {
-            System.out.println("Worst is null");
-            break;
-            }
-            } catch (Exception e) {
-            e.printStackTrace();
-            }
-            } else {
-            //no enoblements founds
-            System.out.println("No Enoblements found!!");
-            break;
-            }
-          *    */
-            // </editor-fold>
-            }
-        }
-    }
-
-    private Hashtable<TargetVillage, Integer> calculateEnoblements(List<de.tor.tribes.types.Village> pSnobSources,
-            List<de.tor.tribes.types.Village> pOffSources,
-            List<de.tor.tribes.types.Village> pTargets,
-            TimeFrame pTimeframe,
-            int pSnobsPerEnoblement,
-            int pCleanOffsPerEnoblement) {
-        ArrayList<OffVillage> snobSources = new ArrayList<OffVillage>();
-        ArrayList<OffVillage> offs = new ArrayList<OffVillage>();
-        ArrayList<TargetVillage> targets = new ArrayList<TargetVillage>();
-
-        UnitHolder snob = DataHolder.getSingleton().getUnitByPlainName("snob");
-        UnitHolder ram = DataHolder.getSingleton().getUnitByPlainName("ram");
-        //build lists
-        snobSources = prepareSourceList(pSnobSources, pTargets, pTimeframe, snob.getSpeed());
-        offs = prepareSourceList(pOffSources, pTargets, pTimeframe, ram.getSpeed());
-        targets = prepareTargetList(pTargets, pSnobsPerEnoblement);
-        // calculate transport costs based on enoblement including timeframe
-        Hashtable<Destination, Double> costs[] = calculateSnobCosts(snobSources, offs, targets, pTimeframe, snob.getSpeed(), ram.getSpeed(), pSnobsPerEnoblement, pCleanOffsPerEnoblement);
-
-        // Create an algorithm instance
-        Optex<OffVillage, TargetVillage> algo = new Optex<OffVillage, TargetVillage>(snobSources, targets, costs);
-
-        // Run the algorithm
-        Hashtable<TargetVillage, Integer> enoblements = new Hashtable<TargetVillage, Integer>();
         try {
             algo.run();
-            int cnt = 0;
-            for (Source src : snobSources) {
+            for (OffVillage src : offs) {
                 for (Order o : src.getOrders()) {
-                    Village s = (Village) src;
+                    de.tor.tribes.util.algo.Village s = (de.tor.tribes.util.algo.Village) src;
                     if (o.getAmount() > 0) {
                         TargetVillage dest = (TargetVillage) o.getDestination();
-                        double dist = s.distanceTo(dest);
-                        double runtime = dist * snob.getSpeed() * 60000;
-                        long send = pTimeframe.getEnd() - (long) Math.round(runtime);
-                        if (pTimeframe.inside(new Date(send), null)) {
-                            if (!enoblements.containsKey(dest)) {
-                                enoblements.put(dest, o.getAmount());
-                            } else {
-                                enoblements.put(dest, enoblements.get(dest) + o.getAmount());
+                        Village v = DataHolder.getSingleton().getVillages()[dest.getC().getX()][dest.getC().getY()];
+                        if (v != null) {
+
+                            pTargets.remove(v);
+                            AbstractTroopMovement mapping = targetMappings.get(v);
+                            if (mapping == null) {
+                                mapping = new Off(v, pMaxAttacksPerVillage);
+                                targetMappings.put(v, mapping);
                             }
-                            cnt++;
+                            Village source = DataHolder.getSingleton().getVillages()[src.getC().getX()][src.getC().getY()];
+                            if (source != null) {
+                                double dist = DSCalculator.calculateDistance(v, source);
+                                double runtime = dist * ram.getSpeed() * 60000;
+                                long send = pTimeFrame.getEnd() - (long) Math.round(runtime);
+                                if (pTimeFrame.inside(new Date(send), null)) {
+                                    mapping.addOff(ram, source);
+                                }
+                            }
                         }
                     }
                 }
@@ -233,7 +78,52 @@ public class OptexWrapper {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return enoblements;
+
+        offs = prepareSourceList(pFakes.get(ram), pTargets, pTimeFrame, pMaxAttacksPerVillage);
+        ArrayList<TargetVillage> fakeTargets = prepareTargetList(pTargets, pMaxAttacksPerVillage);
+        costs = calculateOffCosts(offs, fakeTargets, pTimeFrame, ram.getSpeed());
+        algo = new Optex<OffVillage, TargetVillage>(offs, fakeTargets, costs);
+
+        try {
+            algo.run();
+            for (OffVillage src : offs) {
+                for (Order o : src.getOrders()) {
+                    if (o.getAmount() > 0) {
+                        TargetVillage dest = (TargetVillage) o.getDestination();
+                        Village v = DataHolder.getSingleton().getVillages()[dest.getC().getX()][dest.getC().getY()];
+                        if (v != null) {
+                            AbstractTroopMovement mapping = targetMappings.get(v);
+                            if (mapping == null) {
+                                mapping = new Fake(v, pMaxAttacksPerVillage);
+                                targetMappings.put(v, mapping);
+                            }
+                            Village source = DataHolder.getSingleton().getVillages()[src.getC().getX()][src.getC().getY()];
+                            if (source != null) {
+                                double dist = DSCalculator.calculateDistance(v, source);
+                                double runtime = dist * ram.getSpeed() * 60000;
+                                long send = pTimeFrame.getEnd() - (long) Math.round(runtime);
+                                if (pTimeFrame.inside(new Date(send), null)) {
+                                    mapping.addOff(ram, source);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        LinkedList<AbstractTroopMovement> result = new LinkedList<AbstractTroopMovement>();
+        Enumeration<Village> keys = targetMappings.keys();
+        while (keys.hasMoreElements()) {
+            Village target = keys.nextElement();
+            AbstractTroopMovement move = targetMappings.get(target);
+            if (move.getOffCount() > 0) {
+                result.add(move);
+            }
+        }
+        return result;
     }
 
     /**Prepares a list of sources where all sources are removed which do not reach any target in time.
@@ -301,6 +191,7 @@ public class OptexWrapper {
                 long send = pTimeFrame.getEnd() - (long) Math.round(runtime);
                 double cost = dist;
                 if (!pTimeFrame.inside(new Date(send), null)) {
+                    System.out.println("MAX COST for " + pOffs.get(i) + " -> " + pTargets.get(j));
                     //increase costs to max
                     cost = Double.MAX_VALUE;
                 }
@@ -316,64 +207,6 @@ public class OptexWrapper {
      * - not enough clean offs can reach target
      * - snob from source cannot reach target in time
      */
-    private Hashtable<Destination, Double>[] calculateSnobCosts(ArrayList<OffVillage> pSnobSources,
-            ArrayList<OffVillage> pOffs,
-            ArrayList<TargetVillage> pTargets,
-            TimeFrame pTimeFrame,
-            double pSnobSpeed,
-            double pOffSpeed,
-            int pSnobCount,
-            int pCleanOffs) {
-        Hashtable<Destination, Double> costs[] = new Hashtable[pSnobSources.size()];
-        for (int i = 0; i < pSnobSources.size(); i++) {
-            //calculate cost matrix for each snob source
-            costs[i] = new Hashtable<Destination, Double>();
-            for (int j = 0; j < pTargets.size(); j++) {
-                //calculate matrix row for target
-                //check how many off sources can reach the target
-                int offCount = 0;
-                for (OffVillage v : pOffs) {
-                    double dist = v.distanceTo(pTargets.get(j));
-                    double runtime = dist * pOffSpeed * 60000;
-                    long send = pTimeFrame.getEnd() - (long) Math.round(runtime);
-                    if (pTimeFrame.inside(new Date(send), null)) {
-                        offCount++;
-                    }
-                }
-                //check how many snobs can reach target
-                int snobCount = 0;
-                for (OffVillage v : pSnobSources) {
-                    double dist = v.distanceTo(pTargets.get(j));
-                    double runtime = dist * pSnobSpeed * 60000;
-                    long send = pTimeFrame.getEnd() - (long) Math.round(runtime);
-                    if (pTimeFrame.inside(new Date(send), null)) {
-                        snobCount++;
-                    }
-                }
-
-                //calculate distance
-                double dist = pSnobSources.get(i).distanceTo(pTargets.get(j));
-                double runtime = dist * pSnobSpeed * 60000;
-                long send = pTimeFrame.getEnd() - (long) Math.round(runtime);
-                double cost = dist;
-                if (!pTimeFrame.inside(new Date(send), null)) {
-                    //increase costs to max if current source cannot reach target in time
-                    cost = Double.MAX_VALUE;
-                } else if (offCount < pCleanOffs) {
-                    //increase costs to max if not enough offs can reach target
-                    //  System.out.println("MAX const due to off count");
-                    cost = Double.MAX_VALUE;
-                } else if (snobCount < pSnobCount) {
-                    //increase costs to max if not enough snobs can reach target in time
-                    //System.out.println("MAX const due to snob count");
-                    cost = Double.MAX_VALUE;
-                }
-                costs[i].put(pTargets.get(j), cost);
-            }
-        }
-        return costs;
-    }
-
     public static void draw(ArrayList<OffVillage> offs, ArrayList<TargetVillage> targets) {
         JFrame drawer = new JFrame("Drawer");
         STPDrawer stpdrawer = new STPDrawer(offs, targets);
@@ -383,5 +216,10 @@ public class OptexWrapper {
         drawer.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         drawer.setSize(500, 500);
         drawer.setVisible(true);
+    }
+
+    @Override
+    public List<Village> getNotAssignedSources() {
+        return new LinkedList<Village>();
     }
 }

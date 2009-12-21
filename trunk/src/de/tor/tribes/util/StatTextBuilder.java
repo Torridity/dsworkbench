@@ -338,9 +338,9 @@ public class StatTextBuilder {
         result = result.substring(0, result.lastIndexOf(","));
 
         if (pUseBBCodes) {
-            result += " ([color=" + ((absPoints >= 0) ? "green]" : "red]") + nf.format(absPoints) + "[/color])\n";
+            result += " ([color=" + ((absPoints >= 0) ? "green]+" : "red]") + nf.format(absPoints) + "[/color])\n\n";
         } else {
-            result += " (" + nf.format(absPoints) + "\n";
+            result += " (" + nf.format(absPoints) + "\n\n";
         }// </editor-fold>
 
         // <editor-fold defaultstate="collapsed" desc="Add rel point diff">
@@ -361,9 +361,9 @@ public class StatTextBuilder {
         nf.setMinimumFractionDigits(2);
         nf.setMaximumFractionDigits(2);
         if (pUseBBCodes) {
-            result += " ([color=" + ((relPoints >= 0) ? "green]" : "red]") + ((relPoints >= 0) ? "+" : "") + nf.format(relPoints) + "%[/color])\n";
+            result += " ([color=" + ((relPoints >= 0) ? "green]" : "red]") + ((relPoints >= 0) ? "+" : "") + nf.format(relPoints) + "%[/color])\n\n";
         } else {
-            result += " (" + ((relPoints >= 0) ? "+" : "") + nf.format(relPoints) + "%)\n";
+            result += " (" + ((relPoints >= 0) ? "+" : "") + nf.format(relPoints) + "%)\n\n";
         }// </editor-fold>
 
         // <editor-fold defaultstate="collapsed" desc="Add rel village diff">
@@ -384,12 +384,12 @@ public class StatTextBuilder {
         nf.setMinimumFractionDigits(2);
         nf.setMaximumFractionDigits(2);
         if (pUseBBCodes) {
-            result += " ([color=" + ((relVillages >= 0) ? "green]" : "red]") + ((relVillages >= 0) ? "+" : "") + nf.format(relVillages) + "%[/color])\n";
+            result += " ([color=" + ((relVillages >= 0) ? "green]" : "red]") + ((relVillages >= 0) ? "+" : "") + nf.format(relVillages) + "%[/color])\n\n";
         } else {
-            result += " (" + ((relVillages >= 0) ? "+" : "") + nf.format(relVillages) + "%)\n";
+            result += " (" + ((relVillages >= 0) ? "+" : "") + nf.format(relVillages) + "%)\n\n";
         }// </editor-fold>
 
-        // <editor-fold defaultstate="collapsed" desc="Add attacker diff">
+        // <editor-fold defaultstate="collapsed" desc="Add attacker diff (relative)">
         if (pUseBBCodes) {
             result += "[b]Bester Angreifer (Relativ):[/b] ";
         } else {
@@ -407,9 +407,28 @@ public class StatTextBuilder {
         nf.setMinimumFractionDigits(2);
         nf.setMaximumFractionDigits(2);
         if (pUseBBCodes) {
-            result += " ([color=" + ((relBashOff >= 0) ? "green]" : "red]") + ((relBashOff >= 0) ? "+" : "") + nf.format(relBashOff) + "%[/color])\n";
+            result += " ([color=" + ((relBashOff >= 0) ? "green]" : "red]") + ((relBashOff >= 0) ? "+" : "") + nf.format(relBashOff) + "%[/color])\n\n";
         } else {
-            result += " (" + ((relBashOff >= 0) ? "+" : "") + nf.format(relBashOff) + "%)\n";
+            result += " (" + ((relBashOff >= 0) ? "+" : "") + nf.format(relBashOff) + "%)\n\n";
+        }// </editor-fold>
+
+        // <editor-fold defaultstate="collapsed" desc="Add attacker diff (absolute)">
+        Collections.sort(pStats, Stats.BASH_OFF_COMPARATOR);
+        Stats best = pStats.get(0);
+        if (pUseBBCodes) {
+            result += "[b]Bester Angreifer (Absolut):[/b] ";
+        } else {
+            result += "Bester Angreifer (Absolut): ";
+        }
+
+        nf.setMinimumFractionDigits(0);
+        nf.setMaximumFractionDigits(0);
+
+        result += (pUseBBCodes) ? best.getParent().getTribe().toBBCode() : best.getParent().getTribe().toString();
+        if (pUseBBCodes) {
+            result += " ([color=" + ((best.getBashOffDiff() >= 0) ? "green]+" : "red]") + nf.format(best.getBashOffDiff()) + "[/color])\n\n";
+        } else {
+            result += " (" + ((best.getBashOffDiff() >= 0) ? "+" : "") + nf.format(best.getBashOffDiff()) + "%)\n\n";
         }// </editor-fold>
 
         // <editor-fold defaultstate="collapsed" desc="Add defender diff">
@@ -430,10 +449,30 @@ public class StatTextBuilder {
         nf.setMinimumFractionDigits(2);
         nf.setMaximumFractionDigits(2);
         if (pUseBBCodes) {
-            result += " ([color=" + ((relBashDef >= 0) ? "green]" : "red]") + ((relBashDef >= 0) ? "+" : "") + nf.format(relBashDef) + "%[/color])\n";
+            result += " ([color=" + ((relBashDef >= 0) ? "green]" : "red]") + ((relBashDef >= 0) ? "+" : "") + nf.format(relBashDef) + "%[/color])\n\n";
         } else {
-            result += " (" + ((relBashDef >= 0) ? "+" : "") + nf.format(relBashDef) + "%)\n";
+            result += " (" + ((relBashDef >= 0) ? "+" : "") + nf.format(relBashDef) + "%)\n\n";
         }// </editor-fold>
+
+        // <editor-fold defaultstate="collapsed" desc="Add defender diff (absolute)">
+        Collections.sort(pStats, Stats.BASH_DEF_COMPARATOR);
+        best = pStats.get(0);
+        if (pUseBBCodes) {
+            result += "[b]Bester Verteidiger (Absolut):[/b] ";
+        } else {
+            result += "Bester Verteidiger (Absolut): ";
+        }
+
+        nf.setMinimumFractionDigits(0);
+        nf.setMaximumFractionDigits(0);
+
+        result += (pUseBBCodes) ? best.getParent().getTribe().toBBCode() : best.getParent().getTribe().toString();
+        if (pUseBBCodes) {
+            result += " ([color=" + ((best.getBashDefDiff() >= 0) ? "green]+" : "red]") + nf.format(best.getBashDefDiff()) + "[/color])\n\n";
+        } else {
+            result += " (" + ((best.getBashDefDiff() >= 0) ? "+" : "") + nf.format(best.getBashDefDiff()) + "%)\n\n";
+        }// </editor-fold>
+
 
         return result;
     }
@@ -553,9 +592,9 @@ public class StatTextBuilder {
         result = result.substring(0, result.lastIndexOf(","));
 
         if (pUseBBCodes) {
-            result += " ([color=" + ((absPoints >= 0) ? "green]" : "red]") + nf.format(absPoints) + "[/color])\n";
+            result += " ([color=" + ((absPoints >= 0) ? "green]" : "red]") + nf.format(absPoints) + "[/color])\n\n";
         } else {
-            result += " (" + nf.format(absPoints) + "\n";
+            result += " (" + nf.format(absPoints) + "\n\n";
         }// </editor-fold>
 
         // <editor-fold defaultstate="collapsed" desc="Add rel point diff">
@@ -576,9 +615,9 @@ public class StatTextBuilder {
         nf.setMinimumFractionDigits(2);
         nf.setMaximumFractionDigits(2);
         if (pUseBBCodes) {
-            result += " ([color=" + ((relPoints >= 0) ? "green]" : "red]") + ((relPoints >= 0) ? "+" : "") + nf.format(relPoints) + "%[/color])\n";
+            result += " ([color=" + ((relPoints >= 0) ? "green]" : "red]") + ((relPoints >= 0) ? "+" : "") + nf.format(relPoints) + "%[/color])\n\n";
         } else {
-            result += " (" + ((relPoints >= 0) ? "+" : "") + nf.format(relPoints) + "%)\n";
+            result += " (" + ((relPoints >= 0) ? "+" : "") + nf.format(relPoints) + "%)\n\n";
         }// </editor-fold>
 
         // <editor-fold defaultstate="collapsed" desc="Add rel village diff">
@@ -599,9 +638,9 @@ public class StatTextBuilder {
         nf.setMinimumFractionDigits(2);
         nf.setMaximumFractionDigits(2);
         if (pUseBBCodes) {
-            result += " ([color=" + ((relVillages >= 0) ? "green]" : "red]") + ((relVillages >= 0) ? "+" : "") + nf.format(relVillages) + "%[/color])\n";
+            result += " ([color=" + ((relVillages >= 0) ? "green]" : "red]") + ((relVillages >= 0) ? "+" : "") + nf.format(relVillages) + "%[/color])\n\n";
         } else {
-            result += " (" + ((relVillages >= 0) ? "+" : "") + nf.format(relVillages) + "%)\n";
+            result += " (" + ((relVillages >= 0) ? "+" : "") + nf.format(relVillages) + "%)\n\n";
         }// </editor-fold>
 
         // <editor-fold defaultstate="collapsed" desc="Add attacker diff">
@@ -622,9 +661,9 @@ public class StatTextBuilder {
         nf.setMinimumFractionDigits(2);
         nf.setMaximumFractionDigits(2);
         if (pUseBBCodes) {
-            result += " ([color=" + ((relBashOff >= 0) ? "green]" : "red]") + ((relBashOff >= 0) ? "+" : "") + nf.format(relBashOff) + "%[/color])\n";
+            result += " ([color=" + ((relBashOff >= 0) ? "green]" : "red]") + ((relBashOff >= 0) ? "+" : "") + nf.format(relBashOff) + "%[/color])\n\n";
         } else {
-            result += " (" + ((relBashOff >= 0) ? "+" : "") + nf.format(relBashOff) + "%)\n";
+            result += " (" + ((relBashOff >= 0) ? "+" : "") + nf.format(relBashOff) + "%)\n\n";
         }// </editor-fold>
 
         // <editor-fold defaultstate="collapsed" desc="Add defender diff">
@@ -645,9 +684,9 @@ public class StatTextBuilder {
         nf.setMinimumFractionDigits(2);
         nf.setMaximumFractionDigits(2);
         if (pUseBBCodes) {
-            result += " ([color=" + ((relBashDef >= 0) ? "green]" : "red]") + ((relBashDef >= 0) ? "+" : "") + nf.format(relBashDef) + "%[/color])\n";
+            result += " ([color=" + ((relBashDef >= 0) ? "green]" : "red]") + ((relBashDef >= 0) ? "+" : "") + nf.format(relBashDef) + "%[/color])\n\n";
         } else {
-            result += " (" + ((relBashDef >= 0) ? "+" : "") + nf.format(relBashDef) + "%)\n";
+            result += " (" + ((relBashDef >= 0) ? "+" : "") + nf.format(relBashDef) + "%)\n\n";
         }// </editor-fold>
 
         return result;

@@ -1107,13 +1107,13 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
     private void fireChangeStatTimeEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireChangeStatTimeEvent
         if (evt.getSource() == jWeeklyStats) {
             //remove one week from end date
-            long oneWeek = 1000 * 60 * 60 * 24 * 7;
+            long oneWeek = 1000l * 60l * 60l * 24l * 7l;
             Date end = (Date) jStatEndDate.getValue();
             long start = end.getTime() - oneWeek;
             jStatStartDate.setValue(new Date(start));
         } else {
             //remove one month from end date
-            long oneMonth = 1000 * 60 * 60 * 24 * 31;
+            long oneMonth = 1000l * 60l * 60l * 24l * 31l;
             Date end = (Date) jStatEndDate.getValue();
             long start = end.getTime() - oneMonth;
             jStatStartDate.setValue(new Date(start));

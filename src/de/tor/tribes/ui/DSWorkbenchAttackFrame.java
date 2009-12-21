@@ -63,6 +63,8 @@ import org.apache.log4j.Logger;
 
 // -Dsun.java2d.d3d=true -Dsun.java2d.translaccel=true -Dsun.java2d.ddforcevram=true
 /**
+ * @TODO (DIFF) Changed unit col to graphical representation
+ * @TODO (1.9) Added attack distribution via IGM
  * @author  Charon
  */
 public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements AttackManagerListener {
@@ -260,8 +262,6 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         jAPIKey = new javax.swing.JTextField();
         jSendButton = new javax.swing.JButton();
         jButton13 = new javax.swing.JButton();
-        jLabel23 = new javax.swing.JLabel();
-        jAttacksPerIGM = new javax.swing.JComboBox();
         jAttackPanel = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jAttackTable = new javax.swing.JTable();
@@ -1063,10 +1063,6 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
             }
         });
 
-        jLabel23.setText(bundle.getString("DSWorkbenchAttackFrame.jLabel23.text")); // NOI18N
-
-        jAttacksPerIGM.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "10 (empfohlen für bis zu 50 Angriffe)", "15 ", "20 (empfohlen für mehr als 50 Angriffe)", "25", "30" }));
-
         javax.swing.GroupLayout jSendAttacksIGMDialogLayout = new javax.swing.GroupLayout(jSendAttacksIGMDialog.getContentPane());
         jSendAttacksIGMDialog.getContentPane().setLayout(jSendAttacksIGMDialogLayout);
         jSendAttacksIGMDialogLayout.setHorizontalGroup(
@@ -1074,20 +1070,18 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
             .addGroup(jSendAttacksIGMDialogLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jSendAttacksIGMDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jSendAttacksIGMDialogLayout.createSequentialGroup()
-                        .addComponent(jButton13)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jSendButton))
                     .addGroup(jSendAttacksIGMDialogLayout.createSequentialGroup()
                         .addGroup(jSendAttacksIGMDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel20)
-                            .addComponent(jLabel22)
-                            .addComponent(jLabel23))
-                        .addGap(51, 51, 51)
+                            .addComponent(jLabel22))
+                        .addGap(93, 93, 93)
                         .addGroup(jSendAttacksIGMDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jAPIKey, javax.swing.GroupLayout.DEFAULT_SIZE, 298, Short.MAX_VALUE)
-                            .addComponent(jSubject, javax.swing.GroupLayout.DEFAULT_SIZE, 298, Short.MAX_VALUE)
-                            .addComponent(jAttacksPerIGM, 0, 298, Short.MAX_VALUE))))
+                            .addComponent(jSubject, javax.swing.GroupLayout.DEFAULT_SIZE, 298, Short.MAX_VALUE)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jSendAttacksIGMDialogLayout.createSequentialGroup()
+                        .addComponent(jButton13)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jSendButton)))
                 .addContainerGap())
         );
         jSendAttacksIGMDialogLayout.setVerticalGroup(
@@ -1102,10 +1096,6 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
                     .addComponent(jLabel22)
                     .addComponent(jAPIKey, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jSendAttacksIGMDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel23)
-                    .addComponent(jAttacksPerIGM, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(17, 17, 17)
                 .addGroup(jSendAttacksIGMDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jSendButton)
                     .addComponent(jButton13))
@@ -2470,45 +2460,24 @@ private void fireSendIGMsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
             }
         }
 
-        int attsPerIGM = 10;
-
-        switch (jAttacksPerIGM.getSelectedIndex()) {
-            case 1:
-                attsPerIGM = 15;
-                break;
-            case 2:
-                attsPerIGM = 20;
-                break;
-            case 3:
-                attsPerIGM = 25;
-                break;
-            case 4:
-                attsPerIGM = 30;
-                break;
-            default:
-                break;
-        }
-        String apiKey = jAPIKey.getText();
+        String apiKey = jAPIKey.getText().trim();
         Enumeration<Tribe> tribeKeys = attacks.keys();
         String sUrl = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
-        String messageStart = "(Diese IGM wurde automatisch durch DS Workbench generiert)\n";
+        String messageStart = "[i](Diese IGM wurde automatisch durch DS Workbench generiert)[/i]\n\n";
 
         while (tribeKeys.hasMoreElements()) {
             Tribe t = tribeKeys.nextElement();
             List<Attack> attacksForTribe = attacks.get(t);
             String message = messageStart;
             List<String> messages = new LinkedList<String>();
-            int cnt = 0;
             for (Attack a : attacksForTribe) {
                 String line = AttackToBBCodeFormater.formatAttack(a, sUrl, false);
-                if (cnt == attsPerIGM) {
-                    cnt = 0;
+                if (message.length() + line.length() > 2000) {
                     messages.add(message);
                     message = messageStart + line;
                 } else {
                     message += line;
                 }
-                cnt++;
             }
 
             if (messages.size() > 8) {
@@ -2519,23 +2488,25 @@ private void fireSendIGMsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
                 return;
             }
 
+            int cnt = 1;
             if (messages.size() > 0) {
                 //send multi messages
-                cnt = 1;
                 for (String m : messages) {
-                    if (!IGMSender.sendIGM(t, apiKey, subject, m)) {
+                    String sub = subject + " (Teil " + cnt + "/" + (messages.size() + 1) + ")";
+                    if (!IGMSender.sendIGM(t, apiKey, sub, m)) {
                         JOptionPaneHelper.showErrorBox(jSendAttacksIGMDialog, "Fehler beim Versenden von IGM " + cnt + " an '" + t + "'", "Fehler");
                         return;
                     }
                     cnt++;
                 }
-                if (!IGMSender.sendIGM(t, apiKey, subject, message)) {
-                    JOptionPaneHelper.showErrorBox(jSendAttacksIGMDialog, "Fehler beim Versenden von IGM " + cnt + " an '" + t + "'", "Fehler");
-                    return;
-                }
+            }
+            String sub = subject + " (Teil " + cnt + "/" + (messages.size() + 1) + ")";
+            if (!IGMSender.sendIGM(t, apiKey, sub, message)) {
+                JOptionPaneHelper.showErrorBox(jSendAttacksIGMDialog, "Fehler beim Versenden von IGM " + cnt + " an '" + t + "'", "Fehler");
+                return;
             }
         }
-
+        JOptionPaneHelper.showInformationBox(jSendAttacksIGMDialog, "IGMs erfolgreich verschickt.", "Information");
     }
     jSendAttacksIGMDialog.setVisible(false);
 }//GEN-LAST:event_fireSendIGMsEvent
@@ -2667,7 +2638,6 @@ private void fireSendIGMsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
     private javax.swing.JPanel jAttackPanel;
     private javax.swing.JTextField jAttackPlanName;
     private javax.swing.JTable jAttackTable;
-    private javax.swing.JComboBox jAttacksPerIGM;
     private javax.swing.JButton jAttacksToScriptButton;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton10;
@@ -2714,7 +2684,6 @@ private void fireSendIGMsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel22;
-    private javax.swing.JLabel jLabel23;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;

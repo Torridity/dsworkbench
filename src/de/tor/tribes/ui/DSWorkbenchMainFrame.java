@@ -550,6 +550,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             DSWorkbenchDistanceFrame.getSingleton().setup();
             DSWorkbenchStatsFrame.getSingleton().setup();
             DSWorkbenchDoItYourselfAttackPlaner.getSingleton().setupAttackPlaner();
+            DSWorkbenchReTimerFrame.getSingleton().setup();
             //update attack planner
             if (mTribeTribeAttackFrame != null) {
                 mTribeTribeAttackFrame.setup();

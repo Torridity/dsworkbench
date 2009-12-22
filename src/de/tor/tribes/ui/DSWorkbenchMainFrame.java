@@ -606,6 +606,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             FormConfigFrame.getSingleton();
             DSWorkbenchSearchFrame.getSingleton();
             DSWorkbenchSelectionFrame.getSingleton();
+            DSWorkbenchStatsFrame.getSingleton();
             logger.info("Server settings updated");
             String path = "./servers/" + GlobalOptions.getSelectedServer() + "/serverdata.bin";
             if (!DSWorkbenchSettingsDialog.getSingleton().isVisible()) {
@@ -619,6 +620,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         } catch (Exception e) {
             logger.error("Error while refreshing server settings", e);
         }
+        DSWorkbenchReTimerFrame.getSingleton().setVisible(true);
     }
 
     /**Update UI depending on online state*/

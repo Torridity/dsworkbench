@@ -4,12 +4,9 @@
  */
 package de.tor.tribes.util.algo;
 
-import de.tor.tribes.io.UnitHolder;
-import de.tor.tribes.types.AbstractTroopMovement;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.List;
 
 /*
  * Its constructor takes sources, destinations and costs (an array of Hashtables).
@@ -222,7 +219,7 @@ public class Optex<S extends Source, D extends Destination> {
         return -1;
     }
 
-    protected double _getCosts(Source s, Destination d) {
+    public double _getCosts(Source s, Destination d) {
         return this.costs[this.sources.indexOf(s)].get(d);
     }
 

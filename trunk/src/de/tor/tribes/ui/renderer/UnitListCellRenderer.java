@@ -6,39 +6,53 @@ package de.tor.tribes.ui.renderer;
 
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.ui.ImageManager;
+import de.tor.tribes.util.Constants;
+import java.awt.Color;
 import java.awt.Component;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.ListCellRenderer;
 import javax.swing.SwingConstants;
 
 /**
  *
  * @author Torridity
  */
-public class UnitListCellRenderer extends DefaultListCellRenderer {
+public class UnitListCellRenderer extends JLabel implements ListCellRenderer {
 
     public UnitListCellRenderer() {
+        super();
     }
 
     @Override
     public Component getListCellRendererComponent(JList list, Object pValue, int pIndex, boolean pSelected, boolean pHasFocus) {
-        Component c = super.getListCellRendererComponent(list, pValue, pIndex, pSelected, pHasFocus);
+        //Component c = super.getListCellRendererComponent(list, pValue, pIndex, pSelected, pHasFocus);
+
+        setOpaque(true);
+        if (pSelected) {
+            setForeground(list.getSelectionForeground());
+            super.setBackground(list.getSelectionBackground());
+        } else {
+            setBackground(list.getBackground());
+            setForeground(list.getForeground());
+        }
+
         try {
-            ((JLabel) c).setHorizontalAlignment(SwingConstants.CENTER);
+            setHorizontalAlignment(SwingConstants.CENTER);
             if (pValue == null) {
                 //no icon!?
-                ((JLabel) c).setText("-");
-                ((JLabel) c).setIcon(null);
+                setText("-");
+                setIcon(null);
             } else {
-                ((JLabel) c).setText("");
-                ((JLabel) c).setIcon(ImageManager.getUnitIcon((UnitHolder) pValue));
+                setText("");
+                setIcon(ImageManager.getUnitIcon((UnitHolder) pValue));
             }
         } catch (Exception e) {
             //cast problem
         }
 
-        return c;
+        return this;
 
     }
 }

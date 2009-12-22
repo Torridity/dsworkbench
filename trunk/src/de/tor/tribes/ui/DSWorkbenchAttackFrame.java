@@ -141,8 +141,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
             renderers.add(headerRenderer);
         }
 
-        jAttackTable.setDefaultRenderer(Integer.class, new AttackTypeCellRenderer());
-        jAttackTable.setDefaultEditor(Integer.class, new AttackTypeCellEditor());
+
         jAddPlanDialog.pack();
         jCopyToPlanDialog.pack();
         jRenamePlanDialog.pack();
@@ -2430,7 +2429,6 @@ private void fireSendAttacksAsIGMEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
 
     int[] selectedRows = jAttackTable.getSelectedRows();
     if (selectedRows != null && selectedRows.length < 1) {
-        JOptionPaneHelper.showInformationBox(this, "Keine Angriffe aufgewählt.", "Information");
         return;
     }
     String selectedPlan = AttackManagerTableModel.getSingleton().getActiveAttackPlan();
@@ -2588,6 +2586,9 @@ private void fireSendIGMsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
         jAttackTable.setDefaultEditor(UnitHolder.class, new UnitCellEditor());
         jAttackTable.setDefaultRenderer(UnitHolder.class, new UnitCellRenderer());
         jAttackTable.setDefaultEditor(Village.class, new VillageCellEditor());
+        jAttackTable.setDefaultRenderer(Integer.class, new AttackTypeCellRenderer());
+        jAttackTable.setDefaultEditor(Integer.class, new AttackTypeCellEditor());
+
         AttackManager.getSingleton().forceUpdate(null);
         buildAttackPlanList();
         jActiveAttackPlan.setSelectedItem(AttackManager.DEFAULT_PLAN_ID);

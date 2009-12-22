@@ -20,6 +20,7 @@ import de.tor.tribes.ui.dnd.GhostComponentAdapter;
 import de.tor.tribes.ui.dnd.GhostGlassPane;
 import de.tor.tribes.ui.dnd.GhostMotionAdapter;
 import de.tor.tribes.ui.editors.AttackTypeCellEditor;
+import de.tor.tribes.ui.editors.FakeCellEditor;
 import de.tor.tribes.ui.editors.UnitCellEditor;
 import de.tor.tribes.ui.models.TroopsManagerTableModel;
 import de.tor.tribes.ui.renderer.AttackTypeCellRenderer;
@@ -281,8 +282,9 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame {
             jAttacksTable.setDefaultEditor(Date.class, new DateSpinEditor());*/
             jAttacksTable.setDefaultEditor(UnitHolder.class, new UnitCellEditor());
             jAttacksTable.setDefaultRenderer(UnitHolder.class, new UnitCellRenderer());
-            //jAttacksTable.setDefaultEditor(Village.class, new FakeC());
+            jAttacksTable.setDefaultEditor(Boolean.class, new FakeCellEditor());
             jAttacksTable.setDefaultRenderer(Boolean.class, new FakeCellRenderer());
+
             jAttacksTable.setRowHeight(20);
             jVictimTable.setRowHeight(20);
             DefaultComboBoxModel unitModel = new DefaultComboBoxModel(DataHolder.getSingleton().getUnits().toArray(new UnitHolder[]{}));
@@ -2087,7 +2089,7 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
     if (type == 0) {
         logger.info("Using 'BruteForce' algorithm");
         algo = new BruteForce();
-        /* algo = new OptexWrapper();/*.calculateAttacks(sources,
+        /*  algo = new OptexWrapper();/*.calculateAttacks(sources,
         fakes,
         victimVillages,
         maxAttacksPerVillage,
@@ -3146,7 +3148,7 @@ private void fireTargetAllyFilterChangedEvent(javax.swing.event.CaretEvent evt) 
         DefaultTableModel resultModel = new javax.swing.table.DefaultTableModel(
                 new Object[][]{},
                 new String[]{
-                    "Herkunft", "Truppen", "Ziel", "Startzeit", "Typ", ""}) {
+                    "Herkunft", "Einheit", "Ziel", "Startzeit", "Typ", ""}) {
 
             Class[] types = new Class[]{
                 Village.class, UnitHolder.class, Village.class, Date.class, Integer.class, Boolean.class
@@ -3159,10 +3161,7 @@ private void fireTargetAllyFilterChangedEvent(javax.swing.event.CaretEvent evt) 
 
             @Override
             public boolean isCellEditable(int row, int col) {
-                if (col == 5) {
-                    return false;
-                }
-                return true;
+                return false;
             }
         };
 
@@ -3203,6 +3202,9 @@ private void fireTargetAllyFilterChangedEvent(javax.swing.event.CaretEvent evt) 
         jResultsTable.setDefaultRenderer(Boolean.class, invis);
         jResultsTable.setDefaultRenderer(Integer.class, new AttackTypeCellRenderer());
         jResultsTable.setDefaultEditor(Integer.class, new AttackTypeCellEditor());
+        jResultsTable.setDefaultRenderer(UnitHolder.class, new UnitCellRenderer());
+        jResultsTable.setDefaultEditor(UnitHolder.class, new UnitCellEditor());
+        jResultsTable.setRowHeight(20);
 
         //jResultsTable.setDefaultRenderer(Date.class, new DateCellRenderer());
 

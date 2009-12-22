@@ -1404,7 +1404,7 @@
                               <EmptySpace min="-2" max="-2" attributes="0"/>
                               <Component id="jSetFakeButton" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <Component id="jScrollPane1" alignment="1" pref="298" max="32767" attributes="0"/>
+                          <Component id="jScrollPane1" alignment="1" pref="301" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jPanel1" min="-2" max="-2" attributes="1"/>
@@ -2165,7 +2165,7 @@
                               <Component id="jButton9" min="-2" max="-2" attributes="1"/>
                           </Group>
                           <Group type="102" alignment="1" attributes="0">
-                              <Component id="jScrollPane3" pref="757" max="32767" attributes="0"/>
+                              <Component id="jScrollPane3" pref="755" max="32767" attributes="0"/>
                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
                               <Component id="jFilterTargetButton" min="-2" max="-2" attributes="0"/>
                           </Group>
@@ -2180,7 +2180,7 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="jFilterTargetButton" min="-2" max="-2" attributes="0"/>
-                          <Component id="jScrollPane3" pref="382" max="32767" attributes="0"/>
+                          <Component id="jScrollPane3" pref="385" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jPanel6" min="-2" max="-2" attributes="1"/>
@@ -2589,7 +2589,7 @@
                       <Component id="jAllInOneAlgorithm" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="jBlitzkriegAlgorithm" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="386" max="32767" attributes="0"/>
+                      <EmptySpace pref="389" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>

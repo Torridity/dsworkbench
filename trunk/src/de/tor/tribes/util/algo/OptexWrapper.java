@@ -38,36 +38,37 @@ public class OptexWrapper extends AbstractAttackAlgorithm {
 
         UnitHolder ram = DataHolder.getSingleton().getUnitByPlainName("ram");
         List<de.tor.tribes.types.Village> offSources = pSources.get(ram);
+
+
         ArrayList<OffVillage> offs = prepareSourceList(offSources, pTargets, pTimeFrame, ram.getSpeed());
-
-        ArrayList<TargetVillage> offTargets = prepareTargetList(pTargets, pMaxAttacksPerVillage);
-
-        Hashtable<Destination, Double>[] costs = calculateOffCosts(offs, offTargets, pTimeFrame, ram.getSpeed() * 60000);
+        ArrayList<TargetVillage> offTargets = prepareTargetList(pTargets, 1);
+        Hashtable<Destination, Double>[] costs = calculateOffCosts(offs, offTargets, pTimeFrame, ram.getSpeed());
         Optex<OffVillage, TargetVillage> algo = new Optex<OffVillage, TargetVillage>(offs, offTargets, costs);
         Hashtable<Village, AbstractTroopMovement> targetMappings = new Hashtable<Village, AbstractTroopMovement>();
 
         try {
             algo.run();
-            for (OffVillage src : offs) {
+            for (OffVillage src : offs.toArray(new OffVillage[]{})) {
                 for (Order o : src.getOrders()) {
                     de.tor.tribes.util.algo.Village s = (de.tor.tribes.util.algo.Village) src;
                     if (o.getAmount() > 0) {
                         TargetVillage dest = (TargetVillage) o.getDestination();
                         Village v = DataHolder.getSingleton().getVillages()[dest.getC().getX()][dest.getC().getY()];
                         if (v != null) {
-
                             pTargets.remove(v);
                             AbstractTroopMovement mapping = targetMappings.get(v);
                             if (mapping == null) {
                                 mapping = new Off(v, pMaxAttacksPerVillage);
                                 targetMappings.put(v, mapping);
                             }
+
                             Village source = DataHolder.getSingleton().getVillages()[src.getC().getX()][src.getC().getY()];
                             if (source != null) {
                                 double dist = DSCalculator.calculateDistance(v, source);
                                 double runtime = dist * ram.getSpeed() * 60000;
                                 long send = pTimeFrame.getEnd() - (long) Math.round(runtime);
                                 if (pTimeFrame.inside(new Date(send), null)) {
+                                    System.out.println("Costs: " + algo._getCosts(src, dest));
                                     mapping.addOff(ram, source);
                                 }
                             }
@@ -79,41 +80,42 @@ public class OptexWrapper extends AbstractAttackAlgorithm {
             e.printStackTrace();
         }
 
+        /*
         offs = prepareSourceList(pFakes.get(ram), pTargets, pTimeFrame, pMaxAttacksPerVillage);
         ArrayList<TargetVillage> fakeTargets = prepareTargetList(pTargets, pMaxAttacksPerVillage);
         costs = calculateOffCosts(offs, fakeTargets, pTimeFrame, ram.getSpeed());
         algo = new Optex<OffVillage, TargetVillage>(offs, fakeTargets, costs);
 
         try {
-            algo.run();
-            for (OffVillage src : offs) {
-                for (Order o : src.getOrders()) {
-                    if (o.getAmount() > 0) {
-                        TargetVillage dest = (TargetVillage) o.getDestination();
-                        Village v = DataHolder.getSingleton().getVillages()[dest.getC().getX()][dest.getC().getY()];
-                        if (v != null) {
-                            AbstractTroopMovement mapping = targetMappings.get(v);
-                            if (mapping == null) {
-                                mapping = new Fake(v, pMaxAttacksPerVillage);
-                                targetMappings.put(v, mapping);
-                            }
-                            Village source = DataHolder.getSingleton().getVillages()[src.getC().getX()][src.getC().getY()];
-                            if (source != null) {
-                                double dist = DSCalculator.calculateDistance(v, source);
-                                double runtime = dist * ram.getSpeed() * 60000;
-                                long send = pTimeFrame.getEnd() - (long) Math.round(runtime);
-                                if (pTimeFrame.inside(new Date(send), null)) {
-                                    mapping.addOff(ram, source);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        algo.run();
+        for (OffVillage src : offs) {
+        for (Order o : src.getOrders()) {
+        if (o.getAmount() > 0) {
+        TargetVillage dest = (TargetVillage) o.getDestination();
+        Village v = DataHolder.getSingleton().getVillages()[dest.getC().getX()][dest.getC().getY()];
+        if (v != null) {
+        AbstractTroopMovement mapping = targetMappings.get(v);
+        if (mapping == null) {
+        mapping = new Fake(v, pMaxAttacksPerVillage);
+        targetMappings.put(v, mapping);
         }
-
+        Village source = DataHolder.getSingleton().getVillages()[src.getC().getX()][src.getC().getY()];
+        if (source != null) {
+        double dist = DSCalculator.calculateDistance(v, source);
+        double runtime = dist * ram.getSpeed() * 60000;
+        long send = pTimeFrame.getEnd() - (long) Math.round(runtime);
+        if (pTimeFrame.inside(new Date(send), null)) {
+        mapping.addOff(ram, source);
+        }
+        }
+        }
+        }
+        }
+        }
+        } catch (Exception e) {
+        e.printStackTrace();
+        }
+         */
         LinkedList<AbstractTroopMovement> result = new LinkedList<AbstractTroopMovement>();
         Enumeration<Village> keys = targetMappings.keys();
         while (keys.hasMoreElements()) {
@@ -191,7 +193,6 @@ public class OptexWrapper extends AbstractAttackAlgorithm {
                 long send = pTimeFrame.getEnd() - (long) Math.round(runtime);
                 double cost = dist;
                 if (!pTimeFrame.inside(new Date(send), null)) {
-                    System.out.println("MAX COST for " + pOffs.get(i) + " -> " + pTargets.get(j));
                     //increase costs to max
                     cost = Double.MAX_VALUE;
                 }

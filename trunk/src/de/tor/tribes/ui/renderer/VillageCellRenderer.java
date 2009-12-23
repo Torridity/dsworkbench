@@ -12,6 +12,8 @@ import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.ServerSettings;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;

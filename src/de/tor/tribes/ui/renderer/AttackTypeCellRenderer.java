@@ -5,6 +5,8 @@
 package de.tor.tribes.ui.renderer;
 
 import java.awt.Component;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.ImageIcon;
@@ -40,6 +42,7 @@ public class AttackTypeCellRenderer implements TableCellRenderer {
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         Component c = renderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+        
         try {
             Integer type = (Integer) value;
             ((JLabel) c).setHorizontalAlignment(SwingConstants.CENTER);

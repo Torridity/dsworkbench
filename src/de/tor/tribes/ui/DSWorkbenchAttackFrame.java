@@ -40,9 +40,14 @@ import de.tor.tribes.util.IGMSender;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.js.AttackScriptWriter;
 import java.awt.Component;
+import java.awt.MouseInfo;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ItemEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionAdapter;
+import java.awt.event.MouseMotionListener;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -2566,8 +2571,7 @@ private void fireSendIGMsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
             }
         };
 
-        for (int i = 0; i <
-                pTable.getColumnCount(); i++) {
+        for (int i = 0; i < pTable.getColumnCount(); i++) {
             pTable.getColumn(pTable.getColumnName(i)).setHeaderRenderer(headerRenderer);
         }
 
@@ -2588,6 +2592,29 @@ private void fireSendIGMsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
         jAttackTable.setDefaultEditor(Village.class, new VillageCellEditor());
         jAttackTable.setDefaultRenderer(Integer.class, new AttackTypeCellRenderer());
         jAttackTable.setDefaultEditor(Integer.class, new AttackTypeCellEditor());
+        jAttackTable.addMouseMotionListener(new MouseMotionListener() {
+
+            @Override
+            public void mouseDragged(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                try {
+                    int row = jAttackTable.rowAtPoint(e.getPoint());
+                    int col = jAttackTable.columnAtPoint(e.getPoint());
+
+                    if ((col == 0) || (col == 1)) {
+                        Village v = (Village) AttackManagerTableModel.getSingleton().getValueAt(row, col);
+                        PopupInfoFrame.getSingleton().setInfoItem(v);
+                        PopupInfoFrame.getSingleton().setVisible(true);
+                    }
+
+                } catch (Exception ex) {
+                }
+            }
+        });
+
 
         AttackManager.getSingleton().forceUpdate(null);
         buildAttackPlanList();

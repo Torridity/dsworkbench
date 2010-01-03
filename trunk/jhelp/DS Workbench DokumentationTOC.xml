@@ -91,6 +91,10 @@
 
     <tocitem text="Entfernungs&#252;bersicht " target="pages.distance_overview" image="images.tictac_grey"/>
 
+    <tocitem text="Manueller Angriffsplaner " target="pages.manual_attack_planer" image="images.tictac_grey"/>
+
+    <tocitem text="Re-Time Werkzeug " target="pages.retime_tool" image="images.tictac_grey"/>
+
    </tocitem>
   </tocitem>
   <tocitem text="Ansichten " target="pages.views" image="images.tictac_orange">
@@ -102,6 +106,8 @@
     <tocitem text="Standardangriffe " target="pages.standard_attacks" image="images.tictac_grey"/>
 
     <tocitem text="Userscript - Angriffsinformationen " target="pages.attack_info_script" image="images.tictac_grey"/>
+
+    <tocitem text="Angriffe als IGMs versenden " target="pages.attacks_as_igm" image="images.tictac_grey"/>
 
    </tocitem>
    <tocitem text="Markierungen " target="pages.markers_view" image="images.tictac_grey"/>
@@ -119,6 +125,8 @@
    <tocitem text="Notizblock " target="pages.notes_view" image="images.tictac_grey"/>
 
    <tocitem text="Tag&#252;bersicht " target="pages.tag_view" image="images.tictac_grey"/>
+
+   <tocitem text="Statistiken " target="pages.stats_view" image="images.tictac_grey"/>
 
   </tocitem>
   <tocitem text="Shortcuts " target="pages.shortcuts" image="images.tictac_orange"/>

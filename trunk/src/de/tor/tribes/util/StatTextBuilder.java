@@ -61,6 +61,13 @@ public class StatTextBuilder {
                 }
             }
 
+            double killsPerPonts = s.getKillPerPoint();
+            if (pUseBBCodes) {
+                result += "[color=" + ((killsPerPonts > 0) ? "green]" : "red]") + nf.format(killsPerPonts) + " Kills/Punkt[/color]\n";
+            } else {
+                result += nf.format(killsPerPonts) + " Kills/Punkt\n";
+            }
+
             nf = NumberFormat.getInstance();
             nf.setMinimumFractionDigits(0);
             nf.setMaximumFractionDigits(0);
@@ -243,6 +250,8 @@ public class StatTextBuilder {
         List<Stats> relVillageList = new LinkedList<Stats>();
         double relBashOff = 0.0;
         List<Stats> relBashOffList = new LinkedList<Stats>();
+        double killsPerPoint = 0.0;
+        List<Stats> killsPerPointList = new LinkedList<Stats>();
         double relBashDef = 0.0;
         List<Stats> relBashDefList = new LinkedList<Stats>();
         for (Stats elem : pStats) {
@@ -308,6 +317,19 @@ public class StatTextBuilder {
                 relBashOffList.add(elem);
             }// </editor-fold>
 
+            // <editor-fold defaultstate="collapsed" desc="check kills per point">
+            diffBest = elem.getKillPerPoint();
+
+            if (diffBest > killsPerPoint) {
+                killsPerPoint = diffBest;
+                //remove all former elements and add only better elems
+                killsPerPointList.clear();
+                killsPerPointList.add(elem);
+            } else if (diffBest == killsPerPoint) {
+                //add same value as we have
+                killsPerPointList.add(elem);
+            }// </editor-fold>
+
             // <editor-fold defaultstate="collapsed" desc="check rel bash def growing">
             diffBest = elem.getBashDefDiff();
             currPerc = 0;
@@ -327,9 +349,9 @@ public class StatTextBuilder {
 
         // <editor-fold defaultstate="collapsed" desc="Add abs point diff">
         if (pUseBBCodes) {
-            result += "[b]Größtes Punktwachstum (Absolut):[/b] ";
+            result += "[b]Punktesammler(in):[/b] ";
         } else {
-            result += "Größtes Punktewachstum (Absolut): ";
+            result += "Punktesammler(in): ";
         }
 
         for (Stats s : absPointsList) {
@@ -338,87 +360,87 @@ public class StatTextBuilder {
         result = result.substring(0, result.lastIndexOf(","));
 
         if (pUseBBCodes) {
-            result += " ([color=" + ((absPoints >= 0) ? "green]+" : "red]") + nf.format(absPoints) + "[/color])\n\n";
+            result += " ([color=" + ((absPoints >= 0) ? "green]+" : "red]") + nf.format(absPoints) + " Punkte[/color])\n\n";
         } else {
-            result += " (" + nf.format(absPoints) + "\n\n";
+            result += " (+" + nf.format(absPoints) + " Punkte)\n\n";
         }// </editor-fold>
 
         // <editor-fold defaultstate="collapsed" desc="Add rel point diff">
         if (pUseBBCodes) {
-            result += "[b]Größtes Punktwachstum (Relativ):[/b] ";
+            result += "[b]Überflieger(in):[/b] ";
         } else {
-            result += "Größtes Punktewachstum (Relativ): ";
+            result += "Überflieger(in): ";
         }
         nf = NumberFormat.getInstance();
         nf.setMinimumFractionDigits(0);
         nf.setMaximumFractionDigits(0);
 
         for (Stats s : relPointsList) {
-            result += (pUseBBCodes) ? (s.getParent().getTribe().toBBCode() + " (+" + nf.format(s.getPointDiff()) + "), ") : (s.getParent().getTribe().toString() + " (+" + nf.format(s.getPointDiff()) + "), ");
+            result += (pUseBBCodes) ? (s.getParent().getTribe().toBBCode() + ", ") : (s.getParent().getTribe().toString() + ", ");
         }
         //remove last comma
         result = result.substring(0, result.lastIndexOf(","));
         nf.setMinimumFractionDigits(2);
         nf.setMaximumFractionDigits(2);
         if (pUseBBCodes) {
-            result += " ([color=" + ((relPoints >= 0) ? "green]" : "red]") + ((relPoints >= 0) ? "+" : "") + nf.format(relPoints) + "%[/color])\n\n";
+            result += " ([color=" + ((relPoints >= 0) ? "green]" : "red]") + ((relPoints >= 0) ? "+" : "") + nf.format(relPoints) + "% Punktewachstum[/color])\n\n";
         } else {
-            result += " (" + ((relPoints >= 0) ? "+" : "") + nf.format(relPoints) + "%)\n\n";
+            result += " (" + ((relPoints >= 0) ? "+" : "") + nf.format(relPoints) + "% Punktewachstum)\n\n";
         }// </editor-fold>
 
         // <editor-fold defaultstate="collapsed" desc="Add rel village diff">
         if (pUseBBCodes) {
-            result += "[b]Größter Dorfgewinn:[/b] ";
+            result += "[b]Adelkönig(in):[/b] ";
         } else {
-            result += "Größtes Dorfgewinn: ";
+            result += "Adelkönig(in): ";
         }
 
         nf.setMinimumFractionDigits(0);
         nf.setMaximumFractionDigits(0);
 
         for (Stats s : relVillageList) {
-            result += (pUseBBCodes) ? (s.getParent().getTribe().toBBCode() + " (+" + nf.format(s.getVillageDiff()) + "), ") : (s.getParent().getTribe().toString() + " (+" + nf.format(s.getVillageDiff()) + "), ");
+            result += (pUseBBCodes) ? (s.getParent().getTribe().toBBCode() + ", ") : (s.getParent().getTribe().toString() + ", ");
         }
         //remove last comma
         result = result.substring(0, result.lastIndexOf(","));
         nf.setMinimumFractionDigits(2);
         nf.setMaximumFractionDigits(2);
         if (pUseBBCodes) {
-            result += " ([color=" + ((relVillages >= 0) ? "green]" : "red]") + ((relVillages >= 0) ? "+" : "") + nf.format(relVillages) + "%[/color])\n\n";
+            result += " ([color=" + ((relVillages >= 0) ? "green]" : "red]") + ((relVillages >= 0) ? "+" : "") + nf.format(relVillages) + "% Dorfzuwachs[/color])\n\n";
         } else {
-            result += " (" + ((relVillages >= 0) ? "+" : "") + nf.format(relVillages) + "%)\n\n";
+            result += " (" + ((relVillages >= 0) ? "+" : "") + nf.format(relVillages) + "% Dorfzuwachs)\n\n";
         }// </editor-fold>
 
         // <editor-fold defaultstate="collapsed" desc="Add attacker diff (relative)">
         if (pUseBBCodes) {
-            result += "[b]Bester Angreifer (Relativ):[/b] ";
+            result += "[b]Unbeliebtester Spieler:[/b] ";
         } else {
-            result += "Bester Angreifer (Relativ): ";
+            result += "Unbeliebtester Spieler: ";
         }
 
         nf.setMinimumFractionDigits(0);
         nf.setMaximumFractionDigits(0);
 
         for (Stats s : relBashOffList) {
-            result += (pUseBBCodes) ? (s.getParent().getTribe().toBBCode() + " (+" + nf.format(s.getBashOffDiff()) + "), ") : (s.getParent().getTribe().toString() + " (+" + nf.format(s.getBashOffDiff()) + "), ");
+            result += (pUseBBCodes) ? (s.getParent().getTribe().toBBCode() + ", ") : (s.getParent().getTribe().toString() + ", ");
         }
         //remove last comma
         result = result.substring(0, result.lastIndexOf(","));
         nf.setMinimumFractionDigits(2);
         nf.setMaximumFractionDigits(2);
         if (pUseBBCodes) {
-            result += " ([color=" + ((relBashOff >= 0) ? "green]" : "red]") + ((relBashOff >= 0) ? "+" : "") + nf.format(relBashOff) + "%[/color])\n\n";
+            result += " ([color=" + ((relBashOff >= 0) ? "green]" : "red]") + ((relBashOff >= 0) ? "+" : "") + nf.format(relBashOff) + "% Zuwachs (Kills Off)[/color])\n\n";
         } else {
-            result += " (" + ((relBashOff >= 0) ? "+" : "") + nf.format(relBashOff) + "%)\n\n";
+            result += " (" + ((relBashOff >= 0) ? "+" : "") + nf.format(relBashOff) + "% Zuwachs (Kills Off))\n\n";
         }// </editor-fold>
 
         // <editor-fold defaultstate="collapsed" desc="Add attacker diff (absolute)">
         Collections.sort(pStats, Stats.BASH_OFF_COMPARATOR);
         Stats best = pStats.get(0);
         if (pUseBBCodes) {
-            result += "[b]Bester Angreifer (Absolut):[/b] ";
+            result += "[b]'Angriff ist die beste Verteidigung':[/b] ";
         } else {
-            result += "Bester Angreifer (Absolut): ";
+            result += "'Angriff ist die beste Verteidigung': ";
         }
 
         nf.setMinimumFractionDigits(0);
@@ -426,41 +448,64 @@ public class StatTextBuilder {
 
         result += (pUseBBCodes) ? best.getParent().getTribe().toBBCode() : best.getParent().getTribe().toString();
         if (pUseBBCodes) {
-            result += " ([color=" + ((best.getBashOffDiff() >= 0) ? "green]+" : "red]") + nf.format(best.getBashOffDiff()) + "[/color])\n\n";
+            result += " ([color=" + ((best.getBashOffDiff() >= 0) ? "green]+" : "red]") + nf.format(best.getBashOffDiff()) + " Kills (Off)[/color])\n\n";
         } else {
-            result += " (" + ((best.getBashOffDiff() >= 0) ? "+" : "") + nf.format(best.getBashOffDiff()) + "%)\n\n";
+            result += " (" + ((best.getBashOffDiff() >= 0) ? "+" : "") + nf.format(best.getBashOffDiff()) + " Kills (Off))\n\n";
         }// </editor-fold>
 
-        // <editor-fold defaultstate="collapsed" desc="Add defender diff">
+        // <editor-fold defaultstate="collapsed" desc="Add kills per point)">
         if (pUseBBCodes) {
-            result += "[b]Bester Verteidiger (Relativ):[/b] ";
+            result += "[b]'Ein hart erarbeiteter Sieg':[/b] ";
         } else {
-            result += "Bester Verteidiger (Relativ): ";
+            result += "'Ein hart erarbeiteter Sieg': ";
         }
 
         nf.setMinimumFractionDigits(0);
         nf.setMaximumFractionDigits(0);
 
-        for (Stats s : relBashDefList) {
-            result += (pUseBBCodes) ? (s.getParent().getTribe().toBBCode() + " (+" + nf.format(s.getBashDefDiff()) + "), ") : (s.getParent().getTribe().toString() + " (+" + nf.format(s.getBashDefDiff()) + "), ");
+        for (Stats s : killsPerPointList) {
+            result += (pUseBBCodes) ? (s.getParent().getTribe().toBBCode() + ", ") : (s.getParent().getTribe().toString() + ", ");
         }
         //remove last comma
         result = result.substring(0, result.lastIndexOf(","));
         nf.setMinimumFractionDigits(2);
         nf.setMaximumFractionDigits(2);
         if (pUseBBCodes) {
-            result += " ([color=" + ((relBashDef >= 0) ? "green]" : "red]") + ((relBashDef >= 0) ? "+" : "") + nf.format(relBashDef) + "%[/color])\n\n";
+            result += " ([color=" + ((killsPerPoint >= 0) ? "green]" : "red]") + ((killsPerPoint >= 0) ? "+" : "") + nf.format(killsPerPoint) + " Kills pro Punkt[/color])\n\n";
         } else {
-            result += " (" + ((relBashDef >= 0) ? "+" : "") + nf.format(relBashDef) + "%)\n\n";
+            result += " (" + ((killsPerPoint >= 0) ? "+" : "") + nf.format(killsPerPoint) + " Kills pro Punkt)\n\n";
+        }// </editor-fold>
+
+        // <editor-fold defaultstate="collapsed" desc="Add defender diff">
+        if (pUseBBCodes) {
+            result += "[b]Beliebtester Spieler:[/b] ";
+        } else {
+            result += "Beliebtester Spieler: ";
+        }
+
+        nf.setMinimumFractionDigits(0);
+        nf.setMaximumFractionDigits(0);
+
+        for (Stats s : relBashDefList) {
+            result += (pUseBBCodes) ? (s.getParent().getTribe().toBBCode() + ", ") : (s.getParent().getTribe().toString() + ", ");
+        }
+        //remove last comma
+        result = result.substring(0, result.lastIndexOf(","));
+        nf.setMinimumFractionDigits(2);
+        nf.setMaximumFractionDigits(2);
+        if (pUseBBCodes) {
+            result += " ([color=" + ((relBashDef >= 0) ? "green]" : "red]") + ((relBashDef >= 0) ? "+" : "") + nf.format(relBashDef) + "% Zuwachs (Kills Deff)[/color])\n\n";
+        } else {
+            result += " (" + ((relBashDef >= 0) ? "+" : "") + nf.format(relBashDef) + "% Zuwachs (Kills Deff))\n\n";
         }// </editor-fold>
 
         // <editor-fold defaultstate="collapsed" desc="Add defender diff (absolute)">
         Collections.sort(pStats, Stats.BASH_DEF_COMPARATOR);
         best = pStats.get(0);
         if (pUseBBCodes) {
-            result += "[b]Bester Verteidiger (Absolut):[/b] ";
+            result += "[b]'My Home is my Castle':[/b] ";
         } else {
-            result += "Bester Verteidiger (Absolut): ";
+            result += "'My Home is my Castle': ";
         }
 
         nf.setMinimumFractionDigits(0);
@@ -468,9 +513,9 @@ public class StatTextBuilder {
 
         result += (pUseBBCodes) ? best.getParent().getTribe().toBBCode() : best.getParent().getTribe().toString();
         if (pUseBBCodes) {
-            result += " ([color=" + ((best.getBashDefDiff() >= 0) ? "green]+" : "red]") + nf.format(best.getBashDefDiff()) + "[/color])\n\n";
+            result += " ([color=" + ((best.getBashDefDiff() >= 0) ? "green]+" : "red]") + nf.format(best.getBashDefDiff()) + " Kills (Deff)[/color])\n\n";
         } else {
-            result += " (" + ((best.getBashDefDiff() >= 0) ? "+" : "") + nf.format(best.getBashDefDiff()) + "%)\n\n";
+            result += " (" + ((best.getBashDefDiff() >= 0) ? "+" : "") + nf.format(best.getBashDefDiff()) + "% Kills (Deff))\n\n";
         }// </editor-fold>
 
 
@@ -493,6 +538,9 @@ public class StatTextBuilder {
         List<Stats> relVillageList = new LinkedList<Stats>();
         double relBashOff = 0.0;
         List<Stats> relBashOffList = new LinkedList<Stats>();
+        double killsPerPoint = Double.MAX_VALUE;
+        double killsPerPointVillages = 0;
+        List<Stats> killsPerPointList = new LinkedList<Stats>();
         double relBashDef = 0.0;
         List<Stats> relBashDefList = new LinkedList<Stats>();
         for (Stats elem : pStats) {
@@ -562,6 +610,30 @@ public class StatTextBuilder {
                 relBashOffList.add(elem);
             }// </editor-fold>
 
+            // <editor-fold defaultstate="collapsed" desc="check kills per point">
+            diffBest = elem.getKillPerPoint();
+            int diffVillages = elem.getVillageDiff();
+            if (diffBest < killsPerPoint && diffVillages > 0) {
+                killsPerPoint = diffBest;
+                killsPerPointVillages = diffVillages;
+                //remove all former elements and add only better elems
+                killsPerPointList.clear();
+                killsPerPointList.add(elem);
+            } else if (diffBest == killsPerPoint && elem.getVillageDiff() > 0) {
+                //check if tribe has conquered more villages
+                if (killsPerPointVillages == diffVillages) {
+                    //same bash count, same village amount -> add element
+                    killsPerPointList.add(elem);
+                } else if (diffVillages > killsPerPointVillages) {
+                    //same bash count, more village -> new winner
+                    killsPerPoint = diffBest;
+                    killsPerPointVillages = diffVillages;
+                    //remove all former elements and add only better elems
+                    killsPerPointList.clear();
+                    killsPerPointList.add(elem);
+                }
+            }// </editor-fold>
+
             // <editor-fold defaultstate="collapsed" desc="check rel bash def growing">
             diffBest = elem.getBashDefDiff();
             currPerc = 0;
@@ -581,9 +653,9 @@ public class StatTextBuilder {
 
         // <editor-fold defaultstate="collapsed" desc="Add abs point diff">
         if (pUseBBCodes) {
-            result += "[b]Größter Punktverlust(Absolut):[/b] ";
+            result += "[b]Punktespender(in):[/b] ";
         } else {
-            result += "Größtes Punktverlust (Absolut): ";
+            result += "Punktespender(in): ";
         }
 
         for (Stats s : absPointsList) {
@@ -592,101 +664,124 @@ public class StatTextBuilder {
         result = result.substring(0, result.lastIndexOf(","));
 
         if (pUseBBCodes) {
-            result += " ([color=" + ((absPoints >= 0) ? "green]" : "red]") + nf.format(absPoints) + "[/color])\n\n";
+            result += " ([color=" + ((absPoints >= 0) ? "green]" : "red]") + nf.format(absPoints) + " Punkte[/color])\n\n";
         } else {
-            result += " (" + nf.format(absPoints) + "\n\n";
+            result += " (" + nf.format(absPoints) + " Punkte\n\n";
         }// </editor-fold>
 
         // <editor-fold defaultstate="collapsed" desc="Add rel point diff">
         if (pUseBBCodes) {
-            result += "[b]Größtes Punktverlust(Relativ):[/b] ";
+            result += "[b]Sorgenkind:[/b] ";
         } else {
-            result += "Größtes Punktverlust (Relativ): ";
+            result += "Sorgenkind: ";
         }
         nf = NumberFormat.getInstance();
         nf.setMinimumFractionDigits(0);
         nf.setMaximumFractionDigits(0);
 
         for (Stats s : relPointsList) {
-            result += (pUseBBCodes) ? (s.getParent().getTribe().toBBCode() + " (" + nf.format(s.getPointDiff()) + "), ") : (s.getParent().getTribe().toString() + " (+" + nf.format(s.getPointDiff()) + "), ");
+            result += (pUseBBCodes) ? (s.getParent().getTribe().toBBCode() + ", ") : (s.getParent().getTribe().toString() + ", ");
         }
         //remove last comma
         result = result.substring(0, result.lastIndexOf(","));
         nf.setMinimumFractionDigits(2);
         nf.setMaximumFractionDigits(2);
         if (pUseBBCodes) {
-            result += " ([color=" + ((relPoints >= 0) ? "green]" : "red]") + ((relPoints >= 0) ? "+" : "") + nf.format(relPoints) + "%[/color])\n\n";
+            result += " ([color=" + ((relPoints >= 0) ? "green]" : "red]") + ((relPoints >= 0) ? "+" : "") + nf.format(relPoints) + "% Punkteverlust[/color])\n\n";
         } else {
-            result += " (" + ((relPoints >= 0) ? "+" : "") + nf.format(relPoints) + "%)\n\n";
+            result += " (" + ((relPoints >= 0) ? "+" : "") + nf.format(relPoints) + "% Punkteverlust)\n\n";
         }// </editor-fold>
 
         // <editor-fold defaultstate="collapsed" desc="Add rel village diff">
         if (pUseBBCodes) {
-            result += "[b]Größter Dorfverlust:[/b] ";
+            result += "[b]Dorfspender(in):[/b] ";
         } else {
-            result += "Größtes Dorfverlust: ";
+            result += "Dorfspender(in): ";
         }
 
         nf.setMinimumFractionDigits(0);
         nf.setMaximumFractionDigits(0);
 
         for (Stats s : relVillageList) {
-            result += (pUseBBCodes) ? (s.getParent().getTribe().toBBCode() + " (" + nf.format(s.getVillageDiff()) + "), ") : (s.getParent().getTribe().toString() + " (+" + nf.format(s.getVillageDiff()) + "), ");
+            result += (pUseBBCodes) ? (s.getParent().getTribe().toBBCode() + ", ") : (s.getParent().getTribe().toString() + ", ");
         }
         //remove last comma
         result = result.substring(0, result.lastIndexOf(","));
         nf.setMinimumFractionDigits(2);
         nf.setMaximumFractionDigits(2);
         if (pUseBBCodes) {
-            result += " ([color=" + ((relVillages >= 0) ? "green]" : "red]") + ((relVillages >= 0) ? "+" : "") + nf.format(relVillages) + "%[/color])\n\n";
+            result += " ([color=" + ((relVillages >= 0) ? "green]" : "red]") + ((relVillages >= 0) ? "+" : "") + nf.format(relVillages) + "% Dorfverlust[/color])\n\n";
         } else {
-            result += " (" + ((relVillages >= 0) ? "+" : "") + nf.format(relVillages) + "%)\n\n";
+            result += " (" + ((relVillages >= 0) ? "+" : "") + nf.format(relVillages) + "% Dorfverlust)\n\n";
+        }// </editor-fold>
+
+        // <editor-fold defaultstate="collapsed" desc="Add kills per point diff">
+        if (pUseBBCodes) {
+            result += "[b]Aufadelkönig(in):[/b] ";
+        } else {
+            result += "Aufadelkönig(in): ";
+        }
+
+        nf.setMinimumFractionDigits(0);
+        nf.setMaximumFractionDigits(0);
+
+        for (Stats s : killsPerPointList) {
+            result += (pUseBBCodes) ? (s.getParent().getTribe().toBBCode() + ", ") : (s.getParent().getTribe().toString() + ", ");
+        }
+        //remove last comma
+        result = result.substring(0, result.lastIndexOf(","));
+        nf.setMinimumFractionDigits(2);
+        nf.setMaximumFractionDigits(2);
+        if (pUseBBCodes) {
+            result += " ([color=" + ((killsPerPoint > 0) ? "green]" : "red]") + ((killsPerPoint > 0) ? "+" : "") + nf.format(killsPerPoint) + " Kills pro Punkt[/color])\n\n";
+        } else {
+            result += " (" + ((killsPerPoint > 0) ? "+" : "") + nf.format(killsPerPoint) + " Kills pro Punkt)\n\n";
         }// </editor-fold>
 
         // <editor-fold defaultstate="collapsed" desc="Add attacker diff">
         if (pUseBBCodes) {
-            result += "[b]Inaktivster Angreifer (Relativ):[/b] ";
+            result += "[b]Friedensaktivisten:[/b] ";
         } else {
-            result += "Inaktivster Angreifer (Relativ): ";
+            result += "Friedensaktivisten: ";
         }
 
         nf.setMinimumFractionDigits(0);
         nf.setMaximumFractionDigits(0);
 
         for (Stats s : relBashOffList) {
-            result += (pUseBBCodes) ? (s.getParent().getTribe().toBBCode() + " (+" + nf.format(s.getBashOffDiff()) + "), ") : (s.getParent().getTribe().toString() + " (+" + nf.format(s.getBashOffDiff()) + "), ");
+            result += (pUseBBCodes) ? (s.getParent().getTribe().toBBCode() + ", ") : (s.getParent().getTribe().toString() + ", ");
         }
         //remove last comma
         result = result.substring(0, result.lastIndexOf(","));
         nf.setMinimumFractionDigits(2);
         nf.setMaximumFractionDigits(2);
         if (pUseBBCodes) {
-            result += " ([color=" + ((relBashOff >= 0) ? "green]" : "red]") + ((relBashOff >= 0) ? "+" : "") + nf.format(relBashOff) + "%[/color])\n\n";
+            result += " ([color=" + ((relBashOff >= 0) ? "green]" : "red]") + ((relBashOff >= 0) ? "+" : "") + nf.format(relBashOff) + "% Zuwachs (Kills Off)[/color])\n\n";
         } else {
-            result += " (" + ((relBashOff >= 0) ? "+" : "") + nf.format(relBashOff) + "%)\n\n";
+            result += " (" + ((relBashOff >= 0) ? "+" : "") + nf.format(relBashOff) + "% Zuwachs (Kills Off))\n\n";
         }// </editor-fold>
 
         // <editor-fold defaultstate="collapsed" desc="Add defender diff">
         if (pUseBBCodes) {
-            result += "[b]Inaktivster Verteidiger (Relativ):[/b] ";
+            result += "[b]Lieblinge des Feindes:[/b] ";
         } else {
-            result += "Inaktivster Verteidiger (Relativ): ";
+            result += "Lieblinge des Feindes: ";
         }
 
         nf.setMinimumFractionDigits(0);
         nf.setMaximumFractionDigits(0);
 
         for (Stats s : relBashDefList) {
-            result += (pUseBBCodes) ? (s.getParent().getTribe().toBBCode() + " (+" + nf.format(s.getBashDefDiff()) + "), ") : (s.getParent().getTribe().toString() + " (+" + nf.format(s.getBashDefDiff()) + "), ");
+            result += (pUseBBCodes) ? (s.getParent().getTribe().toBBCode() + ", ") : (s.getParent().getTribe().toString() + ", ");
         }
         //remove last comma
         result = result.substring(0, result.lastIndexOf(","));
         nf.setMinimumFractionDigits(2);
         nf.setMaximumFractionDigits(2);
         if (pUseBBCodes) {
-            result += " ([color=" + ((relBashDef >= 0) ? "green]" : "red]") + ((relBashDef >= 0) ? "+" : "") + nf.format(relBashDef) + "%[/color])\n\n";
+            result += " ([color=" + ((relBashDef >= 0) ? "green]" : "red]") + ((relBashDef >= 0) ? "+" : "") + nf.format(relBashDef) + "% Zuwachs Kills (Deff)[/color])\n\n";
         } else {
-            result += " (" + ((relBashDef >= 0) ? "+" : "") + nf.format(relBashDef) + "%)\n\n";
+            result += " (" + ((relBashDef >= 0) ? "+" : "") + nf.format(relBashDef) + "% Zuwachs Kills (Deff))\n\n";
         }// </editor-fold>
 
         return result;

@@ -40,14 +40,9 @@ import de.tor.tribes.util.IGMSender;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.js.AttackScriptWriter;
 import java.awt.Component;
-import java.awt.MouseInfo;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ItemEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionAdapter;
-import java.awt.event.MouseMotionListener;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -69,7 +64,7 @@ import org.apache.log4j.Logger;
 // -Dsun.java2d.d3d=true -Dsun.java2d.translaccel=true -Dsun.java2d.ddforcevram=true
 /**
  * @TODO (DIFF) Changed unit col to graphical representation
- * @TODO (1.9) Added attack distribution via IGM
+ * @TODO (DIFF) Added attack distribution via IGM
  * @author  Charon
  */
 public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements AttackManagerListener {
@@ -1044,6 +1039,8 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
                 .addComponent(jButton11)
                 .addContainerGap())
         );
+
+        jSendAttacksIGMDialog.setTitle(bundle.getString("DSWorkbenchAttackFrame.jSendAttacksIGMDialog.title")); // NOI18N
 
         jLabel20.setText(bundle.getString("DSWorkbenchAttackFrame.jLabel20.text")); // NOI18N
 
@@ -2127,8 +2124,10 @@ private void fireAddNewAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
         return;
 
     }
-    AttackManager.getSingleton().addEmptyPlan(name);
-    buildAttackPlanList();
+    if (AttackManager.getSingleton().getAttackPlan(name) == null) {
+        AttackManager.getSingleton().addEmptyPlan(name);
+        buildAttackPlanList();
+    }
 
     jAddPlanDialog.setVisible(false);
 }//GEN-LAST:event_fireAddNewAttackPlanEvent
@@ -2592,29 +2591,32 @@ private void fireSendIGMsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
         jAttackTable.setDefaultEditor(Village.class, new VillageCellEditor());
         jAttackTable.setDefaultRenderer(Integer.class, new AttackTypeCellRenderer());
         jAttackTable.setDefaultEditor(Integer.class, new AttackTypeCellEditor());
-        jAttackTable.addMouseMotionListener(new MouseMotionListener() {
+        /* jAttackTable.addMouseMotionListener(new MouseMotionListener() {
 
-            @Override
-            public void mouseDragged(MouseEvent e) {
-            }
+        @Override
+        public void mouseDragged(MouseEvent e) {
+        }
 
-            @Override
-            public void mouseMoved(MouseEvent e) {
-                try {
-                    int row = jAttackTable.rowAtPoint(e.getPoint());
-                    int col = jAttackTable.columnAtPoint(e.getPoint());
+        @Override
+        public void mouseMoved(MouseEvent e) {
+        try {
+        int row = jAttackTable.rowAtPoint(e.getPoint());
+        int col = jAttackTable.columnAtPoint(e.getPoint());
 
-                    if ((col == 0) || (col == 1)) {
-                        Village v = (Village) AttackManagerTableModel.getSingleton().getValueAt(row, col);
-                        PopupInfoFrame.getSingleton().setInfoItem(v);
-                        PopupInfoFrame.getSingleton().setVisible(true);
-                    }
+        if ((col == 0) || (col == 1)) {
+        System.out.println("check");
+        Village v = (Village) AttackManagerTableModel.getSingleton().getValueAt(row, col);
+        PopupInfoFrame.getSingleton().setInfoItem(v);
+        PopupInfoFrame.getSingleton().triggerVisibility();
+        } else {
+        System.out.println("Not CEll!!");
+        PopupInfoFrame.getSingleton().setVisible(false);
+        }
 
-                } catch (Exception ex) {
-                }
-            }
-        });
-
+        } catch (Exception ex) {
+        }
+        }
+        });*/
 
         AttackManager.getSingleton().forceUpdate(null);
         buildAttackPlanList();
@@ -2639,7 +2641,6 @@ private void fireSendIGMsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
     public void fireAttacksChangedEvent(String pPlan) {
         try {
             jAttackTable.invalidate();
-
             for (int i = 0; i < jAttackTable.getColumnCount(); i++) {
                 jAttackTable.getColumn(jAttackTable.getColumnName(i)).setHeaderRenderer(renderers.get(i));
             }

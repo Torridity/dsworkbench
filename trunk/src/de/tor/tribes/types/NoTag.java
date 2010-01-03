@@ -4,6 +4,12 @@
  */
 package de.tor.tribes.types;
 
+import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.ui.DSWorkbenchMainFrame;
+import de.tor.tribes.util.tag.TagManager;
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  *
  * @author Charon
@@ -23,7 +29,25 @@ public class NoTag extends Tag {
         super(pName, pShowOnMap);
     }
 
+    public List<Integer> getVillageIDs() {
+        List<Integer> ids = new LinkedList<Integer>();
+        Tribe user = DSWorkbenchMainFrame.getSingleton().getCurrentUser();
+        if (user != null) {
+            for (Village v : user.getVillageList()) {
+                if (tagsVillage(v.getId())) {
+                    ids.add(v.getId());
+                }
+            }
+        }
+        return ids;
+    }
+
     public boolean tagsVillage(int pVillageID) {
-        return false;
+        Village v = DataHolder.getSingleton().getVillagesById().get(pVillageID);
+        if (v == null) {
+            return false;
+        }
+        List<Tag> tagList = TagManager.getSingleton().getTags(v);
+        return (tagList == null || tagList.isEmpty());
     }
 }

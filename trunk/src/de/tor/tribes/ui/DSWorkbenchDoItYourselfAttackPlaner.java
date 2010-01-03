@@ -62,7 +62,6 @@ import javax.swing.text.DefaultFormatter;
 import org.apache.log4j.Logger;
 
 /**
- *@TODO (1.9) Add help page
  * @author Torridity
  */
 public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFrame {
@@ -110,7 +109,7 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
             public void valueChanged(ListSelectionEvent e) {
                 int selected = jAttackTable.getSelectedRows().length;
                 if (selected == 0) {
-                    setTitle("Angriffe");
+                    setTitle("Manueller Angriffsplaner");
                 } else if (selected == 1) {
                     setTitle("Angriffe (1 Angriff ausgewählt)");
                 } else if (selected > 1) {
@@ -131,7 +130,7 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
         thread.start();
 
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
-        //     GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.markers_view", GlobalOptions.getHelpBroker().getHelpSet());
+        GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.manual_attack_planer", GlobalOptions.getHelpBroker().getHelpSet());
         // </editor-fold>
 
         pack();
@@ -956,8 +955,10 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
             if (jNewPlanField.getText().length() > 0) {
                 //new plan
                 plan = jNewPlanField.getText();
-                AttackManager.getSingleton().addEmptyPlan(plan);
-                DSWorkbenchAttackFrame.getSingleton().buildAttackPlanList();
+                if (AttackManager.getSingleton().getAttackPlan(plan) == null) {
+                    AttackManager.getSingleton().addEmptyPlan(plan);
+                    DSWorkbenchAttackFrame.getSingleton().buildAttackPlanList();
+                }
             } else {
                 plan = (String) jExistingPlansBox.getSelectedItem();
             }

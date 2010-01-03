@@ -495,8 +495,16 @@ public class TribeStatsElement {
         public Integer getRankDefDiff() {
             return (rankDefEnd - rankDefStart);
         }
-// </editor-fold>
 
+        public Double getKillPerPoint() {
+            long bashOffDiff = getBashOffDiff();
+            if (bashOffDiff == 0) {
+                return 0.0;
+            }
+            return (double) bashOffDiff / (double) getPointDiff();
+        }
+
+// </editor-fold>
         @Override
         public int compareTo(Stats o) {
             return 0;
@@ -562,6 +570,15 @@ public class TribeStatsElement {
             @Override
             public int compare(Stats s1, Stats s2) {
                 return s2.getRankDefDiff().compareTo(s1.getRankDefDiff());
+            }
+        }
+        public static final Comparator<Stats> KILLS_PER_POINT_COMPARATOR = new StatKillsPerPointComparator();
+
+        private static class StatKillsPerPointComparator implements Comparator<Stats>, java.io.Serializable {
+
+            @Override
+            public int compare(Stats s1, Stats s2) {
+                return s2.getKillPerPoint().compareTo(s1.getKillPerPoint());
             }
         }
     }

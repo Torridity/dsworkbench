@@ -6,15 +6,16 @@ package de.tor.tribes.ui.models;
 
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
+import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
+import de.tor.tribes.util.tag.TagManager;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.TroopsManagerListener;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.text.NumberFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
@@ -35,6 +36,9 @@ public class TroopsManagerTableModel extends AbstractTableModel {
     private static TroopsManagerTableModel SINGLETON = null;
     private NumberFormat nf = null;
     private int viewType = SHOW_TROOPS_IN_VILLAGE;
+    private Tag[] visibleTags = null;
+    private boolean useANDConnection = true;
+    private Village[] filteredVillages = null;
 
     public static synchronized TroopsManagerTableModel getSingleton() {
         if (SINGLETON == null) {
@@ -80,6 +84,7 @@ public class TroopsManagerTableModel extends AbstractTableModel {
         nf = NumberFormat.getInstance();
         nf.setMaximumFractionDigits(0);
         nf.setMinimumFractionDigits(0);
+        filteredVillages = null;
     }
 
     TroopsManagerTableModel() {
@@ -92,8 +97,21 @@ public class TroopsManagerTableModel extends AbstractTableModel {
         });
     }
 
+    public void setVisibleTags(List<Tag> pTags, boolean pRelation) {
+        if (pTags == null || pTags.isEmpty()) {
+            visibleTags = null;
+        } else {
+            visibleTags = pTags.toArray(new Tag[]{});
+        }
+        useANDConnection = pRelation;
+        filteredVillages = TroopsManager.getSingleton().getVillages(visibleTags, useANDConnection);
+    }
+
     @Override
     public int getRowCount() {
+        if (filteredVillages != null) {
+            return filteredVillages.length;
+        }
         return TroopsManager.getSingleton().getEntryCount();
     }
 
@@ -107,6 +125,7 @@ public class TroopsManagerTableModel extends AbstractTableModel {
         if (types == null) {
             return 0;
         }
+
         return types.length;
     }
 
@@ -120,10 +139,16 @@ public class TroopsManagerTableModel extends AbstractTableModel {
     }
 
     public void removeRow(int pRow) {
-        Village v = TroopsManager.getSingleton().getVillages()[pRow];
+        Village v = null;
+        if (filteredVillages != null) {
+            v = filteredVillages[pRow];
+        } else {
+            v = TroopsManager.getSingleton().getVillages()[pRow];
+        }
         if (v != null) {
             TroopsManager.getSingleton().removeTroopsForVillage(v);
         }
+
     }
 
     @Override
@@ -131,27 +156,42 @@ public class TroopsManagerTableModel extends AbstractTableModel {
         if ((col > 1) && (col <= 2 + DataHolder.getSingleton().getUnits().size()) && viewType != SHOW_TROOPS_IN_VILLAGE && viewType != SHOW_FORGEIGN_TROOPS) {
             return true;
         }
+
         return false;
     }
 
     public void setViewType(int type) {
         viewType = type;
         fireTableDataChanged();
+
     }
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        Village row = TroopsManager.getSingleton().getVillages()[rowIndex];
+        Village[] rows = filteredVillages;
+        if (rows == null) {
+            rows = TroopsManager.getSingleton().getVillages();
+        }
+        if (rowIndex > rows.length - 1) {
+            return null;
+        }
+
+        Village row = rows[rowIndex];
+
+
         switch (columnIndex) {
             case 0: {
                 return row.getTribe();
             }
+
             case 1: {
                 return row;
             }
+
             case 2: {
                 return TroopsManager.getSingleton().getTroopsForVillage(row).getState();
             }
+
             default: {
                 int unitCount = DataHolder.getSingleton().getUnits().size();
                 if (columnIndex < 3 + unitCount) {
@@ -173,9 +213,11 @@ public class TroopsManagerTableModel extends AbstractTableModel {
                             default:
                                 return TroopsManager.getSingleton().getTroopsForVillage(row).getTroopsInVillage().get(unit);
                         }
+
                     } catch (Exception e) {
                         return 0;
                     }
+
                 } else {
                     //troop power columns
                     if (columnIndex == unitCount + 3) {
@@ -198,6 +240,7 @@ public class TroopsManagerTableModel extends AbstractTableModel {
                         } catch (Exception e) {
                             return 0.0f;
                         }
+
                     }
                 }
             }
@@ -224,7 +267,15 @@ public class TroopsManagerTableModel extends AbstractTableModel {
 
             default: {
                 int troopIndex = pCol - 3;
-                Village row = TroopsManager.getSingleton().getVillages()[pRow];
+                Village[] rows = filteredVillages;
+                if (rows == null) {
+                    rows = TroopsManager.getSingleton().getVillages();
+                }
+                if (pRow > rows.length - 1) {
+                    return;
+                }
+
+                Village row = rows[pRow];
                 UnitHolder unit = DataHolder.getSingleton().getUnits().get(troopIndex);
                 Integer value = null;
                 try {
@@ -236,7 +287,8 @@ public class TroopsManagerTableModel extends AbstractTableModel {
                 if (viewType == SHOW_FORGEIGN_TROOPS) {
                     return;
                 }
-                //set current troops
+//set current troops
+
                 switch (viewType) {
                     case SHOW_OWN_TROOPS:
                         VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(row);
@@ -254,7 +306,8 @@ public class TroopsManagerTableModel extends AbstractTableModel {
                         break;
 
                     default:
-                    //not allowed due to troops in village are calculated
+//not allowed due to troops in village are calculated
+
                 }
 
                 //refresh time
@@ -262,6 +315,7 @@ public class TroopsManagerTableModel extends AbstractTableModel {
                 fireTableDataChanged();
 
             }
+
 
         }
     }

@@ -10,7 +10,10 @@
  */
 package de.tor.tribes.ui;
 
+import de.tor.tribes.types.Village;
 import java.awt.MouseInfo;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  *
@@ -19,6 +22,8 @@ import java.awt.MouseInfo;
 public class PopupInfoFrame extends javax.swing.JFrame {
 
     private static PopupInfoFrame SINGLETON = null;
+    private Timer mVisibilityTimer = null;
+    private TimerTask visibleTask = null;
 
     public static synchronized PopupInfoFrame getSingleton() {
         if (SINGLETON == null) {
@@ -30,13 +35,79 @@ public class PopupInfoFrame extends javax.swing.JFrame {
     /** Creates new form PopupInfoFrame */
     public PopupInfoFrame() {
         initComponents();
+       /* visibleTask = new TimerTask() {
+
+            @Override
+            public void run() {
+                System.out.println("EXECUTE");
+                PopupInfoFrame.getSingleton().setVisible(true);
+            }
+        };*/
+        mVisibilityTimer = new Timer("PopupTimer", true);
         new LocationThread().start();
     }
 
-    public void setInfoItem(Object o) {
+    public void setVisible(boolean v) {
+
+        //System.out.println("Cancel all > " + v);
         try {
-            jLabel1.setText(o.toString());
+            visibleTask.cancel();
+            mVisibilityTimer.purge();
         } catch (Exception e) {
+        }
+
+        super.setVisible(v);
+    }
+    boolean sched = false;
+
+    public synchronized void triggerVisibility() {
+        if (visibleTask == null) {
+            //System.out.println("NEW");
+            visibleTask = new TimerTask() {
+
+                @Override
+                public void run() {
+                    System.out.println("RUN!!!");
+                    PopupInfoFrame.getSingleton().setVisible(true);
+                }
+            };
+            //task is over
+
+            mVisibilityTimer.schedule(visibleTask, 1000);
+           // System.out.println("After: " + visibleTask.scheduledExecutionTime());
+        } else if (visibleTask.scheduledExecutionTime() > System.currentTimeMillis()) {
+            //wait
+          //  System.out.println("Exec: " + (visibleTask.scheduledExecutionTime() - System.currentTimeMillis()));
+           // System.out.println("wait");
+        } else {
+            ///System.out.println("retime");
+            try {
+                visibleTask.cancel();
+                visibleTask = null;
+            } catch (Exception e) {
+            }
+            visibleTask = new TimerTask() {
+
+                @Override
+                public void run() {
+                    PopupInfoFrame.getSingleton().setVisible(true);
+                }
+            };
+            mVisibilityTimer.schedule(visibleTask, 1000);
+        }
+    }
+
+    public void setInfoItem(Object o) {
+        if (o == null) {
+            System.out.println("HIDE!!!");
+            setVisible(false);
+            return;
+        }
+        if (o instanceof Village) {
+            try {
+                jLabel1.setText(o.toString());
+            } catch (Exception e) {
+            }
         }
     }
 
@@ -79,12 +150,23 @@ public class PopupInfoFrame extends javax.swing.JFrame {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        java.awt.EventQueue.invokeLater(new Runnable() {
+        TimerTask visibleTask = new TimerTask() {
 
+            @Override
             public void run() {
-                new PopupInfoFrame().setVisible(true);
+                System.out.println("Execute");
             }
-        });
+        };
+        //task is over
+        Timer mVisibilityTimer = new Timer(true);
+        mVisibilityTimer.schedule(visibleTask, 2000);
+        System.out.println("Done!");
+
+
+        try {
+            Thread.sleep(5000);
+        } catch (Exception e) {
+        }
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;

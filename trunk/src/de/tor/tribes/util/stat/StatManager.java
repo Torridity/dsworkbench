@@ -205,6 +205,9 @@ public class StatManager {
     }
 
     public void storeStats() {
+        if(data == null){
+            return;
+        }
         Enumeration<Integer> allyKeys = data.keys();
         String dataPath = "./servers/" + GlobalOptions.getSelectedServer() + "/stats";
         while (allyKeys.hasMoreElements()) {

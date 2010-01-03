@@ -4,6 +4,7 @@
  */
 package de.tor.tribes.util.troops;
 
+import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.DSWorkbenchTroopsFrame;
 import de.tor.tribes.ui.models.TroopsManagerTableModel;
@@ -132,8 +133,91 @@ public class TroopsManager {
         return mTroops.size();
     }
 
+    public int getEntryCount(Tag[] tags, boolean pANDConnection) {
+        if (tags == null) {
+            return getEntryCount();
+        }
+        /*  Enumeration<Village> keys = mTroops.keys();
+        List<Village> alreadyCount = new LinkedList<Village>();
+        int cnt = 0;
+        while (keys.hasMoreElements()) {
+        Village key = keys.nextElement();
+        for (Tag t : tags) {
+        if (t.tagsVillage(key.getId())) {
+        if (!alreadyCount.contains(key)) {
+        alreadyCount.add(key);
+        cnt++;
+        }
+        }
+        }
+        }*/
+        
+        Enumeration<Village> keys = mTroops.keys();
+        List<Village> valid = new LinkedList<Village>();
+        while (keys.hasMoreElements()) {
+            Village key = keys.nextElement();
+            boolean isValid = pANDConnection;
+            for (Tag t : tags) {
+                if (t.tagsVillage(key.getId()) && !pANDConnection) {
+                    //at least one tag was valid
+                    isValid = true;
+                    break;
+                } else if (!t.tagsVillage(key.getId()) && pANDConnection) {
+                    //if AND connection is selected and village is not tagges, break and skip adding
+                    isValid = false;
+                    break;
+                }
+            }
+            if (isValid) {
+                //add village if not already in and valid following the logical operation
+                if (!valid.contains(key)) {
+                    valid.add(key);
+                }
+            } else {
+                //remove if village was already added
+                valid.remove(key);
+            }
+        }
+
+        return valid.size();
+    }
+
     public Village[] getVillages() {
         return mTroops.keySet().toArray(new Village[]{});
+    }
+
+    public Village[] getVillages(Tag[] tags, boolean pANDConnection) {
+        if (tags == null) {
+            return getVillages();
+        }
+        Enumeration<Village> keys = mTroops.keys();
+        List<Village> valid = new LinkedList<Village>();
+        while (keys.hasMoreElements()) {
+            Village key = keys.nextElement();
+            boolean isValid = pANDConnection;
+            for (Tag t : tags) {
+                if (t.tagsVillage(key.getId()) && !pANDConnection) {
+                    //at least one tag was valid
+                    isValid = true;
+                    break;
+                } else if (!t.tagsVillage(key.getId()) && pANDConnection) {
+                    //if AND connection is selected and village is not tagges, break and skip adding
+                    isValid = false;
+                    break;
+                }
+            }
+            if (isValid) {
+                //add village if not already in and valid following the logical operation
+                if (!valid.contains(key)) {
+                    valid.add(key);
+                }
+            } else {
+                //remove if village was already added
+                valid.remove(key);
+            }
+        }
+
+        return valid.toArray(new Village[]{});
     }
 
     public void loadTroopsFromFile(String pFile) {

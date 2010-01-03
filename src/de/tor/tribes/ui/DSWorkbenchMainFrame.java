@@ -82,6 +82,8 @@ import javax.swing.table.DefaultTableModel;
 
 /**
  * @TODO (1.5?) Add min number to troop filter in attack planer????
+ * @TODO (DIFF) Re-Time tool added
+ * @TODO (Diff) DoItYourselfAttackPlaner added
  * @author  Charon
  */
 public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
@@ -117,6 +119,8 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         setAlwaysOnTop(false);
         jExportDialog.pack();
         jAddROIDialog.pack();
+        mAbout = new AboutDialog(this, true);
+        mAbout.pack();
         // <editor-fold defaultstate="collapsed" desc=" Register ShutdownHook ">
 
         Runtime.getRuntime().addShutdownHook(new MainShutdownHook());
@@ -582,7 +586,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             //relevant for first start
             propagateLayerOrder();
             MapPanel.getSingleton().getMapRenderer().initiateRedraw(0);
-            MinimapPanel.getSingleton().redraw();
+            MinimapPanel.getSingleton().redraw(true);
             //call all frames during first execution
             DSWorkbenchAttackFrame.getSingleton();
             DSWorkbenchStatsFrame.getSingleton();
@@ -608,6 +612,8 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             DSWorkbenchSearchFrame.getSingleton();
             DSWorkbenchSelectionFrame.getSingleton();
             DSWorkbenchStatsFrame.getSingleton();
+            DSWorkbenchReTimerFrame.getSingleton();
+            DSWorkbenchDoItYourselfAttackPlaner.getSingleton();
             logger.info("Server settings updated");
             String path = "./servers/" + GlobalOptions.getSelectedServer() + "/serverdata.bin";
             if (!DSWorkbenchSettingsDialog.getSingleton().isVisible()) {
@@ -621,7 +627,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         } catch (Exception e) {
             logger.error("Error while refreshing server settings", e);
         }
-        DSWorkbenchReTimerFrame.getSingleton().setVisible(true);
     }
 
     /**Update UI depending on online state*/
@@ -949,6 +954,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jStartAStarItem = new javax.swing.JMenuItem();
         jDistanceItem = new javax.swing.JMenuItem();
         jDoItYourselfAttackPlanerItem = new javax.swing.JMenuItem();
+        jReTimeToolEvent = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
         jShowAttackFrame = new javax.swing.JCheckBoxMenuItem();
         jShowMarkerFrame = new javax.swing.JCheckBoxMenuItem();
@@ -1218,9 +1224,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         setTitle(bundle.getString("DSWorkbenchMainFrame.title")); // NOI18N
         setBackground(new java.awt.Color(225, 213, 190));
         addWindowListener(new java.awt.event.WindowAdapter() {
-            public void windowClosed(java.awt.event.WindowEvent evt) {
-                fireClosedEvent(evt);
-            }
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 fireDSWorkbenchClosingEvent(evt);
             }
@@ -2008,6 +2011,14 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         });
         jMenu3.add(jDoItYourselfAttackPlanerItem);
 
+        jReTimeToolEvent.setText(bundle.getString("DSWorkbenchMainFrame.jReTimeToolEvent.text_1")); // NOI18N
+        jReTimeToolEvent.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fireToolsActionEvent(evt);
+            }
+        });
+        jMenu3.add(jReTimeToolEvent);
+
         jMenuBar1.add(jMenu3);
 
         jMenu2.setBackground(new java.awt.Color(225, 213, 190));
@@ -2313,8 +2324,8 @@ private void fireShowSettingsEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:
 
     /**Exit the application*/
 private void fireExitEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireExitEvent
-    GlobalOptions.saveProperties();
-    System.exit(0);
+    // GlobalOptions.saveProperties();
+    fireDSWorkbenchClosingEvent(null);
 }//GEN-LAST:event_fireExitEvent
 
     /**Show the toolbar*/
@@ -2358,6 +2369,8 @@ private void fireToolsActionEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:e
         DSWorkbenchDistanceFrame.getSingleton().setVisible(true);
     } else if (evt.getSource() == jDoItYourselfAttackPlanerItem) {
         DSWorkbenchDoItYourselfAttackPlaner.getSingleton().setVisible(true);
+    } else if (evt.getSource() == jReTimeToolEvent) {
+        DSWorkbenchReTimerFrame.getSingleton().setVisible(true);
     }
 }//GEN-LAST:event_fireToolsActionEvent
 
@@ -2908,6 +2921,7 @@ private void fireDSWorkbenchClosingEvent(java.awt.event.WindowEvent evt) {//GEN-
     GlobalOptions.addProperty("zoom.factor", Double.toString(getZoomFactor()));
     GlobalOptions.addProperty("last.x", getCurrentPosition()[0]);
     GlobalOptions.addProperty("last.y", getCurrentPosition()[1]);
+    System.exit(0);
 }//GEN-LAST:event_fireDSWorkbenchClosingEvent
 
 private void firePanelMin(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_firePanelMin
@@ -3006,9 +3020,6 @@ private void fireGraphicPackChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FI
         MapPanel.getSingleton().getMapRenderer().initiateRedraw(0);
     }
 }//GEN-LAST:event_fireGraphicPackChangedEvent
-
-private void fireClosedEvent(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_fireClosedEvent
-}//GEN-LAST:event_fireClosedEvent
 
 private void fireShowStatsFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireShowStatsFrameEvent
     if (jShowStatsFrame.isEnabled()) {
@@ -3364,6 +3375,7 @@ private void fireShowStatsFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIRS
     private javax.swing.JTextField jROIRegion;
     private javax.swing.JTextField jROITextField;
     private javax.swing.JSpinner jRadarSpinner;
+    private javax.swing.JMenuItem jReTimeToolEvent;
     private javax.swing.JButton jRefreshButton;
     private javax.swing.JButton jRemoveROIButton;
     private javax.swing.JScrollPane jScrollPane1;

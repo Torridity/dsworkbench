@@ -400,6 +400,14 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
         }
     }
 
+    public void redraw(boolean pResize) {
+        int mapWidth = (int) ServerSettings.getSingleton().getMapDimension().getWidth();
+        int mapHeight = (int) ServerSettings.getSingleton().getMapDimension().getHeight();
+        rVisiblePart = new Rectangle(0, 0, mapWidth, mapHeight);
+        MinimapRepaintThread.getSingleton().setVisiblePart(rVisiblePart);
+        redraw();
+    }
+
     @Override
     public void fireMarkersChangedEvent() {
         redraw();

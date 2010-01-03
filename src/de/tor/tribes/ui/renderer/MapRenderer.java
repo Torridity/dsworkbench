@@ -1505,7 +1505,6 @@ public class MapRenderer extends Thread {
 
                 //process target villages
                 Enumeration<Village> supportKeys = TroopsManager.getSingleton().getTroopsForVillage(v).getSupports().keys();
-
                 while (supportKeys.hasMoreElements()) {
                     Village source = supportKeys.nextElement();
                     if (!drawnTargets.contains(v) && !drawnTargets.contains(source)) {

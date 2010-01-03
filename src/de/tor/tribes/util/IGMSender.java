@@ -4,6 +4,7 @@
  */
 package de.tor.tribes.util;
 
+import de.tor.tribes.io.ServerManager;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.ui.DSWorkbenchMainFrame;
 import de.tor.tribes.ui.DSWorkbenchSettingsDialog;
@@ -28,7 +29,8 @@ public class IGMSender {
             String why = URLEncoder.encode(pSubject, "UTF-8");
             String name = URLEncoder.encode(pReceiver.getName(), "UTF-8");
             String text = URLEncoder.encode(pMessage, "UTF-8");
-            String get = "http://de43.die-staemme.de/send_mail.php?from_id=" + t.getId() + "&api_key=" + pApiKey;
+            String serverURL = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
+            String get = serverURL + "/send_mail.php?from_id=" + t.getId() + "&api_key=" + pApiKey;
             get += "&to=" + name + "&subject=" + why + "&message=" + text;
             URL u = new URL(get);
             URLConnection ucon = u.openConnection(DSWorkbenchSettingsDialog.getSingleton().getWebProxy());
@@ -58,13 +60,13 @@ public class IGMSender {
     }
 
     public static boolean sendIGM(String pReceiver, String pApiKey, String pSubject, String pMessage) {
-
         try {
             String text = URLEncoder.encode(pSubject, "UTF-8");
             String name = URLEncoder.encode(pReceiver, "UTF-8");
             String why = URLEncoder.encode(pMessage, "UTF-8");
             String apiKey = pApiKey;
-            String get = "http://de43.die-staemme.de/send_mail.php?from_id=3457919&api_key=" + apiKey;
+            String serverURL = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
+            String get = serverURL + "/send_mail.php?from_id=3457919&api_key=" + apiKey;
             get += "&to=" + name + "&subject=" + why + "&message=" + text;
             URL u = new URL(get);
             Proxy p = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("proxy.fzk.de", 8000));

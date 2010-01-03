@@ -48,7 +48,7 @@ import org.jfree.data.xy.XYDataset;
 import org.jfree.ui.RectangleInsets;
 
 /**
- *@TODO (DIFF) added stats frame and ranking
+@TODO (DIFF) Stats added
  * @author Torridity
  */
 public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
@@ -104,6 +104,11 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
                 fireUpdateChartEvent(null);
             }
         });
+
+         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
+        GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.stats_view", GlobalOptions.getHelpBroker().getHelpSet());
+        // </editor-fold>
+
         pack();
     }
 
@@ -348,7 +353,6 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
         jUsedTribes = new javax.swing.JComboBox();
         jPanel10 = new javax.swing.JPanel();
         jUseBBCodesBox = new javax.swing.JCheckBox();
-        jShowPercentBox = new javax.swing.JCheckBox();
         jButton8 = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
@@ -491,18 +495,13 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
         jUseBBCodesBox.setText("BB-Codes verwenden");
         jUseBBCodesBox.setOpaque(false);
 
-        jShowPercentBox.setText("Prozente anzeigen");
-        jShowPercentBox.setOpaque(false);
-
         javax.swing.GroupLayout jPanel10Layout = new javax.swing.GroupLayout(jPanel10);
         jPanel10.setLayout(jPanel10Layout);
         jPanel10Layout.setHorizontalGroup(
             jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel10Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jUseBBCodesBox)
-                    .addComponent(jShowPercentBox))
+                .addComponent(jUseBBCodesBox)
                 .addContainerGap(291, Short.MAX_VALUE))
         );
         jPanel10Layout.setVerticalGroup(
@@ -510,8 +509,7 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
             .addGroup(jPanel10Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jUseBBCodesBox)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jShowPercentBox))
+                .addGap(26, 26, 26))
         );
 
         jButton8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/select.png"))); // NOI18N
@@ -526,12 +524,12 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+            .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel10, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel4)
                             .addComponent(jLabel5)
@@ -547,7 +545,7 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
                                 .addComponent(jMonthlyStats)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 151, Short.MAX_VALUE))
-                    .addComponent(jButton8))
+                    .addComponent(jButton8, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -573,8 +571,8 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
                             .addComponent(jMonthlyStats)))
                     .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jPanel10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel10, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
                 .addComponent(jButton8)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -833,8 +831,8 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 153, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -850,15 +848,16 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jTaskPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 655, Short.MAX_VALUE)
+                    .addComponent(jTaskPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 657, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jScrollPane2))
-                        .addGap(18, 18, 18)
-                        .addComponent(jChartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 507, Short.MAX_VALUE)))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jScrollPane2))
+                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jChartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 521, Short.MAX_VALUE)))
                 .addContainerGap())
         );
 
@@ -893,6 +892,7 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
         StatManager.getSingleton().takeSnapshot();
         jAllyList.getSelectionModel().clearSelection();
         jAllyList.getSelectionModel().setValueIsAdjusting(false);
+        JOptionPaneHelper.showInformationBox(this, "Aktuelle Daten wurden hinzugefügt", "Information");
     }//GEN-LAST:event_fireTakeSnapshotEvent
 
     private void fireRemoveMonitoredElementEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireRemoveMonitoredElementEvent
@@ -1097,11 +1097,11 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
             stats.add(elemStat);
         }
 
-        jPointsArea.setText(StatTextBuilder.buildPointsList(stats, jUseBBCodesBox.isSelected(), jShowPercentBox.isSelected(), (jUsedTribes.getSelectedIndex() == 2)));
-        jBashOffArea.setText(StatTextBuilder.buildBashOffList(stats, jUseBBCodesBox.isSelected(), jShowPercentBox.isSelected(), (jUsedTribes.getSelectedIndex() == 2)));
-        jBashDefArea.setText(StatTextBuilder.buildBashDefList(stats, jUseBBCodesBox.isSelected(), jShowPercentBox.isSelected(), (jUsedTribes.getSelectedIndex() == 2)));
-        jWinnerArea.setText(StatTextBuilder.buildWinnerStats(stats, jUseBBCodesBox.isSelected(), jShowPercentBox.isSelected(), (jUsedTribes.getSelectedIndex() == 2)));
-        jLoserArea.setText(StatTextBuilder.buildLoserStats(stats, jUseBBCodesBox.isSelected(), jShowPercentBox.isSelected(), (jUsedTribes.getSelectedIndex() == 2)));
+        jPointsArea.setText(StatTextBuilder.buildPointsList(stats, jUseBBCodesBox.isSelected(), true, (jUsedTribes.getSelectedIndex() == 2)));
+        jBashOffArea.setText(StatTextBuilder.buildBashOffList(stats, jUseBBCodesBox.isSelected(), true, (jUsedTribes.getSelectedIndex() == 2)));
+        jBashDefArea.setText(StatTextBuilder.buildBashDefList(stats, jUseBBCodesBox.isSelected(), true, (jUsedTribes.getSelectedIndex() == 2)));
+        jWinnerArea.setText(StatTextBuilder.buildWinnerStats(stats, jUseBBCodesBox.isSelected(), true, (jUsedTribes.getSelectedIndex() == 2)));
+        jLoserArea.setText(StatTextBuilder.buildLoserStats(stats, jUseBBCodesBox.isSelected(), true, (jUsedTribes.getSelectedIndex() == 2)));
     }//GEN-LAST:event_fireGenerateStatsEvent
 
     private void fireChangeStatTimeEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireChangeStatTimeEvent
@@ -1163,7 +1163,6 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
     private javax.swing.JCheckBox jShowKillsOff;
     private javax.swing.JCheckBox jShowLegend;
     private javax.swing.JCheckBox jShowLines;
-    private javax.swing.JCheckBox jShowPercentBox;
     private javax.swing.JCheckBox jShowPoints;
     private javax.swing.JCheckBox jShowRank;
     private javax.swing.JCheckBox jShowRankDef;

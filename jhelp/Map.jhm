@@ -24,9 +24,9 @@
 
 <mapID target="pages.main_window_basics_layers" url="pages/main_window_basics.html#layers"/>
 
-<mapID target="pages.bb_export" url="pages/bb_export.html"/>
-
 <mapID target="pages.map_tools_distance_tool" url="pages/map_tools.html#distance_tool"/>
+
+<mapID target="pages.bb_export" url="pages/bb_export.html"/>
 
 <mapID target="pages.attack_planer_settings_not_assigned" url="pages/attack_planer_settings.html#not_assigned"/>
 
@@ -62,6 +62,8 @@
 
 <mapID target="pages.misc_settings" url="pages/misc_settings.html"/>
 
+<mapID target="pages.attacks_as_igm" url="pages/attacks_as_igm.html"/>
+
 <mapID target="pages.attack_planer_target" url="pages/attack_planer_target.html"/>
 
 <mapID target="pages.attack_planer_bruteforce" url="pages/attack_planer_bruteforce.html"/>
@@ -89,6 +91,8 @@
 <mapID target="pages.form_setup" url="pages/form_setup.html"/>
 
 <mapID target="pages.extended_map_functions" url="pages/extended_map_functions.html"/>
+
+<mapID target="pages.manual_attack_planer" url="pages/manual_attack_planer.html"/>
 
 <mapID target="pages.main_window_basics" url="pages/main_window_basics.html"/>
 
@@ -132,13 +136,17 @@
 
 <mapID target="pages.attack_planer_blitzkrieg" url="pages/attack_planer_blitzkrieg.html"/>
 
+<mapID target="pages.retime_tool" url="pages/retime_tool.html"/>
+
+<mapID target="pages.stats_view" url="pages/stats_view.html"/>
+
 <mapID target="pages.draw_tools" url="pages/draw_tools.html"/>
 
 <mapID target="pages.basics" url="pages/basics.html"/>
 
-<mapID target="pages.attack_settings" url="pages/attack_settings.html"/>
-
 <mapID target="pages.map_tools" url="pages/map_tools.html"/>
+
+<mapID target="pages.attack_settings" url="pages/attack_settings.html"/>
 
 <mapID target="pages.selection_tool" url="pages/selection_tool.html"/>
 
@@ -218,6 +226,8 @@
 
 <mapID target="images.replace2" url="images/replace2.png"/>
 
+<mapID target="images.atts_igm" url="images/atts_igm.png"/>
+
 <mapID target="images.l" url="images/l.gif"/>
 
 <mapID target="images.shortcuts.F6" url="images/shortcuts/F6.gif"/>
@@ -238,9 +248,9 @@
 
 <mapID target="images.forbidden" url="images/forbidden.png"/>
 
-<mapID target="images.shortcuts.AltF" url="images/shortcuts/AltF.gif"/>
-
 <mapID target="images.tools.draw_rect" url="images/tools/draw_rect.png"/>
+
+<mapID target="images.shortcuts.AltF" url="images/shortcuts/AltF.gif"/>
 
 <mapID target="images.def" url="images/def.png"/>
 

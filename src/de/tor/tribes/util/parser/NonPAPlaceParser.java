@@ -21,7 +21,6 @@ import java.util.LinkedList;
 import java.util.StringTokenizer;
 
 /**
- *@TODO (1.9) Update state!
  * @author Charon
  */
 public class NonPAPlaceParser {

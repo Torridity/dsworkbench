@@ -1,7 +1,7 @@
 -injars dist\DSWorkbench.jar
 -outjars Release\core.jar
 
--libraryjars 'C:\Programme\Java\jre1.6.0_07\lib\rt.jar'
+-libraryjars 'C:\Program Files\Java\jdk1.6.0_18\jre\lib\rt.jar'
 -libraryjars dist\lib\BiSlider.jar
 -libraryjars dist\lib\colorchooser.jar
 -libraryjars 'dist\lib\DS Workbench Dokumentation_help.jar'

@@ -33,7 +33,6 @@ import org.jdom.Element;
  * Markers can either be hold in files as well as in a database (not implemented yet).<BR>
  * The graphical representation can be realized by a table using the getTableModel() method.
  * @author Jejkal
- * @TODO (DIFF) Added import extension
  */
 public class MarkerManager {
 

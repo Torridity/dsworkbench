@@ -17,6 +17,7 @@ import java.util.List;
 import de.tor.tribes.types.Fake;
 import de.tor.tribes.types.Off;
 import java.util.Collections;
+import java.util.Random;
 import org.apache.log4j.Logger;
 
 /**
@@ -49,9 +50,6 @@ public class BruteForce extends AbstractAttackAlgorithm {
         logger.debug("Assigning offs");
 
         // <editor-fold defaultstate="collapsed" desc=" Assign Offs">
-        if (pRandomize) {
-            Collections.shuffle(pTargets);
-        }
         List<Long> sendTimes = new LinkedList<Long>();
         while (unitKeys.hasMoreElements()) {
             UnitHolder unit = unitKeys.nextElement();
@@ -63,8 +61,10 @@ public class BruteForce extends AbstractAttackAlgorithm {
                     //max. number of attacks per target village
                     int maxAttacksPerVillage = pMaxAttacksPerVillage;
                     Village vTarget = null;
-                    //TimeFrame t = new TimeFrame(pStartTime, pArriveTime, pTimeFrameStartHour, pTimeFrameEndHour);
                     //search all tribes and villages for targets
+                    if (pRandomize) {
+                        Collections.shuffle(pTargets);
+                    }
                     for (Village v : pTargets) {
                         double time = DSCalculator.calculateMoveTimeInSeconds(source, v, unit.getSpeed());
 
@@ -162,6 +162,9 @@ public class BruteForce extends AbstractAttackAlgorithm {
                     Village vTarget = null;
                     //TimeFrame t = new TimeFrame(pStartTime, pArriveTime, pTimeFrameStartHour, pTimeFrameEndHour);
                     //search all tribes and villages for targets
+                    if (pRandomize) {
+                        Collections.shuffle(pTargets);
+                    }
                     for (Village v : pTargets) {
                         if (!attacks.containsKey(v)) {
                             double time = DSCalculator.calculateMoveTimeInSeconds(source, v, unit.getSpeed());

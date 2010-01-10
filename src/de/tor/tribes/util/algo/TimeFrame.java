@@ -7,6 +7,7 @@ package de.tor.tribes.util.algo;
 import de.tor.tribes.types.TimeSpan;
 import de.tor.tribes.types.Tribe;
 import java.awt.Point;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
@@ -67,7 +68,7 @@ public class TimeFrame {
         boolean inFrame = false;
         if ((t > start) && (t < end)) {
             for (TimeSpan span : timeSpans) {
-               // System.out.println("Check frame for " + pTribe);
+                // System.out.println("Check frame for " + pTribe);
                 if (span.isValidFor() == null || span.isValidFor() == pTribe) {
                     //System.out.println("Tribe " + span.isValidFor() + " affected by " + span);
                     Date d = span.getAtDate();
@@ -95,6 +96,37 @@ public class TimeFrame {
             }
         }
         return inFrame;
+    }
+
+    public Date fitInto(long pRuntime, int pArriveStartHour, int pArriveEndHour, Tribe pTribe, List<Long> usedDates) {
+        Date arrive = new Date(end);
+        Calendar c = Calendar.getInstance();
+        c.setTime(arrive);
+        c.set(Calendar.HOUR_OF_DAY, pArriveStartHour);
+        c.set(Calendar.MINUTE, 0);
+        c.set(Calendar.SECOND, 0);
+        Date minDate = c.getTime();
+        c = Calendar.getInstance();
+        c.setTime(arrive);
+        c.set(Calendar.HOUR_OF_DAY, pArriveEndHour - 1);
+        c.set(Calendar.MINUTE, 59);
+        c.set(Calendar.SECOND, 59);
+        Date maxDate = c.getTime();
+        long pEnd = end;
+        for (long l = minDate.getTime(); l <= maxDate.getTime(); l += 60000) {
+            end = l;
+            Date current = new Date(l - pRuntime);
+            if (inside(current, pTribe)) {
+                if (usedDates.contains(current.getTime())) {
+                    l += 10000;
+                } else {
+                    end = pEnd;
+                    return current;
+                }
+            }
+        }
+        end = pEnd;
+        return null;
     }
 
     public Date getArriveDate(long runtime) {

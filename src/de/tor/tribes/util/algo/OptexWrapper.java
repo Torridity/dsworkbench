@@ -41,13 +41,15 @@ public class OptexWrapper extends AbstractAttackAlgorithm {
 
 
         ArrayList<OffVillage> offs = prepareSourceList(offSources, pTargets, pTimeFrame, ram.getSpeed());
-        ArrayList<TargetVillage> offTargets = prepareTargetList(pTargets, 1);
+        ArrayList<TargetVillage> offTargets = prepareTargetList(pTargets, pMaxAttacksPerVillage);
         Hashtable<Destination, Double>[] costs = calculateOffCosts(offs, offTargets, pTimeFrame, ram.getSpeed());
         Optex<OffVillage, TargetVillage> algo = new Optex<OffVillage, TargetVillage>(offs, offTargets, costs);
         Hashtable<Village, AbstractTroopMovement> targetMappings = new Hashtable<Village, AbstractTroopMovement>();
 
         try {
             algo.run();
+
+            /**Build movement mappings*/
             for (OffVillage src : offs.toArray(new OffVillage[]{})) {
                 for (Order o : src.getOrders()) {
                     de.tor.tribes.util.algo.Village s = (de.tor.tribes.util.algo.Village) src;
@@ -67,10 +69,10 @@ public class OptexWrapper extends AbstractAttackAlgorithm {
                                 double dist = DSCalculator.calculateDistance(v, source);
                                 double runtime = dist * ram.getSpeed() * 60000;
                                 long send = pTimeFrame.getEnd() - (long) Math.round(runtime);
-                                if (pTimeFrame.inside(new Date(send), null)) {
-                                    System.out.println("Costs: " + algo._getCosts(src, dest));
+                               // if (pTimeFrame.inside(new Date(send), null)) {
+                                 //   System.out.println("Costs: " + algo._getCosts(src, dest));
                                     mapping.addOff(ram, source);
-                                }
+                               // }
                             }
                         }
                     }
@@ -80,42 +82,8 @@ public class OptexWrapper extends AbstractAttackAlgorithm {
             e.printStackTrace();
         }
 
-        /*
-        offs = prepareSourceList(pFakes.get(ram), pTargets, pTimeFrame, pMaxAttacksPerVillage);
-        ArrayList<TargetVillage> fakeTargets = prepareTargetList(pTargets, pMaxAttacksPerVillage);
-        costs = calculateOffCosts(offs, fakeTargets, pTimeFrame, ram.getSpeed());
-        algo = new Optex<OffVillage, TargetVillage>(offs, fakeTargets, costs);
 
-        try {
-        algo.run();
-        for (OffVillage src : offs) {
-        for (Order o : src.getOrders()) {
-        if (o.getAmount() > 0) {
-        TargetVillage dest = (TargetVillage) o.getDestination();
-        Village v = DataHolder.getSingleton().getVillages()[dest.getC().getX()][dest.getC().getY()];
-        if (v != null) {
-        AbstractTroopMovement mapping = targetMappings.get(v);
-        if (mapping == null) {
-        mapping = new Fake(v, pMaxAttacksPerVillage);
-        targetMappings.put(v, mapping);
-        }
-        Village source = DataHolder.getSingleton().getVillages()[src.getC().getX()][src.getC().getY()];
-        if (source != null) {
-        double dist = DSCalculator.calculateDistance(v, source);
-        double runtime = dist * ram.getSpeed() * 60000;
-        long send = pTimeFrame.getEnd() - (long) Math.round(runtime);
-        if (pTimeFrame.inside(new Date(send), null)) {
-        mapping.addOff(ram, source);
-        }
-        }
-        }
-        }
-        }
-        }
-        } catch (Exception e) {
-        e.printStackTrace();
-        }
-         */
+        /**Combine results*/
         LinkedList<AbstractTroopMovement> result = new LinkedList<AbstractTroopMovement>();
         Enumeration<Village> keys = targetMappings.keys();
         while (keys.hasMoreElements()) {
@@ -147,12 +115,13 @@ public class OptexWrapper extends AbstractAttackAlgorithm {
                 }
             }
             if (fail) {
+            //    System.out.println("Remove " + v);
                 //removing village that does not reach any target
-                sourceCopy.remove(v);
+             //   sourceCopy.remove(v);
             }
         }
 
-
+        /**Set available wares*/
         for (de.tor.tribes.types.Village v : sourceCopy) {
             if (countMapping.containsKey(v)) {
                 //use off source only once
@@ -162,6 +131,7 @@ public class OptexWrapper extends AbstractAttackAlgorithm {
             }
         }
 
+        /**Build Source-Wares list*/
         Enumeration<de.tor.tribes.types.Village> keys = countMapping.keys();
         while (keys.hasMoreElements()) {
             de.tor.tribes.types.Village v = keys.nextElement();
@@ -194,7 +164,7 @@ public class OptexWrapper extends AbstractAttackAlgorithm {
                 double cost = dist;
                 if (!pTimeFrame.inside(new Date(send), null)) {
                     //increase costs to max
-                    cost = Double.MAX_VALUE;
+                   cost = Double.MAX_VALUE;
                 }
                 costs[i].put(pTargets.get(j), cost);
             }

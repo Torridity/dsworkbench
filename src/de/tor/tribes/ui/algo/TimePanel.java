@@ -43,11 +43,6 @@ public class TimePanel extends javax.swing.JPanel {
         reset();
     }
 
-    public void activateTolerance(boolean value) {
-        jToleranceField.setEnabled(value);
-        jLabel4.setEnabled(value);
-    }
-
     public void reset() {
         //setup of send time spinner
         jSendTime.setEditor(new DateEditor(jSendTime, "dd.MM.yy HH:mm:ss"));
@@ -65,13 +60,23 @@ public class TimePanel extends javax.swing.JPanel {
         jSendTimeFrame.setUnit("h");
         jSendTimeFrame.setDecimalFormater(new DecimalFormat("##"));
         jSendTimeFrame.setBackground(Constants.DS_BACK_LIGHT);
+        jArriveTimeFrame.setMinimumValue(0);
+        jArriveTimeFrame.setSliderBackground(Constants.DS_BACK);
+        jArriveTimeFrame.setMaximumColor(Constants.DS_BACK_LIGHT);
+        jArriveTimeFrame.setMinimumColor(Constants.DS_BACK_LIGHT);
+        jArriveTimeFrame.setMaximumValue(24);
+        jArriveTimeFrame.setSegmentSize(1);
+        jArriveTimeFrame.setUnit("h");
+        jArriveTimeFrame.setDecimalFormater(new DecimalFormat("##"));
+        jArriveTimeFrame.setBackground(Constants.DS_BACK_LIGHT);
+
+
         //setup time frame table
         DefaultListModel model = new DefaultListModel();
         jSendTimeFramesList.setModel(model);
         jArriveTime.setEditor(new DateEditor(jArriveTime, "dd.MM.yy HH:mm:ss"));
         c.setTimeInMillis(System.currentTimeMillis() + 2 * 60 * 60 * 1000);
         jArriveTime.setValue(c.getTime());
-        jToleranceField.setValue(2l);
         jTribeTimeFrameBox.setModel(new DefaultComboBoxModel(new Object[]{"Alle"}));
     }
 
@@ -119,8 +124,6 @@ public class TimePanel extends javax.swing.JPanel {
      */
     public TimeFrame getTimeFrame() {
         TimeFrame result = new TimeFrame((Date) jSendTime.getValue(), (Date) jArriveTime.getValue());
-        //set arrive tolerance in seconds
-        result.setArriveTolerance((Long) jToleranceField.getValue());
         //add time frames
         DefaultListModel model = (DefaultListModel) jSendTimeFramesList.getModel();
         for (int i = 0; i < model.getSize(); i++) {
@@ -159,8 +162,6 @@ public class TimePanel extends javax.swing.JPanel {
             }
         }
 
-        //check if arrival might be in night bonus
-        long arrivalTolerance = (Long) jToleranceField.getValue() * 60 * 60 * 1000;
         //check min case
         Date arrive = (Date) jArriveTime.getValue();
 
@@ -196,16 +197,10 @@ public class TimePanel extends javax.swing.JPanel {
                     //in night bonus
                     mightBeInNightBonus = true;
                 }
-                //check min arrive time
-                c.setTimeInMillis(arrive.getTime() - (jToleranceField.isEnabled() ? arrivalTolerance : 0));
-                if (c.get(Calendar.HOUR_OF_DAY) >= 0 && c.get(Calendar.HOUR_OF_DAY) < 7) {
+
+                double max = jArriveTimeFrame.getMaximumColoredValue();
+                if (max <= 7) {
                     mightBeInNightBonus = true;
-                } else {
-                    //check max arrive time
-                    c.setTimeInMillis(arrive.getTime() + (jToleranceField.isEnabled() ? arrivalTolerance : 0));
-                    if (c.get(Calendar.HOUR_OF_DAY) >= 0 && c.get(Calendar.HOUR_OF_DAY) < 7) {
-                        mightBeInNightBonus = true;
-                    }
                 }
                 nightTime = "(0 - 7 Uhr)";
                 break;
@@ -215,17 +210,9 @@ public class TimePanel extends javax.swing.JPanel {
                     //in night bonus
                     mightBeInNightBonus = true;
                 }
-
-                //check min arrive time
-                c.setTimeInMillis(arrive.getTime() - (jToleranceField.isEnabled() ? arrivalTolerance : 0));
-                if (c.get(Calendar.HOUR_OF_DAY) >= 0 && c.get(Calendar.HOUR_OF_DAY) < 8) {
+                double max = jArriveTimeFrame.getMaximumColoredValue();
+                if (max <= 8) {
                     mightBeInNightBonus = true;
-                } else {
-                    //check max arrive time
-                    c.setTimeInMillis(arrive.getTime() + (jToleranceField.isEnabled() ? arrivalTolerance : 0));
-                    if (c.get(Calendar.HOUR_OF_DAY) >= 0 && c.get(Calendar.HOUR_OF_DAY) < 8) {
-                        mightBeInNightBonus = true;
-                    }
                 }
                 break;
             }
@@ -251,29 +238,47 @@ public class TimePanel extends javax.swing.JPanel {
     private void initComponents() {
 
         frameValidityGroup = new javax.swing.ButtonGroup();
+        jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jSendTime = new javax.swing.JSpinner();
+        jButton2 = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jSendTimeFramesList = new javax.swing.JList();
         jLabel2 = new javax.swing.JLabel();
         jSendTimeFrame = new com.visutools.nav.bislider.BiSlider();
         jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        jEveryDayValid = new javax.swing.JRadioButton();
+        jOnlyValidAt = new javax.swing.JRadioButton();
+        jLabel7 = new javax.swing.JLabel();
+        jTribeTimeFrameBox = new javax.swing.JComboBox();
+        jValidAtDay = new javax.swing.JSpinner();
+        jPanel2 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         jArriveTime = new javax.swing.JSpinner();
         jLabel4 = new javax.swing.JLabel();
+        jArriveTimeFrame = new com.visutools.nav.bislider.BiSlider();
+        jTimeFrameStepSize = new javax.swing.JComboBox();
         jLabel5 = new javax.swing.JLabel();
-        jToleranceField = new javax.swing.JFormattedTextField();
+        jLabel8 = new javax.swing.JLabel();
+        jSpinner1 = new javax.swing.JSpinner();
         jLabel6 = new javax.swing.JLabel();
-        jEveryDayValid = new javax.swing.JRadioButton();
-        jOnlyValidAt = new javax.swing.JRadioButton();
-        jValidAtDay = new javax.swing.JSpinner();
-        jTribeTimeFrameBox = new javax.swing.JComboBox();
-        jLabel7 = new javax.swing.JLabel();
+
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Start"));
+        jPanel1.setOpaque(false);
 
         jLabel1.setText("Startzeit");
 
         jSendTime.setModel(new javax.swing.SpinnerDateModel(new java.util.Date(), null, null, java.util.Calendar.SECOND));
+
+        jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/remove.gif"))); // NOI18N
+        jButton2.setMaximumSize(new java.awt.Dimension(23, 23));
+        jButton2.setMinimumSize(new java.awt.Dimension(23, 23));
+        jButton2.setPreferredSize(new java.awt.Dimension(23, 23));
+        jButton2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireRemoveTimeFrameEvent(evt);
+            }
+        });
 
         jScrollPane1.setViewportView(jSendTimeFramesList);
 
@@ -288,34 +293,6 @@ public class TimePanel extends javax.swing.JPanel {
                 fireAddNewTimeFrameEvent(evt);
             }
         });
-
-        jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/remove.gif"))); // NOI18N
-        jButton2.setMaximumSize(new java.awt.Dimension(23, 23));
-        jButton2.setMinimumSize(new java.awt.Dimension(23, 23));
-        jButton2.setPreferredSize(new java.awt.Dimension(23, 23));
-        jButton2.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireRemoveTimeFrameEvent(evt);
-            }
-        });
-
-        jLabel3.setText("Ankunftszeit");
-
-        jArriveTime.setModel(new javax.swing.SpinnerDateModel(new java.util.Date(), null, null, java.util.Calendar.SECOND));
-
-        jLabel4.setText("Toleranz");
-        jLabel4.setEnabled(false);
-
-        jLabel5.setText("+/-");
-        jLabel5.setEnabled(false);
-
-        jToleranceField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(java.text.NumberFormat.getIntegerInstance())));
-        jToleranceField.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
-        jToleranceField.setText("10");
-        jToleranceField.setEnabled(false);
-
-        jLabel6.setText("Stunde(n)");
-        jLabel6.setEnabled(false);
 
         frameValidityGroup.add(jEveryDayValid);
         jEveryDayValid.setSelected(true);
@@ -336,14 +313,138 @@ public class TimePanel extends javax.swing.JPanel {
             }
         });
 
-        jValidAtDay.setModel(new javax.swing.SpinnerDateModel());
-        jValidAtDay.setEnabled(false);
+        jLabel7.setText("Nur Spieler");
 
         jTribeTimeFrameBox.setMaximumSize(new java.awt.Dimension(150, 22));
         jTribeTimeFrameBox.setMinimumSize(new java.awt.Dimension(150, 22));
         jTribeTimeFrameBox.setPreferredSize(new java.awt.Dimension(150, 22));
 
-        jLabel7.setText("Nur Spieler");
+        jValidAtDay.setModel(new javax.swing.SpinnerDateModel());
+        jValidAtDay.setEnabled(false);
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel2))
+                .addGap(10, 10, 10)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jEveryDayValid)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jSendTimeFrame, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 223, Short.MAX_VALUE)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, 0, 0, Short.MAX_VALUE)
+                            .addComponent(jSendTime, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 223, Short.MAX_VALUE)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                    .addComponent(jLabel7, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jOnlyValidAt, javax.swing.GroupLayout.Alignment.LEADING))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jTribeTimeFrameBox, 0, 150, Short.MAX_VALUE)
+                                    .addComponent(jValidAtDay, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE))))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap())
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jSendTime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel2)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jSendTimeFrame, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jEveryDayValid)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jOnlyValidAt)
+                    .addComponent(jValidAtDay, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel7)
+                    .addComponent(jTribeTimeFrameBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Ankunft"));
+        jPanel2.setOpaque(false);
+
+        jLabel3.setText("Ankunftszeit");
+
+        jArriveTime.setModel(new javax.swing.SpinnerDateModel(new java.util.Date(), null, null, java.util.Calendar.SECOND));
+
+        jLabel4.setText("Ankunftszeitrahmen");
+
+        jTimeFrameStepSize.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Sekunde", "Minute" }));
+        jTimeFrameStepSize.setSelectedIndex(1);
+
+        jLabel5.setText("Schrittweite");
+
+        jLabel8.setText("Min. Abstand");
+
+        jSpinner1.setModel(new javax.swing.SpinnerNumberModel(60, 0, 600, 1));
+
+        jLabel6.setText("Sekunden");
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel3)
+                    .addComponent(jLabel4)
+                    .addComponent(jLabel5)
+                    .addComponent(jLabel8))
+                .addGap(10, 10, 10)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jSpinner1, javax.swing.GroupLayout.DEFAULT_SIZE, 209, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel6))
+                    .addComponent(jTimeFrameStepSize, javax.swing.GroupLayout.Alignment.LEADING, 0, 266, Short.MAX_VALUE)
+                    .addComponent(jArriveTimeFrame, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 266, Short.MAX_VALUE)
+                    .addComponent(jArriveTime, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 266, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(jArriveTime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, 36, Short.MAX_VALUE)
+                    .addComponent(jArriveTimeFrame, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jTimeFrameStepSize, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel5))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jSpinner1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel6)
+                    .addComponent(jLabel8))
+                .addContainerGap())
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -351,83 +452,19 @@ public class TimePanel extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(jLabel4)
-                    .addComponent(jLabel3))
-                .addGap(10, 10, 10)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jEveryDayValid)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                .addGap(10, 10, 10)
-                                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jToleranceField))
-                            .addComponent(jArriveTime, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jSendTimeFrame, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, 0, 0, Short.MAX_VALUE)
-                            .addComponent(jSendTime, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                    .addComponent(jLabel7, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jOnlyValidAt, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jTribeTimeFrameBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jValidAtDay))))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel6)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
-                .addContainerGap(212, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jSendTime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel2)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jSendTimeFrame, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jEveryDayValid)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jOnlyValidAt)
-                    .addComponent(jValidAtDay, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel7)
-                    .addComponent(jTribeTimeFrameBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(32, 32, 32)
-                        .addComponent(jLabel4))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel3)
-                            .addComponent(jArriveTime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel5)
-                            .addComponent(jToleranceField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel6))))
-                .addContainerGap(51, Short.MAX_VALUE))
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(16, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -520,6 +557,7 @@ public class TimePanel extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup frameValidityGroup;
     private javax.swing.JSpinner jArriveTime;
+    private com.visutools.nav.bislider.BiSlider jArriveTimeFrame;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JRadioButton jEveryDayValid;
@@ -530,12 +568,16 @@ public class TimePanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JRadioButton jOnlyValidAt;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSpinner jSendTime;
     private com.visutools.nav.bislider.BiSlider jSendTimeFrame;
     private javax.swing.JList jSendTimeFramesList;
-    private javax.swing.JFormattedTextField jToleranceField;
+    private javax.swing.JSpinner jSpinner1;
+    private javax.swing.JComboBox jTimeFrameStepSize;
     private javax.swing.JComboBox jTribeTimeFrameBox;
     private javax.swing.JSpinner jValidAtDay;
     // End of variables declaration//GEN-END:variables

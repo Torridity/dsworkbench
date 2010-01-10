@@ -23,7 +23,7 @@ import org.jdom.Document;
 import org.jdom.Element;
 
 /**
- *
+ * @TODO (2.0) Avoid returning always 0 if no troops are imported
  * @author Charon
  */
 public class StandardAttackManager {

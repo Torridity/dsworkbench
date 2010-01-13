@@ -72,8 +72,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumn;
 
 /**
- * @TODO (DIFF) Arrive time at direct export from result frame corrected
- * @TODO (DIFF) New troop filter for source villages
+ * @TODO (2.0) Fixed start time, arbitrary arrive time not in night bonus?
  * @author Jejkal
  */
 public class TribeTribeAttackFrame extends javax.swing.JFrame {
@@ -1930,7 +1929,7 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
     if (type == 0) {
         logger.info("Using 'BruteForce' algorithm");
         algo = new BruteForce();
-       /*.calculateAttacks(sources,
+        /*.calculateAttacks(sources,
         fakes,
         victimVillages,
         maxAttacksPerVillage,
@@ -1943,7 +1942,7 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
     } else if (type == 1) {
         logger.info("Using 'AllInOne' algorithm");
         //algo = new AllInOne();
-         algo = new Iterix();
+        algo = new Iterix();
     } else if (type == 2) {
         logger.info("Using 'Blitzkrieg' algorithm");
         algo = new Blitzkrieg();
@@ -2916,13 +2915,25 @@ private void fireApplyTroopFiltersEvent(java.awt.event.MouseEvent evt) {//GEN-FI
 }//GEN-LAST:event_fireApplyTroopFiltersEvent
 
 private void fireComplexityChangedEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireComplexityChangedEvent
-   if(jComplexitySlider.getValue() == 0){
-       jComplexityDescription.setText("Geringer Aufwand (meist gute Ergebnisse)");
-   }else if(jComplexitySlider.getValue() == 1){
-       jComplexityDescription.setText("Durchschnittlicher Aufwand (sehr gute Ergebnisse mit fester Ankunftszeit)");
-   }else if(jComplexitySlider.getValue() == 2){
-       jComplexityDescription.setText("Sehr hoher Aufwand (sehr gute Ergebnisse mit variabler Ankunftszeit)");
-   }
+    if (jComplexitySlider.getValue() == 0) {
+        jComplexityDescription.setText("Geringer Aufwand (meist gute Ergebnisse)");
+    } else if (jComplexitySlider.getValue() == 1) {
+        jComplexityDescription.setText("Durchschnittlicher Aufwand (sehr gute Ergebnisse mit fester Ankunftszeit)");
+    } else if (jComplexitySlider.getValue() == 2) {
+        jComplexityDescription.setText("Sehr hoher Aufwand (sehr gute Ergebnisse mit variabler Ankunftszeit)");
+    }
+    SimpleDateFormat f = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
+
+    long s = System.currentTimeMillis();
+    double dist = DSCalculator.calculateDistance((Village) jAttacksTable.getValueAt(0, 0), (Village) jVictimTable.getValueAt(0, 1));
+    long time = Math.round(DataHolder.getSingleton().getUnitByPlainName("ram").getSpeed() * dist * 60000);
+    Date d = mTimePanel.getTimeFrame().getRandomArriveTime(time, null, 18, 22, new LinkedList<Long>());
+    if (d == null) {
+        System.out.println("Not possible");
+    } else {
+        System.out.println(f.format(d));
+    }
+    System.out.println("Dur: " + (System.currentTimeMillis() - s));
 }//GEN-LAST:event_fireComplexityChangedEvent
 
     private void showResults(List<Attack> pAttacks) {

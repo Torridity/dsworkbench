@@ -9,6 +9,7 @@ import de.tor.tribes.types.Tribe;
 import java.awt.Point;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -20,23 +21,19 @@ public class TimeFrame {
 
     private long start = 0;
     private long end = 0;
-    private List<Point> mFrames = null;
     private List<TimeSpan> timeSpans = null;
     private long arriveTolerance = 0;
 
     public TimeFrame(Date pStart, Date pEnd, int pMinHour, int pMaxHour) {
         start = pStart.getTime();
         end = pEnd.getTime();
-        mFrames = new LinkedList<Point>();
         timeSpans = new LinkedList<TimeSpan>();
-        mFrames.add(new Point(pMinHour, pMaxHour));
     }
 
     public TimeFrame(Date pStart, Date pEnd) {
         start = pStart.getTime();
         end = pEnd.getTime();
         timeSpans = new LinkedList<TimeSpan>();
-        mFrames = new LinkedList<Point>();
     }
 
     public void setEnd(long pTime) {
@@ -45,10 +42,6 @@ public class TimeFrame {
 
     public void setArriveTolerance(long pHours) {
         arriveTolerance = pHours;
-    }
-
-    public void addFrame(int pMinHour, int pMaxHour) {
-        mFrames.add(new Point(pMinHour, pMaxHour));
     }
 
     public void addTimeSpan(TimeSpan pSpan) {
@@ -127,6 +120,169 @@ public class TimeFrame {
         }
         end = pEnd;
         return null;
+    }
+
+    public Date getRandomArriveTime(long pRuntime, Tribe pTribe, int pStartHour, int pEndHour, List<Long> usedDates) {
+        Calendar cs = Calendar.getInstance();
+        cs.setTimeInMillis(start);
+        cs.set(Calendar.HOUR_OF_DAY, 0);
+        cs.set(Calendar.MINUTE, 0);
+        cs.set(Calendar.SECOND, 0);
+        cs.set(Calendar.MILLISECOND, 0);
+        List<Long> l = timespansToTimeframes(pTribe);
+        //SimpleDateFormat f = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
+        Calendar arriveStart = Calendar.getInstance();
+        arriveStart.setTimeInMillis(end);
+        arriveStart.set(Calendar.HOUR_OF_DAY, pStartHour);
+        arriveStart.set(Calendar.MINUTE, 0);
+        arriveStart.set(Calendar.SECOND, 0);
+        arriveStart.set(Calendar.MILLISECOND, 0);
+        Calendar arriveEnd = Calendar.getInstance();
+        arriveEnd.setTimeInMillis(end);
+        arriveEnd.set(Calendar.HOUR_OF_DAY, pEndHour - 1);
+        arriveEnd.set(Calendar.MINUTE, 59);
+        arriveEnd.set(Calendar.SECOND, 59);
+        arriveEnd.set(Calendar.MILLISECOND, 999);
+
+        while (!l.isEmpty()) {
+            long s = l.remove(0);
+            long e = l.remove(0);
+            //System.out.println("Start: " + f.format(new Date(s)));
+            //System.out.println("End: " + f.format(new Date(e)));
+            Calendar calStart = Calendar.getInstance();
+            calStart.setTimeInMillis(s + pRuntime);
+            Calendar calEnd = Calendar.getInstance();
+            calEnd.setTimeInMillis(e + pRuntime);
+            //System.out.println("CalStart: " + f.format(calStart.getTime()));
+            //System.out.println("CalEnd: " + f.format(calEnd.getTime()));
+
+
+            boolean startFits = (calStart.get(Calendar.HOUR_OF_DAY) >= arriveStart.getTimeInMillis() && calStart.get(Calendar.HOUR_OF_DAY) < arriveEnd.getTimeInMillis());
+            boolean endFits = (calEnd.get(Calendar.HOUR_OF_DAY) >= arriveStart.getTimeInMillis() && calEnd.get(Calendar.HOUR_OF_DAY) < arriveEnd.getTimeInMillis());
+            long firstTerm = -1;
+            long randomTerm = -1;
+
+            if (startFits && endFits) {
+                //return new Date(s + (long) Math.round(Math.random() * (double) (e - s)));
+                firstTerm = s;
+                randomTerm = e - s;
+            } else if (startFits) {
+                long diff = arriveEnd.getTimeInMillis() - calStart.getTimeInMillis();
+                // return new Date(s + (long) Math.round(Math.random() * (double) (diff)));
+                firstTerm = s;
+                randomTerm = diff;
+            } else if (endFits) {
+                long diff = arriveEnd.getTimeInMillis() - calEnd.getTimeInMillis();
+                //return new Date(e + (long) Math.round(Math.random() * (double) (diff)));
+                firstTerm = e;
+                randomTerm = diff;
+            } else {
+                long startPoss = -1;
+                long endPoss = -1;
+                for (long i = s; i < e; i += 60000) {
+                    if (i + pRuntime >= arriveStart.getTimeInMillis() && i + pRuntime < arriveEnd.getTimeInMillis()) {
+                        if (startPoss == -1) {
+                            startPoss = i;
+                        } else {
+                            endPoss = i;
+                        }
+                    } else {
+                        if (startPoss != -1) {
+                            //end reached, not longer valid
+                            break;
+                        }
+                    }
+                }
+                if (startPoss != -1 && endPoss != -1) {
+                    //valid start and end  found
+                    long diff = endPoss - startPoss;
+                    //return new Date(startPoss + (long) Math.round(Math.random() * (double) (diff)) + pRuntime);
+                    firstTerm = startPoss + pRuntime;
+                    randomTerm = diff;
+                }
+            }
+
+            if (firstTerm != -1 && randomTerm != -1) {
+                Date d = new Date(firstTerm + (long) Math.round(Math.random() * (double) randomTerm));
+                while (usedDates.contains(d.getTime())) {
+                    d = new Date(firstTerm + (long) Math.round(Math.random() * (double) randomTerm));
+                }
+                return d;
+            }
+        }
+        return null;
+    }
+
+    private List<Long> timespansToTimeframes(Tribe pTribe) {
+        Calendar cs = Calendar.getInstance();
+        cs.setTimeInMillis(start);
+        // int hour = cs.get(Calendar.HOUR_OF_DAY);
+        List<Calendar> days = new LinkedList<Calendar>();
+        cs.set(Calendar.HOUR_OF_DAY, 0);
+        cs.set(Calendar.MINUTE, 0);
+        cs.set(Calendar.SECOND, 0);
+        cs.set(Calendar.MILLISECOND, 0);
+        Calendar ce = Calendar.getInstance();
+        ce.setTimeInMillis(end);
+        ce.set(Calendar.HOUR_OF_DAY, 0);
+        ce.set(Calendar.MINUTE, 0);
+        ce.set(Calendar.SECOND, 0);
+        ce.set(Calendar.MILLISECOND, 0);
+        days.add(cs);
+        long ONE_DAY = 1000 * 60 * 60 * 24;
+        long startMillis = cs.getTimeInMillis();
+        while (startMillis < ce.getTimeInMillis()) {
+            //increment by one day and add to day list
+            Calendar c = Calendar.getInstance();
+            startMillis += ONE_DAY;
+            c.setTimeInMillis(startMillis);
+            days.add(c);
+        }
+
+        Collections.sort(days);
+        List<Long> startEndTimes = new LinkedList<Long>();
+        for (TimeSpan span : timeSpans) {
+            if (span.isValidFor() == null || span.isValidFor().equals(pTribe)) {
+                Date d = span.getAtDate();
+                if (d != null) {
+                    Calendar cal = Calendar.getInstance();
+                    cal.setTime(d);
+                    cal.set(Calendar.HOUR_OF_DAY, 0);
+                    cal.set(Calendar.MINUTE, 0);
+                    cal.set(Calendar.SECOND, 0);
+                    cal.set(Calendar.MILLISECOND, 0);
+                    for (Calendar day : days) {
+                        if (day.get(Calendar.DAY_OF_MONTH) == cal.get(Calendar.DAY_OF_MONTH) &&
+                                day.get(Calendar.MONTH) == cal.get(Calendar.MONTH) &&
+                                day.get(Calendar.YEAR) == cal.get(Calendar.YEAR)) {
+                            //valid day
+                            Calendar c = Calendar.getInstance();
+                            c.setTime(day.getTime());
+                            c.set(Calendar.HOUR_OF_DAY, span.getSpan().x);
+                            startEndTimes.add(c.getTimeInMillis());
+                            c.set(Calendar.HOUR_OF_DAY, span.getSpan().y);
+                            c.set(Calendar.MINUTE, 59);
+                            c.set(Calendar.SECOND, 59);
+                            startEndTimes.add(c.getTimeInMillis());
+                        }
+                    }
+                } else {
+                    for (Calendar day : days) {
+                        //valid day
+                        Calendar c = Calendar.getInstance();
+                        c.setTime(day.getTime());
+                        c.set(Calendar.HOUR_OF_DAY, span.getSpan().x);
+                        startEndTimes.add(c.getTimeInMillis());
+                        c.set(Calendar.HOUR_OF_DAY, span.getSpan().y);
+                        c.set(Calendar.MINUTE, 59);
+                        c.set(Calendar.SECOND, 59);
+                        startEndTimes.add(c.getTimeInMillis());
+                    }
+                }
+            }
+        }
+        Collections.sort(startEndTimes);
+        return startEndTimes;
     }
 
     public Date getArriveDate(long runtime) {

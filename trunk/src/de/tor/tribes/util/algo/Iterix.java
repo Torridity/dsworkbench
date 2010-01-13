@@ -214,7 +214,6 @@ public class Iterix extends AbstractAttackAlgorithm {
 
     public double[][] buildFittedSourceMappings(List<Village> pSources, List<Village> pTargets, TimeFrame pTimeFrame, int pMaxAttacksPerVillage) {
         TimeFrame t = new TimeFrame(new Date(pTimeFrame.getStart()), new Date(pTimeFrame.getEnd()));
-        t.addFrame(18, 22);
         List<Long> usedDates = new LinkedList<Long>();
         double[][] tMappings = new double[pSources.size()][pTargets.size()];
         UnitHolder ram = DataHolder.getSingleton().getUnitByPlainName("ram");

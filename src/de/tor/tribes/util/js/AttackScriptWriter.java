@@ -21,7 +21,6 @@ import org.apache.log4j.Logger;
 /**
  *
  * @author Charon
- * @TODO (DIFF) Milliseconds shown for exported times
  */
 public class AttackScriptWriter {
 

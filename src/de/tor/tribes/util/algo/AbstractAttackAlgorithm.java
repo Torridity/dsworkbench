@@ -31,7 +31,7 @@ public abstract class AbstractAttackAlgorithm {
             int pMaxAttacksPerVillage,
             int pMaxCleanPerSnob,
             TimeFrame pTimeFrame,
-            boolean pRandomize,
+            boolean pFakeOffTargets,
             boolean pUse5Snobs);
 
     /**

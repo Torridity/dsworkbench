@@ -99,7 +99,7 @@ public abstract class AbstractTroopMovement {
         return iMinOffs;
     }
 
-    public abstract List<Attack> getAttacks(Date pArriveTime);
+    public abstract List<Attack> getAttacks(TimeFrame pTimeframe);
 
     protected static class AttackRuntimeSort implements Comparator<Attack>, java.io.Serializable {
 

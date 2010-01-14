@@ -342,10 +342,10 @@ public class Blitzkrieg extends AbstractAttackAlgorithm {
         //add used send times to list to avoid unsendable attacks
         Calendar c = Calendar.getInstance();
         c.setTimeInMillis(pTimeFrame.getEnd());
-        for (Attack a : f.getAttacks(c.getTime())) {
+     /*   for (Attack a : f.getAttacks(c.getTime())) {
             long send = a.getArriveTime().getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(a.getSource(), a.getTarget(), a.getUnit().getSpeed()) * 1000);
             sends.add(send);
-        }
+        }*/
 
         assignFakes(pFakes, sends, pFakeSources, pTargets, pTimeFrame, pMaxAttacks);
     }

@@ -82,8 +82,6 @@ import javax.swing.table.DefaultTableModel;
 
 /**
  * @TODO (1.5?) Add min number to troop filter in attack planer????
- * @TODO (DIFF) Re-Time tool added
- * @TODO (Diff) DoItYourselfAttackPlaner added
  * @author  Charon
  */
 public class DSWorkbenchMainFrame extends javax.swing.JFrame implements

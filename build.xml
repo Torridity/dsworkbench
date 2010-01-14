@@ -44,12 +44,12 @@
 
     </target-->
 
- <target name="-post-jar">
+ <!--target name="-post-jar">
      <taskdef resource="proguard/ant/task.properties"
            classpath="lib/proguard.jar" />
     <proguard configuration="proguard.pro" />
     <copy file="Release/core.jar" tofile="dist/DSWorkbench.jar"/>
-        </target>
+        </target-->
         
     <!--
 

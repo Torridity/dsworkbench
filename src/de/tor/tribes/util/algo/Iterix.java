@@ -7,26 +7,20 @@ package de.tor.tribes.util.algo;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.AbstractTroopMovement;
+import de.tor.tribes.types.Fake;
+import de.tor.tribes.types.Off;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.DSCalculator;
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.io.FileWriter;
-import java.text.SimpleDateFormat;
-import java.util.Collections;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 
 /**
  *
@@ -50,20 +44,22 @@ public class Iterix extends AbstractAttackAlgorithm {
     int selectedTarget = 0;
 
     @Override
-    public List<AbstractTroopMovement> calculateAttacks(Hashtable<UnitHolder, List<Village>> pSources, Hashtable<UnitHolder, List<Village>> pFakes, List<Village> pTargets, int pMaxAttacksPerVillage, int pMaxCleanPerSnob, TimeFrame pTimeFrame, boolean pRandomize, boolean pUse5Snobs) {
-        ramSources = pSources.get(DataHolder.getSingleton().getUnitByPlainName("ram"));
-        //  removeImpossibleSources(ramSources, pTargets, pTimeFrame);
+    public List<AbstractTroopMovement> calculateAttacks(Hashtable<UnitHolder, List<Village>> pSources, Hashtable<UnitHolder, List<Village>> pFakes, List<Village> pTargets, int pMaxAttacksPerVillage, int pMaxCleanPerSnob, TimeFrame pTimeFrame, boolean pFakeOffTargets, boolean pUse5Snobs) {
+        UnitHolder ram = DataHolder.getSingleton().getUnitByPlainName("ram");
+        ramSources = pSources.get(ram);
+        if (!pTimeFrame.isVariableArriveTime()) {
+            //remove non-working sources if we use a fixed arrive time
+            removeImpossibleSources(ramSources, pTargets, pTimeFrame);
+        }
         sourceAmounts = resolveDuplicates(ramSources);
-        targets = pTargets;
-        mappings = buildFittedSourceMappings(ramSources, pTargets, pTimeFrame, pMaxAttacksPerVillage);
-       /* mappings = buildMappings(ramSources, pTargets, pTimeFrame, pMaxAttacksPerVillage);
-        tmpMappings = buildMappings(ramSources, pTargets, pTimeFrame, pMaxAttacksPerVillage);*/
+        mappings = buildMappings(ramSources, pTargets, pTimeFrame, pMaxAttacksPerVillage);
         result = new double[mappings.length][mappings[0].length];
-        int[] sourceMappings = buildSourceMappings(mappings);
-        int[] targetMappings = buildTargetMappings(mappings);
-        // mappingsToCSV(mappings, sourceMappings, targetMappings, "mappings.csv");
+        // int[] sourceMappings = buildSourceMappings(mappings);
+        // int[] targetMappings = buildTargetMappings(mappings);
 
-        labels = new JLabel[mappings.length + 1][mappings[0].length + 1];
+
+        // mappingsToCSV(mappings, sourceMappings, targetMappings, "mappings.csv");
+   /*     labels = new JLabel[mappings.length + 1][mappings[0].length + 1];
         labels2 = new JLabel[mappings.length][mappings[0].length];
         f = new JFrame();
         JPanel p = new JPanel();
@@ -71,20 +67,20 @@ public class Iterix extends AbstractAttackAlgorithm {
         p.setLayout(new GridLayout(mappings.length + 1, mappings[0].length + 1));
         p2.setLayout(new GridLayout(mappings.length, mappings[0].length));
         for (int i = 0; i <= mappings.length; i++) {
-            for (int j = 0; j <= mappings[0].length; j++) {
-                JLabel l = new JLabel("0");
-                l.setOpaque(true);
-                labels[i][j] = l;
-                p.add(l);
-                try {
-                    JLabel l2 = new JLabel("0");
-                    l2.setOpaque(true);
-                    labels2[i][j] = l2;
-                    p2.add(l2);
-                } catch (Exception e) {
-                }
+        for (int j = 0; j <= mappings[0].length; j++) {
+        JLabel l = new JLabel("0");
+        l.setOpaque(true);
+        labels[i][j] = l;
+        p.add(l);
+        try {
+        JLabel l2 = new JLabel("0");
+        l2.setOpaque(true);
+        labels2[i][j] = l2;
+        p2.add(l2);
+        } catch (Exception e) {
+        }
 
-            }
+        }
         }
         f.setLayout(new GridLayout(2, 2));
         f.add(p);
@@ -94,47 +90,47 @@ public class Iterix extends AbstractAttackAlgorithm {
 
         b.addMouseListener(new MouseListener() {
 
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                /* try {
-                long s = System.currentTimeMillis();
-                System.out.println("Start");
-                while (!solve(ramSources, targets, mappings, result)) {
+        @Override
+        public void mouseClicked(MouseEvent e) {*/
+        try {
+            long s = System.currentTimeMillis();
+
+            while (!solve(ramSources, pTargets, mappings, result)) {
                 Thread.sleep(10);
                 System.out.println(" Loop: " + (System.currentTimeMillis() - s));
-                }
-                System.out.println("solved: " + (System.currentTimeMillis() - s));
-                int[] sourceMappings = buildSourceMappings(mappings);
-                int[] targetMappings = buildTargetMappings(mappings);
-                drawResults(sourceMappings, targetMappings);
-                colorSelectedValues(selectedSource, selectedTarget);
-                } catch (Exception ewe) {
-                ewe.printStackTrace();
-                }*/
-
-                //solve2(ramSources, targets, mappings, result);
-                solve(ramSources, targets, mappings, result);
-                int[] sourceMappings = buildSourceMappings(mappings);
-                int[] targetMappings = buildTargetMappings(mappings);
-                drawResults(sourceMappings, targetMappings);
-                colorSelectedValues(selectedSource, selectedTarget);
             }
+            System.out.println("solved: " + (System.currentTimeMillis() - s));
+            /* int[] sourceMappings = buildSourceMappings(mappings);
+            int[] targetMappings = buildTargetMappings(mappings);
+            drawResults(sourceMappings, targetMappings);
+            colorSelectedValues(selectedSource, selectedTarget);*/
+        } catch (Exception ewe) {
+            ewe.printStackTrace();
+        }
 
-            @Override
-            public void mousePressed(MouseEvent e) {
-            }
+        //solve2(ramSources, targets, mappings, result);
+/*              solve(ramSources, targets, mappings, result);
+        int[] sourceMappings = buildSourceMappings(mappings);
+        int[] targetMappings = buildTargetMappings(mappings);
+        drawResults(sourceMappings, targetMappings);
+        colorSelectedValues(selectedSource, selectedTarget);
+        }
 
-            @Override
-            public void mouseReleased(MouseEvent e) {
-            }
+        @Override
+        public void mousePressed(MouseEvent e) {
+        }
 
-            @Override
-            public void mouseEntered(MouseEvent e) {
-            }
+        @Override
+        public void mouseReleased(MouseEvent e) {
+        }
 
-            @Override
-            public void mouseExited(MouseEvent e) {
-            }
+        @Override
+        public void mouseEntered(MouseEvent e) {
+        }
+
+        @Override
+        public void mouseExited(MouseEvent e) {
+        }
         });
         f.add(b);
         f.pack();
@@ -142,17 +138,91 @@ public class Iterix extends AbstractAttackAlgorithm {
 
         //solve(ramSources, pTargets, mappings, result);
         for (int i = 0; i < mappings.length; i++) {
-            for (int j = 0; j < mappings[0].length; j++) {
-                labels[i][j].setText("" + mappings[i][j]);
-                labels2[i][j].setText("" + result[i][j]);
-            }
+        for (int j = 0; j < mappings[0].length; j++) {
+        labels[i][j].setText("" + mappings[i][j]);
+        labels2[i][j].setText("" + result[i][j]);
+        }
         }
         //init view
         sourceMappings = buildSourceMappings(mappings);
         targetMappings = buildTargetMappings(mappings);
         drawResults(sourceMappings, targetMappings);
+         */
 
-        return new LinkedList<AbstractTroopMovement>();
+        Hashtable<Village, Off> movements = new Hashtable<Village, Off>();
+        for (int i = 0; i < ramSources.size(); i++) {
+            for (int j = 0; j < pTargets.size(); j++) {
+                if (result[i][j] != 0) {
+                    Village source = ramSources.get(i);
+                    Village target = pTargets.get(j);
+                    Off movementForTarget = movements.get(target);
+                    if (movementForTarget == null) {
+                        movementForTarget = new Off(target, pMaxAttacksPerVillage);
+                        movements.put(target, movementForTarget);
+                    }
+                    movementForTarget.addOff(ram, source);
+                }
+            }
+        }
+        List<AbstractTroopMovement> movementList = new LinkedList<AbstractTroopMovement>();
+        Enumeration<Village> targetKeys = movements.keys();
+        while (targetKeys.hasMoreElements()) {
+            Village target = targetKeys.nextElement();
+            if (!pFakeOffTargets) {
+                pTargets.remove(target);
+            }
+            movementList.add(movements.get(target));
+        }
+
+
+        //assign fakes
+        //@TODO Avoid faking existing source-target combination!!!
+        List<Village> ramFakes = pFakes.get(ram);
+        if (!pTimeFrame.isVariableArriveTime()) {
+            //remove non-working sources if we use a fixed arrive time
+            removeImpossibleSources(ramFakes, pTargets, pTimeFrame);
+        }
+        sourceAmounts = resolveDuplicates(ramFakes);
+        mappings = buildMappings(ramFakes, pTargets, pTimeFrame, pMaxAttacksPerVillage);
+        result = new double[mappings.length][mappings[0].length];
+        try {
+            long s = System.currentTimeMillis();
+
+            while (!solve(ramFakes, pTargets, mappings, result)) {
+                Thread.sleep(10);
+                System.out.println(" Loop: " + (System.currentTimeMillis() - s));
+            }
+            System.out.println("solved: " + (System.currentTimeMillis() - s));
+            /* int[] sourceMappings = buildSourceMappings(mappings);
+            int[] targetMappings = buildTargetMappings(mappings);
+            drawResults(sourceMappings, targetMappings);
+            colorSelectedValues(selectedSource, selectedTarget);*/
+        } catch (Exception ewe) {
+            ewe.printStackTrace();
+        }
+
+        Hashtable<Village, Fake> fakeMovements = new Hashtable<Village, Fake>();
+        for (int i = 0; i < ramFakes.size(); i++) {
+            for (int j = 0; j < pTargets.size(); j++) {
+                if (result[i][j] != 0) {
+                    Village source = ramFakes.get(i);
+                    Village target = pTargets.get(j);
+                    Fake movementForTarget = fakeMovements.get(target);
+                    if (movementForTarget == null) {
+                        movementForTarget = new Fake(target, pMaxAttacksPerVillage);
+                        fakeMovements.put(target, movementForTarget);
+                    }
+                    movementForTarget.addOff(ram, source);
+                }
+            }
+        }
+        targetKeys = fakeMovements.keys();
+        while (targetKeys.hasMoreElements()) {
+            Village target = targetKeys.nextElement();
+            movementList.add(movements.get(target));
+        }
+        
+        return movementList;
     }
 
     /**Remove source-target mappings that are invalid in respect to the provided timeframe*/
@@ -184,69 +254,43 @@ public class Iterix extends AbstractAttackAlgorithm {
         double[][] tMappings = new double[pSources.size()][pTargets.size()];
         UnitHolder ram = DataHolder.getSingleton().getUnitByPlainName("ram");
         int cnt = 0;
+        List<Long> usedDates = new LinkedList<Long>();
         for (int i = 0; i < pSources.size(); i++) {
             for (int j = 0; j < pTargets.size(); j++) {
                 double dist = DSCalculator.calculateDistance(pSources.get(i), pTargets.get(j));
                 double runtime = dist * ram.getSpeed() * 60000;
-                long send = pTimeFrame.getEnd() - (long) Math.round(runtime);
-                if (pTimeFrame.inside(new Date(send), null)) {
-                    tMappings[i][j] = pMaxAttacksPerVillage;
-                    cnt++;
+                if (pTimeFrame.isVariableArriveTime()) {
+                    Date arriveTime = pTimeFrame.getRandomArriveTime(Math.round(runtime), pSources.get(i).getTribe(), usedDates);
+                    if (arriveTime != null) {
+                        tMappings[i][j] = pMaxAttacksPerVillage;
+                        usedDates.add(arriveTime.getTime());
+                        cnt++;
+                    } else {
+                        tMappings[i][j] = 0;
+                    }
                 } else {
-                    tMappings[i][j] = 0;
+                    long send = pTimeFrame.getEnd() - (long) Math.round(runtime);
+                    if (pTimeFrame.inside(new Date(send), null)) {
+                        tMappings[i][j] = pMaxAttacksPerVillage;
+                        cnt++;
+                    } else {
+                        tMappings[i][j] = 0;
+                    }
                 }
             }
         }
         System.out.println("Got " + cnt + " combinations");
-         int[] s = buildSourceMappings(tMappings);
-        int c = 0;
-        int c2 = 0;
-        for (Integer i : s) {
-            if (i != 0) {
-                c++;
-                c2+=i;
-            }
-        }
-        System.out.println("Used Sources: " + c);
-          System.out.println("Poss Mappings: " + c2);
-        return tMappings;
-    }
-
-    public double[][] buildFittedSourceMappings(List<Village> pSources, List<Village> pTargets, TimeFrame pTimeFrame, int pMaxAttacksPerVillage) {
-        TimeFrame t = new TimeFrame(new Date(pTimeFrame.getStart()), new Date(pTimeFrame.getEnd()));
-        List<Long> usedDates = new LinkedList<Long>();
-        double[][] tMappings = new double[pSources.size()][pTargets.size()];
-        UnitHolder ram = DataHolder.getSingleton().getUnitByPlainName("ram");
-        int cnt = 0;
-        for (int i = 0; i < pSources.size(); i++) {
-            for (int j = 0; j < pTargets.size(); j++) {
-                double dist = DSCalculator.calculateDistance(pSources.get(i), pTargets.get(j));
-                double runtime = dist * ram.getSpeed() * 60000;
-                long send = pTimeFrame.getEnd() - (long) Math.round(runtime);
-                Date fitting = pTimeFrame.fitInto(Math.round(runtime), 18, 22, null, usedDates);
-                if (fitting != null) {
-                    //SimpleDateFormat f = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
-                    // System.out.println(pSources.get(i) + " -> " + pTargets.get(j) + " = " + f.format(fitting));
-                    usedDates.add(new Long(fitting.getTime()));
-                    tMappings[i][j] = pMaxAttacksPerVillage;
-                    cnt++;
-                } else {
-                    tMappings[i][j] = 0;
-                }
-            }
-        }
-        System.out.println("Got " + cnt + " combinations (max. " + (pSources.size() * pTargets.size()) + ")");
         int[] s = buildSourceMappings(tMappings);
         int c = 0;
         int c2 = 0;
         for (Integer i : s) {
             if (i != 0) {
                 c++;
-                c2+=i;
+                c2 += i;
             }
         }
         System.out.println("Used Sources: " + c);
-          System.out.println("Poss Mappings: " + c2);
+        System.out.println("Poss Mappings: " + c2);
         return tMappings;
     }
 

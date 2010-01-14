@@ -23,7 +23,7 @@ public class Fake extends AbstractTroopMovement {
     }
 
     @Override
-    public List<Attack> getAttacks(Date pArriveTime) {
+    public List<Attack> getAttacks(TimeFrame pTimeFrame) {
         List<Attack> result = new LinkedList<Attack>();
         Enumeration<UnitHolder> unitKeys = getOffs().keys();
         Village target = getTarget();
@@ -35,7 +35,12 @@ public class Fake extends AbstractTroopMovement {
                 Attack a = new Attack();
                 a.setTarget(target);
                 a.setSource(offSource);
-                a.setArriveTime(pArriveTime);
+                if (!pTimeFrame.isVariableArriveTime()) {
+                    a.setArriveTime(new Date(pTimeFrame.getEnd()));
+                } else {
+                    long runtime = Math.round(DSCalculator.calculateMoveTimeInSeconds(offSource, target, unit.getSpeed()) * 1000);
+                    a.setArriveTime(pTimeFrame.getRandomArriveTime(runtime, offSource.getTribe(), new LinkedList<Long>()));
+                }
                 a.setUnit(unit);
                 a.setType(type);
                 result.add(a);

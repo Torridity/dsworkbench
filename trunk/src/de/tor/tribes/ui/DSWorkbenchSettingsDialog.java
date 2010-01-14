@@ -53,7 +53,6 @@ import javax.swing.table.DefaultTableCellRenderer;
 
 /**
  * @TODO (1.X) Shortcuts editable
- * @TODO (DIFF) Added download of live data
  * @author Jejkal
  */
 public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements

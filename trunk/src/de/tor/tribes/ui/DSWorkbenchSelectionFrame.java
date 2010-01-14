@@ -285,7 +285,7 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
                         .addComponent(jExportAllyBox)
                         .addGap(18, 18, 18)
                         .addComponent(jExportPointsBox)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 37, Short.MAX_VALUE)
                         .addComponent(jExportUnformattedButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jExportBBButton)))
@@ -428,7 +428,7 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 416, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 420, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -684,7 +684,19 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
     }//GEN-LAST:event_fireAlwaysOnTopChangedEvent
 
     private void fireSelectionToAttackPlannerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSelectionToAttackPlannerEvent
-        DSWorkbenchMainFrame.getSingleton().getAttackPlaner().fireSelectionTransferEvent(getSelectedElements());
+        if (JOptionPaneHelper.showQuestionConfirmBox(this, "Dörfer als Herkunft oder Ziel einfügen?", "Dörfer übertragen", "Ziel", "Herkunft") == JOptionPane.NO_OPTION) {
+            if (!DSWorkbenchMainFrame.getSingleton().getAttackPlaner().isVisible()) {
+                DSWorkbenchMainFrame.getSingleton().getAttackPlaner().setup();
+                DSWorkbenchMainFrame.getSingleton().getAttackPlaner().setVisible(true);
+            }
+            DSWorkbenchMainFrame.getSingleton().getAttackPlaner().fireAddTargetsEvent(getSelectedElements());
+        } else {
+            if (!DSWorkbenchMainFrame.getSingleton().getAttackPlaner().isVisible()) {
+                DSWorkbenchMainFrame.getSingleton().getAttackPlaner().setup();
+                DSWorkbenchMainFrame.getSingleton().getAttackPlaner().setVisible(true);
+            }
+            DSWorkbenchMainFrame.getSingleton().getAttackPlaner().fireAddSourcesEvent(getSelectedElements());
+        }
     }//GEN-LAST:event_fireSelectionToAttackPlannerEvent
 
     private void fireSelectRegionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSelectRegionEvent
@@ -790,7 +802,6 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
             }
         });
     }
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBox jAlwaysOnTopBox;
     private javax.swing.JButton jButton1;

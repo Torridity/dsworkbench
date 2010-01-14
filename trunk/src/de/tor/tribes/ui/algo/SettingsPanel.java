@@ -34,10 +34,10 @@ import javax.swing.JSpinner.DateEditor;
 /**
  * @author Jejkal
  */
-public class TimePanel extends javax.swing.JPanel {
+public class SettingsPanel extends javax.swing.JPanel {
 
     /** Creates new form TimePanel */
-    public TimePanel() {
+    public SettingsPanel() {
         initComponents();
         setBackground(Constants.DS_BACK_LIGHT);
         reset();
@@ -80,6 +80,7 @@ public class TimePanel extends javax.swing.JPanel {
         jTribeTimeFrameBox.setModel(new DefaultComboBoxModel(new Object[]{"Alle"}));
     }
 
+    /**Add tribe to timeframe list*/
     public void addTribe(Tribe t) {
         DefaultComboBoxModel model = (DefaultComboBoxModel) jTribeTimeFrameBox.getModel();
         List<Tribe> tribes = new LinkedList<Tribe>();
@@ -101,6 +102,7 @@ public class TimePanel extends javax.swing.JPanel {
         }
     }
 
+    /**Remove tribe from  timeframe list (not used yet)*/
     public void removeTribe(Tribe pTribe) {
         DefaultComboBoxModel model = (DefaultComboBoxModel) jTribeTimeFrameBox.getModel();
         List<Tribe> tribes = new LinkedList<Tribe>();
@@ -132,9 +134,11 @@ public class TimePanel extends javax.swing.JPanel {
             Point s = new Point(span.getSpan().x, span.getSpan().y);
             s.setLocation(s.getX(), s.getY() - 1);
             TimeSpan tmp = new TimeSpan(span.getAtDate(), s, span.isValidFor());
-
             result.addTimeSpan(tmp);
-
+        }
+        if (jVariableArriveTimeBox.isSelected()) {
+            result.setUseVariableArriveTime(true);
+            result.setArriveSpan((int) jArriveTimeFrame.getMinimumColoredValue(), (int) jArriveTimeFrame.getMaximumColoredValue());
         }
         return result;
     }
@@ -228,6 +232,20 @@ public class TimePanel extends javax.swing.JPanel {
         return result;
     }
 
+    /**Return whether to use BruteForce or Iterix as algorithm*/
+    public boolean useBruteForce() {
+        return (jAlgoBox.getSelectedIndex() == 0);
+    }
+
+    public boolean fakeOffTargets(){
+        return jFakeOffTargetsBox.isSelected();
+    }
+
+    /**Return the max. number of attacks per village*/
+    public int getAttacksPerVillage() {
+        return (Integer) jAttackPerVillageSpinner.getValue();
+    }
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -257,13 +275,15 @@ public class TimePanel extends javax.swing.JPanel {
         jArriveTime = new javax.swing.JSpinner();
         jLabel4 = new javax.swing.JLabel();
         jArriveTimeFrame = new com.visutools.nav.bislider.BiSlider();
-        jTimeFrameStepSize = new javax.swing.JComboBox();
+        jPanel3 = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
-        jLabel8 = new javax.swing.JLabel();
-        jSpinner1 = new javax.swing.JSpinner();
+        jAttackPerVillageSpinner = new javax.swing.JSpinner();
+        jVariableArriveTimeBox = new javax.swing.JCheckBox();
         jLabel6 = new javax.swing.JLabel();
+        jAlgoBox = new javax.swing.JComboBox();
+        jFakeOffTargetsBox = new javax.swing.JCheckBox();
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Start"));
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(new java.awt.Color(0, 0, 0), null), "Start", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 12))); // NOI18N
         jPanel1.setOpaque(false);
 
         jLabel1.setText("Startzeit");
@@ -378,10 +398,10 @@ public class TimePanel extends javax.swing.JPanel {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel7)
                     .addComponent(jTribeTimeFrameBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(27, Short.MAX_VALUE))
         );
 
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Ankunft"));
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(new java.awt.Color(0, 0, 0), null), "Ankunft", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 12))); // NOI18N
         jPanel2.setOpaque(false);
 
         jLabel3.setText("Ankunftszeit");
@@ -389,17 +409,6 @@ public class TimePanel extends javax.swing.JPanel {
         jArriveTime.setModel(new javax.swing.SpinnerDateModel(new java.util.Date(), null, null, java.util.Calendar.SECOND));
 
         jLabel4.setText("Ankunftszeitrahmen");
-
-        jTimeFrameStepSize.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Sekunde", "Minute" }));
-        jTimeFrameStepSize.setSelectedIndex(1);
-
-        jLabel5.setText("Schrittweite");
-
-        jLabel8.setText("Min. Abstand");
-
-        jSpinner1.setModel(new javax.swing.SpinnerNumberModel(60, 0, 600, 1));
-
-        jLabel6.setText("Sekunden");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -409,16 +418,9 @@ public class TimePanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel3)
-                    .addComponent(jLabel4)
-                    .addComponent(jLabel5)
-                    .addComponent(jLabel8))
+                    .addComponent(jLabel4))
                 .addGap(10, 10, 10)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jSpinner1, javax.swing.GroupLayout.DEFAULT_SIZE, 209, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jLabel6))
-                    .addComponent(jTimeFrameStepSize, javax.swing.GroupLayout.Alignment.LEADING, 0, 266, Short.MAX_VALUE)
                     .addComponent(jArriveTimeFrame, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 266, Short.MAX_VALUE)
                     .addComponent(jArriveTime, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 266, Short.MAX_VALUE))
                 .addContainerGap())
@@ -434,16 +436,86 @@ public class TimePanel extends javax.swing.JPanel {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, 36, Short.MAX_VALUE)
                     .addComponent(jArriveTimeFrame, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTimeFrameStepSize, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel5))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jSpinner1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel6)
-                    .addComponent(jLabel8))
                 .addContainerGap())
+        );
+
+        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(new java.awt.Color(0, 0, 0), null), "Sonstige Einstellungen", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 12))); // NOI18N
+        jPanel3.setOpaque(false);
+
+        jLabel5.setText("Angriffe pro Dorf");
+
+        jAttackPerVillageSpinner.setModel(new javax.swing.SpinnerNumberModel(1, 1, 100, 1));
+        jAttackPerVillageSpinner.setToolTipText("Maximale Anzahl von Angriffen die einem Zieldorf zugewiesen wird");
+        jAttackPerVillageSpinner.setMaximumSize(new java.awt.Dimension(100, 20));
+        jAttackPerVillageSpinner.setMinimumSize(new java.awt.Dimension(100, 20));
+        jAttackPerVillageSpinner.setPreferredSize(new java.awt.Dimension(100, 20));
+
+        jVariableArriveTimeBox.setText("Variable Ankunftszeit");
+        jVariableArriveTimeBox.setToolTipText("Variable Ankunftszeit verwenden");
+        jVariableArriveTimeBox.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        jVariableArriveTimeBox.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
+        jVariableArriveTimeBox.setIconTextGap(30);
+        jVariableArriveTimeBox.setMargin(new java.awt.Insets(2, 0, 2, 2));
+        jVariableArriveTimeBox.setOpaque(false);
+        jVariableArriveTimeBox.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                fireChangeVariableArriveTimeEvent(evt);
+            }
+        });
+
+        jLabel6.setText("Zielsuche");
+
+        jAlgoBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Zufällig", "Systematisch" }));
+        jAlgoBox.setSelectedIndex(1);
+        jAlgoBox.setToolTipText("Komplexität der Berechnung");
+        jAlgoBox.setMaximumSize(new java.awt.Dimension(100, 20));
+        jAlgoBox.setMinimumSize(new java.awt.Dimension(100, 20));
+        jAlgoBox.setPreferredSize(new java.awt.Dimension(100, 20));
+
+        jFakeOffTargetsBox.setText("Off-Ziele faken");
+        jFakeOffTargetsBox.setToolTipText("Ziele mit zugewiesenen Offs für Fakes sperren");
+        jFakeOffTargetsBox.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        jFakeOffTargetsBox.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
+        jFakeOffTargetsBox.setIconTextGap(60);
+        jFakeOffTargetsBox.setMargin(new java.awt.Insets(2, 0, 2, 2));
+        jFakeOffTargetsBox.setOpaque(false);
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jVariableArriveTimeBox)
+                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addGroup(jPanel3Layout.createSequentialGroup()
+                            .addComponent(jLabel6)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jAlgoBox, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel3Layout.createSequentialGroup()
+                            .addComponent(jLabel5)
+                            .addGap(50, 50, 50)
+                            .addComponent(jAttackPerVillageSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jFakeOffTargetsBox))
+                .addContainerGap(101, Short.MAX_VALUE))
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel5)
+                    .addComponent(jAttackPerVillageSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(jVariableArriveTimeBox)
+                .addGap(18, 18, 18)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel6)
+                    .addComponent(jAlgoBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(jFakeOffTargetsBox)
+                .addContainerGap(164, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -452,19 +524,23 @@ public class TimePanel extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(16, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -554,13 +630,26 @@ public class TimePanel extends javax.swing.JPanel {
             jValidAtDay.setEnabled(true);
         }
     }//GEN-LAST:event_fireValidityChangedEvent
+
+    private void fireChangeVariableArriveTimeEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireChangeVariableArriveTimeEvent
+        if (jVariableArriveTimeBox.isSelected()) {
+            jArriveTime.setEditor(new DateEditor(jArriveTime, "dd.MM.yy"));
+        } else {
+            jArriveTime.setEditor(new DateEditor(jArriveTime, "dd.MM.yy HH:mm:ss"));
+        }
+
+    }//GEN-LAST:event_fireChangeVariableArriveTimeEvent
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup frameValidityGroup;
+    private javax.swing.JComboBox jAlgoBox;
     private javax.swing.JSpinner jArriveTime;
     private com.visutools.nav.bislider.BiSlider jArriveTimeFrame;
+    private javax.swing.JSpinner jAttackPerVillageSpinner;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JRadioButton jEveryDayValid;
+    private javax.swing.JCheckBox jFakeOffTargetsBox;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -568,23 +657,22 @@ public class TimePanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
     private javax.swing.JRadioButton jOnlyValidAt;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSpinner jSendTime;
     private com.visutools.nav.bislider.BiSlider jSendTimeFrame;
     private javax.swing.JList jSendTimeFramesList;
-    private javax.swing.JSpinner jSpinner1;
-    private javax.swing.JComboBox jTimeFrameStepSize;
     private javax.swing.JComboBox jTribeTimeFrameBox;
     private javax.swing.JSpinner jValidAtDay;
+    private javax.swing.JCheckBox jVariableArriveTimeBox;
     // End of variables declaration//GEN-END:variables
 
     public static void main(String[] args) {
         JFrame f = new JFrame();
-        f.add(new TimePanel());
+        f.add(new SettingsPanel());
         f.pack();
         f.setVisible(true);
 

@@ -22,7 +22,9 @@ public class TimeFrame {
     private long start = 0;
     private long end = 0;
     private List<TimeSpan> timeSpans = null;
-    private long arriveTolerance = 0;
+    private boolean variableArriveTime = false;
+    private int variableArriveStartHour = -1;
+    private int variableArriveEndHour = -1;
 
     public TimeFrame(Date pStart, Date pEnd, int pMinHour, int pMaxHour) {
         start = pStart.getTime();
@@ -36,12 +38,25 @@ public class TimeFrame {
         timeSpans = new LinkedList<TimeSpan>();
     }
 
+    public void setStart(long pTime) {
+        start = pTime;
+    }
+
     public void setEnd(long pTime) {
         end = pTime;
     }
 
-    public void setArriveTolerance(long pHours) {
-        arriveTolerance = pHours;
+    public void setArriveSpan(int pStartHour, int pEndHour) {
+        variableArriveStartHour = pStartHour;
+        variableArriveEndHour = pEndHour;
+    }
+
+    public void setUseVariableArriveTime(boolean pValue) {
+        variableArriveTime = pValue;
+    }
+
+    public boolean isVariableArriveTime() {
+        return variableArriveTime;
     }
 
     public void addTimeSpan(TimeSpan pSpan) {
@@ -122,7 +137,7 @@ public class TimeFrame {
         return null;
     }
 
-    public Date getRandomArriveTime(long pRuntime, Tribe pTribe, int pStartHour, int pEndHour, List<Long> usedDates) {
+    public Date getRandomArriveTime(long pRuntime, Tribe pTribe, List<Long> usedDates) {
         Calendar cs = Calendar.getInstance();
         cs.setTimeInMillis(start);
         cs.set(Calendar.HOUR_OF_DAY, 0);
@@ -133,13 +148,13 @@ public class TimeFrame {
         //SimpleDateFormat f = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
         Calendar arriveStart = Calendar.getInstance();
         arriveStart.setTimeInMillis(end);
-        arriveStart.set(Calendar.HOUR_OF_DAY, pStartHour);
+        arriveStart.set(Calendar.HOUR_OF_DAY, variableArriveStartHour);
         arriveStart.set(Calendar.MINUTE, 0);
         arriveStart.set(Calendar.SECOND, 0);
         arriveStart.set(Calendar.MILLISECOND, 0);
         Calendar arriveEnd = Calendar.getInstance();
         arriveEnd.setTimeInMillis(end);
-        arriveEnd.set(Calendar.HOUR_OF_DAY, pEndHour - 1);
+        arriveEnd.set(Calendar.HOUR_OF_DAY, variableArriveEndHour - 1);
         arriveEnd.set(Calendar.MINUTE, 59);
         arriveEnd.set(Calendar.SECOND, 59);
         arriveEnd.set(Calendar.MILLISECOND, 999);
@@ -287,7 +302,7 @@ public class TimeFrame {
 
     public Date getArriveDate(long runtime) {
         Calendar sendCal = Calendar.getInstance();
-        long TOLERANCE = arriveTolerance * 60 * 60 * 1000;
+        long TOLERANCE = 0 * 60 * 60 * 1000;
         long TWENTY_MINUTES = 20 * 60 * 1000;
         for (long l = start; l < end; l += TWENTY_MINUTES) {
             long sendTime = l;

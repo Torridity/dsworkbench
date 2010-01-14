@@ -48,7 +48,6 @@ import org.jfree.data.xy.XYDataset;
 import org.jfree.ui.RectangleInsets;
 
 /**
-@TODO (DIFF) Stats added
  * @author Torridity
  */
 public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {

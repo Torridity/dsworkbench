@@ -18,7 +18,6 @@ import de.tor.tribes.ui.models.TroopsManagerTableModel;
 import java.util.LinkedList;
 
 /**
- * @TODO (DIFF) Limited farm space to 100%, included bonus villages
  * @author Jejkal
  */
 public class VillageTroopsHolder {

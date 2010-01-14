@@ -58,8 +58,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 /**
- * @TODO (DIFF) Cleaned up and extended map popup
- * @TODO (DIFF) Extended village popup menu
  * @author Charon
  */
 public class MapPanel extends JPanel {
@@ -530,25 +528,11 @@ public class MapPanel extends JPanel {
                             int ys = (int) Math.floor(selectionRect.getYPos());
                             int xe = (int) Math.floor(selectionRect.getXPosEnd());
                             int ye = (int) Math.floor(selectionRect.getYPosEnd());
-                            //if (mVillageSelectionListener != null) {
-                            //if a selectionlistener is registered notify it
-                            mVillageSelectionListener.fireSelectionFinishedEvent(new Point(xs, ys), new Point(xe, ye));
-                            /* } else {
-                            exportVillageList = getSelectedVillages(new Point(xs, ys), new Point(xe, ye));
-                            if (exportVillageList.size() > 0) {
-                            //do selection handling by ourself
-                            if (exportVillageList.size() == 1) {
-                            jVillageExportDetails.setText("Es wurde 1 Dorf zum Kopieren in die Zwischenablage ausgewählt.");
-                            } else {
-                            jVillageExportDetails.setText("Es wurden " + exportVillageList.size() + " Dörfer zum Kopieren in die Zwischenablage ausgewählt.");
-                            }
 
-                            jCopyVillagesDialog.setLocationRelativeTo(MapPanel.getSingleton());
-                            jCopyVillagesDialog.setVisible(true);
-                            }
-                            }*/
+                            //notify selection listener (see DSWorkbenchSelectionFrame)
+                            mVillageSelectionListener.fireSelectionFinishedEvent(new Point(xs, ys), new Point(xe, ye));
+                            DSWorkbenchSelectionFrame.getSingleton().toFront();
                             selectionRect = null;
-                            // mVillageSelectionListener = null;
                             break;
                         }
                         case ImageManager.CURSOR_MEASURE: {

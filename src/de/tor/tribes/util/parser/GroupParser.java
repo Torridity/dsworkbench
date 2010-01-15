@@ -50,7 +50,19 @@ public class GroupParser {
 
                     String villageToken = elemTok.nextToken();
                     String groupCountToken = elemTok.nextToken();
-                    String groupsToken = elemTok.nextToken();
+                    String groupsToken = null;
+                    try {
+                        //test group count
+                        Integer.parseInt(groupCountToken);
+                        //group count found, next token must be groups
+                        groupsToken = elemTok.nextToken();
+                    } catch (Exception e) {
+                        //group count not found (Google Chrome uses 2 tabs after village)
+                        //take next tokes as group count 
+                        groupCountToken = elemTok.nextToken();
+                        groupsToken = elemTok.nextToken();
+                    }
+
 
                     Village v = null;
                     try {

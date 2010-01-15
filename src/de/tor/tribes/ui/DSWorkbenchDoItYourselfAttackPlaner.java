@@ -25,6 +25,7 @@ import de.tor.tribes.ui.renderer.AttackTypeListCellRenderer;
 import de.tor.tribes.ui.renderer.DateCellRenderer;
 import de.tor.tribes.ui.renderer.UnitCellRenderer;
 import de.tor.tribes.ui.renderer.UnitListCellRenderer;
+import de.tor.tribes.ui.renderer.VillageCellRenderer;
 import de.tor.tribes.util.AttackToBBCodeFormater;
 import de.tor.tribes.util.BrowserCommandSender;
 import de.tor.tribes.util.Constants;
@@ -98,8 +99,10 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
 
         // jAttackTable.setDefaultRenderer(Village.class, new VillageCellRenderer());
         jAttackTable.setDefaultEditor(Village.class, new DefaultCellEditor(new JTextField("")));
+        jAttackTable.setDefaultRenderer(Village.class, new VillageCellRenderer());
         jAttackTable.setDefaultEditor(Date.class, new DateSpinEditor());
         jAttackTable.setDefaultRenderer(Date.class, new DateCellRenderer());
+
         jAttackTable.setDefaultEditor(Integer.class, new AttackTypeCellEditor());
         jAttackTable.setDefaultRenderer(Integer.class, new AttackTypeCellRenderer());
         jAttackTable.setRowHeight(20);

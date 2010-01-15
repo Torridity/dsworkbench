@@ -14,15 +14,16 @@ import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
-import de.tor.tribes.ui.algo.MiscSettingsPanel;
 import de.tor.tribes.ui.algo.SettingsPanel;
 import de.tor.tribes.ui.editors.AttackTypeCellEditor;
 import de.tor.tribes.ui.editors.FakeCellEditor;
 import de.tor.tribes.ui.editors.UnitCellEditor;
 import de.tor.tribes.ui.renderer.AttackTypeCellRenderer;
 import de.tor.tribes.ui.renderer.FakeCellRenderer;
+import de.tor.tribes.ui.renderer.TribeCellRenderer;
 import de.tor.tribes.ui.renderer.UnitCellRenderer;
 import de.tor.tribes.ui.renderer.UnitListCellRenderer;
+import de.tor.tribes.ui.renderer.VillageCellRenderer;
 import de.tor.tribes.util.AttackToBBCodeFormater;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.DSCalculator;
@@ -30,10 +31,8 @@ import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.algo.AbstractAttackAlgorithm;
-import de.tor.tribes.util.algo.Blitzkrieg;
 import de.tor.tribes.util.algo.BruteForce;
 import de.tor.tribes.util.algo.Iterix;
-import de.tor.tribes.util.algo.OptexWrapper;
 import de.tor.tribes.util.algo.TimeFrame;
 import de.tor.tribes.util.attack.AttackManager;
 import de.tor.tribes.util.parser.VillageParser;
@@ -126,7 +125,6 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame {
             }
         };
         jAttacksTable.setModel(attackModel);
-
         TableRowSorter<TableModel> attackSorter = new TableRowSorter<TableModel>(jAttacksTable.getModel());
         jAttacksTable.setRowSorter(attackSorter);
         // </editor-fold>
@@ -262,9 +260,12 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame {
             jAttacksTable.setDefaultRenderer(UnitHolder.class, new UnitCellRenderer());
             jAttacksTable.setDefaultEditor(Boolean.class, new FakeCellEditor());
             jAttacksTable.setDefaultRenderer(Boolean.class, new FakeCellRenderer());
+            jAttacksTable.setDefaultRenderer(Village.class, new VillageCellRenderer());
 
             jAttacksTable.setRowHeight(20);
             jVictimTable.setRowHeight(20);
+            jVictimTable.setDefaultRenderer(Tribe.class, new TribeCellRenderer());
+            jVictimTable.setDefaultRenderer(Village.class, new VillageCellRenderer());
             DefaultComboBoxModel unitModel = new DefaultComboBoxModel(DataHolder.getSingleton().getUnits().toArray(new UnitHolder[]{}));
             jTroopsList.setModel(unitModel);
             jTroopsList.setSelectedItem(DataHolder.getSingleton().getUnitByPlainName("ram"));
@@ -1729,7 +1730,7 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
     int numInputAttacks = attackModel.getRowCount();
     int numInputTargets = victimVillages.size();
     boolean fakeOffTargets = mSettingsPanel.fakeOffTargets();
-    
+
     // <editor-fold defaultstate="collapsed" desc="Obtain other parameters">
     int maxAttacksPerVillage = mSettingsPanel.getAttacksPerVillage();
 
@@ -2757,6 +2758,7 @@ private void fireApplyTroopFiltersEvent(java.awt.event.MouseEvent evt) {//GEN-FI
         jResultsTable.setDefaultEditor(Integer.class, new AttackTypeCellEditor());
         jResultsTable.setDefaultRenderer(UnitHolder.class, new UnitCellRenderer());
         jResultsTable.setDefaultEditor(UnitHolder.class, new UnitCellEditor());
+        jResultsTable.setDefaultRenderer(Village.class, new VillageCellRenderer());
         jResultsTable.setRowHeight(20);
 
         //jResultsTable.setDefaultRenderer(Date.class, new DateCellRenderer());

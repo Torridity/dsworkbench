@@ -4,37 +4,29 @@
  */
 package de.tor.tribes.ui.renderer;
 
-import de.tor.tribes.io.DataHolder;
-import de.tor.tribes.types.Village;
-import de.tor.tribes.ui.ImageManager;
-import de.tor.tribes.util.Constants;
-import de.tor.tribes.util.DSCalculator;
-import de.tor.tribes.util.ServerSettings;
+import de.tor.tribes.types.Tribe;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import javax.swing.JLabel;
 import javax.swing.JTable;
-import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 
 /**
  *
- * @author Torridity
+ * @author Jejkal
  */
-public class VillageCellRenderer extends DefaultTableCellRenderer {
+public class TribeCellRenderer extends DefaultTableCellRenderer {
 
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         JLabel label = (JLabel) c;
-        Color fg = label.getForeground();
-        Village vil = (Village) value;
+        //Color fg = label.getForeground();
+        Tribe t = (Tribe) value;
 
         try {
-            label.setText(vil.toString());
-            label.setToolTipText(vil.getToolTipText());
+            label.setText(t.toString());
+            label.setToolTipText(t.getToolTipText());
         } catch (Exception e) {
             label.setText("Ungültig");
         }

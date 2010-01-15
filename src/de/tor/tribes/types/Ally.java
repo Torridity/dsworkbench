@@ -204,6 +204,18 @@ public class Ally implements Comparable {
         return stringRepresentation;
     }
 
+    public String getToolTipText() {
+        NumberFormat nf = NumberFormat.getInstance();
+        nf.setMinimumFractionDigits(0);
+        nf.setMaximumFractionDigits(0);
+        return "<html><table border='0' cellspacing='2' cellpadding='0'>" +
+                "<tr><td colspan='2'><img src='" + this.getClass().getResource("/res/ally.png") + "' width='16' height='16'/></td></tr>" +
+                "<tr BGCOLOR='#E1D5BE'><td><b>Name:</b> </td><td>" + toString() + "</td></tr>" +
+                "<tr BGCOLOR='#EFEBDF'><td><b>Punkte:</b> </td><td>" + nf.format(getPoints()) + " (" + nf.format(getRank()) + ")</td></tr>" +
+                "<tr BGCOLOR='#E1D5BE'><td><b>Mitglieder:</b> </td><td>" + nf.format(getMembers()) + "</td></tr>" +
+                "</table></html>";
+    }
+
     public String toBBCode() {
         return "[ally]" + getTag() + "[/ally]";
     }

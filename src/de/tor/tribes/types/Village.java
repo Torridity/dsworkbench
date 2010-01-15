@@ -17,6 +17,7 @@ import de.tor.tribes.util.tag.TagManager;
 import java.awt.geom.Rectangle2D;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.text.NumberFormat;
 import java.util.Comparator;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -361,6 +362,28 @@ public class Village implements Comparable {
         return stringRepresentation;
     }
 
+    public String getToolTipText() {
+        NumberFormat nf = NumberFormat.getInstance();
+        nf.setMinimumFractionDigits(0);
+        nf.setMaximumFractionDigits(0);
+        Tribe t = getTribe();
+        if(t == null){
+            t = Barbarians.getSingleton();
+        }
+        
+        Ally a = t.getAlly();
+        if(a == null){
+            a = NoAlly.getSingleton();
+        }
+        return "<html><table border='0' cellspacing='2' cellpadding='0'>" +
+                "<tr><td colspan='2'><img src='" + this.getClass().getResource("/res/village.png") + "' width='16' height='16'/></td></tr>" +
+                "<tr BGCOLOR='#E1D5BE'><td><b>Name:</b> </td><td>" + getFullName() + "</td></tr>" +
+                "<tr BGCOLOR='#EFEBDF'><td><b>Punkte:</b> </td><td>" + nf.format(getPoints()) + "</td></tr>" +
+                "<tr BGCOLOR='#E1D5BE'><td><b>Besitzer:</b> </td><td>" + t + "</td></tr>" +
+                "<tr BGCOLOR='#EFEBDF'><td><b>Stamm:</b> </td><td>" + a.toString() + "</td></tr>" +
+                "</table></html>";
+    }
+
     public String toBBCode() {
         if (ServerSettings.getSingleton().getCoordType() != 2) {
             int[] hier = DSCalculator.xyToHierarchical(getX(), getY());
@@ -488,27 +511,27 @@ public class Village implements Comparable {
             } else {
                 return result;
             }
-        /* if (Village.getOrderType() == ORDER_ALPHABETICALLY) {
-        int n1 = s1.toString().length(), n2 = s2.toString().length();
-        for (int i1 = 0, i2 = 0; i1 < n1 && i2 < n2; i1++, i2++) {
-        char c1 = s1.toString().charAt(i1);
-        char c2 = s2.toString().charAt(i2);
-        if (c1 != c2) {
-        c1 = Character.toUpperCase(c1);
-        c2 = Character.toUpperCase(c2);
-        if (c1 != c2) {
-        c1 = Character.toLowerCase(c1);
-        c2 = Character.toLowerCase(c2);
-        if (c1 != c2) {
-        return c1 - c2;
-        }
-        }
-        }
-        }
-        return n1 - n2;
-        } else {
-        return s1.compareTo(s2);
-        }*/
+            /* if (Village.getOrderType() == ORDER_ALPHABETICALLY) {
+            int n1 = s1.toString().length(), n2 = s2.toString().length();
+            for (int i1 = 0, i2 = 0; i1 < n1 && i2 < n2; i1++, i2++) {
+            char c1 = s1.toString().charAt(i1);
+            char c2 = s2.toString().charAt(i2);
+            if (c1 != c2) {
+            c1 = Character.toUpperCase(c1);
+            c2 = Character.toUpperCase(c2);
+            if (c1 != c2) {
+            c1 = Character.toLowerCase(c1);
+            c2 = Character.toLowerCase(c2);
+            if (c1 != c2) {
+            return c1 - c2;
+            }
+            }
+            }
+            }
+            return n1 - n2;
+            } else {
+            return s1.compareTo(s2);
+            }*/
         }
     }
 }

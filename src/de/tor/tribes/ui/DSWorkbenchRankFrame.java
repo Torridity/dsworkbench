@@ -13,6 +13,10 @@ package de.tor.tribes.ui;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Ally;
 import de.tor.tribes.types.Tribe;
+import de.tor.tribes.types.Village;
+import de.tor.tribes.ui.renderer.AllyCellRenderer;
+import de.tor.tribes.ui.renderer.TribeCellRenderer;
+import de.tor.tribes.ui.renderer.VillageCellRenderer;
 import de.tor.tribes.util.BrowserCommandSender;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
@@ -154,8 +158,10 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame {
         jRankTable.setDefaultRenderer(Double.class, renderer);
         DefaultTableCellRenderer renderer2 = new DefaultTableCellRenderer() {
 
+            @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
                 Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                //@TODO Add village, tribe and ally detection
                 if (row % 2 == 0 && !isSelected) {
                     c.setBackground(Constants.DS_BACK_LIGHT);
                 }

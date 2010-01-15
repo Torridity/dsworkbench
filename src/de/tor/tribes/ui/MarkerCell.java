@@ -64,6 +64,7 @@ public class MarkerCell extends javax.swing.JPanel implements Comparable {
         jMarkerLabel.setText(mTribe.getName());
         jMarkerLabel.setIcon(PLAYER_ICON);
         type = Marker.TRIBE_MARKER_TYPE;
+        setToolTipText(mTribe.getToolTipText());
     }
 
     MarkerCell(Ally pAlly) throws Exception {
@@ -75,6 +76,7 @@ public class MarkerCell extends javax.swing.JPanel implements Comparable {
         jMarkerLabel.setText(mAlly.getName());
         jMarkerLabel.setIcon(ALLY_ICON);
         type = Marker.ALLY_MARKER_TYPE;
+        setToolTipText(mAlly.getToolTipText());
     }
 
     public Tribe getTribe() {

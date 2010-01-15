@@ -209,6 +209,19 @@ public class Tribe implements Comparable {
         return getName();
     }
 
+    public String getToolTipText() {
+        NumberFormat nf = NumberFormat.getInstance();
+        nf.setMinimumFractionDigits(0);
+        nf.setMaximumFractionDigits(0);
+        return "<html><table border='0' cellspacing='2' cellpadding='0'>" +
+                "<tr><td colspan='2'><img src='" + this.getClass().getResource("/res/face.png") + "' width='16' height='16'/></td></tr>" +
+                "<tr BGCOLOR='#E1D5BE'><td><b>Name:</b> </td><td>" + getName() + "</td></tr>" +
+                "<tr BGCOLOR='#EFEBDF'><td><b>Punkte:</b> </td><td>" + nf.format(getPoints()) + "</td></tr>" +
+                "<tr BGCOLOR='#E1D5BE'><td><b>Dörfer:</b> </td><td>" + nf.format(getVillages()) + "</td></tr>" +
+                "<tr BGCOLOR='#EFEBDF'><td><b>Stamm:</b> </td><td>" + ((getAlly() == null) ? NoAlly.getSingleton().getName() : getAlly().toString()) + "</td></tr>" +
+                "</table></html>";
+    }
+
     public String toBBCode() {
         return "[player]" + getName() + "[/player]";
     }

@@ -33,6 +33,7 @@ import de.tor.tribes.ui.renderer.AttackTypeCellRenderer;
 import de.tor.tribes.ui.renderer.ColoredDateCellRenderer;
 import de.tor.tribes.ui.renderer.UnitCellRenderer;
 import de.tor.tribes.ui.renderer.UnitTableHeaderRenderer;
+import de.tor.tribes.ui.renderer.VillageCellRenderer;
 import de.tor.tribes.util.AttackToBBCodeFormater;
 import de.tor.tribes.util.html.AttackPlanHTMLExporter;
 import de.tor.tribes.util.DSCalculator;
@@ -103,6 +104,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         jAttackTable.getTableHeader().setReorderingAllowed(false);
         sorter.setModel(AttackManagerTableModel.getSingleton());
         jAttackTable.setModel(AttackManagerTableModel.getSingleton());
+       // DataTipManager.get().register(jAttackTable);
         jAttackTable.setRowHeight(20);
         jAttackTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 
@@ -2587,6 +2589,7 @@ private void fireSendIGMsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
         jAttackTable.setDefaultEditor(UnitHolder.class, new UnitCellEditor());
         jAttackTable.setDefaultRenderer(UnitHolder.class, new UnitCellRenderer());
         jAttackTable.setDefaultEditor(Village.class, new VillageCellEditor());
+        jAttackTable.setDefaultRenderer(Village.class, new VillageCellRenderer());
         jAttackTable.setDefaultRenderer(Integer.class, new AttackTypeCellRenderer());
         jAttackTable.setDefaultEditor(Integer.class, new AttackTypeCellEditor());
         /* jAttackTable.addMouseMotionListener(new MouseMotionListener() {

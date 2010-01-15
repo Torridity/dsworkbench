@@ -13,6 +13,7 @@ package de.tor.tribes.ui;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.models.DistanceTableModel;
 import de.tor.tribes.ui.renderer.DistanceTableCellRenderer;
+import de.tor.tribes.ui.renderer.VillageCellRenderer;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
@@ -56,10 +57,11 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame {
         jDistanceTable.setModel(DistanceTableModel.getSingleton());
         cellRenderer = new DistanceTableCellRenderer();
         jDistanceTable.setDefaultRenderer(Double.class, cellRenderer);
-        
+        jDistanceTable.setDefaultRenderer(Village.class, new VillageCellRenderer());
+
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
         GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.distance_overview", GlobalOptions.getHelpBroker().getHelpSet());
-    // </editor-fold>
+        // </editor-fold>
     }
 
     public void setup() {
@@ -105,7 +107,7 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-            // column.setPreferredWidth(w);
+                // column.setPreferredWidth(w);
             }
             renderers.add(headerRenderer);
         }
@@ -370,7 +372,6 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame {
             }
         });
     }
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JButton jCopyFromClipboardEvent;

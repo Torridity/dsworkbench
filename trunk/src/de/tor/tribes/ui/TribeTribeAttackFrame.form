@@ -26,7 +26,7 @@
               <Group type="102" alignment="1" attributes="0">
                   <EmptySpace min="-2" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="1" attributes="0">
-                      <Component id="jScrollPane2" alignment="0" pref="689" max="32767" attributes="1"/>
+                      <Component id="jScrollPane2" alignment="0" pref="697" max="32767" attributes="1"/>
                       <Component id="jPanel2" alignment="0" max="32767" attributes="1"/>
                   </Group>
                   <EmptySpace min="-2" max="-2" attributes="0"/>
@@ -61,9 +61,9 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="1" attributes="0">
-                          <Component id="jLabel5" alignment="0" pref="154" max="32767" attributes="0"/>
-                          <Component id="jLabel6" alignment="0" pref="154" max="32767" attributes="0"/>
-                          <Component id="jTargetsBar" alignment="1" pref="154" max="32767" attributes="0"/>
+                          <Component id="jLabel5" alignment="0" pref="158" max="32767" attributes="0"/>
+                          <Component id="jLabel6" alignment="0" pref="158" max="32767" attributes="0"/>
+                          <Component id="jTargetsBar" alignment="1" pref="158" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
@@ -73,13 +73,13 @@
                       </Group>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jLabel7" pref="156" max="32767" attributes="0"/>
-                          <Component id="jEnoblementsBar" alignment="0" pref="156" max="32767" attributes="1"/>
+                          <Component id="jLabel7" pref="158" max="32767" attributes="0"/>
+                          <Component id="jEnoblementsBar" alignment="0" pref="158" max="32767" attributes="1"/>
                       </Group>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jLabel9" pref="155" max="32767" attributes="0"/>
-                          <Component id="jFullOffsBar" alignment="0" pref="155" max="32767" attributes="1"/>
+                          <Component id="jLabel9" pref="157" max="32767" attributes="0"/>
+                          <Component id="jFullOffsBar" alignment="0" pref="157" max="32767" attributes="1"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -1110,7 +1110,7 @@
                               <EmptySpace min="-2" max="-2" attributes="0"/>
                               <Component id="jSetFakeButton" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <Component id="jScrollPane1" alignment="1" pref="303" max="32767" attributes="0"/>
+                          <Component id="jScrollPane1" alignment="1" pref="306" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jPanel1" min="-2" max="-2" attributes="1"/>
@@ -1850,7 +1850,7 @@
                               <Component id="jButton9" min="-2" max="-2" attributes="1"/>
                           </Group>
                           <Group type="102" alignment="1" attributes="0">
-                              <Component id="jScrollPane3" pref="757" max="32767" attributes="0"/>
+                              <Component id="jScrollPane3" pref="755" max="32767" attributes="0"/>
                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
                               <Component id="jFilterTargetButton" min="-2" max="-2" attributes="0"/>
                           </Group>
@@ -1865,7 +1865,7 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="jFilterTargetButton" min="-2" max="-2" attributes="0"/>
-                          <Component id="jScrollPane3" pref="387" max="32767" attributes="0"/>
+                          <Component id="jScrollPane3" pref="390" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jPanel6" min="-2" max="-2" attributes="1"/>

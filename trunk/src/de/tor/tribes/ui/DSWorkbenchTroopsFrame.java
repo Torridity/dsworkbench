@@ -26,6 +26,8 @@ import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import de.tor.tribes.ui.renderer.NumberFormatCellRenderer;
 import de.tor.tribes.ui.renderer.PercentCellRenderer;
+import de.tor.tribes.ui.renderer.TribeCellRenderer;
+import de.tor.tribes.ui.renderer.VillageCellRenderer;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.TroopInformationToBBCodeFormater;
 import de.tor.tribes.util.tag.TagManager;
@@ -88,6 +90,8 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
         jTroopsTable.setDefaultRenderer(Integer.class, new NumberFormatCellRenderer());
         jTroopsTable.setDefaultRenderer(Double.class, new NumberFormatCellRenderer());
         jTroopsTable.setDefaultRenderer(Float.class, new PercentCellRenderer());
+        jTroopsTable.setDefaultRenderer(Tribe.class, new TribeCellRenderer());
+        jTroopsTable.setDefaultRenderer(Village.class, new VillageCellRenderer());
         jTroopsTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 
             @Override

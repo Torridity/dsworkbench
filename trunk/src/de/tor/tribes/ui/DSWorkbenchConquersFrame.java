@@ -16,6 +16,9 @@ import de.tor.tribes.types.NoAlly;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.models.ConquersTableModel;
+import de.tor.tribes.ui.renderer.AllyCellRenderer;
+import de.tor.tribes.ui.renderer.TribeCellRenderer;
+import de.tor.tribes.ui.renderer.VillageCellRenderer;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
@@ -739,6 +742,9 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
         jConquersTable.setModel(ConquersTableModel.getSingleton());
         ConquerManager.getSingleton().addConquerManagerListener(this);
         jConquersTable.getTableHeader().setReorderingAllowed(false);
+        jConquersTable.setDefaultRenderer(Village.class, new VillageCellRenderer());
+        jConquersTable.setDefaultRenderer(Tribe.class, new TribeCellRenderer());
+        jConquersTable.setDefaultRenderer(Ally.class, new AllyCellRenderer());
 
         //setup renderer and general view
         TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(jConquersTable.getModel());
@@ -827,7 +833,6 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
             }
         });
     }
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jAddAllyButton;
     private javax.swing.JButton jAddTribeButton;
@@ -910,6 +915,10 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
 
                 } catch (Exception e) {
                 }
+                
+                if(column == 0){
+                    //@TODO Add Tooltip processing
+                }
                 if (column == 8) {
                     //format dist col
                     double v = (Double) value;
@@ -925,9 +934,6 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
         };
 
         jConquersTable.setDefaultRenderer(Object.class, renderer);
-
-
-
         jConquersTable.setDefaultRenderer(Double.class, renderer);
         jConquersTable.setDefaultRenderer(Integer.class, renderer);
 

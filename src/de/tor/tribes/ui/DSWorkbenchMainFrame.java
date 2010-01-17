@@ -58,9 +58,6 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Rectangle;
 import java.awt.datatransfer.StringSelection;
-import java.awt.dnd.DropTarget;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.io.FileWriter;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -76,7 +73,6 @@ import javax.swing.JSpinner;
 import javax.swing.JTable;
 import javax.swing.KeyStroke;
 import javax.swing.ListCellRenderer;
-import javax.swing.TransferHandler;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
@@ -553,6 +549,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             DSWorkbenchStatsFrame.getSingleton().setup();
             DSWorkbenchDoItYourselfAttackPlaner.getSingleton().setupAttackPlaner();
             DSWorkbenchReTimerFrame.getSingleton().setup();
+            DSWorkbenchReportFrame.getSingleton().setup();
             //update attack planner
             if (mTribeTribeAttackFrame != null) {
                 mTribeTribeAttackFrame.setup();
@@ -587,31 +584,22 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             MinimapPanel.getSingleton().redraw(true);
             //call all frames during first execution
             DSWorkbenchAttackFrame.getSingleton();
-            DSWorkbenchStatsFrame.getSingleton();
+            DSWorkbenchNotepad.getSingleton();
+            DSWorkbenchTroopsFrame.getSingleton();
+            DSWorkbenchRankFrame.getSingleton();
+            DSWorkbenchFormFrame.getSingleton();
             DSWorkbenchMarkerFrame.getSingleton();
             DSWorkbenchChurchFrame.getSingleton();
             DSWorkbenchConquersFrame.getSingleton();
             DSWorkbenchNotepad.getSingleton();
             DSWorkbenchTagFrame.getSingleton();
-            DSWorkbenchTroopsFrame.getSingleton();
-            DSWorkbenchRankFrame.getSingleton();
-            DSWorkbenchFormFrame.getSingleton();
-            DSWorkbenchSearchFrame.getSingleton();
-            DSWorkbenchAttackFrame.getSingleton();
-            DSWorkbenchMarkerFrame.getSingleton();
-            DSWorkbenchChurchFrame.getSingleton();
-            DSWorkbenchConquersFrame.getSingleton();
-            DSWorkbenchNotepad.getSingleton();
-            DSWorkbenchTagFrame.getSingleton();
-            DSWorkbenchTroopsFrame.getSingleton();
-            DSWorkbenchRankFrame.getSingleton();
-            DSWorkbenchFormFrame.getSingleton();
             FormConfigFrame.getSingleton();
             DSWorkbenchSearchFrame.getSingleton();
             DSWorkbenchSelectionFrame.getSingleton();
             DSWorkbenchStatsFrame.getSingleton();
             DSWorkbenchReTimerFrame.getSingleton();
             DSWorkbenchDoItYourselfAttackPlaner.getSingleton();
+            DSWorkbenchReportFrame.getSingleton();
             logger.info("Server settings updated");
             String path = "./servers/" + GlobalOptions.getSelectedServer() + "/serverdata.bin";
             if (!DSWorkbenchSettingsDialog.getSingleton().isVisible()) {
@@ -688,6 +676,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         DSWorkbenchRankFrame.getSingleton().addFrameListener(this);
         DSWorkbenchFormFrame.getSingleton().addFrameListener(this);
         DSWorkbenchStatsFrame.getSingleton().addFrameListener(this);
+        DSWorkbenchReportFrame.getSingleton().addFrameListener(this);
     }
 
     /**Setup main map and mini map*/
@@ -835,6 +824,15 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                 }
             } catch (Exception e) {
             }
+
+            try {
+                if (Boolean.parseBoolean(GlobalOptions.getProperty("report.frame.visible"))) {
+                    jShowReportFrame.setSelected(true);
+                    logger.info("Restoring report frame");
+                    DSWorkbenchReportFrame.getSingleton().setVisible(true);
+                }
+            } catch (Exception e) {
+            }
             // </editor-fold>
 
             //start ClipboardWatch
@@ -964,6 +962,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jShowNotepadFrame = new javax.swing.JCheckBoxMenuItem();
         jShowTagFrame = new javax.swing.JCheckBoxMenuItem();
         jShowStatsFrame = new javax.swing.JCheckBoxMenuItem();
+        jShowReportFrame = new javax.swing.JCheckBoxMenuItem();
         jMenu4 = new javax.swing.JMenu();
         jHelpItem = new javax.swing.JMenuItem();
         jAboutItem = new javax.swing.JMenuItem();
@@ -2113,6 +2112,15 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         });
         jMenu2.add(jShowStatsFrame);
 
+        jShowReportFrame.setBackground(new java.awt.Color(239, 235, 223));
+        jShowReportFrame.setText(bundle.getString("DSWorkbenchMainFrame.jShowReportFrame.text")); // NOI18N
+        jShowReportFrame.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fireShowReportFrameEvent(evt);
+            }
+        });
+        jMenu2.add(jShowReportFrame);
+
         jMenuBar1.add(jMenu2);
 
         jMenu4.setBackground(new java.awt.Color(225, 213, 190));
@@ -3026,6 +3034,12 @@ private void fireShowStatsFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIRS
     }
 }//GEN-LAST:event_fireShowStatsFrameEvent
 
+private void fireShowReportFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireShowReportFrameEvent
+
+    DSWorkbenchReportFrame.getSingleton().setVisible(!DSWorkbenchReportFrame.getSingleton().isVisible());
+    jShowReportFrame.setSelected(DSWorkbenchReportFrame.getSingleton().isVisible());
+}//GEN-LAST:event_fireShowReportFrameEvent
+
     private void propagateLayerOrder() {
         DefaultListModel model = ((DefaultListModel) jLayerList.getModel());
 
@@ -3199,6 +3213,8 @@ private void fireShowStatsFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIRS
             jShowTagFrame.setSelected(DSWorkbenchTagFrame.getSingleton().isVisible());
         } else if (pSource == DSWorkbenchStatsFrame.getSingleton()) {
             jShowStatsFrame.setSelected(DSWorkbenchStatsFrame.getSingleton().isVisible());
+        } else if (pSource == DSWorkbenchReportFrame.getSingleton()) {
+            jShowReportFrame.setSelected(DSWorkbenchReportFrame.getSingleton().isVisible());
         }
 
     }
@@ -3392,6 +3408,7 @@ private void fireShowStatsFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIRS
     private javax.swing.JCheckBoxMenuItem jShowMarkerFrame;
     private javax.swing.JCheckBoxMenuItem jShowNotepadFrame;
     private javax.swing.JCheckBoxMenuItem jShowRankFrame;
+    private javax.swing.JCheckBoxMenuItem jShowReportFrame;
     private javax.swing.JCheckBoxMenuItem jShowStatsFrame;
     private javax.swing.JCheckBoxMenuItem jShowTagFrame;
     private javax.swing.JCheckBoxMenuItem jShowTroopsFrame;

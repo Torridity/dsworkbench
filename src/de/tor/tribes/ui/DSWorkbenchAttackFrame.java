@@ -2592,33 +2592,7 @@ private void fireSendIGMsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
         jAttackTable.setDefaultRenderer(Village.class, new VillageCellRenderer());
         jAttackTable.setDefaultRenderer(Integer.class, new AttackTypeCellRenderer());
         jAttackTable.setDefaultEditor(Integer.class, new AttackTypeCellEditor());
-        /* jAttackTable.addMouseMotionListener(new MouseMotionListener() {
-
-        @Override
-        public void mouseDragged(MouseEvent e) {
-        }
-
-        @Override
-        public void mouseMoved(MouseEvent e) {
-        try {
-        int row = jAttackTable.rowAtPoint(e.getPoint());
-        int col = jAttackTable.columnAtPoint(e.getPoint());
-
-        if ((col == 0) || (col == 1)) {
-        System.out.println("check");
-        Village v = (Village) AttackManagerTableModel.getSingleton().getValueAt(row, col);
-        PopupInfoFrame.getSingleton().setInfoItem(v);
-        PopupInfoFrame.getSingleton().triggerVisibility();
-        } else {
-        System.out.println("Not CEll!!");
-        PopupInfoFrame.getSingleton().setVisible(false);
-        }
-
-        } catch (Exception ex) {
-        }
-        }
-        });*/
-
+      
         AttackManager.getSingleton().forceUpdate(null);
         buildAttackPlanList();
         jActiveAttackPlan.setSelectedItem(AttackManager.DEFAULT_PLAN_ID);

@@ -501,7 +501,9 @@ public class TribeStatsElement {
             if (bashOffDiff == 0) {
                 return 0.0;
             }
-            return (double) bashOffDiff / (double) getPointDiff();
+            double pDiff = getPointDiff();
+            pDiff = (pDiff == 0) ? 1 : pDiff;
+            return (double) bashOffDiff / (double) pDiff;
         }
 
 // </editor-fold>

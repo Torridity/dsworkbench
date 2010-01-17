@@ -44,23 +44,29 @@ public class GroupParser {
             String line = lineTok.nextToken();
             //german and suisse
             if (line.trim().endsWith("bearbeiten") || line.trim().endsWith("bearbeite")) {
+                System.out.println(line);
                 try {
                     //tokenize line by tab
-                    StringTokenizer elemTok = new StringTokenizer(line, "\t");
+                    StringTokenizer elemTok = new StringTokenizer(line.trim(), "\t");
 
-                    String villageToken = elemTok.nextToken();
-                    String groupCountToken = elemTok.nextToken();
+                    String villageToken = elemTok.nextToken().trim();
+                    System.out.println("  Village: " + villageToken);
+                    String groupCountToken = elemTok.nextToken().trim();
+                    System.out.println(" Group: " + groupCountToken);
                     String groupsToken = null;
                     try {
                         //test group count
                         Integer.parseInt(groupCountToken);
+                        System.out.println(" PARSED!");
                         //group count found, next token must be groups
-                        groupsToken = elemTok.nextToken();
+                        groupsToken = elemTok.nextToken().trim();
+                        System.out.println(" Groups:" + groupsToken);
                     } catch (Exception e) {
                         //group count not found (Google Chrome uses 2 tabs after village)
-                        //take next tokes as group count 
-                        groupCountToken = elemTok.nextToken();
-                        groupsToken = elemTok.nextToken();
+                        //take next tokes as group count
+                        e.printStackTrace();
+                        groupCountToken = elemTok.nextToken().trim();
+                        groupsToken = elemTok.nextToken().trim();
                     }
 
 

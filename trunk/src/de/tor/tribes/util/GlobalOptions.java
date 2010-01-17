@@ -18,6 +18,7 @@ import de.tor.tribes.util.conquer.ConquerManager;
 import de.tor.tribes.util.map.FormManager;
 import de.tor.tribes.util.mark.MarkerManager;
 import de.tor.tribes.util.note.NoteManager;
+import de.tor.tribes.util.report.ReportManager;
 import de.tor.tribes.util.roi.ROIManager;
 import de.tor.tribes.util.stat.StatManager;
 import de.tor.tribes.util.tag.TagManager;
@@ -246,7 +247,12 @@ public class GlobalOptions {
             NoteManager.getSingleton().loadNotesFromFile(DataHolder.getSingleton().getDataDirectory() + "/notes.xml");
             logger.debug("Loading standard attacks");
             StandardAttackManager.getSingleton().loadStandardAttacksFromDisk(DataHolder.getSingleton().getDataDirectory() + "/stdAttacks.xml");
+            logger.debug("Loading reports");
+            ReportManager.getSingleton().loadReportsFromFile(DataHolder.getSingleton().getDataDirectory() + "/reports.xml");
+
             logger.debug("Removing temporary data");
+
+
             DataHolder.getSingleton().removeTempData();
         }
     }
@@ -276,6 +282,8 @@ public class GlobalOptions {
             StandardAttackManager.getSingleton().saveStandardAttacksToDisk(DataHolder.getSingleton().getDataDirectory() + "/stdAttacks.xml");
             logger.debug("Saving stats");
             StatManager.getSingleton().storeStats();
+            logger.debug("Saving resports");
+            ReportManager.getSingleton().saveReportsToFile(DataHolder.getSingleton().getDataDirectory() + "/reports.xml");
             logger.debug("User data saved");
         } else {
             if (isInternatDataDamaged()) {

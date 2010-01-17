@@ -6,7 +6,6 @@ package de.tor.tribes.util;
 
 import de.tor.tribes.util.parser.GroupParser;
 import de.tor.tribes.util.parser.NonPAPlaceParser;
-import de.tor.tribes.util.parser.ReportParser;
 import de.tor.tribes.util.parser.SupportParser;
 import de.tor.tribes.util.parser.TroopsParser;
 import java.awt.Toolkit;
@@ -47,7 +46,7 @@ public class ClipboardWatch extends Thread {
                 String data = (String) t.getTransferData(DataFlavor.stringFlavor);
 
                 if ((data.length() > 10) && (data.length() != lastDataLength)) {
-                    if (ReportParser.parse(data)) {
+                    if (ReportParser.parseReport(data)) {
                         //report parsed, clean clipboard
                         logger.info("Report successfully parsed. Cleaning up clipboard");
                         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(""), null);

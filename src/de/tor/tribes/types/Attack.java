@@ -26,6 +26,7 @@ public class Attack implements Serializable {
     public static final int SNOB_TYPE = 2;
     public static final int SUPPORT_TYPE = 3;
     public static final int FAKE_TYPE = 4;
+    public static final int SPY_TYPE = 5;
     private static final long serialVersionUID = 10L;
     private Village source = null;
     private Village target = null;

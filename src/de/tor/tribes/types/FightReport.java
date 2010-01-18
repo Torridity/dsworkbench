@@ -31,7 +31,8 @@ public class FightReport {
     private Village targetVillage = null;
     private Hashtable<UnitHolder, Integer> defenders = null;
     private Hashtable<UnitHolder, Integer> diedDefenders = null;
-    private Hashtable<UnitHolder, Integer> defendersOutside = null;
+    private Hashtable<Village, Hashtable<UnitHolder, Integer>> defendersOutside = null;
+    private Hashtable<UnitHolder, Integer> defendersOnTheWay = null;
     private boolean conquered = false;
     private byte wallBefore = -1;
     private byte wallAfter = -1;
@@ -42,6 +43,12 @@ public class FightReport {
     private byte acceptanceAfter = 100;
 
     public FightReport() {
+        attackers = new Hashtable<UnitHolder, Integer>();
+        diedAttackers = new Hashtable<UnitHolder, Integer>();
+        defenders = new Hashtable<UnitHolder, Integer>();
+        diedDefenders = new Hashtable<UnitHolder, Integer>();
+        defendersOutside = new Hashtable<Village, Hashtable<UnitHolder, Integer>>();
+        defendersOnTheWay = new Hashtable<UnitHolder, Integer>();
     }
 
     public FightReport(Element pElement) throws Exception {
@@ -63,16 +70,27 @@ public class FightReport {
         Element aDiedAmount = attackerElement.getChild("died");
         Element dAmount = defenderElement.getChild("amount");
         Element dDiedAmount = defenderElement.getChild("died");
+        Element dDefendersOnTheWay = null;
+        try {
+            dDefendersOnTheWay = defenderElement.getChild("ontheway");
+        } catch (Exception e) {
+        }
+
         attackers = new Hashtable<UnitHolder, Integer>();
         diedAttackers = new Hashtable<UnitHolder, Integer>();
         defenders = new Hashtable<UnitHolder, Integer>();
         diedDefenders = new Hashtable<UnitHolder, Integer>();
+        defendersOnTheWay = new Hashtable<UnitHolder, Integer>();
+        defendersOutside = new Hashtable<Village, Hashtable<UnitHolder, Integer>>();
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
             String unitName = unit.getPlainName();
             attackers.put(unit, aAmount.getAttribute(unitName).getIntValue());
             diedAttackers.put(unit, aDiedAmount.getAttribute(unitName).getIntValue());
             defenders.put(unit, dAmount.getAttribute(unitName).getIntValue());
             diedDefenders.put(unit, dDiedAmount.getAttribute(unitName).getIntValue());
+            if (dDefendersOnTheWay != null) {
+                defendersOnTheWay.put(unit, dDefendersOnTheWay.getAttribute(unitName).getIntValue());
+            }
         }
 
         try {
@@ -117,6 +135,10 @@ public class FightReport {
             String sDiedAttackers = "<died ";
             String sDefenders = "<amount ";
             String sDiedDefenders = "<died ";
+            String sDefendersOutside = null;
+            if (whereDefendersOutside()) {
+                sDefendersOutside = "<outside ";
+            }
             Enumeration<UnitHolder> units = attackers.keys();
             while (units.hasMoreElements()) {
                 UnitHolder unit = units.nextElement();
@@ -124,6 +146,9 @@ public class FightReport {
                 sDiedAttackers += unit.getPlainName() + "=\"" + diedAttackers.get(unit) + "\" ";
                 sDefenders += unit.getPlainName() + "=\"" + defenders.get(unit) + "\" ";
                 sDiedDefenders += unit.getPlainName() + "=\"" + diedDefenders.get(unit) + "\" ";
+                if (sDefendersOutside != null) {
+                    sDefendersOutside += unit.getPlainName() + "=\"" + diedDefenders.get(unit) + "\" ";
+                }
             }
             xml += sAttackers + "/>\n";
             xml += sDiedAttackers + "/>\n";
@@ -134,6 +159,9 @@ public class FightReport {
             xml += "<trg>" + getTargetVillage().getId() + "</trg>\n";
             xml += sDefenders + "/>\n";
             xml += sDiedDefenders + "/>\n";
+            if (sDefendersOutside != null) {
+                xml += sDefendersOutside + "/>\n";
+            }
             xml += "</defender>\n";
             if (wasWallDamaged()) {
                 xml += "<wall before=\"" + getWallBefore() + "\" after=\"" + getWallAfter() + "\"/>\n";
@@ -264,12 +292,69 @@ public class FightReport {
         this.diedDefenders = diedDefenders;
     }
 
+    public void addDefendersOutside(Village pVillage, Hashtable<UnitHolder, Integer> pDefenders) {
+        defendersOutside.put(pVillage, pDefenders);
+    }
+
     public boolean wasLostEverything() {
         try {
             return (defenders.get(defenders.keys().nextElement()) < 0);
         } catch (Exception e) {
             return false;
         }
+    }
+
+    public boolean isSimpleSnobAttack() {
+        if (!wasSnobAttack()) {
+            //acceptance reduced, must be snob
+            return false;
+        }
+        int attackerCount = 0;
+        for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
+            attackerCount += attackers.get(unit);
+        }
+        return (attackerCount < 1000);
+    }
+
+    public int guessType() {
+        if (wasSnobAttack() || isSimpleSnobAttack()) {
+            //acceptance reduced, must be snob
+            return Attack.SNOB_TYPE;
+        }
+
+        if (areAttackersHidden()) {
+            //attackers hidden, no info possible
+            return Attack.NO_TYPE;
+        }
+
+        boolean isSnobAttack = false;
+        int attackerCount = 0;
+        int spyCount = 0;
+        for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
+            attackerCount += attackers.get(unit);
+            if (unit.getPlainName().equals("snob") && attackers.get(unit) >= 1) {
+                isSnobAttack = true;
+            }
+            if (unit.getPlainName().equals("spy") && attackers.get(unit) >= 1) {
+                spyCount = attackers.get(unit);
+            }
+        }
+
+        if (isSnobAttack) {
+            //snob joined attack but no acceptance was reduces
+            return Attack.SNOB_TYPE;
+        }
+
+        if (spyCount == attackerCount) {
+            //only spies joined the attack
+            return Attack.SPY_TYPE;
+        }
+
+        if (attackerCount < 500) {
+            return Attack.FAKE_TYPE;
+        }
+
+        return Attack.CLEAN_TYPE;
     }
 
     public boolean wasLostNothing() {
@@ -293,18 +378,26 @@ public class FightReport {
         }
     }
 
+    public boolean whereDefendersOnTheWay() {
+        return (defendersOnTheWay != null && !defendersOnTheWay.isEmpty());
+    }
+
+    public boolean whereDefendersOutside() {
+        return (defendersOutside != null && !defendersOutside.isEmpty());
+    }
+
     /**
      * @return the defendersOutside
      */
-    public Hashtable<UnitHolder, Integer> getDefendersOutside() {
-        return defendersOutside;
+    public Hashtable<UnitHolder, Integer> getDefendersOnTheWay() {
+        return defendersOnTheWay;
     }
 
     /**
      * @param defendersOutside the defendersOutside to set
      */
-    public void setDefendersOutside(Hashtable<UnitHolder, Integer> defendersOutside) {
-        this.defendersOutside = defendersOutside;
+    public void setDefendersOnTheWay(Hashtable<UnitHolder, Integer> defendersOnTheWay) {
+        this.defendersOnTheWay = defendersOnTheWay;
     }
 
     /**

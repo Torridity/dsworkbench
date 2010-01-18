@@ -7,6 +7,7 @@ package de.tor.tribes.util;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.FightReport;
+import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.models.ReportManagerTableModel;
 import de.tor.tribes.util.parser.VillageParser;
 import de.tor.tribes.util.report.ReportManager;
@@ -43,7 +44,7 @@ public class ReportParser {
             ReportManager.getSingleton().forceUpdate(activeSet);
             return true;
         } catch (Exception e) {
- //           e.printStackTrace();
+            //           e.printStackTrace();
         }
         return false;
     }
@@ -54,6 +55,7 @@ public class ReportParser {
         boolean attackerPart = false;
         boolean defenderPart = false;
         boolean troopsOnTheWayPart = false;
+        boolean troopsOutside = false;
         int serverTroopCount = 12;
         FightReport result = new FightReport();
         while (t.hasMoreTokens()) {
@@ -183,6 +185,9 @@ public class ReportParser {
                 }
             } else if (line.startsWith("Truppen des Verteidigers, die unterwegs waren")) {
                 troopsOnTheWayPart = true;
+            } else if (line.startsWith("Truppen des Verteidigers in anderen Dörfern")) {
+                System.out.println("Outside!");
+                troopsOutside = true;
             } else if (line.startsWith("Durch Besitzer des Berichts verborgen")) {
                 if (attackerPart) {
                     String[] unknownAttackers = new String[serverTroopCount];
@@ -214,7 +219,24 @@ public class ReportParser {
                     String[] troops = line.split("\t");
                     if (troops.length == serverTroopCount) {
                         troopsOnTheWayPart = false;
-                        result.setDefendersOutside(parseUnits(troops));
+                        System.out.println(troops);
+                        System.out.println(parseUnits(troops));
+                        result.setDefendersOnTheWay(parseUnits(troops));
+                    }
+                } else if (troopsOutside) {
+                    try {
+                        Village v = VillageParser.parse(line).get(0);
+                        if (v == null) {
+                            throw new Exception();
+                        }
+                        line = line.substring(line.indexOf("\t")).trim();
+                        String[] troops = line.split("\t");
+                        if (troops.length == serverTroopCount) {
+                            result.addDefendersOutside(v, parseUnits(troops));
+                        }
+                    } catch (Exception e) {
+                        troopsOutside = false;
+                        e.printStackTrace();
                     }
                 } else if (luckPart) {
                     if (line.indexOf("%") > 0) {

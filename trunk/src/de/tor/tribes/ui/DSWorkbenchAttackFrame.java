@@ -868,7 +868,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         jButton9.setText(bundle.getString("DSWorkbenchAttackFrame.jButton9.text")); // NOI18N
         jButton9.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jDoMoveToPlanEvent(evt);
+                fireDoMoveToPlanEvent(evt);
             }
         });
 
@@ -2177,7 +2177,7 @@ private void fireCancelMoveToPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
     jMoveToPlanDialog.setVisible(false);
 }//GEN-LAST:event_fireCancelMoveToPlanEvent
 
-private void jDoMoveToPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jDoMoveToPlanEvent
+private void fireDoMoveToPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireDoMoveToPlanEvent
     try {
         String oldPlan = jCurrentPlanBox.getText();
         String newPlan = (String) jNewPlanBox.getSelectedItem();
@@ -2206,7 +2206,7 @@ private void jDoMoveToPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:even
         logger.error("Failed to move attacks", e);
     }
     jMoveToPlanDialog.setVisible(false);
-}//GEN-LAST:event_jDoMoveToPlanEvent
+}//GEN-LAST:event_fireDoMoveToPlanEvent
 
 private void fireModifyTimeEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireModifyTimeEvent
     boolean moveMode = false;

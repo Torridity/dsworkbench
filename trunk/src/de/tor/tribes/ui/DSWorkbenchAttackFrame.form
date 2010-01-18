@@ -1010,7 +1010,7 @@
             </Property>
           </Properties>
           <Events>
-            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jDoMoveToPlanEvent"/>
+            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fireDoMoveToPlanEvent"/>
           </Events>
         </Component>
         <Component class="javax.swing.JButton" name="jButton10">

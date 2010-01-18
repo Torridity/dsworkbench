@@ -33,6 +33,7 @@ public class AttackTypeCellRenderer implements TableCellRenderer {
             icons.add(new ImageIcon("./graphics/icons/snob.png"));
             icons.add(new ImageIcon("./graphics/icons/def.png"));
             icons.add(new ImageIcon("./graphics/icons/fake.png"));
+            icons.add(new ImageIcon("./graphics/icons/spy.png"));
         } catch (Exception e) {
             logger.warn("Failed to load attack type icons");
             icons = null;
@@ -42,7 +43,7 @@ public class AttackTypeCellRenderer implements TableCellRenderer {
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         Component c = renderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-        
+
         try {
             Integer type = (Integer) value;
             ((JLabel) c).setHorizontalAlignment(SwingConstants.CENTER);

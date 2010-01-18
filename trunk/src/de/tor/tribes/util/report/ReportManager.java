@@ -6,6 +6,7 @@ package de.tor.tribes.util.report;
 
 import de.tor.tribes.types.FightReport;
 import de.tor.tribes.types.ReportSet;
+import de.tor.tribes.ui.models.ReportManagerTableModel;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.io.File;
 import java.io.FileWriter;
@@ -151,6 +152,7 @@ public class ReportManager {
         }
         toRename.setName(pNewName);
         reportSets.put(pNewName, toRename);
+        ReportManagerTableModel.getSingleton().setActiveReportSet(pNewName);
         fireReportsChangedEvents(pNewName);
         return true;
     }

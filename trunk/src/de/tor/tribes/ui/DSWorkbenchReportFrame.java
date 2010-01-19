@@ -31,6 +31,7 @@ import de.tor.tribes.util.report.ReportManagerListener;
 import de.tor.tribes.util.report.ReportStatBuilder;
 import java.awt.Component;
 import java.awt.event.ItemEvent;
+import java.text.NumberFormat;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.LinkedList;
@@ -442,9 +443,6 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         jScrollPane4.setPreferredSize(new java.awt.Dimension(140, 130));
 
         jList2.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        jList2.setMaximumSize(new java.awt.Dimension(33, 80));
-        jList2.setMinimumSize(new java.awt.Dimension(33, 80));
-        jList2.setPreferredSize(new java.awt.Dimension(33, 80));
         jScrollPane4.setViewportView(jList2);
 
         jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("Auswertung"));
@@ -1056,9 +1054,30 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
     private void fireAllySelectionChangedEvent() {
         Ally a = (Ally) jList1.getSelectedValue();
         DefaultListModel model = new DefaultListModel();
+        int wall = 0;
+        int building = 0;
+        int kills = 0;
+        int deaths = 0;
         for (Tribe t : lastStats.getAttackingTribes(a)) {
             model.addElement(t);
+            SingleAttackerStat stats = lastStats.getStatsForTribe(t);
+            wall += stats.getDestroyedWallLevels();
+            building += stats.getSummedDestroyedBuildings();
+            kills += stats.getSummedKills();
+            kills += stats.getAtLeast2KDamageCount()*2000;
+            kills += stats.getAtLeast4KDamageCount() * 4000;
+            kills += stats.getAtLeast6KDamageCount() * 6000;
+            kills += stats.getAtLeast8KDamageCount() * 8000;
+            deaths += stats.getSummedLosses();
         }
+
+        NumberFormat f = NumberFormat.getInstance();
+        f.setMinimumFractionDigits(0);
+        f.setMaximumFractionDigits(0);
+        System.out.println("Kills: " + f.format(kills));
+        System.out.println("Deaths: " + f.format(deaths));
+        System.out.println("Wall: " + f.format(wall));
+        System.out.println("Build: " + f.format(building));
         jList2.setModel(model);
     }
 

@@ -174,6 +174,8 @@ public class FightStats {
             Tribe next = tribes.nextElement();
             if (next != null && next.getAlly() != null && next.getAlly().equals(pAlly)) {
                 result.add(next);
+            }else if(pAlly != null && next.getAlly() == null && pAlly.equals(NoAlly.getSingleton())){
+                result.add(next);
             }
         }
         return result.toArray(new Tribe[]{});

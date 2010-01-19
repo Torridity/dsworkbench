@@ -6,6 +6,9 @@ package de.tor.tribes.types;
 
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
@@ -17,39 +20,22 @@ import java.util.List;
 public class FightStats {
 
     private List<Ally> attackingAllies = null;
-    private List<Tribe> attackingTribes = null;
-    private List<Village> attackingVillages = null;
     private List<Ally> defendingAllies = null;
     private List<Tribe> defendingTribes = null;
     private List<Village> defendingVillages = null;
+    private List<Village> conqueredVillages = null;
     private long startTime = Long.MAX_VALUE;
     private long endTime = Long.MIN_VALUE;
     private int reportCount = 0;
-    private int fakeCount = 0;
-    private int offCount = 0;
-    private int snobCount = 0;
-    private int simpleSnobCount = 0;
-    private int enobelements = 0;
-    private int destroyedWallLevels = 0;
-    private Hashtable<String, Integer> destroyedBuildingLevels = null;
-    private Hashtable<UnitHolder, Integer> diedAttackers = null;
-    private Hashtable<UnitHolder, Integer> diedDefenders = null;
-    private Hashtable<UnitHolder, Integer> defendersOnTheWay = null;
-    private Hashtable<UnitHolder, Integer> defendersOutside = null;
+    private Hashtable<Tribe, SingleAttackerStat> attackerList = null;
 
     public FightStats() {
+        attackerList = new Hashtable<Tribe, SingleAttackerStat>();
         attackingAllies = new LinkedList<Ally>();
-        attackingTribes = new LinkedList<Tribe>();
-        attackingVillages = new LinkedList<Village>();
         defendingAllies = new LinkedList<Ally>();
         defendingTribes = new LinkedList<Tribe>();
         defendingVillages = new LinkedList<Village>();
-        destroyedBuildingLevels = new Hashtable<String, Integer>();
-        diedAttackers = new Hashtable<UnitHolder, Integer>();
-        diedDefenders = new Hashtable<UnitHolder, Integer>();
-        defendersOnTheWay = new Hashtable<UnitHolder, Integer>();
-        defendersOutside = new Hashtable<UnitHolder, Integer>();
-
+        conqueredVillages = new LinkedList<Village>();
     }
 
     public void includeReport(FightReport pReport) {
@@ -77,16 +63,16 @@ public class FightStats {
             defenderAlly = NoAlly.getSingleton();
         }
 
-        if (!attackingTribes.contains(attacker)) {
-            attackingTribes.add(attacker);
+        SingleAttackerStat attackerElement = attackerList.get(attacker);
+        if (attackerElement == null) {
+            attackerElement = new SingleAttackerStat(attacker);
+            attackerList.put(attacker, attackerElement);
         }
+
+        attackerElement.addSourceVillage(sourceVillage);
 
         if (!defendingTribes.contains(defender)) {
             defendingTribes.add(defender);
-        }
-
-        if (!attackingVillages.contains(sourceVillage)) {
-            attackingVillages.add(sourceVillage);
         }
 
         if (!defendingVillages.contains(targetVillage)) {
@@ -103,87 +89,128 @@ public class FightStats {
 
         switch (pReport.guessType()) {
             case Attack.FAKE_TYPE:
-                fakeCount++;
+                attackerElement.addFake();
                 break;
             case Attack.SPY_TYPE:
-                fakeCount++;
+                attackerElement.addFake();
                 break;
             case Attack.CLEAN_TYPE:
-                offCount++;
+                attackerElement.addOff();
                 break;
             case Attack.SNOB_TYPE:
                 if (pReport.isSimpleSnobAttack()) {
-                    simpleSnobCount++;
+                    attackerElement.addSimpleSnobAttack();
                 } else {
-                    snobCount++;
+                    attackerElement.addSnobAttack();
                 }
                 break;
         }
 
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
             if (!pReport.areAttackersHidden()) {
-                Integer value = diedAttackers.get(unit);
-                if (value == null) {
-                    value = 0;
-                }
-                diedAttackers.put(unit, value + pReport.getDiedAttackers().get(unit));
+                attackerElement.addSentUnit(unit, pReport.getAttackers().get(unit));
+                attackerElement.addLostUnit(unit, pReport.getDiedAttackers().get(unit));
             }
             if (!pReport.wasLostEverything()) {
-                Integer value = diedDefenders.get(unit);
-                if (value == null) {
-                    value = 0;
-                }
-                diedDefenders.put(unit, value + pReport.getDiedDefenders().get(unit));
+                attackerElement.addKilledUnit(unit, pReport.getDiedDefenders().get(unit));
             }
 
             if (pReport.wasConquered() && pReport.whereDefendersOnTheWay()) {
-                Integer value = defendersOnTheWay.get(unit);
-                if (value == null) {
-                    value = 0;
-                }
-                defendersOnTheWay.put(unit, value + pReport.getDefendersOnTheWay().get(unit));
+                attackerElement.addSilentlyKilledUnit(unit, pReport.getDefendersOnTheWay().get(unit));
             }
+            if (pReport.wasConquered() && pReport.whereDefendersOutside()) {
+                Enumeration<Village> targets = pReport.getDefendersOutside().keys();
+                while (targets.hasMoreElements()) {
+                    Village target = targets.nextElement();
+                    attackerElement.addSilentlyKilledUnit(unit, pReport.getDefendersOutside().get(target).get(unit));
+                }
+            }
+        }
+
+        if (pReport.wasLostEverything() && pReport.wasWallDamaged()) {
+            int diff = pReport.getWallBefore() - pReport.getWallAfter();
+            switch (diff) {
+                case 1:
+                    attackerElement.addAtLeast2KDamage();
+                    break;
+                case 2:
+                    attackerElement.addAtLeast4KDamage();
+                    break;
+                case 3:
+                    attackerElement.addAtLeast6KDamage();
+                    break;
+                default:
+                    attackerElement.addAtLeast8KDamage();
+                    break;
+            }
+        } else if (pReport.wasLostEverything() && !pReport.wasWallDamaged()) {
+            attackerElement.addUnknownDamage();
         }
 
         if (pReport.wasConquered()) {
-            enobelements++;
+            attackerElement.addEnoblement();
+            if (!conqueredVillages.contains(targetVillage)) {
+                conqueredVillages.add(targetVillage);
+            }
         }
 
         if (pReport.wasWallDamaged()) {
-            destroyedWallLevels += (pReport.getWallBefore() - pReport.getWallAfter());
+            attackerElement.addDestroyedWallLevels(pReport.getWallBefore() - pReport.getWallAfter());
         }
 
         if (pReport.wasBuildingDamaged()) {
-            Integer value = destroyedBuildingLevels.get(pReport.getAimedBuilding());
-            if (value == null) {
-                value = 0;
-            }
-            destroyedBuildingLevels.put(pReport.getAimedBuilding(), value + (pReport.getBuildingBefore() - pReport.getBuildingAfter()));
+            attackerElement.addDestroyedBuildingLevel(pReport.getAimedBuilding(), (pReport.getBuildingBefore() - pReport.getBuildingAfter()));
         }
     }
 
+    public List<Ally> getAttackingAllies() {
+        return attackingAllies;
+    }
+
+    public Tribe[] getAttackingTribes(Ally pAlly) {
+        Enumeration<Tribe> tribes = attackerList.keys();
+        List<Tribe> result = new LinkedList<Tribe>();
+        while (tribes.hasMoreElements()) {
+            Tribe next = tribes.nextElement();
+            if (next != null && next.getAlly() != null && next.getAlly().equals(pAlly)) {
+                result.add(next);
+            }
+        }
+        return result.toArray(new Tribe[]{});
+    }
+
+    public SingleAttackerStat getStatsForTribe(Tribe pTribe) {
+        return attackerList.get(pTribe);
+    }
+
+    @Override
     public String toString() {
+
         String res = "";
-        res += attackingTribes + "\n";
-        res += attackingAllies + "\n";
-        res += attackingVillages + "\n";
-        res += "----\n";
-        res += defendingTribes + "\n";
-        res += defendingAllies + "\n";
-        res += defendingVillages + "\n";
-        res += "----\n";
-        res += "" + offCount + "\n";
-        res += "" + fakeCount + "\n";
-        res += "" + simpleSnobCount + "\n";
-        res += "" + snobCount + "\n";
-        res += "----\n";
-        res += diedAttackers + "\n";
-        res += diedDefenders + "\n";
-        res += defendersOnTheWay + "\n";
-        res += "-----\n";
-        res += destroyedBuildingLevels + "\n";
-        res += "" + destroyedWallLevels + "\n";
-        res += "" + enobelements + "\n";
+        SimpleDateFormat f = new SimpleDateFormat("dd.MM.yy HH:mm");
+        res += "Start: " + f.format(new Date(startTime)) + "\n";
+        res += "End: " + f.format(new Date(endTime)) + "\n";
+        res += "Reports: " + reportCount + "\n";
+        res += "AttAllies: " + attackingAllies.size() + "\n";
+        res += "DefAllies: " + defendingAllies.size() + "\n";
+        res += "DefTribes: " + defendingTribes.size() + "\n";
+        res += "DefVillages: " + defendingVillages.size() + "\n";
+        res += "ConqueredVillages: " + conqueredVillages.size() + "\n";
+        res += "-----------------------\n";
+        res += " Involved Tribes\n";
+        Enumeration<Tribe> keys = attackerList.keys();
+        long overallLosses = 0;
+        long overallKills = 0;
+        while (keys.hasMoreElements()) {
+            Tribe t = keys.nextElement();
+            res += attackerList.get(t).toString();
+            overallLosses += attackerList.get(t).getSummedLosses();
+            overallKills += attackerList.get(t).getSummedKills();
+        }
+
+        res += "=====\n";
+        res += "OverallLosses: " + overallLosses + "\n";
+        res += "OverallKills: " + overallKills + "\n";
         res += "=====\n";
         return res;
 

@@ -10,8 +10,11 @@
  */
 package de.tor.tribes.ui;
 
+import de.tor.tribes.types.Ally;
 import de.tor.tribes.types.FightReport;
+import de.tor.tribes.types.FightStats;
 import de.tor.tribes.types.ReportSet;
+import de.tor.tribes.types.SingleAttackerStat;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.models.ReportManagerTableModel;
@@ -53,6 +56,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
     private static Logger logger = Logger.getLogger("ReportView");
     private static DSWorkbenchReportFrame SINGLETON = null;
     private List<DefaultTableCellRenderer> renderers = new LinkedList<DefaultTableCellRenderer>();
+    private FightStats lastStats = null;
 
     public static synchronized DSWorkbenchReportFrame getSingleton() {
         if (SINGLETON == null) {
@@ -114,6 +118,22 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
             jReportTable.getColumn(jReportTable.getColumnName(i)).setHeaderRenderer(headerRenderer);
             renderers.add(headerRenderer);
         }
+
+        jList1.addListSelectionListener(new ListSelectionListener() {
+
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                fireAllySelectionChangedEvent();
+            }
+        });
+
+        jList2.addListSelectionListener(new ListSelectionListener() {
+
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                fireTribeSelectionChangedEvent();
+            }
+        });
 
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
         // GlobalOptions.getHelpBroker().enableHelpKey(jSelectionFilterDialog.getRootPane(), "pages.attack_select_filter", GlobalOptions.getHelpBroker().getHelpSet());
@@ -184,6 +204,32 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         jScrollPane2 = new javax.swing.JScrollPane();
         jReportSetsForStatsList = new javax.swing.JList();
         jButton10 = new javax.swing.JButton();
+        jPanel3 = new javax.swing.JPanel();
+        jLabel7 = new javax.swing.JLabel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        jList1 = new javax.swing.JList();
+        jLabel8 = new javax.swing.JLabel();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        jList2 = new javax.swing.JList();
+        jPanel4 = new javax.swing.JPanel();
+        jLabel9 = new javax.swing.JLabel();
+        jLabel10 = new javax.swing.JLabel();
+        jTextField1 = new javax.swing.JTextField();
+        jTextField2 = new javax.swing.JTextField();
+        jLabel11 = new javax.swing.JLabel();
+        jTextField3 = new javax.swing.JTextField();
+        jLabel13 = new javax.swing.JLabel();
+        jTextField5 = new javax.swing.JTextField();
+        jLabel14 = new javax.swing.JLabel();
+        jTextField6 = new javax.swing.JTextField();
+        jLabel15 = new javax.swing.JLabel();
+        jTextField7 = new javax.swing.JTextField();
+        jLabel16 = new javax.swing.JLabel();
+        jTextField8 = new javax.swing.JTextField();
+        jLabel17 = new javax.swing.JLabel();
+        jTextField9 = new javax.swing.JTextField();
+        jTextField10 = new javax.swing.JTextField();
+        jLabel18 = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         jReportSetBox = new javax.swing.JComboBox();
         jLabel1 = new javax.swing.JLabel();
@@ -377,19 +423,217 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
             }
         });
 
+        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Ergebnisse"));
+        jPanel3.setOpaque(false);
+
+        jLabel7.setText("Teilnehmer (Stämme)");
+
+        jScrollPane3.setMaximumSize(new java.awt.Dimension(140, 130));
+        jScrollPane3.setMinimumSize(new java.awt.Dimension(140, 130));
+        jScrollPane3.setPreferredSize(new java.awt.Dimension(140, 130));
+
+        jList1.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jScrollPane3.setViewportView(jList1);
+
+        jLabel8.setText("Teilnehmer (Spieler)");
+
+        jScrollPane4.setMaximumSize(new java.awt.Dimension(140, 130));
+        jScrollPane4.setMinimumSize(new java.awt.Dimension(140, 130));
+        jScrollPane4.setPreferredSize(new java.awt.Dimension(140, 130));
+
+        jList2.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jList2.setMaximumSize(new java.awt.Dimension(33, 80));
+        jList2.setMinimumSize(new java.awt.Dimension(33, 80));
+        jList2.setPreferredSize(new java.awt.Dimension(33, 80));
+        jScrollPane4.setViewportView(jList2);
+
+        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("Auswertung"));
+        jPanel4.setOpaque(false);
+
+        jLabel9.setText("Angriffe");
+
+        jLabel10.setText("Fakes");
+
+        jTextField1.setEditable(false);
+        jTextField1.setMaximumSize(new java.awt.Dimension(60, 20));
+        jTextField1.setMinimumSize(new java.awt.Dimension(60, 20));
+        jTextField1.setPreferredSize(new java.awt.Dimension(60, 20));
+
+        jTextField2.setEditable(false);
+        jTextField2.setMaximumSize(new java.awt.Dimension(60, 20));
+        jTextField2.setMinimumSize(new java.awt.Dimension(60, 20));
+        jTextField2.setPreferredSize(new java.awt.Dimension(60, 20));
+
+        jLabel11.setText("AG");
+
+        jTextField3.setEditable(false);
+        jTextField3.setMaximumSize(new java.awt.Dimension(60, 20));
+        jTextField3.setMinimumSize(new java.awt.Dimension(60, 20));
+        jTextField3.setPreferredSize(new java.awt.Dimension(60, 20));
+
+        jLabel13.setText("Besiegt");
+
+        jTextField5.setEditable(false);
+        jTextField5.setMaximumSize(new java.awt.Dimension(60, 20));
+        jTextField5.setMinimumSize(new java.awt.Dimension(60, 20));
+        jTextField5.setPreferredSize(new java.awt.Dimension(60, 20));
+
+        jLabel14.setText("Verloren");
+
+        jTextField6.setEditable(false);
+        jTextField6.setMaximumSize(new java.awt.Dimension(60, 20));
+        jTextField6.setMinimumSize(new java.awt.Dimension(60, 20));
+        jTextField6.setPreferredSize(new java.awt.Dimension(60, 20));
+
+        jLabel15.setText("Geadelt");
+
+        jTextField7.setEditable(false);
+        jTextField7.setMaximumSize(new java.awt.Dimension(60, 20));
+        jTextField7.setMinimumSize(new java.awt.Dimension(60, 20));
+        jTextField7.setPreferredSize(new java.awt.Dimension(60, 20));
+
+        jLabel16.setText("Wall");
+
+        jTextField8.setEditable(false);
+        jTextField8.setMaximumSize(new java.awt.Dimension(60, 20));
+        jTextField8.setMinimumSize(new java.awt.Dimension(60, 20));
+        jTextField8.setPreferredSize(new java.awt.Dimension(60, 20));
+
+        jLabel17.setText("Gebäude");
+
+        jTextField9.setEditable(false);
+        jTextField9.setMaximumSize(new java.awt.Dimension(60, 20));
+        jTextField9.setMinimumSize(new java.awt.Dimension(60, 20));
+        jTextField9.setPreferredSize(new java.awt.Dimension(60, 20));
+
+        jTextField10.setEditable(false);
+        jTextField10.setMaximumSize(new java.awt.Dimension(60, 20));
+        jTextField10.setMinimumSize(new java.awt.Dimension(60, 20));
+        jTextField10.setPreferredSize(new java.awt.Dimension(60, 20));
+
+        jLabel18.setText("Stufen");
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel9)
+                    .addComponent(jLabel13)
+                    .addComponent(jLabel16))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel10)
+                        .addGap(18, 18, 18)
+                        .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel11)
+                        .addGap(18, 18, 18)
+                        .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel4Layout.createSequentialGroup()
+                                .addComponent(jTextField8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabel17)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jTextField9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel4Layout.createSequentialGroup()
+                                .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabel14)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(10, 10, 10)
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel15)
+                            .addComponent(jLabel18))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jTextField10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jTextField7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(166, Short.MAX_VALUE))
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel9)
+                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel10)
+                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel11)
+                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel13)
+                    .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel14)
+                    .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel15)
+                    .addComponent(jTextField7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel16)
+                    .addComponent(jTextField8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel17)
+                    .addComponent(jTextField9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jTextField10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel18))
+                .addContainerGap(12, Short.MAX_VALUE))
+        );
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jLabel7)
+                        .addGap(18, 18, 18)
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel8)
+                        .addGap(18, 18, 18)
+                        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jPanel4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel8)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel7))
+                .addGap(18, 18, 18)
+                .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel6)
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(210, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap(416, Short.MAX_VALUE)
-                .addComponent(jButton10)
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
+                        .addComponent(jLabel6)
+                        .addGap(18, 18, 18)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 430, Short.MAX_VALUE))
+                    .addComponent(jButton10))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -397,10 +641,12 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel6))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 264, Short.MAX_VALUE)
+                    .addComponent(jLabel6)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
                 .addComponent(jButton10)
+                .addGap(18, 18, 18)
+                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -796,9 +1042,50 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
             reportSets.add((String) o);
         }
 
-        ReportStatBuilder.buildStats(reportSets);
+        DefaultListModel model = new DefaultListModel();
+        lastStats = ReportStatBuilder.buildStats(reportSets);
+        for (Ally a : lastStats.getAttackingAllies()) {
+            model.addElement(a);
+        }
+
+        jList1.setModel(model);
+        jList2.setModel(new DefaultListModel());
 
     }//GEN-LAST:event_fireDoCreateStatsEvent
+
+    private void fireAllySelectionChangedEvent() {
+        Ally a = (Ally) jList1.getSelectedValue();
+        DefaultListModel model = new DefaultListModel();
+        for (Tribe t : lastStats.getAttackingTribes(a)) {
+            model.addElement(t);
+        }
+        jList2.setModel(model);
+    }
+
+    private void fireTribeSelectionChangedEvent() {
+        Tribe t = (Tribe) jList2.getSelectedValue();
+        if (t == null) {
+            return;
+        }
+        SingleAttackerStat stats = lastStats.getStatsForTribe(t);
+        jTextField1.setText("" + stats.getOffCount());
+        jTextField2.setText("" + stats.getFakeCount());
+        jTextField3.setText("" + stats.getSnobAttackCount() + stats.getSimpleSnobAttackCount());
+        jTextField5.setText("" + stats.getSummedKills());
+        jTextField6.setText("" + stats.getSummedLosses());
+        jTextField7.setText("" + stats.getEnoblementCount());
+        jTextField8.setText("" + stats.getDestroyedWallLevels());
+        int buildings = 0;
+        int levels = 0;
+        Enumeration<String> keys = stats.getDestroyedBuildings().keys();
+        while (keys.hasMoreElements()) {
+            buildings++;
+            levels += stats.getDestroyedBuildings().get(keys.nextElement());
+        }
+        jTextField9.setText("" + buildings);
+        jTextField10.setText("" + levels);
+
+    }
 
     /**
      * @param args the command line arguments
@@ -830,25 +1117,51 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
     private javax.swing.JButton jDoMoveButton;
     private javax.swing.JButton jDoRenameButton;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel14;
+    private javax.swing.JLabel jLabel15;
+    private javax.swing.JLabel jLabel16;
+    private javax.swing.JLabel jLabel17;
+    private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
+    private javax.swing.JList jList1;
+    private javax.swing.JList jList2;
     private javax.swing.JDialog jMoveToSetDialog;
     private javax.swing.JTextField jNewReportSetField;
     private javax.swing.JComboBox jNewSetBox;
     private javax.swing.JTextField jNewSetNameField;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
     private javax.swing.JDialog jRenameReportSetDialog;
     private javax.swing.JComboBox jReportSetBox;
     private javax.swing.JList jReportSetsForStatsList;
     private javax.swing.JTable jReportTable;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane4;
     private com.l2fprod.common.swing.JTaskPane jTaskPane1;
     private com.l2fprod.common.swing.JTaskPaneGroup jTaskPaneGroup1;
+    private javax.swing.JTextField jTextField1;
+    private javax.swing.JTextField jTextField10;
+    private javax.swing.JTextField jTextField2;
+    private javax.swing.JTextField jTextField3;
+    private javax.swing.JTextField jTextField5;
+    private javax.swing.JTextField jTextField6;
+    private javax.swing.JTextField jTextField7;
+    private javax.swing.JTextField jTextField8;
+    private javax.swing.JTextField jTextField9;
     // End of variables declaration//GEN-END:variables
 
     @Override

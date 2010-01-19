@@ -15,15 +15,14 @@ import java.util.List;
  */
 public class ReportStatBuilder {
 
-    public static void buildStats(List<String> pReportSets) {
+    public static FightStats buildStats(List<String> pReportSets) {
         FightStats stats = new FightStats();
         for (String set : pReportSets) {
             ReportSet rSet = ReportManager.getSingleton().getReportSet(set);
             for (FightReport r : rSet.getReports()) {
-                System.out.println(r.getAcceptanceAfter());
                 stats.includeReport(r);
             }
         }
-        System.out.println(stats);
+        return stats;
     }
 }

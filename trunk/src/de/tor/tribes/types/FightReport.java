@@ -6,11 +6,13 @@ package de.tor.tribes.types;
 
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
+import de.tor.tribes.util.xml.JaxenUtils;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.List;
 import org.jdom.Element;
 
 /**
@@ -71,8 +73,15 @@ public class FightReport {
         Element dAmount = defenderElement.getChild("amount");
         Element dDiedAmount = defenderElement.getChild("died");
         Element dDefendersOnTheWay = null;
+
         try {
             dDefendersOnTheWay = defenderElement.getChild("ontheway");
+        } catch (Exception e) {
+        }
+
+        Element dDefendersOutside = null;
+        try {
+            dDefendersOutside = defenderElement.getChild("outside");
         } catch (Exception e) {
         }
 
@@ -90,6 +99,21 @@ public class FightReport {
             diedDefenders.put(unit, dDiedAmount.getAttribute(unitName).getIntValue());
             if (dDefendersOnTheWay != null) {
                 defendersOnTheWay.put(unit, dDefendersOnTheWay.getAttribute(unitName).getIntValue());
+            }
+            if (dDefendersOutside != null) {
+                for (Element e : (List<Element>) JaxenUtils.getNodes(dDefendersOutside, "support")) {
+                    int villageId = e.getAttribute("trg").getIntValue();
+                    int amount = e.getAttribute(unitName).getIntValue();
+                    Village v = DataHolder.getSingleton().getVillagesById().get(villageId);
+                    if (v != null) {
+                        Hashtable<UnitHolder, Integer> unitsInvillage = defendersOutside.get(v);
+                        if (unitsInvillage == null) {
+                            unitsInvillage = new Hashtable<UnitHolder, Integer>();
+                            defendersOutside.put(v, unitsInvillage);
+                        }
+                        unitsInvillage.put(unit, amount);
+                    }
+                }
             }
         }
 
@@ -135,10 +159,11 @@ public class FightReport {
             String sDiedAttackers = "<died ";
             String sDefenders = "<amount ";
             String sDiedDefenders = "<died ";
-            String sDefendersOutside = null;
-            if (whereDefendersOutside()) {
-                sDefendersOutside = "<outside ";
+            String sDefendersOnTheWay = null;
+            if (whereDefendersOnTheWay()) {
+                sDefendersOnTheWay = "<ontheway ";
             }
+
             Enumeration<UnitHolder> units = attackers.keys();
             while (units.hasMoreElements()) {
                 UnitHolder unit = units.nextElement();
@@ -146,8 +171,8 @@ public class FightReport {
                 sDiedAttackers += unit.getPlainName() + "=\"" + diedAttackers.get(unit) + "\" ";
                 sDefenders += unit.getPlainName() + "=\"" + defenders.get(unit) + "\" ";
                 sDiedDefenders += unit.getPlainName() + "=\"" + diedDefenders.get(unit) + "\" ";
-                if (sDefendersOutside != null) {
-                    sDefendersOutside += unit.getPlainName() + "=\"" + diedDefenders.get(unit) + "\" ";
+                if (sDefendersOnTheWay != null) {
+                    sDefendersOnTheWay += unit.getPlainName() + "=\"" + defendersOnTheWay.get(unit) + "\" ";
                 }
             }
             xml += sAttackers + "/>\n";
@@ -159,9 +184,35 @@ public class FightReport {
             xml += "<trg>" + getTargetVillage().getId() + "</trg>\n";
             xml += sDefenders + "/>\n";
             xml += sDiedDefenders + "/>\n";
-            if (sDefendersOutside != null) {
-                xml += sDefendersOutside + "/>\n";
+            if (sDefendersOnTheWay != null) {
+                xml += sDefendersOnTheWay + "/>\n";
             }
+
+            if (whereDefendersOutside()) {
+                xml += "<outside>\n";
+
+                Enumeration<Village> targetVillages = defendersOutside.keys();
+
+                while (targetVillages.hasMoreElements()) {
+                    Village v = targetVillages.nextElement();
+                    if (v != null) {
+                        String villageString = "<support ";
+                        Hashtable<UnitHolder, Integer> support = defendersOutside.get(v);
+                        if (support != null) {
+                            villageString += "trg=\"" + v.getId() + "\" ";
+                            Enumeration<UnitHolder> suppUnits = support.keys();
+                            while (suppUnits.hasMoreElements()) {
+                                UnitHolder unit = suppUnits.nextElement();
+                                villageString += unit.getPlainName() + "=\"" + support.get(unit) + "\" ";
+                            }
+                            villageString += "/>\n";
+                            xml += villageString;
+                        }
+                    }
+                }
+                xml += "</outside>\n";
+            }
+
             xml += "</defender>\n";
             if (wasWallDamaged()) {
                 xml += "<wall before=\"" + getWallBefore() + "\" after=\"" + getWallAfter() + "\"/>\n";
@@ -391,6 +442,13 @@ public class FightReport {
      */
     public Hashtable<UnitHolder, Integer> getDefendersOnTheWay() {
         return defendersOnTheWay;
+    }
+
+    /**
+     * @return the defendersOutside
+     */
+    public Hashtable<Village, Hashtable<UnitHolder, Integer>> getDefendersOutside() {
+        return defendersOutside;
     }
 
     /**
@@ -680,6 +738,25 @@ public class FightReport {
         result.append("Ziel: " + getTargetVillage() + "\n");
         result.append("Anzahl: " + sDefenders);
         result.append("Verluste: " + sDefendersDied);
+
+        if (wasConquered()) {
+            if (whereDefendersOutside()) {
+                Enumeration<Village> villageKeys = defendersOutside.keys();
+                while (villageKeys.hasMoreElements()) {
+                    Village v = villageKeys.nextElement();
+                    if (v != null) {
+                        Hashtable<UnitHolder, Integer> troops = defendersOutside.get(v);
+                        if (troops != null) {
+                            result.append(" -> " + v + " ");
+                            for (UnitHolder u : DataHolder.getSingleton().getUnits()) {
+                                result.append(troops.get(u) + " ");
+                            }
+                        }
+                        result.append("\n");
+                    }
+                }
+            }
+        }
 
 
         if (wasWallDamaged()) {

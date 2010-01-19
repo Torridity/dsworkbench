@@ -42,7 +42,7 @@ public class FightReportHTMLToolTipGenerator {
 
     static {
         try {
-            BufferedReader r = new BufferedReader(new FileReader(new File("templ.tmpl")));
+            BufferedReader r = new BufferedReader(new FileReader(new File("templates/report.tmpl")));
             String line = "";
             while ((line = r.readLine()) != null) {
                 pTemplateData += line;

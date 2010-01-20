@@ -167,6 +167,18 @@ public class FightStats {
         return attackingAllies;
     }
 
+    public int getReportCount() {
+        return reportCount;
+    }
+
+    public Date getStartDate() {
+        return new Date(startTime);
+    }
+
+    public Date getEndDate() {
+        return new Date(endTime);
+    }
+
     public Tribe[] getAttackingTribes(Ally pAlly) {
         Enumeration<Tribe> tribes = attackerList.keys();
         List<Tribe> result = new LinkedList<Tribe>();
@@ -174,11 +186,19 @@ public class FightStats {
             Tribe next = tribes.nextElement();
             if (next != null && next.getAlly() != null && next.getAlly().equals(pAlly)) {
                 result.add(next);
-            }else if(pAlly != null && next.getAlly() == null && pAlly.equals(NoAlly.getSingleton())){
+            } else if (pAlly != null && next.getAlly() == null && pAlly.equals(NoAlly.getSingleton())) {
                 result.add(next);
             }
         }
         return result.toArray(new Tribe[]{});
+    }
+
+    public Ally[] getDefendingAllies() {
+        return defendingAllies.toArray(new Ally[]{});
+    }
+
+    public Tribe[] getDefendingTribes() {
+        return defendingTribes.toArray(new Tribe[]{});
     }
 
     public SingleAttackerStat getStatsForTribe(Tribe pTribe) {

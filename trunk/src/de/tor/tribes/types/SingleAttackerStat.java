@@ -219,6 +219,16 @@ public class SingleAttackerStat {
         return value;
     }
 
+    public int getSummedLossesAsFarmSpace() {
+        int value = 0;
+        for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
+            if (lostUnits != null && !lostUnits.isEmpty()) {
+                value += lostUnits.get(unit) * (int) Math.rint(unit.getPop());
+            }
+        }
+        return value;
+    }
+
     public int getSummedKills() {
         int value = 0;
 
@@ -233,6 +243,43 @@ public class SingleAttackerStat {
         return value;
     }
 
+    public int getSummedKillsAsFarmSpace() {
+        int value = 0;
+
+        for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
+            if (killedUnits != null && !killedUnits.isEmpty()) {
+                value += killedUnits.get(unit) * (int) Math.rint(unit.getPop());
+            }
+            if (silentKills != null && !silentKills.isEmpty()) {
+                value += silentKills.get(unit) * (int) Math.rint(unit.getPop());
+            }
+        }
+        return value;
+    }
+
+    public int getSummedSilentKills() {
+        int value = 0;
+
+        for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
+            if (silentKills != null && !silentKills.isEmpty()) {
+                value += silentKills.get(unit);
+            }
+        }
+        return value;
+    }
+
+    public int getSummedSilentKillsAsFarmSpace() {
+        int value = 0;
+
+        for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
+            if (silentKills != null && !silentKills.isEmpty()) {
+                value += silentKills.get(unit) * (int) Math.rint(unit.getPop());
+            }
+        }
+        return value;
+    }
+
+    @Override
     public String toString() {
         String res = "";
         res += " Attacker: " + attacker + "\n";

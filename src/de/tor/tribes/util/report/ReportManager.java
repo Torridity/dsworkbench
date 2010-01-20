@@ -103,6 +103,7 @@ public class ReportManager {
             logger.debug("Writing reports to '" + pFile + "'");
         }
         try {
+
             FileWriter w = new FileWriter(pFile);
             w.write("<reportSets>\n");
             Enumeration<String> setKeys = reportSets.keys();

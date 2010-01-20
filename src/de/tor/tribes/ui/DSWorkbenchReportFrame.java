@@ -32,6 +32,7 @@ import de.tor.tribes.util.report.ReportStatBuilder;
 import java.awt.Component;
 import java.awt.event.ItemEvent;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.LinkedList;
@@ -124,7 +125,9 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
 
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                fireAllySelectionChangedEvent();
+                if (!e.getValueIsAdjusting()) {
+                    fireAllySelectionChangedEvent();
+                }
             }
         });
 
@@ -132,7 +135,9 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
 
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                fireTribeSelectionChangedEvent();
+                if (!e.getValueIsAdjusting()) {
+                    fireTribeSelectionChangedEvent();
+                }
             }
         });
 
@@ -433,7 +438,6 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         jScrollPane3.setMinimumSize(new java.awt.Dimension(140, 130));
         jScrollPane3.setPreferredSize(new java.awt.Dimension(140, 130));
 
-        jList1.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane3.setViewportView(jList1);
 
         jLabel8.setText("Teilnehmer (Spieler)");
@@ -442,7 +446,6 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         jScrollPane4.setMinimumSize(new java.awt.Dimension(140, 130));
         jScrollPane4.setPreferredSize(new java.awt.Dimension(140, 130));
 
-        jList2.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane4.setViewportView(jList2);
 
         jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("Auswertung"));
@@ -1052,30 +1055,59 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
     }//GEN-LAST:event_fireDoCreateStatsEvent
 
     private void fireAllySelectionChangedEvent() {
-        Ally a = (Ally) jList1.getSelectedValue();
+        Object[] selection = jList1.getSelectedValues();
         DefaultListModel model = new DefaultListModel();
         int wall = 0;
         int building = 0;
         int kills = 0;
+        int silentKills = 0;
+        int killsAsFarm = 0;
         int deaths = 0;
-        for (Tribe t : lastStats.getAttackingTribes(a)) {
-            model.addElement(t);
-            SingleAttackerStat stats = lastStats.getStatsForTribe(t);
-            wall += stats.getDestroyedWallLevels();
-            building += stats.getSummedDestroyedBuildings();
-            kills += stats.getSummedKills();
-            kills += stats.getAtLeast2KDamageCount()*2000;
-            kills += stats.getAtLeast4KDamageCount() * 4000;
-            kills += stats.getAtLeast6KDamageCount() * 6000;
-            kills += stats.getAtLeast8KDamageCount() * 8000;
-            deaths += stats.getSummedLosses();
+        int deathsAsFarm = 0;
+        int tribes = 0;
+        for (Ally a : lastStats.getDefendingAllies()) {
+            System.out.println(a);
         }
+        int defAllies = lastStats.getDefendingAllies().length;
+        int defTribes = lastStats.getDefendingTribes().length;
 
+        for (Object o : selection) {
+            Ally a = (Ally) o;
+            for (Tribe t : lastStats.getAttackingTribes(a)) {
+                tribes++;
+                model.addElement(t);
+                SingleAttackerStat stats = lastStats.getStatsForTribe(t);
+                wall += stats.getDestroyedWallLevels();
+                building += stats.getSummedDestroyedBuildings();
+                kills += stats.getSummedKills();
+                silentKills += stats.getSummedSilentKills();
+                kills += stats.getAtLeast2KDamageCount() * 2000;
+                kills += stats.getAtLeast4KDamageCount() * 4000;
+                kills += stats.getAtLeast6KDamageCount() * 6000;
+                kills += stats.getAtLeast8KDamageCount() * 8000;
+                deaths += stats.getSummedLosses();
+                killsAsFarm += stats.getSummedKillsAsFarmSpace();
+                killsAsFarm += stats.getAtLeast2KDamageCount() * 2000 * 1.5;
+                killsAsFarm += stats.getAtLeast4KDamageCount() * 4000 * 1.5;
+                killsAsFarm += stats.getAtLeast6KDamageCount() * 6000 * 1.5;
+                killsAsFarm += stats.getAtLeast8KDamageCount() * 8000 * 1.5;
+                deathsAsFarm += stats.getSummedLossesAsFarmSpace();
+            }
+        }
         NumberFormat f = NumberFormat.getInstance();
         f.setMinimumFractionDigits(0);
         f.setMaximumFractionDigits(0);
-        System.out.println("Kills: " + f.format(kills));
-        System.out.println("Deaths: " + f.format(deaths));
+        SimpleDateFormat df = new SimpleDateFormat("dd.MM.yy HH:mm");
+        System.out.println("Start: " + df.format(lastStats.getStartDate()));
+        System.out.println("End: " + df.format(lastStats.getEndDate()));
+        System.out.println("Reports: " + lastStats.getReportCount());
+        System.out.println("Attackers: " + tribes + " (" + selection.length + ")");
+        System.out.println("Defenders: " + defTribes + " (" + defAllies + ")");
+        System.out.println("Kills: " + f.format(kills) + " (" + f.format(killsAsFarm) + ")");
+        System.out.println("Silent: " + f.format(silentKills));
+        System.out.println("Deaths: " + f.format(deaths) + " (" + f.format(deathsAsFarm) + ")");
+        System.out.println("Death/Attacker: " + f.format((deaths / tribes)));
+        System.out.println("Death/Defender: " + f.format((kills / defTribes)));
         System.out.println("Wall: " + f.format(wall));
         System.out.println("Build: " + f.format(building));
         jList2.setModel(model);
@@ -1103,7 +1135,6 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         }
         jTextField9.setText("" + buildings);
         jTextField10.setText("" + levels);
-
     }
 
     /**

@@ -56,6 +56,7 @@ public class FightStats {
         }
         Ally attackerAlly = attacker.getAlly();
         Ally defenderAlly = defender.getAlly();
+
         if (attackerAlly == null) {
             attackerAlly = NoAlly.getSingleton();
         }
@@ -75,6 +76,7 @@ public class FightStats {
             defendingTribes.add(defender);
         }
 
+
         if (!defendingVillages.contains(targetVillage)) {
             defendingVillages.add(targetVillage);
         }
@@ -83,7 +85,7 @@ public class FightStats {
             attackingAllies.add(attackerAlly);
         }
 
-        if (!defendingAllies.contains(defenderAlly)) {
+        if (!defendingAllies.contains(defenderAlly) && !defenderAlly.equals(attackerAlly)) {
             defendingAllies.add(defenderAlly);
         }
 

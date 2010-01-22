@@ -21,6 +21,7 @@ import de.tor.tribes.ui.models.ReportManagerTableModel;
 import de.tor.tribes.ui.renderer.AttackTypeCellRenderer;
 import de.tor.tribes.ui.renderer.DateCellRenderer;
 import de.tor.tribes.ui.renderer.FightReportCellRenderer;
+import de.tor.tribes.ui.renderer.ReportWallCataCellRenderer;
 import de.tor.tribes.ui.renderer.TribeCellRenderer;
 import de.tor.tribes.ui.renderer.VillageCellRenderer;
 import de.tor.tribes.util.Constants;
@@ -126,7 +127,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 if (!e.getValueIsAdjusting()) {
-                    fireAllySelectionChangedEvent();
+                    fireRebuildStatsEvent();
                 }
             }
         });
@@ -136,7 +137,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 if (!e.getValueIsAdjusting()) {
-                    fireTribeSelectionChangedEvent();
+                    fireRebuildStatsEvent();
                 }
             }
         });
@@ -158,10 +159,23 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         jReportTable.setDefaultRenderer(Tribe.class, new TribeCellRenderer());
         jReportTable.setDefaultRenderer(Village.class, new VillageCellRenderer());
         jReportTable.setDefaultRenderer(Integer.class, new AttackTypeCellRenderer());
+        jReportTable.setDefaultRenderer(Boolean.class, new ReportWallCataCellRenderer());
         jReportTable.getColumnModel().getColumn(0).setMinWidth(20);
         jReportTable.getColumnModel().getColumn(0).setWidth(20);
         jReportTable.getColumnModel().getColumn(0).setMaxWidth(20);
+        jReportTable.getColumnModel().getColumn(7).setMinWidth(20);
+        jReportTable.getColumnModel().getColumn(7).setWidth(20);
+        jReportTable.getColumnModel().getColumn(7).setMaxWidth(20);
+        jReportTable.getColumnModel().getColumn(8).setMinWidth(20);
+        jReportTable.getColumnModel().getColumn(8).setWidth(20);
+        jReportTable.getColumnModel().getColumn(8).setMaxWidth(20);
+        jReportTable.getColumnModel().getColumn(9).setMinWidth(20);
+        jReportTable.getColumnModel().getColumn(9).setWidth(20);
+        jReportTable.getColumnModel().getColumn(9).setMaxWidth(20);
         jReportTable.getColumnModel().getColumn(0).setResizable(false);
+        jReportTable.getColumnModel().getColumn(7).setResizable(false);
+        jReportTable.getColumnModel().getColumn(8).setResizable(false);
+        jReportTable.getColumnModel().getColumn(9).setResizable(false);
 
         ReportManager.getSingleton().forceUpdate(null);
         buildReportSetList();
@@ -217,25 +231,21 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         jLabel8 = new javax.swing.JLabel();
         jScrollPane4 = new javax.swing.JScrollPane();
         jList2 = new javax.swing.JList();
+        jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel4 = new javax.swing.JPanel();
-        jLabel9 = new javax.swing.JLabel();
-        jLabel10 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
-        jTextField2 = new javax.swing.JTextField();
-        jLabel11 = new javax.swing.JLabel();
-        jTextField3 = new javax.swing.JTextField();
-        jLabel13 = new javax.swing.JLabel();
-        jTextField5 = new javax.swing.JTextField();
-        jLabel14 = new javax.swing.JLabel();
-        jTextField6 = new javax.swing.JTextField();
-        jLabel15 = new javax.swing.JLabel();
-        jTextField7 = new javax.swing.JTextField();
-        jLabel16 = new javax.swing.JLabel();
-        jTextField8 = new javax.swing.JTextField();
-        jLabel17 = new javax.swing.JLabel();
-        jTextField9 = new javax.swing.JTextField();
-        jTextField10 = new javax.swing.JTextField();
-        jLabel18 = new javax.swing.JLabel();
+        jScrollPane5 = new javax.swing.JScrollPane();
+        jOverallStatsArea = new javax.swing.JTextArea();
+        jPanel5 = new javax.swing.JPanel();
+        jScrollPane6 = new javax.swing.JScrollPane();
+        jAllyStatsArea = new javax.swing.JTextArea();
+        jPanel6 = new javax.swing.JPanel();
+        jScrollPane7 = new javax.swing.JScrollPane();
+        jTribeStatsArea = new javax.swing.JTextArea();
+        jPanel7 = new javax.swing.JPanel();
+        jGuessUnknownLosses = new javax.swing.JCheckBox();
+        jUseSilentKillsBox = new javax.swing.JCheckBox();
+        jCheckBox3 = new javax.swing.JCheckBox();
+        jCheckBox4 = new javax.swing.JCheckBox();
         jPanel1 = new javax.swing.JPanel();
         jReportSetBox = new javax.swing.JComboBox();
         jLabel1 = new javax.swing.JLabel();
@@ -448,71 +458,13 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
 
         jScrollPane4.setViewportView(jList2);
 
-        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("Auswertung"));
+        jTabbedPane1.setBackground(new java.awt.Color(239, 235, 223));
+
         jPanel4.setOpaque(false);
 
-        jLabel9.setText("Angriffe");
-
-        jLabel10.setText("Fakes");
-
-        jTextField1.setEditable(false);
-        jTextField1.setMaximumSize(new java.awt.Dimension(60, 20));
-        jTextField1.setMinimumSize(new java.awt.Dimension(60, 20));
-        jTextField1.setPreferredSize(new java.awt.Dimension(60, 20));
-
-        jTextField2.setEditable(false);
-        jTextField2.setMaximumSize(new java.awt.Dimension(60, 20));
-        jTextField2.setMinimumSize(new java.awt.Dimension(60, 20));
-        jTextField2.setPreferredSize(new java.awt.Dimension(60, 20));
-
-        jLabel11.setText("AG");
-
-        jTextField3.setEditable(false);
-        jTextField3.setMaximumSize(new java.awt.Dimension(60, 20));
-        jTextField3.setMinimumSize(new java.awt.Dimension(60, 20));
-        jTextField3.setPreferredSize(new java.awt.Dimension(60, 20));
-
-        jLabel13.setText("Besiegt");
-
-        jTextField5.setEditable(false);
-        jTextField5.setMaximumSize(new java.awt.Dimension(60, 20));
-        jTextField5.setMinimumSize(new java.awt.Dimension(60, 20));
-        jTextField5.setPreferredSize(new java.awt.Dimension(60, 20));
-
-        jLabel14.setText("Verloren");
-
-        jTextField6.setEditable(false);
-        jTextField6.setMaximumSize(new java.awt.Dimension(60, 20));
-        jTextField6.setMinimumSize(new java.awt.Dimension(60, 20));
-        jTextField6.setPreferredSize(new java.awt.Dimension(60, 20));
-
-        jLabel15.setText("Geadelt");
-
-        jTextField7.setEditable(false);
-        jTextField7.setMaximumSize(new java.awt.Dimension(60, 20));
-        jTextField7.setMinimumSize(new java.awt.Dimension(60, 20));
-        jTextField7.setPreferredSize(new java.awt.Dimension(60, 20));
-
-        jLabel16.setText("Wall");
-
-        jTextField8.setEditable(false);
-        jTextField8.setMaximumSize(new java.awt.Dimension(60, 20));
-        jTextField8.setMinimumSize(new java.awt.Dimension(60, 20));
-        jTextField8.setPreferredSize(new java.awt.Dimension(60, 20));
-
-        jLabel17.setText("Gebäude");
-
-        jTextField9.setEditable(false);
-        jTextField9.setMaximumSize(new java.awt.Dimension(60, 20));
-        jTextField9.setMinimumSize(new java.awt.Dimension(60, 20));
-        jTextField9.setPreferredSize(new java.awt.Dimension(60, 20));
-
-        jTextField10.setEditable(false);
-        jTextField10.setMaximumSize(new java.awt.Dimension(60, 20));
-        jTextField10.setMinimumSize(new java.awt.Dimension(60, 20));
-        jTextField10.setPreferredSize(new java.awt.Dimension(60, 20));
-
-        jLabel18.setText("Stufen");
+        jOverallStatsArea.setColumns(20);
+        jOverallStatsArea.setRows(5);
+        jScrollPane5.setViewportView(jOverallStatsArea);
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -520,75 +472,70 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel9)
-                    .addComponent(jLabel13)
-                    .addComponent(jLabel16))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel10)
-                        .addGap(18, 18, 18)
-                        .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel11)
-                        .addGap(18, 18, 18)
-                        .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel4Layout.createSequentialGroup()
-                                .addComponent(jTextField8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(jLabel17)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jTextField9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel4Layout.createSequentialGroup()
-                                .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(jLabel14)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(10, 10, 10)
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel15)
-                            .addComponent(jLabel18))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jTextField10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jTextField7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(166, Short.MAX_VALUE))
+                .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 534, Short.MAX_VALUE)
+                .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel9)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel10)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel11)
-                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel13)
-                    .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel14)
-                    .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel15)
-                    .addComponent(jTextField7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel16)
-                    .addComponent(jTextField8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel17)
-                    .addComponent(jTextField9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel18))
-                .addContainerGap(12, Short.MAX_VALUE))
+                .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 127, Short.MAX_VALUE)
+                .addContainerGap())
         );
+
+        jTabbedPane1.addTab("Gesamtübersicht", new javax.swing.ImageIcon(getClass().getResource("/res/ui/chart.png")), jPanel4); // NOI18N
+
+        jPanel5.setBackground(new java.awt.Color(239, 235, 223));
+
+        jAllyStatsArea.setColumns(20);
+        jAllyStatsArea.setRows(5);
+        jScrollPane6.setViewportView(jAllyStatsArea);
+
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 534, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 127, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        jTabbedPane1.addTab("Stämme", new javax.swing.ImageIcon(getClass().getResource("/res/ally.png")), jPanel5); // NOI18N
+
+        jPanel6.setBackground(new java.awt.Color(239, 235, 223));
+
+        jTribeStatsArea.setColumns(20);
+        jTribeStatsArea.setRows(5);
+        jScrollPane7.setViewportView(jTribeStatsArea);
+
+        javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
+        jPanel6.setLayout(jPanel6Layout);
+        jPanel6Layout.setHorizontalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 554, Short.MAX_VALUE)
+            .addGroup(jPanel6Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 534, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        jPanel6Layout.setVerticalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 149, Short.MAX_VALUE)
+            .addGroup(jPanel6Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 127, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        jTabbedPane1.addTab("Spieler", new javax.swing.ImageIcon(getClass().getResource("/res/face.png")), jPanel6); // NOI18N
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -596,16 +543,16 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jTabbedPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 559, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel3Layout.createSequentialGroup()
                         .addComponent(jLabel7)
                         .addGap(18, 18, 18)
                         .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(jLabel8)
                         .addGap(18, 18, 18)
-                        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jPanel4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
@@ -618,8 +565,73 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
                     .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel7))
                 .addGap(18, 18, 18)
-                .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 184, Short.MAX_VALUE)
                 .addContainerGap())
+        );
+
+        jPanel7.setBorder(javax.swing.BorderFactory.createTitledBorder("Optionen"));
+        jPanel7.setOpaque(false);
+
+        jGuessUnknownLosses.setSelected(true);
+        jGuessUnknownLosses.setText("Gegnerische Verluste schätzen, falls unbekannt");
+        jGuessUnknownLosses.setOpaque(false);
+        jGuessUnknownLosses.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                fireStatsOptionsChangedEvent(evt);
+            }
+        });
+
+        jUseSilentKillsBox.setSelected(true);
+        jUseSilentKillsBox.setText("Auswärtige Einheiten bei Adelung als Verlust werten");
+        jUseSilentKillsBox.setOpaque(false);
+        jUseSilentKillsBox.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                fireStatsOptionsChangedEvent(evt);
+            }
+        });
+
+        jCheckBox3.setSelected(true);
+        jCheckBox3.setText("Verluste pro Angreifer/Verteidiger anzeigen");
+        jCheckBox3.setOpaque(false);
+        jCheckBox3.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                fireStatsOptionsChangedEvent(evt);
+            }
+        });
+
+        jCheckBox4.setText("Gebäudezerstörung einzeln aufschlüsseln");
+        jCheckBox4.setOpaque(false);
+        jCheckBox4.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                fireStatsOptionsChangedEvent(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
+        jPanel7.setLayout(jPanel7Layout);
+        jPanel7Layout.setHorizontalGroup(
+            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel7Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jGuessUnknownLosses)
+                    .addComponent(jUseSilentKillsBox)
+                    .addComponent(jCheckBox3)
+                    .addComponent(jCheckBox4))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel7Layout.setVerticalGroup(
+            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel7Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jGuessUnknownLosses)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jUseSilentKillsBox)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jCheckBox3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jCheckBox4)
+                .addContainerGap(24, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -629,11 +641,13 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
                         .addComponent(jLabel6)
                         .addGap(18, 18, 18)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 430, Short.MAX_VALUE))
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addComponent(jButton10))
                 .addContainerGap())
         );
@@ -642,11 +656,15 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel6)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jLabel6)
+                        .addGap(136, 136, 136))
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(jPanel7, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton10)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
@@ -1054,39 +1072,48 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
 
     }//GEN-LAST:event_fireDoCreateStatsEvent
 
-    private void fireAllySelectionChangedEvent() {
+    private void fireStatsOptionsChangedEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireStatsOptionsChangedEvent
+        fireRebuildStatsEvent();
+    }//GEN-LAST:event_fireStatsOptionsChangedEvent
+
+    private void fireRebuildStatsEvent() {
         Object[] selection = jList1.getSelectedValues();
         DefaultListModel model = new DefaultListModel();
-        int wall = 0;
-        int building = 0;
-        int kills = 0;
-        int silentKills = 0;
-        int killsAsFarm = 0;
-        int deaths = 0;
-        int deathsAsFarm = 0;
-        int tribes = 0;
-        int defAllies = lastStats.getDefendingAllies().length;
-        int defTribes = lastStats.getDefendingTribes().length;
+        int overallWallDamage = 0;
+        int overallBuildingDamage = 0;
+        int overallKills = 0;
+        int overallSilentKills = 0;
+        int overallKillsAsFarm = 0;
+        int overallDeaths = 0;
+        int overallDeathsAsFarm = 0;
+        int overallTribes = 0;
+        int overallDefAllies = lastStats.getDefendingAllies().length;
+        int overallDefTribes = lastStats.getDefendingTribes().length;
 
         NumberFormat f = NumberFormat.getInstance();
         f.setMinimumFractionDigits(0);
         f.setMaximumFractionDigits(0);
-        System.out.println("BorderConditions");
-        System.out.println("----------------");
-        SimpleDateFormat df = new SimpleDateFormat("dd.MM.yy HH:mm");
-        System.out.println("Start: " + df.format(lastStats.getStartDate()));
-        System.out.println("End: " + df.format(lastStats.getEndDate()));
-        System.out.println("Reports: " + lastStats.getReportCount());
-        System.out.println("====================");
-        System.out.println("");
-        System.out.println("AllyStats");
-        System.out.println("---------");
+
+        //  System.out.println("");
+        // System.out.println("");
+        // System.out.println("BorderConditions");
+        // System.out.println("----------------");
+        //  SimpleDateFormat df = new SimpleDateFormat("dd.MM.yy HH:mm");
+        // System.out.println("Start: " + df.format(lastStats.getStartDate()));
+        // System.out.println("End: " + df.format(lastStats.getEndDate()));
+        // System.out.println("Reports: " + lastStats.getReportCount());
+        // System.out.println("====================");
+        // System.out.println("");
+        //  System.out.println("AllyStats");
+        // System.out.println("---------");
+
+        StringBuffer allyBuffer = new StringBuffer();
+        StringBuffer tribeBuffer = new StringBuffer();
         for (Object o : selection) {
             Ally a = (Ally) o;
-            System.out.println("AllyStats (" + a + ")");
-            System.out.println("-----------------------");
-            int allyWall = 0;
-            int allyBuilding = 0;
+            allyBuffer.append(a.toBBCode() + "\n");
+            int allyWallDamage = 0;
+            int allyBuildingDamage = 0;
             int allyKills = 0;
             int allySilentKills = 0;
             int allyKillsAsFarm = 0;
@@ -1094,105 +1121,113 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
             int allyDeathsAsFarm = 0;
             int allyTribes = 0;
             int allyAttacks = 0;
+
             for (Tribe t : lastStats.getAttackingTribes(a)) {
-                tribes++;
+                overallTribes++;
                 allyTribes++;
                 model.addElement(t);
                 SingleAttackerStat stats = lastStats.getStatsForTribe(t);
+
                 allyAttacks += stats.getOffCount() + stats.getSnobAttackCount() + stats.getSimpleSnobAttackCount() + stats.getFakeCount();
-                wall += stats.getDestroyedWallLevels();
-                allyWall += stats.getDestroyedWallLevels();
-                building += stats.getSummedDestroyedBuildings();
-                allyBuilding += stats.getSummedDestroyedBuildings();
-                kills += stats.getSummedKills();
+                overallWallDamage += stats.getDestroyedWallLevels();
+                allyWallDamage += stats.getDestroyedWallLevels();
+                overallBuildingDamage += stats.getSummedDestroyedBuildings();
+                allyBuildingDamage += stats.getSummedDestroyedBuildings();
+                overallKills += stats.getSummedKills();
                 allyKills += stats.getSummedKills();
-                silentKills += stats.getSummedSilentKills();
-                allySilentKills += stats.getSummedSilentKills();
-                kills += stats.getAtLeast2KDamageCount() * 2000;
-                kills += stats.getAtLeast4KDamageCount() * 4000;
-                kills += stats.getAtLeast6KDamageCount() * 6000;
-                kills += stats.getAtLeast8KDamageCount() * 8000;
-                allyKills += stats.getAtLeast2KDamageCount() * 2000;
-                allyKills += stats.getAtLeast4KDamageCount() * 4000;
-                allyKills += stats.getAtLeast6KDamageCount() * 6000;
-                allyKills += stats.getAtLeast8KDamageCount() * 8000;
-                deaths += stats.getSummedLosses();
-                allyDeaths += stats.getSummedLosses();
-                killsAsFarm += stats.getSummedKillsAsFarmSpace();
-                killsAsFarm += stats.getAtLeast2KDamageCount() * 2000 * 1.5;
-                killsAsFarm += stats.getAtLeast4KDamageCount() * 4000 * 1.5;
-                killsAsFarm += stats.getAtLeast6KDamageCount() * 6000 * 1.5;
-                killsAsFarm += stats.getAtLeast8KDamageCount() * 8000 * 1.5;
-                allyKillsAsFarm += stats.getSummedKillsAsFarmSpace();
-                allyKillsAsFarm += stats.getAtLeast2KDamageCount() * 2000 * 1.5;
-                allyKillsAsFarm += stats.getAtLeast4KDamageCount() * 4000 * 1.5;
-                allyKillsAsFarm += stats.getAtLeast6KDamageCount() * 6000 * 1.5;
-                allyKillsAsFarm += stats.getAtLeast8KDamageCount() * 8000 * 1.5;
-                deathsAsFarm += stats.getSummedLossesAsFarmSpace();
+                if (jUseSilentKillsBox.isSelected()) {
+                    overallKills += stats.getSummedSilentKills();
+                    allyKills += stats.getSummedSilentKills();
+                }
+
+                overallDeathsAsFarm += stats.getSummedLossesAsFarmSpace();
                 allyDeathsAsFarm += stats.getSummedLossesAsFarmSpace();
-                System.out.println("  TribeStats (" + t + ")");
-                System.out.println("  -----------------------");
-                System.out.println("    * Attacks: " + (stats.getOffCount() + stats.getSnobAttackCount() + stats.getSimpleSnobAttackCount()));
-                System.out.println("    * Off/AG: " + stats.getOffCount() + "/" + (stats.getSnobAttackCount() + stats.getSimpleSnobAttackCount()));
-                System.out.println("    * Enoblements: " + stats.getEnoblementCount());
-                System.out.println("    * Losses: " + f.format(stats.getSummedLosses()) + " (" + f.format(stats.getSummedLossesAsFarmSpace()) + ")");
-                System.out.println("    * KnownKills: " + f.format(stats.getSummedKills()) + " (" + f.format(stats.getSummedKillsAsFarmSpace()) + ")");
-                System.out.println("      * Silent: " + f.format(stats.getSummedSilentKills()) + " (" + f.format(stats.getSummedSilentKillsAsFarmSpace()) + ")");
-                int unknown = stats.getAtLeast2KDamageCount() * 2000 + stats.getAtLeast4KDamageCount() * 4000 + stats.getAtLeast6KDamageCount() * 6000 + stats.getAtLeast8KDamageCount() * 8000;
-                System.out.println("    * ApproxKills: " + f.format(unknown));
-                System.out.println("    * UnknownKills: " + stats.getUnknownDamageCount());
-                System.out.println("    * WallDestruction: " + stats.getDestroyedWallLevels());
-                System.out.println("    * BuildingDestruction: " + stats.getSummedDestroyedBuildings());
+                overallDeaths += stats.getSummedLosses();
+                allyDeaths += stats.getSummedLosses();
+                overallKillsAsFarm += stats.getSummedKillsAsFarmSpace();
+                allyKillsAsFarm += stats.getSummedKillsAsFarmSpace();
+                if (jGuessUnknownLosses.isSelected()) {
+                    overallKills += stats.getAtLeast2KDamageCount() * 2000;
+                    overallKills += stats.getAtLeast4KDamageCount() * 4000;
+                    overallKills += stats.getAtLeast6KDamageCount() * 6000;
+                    overallKills += stats.getAtLeast8KDamageCount() * 8000;
+                    allyKills += stats.getAtLeast2KDamageCount() * 2000;
+                    allyKills += stats.getAtLeast4KDamageCount() * 4000;
+                    allyKills += stats.getAtLeast6KDamageCount() * 6000;
+                    allyKills += stats.getAtLeast8KDamageCount() * 8000;
+                    overallKillsAsFarm += stats.getAtLeast2KDamageCount() * 2000 * 1.5;
+                    overallKillsAsFarm += stats.getAtLeast4KDamageCount() * 4000 * 1.5;
+                    overallKillsAsFarm += stats.getAtLeast6KDamageCount() * 6000 * 1.5;
+                    overallKillsAsFarm += stats.getAtLeast8KDamageCount() * 8000 * 1.5;
+                    allyKillsAsFarm += stats.getAtLeast2KDamageCount() * 2000 * 1.5;
+                    allyKillsAsFarm += stats.getAtLeast4KDamageCount() * 4000 * 1.5;
+                    allyKillsAsFarm += stats.getAtLeast6KDamageCount() * 6000 * 1.5;
+                    allyKillsAsFarm += stats.getAtLeast8KDamageCount() * 8000 * 1.5;
+                }
+
+                tribeBuffer.append(t.toBBCode() + "\n");
+                tribeBuffer.append("Attacks: " + (stats.getOffCount() + stats.getSnobAttackCount() + stats.getSimpleSnobAttackCount()) + "\n");
+                tribeBuffer.append("Off/AG: " + stats.getOffCount() + "/" + (stats.getSnobAttackCount() + stats.getSimpleSnobAttackCount()) + "\n");
+                tribeBuffer.append("Enoblements: " + stats.getEnoblementCount() + "\n");
+                tribeBuffer.append("Losses: " + f.format(stats.getSummedLosses()) + " (" + f.format(stats.getSummedLossesAsFarmSpace()) + ")\n");
+                tribeBuffer.append("Kills: " + f.format(stats.getSummedKills()) + " (" + f.format(stats.getSummedKillsAsFarmSpace()) + ")\n");
+                tribeBuffer.append("WallDestruction: " + stats.getDestroyedWallLevels() + "\n");
+                tribeBuffer.append("BuildingDestruction: " + stats.getSummedDestroyedBuildings() + "\n");
+                tribeBuffer.append("===========\n");
+                //System.out.println("  TribeStats (" + t + ")");
+                //System.out.println("  -----------------------");
+                // System.out.println("    * Attacks: " + (stats.getOffCount() + stats.getSnobAttackCount() + stats.getSimpleSnobAttackCount()));
+                //System.out.println("    * Off/AG: " + stats.getOffCount() + "/" + (stats.getSnobAttackCount() + stats.getSimpleSnobAttackCount()));
+                // System.out.println("    * Enoblements: " + stats.getEnoblementCount());
+                // System.out.println("    * Losses: " + f.format(stats.getSummedLosses()) + " (" + f.format(stats.getSummedLossesAsFarmSpace()) + ")");
+                //  System.out.println("    * KnownKills: " + f.format(stats.getSummedKills()) + " (" + f.format(stats.getSummedKillsAsFarmSpace()) + ")");
+                // System.out.println("      * Silent: " + f.format(stats.getSummedSilentKills()) + " (" + f.format(stats.getSummedSilentKillsAsFarmSpace()) + ")");
+                //  int unknown = stats.getAtLeast2KDamageCount() * 2000 + stats.getAtLeast4KDamageCount() * 4000 + stats.getAtLeast6KDamageCount() * 6000 + stats.getAtLeast8KDamageCount() * 8000;
+                // System.out.println("    * ApproxKills: " + f.format(unknown));
+                //  System.out.println("    * UnknownKills: " + stats.getUnknownDamageCount());
+                // System.out.println("    * WallDestruction: " + stats.getDestroyedWallLevels());
+                //  System.out.println("    * BuildingDestruction: " + stats.getSummedDestroyedBuildings());
             }
-            System.out.println("============");
-            System.out.println("OverallAlly");
-            System.out.println(" + Tribes: " + allyTribes);
-            System.out.println(" + Attacks: " + allyAttacks);
-            System.out.println(" + Kills: " + f.format(allyKills) + " (" + f.format(allyKillsAsFarm) + ")");
-            System.out.println("   + Silent: " + f.format(allySilentKills));
-            System.out.println(" + Deaths: " + f.format(allyDeaths) + " (" + f.format(allyDeathsAsFarm) + ")");
-            System.out.println(" + WallDestruction: " + f.format(allyWall));
-            System.out.println(" + BuildingDestruction: " + f.format(allyBuilding));
+
+
+            allyBuffer.append("Tribes: " + allyTribes + "\n");
+            allyBuffer.append("Attacks: " + allyAttacks + "\n");
+            allyBuffer.append("Kills: " + f.format(allyKills) + " (" + f.format(allyKillsAsFarm) + ")\n");
+            allyBuffer.append("Deaths: " + f.format(allyDeaths) + " (" + f.format(allyDeathsAsFarm) + ")\n");
+            allyBuffer.append("WallDestruction: " + f.format(allyWallDamage) + "\n");
+            allyBuffer.append("BuildingDestruction: " + f.format(allyBuildingDamage) + "\n");
+            allyBuffer.append("===========\n");
+            //System.out.println(" + Tribes: " + allyTribes);
+            //System.out.println(" + Attacks: " + allyAttacks);
+            // System.out.println(" + Kills: " + f.format(allyKills) + " (" + f.format(allyKillsAsFarm) + ")");
+            //System.out.println("   + Silent: " + f.format(allySilentKills));
+            // System.out.println(" + Deaths: " + f.format(allyDeaths) + " (" + f.format(allyDeathsAsFarm) + ")");
+            //System.out.println(" + WallDestruction: " + f.format(allyWall));
+            //System.out.println(" + BuildingDestruction: " + f.format(allyBuilding));
 
         }
-        System.out.println("");
-        System.out.println("====================");
+        // System.out.println("");
+        //   System.out.println("====================");
+        StringBuffer overallBuffer = new StringBuffer();
+        SimpleDateFormat df = new SimpleDateFormat("dd.MM.yy HH:mm");
+        overallBuffer.append("Start: " + df.format(lastStats.getStartDate()) + "\n");
+        overallBuffer.append("End: " + df.format(lastStats.getEndDate()) + "\n");
+        overallBuffer.append("Reports: " + lastStats.getReportCount() + "\n");
+        overallBuffer.append("- Attackers: " + overallTribes + " (" + selection.length + ")\n");
+        overallBuffer.append("- Defenders: " + overallDefTribes + " (" + overallDefAllies + ")\n");
+        overallBuffer.append("- Kills: " + f.format(overallKills) + " (" + f.format(overallKillsAsFarm) + ")\n");
 
-        System.out.println("OverallStats");
-        System.out.println("- Attackers: " + tribes + " (" + selection.length + ")");
-        System.out.println("- Defenders: " + defTribes + " (" + defAllies + ")");
-        System.out.println("- Kills: " + f.format(kills) + " (" + f.format(killsAsFarm) + ")");
-        System.out.println("  - Silent: " + f.format(silentKills));
-        System.out.println("- Deaths: " + f.format(deaths) + " (" + f.format(deathsAsFarm) + ")");
-        System.out.println("- Death/Attacker: " + f.format((deaths / tribes)));
-        System.out.println("- Death/Defender: " + f.format((kills / defTribes)));
-        System.out.println("- WallDestruction: " + f.format(wall));
-        System.out.println("- BuildingDestruction: " + f.format(building));
+        overallBuffer.append("- Deaths: " + f.format(overallDeaths) + " (" + f.format(overallDeathsAsFarm) + ")\n");
+        overallBuffer.append("- Death/Attacker: " + f.format((overallDeaths / overallTribes)) + "\n");
+        overallBuffer.append("- Death/Defender: " + f.format((overallKills / overallDefTribes)) + "\n");
+        overallBuffer.append("- WallDestruction: " + f.format(overallWallDamage) + "\n");
+        overallBuffer.append("- BuildingDestruction: " + f.format(overallBuildingDamage) + "\n");
+
+
+        jOverallStatsArea.setText(overallBuffer.toString());
+        jAllyStatsArea.setText(allyBuffer.toString());
+        jTribeStatsArea.setText(tribeBuffer.toString());
         jList2.setModel(model);
-    }
-
-    private void fireTribeSelectionChangedEvent() {
-        Tribe t = (Tribe) jList2.getSelectedValue();
-        if (t == null) {
-            return;
-        }
-        SingleAttackerStat stats = lastStats.getStatsForTribe(t);
-        jTextField1.setText("" + stats.getOffCount());
-        jTextField2.setText("" + stats.getFakeCount());
-        jTextField3.setText("" + stats.getSnobAttackCount() + stats.getSimpleSnobAttackCount());
-        jTextField5.setText("" + stats.getSummedKills());
-        jTextField6.setText("" + stats.getSummedLosses());
-        jTextField7.setText("" + stats.getEnoblementCount());
-        jTextField8.setText("" + stats.getDestroyedWallLevels());
-        int buildings = 0;
-        int levels = 0;
-        Enumeration<String> keys = stats.getDestroyedBuildings().keys();
-        while (keys.hasMoreElements()) {
-            buildings++;
-            levels += stats.getDestroyedBuildings().get(keys.nextElement());
-        }
-        jTextField9.setText("" + buildings);
-        jTextField10.setText("" + levels);
     }
 
     /**
@@ -1208,6 +1243,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JDialog jAddReportSetDialog;
+    private javax.swing.JTextArea jAllyStatsArea;
     private javax.swing.JCheckBox jAlwaysOnTopBox;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton10;
@@ -1219,20 +1255,15 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
     private javax.swing.JButton jButton7;
     private javax.swing.JButton jButton8;
     private javax.swing.JButton jButton9;
+    private javax.swing.JCheckBox jCheckBox3;
+    private javax.swing.JCheckBox jCheckBox4;
     private javax.swing.JFrame jCreateStatsFrame;
     private javax.swing.JTextField jCurrentSetField;
     private javax.swing.JButton jDoAddNewSetButton;
     private javax.swing.JButton jDoMoveButton;
     private javax.swing.JButton jDoRenameButton;
+    private javax.swing.JCheckBox jGuessUnknownLosses;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel11;
-    private javax.swing.JLabel jLabel13;
-    private javax.swing.JLabel jLabel14;
-    private javax.swing.JLabel jLabel15;
-    private javax.swing.JLabel jLabel16;
-    private javax.swing.JLabel jLabel17;
-    private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -1240,17 +1271,20 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
     private javax.swing.JList jList1;
     private javax.swing.JList jList2;
     private javax.swing.JDialog jMoveToSetDialog;
     private javax.swing.JTextField jNewReportSetField;
     private javax.swing.JComboBox jNewSetBox;
     private javax.swing.JTextField jNewSetNameField;
+    private javax.swing.JTextArea jOverallStatsArea;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel6;
+    private javax.swing.JPanel jPanel7;
     private javax.swing.JDialog jRenameReportSetDialog;
     private javax.swing.JComboBox jReportSetBox;
     private javax.swing.JList jReportSetsForStatsList;
@@ -1259,17 +1293,14 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JScrollPane jScrollPane5;
+    private javax.swing.JScrollPane jScrollPane6;
+    private javax.swing.JScrollPane jScrollPane7;
+    private javax.swing.JTabbedPane jTabbedPane1;
     private com.l2fprod.common.swing.JTaskPane jTaskPane1;
     private com.l2fprod.common.swing.JTaskPaneGroup jTaskPaneGroup1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField10;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
-    private javax.swing.JTextField jTextField5;
-    private javax.swing.JTextField jTextField6;
-    private javax.swing.JTextField jTextField7;
-    private javax.swing.JTextField jTextField8;
-    private javax.swing.JTextField jTextField9;
+    private javax.swing.JTextArea jTribeStatsArea;
+    private javax.swing.JCheckBox jUseSilentKillsBox;
     // End of variables declaration//GEN-END:variables
 
     @Override
@@ -1277,7 +1308,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         try {
             jReportTable.invalidate();
             for (int i = 0; i < jReportTable.getColumnCount(); i++) {
-                jReportTable.getColumn(jReportTable.getColumnName(i)).setHeaderRenderer(renderers.get(i));
+                jReportTable.getColumnModel().getColumn(i).setHeaderRenderer(renderers.get(i));
             }
             jReportTable.revalidate();
             jReportTable.repaint();

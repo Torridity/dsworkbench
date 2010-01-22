@@ -236,9 +236,6 @@ public class SingleAttackerStat {
             if (killedUnits != null && !killedUnits.isEmpty()) {
                 value += killedUnits.get(unit);
             }
-            if (silentKills != null && !silentKills.isEmpty()) {
-                value += silentKills.get(unit);
-            }
         }
         return value;
     }
@@ -249,9 +246,6 @@ public class SingleAttackerStat {
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
             if (killedUnits != null && !killedUnits.isEmpty()) {
                 value += killedUnits.get(unit) * (int) Math.rint(unit.getPop());
-            }
-            if (silentKills != null && !silentKills.isEmpty()) {
-                value += silentKills.get(unit) * (int) Math.rint(unit.getPop());
             }
         }
         return value;

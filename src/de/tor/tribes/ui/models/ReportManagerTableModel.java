@@ -22,10 +22,10 @@ public class ReportManagerTableModel extends AbstractTableModel {
 
     private static Logger logger = Logger.getLogger("ReportTable");
     Class[] types = new Class[]{
-        FightReport.class, Date.class, Tribe.class, Village.class, Tribe.class, Village.class, Integer.class
+        FightReport.class, Date.class, Tribe.class, Village.class, Tribe.class, Village.class, Integer.class, Boolean.class, Boolean.class, Boolean.class
     };
     String[] colNames = new String[]{
-        "", "Gesendet", "Angreifer", "Herkunft", "Verteidiger", "Ziel", "Typ"
+        "", "Gesendet", "Angreifer", "Herkunft", "Verteidiger", "Ziel", "Typ", "", "", ""
     };
     private String sReportSet = ReportManager.DEFAULT_SET;
     private static ReportManagerTableModel SINGLETON = null;
@@ -97,8 +97,14 @@ public class ReportManagerTableModel extends AbstractTableModel {
                 return set.getReports()[rowIndex].getDefender();
             case 5:
                 return set.getReports()[rowIndex].getTargetVillage();
-            default:
+            case 6:
                 return set.getReports()[rowIndex].guessType();
+            case 7:
+                return set.getReports()[rowIndex].wasWallDamaged();
+           case 8:
+                return set.getReports()[rowIndex].wasBuildingDamaged();
+            default:
+                return set.getReports()[rowIndex].wasConquered();
         }
     }
 }

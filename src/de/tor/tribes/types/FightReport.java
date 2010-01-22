@@ -7,6 +7,7 @@ package de.tor.tribes.types;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.util.xml.JaxenUtils;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -127,7 +128,7 @@ public class FightReport {
         }
         try {
             Element e = pElement.getChild("building");
-            setAimedBuilding(e.getAttribute("target").getValue());
+            setAimedBuilding(URLDecoder.decode(e.getAttribute("target").getValue(), "UTF-8"));
             setBuildingBefore(Byte.parseByte(e.getAttribute("before").getValue()));
             setBuildingAfter(Byte.parseByte(e.getAttribute("after").getValue()));
         } catch (Exception e) {

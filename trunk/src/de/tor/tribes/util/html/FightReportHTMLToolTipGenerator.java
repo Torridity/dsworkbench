@@ -7,12 +7,14 @@ package de.tor.tribes.util.html;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.FightReport;
+import de.tor.tribes.types.Village;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Enumeration;
 
 /**
  *
@@ -31,6 +33,7 @@ public class FightReportHTMLToolTipGenerator {
     private final static String TARGET = "\\$TARGET";
     private final static String ATTACKER_TABLE = "\\$ATTACKER_TABLE";
     private final static String DEFENDER_TABLE = "\\$DEFENDER_TABLE";
+    private final static String MISC_TABLES = "\\$MISC_TABLES";
     private final static String RAM_DAMAGE = "\\$RAM_DAMAGE";
     private final static String CATA_DAMAGE = "\\$CATA_DAMAGE";
     private final static String SNOB_INFLUENCE = "\\$SNOB_INFLUENCE";
@@ -63,6 +66,7 @@ public class FightReportHTMLToolTipGenerator {
         res = res.replaceAll(SEND_TIME, f.format(new Date(pReport.getTimestamp())));
         res = res.replaceAll(ATTACKER_TABLE, tables[0]);
         res = res.replaceAll(DEFENDER_TABLE, tables[1]);
+        res = res.replaceAll(MISC_TABLES, buildMiscTables(pReport));
         res = res.replaceAll(LUCK_STRING, "Gl&uuml;ck (aus Sicht des Angreifers)");
         res = res.replaceAll(LUCK_BAR, buildLuckBar(pReport.getLuck()));
         res = res.replaceAll(MORAL, nf.format(pReport.getMoral()));
@@ -171,6 +175,85 @@ public class FightReportHTMLToolTipGenerator {
         defenderTable += "</table>";
 
         return new String[]{attackerTable, defenderTable};
+    }
+
+    private static String buildMiscTables(FightReport pReport) {
+        String res = "";
+        if (!pReport.wasConquered()) {
+            res += "<tr>";
+            res += "<td colspan=\"5\">&nbsp;</td>";
+            res += "</tr>";
+            return res;
+        }
+
+        String onTheWayTable = "<table width=\"100%\" style=\"border: solid 1px black; padding: 4px;background-color:#EFEBDF;\">";
+        String outsideTable = "<table width=\"100%\" style=\"border: solid 1px black; padding: 4px;background-color:#EFEBDF;\">";
+        onTheWayTable += "<tr>";
+        outsideTable += "<tr>";
+
+        String headerRow = "<tr>";
+        String onTheWayRow = "<tr>";
+
+        for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
+            headerRow += "<td style=\"background-color:#E1D5BE;\"><img src=\"" + FightReportHTMLToolTipGenerator.class.getResource("/res/ui/" + unit.getPlainName() + ".png") + "\"/></td>";
+            int amount = pReport.getDefendersOnTheWay().get(unit);
+            if (amount == 0) {
+                onTheWayRow += "<td style=\"color:#DED3B9;\">" + amount + "</td>";
+            } else {
+                onTheWayRow += "<td>" + amount + "</td>";
+            }
+
+        }
+        headerRow += "</tr>";
+        onTheWayRow += "</tr>";
+
+        onTheWayTable += headerRow;
+        onTheWayTable += onTheWayRow;
+        onTheWayTable += "</table>";
+        res = "<tr>";
+        res += "<td colspan=\"5\"><b>Truppen des Verteidigers, die unterwegs waren:</td>";
+        res += "</tr>";
+        res += "<tr>";
+        res += "<td colspan=\"5\">";
+        res += onTheWayTable;
+        res += "</td>";
+        res += "</tr>";
+        String outsideRow = "";
+
+        headerRow = "<tr style=\"background-color:#E1D5BE;\"><td width=\"100\">&nbsp;</td>";
+        for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
+            headerRow += "<td><img src=\"" + FightReportHTMLToolTipGenerator.class.getResource("/res/ui/" + unit.getPlainName() + ".png") + "\"/></td>";
+        }
+        headerRow += "</tr>";
+        Enumeration<Village> outside = pReport.getDefendersOutside().keys();
+        while (outside.hasMoreElements()) {
+            Village v = outside.nextElement();
+            outsideRow += "<tr><td width=\"100\"><div align=\"center\">" + v.getFullName() + "</div></td>";
+
+            for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
+                int amount = pReport.getDefendersOutside().get(v).get(unit);
+                if (amount == 0) {
+                    outsideRow += "<td style=\"color:#DED3B9;\">" + amount + "</td>";
+                } else {
+                    outsideRow += "<td>" + amount + "</td>";
+                }
+            }
+            outsideRow += "</tr>";
+        }
+
+        res += "<tr>";
+        res += "<td colspan=\"5\"><b>Truppen ausserhalb:</td>";
+        res += "</tr>";
+        res += "<tr>";
+        res += "<td colspan=\"5\">";
+        outsideTable += headerRow;
+        outsideTable += outsideRow;
+        outsideTable += "</table>";
+        res += outsideTable;
+        res += "</td>";
+        res += "</tr>";
+
+        return res;
     }
 
     public static String buildLuckBar(double pLuck) {

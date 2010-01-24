@@ -16,6 +16,7 @@ import de.tor.tribes.types.FightStats;
 import de.tor.tribes.types.ReportSet;
 import de.tor.tribes.types.SingleAttackerStat;
 import de.tor.tribes.types.Tribe;
+import de.tor.tribes.types.TribeStatsElement;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.models.ReportManagerTableModel;
 import de.tor.tribes.ui.renderer.AttackTypeCellRenderer;
@@ -36,6 +37,7 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.DefaultComboBoxModel;
@@ -1082,7 +1084,6 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         int overallWallDamage = 0;
         int overallBuildingDamage = 0;
         int overallKills = 0;
-        int overallSilentKills = 0;
         int overallKillsAsFarm = 0;
         int overallDeaths = 0;
         int overallDeathsAsFarm = 0;
@@ -1094,36 +1095,26 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         f.setMinimumFractionDigits(0);
         f.setMaximumFractionDigits(0);
 
-        //  System.out.println("");
-        // System.out.println("");
-        // System.out.println("BorderConditions");
-        // System.out.println("----------------");
-        //  SimpleDateFormat df = new SimpleDateFormat("dd.MM.yy HH:mm");
-        // System.out.println("Start: " + df.format(lastStats.getStartDate()));
-        // System.out.println("End: " + df.format(lastStats.getEndDate()));
-        // System.out.println("Reports: " + lastStats.getReportCount());
-        // System.out.println("====================");
-        // System.out.println("");
-        //  System.out.println("AllyStats");
-        // System.out.println("---------");
-
         StringBuffer allyBuffer = new StringBuffer();
         StringBuffer tribeBuffer = new StringBuffer();
+        Hashtable<Ally, AllyStatResult> allyResults = new Hashtable<Ally, AllyStatResult>();
+        OverallStatResult overallResult = new OverallStatResult();
         for (Object o : selection) {
             Ally a = (Ally) o;
-            allyBuffer.append(a.toBBCode() + "\n");
+            AllyStatResult result = new AllyStatResult();
+            allyResults.put(a, result);
+            /* allyBuffer.append(a.toBBCode() + "\n");
             int allyWallDamage = 0;
             int allyBuildingDamage = 0;
             int allyKills = 0;
-            int allySilentKills = 0;
             int allyKillsAsFarm = 0;
             int allyDeaths = 0;
             int allyDeathsAsFarm = 0;
             int allyTribes = 0;
-            int allyAttacks = 0;
+            int allyAttacks = 0;*/
 
             for (Tribe t : lastStats.getAttackingTribes(a)) {
-                overallTribes++;
+                /* overallTribes++;
                 allyTribes++;
                 model.addElement(t);
                 SingleAttackerStat stats = lastStats.getStatsForTribe(t);
@@ -1136,8 +1127,8 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
                 overallKills += stats.getSummedKills();
                 allyKills += stats.getSummedKills();
                 if (jUseSilentKillsBox.isSelected()) {
-                    overallKills += stats.getSummedSilentKills();
-                    allyKills += stats.getSummedSilentKills();
+                overallKills += stats.getSummedSilentKills();
+                allyKills += stats.getSummedSilentKills();
                 }
 
                 overallDeathsAsFarm += stats.getSummedLossesAsFarmSpace();
@@ -1147,22 +1138,22 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
                 overallKillsAsFarm += stats.getSummedKillsAsFarmSpace();
                 allyKillsAsFarm += stats.getSummedKillsAsFarmSpace();
                 if (jGuessUnknownLosses.isSelected()) {
-                    overallKills += stats.getAtLeast2KDamageCount() * 2000;
-                    overallKills += stats.getAtLeast4KDamageCount() * 4000;
-                    overallKills += stats.getAtLeast6KDamageCount() * 6000;
-                    overallKills += stats.getAtLeast8KDamageCount() * 8000;
-                    allyKills += stats.getAtLeast2KDamageCount() * 2000;
-                    allyKills += stats.getAtLeast4KDamageCount() * 4000;
-                    allyKills += stats.getAtLeast6KDamageCount() * 6000;
-                    allyKills += stats.getAtLeast8KDamageCount() * 8000;
-                    overallKillsAsFarm += stats.getAtLeast2KDamageCount() * 2000 * 1.5;
-                    overallKillsAsFarm += stats.getAtLeast4KDamageCount() * 4000 * 1.5;
-                    overallKillsAsFarm += stats.getAtLeast6KDamageCount() * 6000 * 1.5;
-                    overallKillsAsFarm += stats.getAtLeast8KDamageCount() * 8000 * 1.5;
-                    allyKillsAsFarm += stats.getAtLeast2KDamageCount() * 2000 * 1.5;
-                    allyKillsAsFarm += stats.getAtLeast4KDamageCount() * 4000 * 1.5;
-                    allyKillsAsFarm += stats.getAtLeast6KDamageCount() * 6000 * 1.5;
-                    allyKillsAsFarm += stats.getAtLeast8KDamageCount() * 8000 * 1.5;
+                overallKills += stats.getAtLeast2KDamageCount() * 2000;
+                overallKills += stats.getAtLeast4KDamageCount() * 4000;
+                overallKills += stats.getAtLeast6KDamageCount() * 6000;
+                overallKills += stats.getAtLeast8KDamageCount() * 8000;
+                allyKills += stats.getAtLeast2KDamageCount() * 2000;
+                allyKills += stats.getAtLeast4KDamageCount() * 4000;
+                allyKills += stats.getAtLeast6KDamageCount() * 6000;
+                allyKills += stats.getAtLeast8KDamageCount() * 8000;
+                overallKillsAsFarm += stats.getAtLeast2KDamageCount() * 2000 * 1.5;
+                overallKillsAsFarm += stats.getAtLeast4KDamageCount() * 4000 * 1.5;
+                overallKillsAsFarm += stats.getAtLeast6KDamageCount() * 6000 * 1.5;
+                overallKillsAsFarm += stats.getAtLeast8KDamageCount() * 8000 * 1.5;
+                allyKillsAsFarm += stats.getAtLeast2KDamageCount() * 2000 * 1.5;
+                allyKillsAsFarm += stats.getAtLeast4KDamageCount() * 4000 * 1.5;
+                allyKillsAsFarm += stats.getAtLeast6KDamageCount() * 6000 * 1.5;
+                allyKillsAsFarm += stats.getAtLeast8KDamageCount() * 8000 * 1.5;
                 }
 
                 tribeBuffer.append(t.toBBCode() + "\n");
@@ -1173,61 +1164,489 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
                 tribeBuffer.append("Kills: " + f.format(stats.getSummedKills()) + " (" + f.format(stats.getSummedKillsAsFarmSpace()) + ")\n");
                 tribeBuffer.append("WallDestruction: " + stats.getDestroyedWallLevels() + "\n");
                 tribeBuffer.append("BuildingDestruction: " + stats.getSummedDestroyedBuildings() + "\n");
-                tribeBuffer.append("===========\n");
-                //System.out.println("  TribeStats (" + t + ")");
-                //System.out.println("  -----------------------");
-                // System.out.println("    * Attacks: " + (stats.getOffCount() + stats.getSnobAttackCount() + stats.getSimpleSnobAttackCount()));
-                //System.out.println("    * Off/AG: " + stats.getOffCount() + "/" + (stats.getSnobAttackCount() + stats.getSimpleSnobAttackCount()));
-                // System.out.println("    * Enoblements: " + stats.getEnoblementCount());
-                // System.out.println("    * Losses: " + f.format(stats.getSummedLosses()) + " (" + f.format(stats.getSummedLossesAsFarmSpace()) + ")");
-                //  System.out.println("    * KnownKills: " + f.format(stats.getSummedKills()) + " (" + f.format(stats.getSummedKillsAsFarmSpace()) + ")");
-                // System.out.println("      * Silent: " + f.format(stats.getSummedSilentKills()) + " (" + f.format(stats.getSummedSilentKillsAsFarmSpace()) + ")");
-                //  int unknown = stats.getAtLeast2KDamageCount() * 2000 + stats.getAtLeast4KDamageCount() * 4000 + stats.getAtLeast6KDamageCount() * 6000 + stats.getAtLeast8KDamageCount() * 8000;
-                // System.out.println("    * ApproxKills: " + f.format(unknown));
-                //  System.out.println("    * UnknownKills: " + stats.getUnknownDamageCount());
-                // System.out.println("    * WallDestruction: " + stats.getDestroyedWallLevels());
-                //  System.out.println("    * BuildingDestruction: " + stats.getSummedDestroyedBuildings());
+                tribeBuffer.append("===========\n");*/
+                TribeStatResult tribeResult = new TribeStatResult();
+                SingleAttackerStat stats = lastStats.getStatsForTribe(t);
+                tribeResult.setTribeStats(stats, jGuessUnknownLosses.isSelected());
+                result.addTribeStatResult(tribeResult);
             }
-
-
+            /*
             allyBuffer.append("Tribes: " + allyTribes + "\n");
             allyBuffer.append("Attacks: " + allyAttacks + "\n");
             allyBuffer.append("Kills: " + f.format(allyKills) + " (" + f.format(allyKillsAsFarm) + ")\n");
             allyBuffer.append("Deaths: " + f.format(allyDeaths) + " (" + f.format(allyDeathsAsFarm) + ")\n");
             allyBuffer.append("WallDestruction: " + f.format(allyWallDamage) + "\n");
             allyBuffer.append("BuildingDestruction: " + f.format(allyBuildingDamage) + "\n");
-            allyBuffer.append("===========\n");
-            //System.out.println(" + Tribes: " + allyTribes);
-            //System.out.println(" + Attacks: " + allyAttacks);
-            // System.out.println(" + Kills: " + f.format(allyKills) + " (" + f.format(allyKillsAsFarm) + ")");
-            //System.out.println("   + Silent: " + f.format(allySilentKills));
-            // System.out.println(" + Deaths: " + f.format(allyDeaths) + " (" + f.format(allyDeathsAsFarm) + ")");
-            //System.out.println(" + WallDestruction: " + f.format(allyWall));
-            //System.out.println(" + BuildingDestruction: " + f.format(allyBuilding));
+            allyBuffer.append("===========\n");*/
+            overallResult.addAllyStatsResult(result);
+        }
+
+        Enumeration<Ally> keys = allyResults.keys();
+        while (keys.hasMoreElements()) {
+            Ally a = keys.nextElement();
+            AllyStatResult res = allyResults.get(a);
+            for (TribeStatResult tribeResult : res.getTribeStats()) {
+                //[b][color=#0e5e0e]██[/color][color=#111111]░░░░░░░░[/color]20%[/b]
+
+                tribeBuffer.append("[quote]" + tribeResult.getTribe().toBBCode() + "\n");
+                tribeBuffer.append("[color=#555555][b]Angriffe (Gesamt/Off/AG):[/b][/color] [b]" + tribeResult.getAttacks() + "/" + tribeResult.getOffs() + "/" + tribeResult.getSnobs() + "[/b]\n");
+                tribeBuffer.append("[color=#555555][b]Adelungen:[/b][/color] [b]" + tribeResult.getEnoblements() + "[/b]\n");
+                tribeBuffer.append("\n");
+
+                double killsOfTribe = 100.0 * (double) tribeResult.getKills() / (double) res.getKills();
+                int perc = (int) Math.round(killsOfTribe / 10);
+                f.setMinimumFractionDigits(0);
+                f.setMaximumFractionDigits(0);
+                tribeBuffer.append("[color=#555555][b]Besiegte Einheiten/Bauernhofplätze/Anteil am Stamm:[/b][/color] [b]");
+                tribeBuffer.append(f.format(tribeResult.getKills()) + "/" + f.format(tribeResult.getKillsAsFarm()) + "/");
+                f.setMinimumFractionDigits(2);
+                f.setMaximumFractionDigits(2);
+                tribeBuffer.append((f.format(killsOfTribe)) + "%[/b]\n");
+
+                /* tribeBuffer.append("[b]Anteil am Stamm: [color=#0e5e0e]");
+                for (int i = 0; i < perc; i++) {
+                tribeBuffer.append("█");
+                }
+
+                tribeBuffer.append("[/color][color=#111111]");
+                for (int i = perc; i < 10; i++) {
+                tribeBuffer.append("░");
+                }
+                f.setMinimumFractionDigits(2);
+                f.setMaximumFractionDigits(2);
+                tribeBuffer.append("[/color] " + f.format(killsOfTribe) + "%[/b]\n");
+                 */
+
+
+                // tribeBuffer.append("[color=#555555][b] besiegte Einheiten[/b][/color]\n");
+
+                double lossesOfTribe = 100.0 * (double) tribeResult.getLosses() / (double) res.getLosses();
+                perc = (int) Math.round(lossesOfTribe / 10);
+                f.setMinimumFractionDigits(0);
+                f.setMaximumFractionDigits(0);
+                tribeBuffer.append("[color=#555555][b]Verlorene Einheiten/Bauernhofplätze/Anteil am Stamm:[/b][/color] [b]");
+                tribeBuffer.append(f.format(tribeResult.getLosses()) + "/" + f.format(tribeResult.getLossesAsFarm()) + "/");
+                f.setMinimumFractionDigits(2);
+                f.setMaximumFractionDigits(2);
+                tribeBuffer.append((f.format(lossesOfTribe)) + "%[/b]\n\n");
+                /*   tribeBuffer.append("[b]Anteil am Stamm: [color=#0e5e0e]");
+                for (int i = 0; i < perc; i++) {
+                tribeBuffer.append("█");
+                }
+                tribeBuffer.append("[/color][color=#111111]");
+                for (int i = perc; i < 10; i++) {
+                tribeBuffer.append("░");
+                }
+                f.setMinimumFractionDigits(2);
+                f.setMaximumFractionDigits(2);
+                tribeBuffer.append("[/color] " + f.format(lossesOfTribe) + "%[/b]\n");*/
+                //tribeBuffer.append("[color=#555555][b] verlorene Einheiten[/b][/color]\n");
+                // tribeBuffer.append("\n");
+                tribeBuffer.append("[color=#555555][b]Zerstörte Wallstufen:[/b][/color] [b]" + tribeResult.getWallDestruction() + "[/b]\n");
+                tribeBuffer.append("[color=#888888][b]Zerstörte Gebäudestufen:[/b][/color] [b]" + tribeResult.getBuildingDestruction() + "[/b]\n");
+                tribeBuffer.append("[/quote]\n");
+            }
 
         }
-        // System.out.println("");
-        //   System.out.println("====================");
+
+
         StringBuffer overallBuffer = new StringBuffer();
         SimpleDateFormat df = new SimpleDateFormat("dd.MM.yy HH:mm");
         overallBuffer.append("Start: " + df.format(lastStats.getStartDate()) + "\n");
         overallBuffer.append("End: " + df.format(lastStats.getEndDate()) + "\n");
         overallBuffer.append("Reports: " + lastStats.getReportCount() + "\n");
-        overallBuffer.append("- Attackers: " + overallTribes + " (" + selection.length + ")\n");
-        overallBuffer.append("- Defenders: " + overallDefTribes + " (" + overallDefAllies + ")\n");
-        overallBuffer.append("- Kills: " + f.format(overallKills) + " (" + f.format(overallKillsAsFarm) + ")\n");
+        overallBuffer.append("Attackers: " + overallResult.getAttackers() + " (" + selection.length + ")\n");
+        overallBuffer.append("Defenders: " + overallDefTribes + " (" + overallDefAllies + ")\n");
+        overallBuffer.append("Kills: " + f.format(overallResult.getKills()) + " (" + f.format(overallResult.getKillsAsFarm()) + ")\n");
 
-        overallBuffer.append("- Deaths: " + f.format(overallDeaths) + " (" + f.format(overallDeathsAsFarm) + ")\n");
-        overallBuffer.append("- Death/Attacker: " + f.format((overallDeaths / overallTribes)) + "\n");
-        overallBuffer.append("- Death/Defender: " + f.format((overallKills / overallDefTribes)) + "\n");
-        overallBuffer.append("- WallDestruction: " + f.format(overallWallDamage) + "\n");
-        overallBuffer.append("- BuildingDestruction: " + f.format(overallBuildingDamage) + "\n");
+        overallBuffer.append("Deaths: " + f.format(overallResult.getLosses()) + " (" + f.format(overallResult.getLossesAsFarm()) + ")\n");
+        overallBuffer.append("Death/Attacker: " + f.format((overallResult.getLosses() / overallResult.getAttackers())) + "\n");
+        overallBuffer.append("Death/Defender: " + f.format((overallResult.getKills() / overallDefTribes)) + "\n");
+        overallBuffer.append("WallDestruction: " + f.format(overallResult.getWallDestruction()) + "\n");
+        overallBuffer.append("BuildingDestruction: " + f.format(overallResult.getBuildingDestruction()) + "\n");
 
 
         jOverallStatsArea.setText(overallBuffer.toString());
         jAllyStatsArea.setText(allyBuffer.toString());
         jTribeStatsArea.setText(tribeBuffer.toString());
         jList2.setModel(model);
+    }
+
+    static class TribeStatResult {
+
+        Tribe tribe = null;
+        private int attacks = 0;
+        private int offs = 0;
+        private int snobs = 0;
+        private int fakes = 0;
+        private int enoblements = 0;
+        private int losses = 0;
+        private int lossesAsFarm = 0;
+        private int kills = 0;
+        private int killsAsFarm = 0;
+        private int wallDestruction = 0;
+        private int buildingDestruction = 0;
+
+        public TribeStatResult() {
+        }
+
+        public void setTribeStats(SingleAttackerStat pStat, boolean pUseApproxValues) {
+            tribe = pStat.getAttacker();
+            attacks = pStat.getOffCount() + pStat.getFakeCount() + pStat.getSnobAttackCount() + pStat.getSimpleSnobAttackCount();
+            offs = pStat.getOffCount();
+            snobs = pStat.getSimpleSnobAttackCount() + pStat.getSnobAttackCount();
+            fakes = pStat.getFakeCount();
+            enoblements = pStat.getEnoblementCount();
+            losses = pStat.getSummedLosses();
+            kills = pStat.getSummedKills();
+            lossesAsFarm = pStat.getSummedLossesAsFarmSpace();
+            killsAsFarm = pStat.getSummedKillsAsFarmSpace();
+            if (pUseApproxValues) {
+                kills += pStat.getAtLeast2KDamageCount() * 2000;
+                kills += pStat.getAtLeast4KDamageCount() * 4000;
+                kills += pStat.getAtLeast6KDamageCount() * 6000;
+                kills += pStat.getAtLeast8KDamageCount() * 8000;
+                killsAsFarm += pStat.getAtLeast2KDamageCount() * 2000 * 1.5;
+                killsAsFarm += pStat.getAtLeast4KDamageCount() * 4000 * 1.5;
+                killsAsFarm += pStat.getAtLeast6KDamageCount() * 6000 * 1.5;
+                killsAsFarm += pStat.getAtLeast8KDamageCount() * 8000 * 1.5;
+            }
+            wallDestruction = pStat.getDestroyedWallLevels();
+            buildingDestruction = pStat.getSummedDestroyedBuildings();
+        }
+
+        /**
+         * @return the tribeStats
+         */
+        public Tribe getTribe() {
+            return tribe;
+        }
+
+        /**
+         * @return the attacks
+         */
+        public int getAttacks() {
+            return attacks;
+        }
+
+        /**
+         * @return the offs
+         */
+        public int getOffs() {
+            return offs;
+        }
+
+        /**
+         * @return the snobs
+         */
+        public int getSnobs() {
+            return snobs;
+        }
+
+        /**
+         * @return the fakes
+         */
+        public int getFakes() {
+            return fakes;
+        }
+
+        /**
+         * @return the enoblements
+         */
+        public int getEnoblements() {
+            return enoblements;
+        }
+
+        /**
+         * @return the losses
+         */
+        public int getLosses() {
+            return losses;
+        }
+
+        /**
+         * @return the lossesAsFarm
+         */
+        public int getLossesAsFarm() {
+            return lossesAsFarm;
+        }
+
+        /**
+         * @return the kills
+         */
+        public int getKills() {
+            return kills;
+        }
+
+        /**
+         * @return the killsAsFarm
+         */
+        public int getKillsAsFarm() {
+            return killsAsFarm;
+        }
+
+        /**
+         * @return the wallDestruction
+         */
+        public int getWallDestruction() {
+            return wallDestruction;
+        }
+
+        /**
+         * @return the buildingDestruction
+         */
+        public int getBuildingDestruction() {
+            return buildingDestruction;
+        }
+    }
+
+    static class AllyStatResult {
+
+        private List<TribeStatResult> tribeStats = null;
+        private int attacks = 0;
+        private int offs = 0;
+        private int snobs = 0;
+        private int fakes = 0;
+        private int enoblements = 0;
+        private int losses = 0;
+        private int lossesAsFarm = 0;
+        private int kills = 0;
+        private int killsAsFarm = 0;
+        private int wallDestruction = 0;
+        private int buildingDestruction = 0;
+
+        public AllyStatResult() {
+            tribeStats = new LinkedList<TribeStatResult>();
+        }
+
+        public void addTribeStatResult(TribeStatResult pStat) {
+            getTribeStats().add(pStat);
+            attacks += pStat.getOffs() + pStat.getFakes() + pStat.getSnobs();
+            offs += pStat.getOffs();
+            snobs += pStat.getSnobs();
+            fakes += pStat.getFakes();
+            enoblements += pStat.getEnoblements();
+            losses += pStat.getLosses();
+            kills += pStat.getKills();
+            lossesAsFarm += pStat.getLossesAsFarm();
+            killsAsFarm += pStat.getKillsAsFarm();
+
+            wallDestruction += pStat.getWallDestruction();
+            buildingDestruction += pStat.getBuildingDestruction();
+        }
+
+        public int getAttackers() {
+            return tribeStats.size();
+        }
+
+        /**
+         * @return the tribeStats
+         */
+        public List<TribeStatResult> getTribeStats() {
+            return tribeStats;
+        }
+
+        /**
+         * @return the attacks
+         */
+        public int getAttacks() {
+            return attacks;
+        }
+
+        /**
+         * @return the offs
+         */
+        public int getOffs() {
+            return offs;
+        }
+
+        /**
+         * @return the snobs
+         */
+        public int getSnobs() {
+            return snobs;
+        }
+
+        /**
+         * @return the fakes
+         */
+        public int getFakes() {
+            return fakes;
+        }
+
+        /**
+         * @return the enoblements
+         */
+        public int getEnoblements() {
+            return enoblements;
+        }
+
+        /**
+         * @return the losses
+         */
+        public int getLosses() {
+            return losses;
+        }
+
+        /**
+         * @return the lossesAsFarm
+         */
+        public int getLossesAsFarm() {
+            return lossesAsFarm;
+        }
+
+        /**
+         * @return the kills
+         */
+        public int getKills() {
+            return kills;
+        }
+
+        /**
+         * @return the killsAsFarm
+         */
+        public int getKillsAsFarm() {
+            return killsAsFarm;
+        }
+
+        /**
+         * @return the wallDestruction
+         */
+        public int getWallDestruction() {
+            return wallDestruction;
+        }
+
+        /**
+         * @return the buildingDestruction
+         */
+        public int getBuildingDestruction() {
+            return buildingDestruction;
+        }
+    }
+
+    static class OverallStatResult {
+
+        private List<AllyStatResult> allyStats = null;
+        private int attackers = 0;
+        private int attacks = 0;
+        private int offs = 0;
+        private int snobs = 0;
+        private int fakes = 0;
+        private int enoblements = 0;
+        private int losses = 0;
+        private int lossesAsFarm = 0;
+        private int kills = 0;
+        private int killsAsFarm = 0;
+        private int wallDestruction = 0;
+        private int buildingDestruction = 0;
+
+        public OverallStatResult() {
+            allyStats = new LinkedList<AllyStatResult>();
+        }
+
+        public void addAllyStatsResult(AllyStatResult pStat) {
+            allyStats.add(pStat);
+            attackers += pStat.getAttackers();
+            attacks += pStat.getOffs() + pStat.getFakes() + pStat.getSnobs();
+            offs += pStat.getOffs();
+            snobs += pStat.getSnobs();
+            fakes += pStat.getFakes();
+            enoblements += pStat.getEnoblements();
+            losses += pStat.getLosses();
+            kills += pStat.getKills();
+            lossesAsFarm += pStat.getLossesAsFarm();
+            killsAsFarm += pStat.getKillsAsFarm();
+            wallDestruction += pStat.getWallDestruction();
+            buildingDestruction += pStat.getBuildingDestruction();
+        }
+
+        /**
+         * @return the tribeStats
+         */
+        public List<AllyStatResult> getAllyStats() {
+            return allyStats;
+        }
+
+        public int getAttackers() {
+            return attackers;
+        }
+
+        /**
+         * @return the attacks
+         */
+        public int getAttacks() {
+            return attacks;
+        }
+
+        /**
+         * @return the offs
+         */
+        public int getOffs() {
+            return offs;
+        }
+
+        /**
+         * @return the snobs
+         */
+        public int getSnobs() {
+            return snobs;
+        }
+
+        /**
+         * @return the fakes
+         */
+        public int getFakes() {
+            return fakes;
+        }
+
+        /**
+         * @return the enoblements
+         */
+        public int getEnoblements() {
+            return enoblements;
+        }
+
+        /**
+         * @return the losses
+         */
+        public int getLosses() {
+            return losses;
+        }
+
+        /**
+         * @return the lossesAsFarm
+         */
+        public int getLossesAsFarm() {
+            return lossesAsFarm;
+        }
+
+        /**
+         * @return the kills
+         */
+        public int getKills() {
+            return kills;
+        }
+
+        /**
+         * @return the killsAsFarm
+         */
+        public int getKillsAsFarm() {
+            return killsAsFarm;
+        }
+
+        /**
+         * @return the wallDestruction
+         */
+        public int getWallDestruction() {
+            return wallDestruction;
+        }
+
+        /**
+         * @return the buildingDestruction
+         */
+        public int getBuildingDestruction() {
+            return buildingDestruction;
+        }
     }
 
     /**

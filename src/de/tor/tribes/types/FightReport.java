@@ -771,34 +771,4 @@ public class FightReport {
         }
         return result.toString();
     }
-
-    public String getToolTipText() {
-        String res = "<table width=\"468\"\">" +
-                "<tr>" +
-                "<td colspan=\"2\">Gesendet</td>" +
-                "<td colspan=\"3\">13.12.10 14:00</td>" +
-                "</tr>" +
-                "<tr>" +
-                "<td width=\"75\" height=\"24\">-10.9</td>" +
-                "<td width=\"25\">&nbsp;</td>" +
-                "<td width=\"154\">" +
-                "<table class=\"luck\" cellspacing=\"0\" cellpadding=\"0\">" +
-                "<tr>" +
-                "<td width=\"29.87779497\" height=\"12\"></td>" +
-                "<td width=\"20.12220503\" style=\"background-color:#F00;\"></td>" +
-                "<td width=\"2\" style=\"background-color:rgb(0, 0, 0)\"></td>" +
-                "<td width=\"0\" style=\"background-image:url(graphic/balken_glueck.png?1);\"></td>" +
-                "<td width=\"50\"></td>" +
-                "</tr>" +
-                "</table>" +
-                "</td>" +
-                "<td width=\"21\">&nbsp;</td>" +
-                "<td width=\"159\">&nbsp;</td>" +
-                "</tr>" +
-                "<tr>" +
-                "<td colspan=\"5\">Moral: 100%</td>" +
-                " </tr>" +
-                "</table>";
-        return res;
-    }
 }

@@ -41,6 +41,7 @@ public class ReportWallCataCellRenderer implements TableCellRenderer {
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         Component c = renderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         JLabel l = new JLabel();
+        l.setOpaque(true);
         l.setForeground(c.getForeground());
         l.setBackground(c.getBackground());
         if (hasFocus) {

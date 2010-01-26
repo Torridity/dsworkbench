@@ -84,6 +84,7 @@ public class ReportManagerTableModel extends AbstractTableModel {
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         ReportSet set = ReportManager.getSingleton().getReportSet(sReportSet);
+
         switch (columnIndex) {
             case 0:
                 return set.getReports()[rowIndex];
@@ -101,7 +102,7 @@ public class ReportManagerTableModel extends AbstractTableModel {
                 return set.getReports()[rowIndex].guessType();
             case 7:
                 return set.getReports()[rowIndex].wasWallDamaged();
-           case 8:
+            case 8:
                 return set.getReports()[rowIndex].wasBuildingDamaged();
             default:
                 return set.getReports()[rowIndex].wasConquered();

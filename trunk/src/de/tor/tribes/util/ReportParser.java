@@ -17,7 +17,7 @@ import java.util.Hashtable;
 import java.util.StringTokenizer;
 
 /**
- *
+ *@TODO (2.0) Add found units to troopsmanager
  * @author Torridity
  */
 public class ReportParser {
@@ -28,23 +28,13 @@ public class ReportParser {
             if (!r.isValid()) {
                 throw new Exception("No valid report data found");
             }
-            /*  Document d = JaxenUtils.getDocument("<reports>"+r.toXml() + "</reports>");
-            System.out.println("<reports>"+r.toXml() + "</reports>");
-            System.out.println(JaxenUtils.getNodes(d, "//reports/report"));
-            System.out.println(new FightReport((Element)JaxenUtils.getNodes(d, "//reports/report").get(0)));*/
-            /* ReportManager.getSingleton().createReportSet("Test");
-            ReportManager.getSingleton().getReportSet("Test").addReport(r);
-            ReportManager.getSingleton().saveReportsToFile("reports.xml");
-            ReportManager.getSingleton().loadReportsFromFile("reports.xml");
-            for (FightReport re : ReportManager.getSingleton().getReportSet("Test").getReports()) {
-            System.out.println(re);
-            }*/
+
             String activeSet = ReportManagerTableModel.getSingleton().getActiveReportSet();
             ReportManager.getSingleton().getReportSet(activeSet).addReport(r);
             ReportManager.getSingleton().forceUpdate(activeSet);
             return true;
         } catch (Exception e) {
-                e.printStackTrace();
+            //no valid report data found
         }
         return false;
     }

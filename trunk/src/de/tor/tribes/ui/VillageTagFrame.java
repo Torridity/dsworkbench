@@ -42,6 +42,7 @@ public class VillageTagFrame extends javax.swing.JFrame implements TagManagerLis
     }
 
     public void showTagsFrame(Village pVillage) {
+        updateUserTags();
         Tribe t = pVillage.getTribe();
         if (t == null) {
             return;
@@ -266,7 +267,6 @@ private void fireVillageSelectionChangedEvent(java.awt.event.ItemEvent evt) {//G
 
         System.out.println(Math.round(4.496529606));
     }
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;

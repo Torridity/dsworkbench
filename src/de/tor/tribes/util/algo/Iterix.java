@@ -14,6 +14,7 @@ import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.DSCalculator;
 import java.awt.Color;
 import java.io.FileWriter;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -46,7 +47,10 @@ public class Iterix extends AbstractAttackAlgorithm {
     @Override
     public List<AbstractTroopMovement> calculateAttacks(Hashtable<UnitHolder, List<Village>> pSources, Hashtable<UnitHolder, List<Village>> pFakes, List<Village> pTargets, int pMaxAttacksPerVillage, int pMaxCleanPerSnob, TimeFrame pTimeFrame, boolean pFakeOffTargets, boolean pUse5Snobs) {
         UnitHolder ram = DataHolder.getSingleton().getUnitByPlainName("ram");
+        UnitHolder cata = DataHolder.getSingleton().getUnitByPlainName("catapult");
         ramSources = pSources.get(ram);
+        List<Village> cataSources = pSources.get(cata);
+        ramSources.addAll(cataSources);
         if (!pTimeFrame.isVariableArriveTime()) {
             //remove non-working sources if we use a fixed arrive time
             removeImpossibleSources(ramSources, pTargets, pTimeFrame);
@@ -54,6 +58,9 @@ public class Iterix extends AbstractAttackAlgorithm {
         sourceAmounts = resolveDuplicates(ramSources);
         mappings = buildMappings(ramSources, pTargets, pTimeFrame, pMaxAttacksPerVillage);
         result = new double[mappings.length][mappings[0].length];
+        
+        // <editor-fold defaultstate="collapsed" desc="Old stuff">
+
         // int[] sourceMappings = buildSourceMappings(mappings);
         // int[] targetMappings = buildTargetMappings(mappings);
 
@@ -92,6 +99,9 @@ public class Iterix extends AbstractAttackAlgorithm {
 
         @Override
         public void mouseClicked(MouseEvent e) {*/
+
+        // </editor-fold>
+
         try {
             long s = System.currentTimeMillis();
 
@@ -108,6 +118,7 @@ public class Iterix extends AbstractAttackAlgorithm {
             ewe.printStackTrace();
         }
 
+// <editor-fold defaultstate="collapsed" desc="Old stuff">
         //solve2(ramSources, targets, mappings, result);
 /*              solve(ramSources, targets, mappings, result);
         int[] sourceMappings = buildSourceMappings(mappings);
@@ -148,7 +159,8 @@ public class Iterix extends AbstractAttackAlgorithm {
         targetMappings = buildTargetMappings(mappings);
         drawResults(sourceMappings, targetMappings);
          */
-
+// </editor-fold>
+        
         Hashtable<Village, Off> movements = new Hashtable<Village, Off>();
         for (int i = 0; i < ramSources.size(); i++) {
             for (int j = 0; j < pTargets.size(); j++) {

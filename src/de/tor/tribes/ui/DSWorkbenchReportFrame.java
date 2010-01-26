@@ -50,6 +50,8 @@ import javax.swing.JTable;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
@@ -116,7 +118,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getButton() == MouseEvent.BUTTON3) {
-                    jPopupMenu1.show((Component)e.getSource(), e.getX(), e.getY());
+                    jPopupMenu1.show((Component) e.getSource(), e.getX(), e.getY());
                 }
             }
 
@@ -1046,7 +1048,6 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
     }//GEN-LAST:event_fireDoRenameEvent
 
     private void fireCreateStatsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCreateStatsEvent
-
         Enumeration<String> plans = ReportManager.getSingleton().getReportSets();
         DefaultListModel model = new DefaultListModel();
         while (plans.hasMoreElements()) {

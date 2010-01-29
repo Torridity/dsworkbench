@@ -24,16 +24,15 @@ import org.apache.log4j.Logger;
  *
  * @author Charon
  */
-public class AllInOne extends AbstractAttackAlgorithm {
+public class AllInOne{// extends AbstractAttackAlgorithm {
 
     private static Logger logger = Logger.getLogger("Algorithm_AllInOne");
     private List<Village> notAssignedSources = null;
 
-    @Override
     public List<Village> getNotAssignedSources() {
         return notAssignedSources;
     }
-
+/*
     @Override
     public List<AbstractTroopMovement> calculateAttacks(
             Hashtable<UnitHolder, List<Village>> pSources,
@@ -526,5 +525,5 @@ public class AllInOne extends AbstractAttackAlgorithm {
         }
 
         assignFakes(pFakes, pFakeSources, pTargets, pTimeFrame, pMaxAttacks);
-    }
+    }*/
 }

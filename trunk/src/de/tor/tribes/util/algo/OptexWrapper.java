@@ -31,10 +31,8 @@ public class OptexWrapper extends AbstractAttackAlgorithm {
             Hashtable<UnitHolder, List<de.tor.tribes.types.Village>> pFakes,
             List<de.tor.tribes.types.Village> pTargets,
             int pMaxAttacksPerVillage,
-            int pMaxCleanPerSnob,
             TimeFrame pTimeFrame,
-            boolean pRandomize,
-            boolean pUse5Snobs) {
+            boolean pFakeOffTargets) {
 
         UnitHolder ram = DataHolder.getSingleton().getUnitByPlainName("ram");
         List<de.tor.tribes.types.Village> offSources = pSources.get(ram);

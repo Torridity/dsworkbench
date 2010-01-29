@@ -39,10 +39,8 @@ public class BruteForce extends AbstractAttackAlgorithm {
             Hashtable<UnitHolder, List<Village>> pFakes,
             List<Village> pTargets,
             int pMaxAttacksPerVillage,
-            int pMaxCleanPerSnob,
             TimeFrame pTimeFrame,
-            boolean pFakeOffTargets,
-            boolean pUse5Snobs) {
+            boolean pFakeOffTargets) {
         Enumeration<UnitHolder> unitKeys = pSources.keys();
         Hashtable<Village, Hashtable<UnitHolder, List<Village>>> attacks = new Hashtable<Village, Hashtable<UnitHolder, List<Village>>>();
         notAssignedSources = new LinkedList<Village>();
@@ -290,7 +288,7 @@ public class BruteForce extends AbstractAttackAlgorithm {
         }
 
 
-        setValidEnoblements(0);
+        //setValidEnoblements(0);
         setFullOffs(fullMovements);
         return movements;
     }

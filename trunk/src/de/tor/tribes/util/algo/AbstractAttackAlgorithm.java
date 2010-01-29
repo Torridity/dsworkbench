@@ -17,35 +17,54 @@ import java.util.List;
  * @TOTO (DIFF) Check max. snob runtime
  * @author Jejkal
  */
-public abstract class AbstractAttackAlgorithm {
+public abstract class AbstractAttackAlgorithm extends Thread {
 
-    private int validEnoblements = 0;
     private int fullOffs = 0;
+    private List<AbstractTroopMovement> results = null;
+    private Hashtable<UnitHolder, List<Village>> sources = null;
+    private Hashtable<UnitHolder, List<Village>> fakes = null;
+    private List<Village> targets = null;
+    private int maxAttacksPerVillage = 0;
+    private TimeFrame timeFrame = null;
+    boolean fakeOffTargets = false;
+    private AlgorithmListener mListener = null;
 
     public abstract List<Village> getNotAssignedSources();
+
+    public void initialize(
+            Hashtable<UnitHolder, List<Village>> pSources,
+            Hashtable<UnitHolder, List<Village>> pFakes,
+            List<Village> pTargets,
+            int pMaxAttacksPerVillage,
+            TimeFrame pTimeFrame,
+            boolean pFakeOffTargets) {
+        sources = pSources;
+        fakes = pFakes;
+        targets = pTargets;
+        maxAttacksPerVillage = pMaxAttacksPerVillage;
+        timeFrame = pTimeFrame;
+        fakeOffTargets = pFakeOffTargets;
+    }
 
     public abstract List<AbstractTroopMovement> calculateAttacks(
             Hashtable<UnitHolder, List<Village>> pSources,
             Hashtable<UnitHolder, List<Village>> pFakes,
             List<Village> pTargets,
             int pMaxAttacksPerVillage,
-            int pMaxCleanPerSnob,
             TimeFrame pTimeFrame,
-            boolean pFakeOffTargets,
-            boolean pUse5Snobs);
+            boolean pFakeOffTargets);
 
-    /**
-     * @return the validEnoblements
-     */
-    public int getValidEnoblements() {
-        return validEnoblements;
+    public TimeFrame getTimeFrame() {
+        return timeFrame;
     }
 
-    /**
-     * @param validEnoblements the validEnoblements to set
-     */
-    public void setValidEnoblements(int validEnoblements) {
-        this.validEnoblements = validEnoblements;
+    public List<AbstractTroopMovement> getResults() {
+        return results;
+    }
+
+    public void execute(AlgorithmListener pListener) {
+        mListener = pListener;
+        start();
     }
 
     /**
@@ -79,5 +98,16 @@ public abstract class AbstractAttackAlgorithm {
 
         Collections.sort(mappings);
         return mappings;
+    }
+
+    @Override
+    public void run() {
+        try {
+            results = calculateAttacks(sources, fakes, targets, maxAttacksPerVillage, timeFrame, fakeOffTargets);
+        } catch (Exception e) {
+            //an error occured
+            results = new LinkedList<AbstractTroopMovement>();
+        }
+        mListener.fireCalculationFinishedEvent(this);
     }
 }

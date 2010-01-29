@@ -10,11 +10,12 @@ import de.tor.tribes.types.AbstractTroopMovement;
 import de.tor.tribes.types.Fake;
 import de.tor.tribes.types.Off;
 import de.tor.tribes.types.Village;
+import de.tor.tribes.ui.algo.AlgorithmLogPanel;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.DSCalculator;
 import java.awt.Color;
 import java.io.FileWriter;
-import java.util.Collections;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -37,28 +38,48 @@ public class Iterix extends AbstractAttackAlgorithm {
     private JLabel[][] labels2;
     private double[][] mappings;
     private double[][] result;
-    private List<Village> ramSources;
+    //  private List<Village> ramSources;
     private List<Village> targets;
     private Integer[] sourceAmounts;
     JFrame f;
     int selectedSource = 0;
     int selectedTarget = 0;
+    private AlgorithmLogPanel mLogPanel = null;
 
     @Override
-    public List<AbstractTroopMovement> calculateAttacks(Hashtable<UnitHolder, List<Village>> pSources, Hashtable<UnitHolder, List<Village>> pFakes, List<Village> pTargets, int pMaxAttacksPerVillage, int pMaxCleanPerSnob, TimeFrame pTimeFrame, boolean pFakeOffTargets, boolean pUse5Snobs) {
+    public List<AbstractTroopMovement> calculateAttacks(
+            Hashtable<UnitHolder, List<Village>> pSources,
+            Hashtable<UnitHolder, List<Village>> pFakes,
+            List<Village> pTargets,
+            int pMaxAttacksPerVillage,
+            TimeFrame pTimeFrame,
+            boolean pFakeOffTargets) {
+        mLogPanel = new AlgorithmLogPanel();
+
+        mLogPanel.addText("Starte systematische Berechnung");
         UnitHolder ram = DataHolder.getSingleton().getUnitByPlainName("ram");
         UnitHolder cata = DataHolder.getSingleton().getUnitByPlainName("catapult");
-        ramSources = pSources.get(ram);
+        List<Village> ramAndCataSources = pSources.get(ram);
         List<Village> cataSources = pSources.get(cata);
-        ramSources.addAll(cataSources);
-        if (!pTimeFrame.isVariableArriveTime()) {
-            //remove non-working sources if we use a fixed arrive time
-            removeImpossibleSources(ramSources, pTargets, pTimeFrame);
+        if (cataSources != null && !cataSources.isEmpty()) {
+            ramAndCataSources.addAll(cataSources);
         }
-        sourceAmounts = resolveDuplicates(ramSources);
-        mappings = buildMappings(ramSources, pTargets, pTimeFrame, pMaxAttacksPerVillage);
+        if (!pTimeFrame.isVariableArriveTime()) {
+            mLogPanel.addText(" - Entferne Herkunftsdörfer, die keins der Ziel erreichen können");
+            //remove non-working sources if we use a fixed arrive time
+            removeImpossibleSources(ramAndCataSources, pTargets, pTimeFrame);
+        }
+        if (ramAndCataSources.isEmpty()) {
+            mLogPanel.addError("Keine Dörfer übrig, Berechnung wird abgebrochen.");
+            return new LinkedList<AbstractTroopMovement>();
+        }
+        //build array of attack amount of each source
+        sourceAmounts = resolveDuplicates(ramAndCataSources);
+        //build mappings of possible source-target combinations
+        mLogPanel.addText(" - Erstelle mögliche Herkunft-Ziel Kombinationen");
+        mappings = buildMappings(ramAndCataSources, pTargets, pTimeFrame, pMaxAttacksPerVillage);
+        //initialize result array
         result = new double[mappings.length][mappings[0].length];
-        
         // <editor-fold defaultstate="collapsed" desc="Old stuff">
 
         // int[] sourceMappings = buildSourceMappings(mappings);
@@ -103,19 +124,21 @@ public class Iterix extends AbstractAttackAlgorithm {
         // </editor-fold>
 
         try {
-            long s = System.currentTimeMillis();
-
-            while (!solve(ramSources, pTargets, mappings, result)) {
+            //long s = System.currentTimeMillis();
+            mLogPanel.addText(" - Suche optimale Herkunft-Ziel Kombinationen");
+            while (!solve(ramAndCataSources, pTargets, mappings, result)) {
                 Thread.sleep(10);
-                System.out.println(" Loop: " + (System.currentTimeMillis() - s));
+                //System.out.println(" Loop: " + (System.currentTimeMillis() - s));
             }
-            System.out.println("solved: " + (System.currentTimeMillis() - s));
+            //System.out.println("solved: " + (System.currentTimeMillis() - s));
             /* int[] sourceMappings = buildSourceMappings(mappings);
             int[] targetMappings = buildTargetMappings(mappings);
             drawResults(sourceMappings, targetMappings);
             colorSelectedValues(selectedSource, selectedTarget);*/
         } catch (Exception ewe) {
             ewe.printStackTrace();
+            mLogPanel.addError("Unerwarteter Fehler bei der Berechnung!");
+            return new LinkedList<AbstractTroopMovement>();
         }
 
 // <editor-fold defaultstate="collapsed" desc="Old stuff">
@@ -160,12 +183,14 @@ public class Iterix extends AbstractAttackAlgorithm {
         drawResults(sourceMappings, targetMappings);
          */
 // </editor-fold>
-        
+
+        mLogPanel.addText(" - Erstelle Ergebnisliste");
+        //store results
         Hashtable<Village, Off> movements = new Hashtable<Village, Off>();
-        for (int i = 0; i < ramSources.size(); i++) {
+        for (int i = 0; i < ramAndCataSources.size(); i++) {
             for (int j = 0; j < pTargets.size(); j++) {
                 if (result[i][j] != 0) {
-                    Village source = ramSources.get(i);
+                    Village source = ramAndCataSources.get(i);
                     Village target = pTargets.get(j);
                     Off movementForTarget = movements.get(target);
                     if (movementForTarget == null) {
@@ -176,6 +201,8 @@ public class Iterix extends AbstractAttackAlgorithm {
                 }
             }
         }
+
+        //set result movements and remove used targets if needed
         List<AbstractTroopMovement> movementList = new LinkedList<AbstractTroopMovement>();
         Enumeration<Village> targetKeys = movements.keys();
         while (targetKeys.hasMoreElements()) {
@@ -185,26 +212,36 @@ public class Iterix extends AbstractAttackAlgorithm {
             }
             movementList.add(movements.get(target));
         }
-
-
         //assign fakes
-        //@TODO Avoid faking existing source-target combination!!!
-        List<Village> ramFakes = pFakes.get(ram);
+        //@TODO Check if faking existing source-target could happen/if checking for it makes sense
+        List<Village> ramAndCataFakes = pFakes.get(ram);
+        List<Village> cataFakes = pFakes.get(cata);
+        if (cataFakes != null && !cataFakes.isEmpty()) {
+            ramAndCataFakes.addAll(cataFakes);
+        }
+
+        if (ramAndCataFakes == null || ramAndCataFakes.isEmpty()) {
+            mLogPanel.addText("Berechnung abgeschlossen.");
+            JFrame jf = new JFrame();
+            jf.add(mLogPanel);
+            jf.pack();
+            jf.setVisible(true);
+            return movementList;
+        }
         if (!pTimeFrame.isVariableArriveTime()) {
             //remove non-working sources if we use a fixed arrive time
-            removeImpossibleSources(ramFakes, pTargets, pTimeFrame);
+            removeImpossibleSources(ramAndCataFakes, pTargets, pTimeFrame);
         }
-        sourceAmounts = resolveDuplicates(ramFakes);
-        mappings = buildMappings(ramFakes, pTargets, pTimeFrame, pMaxAttacksPerVillage);
+        sourceAmounts = resolveDuplicates(ramAndCataFakes);
+        mappings = buildMappings(ramAndCataFakes, pTargets, pTimeFrame, pMaxAttacksPerVillage);
         result = new double[mappings.length][mappings[0].length];
         try {
-            long s = System.currentTimeMillis();
-
-            while (!solve(ramFakes, pTargets, mappings, result)) {
+//            long s = System.currentTimeMillis();
+            while (!solve(ramAndCataFakes, pTargets, mappings, result)) {
                 Thread.sleep(10);
-                System.out.println(" Loop: " + (System.currentTimeMillis() - s));
+                //              System.out.println(" Loop: " + (System.currentTimeMillis() - s));
             }
-            System.out.println("solved: " + (System.currentTimeMillis() - s));
+            //        System.out.println("solved: " + (System.currentTimeMillis() - s));
             /* int[] sourceMappings = buildSourceMappings(mappings);
             int[] targetMappings = buildTargetMappings(mappings);
             drawResults(sourceMappings, targetMappings);
@@ -212,12 +249,11 @@ public class Iterix extends AbstractAttackAlgorithm {
         } catch (Exception ewe) {
             ewe.printStackTrace();
         }
-
         Hashtable<Village, Fake> fakeMovements = new Hashtable<Village, Fake>();
-        for (int i = 0; i < ramFakes.size(); i++) {
+        for (int i = 0; i < ramAndCataFakes.size(); i++) {
             for (int j = 0; j < pTargets.size(); j++) {
                 if (result[i][j] != 0) {
-                    Village source = ramFakes.get(i);
+                    Village source = ramAndCataFakes.get(i);
                     Village target = pTargets.get(j);
                     Fake movementForTarget = fakeMovements.get(target);
                     if (movementForTarget == null) {
@@ -233,7 +269,12 @@ public class Iterix extends AbstractAttackAlgorithm {
             Village target = targetKeys.nextElement();
             movementList.add(movements.get(target));
         }
-        
+
+        JFrame jf = new JFrame();
+        jf.add(f);
+        jf.pack();
+        jf.setVisible(true);
+
         return movementList;
     }
 
@@ -241,6 +282,7 @@ public class Iterix extends AbstractAttackAlgorithm {
     public void removeImpossibleSources(List<Village> pSources, List<Village> pTargets, TimeFrame pTimeFrame) {
         UnitHolder ram = DataHolder.getSingleton().getUnitByPlainName("ram");
         int cnt = 0;
+        int cntBefore = pSources.size();
         for (Village s : pSources.toArray(new Village[]{})) {
             boolean fail = true;
             for (Village t : pTargets) {
@@ -255,10 +297,11 @@ public class Iterix extends AbstractAttackAlgorithm {
             if (fail) {
                 cnt++;
                 //removing village that does not reach any target
+                mLogPanel.addInfo("   * Entferne Herkunftsdorf '" + s + "'");
                 pSources.remove(s);
             }
         }
-        System.out.println("Remove " + cnt + " sources");
+        mLogPanel.addInfo("   * " + cnt + " von " + cntBefore + " Herkunftsdörfern entfernt");
     }
 
     /**Build possible source-target mappings*/
@@ -291,18 +334,19 @@ public class Iterix extends AbstractAttackAlgorithm {
                 }
             }
         }
-        System.out.println("Got " + cnt + " combinations");
+
+
         int[] s = buildSourceMappings(tMappings);
         int c = 0;
-        int c2 = 0;
         for (Integer i : s) {
             if (i != 0) {
                 c++;
-                c2 += i;
             }
         }
-        System.out.println("Used Sources: " + c);
-        System.out.println("Poss Mappings: " + c2);
+
+        int maxCount = pSources.size() * pTargets.size();
+        mLogPanel.addInfo("   * " + cnt + " von " + maxCount + " Herkunft-Ziel Kombinationen möglich");
+        mLogPanel.addInfo("   * " + c + " von " + pSources.size() + " Herkunftsdörfer werden verwendet");
         return tMappings;
     }
 
@@ -312,6 +356,7 @@ public class Iterix extends AbstractAttackAlgorithm {
 
         if (sourcesToTest.isEmpty()) {
             //no more sources available, matrix solved
+            mLogPanel.addInfo("   * Keine weiteren Angriffe möglich");
             return true;
         }
 
@@ -368,7 +413,8 @@ public class Iterix extends AbstractAttackAlgorithm {
             }
         }
         mostAttacks = solveRecursive(pSources, pTargets, mappings, pResults, mostAttacksAtIndex, false);
-        System.out.println("CurrentResults: " + mostAttacks);
+        mLogPanel.addInfo("   * " + mostAttacks + " bisher gefundene Angriffe");
+        //System.out.println("CurrentResults: " + mostAttacks);
         return false;
     }
 
@@ -432,7 +478,6 @@ public class Iterix extends AbstractAttackAlgorithm {
             //do not recurse, finish here
             return countResults(pResults);
         }
-
     }
 
     //enable for one village at one target, probably not all targets are used

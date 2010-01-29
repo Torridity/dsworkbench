@@ -127,7 +127,6 @@ public class MapPanel extends JPanel {
         jCopyVillagesDialog.pack();
         mVillageSelectionListener = DSWorkbenchSelectionFrame.getSingleton();
         markedVillages = new LinkedList<Village>();
-
         initListeners();
     }
 
@@ -159,8 +158,8 @@ public class MapPanel extends JPanel {
         mToolChangeListeners.add(pListener);
     }
 
-    public synchronized void removeMapPanelListener(ToolChangeListener pListener) {
-        mMapPanelListeners.remove(pListener);
+    public synchronized void removeToolChangeListener(ToolChangeListener pListener) {
+        mToolChangeListeners.remove(pListener);
     }
 
     public de.tor.tribes.types.Rectangle getSelectionRect() {

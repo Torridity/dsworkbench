@@ -26,13 +26,13 @@ import org.apache.log4j.Logger;
  *
  * @author Charon
  */
-public class Blitzkrieg extends AbstractAttackAlgorithm {
+public class Blitzkrieg{// extends AbstractAttackAlgorithm {
 
     private static Logger logger = Logger.getLogger("Algorithm_Blitzkrieg");
     private List<Village> notAssignedSources = null;
     private List<Attack> miscAttacks = null;
 
-    public List<Village> getNotAssignedSources() {
+  /*  public List<Village> getNotAssignedSources() {
         return notAssignedSources;
     }
 
@@ -347,7 +347,7 @@ public class Blitzkrieg extends AbstractAttackAlgorithm {
             sends.add(send);
         }*/
 
-        assignFakes(pFakes, sends, pFakeSources, pTargets, pTimeFrame, pMaxAttacks);
+/*       assignFakes(pFakes, sends, pFakeSources, pTargets, pTimeFrame, pMaxAttacks);
     }
 
     private void assignMiscAttacks(List<Attack> pAttacks, List<Long> sends, Hashtable<Village, Integer> attsPerTarget, List<Village> pOffSources, List<Village> pFakeSources, List<Village> pTargets, TimeFrame pTimeFrame, int pMaxAttacks) {
@@ -445,5 +445,5 @@ public class Blitzkrieg extends AbstractAttackAlgorithm {
             return;
         }
         assignMiscAttacks(pAttacks, sends, attsPerTarget, pOffSources, pFakeSources, pTargets, pTimeFrame, pMaxAttacks);
-    }
+    }*/
 }

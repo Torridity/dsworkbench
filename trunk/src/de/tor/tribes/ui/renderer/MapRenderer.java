@@ -32,9 +32,11 @@ import de.tor.tribes.util.algo.ChurchRangeCalculator;
 import de.tor.tribes.util.attack.AttackManager;
 import de.tor.tribes.util.church.ChurchManager;
 import de.tor.tribes.util.conquer.ConquerManager;
+import de.tor.tribes.util.html.FightReportHTMLToolTipGenerator;
 import de.tor.tribes.util.map.FormManager;
 import de.tor.tribes.util.mark.MarkerManager;
 import de.tor.tribes.util.note.NoteManager;
+import de.tor.tribes.util.report.ReportManager;
 import de.tor.tribes.util.tag.TagManager;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
@@ -49,6 +51,7 @@ import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
+import java.awt.MouseInfo;
 import java.awt.Paint;
 import java.awt.PaintContext;
 import java.awt.Point;
@@ -82,6 +85,11 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
+import javax.swing.JToolTip;
+import javax.swing.Popup;
+import javax.swing.PopupFactory;
+import javax.swing.plaf.basic.BasicHTML;
+import javax.swing.text.View;
 import org.apache.log4j.Logger;
 
 /**Map Renderer which supports "dirty layers" defining which layer has to be redrawn.<BR/>
@@ -125,6 +133,8 @@ public class MapRenderer extends Thread {
     private BufferedImage mConquerWarning = null;
     private List<Integer> drawOrder = null;
     private int iPopupTroopType = 0;
+    private Popup infoPopup = null;
+    private Village popupVillage = null;
 
     public MapRenderer() {
         mVisibleVillages = new Village[iVillagesX][iVillagesY];
@@ -916,7 +926,7 @@ public class MapRenderer extends Thread {
                                 }
                             }
                         }
-                    // </editor-fold>
+                        // </editor-fold>
                     }
                 }
                 if (c != null) {
@@ -1569,7 +1579,7 @@ public class MapRenderer extends Thread {
             g2d.setStroke(s);
         }
         g2d.setColor(b);
-    // </editor-fold>
+        // </editor-fold>
     }
 
     /**Render e.g. forms and church ranges*/
@@ -1746,7 +1756,7 @@ public class MapRenderer extends Thread {
                 g2d.setComposite(com);
                 g2d.setColor(cb);
             }
-        //</editor-fold>
+            //</editor-fold>
         }
     }
 
@@ -1794,23 +1804,23 @@ public class MapRenderer extends Thread {
                 int x2 = (int) dragLine.getX2();
                 int y2 = (int) dragLine.getY2();
                 g2d.drawLine(x1, y1, x2, y2);
-            /* boolean drawDistance = false;
-            try {
-            drawDistance = Boolean.parseBoolean(GlobalOptions.getProperty("draw.distance"));
-            } catch (Exception e) {
-            }
-            if (drawDistance) {
-            if (mouseVillage != null) {
-            double d = DSCalculator.calculateDistance(mSourceVillage, mouseVillage);
-            String dist = nf.format(d);
+                /* boolean drawDistance = false;
+                try {
+                drawDistance = Boolean.parseBoolean(GlobalOptions.getProperty("draw.distance"));
+                } catch (Exception e) {
+                }
+                if (drawDistance) {
+                if (mouseVillage != null) {
+                double d = DSCalculator.calculateDistance(mSourceVillage, mouseVillage);
+                String dist = nf.format(d);
 
-            double hf = PatchFontMetrics.patch(g2d.getFontMetrics()).getStringBounds(dist, g2d).getHeight();
+                double hf = PatchFontMetrics.patch(g2d.getFontMetrics()).getStringBounds(dist, g2d).getHeight();
 
-            g2d.drawImage(mDistBorder, null, targetRect.x, targetRect.y);
-            g2d.drawString(dist, targetRect.x + 6, targetRect.y + (int) Math.rint(hf));
-            }
+                g2d.drawImage(mDistBorder, null, targetRect.x, targetRect.y);
+                g2d.drawString(dist, targetRect.x + 6, targetRect.y + (int) Math.rint(hf));
+                }
 
-            }*/
+                }*/
             }
         }
         //</editor-fold>
@@ -1881,8 +1891,43 @@ public class MapRenderer extends Thread {
             g2d.setColor(cBefore);
         }
 
-        if (Boolean.parseBoolean(GlobalOptions.getProperty("show.map.popup"))) {
-            renderVillageInfo(g2d, mouseVillage);
+        /*  if (Boolean.parseBoolean(GlobalOptions.getProperty("show.map.popup"))) {
+        renderVillageInfo(g2d, mouseVillage);
+        }*/
+        try {
+            if (DSWorkbenchMainFrame.getSingleton().isActive() && MapPanel.getSingleton().getMousePosition() != null) {
+                if (mouseVillage == null) {
+                    if (infoPopup != null) {
+                        infoPopup.hide();
+                        infoPopup = null;
+                    }
+                    popupVillage = null;
+                } else {
+                    if (!mouseVillage.equals(popupVillage)) {
+                        if (infoPopup != null) {
+                            infoPopup.hide();
+                        }
+                        popupVillage = mouseVillage;
+                        JToolTip tt = new JToolTip();
+                        tt.setTipText(popupVillage.getExtendedTooltip());
+                        PopupFactory popupFactory = PopupFactory.getSharedInstance();
+                        infoPopup = popupFactory.getPopup(MapPanel.getSingleton(), tt, MouseInfo.getPointerInfo().getLocation().x + 10, MouseInfo.getPointerInfo().getLocation().y + 10);
+                        infoPopup.show();
+                    }
+                }
+            } else {
+                if (infoPopup != null) {
+                    infoPopup.hide();
+                    infoPopup = null;
+                }
+                popupVillage = null;
+            }
+        } catch (Exception e) {
+            if (infoPopup != null) {
+                infoPopup.hide();
+                infoPopup = null;
+            }
+            popupVillage = null;
         }
     }
 
@@ -1909,6 +1954,7 @@ public class MapRenderer extends Thread {
         if (rect == null) {
             return;
         }
+
         BufferedImage popupBuffer = new BufferedImage(500, 500, BufferedImage.TYPE_INT_RGB);
         Graphics2D g2d = (Graphics2D) popupBuffer.getGraphics();
         Font before = g2d.getFont();
@@ -1937,28 +1983,33 @@ public class MapRenderer extends Thread {
         String bonus = getBonusType(mouseVillage);
         if (bonus != null) {
             drawPopupField(g2d, mouseVillage, metrics, xc, yc, null, bonus, width, dy);
-            dy += 19;
+            dy +=
+                    19;
         }
 
         current = new Font("SansSerif", Font.PLAIN, 12);
-        metrics = g2d.getFontMetrics(current);
+        metrics =
+                g2d.getFontMetrics(current);
         g2d.setFont(current);
 
         //Points rect
         String value = nf.format(mouseVillage.getPoints());
         drawPopupField(g2d, mouseVillage, metrics, xc, yc, "Punkte", value, width, dy);
-        dy += 19;
+        dy +=
+                19;
 
         //tags
         List<Tag> tags = TagManager.getSingleton().getTags(mouseVillage);
         if ((tags != null) && (!tags.isEmpty())) {
             value = "";
             List<String> tagLines = new LinkedList<String>();
-            for (int i = 0; i < tags.size(); i++) {
+            for (int i = 0; i <
+                    tags.size(); i++) {
                 bounds = metrics.getStringBounds(value + tags.get(i) + ", ", g2d);
                 if (bounds.getWidth() > 260) {
                     tagLines.add(value);
-                    value = "";
+                    value =
+                            "";
                 } else {
                     value += tags.get(i) + ", ";
                 }
@@ -1969,7 +2020,7 @@ public class MapRenderer extends Thread {
                 tagLines.add(value);
             }
 
-            //render tags
+//render tags
             if (!tagLines.isEmpty()) {
                 String line = tagLines.remove(0);
                 if (tagLines.isEmpty()) {
@@ -1979,19 +2030,24 @@ public class MapRenderer extends Thread {
                 drawPopupField(g2d, mouseVillage, metrics, xc, yc, "Tags", line, width, dy);
 
                 int lines = tagLines.size();
-                for (int i = 0; i < lines - 1; i++) {
+                for (int i = 0; i <
+                        lines - 1; i++) {
                     dy += 19;
                     drawPopupField(g2d, mouseVillage, metrics, xc, yc, "", tagLines.remove(0), width, dy);
                 }
 
                 if (!tagLines.isEmpty()) {
                     dy += 19;
-                    line = tagLines.remove(0);
-                    line = line.substring(0, line.lastIndexOf(","));
+                    line =
+                            tagLines.remove(0);
+                    line =
+                            line.substring(0, line.lastIndexOf(","));
                     drawPopupField(g2d, mouseVillage, metrics, xc, yc, "", line, width, dy);
                 }
+
                 dy += 19;
             }
+
         }
 
         //Tribe rect
@@ -2017,7 +2073,7 @@ public class MapRenderer extends Thread {
                 dy += 19;
             }
 
-            //Ally rect
+//Ally rect
             if (a != null) {
                 if (showRanks) {
                     value = a.getTag() + " (" + nf.format(a.getAll_points()) + " | " + a.getRank() + ")";
@@ -2032,9 +2088,11 @@ public class MapRenderer extends Thread {
 
             if (showMoral) {
                 double moral = ((mouseVillage.getTribe().getPoints() / currentUserVillage.getTribe().getPoints()) * 3 + 0.3) * 100;
-                moral = (moral > 100) ? 100 : moral;
+                moral =
+                        (moral > 100) ? 100 : moral;
                 drawPopupField(g2d, mouseVillage, metrics, xc, yc, "Moral", nf.format(moral) + "%", width, dy);
-                dy += 19;
+                dy +=
+                        19;
             }
 
             SimpleDateFormat f = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
@@ -2043,18 +2101,24 @@ public class MapRenderer extends Thread {
                 Calendar cal = Calendar.getInstance();
                 cal.setTimeInMillis((long) c.getTimestamp() * 1000);
                 drawPopupField(g2d, mouseVillage, metrics, xc, yc, "Adelung am", f.format(cal.getTime()), width, dy);
-                dy += 19;
+                dy +=
+                        19;
                 drawPopupField(g2d, mouseVillage, metrics, xc, yc, "Zustimmung", Integer.toString(c.getCurrentAcceptance()), width, dy);
-                dy += 19;
+                dy +=
+                        19;
             }
+
             if (showFarmSpace) {
                 drawFarmSpace(g2d, metrics, xc, yc, mouseVillage, width, dy);
-                dy += 19;
+                dy +=
+                        19;
             }
+
         } else {
             value = "verlassen";
             drawPopupField(g2d, mouseVillage, metrics, xc, yc, null, value, width, dy);
-            dy += 19;
+            dy +=
+                    19;
         }
 
         Note n = NoteManager.getSingleton().getNoteForVillage(mouseVillage);
@@ -2075,21 +2139,24 @@ public class MapRenderer extends Thread {
                     int size = (int) Math.floor(metrics.getStringBounds(tmp, g2d).getWidth());
                     if (size > width - 30) {
                         lines.add(line);
-                        line = token;
+                        line =
+                                token;
                     } else {
                         line += " " + token;
                     }
+
                 }
                 //add last line if valid
                 if (line.length() >= 1) {
                     lines.add(line);
                 }
 
-                //draw note lines
+//draw note lines
                 boolean first = true;
                 if (n.getNoteSymbol() == -1) {
                     first = false;
                 }
+
                 for (String l : lines) {
                     if (l.length() > 0) {
                         //only add valid lines
@@ -2097,12 +2164,15 @@ public class MapRenderer extends Thread {
                         if (first && symbol >= 0) {
                             //draw icon for first line if exists
                             drawNoteField(g2d, metrics, xc, yc, ImageManager.getNoteSymbol(symbol), l, width, dy);
-                            first = false;
+                            first =
+                                    false;
                         } else {
                             drawNoteField(g2d, metrics, xc, yc, null, l, width, dy);
                         }
+
                         dy += 19;
                     }
+
                 }
             }
         }
@@ -2111,7 +2181,8 @@ public class MapRenderer extends Thread {
         boolean renderedExt = renderExtendedInformation(g2d, mouseVillage, xc, yc, width, dy);
 
         //calculate draw location to position popup inside mappanel
-        villageRect = (Rectangle) rect.clone();
+        villageRect =
+                (Rectangle) rect.clone();
         int height = dy + ((renderedExt) ? 35 : 0);
         int delta = 500 + villageRect.getLocation().x - MapPanel.getSingleton().getWidth();
 
@@ -2257,6 +2328,7 @@ public class MapRenderer extends Thread {
                     g2d.setColor(m.getMarkerColor());
                     g2d.fill3DRect((int) Math.round(pX + dx + bounds.getWidth() + 10), pY + pDy + 2, 17, 17, true);
                 }
+
             }
         } else if (pName != null && pName.startsWith("Besitzer")) {
             if (pVillage.getTribe() != null) {
@@ -2265,6 +2337,7 @@ public class MapRenderer extends Thread {
                     g2d.setColor(m.getMarkerColor());
                     g2d.fill3DRect((int) Math.round(pX + dx + bounds.getWidth() + 10), pY + pDy + 2, 17, 17, true);
                 }
+
             }
         }
     }
@@ -2286,13 +2359,16 @@ public class MapRenderer extends Thread {
             } else {
                 g2d.setColor(Color.GREEN);
             }
+
             NumberFormat format = NumberFormat.getInstance();
 
             format.setMinimumFractionDigits(2);
             format.setMaximumFractionDigits(2);
-            pValue = format.format(fill * 100) + "%";
+            pValue =
+                    format.format(fill * 100) + "%";
             g2d.fill3DRect(pX + dx, pY + pDy, (int) Math.round((pWidth - dx) * fill), 19, true);
         }
+
         g2d.setColor(Constants.DS_BACK);
         g2d.drawRect(pX, pY + pDy, pWidth, 19);
         g2d.setColor(Color.BLACK);
@@ -2301,7 +2377,8 @@ public class MapRenderer extends Thread {
         Rectangle2D bounds = pMetrics.getStringBounds("Bauernhof Füllstand", g2d);
         g2d.drawString("Bauernhof Füllstand", pX + 2, pY + pDy - (int) Math.rint(bounds.getY()) + 2);
 
-        bounds = pMetrics.getStringBounds(pValue, g2d);
+        bounds =
+                pMetrics.getStringBounds(pValue, g2d);
         g2d.drawString(pValue, pX + dx + 2, pY + pDy - (int) Math.rint(bounds.getY()) + 2);
     }
 
@@ -2341,8 +2418,10 @@ public class MapRenderer extends Thread {
         if (MapPanel.getSingleton().getCurrentCursor() == ImageManager.CURSOR_MEASURE) {
             if (mSourceVillage != null) {
                 current = new Font(Font.SANS_SERIF, Font.PLAIN, 9);
-                drawDist = true;
+                drawDist =
+                        true;
             }
+
         }
 
         if (!drawDist) {
@@ -2355,28 +2434,42 @@ public class MapRenderer extends Thread {
                 case TroopsManagerTableModel.SHOW_OWN_TROOPS: {
                     activeTroops = troops.getOwnTroops();
                     break;
+
                 }
+
+
                 case TroopsManagerTableModel.SHOW_TROOPS_OUTSIDE: {
                     activeTroops = troops.getTroopsOutside();
                     break;
+
                 }
+
+
                 case TroopsManagerTableModel.SHOW_TROOPS_ON_THE_WAY: {
                     activeTroops = troops.getTroopsOnTheWay();
                     break;
+
                 }
+
+
                 case TroopsManagerTableModel.SHOW_FORGEIGN_TROOPS: {
                     activeTroops = troops.getForeignTroops();
                     break;
+
                 }
+
+
                 default: {
                     activeTroops = troops.getTroopsInVillage();//TroopsManagerTableModel.SHOW_TROOPS_IN_VILLAGE
                 }
+
             }
 
             if (activeTroops == null) {
                 //no active troops found
                 return false;
             }
+
         }
 
         g2d.setFont(current);
@@ -2411,9 +2504,13 @@ public class MapRenderer extends Thread {
                     Rectangle2D troopBounds = metrics.getStringBounds(troopsValue, g2d);
                     g2d.setColor(Color.BLACK);
                     g2d.drawString(troopsValue, pX + x + 2 + (int) Math.rint(w / 2.0 - troopBounds.getWidth() / 2.0), pY + pDy + 2 + 25 + (int) Math.rint(troopBounds.getHeight() / 2.0));
-                    x += w;
+                    x +=
+                            w;
                     unitCount++;
+
                 }
+
+
             } else {
                 //draw runtime
                 double runtime = DSCalculator.calculateMoveTimeInMinutes(mSourceVillage, pMouseVillage, unit.getSpeed());
@@ -2429,9 +2526,13 @@ public class MapRenderer extends Thread {
                 Rectangle2D troopBounds = metrics.getStringBounds(runtimeValue, g2d);
                 g2d.setColor(Color.BLACK);
                 g2d.drawString(runtimeValue, pX + x + 2 + (int) Math.rint(w / 2.0 - troopBounds.getWidth() / 2.0), pY + pDy + 2 + 25 + (int) Math.rint(troopBounds.getHeight() / 2.0));
-                x += w;
+                x +=
+                        w;
                 unitCount++;
+
             }
+
+
         }
         //  }
         return true;
@@ -2520,7 +2621,7 @@ class RoundGradientPaint implements Paint {
 
     protected Point2D point;
     protected Point2D mRadius;
-    protected Color mPointColor,  mBackgroundColor;
+    protected Color mPointColor, mBackgroundColor;
 
     public RoundGradientPaint(double x, double y, Color pointColor,
             Point2D radius, Color backgroundColor) {
@@ -2552,7 +2653,7 @@ class RoundGradientContext implements PaintContext {
 
     protected Point2D mPoint;
     protected Point2D mRadius;
-    protected Color color1,  color2;
+    protected Color color1, color2;
 
     public RoundGradientContext(Point2D p, Color c1, Point2D r, Color c2) {
         mPoint = p;

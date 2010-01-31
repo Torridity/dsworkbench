@@ -742,9 +742,9 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
         jConquersTable.setModel(ConquersTableModel.getSingleton());
         ConquerManager.getSingleton().addConquerManagerListener(this);
         jConquersTable.getTableHeader().setReorderingAllowed(false);
-        jConquersTable.setDefaultRenderer(Village.class, new VillageCellRenderer());
+        /* jConquersTable.setDefaultRenderer(Village.class, new VillageCellRenderer());
         jConquersTable.setDefaultRenderer(Tribe.class, new TribeCellRenderer());
-        jConquersTable.setDefaultRenderer(Ally.class, new AllyCellRenderer());
+        jConquersTable.setDefaultRenderer(Ally.class, new AllyCellRenderer());*/
 
         //setup renderer and general view
         TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(jConquersTable.getModel());
@@ -912,13 +912,20 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
                             }
                         }
                     }
-
                 } catch (Exception e) {
                 }
-                
-                if(column == 0){
-                    //@TODO Add Tooltip processing
+
+                 try {
+                    if (value instanceof Village) {
+                        ((JLabel) c).setToolTipText(((Village) value).getToolTipText());
+                    } else if (value instanceof Tribe) {
+                        ((JLabel) c).setToolTipText(((Tribe) value).getToolTipText());
+                    } else if (value instanceof Ally) {
+                        ((JLabel) c).setToolTipText(((Ally) value).getToolTipText());
+                    }
+                } catch (Exception e) {
                 }
+               
                 if (column == 8) {
                     //format dist col
                     double v = (Double) value;

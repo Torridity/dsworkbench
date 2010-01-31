@@ -13,6 +13,7 @@ import de.tor.tribes.ui.DSWorkbenchMainFrame;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ServerSettings;
+import de.tor.tribes.util.html.VillageHTMLTooltipGenerator;
 import de.tor.tribes.util.tag.TagManager;
 import java.awt.geom.Rectangle2D;
 import java.net.URLDecoder;
@@ -363,25 +364,11 @@ public class Village implements Comparable {
     }
 
     public String getToolTipText() {
-        NumberFormat nf = NumberFormat.getInstance();
-        nf.setMinimumFractionDigits(0);
-        nf.setMaximumFractionDigits(0);
-        Tribe t = getTribe();
-        if(t == null){
-            t = Barbarians.getSingleton();
-        }
-        
-        Ally a = t.getAlly();
-        if(a == null){
-            a = NoAlly.getSingleton();
-        }
-        return "<html><table border='0' cellspacing='2' cellpadding='0'>" +
-                "<tr><td colspan='2'><img src='" + this.getClass().getResource("/res/village.png") + "' width='16' height='16'/></td></tr>" +
-                "<tr BGCOLOR='#E1D5BE'><td><b>Name:</b> </td><td>" + getFullName() + "</td></tr>" +
-                "<tr BGCOLOR='#EFEBDF'><td><b>Punkte:</b> </td><td>" + nf.format(getPoints()) + "</td></tr>" +
-                "<tr BGCOLOR='#E1D5BE'><td><b>Besitzer:</b> </td><td>" + t + "</td></tr>" +
-                "<tr BGCOLOR='#EFEBDF'><td><b>Stamm:</b> </td><td>" + a.toString() + "</td></tr>" +
-                "</table></html>";
+        return VillageHTMLTooltipGenerator.buildToolTip(this, false);
+    }
+
+    public String getExtendedTooltip() {
+        return VillageHTMLTooltipGenerator.buildToolTip(this);
     }
 
     public String toBBCode() {

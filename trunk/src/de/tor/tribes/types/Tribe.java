@@ -8,11 +8,11 @@
  */
 package de.tor.tribes.types;
 
+import de.tor.tribes.ui.DSWorkbenchMainFrame;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.text.NumberFormat;
 import java.util.Comparator;
-import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -213,13 +213,26 @@ public class Tribe implements Comparable {
         NumberFormat nf = NumberFormat.getInstance();
         nf.setMinimumFractionDigits(0);
         nf.setMaximumFractionDigits(0);
-        return "<html><table border='0' cellspacing='2' cellpadding='0'>" +
-                "<tr><td colspan='2'><img src='" + this.getClass().getResource("/res/face.png") + "' width='16' height='16'/></td></tr>" +
-                "<tr BGCOLOR='#E1D5BE'><td><b>Name:</b> </td><td>" + getName() + "</td></tr>" +
-                "<tr BGCOLOR='#EFEBDF'><td><b>Punkte:</b> </td><td>" + nf.format(getPoints()) + "</td></tr>" +
-                "<tr BGCOLOR='#E1D5BE'><td><b>Dörfer:</b> </td><td>" + nf.format(getVillages()) + "</td></tr>" +
-                "<tr BGCOLOR='#EFEBDF'><td><b>Stamm:</b> </td><td>" + ((getAlly() == null) ? NoAlly.getSingleton().getName() : getAlly().toString()) + "</td></tr>" +
-                "</table></html>";
+        String res = "<html><table style='border: solid 1px black; cellspacing:0px;cellpadding: 0px;background-color:#EFEBDF;'>";
+        res += "<tr><td><b>Name:</b> </td><td>" + getName() + "</td></tr>";
+        res += "<tr><td>&nbsp;&nbsp;&nbsp;Punkte:</td><td>" + nf.format(getPoints()) + " (" + nf.format(getRank()) + ")</td></tr>";
+        res += "<tr><td>&nbsp;&nbsp;&nbsp;Besiegte Gegner (Off):</td><td>" + nf.format(getKillsAtt()) + " (" + nf.format(getRankAtt()) + ")</td></tr>";
+        res += "<tr><td>&nbsp;&nbsp;&nbsp;Besiegte Gegner (Deff):</td><td>" + nf.format(getKillsDef()) + " (" + nf.format(getRankDef()) + ")</td></tr>";
+        if (getAlly() != null) {
+            res += "<tr><td><b>Stamm:</b> </td><td>" + getAlly().toString() + "</td></tr>";
+            res += "<tr><td>&nbsp;&nbsp;&nbsp;Mitglieder: </td><td>" + nf.format(getAlly().getMembers()) + "</td></tr>";
+            res += "<tr><td>&nbsp;&nbsp;&nbsp;Punkte: </td><td>" + nf.format(getAlly().getPoints()) + "(" + nf.format(getAlly().getRank()) + ")</td></tr>";
+        }
+        Tribe current = DSWorkbenchMainFrame.getSingleton().getCurrentUser();
+        if (current != null) {
+            if (!current.equals(this)) {
+                double moral = ((getPoints() / current.getPoints()) * 3 + 0.3) * 100;
+                moral = (moral > 100) ? 100 : moral;
+                res += "<tr><td><b>Moral:</b> </td><td>" + nf.format(moral) + "</td></tr>";
+            }
+        }
+        res += "</table></html>";
+        return res;
     }
 
     public String toBBCode() {

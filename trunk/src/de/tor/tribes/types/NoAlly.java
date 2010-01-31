@@ -4,6 +4,8 @@
  */
 package de.tor.tribes.types;
 
+import java.text.NumberFormat;
+
 /**
  *
  * @author Jejkal
@@ -48,5 +50,15 @@ public class NoAlly extends Ally {
     @Override
     public String toString() {
         return "Kein Stamm";
+    }
+
+    public String getToolTipText() {
+        NumberFormat nf = NumberFormat.getInstance();
+        nf.setMinimumFractionDigits(0);
+        nf.setMaximumFractionDigits(0);
+        String res = "<html><table style='border: solid 1px black; cellspacing:0px;cellpadding: 0px;background-color:#EFEBDF;'>";
+        res += "<tr><td><b>Stamm:</b> </td><td>" + toString() + "</td></tr>";
+        res += "</table></html>";
+        return res;
     }
 }

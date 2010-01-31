@@ -15,6 +15,7 @@ import java.util.Hashtable;
 import java.util.List;
 import org.jdom.Element;
 import de.tor.tribes.ui.models.TroopsManagerTableModel;
+import de.tor.tribes.util.GlobalOptions;
 import java.util.LinkedList;
 
 /**
@@ -216,10 +217,16 @@ public class VillageTroopsHolder {
             farmSpace += onTheWay.get(unit) * unit.getPop();
         }
 
-        boolean isPopBonus = (getVillage().getType() == 4);
+        int max = 20000;
+        try {
+            max = Integer.parseInt(GlobalOptions.getProperty("max.farm.space"));
+        } catch (Exception e) {
+            max = 20000;
+        }
 
         //calculate farm space depending on pop bonus
-        float res = (float) (farmSpace / ((!isPopBonus) ? 24000 : 26400));
+        float res = (float) (farmSpace / (double) max);
+
         return (res > 1.0f) ? 1.0f : res;
     }
 

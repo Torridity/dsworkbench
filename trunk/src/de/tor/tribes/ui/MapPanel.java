@@ -58,6 +58,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 /**
+ * @TODO (2.0) Troops to A*Star in map popup
  * @author Charon
  */
 public class MapPanel extends JPanel {
@@ -1710,19 +1711,23 @@ public class MapPanel extends JPanel {
         }
 
         try {
+            Point mouse = MouseInfo.getPointerInfo().getLocation();
+            mouse.x -= getLocationOnScreen().x;
+            mouse.y -= getLocationOnScreen().y;
             Enumeration<Village> villages = mVillagePositions.keys();
-            Point mouse = getMousePosition();
             while (villages.hasMoreElements()) {
                 Village current = villages.nextElement();
-                if (mVillagePositions.get(current).contains(mouse)) {
+                // System.out.println(mVillagePositions.get(current));
+                if (mVillagePositions.get(current).contains(mouse.x, mouse.y)) {
                     return current;
                 }
 
             }
+
         } catch (Exception e) {
             //failed getting village (probably getting mousepos failed)
         }
-
+      
         return null;
     }
 

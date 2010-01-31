@@ -84,7 +84,7 @@
                                       <Component id="jAllyBox" pref="630" max="32767" attributes="0"/>
                                       <Component id="jRankTypeBox" alignment="0" pref="630" max="32767" attributes="0"/>
                                       <Group type="102" alignment="1" attributes="0">
-                                          <Component id="jFilterField" pref="555" max="32767" attributes="0"/>
+                                          <Component id="jFilterField" pref="557" max="32767" attributes="0"/>
                                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                                           <Component id="jButton1" min="-2" max="-2" attributes="0"/>
                                       </Group>
@@ -97,7 +97,7 @@
                           </Group>
                       </Group>
                       <Group type="102" alignment="1" attributes="0">
-                          <EmptySpace pref="528" max="32767" attributes="0"/>
+                          <EmptySpace pref="530" max="32767" attributes="0"/>
                           <Component id="jDSRealButton" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="jChartsButton" min="-2" max="-2" attributes="0"/>

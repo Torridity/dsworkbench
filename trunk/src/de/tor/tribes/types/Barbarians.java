@@ -4,6 +4,9 @@
  */
 package de.tor.tribes.types;
 
+import de.tor.tribes.ui.DSWorkbenchMainFrame;
+import java.text.NumberFormat;
+
 /**
  *
  * @author Charon
@@ -45,5 +48,15 @@ public class Barbarians extends Tribe {
 
     public Ally getAlly() {
         return BarbarianAlly.getSingleton();
+    }
+
+    public String getToolTipText() {
+        NumberFormat nf = NumberFormat.getInstance();
+        nf.setMinimumFractionDigits(0);
+        nf.setMaximumFractionDigits(0);
+        String res = "<html><table style='border: solid 1px black; cellspacing:0px;cellpadding: 0px;background-color:#EFEBDF;'>";
+        res += "<tr><td><b>Name:</b> </td><td>" + getName() + "</td></tr>";
+        res += "</table></html>";
+        return res;
     }
 }

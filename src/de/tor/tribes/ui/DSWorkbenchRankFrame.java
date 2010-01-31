@@ -12,6 +12,7 @@ package de.tor.tribes.ui;
 
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Ally;
+import de.tor.tribes.types.NoAlly;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.renderer.AllyCellRenderer;
@@ -156,6 +157,9 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame {
         };
         jRankTable.setDefaultRenderer(Integer.class, renderer);
         jRankTable.setDefaultRenderer(Double.class, renderer);
+        jRankTable.setDefaultRenderer(Village.class, new VillageCellRenderer());
+        jRankTable.setDefaultRenderer(Tribe.class, new TribeCellRenderer());
+        jRankTable.setDefaultRenderer(Ally.class, new AllyCellRenderer());
         DefaultTableCellRenderer renderer2 = new DefaultTableCellRenderer() {
 
             @Override
@@ -185,7 +189,7 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame {
                 }) {
 
             Class[] types = new Class[]{
-                Integer.class, Tribe.class, String.class, Double.class, Integer.class, Double.class
+                Integer.class, Tribe.class, Ally.class, Double.class, Integer.class, Double.class
             };
 
             @Override
@@ -208,8 +212,10 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame {
             while (tIDs.hasMoreElements()) {
                 Tribe next = DataHolder.getSingleton().getTribes().get(tIDs.nextElement());
                 String ally = "";
+                Ally nextAlly = NoAlly.getSingleton();
                 if (next.getAlly() != null) {
                     ally = next.getAlly().toString();
+                    nextAlly = next.getAlly();
                 }
                 double pointPerVillage = 0.0;
                 int v = next.getVillages();
@@ -218,7 +224,7 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame {
                 }
                 String name = next.getName();
                 if ((filter == null) || (name.toLowerCase().indexOf(filter) > -1) || (ally.toLowerCase().indexOf(filter) > -1)) {
-                    model.addRow(new Object[]{next.getRank(), name, ally, next.getPoints(), v, pointPerVillage});
+                    model.addRow(new Object[]{next.getRank(), next, nextAlly, next.getPoints(), v, pointPerVillage});
                 }
             }
         } else {
@@ -232,7 +238,7 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame {
 
                 String name = t.getName();
                 if ((filter == null) || (name.toLowerCase().indexOf(filter) > -1) || (ally.toLowerCase().indexOf(filter) > -1)) {
-                    model.addRow(new Object[]{t.getRank(), name, ally, t.getPoints(), v, pointPerVillage});
+                    model.addRow(new Object[]{t.getRank(), t, a, t.getPoints(), v, pointPerVillage});
                 }
             }
         }
@@ -249,7 +255,7 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame {
                 }) {
 
             Class[] types = new Class[]{
-                Integer.class, String.class, String.class, Double.class, Double.class, Integer.class, Double.class, Integer.class
+                Integer.class, Ally.class, String.class, Double.class, Double.class, Integer.class, Double.class, Integer.class
             };
 
             @Override
@@ -277,7 +283,7 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame {
             String name = next.getName();
             String tag = next.getTag();
             if ((filter == null) || (name.toLowerCase().indexOf(filter) > -1) || (tag.toLowerCase().indexOf(filter) > -1)) {
-                model.addRow(new Object[]{next.getRank(), name, tag, next.getPoints(), next.getAll_points(), m, pointPerTribe, next.getVillages()});
+                model.addRow(new Object[]{next.getRank(), next, tag, next.getPoints(), next.getAll_points(), m, pointPerTribe, next.getVillages()});
             }
         }
         jRankTable.setModel(model);
@@ -293,7 +299,7 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame {
                 }) {
 
             Class[] types = new Class[]{
-                Integer.class, Integer.class, String.class, Double.class, Double.class, Double.class, Double.class
+                Integer.class, Integer.class, Tribe.class, Double.class, Double.class, Double.class, Double.class
             };
 
             @Override
@@ -330,7 +336,7 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame {
                     }
                     String name = next.getName();
                     if ((filter == null) || (name.toLowerCase().indexOf(filter) > -1)) {
-                        model.addRow(new Object[]{rankOff, rankDef, name, next.getKillsAtt(), next.getKillsDef(), killsPerPointOff, killsPerPointDef});
+                        model.addRow(new Object[]{rankOff, rankDef, next, next.getKillsAtt(), next.getKillsDef(), killsPerPointOff, killsPerPointDef});
                     }
                 }
             }
@@ -351,7 +357,7 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame {
                     }
                     String name = t.getName();
                     if ((filter == null) || (name.toLowerCase().indexOf(filter) > -1)) {
-                        model.addRow(new Object[]{rankOff, rankDef, name, t.getKillsAtt(), t.getKillsDef(), killsPerPointOff, killsPerPointDef});
+                        model.addRow(new Object[]{rankOff, rankDef, t, t.getKillsAtt(), t.getKillsDef(), killsPerPointOff, killsPerPointDef});
                     }
                 }
             }
@@ -370,7 +376,7 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame {
                 }) {
 
             Class[] types = new Class[]{
-                String.class, String.class, Integer.class, Double.class, Double.class, Double.class, Double.class
+                Ally.class, String.class, Integer.class, Double.class, Double.class, Double.class, Double.class
             };
 
             @Override
@@ -403,7 +409,7 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame {
                 String name = next.getName();
                 String tag = next.getTag();
                 if ((filter == null) || (name.toLowerCase().indexOf(filter) > -1) || (tag.toLowerCase().indexOf(filter) > -1)) {
-                    model.addRow(new Object[]{name, tag, next.getMembers(), killsOff, killsDef, killsPerPointOff, killsPerPointDef});
+                    model.addRow(new Object[]{next, tag, next.getMembers(), killsOff, killsDef, killsPerPointOff, killsPerPointDef});
                 }
             }
         }

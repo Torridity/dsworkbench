@@ -26,12 +26,6 @@ import org.apache.log4j.Logger;
 public class BruteForce extends AbstractAttackAlgorithm {
 
     private static Logger logger = Logger.getLogger("Algorithm_BruteForce");
-    private List<Village> notAssignedSources = null;
-
-    @Override
-    public List<Village> getNotAssignedSources() {
-        return notAssignedSources;
-    }
 
     @Override
     public List<AbstractTroopMovement> calculateAttacks(
@@ -43,15 +37,17 @@ public class BruteForce extends AbstractAttackAlgorithm {
             boolean pFakeOffTargets) {
         Enumeration<UnitHolder> unitKeys = pSources.keys();
         Hashtable<Village, Hashtable<UnitHolder, List<Village>>> attacks = new Hashtable<Village, Hashtable<UnitHolder, List<Village>>>();
-        notAssignedSources = new LinkedList<Village>();
         Hashtable<Tribe, Integer> attacksPerTribe = new Hashtable<Tribe, Integer>();
         logger.debug("Assigning offs");
-
+        logText("Starte zufällige Berechnung");
         // <editor-fold defaultstate="collapsed" desc=" Assign Offs">
         while (unitKeys.hasMoreElements()) {
             UnitHolder unit = unitKeys.nextElement();
+            logInfo(" - Starte Berechnung für Einheit '" + unit.getName() + "'");
             List<Village> sources = pSources.get(unit);
+
             if (sources != null) {
+                logInfo(" - Verwende " + sources.size() + " Herkunftsdörfer");
                 for (Village source : sources) {
                     //time when the attacks should arrive
                     long arrive = pTimeFrame.getEnd();
@@ -61,6 +57,7 @@ public class BruteForce extends AbstractAttackAlgorithm {
 
                     Collections.shuffle(pTargets);
                     //search all tribes and villages for targets
+                    logInfo(" - Teste " + pTargets.size() + " mögliche Ziele");
                     for (Village v : pTargets) {
                         double time = DSCalculator.calculateMoveTimeInSeconds(source, v, unit.getSpeed());
                         Date sendTime = new Date(arrive - (long) time * 1000);
@@ -85,14 +82,14 @@ public class BruteForce extends AbstractAttackAlgorithm {
                             if (attacksForVillage == null) {
                                 //no attack found for this village
                                 //get number of attacks on this tribe
-                                Integer cnt = pMaxAttacksPerVillage;
+                                Integer cnt = attacksPerTribe.get(v.getTribe());
                                 if (cnt == null) {
-                                    //no attacks on this tribe yet
                                     cnt = 0;
                                 }
                                 //create new table of attacks
                                 attacksForVillage = new Hashtable<UnitHolder, List<Village>>();
                                 List<Village> sourceList = new LinkedList<Village>();
+                                logInfo("   * Neuer Angriffe: " + source + " > " + v);
                                 sourceList.add(source);
                                 attacksForVillage.put(unit, sourceList);
                                 attacks.put(v, attacksForVillage);
@@ -114,18 +111,20 @@ public class BruteForce extends AbstractAttackAlgorithm {
                                     boolean added = false;
                                     //max number of attacks neither for villages nor for player reached
                                     List<Village> attsPerUnit = attacksForVillage.get(unit);
-                                    if (attsPerUnit != null && !attsPerUnit.contains(source)) {
-                                        //only add source if it does not attack current target yet
-                                        added = true;
-                                        attsPerUnit.add(source);
-                                    } else {
-                                        attsPerUnit = new LinkedList<Village>();
+                                    if (attsPerUnit != null) {
                                         if (!attsPerUnit.contains(source)) {
                                             //only add source if it does not attack current target yet
                                             added = true;
+                                            logInfo("   * Neuer Angriffe: " + source + " > " + v);
                                             attsPerUnit.add(source);
-                                            attacksForVillage.put(unit, attsPerUnit);
                                         }
+                                    } else {
+                                        attsPerUnit = new LinkedList<Village>();
+                                        //only add source if it does not attack current target yet
+                                        added = true;
+                                        logInfo("   * Neuer Angriffe: " + source + " > " + v);
+                                        attsPerUnit.add(source);
+                                        attacksForVillage.put(unit, attsPerUnit);
                                     }
                                     if (added) {
                                         //only increment attack count if source was added
@@ -145,9 +144,11 @@ public class BruteForce extends AbstractAttackAlgorithm {
                     }
 
                     if (vTarget == null) {
-                        notAssignedSources.add(source);
+                        logInfo(" - Keine Ziele für Herkunftsdorf " + source + " gefunden");
                     }
                 }
+            } else {
+                logInfo(" - Keine Herkunftsdörfer für aktuelle Einheit");
             }
         }
         // </editor-fold>
@@ -238,17 +239,13 @@ public class BruteForce extends AbstractAttackAlgorithm {
                                 break;
                             }
                         }
-
-                        if (vTarget == null) {
-                            notAssignedSources.add(source);
-                        }
                     }
                 }
             }
         }
 
         // </editor-fold>
-
+        logText(" - Erstelle Ergebnisliste");
         //convert to result list
         List<AbstractTroopMovement> movements = new LinkedList<AbstractTroopMovement>();
         Enumeration<Village> targetKeys = attacks.keys();
@@ -287,9 +284,7 @@ public class BruteForce extends AbstractAttackAlgorithm {
             movements.add(f);
         }
 
-
-        //setValidEnoblements(0);
-        setFullOffs(fullMovements);
+        logText("Berechnung abgeschlossen.");
         return movements;
     }
 }

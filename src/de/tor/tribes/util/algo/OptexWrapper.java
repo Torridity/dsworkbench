@@ -186,9 +186,4 @@ public class OptexWrapper extends AbstractAttackAlgorithm {
         drawer.setSize(500, 500);
         drawer.setVisible(true);
     }
-
-    @Override
-    public List<Village> getNotAssignedSources() {
-        return new LinkedList<Village>();
-    }
 }

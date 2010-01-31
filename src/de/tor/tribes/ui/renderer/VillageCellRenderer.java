@@ -29,7 +29,6 @@ public class VillageCellRenderer extends DefaultTableCellRenderer {
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         JLabel label = (JLabel) c;
-        Color fg = label.getForeground();
         Village vil = (Village) value;
 
         try {

@@ -52,53 +52,74 @@ public class TestFrame extends javax.swing.JFrame {
         jPanel1.add(dockBar);
         dockBar.setVisible(true);
         dockBar.setFrameParent();*/
-        String res = "";
+        String res = "<html>";
         try {
-            BufferedReader r = new BufferedReader(new FileReader(new File("templ.tmpl")));
+            BufferedReader r = new BufferedReader(new FileReader(new File("VillageInfo.tmpl")));
             String line = "";
             while ((line = r.readLine()) != null) {
                 res += line;
             }
+            res += "</html>";
         } catch (Exception e) {
             e.printStackTrace();
         }
-        res = res.replaceAll("\\$ATTACKER_TABLE", buildUnitTable());
-        res = res.replaceAll("\\$DEFENDER_TABLE", buildUnitTable());
-        res = res.replaceAll("\\$LUCK_STRING", "Gl&uuml;ck (aus Sicht des Angreifers)");
-        double luck = -25.0;
-        res = res.replaceAll("\\$LUCK_BAR", buildLuckBar(luck));
-        res = res.replaceAll("\\$LUCK_NEG", ((luck < 0) ? "<b>" + Double.toString(luck) + "</b>" : ""));
-        res = res.replaceAll("\\$LUCK_POS", ((luck >= 0) ? "<b>" + Double.toString(luck) + "</b>" : ""));
-        res = res.replaceAll("\\$LUCK_ICON1", "<img src=\"" + ((luck <= 0) ? this.getClass().getResource("/res/rabe.png") : this.getClass().getResource("/res/rabe_grau.png")) + "\"/>");
-        res = res.replaceAll("\\$LUCK_ICON2", "<img src=\"" + ((luck >= 0) ? this.getClass().getResource("/res/klee.png") : this.getClass().getResource("/res/klee_grau.png")) + "\"/>");
+        res = res.replaceAll("\\$VILLAGE_NAME", "Barbarendorf (123|234) K23");
+        res = res.replaceAll("\\$VILLAGE_POINTS", "10.019");
+        res = res.replaceAll("\\$VILLAGE_OWNER", "Rattenfutter");
+        res = res.replaceAll("\\$VILLAGE_ALLY", "[KvA]");
+        res = res.replaceAll("\\$VILLAGE_MORAL", "100%");
+        res = res.replaceAll("\\$VILLAGE_TAGS", "Off;Fertig");
+        res = res.replaceAll("\\$UNIT_TABLE", buildUnitTable());
+        System.out.println(res);
         jLabel1.setToolTipText(res);
     }
 
     public String buildUnitTable() {
         String res = "<table width=\"100%\" style=\"border: solid 1px black; padding: 4px;background-color:#EFEBDF;\">";
-        res += "<tr>";
+        /*res += "<tr>";
         res += "<td width=\"100\">&nbsp;</td>";
         for (int i = 0; i < 13; i++) {
-            res += "<td><img src=\"" + this.getClass().getResource("/res/ui/spear.png") + "\"</td>";
+        res += "<td><div align=\"center\"><img src=\"" + this.getClass().getResource("/res/ui/spear.png") + "\"/></div></td>";
         }
-        res += "</tr>";
+        res += "</tr>";*/
         res += "<tr>";
-        res += "<td width=\"100\"><div align=\"center\">Anzahl:</div></td>";
+        // res += "<td width=\"100\"><div align=\"center\"><b>Im Dorf:</b></div></td>";
         for (int i = 0; i < 13; i++) {
-            res += "<td>2000</td>";
+            if (i % 2 == 0) {
+                res += "<td style=\"background-color:#FFFFFF;font-size:95%;font-family:Verdana\"><div align=\"center\">";
+            } else {
+                res += "<td style=\"font-size:95%;font-family:Verdana\"><div align=\"center\">";
+            }
+
+            res += "<img src=\"" + this.getClass().getResource("/res/ui/spear.png") + "\"/>";
+            res += "<BR/>";
+            res += "<font style=\"color:#AAAAAA;\">2000</font>";
+            res += "<BR/>";
+            res += "200";
+            res += "<BR/>";
+            res += "<b>100</b>";
+            res += "<BR/>";
+            res += "<i>12:23:43</i>";
+            res += "</div>";
+            res += "</td>";
         }
         res += "</tr>";
-        res += "<tr>";
-        res += "<td width=\"100\"><div align=\"center\">Verluste:</div></td>";
+        /* res += "<tr>";
+        res += "<td width=\"100\"><div align=\"center\"><b>Ausserhalb:</b></div></td>";
         for (int i = 0; i < 13; i++) {
-            res += "<td>2000</td>";
+        res += "<td><div align=\"center\">2000</div></td>";
         }
         res += "</tr>";
-        res += "<td width=\"100\"><div align=\"center\">&Uuml;berlebende:</div></td>";
+        res += "<td width=\"100\"><div align=\"center\"><b>Unterwegs:</b></div></td>";
         for (int i = 0; i < 13; i++) {
-            res += "<td>0</td>";
+        res += "<td><div align=\"center\">0</div></td>";
         }
         res += "</tr>";
+        res += "<td width=\"100\"><div align=\"center\"><b>Laufzeit:</b></div></td>";
+        for (int i = 0; i < 13; i++) {
+        res += "<td><div align=\"center\">12:23:43</div></td>";
+        }
+        res += "</tr>";*/
         res += "</table>";
         return res;
     }
@@ -145,31 +166,9 @@ public class TestFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
-        jPanel1 = new javax.swing.JPanel();
-        jComboBox1 = new javax.swing.JComboBox();
         jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ));
-        jScrollPane1.setViewportView(jTable1);
-
-        jPanel1.setLayout(new java.awt.BorderLayout());
-
-        jComboBox1.setBackground(new java.awt.Color(102, 255, 153));
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         jLabel1.setText("jLabel1");
 
@@ -178,32 +177,16 @@ public class TestFrame extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 428, Short.MAX_VALUE)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 428, Short.MAX_VALUE)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(75, 75, 75)
-                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 271, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(174, 174, 174)
-                        .addComponent(jLabel1)))
+                .addGap(173, 173, 173)
+                .addComponent(jLabel1)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 256, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 41, Short.MAX_VALUE)
                 .addComponent(jLabel1)
-                .addGap(23, 23, 23))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -227,10 +210,6 @@ public class TestFrame extends javax.swing.JFrame {
 
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JComboBox jComboBox1;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
     // End of variables declaration//GEN-END:variables
 }

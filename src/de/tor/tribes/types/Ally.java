@@ -208,12 +208,12 @@ public class Ally implements Comparable {
         NumberFormat nf = NumberFormat.getInstance();
         nf.setMinimumFractionDigits(0);
         nf.setMaximumFractionDigits(0);
-        return "<html><table border='0' cellspacing='2' cellpadding='0'>" +
-                "<tr><td colspan='2'><img src='" + this.getClass().getResource("/res/ally.png") + "' width='16' height='16'/></td></tr>" +
-                "<tr BGCOLOR='#E1D5BE'><td><b>Name:</b> </td><td>" + toString() + "</td></tr>" +
-                "<tr BGCOLOR='#EFEBDF'><td><b>Punkte:</b> </td><td>" + nf.format(getPoints()) + " (" + nf.format(getRank()) + ")</td></tr>" +
-                "<tr BGCOLOR='#E1D5BE'><td><b>Mitglieder:</b> </td><td>" + nf.format(getMembers()) + "</td></tr>" +
-                "</table></html>";
+        String res = "<html><table style='border: solid 1px black; cellspacing:0px;cellpadding: 0px;background-color:#EFEBDF;'>";
+        res += "<tr><td><b>Stamm:</b> </td><td>" + toString() + "</td></tr>";
+        res += "<tr><td>&nbsp;&nbsp;&nbsp;Mitglieder: </td><td>" + nf.format(getMembers()) + "</td></tr>";
+        res += "<tr><td>&nbsp;&nbsp;&nbsp;Punkte: </td><td>" + nf.format(getPoints()) + "(" + nf.format(getRank()) + ")</td></tr>";
+        res += "</table></html>";
+        return res;
     }
 
     public String toBBCode() {

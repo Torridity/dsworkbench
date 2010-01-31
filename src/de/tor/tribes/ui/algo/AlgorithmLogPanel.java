@@ -44,6 +44,10 @@ public class AlgorithmLogPanel extends javax.swing.JPanel {
         dateFormat = new SimpleDateFormat("HH:mm:ss");
     }
 
+    public void clear() {
+        jTextPane1.setText("");
+    }
+
     public void addText(String pText) {
         try {
             StyledDocument doc = jTextPane1.getStyledDocument();

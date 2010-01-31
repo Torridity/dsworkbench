@@ -7,6 +7,7 @@ package de.tor.tribes.util.algo;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.AbstractTroopMovement;
 import de.tor.tribes.types.Village;
+import de.tor.tribes.ui.algo.AlgorithmLogPanel;
 import de.tor.tribes.util.ServerSettings;
 import java.util.Collections;
 import java.util.Hashtable;
@@ -19,7 +20,6 @@ import java.util.List;
  */
 public abstract class AbstractAttackAlgorithm extends Thread {
 
-    private int fullOffs = 0;
     private List<AbstractTroopMovement> results = null;
     private Hashtable<UnitHolder, List<Village>> sources = null;
     private Hashtable<UnitHolder, List<Village>> fakes = null;
@@ -28,8 +28,7 @@ public abstract class AbstractAttackAlgorithm extends Thread {
     private TimeFrame timeFrame = null;
     boolean fakeOffTargets = false;
     private AlgorithmListener mListener = null;
-
-    public abstract List<Village> getNotAssignedSources();
+    private AlgorithmLogPanel mLogPanel = null;
 
     public void initialize(
             Hashtable<UnitHolder, List<Village>> pSources,
@@ -37,13 +36,15 @@ public abstract class AbstractAttackAlgorithm extends Thread {
             List<Village> pTargets,
             int pMaxAttacksPerVillage,
             TimeFrame pTimeFrame,
-            boolean pFakeOffTargets) {
+            boolean pFakeOffTargets,
+            AlgorithmLogPanel pLogPanel) {
         sources = pSources;
         fakes = pFakes;
         targets = pTargets;
         maxAttacksPerVillage = pMaxAttacksPerVillage;
         timeFrame = pTimeFrame;
         fakeOffTargets = pFakeOffTargets;
+        mLogPanel = pLogPanel;
     }
 
     public abstract List<AbstractTroopMovement> calculateAttacks(
@@ -53,6 +54,24 @@ public abstract class AbstractAttackAlgorithm extends Thread {
             int pMaxAttacksPerVillage,
             TimeFrame pTimeFrame,
             boolean pFakeOffTargets);
+
+    public void logText(String pText) {
+        if (mLogPanel != null) {
+            mLogPanel.addText(pText);
+        }
+    }
+
+    public void logInfo(String pText) {
+        if (mLogPanel != null) {
+            mLogPanel.addInfo(pText);
+        }
+    }
+
+    public void logError(String pText) {
+        if (mLogPanel != null) {
+            mLogPanel.addError(pText);
+        }
+    }
 
     public TimeFrame getTimeFrame() {
         return timeFrame;
@@ -71,14 +90,11 @@ public abstract class AbstractAttackAlgorithm extends Thread {
      * @return the fullOffs
      */
     public int getFullOffs() {
-        return fullOffs;
-    }
-
-    /**
-     * @param fullOffs the fullOffs to set
-     */
-    public void setFullOffs(int fullOffs) {
-        this.fullOffs = fullOffs;
+        int cnt = 0;
+        for (AbstractTroopMovement movement : results) {
+            cnt += (movement.offComplete()) ? 1 : 0;
+        }
+        return cnt;
     }
 
     public static List<DistanceMapping> buildSourceTargetsMapping(Village pSource, List<Village> pTargets, boolean pIsSnob) {

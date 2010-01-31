@@ -20,6 +20,7 @@ if(window.navigator.userAgent.indexOf("Firefox") > -1){
 
 	//DATA_LOCATION
 
+	
 	/**Building additional document data*/
 	function doAction() {
 		//Place processing
@@ -31,10 +32,122 @@ if(window.navigator.userAgent.indexOf("Firefox") > -1){
 			formNode.appendChild(titleNode);
 			formNode.appendChild(buildTable(getVillageID(formNode)));
 		}else{
-			//overview
-			modifyOverviewTable();
+			formNode = document.getElementsByTagName("form")[0];
+			if(formNode != null && isConfirmScreen(formNode)){
+				var titleNode = document.createElement("h3");
+				titleNode.appendChild(document.createTextNode('Geplante Angriffe'));
+				formNode.appendChild(document.createElement("hr"));
+				formNode.appendChild(titleNode);
+				formNode.appendChild(buildShortTable(getVillageID(formNode)));
+			}else{
+				//overview
+				modifyOverviewTable();
+			}
 		}
 		//View processing
+	}
+	
+	function buildShortTable(villageID){
+	
+		var tab = document.createElement("table");
+		var body = document.createElement("tbody");
+		
+		tab.appendChild(body);
+		tab.setAttribute('class', 'vis');
+		var header = document.createElement("tr")
+		var cols = new Array({
+			'name':'Ziel',
+			'width':250
+			},
+			{
+			'name':'Startzeit',
+			'width':170
+			},
+			{
+			'name':'Start in',
+			'width':170
+			},
+			{
+			'name':'Ankunftszeit',
+			'width':170
+			});
+			
+		for(var c = 0;c<cols.length;c++){
+			var colNode = document.createElement("th");
+			colNode.setAttribute('width', cols[c].width);
+			colNode.appendChild(document.createTextNode(cols[c].name));
+			header.appendChild(colNode);
+		}	
+		body.appendChild(header);
+		buildShortRows(body, villageID);
+	
+		return tab;	
+	}
+	
+	/**Insert all rows into the table*/
+	function buildShortRows(body, villageID){
+		for (var i = 0; i < attacks.length; i++){
+			if(attacks[i].source == villageID){
+				var line = document.createElement("tr");
+				var rowData = '';
+				/*var typeNode = document.createElement("td");
+				if(attacks[i].type != null){
+					var img = document.createElement("img");
+					img.setAttribute('src', 'http://www.dsworkbench.de/DSWorkbench/export/' + attacks[i].type);
+					img.setAttribute('alt', '');
+					typeNode.appendChild(img);
+		  	}else{
+		  		typeNode.appendChild(document.createTextNode('-'));
+				}
+				line.appendChild(typeNode);*/
+				var targetNode = document.createElement("td");
+				var targetLinkNode = document.createElement("a");
+				targetLinkNode.setAttribute('href','/game.php?village=' + attacks[i].source + '&screen=info_village&id=' + attacks[i].target);
+				targetLinkNode.appendChild(document.createTextNode(attacks[i].targetName));
+				targetNode.appendChild(targetLinkNode);
+				line.appendChild(targetNode);
+				//rowData += "<td>" + attacks[i].target + "</td>";
+				/*var unitNode =  document.createElement("td");
+				var img = document.createElement("img");
+				img.setAttribute('src', 'graphic/unit/unit_' + attacks[i].unit);
+				img.setAttribute('alt', '');
+				unitNode.appendChild(img);
+				line.appendChild(unitNode);*/
+				
+				var startTimeNode = document.createElement("td");
+				startTimeNode.appendChild(document.createTextNode(attacks[i].send));
+				line.appendChild(startTimeNode);
+				
+				var sendNode = document.createElement("td");
+				var spanNode = document.createElement("span");			
+				var altNode = document.createElement("td");
+				var tn = document.createTextNode('Abgelaufen');
+				altNode.appendChild(tn);
+				
+				altNode.setAttribute('class', 'warn');
+				sendNode.appendChild(spanNode);
+				if(attacks[i].expired < getRealServerTime(document.getElementById('serverTime'))){			
+					altNode.setAttribute('style', 'display:inline');
+			}else{
+				spanNode.setAttribute('class', 'timer');
+				spanNode.appendChild(document.createTextNode('Warte...'));
+				altNode.setAttribute('style', 'display:none');
+				if(window.navigator.userAgent.indexOf("Firefox") > -1){
+					unsafeWindow.addTimer(spanNode, attacks[i].timerValue, false);
+				}else{
+					addTimer(spanNode, attacks[i].timerValue, false);
+				}
+				line.appendChild(sendNode);
+				}
+				
+				line.appendChild(altNode);
+		
+				var arriveNode = document.createElement("td");
+				arriveNode.appendChild(document.createTextNode(attacks[i].arrive));
+				line.appendChild(arriveNode);
+				body.appendChild(line);
+				}
+			}
 	}
 	
 	/**Build planned attacks table for current village*/
@@ -152,6 +265,12 @@ if(window.navigator.userAgent.indexOf("Firefox") > -1){
 		return (formNode.action.indexOf('mode=sim') > -1);
 	}
 	
+	/**Check if confirm page is shown. If true do not show planned attacks*/
+ 	function isConfirmScreen(formNode){
+		var attrib = formNode.getAttribute('action');
+		return (formNode.action.indexOf('action=command&') > -1);
+	}
+	
 	Array.prototype.contains = function (element) {
 		for (var i = 0; i < this.length; i++) {
 			if (this[i] == element) {
@@ -255,7 +374,7 @@ if(window.navigator.userAgent.indexOf("Firefox") > -1){
 	if(element.firstChild.nodeValue == null) return -1;
 	var part = element.firstChild.nodeValue.split(":");
  
-	// Führende Nullen entfernen
+	// Fï¿½hrende Nullen entfernen
 	for(var j=1; j<3; j++) {
 		if(part[j].charAt(0) == "0")
 			part[j] = part[j].substring(1, part[j].length);

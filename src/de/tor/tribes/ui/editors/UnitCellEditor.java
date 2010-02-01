@@ -17,8 +17,8 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import javax.swing.AbstractCellEditor;
 import javax.swing.BorderFactory;
+import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
@@ -35,6 +35,7 @@ public class UnitCellEditor extends AbstractCellEditor implements TableCellEdito
         DefaultComboBoxModel model = new DefaultComboBoxModel();
         comboComponent = new javax.swing.JComboBox() {
 
+            @Override
             public void processMouseEvent(MouseEvent e) {
                 Component focusOwner = KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner();
 
@@ -43,6 +44,7 @@ public class UnitCellEditor extends AbstractCellEditor implements TableCellEdito
                 }
             }
 
+            @Override
             public void processFocusEvent(FocusEvent fe) {
             }
         };
@@ -60,6 +62,7 @@ public class UnitCellEditor extends AbstractCellEditor implements TableCellEdito
                 }
             }
         });
+
         comboComponent.setRenderer(new UnitListCellRenderer());
         comboComponent.addKeyListener(new KeyListener() {
 
@@ -86,6 +89,8 @@ public class UnitCellEditor extends AbstractCellEditor implements TableCellEdito
     public Object getCellEditorValue() {
         return comboComponent.getSelectedItem();
     }
+
+
 
     @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {

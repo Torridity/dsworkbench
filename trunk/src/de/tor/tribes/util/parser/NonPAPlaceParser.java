@@ -67,15 +67,19 @@ public class NonPAPlaceParser {
                         } else {
                             //get troops from other villages
                             Village supportingVillage = extractVillage(currentLine);
-                            int[] support = parseUnits(currentLine);
-                            cnt = 0;
-                            Hashtable<UnitHolder, Integer> supportTroops = new Hashtable<UnitHolder, Integer>();
-                            for (int i : support) {
-                                //all units in village
-                                supportTroops.put(DataHolder.getSingleton().getUnits().get(cnt), i);
-                                cnt++;
+                            if (supportingVillage != null) {
+                                int[] support = parseUnits(currentLine);
+                                cnt = 0;
+                                Hashtable<UnitHolder, Integer> supportTroops = new Hashtable<UnitHolder, Integer>();
+                                for (int i : support) {
+                                    //all units in village
+                                    supportTroops.put(DataHolder.getSingleton().getUnits().get(cnt), i);
+                                    cnt++;
+                                }
+                                supportsToThis.put(supportingVillage, supportTroops);
+                            } else {
+                                //'troops outside' line or invalid village info
                             }
-                            supportsToThis.put(supportingVillage, supportTroops);
                         }
                         if (!lineTok.hasMoreTokens()) {
                             //wrong information
@@ -108,7 +112,7 @@ public class NonPAPlaceParser {
             }
         }
 
-        if(ownTroops.isEmpty()){
+        if (ownTroops.isEmpty()) {
             //no troops found!?
             return false;
         }
@@ -161,7 +165,7 @@ public class NonPAPlaceParser {
                         //add support for current village 'v'
                         holder.addSupport(supporter, supportTroops);
                         holder.updateSupportValues();
-                    } 
+                    }
                 }
 
                 //set supporters
@@ -196,8 +200,7 @@ public class NonPAPlaceParser {
         return true;
     }
 
-    private static Village extractVillage(
-            String pLine) {
+    private static Village extractVillage(String pLine) {
         //tokenize line by tab and space
         StringTokenizer elemTok = new StringTokenizer(pLine, " \t");
         //try to find village line
@@ -239,18 +242,19 @@ public class NonPAPlaceParser {
         String line = pLine.replaceAll("Aus diesem Dorf", "").replaceAll("Insgesamt", "");
         StringTokenizer t = new StringTokenizer(line, " \t");
         int uCount = DataHolder.getSingleton().getUnits().size();
+
         int[] units = new int[uCount];
         int cnt = 0;
         while (t.hasMoreTokens()) {
             try {
                 units[cnt] = Integer.parseInt(t.nextToken());
                 cnt++;
-
             } catch (Exception e) {
-                //token with no troops
+                //token with no troops, set counter to 0 if village name contained valid number
+                cnt = 0;
             }
         }
-        if (cnt < uCount) {
+        if (units.length < uCount) {
             return new int[]{};
         }
 

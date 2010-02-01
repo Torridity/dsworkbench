@@ -2593,6 +2593,38 @@ private void fireSendIGMsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
         jAttackTable.setDefaultEditor(UnitHolder.class, new UnitCellEditor());
         jAttackTable.setDefaultRenderer(UnitHolder.class, new UnitCellRenderer());
         jAttackTable.setDefaultEditor(Village.class, new VillageCellEditor());
+        /*JComboBox box = new JComboBox();
+        jAttackTable.setDefaultEditor(Village.class, new DefaultCellEditor(box) {
+
+            @Override
+            public Component getTableCellEditorComponent(
+                    JTable table,
+                    Object value,
+                    boolean isSelected,
+                    int row,
+                    int column) {
+                Village current = (Village) value;
+                Tribe t = current.getTribe();
+                Village[] villages = null;
+                if (t != null) {
+                    //use tribes villages
+                    villages = t.getVillageList();
+                } else {
+                    //use single village (barbarian)
+                    villages = new Village[]{current};
+                }
+                Arrays.sort(villages);
+                DefaultComboBoxModel model = new DefaultComboBoxModel(villages);
+                ((JComboBox) editorComponent).setModel(model);
+                ((JComboBox) editorComponent).setSelectedItem(value);
+
+
+                return super.getTableCellEditorComponent(table, value,
+                        isSelected, row, column);
+            }
+        });*/
+
+
         jAttackTable.setDefaultRenderer(Village.class, new VillageCellRenderer());
         jAttackTable.setDefaultRenderer(Integer.class, new AttackTypeCellRenderer());
         jAttackTable.setDefaultEditor(Integer.class, new AttackTypeCellEditor());

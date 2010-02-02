@@ -16,7 +16,6 @@ import de.tor.tribes.types.FightStats;
 import de.tor.tribes.types.ReportSet;
 import de.tor.tribes.types.SingleAttackerStat;
 import de.tor.tribes.types.Tribe;
-import de.tor.tribes.types.TribeStatsElement;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.models.ReportManagerTableModel;
 import de.tor.tribes.ui.renderer.AttackTypeCellRenderer;
@@ -28,10 +27,13 @@ import de.tor.tribes.ui.renderer.VillageCellRenderer;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
+import de.tor.tribes.util.report.ReportFormater;
 import de.tor.tribes.util.report.ReportManager;
 import de.tor.tribes.util.report.ReportManagerListener;
 import de.tor.tribes.util.report.ReportStatBuilder;
 import java.awt.Component;
+import java.awt.Toolkit;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ItemEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -45,13 +47,10 @@ import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
 import javax.swing.JTable;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
@@ -281,6 +280,8 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         jButton4 = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
         jButton6 = new javax.swing.JButton();
+        jTaskPaneGroup2 = new com.l2fprod.common.swing.JTaskPaneGroup();
+        jButton11 = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jReportTable = new javax.swing.JTable();
         jAlwaysOnTopBox = new javax.swing.JCheckBox();
@@ -774,6 +775,9 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
 
         jButton6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/medal.png"))); // NOI18N
         jButton6.setToolTipText("Statistiken erzeugen");
+        jButton6.setMaximumSize(new java.awt.Dimension(59, 33));
+        jButton6.setMinimumSize(new java.awt.Dimension(59, 33));
+        jButton6.setPreferredSize(new java.awt.Dimension(59, 33));
         jButton6.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireCreateStatsEvent(evt);
@@ -782,6 +786,26 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         jTaskPaneGroup1.getContentPane().add(jButton6);
 
         jTaskPane1.add(jTaskPaneGroup1);
+
+        jTaskPaneGroup2.setTitle("Übertragen");
+        com.l2fprod.common.swing.PercentLayout percentLayout3 = new com.l2fprod.common.swing.PercentLayout();
+        percentLayout3.setGap(2);
+        percentLayout3.setOrientation(1);
+        jTaskPaneGroup2.getContentPane().setLayout(percentLayout3);
+
+        jButton11.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_clipboardBB.png"))); // NOI18N
+        jButton11.setToolTipText("Markierte Berichte als BB-Code in die Zwischenablage kopieren");
+        jButton11.setMaximumSize(new java.awt.Dimension(59, 33));
+        jButton11.setMinimumSize(new java.awt.Dimension(59, 33));
+        jButton11.setPreferredSize(new java.awt.Dimension(59, 33));
+        jButton11.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireCopyReportsAsBBCodesToClipboardEvent(evt);
+            }
+        });
+        jTaskPaneGroup2.getContentPane().add(jButton11);
+
+        jTaskPane1.add(jTaskPaneGroup2);
 
         jReportTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -1088,6 +1112,30 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
     private void fireStatOptionsChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireStatOptionsChangedEvent
         fireRebuildStatsEvent();
     }//GEN-LAST:event_fireStatOptionsChangedEvent
+
+    private void fireCopyReportsAsBBCodesToClipboardEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCopyReportsAsBBCodesToClipboardEvent
+
+        int[] selection = jReportTable.getSelectedRows();
+        if (selection == null || selection.length == 0) {
+            return;
+        }
+        String activeSet = ReportManagerTableModel.getSingleton().getActiveReportSet();
+        ReportSet set = ReportManager.getSingleton().getReportSet(activeSet);
+        StringBuffer b = new StringBuffer();
+        for (int i : selection) {
+            int row = jReportTable.convertRowIndexToModel(i);
+            b.append(ReportFormater.format(set.getReports()[row]) + "\n");
+        }
+        try {
+            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(b.toString()), null);
+            String result = "Daten in Zwischenablage kopiert.";
+            JOptionPaneHelper.showInformationBox(this, result, "Information");
+        } catch (Exception e) {
+            logger.error("Failed to copy data to clipboard", e);
+            String result = "Fehler beim Kopieren in die Zwischenablage.";
+            JOptionPaneHelper.showErrorBox(this, result, "Fehler");
+        }
+    }//GEN-LAST:event_fireCopyReportsAsBBCodesToClipboardEvent
 
     private void fireRebuildStatsEvent() {
         Object[] selection = jList1.getSelectedValues();
@@ -1664,6 +1712,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
     private javax.swing.JCheckBox jAlwaysOnTopBox;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton10;
+    private javax.swing.JButton jButton11;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
@@ -1716,6 +1765,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
     private javax.swing.JTabbedPane jTabbedPane1;
     private com.l2fprod.common.swing.JTaskPane jTaskPane1;
     private com.l2fprod.common.swing.JTaskPaneGroup jTaskPaneGroup1;
+    private com.l2fprod.common.swing.JTaskPaneGroup jTaskPaneGroup2;
     private javax.swing.JTextArea jTribeStatsArea;
     private javax.swing.JCheckBox jUseSilentKillsBox;
     // End of variables declaration//GEN-END:variables

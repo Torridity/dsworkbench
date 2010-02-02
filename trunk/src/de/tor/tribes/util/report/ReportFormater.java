@@ -4,7 +4,14 @@
  */
 package de.tor.tribes.util.report;
 
+import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.FightReport;
+import de.tor.tribes.types.Village;
+import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Enumeration;
 
 /**
  *
@@ -12,10 +19,118 @@ import de.tor.tribes.types.FightReport;
  */
 public class ReportFormater {
 
-    public String format(FightReport pReport) {
+    public static String format(FightReport pReport) {
         StringBuffer b = new StringBuffer();
+        SimpleDateFormat d = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
+        b.append("[quote]");
+        b.append("[i][b]Betreff:[/b][/i] " + pReport.getAttacker().toBBCode() + " greift " + pReport.getTargetVillage().toBBCode() + " an\n");
+        b.append("[i][b]Gesendet:[/b][/i] " + d.format(new Date(pReport.getTimestamp())) + "\n\n");
+        if (pReport.isWon()) {
+            b.append("[size=16]Der Angreifer hat gewonnen[/size]\n");
+        } else {
+            b.append("[size=16]Der Verteidiger hat gewonnen[/size]\n");
+        }
+        b.append("\n");
+        NumberFormat nf = NumberFormat.getInstance();
+        nf.setMinimumFractionDigits(1);
+        nf.setMinimumFractionDigits(1);
 
-        return "";
+        b.append("[b]Glück:[/b] " + "[img]http://dsextra.net/ic/luck_" + nf.format(pReport.getLuck()) + "[/img] " + nf.format(pReport.getLuck()) + "%\n");
+        nf.setMinimumFractionDigits(0);
+        nf.setMinimumFractionDigits(0);
+        b.append("[b]Moral:[/b] " + nf.format(pReport.getMoral()) + " %\n");
+        b.append("\n");
+        b.append("[b]Angreifer:[/b] " + pReport.getAttacker().toBBCode() + "\n");
+        b.append("[b]Dorf:[/b] " + pReport.getSourceVillage().toBBCode() + "\n\n");
+        String graphUrl = "";
+        if (!pReport.areAttackersHidden()) {
+
+            graphUrl = "http://dsextra.net/ic/knights_";
+            for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
+                Integer amount = pReport.getAttackers().get(unit);
+                graphUrl += amount + "_";
+            }
+            for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
+                Integer amount = pReport.getDiedAttackers().get(unit);
+                graphUrl += amount + "_";
+            }
+            graphUrl = graphUrl.substring(0, graphUrl.lastIndexOf("_"));
+            b.append("[img]" + graphUrl + "[/img]\n");
+        } else {
+            b.append("Durch Besitzer des Berichts verborgen\n");
+        }
+        b.append("\n");
+
+        b.append("[b]Verteidiger:[/b] " + pReport.getDefender().toBBCode() + "\n");
+        b.append("[b]Dorf:[/b] " + pReport.getTargetVillage().toBBCode() + "\n\n");
+        if (!pReport.wasLostEverything()) {
+            graphUrl = "http://dsextra.net/ic/knights_";
+            for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
+                Integer amount = pReport.getDefenders().get(unit);
+                graphUrl += amount + "_";
+            }
+            for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
+                Integer amount = pReport.getDiedDefenders().get(unit);
+                graphUrl += amount + "_";
+            }
+            graphUrl = graphUrl.substring(0, graphUrl.lastIndexOf("_"));
+            b.append("[img]" + graphUrl + "[/img]\n");
+        } else {
+            b.append("\nKeiner deiner Kämpfer ist lebend zurückgekehrt.\nEs konnten keine Informationen über die Truppenstärke des Gegners erlangt werden.\n");
+        }
+
+        b.append("\n");
+        boolean wasAdditionTroops = false;
+        if (pReport.whereDefendersOnTheWay()) {
+            wasAdditionTroops = true;
+            b.append("[quote]\n");
+            graphUrl = "http://dsextra.net/ic/knights_";
+            b.append("[b]Truppen des Verteidigers, die unterwegs waren[/b]\n\n");
+            for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
+                Integer amount = pReport.getDefendersOnTheWay().get(unit);
+                graphUrl += amount + "_";
+            }
+            graphUrl = graphUrl.substring(0, graphUrl.lastIndexOf("_"));
+            b.append("[img]" + graphUrl + "[/img]\n\n");
+        }
+        if (pReport.whereDefendersOutside()) {
+            wasAdditionTroops = true;
+            Enumeration<Village> targetKeys = pReport.getDefendersOutside().keys();
+            while (targetKeys.hasMoreElements()) {
+                Village target = targetKeys.nextElement();
+                b.append(target.toBBCode() + "\n\n");
+                graphUrl = "http://dsextra.net/ic/knights_";
+                for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
+                    Integer amount = pReport.getDefendersOutside().get(target).get(unit);
+                    graphUrl += amount + "_";
+                }
+                graphUrl = graphUrl.substring(0, graphUrl.lastIndexOf("_"));
+                b.append("[img]" + graphUrl + "[/img]\n\n");
+            }
+        }
+
+
+        if (wasAdditionTroops) {
+            b.append("[/quote]\n");
+        }
+
+        if (pReport.wasSnobAttack()) {
+            b.append("[b]Veränderung der Zustimmung:[/b] Zustimmung gesunken von " + nf.format(pReport.getAcceptanceBefore()) + " auf " + pReport.getAcceptanceAfter() + "\n");
+        }
+
+        if (pReport.wasWallDamaged()) {
+            b.append("[b]Schaden durch Rammen:[/b] Wall beschädigt von Level " + pReport.getWallBefore() + " auf Level " + pReport.getWallAfter() + "\n");
+        }
+
+        if (pReport.wasBuildingDamaged()) {
+            b.append("[b]Schaden durch Katapultbeschuss:[/b] " + pReport.getAimedBuilding() + " beschädigt von Level " + pReport.getBuildingBefore() + " auf Level " + pReport.getBuildingAfter() + "\n");
+        }
+
+
+        b.append("\n");
+        b.append("[size=7]Formatiert mit [url=http://www.dsworkbench.de/index.php?id=23]DS Workbench[/url], powered by [url=http://dsextra.net/report]dsextra report[/url]");
+        b.append("[/quote]");
+        return b.toString();
     }
     /*
     [quote]

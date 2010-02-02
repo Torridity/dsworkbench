@@ -22,6 +22,7 @@ public class FightReportCellRenderer extends DefaultTableCellRenderer {
     private ImageIcon GREEN_ICON = null;
     private ImageIcon YELLOW_ICON = null;
     private ImageIcon RED_ICON = null;
+    private ImageIcon GREY_ICON = null;
 
     public FightReportCellRenderer() {
         try {
@@ -29,6 +30,7 @@ public class FightReportCellRenderer extends DefaultTableCellRenderer {
             GREEN_ICON = new ImageIcon(this.getClass().getResource("/res/ui/bullet_ball_green.png"));
             YELLOW_ICON = new ImageIcon(this.getClass().getResource("/res/ui/bullet_ball_yellow.png"));
             RED_ICON = new ImageIcon(this.getClass().getResource("/res/ui/bullet_ball_red.png"));
+            GREY_ICON = new ImageIcon(this.getClass().getResource("/res/ui/bullet_ball_grey.png"));
         } catch (Exception e) {
         }
     }
@@ -41,7 +43,9 @@ public class FightReportCellRenderer extends DefaultTableCellRenderer {
 
         try {
             label.setText("");
-            if (rep.isSpyReport()) {
+            if (rep.areAttackersHidden()) {
+                label.setIcon(GREY_ICON);
+            } else if (rep.isSpyReport()) {
                 label.setIcon(BLUE_ICON);
             } else if (rep.wasLostEverything()) {
                 label.setIcon(RED_ICON);

@@ -69,7 +69,7 @@ public class FightReportHTMLToolTipGenerator {
         res = res.replaceAll(MISC_TABLES, buildMiscTables(pReport));
         res = res.replaceAll(LUCK_STRING, "Gl&uuml;ck (aus Sicht des Angreifers)");
         res = res.replaceAll(LUCK_BAR, buildLuckBar(pReport.getLuck()));
-        res = res.replaceAll(MORAL, nf.format(pReport.getMoral()));
+        res = res.replaceAll(MORAL, nf.format(pReport.getMoral()) + "%");
         nf.setMinimumFractionDigits(1);
         nf.setMaximumFractionDigits(1);
         res = res.replaceAll(LUCK_NEG, ((pReport.getLuck() < 0) ? "<b>" + nf.format(pReport.getLuck()) + "%</b>" : ""));
@@ -220,39 +220,41 @@ public class FightReportHTMLToolTipGenerator {
         res += "</tr>";
         String outsideRow = "";
 
-        headerRow = "<tr style=\"background-color:#E1D5BE;\"><td width=\"100\">&nbsp;</td>";
-        for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
-            headerRow += "<td><img src=\"" + FightReportHTMLToolTipGenerator.class.getResource("/res/ui/" + unit.getPlainName() + ".png") + "\"/></td>";
-        }
-        headerRow += "</tr>";
-        Enumeration<Village> outside = pReport.getDefendersOutside().keys();
-        while (outside.hasMoreElements()) {
-            Village v = outside.nextElement();
-            outsideRow += "<tr><td width=\"100\"><div align=\"center\">" + v.getFullName() + "</div></td>";
-
+        if (pReport.whereDefendersOutside()) {
+            headerRow = "<tr style=\"background-color:#E1D5BE;\"><td width=\"100\">&nbsp;</td>";
             for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
-                int amount = pReport.getDefendersOutside().get(v).get(unit);
-                if (amount == 0) {
-                    outsideRow += "<td style=\"color:#DED3B9;\">" + amount + "</td>";
-                } else {
-                    outsideRow += "<td>" + amount + "</td>";
-                }
+                headerRow += "<td><img src=\"" + FightReportHTMLToolTipGenerator.class.getResource("/res/ui/" + unit.getPlainName() + ".png") + "\"/></td>";
             }
-            outsideRow += "</tr>";
+            headerRow += "</tr>";
+
+            Enumeration<Village> outside = pReport.getDefendersOutside().keys();
+            while (outside.hasMoreElements()) {
+                Village v = outside.nextElement();
+                outsideRow += "<tr><td width=\"100\"><div align=\"center\">" + v.getFullName() + "</div></td>";
+
+                for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
+                    int amount = pReport.getDefendersOutside().get(v).get(unit);
+                    if (amount == 0) {
+                        outsideRow += "<td style=\"color:#DED3B9;\">" + amount + "</td>";
+                    } else {
+                        outsideRow += "<td>" + amount + "</td>";
+                    }
+                }
+                outsideRow += "</tr>";
+            }
+
+            res += "<tr>";
+            res += "<td colspan=\"5\"><b>Truppen ausserhalb:</td>";
+            res += "</tr>";
+            res += "<tr>";
+            res += "<td colspan=\"5\">";
+            outsideTable += headerRow;
+            outsideTable += outsideRow;
+            outsideTable += "</table>";
+            res += outsideTable;
+            res += "</td>";
+            res += "</tr>";
         }
-
-        res += "<tr>";
-        res += "<td colspan=\"5\"><b>Truppen ausserhalb:</td>";
-        res += "</tr>";
-        res += "<tr>";
-        res += "<td colspan=\"5\">";
-        outsideTable += headerRow;
-        outsideTable += outsideRow;
-        outsideTable += "</table>";
-        res += outsideTable;
-        res += "</td>";
-        res += "</tr>";
-
         return res;
     }
 

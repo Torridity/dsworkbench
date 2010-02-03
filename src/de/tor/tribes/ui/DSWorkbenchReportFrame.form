@@ -684,26 +684,6 @@
         </Container>
       </SubComponents>
     </Container>
-    <Container class="javax.swing.JPopupMenu" name="jPopupMenu1">
-
-      <Layout class="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout">
-        <Property name="useNullLayout" type="boolean" value="true"/>
-      </Layout>
-      <SubComponents>
-        <MenuItem class="javax.swing.JCheckBoxMenuItem" name="jCheckBoxMenuItem1">
-          <Properties>
-            <Property name="selected" type="boolean" value="true"/>
-            <Property name="text" type="java.lang.String" value="jCheckBoxMenuItem1"/>
-          </Properties>
-        </MenuItem>
-        <MenuItem class="javax.swing.JCheckBoxMenuItem" name="jCheckBoxMenuItem2">
-          <Properties>
-            <Property name="selected" type="boolean" value="true"/>
-            <Property name="text" type="java.lang.String" value="jCheckBoxMenuItem2"/>
-          </Properties>
-        </MenuItem>
-      </SubComponents>
-    </Container>
   </NonVisualComponents>
   <Properties>
     <Property name="title" type="java.lang.String" value="Berichtdatenbank"/>

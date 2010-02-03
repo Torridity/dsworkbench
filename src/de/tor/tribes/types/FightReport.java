@@ -20,7 +20,7 @@ import org.jdom.Element;
  *
  * @author Torridity
  */
-public class FightReport {
+public class FightReport implements Comparable<FightReport> {
 
     private boolean won = false;
     private long timestamp = 0;
@@ -382,16 +382,17 @@ public class FightReport {
         boolean isSnobAttack = false;
         int attackerCount = 0;
         int spyCount = 0;
-        for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
-            attackerCount += attackers.get(unit);
-            if (unit.getPlainName().equals("snob") && attackers.get(unit) >= 1) {
-                isSnobAttack = true;
-            }
-            if (unit.getPlainName().equals("spy") && attackers.get(unit) >= 1) {
-                spyCount = attackers.get(unit);
+        if (attackers != null) {
+            for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
+                attackerCount += attackers.get(unit);
+                if (unit.getPlainName().equals("snob") && attackers.get(unit) >= 1) {
+                    isSnobAttack = true;
+                }
+                if (unit.getPlainName().equals("spy") && attackers.get(unit) >= 1) {
+                    spyCount = attackers.get(unit);
+                }
             }
         }
-
         if (isSnobAttack) {
             //snob joined attack but no acceptance was reduces
             return Attack.SNOB_TYPE;
@@ -684,6 +685,39 @@ public class FightReport {
                 !getDiedDefenders().isEmpty());
     }
 
+    public byte getVillageEffects() {
+        byte effect = 0;
+        if (wasWallDamaged()) {
+            effect += 1;
+        }
+        if (wasBuildingDamaged()) {
+            effect += 2;
+        }
+        if (wasConquered()) {
+            effect += 4;
+        }
+        return effect;
+    }
+
+    public Integer getComparableValue() {
+        if (areAttackersHidden()) {
+            //grey report
+            return 4;
+        } else if (isSpyReport()) {
+            //blue report
+            return 2;
+        } else if (wasLostEverything()) {
+            //red report
+            return 3;
+        } else if (wasLostNothing()) {
+            //green report
+            return 0;
+        } else {
+            //yellow report
+            return 1;
+        }
+    }
+
     @Override
     public String toString() {
         StringBuffer result = new StringBuffer();
@@ -770,5 +804,10 @@ public class FightReport {
             result.append("Zustimmung gesenkt von " + getAcceptanceBefore() + " auf " + getAcceptanceAfter() + "\n");
         }
         return result.toString();
+    }
+
+    @Override
+    public int compareTo(FightReport o) {
+        return getComparableValue().compareTo(o.getComparableValue());
     }
 }

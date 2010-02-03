@@ -2526,8 +2526,7 @@ public class MapRenderer extends Thread {
                 Rectangle2D troopBounds = metrics.getStringBounds(runtimeValue, g2d);
                 g2d.setColor(Color.BLACK);
                 g2d.drawString(runtimeValue, pX + x + 2 + (int) Math.rint(w / 2.0 - troopBounds.getWidth() / 2.0), pY + pDy + 2 + 25 + (int) Math.rint(troopBounds.getHeight() / 2.0));
-                x +=
-                        w;
+                x +=        w;
                 unitCount++;
 
             }

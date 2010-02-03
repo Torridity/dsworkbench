@@ -7,9 +7,8 @@ package de.tor.tribes.ui;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
+import java.util.Vector;
+import javax.swing.table.AbstractTableModel;
 
 /**
  *
@@ -19,6 +18,7 @@ public class TestFrame extends javax.swing.JFrame {
 
     public static String icons[] = new String[]{
         "res/ui/icon.png", "res/ui/icon.png", "res/ui/icon.png", "res/ui/icon.png"};
+    private MyTableModel model = null;
 
     /** Creates new form TestFrame */
     public TestFrame() {
@@ -52,26 +52,10 @@ public class TestFrame extends javax.swing.JFrame {
         jPanel1.add(dockBar);
         dockBar.setVisible(true);
         dockBar.setFrameParent();*/
-        String res = "<html>";
-        try {
-            BufferedReader r = new BufferedReader(new FileReader(new File("VillageInfo.tmpl")));
-            String line = "";
-            while ((line = r.readLine()) != null) {
-                res += line;
-            }
-            res += "</html>";
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        res = res.replaceAll("\\$VILLAGE_NAME", "Barbarendorf (123|234) K23");
-        res = res.replaceAll("\\$VILLAGE_POINTS", "10.019");
-        res = res.replaceAll("\\$VILLAGE_OWNER", "Rattenfutter");
-        res = res.replaceAll("\\$VILLAGE_ALLY", "[KvA]");
-        res = res.replaceAll("\\$VILLAGE_MORAL", "100%");
-        res = res.replaceAll("\\$VILLAGE_TAGS", "Off;Fertig");
-        res = res.replaceAll("\\$UNIT_TABLE", buildUnitTable());
-        System.out.println(res);
-        jLabel1.setToolTipText(res);
+        model = new MyTableModel();
+        jTable1.setModel(model);
+
+
     }
 
     public String buildUnitTable() {
@@ -166,36 +150,116 @@ public class TestFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
+        jPopupMenu1 = new javax.swing.JPopupMenu();
+        jCheckBoxMenuItem1 = new javax.swing.JCheckBoxMenuItem();
+        jCheckBoxMenuItem2 = new javax.swing.JCheckBoxMenuItem();
+        jCheckBoxMenuItem3 = new javax.swing.JCheckBoxMenuItem();
+        jCheckBoxMenuItem4 = new javax.swing.JCheckBoxMenuItem();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTable1 = new javax.swing.JTable();
+        jComboBox1 = new javax.swing.JComboBox();
+
+        jCheckBoxMenuItem1.setSelected(true);
+        jCheckBoxMenuItem1.setText("jCheckBoxMenuItem1");
+        jCheckBoxMenuItem1.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                fireChange(evt);
+            }
+        });
+        jPopupMenu1.add(jCheckBoxMenuItem1);
+
+        jCheckBoxMenuItem2.setText("jCheckBoxMenuItem2");
+        jCheckBoxMenuItem2.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                fireChange(evt);
+            }
+        });
+        jPopupMenu1.add(jCheckBoxMenuItem2);
+
+        jCheckBoxMenuItem3.setSelected(true);
+        jCheckBoxMenuItem3.setText("jCheckBoxMenuItem3");
+        jCheckBoxMenuItem3.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                fireChange(evt);
+            }
+        });
+        jPopupMenu1.add(jCheckBoxMenuItem3);
+
+        jCheckBoxMenuItem4.setText("jCheckBoxMenuItem4");
+        jCheckBoxMenuItem4.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                fireChange(evt);
+            }
+        });
+        jPopupMenu1.add(jCheckBoxMenuItem4);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jLabel1.setText("jLabel1");
+        jScrollPane1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireTabClick(evt);
+            }
+        });
+
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane1.setViewportView(jTable1);
+
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jComboBox1.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                fireChange(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(173, 173, 173)
-                .addComponent(jLabel1)
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 452, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(46, 46, 46)
+                .addComponent(jComboBox1, 0, 123, Short.MAX_VALUE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 345, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(14, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void fireChange(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireChange
+       // if (evt.getSource() == jCheckBoxMenuItem1) {
+            model.changeVis(new boolean[]{jCheckBoxMenuItem1.isSelected(), jCheckBoxMenuItem2.isSelected(), jCheckBoxMenuItem3.isSelected(), jCheckBoxMenuItem4.isSelected()});
+            model.fireTableStructureChanged();
+       // }
+    }//GEN-LAST:event_fireChange
+
+    private void fireTabClick(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireTabClick
+        jPopupMenu1.show(jTable1, evt.getX(), evt.getY());
+    }//GEN-LAST:event_fireTabClick
+
     public static void main(String args[]) {
 
 
-        TestFrame f = new TestFrame();
+    /*    TestFrame f = new TestFrame();
         f.addWindowListener(new WindowAdapter() {
 
             public void windowClosing(WindowEvent e) {
@@ -205,11 +269,100 @@ public class TestFrame extends javax.swing.JFrame {
 
         f.setSize(300, 100);
         f.setVisible(true);
+*/
 
+      String cols = "true,true,false,false";
+      String[] c = cols.split(",");
+      for(String co : c){
+          System.out.println(co);
+      }
         //System.out.println(System.getProperty("user.dir"));
 
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel jLabel1;
+    private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItem1;
+    private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItem2;
+    private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItem3;
+    private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItem4;
+    private javax.swing.JComboBox jComboBox1;
+    private javax.swing.JPopupMenu jPopupMenu1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable jTable1;
     // End of variables declaration//GEN-END:variables
+}
+
+class MyTableModel extends AbstractTableModel {
+
+    /** Vector of Object[], this are the datas of the table */
+    Vector datas = new Vector();
+    /** Indicates which columns are visible */
+    boolean[] columnsVisible = new boolean[4];
+    /** Column names */
+    String[] columnsName = {
+        "0", "1", "2", "3"
+    };
+
+    /** Constructor */
+    public MyTableModel() {
+        columnsVisible[0] = true;
+        columnsVisible[1] = false;
+        columnsVisible[2] = true;
+        columnsVisible[3] = false;
+    }
+
+    public void changeVis(boolean[] newVis) {
+        columnsVisible[0] = newVis[0];
+        columnsVisible[1] = newVis[1];
+        columnsVisible[2] = newVis[2];
+        columnsVisible[3] = newVis[3];
+        for(boolean b : columnsVisible){
+            System.out.println(b);
+        }
+        System.out.println("---");
+    }
+
+    /**
+     * This functiun converts a column number in the table
+     * to the right number of the datas.
+     */
+    protected int getNumber(int col) {
+        int n = col;    // right number to return
+        int i = 0;
+        do {
+            if (!(columnsVisible[i])) {
+                n++;
+            }
+            i++;
+        } while (i < n);
+        // If we are on an invisible column,
+        // we have to go one step further
+        while (!(columnsVisible[n])) {
+            n++;
+        }
+        return n;
+    }
+
+    // *** TABLE MODEL METHODS ***
+    public int getColumnCount() {
+        int n = 0;
+        for (int i = 0; i < 4; i++) {
+            if (columnsVisible[i]) {
+                n++;
+            }
+        }
+        return n;
+    }
+
+    public int getRowCount() {
+        return datas.size();
+    }
+
+    public Object getValueAt(int row, int col) {
+        Object[] array = (Object[]) (datas.elementAt(row));
+        return array[getNumber(col)];
+    }
+
+    public String getColumnName(int col) {
+        return columnsName[getNumber(col)];
+    }
 }

@@ -76,6 +76,7 @@ import javax.swing.table.TableColumn;
 
 /**
  * @TODO (2.0) Fixed start time, arbitrary arrive time not in night bonus?
+ * @TODO (2.0) Introduce for target "All but <1000, <2000" Button/ComboBOx
  * @author Jejkal
  */
 public class TribeTribeAttackFrame extends javax.swing.JFrame implements AlgorithmListener {

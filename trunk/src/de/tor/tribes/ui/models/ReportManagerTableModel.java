@@ -8,27 +8,30 @@ import de.tor.tribes.types.FightReport;
 import de.tor.tribes.types.ReportSet;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
+import de.tor.tribes.ui.DSWorkbenchReportFrame;
 import de.tor.tribes.util.report.ReportManager;
 import de.tor.tribes.util.report.ReportManagerListener;
+import java.util.Arrays;
 import java.util.Date;
-import javax.swing.table.AbstractTableModel;
+import java.util.List;
 import org.apache.log4j.Logger;
 
 /**
  *
  * @author Torridity
  */
-public class ReportManagerTableModel extends AbstractTableModel {
+public class ReportManagerTableModel extends AbstractDSWorkbenchTableModel {
 
+    private final String PROPERTY_BASE_ID = "report.table.model";
     private static Logger logger = Logger.getLogger("ReportTable");
-    Class[] types = new Class[]{
-        FightReport.class, Date.class, Tribe.class, Village.class, Tribe.class, Village.class, Integer.class, Boolean.class, Boolean.class, Boolean.class
-    };
-    String[] colNames = new String[]{
-        "", "Gesendet", "Angreifer", "Herkunft", "Verteidiger", "Ziel", "Typ", "", "", ""
-    };
     private String sReportSet = ReportManager.DEFAULT_SET;
     private static ReportManagerTableModel SINGLETON = null;
+
+    static {
+        internalNames = Arrays.asList(new String[]{"Status", "Gesendet", "Angreifer", "Herkunft", "Verteidiger", "Ziel", "Typ", "Sonstiges"});
+        colNames = new String[]{"Status", "Gesendet", "Angreifer", "Herkunft", "Verteidiger", "Ziel", "Typ", "Sonstiges"};
+        types = new Class[]{FightReport.class, Date.class, Tribe.class, Village.class, Tribe.class, Village.class, Integer.class, Byte.class};
+    }
 
     public static synchronized ReportManagerTableModel getSingleton() {
         if (SINGLETON == null) {
@@ -38,7 +41,7 @@ public class ReportManagerTableModel extends AbstractTableModel {
     }
 
     ReportManagerTableModel() {
-
+        super();
         ReportManager.getSingleton().addReportManagerListener(new ReportManagerListener() {
 
             @Override
@@ -59,12 +62,14 @@ public class ReportManagerTableModel extends AbstractTableModel {
 
     @Override
     public String getColumnName(int col) {
-        return colNames[col];
+        //return colNames[col];
+        return colNames[getNumber(col)];
     }
 
     @Override
     public Class getColumnClass(int columnIndex) {
-        return types[columnIndex];
+        return types[getNumber(columnIndex)];
+        //return types[columnIndex];
     }
 
     public void removeRow(int pRow) {
@@ -76,15 +81,14 @@ public class ReportManagerTableModel extends AbstractTableModel {
         return ReportManager.getSingleton().getReportSet(sReportSet).getReports().length;
     }
 
-    @Override
+    /* @Override
     public int getColumnCount() {
-        return colNames.length;
-    }
-
+    return colNames.length;
+    }*/
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         ReportSet set = ReportManager.getSingleton().getReportSet(sReportSet);
-
+        columnIndex = getNumber(columnIndex);
         switch (columnIndex) {
             case 0:
                 return set.getReports()[rowIndex];
@@ -100,12 +104,29 @@ public class ReportManagerTableModel extends AbstractTableModel {
                 return set.getReports()[rowIndex].getTargetVillage();
             case 6:
                 return set.getReports()[rowIndex].guessType();
-            case 7:
-                return set.getReports()[rowIndex].wasWallDamaged();
-            case 8:
-                return set.getReports()[rowIndex].wasBuildingDamaged();
             default:
-                return set.getReports()[rowIndex].wasConquered();
+                return set.getReports()[rowIndex].getVillageEffects();
         }
+    }
+
+    @Override
+    public List<String> getInternalColumnNames() {
+        System.out.println("GET: " + hashCode() + " - " + internalNames);
+        return internalNames;
+    }
+
+    @Override
+    public String getPropertyBaseID() {
+        return PROPERTY_BASE_ID;
+    }
+
+    @Override
+    public String[] getColumnNames() {
+        return colNames;
+    }
+
+    @Override
+    public void doNotifyOnColumnChange() {
+        DSWorkbenchReportFrame.getSingleton().fireReportsChangedEvent("");
     }
 }

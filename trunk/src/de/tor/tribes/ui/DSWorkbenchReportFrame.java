@@ -47,6 +47,7 @@ import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionEvent;
@@ -65,7 +66,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
 
     private static Logger logger = Logger.getLogger("ReportView");
     private static DSWorkbenchReportFrame SINGLETON = null;
-    private List<DefaultTableCellRenderer> renderers = new LinkedList<DefaultTableCellRenderer>();
+    private DefaultTableCellRenderer headerRenderer = null;
     private FightStats lastStats = null;
 
     public static synchronized DSWorkbenchReportFrame getSingleton() {
@@ -95,30 +96,14 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         jReportTable.setColumnSelectionAllowed(false);
         jReportTable.getTableHeader().setReorderingAllowed(false);
         jReportTable.setModel(ReportManagerTableModel.getSingleton());
-        jReportTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                try {
-                    int selected = jReportTable.getSelectedRows().length;
-                    if (selected == 0) {
-                        setTitle("Berichtdatenbank");
-                    } else if (selected == 1) {
-                        setTitle("Berichtdatenbank (1 Bericht ausgewählt)");
-                    } else if (selected > 1) {
-                        setTitle("Berichtdatenbank (" + selected + " Berichte ausgewählt)");
-                    }
-                } catch (Exception ignored) {
-                }
-            }
-        });
-
-        jReportTable.getTableHeader().addMouseListener(new MouseListener() {
+        MouseListener l = new MouseListener() {
 
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (e.getButton() == MouseEvent.BUTTON3) {
-                    jPopupMenu1.show((Component) e.getSource(), e.getX(), e.getY());
+                if (e.getButton() == MouseEvent.BUTTON3 || e.getButton() == MouseEvent.BUTTON2) {
+                    ReportManagerTableModel.getSingleton().getPopup().show(jReportTable, e.getX(), e.getY());
+                    ReportManagerTableModel.getSingleton().getPopup().requestFocusInWindow();
                 }
             }
 
@@ -137,23 +122,42 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
             @Override
             public void mouseExited(MouseEvent e) {
             }
-        });
-        for (int i = 0; i < jReportTable.getColumnCount(); i++) {
-            DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
+        };
 
-                @Override
-                public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-                    Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
-                    c.setBackground(Constants.DS_BACK);
+        jReportTable.addMouseListener(l);
+        jScrollPane1.addMouseListener(l);
+        jReportTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 
-                    DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
-                    r.setText("<html><b>" + r.getText() + "</b></html>");
-                    return c;
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                try {
+                    int selected = jReportTable.getSelectedRows().length;
+                    if (selected == 0) {
+                        setTitle("Berichtdatenbank");
+                    } else if (selected == 1) {
+                        setTitle("Berichtdatenbank (1 Bericht ausgewählt)");
+                    } else if (selected > 1) {
+                        setTitle("Berichtdatenbank (" + selected + " Berichte ausgewählt)");
+                    }
+                } catch (Exception ignored) {
                 }
-            };
-            jReportTable.getColumn(jReportTable.getColumnName(i)).setHeaderRenderer(headerRenderer);
-            renderers.add(headerRenderer);
-        }
+            }
+        });
+
+        DefaultTableCellRenderer headRender = new DefaultTableCellRenderer() {
+
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
+                c.setBackground(Constants.DS_BACK);
+
+                DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
+                r.setText("<html><b>" + r.getText() + "</b></html>");
+                return c;
+            }
+        };
+        headerRenderer = headRender;
+        fireReportsChangedEvent(null);
 
         jList1.addListSelectionListener(new ListSelectionListener() {
 
@@ -182,11 +186,12 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         jReportTable.setDefaultRenderer(Tribe.class, new TribeCellRenderer());
         jReportTable.setDefaultRenderer(Village.class, new VillageCellRenderer());
         jReportTable.setDefaultRenderer(Integer.class, new AttackTypeCellRenderer());
-        jReportTable.setDefaultRenderer(Boolean.class, new ReportWallCataCellRenderer());
-        jReportTable.getColumnModel().getColumn(0).setMinWidth(20);
+        jReportTable.setDefaultRenderer(Byte.class, new ReportWallCataCellRenderer());
+        /* jReportTable.getColumnModel().getColumn(0).setMinWidth(20);
         jReportTable.getColumnModel().getColumn(0).setWidth(20);
-        jReportTable.getColumnModel().getColumn(0).setMaxWidth(20);
-        jReportTable.getColumnModel().getColumn(7).setMinWidth(20);
+        jReportTable.getColumnModel().getColumn(0).setMaxWidth(20);*/
+        jReportTable.setRowHeight(20);
+        /*jReportTable.getColumnModel().getColumn(7).setMinWidth(20);
         jReportTable.getColumnModel().getColumn(7).setWidth(20);
         jReportTable.getColumnModel().getColumn(7).setMaxWidth(20);
         jReportTable.getColumnModel().getColumn(8).setMinWidth(20);
@@ -198,7 +203,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         jReportTable.getColumnModel().getColumn(0).setResizable(false);
         jReportTable.getColumnModel().getColumn(7).setResizable(false);
         jReportTable.getColumnModel().getColumn(8).setResizable(false);
-        jReportTable.getColumnModel().getColumn(9).setResizable(false);
+        jReportTable.getColumnModel().getColumn(9).setResizable(false);*/
 
         ReportManager.getSingleton().forceUpdate(null);
         buildReportSetList();
@@ -266,9 +271,6 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         jUseSilentKillsBox = new javax.swing.JCheckBox();
         jCheckBox3 = new javax.swing.JCheckBox();
         jShowPercentsBox = new javax.swing.JCheckBox();
-        jPopupMenu1 = new javax.swing.JPopupMenu();
-        jCheckBoxMenuItem1 = new javax.swing.JCheckBoxMenuItem();
-        jCheckBoxMenuItem2 = new javax.swing.JCheckBoxMenuItem();
         jPanel1 = new javax.swing.JPanel();
         jReportSetBox = new javax.swing.JComboBox();
         jLabel1 = new javax.swing.JLabel();
@@ -692,14 +694,6 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
                 .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
-
-        jCheckBoxMenuItem1.setSelected(true);
-        jCheckBoxMenuItem1.setText("jCheckBoxMenuItem1");
-        jPopupMenu1.add(jCheckBoxMenuItem1);
-
-        jCheckBoxMenuItem2.setSelected(true);
-        jCheckBoxMenuItem2.setText("jCheckBoxMenuItem2");
-        jPopupMenu1.add(jCheckBoxMenuItem2);
 
         setTitle("Berichtdatenbank");
 
@@ -1722,8 +1716,6 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
     private javax.swing.JButton jButton8;
     private javax.swing.JButton jButton9;
     private javax.swing.JCheckBox jCheckBox3;
-    private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItem1;
-    private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItem2;
     private javax.swing.JFrame jCreateStatsFrame;
     private javax.swing.JTextField jCurrentSetField;
     private javax.swing.JButton jDoAddNewSetButton;
@@ -1750,7 +1742,6 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
-    private javax.swing.JPopupMenu jPopupMenu1;
     private javax.swing.JDialog jRenameReportSetDialog;
     private javax.swing.JComboBox jReportSetBox;
     private javax.swing.JList jReportSetsForStatsList;
@@ -1775,7 +1766,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         try {
             jReportTable.invalidate();
             for (int i = 0; i < jReportTable.getColumnCount(); i++) {
-                jReportTable.getColumnModel().getColumn(i).setHeaderRenderer(renderers.get(i));
+                jReportTable.getColumnModel().getColumn(i).setHeaderRenderer(headerRenderer);
             }
             jReportTable.revalidate();
             jReportTable.repaint();

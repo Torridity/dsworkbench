@@ -12,13 +12,12 @@ package de.tor.tribes.ui;
 
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Ally;
+import de.tor.tribes.types.Conquer;
 import de.tor.tribes.types.NoAlly;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.models.ConquersTableModel;
-import de.tor.tribes.ui.renderer.AllyCellRenderer;
-import de.tor.tribes.ui.renderer.TribeCellRenderer;
-import de.tor.tribes.ui.renderer.VillageCellRenderer;
+import de.tor.tribes.ui.renderer.SortableTableHeaderRenderer;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
@@ -33,6 +32,8 @@ import de.tor.tribes.util.conquer.TribeFilter;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Point;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -60,7 +61,7 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
 
     private static Logger logger = Logger.getLogger("ConquerView");
     private static DSWorkbenchConquersFrame SINGLETON = null;
-    private List<TableCellRenderer> mHeaderRenderers = null;
+    private TableCellRenderer mHeaderRenderer = null;
 
     DSWorkbenchConquersFrame() {
         initComponents();
@@ -70,9 +71,7 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
         } catch (Exception e) {
             //setting not available
         }
-        mHeaderRenderers = new LinkedList<TableCellRenderer>();
-
-        DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
+        mHeaderRenderer = new SortableTableHeaderRenderer();/* new DefaultTableCellRenderer() {
 
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
@@ -82,16 +81,42 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
                 r.setText("<html><b>" + r.getText() + "</b></html>");
                 return r;
             }
-        };
+        };*/
 
         jConquersTable.setColumnSelectionAllowed(false);
         jConquersTable.setModel(ConquersTableModel.getSingleton());
         TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>();
         jConquersTable.setRowSorter(sorter);
 
-        for (int i = 0; i < 9; i++) {
-            mHeaderRenderers.add(headerRenderer);
-        }
+        MouseListener l = new MouseListener() {
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getButton() == MouseEvent.BUTTON3 || e.getButton() == MouseEvent.BUTTON2) {
+                    ConquersTableModel.getSingleton().getPopup().show(jConquersTable, e.getX(), e.getY());
+                    ConquersTableModel.getSingleton().getPopup().requestFocusInWindow();
+                }
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+            }
+        };
+
+        jConquersTable.addMouseListener(l);
+        jScrollPane1.addMouseListener(l);
 
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
         GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.conquers_view", GlobalOptions.getHelpBroker().getHelpSet());
@@ -753,7 +778,7 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
         //update view
         for (int i = 0; i < jConquersTable.getColumnCount(); i++) {
             TableColumn column = jConquersTable.getColumnModel().getColumn(i);
-            column.setHeaderRenderer(mHeaderRenderers.get(i));
+            column.setHeaderRenderer(mHeaderRenderer);
         }
         jConquersTable.revalidate();
         setupFilterDialog();
@@ -885,11 +910,12 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
                 Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 
                 try {
-                    Tribe loser = (Tribe) table.getValueAt(row, 3);
+                    Conquer con = ConquerManager.getSingleton().getConquer(row);
+                    Tribe loser = DataHolder.getSingleton().getTribes().get(con.getLoser());
                     if (loser.getId() == 0) {
                         c.setBackground(Color.PINK);
                     } else {
-                        Tribe winner = (Tribe) table.getValueAt(row, 4);
+                        Tribe winner = DataHolder.getSingleton().getTribes().get(con.getWinner());
                         if (loser != null && winner != null) {
                             if (loser.getId() == winner.getId()) {
                                 c.setBackground(Color.GREEN);
@@ -915,7 +941,7 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
                 } catch (Exception e) {
                 }
 
-                 try {
+                try {
                     if (value instanceof Village) {
                         ((JLabel) c).setToolTipText(((Village) value).getToolTipText());
                     } else if (value instanceof Tribe) {
@@ -925,8 +951,8 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
                     }
                 } catch (Exception e) {
                 }
-               
-                if (column == 8) {
+
+                if (value instanceof Double) {
                     //format dist col
                     double v = (Double) value;
                     NumberFormat nf = NumberFormat.getInstance();
@@ -934,8 +960,6 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
                     nf.setMaximumFractionDigits(2);
                     ((JLabel) c).setText(nf.format(v));
                 }
-
-//                DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
                 return c;
             }
         };
@@ -946,17 +970,17 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
 
         for (int i = 0; i < jConquersTable.getColumnCount(); i++) {
             TableColumn c = jConquersTable.getColumnModel().getColumn(i);
-            c.setHeaderRenderer(mHeaderRenderers.get(i));
+            c.setHeaderRenderer(mHeaderRenderer);
         }
         //setup row sorter
         TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>();
         jConquersTable.setRowSorter(sorter);
         sorter.setModel(ConquersTableModel.getSingleton());
-        sorter.setComparator(0, Village.CASE_INSENSITIVE_ORDER);
+        /* sorter.setComparator(0, Village.CASE_INSENSITIVE_ORDER);
         sorter.setComparator(3, Tribe.CASE_INSENSITIVE_ORDER);
         sorter.setComparator(4, Ally.CASE_INSENSITIVE_ORDER);
         sorter.setComparator(5, Tribe.CASE_INSENSITIVE_ORDER);
-        sorter.setComparator(6, Ally.CASE_INSENSITIVE_ORDER);
+        sorter.setComparator(6, Ally.CASE_INSENSITIVE_ORDER);*/
         jConquersTable.revalidate();
         jConquersTable.repaint();
         Calendar c = Calendar.getInstance();
@@ -971,8 +995,7 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
         int percFriendly = (int) Math.rint(100.0 * (double) conquerStats[1] / (double) conquers);
 
         jGreyConquersLabel.setText("<html><b>Grau-Adelungen:</b> " + conquerStats[0] + " von " + conquers + " (" + percGrey + "%)" + "</html>");
-        jFriendlyConquersLabel.setText(
-                "<html><b>Aufadelungen:</b> " + conquerStats[1] + " von " + conquers + " (" + percFriendly + "%)" + "</html>");
+        jFriendlyConquersLabel.setText("<html><b>Aufadelungen:</b> " + conquerStats[1] + " von " + conquers + " (" + percFriendly + "%)" + "</html>");
 
     }
 }

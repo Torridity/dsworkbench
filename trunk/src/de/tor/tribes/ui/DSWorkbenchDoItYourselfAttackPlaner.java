@@ -23,6 +23,7 @@ import de.tor.tribes.ui.models.DoItYourselfAttackTableModel;
 import de.tor.tribes.ui.renderer.AttackTypeCellRenderer;
 import de.tor.tribes.ui.renderer.AttackTypeListCellRenderer;
 import de.tor.tribes.ui.renderer.DateCellRenderer;
+import de.tor.tribes.ui.renderer.SortableTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.UnitCellRenderer;
 import de.tor.tribes.ui.renderer.UnitListCellRenderer;
 import de.tor.tribes.ui.renderer.VillageCellRenderer;
@@ -36,9 +37,10 @@ import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.attack.AttackManager;
 import de.tor.tribes.util.html.AttackPlanHTMLExporter;
 import de.tor.tribes.util.parser.VillageParser;
-import java.awt.Component;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -51,11 +53,9 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JSpinner.DateEditor;
-import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
@@ -69,7 +69,7 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
 
     private static Logger logger = Logger.getLogger("DoItYourselflAttackPlaner");
     private static DSWorkbenchDoItYourselfAttackPlaner SINGLETON = null;
-    private List<TableCellRenderer> mHeaderRenderers = null;
+    private TableCellRenderer mHeaderRenderer = null;
 
     /** Creates new form DSWorkbenchDoItYourselflAttackPlaner */
     DSWorkbenchDoItYourselfAttackPlaner() {
@@ -80,23 +80,23 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
         } catch (Exception e) {
             //setting not available
         }
-        mHeaderRenderers = new LinkedList<TableCellRenderer>();
-        DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
+        mHeaderRenderer = new SortableTableHeaderRenderer();
+        /*DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
 
-            @Override
-            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-                Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
-                c.setBackground(Constants.DS_BACK);
-                DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
-                r.setText("<html><b>" + r.getText() + "</b></html>");
-                return c;
-            }
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+        Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
+        c.setBackground(Constants.DS_BACK);
+        DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
+        r.setText("<html><b>" + r.getText() + "</b></html>");
+        return c;
+        }
         };
 
         for (int i = 0; i < 7; i++) {
-            mHeaderRenderers.add(headerRenderer);
-        }
-
+        mHeaderRenderers.add(headerRenderer);
+        }*/
+        fireRebuildTableEvent();
         // jAttackTable.setDefaultRenderer(Village.class, new VillageCellRenderer());
         jAttackTable.setDefaultEditor(Village.class, new DefaultCellEditor(new JTextField("")));
         jAttackTable.setDefaultRenderer(Village.class, new VillageCellRenderer());
@@ -127,6 +127,36 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
         jArriveTime.setValue(Calendar.getInstance().getTime());
         ((DateEditor) jNewArriveSpinner.getEditor()).getFormat().applyPattern("dd.MM.yy HH:mm:ss");
         jNewArriveSpinner.setValue(Calendar.getInstance().getTime());
+        MouseListener l = new MouseListener() {
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getButton() == MouseEvent.BUTTON3 || e.getButton() == MouseEvent.BUTTON2) {
+                    DoItYourselfAttackTableModel.getSingleton().getPopup().show(jAttackTable, e.getX(), e.getY());
+                    DoItYourselfAttackTableModel.getSingleton().getPopup().requestFocusInWindow();
+                }
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+            }
+        };
+
+        jAttackTable.addMouseListener(l);
+        jScrollPane1.addMouseListener(l);
+
 
         DoItYourselfCountdownThread thread = new DoItYourselfCountdownThread();
         thread.setDaemon(true);
@@ -156,7 +186,7 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
 
         jScrollPane1.getViewport().setBackground(Constants.DS_BACK_LIGHT);
         for (int i = 0; i < jAttackTable.getColumnCount(); i++) {
-            jAttackTable.getColumn(jAttackTable.getColumnName(i)).setHeaderRenderer(mHeaderRenderers.get(i));
+            jAttackTable.getColumn(jAttackTable.getColumnName(i)).setHeaderRenderer(mHeaderRenderer);
         }
         jAttackTable.revalidate();
         jAttackTable.setDefaultRenderer(UnitHolder.class, new UnitCellRenderer());
@@ -1021,6 +1051,19 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
         }
         jAttackTable.repaint();
     }//GEN-LAST:event_fireAdeptEvent
+
+    public void fireRebuildTableEvent() {
+        try {
+            jAttackTable.invalidate();
+            for (int i = 0; i < jAttackTable.getColumnCount(); i++) {
+                jAttackTable.getColumn(jAttackTable.getColumnName(i)).setHeaderRenderer(mHeaderRenderer);
+            }
+            jAttackTable.revalidate();
+            jAttackTable.repaint();
+        } catch (Exception e) {
+            logger.error("Failed to update attacks table", e);
+        }
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jAdeptTimeButton;
     private javax.swing.JButton jAdeptTypeButton;

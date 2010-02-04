@@ -12,23 +12,26 @@ import de.tor.tribes.types.Conquer;
 import de.tor.tribes.types.NoAlly;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
+import de.tor.tribes.ui.DSWorkbenchConquersFrame;
 import de.tor.tribes.ui.DSWorkbenchMainFrame;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.conquer.ConquerManager;
 import de.tor.tribes.util.conquer.ConquerManagerListener;
-import java.awt.Desktop;
 import java.text.SimpleDateFormat;
-import javax.swing.table.AbstractTableModel;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author Charon
  */
-public class ConquersTableModel extends AbstractTableModel {
+public class ConquersTableModel extends AbstractDSWorkbenchTableModel {
 
-    Class[] types = null;
-    String[] colNames = null;
+    private final String PROPERTY_BASE_ID = "conquers.table.model";
+    protected static Class[] types;
+    protected static String[] colNames;
+    protected static List<String> internalNames;
     private static ConquersTableModel SINGLETON = null;
-    // boolean[] columnsVisible = new boolean[9];
 
     public static synchronized ConquersTableModel getSingleton() {
         if (SINGLETON == null) {
@@ -37,26 +40,13 @@ public class ConquersTableModel extends AbstractTableModel {
         return SINGLETON;
     }
 
-    public void setup() {
-        types = new Class[]{
-                    Village.class, String.class, String.class, Tribe.class, Ally.class, Tribe.class, Ally.class, Integer.class, Double.class
-                };
-        colNames = new String[]{
-                    "Dorf", "Kontinent", "Geadelt am", "Verlierer", "Stamm", "Gewinner", "Stamm", "Zustimmung", "Entfernung"
-                };
+    static {
+        types = new Class[]{Village.class, String.class, String.class, Tribe.class, Ally.class, Tribe.class, Ally.class, Integer.class, Double.class};
+        colNames = new String[]{"Dorf", "Kontinent", "Geadelt am", "Verlierer", "Stamm", "Gewinner", "Stamm", "Zustimmung", "Entfernung"};
+        internalNames = Arrays.asList(new String[]{"Dorf", "Kontinent", "Geadelt am", "Verlierer", "Stamm (Verlierer)", "Gewinner", "Stamm (Gewinner)", "Zustimmung", "Entfernung"});
     }
 
     ConquersTableModel() {
-        /*     columnsVisible[0] = true;
-        columnsVisible[1] = false;
-        columnsVisible[2] = true;
-        columnsVisible[3] = true;
-        columnsVisible[4] = true;
-        columnsVisible[5] = false;
-        columnsVisible[6] = true;
-        columnsVisible[7] = true;
-        columnsVisible[8] = true;
-         */
         ConquerManager.getSingleton().addConquerManagerListener(new ConquerManagerListener() {
 
             @Override
@@ -66,60 +56,10 @@ public class ConquersTableModel extends AbstractTableModel {
         });
     }
 
-    /*    protected int getNumber(int col) {
-    int n = col;    // right number to return
-    int i = 0;
-    do {
-    if (!(columnsVisible[i])) {
-    n++;
-    }
-    i++;
-    } while (i < n);
-    // If we are on an invisible column,
-    // we have to go one step further
-    while (!(columnsVisible[n])) {
-    n++;
-    }
-    return n;
-    }*/
     @Override
     public int getRowCount() {
         int cnt = ConquerManager.getSingleton().getConquerCount();
         return cnt;
-    }
-
-    @Override
-    public Class getColumnClass(int columnIndex) {
-        return types[columnIndex];
-    }
-    /* @Override
-    public Class getColumnClass(int columnIndex) {
-    return types[getNumber(columnIndex)];
-    }*/
-
-    @Override
-    public int getColumnCount() {
-        if (types == null) {
-            return 0;
-        }
-        return types.length;
-    }
-    /* public int getColumnCount() {
-    int n = 0;
-    for (int i = 0; i < 9; i++) {
-    if (columnsVisible[i]) {
-    n++;
-    }
-    }
-    return n;
-    }*/
-
-    /*public String getColumnName(int col) {
-    return colNames[getNumber(col)];
-    }*/
-    @Override
-    public String getColumnName(int col) {
-        return colNames[col];
     }
 
     @Override
@@ -129,8 +69,8 @@ public class ConquersTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-       // columnIndex = getNumber(columnIndex);
         Conquer c = ConquerManager.getSingleton().getConquer(rowIndex);
+        columnIndex = getRealColumnId(columnIndex);
         switch (columnIndex) {
             case 0:
                 return DataHolder.getSingleton().getVillagesById().get(c.getVillageID());
@@ -140,7 +80,7 @@ public class ConquersTableModel extends AbstractTableModel {
             }
             case 2: {
                 SimpleDateFormat f = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
-                return f.format((long) c.getTimestamp() * 1000);
+                return f.format(new Date((long) c.getTimestamp() * 1000));
             }
             case 3: {
                 Tribe t = DataHolder.getSingleton().getTribes().get(c.getLoser());
@@ -193,5 +133,30 @@ public class ConquersTableModel extends AbstractTableModel {
 
             }
         }
+    }
+
+    @Override
+    public String getPropertyBaseID() {
+        return PROPERTY_BASE_ID;
+    }
+
+    @Override
+    public Class[] getColumnClasses() {
+        return types;
+    }
+
+    @Override
+    public String[] getColumnNames() {
+        return colNames;
+    }
+
+    @Override
+    public List<String> getInternalColumnNames() {
+        return internalNames;
+    }
+
+    @Override
+    public void doNotifyOnColumnChange() {
+        DSWorkbenchConquersFrame.getSingleton().fireConquersChangedEvent();
     }
 }

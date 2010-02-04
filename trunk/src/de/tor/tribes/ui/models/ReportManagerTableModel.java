@@ -23,6 +23,9 @@ import org.apache.log4j.Logger;
 public class ReportManagerTableModel extends AbstractDSWorkbenchTableModel {
 
     private final String PROPERTY_BASE_ID = "report.table.model";
+    protected static Class[] types;
+    protected static String[] colNames;
+    protected static List<String> internalNames;
     private static Logger logger = Logger.getLogger("ReportTable");
     private String sReportSet = ReportManager.DEFAULT_SET;
     private static ReportManagerTableModel SINGLETON = null;
@@ -60,18 +63,6 @@ public class ReportManagerTableModel extends AbstractDSWorkbenchTableModel {
         return sReportSet;
     }
 
-    @Override
-    public String getColumnName(int col) {
-        //return colNames[col];
-        return colNames[getNumber(col)];
-    }
-
-    @Override
-    public Class getColumnClass(int columnIndex) {
-        return types[getNumber(columnIndex)];
-        //return types[columnIndex];
-    }
-
     public void removeRow(int pRow) {
         ReportManager.getSingleton().removeReport(sReportSet, pRow);
     }
@@ -88,7 +79,7 @@ public class ReportManagerTableModel extends AbstractDSWorkbenchTableModel {
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         ReportSet set = ReportManager.getSingleton().getReportSet(sReportSet);
-        columnIndex = getNumber(columnIndex);
+        columnIndex = getRealColumnId(columnIndex);
         switch (columnIndex) {
             case 0:
                 return set.getReports()[rowIndex];
@@ -110,19 +101,23 @@ public class ReportManagerTableModel extends AbstractDSWorkbenchTableModel {
     }
 
     @Override
-    public List<String> getInternalColumnNames() {
-        System.out.println("GET: " + hashCode() + " - " + internalNames);
-        return internalNames;
-    }
-
-    @Override
     public String getPropertyBaseID() {
         return PROPERTY_BASE_ID;
     }
 
     @Override
+    public Class[] getColumnClasses() {
+        return types;
+    }
+
+    @Override
     public String[] getColumnNames() {
         return colNames;
+    }
+
+    @Override
+    public List<String> getInternalColumnNames() {
+        return internalNames;
     }
 
     @Override

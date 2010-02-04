@@ -17,27 +17,26 @@ import de.tor.tribes.types.TagMapMarker;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.editors.TagMapMarkerCellEditor;
 import de.tor.tribes.ui.models.TagTableModel;
+import de.tor.tribes.ui.renderer.SortableTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.TagMapMarkerRenderer;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.TagToBBCodeFormater;
 import de.tor.tribes.util.tag.TagManager;
-import java.awt.Component;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
-import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import org.apache.log4j.Logger;
@@ -49,7 +48,7 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
 
     private static Logger logger = Logger.getLogger("TagView");
     private static DSWorkbenchTagFrame SINGLETON = null;
-    private List<TableCellRenderer> mHeaderRenderers = null;
+    private TableCellRenderer mHeaderRenderer = null;
 
     /** Creates new form DSWorkbenchTagFrame */
     DSWorkbenchTagFrame() {
@@ -60,32 +59,61 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
         } catch (Exception e) {
             //setting not available
         }
-        mHeaderRenderers = new LinkedList<TableCellRenderer>();
+        mHeaderRenderer = new SortableTableHeaderRenderer();/*new LinkedList<TableCellRenderer>();
 
         DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
 
-            @Override
-            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-                Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
-                c.setBackground(Constants.DS_BACK);
-                DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
-                r.setText("<html><b>" + r.getText() + "</b></html>");
-                return c;
-            }
-        };
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+        Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
+        c.setBackground(Constants.DS_BACK);
+        DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
+        r.setText("<html><b>" + r.getText() + "</b></html>");
+        return c;
+        }
+        };*/
 
         jTagTable.setColumnSelectionAllowed(false);
         jTagTable.setModel(TagTableModel.getSingleton());
         TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>();
         jTagTable.setRowSorter(sorter);
 
-        for (int i = 0; i < 7; i++) {
-            mHeaderRenderers.add(headerRenderer);
-        }
+        /*for (int i = 0; i < jTagTable.getColumnCount(); i++) {
+        mHeaderRenderers.add(mHeaderRenderer);
+        }*/
 
         jTagTable.setDefaultRenderer(TagMapMarker.class, new TagMapMarkerRenderer());
         jTagTable.setDefaultEditor(TagMapMarker.class, new TagMapMarkerCellEditor());
 
+        MouseListener l = new MouseListener() {
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getButton() == MouseEvent.BUTTON3 || e.getButton() == MouseEvent.BUTTON2) {
+                    TagTableModel.getSingleton().getPopup().show(jTagTable, e.getX(), e.getY());
+                    TagTableModel.getSingleton().getPopup().requestFocusInWindow();
+                }
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+            }
+        };
+
+        jTagTable.addMouseListener(l);
+        jScrollPane1.addMouseListener(l);
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
         GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.tag_view", GlobalOptions.getHelpBroker().getHelpSet());
         // </editor-fold>
@@ -98,6 +126,8 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
                 updateTaggedVillageList();
             }
         });
+
+
         pack();
     }
 
@@ -122,10 +152,7 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
         jTagTable.setRowSorter(sorter);
         jScrollPane1.getViewport().setBackground(Constants.DS_BACK_LIGHT);
         //update view
-        for (int i = 0; i < jTagTable.getColumnCount(); i++) {
-            TableColumn column = jTagTable.getColumnModel().getColumn(i);
-            column.setHeaderRenderer(mHeaderRenderers.get(i));
-        }
+        fireRebuildTableEvent();
         jTagTable.revalidate();
         jTagTable.repaint();
     }
@@ -517,6 +544,19 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
         jTaggedVillageList.setModel(model);
     }
 
+    public void fireRebuildTableEvent() {
+        try {
+            jTagTable.invalidate();
+            for (int i = 0; i < jTagTable.getColumnCount(); i++) {
+                jTagTable.getColumn(jTagTable.getColumnName(i)).setHeaderRenderer(mHeaderRenderer);
+            }
+            jTagTable.revalidate();
+            jTagTable.repaint();
+        } catch (Exception e) {
+            logger.error("Failed to update tag table", e);
+        }
+    }
+
     /**
      * @param args the command line arguments
      */
@@ -528,7 +568,6 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
             }
         });
     }
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JDialog jAddTagDialog;
     private javax.swing.JCheckBox jAlwaysOnTopBox;

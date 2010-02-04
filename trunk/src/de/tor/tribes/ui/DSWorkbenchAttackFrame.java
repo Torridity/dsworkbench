@@ -31,6 +31,7 @@ import de.tor.tribes.ui.editors.VillageCellEditor;
 import de.tor.tribes.ui.models.StandardAttackTableModel;
 import de.tor.tribes.ui.renderer.AttackTypeCellRenderer;
 import de.tor.tribes.ui.renderer.ColoredDateCellRenderer;
+import de.tor.tribes.ui.renderer.SortableTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.UnitCellRenderer;
 import de.tor.tribes.ui.renderer.UnitTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.VillageCellRenderer;
@@ -44,6 +45,8 @@ import java.awt.Component;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ItemEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -70,7 +73,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
 
     private static Logger logger = Logger.getLogger("AttackView");
     private static DSWorkbenchAttackFrame SINGLETON = null;
-    private List<DefaultTableCellRenderer> renderers = new LinkedList<DefaultTableCellRenderer>();
+    private DefaultTableCellRenderer mHeaderRenderer = null;
     private NotifyThread mNotifyThread = null;
     private CountdownThread mCountdownThread = null;
 
@@ -104,7 +107,6 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         jAttackTable.getTableHeader().setReorderingAllowed(false);
         sorter.setModel(AttackManagerTableModel.getSingleton());
         jAttackTable.setModel(AttackManagerTableModel.getSingleton());
-        // DataTipManager.get().register(jAttackTable);
         jAttackTable.setRowHeight(20);
         jAttackTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 
@@ -125,22 +127,38 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         });
 
         //instantiate the column renderers
-        for (int i = 0; i < jAttackTable.getColumnCount(); i++) {
-            DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
+        for (int i = 0; i < AttackManagerTableModel.getSingleton().getColumnClasses().length; i++) {
+            mHeaderRenderer = new SortableTableHeaderRenderer();/*new DefaultTableCellRenderer() {
 
-                @Override
-                public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-                    Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
-                    c.setBackground(Constants.DS_BACK);
-                    DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
-                    r.setText("<html><b>" + r.getText() + "</b></html>");
-                    return c;
-                }
-            };
-            jAttackTable.getColumn(jAttackTable.getColumnName(i)).setHeaderRenderer(headerRenderer);
-            renderers.add(headerRenderer);
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+            c.setBackground(Constants.DS_BACK);
+            DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
+            r.setText("<html><b>" + r.getText() + "</b></html>");
+            List<? extends SortKey> sortKeys = table.getRowSorter().getSortKeys();
+
+            try {
+            SortKey key = sortKeys.get(0);
+            if (column == key.getColumn()) {
+            Icon ascIcon = UIManager.getIcon("Table.ascendingSortIcon");
+            Icon descIcon = UIManager.getIcon("Table.descendingSortIcon");
+            r.setIcon(key.getSortOrder() == SortOrder.ASCENDING ? ascIcon : descIcon);
+            } else {
+            r.setIcon(null);
+            }
+            } catch (Exception e) {
+            r.setIcon(null);
+            }
+            return r;
+            }
+            };*/
         }
 
+        for (int i = 0; i < jAttackTable.getColumnCount(); i++) {
+            jAttackTable.getColumn(jAttackTable.getColumnName(i)).setHeaderRenderer(mHeaderRenderer);
+        }
+        fireAttacksChangedEvent(null);
 
         jAddPlanDialog.pack();
         jCopyToPlanDialog.pack();
@@ -156,7 +174,35 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         mCountdownThread.start();
 
         jArriveDateField.setEditor(new DateEditor(jArriveDateField, "dd.MM.yy HH:mm:ss"));
+        MouseListener l = new MouseListener() {
 
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getButton() == MouseEvent.BUTTON3 || e.getButton() == MouseEvent.BUTTON2) {
+                    AttackManagerTableModel.getSingleton().getPopup().show(jAttackTable, e.getX(), e.getY());
+                    AttackManagerTableModel.getSingleton().getPopup().requestFocusInWindow();
+                }
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+            }
+        };
+
+        jAttackTable.addMouseListener(l);
+        jScrollPane2.addMouseListener(l);
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
         GlobalOptions.getHelpBroker().enableHelpKey(jSelectionFilterDialog.getRootPane(), "pages.attack_select_filter", GlobalOptions.getHelpBroker().getHelpSet());
         GlobalOptions.getHelpBroker().enableHelpKey(jTimeChangeDialog.getRootPane(), "pages.change_attack_times", GlobalOptions.getHelpBroker().getHelpSet());
@@ -164,11 +210,6 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
 // </editor-fold>
         jStandardAttackDialog.pack();
         pack();
-    }
-
-    protected void updateCountdownSettings() {
-        mCountdownThread.updateSettings();
-        AttackManagerTableModel.getSingleton().updateCountdownSettings();
     }
 
     /** This method is called from within the constructor to
@@ -2596,32 +2637,32 @@ private void fireSendIGMsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
         /*JComboBox box = new JComboBox();
         jAttackTable.setDefaultEditor(Village.class, new DefaultCellEditor(box) {
 
-            @Override
-            public Component getTableCellEditorComponent(
-                    JTable table,
-                    Object value,
-                    boolean isSelected,
-                    int row,
-                    int column) {
-                Village current = (Village) value;
-                Tribe t = current.getTribe();
-                Village[] villages = null;
-                if (t != null) {
-                    //use tribes villages
-                    villages = t.getVillageList();
-                } else {
-                    //use single village (barbarian)
-                    villages = new Village[]{current};
-                }
-                Arrays.sort(villages);
-                DefaultComboBoxModel model = new DefaultComboBoxModel(villages);
-                ((JComboBox) editorComponent).setModel(model);
-                ((JComboBox) editorComponent).setSelectedItem(value);
+        @Override
+        public Component getTableCellEditorComponent(
+        JTable table,
+        Object value,
+        boolean isSelected,
+        int row,
+        int column) {
+        Village current = (Village) value;
+        Tribe t = current.getTribe();
+        Village[] villages = null;
+        if (t != null) {
+        //use tribes villages
+        villages = t.getVillageList();
+        } else {
+        //use single village (barbarian)
+        villages = new Village[]{current};
+        }
+        Arrays.sort(villages);
+        DefaultComboBoxModel model = new DefaultComboBoxModel(villages);
+        ((JComboBox) editorComponent).setModel(model);
+        ((JComboBox) editorComponent).setSelectedItem(value);
 
 
-                return super.getTableCellEditorComponent(table, value,
-                        isSelected, row, column);
-            }
+        return super.getTableCellEditorComponent(table, value,
+        isSelected, row, column);
+        }
         });*/
 
 
@@ -2653,7 +2694,7 @@ private void fireSendIGMsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
         try {
             jAttackTable.invalidate();
             for (int i = 0; i < jAttackTable.getColumnCount(); i++) {
-                jAttackTable.getColumn(jAttackTable.getColumnName(i)).setHeaderRenderer(renderers.get(i));
+                jAttackTable.getColumn(jAttackTable.getColumnName(i)).setHeaderRenderer(mHeaderRenderer);
             }
             jAttackTable.revalidate();
             jAttackTable.repaint();

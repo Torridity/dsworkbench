@@ -15,6 +15,7 @@ import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.editors.ColorChooserCellEditor;
 import de.tor.tribes.ui.editors.VillageCellEditor;
 import de.tor.tribes.ui.renderer.ColorCellRenderer;
+import de.tor.tribes.ui.renderer.SortableTableHeaderRenderer;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
@@ -28,7 +29,6 @@ import java.util.LinkedList;
 import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
-import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -45,7 +45,7 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
 
     private static Logger logger = Logger.getLogger("ChurchView");
     private static DSWorkbenchChurchFrame SINGLETON = null;
-    private List<TableCellRenderer> mHeaderRenderers = null;
+    private TableCellRenderer mHeaderRenderer = null;
 
     public static DSWorkbenchChurchFrame getSingleton() {
         if (SINGLETON == null) {
@@ -63,23 +63,23 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
         } catch (Exception e) {
             //setting not available
         }
-        mHeaderRenderers = new LinkedList<TableCellRenderer>();
+        mHeaderRenderer = new SortableTableHeaderRenderer();
 
-        DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
+        /* DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
 
-            @Override
-            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-                Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
-                c.setBackground(Constants.DS_BACK);
-                DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
-                r.setText("<html><b>" + r.getText() + "</b></html>");
-                return c;
-            }
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+        Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
+        c.setBackground(Constants.DS_BACK);
+        DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
+        r.setText("<html><b>" + r.getText() + "</b></html>");
+        return c;
+        }
         };
 
         for (int i = 0; i < 4; i++) {
-            mHeaderRenderers.add(headerRenderer);
-        }
+        mHeaderRenderers.add(headerRenderer);
+        }*/
 
         jChurchTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 
@@ -295,7 +295,7 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
         jChurchTable.getColumnModel().getColumn(2).setMaxWidth(75);
 
         for (int i = 0; i < jChurchTable.getColumnCount(); i++) {
-            jChurchTable.getColumn(jChurchTable.getColumnName(i)).setHeaderRenderer(mHeaderRenderers.get(i));
+            jChurchTable.getColumn(jChurchTable.getColumnName(i)).setHeaderRenderer(mHeaderRenderer);
         }
 
         TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(ChurchManager.getSingleton().getTableModel());
@@ -314,7 +314,6 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
             }
         });
     }
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;

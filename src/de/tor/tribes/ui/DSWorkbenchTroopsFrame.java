@@ -56,7 +56,7 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
 
     private static Logger logger = Logger.getLogger("TroopsDialog");
     private static DSWorkbenchTroopsFrame SINGLETON = null;
-    private List<DefaultTableCellRenderer> renderers = new LinkedList<DefaultTableCellRenderer>();
+    private DefaultTableCellRenderer mHeaderRenderer = null;
     private List<ImageIcon> mColumnIcons = new LinkedList<ImageIcon>();
     private TroopInfoChartPanel infoPanel = null;
 
@@ -679,7 +679,7 @@ private void fireRelationChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST
         //setup renderer and general view
         jTroopsTable.getTableHeader().setReorderingAllowed(false);
 
-        DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
+        mHeaderRenderer = new DefaultTableCellRenderer() {
 
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
@@ -727,14 +727,12 @@ private void fireRelationChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST
 
         for (int i = 0; i < jTroopsTable.getColumnCount(); i++) {
             TableColumn column = jTroopsTable.getColumnModel().getColumn(i);
-            column.setHeaderRenderer(headerRenderer);
+            column.setHeaderRenderer(mHeaderRenderer);
             if ((i > 2 && i < DataHolder.getSingleton().getUnits().size() + 3)) {
                 column.setWidth(60);
                 column.setPreferredWidth(60);
                 //column.setResizable(false);
             }
-
-            renderers.add(headerRenderer);
         }
 
         buildTagList();
@@ -774,7 +772,7 @@ private void fireRelationChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST
             jTroopsTable.getTableHeader().setReorderingAllowed(false);
 
             for (int i = 0; i < jTroopsTable.getColumnCount(); i++) {
-                jTroopsTable.getColumnModel().getColumn(i).setHeaderRenderer(renderers.get(i));
+                jTroopsTable.getColumnModel().getColumn(i).setHeaderRenderer(mHeaderRenderer);
             }
 
             jTroopsTable.revalidate();

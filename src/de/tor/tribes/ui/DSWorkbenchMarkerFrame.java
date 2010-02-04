@@ -24,6 +24,7 @@ import de.tor.tribes.ui.renderer.MarkerPanelCellRenderer;
 import de.tor.tribes.ui.editors.ColorChooserCellEditor;
 import de.tor.tribes.ui.models.MarkerTableModel;
 import de.tor.tribes.ui.renderer.MapRenderer;
+import de.tor.tribes.ui.renderer.SortableTableHeaderRenderer;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
 import java.awt.Component;
@@ -44,7 +45,7 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
 
     private static Logger logger = Logger.getLogger("MarkerView");
     private static DSWorkbenchMarkerFrame SINGLETON = null;
-    private List<TableCellRenderer> mHeaderRenderers = null;
+    private TableCellRenderer mHeaderRenderer = null;
     // private List<DSWorkbenchFrameListener> mFrameListeners = null;
 
     /** Creates new form DSWorkbenchMarkerFrame */
@@ -57,7 +58,7 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
             //setting not available
         }
 
-      //  GhostGlassPane pane = new GhostGlassPane();
+        //  GhostGlassPane pane = new GhostGlassPane();
         // DragSource dragSource = new DragSource();
         //  DropTarget dropTarget2 = new DropTarget(jMarkerPanel, DnDConstants.ACTION_COPY, new DDropSource(pane));
         // DragGestureRecognizer dragRecognizer1 = dragSource.createDefaultDragGestureRecognizer(jLabel1, DnDConstants.ACTION_COPY, new DDragSource(pane));
@@ -67,22 +68,22 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
         jLabel1.addMouseListener(adapter);
         adapter.addGhostDropListener(this);*/
 
-        mHeaderRenderers = new LinkedList<TableCellRenderer>();
-        DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
+        mHeaderRenderer = new SortableTableHeaderRenderer();
+        /*DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
 
-            @Override
-            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-                Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
-                c.setBackground(Constants.DS_BACK);
-                DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
-                r.setText("<html><b>" + r.getText() + "</b></html>");
-                return c;
-            }
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+        Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
+        c.setBackground(Constants.DS_BACK);
+        DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
+        r.setText("<html><b>" + r.getText() + "</b></html>");
+        return c;
+        }
         };
 
         for (int i = 0; i < 2; i++) {
-            mHeaderRenderers.add(headerRenderer);
-        }
+        mHeaderRenderers.add(headerRenderer);
+        }*/
 
         jMarkerTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 
@@ -583,7 +584,7 @@ private void fireCloseAddRenameDialogEvent(java.awt.event.MouseEvent evt) {//GEN
         jMarkerTable.getColumnModel().getColumn(1).setMaxWidth(75);
 
         for (int i = 0; i < jMarkerTable.getColumnCount(); i++) {
-            jMarkerTable.getColumn(jMarkerTable.getColumnName(i)).setHeaderRenderer(mHeaderRenderers.get(i));
+            jMarkerTable.getColumn(jMarkerTable.getColumnName(i)).setHeaderRenderer(mHeaderRenderer);
         }
 
         TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(MarkerTableModel.getSingleton());

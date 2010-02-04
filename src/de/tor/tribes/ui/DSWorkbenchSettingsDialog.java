@@ -257,22 +257,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             }
         } catch (Exception e) {
         }
-        //live countdown
-        try {
-            String v = GlobalOptions.getProperty("show.live.countdown");
-            if (v == null) {
-                //activate by default on first startup
-                jShowLiveCountdown.setSelected(true);
-                GlobalOptions.addProperty("show.live.countdown", Boolean.toString(true));
-            } else {
-                if (Boolean.parseBoolean(v)) {
-                    jShowLiveCountdown.setSelected(true);
-                }
-            }
-            DSWorkbenchAttackFrame.getSingleton().updateCountdownSettings();
-        } catch (Exception e) {
-        }
-
+       
         //draw attacks by default
         try {
             if (Boolean.parseBoolean(GlobalOptions.getProperty("draw.attacks.by.default"))) {
@@ -2286,8 +2271,6 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         GlobalOptions.addProperty("max.density.troops", jMaxTroopDensity.getText());
         GlobalOptions.addProperty("max.farm.space", jMaxFarmSpace.getText());
         GlobalOptions.addProperty("attack.bbexport.template", jAttackBBExportTemplate.getText());
-        GlobalOptions.addProperty("show.live.countdown", Boolean.toString(jShowLiveCountdown.isSelected()));
-        DSWorkbenchAttackFrame.getSingleton().updateCountdownSettings();
         GlobalOptions.saveProperties();
         if (!checkSettings()) {
             return;

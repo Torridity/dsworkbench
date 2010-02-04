@@ -22,6 +22,7 @@ import de.tor.tribes.ui.renderer.AttackTypeCellRenderer;
 import de.tor.tribes.ui.renderer.DateCellRenderer;
 import de.tor.tribes.ui.renderer.FightReportCellRenderer;
 import de.tor.tribes.ui.renderer.ReportWallCataCellRenderer;
+import de.tor.tribes.ui.renderer.SortableTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.TribeCellRenderer;
 import de.tor.tribes.ui.renderer.VillageCellRenderer;
 import de.tor.tribes.util.Constants;
@@ -47,7 +48,7 @@ import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
+
 import javax.swing.JTable;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionEvent;
@@ -144,7 +145,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
             }
         });
 
-        DefaultTableCellRenderer headRender = new DefaultTableCellRenderer() {
+      /*  DefaultTableCellRenderer headRender = new DefaultTableCellRenderer() {
 
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
@@ -155,8 +156,8 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
                 r.setText("<html><b>" + r.getText() + "</b></html>");
                 return c;
             }
-        };
-        headerRenderer = headRender;
+        };*/
+        headerRenderer = new SortableTableHeaderRenderer();
         fireReportsChangedEvent(null);
 
         jList1.addListSelectionListener(new ListSelectionListener() {
@@ -186,25 +187,10 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         jReportTable.setDefaultRenderer(Tribe.class, new TribeCellRenderer());
         jReportTable.setDefaultRenderer(Village.class, new VillageCellRenderer());
         jReportTable.setDefaultRenderer(Integer.class, new AttackTypeCellRenderer());
-        jReportTable.setDefaultRenderer(Byte.class, new ReportWallCataCellRenderer());
-        /* jReportTable.getColumnModel().getColumn(0).setMinWidth(20);
-        jReportTable.getColumnModel().getColumn(0).setWidth(20);
-        jReportTable.getColumnModel().getColumn(0).setMaxWidth(20);*/
-        jReportTable.setRowHeight(20);
-        /*jReportTable.getColumnModel().getColumn(7).setMinWidth(20);
-        jReportTable.getColumnModel().getColumn(7).setWidth(20);
-        jReportTable.getColumnModel().getColumn(7).setMaxWidth(20);
-        jReportTable.getColumnModel().getColumn(8).setMinWidth(20);
-        jReportTable.getColumnModel().getColumn(8).setWidth(20);
-        jReportTable.getColumnModel().getColumn(8).setMaxWidth(20);
-        jReportTable.getColumnModel().getColumn(9).setMinWidth(20);
-        jReportTable.getColumnModel().getColumn(9).setWidth(20);
-        jReportTable.getColumnModel().getColumn(9).setMaxWidth(20);
-        jReportTable.getColumnModel().getColumn(0).setResizable(false);
-        jReportTable.getColumnModel().getColumn(7).setResizable(false);
-        jReportTable.getColumnModel().getColumn(8).setResizable(false);
-        jReportTable.getColumnModel().getColumn(9).setResizable(false);*/
 
+        jReportTable.setDefaultRenderer(Boolean.class, new ReportWallCataCellRenderer());
+        jReportTable.setDefaultRenderer(Byte.class, new ReportWallCataCellRenderer());
+        jReportTable.setRowHeight(20);
         ReportManager.getSingleton().forceUpdate(null);
         buildReportSetList();
         jReportSetBox.setSelectedItem(ReportManager.DEFAULT_SET);
@@ -1041,7 +1027,6 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
                 JOptionPaneHelper.showWarningBox(jAddReportSetDialog, "Ein Set mit dem angegebenen Namen existiert bereits.\n" +
                         "Bitte wähle einen anderen Namen oder lösche zuerst das bestehende Set.", "Warnung");
                 return;
-
             }
 
             ReportManager.getSingleton().createReportSet(name);

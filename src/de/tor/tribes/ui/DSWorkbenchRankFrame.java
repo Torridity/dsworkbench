@@ -16,6 +16,7 @@ import de.tor.tribes.types.NoAlly;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.renderer.AllyCellRenderer;
+import de.tor.tribes.ui.renderer.SortableTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.TribeCellRenderer;
 import de.tor.tribes.ui.renderer.VillageCellRenderer;
 import de.tor.tribes.util.BrowserCommandSender;
@@ -123,19 +124,19 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame {
 
         //setup sorter, header and numeric renderer
 
-
+        DefaultTableCellRenderer headerRenderer = new SortableTableHeaderRenderer();
         for (int i = 0; i < jRankTable.getColumnCount(); i++) {
-            DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
+            /*new DefaultTableCellRenderer() {
 
-                @Override
-                public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-                    Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
-                    c.setBackground(Constants.DS_BACK);
-                    DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
-                    r.setText("<html><b>" + r.getText() + "</b></html>");
-                    return c;
-                }
-            };
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
+            c.setBackground(Constants.DS_BACK);
+            DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
+            r.setText("<html><b>" + r.getText() + "</b></html>");
+            return c;
+            }
+            };*/
             jRankTable.getColumn(jRankTable.getColumnName(i)).setHeaderRenderer(headerRenderer);
         }
         TableCellRenderer renderer = new TableCellRenderer() {

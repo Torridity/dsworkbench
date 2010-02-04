@@ -536,7 +536,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             DSWorkbenchChurchFrame.getSingleton().setupChurchPanel();
             DSWorkbenchAttackFrame.getSingleton().setupAttackPanel();
             DSWorkbenchTagFrame.getSingleton().setup();
-            ConquersTableModel.getSingleton().setup();
+            ConquersTableModel.getSingleton();
             DSWorkbenchConquersFrame.getSingleton().setupConquersPanel();
             //update troops table and troops view
             TroopsManagerTableModel.getSingleton().setup();
@@ -667,7 +667,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         DSWorkbenchAttackFrame.getSingleton().addFrameListener(this);
         DSWorkbenchMarkerFrame.getSingleton().addFrameListener(this);
         DSWorkbenchChurchFrame.getSingleton().addFrameListener(this);
-        ConquersTableModel.getSingleton().setup();
         DSWorkbenchConquersFrame.getSingleton().addFrameListener(this);
         DSWorkbenchNotepad.getSingleton().addFrameListener(this);
         DSWorkbenchTagFrame.getSingleton().addFrameListener(this);

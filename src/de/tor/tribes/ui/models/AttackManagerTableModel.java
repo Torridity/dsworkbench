@@ -5,30 +5,39 @@
 package de.tor.tribes.ui.models;
 
 import de.tor.tribes.io.UnitHolder;
+import de.tor.tribes.types.Ally;
 import de.tor.tribes.types.Attack;
+import de.tor.tribes.types.BarbarianAlly;
+import de.tor.tribes.types.Barbarians;
+import de.tor.tribes.types.NoAlly;
+import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
+import de.tor.tribes.ui.DSWorkbenchAttackFrame;
 import de.tor.tribes.util.DSCalculator;
-import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.attack.AttackManager;
 import de.tor.tribes.util.attack.AttackManagerListener;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import javax.swing.table.AbstractTableModel;
 import org.apache.log4j.Logger;
 
 /**
  *
  * @author Jejkal
  */
-public class AttackManagerTableModel extends AbstractTableModel {
+public class AttackManagerTableModel extends AbstractDSWorkbenchTableModel {
 
+    private final String PROPERTY_BASE_ID = "attack.table.model";
     private static Logger logger = Logger.getLogger("AttackTable");
-    Class[] types = new Class[]{
-        Village.class, Village.class, UnitHolder.class, Date.class, Date.class, Boolean.class, Integer.class, String.class
-    };
-    String[] colNames = new String[]{
-        "Herkunft", "Ziel", "Einheit", "Abschickzeit", "Ankunftzeit", "Einzeichnen", "Typ", "Verbleibend"
-    };
+    protected static Class[] types;
+    protected static String[] colNames;
+    protected static List<String> internalNames;
+
+    static {
+        types = new Class[]{Tribe.class, Ally.class, Village.class, Tribe.class, Ally.class, Village.class, UnitHolder.class, Date.class, Date.class, Boolean.class, Integer.class, String.class};
+        colNames = new String[]{"Angreifer", "Stamm (Angreifer)", "Herkunft", "Verteidiger", "Stamm (Verteidiger)", "Ziel", "Einheit", "Abschickzeit", "Ankunftzeit", "Einzeichnen", "Typ", "Verbleibend"};
+        internalNames = Arrays.asList(new String[]{"Angreifer", "Stamm (Angreifer)", "Herkunft", "Verteidiger", "Stamm (Verteidiger)", "Ziel", "Einheit", "Abschickzeit", "Ankunftzeit", "Einzeichnen", "Typ", "Countdown"});
+    }
     private String sActiveAttackPlan = AttackManager.DEFAULT_PLAN_ID;
     private static AttackManagerTableModel SINGLETON = null;
 
@@ -59,26 +68,6 @@ public class AttackManagerTableModel extends AbstractTableModel {
         return sActiveAttackPlan;
     }
 
-    public void updateCountdownSettings() {
-        boolean showCountdown = Boolean.parseBoolean(GlobalOptions.getProperty("show.live.countdown"));
-        if (showCountdown) {
-            types = new Class[]{
-                        Village.class, Village.class, UnitHolder.class, Date.class, Date.class, Boolean.class, Integer.class, String.class
-                    };
-            colNames = new String[]{
-                        "Herkunft", "Ziel", "Einheit", "Abschickzeit", "Ankunftzeit", "Einzeichnen", "Typ", "Verbleibend"
-                    };
-        } else {
-            types = new Class[]{
-                        Village.class, Village.class, UnitHolder.class, Date.class, Date.class, Boolean.class, Integer.class
-                    };
-            colNames = new String[]{
-                        "Herkunft", "Ziel", "Einheit", "Abschickzeit", "Ankunftzeit", "Einzeichnen", "Typ"
-                    };
-        }
-        fireTableStructureChanged();
-    }
-
     public void addRow(Object[] row) {
         AttackManager.getSingleton().addAttack((Village) row[0], (Village) row[1], (UnitHolder) row[2], (Date) row[4], sActiveAttackPlan);
     }
@@ -88,18 +77,10 @@ public class AttackManagerTableModel extends AbstractTableModel {
     }
 
     @Override
-    public String getColumnName(int col) {
-        return colNames[col];
-    }
-
-    @Override
-    public Class getColumnClass(int columnIndex) {
-        return types[columnIndex];
-    }
-
-    @Override
     public boolean isCellEditable(int row, int col) {
-        if (col == 7) {
+        col = getRealColumnId(col);
+        if (col == 0 || col == 1 || col == 3 || col == 4 || col == 11) {
+            //attacker, defender and countdown are not editable
             return false;
         }
         return true;
@@ -115,23 +96,59 @@ public class AttackManagerTableModel extends AbstractTableModel {
             } else {
                 return null;
             }
-
+            pCol = getRealColumnId(pCol);
             switch (pCol) {
-                case 0:
-                    return a.getSource();
-                case 1:
-                    return a.getTarget();
+                case 0: {
+                    Tribe attacker = a.getSource().getTribe();
+                    if (attacker == null) {
+                        return Barbarians.getSingleton();
+                    }
+                    return attacker;
+                }
+                case 1: {
+                    Tribe attacker = a.getSource().getTribe();
+                    if (attacker == null) {
+                        return BarbarianAlly.getSingleton();
+                    }
+                    Ally ally = attacker.getAlly();
+                    if (ally == null) {
+                        return NoAlly.getSingleton();
+                    }
+                    return ally;
+                }
                 case 2:
-                    return a.getUnit();
+                    return a.getSource();
                 case 3: {
+                    Tribe defender = a.getTarget().getTribe();
+                    if (defender == null) {
+                        return Barbarians.getSingleton();
+                    }
+                    return defender;
+                }
+                case 4: {
+                    Tribe defender = a.getTarget().getTribe();
+                    if (defender == null) {
+                        return Barbarians.getSingleton();
+                    }
+                    Ally ally = defender.getAlly();
+                    if (ally == null) {
+                        return NoAlly.getSingleton();
+                    }
+                    return ally;
+                }
+                case 5:
+                    return a.getTarget();
+                case 6:
+                    return a.getUnit();
+                case 7: {
                     long sendTime = a.getArriveTime().getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(a.getSource(), a.getTarget(), a.getUnit().getSpeed()) * 1000);
                     return new Date(sendTime);
                 }
-                case 4:
+                case 8:
                     return a.getArriveTime();
-                case 5:
+                case 9:
                     return a.isShowOnMap();
-                case 6:
+                case 10:
                     return a.getType();
                 default:
                     long sendTime = a.getArriveTime().getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(a.getSource(), a.getTarget(), a.getUnit().getSpeed()) * 1000);
@@ -187,8 +204,9 @@ public class AttackManagerTableModel extends AbstractTableModel {
         try {
             String activePlan = getActiveAttackPlan();
             Attack a = AttackManager.getSingleton().getAttackPlan(activePlan).get(pRow);
+            pCol = getRealColumnId(pCol);
             switch (pCol) {
-                case 0: {
+                case 2: {
                     if (pValue == null) {
                         a.setSource(null);
                     } else {
@@ -196,7 +214,7 @@ public class AttackManagerTableModel extends AbstractTableModel {
                     }
                     break;
                 }
-                case 1: {
+                case 5: {
                     if (pValue == null) {
                         a.setTarget(null);
                     } else {
@@ -204,7 +222,7 @@ public class AttackManagerTableModel extends AbstractTableModel {
                     }
                     break;
                 }
-                case 2: {
+                case 6: {
                     if (pValue == null) {
                         a.setUnit(null);
                     } else {
@@ -212,7 +230,7 @@ public class AttackManagerTableModel extends AbstractTableModel {
                     }
                     break;
                 }
-                case 3: {
+                case 7: {
                     if (pValue == null) {
                         a.setArriveTime(null);
                     } else {
@@ -222,7 +240,7 @@ public class AttackManagerTableModel extends AbstractTableModel {
                     }
                     break;
                 }
-                case 4: {
+                case 8: {
                     if (pValue == null) {
                         a.setArriveTime(null);
                     } else {
@@ -230,7 +248,7 @@ public class AttackManagerTableModel extends AbstractTableModel {
                     }
                     break;
                 }
-                case 5: {
+                case 9: {
                     if (pValue == null) {
                         a.setShowOnMap(false);
                     } else {
@@ -238,7 +256,7 @@ public class AttackManagerTableModel extends AbstractTableModel {
                     }
                     break;
                 }
-                case 6: {
+                case 10: {
                     if (pValue == null) {
                         a.setType(Attack.NO_TYPE);
                     } else {
@@ -251,13 +269,32 @@ public class AttackManagerTableModel extends AbstractTableModel {
                     break;
                 }
             }
-        //DSWorkbenchAttackFrame.getSingleton().updateTableUI();
         } catch (Exception e) {
         }
     }
 
     @Override
-    public int getColumnCount() {
-        return types.length;
+    public String getPropertyBaseID() {
+        return PROPERTY_BASE_ID;
+    }
+
+    @Override
+    public Class[] getColumnClasses() {
+        return types;
+    }
+
+    @Override
+    public String[] getColumnNames() {
+        return colNames;
+    }
+
+    @Override
+    public List<String> getInternalColumnNames() {
+        return internalNames;
+    }
+
+    @Override
+    public void doNotifyOnColumnChange() {
+        DSWorkbenchAttackFrame.getSingleton().fireAttacksChangedEvent(null);
     }
 }

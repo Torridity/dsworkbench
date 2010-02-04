@@ -17,6 +17,7 @@ import de.tor.tribes.types.NoTag;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.renderer.DateCellRenderer;
+import de.tor.tribes.ui.renderer.SortableTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.UnitCellRenderer;
 import de.tor.tribes.ui.renderer.UnitListCellRenderer;
 import de.tor.tribes.util.Constants;
@@ -497,11 +498,11 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
                     .addComponent(jLabel9))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jReturnField, javax.swing.GroupLayout.DEFAULT_SIZE, 207, Short.MAX_VALUE)
-                    .addComponent(jArriveField, javax.swing.GroupLayout.DEFAULT_SIZE, 207, Short.MAX_VALUE)
-                    .addComponent(jSourceVillage, javax.swing.GroupLayout.DEFAULT_SIZE, 207, Short.MAX_VALUE)
-                    .addComponent(jTargetVillage, javax.swing.GroupLayout.DEFAULT_SIZE, 207, Short.MAX_VALUE)
-                    .addComponent(jEstSendTime, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 207, Short.MAX_VALUE))
+                    .addComponent(jReturnField, javax.swing.GroupLayout.DEFAULT_SIZE, 209, Short.MAX_VALUE)
+                    .addComponent(jArriveField, javax.swing.GroupLayout.DEFAULT_SIZE, 209, Short.MAX_VALUE)
+                    .addComponent(jSourceVillage, javax.swing.GroupLayout.DEFAULT_SIZE, 209, Short.MAX_VALUE)
+                    .addComponent(jTargetVillage, javax.swing.GroupLayout.DEFAULT_SIZE, 209, Short.MAX_VALUE)
+                    .addComponent(jEstSendTime, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 209, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -560,6 +561,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         jRelationBox.setToolTipText("Verknüpfung der gewählten Dorfgruppen (UND = Dorf muss in allen Gruppen sein, ODER = Dorf muss in mindestens einer Gruppe sein)");
         jRelationBox.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jRelationBox.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/logic_or.png"))); // NOI18N
+        jRelationBox.setOpaque(false);
         jRelationBox.setSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/logic_and.png"))); // NOI18N
 
         jUnitBox.setToolTipText("Langsamste Einheit mit der gegengetimed wird");
@@ -627,8 +629,8 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 448, Short.MAX_VALUE)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 448, Short.MAX_VALUE)))
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 450, Short.MAX_VALUE)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 450, Short.MAX_VALUE)))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(13, 13, 13)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1032,7 +1034,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         jResultTable.setDefaultRenderer(UnitHolder.class, new UnitCellRenderer());
         jResultTable.setDefaultRenderer(Date.class, new DateCellRenderer());
         jResultTable.setRowHeight(20);
-        DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
+        DefaultTableCellRenderer headerRenderer = new SortableTableHeaderRenderer();/*DefaultTableCellRenderer() {
 
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
@@ -1044,7 +1046,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
                 r.setText("<html><b>" + r.getText() + "</b></html>");
                 return c;
             }
-        };
+        };*/
         for (int i = 0; i < jResultTable.getColumnCount(); i++) {
             jResultTable.getColumn(jResultTable.getColumnName(i)).setHeaderRenderer(headerRenderer);
         }

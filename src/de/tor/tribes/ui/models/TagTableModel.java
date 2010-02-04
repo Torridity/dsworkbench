@@ -6,22 +6,30 @@ package de.tor.tribes.ui.models;
 
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.TagMapMarker;
+import de.tor.tribes.ui.DSWorkbenchMarkerFrame;
+import de.tor.tribes.ui.DSWorkbenchTagFrame;
 import de.tor.tribes.ui.MapPanel;
 import de.tor.tribes.util.tag.TagManager;
 import de.tor.tribes.util.tag.TagManagerListener;
-import javax.swing.table.AbstractTableModel;
+import java.io.PushbackReader;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author Jejkal
  */
-public class TagTableModel extends AbstractTableModel {
+public class TagTableModel extends AbstractDSWorkbenchTableModel {
 
-    Class[] types = new Class[]{
-        String.class, Integer.class, TagMapMarker.class, Boolean.class
-    };
-    String[] colNames = new String[]{
-        "Name", "Dörfer", "Kartenmarkierung", "Einzeichnen"
-    };
+    private final String PROPERTY_BASE_ID = "tag.table.model";
+    protected static Class[] types;
+    protected static String[] colNames;
+    protected static List<String> internalNames;
+
+    static {
+        types = new Class[]{String.class, Integer.class, TagMapMarker.class, Boolean.class};
+        colNames = new String[]{"Name", "Dörfer", "Kartenmarkierung", "Einzeichnen"};
+        internalNames = Arrays.asList(new String[]{"Name", "Dörfer", "Kartenmarkierung", "Einzeichnen"});
+    }
     private static TagTableModel SINGLETON = null;
 
     public static synchronized TagTableModel getSingleton() {
@@ -47,11 +55,6 @@ public class TagTableModel extends AbstractTableModel {
         return TagManager.getSingleton().getTags().size();
     }
 
-    @Override
-    public int getColumnCount() {
-        return colNames.length;
-    }
-
     public void addRow(Object[] row) {
         TagManager.getSingleton().addTag((String) row[0]);
     }
@@ -62,17 +65,8 @@ public class TagTableModel extends AbstractTableModel {
     }
 
     @Override
-    public String getColumnName(int col) {
-        return colNames[col];
-    }
-
-    @Override
-    public Class getColumnClass(int columnIndex) {
-        return types[columnIndex];
-    }
-
-    @Override
     public boolean isCellEditable(int row, int col) {
+        col = getRealColumnId(col);
         if (col != 1) {
             return true;
         }
@@ -81,6 +75,7 @@ public class TagTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
+        columnIndex = getRealColumnId(columnIndex);
         switch (columnIndex) {
             case 0: {
                 return TagManager.getSingleton().getTags().get(rowIndex).getName();
@@ -99,6 +94,7 @@ public class TagTableModel extends AbstractTableModel {
 
     @Override
     public void setValueAt(Object value, int rowIndex, int columnIndex) {
+        columnIndex = getRealColumnId(columnIndex);
         switch (columnIndex) {
             case 0: {
                 TagManager.getSingleton().getTags().get(rowIndex).setName((String) value);
@@ -121,5 +117,30 @@ public class TagTableModel extends AbstractTableModel {
         }
         //repaint map
         MapPanel.getSingleton().getMapRenderer().initiateRedraw(0);
+    }
+
+    @Override
+    public String getPropertyBaseID() {
+        return PROPERTY_BASE_ID;
+    }
+
+    @Override
+    public Class[] getColumnClasses() {
+        return types;
+    }
+
+    @Override
+    public String[] getColumnNames() {
+        return colNames;
+    }
+
+    @Override
+    public List<String> getInternalColumnNames() {
+        return internalNames;
+    }
+
+    @Override
+    public void doNotifyOnColumnChange() {
+        DSWorkbenchTagFrame.getSingleton();
     }
 }

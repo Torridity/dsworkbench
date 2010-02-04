@@ -13,6 +13,7 @@ package de.tor.tribes.ui;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.models.DistanceTableModel;
 import de.tor.tribes.ui.renderer.DistanceTableCellRenderer;
+import de.tor.tribes.ui.renderer.SortableTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.VillageCellRenderer;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
@@ -41,7 +42,7 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame {
 
     private static Logger logger = Logger.getLogger("DistanceFrame");
     private static DSWorkbenchDistanceFrame SINGLETON = null;
-    private List<DefaultTableCellRenderer> renderers = new LinkedList<DefaultTableCellRenderer>();
+    private DefaultTableCellRenderer headerRenderer = null;
     private DistanceTableCellRenderer cellRenderer = null;
 
     public static synchronized DSWorkbenchDistanceFrame getSingleton() {
@@ -70,7 +71,8 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame {
         jDistanceTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(DistanceTableModel.getSingleton());
         jDistanceTable.setRowSorter(sorter);
-        DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
+        headerRenderer = new SortableTableHeaderRenderer();
+        /*DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
 
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
@@ -80,7 +82,7 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame {
                 r.setHorizontalAlignment(JLabel.CENTER);
                 return r;
             }
-        };
+        };*/
 
         int w0 = 100;
         try {
@@ -109,7 +111,7 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame {
                 }
                 // column.setPreferredWidth(w);
             }
-            renderers.add(headerRenderer);
+           // renderers.add(headerRenderer);
         }
 
         jDistanceTable.setModel(DistanceTableModel.getSingleton());

@@ -7,7 +7,6 @@ package de.tor.tribes.ui.models;
 import de.tor.tribes.util.GlobalOptions;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.io.NotSerializableException;
 import java.util.List;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JPopupMenu;
@@ -19,17 +18,17 @@ import javax.swing.table.AbstractTableModel;
  */
 public abstract class AbstractDSWorkbenchTableModel extends AbstractTableModel {
 
-    protected static Class[] types;
-    protected static String[] colNames;
-    protected static List<String> internalNames;
+   
     private boolean[] visibleColumns = null;
     private JPopupMenu popup = null;
 
-    public abstract List<String> getInternalColumnNames();
-
     public abstract String getPropertyBaseID();
 
+    public abstract Class[] getColumnClasses();
+
     public abstract String[] getColumnNames();
+
+    public abstract List<String> getInternalColumnNames();
 
     public abstract void doNotifyOnColumnChange();
 
@@ -40,11 +39,12 @@ public abstract class AbstractDSWorkbenchTableModel extends AbstractTableModel {
     }
 
     private void checkStaticImplementation() throws UnsupportedOperationException {
-        if (types == null || colNames == null || internalNames == null) {
+        if (getColumnClasses() == null || getColumnNames() == null || getInternalColumnNames() == null) {
             throw new UnsupportedOperationException("Static initialization not implemented yet");
         }
     }
 
+    /**Fill the array of visible cols*/
     private void loadVisibilityState() {
         String cols = GlobalOptions.getProperty(getPropertyBaseID() + ".visible.cols");
         int cnt = 0;
@@ -70,6 +70,7 @@ public abstract class AbstractDSWorkbenchTableModel extends AbstractTableModel {
         saveVisibilityState();
     }
 
+    /**Save the property holding the array of visible cols*/
     private void saveVisibilityState() {
         String colData = "";
         for (boolean col : visibleColumns) {
@@ -79,6 +80,7 @@ public abstract class AbstractDSWorkbenchTableModel extends AbstractTableModel {
         GlobalOptions.addProperty(getPropertyBaseID() + ".visible.cols", colData);
     }
 
+    /**Build the right-click popup to enable/disable columns*/
     private void buildPopup() {
         int cnt = 0;
         popup = new JPopupMenu("Angezeigte Spalten");
@@ -89,8 +91,6 @@ public abstract class AbstractDSWorkbenchTableModel extends AbstractTableModel {
                 @Override
                 public void itemStateChanged(ItemEvent e) {
                     String text = ((JCheckBoxMenuItem) e.getSource()).getText();
-                    System.out.println(getInternalColumnNames());
-                    System.out.println("Getting");
                     int idx = getInternalColumnNames().indexOf(text);
                     visibleColumns[idx] = !visibleColumns[idx];
                     saveVisibilityState();
@@ -103,8 +103,20 @@ public abstract class AbstractDSWorkbenchTableModel extends AbstractTableModel {
         }
     }
 
+    /**Return the right-click popup to register it for a tables ScrollPane and the table itself*/
     public JPopupMenu getPopup() {
         return popup;
+    }
+
+    @Override
+    public String getColumnName(int col) {
+        //return colNames[col];
+        return getColumnNames()[getRealColumnId(col)];
+    }
+
+    @Override
+    public Class getColumnClass(int columnIndex) {
+        return getColumnClasses()[getRealColumnId(columnIndex)];
     }
 
     @Override
@@ -118,7 +130,8 @@ public abstract class AbstractDSWorkbenchTableModel extends AbstractTableModel {
         return n;
     }
 
-    protected int getNumber(int col) {
+    /**Get the real column number in respect to (in-)visible columns*/
+    protected int getRealColumnId(int col) {
         int n = col;    // right number to return
         int i = 0;
         do {

@@ -7,31 +7,33 @@ package de.tor.tribes.ui.models;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.Village;
+import de.tor.tribes.ui.DSWorkbenchDoItYourselfAttackPlaner;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.attack.AttackManager;
 import de.tor.tribes.util.parser.VillageParser;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
-import javax.swing.table.AbstractTableModel;
 
 /**
  *
  * @author Torridity
  */
-public class DoItYourselfAttackTableModel extends AbstractTableModel {
+public class DoItYourselfAttackTableModel extends AbstractDSWorkbenchTableModel {
 
+    private final String PROPERTY_BASE_ID = "manual.attack.planer.table.model";
     private static Logger logger = Logger.getLogger("DoItYourselfAttackTable");
-    Class[] types = new Class[]{
-        Integer.class, UnitHolder.class, Village.class, Village.class, Date.class, Date.class, String.class
-    };
-    String[] colNames = new String[]{
-        "Angriffstyp", "Einheit", "Herkunft", "Ziel", "Abschickzeit", "Ankunftzeit", "Verbleibend"
-    };
+    protected static Class[] types;
+    protected static String[] colNames;
+    protected static List<String> internalNames;
+
+    static {
+        types = new Class[]{Integer.class, UnitHolder.class, Village.class, Village.class, Date.class, Date.class, String.class};
+        colNames = new String[]{"Angriffstyp", "Einheit", "Herkunft", "Ziel", "Abschickzeit", "Ankunftzeit", "Verbleibend"};
+        internalNames = Arrays.asList(new String[]{"Angriffstyp", "Einheit", "Herkunft", "Ziel", "Abschickzeit", "Ankunftzeit", "Countdown"});
+    }
     private static DoItYourselfAttackTableModel SINGLETON = null;
-    //  private List<Attack> mAttacks = null;
 
     public static synchronized DoItYourselfAttackTableModel getSingleton() {
         if (SINGLETON == null) {
@@ -63,22 +65,8 @@ public class DoItYourselfAttackTableModel extends AbstractTableModel {
     }
 
     @Override
-    public int getColumnCount() {
-        return types.length;
-    }
-
-    @Override
-    public String getColumnName(int col) {
-        return colNames[col];
-    }
-
-    @Override
-    public Class getColumnClass(int columnIndex) {
-        return types[columnIndex];
-    }
-
-    @Override
     public boolean isCellEditable(int row, int col) {
+        col = getRealColumnId(col);
         if (col == 6 || col == 4) {
             return false;
         }
@@ -94,6 +82,7 @@ public class DoItYourselfAttackTableModel extends AbstractTableModel {
         } else {
             return null;
         }
+        pCol = getRealColumnId(pCol);
         switch (pCol) {
             case 0:
                 return a.getType();
@@ -169,6 +158,7 @@ public class DoItYourselfAttackTableModel extends AbstractTableModel {
         if (attacks == null || attacks.size() == 0 || attacks.size() < pRow) {
             return;
         }
+        pCol = getRealColumnId(pCol);
         switch (pCol) {
             case 0: {
                 attacks.get(pRow).setType((Integer) pValue);
@@ -210,5 +200,30 @@ public class DoItYourselfAttackTableModel extends AbstractTableModel {
             default: {
             }
         }
+    }
+
+    @Override
+    public String getPropertyBaseID() {
+        return PROPERTY_BASE_ID;
+    }
+
+    @Override
+    public Class[] getColumnClasses() {
+        return types;
+    }
+
+    @Override
+    public String[] getColumnNames() {
+        return colNames;
+    }
+
+    @Override
+    public List<String> getInternalColumnNames() {
+        return internalNames;
+    }
+
+    @Override
+    public void doNotifyOnColumnChange() {
+        DSWorkbenchDoItYourselfAttackPlaner.getSingleton().fireRebuildTableEvent();
     }
 }

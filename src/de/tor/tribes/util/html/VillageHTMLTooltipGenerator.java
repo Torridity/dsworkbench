@@ -13,6 +13,7 @@ import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.DSWorkbenchMainFrame;
+import de.tor.tribes.ui.MapPanel;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.conquer.ConquerManager;
@@ -195,6 +196,7 @@ public class VillageHTMLTooltipGenerator {
         VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(pVillage);
         Village current = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage();
         if (holder == null && (current != null && current.equals(pVillage))) {
+            //we have the active user village but no troops
             return "";
         }
 
@@ -230,8 +232,15 @@ public class VillageHTMLTooltipGenerator {
                 }
                 res += "<BR/>\n";
             }
-            if (current != null && !current.equals(pVillage)) {
-                double runtime = DSCalculator.calculateMoveTimeInMinutes(current, pVillage, unit.getSpeed());
+            Village toolSource = MapPanel.getSingleton().getToolSourceVillage();
+            if (toolSource == null) {
+                if (current != null && !current.equals(pVillage)) {
+                    double runtime = DSCalculator.calculateMoveTimeInMinutes(current, pVillage, unit.getSpeed());
+                    res += "<i>" + DSCalculator.formatTimeInMinutes(runtime) + "</i>";
+                }
+            } else {
+                //tool source village is not null
+                double runtime = DSCalculator.calculateMoveTimeInMinutes(toolSource, pVillage, unit.getSpeed());
                 res += "<i>" + DSCalculator.formatTimeInMinutes(runtime) + "</i>";
             }
             res += "</div>";

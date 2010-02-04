@@ -143,10 +143,6 @@ public class MapPanel extends JPanel {
         return markedVillages;
     }
 
-    public void initBuffer() {
-        //  createBufferStrategy(2);
-    }
-
     public synchronized void addMapPanelListener(MapPanelListener pListener) {
         mMapPanelListeners.add(pListener);
     }
@@ -753,6 +749,10 @@ public class MapPanel extends JPanel {
     int dy = 0 - (int) b.getY();
     return new Rectangle(0, 0, (int) b.getWidth() - dx, (int) b.getHeight() - dy);
     }*/
+
+    public Village getToolSourceVillage() {
+        return mSourceVillage;
+    }
 
     public MapRenderer getMapRenderer() {
         return mMapRenderer;
@@ -1727,7 +1727,7 @@ public class MapPanel extends JPanel {
         } catch (Exception e) {
             //failed getting village (probably getting mousepos failed)
         }
-      
+
         return null;
     }
 

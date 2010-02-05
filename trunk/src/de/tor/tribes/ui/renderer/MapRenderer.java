@@ -33,11 +33,9 @@ import de.tor.tribes.util.algo.ChurchRangeCalculator;
 import de.tor.tribes.util.attack.AttackManager;
 import de.tor.tribes.util.church.ChurchManager;
 import de.tor.tribes.util.conquer.ConquerManager;
-import de.tor.tribes.util.html.FightReportHTMLToolTipGenerator;
 import de.tor.tribes.util.map.FormManager;
 import de.tor.tribes.util.mark.MarkerManager;
 import de.tor.tribes.util.note.NoteManager;
-import de.tor.tribes.util.report.ReportManager;
 import de.tor.tribes.util.tag.TagManager;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
@@ -86,11 +84,10 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
+import javax.swing.JList;
 import javax.swing.JToolTip;
 import javax.swing.Popup;
 import javax.swing.PopupFactory;
-import javax.swing.plaf.basic.BasicHTML;
-import javax.swing.text.View;
 import org.apache.log4j.Logger;
 
 /**Map Renderer which supports "dirty layers" defining which layer has to be redrawn.<BR/>
@@ -448,7 +445,6 @@ public class MapRenderer extends Thread {
                 g2d.fillRect(0, 0, wb, hb);
                 g2d.setComposite(c);
             }
-
         }
 
         //disable decoration if field size is not equal the decoration texture size
@@ -826,6 +822,7 @@ public class MapRenderer extends Thread {
         }
         g2d.setStroke(s);
         //</editor-fold>
+
         g2d.dispose();
     }
 
@@ -1962,6 +1959,122 @@ public class MapRenderer extends Thread {
             g2d.setColor(cBefore);
         }
 
+
+        //ruler drawing
+        Hashtable<Color, Rectangle> vertRulerParts = new Hashtable<Color, Rectangle>();
+        Hashtable<Color, Rectangle> horRulerParts = new Hashtable<Color, Rectangle>();
+        double xVillage = Math.floor(viewStartPoint.x);
+        double yVillage = Math.floor(viewStartPoint.y);
+        double rulerStart = -1 * width * (viewStartPoint.x - xVillage);
+        double rulerEnd = -1 * height * (viewStartPoint.y - yVillage);
+        Composite com = g2d.getComposite();
+        Color c = g2d.getColor();
+        for (int i = 0; i < mVisibleVillages.length; i++) {
+            for (int j = 0; j < mVisibleVillages[0].length; j++) {
+                if (i == 0) {
+                    //draw vertical ruler
+                    if ((yVillage + j) % 2 == 0) {
+                        g2d.setColor(Constants.DS_BACK_LIGHT);
+                    } else {
+                        g2d.setColor(Constants.DS_BACK);
+                    }
+                    Rectangle rulerPart = vertRulerParts.get(g2d.getColor());
+                    if (rulerPart == null) {
+                        rulerPart = new Rectangle(0, (int) Math.floor(rulerEnd) + j * height, width, height);
+                        if (MapPanel.getSingleton().getBounds().contains(rulerPart)) {
+                            vertRulerParts.put(g2d.getColor(), rulerPart);
+                        }
+                        if (g2d.getColor() == Constants.DS_BACK) {
+                            g2d.fill3DRect(0, (int) Math.floor(rulerEnd) + j * height, width, height, true);
+                        } else {
+                            g2d.fillRect(0, (int) Math.floor(rulerEnd) + j * height, width, height);
+                        }
+                    } else {
+                        g2d.copyArea(rulerPart.x, rulerPart.y, rulerPart.width, rulerPart.height, (int) Math.floor(rulerStart) - rulerPart.x, (int) Math.floor(rulerEnd) + j * height - rulerPart.y);
+                    }
+                    if (mouseVillage != null && mouseVillage.getY() == (yVillage + j)) {
+                        g2d.setColor(Color.YELLOW);
+                        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
+                        g2d.fillRect(0, rulerPart.y, rulerPart.width, rulerPart.height);
+                        g2d.setComposite(com);
+                    }
+                }
+                if (j == mVisibleVillages[0].length - 1) {
+                    //draw horizontal ruler
+                    if ((xVillage + i) % 2 == 0) {
+                        g2d.setColor(Constants.DS_BACK_LIGHT);
+                    } else {
+                        g2d.setColor(Constants.DS_BACK);
+                    }
+                    Rectangle rulerPart = horRulerParts.get(g2d.getColor());
+                    if (rulerPart == null) {
+                        rulerPart = new Rectangle((int) Math.floor(rulerStart) + i * width, 0, width, height);
+                        if (MapPanel.getSingleton().getBounds().contains(rulerPart)) {
+                            horRulerParts.put(g2d.getColor(), rulerPart);
+                        }
+                        if (g2d.getColor() == Constants.DS_BACK) {
+                            g2d.fill3DRect((int) Math.floor(rulerStart) + i * width, 0, width, height, true);
+                        } else {
+                            g2d.fillRect((int) Math.floor(rulerStart) + i * width, 0, width, height);
+                        }
+                    } else {
+                        g2d.copyArea(rulerPart.x, rulerPart.y, rulerPart.width, rulerPart.height, (int) Math.floor(rulerStart) + i * width - rulerPart.x, (int) Math.floor(rulerEnd) - rulerPart.y);
+                    }
+                    if (mouseVillage != null && mouseVillage.getX() == (xVillage + i)) {
+                        g2d.setColor(Color.YELLOW);
+                        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
+                        g2d.fillRect(rulerPart.x, 0, rulerPart.width, rulerPart.height);
+                        g2d.setComposite(com);
+                    }
+                }
+            }
+        }
+        g2d.setComposite(com);
+        g2d.setColor(Color.BLACK);
+        for (int i = 0; i < mVisibleVillages.length; i++) {
+            for (int j = 0; j < mVisibleVillages[0].length; j++) {
+                if (i == 0 && j != 0) {
+                    //draw vertical values
+                    if ((yVillage + j) % 2 == 0) {
+                        g2d.setColor(Color.DARK_GRAY);
+                    } else {
+                        g2d.setColor(Color.BLACK);
+                    }
+                    String coord = Integer.toString((int) yVillage + j);
+                    double w = g2d.getFontMetrics().getStringBounds(coord, g2d).getWidth();
+                    double fact = (double) (width - 2) / w;
+                    AffineTransform f = g2d.getTransform();
+                    AffineTransform t = AffineTransform.getTranslateInstance(0, (int) Math.floor(rulerEnd) + j * height);
+                    t.scale(fact, 1);
+                    g2d.setTransform(t);
+                    g2d.drawString(coord, 1, height - 2);
+                    g2d.setTransform(f);
+                } else if (i != 0 && j == 0) {
+                    //draw horizontal values
+                    String coord = Integer.toString((int) xVillage + i);
+                    double w = g2d.getFontMetrics().getStringBounds(coord, g2d).getWidth();
+                    double fact = (double) (width - 2) / w;
+                    int dy = -2;
+                    if ((xVillage + i) % 2 == 0) {
+                        g2d.setColor(Color.DARK_GRAY);
+                    } else {
+                        g2d.setColor(Color.BLACK);
+                    }
+                    //System.out.println("Fac " + fact);
+                    AffineTransform f = g2d.getTransform();
+                    AffineTransform t = AffineTransform.getTranslateInstance((int) Math.floor(rulerStart) + i * width, height);
+                    t.scale(fact, 1);
+                    g2d.setTransform(t);
+                    g2d.drawString(coord, 1, dy);
+                    g2d.setTransform(f);
+
+                }
+            }
+        }
+        //insert 'stopper'
+        g2d.setColor(Constants.DS_BACK);
+        g2d.fill3DRect(0, 0, width, height, true);
+        g2d.setColor(c);
 
         // g2d.setComposite(c);
         /*  if (Boolean.parseBoolean(GlobalOptions.getProperty("show.map.popup"))) {

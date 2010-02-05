@@ -462,7 +462,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             jHighlightTribeVillages.setSelected(true);
             GlobalOptions.addProperty("highlight.tribes.villages", Boolean.toString(true));
         }
-        
+
         try {
             jRadarSpinner.setEditor(new JSpinner.DateEditor(jRadarSpinner, "HH'h' mm'min'"));
             String val = GlobalOptions.getProperty("radar.size");
@@ -513,6 +513,20 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         // </editor-fold>
         //update online state
         onlineStateChanged();
+    }
+    boolean map = true;
+
+    public void switchPanel() {
+        if (map) {
+            jPanel1.remove(MapPanel.getSingleton());
+            jPanel1.add(jCustomPanel);
+            map = false;
+        } else {
+            jPanel1.remove(jCustomPanel);
+            jPanel1.add(MapPanel.getSingleton());
+            map = true;
+        }
+        jPanel1.repaint();
     }
 
     public String[] getCurrentPosition() {
@@ -890,6 +904,10 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jROIPosition = new javax.swing.JComboBox();
         jAddNewROIButton = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
+        jCustomPanel = new javax.swing.JPanel();
+        jScrollPane5 = new javax.swing.JScrollPane();
+        jTable1 = new javax.swing.JTable();
+        jButton4 = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         jMinimapPanel = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
@@ -1229,6 +1247,47 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane5.setViewportView(jTable1);
+
+        jButton4.setText(bundle.getString("DSWorkbenchMainFrame.jButton4.text")); // NOI18N
+        jButton4.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                switchPanel(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jCustomPanelLayout = new javax.swing.GroupLayout(jCustomPanel);
+        jCustomPanel.setLayout(jCustomPanelLayout);
+        jCustomPanelLayout.setHorizontalGroup(
+            jCustomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jCustomPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jCustomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 552, Short.MAX_VALUE)
+                    .addComponent(jButton4))
+                .addContainerGap())
+        );
+        jCustomPanelLayout.setVerticalGroup(
+            jCustomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jCustomPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 445, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jButton4)
+                .addContainerGap())
+        );
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle(bundle.getString("DSWorkbenchMainFrame.title")); // NOI18N
         setBackground(new java.awt.Color(225, 213, 190));
@@ -1461,7 +1520,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                 .addGroup(jNavigationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jRefreshButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jCenterCoordinateIngame, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(13, Short.MAX_VALUE))
+                .addContainerGap(11, Short.MAX_VALUE))
         );
         jNavigationPanelLayout.setVerticalGroup(
             jNavigationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1583,13 +1642,13 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jInformationPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jCurrentPlayer, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 219, Short.MAX_VALUE)
-                    .addComponent(jCurrentPlayerVillages, javax.swing.GroupLayout.Alignment.LEADING, 0, 219, Short.MAX_VALUE)
+                    .addComponent(jCurrentPlayer, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 217, Short.MAX_VALUE)
+                    .addComponent(jCurrentPlayerVillages, javax.swing.GroupLayout.Alignment.LEADING, 0, 217, Short.MAX_VALUE)
                     .addGroup(jInformationPanelLayout.createSequentialGroup()
                         .addComponent(jCurrentToolLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 91, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 89, Short.MAX_VALUE)
                         .addComponent(jCenterIngameButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jOnlineLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -1722,7 +1781,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                             .addComponent(jLayerUpButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLayerDownButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addComponent(jShowMapPopup, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(17, Short.MAX_VALUE))
+                .addContainerGap(15, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -3044,6 +3103,10 @@ private void fireHighlightTribeVillagesChangedEvent(javax.swing.event.ChangeEven
     GlobalOptions.addProperty("highlight.tribes.villages", Boolean.toString(jHighlightTribeVillages.isSelected()));
 }//GEN-LAST:event_fireHighlightTribeVillagesChangedEvent
 
+private void switchPanel(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_switchPanel
+    switchPanel();
+}//GEN-LAST:event_switchPanel
+
     private void propagateLayerOrder() {
         DefaultListModel model = ((DefaultListModel) jLayerList.getModel());
 
@@ -3323,6 +3386,7 @@ private void fireHighlightTribeVillagesChangedEvent(javax.swing.event.ChangeEven
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jCancelExportButton;
     private javax.swing.JButton jCenterCoordinateIngame;
@@ -3333,6 +3397,7 @@ private void fireHighlightTribeVillagesChangedEvent(javax.swing.event.ChangeEven
     private javax.swing.JLabel jCurrentPlayer;
     private javax.swing.JComboBox jCurrentPlayerVillages;
     private javax.swing.JLabel jCurrentToolLabel;
+    private javax.swing.JPanel jCustomPanel;
     private javax.swing.JMenuItem jDistanceItem;
     private javax.swing.JMenuItem jDoItYourselfAttackPlanerItem;
     private javax.swing.JButton jExportButton;
@@ -3399,6 +3464,7 @@ private void fireHighlightTribeVillagesChangedEvent(javax.swing.event.ChangeEven
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JMenuItem jSearchItem;
     private javax.swing.JMenuItem jSelectionOverviewItem;
     private javax.swing.JSeparator jSeparator1;
@@ -3416,6 +3482,7 @@ private void fireHighlightTribeVillagesChangedEvent(javax.swing.event.ChangeEven
     private javax.swing.JCheckBoxMenuItem jShowTagFrame;
     private javax.swing.JCheckBoxMenuItem jShowTroopsFrame;
     private javax.swing.JMenuItem jStartAStarItem;
+    private javax.swing.JTable jTable1;
     private com.l2fprod.common.swing.JTaskPane jTaskPane1;
     private com.l2fprod.common.swing.JTaskPaneGroup jTaskPaneGroup1;
     private com.l2fprod.common.swing.JTaskPaneGroup jTaskPaneGroup2;

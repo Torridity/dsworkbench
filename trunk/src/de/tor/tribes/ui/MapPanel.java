@@ -198,6 +198,8 @@ public class MapPanel extends JPanel {
                         jVillageActionsMenu.show(MapPanel.getSingleton(), e.getX(), e.getY());
                     }
                     return;
+                }else{
+                    DSWorkbenchMainFrame.getSingleton().switchPanel();
                 }
 
                 if (e.getButton() == MouseEvent.BUTTON1 && shiftDown) {

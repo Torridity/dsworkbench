@@ -63,6 +63,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.Properties;
 import java.util.Vector;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListCellRenderer;
@@ -78,6 +79,7 @@ import javax.swing.table.DefaultTableModel;
 
 /**
  * @TODO (1.5?) Add min number to troop filter in attack planer????
+ * @TODO (DIFF) Main size stored
  * @author  Charon
  */
 public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
@@ -115,6 +117,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jAddROIDialog.pack();
         mAbout = new AboutDialog(this, true);
         mAbout.pack();
+
         // <editor-fold defaultstate="collapsed" desc=" Register ShutdownHook ">
 
         Runtime.getRuntime().addShutdownHook(new MainShutdownHook());
@@ -462,6 +465,18 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             jHighlightTribeVillages.setSelected(true);
             GlobalOptions.addProperty("highlight.tribes.villages", Boolean.toString(true));
         }
+        try {
+            String val = GlobalOptions.getProperty("show.ruler");
+            if (val == null) {
+                jShowRuler.setSelected(true);
+                GlobalOptions.addProperty("show.ruler", Boolean.toString(true));
+            } else {
+                jShowRuler.setSelected(Boolean.parseBoolean(val));
+            }
+        } catch (Exception e) {
+            jShowRuler.setSelected(true);
+            GlobalOptions.addProperty("show.ruler", Boolean.toString(true));
+        }
 
         try {
             jRadarSpinner.setEditor(new JSpinner.DateEditor(jRadarSpinner, "HH'h' mm'min'"));
@@ -513,20 +528,53 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         // </editor-fold>
         //update online state
         onlineStateChanged();
+        restoreProperties();
     }
-    boolean map = true;
+    /* boolean map = true;
 
     public void switchPanel() {
-        if (map) {
-            jPanel1.remove(MapPanel.getSingleton());
-            jPanel1.add(jCustomPanel);
-            map = false;
-        } else {
-            jPanel1.remove(jCustomPanel);
-            jPanel1.add(MapPanel.getSingleton());
-            map = true;
+    if (map) {
+    jPanel1.remove(MapPanel.getSingleton());
+    jPanel1.add(jCustomPanel);
+    map = false;
+    } else {
+    jPanel1.remove(jCustomPanel);
+    jPanel1.add(MapPanel.getSingleton());
+    map = true;
+    }
+    jPanel1.repaint();
+    }*/
+
+    public void storeProperties() {
+        GlobalOptions.addProperty("main.size.width", Integer.toString(getWidth()));
+        GlobalOptions.addProperty("main.size.height", Integer.toString(getHeight()));
+        GlobalOptions.addProperty("navigation.group.expanded", Boolean.toString(jNavigationGroup.isExpanded()));
+        GlobalOptions.addProperty("information.group.expanded", Boolean.toString(jInformationGroup.isExpanded()));
+        GlobalOptions.addProperty("map.group.expanded", Boolean.toString(jMapGroup.isExpanded()));
+        GlobalOptions.addProperty("roi.group.expanded", Boolean.toString(jROIGroup.isExpanded()));
+        GlobalOptions.addProperty("uv.group.expanded", Boolean.toString(jUVGroup.isExpanded()));
+    }
+
+    public void restoreProperties() {
+        try {
+            int width = Integer.parseInt(GlobalOptions.getProperty("main.size.width"));
+            int height = Integer.parseInt(GlobalOptions.getProperty("main.size.height"));
+            setSize(width, height);
+        } catch (Exception e) {
         }
-        jPanel1.repaint();
+        try {
+            jNavigationGroup.setExpanded(Boolean.parseBoolean(GlobalOptions.getProperty("navigation.group.expanded")));
+            jInformationGroup.setExpanded(Boolean.parseBoolean(GlobalOptions.getProperty("information.group.expanded")));
+            jMapGroup.setExpanded(Boolean.parseBoolean(GlobalOptions.getProperty("map.group.expanded")));
+            jROIGroup.setExpanded(Boolean.parseBoolean(GlobalOptions.getProperty("roi.group.expanded")));
+            jUVGroup.setExpanded(Boolean.parseBoolean(GlobalOptions.getProperty("uv.group.expanded")));
+        } catch (Exception e) {
+            jNavigationGroup.setExpanded(false);
+            jInformationGroup.setExpanded(false);
+            jMapGroup.setExpanded(true);
+            jROIGroup.setExpanded(false);
+            jUVGroup.setExpanded(false);
+        }
     }
 
     public String[] getCurrentPosition() {
@@ -729,6 +777,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
     @Override
     public void setVisible(boolean v) {
         logger.info("Setting MainWindow visible");
+
         super.setVisible(v);
         if (v) {
             //only if set to visible
@@ -912,7 +961,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jMinimapPanel = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTaskPane1 = new com.l2fprod.common.swing.JTaskPane();
-        jTaskPaneGroup4 = new com.l2fprod.common.swing.JTaskPaneGroup();
+        jNavigationGroup = new com.l2fprod.common.swing.JTaskPaneGroup();
         jNavigationPanel = new javax.swing.JPanel();
         jMoveE = new javax.swing.JButton();
         jMoveNE = new javax.swing.JButton();
@@ -931,7 +980,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jZoomInButton = new javax.swing.JButton();
         jZoomOutButton = new javax.swing.JButton();
         jCenterCoordinateIngame = new javax.swing.JButton();
-        jTaskPaneGroup1 = new com.l2fprod.common.swing.JTaskPaneGroup();
+        jInformationGroup = new com.l2fprod.common.swing.JTaskPaneGroup();
         jInformationPanel = new javax.swing.JPanel();
         jCurrentPlayerVillages = new javax.swing.JComboBox();
         jCurrentPlayer = new javax.swing.JLabel();
@@ -939,7 +988,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jOnlineLabel = new javax.swing.JLabel();
         jCurrentToolLabel = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
-        jTaskPaneGroup5 = new com.l2fprod.common.swing.JTaskPaneGroup();
+        jMapGroup = new com.l2fprod.common.swing.JTaskPaneGroup();
         jPanel2 = new javax.swing.JPanel();
         jShowMapPopup = new javax.swing.JCheckBox();
         jLabel5 = new javax.swing.JLabel();
@@ -952,13 +1001,14 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jLabel12 = new javax.swing.JLabel();
         jGraphicPacks = new javax.swing.JComboBox();
         jHighlightTribeVillages = new javax.swing.JCheckBox();
-        jTaskPaneGroup2 = new com.l2fprod.common.swing.JTaskPaneGroup();
+        jShowRuler = new javax.swing.JCheckBox();
+        jROIGroup = new com.l2fprod.common.swing.JTaskPaneGroup();
         jPanel3 = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
         jROIBox = new javax.swing.JComboBox();
         jRemoveROIButton = new javax.swing.JButton();
         jAddROIButton = new javax.swing.JButton();
-        jTaskPaneGroup3 = new com.l2fprod.common.swing.JTaskPaneGroup();
+        jUVGroup = new com.l2fprod.common.swing.JTaskPaneGroup();
         jPanel4 = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
         jUVIDField = new javax.swing.JTextField();
@@ -1316,11 +1366,11 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         percentLayout1.setGap(5);
         jTaskPane1.setLayout(percentLayout1);
 
-        jTaskPaneGroup4.setExpanded(false);
-        jTaskPaneGroup4.setTitle(bundle.getString("DSWorkbenchMainFrame.jTaskPaneGroup4.title")); // NOI18N
+        jNavigationGroup.setExpanded(false);
+        jNavigationGroup.setTitle(bundle.getString("DSWorkbenchMainFrame.jNavigationGroup.title")); // NOI18N
         com.l2fprod.common.swing.PercentLayout percentLayout6 = new com.l2fprod.common.swing.PercentLayout();
         percentLayout6.setOrientation(1);
-        jTaskPaneGroup4.getContentPane().setLayout(percentLayout6);
+        jNavigationGroup.getContentPane().setLayout(percentLayout6);
 
         jNavigationPanel.setBackground(new java.awt.Color(239, 235, 223));
 
@@ -1520,7 +1570,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                 .addGroup(jNavigationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jRefreshButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jCenterCoordinateIngame, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(11, Short.MAX_VALUE))
+                .addContainerGap(13, Short.MAX_VALUE))
         );
         jNavigationPanelLayout.setVerticalGroup(
             jNavigationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1563,16 +1613,16 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jTaskPaneGroup4.getContentPane().add(jNavigationPanel);
+        jNavigationGroup.getContentPane().add(jNavigationPanel);
 
-        jTaskPane1.add(jTaskPaneGroup4);
+        jTaskPane1.add(jNavigationGroup);
 
-        jTaskPaneGroup1.setBackground(new java.awt.Color(239, 235, 223));
-        jTaskPaneGroup1.setExpanded(false);
-        jTaskPaneGroup1.setTitle(bundle.getString("DSWorkbenchMainFrame.jTaskPaneGroup1.title")); // NOI18N
+        jInformationGroup.setBackground(new java.awt.Color(239, 235, 223));
+        jInformationGroup.setExpanded(false);
+        jInformationGroup.setTitle(bundle.getString("DSWorkbenchMainFrame.jInformationGroup.title")); // NOI18N
         com.l2fprod.common.swing.PercentLayout percentLayout5 = new com.l2fprod.common.swing.PercentLayout();
         percentLayout5.setOrientation(1);
-        jTaskPaneGroup1.getContentPane().setLayout(percentLayout5);
+        jInformationGroup.getContentPane().setLayout(percentLayout5);
 
         jInformationPanel.setBackground(new java.awt.Color(239, 235, 223));
 
@@ -1642,13 +1692,13 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jInformationPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jCurrentPlayer, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 217, Short.MAX_VALUE)
-                    .addComponent(jCurrentPlayerVillages, javax.swing.GroupLayout.Alignment.LEADING, 0, 217, Short.MAX_VALUE)
+                    .addComponent(jCurrentPlayer, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 219, Short.MAX_VALUE)
+                    .addComponent(jCurrentPlayerVillages, javax.swing.GroupLayout.Alignment.LEADING, 0, 219, Short.MAX_VALUE)
                     .addGroup(jInformationPanelLayout.createSequentialGroup()
                         .addComponent(jCurrentToolLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 89, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 91, Short.MAX_VALUE)
                         .addComponent(jCenterIngameButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jOnlineLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -1670,14 +1720,14 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jTaskPaneGroup1.getContentPane().add(jInformationPanel);
+        jInformationGroup.getContentPane().add(jInformationPanel);
 
-        jTaskPane1.add(jTaskPaneGroup1);
+        jTaskPane1.add(jInformationGroup);
 
-        jTaskPaneGroup5.setTitle(bundle.getString("DSWorkbenchMainFrame.jTaskPaneGroup5.title")); // NOI18N
+        jMapGroup.setTitle(bundle.getString("DSWorkbenchMainFrame.jMapGroup.title")); // NOI18N
         com.l2fprod.common.swing.PercentLayout percentLayout4 = new com.l2fprod.common.swing.PercentLayout();
         percentLayout4.setOrientation(1);
-        jTaskPaneGroup5.getContentPane().setLayout(percentLayout4);
+        jMapGroup.getContentPane().setLayout(percentLayout4);
 
         jPanel2.setBackground(new java.awt.Color(239, 235, 223));
         jPanel2.setMaximumSize(new java.awt.Dimension(100, 281));
@@ -1756,23 +1806,32 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             }
         });
 
+        jShowRuler.setText(bundle.getString("DSWorkbenchMainFrame.jShowRuler.text")); // NOI18N
+        jShowRuler.setToolTipText(bundle.getString("DSWorkbenchMainFrame.jShowRuler.toolTipText")); // NOI18N
+        jShowRuler.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        jShowRuler.setOpaque(false);
+        jShowRuler.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                fireShowRulerChangedEvent(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jHighlightTribeVillages, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel5)
-                        .addGap(10, 10, 10)
-                        .addComponent(jRadarSpinner))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jLabel12)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jGraphicPacks, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jLabel5)
+                        .addGap(10, 10, 10)
+                        .addComponent(jRadarSpinner))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jLabel10)
                         .addGap(14, 14, 14)
                         .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1780,8 +1839,10 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLayerUpButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLayerDownButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(jShowMapPopup, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(15, Short.MAX_VALUE))
+                    .addComponent(jShowRuler, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jHighlightTribeVillages, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jShowMapPopup, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(17, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1794,30 +1855,32 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                 .addComponent(jShowMapPopup)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jHighlightTribeVillages)
-                .addGap(20, 20, 20)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jShowRuler)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
                     .addComponent(jRadarSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel10)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 132, Short.MAX_VALUE)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jLayerUpButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLayerDownButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jLayerDownButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 124, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
-        jTaskPaneGroup5.getContentPane().add(jPanel2);
+        jMapGroup.getContentPane().add(jPanel2);
 
-        jTaskPane1.add(jTaskPaneGroup5);
+        jTaskPane1.add(jMapGroup);
 
-        jTaskPaneGroup2.setExpanded(false);
-        jTaskPaneGroup2.setTitle(bundle.getString("DSWorkbenchMainFrame.jTaskPaneGroup2.title")); // NOI18N
+        jROIGroup.setExpanded(false);
+        jROIGroup.setTitle(bundle.getString("DSWorkbenchMainFrame.jROIGroup.title")); // NOI18N
         com.l2fprod.common.swing.PercentLayout percentLayout2 = new com.l2fprod.common.swing.PercentLayout();
         percentLayout2.setOrientation(1);
-        jTaskPaneGroup2.getContentPane().setLayout(percentLayout2);
+        jROIGroup.getContentPane().setLayout(percentLayout2);
 
         jPanel3.setBackground(new java.awt.Color(239, 235, 223));
         jPanel3.setMaximumSize(new java.awt.Dimension(293, 70));
@@ -1887,15 +1950,15 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                 .addContainerGap())
         );
 
-        jTaskPaneGroup2.getContentPane().add(jPanel3);
+        jROIGroup.getContentPane().add(jPanel3);
 
-        jTaskPane1.add(jTaskPaneGroup2);
+        jTaskPane1.add(jROIGroup);
 
-        jTaskPaneGroup3.setExpanded(false);
-        jTaskPaneGroup3.setTitle(bundle.getString("DSWorkbenchMainFrame.jTaskPaneGroup3.title")); // NOI18N
+        jUVGroup.setExpanded(false);
+        jUVGroup.setTitle(bundle.getString("DSWorkbenchMainFrame.jUVGroup.title")); // NOI18N
         com.l2fprod.common.swing.PercentLayout percentLayout3 = new com.l2fprod.common.swing.PercentLayout();
         percentLayout3.setOrientation(1);
-        jTaskPaneGroup3.getContentPane().setLayout(percentLayout3);
+        jUVGroup.getContentPane().setLayout(percentLayout3);
 
         jPanel4.setBackground(new java.awt.Color(239, 235, 223));
 
@@ -1942,9 +2005,9 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jTaskPaneGroup3.getContentPane().add(jPanel4);
+        jUVGroup.getContentPane().add(jPanel4);
 
-        jTaskPane1.add(jTaskPaneGroup3);
+        jTaskPane1.add(jUVGroup);
 
         jScrollPane2.setViewportView(jTaskPane1);
 
@@ -3104,8 +3167,12 @@ private void fireHighlightTribeVillagesChangedEvent(javax.swing.event.ChangeEven
 }//GEN-LAST:event_fireHighlightTribeVillagesChangedEvent
 
 private void switchPanel(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_switchPanel
-    switchPanel();
+    //  switchPanel();
 }//GEN-LAST:event_switchPanel
+
+private void fireShowRulerChangedEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireShowRulerChangedEvent
+    GlobalOptions.addProperty("show.ruler", Boolean.toString(jShowRuler.isSelected()));
+}//GEN-LAST:event_fireShowRulerChangedEvent
 
     private void propagateLayerOrder() {
         DefaultListModel model = ((DefaultListModel) jLayerList.getModel());
@@ -3410,6 +3477,7 @@ private void switchPanel(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_switc
     private javax.swing.JComboBox jGraphicPacks;
     private javax.swing.JMenuItem jHelpItem;
     private javax.swing.JCheckBox jHighlightTribeVillages;
+    private com.l2fprod.common.swing.JTaskPaneGroup jInformationGroup;
     private javax.swing.JPanel jInformationPanel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
@@ -3425,6 +3493,7 @@ private void switchPanel(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_switc
     private javax.swing.JButton jLayerDownButton;
     private javax.swing.JList jLayerList;
     private javax.swing.JButton jLayerUpButton;
+    private com.l2fprod.common.swing.JTaskPaneGroup jMapGroup;
     private javax.swing.JDialog jMapShotDialog;
     private javax.swing.JTable jMarkerSetExportTable;
     private javax.swing.JMenu jMenu1;
@@ -3446,6 +3515,7 @@ private void switchPanel(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_switc
     private javax.swing.JButton jMoveSE;
     private javax.swing.JButton jMoveSW;
     private javax.swing.JButton jMoveW;
+    private com.l2fprod.common.swing.JTaskPaneGroup jNavigationGroup;
     private javax.swing.JPanel jNavigationPanel;
     private javax.swing.JLabel jOnlineLabel;
     private javax.swing.JPanel jPanel1;
@@ -3453,6 +3523,7 @@ private void switchPanel(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_switc
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JComboBox jROIBox;
+    private com.l2fprod.common.swing.JTaskPaneGroup jROIGroup;
     private javax.swing.JComboBox jROIPosition;
     private javax.swing.JTextField jROIRegion;
     private javax.swing.JTextField jROITextField;
@@ -3478,18 +3549,15 @@ private void switchPanel(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_switc
     private javax.swing.JCheckBoxMenuItem jShowNotepadFrame;
     private javax.swing.JCheckBoxMenuItem jShowRankFrame;
     private javax.swing.JCheckBoxMenuItem jShowReportFrame;
+    private javax.swing.JCheckBox jShowRuler;
     private javax.swing.JCheckBoxMenuItem jShowStatsFrame;
     private javax.swing.JCheckBoxMenuItem jShowTagFrame;
     private javax.swing.JCheckBoxMenuItem jShowTroopsFrame;
     private javax.swing.JMenuItem jStartAStarItem;
     private javax.swing.JTable jTable1;
     private com.l2fprod.common.swing.JTaskPane jTaskPane1;
-    private com.l2fprod.common.swing.JTaskPaneGroup jTaskPaneGroup1;
-    private com.l2fprod.common.swing.JTaskPaneGroup jTaskPaneGroup2;
-    private com.l2fprod.common.swing.JTaskPaneGroup jTaskPaneGroup3;
-    private com.l2fprod.common.swing.JTaskPaneGroup jTaskPaneGroup4;
-    private com.l2fprod.common.swing.JTaskPaneGroup jTaskPaneGroup5;
     private javax.swing.JMenuItem jTribeTribeAttackItem;
+    private com.l2fprod.common.swing.JTaskPaneGroup jUVGroup;
     private javax.swing.JTextField jUVIDField;
     private javax.swing.JToggleButton jUVModeButton;
     private javax.swing.JMenuItem jUnitOverviewItem;

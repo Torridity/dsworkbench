@@ -67,6 +67,7 @@ import org.apache.log4j.Logger;
 
 // -Dsun.java2d.d3d=true -Dsun.java2d.translaccel=true -Dsun.java2d.ddforcevram=true
 /**
+ * @TODO (DIFF) Checked slow countdown refresh!
  * @author  Charon
  */
 public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements AttackManagerListener {
@@ -1582,10 +1583,13 @@ private void fireSendAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:eve
 
     for (Integer selectedRow : selectedRows) {
         int row = jAttackTable.convertRowIndexToModel(selectedRow);
-        Village source = (Village) AttackManagerTableModel.getSingleton().getValueAt(row, 0);
-        Village target = (Village) AttackManagerTableModel.getSingleton().getValueAt(row, 1);
-        int type = (Integer) AttackManagerTableModel.getSingleton().getValueAt(row, 6);
-        BrowserCommandSender.sendTroops(source, target, type);
+        Attack a = AttackManagerTableModel.getSingleton().getAttackAtRow(row);
+        if (a != null) {
+            Village source = a.getSource();
+            Village target = a.getTarget();
+            int type = a.getType();
+            BrowserCommandSender.sendTroops(source, target, type);
+        }
     }
 }//GEN-LAST:event_fireSendAttackEvent
 
@@ -1606,7 +1610,7 @@ private void fireDrawSelectedEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
         for (int r : rows) {
             jAttackTable.invalidate();
             int row = jAttackTable.convertRowIndexToModel(r);
-            AttackManagerTableModel.getSingleton().setValueAt(new Boolean(draw), row, 5);
+            AttackManagerTableModel.getSingleton().getAttackAtRow(row).setShowOnMap(draw);
             jAttackTable.revalidate();
         }
     }
@@ -2701,6 +2705,10 @@ private void fireSendIGMsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
         } catch (Exception e) {
             logger.error("Failed to update attacks table", e);
         }
+    }
+
+    public CountdownThread getCountdownThread() {
+        return mCountdownThread;
     }
 
     protected void updateCountdown() {

@@ -67,6 +67,7 @@ public class MainShutdownHook extends Thread {
             GlobalOptions.addProperty("report.frame.alwaysOnTop", Boolean.toString(DSWorkbenchReportFrame.getSingleton().isAlwaysOnTop()));
             GlobalOptions.addProperty("report.frame.visible", Boolean.toString(DSWorkbenchReportFrame.getSingleton().isVisible()));
             GlobalOptions.addProperty("layer.order", DSWorkbenchMainFrame.getSingleton().getLayerOrder());
+            DSWorkbenchMainFrame.getSingleton().storeProperties();
             logger.debug("Saving global properties");
             GlobalOptions.saveProperties();
             logger.debug("Shutdown finished");

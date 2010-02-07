@@ -18,7 +18,6 @@ import javax.swing.table.AbstractTableModel;
  */
 public abstract class AbstractDSWorkbenchTableModel extends AbstractTableModel {
 
-   
     private boolean[] visibleColumns = null;
     private JPopupMenu popup = null;
 
@@ -30,6 +29,8 @@ public abstract class AbstractDSWorkbenchTableModel extends AbstractTableModel {
 
     public abstract List<String> getInternalColumnNames();
 
+    public abstract boolean[] getEditableColumns();
+
     public abstract void doNotifyOnColumnChange();
 
     public AbstractDSWorkbenchTableModel() {
@@ -39,7 +40,7 @@ public abstract class AbstractDSWorkbenchTableModel extends AbstractTableModel {
     }
 
     private void checkStaticImplementation() throws UnsupportedOperationException {
-        if (getColumnClasses() == null || getColumnNames() == null || getInternalColumnNames() == null) {
+        if (getColumnClasses() == null || getColumnNames() == null || getInternalColumnNames() == null || getEditableColumns() == null) {
             throw new UnsupportedOperationException("Static initialization not implemented yet");
         }
     }
@@ -117,6 +118,12 @@ public abstract class AbstractDSWorkbenchTableModel extends AbstractTableModel {
     @Override
     public Class getColumnClass(int columnIndex) {
         return getColumnClasses()[getRealColumnId(columnIndex)];
+    }
+
+    @Override
+    public boolean isCellEditable(int row, int col) {
+        col = getRealColumnId(col);
+        return getEditableColumns()[col];
     }
 
     @Override

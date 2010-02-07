@@ -24,6 +24,7 @@ import org.jdom.Element;
 
 /**
  * @TODO (2.0) Avoid returning always 0 if no troops are imported
+ * @TODO (2.0) Check why sometimes attacks are not stored
  * @author Charon
  */
 public class StandardAttackManager {
@@ -72,6 +73,7 @@ public class StandardAttackManager {
                 Document d = JaxenUtils.getDocument(attackFile);
                 for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//stdAttacks/type")) {
                     String type = URLDecoder.decode(e.getAttributeValue("name"), "UTF-8");
+                    logger.debug("Adding standard attack for type '" + type + "'");
                     //logger.debug(" * loading standard attacks for type '" + type + "'");
                     List<StandardAttackElement> elements = new LinkedList<StandardAttackElement>();
                     standardAttacks.put(type, elements);
@@ -83,7 +85,7 @@ public class StandardAttackManager {
                         }
 
                         if (element != null) {
-                           // logger.debug("   * adding element for unit '" + element.getUnit() + "'");
+                            // logger.debug("   * adding element for unit '" + element.getUnit() + "'");
                             elements.add(element);
                         }
                     }
@@ -105,7 +107,6 @@ public class StandardAttackManager {
                         }
                     }
                 }
-
                 logger.debug("Standard attacks loaded successfully");
             } catch (Exception e) {
                 logger.error("Failed to load standard attacks", e);
@@ -191,7 +192,10 @@ public class StandardAttackManager {
                 break;
             }
         }
-
+        if (activeList == null) {
+            logger.warn("StdAttack list for type '" + pType + "' is 'null', returning 0");
+            return 0;
+        }
         for (StandardAttackElement elem : activeList) {
             if (elem.affectsUnit(pUnit)) {
                 return elem.getTroopsAmount(pVillage);

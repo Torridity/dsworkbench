@@ -8,7 +8,6 @@ package de.tor.tribes.ui;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Ally;
 import de.tor.tribes.types.Church;
-import de.tor.tribes.types.NoAlly;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.util.BrowserCommandSender;
@@ -105,6 +104,7 @@ public class MapPanel extends JPanel {
         if (SINGLETON == null) {
             SINGLETON = new MapPanel();
         }
+
         return SINGLETON;
     }
 
@@ -130,6 +130,15 @@ public class MapPanel extends JPanel {
         markedVillages = new LinkedList<Village>();
         initListeners();
     }
+
+   /* boolean INIT = false;
+    public BufferStrategy getStrategy() {
+        if (isVisible() && !INIT) {
+            INIT = true;
+            createBufferStrategy(4);
+        }
+        return getBufferStrategy();
+    }*/
 
     public void setSpaceDown(boolean pValue) {
         spaceDown = pValue;
@@ -198,9 +207,9 @@ public class MapPanel extends JPanel {
                         jVillageActionsMenu.show(MapPanel.getSingleton(), e.getX(), e.getY());
                     }
                     return;
-                }else{
+                }/* else {
                     DSWorkbenchMainFrame.getSingleton().switchPanel();
-                }
+                }*/
 
                 if (e.getButton() == MouseEvent.BUTTON1 && shiftDown) {
                     Village v = getVillageAtMousePos();
@@ -1169,7 +1178,7 @@ public class MapPanel extends JPanel {
 
         jVillageActionsMenu.add(jMarkedVillageSubmenu);
 
-        setLayout(null);
+ 
     }// </editor-fold>//GEN-END:initComponents
 
     private void fireVillageExportEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireVillageExportEvent

@@ -20,7 +20,7 @@ public class StandardAttackElement {
 
     public static final String ALL_TROOPS = "Alle";
     private UnitHolder unit = null;
-    private Integer fixedAmount = -1;
+    private Integer fixedAmount = 0;
     private String dynamicAmount = ALL_TROOPS;
 
     public StandardAttackElement(UnitHolder pUnit, Integer pFixedAmout) {
@@ -37,7 +37,11 @@ public class StandardAttackElement {
 
     public static StandardAttackElement fromXml(Element e) throws Exception {
         UnitHolder unit = DataHolder.getSingleton().getUnitByPlainName(e.getAttributeValue("unit"));
-        Integer fixed = e.getAttribute("fixAmount").getIntValue();
+        Integer fixed = 0;
+        try {
+            fixed = e.getAttribute("fixAmount").getIntValue();
+        } catch (Exception ignored) {
+        }
         String dyn = null;
         try {
             dyn = URLDecoder.decode(e.getAttributeValue("dynAmount"), "UTF-8");
@@ -63,7 +67,7 @@ public class StandardAttackElement {
             result = "<attackElement unit=\"" + unit.getPlainName() + "\" fixAmount=\"" + fixedAmount + "\"/>\n";
         } else {
             try {
-                result = "<attackElement unit=\"" + unit.getPlainName() + "\" fixAmount=\"" + fixedAmount + "\" dynAmount=\"" + URLEncoder.encode(dynamicAmount, "UTF-8") + "\"/>\n";
+                result = "<attackElement unit=\"" + unit.getPlainName() + "\" fixAmount=\"-1\" dynAmount=\"" + URLEncoder.encode(dynamicAmount, "UTF-8") + "\"/>\n";
             } catch (Exception e) {
                 result = "<attackElement unit=\"" + unit.getPlainName() + "\" fixAmount=\"" + fixedAmount + "\"/>\n";
             }

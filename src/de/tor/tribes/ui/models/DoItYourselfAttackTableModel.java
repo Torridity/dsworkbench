@@ -27,11 +27,13 @@ public class DoItYourselfAttackTableModel extends AbstractDSWorkbenchTableModel 
     protected static Class[] types;
     protected static String[] colNames;
     protected static List<String> internalNames;
+    protected static boolean[] editableColumns = null;
 
     static {
         types = new Class[]{Integer.class, UnitHolder.class, Village.class, Village.class, Date.class, Date.class, String.class};
         colNames = new String[]{"Angriffstyp", "Einheit", "Herkunft", "Ziel", "Abschickzeit", "Ankunftzeit", "Verbleibend"};
         internalNames = Arrays.asList(new String[]{"Angriffstyp", "Einheit", "Herkunft", "Ziel", "Abschickzeit", "Ankunftzeit", "Countdown"});
+        editableColumns = new boolean[]{true, true, true, true, false, true, false, true, true, false};
     }
     private static DoItYourselfAttackTableModel SINGLETON = null;
 
@@ -62,15 +64,6 @@ public class DoItYourselfAttackTableModel extends AbstractDSWorkbenchTableModel 
 
     public Attack getAttack(int pRow) {
         return AttackManager.getSingleton().getDoItYourselfAttacks().get(pRow);
-    }
-
-    @Override
-    public boolean isCellEditable(int row, int col) {
-        col = getRealColumnId(col);
-        if (col == 6 || col == 4) {
-            return false;
-        }
-        return true;
     }
 
     @Override
@@ -220,6 +213,11 @@ public class DoItYourselfAttackTableModel extends AbstractDSWorkbenchTableModel 
     @Override
     public List<String> getInternalColumnNames() {
         return internalNames;
+    }
+
+    @Override
+    public boolean[] getEditableColumns() {
+        return editableColumns;
     }
 
     @Override

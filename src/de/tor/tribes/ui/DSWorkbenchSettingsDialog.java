@@ -257,12 +257,20 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             }
         } catch (Exception e) {
         }
-       
+
         //draw attacks by default
         try {
             if (Boolean.parseBoolean(GlobalOptions.getProperty("draw.attacks.by.default"))) {
                 jDrawAttacksByDefaultBox.setSelected(true);
             }
+        } catch (Exception e) {
+        }
+        //show live countdown in attack table
+        try {
+            if (Boolean.parseBoolean(GlobalOptions.getProperty("show.live.countdown"))) {
+                jShowLiveCountdown.setSelected(true);
+            }
+            DSWorkbenchAttackFrame.getSingleton().getCountdownThread().updateSettings();
         } catch (Exception e) {
         }
 
@@ -2271,12 +2279,14 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         GlobalOptions.addProperty("max.density.troops", jMaxTroopDensity.getText());
         GlobalOptions.addProperty("max.farm.space", jMaxFarmSpace.getText());
         GlobalOptions.addProperty("attack.bbexport.template", jAttackBBExportTemplate.getText());
+        GlobalOptions.addProperty("show.live.countdown", Boolean.toString(jShowLiveCountdown.isSelected()));
         GlobalOptions.saveProperties();
         if (!checkSettings()) {
             return;
         }
         setVisible(false);
         DSWorkbenchMainFrame.getSingleton().serverSettingsChangedEvent();
+        DSWorkbenchAttackFrame.getSingleton().getCountdownThread().updateSettings();
         MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.ALL_LAYERS);
     }//GEN-LAST:event_fireOkEvent
 

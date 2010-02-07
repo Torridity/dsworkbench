@@ -32,11 +32,25 @@ public class AttackManagerTableModel extends AbstractDSWorkbenchTableModel {
     protected static Class[] types;
     protected static String[] colNames;
     protected static List<String> internalNames;
+    protected static boolean[] editableColumns = null;
+    public final static int ATTACKER_COL = 0;
+    public final static int ATTACKER_ALLY_COL = 1;
+    public final static int SOURCE_COL = 2;
+    public final static int DEFENDER_COL = 3;
+    public final static int DEFENDER_ALLY_COL = 4;
+    public final static int TARGET_COL = 5;
+    public final static int UNIT_COL = 6;
+    public final static int SEND_TIME_COL = 7;
+    public final static int ARRIVE_TIME_COL = 8;
+    public final static int DRAW_COL = 9;
+    public final static int TYPE_COL = 10;
+    public final static int COUNTDOWN_COL = 11;
 
     static {
         types = new Class[]{Tribe.class, Ally.class, Village.class, Tribe.class, Ally.class, Village.class, UnitHolder.class, Date.class, Date.class, Boolean.class, Integer.class, String.class};
         colNames = new String[]{"Angreifer", "Stamm (Angreifer)", "Herkunft", "Verteidiger", "Stamm (Verteidiger)", "Ziel", "Einheit", "Abschickzeit", "Ankunftzeit", "Einzeichnen", "Typ", "Verbleibend"};
         internalNames = Arrays.asList(new String[]{"Angreifer", "Stamm (Angreifer)", "Herkunft", "Verteidiger", "Stamm (Verteidiger)", "Ziel", "Einheit", "Abschickzeit", "Ankunftzeit", "Einzeichnen", "Typ", "Countdown"});
+        editableColumns = new boolean[]{false, false, true, false, false, true, true, true, true, true, true, false};
     }
     private String sActiveAttackPlan = AttackManager.DEFAULT_PLAN_ID;
     private static AttackManagerTableModel SINGLETON = null;
@@ -84,6 +98,15 @@ public class AttackManagerTableModel extends AbstractDSWorkbenchTableModel {
             return false;
         }
         return true;
+    }
+
+    public Attack getAttackAtRow(int pRow) {
+        List<Attack> attacks = AttackManager.getSingleton().getAttackPlan(getActiveAttackPlan());
+        if (attacks.size() > pRow) {
+            return attacks.get(pRow);
+        } else {
+            return null;
+        }
     }
 
     @Override
@@ -291,6 +314,11 @@ public class AttackManagerTableModel extends AbstractDSWorkbenchTableModel {
     @Override
     public List<String> getInternalColumnNames() {
         return internalNames;
+    }
+
+    @Override
+    public boolean[] getEditableColumns() {
+        return editableColumns;
     }
 
     @Override

@@ -2,16 +2,17 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package de.tor.tribes.util.conquer;
 
-import de.tor.tribes.types.Conquer;
+package de.tor.tribes.util.report;
+
+import de.tor.tribes.types.FightReport;
 import de.tor.tribes.util.Filter;
 
 /**
  *
- * @author Charon
+ * @author Torridity
  */
-public interface ConquerFilterInterface extends Filter<Conquer>{
+public interface ReportFilterInterface extends Filter<FightReport>{
 
     public void setup(Object pFilterComponent);
 

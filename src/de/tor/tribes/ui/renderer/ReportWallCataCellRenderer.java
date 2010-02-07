@@ -5,6 +5,7 @@
 package de.tor.tribes.ui.renderer;
 
 import de.tor.tribes.types.FightReport;
+import de.tor.tribes.ui.models.ReportManagerTableModel;
 import java.awt.Component;
 import java.io.File;
 import java.util.LinkedList;
@@ -72,7 +73,7 @@ public class ReportWallCataCellRenderer implements TableCellRenderer {
             }
             }*/
 
-          
+
             byte v = (Byte) value;
             StringBuffer text = new StringBuffer();
             text.append("<html>");
@@ -80,7 +81,8 @@ public class ReportWallCataCellRenderer implements TableCellRenderer {
             tooltip.append("<html>");
             FightReport report = null;
             try {
-                report = (FightReport) table.getValueAt(row, 0);
+                report = ReportManagerTableModel.getSingleton().getReportAtRow(row);
+                //report = (FightReport) table.getValueAt(row, 0);
             } catch (Exception e) {
                 report = null;
             }

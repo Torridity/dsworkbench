@@ -12,6 +12,7 @@ import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.DSWorkbenchSettingsDialog;
 import de.tor.tribes.ui.MapPanel;
+import de.tor.tribes.util.FilterableManager;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
@@ -33,7 +34,7 @@ import org.jdom.Element;
 /**
  * @author Charon
  */
-public class ConquerManager {
+public class ConquerManager extends FilterableManager<Conquer, ConquerFilterInterface> {
 
     private static Logger logger = Logger.getLogger("ConquerManager");
     private static ConquerManager SINGLETON = null;
@@ -41,8 +42,8 @@ public class ConquerManager {
     private List<Conquer> conquers = null;
     private ConquerUpdateThread updateThread = null;
     private List<ConquerManagerListener> mManagerListeners = null;
-    private Conquer[] filteredList = null;
-    private List<ConquerFilterInterface> filters = null;
+    //  private Conquer[] filteredList = null;
+    // private List<ConquerFilterInterface> filters = null;
 
     public static synchronized ConquerManager getSingleton() {
         if (SINGLETON == null) {
@@ -54,7 +55,7 @@ public class ConquerManager {
     ConquerManager() {
         conquers = Collections.synchronizedList(new LinkedList<Conquer>());
         mManagerListeners = new LinkedList<ConquerManagerListener>();
-        filters = new LinkedList<ConquerFilterInterface>();
+        // filters = new LinkedList<ConquerFilterInterface>();
         updateThread = new ConquerUpdateThread();
         updateThread.start();
     }
@@ -72,12 +73,19 @@ public class ConquerManager {
         mManagerListeners.remove(pListener);
     }
 
+    @Override
+    public Conquer[] getUnfilteredElements() {
+        return conquers.toArray(new Conquer[]{});
+    }
+
     public int getConquerCount() {
-        return filteredList.length;
+        //return filteredList.length;
+        return getFilteredElementCount();
     }
 
     public Conquer getConquer(int id) {
-        return filteredList[id];
+        //return filteredList[id];
+        return getFilteredElement(id);
     }
 
     public void forceUpdate() {
@@ -88,41 +96,41 @@ public class ConquerManager {
         }
     }
 
-    public void setFilters(List<ConquerFilterInterface> pFilters) {
-        filters.clear();
-        filters = new LinkedList<ConquerFilterInterface>(pFilters);
-        updateFilters();
-    }
+    /* public void setFilters(List<ConquerFilterInterface> pFilters) {
+    filters.clear();
+    filters = new LinkedList<ConquerFilterInterface>(pFilters);
+    updateFilters();
+    }*/
 
-    public void updateFilters() {
-        Conquer[] aConquers = conquers.toArray(new Conquer[]{});
-        List<Conquer> filtered = new LinkedList<Conquer>();
-        for (Conquer c : aConquers) {
-            if (filters == null || filters.isEmpty()) {
-                //no filters defined        
-                filtered.add(c);
-            } else {
-                //use all filters
-                boolean valid = true;
-                for (ConquerFilterInterface f : filters) {
-                    if (!f.isValid(c)) {
-                        //conquer is invalid for the current filter
-                        valid = false;
-                        break;
-                    }
-                }
-                if (valid) {
-                    //only add if conquer is valid for all filters
-                    filtered.add(c);
-                }
-            }
-        }
-        filteredList = filtered.toArray(new Conquer[]{});
+    /* public void updateFilters() {
+    Conquer[] aConquers = conquers.toArray(new Conquer[]{});
+    List<Conquer> filtered = new LinkedList<Conquer>();
+    for (Conquer c : aConquers) {
+    if (filters == null || filters.isEmpty()) {
+    //no filters defined
+    filtered.add(c);
+    } else {
+    //use all filters
+    boolean valid = true;
+    for (ConquerFilterInterface f : filters) {
+    if (!f.isValid(c)) {
+    //conquer is invalid for the current filter
+    valid = false;
+    break;
     }
-
+    }
+    if (valid) {
+    //only add if conquer is valid for all filters
+    filtered.add(c);
+    }
+    }
+    }
+    filteredList = filtered.toArray(new Conquer[]{});
+    }*/
     public void loadConquersFromFile(String pFile) {
         conquers.clear();
-        filteredList = new Conquer[]{};
+        //filteredList = new Conquer[]{};
+        clearFilteredList();
         if (pFile == null) {
             logger.error("File argument is 'null'");
             return;
@@ -423,8 +431,7 @@ public class ConquerManager {
         int grey = 0;
         int friendly = 0;
         //Conquer[] conquerA = conquers.toArray(new Conquer[]{});
-
-        for (Conquer c : filteredList) {
+        for (Conquer c : getFilteredList()) {
             if (c.getLoser() == 0) {
                 grey++;
             } else {

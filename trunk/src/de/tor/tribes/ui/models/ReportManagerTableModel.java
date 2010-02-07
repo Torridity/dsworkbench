@@ -26,6 +26,7 @@ public class ReportManagerTableModel extends AbstractDSWorkbenchTableModel {
     protected static Class[] types;
     protected static String[] colNames;
     protected static List<String> internalNames;
+    protected static boolean[] editableColumns = null;
     private static Logger logger = Logger.getLogger("ReportTable");
     private String sReportSet = ReportManager.DEFAULT_SET;
     private static ReportManagerTableModel SINGLETON = null;
@@ -34,6 +35,7 @@ public class ReportManagerTableModel extends AbstractDSWorkbenchTableModel {
         internalNames = Arrays.asList(new String[]{"Status", "Gesendet", "Angreifer", "Herkunft", "Verteidiger", "Ziel", "Typ", "Sonstiges"});
         colNames = new String[]{"Status", "Gesendet", "Angreifer", "Herkunft", "Verteidiger", "Ziel", "Typ", "Sonstiges"};
         types = new Class[]{FightReport.class, Date.class, Tribe.class, Village.class, Tribe.class, Village.class, Integer.class, Byte.class};
+        editableColumns = new boolean[]{false, false, false, false, false, false, false, false};
     }
 
     public static synchronized ReportManagerTableModel getSingleton() {
@@ -70,6 +72,13 @@ public class ReportManagerTableModel extends AbstractDSWorkbenchTableModel {
     @Override
     public int getRowCount() {
         return ReportManager.getSingleton().getReportSet(sReportSet).getReports().length;
+    }
+
+
+    public FightReport getReportAtRow(int pRow){
+       ReportSet set = ReportManager.getSingleton().getReportSet(sReportSet);
+    //@TODO Include filter
+       return set.getReports()[pRow];
     }
 
     /* @Override
@@ -118,6 +127,11 @@ public class ReportManagerTableModel extends AbstractDSWorkbenchTableModel {
     @Override
     public List<String> getInternalColumnNames() {
         return internalNames;
+    }
+
+    @Override
+    public boolean[] getEditableColumns() {
+        return editableColumns;
     }
 
     @Override

@@ -24,11 +24,13 @@ public class TagTableModel extends AbstractDSWorkbenchTableModel {
     protected static Class[] types;
     protected static String[] colNames;
     protected static List<String> internalNames;
+    protected static boolean[] editableColumns = null;
 
     static {
         types = new Class[]{String.class, Integer.class, TagMapMarker.class, Boolean.class};
         colNames = new String[]{"Name", "Dörfer", "Kartenmarkierung", "Einzeichnen"};
         internalNames = Arrays.asList(new String[]{"Name", "Dörfer", "Kartenmarkierung", "Einzeichnen"});
+        editableColumns = new boolean[]{true, false, true, true};
     }
     private static TagTableModel SINGLETON = null;
 
@@ -62,15 +64,6 @@ public class TagTableModel extends AbstractDSWorkbenchTableModel {
     public void removeRow(int pRow) {
         Tag t = TagManager.getSingleton().getTags().get(pRow);
         TagManager.getSingleton().removeTag(t);
-    }
-
-    @Override
-    public boolean isCellEditable(int row, int col) {
-        col = getRealColumnId(col);
-        if (col != 1) {
-            return true;
-        }
-        return false;
     }
 
     @Override
@@ -137,6 +130,11 @@ public class TagTableModel extends AbstractDSWorkbenchTableModel {
     @Override
     public List<String> getInternalColumnNames() {
         return internalNames;
+    }
+
+    @Override
+    public boolean[] getEditableColumns() {
+        return editableColumns;
     }
 
     @Override

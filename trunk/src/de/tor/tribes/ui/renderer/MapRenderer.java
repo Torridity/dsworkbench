@@ -184,11 +184,13 @@ public class MapRenderer extends Thread {
     public void initiateRedraw(int pType) {
         mapRedrawRequired = true;
     }
+    long rendered = 0;
 
     /**Render loop*/
     @Override
     public void run() {
         logger.debug("Entering render loop");
+        long sleepTime = 40;
         while (true) {
             try {
                 int w = MapPanel.getSingleton().getWidth();
@@ -310,8 +312,10 @@ public class MapRenderer extends Thread {
                         }
                     }
                     //draw live layer -> always on top
+                    // System.out.println("Norm " + (System.currentTimeMillis() - s));
                     renderLiveLayer(g2d);
                     g2d.drawImage(mLayers.get(LIVE_LAYER), 0, 0, null);
+                    //  System.out.println("LIve " + (System.currentTimeMillis() - s));
                     //render selection
                     de.tor.tribes.types.Rectangle selection = MapPanel.getSingleton().getSelectionRect();
                     if (selection != null) {
@@ -322,20 +326,41 @@ public class MapRenderer extends Thread {
 
                     //notify MapPanel to bring buffer to screen
                     Hashtable<Village, Rectangle> pos = (Hashtable<Village, Rectangle>) villagePositions.clone();
+
+                    // MapPanel.getSingleton().getStrategy().getDrawGraphics().drawImage(mMainBuffer, 0, 0, null);
+                    // MapPanel.getSingleton().getStrategy().show();
                     MapPanel.getSingleton().updateComplete(pos, mMainBuffer);
                     MapPanel.getSingleton().repaint();
                     g2d.dispose();
                 }
             } catch (Throwable t) {
+                rendered = 0;
                 logger.error("Redrawing map failed", t);
             }
             try {
-
-                Thread.sleep(40);
+                Thread.sleep(sleepTime);
             } catch (InterruptedException ie) {
+            }
+
+            if (rendered == 0) {
+                frames++;
+                rendered = System.currentTimeMillis();
+            } else {
+                frames++;
+                long dur = System.currentTimeMillis() - rendered;
+                if (dur >= 1000) {
+                    if (frames < 10 && sleepTime > 10) {
+                        sleepTime -= 10;
+                    } else {
+                        sleepTime += 10;
+                    }
+                    rendered = System.currentTimeMillis();
+                    frames = 0;
+                }
             }
         }
     }
+    int frames = 0;
 
     /**Set the drag line externally (done by MapPanel class)*/
     public void setDragLine(int pXS, int pYS, int pXE, int pYE) {
@@ -1959,123 +1984,124 @@ public class MapRenderer extends Thread {
             g2d.setColor(cBefore);
         }
 
-
-        //ruler drawing
-        Hashtable<Color, Rectangle> vertRulerParts = new Hashtable<Color, Rectangle>();
-        Hashtable<Color, Rectangle> horRulerParts = new Hashtable<Color, Rectangle>();
-        double xVillage = Math.floor(viewStartPoint.x);
-        double yVillage = Math.floor(viewStartPoint.y);
-        double rulerStart = -1 * width * (viewStartPoint.x - xVillage);
-        double rulerEnd = -1 * height * (viewStartPoint.y - yVillage);
-        Composite com = g2d.getComposite();
-        Color c = g2d.getColor();
-        for (int i = 0; i < mVisibleVillages.length; i++) {
-            for (int j = 0; j < mVisibleVillages[0].length; j++) {
-                if (i == 0) {
-                    //draw vertical ruler
-                    if ((yVillage + j) % 2 == 0) {
-                        g2d.setColor(Constants.DS_BACK_LIGHT);
-                    } else {
-                        g2d.setColor(Constants.DS_BACK);
-                    }
-                    Rectangle rulerPart = vertRulerParts.get(g2d.getColor());
-                    if (rulerPart == null) {
-                        rulerPart = new Rectangle(0, (int) Math.floor(rulerEnd) + j * height, width, height);
-                        if (MapPanel.getSingleton().getBounds().contains(rulerPart)) {
-                            vertRulerParts.put(g2d.getColor(), rulerPart);
-                        }
-                        if (g2d.getColor() == Constants.DS_BACK) {
-                            g2d.fill3DRect(0, (int) Math.floor(rulerEnd) + j * height, width, height, true);
+        if (Boolean.parseBoolean(GlobalOptions.getProperty("show.ruler"))) {
+            //ruler drawing
+            Hashtable<Color, Rectangle> vertRulerParts = new Hashtable<Color, Rectangle>();
+            Hashtable<Color, Rectangle> horRulerParts = new Hashtable<Color, Rectangle>();
+            double xVillage = Math.floor(viewStartPoint.x);
+            double yVillage = Math.floor(viewStartPoint.y);
+            double rulerStart = -1 * width * (viewStartPoint.x - xVillage);
+            double rulerEnd = -1 * height * (viewStartPoint.y - yVillage);
+            Composite com = g2d.getComposite();
+            Color c = g2d.getColor();
+            for (int i = 0; i < mVisibleVillages.length; i++) {
+                for (int j = 0; j < mVisibleVillages[0].length; j++) {
+                    if (i == 0) {
+                        //draw vertical ruler
+                        if ((yVillage + j) % 2 == 0) {
+                            g2d.setColor(Constants.DS_BACK_LIGHT);
                         } else {
-                            g2d.fillRect(0, (int) Math.floor(rulerEnd) + j * height, width, height);
+                            g2d.setColor(Constants.DS_BACK);
                         }
-                    } else {
-                        g2d.copyArea(rulerPart.x, rulerPart.y, rulerPart.width, rulerPart.height, (int) Math.floor(rulerStart) - rulerPart.x, (int) Math.floor(rulerEnd) + j * height - rulerPart.y);
-                    }
-                    if (mouseVillage != null && mouseVillage.getY() == (yVillage + j)) {
-                        g2d.setColor(Color.YELLOW);
-                        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
-                        g2d.fillRect(0, rulerPart.y, rulerPart.width, rulerPart.height);
-                        g2d.setComposite(com);
-                    }
-                }
-                if (j == mVisibleVillages[0].length - 1) {
-                    //draw horizontal ruler
-                    if ((xVillage + i) % 2 == 0) {
-                        g2d.setColor(Constants.DS_BACK_LIGHT);
-                    } else {
-                        g2d.setColor(Constants.DS_BACK);
-                    }
-                    Rectangle rulerPart = horRulerParts.get(g2d.getColor());
-                    if (rulerPart == null) {
-                        rulerPart = new Rectangle((int) Math.floor(rulerStart) + i * width, 0, width, height);
-                        if (MapPanel.getSingleton().getBounds().contains(rulerPart)) {
-                            horRulerParts.put(g2d.getColor(), rulerPart);
-                        }
-                        if (g2d.getColor() == Constants.DS_BACK) {
-                            g2d.fill3DRect((int) Math.floor(rulerStart) + i * width, 0, width, height, true);
+                        Rectangle rulerPart = vertRulerParts.get(g2d.getColor());
+                        if (rulerPart == null) {
+                            rulerPart = new Rectangle(0, (int) Math.floor(rulerEnd) + j * height, width, height);
+                            if (MapPanel.getSingleton().getBounds().contains(rulerPart)) {
+                                vertRulerParts.put(g2d.getColor(), rulerPart);
+                            }
+                            if (g2d.getColor() == Constants.DS_BACK) {
+                                g2d.fill3DRect(0, (int) Math.floor(rulerEnd) + j * height, width, height, true);
+                            } else {
+                                g2d.fillRect(0, (int) Math.floor(rulerEnd) + j * height, width, height);
+                            }
                         } else {
-                            g2d.fillRect((int) Math.floor(rulerStart) + i * width, 0, width, height);
+                            g2d.copyArea(rulerPart.x, rulerPart.y, rulerPart.width, rulerPart.height, (int) Math.floor(rulerStart) - rulerPart.x, (int) Math.floor(rulerEnd) + j * height - rulerPart.y);
                         }
-                    } else {
-                        g2d.copyArea(rulerPart.x, rulerPart.y, rulerPart.width, rulerPart.height, (int) Math.floor(rulerStart) + i * width - rulerPart.x, (int) Math.floor(rulerEnd) - rulerPart.y);
+                        if (mouseVillage != null && mouseVillage.getY() == (yVillage + j)) {
+                            g2d.setColor(Color.YELLOW);
+                            g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
+                            g2d.fillRect(0, rulerPart.y, rulerPart.width, rulerPart.height);
+                            g2d.setComposite(com);
+                        }
                     }
-                    if (mouseVillage != null && mouseVillage.getX() == (xVillage + i)) {
-                        g2d.setColor(Color.YELLOW);
-                        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
-                        g2d.fillRect(rulerPart.x, 0, rulerPart.width, rulerPart.height);
-                        g2d.setComposite(com);
+                    if (j == mVisibleVillages[0].length - 1) {
+                        //draw horizontal ruler
+                        if ((xVillage + i) % 2 == 0) {
+                            g2d.setColor(Constants.DS_BACK_LIGHT);
+                        } else {
+                            g2d.setColor(Constants.DS_BACK);
+                        }
+                        Rectangle rulerPart = horRulerParts.get(g2d.getColor());
+                        if (rulerPart == null) {
+                            rulerPart = new Rectangle((int) Math.floor(rulerStart) + i * width, 0, width, height);
+                            if (MapPanel.getSingleton().getBounds().contains(rulerPart)) {
+                                horRulerParts.put(g2d.getColor(), rulerPart);
+                            }
+                            if (g2d.getColor() == Constants.DS_BACK) {
+                                g2d.fill3DRect((int) Math.floor(rulerStart) + i * width, 0, width, height, true);
+                            } else {
+                                g2d.fillRect((int) Math.floor(rulerStart) + i * width, 0, width, height);
+                            }
+                        } else {
+                            g2d.copyArea(rulerPart.x, rulerPart.y, rulerPart.width, rulerPart.height, (int) Math.floor(rulerStart) + i * width - rulerPart.x, (int) Math.floor(rulerEnd) - rulerPart.y);
+                        }
+                        if (mouseVillage != null && mouseVillage.getX() == (xVillage + i)) {
+                            g2d.setColor(Color.YELLOW);
+                            g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
+                            g2d.fillRect(rulerPart.x, 0, rulerPart.width, rulerPart.height);
+                            g2d.setComposite(com);
+                        }
                     }
                 }
             }
-        }
-        g2d.setComposite(com);
-        g2d.setColor(Color.BLACK);
-        for (int i = 0; i < mVisibleVillages.length; i++) {
-            for (int j = 0; j < mVisibleVillages[0].length; j++) {
-                if (i == 0 && j != 0) {
-                    //draw vertical values
-                    if ((yVillage + j) % 2 == 0) {
-                        g2d.setColor(Color.DARK_GRAY);
-                    } else {
-                        g2d.setColor(Color.BLACK);
-                    }
-                    String coord = Integer.toString((int) yVillage + j);
-                    double w = g2d.getFontMetrics().getStringBounds(coord, g2d).getWidth();
-                    double fact = (double) (width - 2) / w;
-                    AffineTransform f = g2d.getTransform();
-                    AffineTransform t = AffineTransform.getTranslateInstance(0, (int) Math.floor(rulerEnd) + j * height);
-                    t.scale(fact, 1);
-                    g2d.setTransform(t);
-                    g2d.drawString(coord, 1, height - 2);
-                    g2d.setTransform(f);
-                } else if (i != 0 && j == 0) {
-                    //draw horizontal values
-                    String coord = Integer.toString((int) xVillage + i);
-                    double w = g2d.getFontMetrics().getStringBounds(coord, g2d).getWidth();
-                    double fact = (double) (width - 2) / w;
-                    int dy = -2;
-                    if ((xVillage + i) % 2 == 0) {
-                        g2d.setColor(Color.DARK_GRAY);
-                    } else {
-                        g2d.setColor(Color.BLACK);
-                    }
-                    //System.out.println("Fac " + fact);
-                    AffineTransform f = g2d.getTransform();
-                    AffineTransform t = AffineTransform.getTranslateInstance((int) Math.floor(rulerStart) + i * width, height);
-                    t.scale(fact, 1);
-                    g2d.setTransform(t);
-                    g2d.drawString(coord, 1, dy);
-                    g2d.setTransform(f);
 
+            g2d.setComposite(com);
+            g2d.setColor(Color.BLACK);
+            for (int i = 0; i < mVisibleVillages.length; i++) {
+                for (int j = 0; j < mVisibleVillages[0].length; j++) {
+                    if (i == 0 && j != 0) {
+                        //draw vertical values
+                        if ((yVillage + j) % 2 == 0) {
+                            g2d.setColor(Color.DARK_GRAY);
+                        } else {
+                            g2d.setColor(Color.BLACK);
+                        }
+                        String coord = Integer.toString((int) yVillage + j);
+                        double w = g2d.getFontMetrics().getStringBounds(coord, g2d).getWidth();
+                        double fact = (double) (width - 2) / w;
+                        AffineTransform f = g2d.getTransform();
+                        AffineTransform t = AffineTransform.getTranslateInstance(0, (int) Math.floor(rulerEnd) + j * height);
+                        t.scale(fact, 1);
+                        g2d.setTransform(t);
+                        g2d.drawString(coord, 1, height - 2);
+                        g2d.setTransform(f);
+                    } else if (i != 0 && j == 0) {
+                        //draw horizontal values
+                        String coord = Integer.toString((int) xVillage + i);
+                        double w = g2d.getFontMetrics().getStringBounds(coord, g2d).getWidth();
+                        double fact = (double) (width - 2) / w;
+                        int dy = -2;
+                        if ((xVillage + i) % 2 == 0) {
+                            g2d.setColor(Color.DARK_GRAY);
+                        } else {
+                            g2d.setColor(Color.BLACK);
+                        }
+                        //System.out.println("Fac " + fact);
+                        AffineTransform f = g2d.getTransform();
+                        AffineTransform t = AffineTransform.getTranslateInstance((int) Math.floor(rulerStart) + i * width, height);
+                        t.scale(fact, 1);
+                        g2d.setTransform(t);
+                        g2d.drawString(coord, 1, dy);
+                        g2d.setTransform(f);
+
+                    }
                 }
             }
+            //insert 'stopper'
+            g2d.setColor(Constants.DS_BACK);
+            g2d.fill3DRect(0, 0, width, height, true);
+            g2d.setColor(c);
         }
-        //insert 'stopper'
-        g2d.setColor(Constants.DS_BACK);
-        g2d.fill3DRect(0, 0, width, height, true);
-        g2d.setColor(c);
-
         // g2d.setComposite(c);
         /*  if (Boolean.parseBoolean(GlobalOptions.getProperty("show.map.popup"))) {
         renderVillageInfo(g2d, mouseVillage);
@@ -2177,20 +2203,17 @@ public class MapRenderer extends Thread {
         String bonus = getBonusType(mouseVillage);
         if (bonus != null) {
             drawPopupField(g2d, mouseVillage, metrics, xc, yc, null, bonus, width, dy);
-            dy +=
-                    19;
+            dy += 19;
         }
 
         current = new Font("SansSerif", Font.PLAIN, 12);
-        metrics =
-                g2d.getFontMetrics(current);
+        metrics = g2d.getFontMetrics(current);
         g2d.setFont(current);
 
         //Points rect
         String value = nf.format(mouseVillage.getPoints());
         drawPopupField(g2d, mouseVillage, metrics, xc, yc, "Punkte", value, width, dy);
-        dy +=
-                19;
+        dy += 19;
 
         //tags
         List<Tag> tags = TagManager.getSingleton().getTags(mouseVillage);
@@ -2202,8 +2225,7 @@ public class MapRenderer extends Thread {
                 bounds = metrics.getStringBounds(value + tags.get(i) + ", ", g2d);
                 if (bounds.getWidth() > 260) {
                     tagLines.add(value);
-                    value =
-                            "";
+                    value = "";
                 } else {
                     value += tags.get(i) + ", ";
                 }

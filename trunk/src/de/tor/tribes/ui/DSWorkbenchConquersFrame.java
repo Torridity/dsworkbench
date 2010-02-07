@@ -73,14 +73,14 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
         }
         mHeaderRenderer = new SortableTableHeaderRenderer();/* new DefaultTableCellRenderer() {
 
-            @Override
-            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-                Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
-                c.setBackground(Constants.DS_BACK);
-                DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
-                r.setText("<html><b>" + r.getText() + "</b></html>");
-                return r;
-            }
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+        Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
+        c.setBackground(Constants.DS_BACK);
+        DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
+        r.setText("<html><b>" + r.getText() + "</b></html>");
+        return r;
+        }
         };*/
 
         jConquersTable.setColumnSelectionAllowed(false);
@@ -598,8 +598,12 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
             return;
         }
         int row = jConquersTable.convertRowIndexToModel(rows[0]);
-        Village v = ((Village) ConquersTableModel.getSingleton().getValueAt(row, 0));
-        DSWorkbenchMainFrame.getSingleton().centerVillage(v);
+        Conquer c = ConquersTableModel.getSingleton().getConquerAtRow(row);
+
+        if (c != null) {
+            Village v = DataHolder.getSingleton().getVillagesById().get(c.getVillageID());
+            DSWorkbenchMainFrame.getSingleton().centerVillage(v);
+        }
     }//GEN-LAST:event_fireCenterConqueredVillageEvent
 
     private void fireCloseFilterDialogEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCloseFilterDialogEvent
@@ -908,11 +912,11 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
                 Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-
                 try {
+                    row = jConquersTable.convertRowIndexToModel(row);
                     Conquer con = ConquerManager.getSingleton().getConquer(row);
                     Tribe loser = DataHolder.getSingleton().getTribes().get(con.getLoser());
-                    if (loser.getId() == 0) {
+                    if (loser == null) {
                         c.setBackground(Color.PINK);
                     } else {
                         Tribe winner = DataHolder.getSingleton().getTribes().get(con.getWinner());

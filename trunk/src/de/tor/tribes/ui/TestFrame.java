@@ -5,6 +5,8 @@
  */
 package de.tor.tribes.ui;
 
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Vector;
@@ -23,6 +25,33 @@ public class TestFrame extends javax.swing.JFrame {
     /** Creates new form TestFrame */
     public TestFrame() {
         initComponents();
+        for(MouseListener l : jComboBox1.getMouseListeners()){
+            jComboBox1.removeMouseListener(l);
+        }
+
+        jComboBox1.addMouseListener(new MouseListener() {
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                System.out.println("Click");
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+            }
+        });
         /*  GroupableTableModel model = new GroupableTableModel();
         TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(model);
         jTable1.setModel(model);
@@ -52,9 +81,6 @@ public class TestFrame extends javax.swing.JFrame {
         jPanel1.add(dockBar);
         dockBar.setVisible(true);
         dockBar.setFrameParent();*/
-        model = new MyTableModel();
-        jTable1.setModel(model);
-
 
     }
 
@@ -155,8 +181,6 @@ public class TestFrame extends javax.swing.JFrame {
         jCheckBoxMenuItem2 = new javax.swing.JCheckBoxMenuItem();
         jCheckBoxMenuItem3 = new javax.swing.JCheckBoxMenuItem();
         jCheckBoxMenuItem4 = new javax.swing.JCheckBoxMenuItem();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
         jComboBox1 = new javax.swing.JComboBox();
 
         jCheckBoxMenuItem1.setSelected(true);
@@ -195,26 +219,12 @@ public class TestFrame extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jScrollPane1.addMouseListener(new java.awt.event.MouseAdapter() {
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jComboBox1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireTabClick(evt);
+                fireClick(evt);
             }
         });
-
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ));
-        jScrollPane1.setViewportView(jTable1);
-
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         jComboBox1.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 fireChange(evt);
@@ -227,8 +237,6 @@ public class TestFrame extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 452, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(46, 46, 46)
                 .addComponent(jComboBox1, 0, 123, Short.MAX_VALUE)
                 .addContainerGap())
         );
@@ -236,30 +244,28 @@ public class TestFrame extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 345, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(14, Short.MAX_VALUE))
+                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void fireChange(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireChange
-       // if (evt.getSource() == jCheckBoxMenuItem1) {
-            model.changeVis(new boolean[]{jCheckBoxMenuItem1.isSelected(), jCheckBoxMenuItem2.isSelected(), jCheckBoxMenuItem3.isSelected(), jCheckBoxMenuItem4.isSelected()});
-            model.fireTableStructureChanged();
-       // }
+        if (evt.getStateChange() == evt.SELECTED) {
+            System.out.println(jComboBox1.getSelectedIndex());
+        }
     }//GEN-LAST:event_fireChange
 
-    private void fireTabClick(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireTabClick
-        jPopupMenu1.show(jTable1, evt.getX(), evt.getY());
-    }//GEN-LAST:event_fireTabClick
+    private void fireClick(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireClick
+        System.out.println("CLick!!");
+        jComboBox1.hidePopup();
+    }//GEN-LAST:event_fireClick
 
     public static void main(String args[]) {
 
 
-    /*    TestFrame f = new TestFrame();
+        TestFrame f = new TestFrame();
         f.addWindowListener(new WindowAdapter() {
 
             public void windowClosing(WindowEvent e) {
@@ -269,13 +275,9 @@ public class TestFrame extends javax.swing.JFrame {
 
         f.setSize(300, 100);
         f.setVisible(true);
-*/
 
-      String cols = "true,true,false,false";
-      String[] c = cols.split(",");
-      for(String co : c){
-          System.out.println(co);
-      }
+
+
         //System.out.println(System.getProperty("user.dir"));
 
     }
@@ -286,8 +288,6 @@ public class TestFrame extends javax.swing.JFrame {
     private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItem4;
     private javax.swing.JComboBox jComboBox1;
     private javax.swing.JPopupMenu jPopupMenu1;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
     // End of variables declaration//GEN-END:variables
 }
 
@@ -315,7 +315,7 @@ class MyTableModel extends AbstractTableModel {
         columnsVisible[1] = newVis[1];
         columnsVisible[2] = newVis[2];
         columnsVisible[3] = newVis[3];
-        for(boolean b : columnsVisible){
+        for (boolean b : columnsVisible) {
             System.out.println(b);
         }
         System.out.println("---");

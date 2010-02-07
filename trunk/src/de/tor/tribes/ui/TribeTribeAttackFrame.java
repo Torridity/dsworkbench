@@ -65,18 +65,20 @@ import java.util.StringTokenizer;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.Collections;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JToolTip;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumn;
 
 /**
  * @TODO (2.0) Fixed start time, arbitrary arrive time not in night bonus?
- * @TODO (2.0) Introduce for target "All but <1000, <2000" Button/ComboBOx
+ * @TODO (DIFF) Settings are stored now
+ * @TODO (DIFF) Introduce for target "All but <1000, <2000" Button/ComboBOx
  * @author Jejkal
  */
 public class TribeTribeAttackFrame extends javax.swing.JFrame implements AlgorithmListener {
@@ -98,6 +100,34 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Algorit
         jTransferToAttackManagerDialog.pack();
         jAttackResultDetailsFrame.pack();
         jTargetResultDetailsFrame.pack();
+
+        for (MouseListener l : jAllTargetsComboBox.getMouseListeners()) {
+            jAllTargetsComboBox.removeMouseListener(l);
+        }
+
+        jAllTargetsComboBox.addMouseListener(new MouseListener() {
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                fireAddFilteredTargetVillages();
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+            }
+        });
 
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
         GlobalOptions.getHelpBroker().enableHelp(jSourcePanel, "pages.attack_planer_source", GlobalOptions.getHelpBroker().getHelpSet());
@@ -402,9 +432,9 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Algorit
         jVictimTable = new javax.swing.JTable();
         jButton4 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
-        jButton9 = new javax.swing.JButton();
         jButton16 = new javax.swing.JButton();
         jFilterTargetButton = new javax.swing.JButton();
+        jAllTargetsComboBox = new javax.swing.JComboBox();
         jCalculatingProgressBar = new javax.swing.JProgressBar();
 
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("de/tor/tribes/ui/Bundle"); // NOI18N
@@ -958,6 +988,11 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Algorit
 
         setTitle(bundle.getString("TribeTribeAttackFrame.title")); // NOI18N
         setBackground(new java.awt.Color(239, 235, 223));
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                fireClosingEvent(evt);
+            }
+        });
 
         jCalculateButton.setBackground(new java.awt.Color(239, 235, 223));
         jCalculateButton.setText(bundle.getString("TribeTribeAttackFrame.jCalculateButton.text")); // NOI18N
@@ -1491,15 +1526,6 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Algorit
             }
         });
 
-        jButton9.setBackground(new java.awt.Color(239, 235, 223));
-        jButton9.setText(bundle.getString("TribeTribeAttackFrame.jButton9.text")); // NOI18N
-        jButton9.setToolTipText(bundle.getString("TribeTribeAttackFrame.jButton9.toolTipText")); // NOI18N
-        jButton9.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireAddAllTargetVillagesEvent(evt);
-            }
-        });
-
         jButton16.setBackground(new java.awt.Color(239, 235, 223));
         jButton16.setText(bundle.getString("TribeTribeAttackFrame.jButton16.text")); // NOI18N
         jButton16.setToolTipText(bundle.getString("TribeTribeAttackFrame.jButton16.toolTipText")); // NOI18N
@@ -1518,6 +1544,8 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Algorit
             }
         });
 
+        jAllTargetsComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Alle", ">= 3.000 Punkte", ">= 5.000 Punkte", ">= 7.000 Punkte", " ", " ", " " }));
+
         javax.swing.GroupLayout jTargetPanelLayout = new javax.swing.GroupLayout(jTargetPanel);
         jTargetPanel.setLayout(jTargetPanelLayout);
         jTargetPanelLayout.setHorizontalGroup(
@@ -1527,17 +1555,17 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Algorit
                 .addGroup(jTargetPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jTargetPanelLayout.createSequentialGroup()
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 757, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jFilterTargetButton))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jTargetPanelLayout.createSequentialGroup()
                         .addComponent(jButton16)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton9))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jTargetPanelLayout.createSequentialGroup()
-                        .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 757, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jFilterTargetButton)))
+                        .addComponent(jAllTargetsComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         jTargetPanelLayout.setVerticalGroup(
@@ -1550,12 +1578,11 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Algorit
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jTargetPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jButton9)
-                    .addGroup(jTargetPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(jButton2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jButton16))
+                .addGroup(jTargetPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jAllTargetsComboBox)
+                    .addComponent(jButton2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButton4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButton16, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -1986,24 +2013,6 @@ private void fireAddTargetVillageEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
     jVictimTable.revalidate();
     jVictimTable.repaint();//.updateUI();
 }//GEN-LAST:event_fireAddTargetVillageEvent
-
-private void fireAddAllTargetVillagesEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireAddAllTargetVillagesEvent
-    //add all current target villages
-    Tribe target = (Tribe) jTargetTribeList.getSelectedValue();
-    if (target == null) {
-        return;
-    }
-
-    jVictimTable.invalidate();
-    int size = jTargetVillageList.getModel().getSize();
-    for (int i = 0; i <
-            size; i++) {
-        ((DefaultTableModel) jVictimTable.getModel()).addRow(new Object[]{target, jTargetVillageList.getModel().getElementAt(i)});
-    }
-
-    jVictimTable.revalidate();
-    jVictimTable.repaint();//.updateUI();
-}//GEN-LAST:event_fireAddAllTargetVillagesEvent
 
 private void fireTransferAttacksToPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireTransferAttacksToPlanEvent
     //transfer results to attack view
@@ -2574,7 +2583,6 @@ private void fireApplyTroopFiltersEvent(java.awt.event.MouseEvent evt) {//GEN-FI
             }
         }
 
-
         jAttacksTable.invalidate();
         for (int i = rowsToRemove.size() - 1; i >= 0; i--) {
             int row = rowsToRemove.get(i);
@@ -2600,6 +2608,40 @@ private void fireShowCalculationLogEvent(java.awt.event.MouseEvent evt) {//GEN-F
     f.pack();
     f.setVisible(true);
 }//GEN-LAST:event_fireShowCalculationLogEvent
+
+private void fireClosingEvent(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_fireClosingEvent
+    mSettingsPanel.storeProperties();
+}//GEN-LAST:event_fireClosingEvent
+
+    private void fireAddFilteredTargetVillages() {
+        Tribe target = (Tribe) jTargetTribeList.getSelectedValue();
+        if (target == null) {
+            return;
+        }
+
+        jVictimTable.invalidate();
+        int size = jTargetVillageList.getModel().getSize();
+        for (int i = 0; i < size; i++) {
+            Village victimVillage = (Village) jTargetVillageList.getModel().getElementAt(i);
+            int idx = jAllTargetsComboBox.getSelectedIndex();
+            boolean add = false;
+            if (idx == 0) {
+                add = true;
+            } else if (idx == 1 && victimVillage.getPoints() >= 3000) {
+                add = true;
+            } else if (idx == 2 && victimVillage.getPoints() >= 5000) {
+                add = true;
+            } else if (idx == 3 && victimVillage.getPoints() >= 7000) {
+                add = true;
+            }
+            if (add) {
+                ((DefaultTableModel) jVictimTable.getModel()).addRow(new Object[]{target, victimVillage});
+            }
+        }
+
+        jVictimTable.revalidate();
+        jVictimTable.repaint();//.updateUI();
+    }
 
     /**Add source villages externally (see DSWorkbenchMainFrame)*/
     public void fireAddSourcesEvent(List<Village> pSources) {
@@ -3301,6 +3343,7 @@ private void fireShowCalculationLogEvent(java.awt.event.MouseEvent evt) {//GEN-F
     private javax.swing.ButtonGroup attackTypeGroup;
     private javax.swing.JButton jAddToAttacksButton;
     private javax.swing.JButton jAddToAttacksButton1;
+    private javax.swing.JComboBox jAllTargetsComboBox;
     private javax.swing.JButton jApplyFiltersButton;
     private javax.swing.JDialog jAttackPlanSelectionDialog;
     private javax.swing.JTable jAttackPlanTable;
@@ -3322,7 +3365,6 @@ private void fireShowCalculationLogEvent(java.awt.event.MouseEvent evt) {//GEN-F
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
     private javax.swing.JButton jButton8;
-    private javax.swing.JButton jButton9;
     private javax.swing.JButton jCalculateButton;
     private javax.swing.JProgressBar jCalculatingProgressBar;
     private javax.swing.JButton jCancelSyncButton;

@@ -70,7 +70,6 @@ public class SettingsPanel extends javax.swing.JPanel {
         jArriveTimeFrame.setDecimalFormater(new DecimalFormat("##"));
         jArriveTimeFrame.setBackground(Constants.DS_BACK_LIGHT);
 
-
         //setup time frame table
         DefaultListModel model = new DefaultListModel();
         jSendTimeFramesList.setModel(model);
@@ -78,6 +77,58 @@ public class SettingsPanel extends javax.swing.JPanel {
         c.setTimeInMillis(System.currentTimeMillis() + 2 * 60 * 60 * 1000);
         jArriveTime.setValue(c.getTime());
         jTribeTimeFrameBox.setModel(new DefaultComboBoxModel(new Object[]{"Alle"}));
+        restoreProperties();
+    }
+
+    public void storeProperties() {
+        String server = GlobalOptions.getSelectedServer();
+        GlobalOptions.addProperty(server + ".attack.frame.start.date", Long.toString(((Date) jSendTime.getValue()).getTime()));
+        GlobalOptions.addProperty(server + ".attack.frame.arrive.date", Long.toString(((Date) jArriveTime.getValue()).getTime()));
+        GlobalOptions.addProperty(server + ".attack.frame.arrive.frame.min", Double.toString(jArriveTimeFrame.getMinimumColoredValue()));
+        GlobalOptions.addProperty(server + ".attack.frame.arrive.frame.max", Double.toString(jArriveTimeFrame.getMaximumColoredValue()));
+        GlobalOptions.addProperty(server + ".attack.frame.attacks.per.village", Integer.toString((Integer) jAttackPerVillageSpinner.getValue()));
+        GlobalOptions.addProperty(server + ".attack.frame.var.arrive.time", Boolean.toString(jVariableArriveTimeBox.isSelected()));
+        GlobalOptions.addProperty(server + ".attack.frame.algo.type", Integer.toString(jAlgoBox.getSelectedIndex()));
+        GlobalOptions.addProperty(server + ".attack.frame.fake.off.targets", Boolean.toString(jFakeOffTargetsBox.isSelected()));
+        DefaultListModel model = (DefaultListModel) jSendTimeFramesList.getModel();
+        String spanProp = "";
+        for (int i = 0; i < model.getSize(); i++) {
+            spanProp += ((TimeSpan) model.getElementAt(i)).toPropertyString() + ";";
+        }
+        GlobalOptions.addProperty(server + ".attack.frame.time.spans", spanProp);
+    }
+
+    public void restoreProperties() {
+        try {
+            String server = GlobalOptions.getSelectedServer();
+            jSendTime.setValue(new Date(Long.parseLong(GlobalOptions.getProperty(server + ".attack.frame.start.date"))));
+            jArriveTime.setValue(new Date(Long.parseLong(GlobalOptions.getProperty(server + ".attack.frame.arrive.date"))));
+            jArriveTimeFrame.setMinimumColoredValue(Double.parseDouble(GlobalOptions.getProperty(server + ".attack.frame.arrive.frame.min")));
+            jArriveTimeFrame.setMaximumColoredValue(Double.parseDouble(GlobalOptions.getProperty(server + ".attack.frame.arrive.frame.max")));
+            jAttackPerVillageSpinner.setValue(Integer.parseInt(GlobalOptions.getProperty(server + ".attack.frame.attacks.per.village")));
+            jAlgoBox.setSelectedIndex(Integer.parseInt(GlobalOptions.getProperty(server + ".attack.frame.algo.type")));
+            jVariableArriveTimeBox.setSelected(Boolean.parseBoolean(GlobalOptions.getProperty(server + ".attack.frame.var.arrive.time")));
+            jFakeOffTargetsBox.setSelected(Boolean.parseBoolean(GlobalOptions.getProperty(server + ".attack.frame.fake.off.targets")));
+            String spanProp = GlobalOptions.getProperty(server + ".attack.frame.time.spans");
+            String[] spans = spanProp.split(";");
+            DefaultListModel model = (DefaultListModel) jSendTimeFramesList.getModel();
+            for (String span : spans) {
+                try {
+                    TimeSpan s = TimeSpan.fromPropertyString(span);
+                    if (s != null) {
+                        model.addElement(s);
+                    }
+                } catch (Exception invalid) {
+                }
+            }
+
+        } catch (Exception e) {
+        }
+        if (jVariableArriveTimeBox.isSelected()) {
+            jArriveTime.setEditor(new DateEditor(jArriveTime, "dd.MM.yy"));
+        } else {
+            jArriveTime.setEditor(new DateEditor(jArriveTime, "dd.MM.yy HH:mm:ss"));
+        }
     }
 
     /**Add tribe to timeframe list*/
@@ -184,44 +235,58 @@ public class SettingsPanel extends javax.swing.JPanel {
                 }
             }
         }
-
-        Calendar c = Calendar.getInstance();
-        c.setTimeInMillis(arrive.getTime());
         boolean mightBeInNightBonus = false;
-        //check for night bonus
-        int nightBonus = ServerManager.getNightBonusRange(GlobalOptions.getSelectedServer());
         String nightTime = "(0 - 8 Uhr)";
-        switch (nightBonus) {
-            case DatabaseServerEntry.NO_NIGHT_BONUS: {
-                mightBeInNightBonus = false;
-                break;
-            }
-            case DatabaseServerEntry.NIGHT_BONUS_0to7: {
-                if (c.get(Calendar.HOUR_OF_DAY) >= 0 && c.get(Calendar.HOUR_OF_DAY) < 7) {
-                    //in night bonus
-                    mightBeInNightBonus = true;
+        int nightBonus = ServerManager.getNightBonusRange(GlobalOptions.getSelectedServer());
+        if (!jVariableArriveTimeBox.isSelected()) {
+            Calendar c = Calendar.getInstance();
+            c.setTimeInMillis(arrive.getTime());
+            //check for night bonus
+            switch (nightBonus) {
+                case DatabaseServerEntry.NO_NIGHT_BONUS: {
+                    mightBeInNightBonus = false;
+                    break;
                 }
+                case DatabaseServerEntry.NIGHT_BONUS_0to7: {
+                    if (c.get(Calendar.HOUR_OF_DAY) >= 0 && c.get(Calendar.HOUR_OF_DAY) < 7) {
+                        //in night bonus
+                        mightBeInNightBonus = true;
+                    }
 
-                double max = jArriveTimeFrame.getMaximumColoredValue();
-                if (max <= 7) {
-                    mightBeInNightBonus = true;
+                    nightTime = "(0 - 7 Uhr)";
+                    break;
                 }
-                nightTime = "(0 - 7 Uhr)";
-                break;
+                default: {
+                    if (c.get(Calendar.HOUR_OF_DAY) >= 0 && c.get(Calendar.HOUR_OF_DAY) < 8) {
+                        //in night bonus
+                        mightBeInNightBonus = true;
+                    }
+                    break;
+                }
             }
-            default: {
-                if (c.get(Calendar.HOUR_OF_DAY) >= 0 && c.get(Calendar.HOUR_OF_DAY) < 8) {
-                    //in night bonus
-                    mightBeInNightBonus = true;
+        } else {
+            switch (nightBonus) {
+                case DatabaseServerEntry.NO_NIGHT_BONUS: {
+                    mightBeInNightBonus = false;
+                    break;
                 }
-                double max = jArriveTimeFrame.getMaximumColoredValue();
-                if (max <= 8) {
-                    mightBeInNightBonus = true;
+                case DatabaseServerEntry.NIGHT_BONUS_0to7: {
+                    if (jArriveTimeFrame.getMinimumColoredValue() <= 7 || jArriveTimeFrame.getMaximumColoredValue() <= 7) {
+                        //in night bonus
+                        mightBeInNightBonus = true;
+                    }
+                    nightTime = "(0 - 7 Uhr)";
+                    break;
                 }
-                break;
+                default: {
+                    if (jArriveTimeFrame.getMinimumColoredValue() <= 8 || jArriveTimeFrame.getMaximumColoredValue() <= 8) {
+                        //in night bonus
+                        mightBeInNightBonus = true;
+                    }
+                    break;
+                }
             }
         }
-
         if (mightBeInNightBonus) {
             if (JOptionPaneHelper.showQuestionConfirmBox(this, "Die angegebene Ankunftszeit kann unter Umständen im Nachbonus " + nightTime + " liegen.\n" +
                     "Willst du die Ankunftszeit entsprechend korrigieren?", "Nachtbonus", "Nein", "Ja") == JOptionPane.YES_OPTION) {
@@ -237,7 +302,7 @@ public class SettingsPanel extends javax.swing.JPanel {
         return (jAlgoBox.getSelectedIndex() == 0);
     }
 
-    public boolean fakeOffTargets(){
+    public boolean fakeOffTargets() {
         return jFakeOffTargetsBox.isSelected();
     }
 
@@ -639,7 +704,6 @@ public class SettingsPanel extends javax.swing.JPanel {
         }
 
     }//GEN-LAST:event_fireChangeVariableArriveTimeEvent
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup frameValidityGroup;
     private javax.swing.JComboBox jAlgoBox;

@@ -10,6 +10,7 @@
  */
 package de.tor.tribes.ui;
 
+import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Ally;
 import de.tor.tribes.types.FightReport;
 import de.tor.tribes.types.FightStats;
@@ -32,7 +33,6 @@ import de.tor.tribes.util.report.ReportFormater;
 import de.tor.tribes.util.report.ReportManager;
 import de.tor.tribes.util.report.ReportManagerListener;
 import de.tor.tribes.util.report.ReportStatBuilder;
-import java.awt.Component;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ItemEvent;
@@ -40,6 +40,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -49,7 +50,6 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 
-import javax.swing.JTable;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -182,6 +182,8 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         ReportManager.getSingleton().forceUpdate(null);
         buildReportSetList();
         jReportSetBox.setSelectedItem(ReportManager.DEFAULT_SET);
+        jTribeList.setModel(new DefaultListModel());
+        buildTribesList(null);
     }
 
     public void buildReportSetList() {
@@ -192,6 +194,24 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         }
         jReportSetBox.setModel(model);
         jReportSetBox.setSelectedItem(ReportManagerTableModel.getSingleton().getActiveReportSet());
+    }
+
+    private void buildTribesList(String pFilter) {
+        Enumeration<Integer> tribeIds = DataHolder.getSingleton().getTribes().keys();
+        List<Tribe> tribes = new LinkedList<Tribe>();
+        while (tribeIds.hasMoreElements()) {
+            Tribe t = DataHolder.getSingleton().getTribes().get(tribeIds.nextElement());
+            if (t != null &&
+                    (pFilter == null ||
+                    (pFilter.length() == 0) ||
+                    (t.getName().toLowerCase().indexOf(pFilter.toLowerCase()) >= 0))) {
+                tribes.add(t);
+            }
+
+        }
+        Collections.sort(tribes);
+        jTribeSelectionBox.setModel(new DefaultComboBoxModel(tribes.toArray(new Tribe[]{})));
+
     }
 
     /** This method is called from within the constructor to
@@ -247,28 +267,28 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         jShowPercentsBox = new javax.swing.JCheckBox();
         jFilterDialog = new javax.swing.JDialog();
         jPanel8 = new javax.swing.JPanel();
-        jComboBox1 = new javax.swing.JComboBox();
-        jCheckBox1 = new javax.swing.JCheckBox();
-        jTextField1 = new javax.swing.JTextField();
-        jButton12 = new javax.swing.JButton();
+        jTribeSelectionBox = new javax.swing.JComboBox();
+        jFilterByTribeBox = new javax.swing.JCheckBox();
+        jTribeSelectionFilter = new javax.swing.JTextField();
+        jAddTribeButton = new javax.swing.JButton();
         jScrollPane4 = new javax.swing.JScrollPane();
-        jList2 = new javax.swing.JList();
-        jButton13 = new javax.swing.JButton();
-        jPanel9 = new javax.swing.JPanel();
-        jComboBox2 = new javax.swing.JComboBox();
-        jCheckBox2 = new javax.swing.JCheckBox();
-        jTextField2 = new javax.swing.JTextField();
-        jButton14 = new javax.swing.JButton();
-        jScrollPane8 = new javax.swing.JScrollPane();
-        jList3 = new javax.swing.JList();
-        jButton15 = new javax.swing.JButton();
+        jTribeList = new javax.swing.JList();
+        jRemoveTribeButton = new javax.swing.JButton();
+        jIsAttackerBox = new javax.swing.JCheckBox();
         jPanel10 = new javax.swing.JPanel();
-        jCheckBox4 = new javax.swing.JCheckBox();
-        jCheckBox5 = new javax.swing.JCheckBox();
-        jCheckBox6 = new javax.swing.JCheckBox();
-        jCheckBox7 = new javax.swing.JCheckBox();
-        jCheckBox8 = new javax.swing.JCheckBox();
-        jCheckBox9 = new javax.swing.JCheckBox();
+        jShowHiddenAttackerReports = new javax.swing.JCheckBox();
+        jShowRedReports = new javax.swing.JCheckBox();
+        jShowYellowReports = new javax.swing.JCheckBox();
+        jShowGreenReports = new javax.swing.JCheckBox();
+        jShowBlueReports = new javax.swing.JCheckBox();
+        jShowSnobReports = new javax.swing.JCheckBox();
+        jLabel8 = new javax.swing.JLabel();
+        jStartDate = new javax.swing.JSpinner();
+        jLabel9 = new javax.swing.JLabel();
+        jEndDate = new javax.swing.JSpinner();
+        jFilterByDate = new javax.swing.JCheckBox();
+        jButton16 = new javax.swing.JButton();
+        jButton17 = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         jReportSetBox = new javax.swing.JComboBox();
         jLabel1 = new javax.swing.JLabel();
@@ -279,6 +299,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         jTaskPaneGroup1 = new com.l2fprod.common.swing.JTaskPaneGroup();
         jButton4 = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
+        jButton12 = new javax.swing.JButton();
         jButton6 = new javax.swing.JButton();
         jTaskPaneGroup2 = new com.l2fprod.common.swing.JTaskPaneGroup();
         jButton11 = new javax.swing.JButton();
@@ -696,27 +717,54 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         jFilterDialog.setTitle("Berichte filtern");
         jFilterDialog.setAlwaysOnTop(true);
 
-        jPanel8.setBorder(javax.swing.BorderFactory.createTitledBorder("Filtern nach Angreifer"));
+        jPanel8.setBackground(new java.awt.Color(239, 235, 223));
+        jPanel8.setBorder(javax.swing.BorderFactory.createTitledBorder("Filtern nach Angreifer/Verteidiger"));
 
-        jComboBox1.setEnabled(false);
-        jComboBox1.setMinimumSize(new java.awt.Dimension(28, 20));
+        jTribeSelectionBox.setEnabled(false);
+        jTribeSelectionBox.setMinimumSize(new java.awt.Dimension(28, 20));
 
-        jCheckBox1.setSelected(true);
-        jCheckBox1.setText("Alle Berichte anzeigen");
+        jFilterByTribeBox.setSelected(true);
+        jFilterByTribeBox.setText("Alle Berichte anzeigen");
+        jFilterByTribeBox.setOpaque(false);
+        jFilterByTribeBox.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                fireFilterByTribeChangedEvent(evt);
+            }
+        });
 
-        jTextField1.setEnabled(false);
+        jTribeSelectionFilter.setEnabled(false);
+        jTribeSelectionFilter.addCaretListener(new javax.swing.event.CaretListener() {
+            public void caretUpdate(javax.swing.event.CaretEvent evt) {
+                fireFilterChangedEvent(evt);
+            }
+        });
 
-        jButton12.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/add.gif"))); // NOI18N
-        jButton12.setEnabled(false);
-        jButton12.setMaximumSize(new java.awt.Dimension(25, 25));
-        jButton12.setMinimumSize(new java.awt.Dimension(25, 25));
+        jAddTribeButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/add.gif"))); // NOI18N
+        jAddTribeButton.setEnabled(false);
+        jAddTribeButton.setMaximumSize(new java.awt.Dimension(25, 25));
+        jAddTribeButton.setMinimumSize(new java.awt.Dimension(25, 25));
+        jAddTribeButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireTribeFilterChangedEvent(evt);
+            }
+        });
 
-        jScrollPane4.setViewportView(jList2);
+        jScrollPane4.setViewportView(jTribeList);
 
-        jButton13.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/remove.gif"))); // NOI18N
-        jButton13.setEnabled(false);
-        jButton13.setMaximumSize(new java.awt.Dimension(25, 25));
-        jButton13.setMinimumSize(new java.awt.Dimension(25, 25));
+        jRemoveTribeButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/remove.gif"))); // NOI18N
+        jRemoveTribeButton.setEnabled(false);
+        jRemoveTribeButton.setMaximumSize(new java.awt.Dimension(25, 25));
+        jRemoveTribeButton.setMinimumSize(new java.awt.Dimension(25, 25));
+        jRemoveTribeButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireTribeFilterChangedEvent(evt);
+            }
+        });
+
+        jIsAttackerBox.setSelected(true);
+        jIsAttackerBox.setText("Ist Angreifer");
+        jIsAttackerBox.setEnabled(false);
+        jIsAttackerBox.setOpaque(false);
 
         javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
         jPanel8.setLayout(jPanel8Layout);
@@ -724,121 +772,89 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel8Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel8Layout.createSequentialGroup()
+                        .addComponent(jIsAttackerBox)
+                        .addGap(50, 50, 50))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel8Layout.createSequentialGroup()
                         .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(jComboBox1, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jCheckBox1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton12, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18))
-                    .addGroup(jPanel8Layout.createSequentialGroup()
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(50, 50, 50)))
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 222, Short.MAX_VALUE)
+                            .addComponent(jFilterByTribeBox, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jTribeSelectionBox, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jTribeSelectionFilter, javax.swing.GroupLayout.Alignment.LEADING))
+                        .addGap(4, 4, 4)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jButton13, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jAddTribeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 209, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jRemoveTribeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         jPanel8Layout.setVerticalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel8Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jCheckBox1)
-                .addGap(15, 15, 15)
-                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton13, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton12, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel8Layout.createSequentialGroup()
-                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        jPanel9.setBorder(javax.swing.BorderFactory.createTitledBorder("Filtern nach Verteidiger"));
-
-        jComboBox2.setEnabled(false);
-        jComboBox2.setMinimumSize(new java.awt.Dimension(28, 20));
-
-        jCheckBox2.setSelected(true);
-        jCheckBox2.setText("Alle Berichte anzeigen");
-
-        jTextField2.setEnabled(false);
-
-        jButton14.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/add.gif"))); // NOI18N
-        jButton14.setEnabled(false);
-        jButton14.setMaximumSize(new java.awt.Dimension(25, 25));
-        jButton14.setMinimumSize(new java.awt.Dimension(25, 25));
-
-        jScrollPane8.setViewportView(jList3);
-
-        jButton15.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/remove.gif"))); // NOI18N
-        jButton15.setEnabled(false);
-        jButton15.setMaximumSize(new java.awt.Dimension(25, 25));
-        jButton15.setMinimumSize(new java.awt.Dimension(25, 25));
-
-        javax.swing.GroupLayout jPanel9Layout = new javax.swing.GroupLayout(jPanel9);
-        jPanel9.setLayout(jPanel9Layout);
-        jPanel9Layout.setHorizontalGroup(
-            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel9Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel9Layout.createSequentialGroup()
-                        .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(jComboBox2, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jCheckBox2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton14, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18))
-                    .addGroup(jPanel9Layout.createSequentialGroup()
-                        .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(50, 50, 50)))
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane8, javax.swing.GroupLayout.DEFAULT_SIZE, 222, Short.MAX_VALUE)
+                .addComponent(jFilterByTribeBox)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jButton15, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jAddTribeButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 110, Short.MAX_VALUE)
+                    .addComponent(jRemoveTribeButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel8Layout.createSequentialGroup()
+                        .addComponent(jTribeSelectionBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jTribeSelectionFilter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jIsAttackerBox)))
                 .addContainerGap())
         );
-        jPanel9Layout.setVerticalGroup(
-            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel9Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jCheckBox2)
-                .addGap(15, 15, 15)
-                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton15, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton14, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel9Layout.createSequentialGroup()
-                        .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane8, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
 
+        jPanel10.setBackground(new java.awt.Color(239, 235, 223));
         jPanel10.setBorder(javax.swing.BorderFactory.createTitledBorder("Sonstige Filter"));
 
-        jCheckBox4.setSelected(true);
-        jCheckBox4.setText("Berichte mit verborgenen Truppeninformationen anzeigen");
+        jShowHiddenAttackerReports.setSelected(true);
+        jShowHiddenAttackerReports.setText("Berichte mit verborgenen Truppeninformationen anzeigen");
+        jShowHiddenAttackerReports.setOpaque(false);
 
-        jCheckBox5.setSelected(true);
-        jCheckBox5.setText("Rote Berichte anzeigen");
+        jShowRedReports.setSelected(true);
+        jShowRedReports.setText("Rote Berichte anzeigen");
+        jShowRedReports.setOpaque(false);
 
-        jCheckBox6.setSelected(true);
-        jCheckBox6.setText("Gelbe Berichte anzeigen");
+        jShowYellowReports.setSelected(true);
+        jShowYellowReports.setText("Gelbe Berichte anzeigen");
+        jShowYellowReports.setOpaque(false);
 
-        jCheckBox7.setSelected(true);
-        jCheckBox7.setText("Grüne Berichte anzeigen");
+        jShowGreenReports.setSelected(true);
+        jShowGreenReports.setText("Grüne Berichte anzeigen");
+        jShowGreenReports.setOpaque(false);
 
-        jCheckBox8.setSelected(true);
-        jCheckBox8.setText("Blaue Berichte anzeigen");
+        jShowBlueReports.setSelected(true);
+        jShowBlueReports.setText("Blaue Berichte anzeigen");
+        jShowBlueReports.setOpaque(false);
 
-        jCheckBox9.setSelected(true);
-        jCheckBox9.setText("Berichte mit Zustimmungssenkung anzeigen");
+        jShowSnobReports.setSelected(true);
+        jShowSnobReports.setText("Berichte mit Zustimmungssenkung anzeigen");
+        jShowSnobReports.setOpaque(false);
+
+        jLabel8.setText("Berichte vom");
+        jLabel8.setEnabled(false);
+
+        jStartDate.setModel(new javax.swing.SpinnerDateModel(new java.util.Date(), new java.util.Date(), null, java.util.Calendar.DAY_OF_MONTH));
+        jStartDate.setEnabled(false);
+
+        jLabel9.setText("bis zum");
+        jLabel9.setEnabled(false);
+
+        jEndDate.setModel(new javax.swing.SpinnerDateModel(new java.util.Date(1265664829299L), new java.util.Date(1265664829299L), null, java.util.Calendar.DAY_OF_MONTH));
+        jEndDate.setEnabled(false);
+
+        jFilterByDate.setText("Nach Datum filtern");
+        jFilterByDate.setOpaque(false);
+        jFilterByDate.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                fireFilterByDateChangedEvent(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel10Layout = new javax.swing.GroupLayout(jPanel10);
         jPanel10.setLayout(jPanel10Layout);
@@ -847,54 +863,80 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
             .addGroup(jPanel10Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jCheckBox4)
-                    .addComponent(jCheckBox5)
-                    .addComponent(jCheckBox6)
-                    .addComponent(jCheckBox7)
-                    .addComponent(jCheckBox8)
-                    .addComponent(jCheckBox9))
-                .addContainerGap(170, Short.MAX_VALUE))
+                    .addComponent(jFilterByDate)
+                    .addComponent(jShowHiddenAttackerReports)
+                    .addComponent(jShowRedReports)
+                    .addComponent(jShowYellowReports)
+                    .addComponent(jShowGreenReports)
+                    .addComponent(jShowBlueReports)
+                    .addComponent(jShowSnobReports)
+                    .addGroup(jPanel10Layout.createSequentialGroup()
+                        .addComponent(jLabel8)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jStartDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel9)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jEndDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(62, Short.MAX_VALUE))
         );
         jPanel10Layout.setVerticalGroup(
             jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel10Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jCheckBox4)
+                .addComponent(jShowHiddenAttackerReports)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jCheckBox5)
+                .addComponent(jShowRedReports)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jCheckBox6)
+                .addComponent(jShowYellowReports)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jCheckBox7)
+                .addComponent(jShowGreenReports)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jCheckBox8)
+                .addComponent(jShowBlueReports)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jCheckBox9)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jShowSnobReports)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jFilterByDate)
+                .addGap(18, 18, 18)
+                .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel8)
+                    .addComponent(jStartDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel9)
+                    .addComponent(jEndDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
         );
+
+        jButton16.setText("Filtern");
+
+        jButton17.setText("Abbrechen");
 
         javax.swing.GroupLayout jFilterDialogLayout = new javax.swing.GroupLayout(jFilterDialog.getContentPane());
         jFilterDialog.getContentPane().setLayout(jFilterDialogLayout);
         jFilterDialogLayout.setHorizontalGroup(
             jFilterDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jFilterDialogLayout.createSequentialGroup()
+            .addGroup(jFilterDialogLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jFilterDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jPanel10, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel8, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel9, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(jFilterDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel10, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jFilterDialogLayout.createSequentialGroup()
+                        .addComponent(jButton17)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton16)))
                 .addContainerGap())
         );
         jFilterDialogLayout.setVerticalGroup(
             jFilterDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jFilterDialogLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
                 .addComponent(jPanel10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(88, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jFilterDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton16)
+                    .addComponent(jButton17))
+                .addContainerGap())
         );
 
         setTitle("Berichtdatenbank");
@@ -968,6 +1010,18 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
             }
         });
         jTaskPaneGroup1.getContentPane().add(jButton5);
+
+        jButton12.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/filter_off.png"))); // NOI18N
+        jButton12.setToolTipText("Angezeigte Berichte filtern");
+        jButton12.setMaximumSize(new java.awt.Dimension(59, 33));
+        jButton12.setMinimumSize(new java.awt.Dimension(59, 33));
+        jButton12.setPreferredSize(new java.awt.Dimension(59, 33));
+        jButton12.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireShowFilterDialogEvent(evt);
+            }
+        });
+        jTaskPaneGroup1.getContentPane().add(jButton12);
 
         jButton6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/medal.png"))); // NOI18N
         jButton6.setToolTipText("Statistiken erzeugen");
@@ -1163,7 +1217,6 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
             return;
         }
 
-
         if (JOptionPaneHelper.showQuestionConfirmBox(this, "Willst du das Berichtsset '" + selection + "' und alle enthaltenen Berichte\n" +
                 "wirklich löschen?", "Berichtsset löschen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
             ReportManagerTableModel.getSingleton().setActiveReportSet(ReportManager.DEFAULT_SET);
@@ -1331,6 +1384,53 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
             JOptionPaneHelper.showErrorBox(this, result, "Fehler");
         }
     }//GEN-LAST:event_fireCopyReportsAsBBCodesToClipboardEvent
+
+    private void fireFilterByDateChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireFilterByDateChangedEvent
+        jLabel8.setEnabled(jFilterByDate.isSelected());
+        jLabel9.setEnabled(jFilterByDate.isSelected());
+        jStartDate.setEnabled(jFilterByDate.isSelected());
+        jEndDate.setEnabled(jFilterByDate.isSelected());
+    }//GEN-LAST:event_fireFilterByDateChangedEvent
+
+    private void fireFilterByTribeChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireFilterByTribeChangedEvent
+        jAddTribeButton.setEnabled(!jFilterByTribeBox.isSelected());
+        jRemoveTribeButton.setEnabled(!jFilterByTribeBox.isSelected());
+        jTribeList.setEnabled(!jFilterByTribeBox.isSelected());
+        jTribeSelectionFilter.setEnabled(!jFilterByTribeBox.isSelected());
+        jTribeSelectionBox.setEnabled(!jFilterByTribeBox.isSelected());
+        jIsAttackerBox.setEnabled(!jFilterByTribeBox.isSelected());
+    }//GEN-LAST:event_fireFilterByTribeChangedEvent
+
+    private void fireFilterChangedEvent(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_fireFilterChangedEvent
+        buildTribesList(jTribeSelectionFilter.getText());
+    }//GEN-LAST:event_fireFilterChangedEvent
+
+    private void fireTribeFilterChangedEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireTribeFilterChangedEvent
+         if (evt.getSource() == jAddTribeButton) {
+            //add tribe
+            jTribeSelectionBox.firePopupMenuCanceled();
+            Tribe t = (Tribe) jTribeSelectionBox.getSelectedItem();
+            if (t != null) {
+                if (((DefaultListModel) jTribeList.getModel()).indexOf(t) < 0) {
+                    ((DefaultListModel) jTribeList.getModel()).addElement(t);
+                }
+            }
+        } else {
+            //remove tribe
+            Tribe t = (Tribe) jTribeList.getSelectedValue();
+            if (t != null) {
+                if (JOptionPaneHelper.showQuestionConfirmBox(jFilterDialog, "Gewählten Spieler entfernen?", "Spieler entfernen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
+                    ((DefaultListModel) jTribeList.getModel()).removeElement(t);
+                }
+            }
+        }
+    }//GEN-LAST:event_fireTribeFilterChangedEvent
+
+    private void fireShowFilterDialogEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireShowFilterDialogEvent
+       jFilterDialog.pack();
+       jFilterDialog.setLocationRelativeTo(this);
+       jFilterDialog.setVisible(true);
+    }//GEN-LAST:event_fireShowFilterDialogEvent
 
     private void fireRebuildStatsEvent() {
         Object[] selection = jList1.getSelectedValues();
@@ -1903,15 +2003,15 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JDialog jAddReportSetDialog;
+    private javax.swing.JButton jAddTribeButton;
     private javax.swing.JTextArea jAllyStatsArea;
     private javax.swing.JCheckBox jAlwaysOnTopBox;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton10;
     private javax.swing.JButton jButton11;
     private javax.swing.JButton jButton12;
-    private javax.swing.JButton jButton13;
-    private javax.swing.JButton jButton14;
-    private javax.swing.JButton jButton15;
+    private javax.swing.JButton jButton16;
+    private javax.swing.JButton jButton17;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
@@ -1920,24 +2020,18 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
     private javax.swing.JButton jButton7;
     private javax.swing.JButton jButton8;
     private javax.swing.JButton jButton9;
-    private javax.swing.JCheckBox jCheckBox1;
-    private javax.swing.JCheckBox jCheckBox2;
     private javax.swing.JCheckBox jCheckBox3;
-    private javax.swing.JCheckBox jCheckBox4;
-    private javax.swing.JCheckBox jCheckBox5;
-    private javax.swing.JCheckBox jCheckBox6;
-    private javax.swing.JCheckBox jCheckBox7;
-    private javax.swing.JCheckBox jCheckBox8;
-    private javax.swing.JCheckBox jCheckBox9;
-    private javax.swing.JComboBox jComboBox1;
-    private javax.swing.JComboBox jComboBox2;
     private javax.swing.JFrame jCreateStatsFrame;
     private javax.swing.JTextField jCurrentSetField;
     private javax.swing.JButton jDoAddNewSetButton;
     private javax.swing.JButton jDoMoveButton;
     private javax.swing.JButton jDoRenameButton;
+    private javax.swing.JSpinner jEndDate;
+    private javax.swing.JCheckBox jFilterByDate;
+    private javax.swing.JCheckBox jFilterByTribeBox;
     private javax.swing.JDialog jFilterDialog;
     private javax.swing.JCheckBox jGuessUnknownLosses;
+    private javax.swing.JCheckBox jIsAttackerBox;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -1945,9 +2039,9 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JList jList1;
-    private javax.swing.JList jList2;
-    private javax.swing.JList jList3;
     private javax.swing.JDialog jMoveToSetDialog;
     private javax.swing.JTextField jNewReportSetField;
     private javax.swing.JComboBox jNewSetBox;
@@ -1962,7 +2056,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
-    private javax.swing.JPanel jPanel9;
+    private javax.swing.JButton jRemoveTribeButton;
     private javax.swing.JDialog jRenameReportSetDialog;
     private javax.swing.JComboBox jReportSetBox;
     private javax.swing.JList jReportSetsForStatsList;
@@ -1974,14 +2068,21 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
     private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JScrollPane jScrollPane6;
     private javax.swing.JScrollPane jScrollPane7;
-    private javax.swing.JScrollPane jScrollPane8;
+    private javax.swing.JCheckBox jShowBlueReports;
+    private javax.swing.JCheckBox jShowGreenReports;
+    private javax.swing.JCheckBox jShowHiddenAttackerReports;
     private javax.swing.JCheckBox jShowPercentsBox;
+    private javax.swing.JCheckBox jShowRedReports;
+    private javax.swing.JCheckBox jShowSnobReports;
+    private javax.swing.JCheckBox jShowYellowReports;
+    private javax.swing.JSpinner jStartDate;
     private javax.swing.JTabbedPane jTabbedPane1;
     private com.l2fprod.common.swing.JTaskPane jTaskPane1;
     private com.l2fprod.common.swing.JTaskPaneGroup jTaskPaneGroup1;
     private com.l2fprod.common.swing.JTaskPaneGroup jTaskPaneGroup2;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
+    private javax.swing.JList jTribeList;
+    private javax.swing.JComboBox jTribeSelectionBox;
+    private javax.swing.JTextField jTribeSelectionFilter;
     private javax.swing.JTextArea jTribeStatsArea;
     private javax.swing.JCheckBox jUseSilentKillsBox;
     // End of variables declaration//GEN-END:variables

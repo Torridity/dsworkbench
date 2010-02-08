@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<Form version="1.3" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
+<Form version="1.5" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
   <NonVisualComponents>
     <Container class="javax.swing.JDialog" name="jMoveToSetDialog">
       <Properties>
@@ -693,14 +693,18 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" alignment="1" attributes="0">
+              <Group type="102" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="1" attributes="0">
-                      <Component id="jPanel10" alignment="0" max="32767" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
                       <Component id="jPanel8" alignment="0" max="32767" attributes="0"/>
-                      <Component id="jPanel9" alignment="0" max="32767" attributes="0"/>
+                      <Component id="jPanel10" alignment="1" max="32767" attributes="0"/>
+                      <Group type="102" alignment="1" attributes="0">
+                          <Component id="jButton17" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" max="-2" attributes="0"/>
+                          <Component id="jButton16" min="-2" max="-2" attributes="0"/>
+                      </Group>
                   </Group>
-                  <EmptySpace max="-2" attributes="0"/>
+                  <EmptySpace min="-2" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -708,12 +712,15 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="jPanel8" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                  <Component id="jPanel9" min="-2" max="-2" attributes="0"/>
+                  <Component id="jPanel8" max="32767" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="jPanel10" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="88" max="32767" attributes="0"/>
+                  <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="jButton16" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="jButton17" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace min="-2" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -721,9 +728,12 @@
       <SubComponents>
         <Container class="javax.swing.JPanel" name="jPanel8">
           <Properties>
+            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="df" green="eb" red="ef" type="rgb"/>
+            </Property>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-                <TitledBorder title="Filtern nach Angreifer"/>
+                <TitledBorder title="Filtern nach Angreifer/Verteidiger"/>
               </Border>
             </Property>
           </Properties>
@@ -733,25 +743,26 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
-                              <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                                  <Component id="jComboBox1" alignment="0" max="32767" attributes="1"/>
-                                  <Component id="jCheckBox1" alignment="0" max="32767" attributes="1"/>
-                              </Group>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="jButton12" min="-2" pref="26" max="-2" attributes="0"/>
-                              <EmptySpace type="separate" max="-2" attributes="0"/>
-                          </Group>
-                          <Group type="102" attributes="0">
-                              <Component id="jTextField1" min="-2" pref="131" max="-2" attributes="1"/>
+                              <Component id="jIsAttackerBox" min="-2" max="-2" attributes="1"/>
                               <EmptySpace min="-2" pref="50" max="-2" attributes="0"/>
                           </Group>
+                          <Group type="102" alignment="1" attributes="0">
+                              <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                                  <Component id="jFilterByTribeBox" alignment="0" min="-2" max="-2" attributes="1"/>
+                                  <Component id="jTribeSelectionBox" alignment="0" min="-2" pref="180" max="-2" attributes="1"/>
+                                  <Component id="jTribeSelectionFilter" alignment="0" max="32767" attributes="1"/>
+                              </Group>
+                              <EmptySpace min="-2" pref="4" max="-2" attributes="0"/>
+                          </Group>
                       </Group>
-                      <EmptySpace type="separate" max="-2" attributes="0"/>
-                      <Component id="jScrollPane4" pref="222" max="32767" attributes="0"/>
+                      <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
+                      <Component id="jAddTribeButton" min="-2" pref="26" max="-2" attributes="0"/>
+                      <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
+                      <Component id="jScrollPane4" pref="209" max="32767" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="jButton13" min="-2" pref="26" max="-2" attributes="0"/>
+                      <Component id="jRemoveTribeButton" min="-2" pref="26" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -760,25 +771,27 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jCheckBox1" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="15" max="-2" attributes="0"/>
+                      <Component id="jFilterByTribeBox" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jButton13" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="jButton12" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="jAddTribeButton" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="jScrollPane4" alignment="0" pref="110" max="32767" attributes="0"/>
+                          <Component id="jRemoveTribeButton" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Group type="102" alignment="0" attributes="0">
-                              <Component id="jComboBox1" min="-2" max="-2" attributes="0"/>
+                              <Component id="jTribeSelectionBox" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="jTextField1" min="-2" max="-2" attributes="0"/>
+                              <Component id="jTribeSelectionFilter" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                              <Component id="jIsAttackerBox" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <Component id="jScrollPane4" alignment="0" min="-2" pref="102" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace max="32767" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
           </Layout>
           <SubComponents>
-            <Component class="javax.swing.JComboBox" name="jComboBox1">
+            <Component class="javax.swing.JComboBox" name="jTribeSelectionBox">
               <Properties>
                 <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
                   <StringArray count="0"/>
@@ -789,18 +802,25 @@
                 </Property>
               </Properties>
             </Component>
-            <Component class="javax.swing.JCheckBox" name="jCheckBox1">
+            <Component class="javax.swing.JCheckBox" name="jFilterByTribeBox">
               <Properties>
                 <Property name="selected" type="boolean" value="true"/>
                 <Property name="text" type="java.lang.String" value="Alle Berichte anzeigen"/>
+                <Property name="opaque" type="boolean" value="false"/>
               </Properties>
+              <Events>
+                <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="fireFilterByTribeChangedEvent"/>
+              </Events>
             </Component>
-            <Component class="javax.swing.JTextField" name="jTextField1">
+            <Component class="javax.swing.JTextField" name="jTribeSelectionFilter">
               <Properties>
                 <Property name="enabled" type="boolean" value="false"/>
               </Properties>
+              <Events>
+                <EventHandler event="caretUpdate" listener="javax.swing.event.CaretListener" parameters="javax.swing.event.CaretEvent" handler="fireFilterChangedEvent"/>
+              </Events>
             </Component>
-            <Component class="javax.swing.JButton" name="jButton12">
+            <Component class="javax.swing.JButton" name="jAddTribeButton">
               <Properties>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                   <Image iconType="3" name="/res/add.gif"/>
@@ -813,6 +833,9 @@
                   <Dimension value="[25, 25]"/>
                 </Property>
               </Properties>
+              <Events>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fireTribeFilterChangedEvent"/>
+              </Events>
             </Component>
             <Container class="javax.swing.JScrollPane" name="jScrollPane4">
               <AuxValues>
@@ -821,7 +844,7 @@
 
               <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
               <SubComponents>
-                <Component class="javax.swing.JList" name="jList2">
+                <Component class="javax.swing.JList" name="jTribeList">
                   <Properties>
                     <Property name="model" type="javax.swing.ListModel" editor="org.netbeans.modules.form.editors2.ListModelEditor">
                       <StringArray count="0"/>
@@ -830,7 +853,7 @@
                 </Component>
               </SubComponents>
             </Container>
-            <Component class="javax.swing.JButton" name="jButton13">
+            <Component class="javax.swing.JButton" name="jRemoveTribeButton">
               <Properties>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                   <Image iconType="3" name="/res/remove.gif"/>
@@ -843,138 +866,25 @@
                   <Dimension value="[25, 25]"/>
                 </Property>
               </Properties>
+              <Events>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fireTribeFilterChangedEvent"/>
+              </Events>
             </Component>
-          </SubComponents>
-        </Container>
-        <Container class="javax.swing.JPanel" name="jPanel9">
-          <Properties>
-            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
-              <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-                <TitledBorder title="Filtern nach Verteidiger"/>
-              </Border>
-            </Property>
-          </Properties>
-
-          <Layout>
-            <DimensionLayout dim="0">
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" alignment="0" attributes="0">
-                              <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                                  <Component id="jComboBox2" alignment="0" max="32767" attributes="1"/>
-                                  <Component id="jCheckBox2" alignment="0" max="32767" attributes="1"/>
-                              </Group>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="jButton14" min="-2" pref="26" max="-2" attributes="0"/>
-                              <EmptySpace type="separate" max="-2" attributes="0"/>
-                          </Group>
-                          <Group type="102" alignment="0" attributes="0">
-                              <Component id="jTextField2" min="-2" pref="131" max="-2" attributes="1"/>
-                              <EmptySpace min="-2" pref="50" max="-2" attributes="0"/>
-                          </Group>
-                      </Group>
-                      <EmptySpace type="separate" max="-2" attributes="0"/>
-                      <Component id="jScrollPane8" pref="222" max="32767" attributes="0"/>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="jButton15" min="-2" pref="26" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                  </Group>
-              </Group>
-            </DimensionLayout>
-            <DimensionLayout dim="1">
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jCheckBox2" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="15" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jButton15" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="jButton14" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Group type="102" alignment="0" attributes="0">
-                              <Component id="jComboBox2" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="jTextField2" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <Component id="jScrollPane8" alignment="0" min="-2" pref="102" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace max="32767" attributes="0"/>
-                  </Group>
-              </Group>
-            </DimensionLayout>
-          </Layout>
-          <SubComponents>
-            <Component class="javax.swing.JComboBox" name="jComboBox2">
-              <Properties>
-                <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-                  <StringArray count="0"/>
-                </Property>
-                <Property name="enabled" type="boolean" value="false"/>
-                <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                  <Dimension value="[28, 20]"/>
-                </Property>
-              </Properties>
-            </Component>
-            <Component class="javax.swing.JCheckBox" name="jCheckBox2">
+            <Component class="javax.swing.JCheckBox" name="jIsAttackerBox">
               <Properties>
                 <Property name="selected" type="boolean" value="true"/>
-                <Property name="text" type="java.lang.String" value="Alle Berichte anzeigen"/>
-              </Properties>
-            </Component>
-            <Component class="javax.swing.JTextField" name="jTextField2">
-              <Properties>
+                <Property name="text" type="java.lang.String" value="Ist Angreifer"/>
                 <Property name="enabled" type="boolean" value="false"/>
-              </Properties>
-            </Component>
-            <Component class="javax.swing.JButton" name="jButton14">
-              <Properties>
-                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/res/add.gif"/>
-                </Property>
-                <Property name="enabled" type="boolean" value="false"/>
-                <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                  <Dimension value="[25, 25]"/>
-                </Property>
-                <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                  <Dimension value="[25, 25]"/>
-                </Property>
-              </Properties>
-            </Component>
-            <Container class="javax.swing.JScrollPane" name="jScrollPane8">
-              <AuxValues>
-                <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
-              </AuxValues>
-
-              <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
-              <SubComponents>
-                <Component class="javax.swing.JList" name="jList3">
-                  <Properties>
-                    <Property name="model" type="javax.swing.ListModel" editor="org.netbeans.modules.form.editors2.ListModelEditor">
-                      <StringArray count="0"/>
-                    </Property>
-                  </Properties>
-                </Component>
-              </SubComponents>
-            </Container>
-            <Component class="javax.swing.JButton" name="jButton15">
-              <Properties>
-                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/res/remove.gif"/>
-                </Property>
-                <Property name="enabled" type="boolean" value="false"/>
-                <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                  <Dimension value="[25, 25]"/>
-                </Property>
-                <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                  <Dimension value="[25, 25]"/>
-                </Property>
+                <Property name="opaque" type="boolean" value="false"/>
               </Properties>
             </Component>
           </SubComponents>
         </Container>
         <Container class="javax.swing.JPanel" name="jPanel10">
           <Properties>
+            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="df" green="eb" red="ef" type="rgb"/>
+            </Property>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
                 <TitledBorder title="Sonstige Filter"/>
@@ -985,17 +895,27 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jCheckBox4" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="jCheckBox5" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="jCheckBox6" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="jCheckBox7" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="jCheckBox8" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="jCheckBox9" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="jFilterByDate" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="jShowHiddenAttackerReports" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="jShowRedReports" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="jShowYellowReports" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="jShowGreenReports" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="jShowBlueReports" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="jShowSnobReports" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Group type="102" alignment="0" attributes="0">
+                              <Component id="jLabel8" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
+                              <Component id="jStartDate" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
+                              <Component id="jLabel9" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                              <Component id="jEndDate" min="-2" max="-2" attributes="0"/>
+                          </Group>
                       </Group>
-                      <EmptySpace pref="170" max="32767" attributes="0"/>
+                      <EmptySpace pref="62" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -1003,61 +923,123 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jCheckBox4" min="-2" max="-2" attributes="0"/>
+                      <Component id="jShowHiddenAttackerReports" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="jCheckBox5" min="-2" max="-2" attributes="0"/>
+                      <Component id="jShowRedReports" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="jCheckBox6" min="-2" max="-2" attributes="0"/>
+                      <Component id="jShowYellowReports" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="jCheckBox7" min="-2" max="-2" attributes="0"/>
+                      <Component id="jShowGreenReports" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="jCheckBox8" min="-2" max="-2" attributes="0"/>
+                      <Component id="jShowBlueReports" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="jCheckBox9" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="32767" attributes="0"/>
+                      <Component id="jShowSnobReports" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Component id="jFilterByDate" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="jLabel8" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jStartDate" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabel9" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jEndDate" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
           </Layout>
           <SubComponents>
-            <Component class="javax.swing.JCheckBox" name="jCheckBox4">
+            <Component class="javax.swing.JCheckBox" name="jShowHiddenAttackerReports">
               <Properties>
                 <Property name="selected" type="boolean" value="true"/>
                 <Property name="text" type="java.lang.String" value="Berichte mit verborgenen Truppeninformationen anzeigen"/>
+                <Property name="opaque" type="boolean" value="false"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JCheckBox" name="jCheckBox5">
+            <Component class="javax.swing.JCheckBox" name="jShowRedReports">
               <Properties>
                 <Property name="selected" type="boolean" value="true"/>
                 <Property name="text" type="java.lang.String" value="Rote Berichte anzeigen"/>
+                <Property name="opaque" type="boolean" value="false"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JCheckBox" name="jCheckBox6">
+            <Component class="javax.swing.JCheckBox" name="jShowYellowReports">
               <Properties>
                 <Property name="selected" type="boolean" value="true"/>
                 <Property name="text" type="java.lang.String" value="Gelbe Berichte anzeigen"/>
+                <Property name="opaque" type="boolean" value="false"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JCheckBox" name="jCheckBox7">
+            <Component class="javax.swing.JCheckBox" name="jShowGreenReports">
               <Properties>
                 <Property name="selected" type="boolean" value="true"/>
                 <Property name="text" type="java.lang.String" value="Gr&#xfc;ne Berichte anzeigen"/>
+                <Property name="opaque" type="boolean" value="false"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JCheckBox" name="jCheckBox8">
+            <Component class="javax.swing.JCheckBox" name="jShowBlueReports">
               <Properties>
                 <Property name="selected" type="boolean" value="true"/>
                 <Property name="text" type="java.lang.String" value="Blaue Berichte anzeigen"/>
+                <Property name="opaque" type="boolean" value="false"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JCheckBox" name="jCheckBox9">
+            <Component class="javax.swing.JCheckBox" name="jShowSnobReports">
               <Properties>
                 <Property name="selected" type="boolean" value="true"/>
                 <Property name="text" type="java.lang.String" value="Berichte mit Zustimmungssenkung anzeigen"/>
+                <Property name="opaque" type="boolean" value="false"/>
               </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="jLabel8">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Berichte vom"/>
+                <Property name="enabled" type="boolean" value="false"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JSpinner" name="jStartDate">
+              <Properties>
+                <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.editors2.SpinnerModelEditor">
+                  <SpinnerModel initial="now" minimum="now" stepSize="5" type="date"/>
+                </Property>
+                <Property name="enabled" type="boolean" value="false"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="jLabel9">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="bis zum"/>
+                <Property name="enabled" type="boolean" value="false"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JSpinner" name="jEndDate">
+              <Properties>
+                <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.editors2.SpinnerModelEditor">
+                  <SpinnerModel initial="1265664829299" minimum="1265664829299" stepSize="5" type="date"/>
+                </Property>
+                <Property name="enabled" type="boolean" value="false"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JCheckBox" name="jFilterByDate">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Nach Datum filtern"/>
+                <Property name="opaque" type="boolean" value="false"/>
+              </Properties>
+              <Events>
+                <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="fireFilterByDateChangedEvent"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>
+        <Component class="javax.swing.JButton" name="jButton16">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Filtern"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JButton" name="jButton17">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Abbrechen"/>
+          </Properties>
+        </Component>
       </SubComponents>
     </Container>
   </NonVisualComponents>
@@ -1269,6 +1251,26 @@
                     <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fireMoveReportsEvent"/>
                   </Events>
                 </Component>
+                <Component class="javax.swing.JButton" name="jButton12">
+                  <Properties>
+                    <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                      <Image iconType="3" name="/res/ui/filter_off.png"/>
+                    </Property>
+                    <Property name="toolTipText" type="java.lang.String" value="Angezeigte Berichte filtern"/>
+                    <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                      <Dimension value="[59, 33]"/>
+                    </Property>
+                    <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                      <Dimension value="[59, 33]"/>
+                    </Property>
+                    <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                      <Dimension value="[59, 33]"/>
+                    </Property>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fireShowFilterDialogEvent"/>
+                  </Events>
+                </Component>
                 <Component class="javax.swing.JButton" name="jButton6">
                   <Properties>
                     <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
@@ -1391,7 +1393,23 @@
                     <CodeMethod name="add" class="java.awt.Container" parameterTypes="java.awt.Component"/>
                   </StatementProvider>
                   <Parameters>
-                    <CodeExpression id="8_jButton6">
+                    <CodeExpression id="8_jButton12">
+                      <CodeVariable name="jButton12" type="8194" declaredType="javax.swing.JButton"/>
+                      <ExpressionOrigin>
+                        <ExpressionProvider type="ComponentRef">
+                          <ComponentRef name="jButton12"/>
+                        </ExpressionProvider>
+                      </ExpressionOrigin>
+                    </CodeExpression>
+                  </Parameters>
+                </CodeStatement>
+                <CodeStatement>
+                  <CodeExpression id="4"/>
+                  <StatementProvider type="CodeMethod">
+                    <CodeMethod name="add" class="java.awt.Container" parameterTypes="java.awt.Component"/>
+                  </StatementProvider>
+                  <Parameters>
+                    <CodeExpression id="9_jButton6">
                       <CodeVariable name="jButton6" type="8194" declaredType="javax.swing.JButton"/>
                       <ExpressionOrigin>
                         <ExpressionProvider type="ComponentRef">
@@ -1431,7 +1449,7 @@
               </SubComponents>
               <LayoutCode>
                 <CodeStatement>
-                  <CodeExpression id="9_percentLayout3">
+                  <CodeExpression id="10_percentLayout3">
                     <CodeVariable name="percentLayout3" type="4096" declaredType="com.l2fprod.common.swing.PercentLayout"/>
                     <ExpressionOrigin>
                       <ExpressionProvider type="CodeConstructor">
@@ -1440,16 +1458,16 @@
                     </ExpressionOrigin>
                   </CodeExpression>
                   <StatementProvider type="CodeExpression">
-                    <CodeExpression id="9_percentLayout3"/>
+                    <CodeExpression id="10_percentLayout3"/>
                   </StatementProvider>
                 </CodeStatement>
                 <CodeStatement>
-                  <CodeExpression id="9_percentLayout3"/>
+                  <CodeExpression id="10_percentLayout3"/>
                   <StatementProvider type="CodeMethod">
                     <CodeMethod name="setGap" class="com.l2fprod.common.swing.PercentLayout" parameterTypes="int"/>
                   </StatementProvider>
                   <Parameters>
-                    <CodeExpression id="10">
+                    <CodeExpression id="11">
                       <ExpressionOrigin>
                         <Value type="int" value="2"/>
                       </ExpressionOrigin>
@@ -1457,12 +1475,12 @@
                   </Parameters>
                 </CodeStatement>
                 <CodeStatement>
-                  <CodeExpression id="9_percentLayout3"/>
+                  <CodeExpression id="10_percentLayout3"/>
                   <StatementProvider type="CodeMethod">
                     <CodeMethod name="setOrientation" class="com.l2fprod.common.swing.PercentLayout" parameterTypes="int"/>
                   </StatementProvider>
                   <Parameters>
-                    <CodeExpression id="11">
+                    <CodeExpression id="12">
                       <ExpressionOrigin>
                         <Value type="int" value="1"/>
                       </ExpressionOrigin>
@@ -1470,9 +1488,9 @@
                   </Parameters>
                 </CodeStatement>
                 <CodeStatement>
-                  <CodeExpression id="12">
+                  <CodeExpression id="13">
                     <ExpressionOrigin>
-                      <CodeExpression id="13_jTaskPaneGroup2">
+                      <CodeExpression id="14_jTaskPaneGroup2">
                         <CodeVariable name="jTaskPaneGroup2" type="8194" declaredType="com.l2fprod.common.swing.JTaskPaneGroup"/>
                         <ExpressionOrigin>
                           <ExpressionProvider type="ComponentRef">
@@ -1489,16 +1507,16 @@
                     <CodeMethod name="setLayout" class="java.awt.Container" parameterTypes="java.awt.LayoutManager"/>
                   </StatementProvider>
                   <Parameters>
-                    <CodeExpression id="9_percentLayout3"/>
+                    <CodeExpression id="10_percentLayout3"/>
                   </Parameters>
                 </CodeStatement>
                 <CodeStatement>
-                  <CodeExpression id="12"/>
+                  <CodeExpression id="13"/>
                   <StatementProvider type="CodeMethod">
                     <CodeMethod name="add" class="java.awt.Container" parameterTypes="java.awt.Component"/>
                   </StatementProvider>
                   <Parameters>
-                    <CodeExpression id="14_jButton11">
+                    <CodeExpression id="15_jButton11">
                       <CodeVariable name="jButton11" type="8194" declaredType="javax.swing.JButton"/>
                       <ExpressionOrigin>
                         <ExpressionProvider type="ComponentRef">
@@ -1513,7 +1531,7 @@
           </SubComponents>
           <LayoutCode>
             <CodeStatement>
-              <CodeExpression id="15_percentLayout1">
+              <CodeExpression id="16_percentLayout1">
                 <CodeVariable name="percentLayout1" type="4096" declaredType="com.l2fprod.common.swing.PercentLayout"/>
                 <ExpressionOrigin>
                   <ExpressionProvider type="CodeConstructor">
@@ -1522,16 +1540,16 @@
                 </ExpressionOrigin>
               </CodeExpression>
               <StatementProvider type="CodeExpression">
-                <CodeExpression id="15_percentLayout1"/>
+                <CodeExpression id="16_percentLayout1"/>
               </StatementProvider>
             </CodeStatement>
             <CodeStatement>
-              <CodeExpression id="15_percentLayout1"/>
+              <CodeExpression id="16_percentLayout1"/>
               <StatementProvider type="CodeMethod">
                 <CodeMethod name="setGap" class="com.l2fprod.common.swing.PercentLayout" parameterTypes="int"/>
               </StatementProvider>
               <Parameters>
-                <CodeExpression id="16">
+                <CodeExpression id="17">
                   <ExpressionOrigin>
                     <Value type="int" value="14"/>
                   </ExpressionOrigin>
@@ -1539,12 +1557,12 @@
               </Parameters>
             </CodeStatement>
             <CodeStatement>
-              <CodeExpression id="15_percentLayout1"/>
+              <CodeExpression id="16_percentLayout1"/>
               <StatementProvider type="CodeMethod">
                 <CodeMethod name="setOrientation" class="com.l2fprod.common.swing.PercentLayout" parameterTypes="int"/>
               </StatementProvider>
               <Parameters>
-                <CodeExpression id="17">
+                <CodeExpression id="18">
                   <ExpressionOrigin>
                     <Value type="int" value="1"/>
                   </ExpressionOrigin>
@@ -1552,7 +1570,7 @@
               </Parameters>
             </CodeStatement>
             <CodeStatement>
-              <CodeExpression id="18_jTaskPane1">
+              <CodeExpression id="19_jTaskPane1">
                 <CodeVariable name="jTaskPane1" type="8194" declaredType="com.l2fprod.common.swing.JTaskPane"/>
                 <ExpressionOrigin>
                   <ExpressionProvider type="ComponentRef">
@@ -1564,11 +1582,11 @@
                 <CodeMethod name="setLayout" class="java.awt.Container" parameterTypes="java.awt.LayoutManager"/>
               </StatementProvider>
               <Parameters>
-                <CodeExpression id="15_percentLayout1"/>
+                <CodeExpression id="16_percentLayout1"/>
               </Parameters>
             </CodeStatement>
             <CodeStatement>
-              <CodeExpression id="18_jTaskPane1"/>
+              <CodeExpression id="19_jTaskPane1"/>
               <StatementProvider type="CodeMethod">
                 <CodeMethod name="add" class="java.awt.Container" parameterTypes="java.awt.Component"/>
               </StatementProvider>
@@ -1577,12 +1595,12 @@
               </Parameters>
             </CodeStatement>
             <CodeStatement>
-              <CodeExpression id="18_jTaskPane1"/>
+              <CodeExpression id="19_jTaskPane1"/>
               <StatementProvider type="CodeMethod">
                 <CodeMethod name="add" class="java.awt.Container" parameterTypes="java.awt.Component"/>
               </StatementProvider>
               <Parameters>
-                <CodeExpression id="13_jTaskPaneGroup2"/>
+                <CodeExpression id="14_jTaskPaneGroup2"/>
               </Parameters>
             </CodeStatement>
           </LayoutCode>

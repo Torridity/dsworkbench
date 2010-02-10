@@ -405,10 +405,6 @@ public class ConquerManager extends FilterableManager<Conquer, ConquerFilterInte
         return null;
     }
 
-    public static void main(String[] args) {
-        ConquerManager.getSingleton().updateConquers();
-    }
-
     /**
      * @return the lastUpdate
      */

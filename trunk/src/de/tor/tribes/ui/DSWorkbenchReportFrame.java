@@ -29,10 +29,16 @@ import de.tor.tribes.ui.renderer.VillageCellRenderer;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
+import de.tor.tribes.util.report.ColorFilter;
+import de.tor.tribes.util.report.ConqueredFilter;
+import de.tor.tribes.util.report.DateFilter;
+import de.tor.tribes.util.report.ReportFilterInterface;
 import de.tor.tribes.util.report.ReportFormater;
 import de.tor.tribes.util.report.ReportManager;
 import de.tor.tribes.util.report.ReportManagerListener;
 import de.tor.tribes.util.report.ReportStatBuilder;
+import de.tor.tribes.util.report.TribeFilter;
+import de.tor.tribes.util.report.DefenderFilter;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ItemEvent;
@@ -274,7 +280,6 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         jScrollPane4 = new javax.swing.JScrollPane();
         jTribeList = new javax.swing.JList();
         jRemoveTribeButton = new javax.swing.JButton();
-        jIsAttackerBox = new javax.swing.JCheckBox();
         jPanel10 = new javax.swing.JPanel();
         jShowHiddenAttackerReports = new javax.swing.JCheckBox();
         jShowRedReports = new javax.swing.JCheckBox();
@@ -287,7 +292,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         jLabel9 = new javax.swing.JLabel();
         jEndDate = new javax.swing.JSpinner();
         jFilterByDate = new javax.swing.JCheckBox();
-        jButton16 = new javax.swing.JButton();
+        jDoFilterButton = new javax.swing.JButton();
         jButton17 = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         jReportSetBox = new javax.swing.JComboBox();
@@ -761,28 +766,17 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
             }
         });
 
-        jIsAttackerBox.setSelected(true);
-        jIsAttackerBox.setText("Ist Angreifer");
-        jIsAttackerBox.setEnabled(false);
-        jIsAttackerBox.setOpaque(false);
-
         javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
         jPanel8.setLayout(jPanel8Layout);
         jPanel8Layout.setHorizontalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel8Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(jPanel8Layout.createSequentialGroup()
-                        .addComponent(jIsAttackerBox)
-                        .addGap(50, 50, 50))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel8Layout.createSequentialGroup()
-                        .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(jFilterByTribeBox, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jTribeSelectionBox, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jTribeSelectionFilter, javax.swing.GroupLayout.Alignment.LEADING))
-                        .addGap(4, 4, 4)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(jFilterByTribeBox, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jTribeSelectionBox, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jTribeSelectionFilter, javax.swing.GroupLayout.Alignment.LEADING))
+                .addGap(4, 4, 4)
                 .addComponent(jAddTribeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 209, Short.MAX_VALUE)
@@ -803,9 +797,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
                     .addGroup(jPanel8Layout.createSequentialGroup()
                         .addComponent(jTribeSelectionBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTribeSelectionFilter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jIsAttackerBox)))
+                        .addComponent(jTribeSelectionFilter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
 
@@ -839,13 +831,13 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         jLabel8.setText("Berichte vom");
         jLabel8.setEnabled(false);
 
-        jStartDate.setModel(new javax.swing.SpinnerDateModel(new java.util.Date(), new java.util.Date(), null, java.util.Calendar.DAY_OF_MONTH));
+        jStartDate.setModel(new javax.swing.SpinnerDateModel());
         jStartDate.setEnabled(false);
 
         jLabel9.setText("bis zum");
         jLabel9.setEnabled(false);
 
-        jEndDate.setModel(new javax.swing.SpinnerDateModel(new java.util.Date(1265664829299L), new java.util.Date(1265664829299L), null, java.util.Calendar.DAY_OF_MONTH));
+        jEndDate.setModel(new javax.swing.SpinnerDateModel());
         jEndDate.setEnabled(false);
 
         jFilterByDate.setText("Nach Datum filtern");
@@ -878,7 +870,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
                         .addComponent(jLabel9)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jEndDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(62, Short.MAX_VALUE))
+                .addContainerGap(130, Short.MAX_VALUE))
         );
         jPanel10Layout.setVerticalGroup(
             jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -906,9 +898,19 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
                 .addContainerGap())
         );
 
-        jButton16.setText("Filtern");
+        jDoFilterButton.setText("Filtern");
+        jDoFilterButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireApplyFilterEvent(evt);
+            }
+        });
 
         jButton17.setText("Abbrechen");
+        jButton17.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireApplyFilterEvent(evt);
+            }
+        });
 
         javax.swing.GroupLayout jFilterDialogLayout = new javax.swing.GroupLayout(jFilterDialog.getContentPane());
         jFilterDialog.getContentPane().setLayout(jFilterDialogLayout);
@@ -922,7 +924,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jFilterDialogLayout.createSequentialGroup()
                         .addComponent(jButton17)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton16)))
+                        .addComponent(jDoFilterButton)))
                 .addContainerGap())
         );
         jFilterDialogLayout.setVerticalGroup(
@@ -934,7 +936,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
                 .addComponent(jPanel10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jFilterDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton16)
+                    .addComponent(jDoFilterButton)
                     .addComponent(jButton17))
                 .addContainerGap())
         );
@@ -1153,7 +1155,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
             jReportTable.getSelectionModel().clearSelection();
             jReportTable.setRowSorter(new TableRowSorter(ReportManagerTableModel.getSingleton()));
             ReportManagerTableModel.getSingleton().setActiveReportSet((String) jReportSetBox.getSelectedItem());
-
+            ReportManager.getSingleton().updateFilters();
             jReportTable.repaint();//.updateUI();
             jReportTable.revalidate();
         }
@@ -1398,7 +1400,6 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         jTribeList.setEnabled(!jFilterByTribeBox.isSelected());
         jTribeSelectionFilter.setEnabled(!jFilterByTribeBox.isSelected());
         jTribeSelectionBox.setEnabled(!jFilterByTribeBox.isSelected());
-        jIsAttackerBox.setEnabled(!jFilterByTribeBox.isSelected());
     }//GEN-LAST:event_fireFilterByTribeChangedEvent
 
     private void fireFilterChangedEvent(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_fireFilterChangedEvent
@@ -1406,7 +1407,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
     }//GEN-LAST:event_fireFilterChangedEvent
 
     private void fireTribeFilterChangedEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireTribeFilterChangedEvent
-         if (evt.getSource() == jAddTribeButton) {
+        if (evt.getSource() == jAddTribeButton) {
             //add tribe
             jTribeSelectionBox.firePopupMenuCanceled();
             Tribe t = (Tribe) jTribeSelectionBox.getSelectedItem();
@@ -1417,20 +1418,82 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
             }
         } else {
             //remove tribe
-            Tribe t = (Tribe) jTribeList.getSelectedValue();
-            if (t != null) {
+            Tribe filter = (Tribe) jTribeList.getSelectedValue();
+            if (filter != null) {
                 if (JOptionPaneHelper.showQuestionConfirmBox(jFilterDialog, "Gewählten Spieler entfernen?", "Spieler entfernen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
-                    ((DefaultListModel) jTribeList.getModel()).removeElement(t);
+                    ((DefaultListModel) jTribeList.getModel()).removeElement(filter);
                 }
             }
         }
     }//GEN-LAST:event_fireTribeFilterChangedEvent
 
     private void fireShowFilterDialogEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireShowFilterDialogEvent
-       jFilterDialog.pack();
-       jFilterDialog.setLocationRelativeTo(this);
-       jFilterDialog.setVisible(true);
+        jFilterDialog.pack();
+        jFilterDialog.setLocationRelativeTo(this);
+        jFilterDialog.setVisible(true);
     }//GEN-LAST:event_fireShowFilterDialogEvent
+
+    private void fireApplyFilterEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireApplyFilterEvent
+        if (evt.getSource() == jDoFilterButton) {
+            List<ReportFilterInterface> filters = new LinkedList<ReportFilterInterface>();
+            if (!jFilterByTribeBox.isSelected()) {
+                DefaultListModel model = (DefaultListModel) jTribeList.getModel();
+                if (model.isEmpty()) {
+                    JOptionPaneHelper.showInformationBox(jFilterDialog, "Keine Spieler ausgewählt", "Information");
+                    return;
+                }
+                List<Tribe> tribes = new LinkedList<Tribe>();
+                for (int i = 0; i < model.size(); i++) {
+                    tribes.add((Tribe) model.getElementAt(i));
+                }
+                TribeFilter filter = new TribeFilter();
+                filter.setup(tribes);
+                filters.add(filter);
+
+            }
+            int colorFilter = 0;
+            if (jShowHiddenAttackerReports.isSelected()) {
+                colorFilter += ColorFilter.GREY;
+            }
+            if (jShowRedReports.isSelected()) {
+                colorFilter += ColorFilter.RED;
+            }
+            if (jShowYellowReports.isSelected()) {
+                colorFilter += ColorFilter.YELLOW;
+            }
+            if (jShowGreenReports.isSelected()) {
+                colorFilter += ColorFilter.GREEN;
+            }
+            if (jShowBlueReports.isSelected()) {
+                colorFilter += ColorFilter.BLUE;
+            }
+            ColorFilter colFilter = new ColorFilter();
+            colFilter.setup(colorFilter);
+            filters.add(colFilter);
+            if (!jShowSnobReports.isSelected()) {
+                filters.add(new ConqueredFilter());
+            }
+            if (jFilterByDate.isSelected()) {
+                DateFilter dateFilter = new DateFilter();
+                List<Long> dates = new LinkedList<Long>();
+                Date start = (Date) jStartDate.getValue();
+                Date end = (Date) jEndDate.getValue();
+                if (start.getTime() > end.getTime()) {
+                    jStartDate.setValue(end);
+                    jEndDate.setValue(start);
+                    start = (Date) jStartDate.getValue();
+                    end = (Date) jEndDate.getValue();
+                }
+                dates.add(start.getTime());
+                dates.add(end.getTime());
+                dateFilter.setup(dates);
+                filters.add(dateFilter);
+            }
+            ReportManager.getSingleton().setFilters(filters);
+        }
+        jFilterDialog.setVisible(false);
+        jReportTable.updateUI();
+    }//GEN-LAST:event_fireApplyFilterEvent
 
     private void fireRebuildStatsEvent() {
         Object[] selection = jList1.getSelectedValues();
@@ -2010,7 +2073,6 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
     private javax.swing.JButton jButton10;
     private javax.swing.JButton jButton11;
     private javax.swing.JButton jButton12;
-    private javax.swing.JButton jButton16;
     private javax.swing.JButton jButton17;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
@@ -2024,6 +2086,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
     private javax.swing.JFrame jCreateStatsFrame;
     private javax.swing.JTextField jCurrentSetField;
     private javax.swing.JButton jDoAddNewSetButton;
+    private javax.swing.JButton jDoFilterButton;
     private javax.swing.JButton jDoMoveButton;
     private javax.swing.JButton jDoRenameButton;
     private javax.swing.JSpinner jEndDate;
@@ -2031,7 +2094,6 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
     private javax.swing.JCheckBox jFilterByTribeBox;
     private javax.swing.JDialog jFilterDialog;
     private javax.swing.JCheckBox jGuessUnknownLosses;
-    private javax.swing.JCheckBox jIsAttackerBox;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

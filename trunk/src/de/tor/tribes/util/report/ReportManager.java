@@ -7,6 +7,7 @@ package de.tor.tribes.util.report;
 import de.tor.tribes.types.FightReport;
 import de.tor.tribes.types.ReportSet;
 import de.tor.tribes.ui.models.ReportManagerTableModel;
+import de.tor.tribes.util.FilterableManager;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.io.File;
 import java.io.FileWriter;
@@ -22,7 +23,7 @@ import org.jdom.Element;
  *
  * @author Torridity
  */
-public class ReportManager {
+public class ReportManager extends FilterableManager<FightReport, ReportFilterInterface> {
 
     private static Logger logger = Logger.getLogger("ReportManager");
     private static ReportManager SINGLETON = null;
@@ -57,6 +58,7 @@ public class ReportManager {
 
     public void loadReportsFromFile(String pFile) {
         reportSets.clear();
+        clearFilteredList();
         reportSets.put(DEFAULT_SET, new ReportSet(DEFAULT_SET));
         if (pFile == null) {
             logger.error("File argument is 'null'");
@@ -154,6 +156,7 @@ public class ReportManager {
         toRename.setName(pNewName);
         reportSets.put(pNewName, toRename);
         ReportManagerTableModel.getSingleton().setActiveReportSet(pNewName);
+        ReportManager.getSingleton().updateFilters();
         fireReportsChangedEvents(pNewName);
         return true;
     }
@@ -178,7 +181,7 @@ public class ReportManager {
         }
 
         ReportSet reportSet = reportSets.get(set);
-        FightReport[] reports = reportSet.getReports();
+        FightReport[] reports = getFilteredList().toArray(new FightReport[]{});
 
         for (int i : pIDs) {
             if (logger.isDebugEnabled()) {
@@ -196,6 +199,7 @@ public class ReportManager {
     }
 
     public void forceUpdate(String pPlan) {
+        updateFilters();
         fireReportsChangedEvents(pPlan);
     }
 
@@ -209,5 +213,10 @@ public class ReportManager {
         for (ReportManagerListener listener : listeners) {
             listener.fireReportsChangedEvent(plan);
         }
+    }
+
+    @Override
+    public FightReport[] getUnfilteredElements() {
+        return reportSets.get(ReportManagerTableModel.getSingleton().getActiveReportSet()).getReports();
     }
 }

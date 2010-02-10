@@ -96,27 +96,27 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame {
             case 0: {
                 buildTribeRanking();
                 sorter.setModel(jRankTable.getModel());
-                sorter.setComparator(1, String.CASE_INSENSITIVE_ORDER);
-                sorter.setComparator(2, String.CASE_INSENSITIVE_ORDER);
+                sorter.setComparator(1, Tribe.CASE_INSENSITIVE_ORDER);
+                sorter.setComparator(2, Ally.CASE_INSENSITIVE_ORDER);
                 break;
             }
             case 1: {
                 buildAllyRanking();
                 sorter.setModel(jRankTable.getModel());
-                sorter.setComparator(1, String.CASE_INSENSITIVE_ORDER);
+                sorter.setComparator(1, Ally.CASE_INSENSITIVE_ORDER);
                 sorter.setComparator(2, String.CASE_INSENSITIVE_ORDER);
                 break;
             }
             case 2: {
                 buildBashTribeRanking();
                 sorter.setModel(jRankTable.getModel());
-                sorter.setComparator(2, String.CASE_INSENSITIVE_ORDER);
+                sorter.setComparator(2, Tribe.CASE_INSENSITIVE_ORDER);
                 break;
             }
             case 3: {
                 buildBashAllyRanking();
                 sorter.setModel(jRankTable.getModel());
-                sorter.setComparator(0, String.CASE_INSENSITIVE_ORDER);
+                sorter.setComparator(0, Ally.CASE_INSENSITIVE_ORDER);
                 sorter.setComparator(1, String.CASE_INSENSITIVE_ORDER);
                 break;
             }
@@ -158,19 +158,25 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame {
         };
         jRankTable.setDefaultRenderer(Integer.class, renderer);
         jRankTable.setDefaultRenderer(Double.class, renderer);
-        jRankTable.setDefaultRenderer(Village.class, new VillageCellRenderer());
+        /*  jRankTable.setDefaultRenderer(Village.class, new VillageCellRenderer());
         jRankTable.setDefaultRenderer(Tribe.class, new TribeCellRenderer());
-        jRankTable.setDefaultRenderer(Ally.class, new AllyCellRenderer());
+        jRankTable.setDefaultRenderer(Ally.class, new AllyCellRenderer());*/
         DefaultTableCellRenderer renderer2 = new DefaultTableCellRenderer() {
 
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
                 Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-                //@TODO Add village, tribe and ally detection
+                if (value instanceof Village) {
+                    c = new VillageCellRenderer().getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                } else if (value instanceof Tribe) {
+                    c = new TribeCellRenderer().getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                } else if (value instanceof Ally) {
+                    c = new AllyCellRenderer().getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                }
+
                 if (row % 2 == 0 && !isSelected) {
                     c.setBackground(Constants.DS_BACK_LIGHT);
                 }
-                DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
                 // r.setText(r.getText());
                 return c;
             }

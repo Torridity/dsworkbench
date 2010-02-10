@@ -50,4 +50,8 @@ public class NoTag extends Tag {
         List<Tag> tagList = TagManager.getSingleton().getTags(v);
         return (tagList == null || tagList.isEmpty());
     }
+
+    public String toString() {
+        return "Kein Stamm";
+    }
 }

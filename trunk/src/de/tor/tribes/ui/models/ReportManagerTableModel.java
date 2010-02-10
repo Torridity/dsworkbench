@@ -62,6 +62,9 @@ public class ReportManagerTableModel extends AbstractDSWorkbenchTableModel {
     }
 
     public synchronized String getActiveReportSet() {
+        if (sReportSet == null) {
+            return ReportManager.DEFAULT_SET;
+        }
         return sReportSet;
     }
 
@@ -71,14 +74,13 @@ public class ReportManagerTableModel extends AbstractDSWorkbenchTableModel {
 
     @Override
     public int getRowCount() {
-        return ReportManager.getSingleton().getReportSet(sReportSet).getReports().length;
+        return ReportManager.getSingleton().getFilteredElementCount();
     }
 
-
-    public FightReport getReportAtRow(int pRow){
-       ReportSet set = ReportManager.getSingleton().getReportSet(sReportSet);
-    //@TODO Include filter
-       return set.getReports()[pRow];
+    public FightReport getReportAtRow(int pRow) {
+        ReportSet set = ReportManager.getSingleton().getReportSet(sReportSet);
+        //@TODO Include filter
+        return set.getReports()[pRow];
     }
 
     /* @Override
@@ -87,25 +89,30 @@ public class ReportManagerTableModel extends AbstractDSWorkbenchTableModel {
     }*/
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        ReportSet set = ReportManager.getSingleton().getReportSet(sReportSet);
-        columnIndex = getRealColumnId(columnIndex);
-        switch (columnIndex) {
-            case 0:
-                return set.getReports()[rowIndex];
-            case 1:
-                return new Date(set.getReports()[rowIndex].getTimestamp());
-            case 2:
-                return set.getReports()[rowIndex].getAttacker();
-            case 3:
-                return set.getReports()[rowIndex].getSourceVillage();
-            case 4:
-                return set.getReports()[rowIndex].getDefender();
-            case 5:
-                return set.getReports()[rowIndex].getTargetVillage();
-            case 6:
-                return set.getReports()[rowIndex].guessType();
-            default:
-                return set.getReports()[rowIndex].getVillageEffects();
+        // ReportSet set = ReportManager.getSingleton().getReportSet(sReportSet);
+        try {
+            List<FightReport> reports = ReportManager.getSingleton().getFilteredList();
+            columnIndex = getRealColumnId(columnIndex);
+            switch (columnIndex) {
+                case 0:
+                    return reports.get(rowIndex);
+                case 1:
+                    return new Date(reports.get(rowIndex).getTimestamp());
+                case 2:
+                    return reports.get(rowIndex).getAttacker();
+                case 3:
+                    return reports.get(rowIndex).getSourceVillage();
+                case 4:
+                    return reports.get(rowIndex).getDefender();
+                case 5:
+                    return reports.get(rowIndex).getTargetVillage();
+                case 6:
+                    return reports.get(rowIndex).guessType();
+                default:
+                    return reports.get(rowIndex).getVillageEffects();
+            }
+        } catch (Exception e) {
+            return null;
         }
     }
 

@@ -656,7 +656,7 @@
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/res/ui/filter_off.png"/>
             </Property>
-            <Property name="toolTipText" type="java.lang.String" value="Gew&#xe4;hltes Dorf auf der Karte zentrieren"/>
+            <Property name="toolTipText" type="java.lang.String" value="Eroberungen filtern"/>
             <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
               <Dimension value="[59, 35]"/>
             </Property>

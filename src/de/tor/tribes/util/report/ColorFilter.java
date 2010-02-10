@@ -5,7 +5,6 @@
 package de.tor.tribes.util.report;
 
 import de.tor.tribes.types.FightReport;
-import de.tor.tribes.types.Tribe;
 
 /**
  *
@@ -13,12 +12,12 @@ import de.tor.tribes.types.Tribe;
  */
 public class ColorFilter implements ReportFilterInterface {
 
-    private Integer color = GREY;
-    public static final int GREY = 0;
-    public static final int BLUE = 1;
-    public static final int RED = 2;
-    public static final int YELLOW = 3;
-    public static final int GREEN = 4;
+    private Integer color = 31;
+    public static final int GREY = 1;
+    public static final int BLUE = 2;
+    public static final int RED = 4;
+    public static final int YELLOW = 8;
+    public static final int GREEN = 16;
 
     @Override
     public void setup(Object pFilterComponent) {
@@ -27,17 +26,24 @@ public class ColorFilter implements ReportFilterInterface {
 
     @Override
     public boolean isValid(FightReport c) {
-        if (c.areAttackersHidden() && color == GREY) {
-            return true;
-        } else if (c.isSpyReport() && color == BLUE) {
-            return true;
-        } else if (c.wasLostEverything() && color == RED) {
-            return true;
-        } else if (c.wasLostNothing() && color == GREEN) {
-            return true;
-        } else if (color == YELLOW) {
-            return true;
+        int value = 0;
+        if (c.areAttackersHidden()) {
+            value = GREY;
+        } else if (c.isSpyReport()) {
+            value = BLUE;
+        } else if (c.wasLostEverything()) {
+            value = RED;
+        } else if (c.wasLostNothing()) {
+            value = GREEN;
+        } else {
+            value = YELLOW;
         }
-        return false;
+        return ((color & value) > 0);
+    }
+
+    public static void main(String[] args) {
+        ColorFilter f = new ColorFilter();
+        f.setup(ColorFilter.RED + ColorFilter.BLUE + ColorFilter.GREEN);
+
     }
 }

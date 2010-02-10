@@ -506,7 +506,7 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
 
         jButton2.setBackground(new java.awt.Color(239, 235, 223));
         jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/filter_off.png"))); // NOI18N
-        jButton2.setToolTipText("Gewähltes Dorf auf der Karte zentrieren");
+        jButton2.setToolTipText("Eroberungen filtern");
         jButton2.setMaximumSize(new java.awt.Dimension(59, 35));
         jButton2.setMinimumSize(new java.awt.Dimension(59, 35));
         jButton2.setPreferredSize(new java.awt.Dimension(59, 35));

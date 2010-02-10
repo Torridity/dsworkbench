@@ -189,7 +189,7 @@ public class SettingsPanel extends javax.swing.JPanel {
         }
         if (jVariableArriveTimeBox.isSelected()) {
             result.setUseVariableArriveTime(true);
-            result.setArriveSpan((int) jArriveTimeFrame.getMinimumColoredValue(), (int) jArriveTimeFrame.getMaximumColoredValue());
+            result.setArriveSpan((int) Math.rint(jArriveTimeFrame.getMinimumColoredValue()), (int) Math.rint(jArriveTimeFrame.getMaximumColoredValue()));
         }
         return result;
     }

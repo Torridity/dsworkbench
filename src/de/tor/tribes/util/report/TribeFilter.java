@@ -6,26 +6,23 @@ package de.tor.tribes.util.report;
 
 import de.tor.tribes.types.FightReport;
 import de.tor.tribes.types.Tribe;
+import java.util.List;
 
 /**
  *
  * @author Torridity
  */
-public class AttackerFilter implements ReportFilterInterface {
+public class TribeFilter implements ReportFilterInterface {
 
-    private Tribe owner = null;
+    private List<Tribe> tribes = null;
 
     @Override
     public void setup(Object pFilterComponent) {
-        owner = (Tribe) pFilterComponent;
+        tribes = (List<Tribe>) pFilterComponent;
     }
 
     @Override
     public boolean isValid(FightReport c) {
-        try {
-            return c.getAttacker().equals(owner);
-        } catch (Exception e) {
-            return false;
-        }
+        return (tribes.contains(c.getAttacker()) || tribes.contains(c.getDefender()));
     }
 }

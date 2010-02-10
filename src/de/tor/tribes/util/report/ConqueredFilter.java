@@ -18,6 +18,6 @@ public class ConqueredFilter implements ReportFilterInterface {
 
     @Override
     public boolean isValid(FightReport c) {
-        return c.wasConquered() || c.wasSnobAttack();
+        return !(c.wasConquered() || c.wasSnobAttack());
     }
 }

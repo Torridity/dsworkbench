@@ -1762,7 +1762,6 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
 
     boolean fakeOffTargets = mSettingsPanel.fakeOffTargets();
 
-
     int maxAttacksPerVillage = mSettingsPanel.getAttacksPerVillage();
     TimeFrame timeFrame = mSettingsPanel.getTimeFrame();
 
@@ -1788,7 +1787,7 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
             return;
         }
     }
-
+    mSettingsPanel.storeProperties();
     logPanel.clear();
     algo.initialize(sources,
             fakes,

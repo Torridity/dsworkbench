@@ -11,6 +11,7 @@ import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.Hashtable;
+import org.apache.log4j.Logger;
 import org.jdom.Element;
 
 /**
@@ -18,6 +19,7 @@ import org.jdom.Element;
  */
 public class StandardAttackElement {
 
+    private static Logger logger = Logger.getLogger("StandardAttackElement");
     public static final String ALL_TROOPS = "Alle";
     private UnitHolder unit = null;
     private Integer fixedAmount = 0;
@@ -118,21 +120,22 @@ public class StandardAttackElement {
 
     public int getTroopsAmount(Village pVillage) {
         VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(pVillage);
+        boolean haveTroopInfo = true;
         if (holder == null) {
             //no info available
-            return 0;
+            haveTroopInfo = false;
         }
 
         Hashtable<UnitHolder, Integer> ownTroops = holder.getOwnTroops();
         if (ownTroops == null) {
             //no troops in village
-            return 0;
+            haveTroopInfo = false;
         }
 
         Integer availableAmount = ownTroops.get(unit);
         if (availableAmount == 0) {
             //no troops in village
-            return 0;
+            haveTroopInfo = false;
         }
 
         if (fixedAmount != -1) {
@@ -142,9 +145,17 @@ public class StandardAttackElement {
                 return fixedAmount;
             } else {
                 //return max. avail count
-                return availableAmount;
+                if (availableAmount > 0) {
+                    return availableAmount;
+                } else {
+                    return fixedAmount;
+                }
             }
         } else {
+            if (!haveTroopInfo) {
+                logger.debug("Not having troop information or unit " + getUnit() + "  amount is 0. Dynamic amount not available.");
+                return 0;
+            }
             //dyn amount
             if (dynamicAmount.equals(ALL_TROOPS)) {
                 //return all

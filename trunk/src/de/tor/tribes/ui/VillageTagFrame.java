@@ -12,11 +12,13 @@ import de.tor.tribes.types.Tribe;
 import de.tor.tribes.util.tag.TagManager;
 import de.tor.tribes.util.tag.TagManagerListener;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 
 /**
+ *@TODO (DIFF) Added multi village tagging
  * @author  Charon
  */
 public class VillageTagFrame extends javax.swing.JFrame implements TagManagerListener {
@@ -59,6 +61,36 @@ public class VillageTagFrame extends javax.swing.JFrame implements TagManagerLis
         DefaultListModel lModel = new DefaultListModel();
 
         for (Tag tag : tags) {
+            lModel.addElement(tag);
+        }
+
+        jTagsList.setModel(lModel);
+
+        setVisible(true);
+    }
+
+    public void showTagsFrame(List<Village> pVillage) {
+        updateUserTags();
+        Village[] list = pVillage.toArray(new Village[]{});
+        jPlayerName.setText("Mehrfachauswahl");
+        Arrays.sort(list);
+
+        jVillageList.setModel(new DefaultComboBoxModel(list));
+        jVillageList.setSelectedItem(pVillage.get(0));
+        List<Tag> allTags = new LinkedList<Tag>();
+        for (Village v : pVillage) {
+            List<Tag> tags = TagManager.getSingleton().getTags(v);
+            for (Tag t : tags) {
+                if (!allTags.contains(t)) {
+                    allTags.add(t);
+                }
+            }
+        }
+
+
+        DefaultListModel lModel = new DefaultListModel();
+
+        for (Tag tag : allTags) {
             lModel.addElement(tag);
         }
 
@@ -203,30 +235,53 @@ public class VillageTagFrame extends javax.swing.JFrame implements TagManagerLis
     }// </editor-fold>//GEN-END:initComponents
 
 private void fireAddTagEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireAddTagEvent
-    Village selection = (Village) jVillageList.getSelectedItem();
     Tag tag = (Tag) jTagsChooser.getSelectedItem();
-    if ((selection == null) || (tag == null)) {
-        return;
-    }
-
     DefaultListModel model = (DefaultListModel) jTagsList.getModel();
-    if (!model.contains(tag)) {
-        model.addElement(tag);
-        TagManager.getSingleton().addTag(selection, tag.getName());
+    if (jPlayerName.getText().equals("Mehrfachauswahl")) {
+        if (tag == null) {
+            return;
+        }
+
+        for (int i = 0; i < jVillageList.getItemCount(); i++) {
+            Village v = (Village) jVillageList.getItemAt(i);
+            if (v.getTribe() != null) {
+                TagManager.getSingleton().addTag(v, tag.getName());
+            }
+        }
+        if (!model.contains(tag)) {
+            model.addElement(tag);
+        }
+    } else {
+        Village selection = (Village) jVillageList.getSelectedItem();
+        if ((selection == null) || (tag == null)) {
+            return;
+        }
+        if (!model.contains(tag)) {
+            model.addElement(tag);
+            TagManager.getSingleton().addTag(selection, tag.getName());
+        }
     }
 }//GEN-LAST:event_fireAddTagEvent
 
 private void fireRemoveTagEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireRemoveTagEvent
-    Village selection = (Village) jVillageList.getSelectedItem();
-    if (selection == null) {
-        return;
-    }
     Tag selectedTag = (Tag) jTagsList.getSelectedValue();
     if (selectedTag == null) {
         return;
     }
-    TagManager.getSingleton().removeTag(selection, selectedTag.getName());
-
+    if (jPlayerName.getText().equals("Mehrfachauswahl")) {
+        for (int i = 0; i < jVillageList.getItemCount(); i++) {
+            Village v = (Village) jVillageList.getItemAt(i);
+            if (v.getTribe() != null) {
+                TagManager.getSingleton().removeTag(v, selectedTag.getName());
+            }
+        }
+    } else {
+        Village selection = (Village) jVillageList.getSelectedItem();
+        if (selection == null) {
+            return;
+        }
+        TagManager.getSingleton().removeTag(selection, selectedTag.getName());
+    }
     DefaultListModel model = (DefaultListModel) jTagsList.getModel();
     model.removeElement(selectedTag);
 }//GEN-LAST:event_fireRemoveTagEvent

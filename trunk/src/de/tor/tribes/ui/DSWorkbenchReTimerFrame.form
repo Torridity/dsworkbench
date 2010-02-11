@@ -758,7 +758,7 @@
                           <Component id="jRelationBox" alignment="1" max="32767" attributes="1"/>
                           <Component id="jScrollPane3" alignment="1" pref="131" max="32767" attributes="1"/>
                       </Group>
-                      <EmptySpace pref="70" max="32767" attributes="0"/>
+                      <EmptySpace pref="72" max="32767" attributes="0"/>
                       <Component id="jLabel8" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="1" max="-2" attributes="0">
@@ -817,7 +817,7 @@
             <Component class="javax.swing.JCheckBox" name="jRelationBox">
               <Properties>
                 <Property name="selected" type="boolean" value="true"/>
-                <Property name="text" type="java.lang.String" value="Verkn&#xfc;pfung"/>
+                <Property name="text" type="java.lang.String" value="Verkn&#xfc;pfung (UND)"/>
                 <Property name="toolTipText" type="java.lang.String" value="Verkn&#xfc;pfung der gew&#xe4;hlten Dorfgruppen (UND = Dorf muss in allen Gruppen sein, ODER = Dorf muss in mindestens einer Gruppe sein)"/>
                 <Property name="horizontalAlignment" type="int" value="4"/>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
@@ -828,6 +828,9 @@
                   <Image iconType="3" name="/res/ui/logic_and.png"/>
                 </Property>
               </Properties>
+              <Events>
+                <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="fireRelationChangedEvent"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JComboBox" name="jUnitBox">
               <Properties>

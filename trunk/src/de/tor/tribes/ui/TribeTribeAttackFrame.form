@@ -997,7 +997,7 @@
               <Component id="jTabbedPane1" pref="640" max="32767" attributes="0"/>
               <EmptySpace min="-2" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                  <Component id="jCalculatingProgressBar" max="32767" attributes="1"/>
+                  <Component id="jCalculatingProgressBar" min="-2" max="-2" attributes="1"/>
                   <Component id="jCalculateButton" alignment="0" max="32767" attributes="1"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
@@ -2210,6 +2210,15 @@
     </Container>
     <Component class="javax.swing.JProgressBar" name="jCalculatingProgressBar">
       <Properties>
+        <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+          <Dimension value="[32767, 23]"/>
+        </Property>
+        <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+          <Dimension value="[10, 23]"/>
+        </Property>
+        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+          <Dimension value="[146, 23]"/>
+        </Property>
         <Property name="string" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
           <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="TribeTribeAttackFrame.jCalculatingProgressBar.string" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
         </Property>

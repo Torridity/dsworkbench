@@ -23,7 +23,7 @@ import org.jdom.Document;
 import org.jdom.Element;
 
 /**
- * @TODO (2.0) Avoid returning always 0 if no troops are imported
+ * @TODO (DIFF) Avoid returning always 0 if no troops are imported
  * @TODO (2.0) Check why sometimes attacks are not stored
  * @author Charon
  */

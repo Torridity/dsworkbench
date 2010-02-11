@@ -78,9 +78,8 @@ public class ReportManagerTableModel extends AbstractDSWorkbenchTableModel {
     }
 
     public FightReport getReportAtRow(int pRow) {
-        ReportSet set = ReportManager.getSingleton().getReportSet(sReportSet);
-        //@TODO Include filter
-        return set.getReports()[pRow];
+        List<FightReport> filtered = ReportManager.getSingleton().getFilteredList();
+        return filtered.get(pRow);
     }
 
     /* @Override

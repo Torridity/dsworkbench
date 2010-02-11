@@ -58,6 +58,9 @@ import javax.swing.JPanel;
 
 /**
  * @TODO (2.0) Troops to A*Star in map popup
+ * @TODO (DIFF) Added new popup
+ * @TODO (DIFF) Added ruler
+ * @TODO (DIFF) Added fancy "mark all tribes villages" feature
  * @author Charon
  */
 public class MapPanel extends JPanel {
@@ -131,15 +134,14 @@ public class MapPanel extends JPanel {
         initListeners();
     }
 
-   /* boolean INIT = false;
+    /* boolean INIT = false;
     public BufferStrategy getStrategy() {
-        if (isVisible() && !INIT) {
-            INIT = true;
-            createBufferStrategy(4);
-        }
-        return getBufferStrategy();
+    if (isVisible() && !INIT) {
+    INIT = true;
+    createBufferStrategy(4);
+    }
+    return getBufferStrategy();
     }*/
-
     public void setSpaceDown(boolean pValue) {
         spaceDown = pValue;
     }
@@ -208,11 +210,10 @@ public class MapPanel extends JPanel {
                     }
                     return;
                 }/* else {
-                    DSWorkbenchMainFrame.getSingleton().switchPanel();
+                DSWorkbenchMainFrame.getSingleton().switchPanel();
                 }*/
-
+                Village v = getVillageAtMousePos();
                 if (e.getButton() == MouseEvent.BUTTON1 && shiftDown) {
-                    Village v = getVillageAtMousePos();
                     if (v != null) {
                         if (!markedVillages.contains(v)) {
                             markedVillages.add(v);
@@ -223,7 +224,7 @@ public class MapPanel extends JPanel {
                         markedVillages.clear();
                     }
                     return;
-                } else if (!shiftDown) {
+                } else if (!shiftDown && v == null) {
                     markedVillages.clear();
                 }
 
@@ -240,44 +241,50 @@ public class MapPanel extends JPanel {
                 switch (tmpCursor) {
                     case ImageManager.CURSOR_DEFAULT: {
                         //center village on click with default cursor
-                        Village current = getVillageAtMousePos();
-                        if (current != null) {
+                        //Village current = getVillageAtMousePos();
+                        if (v != null) {
                             Tribe t = DSWorkbenchMainFrame.getSingleton().getCurrentUser();
-                            if ((current != null) && (current.getTribe() != null) && (t != null) && (t.equals(current.getTribe()))) {
-                                DSWorkbenchMainFrame.getSingleton().setCurrentUserVillage(current);
+                            if ((v != null) && (v.getTribe() != null) && (t != null) && (t.equals(v.getTribe()))) {
+                                DSWorkbenchMainFrame.getSingleton().setCurrentUserVillage(v);
                             }
                         }
                         break;
                     }
                     case ImageManager.CURSOR_MARK: {
-                        Village current = getVillageAtMousePos();
-                        if (current != null) {
-                            if (current.getTribe() == null) {
+                       // Village current = getVillageAtMousePos();
+                        if (v != null) {
+                            if (v.getTribe() == null) {
                                 //empty village
                                 return;
                             }
                             mMarkerAddFrame.setLocation(e.getPoint());
-                            mMarkerAddFrame.setVillage(current);
+                            mMarkerAddFrame.setVillage(v);
                             mMarkerAddFrame.setVisible(true);
                         }
                         break;
                     }
                     case ImageManager.CURSOR_TAG: {
-                        Village current = getVillageAtMousePos();
-                        if (current != null) {
-                            if (current.getTribe() == null) {
+                      //  Village current = getVillageAtMousePos();
+                        if (v != null) {
+                            if (v.getTribe() == null) {
                                 //empty village
                                 return;
                             }
-                            VillageTagFrame.getSingleton().setLocation(e.getPoint());
-                            VillageTagFrame.getSingleton().showTagsFrame(current);
+                            List<Village> marked = getMarkedVillages();
+                            if (marked == null || marked.isEmpty()) {
+                                VillageTagFrame.getSingleton().setLocation(e.getPoint());
+                                VillageTagFrame.getSingleton().showTagsFrame(v);
+                            } else {
+                                VillageTagFrame.getSingleton().setLocation(e.getPoint());
+                                VillageTagFrame.getSingleton().showTagsFrame(marked);
+                            }
                             break;
                         }
                     }
                     case ImageManager.CURSOR_SUPPORT: {
-                        Village current = getVillageAtMousePos();
-                        if (current != null) {
-                            if (current.getTribe() == null) {
+                       // Village current = getVillageAtMousePos();
+                        if (v != null) {
+                            if (v.getTribe() == null) {
                                 //empty village
                                 return;
                             }
@@ -286,7 +293,7 @@ public class MapPanel extends JPanel {
                             return;
                         }
                         VillageSupportFrame.getSingleton().setLocation(e.getPoint());
-                        VillageSupportFrame.getSingleton().showSupportFrame(current);
+                        VillageSupportFrame.getSingleton().showSupportFrame(v);
                         break;
                     }
                     case ImageManager.CURSOR_RADAR: {
@@ -303,7 +310,7 @@ public class MapPanel extends JPanel {
                     }
                     case ImageManager.CURSOR_ATTACK_INGAME: {
                         if (e.getClickCount() == 2) {
-                            Village v = getVillageAtMousePos();
+                         //   Village v = getVillageAtMousePos();
                             Village u = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage();
                             if ((u != null) && (v != null)) {
                                 if (Desktop.isDesktopSupported()) {
@@ -315,7 +322,7 @@ public class MapPanel extends JPanel {
                     }
                     case ImageManager.CURSOR_SEND_RES_INGAME: {
                         if (e.getClickCount() == 2) {
-                            Village v = getVillageAtMousePos();
+                          //  Village v = getVillageAtMousePos();
                             Village u = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage();
                             if ((u != null) && (v != null)) {
                                 if (Desktop.isDesktopSupported()) {
@@ -354,7 +361,7 @@ public class MapPanel extends JPanel {
                         break;
                     }
                     case ImageManager.CURSOR_CHURCH_1: {
-                        Village v = getVillageAtMousePos();
+                     //   Village v = getVillageAtMousePos();
                         if (v != null) {
                             ChurchManager.getSingleton().addChurch(v, Church.RANGE1);
 
@@ -362,7 +369,7 @@ public class MapPanel extends JPanel {
                         break;
                     }
                     case ImageManager.CURSOR_CHURCH_2: {
-                        Village v = getVillageAtMousePos();
+                      //  Village v = getVillageAtMousePos();
                         if (v != null) {
                             ChurchManager.getSingleton().addChurch(v, Church.RANGE2);
 
@@ -370,7 +377,7 @@ public class MapPanel extends JPanel {
                         break;
                     }
                     case ImageManager.CURSOR_CHURCH_3: {
-                        Village v = getVillageAtMousePos();
+                      //  Village v = getVillageAtMousePos();
                         if (v != null) {
                             ChurchManager.getSingleton().addChurch(v, Church.RANGE3);
 
@@ -378,14 +385,14 @@ public class MapPanel extends JPanel {
                         break;
                     }
                     case ImageManager.CURSOR_REMOVE_CHURCH: {
-                        Village v = getVillageAtMousePos();
+                      //  Village v = getVillageAtMousePos();
                         if (v != null) {
                             ChurchManager.getSingleton().removeChurch(v);
                         }
                         break;
                     }
                     case ImageManager.CURSOR_NOTE: {
-                        Village v = getVillageAtMousePos();
+                       // Village v = getVillageAtMousePos();
                         if (v != null) {
                             DSWorkbenchNotepad.getSingleton().addNoteForVillage(v);
                             if (!DSWorkbenchNotepad.getSingleton().isVisible()) {

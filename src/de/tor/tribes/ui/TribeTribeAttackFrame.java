@@ -76,9 +76,12 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumn;
 
 /**
- * @TODO (2.0) Fixed start time, arbitrary arrive time not in night bonus?
+ * @TODO (DIFF) Redesign of attack planer
+ * @TODO (DIFF) New algorithm
  * @TODO (DIFF) Settings are stored now
  * @TODO (DIFF) Introduce for target "All but <1000, <2000" Button/ComboBOx
+ * @TODO (2.0) Add attack amount for each village in target list
+ *  @TODO (2.0) Add fake deff type
  * @author Jejkal
  */
 public class TribeTribeAttackFrame extends javax.swing.JFrame implements AlgorithmListener {
@@ -1588,6 +1591,9 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Algorit
 
         jTabbedPane1.addTab(bundle.getString("TribeTribeAttackFrame.jTargetPanel.TabConstraints.tabTitle"), new javax.swing.ImageIcon(getClass().getResource("/res/ally.png")), jTargetPanel); // NOI18N
 
+        jCalculatingProgressBar.setMaximumSize(new java.awt.Dimension(32767, 23));
+        jCalculatingProgressBar.setMinimumSize(new java.awt.Dimension(10, 23));
+        jCalculatingProgressBar.setPreferredSize(new java.awt.Dimension(146, 23));
         jCalculatingProgressBar.setString(bundle.getString("TribeTribeAttackFrame.jCalculatingProgressBar.string")); // NOI18N
         jCalculatingProgressBar.setStringPainted(true);
 
@@ -1612,7 +1618,7 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Algorit
                 .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 640, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jCalculatingProgressBar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jCalculatingProgressBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jCalculateButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -1781,7 +1787,7 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
 
     //check misc-units criteria
     if (useMiscUnits && !supportMiscUnits) {
-        if (JOptionPaneHelper.showQuestionConfirmBox(this, "Der gewählte Algorithmus unterstützt nur Rammen, Katapulte und AGs als angreifende Einheiten.\n" +
+        if (JOptionPaneHelper.showQuestionConfirmBox(this, "Der gewählte Algorithmus unterstützt nur Rammen und Katapulte als angreifende Einheiten.\n" +
                 "Dörfer für die eine andere Einheit gewählt wurde werden ignoriert.\n" +
                 "Trotzdem fortfahren?", "Warnung", "Nein", "Ja") == JOptionPane.NO_OPTION) {
             return;
@@ -1900,33 +1906,25 @@ private void fireUnformattedAttacksToClipboardEvent(java.awt.event.MouseEvent ev
                     buffer.append("(Clean-Off)");
                     buffer.append("\t");
                     break;
-
                 }
-
 
                 case Attack.FAKE_TYPE: {
                     buffer.append("(Fake)");
                     buffer.append("\t");
                     break;
-
                 }
-
 
                 case Attack.SNOB_TYPE: {
                     buffer.append("(AG)");
                     buffer.append("\t");
                     break;
-
                 }
-
 
                 case Attack.SUPPORT_TYPE: {
                     buffer.append("(Unterstützung)");
                     buffer.append("\t");
                     break;
-
                 }
-
 
             }
 
@@ -3247,12 +3245,9 @@ private void fireClosingEvent(java.awt.event.WindowEvent evt) {//GEN-FIRST:event
         jCalculatingProgressBar.setIndeterminate(false);
         jCalculatingProgressBar.setString("Berechnung abgeschlossen");
         jCalculateButton.setEnabled(true);
+        repaint();
         List<Attack> attackList = new LinkedList<Attack>();
         List<Village> targets = new LinkedList<Village>();
-
-        // <editor-fold defaultstate="collapsed" desc=" Post processing ">
-
-        // <editor-fold defaultstate="collapsed" desc="Additional assignment">
 
         logger.debug("Algorithm post-processing skipped");
         for (AbstractTroopMovement movement : pParent.getResults()) {
@@ -3263,7 +3258,6 @@ private void fireClosingEvent(java.awt.event.WindowEvent evt) {//GEN-FIRST:event
                 if (!targets.contains(attack.getTarget())) {
                     targets.add(attack.getTarget());
                 }
-
             }
         }
 
@@ -3278,7 +3272,6 @@ private void fireClosingEvent(java.awt.event.WindowEvent evt) {//GEN-FIRST:event
             Integer val = attackMappings.get(v);
             attackMappings.put(v, val + 1);
         }
-
 
 // </editor-fold>
 

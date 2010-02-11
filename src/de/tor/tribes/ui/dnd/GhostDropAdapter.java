@@ -18,7 +18,6 @@ public class GhostDropAdapter extends MouseAdapter {
     /**
      * Instantiate a GhostDropAdapter
      * @param glassPane a glasspane where the transparent drag and drop is drawn
-     * @param action TODO !? remove?
      */
     public GhostDropAdapter(GhostGlassPane glassPane, String action) {
         this.glassPane = glassPane;

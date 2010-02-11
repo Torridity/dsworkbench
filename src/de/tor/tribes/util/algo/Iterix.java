@@ -36,7 +36,7 @@ public class Iterix extends AbstractAttackAlgorithm {
     private double[][] mappings;
     private double[][] result;
     //  private List<Village> ramSources;
-    private List<Village> targets;
+   // private List<Village> targets;
     private Integer[] sourceAmounts;
     JFrame f;
     int selectedSource = 0;

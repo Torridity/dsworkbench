@@ -66,7 +66,8 @@ import org.apache.log4j.Logger;
 
 /**
  *@TODO (DIFF) Report database added including war stats
- * @TODO (2.0) Report to A*Star 
+ * @TODO (2.0) Report to A*Star
+ * @TODO (2.0) Manually move troops from report to troop view
  * @author Torridity
  */
 public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements ReportManagerListener {

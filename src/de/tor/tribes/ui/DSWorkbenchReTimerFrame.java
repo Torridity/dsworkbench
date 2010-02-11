@@ -20,7 +20,6 @@ import de.tor.tribes.ui.renderer.DateCellRenderer;
 import de.tor.tribes.ui.renderer.SortableTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.UnitCellRenderer;
 import de.tor.tribes.ui.renderer.UnitListCellRenderer;
-import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
@@ -31,7 +30,6 @@ import de.tor.tribes.util.tag.TagManagerListener;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.event.ItemEvent;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -42,12 +40,12 @@ import java.util.List;
 import java.util.StringTokenizer;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
-import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import org.apache.log4j.Logger;
 
 /**
+ * @TODO (2.0) Add troop amount filter
  * @author Jejkal
  */
 public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements TagManagerListener {
@@ -66,7 +64,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
     DSWorkbenchReTimerFrame() {
         initComponents();
 
-         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
+        // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
         GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.retime_tool", GlobalOptions.getHelpBroker().getHelpSet());
         // </editor-fold>
     }
@@ -557,12 +555,17 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         jLabel7.setText("Dorfgruppe");
 
         jRelationBox.setSelected(true);
-        jRelationBox.setText("Verknüpfung");
+        jRelationBox.setText("Verknüpfung (UND)");
         jRelationBox.setToolTipText("Verknüpfung der gewählten Dorfgruppen (UND = Dorf muss in allen Gruppen sein, ODER = Dorf muss in mindestens einer Gruppe sein)");
         jRelationBox.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jRelationBox.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/logic_or.png"))); // NOI18N
         jRelationBox.setOpaque(false);
         jRelationBox.setSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/logic_and.png"))); // NOI18N
+        jRelationBox.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                fireRelationChangedEvent(evt);
+            }
+        });
 
         jUnitBox.setToolTipText("Langsamste Einheit mit der gegengetimed wird");
         jUnitBox.setMaximumSize(new java.awt.Dimension(40, 25));
@@ -591,7 +594,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jRelationBox, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 131, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 70, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 72, Short.MAX_VALUE)
                 .addComponent(jLabel8)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
@@ -822,10 +825,10 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
             jSnobBox.setEnabled(true);
         }
 
-        if (jSnobBox.isEnabled()) {
-            jSnobBox.setSelected(true);
-            fireEstUnitChangedEvent(new ItemEvent(jSnobBox, 0, null, 0));
-        } else if (jRamBox.isEnabled()) {
+        /*if (jSnobBox.isEnabled()) {
+        jSnobBox.setSelected(true);
+        fireEstUnitChangedEvent(new ItemEvent(jSnobBox, 0, null, 0));
+        } else*/ if (jRamBox.isEnabled()) {
             jRamBox.setSelected(true);
             fireEstUnitChangedEvent(new ItemEvent(jRamBox, 0, null, 0));
         } else if (jAxeBox.isEnabled()) {
@@ -1004,6 +1007,14 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         setAlwaysOnTop(jMainAlwaysOnTopBox.isSelected());
     }//GEN-LAST:event_fireAlwaysOnTopChangedEvent
 
+    private void fireRelationChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireRelationChangedEvent
+        if (jRelationBox.isSelected()) {
+            jRelationBox.setText("Verknüpfung (UND)");
+        } else {
+            jRelationBox.setText("Verknüpfung (ODER)");
+        }
+    }//GEN-LAST:event_fireRelationChangedEvent
+
     private void buildResults(Hashtable<Village, Date> pTimings, Village pTarget, UnitHolder pUnit) {
         DefaultTableModel resultModel = new javax.swing.table.DefaultTableModel(
                 new Object[][]{},
@@ -1036,16 +1047,16 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         jResultTable.setRowHeight(20);
         DefaultTableCellRenderer headerRenderer = new SortableTableHeaderRenderer();/*DefaultTableCellRenderer() {
 
-            @Override
-            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-                Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
-                String t = ((DefaultTableCellRenderer) c).getText();
-                ((DefaultTableCellRenderer) c).setText(t);
-                c.setBackground(Constants.DS_BACK);
-                DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
-                r.setText("<html><b>" + r.getText() + "</b></html>");
-                return c;
-            }
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+        Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
+        String t = ((DefaultTableCellRenderer) c).getText();
+        ((DefaultTableCellRenderer) c).setText(t);
+        c.setBackground(Constants.DS_BACK);
+        DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
+        r.setText("<html><b>" + r.getText() + "</b></html>");
+        return c;
+        }
         };*/
         for (int i = 0; i < jResultTable.getColumnCount(); i++) {
             jResultTable.getColumn(jResultTable.getColumnName(i)).setHeaderRenderer(headerRenderer);

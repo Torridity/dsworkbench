@@ -79,7 +79,8 @@ import javax.swing.table.DefaultTableModel;
 
 /**
  * @TODO (1.5?) Add min number to troop filter in attack planer????
- * @TODO (DIFF) Main size stored
+ * @TODO (DIFF) Main size and settings stored
+ * @TODO (DIFF) Global: Table cell popups for village, tribe and ally
  * @author  Charon
  */
 public class DSWorkbenchMainFrame extends javax.swing.JFrame implements

@@ -23,6 +23,7 @@ import de.tor.tribes.util.church.ChurchManager;
 import de.tor.tribes.util.church.ChurchManagerListener;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.LinkedList;
@@ -301,6 +302,10 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
         TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(ChurchManager.getSingleton().getTableModel());
         jChurchTable.setRowSorter(sorter);
         jChurchTable.revalidate();
+    }
+
+    @Override
+    public void fireVillagesDraggedEvent(List<Village> pVillages, Point pDropLocation) {
     }
 
     /**

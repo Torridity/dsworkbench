@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.LinkedList;
@@ -377,37 +378,34 @@ public class AttackManager {
 
     /**Remove one attack from the default plan*/
     public synchronized void removeAttack(int pID) {
-        removeAttacks(null, new int[]{pID});
+        removeAttacks(null, new Integer[]{pID});
     }
 
     /**Remove a number of attacks from the default plan*/
-    public synchronized void removeAttack(int[] pIDs) {
+    public synchronized void removeAttack(Integer[] pIDs) {
         removeAttacks(null, pIDs);
     }
 
     /**Remove one attack from any plan*/
     public synchronized void removeAttack(String pPlan, int pID) {
-        removeAttacks(pPlan, new int[]{pID});
+        removeAttacks(pPlan, new Integer[]{pID});
     }
 
     /**Remove a number of attacks from any plan*/
-    public synchronized void removeAttacks(String pPlan, int[] pIDs) {
+    public synchronized void removeAttacks(String pPlan, Integer[] pIDs) {
         String plan = pPlan;
         if (plan == null) {
             plan = DEFAULT_PLAN_ID;
         }
-
         List<Attack> planAttacks = mAttackPlans.get(plan);
         Attack[] attacks = planAttacks.toArray(new Attack[]{});
         if (planAttacks != null) {
             for (int i : pIDs) {
                 if (logger.isDebugEnabled()) {
-                    logger.debug("Removing attack " + i + " from plan '" + plan + "'");
+                    logger.debug("Removing attack from plan '" + plan + "'");
                 }
-
                 planAttacks.remove(attacks[i]);
             }
-
         }
         fireAttacksChangedEvents(plan);
     }

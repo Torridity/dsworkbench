@@ -11,14 +11,16 @@
 package de.tor.tribes.ui;
 
 import de.tor.tribes.types.AbstractForm;
+import de.tor.tribes.types.Village;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.map.FormManager;
+import java.awt.Point;
 import java.awt.Rectangle;
+import java.util.List;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
-import javax.swing.UIManager;
 import org.apache.log4j.Logger;
 
 /**
@@ -307,6 +309,9 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame {
         setAlwaysOnTop(!isAlwaysOnTop());
     }//GEN-LAST:event_fireFormFrameAlwaysOnTopEvent
 
+    @Override
+    public void fireVillagesDraggedEvent(List<Village> pVillages, Point pDropLocation) {
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBox jAlwaysOnTop;
     private javax.swing.JButton jButton1;

@@ -33,6 +33,8 @@ import javax.swing.text.html.HTMLDocument;
 import org.apache.log4j.Logger;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.parser.VillageParser;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -168,7 +170,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame {
 
         //<editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
         GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.notes_view", GlobalOptions.getHelpBroker().getHelpSet());
-    //</editor-fold>
+        //</editor-fold>
 
     }
 
@@ -1065,6 +1067,28 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame {
         setTitle("Notizblock - Notiz " + (n.indexOf(currentNote) + 1) + " von " + n.size());
     }
 
+    @Override
+    public void fireVillagesDraggedEvent(List<Village> pVillages, Point pDropLocation) {
+        if (currentNote == null) {
+            return;
+        }
+        try {
+            Rectangle bounds = jVillageList.getBounds();
+            Point locationOnScreen = jVillageList.getLocationOnScreen();
+            bounds.setLocation(locationOnScreen);
+            pDropLocation.move(locationOnScreen.x, locationOnScreen.y);
+            if (bounds.contains(pDropLocation)) {
+                for (Village v : pVillages) {
+                    currentNote.addVillage(v);
+                }
+            }
+            showCurrentNote();
+            MapPanel.getSingleton().getMapRenderer().initiateRedraw(0);
+        } catch (Exception e) {
+            logger.error("Failed to insert dropped villages", e);
+        }
+    }
+
     /**
      * @param args the command line arguments
      */
@@ -1082,17 +1106,16 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame {
         String test = "test;test;test;";
         System.out.println(test.split(";").length);
 
-    //System.out.println(text.matches("\\([0-9]{1,3}\\|[0-9]{1,3}\\)"));
-    //System.out.println(text.matches("[0-9]{1,3}\\:[0-9]{1,3}:[0-9]{1,3}"));
+        //System.out.println(text.matches("\\([0-9]{1,3}\\|[0-9]{1,3}\\)"));
+        //System.out.println(text.matches("[0-9]{1,3}\\:[0-9]{1,3}:[0-9]{1,3}"));
        /* String[] t = text.split("[0-9]{1,3}");
-    System.out.println(t.length);
-    System.out.println(t[t.length - 3]);
-    System.out.println(t[t.length - 2]);
-    System.out.println(t[t.length - 1]);
+        System.out.println(t.length);
+        System.out.println(t[t.length - 3]);
+        System.out.println(t[t.length - 2]);
+        System.out.println(t[t.length - 1]);
 
-    System.out.println(text.trim().matches(".+[0-9]{1,3}\\:[0-9]{1,3}:[0-9]{1,3}"));*/
+        System.out.println(text.trim().matches(".+[0-9]{1,3}\\:[0-9]{1,3}:[0-9]{1,3}"));*/
     }
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField jAddVillageField;
     private javax.swing.JCheckBox jAlwaysOnTopBox;

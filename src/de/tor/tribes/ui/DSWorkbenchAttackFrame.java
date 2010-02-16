@@ -32,6 +32,7 @@ import de.tor.tribes.ui.models.StandardAttackTableModel;
 import de.tor.tribes.ui.renderer.AttackTypeCellRenderer;
 import de.tor.tribes.ui.renderer.ColoredDateCellRenderer;
 import de.tor.tribes.ui.renderer.SortableTableHeaderRenderer;
+import de.tor.tribes.ui.renderer.StandardAttackTypeCellRenderer;
 import de.tor.tribes.ui.renderer.UnitCellRenderer;
 import de.tor.tribes.ui.renderer.UnitTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.VillageCellRenderer;
@@ -42,6 +43,7 @@ import de.tor.tribes.util.IGMSender;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.js.AttackScriptWriter;
 import java.awt.Component;
+import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ItemEvent;
@@ -68,6 +70,8 @@ import org.apache.log4j.Logger;
 // -Dsun.java2d.d3d=true -Dsun.java2d.translaccel=true -Dsun.java2d.ddforcevram=true
 /**
  * @TODO (DIFF) Checked slow countdown refresh!
+ * @TODO (DIFF) Correct moving of attacks to another plan
+ * @TODO (DIFF) Improved std attack frame and added fake-def
  * @author  Charon
  */
 public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements AttackManagerListener {
@@ -490,8 +494,8 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
                             .addComponent(jLabel4))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 375, Short.MAX_VALUE)
-                            .addComponent(jTargetTribeBox, 0, 375, Short.MAX_VALUE)))
+                            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 379, Short.MAX_VALUE)
+                            .addComponent(jTargetTribeBox, 0, 379, Short.MAX_VALUE)))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                         .addComponent(jNoTargetVillageButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -1074,7 +1078,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
             jStandardAttackDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jStandardAttackDialogLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -2240,14 +2244,16 @@ private void fireDoMoveToPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
             List<Attack> sourcePlan = AttackManager.getSingleton().getAttackPlan(oldPlan);
             List<Attack> tmpPlan = new LinkedList<Attack>();
             jAttackTable.invalidate();
+            List<Integer> toRemove = new LinkedList<Integer>();
             for (int i : rows) {
                 int row = jAttackTable.convertRowIndexToModel(i);
                 tmpPlan.add(sourcePlan.get(row));
+                toRemove.add(row);
             }
 
-            AttackManager.getSingleton().removeAttacks(oldPlan, rows);
+            AttackManager.getSingleton().removeAttacks(oldPlan, toRemove.toArray(new Integer[]{}));
             for (Attack a : tmpPlan) {
-                AttackManager.getSingleton().addAttack(a.getSource(), a.getTarget(), a.getUnit(), a.getArriveTime(), newPlan);
+                AttackManager.getSingleton().addAttack(a.getSource(), a.getTarget(), a.getUnit(), a.getArriveTime(), a.isShowOnMap(), newPlan, a.getType());
             }
             jAttackTable.revalidate();
         }
@@ -2436,7 +2442,8 @@ private void fireSetStandardAttacksEvent(java.awt.event.MouseEvent evt) {//GEN-F
             jStandardAttackTable.getColumnModel().getColumn(i).setHeaderRenderer(new UnitTableHeaderRenderer());
         }
         jStandardAttackTable.setDefaultEditor(StandardAttackElement.class, new StandardAttackElementEditor());
-
+        jStandardAttackTable.setDefaultRenderer(String.class, new StandardAttackTypeCellRenderer());
+        jStandardAttackTable.setRowHeight(20);
         jStandardAttackDialog.setLocationRelativeTo(this);
         jStandardAttackDialog.setVisible(true);
     } catch (Exception e) {
@@ -2711,9 +2718,14 @@ private void fireSendIGMsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
         return mCountdownThread;
     }
 
+    @Override
+    public void fireVillagesDraggedEvent(List<Village> pVillages, Point pDropLocation) {
+    }
+
     protected void updateCountdown() {
         jAttackTable.repaint();
     }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JTextField jAPIKey;

@@ -3078,49 +3078,51 @@ private void fireShowNotepadEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:e
 }//GEN-LAST:event_fireShowNotepadEvent
 
 private void fireChangeDrawOrderEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireChangeDrawOrderEvent
-    int idx = jLayerList.getSelectedIndex();
-    DefaultListModel model = ((DefaultListModel) jLayerList.getModel());
-    if (evt.getSource() == jLayerUpButton) {
-        if (idx == 0) {
-            //already on first position
-            return;
-        }
-        jLayerList.invalidate();
-        String elem = (String) model.remove(idx);
-        jLayerList.revalidate();
-        idx -= 1;
-        jLayerList.invalidate();
-        model.add(idx, elem);
-        jLayerList.setSelectedIndex(idx);
-        try {
-            //scroll element to be visible
-            Rectangle g = jLayerList.getCellBounds(idx, idx);
-            jLayerList.scrollRectToVisible(g);
-        } catch (Exception e) {
-        }
-        jLayerList.revalidate();
-    } else {
-        if (idx == model.getSize() - 1) {
-            //already on last position
-            return;
-        }
+    try {
+        int idx = jLayerList.getSelectedIndex();
+        DefaultListModel model = ((DefaultListModel) jLayerList.getModel());
+        if (evt.getSource() == jLayerUpButton) {
+            if (idx == 0) {
+                //already on first position
+                return;
+            }
+            jLayerList.invalidate();
+            String elem = (String) model.remove(idx);
+            jLayerList.revalidate();
+            idx -= 1;
+            jLayerList.invalidate();
+            model.add(idx, elem);
+            jLayerList.setSelectedIndex(idx);
+            try {
+                //scroll element to be visible
+                Rectangle g = jLayerList.getCellBounds(idx, idx);
+                jLayerList.scrollRectToVisible(g);
+            } catch (Exception e) {
+            }
+            jLayerList.revalidate();
+        } else {
+            if (idx == model.getSize() - 1) {
+                //already on last position
+                return;
+            }
 
-        jLayerList.invalidate();
-        String elem = (String) model.remove(idx);
-        idx += 1;
-        model.add(idx, elem);
-        jLayerList.setSelectedIndex(idx);
-        try {
-            //scroll element to be visible
-            Rectangle g = jLayerList.getCellBounds(idx, idx);
-            jLayerList.scrollRectToVisible(g);
-        } catch (Exception e) {
+            jLayerList.invalidate();
+            String elem = (String) model.remove(idx);
+            idx += 1;
+            model.add(idx, elem);
+            jLayerList.setSelectedIndex(idx);
+            try {
+                //scroll element to be visible
+                Rectangle g = jLayerList.getCellBounds(idx, idx);
+                jLayerList.scrollRectToVisible(g);
+            } catch (Exception e) {
+            }
+            jLayerList.revalidate();
         }
-        jLayerList.revalidate();
+        jLayerList.updateUI();
+        propagateLayerOrder();
+    } catch (Exception outer) {
     }
-    jLayerList.updateUI();
-    propagateLayerOrder();
-
 }//GEN-LAST:event_fireChangeDrawOrderEvent
 
 private void fireShowTagFrameEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireShowTagFrameEvent

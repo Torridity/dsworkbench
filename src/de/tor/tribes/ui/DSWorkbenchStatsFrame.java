@@ -14,12 +14,14 @@ import de.tor.tribes.types.Ally;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.TribeStatsElement;
 import de.tor.tribes.types.TribeStatsElement.Stats;
+import de.tor.tribes.types.Village;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.StatTextBuilder;
 import de.tor.tribes.util.stat.StatManager;
 import java.awt.Color;
+import java.awt.Point;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -104,7 +106,7 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
             }
         });
 
-         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
+        // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
         GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.stats_view", GlobalOptions.getHelpBroker().getHelpSet());
         // </editor-fold>
 
@@ -1117,7 +1119,13 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
             long start = end.getTime() - oneMonth;
             jStatStartDate.setValue(new Date(start));
         }
+
     }//GEN-LAST:event_fireChangeStatTimeEvent
+
+    @Override
+    public void fireVillagesDraggedEvent(List<Village> pVillages, Point pDropLocation) {
+    }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JList jAllyList;
     private javax.swing.JCheckBox jAlwaysOnTopBox;

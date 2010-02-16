@@ -17,6 +17,7 @@ import java.awt.Composite;
 import java.awt.Font;
 import java.awt.Polygon;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 
 /**
@@ -58,7 +59,7 @@ public class Line extends AbstractForm {
             l.setYPosEnd(Double.parseDouble(elem.getAttributeValue("y")));
             elem = e.getChild("textSize");
             l.setTextSize(Integer.parseInt(elem.getTextTrim()));
-             elem = e.getChild("drawName");
+            elem = e.getChild("drawName");
             l.setDrawName(Boolean.parseBoolean(elem.getTextTrim()));
             return l;
         } catch (Exception ex) {
@@ -71,10 +72,9 @@ public class Line extends AbstractForm {
         Point2D.Double s = MapPanel.getSingleton().virtualPosToSceenPosDouble(getXPos(), getYPos());
         Point2D.Double e = MapPanel.getSingleton().virtualPosToSceenPosDouble(getXPosEnd(), getYPosEnd());
         java.awt.Rectangle mapBounds = MapPanel.getSingleton().getBounds();
-        if (mapBounds.contains(s) || mapBounds.contains(e)) {
-            setVisibleOnMap(true);
-        } else {
-            setVisibleOnMap(false);
+
+        setVisibleOnMap(mapBounds.intersectsLine(new Line2D.Double(s, e)));
+        if (!isVisibleOnMap()) {
             return;
         }
 

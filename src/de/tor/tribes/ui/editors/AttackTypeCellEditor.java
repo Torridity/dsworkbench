@@ -45,6 +45,7 @@ public class AttackTypeCellEditor extends AbstractCellEditor implements TableCel
             icons.add(new ImageIcon("./graphics/icons/snob.png"));
             icons.add(new ImageIcon("./graphics/icons/def.png"));
             icons.add(new ImageIcon("./graphics/icons/fake.png"));
+            icons.add(new ImageIcon("./graphics/icons/def_fake.png"));
             comboComponent = new javax.swing.JComboBox() {
 
                 @Override
@@ -92,7 +93,7 @@ public class AttackTypeCellEditor extends AbstractCellEditor implements TableCel
             });
 
             //add content
-            comboComponent.setModel(new DefaultComboBoxModel(new Object[]{0, 1, 2, 3, 4}));
+            comboComponent.setModel(new DefaultComboBoxModel(new Object[]{0, 1, 2, 3, 4, 5}));
             comboComponent.setRenderer(new ListCellRenderer() {
 
                 @Override

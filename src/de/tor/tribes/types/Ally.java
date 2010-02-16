@@ -8,6 +8,7 @@
  */
 package de.tor.tribes.types;
 
+import java.io.Serializable;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.text.NumberFormat;
@@ -20,7 +21,7 @@ import java.util.StringTokenizer;
  *
  * @author Charon
  */
-public class Ally implements Comparable {
+public class Ally implements Comparable, Serializable {
 
     private int id = 0;
     private String name = null;

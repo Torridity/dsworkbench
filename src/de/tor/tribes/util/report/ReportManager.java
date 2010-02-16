@@ -145,6 +145,10 @@ public class ReportManager extends FilterableManager<FightReport, ReportFilterIn
         return reportSets.get(pName);
     }
 
+    public ReportSet getCurrentReportSet() {
+        return getReportSet(ReportManagerTableModel.getSingleton().getActiveReportSet());
+    }
+
     public boolean renameReportSet(String pName, String pNewName) {
         if (pName == null) {
             return false;

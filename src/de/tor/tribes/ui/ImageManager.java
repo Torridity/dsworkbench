@@ -6,6 +6,7 @@ package de.tor.tribes.ui;
 
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
+import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Image;
 import java.awt.Point;
@@ -116,7 +117,6 @@ public class ImageManager {
     public final static int NOTE_SYMBOL_CHECK = 28;
     public final static int NOTE_SYMBOL_EYE = 29;
     public final static int NOTE_SYMBOL_NO_EYE = 30;
-
     //</editor-fold>
     private static final List<Cursor> CURSORS = new LinkedList<Cursor>();
     private static final List<ImageIcon> CURSOR_IMAGES = new LinkedList<ImageIcon>();
@@ -195,6 +195,7 @@ public class ImageManager {
             throw new Exception("Failed to load note icons");
         }
     }
+
     public static void loadNoteSymbols() throws Exception {
         NOTE_SYMBOLS.add(ImageIO.read(new File("graphics/icons/def_cav.png")));
         NOTE_SYMBOLS.add(ImageIO.read(new File("graphics/icons/def_archer.png")));
@@ -231,6 +232,17 @@ public class ImageManager {
             return Cursor.getDefaultCursor();
         }
         return CURSORS.get(pID);
+    }
+
+    public static Cursor createVillageDragCursor(int pVillageCount) {
+        try {
+            Image i = ImageIO.read(new File("H:/Software/DSWorkbench/graphics/cursors/village_drag.png"));
+            i.getGraphics().setColor(Color.BLACK);
+            i.getGraphics().drawString(Integer.toString(pVillageCount), 5, 12);
+            return Toolkit.getDefaultToolkit().createCustomCursor(i, new Point(0, 0), "Village");
+        } catch (Exception e) {
+        }
+        return Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
     }
 
     /**Get the cursor for the provided ID*/
@@ -297,7 +309,7 @@ public class ImageManager {
         }
     }
 
-      /**Get thr unit icon for the provided ID*/
+    /**Get thr unit icon for the provided ID*/
     public static ImageIcon getUnitIcon(int pId, boolean pChecked) {
         if (DataHolder.getSingleton().getUnits().size() == 9 && pChecked) {
             //old style

@@ -10,12 +10,10 @@ import de.tor.tribes.types.AbstractTroopMovement;
 import de.tor.tribes.types.Fake;
 import de.tor.tribes.types.Off;
 import de.tor.tribes.types.Village;
-import de.tor.tribes.ui.algo.AlgorithmLogPanel;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.DSCalculator;
 import java.awt.Color;
 import java.io.FileWriter;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -23,6 +21,7 @@ import java.util.LinkedList;
 import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import org.apache.log4j.Logger;
 
 /**
  *
@@ -30,13 +29,13 @@ import javax.swing.JLabel;
  */
 public class Iterix extends AbstractAttackAlgorithm {
 
-  
+    private static Logger logger = Logger.getLogger("SystematicAlgorithm");
     private JLabel[][] labels;
     private JLabel[][] labels2;
     private double[][] mappings;
     private double[][] result;
     //  private List<Village> ramSources;
-   // private List<Village> targets;
+    // private List<Village> targets;
     private Integer[] sourceAmounts;
     JFrame f;
     int selectedSource = 0;
@@ -52,172 +51,187 @@ public class Iterix extends AbstractAttackAlgorithm {
             TimeFrame pTimeFrame,
             boolean pFakeOffTargets) {
         logText("Starte systematische Berechnung");
+        logText("Berechne Offs");
         UnitHolder ram = DataHolder.getSingleton().getUnitByPlainName("ram");
         UnitHolder cata = DataHolder.getSingleton().getUnitByPlainName("catapult");
         List<Village> ramAndCataSources = pSources.get(ram);
+        if (ramAndCataSources == null || ramAndCataSources.isEmpty()) {
+            ramAndCataSources = new LinkedList<Village>();
+        }
         List<Village> cataSources = pSources.get(cata);
         if (cataSources != null && !cataSources.isEmpty()) {
             ramAndCataSources.addAll(cataSources);
         }
-        if (!pTimeFrame.isVariableArriveTime()) {
-            logText(" - Entferne Herkunftsdörfer, die keins der Ziel erreichen können");
-            //remove non-working sources if we use a fixed arrive time
-            removeImpossibleSources(ramAndCataSources, pTargets, pTimeFrame);
-        }
-        if (ramAndCataSources.isEmpty()) {
-            logError("Keine Dörfer übrig, Berechnung wird abgebrochen.");
-            return new LinkedList<AbstractTroopMovement>();
-        }
-        //build array of attack amount of each source
-        sourceAmounts = resolveDuplicates(ramAndCataSources);
-        //build mappings of possible source-target combinations
-        logText(" - Erstelle mögliche Herkunft-Ziel Kombinationen");
-        mappings = buildMappings(ramAndCataSources, pTargets, pTimeFrame, pMaxAttacksPerVillage);
-        //initialize result array
-        result = new double[mappings.length][mappings[0].length];
-        // <editor-fold defaultstate="collapsed" desc="Old stuff">
-
-        // int[] sourceMappings = buildSourceMappings(mappings);
-        // int[] targetMappings = buildTargetMappings(mappings);
-
-
-        // mappingsToCSV(mappings, sourceMappings, targetMappings, "mappings.csv");
-   /*     labels = new JLabel[mappings.length + 1][mappings[0].length + 1];
-        labels2 = new JLabel[mappings.length][mappings[0].length];
-        f = new JFrame();
-        JPanel p = new JPanel();
-        JPanel p2 = new JPanel();
-        p.setLayout(new GridLayout(mappings.length + 1, mappings[0].length + 1));
-        p2.setLayout(new GridLayout(mappings.length, mappings[0].length));
-        for (int i = 0; i <= mappings.length; i++) {
-        for (int j = 0; j <= mappings[0].length; j++) {
-        JLabel l = new JLabel("0");
-        l.setOpaque(true);
-        labels[i][j] = l;
-        p.add(l);
-        try {
-        JLabel l2 = new JLabel("0");
-        l2.setOpaque(true);
-        labels2[i][j] = l2;
-        p2.add(l2);
-        } catch (Exception e) {
-        }
-
-        }
-        }
-        f.setLayout(new GridLayout(2, 2));
-        f.add(p);
-        f.add(p2);
-
-        JButton b = new JButton("Calc");
-
-        b.addMouseListener(new MouseListener() {
-
-        @Override
-        public void mouseClicked(MouseEvent e) {*/
-
-        // </editor-fold>
-
-        try {
-            //long s = System.currentTimeMillis();
-            logText(" - Suche optimale Herkunft-Ziel Kombinationen");
-            round = 1;
-            while (!solve(ramAndCataSources, pTargets, mappings, result)) {
-                Thread.sleep(10);
-                //System.out.println(" Loop: " + (System.currentTimeMillis() - s));
+        Hashtable<Village, Off> movements = new Hashtable<Village, Off>();
+        List<AbstractTroopMovement> movementList = new LinkedList<AbstractTroopMovement>();
+        if (!ramAndCataSources.isEmpty()) {
+            //off sources are available
+            if (!pTimeFrame.isVariableArriveTime()) {
+                logText(" - Entferne Herkunftsdörfer, die keins der Ziel erreichen können");
+                //remove non-working sources if we use a fixed arrive time
+                removeImpossibleSources(ramAndCataSources, pTargets, pTimeFrame);
             }
-            //System.out.println("solved: " + (System.currentTimeMillis() - s));
+            if (ramAndCataSources.isEmpty()) {
+                logError("Keine Dörfer übrig, Berechnung wird abgebrochen.");
+                return new LinkedList<AbstractTroopMovement>();
+            }
+            //build array of attack amount of each source
+            sourceAmounts = resolveDuplicates(ramAndCataSources);
+            //build mappings of possible source-target combinations
+            logText(" - Erstelle mögliche Herkunft-Ziel Kombinationen");
+            mappings = buildMappings(ramAndCataSources, pTargets, pTimeFrame, pMaxAttacksPerVillage);
+            //initialize result array
+            result = new double[mappings.length][mappings[0].length];
+            // <editor-fold defaultstate="collapsed" desc="Old stuff">
+
+            // int[] sourceMappings = buildSourceMappings(mappings);
+            // int[] targetMappings = buildTargetMappings(mappings);
+
+
+            // mappingsToCSV(mappings, sourceMappings, targetMappings, "mappings.csv");
+   /*     labels = new JLabel[mappings.length + 1][mappings[0].length + 1];
+            labels2 = new JLabel[mappings.length][mappings[0].length];
+            f = new JFrame();
+            JPanel p = new JPanel();
+            JPanel p2 = new JPanel();
+            p.setLayout(new GridLayout(mappings.length + 1, mappings[0].length + 1));
+            p2.setLayout(new GridLayout(mappings.length, mappings[0].length));
+            for (int i = 0; i <= mappings.length; i++) {
+            for (int j = 0; j <= mappings[0].length; j++) {
+            JLabel l = new JLabel("0");
+            l.setOpaque(true);
+            labels[i][j] = l;
+            p.add(l);
+            try {
+            JLabel l2 = new JLabel("0");
+            l2.setOpaque(true);
+            labels2[i][j] = l2;
+            p2.add(l2);
+            } catch (Exception e) {
+            }
+
+            }
+            }
+            f.setLayout(new GridLayout(2, 2));
+            f.add(p);
+            f.add(p2);
+
+            JButton b = new JButton("Calc");
+
+            b.addMouseListener(new MouseListener() {
+
+            @Override
+            public void mouseClicked(MouseEvent e) {*/
+
+            // </editor-fold>
+
+            try {
+                //long s = System.currentTimeMillis();
+                logText(" - Suche optimale Herkunft-Ziel Kombinationen");
+                round = 1;
+                while (!solve(ramAndCataSources, pTargets, mappings, result)) {
+                    Thread.sleep(10);
+                    //System.out.println(" Loop: " + (System.currentTimeMillis() - s));
+                }
+                //System.out.println("solved: " + (System.currentTimeMillis() - s));
             /* int[] sourceMappings = buildSourceMappings(mappings);
+                int[] targetMappings = buildTargetMappings(mappings);
+                drawResults(sourceMappings, targetMappings);
+                colorSelectedValues(selectedSource, selectedTarget);*/
+            } catch (Exception ewe) {
+                logger.error("Unexpexted error during off calculation", ewe);
+                logError("Unerwarteter Fehler bei der Off-Berechnung!");
+                return new LinkedList<AbstractTroopMovement>();
+            }
+
+            // <editor-fold defaultstate="collapsed" desc="Old stuff">
+            //solve2(ramSources, targets, mappings, result);
+/*              solve(ramSources, targets, mappings, result);
+            int[] sourceMappings = buildSourceMappings(mappings);
             int[] targetMappings = buildTargetMappings(mappings);
             drawResults(sourceMappings, targetMappings);
-            colorSelectedValues(selectedSource, selectedTarget);*/
-        } catch (Exception ewe) {
-            ewe.printStackTrace();
-            logError("Unerwarteter Fehler bei der Berechnung!");
-            return new LinkedList<AbstractTroopMovement>();
-        }
+            colorSelectedValues(selectedSource, selectedTarget);
+            }
 
-// <editor-fold defaultstate="collapsed" desc="Old stuff">
-        //solve2(ramSources, targets, mappings, result);
-/*              solve(ramSources, targets, mappings, result);
-        int[] sourceMappings = buildSourceMappings(mappings);
-        int[] targetMappings = buildTargetMappings(mappings);
-        drawResults(sourceMappings, targetMappings);
-        colorSelectedValues(selectedSource, selectedTarget);
-        }
+            @Override
+            public void mousePressed(MouseEvent e) {
+            }
 
-        @Override
-        public void mousePressed(MouseEvent e) {
-        }
+            @Override
+            public void mouseReleased(MouseEvent e) {
+            }
 
-        @Override
-        public void mouseReleased(MouseEvent e) {
-        }
+            @Override
+            public void mouseEntered(MouseEvent e) {
+            }
 
-        @Override
-        public void mouseEntered(MouseEvent e) {
-        }
+            @Override
+            public void mouseExited(MouseEvent e) {
+            }
+            });
+            f.add(b);
+            f.pack();
+            f.setVisible(true);
 
-        @Override
-        public void mouseExited(MouseEvent e) {
-        }
-        });
-        f.add(b);
-        f.pack();
-        f.setVisible(true);
-
-        //solve(ramSources, pTargets, mappings, result);
-        for (int i = 0; i < mappings.length; i++) {
-        for (int j = 0; j < mappings[0].length; j++) {
-        labels[i][j].setText("" + mappings[i][j]);
-        labels2[i][j].setText("" + result[i][j]);
-        }
-        }
-        //init view
-        sourceMappings = buildSourceMappings(mappings);
-        targetMappings = buildTargetMappings(mappings);
-        drawResults(sourceMappings, targetMappings);
-         */
+            //solve(ramSources, pTargets, mappings, result);
+            for (int i = 0; i < mappings.length; i++) {
+            for (int j = 0; j < mappings[0].length; j++) {
+            labels[i][j].setText("" + mappings[i][j]);
+            labels2[i][j].setText("" + result[i][j]);
+            }
+            }
+            //init view
+            sourceMappings = buildSourceMappings(mappings);
+            targetMappings = buildTargetMappings(mappings);
+            drawResults(sourceMappings, targetMappings);
+             */
 // </editor-fold>
 
-        logText(" - Erstelle Ergebnisliste");
-        //store results
-        Hashtable<Village, Off> movements = new Hashtable<Village, Off>();
-        for (int i = 0; i < ramAndCataSources.size(); i++) {
-            for (int j = 0; j < pTargets.size(); j++) {
-                if (result[i][j] != 0) {
-                    Village source = ramAndCataSources.get(i);
-                    Village target = pTargets.get(j);
-                    Off movementForTarget = movements.get(target);
-                    if (movementForTarget == null) {
-                        movementForTarget = new Off(target, pMaxAttacksPerVillage);
-                        movements.put(target, movementForTarget);
+            logText(" - Erstelle Ergebnisliste");
+            //store results
+
+            for (int i = 0; i < ramAndCataSources.size(); i++) {
+                for (int j = 0; j < pTargets.size(); j++) {
+                    if (result[i][j] != 0) {
+                        Village source = ramAndCataSources.get(i);
+                        Village target = pTargets.get(j);
+                        Off movementForTarget = movements.get(target);
+                        if (movementForTarget == null) {
+                            movementForTarget = new Off(target, pMaxAttacksPerVillage);
+                            movements.put(target, movementForTarget);
+                        }
+                        movementForTarget.addOff(ram, source);
                     }
-                    movementForTarget.addOff(ram, source);
                 }
             }
-        }
 
-        //set result movements and remove used targets if needed
-        List<AbstractTroopMovement> movementList = new LinkedList<AbstractTroopMovement>();
-        Enumeration<Village> targetKeys = movements.keys();
-        while (targetKeys.hasMoreElements()) {
-            Village target = targetKeys.nextElement();
-            if (!pFakeOffTargets) {
-                pTargets.remove(target);
+            //set result movements and remove used targets if needed
+
+            Enumeration<Village> targetKeys = movements.keys();
+            while (targetKeys.hasMoreElements()) {
+                Village target = targetKeys.nextElement();
+                if (!pFakeOffTargets) {
+                    pTargets.remove(target);
+                }
+                movementList.add(movements.get(target));
             }
-            movementList.add(movements.get(target));
-        }
+        }//end of off assignment
+
+
         //assign fakes
         //@TODO Check if faking existing source-target could happen/if checking for it makes sense
+        logText("Berechne Fakes");
         List<Village> ramAndCataFakes = pFakes.get(ram);
+        if (ramAndCataFakes == null || ramAndCataFakes.isEmpty()) {
+            ramAndCataFakes = new LinkedList<Village>();
+        }
         List<Village> cataFakes = pFakes.get(cata);
         if (cataFakes != null && !cataFakes.isEmpty()) {
             ramAndCataFakes.addAll(cataFakes);
         }
 
         if (ramAndCataFakes == null || ramAndCataFakes.isEmpty()) {
-            logText("Berechnung abgeschlossen.");
+            logText("Keine gültigen Fakes gefunden. Berechnung abgeschlossen.");
             return movementList;
         }
         if (!pTimeFrame.isVariableArriveTime()) {
@@ -226,10 +240,24 @@ public class Iterix extends AbstractAttackAlgorithm {
         }
         sourceAmounts = resolveDuplicates(ramAndCataFakes);
         mappings = buildMappings(ramAndCataFakes, pTargets, pTimeFrame, pMaxAttacksPerVillage);
+        for (int i = 0; i < mappings.length; i++) {
+            for (int j = 0; j < mappings[0].length; j++) {
+                Village target = pTargets.get(j);
+                if (!movements.isEmpty()) {
+                    Off movement = (Off) movements.get(target);
+                    if (movement != null &&  mappings[i][j] != 0) {
+                        int remainingCount = pMaxAttacksPerVillage - movement.getOffCount();
+                      //  System.out.println("Remain for " + target + ": " + remainingCount);
+                        mappings[i][j] = (remainingCount < 0) ? 0 : remainingCount;
+                    }
+                }
+            }
+        }
+
         result = new double[mappings.length][mappings[0].length];
         try {
 //            long s = System.currentTimeMillis();
-
+            logText(" - Suche optimale Herkunft-Ziel Kombinationen");
             while (!solve(ramAndCataFakes, pTargets, mappings, result)) {
                 Thread.sleep(10);
                 //              System.out.println(" Loop: " + (System.currentTimeMillis() - s));
@@ -240,7 +268,9 @@ public class Iterix extends AbstractAttackAlgorithm {
             drawResults(sourceMappings, targetMappings);
             colorSelectedValues(selectedSource, selectedTarget);*/
         } catch (Exception ewe) {
-            ewe.printStackTrace();
+            logger.error("Unexpexted error during fake calculation", ewe);
+            logError("Unerwarteter Fehler bei der Fake-Berechnung!");
+            return new LinkedList<AbstractTroopMovement>();
         }
         Hashtable<Village, Fake> fakeMovements = new Hashtable<Village, Fake>();
         for (int i = 0; i < ramAndCataFakes.size(); i++) {
@@ -257,16 +287,16 @@ public class Iterix extends AbstractAttackAlgorithm {
                 }
             }
         }
-        targetKeys = fakeMovements.keys();
+        Enumeration<Village> targetKeys = fakeMovements.keys();
         while (targetKeys.hasMoreElements()) {
             Village target = targetKeys.nextElement();
-            movementList.add(movements.get(target));
+            movementList.add(fakeMovements.get(target));
         }
 
-        JFrame jf = new JFrame();
+        /*JFrame jf = new JFrame();
         jf.add(f);
         jf.pack();
-        jf.setVisible(true);
+        jf.setVisible(true);*/
 
         return movementList;
     }

@@ -57,6 +57,9 @@ public class AttackScriptWriter {
                 case Attack.FAKE_TYPE:
                     block += "'fake.png',\n";
                     break;
+                case Attack.FAKE_DEFF_TYPE:
+                    block += "'def_fake.png',\n";
+                    break;
                 case Attack.SNOB_TYPE:
                     block += "'snob.png',\n";
                     break;
@@ -74,12 +77,22 @@ public class AttackScriptWriter {
             long sendTime = a.getArriveTime().getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(a.getSource(), a.getTarget(), a.getUnit().getSpeed()) * 1000);
 
             Calendar midnight = Calendar.getInstance();
+            // midnight.setTime(a.getArriveTime());
             midnight.set(Calendar.HOUR_OF_DAY, 0);
             midnight.set(Calendar.MINUTE, 0);
             midnight.set(Calendar.SECOND, 0);
             midnight.set(Calendar.MILLISECOND, 0);
             //calculate difference from today midnight
             long diff = sendTime - midnight.getTimeInMillis();
+
+            //@TODO Is there a way to get always the correct time?
+            //Calculation = CurrentServerTime(seconds) + TimeUntilEvent(seconds)
+            //timediff = time difference between server time and current timestamp
+            //time = endTime - (currentTime + timeDiff)
+            //currentTime = now/1000 (timestamp in seconds
+            //endtime = time when timer finishs relative to now
+            //long diffInSeconds = Math.round((a.getArriveTime().getTime() - sendTime) / 1000.0);
+
             block += "'timerValue':'" + (int) Math.round((double) diff / 1000.0) + "',\n";
             SimpleDateFormat df = new SimpleDateFormat("dd.MM.yy HH:mm:ss.SSS");
             block += "'send':'" + df.format(new Date(sendTime)) + "',\n";

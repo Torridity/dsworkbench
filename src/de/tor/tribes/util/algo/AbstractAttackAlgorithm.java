@@ -13,6 +13,7 @@ import java.util.Collections;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
+import org.apache.log4j.Logger;
 
 /**
  * @TOTO (DIFF) Check max. snob runtime
@@ -20,6 +21,7 @@ import java.util.List;
  */
 public abstract class AbstractAttackAlgorithm extends Thread {
 
+    private static Logger logger = Logger.getLogger("AttackAlgorithm");
     private List<AbstractTroopMovement> results = null;
     private Hashtable<UnitHolder, List<Village>> sources = null;
     private Hashtable<UnitHolder, List<Village>> fakes = null;
@@ -122,6 +124,8 @@ public abstract class AbstractAttackAlgorithm extends Thread {
             results = calculateAttacks(sources, fakes, targets, maxAttacksPerVillage, timeFrame, fakeOffTargets);
         } catch (Exception e) {
             //an error occured
+            logger.error("An error occured during calculation", e);
+            e.printStackTrace();
             results = new LinkedList<AbstractTroopMovement>();
         }
         mListener.fireCalculationFinishedEvent(this);

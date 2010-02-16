@@ -30,6 +30,7 @@ import de.tor.tribes.util.tag.TagManagerListener;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.awt.Color;
+import java.awt.Point;
 import java.awt.event.ItemEvent;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -42,10 +43,12 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 import org.apache.log4j.Logger;
 
 /**
- * @TODO (2.0) Add troop amount filter
+ * @TODO (DIFF) Added troop amount filter
  * @author Jejkal
  */
 public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements TagManagerListener {
@@ -104,6 +107,11 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         }
         jTagList.setModel(tagModel);
         jRelationBox.setSelected(true);
+        // <editor-fold defaultstate="collapsed" desc="Build filter dialog">
+        jFilterUnitBox.setModel(new DefaultComboBoxModel(DataHolder.getSingleton().getUnits().toArray(new UnitHolder[]{})));
+        jFilterUnitBox.setRenderer(new UnitListCellRenderer());
+        jFilterList.setModel(new DefaultListModel());
+// </editor-fold>
     }
 
     /** This method is called from within the constructor to
@@ -122,6 +130,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         jResultTable = new javax.swing.JTable();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
+        jButton4 = new javax.swing.JButton();
         jAlwaysOnTopBox = new javax.swing.JCheckBox();
         jAttackPlanSelectionDialog = new javax.swing.JDialog();
         jLabel10 = new javax.swing.JLabel();
@@ -130,6 +139,21 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         jExistingAttackPlanBox = new javax.swing.JComboBox();
         jInsertButton = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
+        jFilterDialog = new javax.swing.JDialog();
+        jPanel6 = new javax.swing.JPanel();
+        jFilterUnitBox = new javax.swing.JComboBox();
+        jLabel25 = new javax.swing.JLabel();
+        jLabel26 = new javax.swing.JLabel();
+        jLabel27 = new javax.swing.JLabel();
+        jButton17 = new javax.swing.JButton();
+        jMinValue = new javax.swing.JTextField();
+        jMaxValue = new javax.swing.JTextField();
+        jButton20 = new javax.swing.JButton();
+        jApplyFiltersButton = new javax.swing.JButton();
+        jScrollPane14 = new javax.swing.JScrollPane();
+        jFilterList = new javax.swing.JList();
+        jLabel28 = new javax.swing.JLabel();
+        jButton18 = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jComandArea = new javax.swing.JTextArea();
@@ -201,6 +225,14 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
             }
         });
 
+        jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/filter_strength.png"))); // NOI18N
+        jButton4.setToolTipText("Herkunftsdörfer nach Kampfkraft filtern");
+        jButton4.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireShowFilterDialogEvent(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
@@ -210,6 +242,8 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 497, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
+                        .addComponent(jButton4)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton2)))
@@ -221,9 +255,11 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
                 .addContainerGap()
                 .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 369, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton2)
-                    .addComponent(jButton3))
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jButton2)
+                        .addComponent(jButton3))
+                    .addComponent(jButton4))
                 .addContainerGap())
         );
 
@@ -314,6 +350,144 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
                     .addComponent(jInsertButton)
                     .addComponent(jButton5))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("de/tor/tribes/ui/Bundle"); // NOI18N
+        jPanel6.setBorder(javax.swing.BorderFactory.createTitledBorder(bundle.getString("TribeTribeAttackFrame.jPanel3.border.title"))); // NOI18N
+
+        jFilterUnitBox.setMaximumSize(new java.awt.Dimension(51, 25));
+        jFilterUnitBox.setMinimumSize(new java.awt.Dimension(51, 25));
+        jFilterUnitBox.setPreferredSize(new java.awt.Dimension(51, 25));
+
+        jLabel25.setText(bundle.getString("TribeTribeAttackFrame.jLabel25.text")); // NOI18N
+
+        jLabel26.setText(bundle.getString("TribeTribeAttackFrame.jLabel26.text")); // NOI18N
+
+        jLabel27.setText(bundle.getString("TribeTribeAttackFrame.jLabel27.text")); // NOI18N
+
+        jButton17.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/add.gif"))); // NOI18N
+        jButton17.setText(bundle.getString("TribeTribeAttackFrame.jButton17.text")); // NOI18N
+        jButton17.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireAddTroopFilterEvent(evt);
+            }
+        });
+
+        jMinValue.setText(bundle.getString("TribeTribeAttackFrame.jMinValue.text")); // NOI18N
+        jMinValue.setMaximumSize(new java.awt.Dimension(51, 20));
+        jMinValue.setMinimumSize(new java.awt.Dimension(51, 20));
+        jMinValue.setPreferredSize(new java.awt.Dimension(51, 20));
+
+        jMaxValue.setText(bundle.getString("TribeTribeAttackFrame.jMaxValue.text")); // NOI18N
+        jMaxValue.setMaximumSize(new java.awt.Dimension(51, 20));
+        jMaxValue.setMinimumSize(new java.awt.Dimension(51, 20));
+        jMaxValue.setPreferredSize(new java.awt.Dimension(51, 20));
+
+        javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
+        jPanel6.setLayout(jPanel6Layout);
+        jPanel6Layout.setHorizontalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel6Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel25)
+                            .addComponent(jLabel26))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jMinValue, 0, 0, Short.MAX_VALUE)
+                            .addComponent(jFilterUnitBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27, Short.MAX_VALUE)
+                        .addComponent(jLabel27)
+                        .addGap(18, 18, 18)
+                        .addComponent(jMaxValue, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jButton17, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addContainerGap())
+        );
+        jPanel6Layout.setVerticalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel6Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel25)
+                    .addComponent(jFilterUnitBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel26)
+                    .addComponent(jLabel27)
+                    .addComponent(jMinValue, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jMaxValue, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(jButton17)
+                .addContainerGap())
+        );
+
+        jButton20.setText(bundle.getString("TribeTribeAttackFrame.jButton20.text")); // NOI18N
+        jButton20.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireApplyTroopFiltersEvent(evt);
+            }
+        });
+
+        jApplyFiltersButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/checkbox.png"))); // NOI18N
+        jApplyFiltersButton.setText(bundle.getString("TribeTribeAttackFrame.jApplyFiltersButton.text")); // NOI18N
+        jApplyFiltersButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireApplyTroopFiltersEvent(evt);
+            }
+        });
+
+        jScrollPane14.setViewportView(jFilterList);
+
+        jLabel28.setText(bundle.getString("TribeTribeAttackFrame.jLabel28.text")); // NOI18N
+
+        jButton18.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/remove.gif"))); // NOI18N
+        jButton18.setText(bundle.getString("TribeTribeAttackFrame.jButton18.text")); // NOI18N
+        jButton18.setToolTipText(bundle.getString("TribeTribeAttackFrame.jButton18.toolTipText")); // NOI18N
+        jButton18.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireRemoveTroopFilterEvent(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jFilterDialogLayout = new javax.swing.GroupLayout(jFilterDialog.getContentPane());
+        jFilterDialog.getContentPane().setLayout(jFilterDialogLayout);
+        jFilterDialogLayout.setHorizontalGroup(
+            jFilterDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jFilterDialogLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jFilterDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jFilterDialogLayout.createSequentialGroup()
+                        .addComponent(jLabel28)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jFilterDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jFilterDialogLayout.createSequentialGroup()
+                                .addComponent(jButton20)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jFilterDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(jButton18, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jApplyFiltersButton, javax.swing.GroupLayout.Alignment.TRAILING)))
+                            .addComponent(jScrollPane14, javax.swing.GroupLayout.DEFAULT_SIZE, 201, Short.MAX_VALUE))))
+                .addContainerGap())
+        );
+        jFilterDialogLayout.setVerticalGroup(
+            jFilterDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jFilterDialogLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jFilterDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel28)
+                    .addComponent(jScrollPane14))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jFilterDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jApplyFiltersButton)
+                    .addComponent(jButton20))
+                .addContainerGap())
         );
 
         setTitle("Re-Time Werkzeug");
@@ -923,7 +1097,13 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
             }
         }
 
-        Village target = VillageParser.parse(jSourceVillage.getText()).get(0);
+        Village target = null;
+        try {
+            target = VillageParser.parse(jSourceVillage.getText()).get(0);
+        } catch (Exception e) {
+            //no target set
+            return;
+        }
         UnitHolder unit = (UnitHolder) jUnitBox.getSelectedItem();
 
         Hashtable<Village, Date> timings = new Hashtable<Village, Date>();
@@ -1015,6 +1195,105 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         }
     }//GEN-LAST:event_fireRelationChangedEvent
 
+    private void fireAddTroopFilterEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireAddTroopFilterEvent
+        UnitHolder unit = (UnitHolder) jFilterUnitBox.getSelectedItem();
+        DefaultListModel filterModel = (DefaultListModel) jFilterList.getModel();
+        TroopFilterElement elem = null;
+        int min = Integer.MIN_VALUE;
+        int max = Integer.MAX_VALUE;
+        try {
+            min = Integer.parseInt(jMinValue.getText());
+        } catch (Exception e) {
+            min = Integer.MIN_VALUE;
+        }
+        try {
+            max = Integer.parseInt(jMaxValue.getText());
+        } catch (Exception e) {
+            max = Integer.MAX_VALUE;
+        }
+        if (min > max) {
+            int tmp = min;
+            min = max;
+            max = tmp;
+            jMinValue.setText("" + min);
+            jMaxValue.setText("" + max);
+        }
+
+        for (int i = 0; i < filterModel.size(); i++) {
+            TroopFilterElement listElem = (TroopFilterElement) filterModel.get(i);
+            if (listElem.getUnit().equals(unit)) {
+                //update min and max and return
+                listElem.setMin(min);
+                listElem.setMax(max);
+                jFilterList.repaint();
+                return;
+            }
+        }
+        if (elem == null) {
+            elem = new TroopFilterElement(unit, min, max);
+            filterModel.addElement(elem);
+        }
+}//GEN-LAST:event_fireAddTroopFilterEvent
+
+    private void fireApplyTroopFiltersEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireApplyTroopFiltersEvent
+        if (evt.getSource() == jApplyFiltersButton) {
+            DefaultListModel filterModel = (DefaultListModel) jFilterList.getModel();
+            List<Integer> rowsToRemove = new LinkedList<Integer>();
+            int removeCount = 0;
+            for (int i = 0; i < jResultTable.getRowCount(); i++) {
+                //go through all rows in attack table and get source village
+                Village v = (Village) jResultTable.getValueAt(i, 0);
+                for (int j = 0; j < filterModel.size(); j++) {
+                    //check for all filters if villag is allowed
+                    if (!((TroopFilterElement) filterModel.get(j)).allowsVillage(v)) {
+                        //village is not allowed, add to remove list
+                        int row = jResultTable.convertRowIndexToModel(i);
+                        rowsToRemove.add(row);
+                        removeCount++;
+                    }
+                }
+            }
+
+            jResultTable.invalidate();
+            for (int i = rowsToRemove.size() - 1; i >= 0; i--) {
+                int row = rowsToRemove.get(i);
+                ((DefaultTableModel) jResultTable.getModel()).removeRow(row);
+            }
+            jResultTable.revalidate();
+            String message = "Es wurden keine Angriffe entfernt.";
+            if (removeCount == 1) {
+                message = "Es wurde ein Angriff entfernt.";
+            } else if (removeCount > 1) {
+                message = "Es wurden " + removeCount + " Angriffe entfernt.";
+            }
+
+            JOptionPaneHelper.showInformationBox(jFilterDialog, message, "Information");
+        }
+        jFilterDialog.setVisible(false);
+}//GEN-LAST:event_fireApplyTroopFiltersEvent
+
+    private void fireRemoveTroopFilterEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireRemoveTroopFilterEvent
+        Object[] selection = jFilterList.getSelectedValues();
+        if (selection == null || selection.length == 0) {
+            return;
+        }
+        List<TroopFilterElement> toRemove = new LinkedList<TroopFilterElement>();
+        for (Object elem : selection) {
+            toRemove.add((TroopFilterElement) elem);
+        }
+        DefaultListModel filterModel = (DefaultListModel) jFilterList.getModel();
+        for (TroopFilterElement elem : toRemove) {
+            filterModel.removeElement(elem);
+        }
+        jFilterList.repaint();
+}//GEN-LAST:event_fireRemoveTroopFilterEvent
+
+    private void fireShowFilterDialogEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireShowFilterDialogEvent
+        jFilterDialog.pack();
+        jFilterDialog.setLocationRelativeTo(jResultFrame);
+        jFilterDialog.setVisible(true);
+    }//GEN-LAST:event_fireShowFilterDialogEvent
+
     private void buildResults(Hashtable<Village, Date> pTimings, Village pTarget, UnitHolder pUnit) {
         DefaultTableModel resultModel = new javax.swing.table.DefaultTableModel(
                 new Object[][]{},
@@ -1036,6 +1315,8 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
             }
         };
         jResultTable.setModel(resultModel);
+        TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(resultModel);
+        jResultTable.setRowSorter(sorter);
         Enumeration<Village> sourceKeys = pTimings.keys();
         while (sourceKeys.hasMoreElements()) {
             Village source = sourceKeys.nextElement();
@@ -1065,6 +1346,10 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         jResultFrame.setVisible(true);
     }
 
+    @Override
+    public void fireVillagesDraggedEvent(List<Village> pVillages, Point pDropLocation) {
+    }
+
     /**
      * @param args the command line arguments
      */
@@ -1079,22 +1364,34 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JCheckBox jAlwaysOnTopBox;
+    private javax.swing.JButton jApplyFiltersButton;
     private javax.swing.JTextField jArriveField;
     private javax.swing.JDialog jAttackPlanSelectionDialog;
     private javax.swing.JCheckBox jAxeBox;
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton17;
+    private javax.swing.JButton jButton18;
     private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton20;
     private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
     private javax.swing.JTextArea jComandArea;
     private javax.swing.JTextField jEstSendTime;
     private javax.swing.JComboBox jExistingAttackPlanBox;
+    private javax.swing.JDialog jFilterDialog;
+    private javax.swing.JList jFilterList;
+    private javax.swing.JComboBox jFilterUnitBox;
     private javax.swing.JCheckBox jHeavyBox;
     private javax.swing.JButton jInsertButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel25;
+    private javax.swing.JLabel jLabel26;
+    private javax.swing.JLabel jLabel27;
+    private javax.swing.JLabel jLabel28;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -1104,6 +1401,8 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
     private javax.swing.JLabel jLabel9;
     private javax.swing.JCheckBox jLightBox;
     private javax.swing.JCheckBox jMainAlwaysOnTopBox;
+    private javax.swing.JTextField jMaxValue;
+    private javax.swing.JTextField jMinValue;
     private javax.swing.JTextField jNewAttackPlanField;
     private javax.swing.JCheckBox jPalaBox;
     private javax.swing.JPanel jPanel1;
@@ -1111,6 +1410,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel6;
     private javax.swing.JTextPane jParserInfo;
     private javax.swing.JCheckBox jRamBox;
     private javax.swing.JCheckBox jRelationBox;
@@ -1118,6 +1418,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
     private javax.swing.JTable jResultTable;
     private javax.swing.JTextField jReturnField;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane14;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane5;

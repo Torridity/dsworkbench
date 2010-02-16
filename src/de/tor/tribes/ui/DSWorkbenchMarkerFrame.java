@@ -7,6 +7,7 @@ package de.tor.tribes.ui;
 
 import de.tor.tribes.types.Marker;
 import de.tor.tribes.types.MarkerSet;
+import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.dnd.GhostDropEvent;
 import de.tor.tribes.ui.dnd.GhostDropListener;
 import de.tor.tribes.util.Constants;
@@ -27,14 +28,12 @@ import de.tor.tribes.ui.renderer.MapRenderer;
 import de.tor.tribes.ui.renderer.SortableTableHeaderRenderer;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
-import java.awt.Component;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import org.apache.log4j.Logger;
 
@@ -591,6 +590,10 @@ private void fireCloseAddRenameDialogEvent(java.awt.event.MouseEvent evt) {//GEN
         jMarkerTable.setRowSorter(sorter);
         jMarkerTable.revalidate();
         rebuildSetList();
+    }
+
+    @Override
+    public void fireVillagesDraggedEvent(List<Village> pVillages, Point pDropLocation) {
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JDialog jAddRenameDialog;

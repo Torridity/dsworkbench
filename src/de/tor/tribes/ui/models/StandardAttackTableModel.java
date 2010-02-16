@@ -91,6 +91,8 @@ public class StandardAttackTableModel extends AbstractTableModel {
             typeId = StandardAttackManager.SUPPORT_TYPE_ROW;
         } else if (pRow == 4) {
             typeId = StandardAttackManager.FAKE_TYPE_ROW;
+        } else if (pRow == 5) {
+            typeId = StandardAttackManager.FAKE_DEFF_TYPE_ROW;
         }
 
         if (pCol == 0) {
@@ -103,6 +105,8 @@ public class StandardAttackTableModel extends AbstractTableModel {
                     return "Off";
                 case StandardAttackManager.SNOB_TYPE_ROW:
                     return "AG";
+                case StandardAttackManager.FAKE_DEFF_TYPE_ROW:
+                    return "Fake (Deff)";
                 default:
                     return "Unterstützung";
             }
@@ -115,7 +119,7 @@ public class StandardAttackTableModel extends AbstractTableModel {
 
     @Override
     public int getRowCount() {
-        return 5;
+        return 6;
     }
 
     @Override
@@ -131,6 +135,8 @@ public class StandardAttackTableModel extends AbstractTableModel {
             typeId = StandardAttackManager.SUPPORT_TYPE_ROW;
         } else if (pRow == 4) {
             typeId = StandardAttackManager.FAKE_TYPE_ROW;
+        } else if (pRow == 5) {
+            typeId = StandardAttackManager.FAKE_DEFF_TYPE_ROW;
         }
 
         String col = getColumnName(pCol);

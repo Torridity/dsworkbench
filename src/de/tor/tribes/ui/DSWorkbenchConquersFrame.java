@@ -851,6 +851,10 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
         jTribeSelection.setModel(new DefaultComboBoxModel(tribes.toArray(new Tribe[]{})));
     }
 
+    @Override
+    public void fireVillagesDraggedEvent(List<Village> pVillages, Point pDropLocation) {
+    }
+
     /**
      * @param args the command line arguments
      */

@@ -21,6 +21,7 @@ import java.awt.event.ItemEvent;
 import java.text.NumberFormat;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JSpinner.DateEditor;
 import javax.swing.JTextField;
@@ -34,6 +35,8 @@ import javax.swing.event.ChangeListener;
 public class AttackAddFrame extends javax.swing.JFrame {
 
     private Village mSource;
+    private boolean isMultiAttack = false;
+    private Village[] mSources = null;
     private Village mTarget;
     private final NumberFormat nf = NumberFormat.getInstance();
     private boolean skipValidation = false;
@@ -69,12 +72,26 @@ public class AttackAddFrame extends javax.swing.JFrame {
      * Returns result depending on the time mode (arrive or send) 
      */
     private boolean validateTime() {
-        long sendMillis = ((Date) jTimeSpinner.getValue()).getTime();
-        //check time depending selected unit
-        double speed = ((UnitHolder) jUnitBox.getSelectedItem()).getSpeed();
-        double minTime = DSCalculator.calculateMoveTimeInMinutes(mSource, mTarget, speed);
-        long moveTime = (long) minTime * 60000;
-        return (sendMillis > System.currentTimeMillis() + moveTime);
+        if (isMultiAttack) {
+            for (Village source : mSources) {
+                long sendMillis = ((Date) jTimeSpinner.getValue()).getTime();
+                //check time depending selected unit
+                double speed = ((UnitHolder) jUnitBox.getSelectedItem()).getSpeed();
+                double minTime = DSCalculator.calculateMoveTimeInMinutes(source, mTarget, speed);
+                long moveTime = (long) minTime * 60000;
+                if (!(sendMillis > System.currentTimeMillis() + moveTime)) {
+                    return false;
+                }
+            }
+            return true;
+        } else {
+            long sendMillis = ((Date) jTimeSpinner.getValue()).getTime();
+            //check time depending selected unit
+            double speed = ((UnitHolder) jUnitBox.getSelectedItem()).getSpeed();
+            double minTime = DSCalculator.calculateMoveTimeInMinutes(mSource, mTarget, speed);
+            long moveTime = (long) minTime * 60000;
+            return (sendMillis > System.currentTimeMillis() + moveTime);
+        }
     }
 
     protected void buildUnitBox() {
@@ -93,7 +110,87 @@ public class AttackAddFrame extends javax.swing.JFrame {
         return (UnitHolder) jUnitBox.getSelectedItem();
     }
 
+    public void setupAttack(List<Village> pSources, Village pTarget, int pInitialUnit, Date pInititalTime) {
+        if (pSources == null || pSources.isEmpty()) {
+            return;
+        }
+        if (pSources.size() == 1) {
+            setupAttack(pSources.get(0), pTarget, pInitialUnit, pInititalTime);
+            return;
+        }
+        isMultiAttack = true;
+        mSources = pSources.toArray(new Village[]{});
+        if ((pTarget == null)) {
+            return;
+        }
+        for (Village source : mSources) {
+            if (source == null) {
+                pSources.remove(source);
+            } else if (source.equals(pTarget)) {
+                pSources.remove(source);
+            } else if (source.getTribe() == null) {
+                pSources.remove(source);
+            }
+        }
+        //rebuild sources list
+        mSources = pSources.toArray(new Village[]{});
+        skipValidation = true;
+        int initialUnit = (pInitialUnit >= 0) ? pInitialUnit : 0;
+        if (initialUnit > jUnitBox.getItemCount() - 1) {
+            initialUnit = -1;
+        }
+        jUnitBox.setSelectedIndex(initialUnit);
+
+        if (pInititalTime != null) {
+            jTimeSpinner.setValue(pInititalTime);
+        } else {
+            double maxDur = 0;
+            for (Village source : mSources) {
+                double dur = DSCalculator.calculateMoveTimeInMinutes(source, pTarget, ((UnitHolder) jUnitBox.getSelectedItem()).getSpeed());
+                dur = dur * 60000;
+                if (dur > maxDur) {
+                    maxDur = dur;
+                }
+            }
+            jTimeSpinner.setValue(new Date(System.currentTimeMillis() + (long) maxDur + 60000));
+            ((DateEditor) jTimeSpinner.getEditor()).getTextField().setForeground(Color.BLACK);
+        }
+
+        mTarget = pTarget;
+        jSourceVillage.setText(mSources.length + " gewählte Dörfer");
+        if (pTarget.getTribe() != null) {
+            jTargetVillage.setText(pTarget.getTribe() + " (" + pTarget + ")");
+        } else {
+            jTargetVillage.setText("Barbarendorf" + " (" + pTarget.getX() + "|" + pTarget.getY() + ")");
+        }
+
+        jDistance.setText("Unterschiedliche Entfernungen");
+
+        Enumeration<String> plans = AttackManager.getSingleton().getPlans();
+        Object lastSelection = jAttackPlanBox.getSelectedItem();
+        DefaultComboBoxModel model = new DefaultComboBoxModel();
+        while (plans.hasMoreElements()) {
+            model.addElement(plans.nextElement());
+        }
+
+        jAttackPlanBox.setModel(model);
+        if (lastSelection != null) {
+            jAttackPlanBox.setSelectedItem(lastSelection);
+        } else {
+            jAttackPlanBox.setSelectedIndex(0);
+        }
+        Rectangle bounds = getBounds();
+        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+        int delta = dim.width - (bounds.x + bounds.width);
+        if (delta < 0) {
+            setLocation(bounds.x + delta, bounds.y);
+        }
+        setVisible(true);
+        skipValidation = false;
+    }
+
     public void setupAttack(Village pSource, Village pTarget, int pInitialUnit, Date pInititalTime) {
+        isMultiAttack = false;
         if ((pSource == null) || (pTarget == null)) {
             return;
         }
@@ -348,12 +445,24 @@ public class AttackAddFrame extends javax.swing.JFrame {
 private void fireUnitChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireUnitChangedEvent
     if (evt.getStateChange() == ItemEvent.SELECTED) {
         UnitHolder u = (UnitHolder) evt.getItem();
-        long arriveTime = (long) (System.currentTimeMillis() + DSCalculator.calculateMoveTimeInSeconds(mSource, mTarget, u.getSpeed()) * 1000 + 1000);
-        if (((Date) jTimeSpinner.getValue()).getTime() < arriveTime) {
-            //only set new arrive time if unit could not arrive at the current time
-            jTimeSpinner.setValue(new Date(arriveTime));
+        // long arriveTime = (long) (System.currentTimeMillis() + DSCalculator.calculateMoveTimeInSeconds(mSource, mTarget, u.getSpeed()) * 1000 + 1000);
 
+        double maxDur = 0;
+        for (Village source : mSources) {
+            double dur = DSCalculator.calculateMoveTimeInMinutes(source, mTarget, u.getSpeed());
+            dur = dur * 60000;
+            if (dur > maxDur) {
+                maxDur = dur;
+            }
         }
+        if (((Date) jTimeSpinner.getValue()).getTime() < (System.currentTimeMillis() + maxDur)) {
+            jTimeSpinner.setValue(new Date(Math.round((System.currentTimeMillis() + maxDur))));
+        }
+
+        /*if (((Date) jTimeSpinner.getValue()).getTime() < arriveTime) {
+        //only set new arrive time if unit could not arrive at the current time
+        jTimeSpinner.setValue(new Date(arriveTime));
+        }*/
     }
 }//GEN-LAST:event_fireUnitChangedEvent
 
@@ -369,7 +478,14 @@ private void fireAddAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:even
     UnitHolder u = (UnitHolder) jUnitBox.getSelectedItem();
     //long sendTime = getTime().getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(mSource, mTarget, u.getSpeed()) * 1000);
     Object plan = jAttackPlanBox.getSelectedItem();
-    AttackManager.getSingleton().addAttack(mSource, mTarget, getSelectedUnit(), getTime(), (String) plan);
+
+    if (isMultiAttack) {
+        for (Village source : mSources) {
+            AttackManager.getSingleton().addAttack(source, mTarget, getSelectedUnit(), getTime(), (String) plan);
+        }
+    } else {
+        AttackManager.getSingleton().addAttack(mSource, mTarget, getSelectedUnit(), getTime(), (String) plan);
+    }
     GlobalOptions.setLastArriveTime(getTime());
     setVisible(false);
 }//GEN-LAST:event_fireAddAttackEvent

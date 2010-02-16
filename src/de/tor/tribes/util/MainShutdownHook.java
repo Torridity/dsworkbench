@@ -23,7 +23,7 @@ import de.tor.tribes.ui.DSWorkbenchStatsFrame;
 import de.tor.tribes.ui.DSWorkbenchTagFrame;
 
 /**
- *
+ *@TODO (2.0) Store user data only if it was loaded successfully
  * @author Charon
  */
 public class MainShutdownHook extends Thread {

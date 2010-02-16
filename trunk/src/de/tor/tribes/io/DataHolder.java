@@ -10,14 +10,15 @@ package de.tor.tribes.io;
 
 import de.tor.tribes.php.DatabaseInterface;
 import de.tor.tribes.types.Ally;
+import de.tor.tribes.types.Marker;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.DSWorkbenchSettingsDialog;
 import de.tor.tribes.util.Constants;
-import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.xml.JaxenUtils;
+import java.awt.Point;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
@@ -29,13 +30,11 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
@@ -346,7 +345,7 @@ public class DataHolder {
         return true;
     }
 
-      public boolean loadLiveData() {
+    public boolean loadLiveData() {
         loading = true;
         try {
             String serverID = GlobalOptions.getSelectedServer();
@@ -827,7 +826,7 @@ public class DataHolder {
         return true;
     }
 
-     private boolean downloadLiveData() {
+    private boolean downloadLiveData() {
         URL file = null;
         String serverID = GlobalOptions.getSelectedServer();
         String serverDir = getDataDirectory();
@@ -887,114 +886,114 @@ public class DataHolder {
             }
             //</editor-fold>
 
-                //load villages
-                logger.info("Downloading new data version from " + sURL);
-                //clear all data structures
-                initialize();
+            //load villages
+            logger.info("Downloading new data version from " + sURL);
+            //clear all data structures
+            initialize();
 
-                // <editor-fold defaultstate="collapsed" desc=" Load villages ">
+            // <editor-fold defaultstate="collapsed" desc=" Load villages ">
 
-                fireDataHolderEvents("Lade Dörferliste");
-                file = new URL(sURL + "/map//village.txt.gz");
+            fireDataHolderEvents("Lade Dörferliste");
+            file = new URL(sURL + "/map//village.txt.gz");
 
-                logger.debug(" + Start reading villages");
-                downloadDataFile(file, "village.tmp");
-                logger.debug(" - Finished reading villages");
+            logger.debug(" + Start reading villages");
+            downloadDataFile(file, "village.tmp");
+            logger.debug(" - Finished reading villages");
 
-                BufferedReader r = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream("village.tmp"))));
-                String line = "";
-                logger.debug(" + Start parsing villages");
-                while ((line = r.readLine()) != null) {
-                    line = line.replaceAll(",,", ", ,");
-                    Village v = Village.parseFromPlainData(line);
-                    try {
-                        mVillages[v.getX()][v.getY()] = v;
-                    } catch (Exception e) {
-                        //ignore invalid village
-                    }
-                }
-                r.close();
-                logger.debug(" - Finished parsing villages");
-                // </editor-fold>
-
-                // <editor-fold defaultstate="collapsed" desc=" Load tribes ">
-
-                fireDataHolderEvents("Lade Spielerliste");
-
-                file = new URL(sURL + "/map/tribe.txt.gz");
-                logger.debug(" + Start reading tribes");
-                downloadDataFile(file, "tribe.tmp");
-                logger.debug(" - Finished reading tribes");
-
-                r = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream("tribe.tmp"))));
-
-                line = "";
-                logger.debug(" + Start parsing tribes");
+            BufferedReader r = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream("village.tmp"))));
+            String line = "";
+            logger.debug(" + Start parsing villages");
+            while ((line = r.readLine()) != null) {
+                line = line.replaceAll(",,", ", ,");
+                Village v = Village.parseFromPlainData(line);
                 try {
-                    while ((line = r.readLine()) != null) {
-                        line = line.replaceAll(",,", ", ,");
-                        Tribe t = Tribe.parseFromPlainData(line);
-                        try {
-                            mTribes.put(t.getId(), t);
-                        } catch (Exception e) {
-                            //ignore invalid tribe
-                        }
+                    mVillages[v.getX()][v.getY()] = v;
+                } catch (Exception e) {
+                    //ignore invalid village
                     }
-                } catch (Throwable t) {
-                }
-                r.close();
-                logger.debug(" - Finished parsing tribes");
-                // </editor-fold>
+            }
+            r.close();
+            logger.debug(" - Finished parsing villages");
+            // </editor-fold>
 
-                // <editor-fold defaultstate="collapsed" desc=" Load allies ">
-                fireDataHolderEvents("Lade Stämmeliste");
-                file = new URL(sURL + "/map/ally.txt.gz");
-                logger.debug(" + Start reading allies");
-                downloadDataFile(file, "ally.tmp");
-                logger.debug(" - Finished reading allies");
+            // <editor-fold defaultstate="collapsed" desc=" Load tribes ">
 
-                r = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream("ally.tmp"))));
-                line = "";
-                logger.debug(" + Start parsing allies");
+            fireDataHolderEvents("Lade Spielerliste");
+
+            file = new URL(sURL + "/map/tribe.txt.gz");
+            logger.debug(" + Start reading tribes");
+            downloadDataFile(file, "tribe.tmp");
+            logger.debug(" - Finished reading tribes");
+
+            r = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream("tribe.tmp"))));
+
+            line = "";
+            logger.debug(" + Start parsing tribes");
+            try {
                 while ((line = r.readLine()) != null) {
                     line = line.replaceAll(",,", ", ,");
-                    Ally a = Ally.parseFromPlainData(line);
+                    Tribe t = Tribe.parseFromPlainData(line);
                     try {
-                        mAllies.put(a.getId(), a);
+                        mTribes.put(t.getId(), t);
                     } catch (Exception e) {
-                        //ignore invalid ally
+                        //ignore invalid tribe
+                        }
+                }
+            } catch (Throwable t) {
+            }
+            r.close();
+            logger.debug(" - Finished parsing tribes");
+            // </editor-fold>
+
+            // <editor-fold defaultstate="collapsed" desc=" Load allies ">
+            fireDataHolderEvents("Lade Stämmeliste");
+            file = new URL(sURL + "/map/ally.txt.gz");
+            logger.debug(" + Start reading allies");
+            downloadDataFile(file, "ally.tmp");
+            logger.debug(" - Finished reading allies");
+
+            r = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream("ally.tmp"))));
+            line = "";
+            logger.debug(" + Start parsing allies");
+            while ((line = r.readLine()) != null) {
+                line = line.replaceAll(",,", ", ,");
+                Ally a = Ally.parseFromPlainData(line);
+                try {
+                    mAllies.put(a.getId(), a);
+                } catch (Exception e) {
+                    //ignore invalid ally
                     }
-                }
-                logger.debug(" - Finished parsing allies");
-                r.close();
+            }
+            logger.debug(" - Finished parsing allies");
+            r.close();
 
-                // </editor-fold>
+            // </editor-fold>
 
-                // <editor-fold defaultstate="collapsed" desc=" Load conquers off ">
-                fireDataHolderEvents("Lese besiegte Gegner (Angriff)...");
-                target = new File(serverDir + "/kill_att.txt.gz");
-                file = new URL(sURL + "/map/kill_att.txt.gz");
-                logger.debug(" + Downloading conquers (off)");
-                downloadDataFile(file, "kill_att.tmp");
-                if (target.exists()) {
-                    target.delete();
-                }
-                new File("kill_att.tmp").renameTo(target);
-                logger.debug(" - Finished downloading conquers (off)");
-                // </editor-fold>
+            // <editor-fold defaultstate="collapsed" desc=" Load conquers off ">
+            fireDataHolderEvents("Lese besiegte Gegner (Angriff)...");
+            target = new File(serverDir + "/kill_att.txt.gz");
+            file = new URL(sURL + "/map/kill_att.txt.gz");
+            logger.debug(" + Downloading conquers (off)");
+            downloadDataFile(file, "kill_att.tmp");
+            if (target.exists()) {
+                target.delete();
+            }
+            new File("kill_att.tmp").renameTo(target);
+            logger.debug(" - Finished downloading conquers (off)");
+            // </editor-fold>
 
-                // <editor-fold defaultstate="collapsed" desc=" Load conquers def ">
-                fireDataHolderEvents("Lese besiegte Gegner (Verteidigung)...");
-                target = new File(serverDir + "/kill_def.txt.gz");
-                file = new URL(sURL + "/map/kill_def.txt.gz");
-                logger.debug(" + Downloading conquers (def)");
-                downloadDataFile(file, "kill_def.tmp");
-                if (target.exists()) {
-                    target.delete();
-                }
-                new File("kill_def.tmp").renameTo(target);
-                logger.debug(" - Finished downloading conquers (def)");
-                // </editor-fold>
+            // <editor-fold defaultstate="collapsed" desc=" Load conquers def ">
+            fireDataHolderEvents("Lese besiegte Gegner (Verteidigung)...");
+            target = new File(serverDir + "/kill_def.txt.gz");
+            file = new URL(sURL + "/map/kill_def.txt.gz");
+            logger.debug(" + Downloading conquers (def)");
+            downloadDataFile(file, "kill_def.tmp");
+            if (target.exists()) {
+                target.delete();
+            }
+            new File("kill_def.tmp").renameTo(target);
+            logger.debug(" - Finished downloading conquers (def)");
+            // </editor-fold>
 
 
             // <editor-fold defaultstate="collapsed" desc="Direct download from DS-Servers">
@@ -1020,7 +1019,7 @@ public class DataHolder {
             }
             //</editor-fold>
 
-           // DatabaseInterface.updateDataVersion(accountName, serverID);
+            // DatabaseInterface.updateDataVersion(accountName, serverID);
             fireDataHolderEvents("Download von die-staemme.de erfolgreich beendet.");
         } catch (Throwable t) {
             fireDataHolderEvents("Download von die-staemme.de fehlgeschlagen.");
@@ -1184,6 +1183,39 @@ public class DataHolder {
             }
         }
         return mVillages;
+    }
+
+    public List<Village> getVillagesInRegion(Point pStart, Point pEnd) {
+        List<Village> marked = new LinkedList<Village>();
+        try {
+            int xStart = (pStart.x < pEnd.x) ? pStart.x : pEnd.x;
+            int xEnd = (pEnd.x > pStart.x) ? pEnd.x : pStart.x;
+            int yStart = (pStart.y < pEnd.y) ? pStart.y : pEnd.y;
+            int yEnd = (pEnd.y > pStart.y) ? pEnd.y : pStart.y;
+            boolean showBarbarian = true;
+            try {
+                showBarbarian = Boolean.parseBoolean(GlobalOptions.getProperty("show.barbarian"));
+            } catch (Exception e) {
+                showBarbarian = true;
+            }
+
+            for (int x = xStart; x <= xEnd; x++) {
+                for (int y = yStart; y <= yEnd; y++) {
+                    Village v = getVillages()[x][y];
+                    if ((v != null && v.getTribe() == null) && !showBarbarian) {
+                        //dont select barbarians if they are not visible
+                    } else {
+                        if (v != null && !marked.contains(v)) {
+                            marked.add(v);
+                        }
+                    }
+                }
+            }
+            Collections.sort(marked, Village.ALLY_TRIBE_VILLAGE_COMPARATOR);
+        } catch (Exception e) {
+            //occurs if no rect was opened by selection tool -> ignore
+        }
+        return marked;
     }
 
     /**Get villages as a hashtable ordered by IDs*/

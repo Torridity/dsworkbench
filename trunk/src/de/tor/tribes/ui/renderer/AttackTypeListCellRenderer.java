@@ -28,6 +28,7 @@ public class AttackTypeListCellRenderer extends DefaultListCellRenderer {
             icons.add(new ImageIcon("./graphics/icons/snob.png"));
             icons.add(new ImageIcon("./graphics/icons/def.png"));
             icons.add(new ImageIcon("./graphics/icons/fake.png"));
+            icons.add(new ImageIcon("./graphics/icons/def_fake.png"));
         } catch (Exception e) {
             icons = null;
         }

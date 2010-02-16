@@ -17,7 +17,6 @@ import java.util.Hashtable;
 import java.util.StringTokenizer;
 
 /**
- *@TODO (2.0) Add found units to troopsmanager
  * @author Torridity
  */
 public class ReportParser {

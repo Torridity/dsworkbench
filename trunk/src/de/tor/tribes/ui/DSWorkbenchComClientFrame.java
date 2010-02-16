@@ -12,9 +12,12 @@ package de.tor.tribes.ui;
 
 import de.tor.tribes.net.ComClient;
 import de.tor.tribes.net.ComClientListener;
+import de.tor.tribes.types.Village;
 import java.awt.Color;
+import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.util.Arrays;
+import java.util.List;
 import javax.swing.DefaultListModel;
 import javax.swing.text.DefaultStyledDocument;
 import javax.swing.text.SimpleAttributeSet;
@@ -317,7 +320,6 @@ public class DSWorkbenchComClientFrame extends AbstractDSWorkbenchFrame implemen
             }
         });
     }
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jConnectButton;
     private javax.swing.JButton jDisconnectButton;
@@ -438,5 +440,9 @@ public class DSWorkbenchComClientFrame extends AbstractDSWorkbenchFrame implemen
         } finally {
             fireDisconnectEvent(null);
         }
+    }
+
+    @Override
+    public void fireVillagesDraggedEvent(List<Village> pVillages, Point pDropLocation) {
     }
 }

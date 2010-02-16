@@ -85,6 +85,23 @@ public class TagTableModel extends AbstractDSWorkbenchTableModel {
         }
     }
 
+    public Object getOriginalValueAt(int rowIndex, int columnIndex) {
+        switch (columnIndex) {
+            case 0: {
+                return TagManager.getSingleton().getTags().get(rowIndex).getName();
+            }
+            case 1: {
+                return TagManager.getSingleton().getTags().get(rowIndex).getVillageIDs().size();
+            }
+            case 2: {
+                return TagManager.getSingleton().getTags().get(rowIndex).getMapMarker();
+            }
+            default: {
+                return TagManager.getSingleton().getTags().get(rowIndex).isShowOnMap();
+            }
+        }
+    }
+
     @Override
     public void setValueAt(Object value, int rowIndex, int columnIndex) {
         columnIndex = getRealColumnId(columnIndex);
@@ -139,6 +156,6 @@ public class TagTableModel extends AbstractDSWorkbenchTableModel {
 
     @Override
     public void doNotifyOnColumnChange() {
-        DSWorkbenchTagFrame.getSingleton();
+        DSWorkbenchTagFrame.getSingleton().fireRebuildTableEvent();
     }
 }

@@ -16,6 +16,7 @@ import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.algo.AlgorithmLogPanel;
 import de.tor.tribes.ui.algo.SettingsPanel;
+import de.tor.tribes.ui.dnd.VillageTransferable;
 import de.tor.tribes.ui.editors.AttackTypeCellEditor;
 import de.tor.tribes.ui.editors.FakeCellEditor;
 import de.tor.tribes.ui.editors.UnitCellEditor;
@@ -65,6 +66,19 @@ import java.util.StringTokenizer;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
+import java.awt.dnd.DnDConstants;
+import java.awt.dnd.DragGestureEvent;
+import java.awt.dnd.DragGestureListener;
+import java.awt.dnd.DragSource;
+import java.awt.dnd.DragSourceDragEvent;
+import java.awt.dnd.DragSourceDropEvent;
+import java.awt.dnd.DragSourceEvent;
+import java.awt.dnd.DragSourceListener;
+import java.awt.dnd.DropTarget;
+import java.awt.dnd.DropTargetDragEvent;
+import java.awt.dnd.DropTargetDropEvent;
+import java.awt.dnd.DropTargetEvent;
+import java.awt.dnd.DropTargetListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Collections;
@@ -72,6 +86,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumn;
 
@@ -81,16 +96,17 @@ import javax.swing.table.TableColumn;
  * @TODO (DIFF) Settings are stored now
  * @TODO (DIFF) Introduce for target "All but <1000, <2000" Button/ComboBOx
  * @TODO (2.0) Add attack amount for each village in target list
- *  @TODO (2.0) Add fake deff type
+ * @TODO (2.0) Add fake deff type
  * @author Jejkal
  */
-public class TribeTribeAttackFrame extends javax.swing.JFrame implements AlgorithmListener {
+public class TribeTribeAttackFrame extends javax.swing.JFrame implements AlgorithmListener, DropTargetListener, DragGestureListener, DragSourceListener {
 
     private static Logger logger = Logger.getLogger("AttackPlanner");
     private SettingsPanel mSettingsPanel = null;
     //private MiscSettingsPanel mMiscPanel = null;
     private JButton filterSource = null;
     private AlgorithmLogPanel logPanel = null;
+    private DragSource dragSource;
 
     /** Creates new form TribeTribeAttackFrame */
     public TribeTribeAttackFrame() {
@@ -103,7 +119,10 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Algorit
         jTransferToAttackManagerDialog.pack();
         jAttackResultDetailsFrame.pack();
         jTargetResultDetailsFrame.pack();
-
+        dragSource = DragSource.getDefaultDragSource();
+        dragSource.createDefaultDragGestureRecognizer(this, DnDConstants.ACTION_COPY_OR_MOVE, this);
+        DropTarget dropTarget = new DropTarget(this, this);
+        this.setDropTarget(dropTarget);
         for (MouseListener l : jAllTargetsComboBox.getMouseListeners()) {
             jAllTargetsComboBox.removeMouseListener(l);
         }
@@ -1802,11 +1821,17 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
             timeFrame,
             fakeOffTargets,
             logPanel);
+    SwingUtilities.invokeLater(new Runnable() {
 
+        @Override
+        public void run() {
+            jCalculateButton.setEnabled(false);
+            jCalculatingProgressBar.setString("Berechnung läuft...");
+            jCalculatingProgressBar.setIndeterminate(true);
+        }
+    });
     algo.execute(this);
-    jCalculateButton.setEnabled(false);
-    jCalculatingProgressBar.setString("Berechnung läuft...");
-    jCalculatingProgressBar.setIndeterminate(true);
+
 
 }//GEN-LAST:event_fireCalculateAttackEvent
 
@@ -2927,7 +2952,7 @@ private void fireClosingEvent(java.awt.event.WindowEvent evt) {//GEN-FIRST:event
         //</editor-fold>
     }
 
-// <editor-fold defaultstate="collapsed" desc="Source selection handlers">
+    // <editor-fold defaultstate="collapsed" desc="Source selection handlers">
     private void fireFilterSourceVillagesByGroupEvent() {
         List<Village> villageList = getGroupFilteredSourceVillages();
         //build continents list
@@ -3123,7 +3148,7 @@ private void fireClosingEvent(java.awt.event.WindowEvent evt) {//GEN-FIRST:event
     }
 
 // </editor-fold>
-// <editor-fold defaultstate="collapsed" desc="Target selection handlers">
+    // <editor-fold defaultstate="collapsed" desc="Target selection handlers">
     private void fireFilterTargetByAllyEvent() {
         Ally a = null;
         try {
@@ -3241,11 +3266,18 @@ private void fireClosingEvent(java.awt.event.WindowEvent evt) {//GEN-FIRST:event
     }
 // </editor-fold>
 
+    @Override
     public void fireCalculationFinishedEvent(AbstractAttackAlgorithm pParent) {
-        jCalculatingProgressBar.setIndeterminate(false);
-        jCalculatingProgressBar.setString("Berechnung abgeschlossen");
-        jCalculateButton.setEnabled(true);
-        repaint();
+        SwingUtilities.invokeLater(new Runnable() {
+
+            @Override
+            public void run() {
+                jCalculateButton.setEnabled(true);
+                jCalculatingProgressBar.setString("Berechnung abgeschlossen");
+                jCalculatingProgressBar.setIndeterminate(false);
+            }
+        });
+
         List<Attack> attackList = new LinkedList<Attack>();
         List<Village> targets = new LinkedList<Village>();
 
@@ -3317,6 +3349,82 @@ private void fireClosingEvent(java.awt.event.WindowEvent evt) {//GEN-FIRST:event
         logger.debug("Building results...");
 
         showResults(attackList);
+    }
+
+    @Override
+    public void dragEnter(DropTargetDragEvent dtde) {
+        if (dtde.isDataFlavorSupported(VillageTransferable.villageDataFlavor) || dtde.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+            dtde.acceptDrag(DnDConstants.ACTION_COPY_OR_MOVE);
+        }
+    }
+
+    @Override
+    public void dragOver(DropTargetDragEvent dtde) {
+    }
+
+    @Override
+    public void dropActionChanged(DropTargetDragEvent dtde) {
+    }
+
+    @Override
+    public void dragExit(DropTargetEvent dte) {
+    }
+
+    @Override
+    public void drop(DropTargetDropEvent dtde) {
+        if (dtde.isDataFlavorSupported(VillageTransferable.villageDataFlavor) || dtde.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+            dtde.acceptDrop(DnDConstants.ACTION_COPY_OR_MOVE);
+        } else {
+            dtde.rejectDrop();
+            return;
+        }
+
+        Transferable t = dtde.getTransferable();
+        List<Village> villages;
+        MapPanel.getSingleton().setCurrentCursor(MapPanel.getSingleton().getCurrentCursor());
+        try {
+            villages = (List<Village>) t.getTransferData(VillageTransferable.villageDataFlavor);
+            if (jTabbedPane1.getSelectedIndex() == 0) {
+                UnitHolder uSource = (UnitHolder) jTroopsList.getSelectedItem();
+                for (Village village : villages) {
+                    if (village != null && village.getTribe() != null) {
+                        ((DefaultTableModel) jAttacksTable.getModel()).addRow(new Object[]{village, uSource, jMarkAsFakeBox.isSelected()});
+                        mSettingsPanel.addTribe(village.getTribe());
+                    }
+                }
+            } else if (jTabbedPane1.getSelectedIndex() == 1) {
+                for (Village village : villages) {
+                    if (village != null && village.getTribe() != null) {
+                        ((DefaultTableModel) jVictimTable.getModel()).addRow(new Object[]{village.getTribe(), village});
+                    }
+                }
+            }
+        } catch (Exception ex) {
+        }
+    }
+
+    @Override
+    public void dragGestureRecognized(DragGestureEvent dge) {
+    }
+
+    @Override
+    public void dragEnter(DragSourceDragEvent dsde) {
+    }
+
+    @Override
+    public void dragOver(DragSourceDragEvent dsde) {
+    }
+
+    @Override
+    public void dropActionChanged(DragSourceDragEvent dsde) {
+    }
+
+    @Override
+    public void dragExit(DragSourceEvent dse) {
+    }
+
+    @Override
+    public void dragDropEnd(DragSourceDropEvent dsde) {
     }
 
     /**

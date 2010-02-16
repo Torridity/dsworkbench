@@ -25,6 +25,7 @@ import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.dsreal.DSRealManager;
 import java.awt.Component;
+import java.awt.Point;
 import java.awt.event.ItemEvent;
 import java.awt.event.KeyEvent;
 import java.text.NumberFormat;
@@ -768,6 +769,10 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame {
         model.insertElementAt("Alle", 0);
         jAllyBox.setModel(model);
         jAllyBox.setSelectedIndex(0);
+    }
+
+    @Override
+    public void fireVillagesDraggedEvent(List<Village> pVillages, Point pDropLocation) {
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox jAllyBox;

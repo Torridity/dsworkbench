@@ -10,15 +10,19 @@ package de.tor.tribes.types;
 
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.ui.DSWorkbenchMainFrame;
+import de.tor.tribes.ui.dnd.VillageTransferable;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.html.VillageHTMLTooltipGenerator;
 import de.tor.tribes.util.tag.TagManager;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.geom.Rectangle2D;
+import java.io.Serializable;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.text.NumberFormat;
 import java.util.Comparator;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -27,7 +31,7 @@ import java.util.StringTokenizer;
  *
  * @author Charon
  */
-public class Village implements Comparable {
+public class Village implements Comparable, Serializable {
 
     public static final Comparator<Village> CASE_INSENSITIVE_ORDER = new CaseInsensitiveComparator();
     public static final Comparator<Village> ALLY_TRIBE_VILLAGE_COMPARATOR = new AllyTribeVillageComparator();

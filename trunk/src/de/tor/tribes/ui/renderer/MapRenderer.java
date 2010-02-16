@@ -127,12 +127,13 @@ public class MapRenderer extends Thread {
     private Point2D.Double viewStartPoint = null;
     private double currentZoom = 0.0;
     private Village currentUserVillage = null;
-    private BufferedImage mMainBuffer = null;
+    private BufferedImage mBackBuffer = null;
     private BufferedImage mConquerWarning = null;
     private List<Integer> drawOrder = null;
     private int iPopupTroopType = 0;
     private Popup infoPopup = null;
     private Village popupVillage = null;
+    private BufferedImage mFrontBuffer = null;
 
     public MapRenderer() {
         mVisibleVillages = new Village[iVillagesX][iVillagesY];
@@ -190,38 +191,42 @@ public class MapRenderer extends Thread {
     @Override
     public void run() {
         logger.debug("Entering render loop");
-        long sleepTime = 40;
         while (true) {
             try {
                 int w = MapPanel.getSingleton().getWidth();
                 int h = MapPanel.getSingleton().getHeight();
                 if ((w != 0) && (h != 0)) {
                     Graphics2D g2d = null;
-                    if (mMainBuffer == null) {
+
+                    if (mBackBuffer == null) {
                         //create main buffer during first iteration
-                        mMainBuffer = getBufferedImage(w, h, Transparency.TRANSLUCENT);//MapPanel.getSingleton().createImage(w, h)
-                        g2d = (Graphics2D) mMainBuffer.getGraphics();
+                        mBackBuffer = getBufferedImage(w, h, Transparency.OPAQUE);//MapPanel.getSingleton().createImage(w, h)
+                        mFrontBuffer = getBufferedImage(w, h, Transparency.OPAQUE);
+
+                        g2d = (Graphics2D) mBackBuffer.getGraphics();
                         prepareGraphics(g2d);
                         //set redraw required flag if nothin was drawn yet
                         mapRedrawRequired = true;
                     } else {
                         //check if image size is still valid
                         //if not re-create main buffer
-                        if (mMainBuffer.getWidth(null) != w || mMainBuffer.getHeight(null) != h) {
+                        if (mBackBuffer.getWidth(null) != w || mBackBuffer.getHeight(null) != h) {
                             //map panel has resized
-                            mMainBuffer = getBufferedImage(w, h, Transparency.TRANSLUCENT);//MapPanel.getSingleton().createImage(w, h);
-                            g2d = (Graphics2D) mMainBuffer.getGraphics();
+                            mBackBuffer = getBufferedImage(w, h, Transparency.OPAQUE);//MapPanel.getSingleton().createImage(w, h);
+                            mFrontBuffer = getBufferedImage(w, h, Transparency.OPAQUE);
+                            g2d = (Graphics2D) mBackBuffer.getGraphics();
                             prepareGraphics(g2d);
                             //set redraw required flag if size has changed
                             mapRedrawRequired = true;
                         } else {
                             //only clear graphics
-                            g2d = (Graphics2D) mMainBuffer.getGraphics();
+                            g2d = (Graphics2D) mBackBuffer.getGraphics();
                             Composite c = g2d.getComposite();
                             g2d.clearRect(0, 0, w, h);
                             g2d.setComposite(c);
                         }
                     }
+
                     //get currently selected user village for marking -> one call reduces sync effort
                     currentUserVillage = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage();
                     //check if redraw required
@@ -252,6 +257,7 @@ public class MapRenderer extends Thread {
                                 g2d.drawImage(mLayers.get(MARKER_LAYER), 0, 0, null);
                             }
                         } else if (layer == 1) {
+                            //  System.out.println("DRAW MAP");
                             g2d.drawImage(mLayers.get(MAP_LAYER), 0, 0, null);
                             mapDrawn = true;
                         } else if (layer == 2) {
@@ -312,10 +318,8 @@ public class MapRenderer extends Thread {
                         }
                     }
                     //draw live layer -> always on top
-                    // System.out.println("Norm " + (System.currentTimeMillis() - s));
                     renderLiveLayer(g2d);
                     g2d.drawImage(mLayers.get(LIVE_LAYER), 0, 0, null);
-                    //  System.out.println("LIve " + (System.currentTimeMillis() - s));
                     //render selection
                     de.tor.tribes.types.Rectangle selection = MapPanel.getSingleton().getSelectionRect();
                     if (selection != null) {
@@ -326,38 +330,39 @@ public class MapRenderer extends Thread {
 
                     //notify MapPanel to bring buffer to screen
                     Hashtable<Village, Rectangle> pos = (Hashtable<Village, Rectangle>) villagePositions.clone();
-
-                    // MapPanel.getSingleton().getStrategy().getDrawGraphics().drawImage(mMainBuffer, 0, 0, null);
-                    // MapPanel.getSingleton().getStrategy().show();
-                    MapPanel.getSingleton().updateComplete(pos, mMainBuffer);
-                    MapPanel.getSingleton().repaint();
+                    Graphics2D g2d2 = (Graphics2D) mFrontBuffer.getGraphics();
+                    prepareGraphics(g2d2);
+                    g2d2.drawImage(mBackBuffer, 0, 0, null);
+                    MapPanel.getSingleton().updateComplete(pos, mFrontBuffer);
+                    g2d2.dispose();
                     g2d.dispose();
+                    MapPanel.getSingleton().repaint();
                 }
             } catch (Throwable t) {
                 rendered = 0;
                 logger.error("Redrawing map failed", t);
             }
             try {
-                Thread.sleep(sleepTime);
+                Thread.sleep(40);
             } catch (InterruptedException ie) {
             }
 
-            if (rendered == 0) {
-                frames++;
-                rendered = System.currentTimeMillis();
+            /*  if (rendered == 0) {
+            frames++;
+            rendered = System.currentTimeMillis();
             } else {
-                frames++;
-                long dur = System.currentTimeMillis() - rendered;
-                if (dur >= 1000) {
-                    if (frames < 10 && sleepTime > 10) {
-                        sleepTime -= 10;
-                    } else {
-                        sleepTime += 10;
-                    }
-                    rendered = System.currentTimeMillis();
-                    frames = 0;
-                }
+            frames++;
+            long dur = System.currentTimeMillis() - rendered;
+            if (dur >= 1000) {
+            if (frames < 10 && sleepTime > 10) {
+            sleepTime -= 10;
+            } else {
+            sleepTime += 10;
             }
+            rendered = System.currentTimeMillis();
+            frames = 0;
+            }
+            }*/
         }
     }
     int frames = 0;
@@ -1628,15 +1633,6 @@ public class MapRenderer extends Thread {
         for (AbstractForm form : forms) {
             form.renderForm(g2d);
         }
-
-        if (!FormConfigFrame.getSingleton().isInEditMode()) {
-            //only render in create mode to avoid multi-drawing
-            AbstractForm f = FormConfigFrame.getSingleton().getCurrentForm();
-
-            if (f != null) {
-                f.renderForm(g2d);
-            }
-        }
     }
 
     private void renderChurches(Graphics2D g2d) {
@@ -1827,6 +1823,16 @@ public class MapRenderer extends Thread {
         Village mouseVillage = MapPanel.getSingleton().getVillageAtMousePos();
         int width = GlobalOptions.getSkin().getCurrentFieldWidth();
         int height = GlobalOptions.getSkin().getCurrentFieldHeight();
+
+        //render temp form
+        if (!FormConfigFrame.getSingleton().isInEditMode()) {
+            //only render in create mode to avoid multi-drawing
+            AbstractForm f = FormConfigFrame.getSingleton().getCurrentForm();
+
+            if (f != null) {
+                f.renderForm(g2d);
+            }
+        }
 
         if (Boolean.parseBoolean(GlobalOptions.getProperty("highlight.tribes.villages"))) {
             Tribe mouseTribe = Barbarians.getSingleton();

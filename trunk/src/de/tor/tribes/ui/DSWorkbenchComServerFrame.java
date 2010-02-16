@@ -12,9 +12,12 @@ package de.tor.tribes.ui;
 
 import de.tor.tribes.net.PeerManager;
 import de.tor.tribes.net.PeerManagerListener;
+import de.tor.tribes.types.Village;
 import de.tor.tribes.util.Constants;
 import java.awt.Color;
+import java.awt.Point;
 import java.util.Arrays;
+import java.util.List;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 import javax.swing.text.DefaultStyledDocument;
@@ -390,6 +393,10 @@ public class DSWorkbenchComServerFrame extends AbstractDSWorkbenchFrame implemen
         jBanFrame.setVisible(false);
     }//GEN-LAST:event_fireCloseBanListEvent
 
+    @Override
+    public void fireVillagesDraggedEvent(List<Village> pVillages, Point pDropLocation) {
+    }
+
     /**
      * @param args the command line arguments
      */
@@ -401,7 +408,6 @@ public class DSWorkbenchComServerFrame extends AbstractDSWorkbenchFrame implemen
             }
         });
     }
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JFrame jBanFrame;
     private javax.swing.JList jBanList;

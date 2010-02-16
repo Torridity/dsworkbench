@@ -26,7 +26,8 @@ public class Attack implements Serializable {
     public static final int SNOB_TYPE = 2;
     public static final int SUPPORT_TYPE = 3;
     public static final int FAKE_TYPE = 4;
-    public static final int SPY_TYPE = 5;
+    public static final int FAKE_DEFF_TYPE = 5;
+    public static final int SPY_TYPE = 6;
     private static final long serialVersionUID = 10L;
     private Village source = null;
     private Village target = null;
@@ -149,11 +150,16 @@ public class Attack implements Serializable {
      */
 
     public String toString() {
-        long send = getArriveTime().getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(getSource(), getTarget(), getUnit().getSpeed()) * 1000);
+        /* long send = getArriveTime().getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(getSource(), getTarget(), getUnit().getSpeed()) * 1000);
         SimpleDateFormat f = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
         Calendar c = Calendar.getInstance();
         c.setTimeInMillis(send);
-        String result = getSource() + " > " + getTarget() + ": " + f.format(c.getTime()) + " ... " + f.format(getArriveTime());
+        String result = getSource() + " > " + getTarget() + ": " + f.format(c.getTime()) + " ... " + f.format(getArriveTime());*/
+        SimpleDateFormat f = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
+        String result = getSource() + "\n";
+        result += getTarget() + "\n";
+        result += getUnit() + "\n";
+        result += f.format(getArriveTime());
         return result;
     }
 }

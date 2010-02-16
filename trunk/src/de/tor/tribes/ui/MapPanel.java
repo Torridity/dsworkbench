@@ -5,11 +5,14 @@
  */
 package de.tor.tribes.ui;
 
+import de.tor.tribes.dssim.ui.DSWorkbenchSimulatorFrame;
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Ally;
 import de.tor.tribes.types.Church;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
+import de.tor.tribes.ui.dnd.VillageTransferable;
 import de.tor.tribes.util.BrowserCommandSender;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ToolChangeListener;
@@ -19,6 +22,14 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.MouseInfo;
 import java.awt.Point;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.dnd.DragGestureEvent;
+import java.awt.dnd.DragSourceDragEvent;
+import java.awt.dnd.DragSourceDropEvent;
+import java.awt.dnd.DragSourceEvent;
+import java.awt.dnd.DropTargetDragEvent;
+import java.awt.dnd.DropTargetDropEvent;
+import java.awt.dnd.DropTargetEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -38,12 +49,22 @@ import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.VillageSelectionListener;
 import de.tor.tribes.util.church.ChurchManager;
 import de.tor.tribes.util.stat.StatManager;
+import de.tor.tribes.util.troops.TroopsManager;
+import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.awt.AlphaComposite;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.FontMetrics;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
+import java.awt.dnd.DnDConstants;
+import java.awt.dnd.DragGestureListener;
+import java.awt.dnd.DragSource;
+import java.awt.dnd.DragSourceListener;
+import java.awt.dnd.DropTarget;
+import java.awt.dnd.DropTargetListener;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -61,11 +82,15 @@ import javax.swing.JPanel;
  * @TODO (DIFF) Added new popup
  * @TODO (DIFF) Added ruler
  * @TODO (DIFF) Added fancy "mark all tribes villages" feature
+ * @TODO (DIFF) Fixed form drawing issues (line intersection, overlay issue)
  * @author Charon
  */
-public class MapPanel extends JPanel {
+public class MapPanel extends JPanel implements DragGestureListener, // For recognizing the start of drags
+        DragSourceListener, // For processing drag source events
+        DropTargetListener // For processing drop target events
+{
+// <editor-fold defaultstate="collapsed" desc=" Member variables ">
 
-    // <editor-fold defaultstate="collapsed" desc=" Member variables ">
     private static Logger logger = Logger.getLogger("MapCanvas");
     private BufferedImage mBuffer = null;
     private double dCenterX = 500.0;
@@ -101,6 +126,8 @@ public class MapPanel extends JPanel {
     private boolean shiftDown = false;
     private List<Village> markedVillages = null;
     private Village actionMenuVillage = null;
+    DragSource dragSource; // A central DnD object
+    boolean dragMode; // Are we dragging or scribbling?
     // </editor-fold>
 
     public static synchronized MapPanel getSingleton() {
@@ -121,7 +148,7 @@ public class MapPanel extends JPanel {
         mToolChangeListeners = new LinkedList<ToolChangeListener>();
         mMarkerAddFrame = new MarkerAddFrame();
         setCursor(ImageManager.getCursor(iCurrentCursor));
-        setIgnoreRepaint(true);
+        setIgnoreRepaint(false);
         attackAddFrame = new AttackAddFrame();
         mVirtualBounds = new Rectangle2D.Double(0.0, 0.0, 0.0, 0.0);
         jCopyOwn.setSelected(true);
@@ -175,6 +202,16 @@ public class MapPanel extends JPanel {
     }
 
     private void initListeners() {
+        dragSource = DragSource.getDefaultDragSource();
+        dragSource.createDefaultDragGestureRecognizer(this, // What component
+                DnDConstants.ACTION_COPY_OR_MOVE, // What drag types?
+                this);// the listener
+
+        // Create and set up a DropTarget that will listen for drags and
+        // drops over this component, and will notify the DropTargetListener
+        DropTarget dropTarget = new DropTarget(this, // component to monitor
+                this); // listener to notify
+        this.setDropTarget(dropTarget); // Tell the component about it.
 
         // <editor-fold defaultstate="collapsed" desc="MouseWheelListener for Tool changes">
         addMouseWheelListener(new MouseWheelListener() {
@@ -224,7 +261,7 @@ public class MapPanel extends JPanel {
                         markedVillages.clear();
                     }
                     return;
-                } else if (!shiftDown && v == null) {
+                } else if (!shiftDown && v == null && !MenuRenderer.getSingleton().isVisible()) {
                     markedVillages.clear();
                 }
 
@@ -251,7 +288,7 @@ public class MapPanel extends JPanel {
                         break;
                     }
                     case ImageManager.CURSOR_MARK: {
-                       // Village current = getVillageAtMousePos();
+                        // Village current = getVillageAtMousePos();
                         if (v != null) {
                             if (v.getTribe() == null) {
                                 //empty village
@@ -264,7 +301,7 @@ public class MapPanel extends JPanel {
                         break;
                     }
                     case ImageManager.CURSOR_TAG: {
-                      //  Village current = getVillageAtMousePos();
+                        //  Village current = getVillageAtMousePos();
                         if (v != null) {
                             if (v.getTribe() == null) {
                                 //empty village
@@ -282,7 +319,7 @@ public class MapPanel extends JPanel {
                         }
                     }
                     case ImageManager.CURSOR_SUPPORT: {
-                       // Village current = getVillageAtMousePos();
+                        // Village current = getVillageAtMousePos();
                         if (v != null) {
                             if (v.getTribe() == null) {
                                 //empty village
@@ -310,7 +347,7 @@ public class MapPanel extends JPanel {
                     }
                     case ImageManager.CURSOR_ATTACK_INGAME: {
                         if (e.getClickCount() == 2) {
-                         //   Village v = getVillageAtMousePos();
+                            //   Village v = getVillageAtMousePos();
                             Village u = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage();
                             if ((u != null) && (v != null)) {
                                 if (Desktop.isDesktopSupported()) {
@@ -322,7 +359,7 @@ public class MapPanel extends JPanel {
                     }
                     case ImageManager.CURSOR_SEND_RES_INGAME: {
                         if (e.getClickCount() == 2) {
-                          //  Village v = getVillageAtMousePos();
+                            //  Village v = getVillageAtMousePos();
                             Village u = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage();
                             if ((u != null) && (v != null)) {
                                 if (Desktop.isDesktopSupported()) {
@@ -361,7 +398,7 @@ public class MapPanel extends JPanel {
                         break;
                     }
                     case ImageManager.CURSOR_CHURCH_1: {
-                     //   Village v = getVillageAtMousePos();
+                        //   Village v = getVillageAtMousePos();
                         if (v != null) {
                             ChurchManager.getSingleton().addChurch(v, Church.RANGE1);
 
@@ -369,7 +406,7 @@ public class MapPanel extends JPanel {
                         break;
                     }
                     case ImageManager.CURSOR_CHURCH_2: {
-                      //  Village v = getVillageAtMousePos();
+                        //  Village v = getVillageAtMousePos();
                         if (v != null) {
                             ChurchManager.getSingleton().addChurch(v, Church.RANGE2);
 
@@ -377,7 +414,7 @@ public class MapPanel extends JPanel {
                         break;
                     }
                     case ImageManager.CURSOR_CHURCH_3: {
-                      //  Village v = getVillageAtMousePos();
+                        //  Village v = getVillageAtMousePos();
                         if (v != null) {
                             ChurchManager.getSingleton().addChurch(v, Church.RANGE3);
 
@@ -385,14 +422,14 @@ public class MapPanel extends JPanel {
                         break;
                     }
                     case ImageManager.CURSOR_REMOVE_CHURCH: {
-                      //  Village v = getVillageAtMousePos();
+                        //  Village v = getVillageAtMousePos();
                         if (v != null) {
                             ChurchManager.getSingleton().removeChurch(v);
                         }
                         break;
                     }
                     case ImageManager.CURSOR_NOTE: {
-                       // Village v = getVillageAtMousePos();
+                        // Village v = getVillageAtMousePos();
                         if (v != null) {
                             DSWorkbenchNotepad.getSingleton().addNoteForVillage(v);
                             if (!DSWorkbenchNotepad.getSingleton().isVisible()) {
@@ -427,13 +464,15 @@ public class MapPanel extends JPanel {
                     isAttack = isAttackCursor();
                 }
                 int tmpCursor = (spaceDown) ? ImageManager.CURSOR_DEFAULT : iCurrentCursor;
-
                 switch (tmpCursor) {
                     case ImageManager.CURSOR_DEFAULT: {
                         mouseDownPoint = MouseInfo.getPointerInfo().getLocation();
                         break;
                     }
                     case ImageManager.CURSOR_SELECTION: {
+                        if (!shiftDown) {
+                            markedVillages.clear();
+                        }
                         selectionRect = new de.tor.tribes.types.Rectangle();
                         selectionRect.setDrawColor(Color.YELLOW);
                         selectionRect.setFilled(true);
@@ -544,8 +583,14 @@ public class MapPanel extends JPanel {
                             int ye = (int) Math.floor(selectionRect.getYPosEnd());
 
                             //notify selection listener (see DSWorkbenchSelectionFrame)
-                            mVillageSelectionListener.fireSelectionFinishedEvent(new Point(xs, ys), new Point(xe, ye));
-                            DSWorkbenchSelectionFrame.getSingleton().toFront();
+                            // mVillageSelectionListener.fireSelectionFinishedEvent(new Point(xs, ys), new Point(xe, ye));
+                            List<Village> villages = DataHolder.getSingleton().getVillagesInRegion(new Point(xs, ys), new Point(xe, ye));
+                            for (Village v : villages) {
+                                if (!markedVillages.contains(v)) {
+                                    markedVillages.add(v);
+                                }
+                            }
+                            //  DSWorkbenchSelectionFrame.getSingleton().toFront();
                             selectionRect = null;
                             break;
                         }
@@ -622,6 +667,7 @@ public class MapPanel extends JPanel {
 
         addMouseListener(MenuRenderer.getSingleton());
         //</editor-fold>
+
 
         // <editor-fold defaultstate="collapsed" desc=" MouseMotionListener for dragging operations ">
         addMouseMotionListener(new MouseMotionListener() {
@@ -841,9 +887,9 @@ public class MapPanel extends JPanel {
     public void setCurrentCursor(int pCurrentCursor) {
         iCurrentCursor = pCurrentCursor;
         setCursor(ImageManager.getCursor(iCurrentCursor));
-        if (pCurrentCursor == ImageManager.CURSOR_SELECTION) {
-            DSWorkbenchSelectionFrame.getSingleton().setVisible(true);
-        }
+        /*if (pCurrentCursor == ImageManager.CURSOR_SELECTION) {
+        DSWorkbenchSelectionFrame.getSingleton().setVisible(true);
+        }*/
         fireToolChangedEvents(iCurrentCursor);
     }
 
@@ -890,6 +936,9 @@ public class MapPanel extends JPanel {
         jCurrentToAttackPlanerAsTargetItem = new javax.swing.JMenuItem();
         jCurrentToAttackPlanerAsSourceItem = new javax.swing.JMenuItem();
         jSeparator2 = new javax.swing.JSeparator();
+        jCurrentToAStarAsAttacker = new javax.swing.JMenuItem();
+        jCurrentToAStarAsDefender = new javax.swing.JMenuItem();
+        jSeparator7 = new javax.swing.JSeparator();
         jCenterItem = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JSeparator();
         jCurrentCoordAsBBToClipboardItem = new javax.swing.JMenuItem();
@@ -1112,6 +1161,23 @@ public class MapPanel extends JPanel {
         jCurrentVillageSubmenu.add(jCurrentToAttackPlanerAsSourceItem);
         jCurrentVillageSubmenu.add(jSeparator2);
 
+        jCurrentToAStarAsAttacker.setText("Truppen als Angreifer nach A*Star");
+        jCurrentToAStarAsAttacker.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fireVillagePopupActionEvent(evt);
+            }
+        });
+        jCurrentVillageSubmenu.add(jCurrentToAStarAsAttacker);
+
+        jCurrentToAStarAsDefender.setText("Truppen als Verteidiger nach A*Star");
+        jCurrentToAStarAsDefender.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fireVillagePopupActionEvent(evt);
+            }
+        });
+        jCurrentVillageSubmenu.add(jCurrentToAStarAsDefender);
+        jCurrentVillageSubmenu.add(jSeparator7);
+
         jCenterItem.setText("Zentrieren");
         jCenterItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1185,7 +1251,7 @@ public class MapPanel extends JPanel {
 
         jVillageActionsMenu.add(jMarkedVillageSubmenu);
 
- 
+        setLayout(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void fireVillageExportEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireVillageExportEvent
@@ -1512,6 +1578,33 @@ public class MapPanel extends JPanel {
                     JOptionPaneHelper.showWarningBox(this, "Es ist keine Notiz ausgewählt.", "Warnung");
                 }
             }
+        } else if (evt.getSource() == jCurrentToAStarAsAttacker || evt.getSource() == jCurrentToAStarAsDefender) {
+            Village v = actionMenuVillage;
+            VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(v);
+            if (holder == null) {
+                JOptionPaneHelper.showInformationBox(this, "Keine Truppeninformationen vorhanden", "Information");
+                return;
+            }
+            Hashtable<String, Double> values = new Hashtable<String, Double>();
+            Hashtable<UnitHolder, Integer> inVillage = holder.getTroopsInVillage();
+            if (inVillage == null) {
+                JOptionPaneHelper.showInformationBox(this, "Keine Truppeninformationen vorhanden", "Information");
+                return;
+            }
+            for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
+                if (evt.getSource() == jCurrentToAStarAsAttacker) {
+                    values.put("att_" + unit.getPlainName(), (double) inVillage.get(unit));
+                }
+                if (evt.getSource() == jCurrentToAStarAsDefender) {
+                    values.put("def_" + unit.getPlainName(), (double) inVillage.get(unit));
+                }
+            }
+            if (!DSWorkbenchSimulatorFrame.getSingleton().isVisible()) {
+                DSWorkbenchSimulatorFrame.getSingleton().setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
+                DSWorkbenchSimulatorFrame.getSingleton().showIntegratedVersion(GlobalOptions.getSelectedServer());
+            }
+            DSWorkbenchSimulatorFrame.getSingleton().toFront();
+            DSWorkbenchSimulatorFrame.getSingleton().insertValuesExternally(values);
         } else if (evt.getSource() == jVillageInfoIngame) {
             //center village ingame
             Village v = actionMenuVillage;
@@ -1656,7 +1749,6 @@ public class MapPanel extends JPanel {
         } catch (Exception e) {
             logger.error("Failed to paint", e);
         }
-
     }
 
     /**Update map to new position -> needs fully update*/
@@ -1735,7 +1827,6 @@ public class MapPanel extends JPanel {
             Enumeration<Village> villages = mVillagePositions.keys();
             while (villages.hasMoreElements()) {
                 Village current = villages.nextElement();
-                // System.out.println(mVillagePositions.get(current));
                 if (mVillagePositions.get(current).contains(mouse.x, mouse.y)) {
                     return current;
                 }
@@ -1850,7 +1941,90 @@ public class MapPanel extends JPanel {
         for (MapPanelListener listener : mMapPanelListeners) {
             listener.fireScrollEvent(pX, pY);
         }
+    }
 
+    @Override
+    public void dragGestureRecognized(DragGestureEvent dge) {
+        if (getCurrentCursor() != ImageManager.CURSOR_DEFAULT) {
+            return;
+        }
+        Village v = getVillageAtMousePos();
+        if (v == null) {
+            return;
+        }
+        Cursor c = null;
+        if (!markedVillages.isEmpty()) {
+            c = ImageManager.createVillageDragCursor(markedVillages.size());
+            setCursor(c);
+            dge.startDrag(c, new VillageTransferable(markedVillages), this);
+        } else {
+            c = ImageManager.createVillageDragCursor(1);
+            setCursor(c);
+            dge.startDrag(c, new VillageTransferable(v), this);
+        }
+    }
+
+    @Override
+    public void dragEnter(DragSourceDragEvent dsde) {
+    }
+
+    @Override
+    public void dragOver(DragSourceDragEvent dsde) {
+    }
+
+    @Override
+    public void dropActionChanged(DragSourceDragEvent dsde) {
+    }
+
+    @Override
+    public void dragExit(DragSourceEvent dse) {
+    }
+
+    @Override
+    public void dragDropEnd(DragSourceDropEvent dsde) {
+    }
+
+    @Override
+    public void dragEnter(DropTargetDragEvent dtde) {
+        if (dtde.isDataFlavorSupported(VillageTransferable.villageDataFlavor) || dtde.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+            dtde.acceptDrag(DnDConstants.ACTION_COPY_OR_MOVE);
+        }
+    }
+
+    @Override
+    public void dragOver(DropTargetDragEvent dtde) {
+    }
+
+    @Override
+    public void dropActionChanged(DropTargetDragEvent dtde) {
+    }
+
+    @Override
+    public void dragExit(DropTargetEvent dte) {
+    }
+
+    @Override
+    public void drop(DropTargetDropEvent dtde) {
+        if (dtde.isDataFlavorSupported(VillageTransferable.villageDataFlavor) || dtde.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+            dtde.acceptDrop(DnDConstants.ACTION_COPY_OR_MOVE);
+        } else {
+            dtde.rejectDrop();
+            return;
+        }
+
+        Transferable t = dtde.getTransferable();
+        List<Village> v;
+        setCurrentCursor(getCurrentCursor());
+        try {
+            v = (List<Village>) t.getTransferData(VillageTransferable.villageDataFlavor);
+            Village target = getVillageAtMousePos();
+            if (target == null) {
+                return;
+            }
+            attackAddFrame.setupAttack(v, target, DataHolder.getSingleton().getUnitID("Ramme"), null);
+        } catch (Exception ex) {
+            logger.error("Failed to drop villages", ex);
+        }
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem jAllAddToNoteItem;
@@ -1873,6 +2047,8 @@ public class MapPanel extends JPanel {
     private javax.swing.JMenuItem jCurrentCoordAsBBToClipboardItem;
     private javax.swing.JMenuItem jCurrentCoordToClipboardItem;
     private javax.swing.JMenuItem jCurrentCreateNoteItem;
+    private javax.swing.JMenuItem jCurrentToAStarAsAttacker;
+    private javax.swing.JMenuItem jCurrentToAStarAsDefender;
     private javax.swing.JMenuItem jCurrentToAttackPlanerAsSourceItem;
     private javax.swing.JMenuItem jCurrentToAttackPlanerAsTargetItem;
     private javax.swing.JMenu jCurrentVillageSubmenu;
@@ -1892,16 +2068,10 @@ public class MapPanel extends JPanel {
     private javax.swing.JSeparator jSeparator4;
     private javax.swing.JSeparator jSeparator5;
     private javax.swing.JSeparator jSeparator6;
+    private javax.swing.JSeparator jSeparator7;
     private javax.swing.JMenu jTribeSubmenu;
     private javax.swing.JPopupMenu jVillageActionsMenu;
     private javax.swing.JLabel jVillageExportDetails;
     private javax.swing.JMenuItem jVillageInfoIngame;
     // End of variables declaration//GEN-END:variables
-
-    public static void main(String[] args) {
-        int[] xs = new int[]{0, 1, 2};
-        int[] ys = new int[]{0, 1, 0};
-        int tm = 3;
-
-    }
 }

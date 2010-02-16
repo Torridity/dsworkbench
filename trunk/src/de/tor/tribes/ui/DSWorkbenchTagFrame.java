@@ -23,9 +23,15 @@ import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.TagToBBCodeFormater;
+import de.tor.tribes.util.parser.VillageParser;
 import de.tor.tribes.util.tag.TagManager;
+import java.awt.Component;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.Toolkit;
+import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Collections;
@@ -182,6 +188,7 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
         jButton4 = new javax.swing.JButton();
         jButton6 = new javax.swing.JButton();
         jButton7 = new javax.swing.JButton();
+        jButton8 = new javax.swing.JButton();
         jAlwaysOnTopBox = new javax.swing.JCheckBox();
 
         jAddTagDialog.setTitle("Neuer Tag");
@@ -310,6 +317,15 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
             }
         });
 
+        jButton8.setBackground(new java.awt.Color(239, 235, 223));
+        jButton8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/from_clipboard.png"))); // NOI18N
+        jButton8.setToolTipText("Dörfer aus der Zwischenablage mit dem gewählten Tag versehen");
+        jButton8.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireTagVillagesFromClipboardEvent(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -327,7 +343,8 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
                         .addComponent(jButton2)
                         .addComponent(jButton6)
                         .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jButton7))
+                    .addComponent(jButton7)
+                    .addComponent(jButton8))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -335,7 +352,7 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 189, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 194, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jButton3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -343,7 +360,9 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton7)))
+                        .addComponent(jButton7)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton8)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -405,7 +424,7 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
         List<String> toRemove = new LinkedList<String>();
         for (int row : rows) {
             row = jTagTable.convertRowIndexToModel(row);
-            toRemove.add((String) TagTableModel.getSingleton().getValueAt(row, 0));
+            toRemove.add((String) TagTableModel.getSingleton().getOriginalValueAt(row, 0));
         }
         for (String tag : toRemove) {
             TagManager.getSingleton().removeTagByName(tag);
@@ -422,7 +441,7 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
 
         for (int row : rows) {
             row = jTagTable.convertRowIndexToModel(row);
-            String name = (String) TagTableModel.getSingleton().getValueAt(row, 0);
+            String name = (String) TagTableModel.getSingleton().getOriginalValueAt(row, 0);
             TagManager.getSingleton().getTagByName(name).setTagColor(null);
         }
         jTagTable.repaint();
@@ -478,7 +497,7 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
 
             for (int row : rows) {
                 row = jTagTable.convertRowIndexToModel(row);
-                String name = (String) TagTableModel.getSingleton().getValueAt(row, 0);
+                String name = (String) TagTableModel.getSingleton().getOriginalValueAt(row, 0);
                 Tag t = TagManager.getSingleton().getTagByName(name);
                 if (t != null) {
                     for (Object o : selection) {
@@ -504,7 +523,7 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
         String result = "";
         for (int row : rows) {
             int r = jTagTable.convertRowIndexToModel(row);
-            String name = (String) TagTableModel.getSingleton().getValueAt(r, 0);
+            String name = (String) TagTableModel.getSingleton().getOriginalValueAt(r, 0);
             Tag t = TagManager.getSingleton().getTagByName(name);
             if (t != null) {
                 result += TagToBBCodeFormater.formatTag(t, sUrl, extended);
@@ -520,6 +539,37 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
         }
     }//GEN-LAST:event_fireCopyTagsAsBBCodeToClipboardEvent
 
+    private void fireTagVillagesFromClipboardEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireTagVillagesFromClipboardEvent
+        try {
+            Transferable t = (Transferable) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
+            List<Village> villages = VillageParser.parse((String) t.getTransferData(DataFlavor.stringFlavor));
+            if (villages.isEmpty()) {
+                JOptionPaneHelper.showInformationBox(this, "Keine Dorfdaten in der Zwischenablage gefunden", "Information");
+                return;
+            }
+
+            int row = jTagTable.getSelectedRow();
+            if (row == -1) {
+                return;
+            }
+
+            String tagName = (String) TagTableModel.getSingleton().getOriginalValueAt(row, 0);
+            Tag tag = TagManager.getSingleton().getTagByName(tagName);
+            for (Village v : villages) {
+                tag.tagVillage(v.getId());
+            }
+            updateTaggedVillageList();
+            MapPanel.getSingleton().getMapRenderer().initiateRedraw(0);
+            if (villages.size() == 1) {
+                JOptionPaneHelper.showInformationBox(this, "Ein Dorf wurden mit dem gewähltem Tag versehen", "Information");
+            } else {
+                JOptionPaneHelper.showInformationBox(this, villages.size() + " Dörfer wurden mit dem gewähltem Tag versehen", "Information");
+            }
+        } catch (Exception e) {
+            logger.error("Failed to get village from clipboard", e);
+        }
+    }//GEN-LAST:event_fireTagVillagesFromClipboardEvent
+
     private void updateTaggedVillageList() {
         int[] rows = jTagTable.getSelectedRows();
         if (rows == null || rows.length == 0) {
@@ -529,7 +579,7 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
         List<Village> villages = new LinkedList<Village>();
         for (int row : rows) {
             row = jTagTable.convertRowIndexToModel(row);
-            String name = (String) TagTableModel.getSingleton().getValueAt(row, 0);
+            String name = (String) TagTableModel.getSingleton().getOriginalValueAt(row, 0);
             for (Integer i : TagManager.getSingleton().getTagByName(name).getVillageIDs()) {
                 Village v = DataHolder.getSingleton().getVillagesById().get(i);
                 if (v != null && !villages.contains(v)) {
@@ -557,6 +607,37 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
         }
     }
 
+    @Override
+    public void fireVillagesDraggedEvent(List<Village> pVillages, Point pDropLocation) {
+        try {
+            Rectangle bounds = jTaggedVillageList.getBounds();
+            Point locationOnScreen = jTaggedVillageList.getLocationOnScreen();
+            bounds.setLocation(locationOnScreen);
+            pDropLocation.move(locationOnScreen.x, locationOnScreen.y);
+            if (bounds.contains(pDropLocation)) {
+                int[] rows = jTagTable.getSelectedRows();
+                if (rows == null || rows.length == 0) {
+                    return;
+                }
+
+                for (int row : rows) {
+                    row = jTagTable.convertRowIndexToModel(row);
+                    String name = (String) TagTableModel.getSingleton().getOriginalValueAt(row, 0);
+                    Tag t = TagManager.getSingleton().getTagByName(name);
+                    for (Village v : pVillages) {
+                        if (v != null && v.getTribe() != null) {
+                            t.tagVillage(v.getId());
+                        }
+                    }
+                }
+                updateTaggedVillageList();
+            }
+            MapPanel.getSingleton().getMapRenderer().initiateRedraw(0);
+        } catch (Exception e) {
+            logger.error("Failed to insert dropped villages", e);
+        }
+    }
+
     /**
      * @param args the command line arguments
      */
@@ -578,6 +659,7 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
     private javax.swing.JButton jButton7;
+    private javax.swing.JButton jButton8;
     private javax.swing.JButton jCreateTagButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JTextField jNewTagName;

@@ -35,6 +35,7 @@ public class StandardAttackManager {
     public static final int SNOB_TYPE_ROW = 2;
     public static final int SUPPORT_TYPE_ROW = 3;
     public static final int FAKE_TYPE_ROW = 4;
+    public static final int FAKE_DEFF_TYPE_ROW = 5;
     private static StandardAttackManager SINGLETON = null;
     private Hashtable<String, List<StandardAttackElement>> standardAttacks = null;
 
@@ -74,7 +75,7 @@ public class StandardAttackManager {
                 for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//stdAttacks/type")) {
                     String type = URLDecoder.decode(e.getAttributeValue("name"), "UTF-8");
                     logger.debug("Adding standard attack for type '" + type + "'");
-                    //logger.debug(" * loading standard attacks for type '" + type + "'");
+                    logger.debug(" * loading standard attacks for type '" + type + "'");
                     List<StandardAttackElement> elements = new LinkedList<StandardAttackElement>();
                     standardAttacks.put(type, elements);
                     for (Element elem : (List<Element>) JaxenUtils.getNodes(e, "attackElement")) {
@@ -82,61 +83,47 @@ public class StandardAttackManager {
                         try {
                             element = StandardAttackElement.fromXml(elem);
                         } catch (Exception invalid) {
+                            logger.warn("Invalid standard attack element", invalid);
                         }
 
                         if (element != null) {
-                            // logger.debug("   * adding element for unit '" + element.getUnit() + "'");
+                            logger.debug("   * adding element for unit '" + element.getUnit() + "'");
                             elements.add(element);
                         }
                     }
-                    for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
-                        int typeID = NO_TYPE_ROW;
-                        if (type.equals("Keiner")) {
-                            typeID = NO_TYPE_ROW;
-                        } else if (type.equals("Fake")) {
-                            typeID = FAKE_TYPE_ROW;
-                        } else if (type.equals("Off")) {
-                            typeID = OFF_TYPE_ROW;
-                        } else if (type.equals("AG")) {
-                            typeID = SNOB_TYPE_ROW;
-                        } else if (type.equals("Unterstützung")) {
-                            typeID = SUPPORT_TYPE_ROW;
-                        }
-                        if (!containsElementForUnit(typeID, unit)) {
-                            standardAttacks.get(type).add(new StandardAttackElement(unit, 0));
-                        }
-                    }
                 }
+                checkValues();
                 logger.debug("Standard attacks loaded successfully");
             } catch (Exception e) {
                 logger.error("Failed to load standard attacks", e);
             }
         } else {
             logger.info("No standard attacks found under '" + pFile + "'");
-            standardAttacks.put("Keiner", new LinkedList<StandardAttackElement>());
+            checkValues();
+            /* standardAttacks.put("Keiner", new LinkedList<StandardAttackElement>());
             standardAttacks.put("Fake", new LinkedList<StandardAttackElement>());
             standardAttacks.put("Off", new LinkedList<StandardAttackElement>());
             standardAttacks.put("AG", new LinkedList<StandardAttackElement>());
             standardAttacks.put("Unterstützung", new LinkedList<StandardAttackElement>());
             for (int type = NO_TYPE_ROW; type <= FAKE_TYPE_ROW; type++) {
-                for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
-                    String typeName = "";
-                    if (type == NO_TYPE_ROW) {
-                        typeName = "Keiner";
-                    } else if (type == FAKE_TYPE_ROW) {
-                        typeName = "Fake";
-                    } else if (type == OFF_TYPE_ROW) {
-                        typeName = "Off";
-                    } else if (type == SNOB_TYPE_ROW) {
-                        typeName = "AG";
-                    } else if (type == SUPPORT_TYPE_ROW) {
-                        typeName = "Unterstützung";
-                    }
-                    if (!containsElementForUnit(type, unit)) {
-                        standardAttacks.get(typeName).add(new StandardAttackElement(unit, 0));
-                    }
-                }
+            for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
+            String typeName = "";
+            if (type == NO_TYPE_ROW) {
+            typeName = "Keiner";
+            } else if (type == FAKE_TYPE_ROW) {
+            typeName = "Fake";
+            } else if (type == OFF_TYPE_ROW) {
+            typeName = "Off";
+            } else if (type == SNOB_TYPE_ROW) {
+            typeName = "AG";
+            } else if (type == SUPPORT_TYPE_ROW) {
+            typeName = "Unterstützung";
             }
+            if (!containsElementForUnit(typeName, unit)) {
+            standardAttacks.get(typeName).add(new StandardAttackElement(unit, 0));
+            }
+            }
+            }*/
         }
     }
 
@@ -168,6 +155,34 @@ public class StandardAttackManager {
         }
     }
 
+    private void checkValues() {
+        for (int type = 0; type <= FAKE_DEFF_TYPE_ROW; type++) {
+            for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
+                String typeName = "";
+                if (type == NO_TYPE_ROW) {
+                    typeName = "Keiner";
+                } else if (type == FAKE_TYPE_ROW) {
+                    typeName = "Fake";
+                } else if (type == OFF_TYPE_ROW) {
+                    typeName = "Off";
+                } else if (type == SNOB_TYPE_ROW) {
+                    typeName = "AG";
+                } else if (type == SUPPORT_TYPE_ROW) {
+                    typeName = "Unterstützung";
+                } else if (type == FAKE_DEFF_TYPE_ROW) {
+                    typeName = "Fake (Deff)";
+                }
+                if (standardAttacks.get(typeName) == null) {
+                    //add empty list if element list for type not found
+                    standardAttacks.put(typeName, new LinkedList<StandardAttackElement>());
+                }
+                if (!containsElementForUnit(typeName, unit)) {
+                    standardAttacks.get(typeName).add(new StandardAttackElement(unit, 0));
+                }
+            }
+        }
+    }
+
     public int getAmountForVillage(int pType, UnitHolder pUnit, Village pVillage) {
         List<StandardAttackElement> activeList = null;
         switch (pType) {
@@ -185,6 +200,10 @@ public class StandardAttackManager {
             }
             case Attack.SUPPORT_TYPE: {
                 activeList = standardAttacks.get("Unterstützung");
+                break;
+            }
+            case Attack.FAKE_DEFF_TYPE: {
+                activeList = standardAttacks.get("Fake (Deff)");
                 break;
             }
             default: {
@@ -217,6 +236,10 @@ public class StandardAttackManager {
                 activeList = standardAttacks.get("Fake");
                 break;
             }
+            case FAKE_DEFF_TYPE_ROW: {
+                activeList = standardAttacks.get("Fake (Deff)");
+                break;
+            }
             case SNOB_TYPE_ROW: {
                 activeList = standardAttacks.get("AG");
                 break;
@@ -239,32 +262,32 @@ public class StandardAttackManager {
         return null;
     }
 
-    private boolean containsElementForUnit(int pType, UnitHolder pUnit) {
-        List<StandardAttackElement> activeList = null;
+    private boolean containsElementForUnit(String pType, UnitHolder pUnit) {
+        /* List<StandardAttackElement> activeList = null;
         switch (pType) {
-            case OFF_TYPE_ROW: {
-                activeList = standardAttacks.get("Off");
-                break;
-            }
-            case FAKE_TYPE_ROW: {
-                activeList = standardAttacks.get("Fake");
-                break;
-            }
-            case SNOB_TYPE_ROW: {
-                activeList = standardAttacks.get("AG");
-                break;
-            }
-            case SUPPORT_TYPE_ROW: {
-                activeList = standardAttacks.get("Unterstützung");
-                break;
-            }
-            default: {
-                activeList = standardAttacks.get("Keiner");
-                break;
-            }
+        case OFF_TYPE_ROW: {
+        activeList = standardAttacks.get("Off");
+        break;
         }
+        case FAKE_TYPE_ROW: {
+        activeList = standardAttacks.get("Fake");
+        break;
+        }
+        case SNOB_TYPE_ROW: {
+        activeList = standardAttacks.get("AG");
+        break;
+        }
+        case SUPPORT_TYPE_ROW: {
+        activeList = standardAttacks.get("Unterstützung");
+        break;
+        }
+        default: {
+        activeList = standardAttacks.get("Keiner");
+        break;
+        }
+        }*/
 
-        for (StandardAttackElement elem : activeList) {
+        for (StandardAttackElement elem : standardAttacks.get(pType)) {
             if (elem.affectsUnit(pUnit)) {
                 return true;
             }

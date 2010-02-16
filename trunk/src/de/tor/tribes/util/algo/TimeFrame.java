@@ -15,6 +15,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
+ * @TODO (2.0) Check for start time if using random timeframe
  * @author Jejkal
  */
 public class TimeFrame {
@@ -170,7 +171,6 @@ public class TimeFrame {
             calEnd.setTimeInMillis(e + pRuntime);
             //System.out.println("CalStart: " + f.format(calStart.getTime()));
             //System.out.println("CalEnd: " + f.format(calEnd.getTime()));
-
 
             boolean startFits = (calStart.get(Calendar.HOUR_OF_DAY) >= arriveStart.getTimeInMillis() && calStart.get(Calendar.HOUR_OF_DAY) < arriveEnd.getTimeInMillis());
             boolean endFits = (calEnd.get(Calendar.HOUR_OF_DAY) >= arriveStart.getTimeInMillis() && calEnd.get(Calendar.HOUR_OF_DAY) < arriveEnd.getTimeInMillis());

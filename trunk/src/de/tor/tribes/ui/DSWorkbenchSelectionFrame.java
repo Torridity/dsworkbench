@@ -285,7 +285,7 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
                         .addComponent(jExportAllyBox)
                         .addGap(18, 18, 18)
                         .addComponent(jExportPointsBox)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 37, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 45, Short.MAX_VALUE)
                         .addComponent(jExportUnformattedButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jExportBBButton)))
@@ -428,7 +428,7 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 424, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 428, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -791,6 +791,11 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
         return result;
     }
 
+    @Override
+    public void fireVillagesDraggedEvent(List<Village> pVillages, Point pDropLocation) {
+        addVillages(pVillages);
+    }
+
     /**
      * @param args the command line arguments
      */
@@ -832,35 +837,44 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
 
     @Override
     public void fireSelectionFinishedEvent(Point pStart, Point pEnd) {
+        /*  try {
+        int xStart = (pStart.x < pEnd.x) ? pStart.x : pEnd.x;
+        int xEnd = (pEnd.x > pStart.x) ? pEnd.x : pStart.x;
+        int yStart = (pStart.y < pEnd.y) ? pStart.y : pEnd.y;
+        int yEnd = (pEnd.y > pStart.y) ? pEnd.y : pStart.y;
+        boolean showBarbarian = true;
         try {
-            int xStart = (pStart.x < pEnd.x) ? pStart.x : pEnd.x;
-            int xEnd = (pEnd.x > pStart.x) ? pEnd.x : pStart.x;
-            int yStart = (pStart.y < pEnd.y) ? pStart.y : pEnd.y;
-            int yEnd = (pEnd.y > pStart.y) ? pEnd.y : pStart.y;
-            boolean showBarbarian = true;
-            try {
-                showBarbarian = Boolean.parseBoolean(GlobalOptions.getProperty("show.barbarian"));
-            } catch (Exception e) {
-                showBarbarian = true;
-            }
-
-            for (int x = xStart; x <= xEnd; x++) {
-                for (int y = yStart; y <= yEnd; y++) {
-                    Village v = DataHolder.getSingleton().getVillages()[x][y];
-                    if ((v != null && v.getTribe() == null) && !showBarbarian) {
-                        //dont select barbarians if they are not visible
-                    } else {
-                        if (v != null && !treeData.contains(v)) {
-                            treeData.add(v);
-                        }
-                    }
-                }
-            }
-            Collections.sort(treeData, Village.ALLY_TRIBE_VILLAGE_COMPARATOR);
-            buildTree();
+        showBarbarian = Boolean.parseBoolean(GlobalOptions.getProperty("show.barbarian"));
         } catch (Exception e) {
-            //occurs if no rect was opened by selection tool -> ignore
+        showBarbarian = true;
         }
+        List<Village> marked = new LinkedList<Village>();
+        for (int x = xStart; x <= xEnd; x++) {
+        for (int y = yStart; y <= yEnd; y++) {
+        Village v = DataHolder.getSingleton().getVillages()[x][y];
+        if ((v != null && v.getTribe() == null) && !showBarbarian) {
+        //dont select barbarians if they are not visible
+        } else {
+        if (v != null) {
+        marked.add(v);
+        }
+        if (v != null && !treeData.contains(v)) {
+        treeData.add(v);
+        }
+        }
+        }
+        }
+        MapPanel.getSingleton().addMarkedVillagesExternally(marked);
+        Collections.sort(treeData, Village.ALLY_TRIBE_VILLAGE_COMPARATOR);
+        buildTree();
+        } catch (Exception e) {
+        //occurs if no rect was opened by selection tool -> ignore
+        }*/
+
+        for (Village v : DataHolder.getSingleton().getVillagesInRegion(pStart, pEnd)) {
+            treeData.add(v);
+        }
+        buildTree();
     }
 
     public void addVillages(List<Village> pVillages) {

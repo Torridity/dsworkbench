@@ -10,7 +10,9 @@
  */
 package de.tor.tribes.ui;
 
+import de.tor.tribes.dssim.ui.DSWorkbenchSimulatorFrame;
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Ally;
 import de.tor.tribes.types.FightReport;
 import de.tor.tribes.types.FightStats;
@@ -38,7 +40,9 @@ import de.tor.tribes.util.report.ReportManager;
 import de.tor.tribes.util.report.ReportManagerListener;
 import de.tor.tribes.util.report.ReportStatBuilder;
 import de.tor.tribes.util.report.TribeFilter;
-import de.tor.tribes.util.report.DefenderFilter;
+import de.tor.tribes.util.troops.TroopsManager;
+import de.tor.tribes.util.troops.VillageTroopsHolder;
+import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ItemEvent;
@@ -172,6 +176,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         jRenameReportSetDialog.pack();
         jAddReportSetDialog.pack();
         jCreateStatsFrame.pack();
+
         pack();
     }
 
@@ -218,7 +223,6 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         }
         Collections.sort(tribes);
         jTribeSelectionBox.setModel(new DefaultComboBoxModel(tribes.toArray(new Tribe[]{})));
-
     }
 
     /** This method is called from within the constructor to
@@ -309,6 +313,8 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         jButton6 = new javax.swing.JButton();
         jTaskPaneGroup2 = new com.l2fprod.common.swing.JTaskPaneGroup();
         jButton11 = new javax.swing.JButton();
+        jButton13 = new javax.swing.JButton();
+        jButton14 = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jReportTable = new javax.swing.JTable();
         jAlwaysOnTopBox = new javax.swing.JCheckBox();
@@ -871,7 +877,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
                         .addComponent(jLabel9)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jEndDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(130, Short.MAX_VALUE))
+                .addContainerGap(142, Short.MAX_VALUE))
         );
         jPanel10Layout.setVerticalGroup(
             jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1057,6 +1063,30 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
             }
         });
         jTaskPaneGroup2.getContentPane().add(jButton11);
+
+        jButton13.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/report_toAStar.png"))); // NOI18N
+        jButton13.setToolTipText("Truppen aus markiertem Bericht nach A*Star übertragen");
+        jButton13.setMaximumSize(new java.awt.Dimension(59, 33));
+        jButton13.setMinimumSize(new java.awt.Dimension(59, 33));
+        jButton13.setPreferredSize(new java.awt.Dimension(59, 33));
+        jButton13.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireTransferToAStarEvent(evt);
+            }
+        });
+        jTaskPaneGroup2.getContentPane().add(jButton13);
+
+        jButton14.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/moveToTable.png"))); // NOI18N
+        jButton14.setToolTipText("Überlebende, verteidigende Truppen aus markierten Berichten in Truppenübersicht einfügen");
+        jButton14.setMaximumSize(new java.awt.Dimension(59, 33));
+        jButton14.setMinimumSize(new java.awt.Dimension(59, 33));
+        jButton14.setPreferredSize(new java.awt.Dimension(59, 33));
+        jButton14.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireMoveTroopsToTroopManagerEvent(evt);
+            }
+        });
+        jTaskPaneGroup2.getContentPane().add(jButton14);
 
         jTaskPane1.add(jTaskPaneGroup2);
 
@@ -1493,8 +1523,70 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
             ReportManager.getSingleton().setFilters(filters);
         }
         jFilterDialog.setVisible(false);
-        jReportTable.updateUI();
+        ReportManagerTableModel.getSingleton().fireTableDataChanged();
     }//GEN-LAST:event_fireApplyFilterEvent
+
+    private void fireTransferToAStarEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireTransferToAStarEvent
+        int row = jReportTable.getSelectedRow();
+        if (row == -1) {
+            return;
+        }
+        row = jReportTable.convertRowIndexToModel(row);
+        FightReport report = ReportManager.getSingleton().getFilteredElement(row);
+        Hashtable<String, Double> values = new Hashtable<String, Double>();
+        for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
+            if (!report.areAttackersHidden()) {
+                values.put("att_" + unit.getPlainName(), (double) report.getAttackers().get(unit));
+            }
+            if (!report.wasLostEverything()) {
+                values.put("def_" + unit.getPlainName(), (double) report.getDefenders().get(unit));
+            }
+        }
+        if (report.wasBuildingDamaged()) {
+            values.put("building", (double) report.getBuildingBefore());
+        }
+        if (report.wasWallDamaged()) {
+            values.put("wall", (double) report.getWallBefore());
+        }
+        values.put("luck", report.getLuck());
+        values.put("moral", report.getMoral());
+        if (!DSWorkbenchSimulatorFrame.getSingleton().isVisible()) {
+            DSWorkbenchSimulatorFrame.getSingleton().setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
+            DSWorkbenchSimulatorFrame.getSingleton().showIntegratedVersion(GlobalOptions.getSelectedServer());
+        }
+
+        DSWorkbenchSimulatorFrame.getSingleton().insertValuesExternally(values);
+    }//GEN-LAST:event_fireTransferToAStarEvent
+
+    private void fireMoveTroopsToTroopManagerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireMoveTroopsToTroopManagerEvent
+        int[] rows = jReportTable.getSelectedRows();
+        if (rows == null || rows.length == 0) {
+            return;
+        }
+        for (int i = 0; i < rows.length; i++) {
+            int row = jReportTable.convertRowIndexToModel(rows[i]);
+            FightReport report = ReportManager.getSingleton().getFilteredElement(row);
+            if (!report.wasLostEverything()) {
+                Hashtable<UnitHolder, Integer> defenders = report.getDefenders();
+                Hashtable<UnitHolder, Integer> diedDefenders = report.getDiedDefenders();
+                Village target = report.getTargetVillage();
+                VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(target);
+                if (holder == null) {
+                    TroopsManager.getSingleton().addTroopsForVillage(target, new LinkedList<Integer>());
+                    holder = TroopsManager.getSingleton().getTroopsForVillage(target);
+                }
+                Hashtable<UnitHolder, Integer> inVillage = holder.getTroopsInVillage();
+                for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
+                    int amount = defenders.get(unit) - diedDefenders.get(unit);
+                    inVillage.put(unit, amount);
+                }
+            }
+        }
+        JOptionPaneHelper.showInformationBox(this, "Truppen übertragen", "Information");
+        TroopsManager.getSingleton().forceUpdate();
+        MapPanel.getSingleton().getMapRenderer().initiateRedraw(0);
+
+    }//GEN-LAST:event_fireMoveTroopsToTroopManagerEvent
 
     private void fireRebuildStatsEvent() {
         Object[] selection = jList1.getSelectedValues();
@@ -1676,6 +1768,12 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         jAllyStatsArea.setText(allyBuffer.toString());
         jTribeStatsArea.setText(tribeBuffer.toString());
     }
+
+    @Override
+    public void fireVillagesDraggedEvent(List<Village> pVillages, Point pDropLocation) {
+        System.out.println(pVillages);
+    }
+
 
     static class TribeStatResult {
 
@@ -2074,6 +2172,8 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
     private javax.swing.JButton jButton10;
     private javax.swing.JButton jButton11;
     private javax.swing.JButton jButton12;
+    private javax.swing.JButton jButton13;
+    private javax.swing.JButton jButton14;
     private javax.swing.JButton jButton17;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;

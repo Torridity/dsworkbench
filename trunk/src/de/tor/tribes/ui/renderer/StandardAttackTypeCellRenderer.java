@@ -5,8 +5,6 @@
 package de.tor.tribes.ui.renderer;
 
 import java.awt.Component;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.ImageIcon;
@@ -18,15 +16,16 @@ import javax.swing.table.TableCellRenderer;
 import org.apache.log4j.Logger;
 
 /**
- * @author Jejkal
+ *
+ * @author Torridity
  */
-public class AttackTypeCellRenderer implements TableCellRenderer {
+public class StandardAttackTypeCellRenderer implements TableCellRenderer {
 
-    private static Logger logger = Logger.getLogger("AttackDialog (TypeRenderer)");
+    private static Logger logger = Logger.getLogger("AttackDialog (StandardAttackTypeRenderer)");
     private DefaultTableCellRenderer renderer = new DefaultTableCellRenderer();
     private List<ImageIcon> icons = null;
 
-    public AttackTypeCellRenderer() {
+    public StandardAttackTypeCellRenderer() {
         try {
             icons = new LinkedList<ImageIcon>();
             icons.add(new ImageIcon("./graphics/icons/axe.png"));
@@ -34,7 +33,6 @@ public class AttackTypeCellRenderer implements TableCellRenderer {
             icons.add(new ImageIcon("./graphics/icons/def.png"));
             icons.add(new ImageIcon("./graphics/icons/fake.png"));
             icons.add(new ImageIcon("./graphics/icons/def_fake.png"));
-            icons.add(new ImageIcon("./graphics/icons/spy.png"));
         } catch (Exception e) {
             logger.warn("Failed to load attack type icons");
             icons = null;
@@ -46,21 +44,27 @@ public class AttackTypeCellRenderer implements TableCellRenderer {
         Component c = renderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 
         try {
-            Integer type = (Integer) value;
+            String type = (String) value;
             ((JLabel) c).setHorizontalAlignment(SwingConstants.CENTER);
-            if (type == 0) {
+            if (type.equals("Keiner")) {
                 //no icon!?
                 ((JLabel) c).setText("-");
                 ((JLabel) c).setIcon(null);
-            } else {
-                int pos = type - 1;
-                if (pos >= 0) {
-                    ((JLabel) c).setText("");
-                    ((JLabel) c).setIcon(icons.get(pos));
-                } else {
-                    ((JLabel) c).setText("-");
-                    ((JLabel) c).setIcon(null);
-                }
+            } else if (type.equals("Off")) {
+                ((JLabel) c).setText("");
+                ((JLabel) c).setIcon(icons.get(0));
+            } else if (type.equals("AG")) {
+                ((JLabel) c).setText("");
+                ((JLabel) c).setIcon(icons.get(1));
+            } else if (type.equals("Unterstützung")) {
+                ((JLabel) c).setText("");
+                ((JLabel) c).setIcon(icons.get(2));
+            } else if (type.equals("Fake")) {
+                ((JLabel) c).setText("");
+                ((JLabel) c).setIcon(icons.get(3));
+            } else if (type.equals("Fake (Deff)")) {
+                ((JLabel) c).setText("");
+                ((JLabel) c).setIcon(icons.get(4));
             }
         } catch (Exception e) {
             //cast problem

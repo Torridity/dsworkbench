@@ -15,18 +15,15 @@ import de.tor.tribes.ui.models.DistanceTableModel;
 import de.tor.tribes.ui.renderer.DistanceTableCellRenderer;
 import de.tor.tribes.ui.renderer.SortableTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.VillageCellRenderer;
-import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.dist.DistanceManager;
 import de.tor.tribes.util.parser.VillageParser;
-import java.awt.Component;
+import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
-import java.util.LinkedList;
 import java.util.List;
-import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
@@ -74,14 +71,14 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame {
         headerRenderer = new SortableTableHeaderRenderer();
         /*DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
 
-            @Override
-            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-                Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
-                c.setBackground(Constants.DS_BACK);
-                DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
-                r.setHorizontalAlignment(JLabel.CENTER);
-                return r;
-            }
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+        Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
+        c.setBackground(Constants.DS_BACK);
+        DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
+        r.setHorizontalAlignment(JLabel.CENTER);
+        return r;
+        }
         };*/
 
         int w0 = 100;
@@ -111,7 +108,7 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame {
                 }
                 // column.setPreferredWidth(w);
             }
-           // renderers.add(headerRenderer);
+            // renderers.add(headerRenderer);
         }
 
         jDistanceTable.setModel(DistanceTableModel.getSingleton());
@@ -362,6 +359,20 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame {
         cellRenderer.setMarkerMax(max);
         jDistanceTable.repaint();
     }//GEN-LAST:event_fireUpdateEvent
+
+    @Override
+    public void fireVillagesDraggedEvent(List<Village> pVillages, Point pDropLocation) {
+        try {
+            for (Village v : pVillages) {
+                DistanceManager.getSingleton().addVillage(v);
+            }
+            DistanceTableModel.getSingleton().fireTableStructureChanged();
+            jDistanceTable.revalidate();
+            setup();
+        } catch (Exception e) {
+            logger.error("Failed to received dropped villages", e);
+        }
+    }
 
     /**
      * @param args the command line arguments

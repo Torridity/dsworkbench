@@ -284,6 +284,24 @@
             </MenuItem>
             <MenuItem class="javax.swing.JSeparator" name="jSeparator2">
             </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="jCurrentToAStarAsAttacker">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Truppen als Angreifer nach A*Star"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fireVillagePopupActionEvent"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="jCurrentToAStarAsDefender">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Truppen als Verteidiger nach A*Star"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fireVillagePopupActionEvent"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JSeparator" name="jSeparator7">
+            </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="jCenterItem">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Zentrieren"/>

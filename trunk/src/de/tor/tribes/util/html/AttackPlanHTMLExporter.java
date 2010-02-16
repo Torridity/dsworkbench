@@ -65,7 +65,7 @@ public class AttackPlanHTMLExporter {
     private static final String TARGET_VILLAGE_LINK = "\\$TARGET_VILLAGE_LINK";
     private static final String TARGET_VILLAGE_NAME = "\\$TARGET_VILLAGE_NAME";
     private static final String TARGET_VILLAGE_COORD = "\\$TARGET_VILLAGE_COORD";
-   
+
     static {
         loadCustomTemplate();
     }
@@ -198,6 +198,10 @@ public class AttackPlanHTMLExporter {
                 }
                 case Attack.FAKE_TYPE: {
                     b = b.replaceAll(TYPE, "<img src=\"http://www.dsworkbench.de/DSWorkbench/export/fake.png\">");
+                    break;
+                }
+                case Attack.FAKE_DEFF_TYPE: {
+                    b = b.replaceAll(TYPE, "<img src=\"http://www.dsworkbench.de/DSWorkbench/export/def_fake.png\">");
                     break;
                 }
                 case Attack.SUPPORT_TYPE: {

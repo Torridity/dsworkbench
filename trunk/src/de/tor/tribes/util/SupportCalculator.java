@@ -21,6 +21,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 /**
+ * @TODO (2.0) Use village list by tags, not by current tribe to allow to support UV-accounts and other troops
  * @author Charon
  */
 public class SupportCalculator {

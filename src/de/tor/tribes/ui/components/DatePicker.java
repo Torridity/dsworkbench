@@ -7,11 +7,11 @@ package de.tor.tribes.ui.components;
 // Decompiled by Jad v1.5.8g. Copyright 2001 Pavel Kouznetsov.
 // Jad home page: http://www.kpdus.com/jad.html
 // Decompiler options: packimports(3)
-
 import java.awt.*;
 import java.awt.event.*;
 import java.text.DateFormat;
 import java.text.FieldPosition;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import javax.swing.*;
 import org.netbeans.lib.awtextra.AbsoluteConstraints;
@@ -107,7 +107,7 @@ public final class DatePicker extends JPanel {
 
     private void init() {
         setLayout(new AbsoluteLayout());
-        setMinimumSize(new Dimension(161, 226));
+        setMinimumSize(new Dimension(161, 220));
         setMaximumSize(getMinimumSize());
         setPreferredSize(getMinimumSize());
         setBorder(new javax.swing.plaf.BorderUIResource.EtchedBorderUIResource());
@@ -264,10 +264,10 @@ public final class DatePicker extends JPanel {
 
     private static GregorianCalendar getToday() {
         GregorianCalendar gregoriancalendar = new GregorianCalendar();
-        gregoriancalendar.set(11, 0);
-        gregoriancalendar.set(12, 0);
-        gregoriancalendar.set(13, 0);
-        gregoriancalendar.set(14, 0);
+        gregoriancalendar.set(GregorianCalendar.HOUR, 0);
+        gregoriancalendar.set(GregorianCalendar.MINUTE, 0);
+        gregoriancalendar.set(GregorianCalendar.SECOND, 0);
+        gregoriancalendar.set(GregorianCalendar.MILLISECOND, 0);
         return gregoriancalendar;
     }
 
@@ -295,23 +295,25 @@ public final class DatePicker extends JPanel {
         do {
             i1 = gregoriancalendar.get(GregorianCalendar.WEEK_OF_MONTH);
             k = gregoriancalendar.get(GregorianCalendar.DAY_OF_WEEK);
+
+            SimpleDateFormat f = new SimpleDateFormat("dd.MM.yyyy");
+            //  System.out.println(f.format(gregoriancalendar.getTime()));
             if (k == 1) {
                 //set sunday to be the last day, somehow the "setFirstDayOfWeek" does not work
                 k = 8;
+                i1 -= 1;
             }
-
             if (i1 == 0) {
                 //current month starts with 0-week, skip decrementing week
                 dec = 0;
             }
 
+            // System.out.println("Set day " + k + " in week " + i1);
             JTextField jtextfield = daysInMonth[i1 - dec][k - 2];
-
             //set value of day
             jtextfield.setText(Integer.toString(gregoriancalendar.get(GregorianCalendar.DAY_OF_MONTH)));
-            //System.out.println("Index " + (i1 - dec) + "," + (k - 2) + " -> " + jtextfield.getText());
+            //hightlight currently selected day of month
             if (j == gregoriancalendar.get(GregorianCalendar.DAY_OF_MONTH)) {
-                //hightlight currently selected day of month
                 jtextfield.setBackground(highlight);
                 selectedDay = jtextfield;
             } else {
@@ -324,15 +326,18 @@ public final class DatePicker extends JPanel {
                 }
             }
             if (gregoriancalendar.get(GregorianCalendar.DAY_OF_MONTH) >= daysInCurrentMonth) {
+                //break if all days of this month where set
                 break;
             }
+            //increment to next day
             gregoriancalendar.add(GregorianCalendar.DAY_OF_MONTH, 1);
         } while (gregoriancalendar.get(GregorianCalendar.DAY_OF_MONTH) <= daysInCurrentMonth);
-
+        //set day of month eiter to the selected day or to the last day if the selected month has less days
         gregoriancalendar.set(GregorianCalendar.DAY_OF_MONTH, j);
         selectedDate = gregoriancalendar;
     }
 
+    /**Calculate the number of days for the current month*/
     private static int calculateDaysInMonth(Calendar calendar) {
         byte days = 0;
         switch (calendar.get(GregorianCalendar.MONTH)) {

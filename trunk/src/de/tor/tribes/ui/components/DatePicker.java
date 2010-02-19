@@ -232,19 +232,19 @@ public final class DatePicker extends JPanel {
     }
 
     private void onForwardClicked(ActionEvent actionevent) {
-        int i = selectedDate.get(5);
-        selectedDate.set(5, 1);
-        selectedDate.add(2, 1);
-        selectedDate.set(5, Math.min(i, calculateDaysInMonth(selectedDate)));
+        int i = selectedDate.get(Calendar.DAY_OF_MONTH);
+        selectedDate.set(Calendar.DAY_OF_MONTH, 1);
+        selectedDate.add(Calendar.MONTH, 1);
+        selectedDate.set(Calendar.DAY_OF_MONTH, Math.min(i, calculateDaysInMonth(selectedDate)));
         monthAndYear.setText(formatDateText(selectedDate.getTime()));
         calculateCalendar();
     }
 
     private void onBackClicked(ActionEvent actionevent) {
-        int i = selectedDate.get(5);
-        selectedDate.set(5, 1);
-        selectedDate.add(2, -1);
-        selectedDate.set(5, Math.min(i, calculateDaysInMonth(selectedDate)));
+        int i = selectedDate.get(Calendar.DAY_OF_MONTH);
+        selectedDate.set(Calendar.DAY_OF_MONTH, 1);
+        selectedDate.add(Calendar.MONTH, -1);
+        selectedDate.set(Calendar.DAY_OF_MONTH, Math.min(i, calculateDaysInMonth(selectedDate)));
         monthAndYear.setText(formatDateText(selectedDate.getTime()));
         calculateCalendar();
     }
@@ -276,65 +276,123 @@ public final class DatePicker extends JPanel {
             selectedDay.setBackground(white);
             selectedDay = null;
         }
-        //get calendar
-        GregorianCalendar gregoriancalendar = new GregorianCalendar(selectedDate.get(1), selectedDate.get(2), 1);
-        //get days in this month
-        int daysInCurrentMonth = calculateDaysInMonth(gregoriancalendar);
-        int j = Math.min(daysInCurrentMonth, selectedDate.get(GregorianCalendar.DAY_OF_MONTH));
-        int k = gregoriancalendar.get(GregorianCalendar.DAY_OF_WEEK);
-        //draw grey boxes for days which are not in this months beginning
+
+        //get days of this and the last month and current calendar
+        GregorianCalendar calLast = new GregorianCalendar(selectedDate.get(1), selectedDate.get(2), 1);
+        calLast.add(Calendar.MONTH, -1);
+        int daysInLastMonth = calculateDaysInMonth(calLast);
+        GregorianCalendar calCurrent = new GregorianCalendar(selectedDate.get(1), selectedDate.get(2), 1);
+        int daysInCurrentMonth = calculateDaysInMonth(calCurrent);
+
+        int dayToSelect = Math.min(daysInCurrentMonth, selectedDate.get(GregorianCalendar.DAY_OF_MONTH));
+
+        //reset all boxes
         for (int i1 = 0; i1 < daysInMonth.length; i1++) {
             for (int i2 = 0; i2 < daysInMonth[0].length; i2++) {
                 daysInMonth[i1][i2].setText("");
-                daysInMonth[i1][i2].setBackground(gray);
+                daysInMonth[i1][i2].setBackground(Color.WHITE);
             }
         }
-        int i1;
 
-        int dec = 1;
+        //remap the calendars day and get leading and trailing village amount
+        int startDay = 0;
+        int leadingDays = 0;
+        int calendarDay = calCurrent.get(GregorianCalendar.DAY_OF_WEEK);
+        switch (calendarDay) {
+            case Calendar.TUESDAY:
+                startDay = 1;
+                leadingDays = 1;
+                break;
+            case Calendar.WEDNESDAY:
+                startDay = 2;
+                leadingDays = 2;
+                break;
+            case Calendar.THURSDAY:
+                startDay = 3;
+                leadingDays = 3;
+                break;
+            case Calendar.FRIDAY:
+                startDay = 4;
+                leadingDays = 4;
+                break;
+            case Calendar.SATURDAY:
+                startDay = 5;
+                leadingDays = 5;
+                break;
+            case Calendar.SUNDAY:
+                startDay = 6;
+                leadingDays = 6;
+                break;
+            default:
+                //monday
+                startDay = 0;
+                leadingDays = 7;
+        }
+
+        for (int i = 1; i <= leadingDays; i++) {
+            JTextField leadingField = daysInMonth[0][i - 1];
+            leadingField.setText(Integer.toString(daysInLastMonth - leadingDays + i));
+            leadingField.setForeground(Color.LIGHT_GRAY);
+        }
+
+        int week = 0;
+        startDay = leadingDays;
+
         do {
-            i1 = gregoriancalendar.get(GregorianCalendar.WEEK_OF_MONTH);
-            k = gregoriancalendar.get(GregorianCalendar.DAY_OF_WEEK);
-
-            SimpleDateFormat f = new SimpleDateFormat("dd.MM.yyyy");
-            //  System.out.println(f.format(gregoriancalendar.getTime()));
-            if (k == 1) {
-                //set sunday to be the last day, somehow the "setFirstDayOfWeek" does not work
-                k = 8;
-                i1 -= 1;
+            //check if we've reached sunday
+            if (startDay != 0 && startDay % 7 == 0) {
+                //increment week and reset week day
+                week++;
+                startDay = 0;
             }
-            if (i1 == 0) {
-                //current month starts with 0-week, skip decrementing week
-                dec = 0;
-            }
-
-            // System.out.println("Set day " + k + " in week " + i1);
-            JTextField jtextfield = daysInMonth[i1 - dec][k - 2];
-            //set value of day
-            jtextfield.setText(Integer.toString(gregoriancalendar.get(GregorianCalendar.DAY_OF_MONTH)));
+            //get current calendar field
+            JTextField currentDayField = daysInMonth[week][startDay];
+            //increment day of week
+            startDay += 1;
+            //set value of day from calendar
+            currentDayField.setText(Integer.toString(calCurrent.get(GregorianCalendar.DAY_OF_MONTH)));
             //hightlight currently selected day of month
-            if (j == gregoriancalendar.get(GregorianCalendar.DAY_OF_MONTH)) {
-                jtextfield.setBackground(highlight);
-                selectedDay = jtextfield;
+            if (dayToSelect == calCurrent.get(GregorianCalendar.DAY_OF_MONTH)) {
+                //current field is selected, mark it
+                currentDayField.setBackground(highlight);
+                selectedDay = currentDayField;
             } else {
-                if (k == 8) {
+                if (startDay == 7) {
                     //draw sundays different
-                    jtextfield.setBackground(new Color(240, 240, 240));
+                    currentDayField.setBackground(new Color(240, 240, 240));
                 } else {
                     //draw white background
-                    jtextfield.setBackground(white);
+                    currentDayField.setBackground(Color.WHITE);
                 }
             }
-            if (gregoriancalendar.get(GregorianCalendar.DAY_OF_MONTH) >= daysInCurrentMonth) {
+            if (calCurrent.get(GregorianCalendar.DAY_OF_MONTH) >= daysInCurrentMonth) {
                 //break if all days of this month where set
                 break;
             }
             //increment to next day
-            gregoriancalendar.add(GregorianCalendar.DAY_OF_MONTH, 1);
-        } while (gregoriancalendar.get(GregorianCalendar.DAY_OF_MONTH) <= daysInCurrentMonth);
+            calCurrent.add(GregorianCalendar.DAY_OF_MONTH, 1);
+
+        } while (startDay <= daysInCurrentMonth);
+
+
+        int trailingDay = 1;
+        //add trailing days beginning with the last day of this month
+        for (int i = week * 7 + startDay + 1; i <= 42; i++) {
+            if (startDay % 7 == 0) {
+                week++;
+                startDay = 0;
+            }
+            //get trailing field
+            JTextField trailingField = daysInMonth[week][startDay];
+            startDay++;
+            //set trailing value and increment trailing day
+            trailingField.setForeground(Color.LIGHT_GRAY);
+            trailingField.setText(Integer.toString(trailingDay));
+            trailingDay++;
+        }
         //set day of month eiter to the selected day or to the last day if the selected month has less days
-        gregoriancalendar.set(GregorianCalendar.DAY_OF_MONTH, j);
-        selectedDate = gregoriancalendar;
+        calCurrent.set(GregorianCalendar.DAY_OF_MONTH, dayToSelect);
+        selectedDate = calCurrent;
     }
 
     /**Calculate the number of days for the current month*/

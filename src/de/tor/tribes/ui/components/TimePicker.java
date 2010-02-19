@@ -6,11 +6,12 @@ import java.awt.Font;
 import java.awt.Insets;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.BevelBorder;
@@ -216,7 +217,7 @@ public class TimePicker extends javax.swing.JPanel {
             if (j % elemsPerRow == 0) {
                 row++;
             }
-            
+
             minutePanel.add(jLabel1, new AbsoluteConstraints(col * rowWidth, row * rowHeight, rowWidth, rowHeight));
         }
         JButton expandButton = new JButton();
@@ -257,12 +258,12 @@ public class TimePicker extends javax.swing.JPanel {
     }
 
     public static void main(String[] args) {
-        JFrame f = new JFrame();
+        /*  JFrame f = new JFrame();
         f.add(new TimePicker(Calendar.getInstance().getTime()));
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         f.pack();
-        f.setVisible(true);
-
+        f.setVisible(true);*/
+       
     }
 
     /** This method is called from within the constructor to

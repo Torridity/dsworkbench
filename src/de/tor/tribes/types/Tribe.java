@@ -27,11 +27,11 @@ public class Tribe implements Comparable,Serializable {
     private int id = 0;
     private String name = null;
     private int allyID = 0;
-    private transient Ally ally = null;
+    private Ally ally = null;
     private short villages = 0;
     private double points = 0;
     private int rank = 0;
-    private transient List<Village> villageList = null;
+    private List<Village> villageList = null;
     private double killsAtt = 0;
     private int rankAtt = 0;
     private double killsDef = 0;

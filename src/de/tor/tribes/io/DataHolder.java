@@ -10,7 +10,6 @@ package de.tor.tribes.io;
 
 import de.tor.tribes.php.DatabaseInterface;
 import de.tor.tribes.types.Ally;
-import de.tor.tribes.types.Marker;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.DSWorkbenchSettingsDialog;

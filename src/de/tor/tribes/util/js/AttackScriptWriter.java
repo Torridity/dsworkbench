@@ -6,14 +6,13 @@ package de.tor.tribes.util.js;
 
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.util.DSCalculator;
-import java.awt.Desktop;
+import java.awt.Color;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.InputStreamReader;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import org.apache.log4j.Logger;
@@ -26,7 +25,18 @@ public class AttackScriptWriter {
 
     private static Logger logger = Logger.getLogger("AttackScriptWriter");
 
-    public static boolean writeAttackScript(List<Attack> pAttacks) {
+    public static boolean writeAttackScript(List<Attack> pAttacks,
+            boolean pDrawAttacks,
+            int pLineWidth,
+            boolean pStraightLine,
+            Color pStartColor,
+            Color pEndColor,
+            boolean pShowAttacksInMapPopup,
+            boolean pShowAttacksInVillageInfo,
+            boolean pShowAttacksOnConfirmPage,
+            boolean pShowAttacksOnCommandPage,
+            boolean pShowAttacksOnMap,
+            boolean pShowAttacksInOverview) {
         logger.debug("Start writing attack script");
         String tmpl = "";
         try {
@@ -34,7 +44,9 @@ public class AttackScriptWriter {
             BufferedReader r = new BufferedReader(new InputStreamReader(new FileInputStream("./scripts/show.tmpl")));
             String line = "";
             while ((line = r.readLine()) != null) {
-                tmpl += line + "\n";
+              //  if (line != null && !line.trim().startsWith("//") && !line.trim().startsWith("*") && !line.trim().startsWith("/*") && !line.trim().startsWith("*/")) {
+                    tmpl += line + "\n";
+              //  }
             }
             r.close();
         } catch (Exception e) {
@@ -46,54 +58,41 @@ public class AttackScriptWriter {
         String data = "var attacks = new Array(";
         for (Attack a : pAttacks) {
             //set type
-            String block = "{\n'type':";
+            String block = "{\n";
             switch (a.getType()) {
                 case Attack.NO_TYPE:
-                    block += ",";
+                    //block += ",";
                     break;
                 case Attack.CLEAN_TYPE:
-                    block += "'axe.png',\n";
+                    block += "'type':'axe.png',\n";
                     break;
                 case Attack.FAKE_TYPE:
-                    block += "'fake.png',\n";
+                    block += "'type':'fake.png',\n";
                     break;
                 case Attack.FAKE_DEFF_TYPE:
-                    block += "'def_fake.png',\n";
+                    block += "'type':'def_fake.png',\n";
                     break;
                 case Attack.SNOB_TYPE:
-                    block += "'snob.png',\n";
+                    block += "'type':'snob.png',\n";
                     break;
                 case Attack.SUPPORT_TYPE:
-                    block += "'def.png',\n";
+                    block += "'type':'def.png',\n";
                     break;
             }
             //set source and target
+
+            block += "'sourceName':'" + toUnicode(a.getSource().toString()) + "',\n";
             block += "'source':" + a.getSource().getId() + ",\n";
+            block += "'xs':" + a.getSource().getX() + ",\n";
+            block += "'ys':" + a.getSource().getY() + ",\n";
             block += "'target':" + a.getTarget().getId() + ",\n";
+            block += "'xt':" + a.getTarget().getX() + ",\n";
+            block += "'yt':" + a.getTarget().getY() + ",\n";
             block += "'targetName':'" + toUnicode(a.getTarget().toString()) + "',\n";
             //unit
             block += "'unit':'" + a.getUnit().getPlainName() + ".png',\n";
             //times
             long sendTime = a.getArriveTime().getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(a.getSource(), a.getTarget(), a.getUnit().getSpeed()) * 1000);
-
-            Calendar midnight = Calendar.getInstance();
-            // midnight.setTime(a.getArriveTime());
-            midnight.set(Calendar.HOUR_OF_DAY, 0);
-            midnight.set(Calendar.MINUTE, 0);
-            midnight.set(Calendar.SECOND, 0);
-            midnight.set(Calendar.MILLISECOND, 0);
-            //calculate difference from today midnight
-            long diff = sendTime - midnight.getTimeInMillis();
-
-            //@TODO Is there a way to get always the correct time?
-            //Calculation = CurrentServerTime(seconds) + TimeUntilEvent(seconds)
-            //timediff = time difference between server time and current timestamp
-            //time = endTime - (currentTime + timeDiff)
-            //currentTime = now/1000 (timestamp in seconds
-            //endtime = time when timer finishs relative to now
-            //long diffInSeconds = Math.round((a.getArriveTime().getTime() - sendTime) / 1000.0);
-
-            block += "'timerValue':'" + (int) Math.round((double) diff / 1000.0) + "',\n";
             SimpleDateFormat df = new SimpleDateFormat("dd.MM.yy HH:mm:ss.SSS");
             block += "'send':'" + df.format(new Date(sendTime)) + "',\n";
             block += "'arrive':'" + df.format(a.getArriveTime()) + "',\n";
@@ -106,10 +105,25 @@ public class AttackScriptWriter {
         data = data.substring(0, data.length() - 2);
         data += ");\n";
 
-        tmpl = tmpl.replaceAll("//DATA_LOCATION", data);
+
+        String param = "";
+        param += "var drawAttacks = " + ((pDrawAttacks) ? 1 : 0) + ";\n";
+        param += "var attackLineWidth = " + pLineWidth + ";\n";
+        param += "var straightLine = " + ((pStraightLine) ? 1 : 0) + ";\n";
+        param += "var gradientStartColor = 'rgb(" + pStartColor.getRed() + "," + pStartColor.getGreen() + "," + pStartColor.getBlue() + ")';\n";
+        param += "var gradientEndColor = 'rgb(" + pEndColor.getRed() + "," + pEndColor.getGreen() + "," + pEndColor.getBlue() + ")';\n";
+        param += "var showAttacksInMapPopup = " + ((pShowAttacksInMapPopup) ? 1 : 0) + ";\n";
+        param += "var showAttacksInVillageInfo = " + ((pShowAttacksInVillageInfo) ? 1 : 0) + ";\n";
+        param += "var showAttacksOnConfirmPage = " + ((pShowAttacksOnConfirmPage) ? 1 : 0) + ";\n";
+        param += "var showAttackOnCommandPage = " + ((pShowAttacksOnCommandPage) ? 1 : 0) + ";\n";
+        param += "var showAttacksOnMap = " + ((pShowAttacksOnMap) ? 1 : 0) + ";\n";
+        param += "var showAttacksInOverview = " + ((pShowAttacksInOverview) ? 1 : 0) + ";\n";
+
+        tmpl = tmpl.replaceAll("\\$\\$DATA_LOCATION", data);
+        tmpl = tmpl.replaceAll("\\$\\$PARAMETER_LOCATION", param);
         try {
-            logger.debug(" - writing data to 'attack_info.user.js'");
-            FileWriter f = new FileWriter("./attack_info.user.js");
+            logger.debug(" - writing data to 'zz_attack_info.user.js'");
+            FileWriter f = new FileWriter("./zz_attack_info.user.js");
             f.write(tmpl);
             f.flush();
             f.close();
@@ -182,11 +196,12 @@ public class AttackScriptWriter {
         return res;
     }
 
-    public static void main(String[] args) {
-        int v = 136628250;
+    public static void main(String[] args) throws Exception {
+        /* int v = 136628250;
         int w = 24 * 60 * 60 * 1000;
         System.out.println(v);
         System.out.println(w);
-        System.out.println(Math.floor(v / (24 * 60 * 60 * 1000)));
+        System.out.println(Math.floor(v / (24 * 60 * 60 * 1000)));*/
+        System.out.println(URLEncoder.encode("krieger.odins", "UTF-8"));
     }
 }

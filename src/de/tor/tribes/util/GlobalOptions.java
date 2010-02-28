@@ -62,6 +62,8 @@ public class GlobalOptions {
     private static int iUVID = -1;
     private static boolean internalDataDamaged = false;
 
+    
+
     /**Init all managed objects
      * @param pDownloadData TRUE=download the WorldData from the tribes server
      * @throws Exception If an Error occurs while initializing the objects

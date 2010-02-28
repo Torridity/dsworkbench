@@ -1,20 +1,22 @@
 package de.tor.tribes.ui.components;
 
+import de.tor.tribes.dssim.Constants;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.border.BevelBorder;
+import javax.swing.plaf.basic.BasicArrowButton;
 import org.netbeans.lib.awtextra.AbsoluteConstraints;
 import org.netbeans.lib.awtextra.AbsoluteLayout;
 
@@ -34,63 +36,103 @@ import org.netbeans.lib.awtextra.AbsoluteLayout;
  */
 public class TimePicker extends javax.swing.JPanel {
 
+    private static final Color highlight = new Color(255, 255, 204);
     private JPanel minutePanel = new JPanel();
     private boolean minutesExpanded = false;
     private static final Font smallFont = new Font("Dialog", 0, 10);
-    private int pHour = 0;
-    private int pMinute = 0;
-    private JTextField selectedHour = null;
-    private JTextField selectedMinute = null;
+    private static final Font largeFont = new Font("Dialog", 0, 12);
+    private int pHour = 20;
+    private int pMinute = 55;
+    private CrossedLabel selectedHour = null;
+    private CrossedLabel selectedMinute = null;
     JPanel hourPanel = new JPanel();
+    CrossedLabel[][] hourLabels = new CrossedLabel[12][2];
+    CrossedLabel[][] minuteLabels = null;
+    JDialog pParent;
 
     /** Creates new form TimePicker */
     public TimePicker(Date pDate) {
         initComponents();
         Calendar cal = Calendar.getInstance();
+        if (pDate != null) {
+            cal.setTime(pDate);
+        }
         pHour = cal.get(Calendar.HOUR_OF_DAY);
         pMinute = cal.get(Calendar.MINUTE);
-        addHourLabels();
-        addMinuteLabels(false);
-
+        init();
         setBorder(new javax.swing.plaf.BorderUIResource.EtchedBorderUIResource());
     }
 
-    public void addHourLabels() {
+    public TimePicker() {
+        this(null);
+    }
 
+    public void setParent(JDialog parent) {
+        System.out.println("SET PARENT");
+        pParent = parent;
+    }
+
+    public Date getTime() {
+        return new GregorianCalendar(0, 0, 0, pHour, pMinute).getTime();
+    }
+
+    private void init() {
         setLayout(new AbsoluteLayout());
         hourPanel.setLayout(new AbsoluteLayout());
-        setMinimumSize(new Dimension(260, 220));
-        setMaximumSize(getMinimumSize());
-        setPreferredSize(getMinimumSize());
         hourPanel.setBackground(Color.RED);
         add(hourPanel, new AbsoluteConstraints(10, 10, 240, 40));
+        addHourLabels();
+        addMinuteLabels(false);
+    }
+
+    private void updateSize() {
+        if (minutesExpanded) {
+            setMinimumSize(new Dimension(260, 260));
+            setMaximumSize(getMinimumSize());
+            setPreferredSize(getMinimumSize());
+        } else {
+            setMinimumSize(new Dimension(260, 160));
+            setMaximumSize(getMinimumSize());
+            setPreferredSize(getMinimumSize());
+        }
+        if (pParent != null) {
+            pParent.pack();
+        }
+    }
+
+    public void addHourLabels() {
         int row = -1;
         for (int j = 0; j < 24; j++) {
-            JTextField jLabel1 = new JTextField();
-            jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-            if (j < 10) {
-                jLabel1.setText("0" + Integer.toString(j));
-            } else {
-                jLabel1.setText(Integer.toString(j));
+            int col = j % 12;
+            if (j % 12 == 0) {
+                row++;
             }
-            jLabel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-            jLabel1.setHorizontalAlignment(0);
-            jLabel1.setOpaque(true);
-            jLabel1.setEditable(false);
-            jLabel1.setBackground(Color.LIGHT_GRAY);
-            jLabel1.setFont(smallFont);
-            jLabel1.addMouseListener(new MouseListener() {
+            hourLabels[col][row] = new CrossedLabel();
+            CrossedLabel label = hourLabels[col][row];
+
+            label.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+            if (j < 10) {
+                label.setText("0" + Integer.toString(j));
+            } else {
+                label.setText(Integer.toString(j));
+            }
+
+            label.setBorder(javax.swing.BorderFactory.createLineBorder(Constants.DS_BACK));
+            label.setHorizontalAlignment(0);
+            label.setOpaque(true);
+            label.setBackground(Constants.DS_BACK_LIGHT);
+            label.setFont(smallFont);
+            label.addMouseListener(new MouseListener() {
 
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     if (selectedHour != null) {
-                        selectedHour.setBackground(Color.LIGHT_GRAY);
-                        selectedHour.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
+                        selectedHour.uncross();
+                        selectedHour.setBackground(Constants.DS_BACK_LIGHT);
                     }
-                    selectedHour = ((JTextField) e.getSource());
+                    selectedHour = ((CrossedLabel) e.getSource());
+                    selectedHour.cross();
                     pHour = Integer.parseInt(selectedHour.getText());
-                    selectedHour.setBackground(Color.YELLOW);
-                    selectedHour.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
                 }
 
                 public void mousePressed(MouseEvent e) {
@@ -100,84 +142,79 @@ public class TimePicker extends javax.swing.JPanel {
                 }
 
                 public void mouseEntered(MouseEvent e) {
-                    ((JTextField) e.getSource()).setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));//Background(Color.YELLOW.brighter());
+                    ((CrossedLabel) e.getSource()).setBackground(highlight);
                 }
 
                 public void mouseExited(MouseEvent e) {
-                    if (e.getSource() != selectedHour) {
-                        ((JTextField) e.getSource()).setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-                    } else {
-                        selectedHour.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
-                    }
+                    ((CrossedLabel) e.getSource()).setBackground(Constants.DS_BACK_LIGHT);
                 }
             });
 
             if (j == pHour) {
-                jLabel1.setBackground(Color.YELLOW);
-                selectedHour = jLabel1;
-                selectedHour.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+                selectedHour = label;
+                selectedHour.cross();
             }
-            int col = j % 12;
-            if (j % 12 == 0) {
-                row++;
-            }
-            hourPanel.add(jLabel1, new AbsoluteConstraints(col * 20, row * 20, 20, 20));
+
+            hourPanel.add(label, new AbsoluteConstraints(col * 20, row * 20, 20, 20));
         }
     }
 
     public void addMinuteLabels(boolean pEachMinute) {
         minutePanel.removeAll();
-
         minutesExpanded = pEachMinute;
         minutePanel.setLayout(new AbsoluteLayout());
         minutePanel.setBackground(Color.WHITE);
         int max = 0;
         int elemsPerRow = 0;
-
         if (pEachMinute) {
             //12 elems per row, 5 rows
             max = 60;
             elemsPerRow = 8;
+            minuteLabels = new CrossedLabel[8][8];
         } else {
             //6 elems per row, 2 rows
             max = 12;
             elemsPerRow = 6;
+            minuteLabels = new CrossedLabel[6][2];
         }
         int rowWidth = 240 / elemsPerRow;
         int rowHeight = 20;
-        add(minutePanel, new AbsoluteConstraints(10, 50, 240, rowHeight * (max / elemsPerRow) + rowHeight));
-        int row = -1;
+        add(minutePanel, new AbsoluteConstraints(10, 50, 240, rowHeight * (max / elemsPerRow) + 3 * rowHeight));
+        int row = 0;
         for (int j = 0; j < max; j++) {
-            JTextField jLabel1 = new JTextField();
-            jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+            int col = j % elemsPerRow;
+            if (j != 0 && j % elemsPerRow == 0) {
+                row++;
+            }
+            minuteLabels[col][row] = new CrossedLabel();
+            CrossedLabel label = minuteLabels[col][row];
+            label.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
 
             int num = j;
             if (!pEachMinute) {
                 num = j * 5;
             }
             if (num < 10) {
-                jLabel1.setText(":0" + Integer.toString(num));
+                label.setText(":0" + Integer.toString(num));
             } else {
-                jLabel1.setText(":" + Integer.toString(num));
+                label.setText(":" + Integer.toString(num));
             }
-            jLabel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-            jLabel1.setHorizontalAlignment(0);
-            jLabel1.setOpaque(true);
-            jLabel1.setEditable(false);
-            jLabel1.setBackground(Color.WHITE);
-            jLabel1.setFont(smallFont);
+            label.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
+            label.setHorizontalAlignment(0);
+            label.setOpaque(true);
+            label.setBackground(Color.WHITE);
+            label.setFont(smallFont);
 
-            jLabel1.addMouseListener(new MouseListener() {
+            label.addMouseListener(new MouseListener() {
 
                 public void mouseClicked(MouseEvent e) {
                     if (selectedMinute != null) {
-                        selectedMinute.setBackground(Color.WHITE);
+                        selectedMinute.uncross();
                         selectedMinute.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
                     }
-                    selectedMinute = ((JTextField) e.getSource());
+                    selectedMinute = ((CrossedLabel) e.getSource());
                     pMinute = Integer.parseInt(selectedMinute.getText().replaceAll(":", ""));
-                    selectedMinute.setBackground(Color.YELLOW);
-                    selectedMinute.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+                    selectedMinute.cross();
                 }
 
                 public void mousePressed(MouseEvent e) {
@@ -187,48 +224,38 @@ public class TimePicker extends javax.swing.JPanel {
                 }
 
                 public void mouseEntered(MouseEvent e) {
-                    ((JTextField) e.getSource()).setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));//Background(Color.YELLOW.brighter());
+                    ((CrossedLabel) e.getSource()).setBackground(highlight);
                 }
 
                 public void mouseExited(MouseEvent e) {
-                    if (e.getSource() != selectedMinute) {
-                        ((JTextField) e.getSource()).setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-                    } else {
-                        selectedMinute.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
-                    }
+                    ((CrossedLabel) e.getSource()).setBackground(Color.WHITE);
                 }
             });
 
             if (pEachMinute) {
                 if (j == pMinute) {
-                    jLabel1.setBackground(Color.YELLOW);
-                    selectedMinute = jLabel1;
-                    selectedMinute.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+                    selectedMinute = label;
+                    selectedMinute.cross();
                 }
             } else {
                 int min = (int) Math.rint(pMinute / 5) * 5;
                 if (j * 5 == min) {
-                    jLabel1.setBackground(Color.YELLOW);
-                    selectedMinute = jLabel1;
-                    selectedMinute.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+                    selectedMinute = label;
+                    selectedMinute.cross();
                 }
             }
-            int col = j % elemsPerRow;
-            if (j % elemsPerRow == 0) {
-                row++;
-            }
 
-            minutePanel.add(jLabel1, new AbsoluteConstraints(col * rowWidth, row * rowHeight, rowWidth, rowHeight));
+            minutePanel.add(label, new AbsoluteConstraints(col * rowWidth, row * rowHeight, rowWidth, rowHeight));
         }
-        JButton expandButton = new JButton();
+        BasicArrowButton expandButton = null;
+
+        if (pEachMinute) {
+            expandButton = new BasicArrowButton(BasicArrowButton.WEST);
+        } else {
+            expandButton = new BasicArrowButton(BasicArrowButton.EAST);
+        }
         expandButton.setFont(smallFont);
         expandButton.setMargin(new Insets(2, 2, 2, 2));
-        if (pEachMinute) {
-            expandButton.setText("<<");
-        } else {
-            expandButton.setText(">>");
-        }
-
         expandButton.addMouseListener(new MouseListener() {
 
             @Override
@@ -252,18 +279,68 @@ public class TimePicker extends javax.swing.JPanel {
             public void mouseExited(MouseEvent e) {
             }
         });
-        minutePanel.add(expandButton, new AbsoluteConstraints(240 - rowWidth, rowHeight * (max / elemsPerRow), rowWidth, 20));
+        minutePanel.add(expandButton, new AbsoluteConstraints(240 - rowWidth, rowHeight * (max / elemsPerRow), rowWidth, rowHeight));
 
+        JButton okButton = new JButton("OK");
+        JButton nowButton = new JButton("Jetzt");
+        okButton.setMargin(new Insets(2, 2, 2, 2));
+        nowButton.setMargin(new Insets(2, 2, 2, 2));
+        okButton.setFont(largeFont);
+        nowButton.setFont(largeFont);
+        okButton.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent actionevent) {
+                setVisible(false);
+            }
+        });
+        nowButton.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent actionevent) {
+            }
+        });
+        minutePanel.add(okButton, new AbsoluteConstraints(110, rowHeight * (max / elemsPerRow) + rowHeight + 10, 40, 20));
         minutePanel.updateUI();
+        updateSize();
+    }
+
+    public void updateTime() {
+        int col = pHour % 12;
+        int row = (int) Math.floor(pHour / 12);
+        if (selectedHour != null) {
+            selectedHour.uncross();
+        }
+        hourLabels[col][row].cross();
+        if (minutesExpanded) {
+            col = pMinute % 8;
+            row = (int) Math.floor(pMinute / 8);
+        } else {
+            col = pMinute % 6;
+            row = (int) Math.floor(pMinute / 6);
+        }
+        if (selectedMinute != null) {
+            selectedMinute.uncross();
+        }
+        minuteLabels[col][row].cross();
+    }
+
+    private void onNow(ActionEvent actionevent) {
+        Calendar cal = Calendar.getInstance();
+        pHour = cal.get(Calendar.HOUR_OF_DAY);
+        pMinute = cal.get(Calendar.MINUTE);
+
+        /*selectedDate = getToday();
+        if (isVisible()) {
+        monthAndYear.setText(formatDateText(selectedDate.getTime()));
+        calculateCalendar();
+        }*/
     }
 
     public static void main(String[] args) {
-        /*  JFrame f = new JFrame();
-        f.add(new TimePicker(Calendar.getInstance().getTime()));
-        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        JDialog f = new JDialog();
+        f.getContentPane().add(new TimePicker(Calendar.getInstance().getTime()));
+        //f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         f.pack();
-        f.setVisible(true);*/
-       
+        f.setVisible(true);
     }
 
     /** This method is called from within the constructor to

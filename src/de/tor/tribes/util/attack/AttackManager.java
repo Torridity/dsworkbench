@@ -21,7 +21,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.LinkedList;
@@ -78,7 +77,6 @@ public class AttackManager {
             logger.error("File argument is 'null'");
             return;
         }
-
         File attackFile = new File(pFile);
         if (attackFile.exists()) {
             if (logger.isDebugEnabled()) {
@@ -140,6 +138,7 @@ public class AttackManager {
                 }
                 for (Element e1 : (List<Element>) JaxenUtils.getNodes(e, "attacks/attack")) {
                     Attack a = new Attack(e1);
+
                     if (a != null) {
                         Village source = DataHolder.getSingleton().getVillages()[a.getSource().getX()][a.getSource().getY()];
                         Village target = DataHolder.getSingleton().getVillages()[a.getTarget().getX()][a.getTarget().getY()];
@@ -147,6 +146,7 @@ public class AttackManager {
                     }
                 }
             }
+
             forceUpdate(DEFAULT_PLAN_ID);
             DSWorkbenchAttackFrame.getSingleton().buildAttackPlanList();
             logger.debug("Troop movements imported successfully");
@@ -170,6 +170,7 @@ public class AttackManager {
                 result += "<plan key=\"" + URLEncoder.encode(plan, "UTF-8") + "\">\n";
                 List<Attack> attacks = mAttackPlans.get(plan);
                 result += "<attacks>\n";
+
                 for (Attack a : attacks) {
                     result += a.toXml() + "\n";
                 }
@@ -190,6 +191,7 @@ public class AttackManager {
 
     public void saveTroopMovementsToDisk(String pFile) {
         try {
+
             FileWriter w = new FileWriter(pFile);
             w.write("<plans>\n");
             Enumeration<String> plans = mAttackPlans.keys();
@@ -197,8 +199,10 @@ public class AttackManager {
                 String key = plans.nextElement();
                 w.write("<plan key=\"" + URLEncoder.encode(key, "UTF-8") + "\">\n");
                 List<Attack> attacks = mAttackPlans.get(key);
+
                 w.write("<attacks>\n");
                 for (Attack a : attacks) {
+
                     w.write(a.toXml() + "\n");
                 }
 

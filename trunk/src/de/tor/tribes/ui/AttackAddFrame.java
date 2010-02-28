@@ -448,17 +448,25 @@ private void fireUnitChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:eve
         // long arriveTime = (long) (System.currentTimeMillis() + DSCalculator.calculateMoveTimeInSeconds(mSource, mTarget, u.getSpeed()) * 1000 + 1000);
 
         double maxDur = 0;
-        for (Village source : mSources) {
-            double dur = DSCalculator.calculateMoveTimeInMinutes(source, mTarget, u.getSpeed());
+        if (mSources == null) {
+            double dur = DSCalculator.calculateMoveTimeInMinutes(mSource, mTarget, u.getSpeed());
             dur = dur * 60000;
-            if (dur > maxDur) {
-                maxDur = dur;
+            maxDur = dur;
+            if (((Date) jTimeSpinner.getValue()).getTime() < (System.currentTimeMillis() + maxDur)) {
+                jTimeSpinner.setValue(new Date(Math.round((System.currentTimeMillis() + maxDur))));
+            }
+        } else {
+            for (Village source : mSources) {
+                double dur = DSCalculator.calculateMoveTimeInMinutes(source, mTarget, u.getSpeed());
+                dur = dur * 60000;
+                if (dur > maxDur) {
+                    maxDur = dur;
+                }
+            }
+            if (((Date) jTimeSpinner.getValue()).getTime() < (System.currentTimeMillis() + maxDur)) {
+                jTimeSpinner.setValue(new Date(Math.round((System.currentTimeMillis() + maxDur))));
             }
         }
-        if (((Date) jTimeSpinner.getValue()).getTime() < (System.currentTimeMillis() + maxDur)) {
-            jTimeSpinner.setValue(new Date(Math.round((System.currentTimeMillis() + maxDur))));
-        }
-
         /*if (((Date) jTimeSpinner.getValue()).getTime() < arriveTime) {
         //only set new arrive time if unit could not arrive at the current time
         jTimeSpinner.setValue(new Date(arriveTime));

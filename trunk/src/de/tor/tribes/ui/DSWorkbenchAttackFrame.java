@@ -42,6 +42,7 @@ import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.IGMSender;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.js.AttackScriptWriter;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Point;
 import java.awt.Toolkit;
@@ -2467,8 +2468,21 @@ private void fireWriteAttacksToScriptEvent(java.awt.event.MouseEvent evt) {//GEN
         Attack a = AttackManager.getSingleton().getAttackPlan(selectedPlan).get(row);
         attacks.add(a);
     }
+    /*public static boolean writeAttackScript(List<Attack> pAttacks,
+    boolean pDrawAttacks,
+    int pLineWidth,
+    boolean pStraightLine,
+    Color pStartColor,
+    Color pEndColor,
+    boolean pShowAttacksInMapPopup,
+    boolean pShowAttacksInVillageInfo,
+    boolean pShowAttacksOnConfirmPage,
+    boolean pShowAttacksOnCommandPage,
+    boolean pShowAttacksOnMap,
+    boolean pShowAttacksInOverview) {*/
 
-    if (AttackScriptWriter.writeAttackScript(attacks)) {
+
+    if (AttackScriptWriter.writeAttackScript(attacks, true, 5, true, Color.GREEN, Color.RED, true, true, true, true, true, true)) {
         if (System.getProperty("os.name").startsWith("Windows")) {
             if (JOptionPaneHelper.showQuestionConfirmBox(this, "Script erfolgreich nach 'attack_info.user.js' geschrieben.\nDenke bitte daran, das Script in deinem Browser einzufügen/zu aktualisieren!\nMöchtest du das Speicherverzeichnis des Scripts nun im Explorer öffnen?", "Information", "Nein", "Ja") == JOptionPane.YES_OPTION) {
                 try {
@@ -2725,7 +2739,6 @@ private void fireSendIGMsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
     protected void updateCountdown() {
         jAttackTable.repaint();
     }
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JTextField jAPIKey;

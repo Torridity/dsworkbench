@@ -15,6 +15,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import javax.swing.*;
+import javax.swing.plaf.basic.BasicArrowButton;
 import org.netbeans.lib.awtextra.AbsoluteConstraints;
 import org.netbeans.lib.awtextra.AbsoluteLayout;
 
@@ -22,10 +23,9 @@ import org.netbeans.lib.awtextra.AbsoluteLayout;
 //            DatePicker
 public final class DateField extends JPanel {
 
-    private final JTextField dateText, timeText;
-    private final JButton dateDropdownButton, timeDropdownButton;
+    private final JTextField dateText;
+    private final JButton dateDropdownButton;
     private DatePicker dp;
-    private TimePicker tp;
     private JDialog dlg;
 
     final class Listener extends ComponentAdapter {
@@ -34,7 +34,6 @@ public final class DateField extends JPanel {
             Date date = ((DatePicker) componentevent.getSource()).getDate();
             if (null != date) {
                 dateText.setText(DateField.dateToDateString(date));
-                timeText.setText(DateField.dateToTimeString(date));
             }
             dlg.dispose();
         }
@@ -45,21 +44,15 @@ public final class DateField extends JPanel {
 
     public DateField() {
         dateText = new JTextField();
-        dateDropdownButton = new JButton();
-        timeText = new JTextField();
-        timeDropdownButton = new JButton();
-
+        dateDropdownButton = new BasicArrowButton(BasicArrowButton.SOUTH);
         init();
     }
 
     public DateField(Date date) {
         dateText = new JTextField();
-        dateDropdownButton = new JButton();
-        timeText = new JTextField();
-        timeDropdownButton = new JButton();
+        dateDropdownButton = new BasicArrowButton(BasicArrowButton.SOUTH);
         init();
         dateText.setText(dateToDateString(date));
-        timeText.setText(dateToTimeString(date));
     }
 
     public Date getDate() {
@@ -71,7 +64,7 @@ public final class DateField extends JPanel {
         dateText.setText("");
         dateText.setEditable(false);
         dateText.setBackground(new Color(255, 255, 255));
-        add(dateText, new AbsoluteConstraints(10, 10, 141, 20));
+        add(dateText, new AbsoluteConstraints(0, 0, 141, 20));
         dateDropdownButton.setText("...");
         dateDropdownButton.setMargin(new Insets(2, 2, 2, 2));
         dateDropdownButton.addActionListener(new ActionListener() {
@@ -80,33 +73,20 @@ public final class DateField extends JPanel {
                 onButtonClick(actionevent);
             }
         });
-        add(dateDropdownButton, new AbsoluteConstraints(151, 10, 20, 21));
+        add(dateDropdownButton, new AbsoluteConstraints(151, 0, 20, 21));
 
         dateText.setText("");
         dateText.setEditable(false);
         dateText.setBackground(new Color(255, 255, 255));
-        add(timeText, new AbsoluteConstraints(191, 10, 141, 20));
-        timeDropdownButton.setText("...");
-        timeDropdownButton.setMargin(new Insets(2, 2, 2, 2));
-        timeDropdownButton.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent actionevent) {
-                onButtonClick(actionevent);
-            }
-        });
-        add(timeDropdownButton, new AbsoluteConstraints(171, 10, 20, 21));
     }
 
     private void onButtonClick(ActionEvent actionevent) {
         if (actionevent.getSource() == dateDropdownButton) {
             if ("".equals(dateText.getText())) {
                 dp = new DatePicker();
-                tp = new TimePicker(Calendar.getInstance().getTime());
             } else {
                 dp = new DatePicker(stringToDate(dateText.getText()));
-                tp = new TimePicker(Calendar.getInstance().getTime());
             }
-            dp.setHideOnSelect(true);
             dp.addComponentListener(new Listener());
             Point point = dateText.getLocationOnScreen();
             point.setLocation(point.getX(), (point.getY() - 1.0D) + dateText.getSize().getHeight());
@@ -116,9 +96,7 @@ public final class DateField extends JPanel {
             dlg.setUndecorated(true);
             JPanel p = new JPanel();
             p.add(dp);
-            p.add(tp);
             dlg.getContentPane().add(p);
-            
             dlg.pack();
             dlg.setVisible(true);
         }
@@ -126,7 +104,7 @@ public final class DateField extends JPanel {
 
     private static String dateToDateString(Date date) {
         if (null != date) {
-            SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyy");
+            SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy");
             return df.format(date);
         } else {
             return null;
@@ -151,6 +129,10 @@ public final class DateField extends JPanel {
     }
 
     public static void main(String[] args) {
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception e) {
+        }
         JFrame f = new JFrame();
         f.add(new DateField(Calendar.getInstance().getTime()));
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

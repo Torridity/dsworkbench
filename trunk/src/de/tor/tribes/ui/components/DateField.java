@@ -64,7 +64,7 @@ public final class DateField extends JPanel {
         dateText.setText("");
         dateText.setEditable(false);
         dateText.setBackground(new Color(255, 255, 255));
-        add(dateText, new AbsoluteConstraints(0, 0, 141, 20));
+        add(dateText, new AbsoluteConstraints(0, 0, 120, 20));
         dateDropdownButton.setText("...");
         dateDropdownButton.setMargin(new Insets(2, 2, 2, 2));
         dateDropdownButton.addActionListener(new ActionListener() {
@@ -73,7 +73,7 @@ public final class DateField extends JPanel {
                 onButtonClick(actionevent);
             }
         });
-        add(dateDropdownButton, new AbsoluteConstraints(151, 0, 20, 21));
+        add(dateDropdownButton, new AbsoluteConstraints(125, 0, 20, 21));
 
         dateText.setText("");
         dateText.setEditable(false);

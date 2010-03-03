@@ -74,7 +74,7 @@ public class TimeField extends JPanel {
         timeText.setText("");
         timeText.setEditable(false);
         timeText.setBackground(new Color(255, 255, 255));
-        add(timeText, new AbsoluteConstraints(0, 0, 141, 20));
+        add(timeText, new AbsoluteConstraints(0, 0, 120, 20));
         timeDropdownButton.setText("...");
         timeDropdownButton.setMargin(new Insets(2, 2, 2, 2));
         timeDropdownButton.addActionListener(new ActionListener() {
@@ -83,7 +83,7 @@ public class TimeField extends JPanel {
                 onButtonClick(actionevent);
             }
         });
-        add(timeDropdownButton, new AbsoluteConstraints(151, 0, 20, 21));
+        add(timeDropdownButton, new AbsoluteConstraints(125, 0, 20, 21));
 
         timeText.setText("");
         timeText.setEditable(false);

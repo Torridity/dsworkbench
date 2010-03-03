@@ -45,11 +45,11 @@ public class SettingsPanel extends javax.swing.JPanel {
 
     public void reset() {
         //setup of send time spinner
-        jSendTime.setEditor(new DateEditor(jSendTime, "dd.MM.yy HH:mm:ss"));
+       // jSendTime.setEditor(new DateEditor(jSendTime, "dd.MM.yy HH:mm:ss"));
         jValidAtDay.setEditor(new DateEditor(jValidAtDay, "dd.MM.yy"));
         Calendar c = Calendar.getInstance();
         c.setTimeInMillis(System.currentTimeMillis() + 60 * 60 * 1000);
-        jSendTime.setValue(c.getTime());
+     //   jSendTime.setValue(c.getTime());
         //setup of time frame selection
         jSendTimeFrame.setMinimumValue(0);
         jSendTimeFrame.setSliderBackground(Constants.DS_BACK);
@@ -73,17 +73,17 @@ public class SettingsPanel extends javax.swing.JPanel {
         //setup time frame table
         DefaultListModel model = new DefaultListModel();
         jSendTimeFramesList.setModel(model);
-        jArriveTime.setEditor(new DateEditor(jArriveTime, "dd.MM.yy HH:mm:ss"));
+      //  jArriveTime.setEditor(new DateEditor(jArriveTime, "dd.MM.yy HH:mm:ss"));
         c.setTimeInMillis(System.currentTimeMillis() + 2 * 60 * 60 * 1000);
-        jArriveTime.setValue(c.getTime());
+      //  jArriveTime.setValue(c.getTime());
         jTribeTimeFrameBox.setModel(new DefaultComboBoxModel(new Object[]{"Alle"}));
         restoreProperties();
     }
 
     public void storeProperties() {
         String server = GlobalOptions.getSelectedServer();
-        GlobalOptions.addProperty(server + ".attack.frame.start.date", Long.toString(((Date) jSendTime.getValue()).getTime()));
-        GlobalOptions.addProperty(server + ".attack.frame.arrive.date", Long.toString(((Date) jArriveTime.getValue()).getTime()));
+   //     GlobalOptions.addProperty(server + ".attack.frame.start.date", Long.toString(((Date) jSendTime.getValue()).getTime()));
+   //     GlobalOptions.addProperty(server + ".attack.frame.arrive.date", Long.toString(((Date) jArriveTime.getValue()).getTime()));
         GlobalOptions.addProperty(server + ".attack.frame.arrive.frame.min", Double.toString(jArriveTimeFrame.getMinimumColoredValue()));
         GlobalOptions.addProperty(server + ".attack.frame.arrive.frame.max", Double.toString(jArriveTimeFrame.getMaximumColoredValue()));
         GlobalOptions.addProperty(server + ".attack.frame.attacks.per.village", Integer.toString((Integer) jAttackPerVillageSpinner.getValue()));
@@ -101,8 +101,8 @@ public class SettingsPanel extends javax.swing.JPanel {
     public void restoreProperties() {
         try {
             String server = GlobalOptions.getSelectedServer();
-            jSendTime.setValue(new Date(Long.parseLong(GlobalOptions.getProperty(server + ".attack.frame.start.date"))));
-            jArriveTime.setValue(new Date(Long.parseLong(GlobalOptions.getProperty(server + ".attack.frame.arrive.date"))));
+        //    jSendTime.setValue(new Date(Long.parseLong(GlobalOptions.getProperty(server + ".attack.frame.start.date"))));
+        //    jArriveTime.setValue(new Date(Long.parseLong(GlobalOptions.getProperty(server + ".attack.frame.arrive.date"))));
             jArriveTimeFrame.setMinimumColoredValue(Double.parseDouble(GlobalOptions.getProperty(server + ".attack.frame.arrive.frame.min")));
             jArriveTimeFrame.setMaximumColoredValue(Double.parseDouble(GlobalOptions.getProperty(server + ".attack.frame.arrive.frame.max")));
             jAttackPerVillageSpinner.setValue(Integer.parseInt(GlobalOptions.getProperty(server + ".attack.frame.attacks.per.village")));
@@ -125,9 +125,9 @@ public class SettingsPanel extends javax.swing.JPanel {
         } catch (Exception e) {
         }
         if (jVariableArriveTimeBox.isSelected()) {
-            jArriveTime.setEditor(new DateEditor(jArriveTime, "dd.MM.yy"));
+    //        jArriveTime.setEditor(new DateEditor(jArriveTime, "dd.MM.yy"));
         } else {
-            jArriveTime.setEditor(new DateEditor(jArriveTime, "dd.MM.yy HH:mm:ss"));
+    //        jArriveTime.setEditor(new DateEditor(jArriveTime, "dd.MM.yy HH:mm:ss"));
         }
     }
 
@@ -176,7 +176,7 @@ public class SettingsPanel extends javax.swing.JPanel {
     /**Return selected send time frames
      */
     public TimeFrame getTimeFrame() {
-        TimeFrame result = new TimeFrame((Date) jSendTime.getValue(), (Date) jArriveTime.getValue());
+   /*     TimeFrame result = new TimeFrame((Date) jSendTime.getValue(), (Date) jArriveTime.getValue());
         //add time frames
         DefaultListModel model = (DefaultListModel) jSendTimeFramesList.getModel();
         for (int i = 0; i < model.getSize(); i++) {
@@ -192,6 +192,10 @@ public class SettingsPanel extends javax.swing.JPanel {
             result.setArriveSpan((int) Math.rint(jArriveTimeFrame.getMinimumColoredValue()), (int) Math.rint(jArriveTimeFrame.getMaximumColoredValue()));
         }
         return result;
+    
+    */
+
+        return null;
     }
 
     public boolean validatePanel() {
@@ -208,7 +212,7 @@ public class SettingsPanel extends javax.swing.JPanel {
             }
         }
 
-        Date sendTime = (Date) jSendTime.getValue();
+  /*      Date sendTime = (Date) jSendTime.getValue();
         if (sendTime.getTime() < System.currentTimeMillis()) {
             if (JOptionPaneHelper.showQuestionConfirmBox(this, "Die Startzeit liegt in der Vergangenheit. Daher könnten Abschickzeitpunkte bestimmt werden,\n" +
                     "die nicht eingehalten werden können. Trotzdem fortfahren?", "Startzeit in Vergangenheit", "Nein", "Ja") == JOptionPane.YES_OPTION) {
@@ -216,9 +220,9 @@ public class SettingsPanel extends javax.swing.JPanel {
                 result = false;
             }
         }
-
+*/
         //check min case
-        Date arrive = (Date) jArriveTime.getValue();
+   /*     Date arrive = (Date) jArriveTime.getValue();
 
         if (sendTime.getTime() >= arrive.getTime()) {
             //check if start is after arrive
@@ -235,12 +239,17 @@ public class SettingsPanel extends javax.swing.JPanel {
                 }
             }
         }
+    
+    
+    */
+
+
         boolean mightBeInNightBonus = false;
         String nightTime = "(0 - 8 Uhr)";
         int nightBonus = ServerManager.getNightBonusRange(GlobalOptions.getSelectedServer());
         if (!jVariableArriveTimeBox.isSelected()) {
             Calendar c = Calendar.getInstance();
-            c.setTimeInMillis(arrive.getTime());
+   //         c.setTimeInMillis(arrive.getTime());
             //check for night bonus
             switch (nightBonus) {
                 case DatabaseServerEntry.NO_NIGHT_BONUS: {
@@ -323,7 +332,6 @@ public class SettingsPanel extends javax.swing.JPanel {
         frameValidityGroup = new javax.swing.ButtonGroup();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        jSendTime = new javax.swing.JSpinner();
         jButton2 = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jSendTimeFramesList = new javax.swing.JList();
@@ -335,11 +343,13 @@ public class SettingsPanel extends javax.swing.JPanel {
         jLabel7 = new javax.swing.JLabel();
         jTribeTimeFrameBox = new javax.swing.JComboBox();
         jValidAtDay = new javax.swing.JSpinner();
+        jSendDate = new de.tor.tribes.ui.components.DateField();
         jPanel2 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
-        jArriveTime = new javax.swing.JSpinner();
         jLabel4 = new javax.swing.JLabel();
         jArriveTimeFrame = new com.visutools.nav.bislider.BiSlider();
+        jArriveDate = new de.tor.tribes.ui.components.DateField();
+        jArriveTime = new de.tor.tribes.ui.components.TimeField();
         jPanel3 = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
         jAttackPerVillageSpinner = new javax.swing.JSpinner();
@@ -347,15 +357,11 @@ public class SettingsPanel extends javax.swing.JPanel {
         jLabel6 = new javax.swing.JLabel();
         jAlgoBox = new javax.swing.JComboBox();
         jFakeOffTargetsBox = new javax.swing.JCheckBox();
-        dateField1 = new de.tor.tribes.ui.components.DateField();
-        timeField1 = new de.tor.tribes.ui.components.TimeField();
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(new java.awt.Color(0, 0, 0), null), "Start", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 12))); // NOI18N
         jPanel1.setOpaque(false);
 
-        jLabel1.setText("Startzeit");
-
-        jSendTime.setModel(new javax.swing.SpinnerDateModel(new java.util.Date(), null, null, java.util.Calendar.SECOND));
+        jLabel1.setText("Startdatum");
 
         jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/remove.gif"))); // NOI18N
         jButton2.setMaximumSize(new java.awt.Dimension(23, 23));
@@ -409,44 +415,50 @@ public class SettingsPanel extends javax.swing.JPanel {
         jValidAtDay.setModel(new javax.swing.SpinnerDateModel());
         jValidAtDay.setEnabled(false);
 
+        jSendDate.setOpaque(false);
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel2))
-                .addGap(10, 10, 10)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jEveryDayValid)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jSendTimeFrame, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 223, Short.MAX_VALUE)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, 0, 0, Short.MAX_VALUE)
-                            .addComponent(jSendTime, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 223, Short.MAX_VALUE)
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                    .addComponent(jLabel7, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jOnlyValidAt, javax.swing.GroupLayout.Alignment.LEADING))
+                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 98, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jSendDate, javax.swing.GroupLayout.DEFAULT_SIZE, 258, Short.MAX_VALUE)
+                        .addGap(56, 56, 56))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addGap(10, 10, 10)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jEveryDayValid)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(jSendTimeFrame, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 257, Short.MAX_VALUE)
+                                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, 0, 0, Short.MAX_VALUE)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                            .addComponent(jLabel7, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                            .addComponent(jOnlyValidAt, javax.swing.GroupLayout.Alignment.LEADING))
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(jTribeTimeFrameBox, 0, 184, Short.MAX_VALUE)
+                                            .addComponent(jValidAtDay, javax.swing.GroupLayout.DEFAULT_SIZE, 184, Short.MAX_VALUE))))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jTribeTimeFrameBox, 0, 150, Short.MAX_VALUE)
-                                    .addComponent(jValidAtDay, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE))))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap())
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addContainerGap())))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jSendTime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jSendDate, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel2)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -465,7 +477,7 @@ public class SettingsPanel extends javax.swing.JPanel {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel7)
                     .addComponent(jTribeTimeFrameBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(27, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(new java.awt.Color(0, 0, 0), null), "Ankunft", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 12))); // NOI18N
@@ -473,9 +485,11 @@ public class SettingsPanel extends javax.swing.JPanel {
 
         jLabel3.setText("Ankunftszeit");
 
-        jArriveTime.setModel(new javax.swing.SpinnerDateModel(new java.util.Date(), null, null, java.util.Calendar.SECOND));
-
         jLabel4.setText("Ankunftszeitrahmen");
+
+        jArriveDate.setOpaque(false);
+
+        jArriveTime.setOpaque(false);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -487,22 +501,26 @@ public class SettingsPanel extends javax.swing.JPanel {
                     .addComponent(jLabel3)
                     .addComponent(jLabel4))
                 .addGap(10, 10, 10)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jArriveTimeFrame, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 266, Short.MAX_VALUE)
-                    .addComponent(jArriveTime, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 266, Short.MAX_VALUE))
-                .addContainerGap())
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jArriveDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jArriveTime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jArriveTimeFrame, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jLabel3)
+                    .addComponent(jArriveDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jArriveTime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, 36, Short.MAX_VALUE)
-                    .addComponent(jArriveTimeFrame, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jArriveTimeFrame, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, 36, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -565,7 +583,7 @@ public class SettingsPanel extends javax.swing.JPanel {
                             .addGap(50, 50, 50)
                             .addComponent(jAttackPerVillageSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addComponent(jFakeOffTargetsBox))
-                .addContainerGap(101, Short.MAX_VALUE))
+                .addContainerGap(67, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -582,7 +600,7 @@ public class SettingsPanel extends javax.swing.JPanel {
                     .addComponent(jAlgoBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(jFakeOffTargetsBox)
-                .addContainerGap(164, Short.MAX_VALUE))
+                .addContainerGap(154, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -591,14 +609,12 @@ public class SettingsPanel extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(dateField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(timeField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -608,13 +624,8 @@ public class SettingsPanel extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(dateField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(timeField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -707,18 +718,20 @@ public class SettingsPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_fireValidityChangedEvent
 
     private void fireChangeVariableArriveTimeEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireChangeVariableArriveTimeEvent
-        if (jVariableArriveTimeBox.isSelected()) {
+    /*    if (jVariableArriveTimeBox.isSelected()) {
             jArriveTime.setEditor(new DateEditor(jArriveTime, "dd.MM.yy"));
         } else {
             jArriveTime.setEditor(new DateEditor(jArriveTime, "dd.MM.yy HH:mm:ss"));
         }
+     
+     */
 
     }//GEN-LAST:event_fireChangeVariableArriveTimeEvent
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private de.tor.tribes.ui.components.DateField dateField1;
     private javax.swing.ButtonGroup frameValidityGroup;
     private javax.swing.JComboBox jAlgoBox;
-    private javax.swing.JSpinner jArriveTime;
+    private de.tor.tribes.ui.components.DateField jArriveDate;
+    private de.tor.tribes.ui.components.TimeField jArriveTime;
     private com.visutools.nav.bislider.BiSlider jArriveTimeFrame;
     private javax.swing.JSpinner jAttackPerVillageSpinner;
     private javax.swing.JButton jButton1;
@@ -737,13 +750,12 @@ public class SettingsPanel extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JSpinner jSendTime;
+    private de.tor.tribes.ui.components.DateField jSendDate;
     private com.visutools.nav.bislider.BiSlider jSendTimeFrame;
     private javax.swing.JList jSendTimeFramesList;
     private javax.swing.JComboBox jTribeTimeFrameBox;
     private javax.swing.JSpinner jValidAtDay;
     private javax.swing.JCheckBox jVariableArriveTimeBox;
-    private de.tor.tribes.ui.components.TimeField timeField1;
     // End of variables declaration//GEN-END:variables
 
     public static void main(String[] args) {

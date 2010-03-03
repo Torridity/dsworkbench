@@ -22,7 +22,6 @@ public class ServerManager {
     private static List<DatabaseServerEntry> SERVERS = null;
     private static boolean SERVERS_UPDATED = false;
 
-
     static {
         SERVERS = new LinkedList<DatabaseServerEntry>();
         File serverDir = new File(Constants.SERVER_DIR);
@@ -37,6 +36,13 @@ public class ServerManager {
             return;
         }
         SERVERS = DatabaseInterface.getServerInfo();
+        DatabaseServerEntry el = new DatabaseServerEntry();
+        el.setServerID("de55");
+        el.setServerURL("http://de55.die-staemme.de");
+        el.setAcceptanceRiseSpeed(1.0);
+        el.setDataVersion(0);
+        el.setNightBonus((byte) 1);
+        SERVERS.add(el);
         if (SERVERS != null && !SERVERS.isEmpty()) {
             SERVERS_UPDATED = true;
         }
@@ -81,7 +87,7 @@ public class ServerManager {
         return 1;
     }
 
-     public static byte getNightBonusRange(String pServerID) {
+    public static byte getNightBonusRange(String pServerID) {
         for (DatabaseServerEntry entry : SERVERS) {
             if (entry.getServerID().equals(pServerID)) {
                 return entry.getNightBonus();

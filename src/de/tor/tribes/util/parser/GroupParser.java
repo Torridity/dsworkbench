@@ -50,9 +50,7 @@ public class GroupParser {
                     StringTokenizer elemTok = new StringTokenizer(line.trim(), "\t");
 
                     String villageToken = elemTok.nextToken().trim();
-                  //  System.out.println("  Village: " + villageToken);
                     String groupCountToken = elemTok.nextToken().trim();
-                 //   System.out.println(" Group: " + groupCountToken);
                     String groupsToken = null;
                     try {
                         //test group count

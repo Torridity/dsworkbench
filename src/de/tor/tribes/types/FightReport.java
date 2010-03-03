@@ -675,6 +675,11 @@ public class FightReport implements Comparable<FightReport> {
     }
 
     public boolean isValid() {
+        System.out.println(getAttacker());
+        System.out.println(getSourceVillage());
+        System.out.println(getDefender());
+        System.out.println(getTargetVillage());
+
         return (getAttacker() != null &&
                 getSourceVillage() != null &&
                 !getAttackers().isEmpty() &&

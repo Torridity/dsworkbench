@@ -38,7 +38,11 @@ public class NonPAPlaceParser {
             //walk through all lines
             if (v == null) {
                 //try to get current village
-                v = extractVillage(currentLine);
+                try {
+                    v = VillageParser.parse(currentLine).get(0);
+                } catch (Exception e) {
+                    v = null;
+                }
             } else {
                 //have current village, find troops
                 if (currentLine.trim().startsWith("Aus diesem Dorf")) {

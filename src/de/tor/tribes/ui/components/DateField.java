@@ -111,18 +111,10 @@ public final class DateField extends JPanel {
         }
     }
 
-    private static String dateToTimeString(Date date) {
-        if (null != date) {
-            SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss");
-            return df.format(date);
-        } else {
-            return null;
-        }
-    }
-
     private static Date stringToDate(String s) {
         try {
-            return DateFormat.getDateInstance(1).parse(s);
+            SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy");
+            return df.parse(s);
         } catch (ParseException e) {
             return null;
         }

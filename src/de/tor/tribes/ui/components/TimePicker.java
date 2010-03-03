@@ -68,7 +68,6 @@ public class TimePicker extends javax.swing.JPanel {
     }
 
     public void setParent(JDialog parent) {
-        System.out.println("SET PARENT");
         pParent = parent;
     }
 

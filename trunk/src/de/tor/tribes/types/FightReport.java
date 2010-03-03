@@ -299,6 +299,10 @@ public class FightReport implements Comparable<FightReport> {
      * @param defender the defender to set
      */
     public void setDefender(Tribe defender) {
+        if (defender == null) {
+            this.defender = Barbarians.getSingleton();
+            return;
+        }
         this.defender = defender;
     }
 
@@ -675,10 +679,10 @@ public class FightReport implements Comparable<FightReport> {
     }
 
     public boolean isValid() {
-        System.out.println(getAttacker());
+       /* System.out.println(getAttacker());
         System.out.println(getSourceVillage());
         System.out.println(getDefender());
-        System.out.println(getTargetVillage());
+        System.out.println(getTargetVillage());*/
 
         return (getAttacker() != null &&
                 getSourceVillage() != null &&

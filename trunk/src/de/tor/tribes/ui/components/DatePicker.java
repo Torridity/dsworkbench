@@ -351,6 +351,7 @@ public final class DatePicker extends JPanel {
             } else {
                 //draw white background
                 currentDayField.setBackground(Color.WHITE);
+                currentDayField.uncross();
             }
             if (calCurrent.get(GregorianCalendar.DAY_OF_MONTH) >= daysInCurrentMonth) {
                 //break if all days of this month where set

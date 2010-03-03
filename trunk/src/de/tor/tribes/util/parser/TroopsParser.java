@@ -82,44 +82,49 @@ public class TroopsParser {
                 }
                 villageLines--;
             } else {
-                Village current = extractVillage(line);
-                if (current != null) {
-                    v = current;
-                    villageLines = 4;
+                try {
+                    Village current = VillageParser.parse(line).get(0);
+                    if (current != null) {
+                        v = current;
+                        villageLines = 4;
+                    }
+                } catch (Exception e) {
+                    v = null;
+                    villageLines = 0;
                 }
-            /* String nextToken = null;
-            while (elemTok.hasMoreElements()) {
-            String currentToken = null;
-            if (nextToken == null) {
-            currentToken = elemTok.nextToken();
-            } else {
-            currentToken = nextToken;
-            }
-            if (elemTok.hasMoreTokens()) {
-            nextToken = elemTok.nextToken();
-            }
+                /* String nextToken = null;
+                while (elemTok.hasMoreElements()) {
+                String currentToken = null;
+                if (nextToken == null) {
+                currentToken = elemTok.nextToken();
+                } else {
+                currentToken = nextToken;
+                }
+                if (elemTok.hasMoreTokens()) {
+                nextToken = elemTok.nextToken();
+                }
 
-            //search village
-            if (currentToken.trim().startsWith("(") && currentToken.trim().endsWith(")")) {
-            //check if we got a village
-            try {
-            String coord = currentToken.trim().substring(currentToken.lastIndexOf("(") + 1, currentToken.lastIndexOf(")"));
-            if (ServerSettings.getSingleton().getCoordType() != 2) {
-            String[] split = coord.trim().split("[(\\:)]");
-            int[] xy = DSCalculator.hierarchicalToXy(Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2]));
-            v = DataHolder.getSingleton().getVillages()[xy[0]][xy[1]];
-            villageLines = 4;
-            break;
-            } else {
-            String[] split = coord.trim().split("[(\\|)]");
-            v = DataHolder.getSingleton().getVillages()[Integer.parseInt(split[0])][Integer.parseInt(split[1])];
-            villageLines = 4;
-            break;
-            }
-            } catch (Exception e) {
-            }
-            }
-            }*/
+                //search village
+                if (currentToken.trim().startsWith("(") && currentToken.trim().endsWith(")")) {
+                //check if we got a village
+                try {
+                String coord = currentToken.trim().substring(currentToken.lastIndexOf("(") + 1, currentToken.lastIndexOf(")"));
+                if (ServerSettings.getSingleton().getCoordType() != 2) {
+                String[] split = coord.trim().split("[(\\:)]");
+                int[] xy = DSCalculator.hierarchicalToXy(Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2]));
+                v = DataHolder.getSingleton().getVillages()[xy[0]][xy[1]];
+                villageLines = 4;
+                break;
+                } else {
+                String[] split = coord.trim().split("[(\\|)]");
+                v = DataHolder.getSingleton().getVillages()[Integer.parseInt(split[0])][Integer.parseInt(split[1])];
+                villageLines = 4;
+                break;
+                }
+                } catch (Exception e) {
+                }
+                }
+                }*/
             }
             if (villageLines == 0) {
                 int troopsCount = DataHolder.getSingleton().getUnits().size();
@@ -148,7 +153,7 @@ public class TroopsParser {
                     troopsInVillage.clear();
                     troopsOutside.clear();
                     troopsOnTheWay.clear();
-                // troops.clear();
+                    // troops.clear();
                 }
             }
         }
@@ -242,7 +247,7 @@ public class TroopsParser {
         System.out.println(token.matches("\\(*[0-9]{1,2}\\:[0-9]{1,2}\\:[0-9]{1,2}\\)*"));
 
 
-    // TroopsParser.parse(pTroopsString);
+        // TroopsParser.parse(pTroopsString);
     }
     /*
     kirscheye3	435|447 FaNtAsY wOrLd ... <3	Schwere Kavallerie	Torridity	436|444 FaNtAsY wOrLd ... 12	02.10.08 23:06:46

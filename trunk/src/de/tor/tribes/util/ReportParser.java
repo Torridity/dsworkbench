@@ -49,7 +49,6 @@ public class ReportParser {
         FightReport result = new FightReport();
         while (t.hasMoreTokens()) {
             String line = t.nextToken();
-
             if (line.startsWith("Gesendet")) {
                 line = line.replaceAll("Gesendet", "").trim();
                 SimpleDateFormat f = new SimpleDateFormat("dd.MM.yy HH:mm");
@@ -60,16 +59,20 @@ public class ReportParser {
                     result.setTimestamp(0l);
                 }
             } else if (line.startsWith("Der Angreifer hat gewonnen")) {
+               // System.out.println("Won");
                 result.setWon(true);
             } else if (line.startsWith("Der Verteidiger hat gewonnen")) {
+               // System.out.println("Lost");
                 result.setWon(false);
             } else if (line.startsWith("Glück")) {
+                //System.out.println("Luck");
                 line = line.replaceAll("Glück \\(aus Sicht des Angreifers\\)", "").replaceAll("Glück \\(aus Sicht des Verteidigers\\)", "").trim();
                 if (line.indexOf("%") > 0) {
                     //negative luck is in same line, try it!
                     try {
 
                         double luck = Double.parseDouble(line.trim().replaceAll("%", ""));
+                        //System.out.println("Luck: " + luck);
                         result.setLuck(luck);
                     } catch (Exception e) {
                         result.setLuck(0.0);
@@ -80,9 +83,10 @@ public class ReportParser {
                     luckPart = true;
                 }
             } else if (line.startsWith("Glück (aus Sicht des Verteidigers)")) {
+                //System.out.println("LuckPart");
                 luckPart = true;
-
             } else if (line.startsWith("Moral")) {
+               // System.out.println("Moral");
                 line = line.replaceAll("Moral:", "").trim().replaceAll("%", "");
                 try {
                     double moral = Double.parseDouble(line);
@@ -92,9 +96,11 @@ public class ReportParser {
             } else if (line.startsWith("Angreifer")) {
                 attackerPart = true;
                 line = line.replaceAll("Angreifer:", "").trim();
+                //System.out.println("Attacker " +line);
                 result.setAttacker(DataHolder.getSingleton().getTribeByName(line));
-            } else if (line.startsWith("Dorf")) {
-                line = line.replaceAll("Dorf:", "").trim();
+            } else if (line.startsWith("Dorf") || line.startsWith("Herkunft") || line.startsWith("Ziel")) {
+                line = line.replaceAll("Dorf:", "").replaceAll("Herkunft:", "").replaceAll("Ziel:", "").trim();
+               // System.out.println("Village " +line);
                 if (attackerPart) {
                     result.setSourceVillage(VillageParser.parse(line).get(0));
                 } else if (defenderPart) {
@@ -102,6 +108,7 @@ public class ReportParser {
                 }
             } else if (line.startsWith("Anzahl")) {
                 line = line.replaceAll("Anzahl:", "").trim();
+               // System.out.println("Amoi" +line);
                 if (attackerPart) {
                     String[] troops = line.split("\t");
                     if (troops.length == serverTroopCount) {
@@ -130,6 +137,7 @@ public class ReportParser {
             } else if (line.startsWith("Verteidiger")) {
                 defenderPart = true;
                 line = line.replaceAll("Verteidiger:", "").trim();
+               // System.out.println("Def " + line);
                 result.setDefender(DataHolder.getSingleton().getTribeByName(line));
             } else if (line.startsWith("Schaden durch Rammböcke")) {
                 line = line.replaceAll("Schaden durch Rammböcke:", "").trim();
@@ -175,7 +183,6 @@ public class ReportParser {
             } else if (line.startsWith("Truppen des Verteidigers, die unterwegs waren")) {
                 troopsOnTheWayPart = true;
             } else if (line.startsWith("Truppen des Verteidigers in anderen Dörfern")) {
-                System.out.println("Outside!");
                 troopsOutside = true;
             } else if (line.startsWith("Durch Besitzer des Berichts verborgen")) {
                 if (attackerPart) {
@@ -208,8 +215,6 @@ public class ReportParser {
                     String[] troops = line.split("\t");
                     if (troops.length == serverTroopCount) {
                         troopsOnTheWayPart = false;
-                        System.out.println(troops);
-                        System.out.println(parseUnits(troops));
                         result.setDefendersOnTheWay(parseUnits(troops));
                     }
                 } else if (troopsOutside) {
@@ -240,7 +245,6 @@ public class ReportParser {
                 }
             }
         }
-
         return result;
     }
 

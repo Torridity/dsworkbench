@@ -22,6 +22,7 @@ public class ClipboardWatch extends Thread {
 
     private static Logger logger = Logger.getLogger("ClipboardMonitor");
     private static ClipboardWatch SINGLETON = null;
+    private static String recentlyParsedData = null;
     private int lastDataLength = 0;
 
     public static synchronized ClipboardWatch getSingleton() {
@@ -46,30 +47,28 @@ public class ClipboardWatch extends Thread {
                 String data = (String) t.getTransferData(DataFlavor.stringFlavor);
 
                 if ((data.length() > 10) && (data.length() != lastDataLength)) {
-                    if (ReportParser.parseReport(data)) {
-                        //report parsed, clean clipboard
-                        logger.info("Report successfully parsed. Cleaning up clipboard");
-                        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(""), null);
-                    } else if (TroopsParser.parse(data)) {
-                        logger.info("Troops successfully parsed. Cleaning up clipboard");
-                        //at least one village was found, so clean the clipboard
-                        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(""), null);
-                    //  }else if (TroopsParser50.parse(data)) {
-                    //  logger.info("Troops successfully parsed. Cleaning up clipboard");
-                    //at least one village was found, so clean the clipboard
-                    //   Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(""), null);
-                    } else if (GroupParser.parse(data)) {
-                        logger.info("Groups successfully parsed. Cleaning up clipboard");
-                        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(""), null);
-                    } else if (SupportParser.parse(data)) {
-                        logger.info("Support successfully parsed. Cleaning up clipboard");
-                        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(""), null);
-                    } else if (NonPAPlaceParser.parse(data)) {
-                        logger.info("Place info successfully parsed. Cleaning up clipboard");
-                        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(""), null);
-                    } else {
-                        //store last length to avoid parsing the same data more than once
-                        lastDataLength = data.length();
+                    if (!data.equals(recentlyParsedData)) {
+                        if (ReportParser.parseReport(data)) {
+                            //report parsed, clean clipboard
+                            logger.info("Report successfully parsed.");
+                            recentlyParsedData = data;
+                        } else if (TroopsParser.parse(data)) {
+                            logger.info("Troops successfully parsed.");
+                            //at least one village was found, so clean the clipboard
+                            recentlyParsedData = data;
+                        } else if (GroupParser.parse(data)) {
+                            logger.info("Groups successfully parsed.");
+                            recentlyParsedData = data;
+                        } else if (SupportParser.parse(data)) {
+                            logger.info("Support successfully parsed.");
+                            recentlyParsedData = data;
+                        } else if (NonPAPlaceParser.parse(data)) {
+                            logger.info("Place info successfully parsed.");
+                            recentlyParsedData = data;
+                        } else {
+                            //store last length to avoid parsing the same data more than once
+                            lastDataLength = data.length();
+                        }
                     }
                 }
             } catch (Exception e) {

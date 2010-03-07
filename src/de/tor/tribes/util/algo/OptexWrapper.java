@@ -30,14 +30,15 @@ public class OptexWrapper extends AbstractAttackAlgorithm {
             Hashtable<UnitHolder, List<de.tor.tribes.types.Village>> pSources,
             Hashtable<UnitHolder, List<de.tor.tribes.types.Village>> pFakes,
             List<de.tor.tribes.types.Village> pTargets,
-            int pMaxAttacksPerVillage,
+            List<de.tor.tribes.types.Village> pFakeTargets,
+            Hashtable<Village, Integer> pMaxAttacksTable,
             TimeFrame pTimeFrame,
             boolean pFakeOffTargets) {
 
         UnitHolder ram = DataHolder.getSingleton().getUnitByPlainName("ram");
         List<de.tor.tribes.types.Village> offSources = pSources.get(ram);
 
-
+        int pMaxAttacksPerVillage = 0;
         ArrayList<OffVillage> offs = prepareSourceList(offSources, pTargets, pTimeFrame, ram.getSpeed());
         ArrayList<TargetVillage> offTargets = prepareTargetList(pTargets, pMaxAttacksPerVillage);
         Hashtable<Destination, Double>[] costs = calculateOffCosts(offs, offTargets, pTimeFrame, ram.getSpeed());
@@ -67,10 +68,10 @@ public class OptexWrapper extends AbstractAttackAlgorithm {
                                 double dist = DSCalculator.calculateDistance(v, source);
                                 double runtime = dist * ram.getSpeed() * 60000;
                                 long send = pTimeFrame.getEnd() - (long) Math.round(runtime);
-                               // if (pTimeFrame.inside(new Date(send), null)) {
-                                 //   System.out.println("Costs: " + algo._getCosts(src, dest));
-                                    mapping.addOff(ram, source);
-                               // }
+                                // if (pTimeFrame.inside(new Date(send), null)) {
+                                //   System.out.println("Costs: " + algo._getCosts(src, dest));
+                                mapping.addOff(ram, source);
+                                // }
                             }
                         }
                     }
@@ -113,9 +114,9 @@ public class OptexWrapper extends AbstractAttackAlgorithm {
                 }
             }
             if (fail) {
-            //    System.out.println("Remove " + v);
+                //    System.out.println("Remove " + v);
                 //removing village that does not reach any target
-             //   sourceCopy.remove(v);
+                //   sourceCopy.remove(v);
             }
         }
 
@@ -162,7 +163,7 @@ public class OptexWrapper extends AbstractAttackAlgorithm {
                 double cost = dist;
                 if (!pTimeFrame.inside(new Date(send), null)) {
                     //increase costs to max
-                   cost = Double.MAX_VALUE;
+                    cost = Double.MAX_VALUE;
                 }
                 costs[i].put(pTargets.get(j), cost);
             }

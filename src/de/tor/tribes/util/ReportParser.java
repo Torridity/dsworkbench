@@ -24,11 +24,13 @@ public class ReportParser {
     public static boolean parseReport(String pData) {
         try {
             FightReport r = parse(pData);
+    
             if (!r.isValid()) {
                 throw new Exception("No valid report data found");
             }
 
             String activeSet = ReportManagerTableModel.getSingleton().getActiveReportSet();
+
             ReportManager.getSingleton().getReportSet(activeSet).addReport(r);
             ReportManager.getSingleton().forceUpdate(activeSet);
             return true;
@@ -48,7 +50,7 @@ public class ReportParser {
         int serverTroopCount = 12;
         FightReport result = new FightReport();
         while (t.hasMoreTokens()) {
-            String line = t.nextToken();
+            String line = t.nextToken().trim();
             if (line.startsWith("Gesendet")) {
                 line = line.replaceAll("Gesendet", "").trim();
                 SimpleDateFormat f = new SimpleDateFormat("dd.MM.yy HH:mm");
@@ -62,7 +64,7 @@ public class ReportParser {
                // System.out.println("Won");
                 result.setWon(true);
             } else if (line.startsWith("Der Verteidiger hat gewonnen")) {
-               // System.out.println("Lost");
+                //System.out.println("Lost");
                 result.setWon(false);
             } else if (line.startsWith("Glück")) {
                 //System.out.println("Luck");

@@ -14,6 +14,8 @@
 
 <mapID target="pages.church_view" url="pages/church_view.html"/>
 
+<mapID target="pages.tables" url="pages/tables.html"/>
+
 <mapID target="pages.settings" url="pages/settings.html"/>
 
 <mapID target="pages.map_tools_zoom_minimap" url="pages/map_tools.html#zoom_minimap"/>
@@ -94,6 +96,8 @@
 
 <mapID target="pages.manual_attack_planer" url="pages/manual_attack_planer.html"/>
 
+<mapID target="pages.main_window_dnd" url="pages/main_window_dnd.html"/>
+
 <mapID target="pages.main_window_basics" url="pages/main_window_basics.html"/>
 
 <mapID target="pages.attack_tools" url="pages/attack_tools.html"/>
@@ -115,6 +119,8 @@
 <mapID target="pages.attack_template_settings" url="pages/attack_template_settings.html"/>
 
 <mapID target="pages.form_view" url="pages/form_view.html"/>
+
+<mapID target="pages.reports_view" url="pages/reports_view.html"/>
 
 <mapID target="pages.attack_planer_settings" url="pages/attack_planer_settings.html"/>
 
@@ -171,6 +177,8 @@
 <mapID target="pages.template" url="pages/template.html"/>
 
 <mapID target="pages.support_tool" url="pages/support_tool.html"/>
+
+<mapID target="pages.reports_view_filters" url="pages/reports_view_filters.html"/>
 
 <mapID target="pages.attack_planer_results_details_sources" url="pages/attack_planer_results_details_sources.html"/>
 

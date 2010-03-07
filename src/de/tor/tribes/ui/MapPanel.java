@@ -78,7 +78,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 /**
- * @TODO (2.0) Troops to A*Star in map popup
+ * @TODO (DIFF) Troops to A*Star in map popup
  * @TODO (DIFF) Added new popup
  * @TODO (DIFF) Added ruler
  * @TODO (DIFF) Added fancy "mark all tribes villages" feature
@@ -148,7 +148,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
         mToolChangeListeners = new LinkedList<ToolChangeListener>();
         mMarkerAddFrame = new MarkerAddFrame();
         setCursor(ImageManager.getCursor(iCurrentCursor));
-        setIgnoreRepaint(false);
+        setIgnoreRepaint(true);
         attackAddFrame = new AttackAddFrame();
         mVirtualBounds = new Rectangle2D.Double(0.0, 0.0, 0.0, 0.0);
         jCopyOwn.setSelected(true);
@@ -705,6 +705,9 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                     }
                     case ImageManager.CURSOR_SELECTION: {
                         Point2D.Double pos = mouseToVirtualPos(e.getX(), e.getY());
+                        if (selectionRect == null) {
+                            return;
+                        }
                         int xs = (int) Math.floor(selectionRect.getXPos());
                         int ys = (int) Math.floor(selectionRect.getYPos());
                         int xe = (int) Math.floor(selectionRect.getXPosEnd());
@@ -951,6 +954,8 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
         jSeparator6 = new javax.swing.JSeparator();
         jAllCreateNoteItem = new javax.swing.JMenuItem();
         jAllAddToNoteItem = new javax.swing.JMenuItem();
+        jSeparator8 = new javax.swing.JSeparator();
+        jCenterVillagesIngameItem = new javax.swing.JMenuItem();
 
         jCopyVillagesDialog.setTitle("Dorfinformationen kopieren");
         jCopyVillagesDialog.setAlwaysOnTop(true);
@@ -1178,7 +1183,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
         jCurrentVillageSubmenu.add(jCurrentToAStarAsDefender);
         jCurrentVillageSubmenu.add(jSeparator7);
 
-        jCenterItem.setText("Zentrieren");
+        jCenterItem.setText("Auf der Karte zentrieren");
         jCenterItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 fireVillagePopupActionEvent(evt);
@@ -1248,6 +1253,15 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
             }
         });
         jMarkedVillageSubmenu.add(jAllAddToNoteItem);
+        jMarkedVillageSubmenu.add(jSeparator8);
+
+        jCenterVillagesIngameItem.setText("Im Spiel zentrieren (max. 10 Dörfer)");
+        jCenterVillagesIngameItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fireVillagePopupActionEvent(evt);
+            }
+        });
+        jMarkedVillageSubmenu.add(jCenterVillagesIngameItem);
 
         jVillageActionsMenu.add(jMarkedVillageSubmenu);
 
@@ -1529,7 +1543,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
             if (v != null) {
                 DSWorkbenchMainFrame.getSingleton().centerVillage(v);
             }
-        } else if (evt.getSource() == jCurrentToAttackPlanerAsSourceItem) {
+        }else if (evt.getSource() == jCurrentToAttackPlanerAsSourceItem) {
             Village v = actionMenuVillage;
             if (v != null) {
                 if (v.getTribe() == null) {
@@ -1692,6 +1706,20 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                 JOptionPaneHelper.showInformationBox(this, "Dörfer hinzugefügt", "Information");
             } else {
                 JOptionPaneHelper.showWarningBox(this, "Es ist keine Notiz ausgewählt.", "Warnung");
+            }
+        } else if (evt.getSource() == jCenterVillagesIngameItem) {
+            if (markedVillages.isEmpty()) {
+                JOptionPaneHelper.showInformationBox(this, "Keine Dörfer markiert.", "Information");
+                return;
+            }
+            int cnt = 0;
+            for (Village v : markedVillages) {
+                BrowserCommandSender.centerVillage(v);
+                cnt++;
+                if (cnt == 10) {
+                    //allow max 10 villages
+                    return;
+                }
             }
         }
     }//GEN-LAST:event_fireVillagePopupActionEvent
@@ -1877,7 +1905,6 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
         if (positionUpdate) {
             DSWorkbenchFormFrame.getSingleton().updateFormList();
         }
-
         positionUpdate = false;
     }
 
@@ -1966,22 +1993,27 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
 
     @Override
     public void dragEnter(DragSourceDragEvent dsde) {
+      
     }
 
     @Override
     public void dragOver(DragSourceDragEvent dsde) {
+      
     }
 
     @Override
     public void dropActionChanged(DragSourceDragEvent dsde) {
+      
     }
 
     @Override
     public void dragExit(DragSourceEvent dse) {
+       
     }
 
     @Override
     public void dragDropEnd(DragSourceDropEvent dsde) {
+       setCurrentCursor(getCurrentCursor());
     }
 
     @Override
@@ -1993,14 +2025,17 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
 
     @Override
     public void dragOver(DropTargetDragEvent dtde) {
+      
     }
 
     @Override
     public void dropActionChanged(DropTargetDragEvent dtde) {
+       
     }
 
     @Override
     public void dragExit(DropTargetEvent dte) {
+      
     }
 
     @Override
@@ -2036,6 +2071,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
     private javax.swing.JMenu jAllySubmenu;
     private javax.swing.JButton jCancelExportButton;
     private javax.swing.JMenuItem jCenterItem;
+    private javax.swing.JMenuItem jCenterVillagesIngameItem;
     private javax.swing.JCheckBox jCopyBarbarian;
     private javax.swing.JCheckBox jCopyEnemyAlly;
     private javax.swing.JCheckBox jCopyOwn;
@@ -2069,6 +2105,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
     private javax.swing.JSeparator jSeparator5;
     private javax.swing.JSeparator jSeparator6;
     private javax.swing.JSeparator jSeparator7;
+    private javax.swing.JSeparator jSeparator8;
     private javax.swing.JMenu jTribeSubmenu;
     private javax.swing.JPopupMenu jVillageActionsMenu;
     private javax.swing.JLabel jVillageExportDetails;

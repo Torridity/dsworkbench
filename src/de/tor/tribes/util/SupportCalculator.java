@@ -21,7 +21,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 /**
- * @TODO (2.0) Use village list by tags, not by current tribe to allow to support UV-accounts and other troops
+ * @TODO (DIFF) Use village list by tags, if any tag is selected. In any other case use entire current users village list
  * @author Charon
  */
 public class SupportCalculator {
@@ -32,7 +32,11 @@ public class SupportCalculator {
         Hashtable<UnitHolder, Integer> unitTable = new Hashtable<UnitHolder, Integer>();
         if (logger.isDebugEnabled()) {
             logger.debug("Try to find support for village " + pVillage + " at arrival time " + new SimpleDateFormat("dd.MM.yy HH:mm:ss.SSS").format(pArrive));
-            logger.debug(" - " + ((pTags != null) ? "using" : "not using") + " tag filter");
+            if (pTags == null || pTags.isEmpty()) {
+                logger.debug(" - using all villages of current user");
+            } else {
+                logger.debug(" - valid tags: " + pTags);
+            }
             logger.debug(" - need at least " + pMinNumber + " units");
         }
 
@@ -65,30 +69,47 @@ public class SupportCalculator {
             }
         }
 
-        Tribe own = DSWorkbenchMainFrame.getSingleton().getCurrentUser();
-        if (own == null) {
-            logger.warn("Current user is 'null'");
-            return new LinkedList<SupportMovement>();
-        }
         List<SupportMovement> movements = new LinkedList<SupportMovement>();
-        Village[] villageList = own.getVillageList();
+
+        //get tagged villages
+        List<Village> villages = new LinkedList<Village>();
+        if (pTags == null || pTags.isEmpty()) {
+            Tribe own = DSWorkbenchMainFrame.getSingleton().getCurrentUser();
+            if (own == null) {
+                logger.error("Current tribe is 'null'");
+                return movements;
+            }
+            for (Village v : own.getVillageList()) {
+                villages.add(v);
+            }
+        } else {
+            for (Tag t : pTags) {
+                for (Integer id : t.getVillageIDs()) {
+                    Village v = DataHolder.getSingleton().getVillagesById().get(id);
+                    if (!villages.contains(v)) {
+                        villages.add(v);
+                    }
+                }
+            }
+        }
+        /* Village[] villageList = tmpVillageList.toArray(new Village[]{});
         List<Village> villages = new LinkedList<Village>();
         //buid list of allowed villages
         for (Village v : villageList) {
-            if (pTags != null && !pTags.isEmpty()) {
-                for (Tag t : pTags) {
-                    if (t.tagsVillage(v.getId())) {
-                        if (!villages.contains(v)) {
-                            //add village if not already included
-                            villages.add(v);
-                        }
-                    }
-                }
-            } else {
-                //add all villages
-                villages.add(v);
-            }
+        if (pTags != null && !pTags.isEmpty()) {
+        for (Tag t : pTags) {
+        if (t.tagsVillage(v.getId())) {
+        if (!villages.contains(v)) {
+        //add village if not already included
+        villages.add(v);
         }
+        }
+        }
+        } else {
+        //add all villages
+        villages.add(v);
+        }
+        }*/
         //move village itself
         villages.remove(pVillage);
         for (Village v : villages) {
@@ -109,7 +130,7 @@ public class SupportCalculator {
         if (troops == null) {
             return null;
         }
-       // List<Integer> availableTroops = troops.getTroops();
+        // List<Integer> availableTroops = troops.getTroops();
 
         UnitHolder slowestPossible = null;
         while (allowedKeys.hasMoreElements()) {

@@ -5,10 +5,9 @@
  */
 package de.tor.tribes.ui;
 
+import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.util.Vector;
 import javax.swing.table.AbstractTableModel;
 
@@ -264,7 +263,7 @@ public class TestFrame extends javax.swing.JFrame {
 
     public static void main(String args[]) {
 
-
+/*
         TestFrame f = new TestFrame();
         f.addWindowListener(new WindowAdapter() {
 
@@ -276,7 +275,8 @@ public class TestFrame extends javax.swing.JFrame {
         f.setSize(300, 100);
         f.setVisible(true);
 
-
+*/
+      Toolkit.getDefaultToolkit().beep();     
 
         //System.out.println(System.getProperty("user.dir"));
 

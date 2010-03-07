@@ -70,8 +70,8 @@ import org.apache.log4j.Logger;
 
 /**
  *@TODO (DIFF) Report database added including war stats
- * @TODO (2.0) Report to A*Star
- * @TODO (2.0) Manually move troops from report to troop view
+ * @TODO (DIFF) Report to A*Star
+ * @TODO (DIFF) Manually move troops from report to troop view
  * @author Torridity
  */
 public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements ReportManagerListener {
@@ -1005,6 +1005,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         jTaskPaneGroup1.getContentPane().setLayout(percentLayout2);
 
         jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_remove.png"))); // NOI18N
+        jButton4.setToolTipText("Ausgewählte Berichte löschen");
         jButton4.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireRemoveReportsEvent(evt);
@@ -1013,6 +1014,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         jTaskPaneGroup1.getContentPane().add(jButton4);
 
         jButton5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/replace2.png"))); // NOI18N
+        jButton5.setToolTipText("Ausgewählte Berichte in ein anderes Berichtset verschieben");
         jButton5.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireMoveReportsEvent(evt);
@@ -1022,9 +1024,6 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
 
         jButton12.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/filter_off.png"))); // NOI18N
         jButton12.setToolTipText("Angezeigte Berichte filtern");
-        jButton12.setMaximumSize(new java.awt.Dimension(59, 33));
-        jButton12.setMinimumSize(new java.awt.Dimension(59, 33));
-        jButton12.setPreferredSize(new java.awt.Dimension(59, 33));
         jButton12.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireShowFilterDialogEvent(evt);
@@ -1215,7 +1214,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
             ReportManagerTableModel.getSingleton().removeRow(row);
             jReportTable.revalidate();
         }
-        jReportTable.repaint();
+        ReportManager.getSingleton().forceUpdate( ReportManagerTableModel.getSingleton().getActiveReportSet());
 
     }//GEN-LAST:event_fireRemoveReportsEvent
 

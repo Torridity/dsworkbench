@@ -72,7 +72,7 @@ public class VillageSupportFrame extends javax.swing.JFrame {
         jTransferToAttackOverviewDialog.pack();
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
         GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.support_tool", GlobalOptions.getHelpBroker().getHelpSet());
-    // </editor-fold>
+        // </editor-fold>
     }
 
     public void showSupportFrame(Village pCurrent) {
@@ -439,7 +439,7 @@ public class VillageSupportFrame extends javax.swing.JFrame {
         for (Object o : jTagsList.getSelectedValues()) {
             allowedTags.add((Tag) o);
         }
-
+       
         List<SupportCalculator.SupportMovement> movements = SupportCalculator.calculateSupport(mCurrentVillage, arrive, defOnly, allowedTags, minUnitCnt);
         if ((movements == null) || (movements.size() == 0)) {
             JOptionPaneHelper.showWarningBox(this, "Mit den eingestellten Parametern ist keine Unterstützung möglich.", "Warnung");
@@ -531,7 +531,7 @@ public class VillageSupportFrame extends javax.swing.JFrame {
             int[] rows = jSupportTable.getSelectedRows();
             if ((rows != null) && (rows.length > 0)) {
                 boolean extended = (JOptionPaneHelper.showQuestionConfirmBox(jResultDialog, "Erweiterte BB-Codes verwenden (nur für Forum und Notizen geeignet)?", "Erweiterter BB-Code", "Nein", "Ja") == JOptionPane.YES_OPTION);
-               
+
                 StringBuffer buffer = new StringBuffer();
                 if (extended) {
                     buffer.append("[u][size=12]Unterstützungsplan[/size][/u]\n\n");

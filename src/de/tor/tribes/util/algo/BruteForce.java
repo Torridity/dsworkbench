@@ -32,7 +32,8 @@ public class BruteForce extends AbstractAttackAlgorithm {
             Hashtable<UnitHolder, List<Village>> pSources,
             Hashtable<UnitHolder, List<Village>> pFakes,
             List<Village> pTargets,
-            int pMaxAttacksPerVillage,
+            List<Village> pFakeTargets,
+            Hashtable<Village, Integer> pMaxAttacksTable,
             TimeFrame pTimeFrame,
             boolean pFakeOffTargets) {
         Enumeration<UnitHolder> unitKeys = pSources.keys();
@@ -51,14 +52,13 @@ public class BruteForce extends AbstractAttackAlgorithm {
                 for (Village source : sources) {
                     //time when the attacks should arrive
                     long arrive = pTimeFrame.getEnd();
-                    //max. number of attacks per target village
-                    int maxAttacksPerVillage = pMaxAttacksPerVillage;
                     Village vTarget = null;
 
                     Collections.shuffle(pTargets);
                     //search all tribes and villages for targets
                     logInfo(" - Teste " + pTargets.size() + " mögliche Ziele");
                     for (Village v : pTargets) {
+                        int maxAttacksPerVillage = pMaxAttacksTable.get(v);
                         double time = DSCalculator.calculateMoveTimeInSeconds(source, v, unit.getSpeed());
                         Date sendTime = new Date(arrive - (long) time * 1000);
                         if (pTimeFrame.isVariableArriveTime()) {
@@ -153,13 +153,21 @@ public class BruteForce extends AbstractAttackAlgorithm {
         }
         // </editor-fold>
 
-        if (!pFakeOffTargets) {
-            logger.debug("Removing off targets from fake list");
+        if (pFakeOffTargets) {
+            logger.debug("Removing assigned off targets from fake list");
             Enumeration<Village> targets = attacks.keys();
             while (targets.hasMoreElements()) {
                 Village target = targets.nextElement();
                 pTargets.remove(target);
             }
+        } else {
+            //clear target list
+            pTargets.clear();
+        }
+
+        //adding fake targets
+        for (Village fakeTarget : pFakeTargets) {
+            pTargets.add(fakeTarget);
         }
         logger.debug("Assigning fakes");
 
@@ -177,12 +185,13 @@ public class BruteForce extends AbstractAttackAlgorithm {
                     //time when the attacks should arrive
                     long arrive = pTimeFrame.getEnd();
                     //max. number of attacks per target village
-                    int maxAttacksPerVillage = pMaxAttacksPerVillage;
+
                     Village vTarget = null;
                     //TimeFrame t = new TimeFrame(pStartTime, pArriveTime, pTimeFrameStartHour, pTimeFrameEndHour);
                     //search all tribes and villages for targets
                     Collections.shuffle(pTargets);
                     for (Village v : pTargets) {
+                        int maxAttacksPerVillage = pMaxAttacksTable.get(v);
                         if (!attacks.containsKey(v)) {
                             double time = DSCalculator.calculateMoveTimeInSeconds(source, v, unit.getSpeed());
                             Date sendTime = new Date(arrive - (long) time * 1000);
@@ -205,7 +214,7 @@ public class BruteForce extends AbstractAttackAlgorithm {
                                 if (attacksForVillage == null) {
                                     //no attack found for this village
                                     //get number of attacks on this tribe
-                                    Integer cnt = pMaxAttacksPerVillage;
+                                    Integer cnt = maxAttacksPerVillage;
                                     if (cnt == null) {
                                         //no attacks on this tribe yet
                                         cnt = 0;
@@ -254,7 +263,7 @@ public class BruteForce extends AbstractAttackAlgorithm {
         while (targetKeys.hasMoreElements()) {
             Village target = targetKeys.nextElement();
             Enumeration<UnitHolder> sourceKeys = attacks.get(target).keys();
-            Off f = new Off(target, pMaxAttacksPerVillage);
+            Off f = new Off(target, pMaxAttacksTable.get(target));
             while (sourceKeys.hasMoreElements()) {
                 UnitHolder sourceUnit = sourceKeys.nextElement();
                 List<Village> unitVillages = attacks.get(target).get(sourceUnit);
@@ -272,7 +281,7 @@ public class BruteForce extends AbstractAttackAlgorithm {
         while (fakeKeys.hasMoreElements()) {
             Village target = fakeKeys.nextElement();
             Enumeration<Village> sourceKeys = fakes.get(target).keys();
-            Fake f = new Fake(target, pMaxAttacksPerVillage);
+            Fake f = new Fake(target, pMaxAttacksTable.get(target));
             while (sourceKeys.hasMoreElements()) {
                 Village source = sourceKeys.nextElement();
                 UnitHolder unit = fakes.get(target).get(source);

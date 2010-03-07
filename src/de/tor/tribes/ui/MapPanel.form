@@ -304,7 +304,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="jCenterItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Zentrieren"/>
+                <Property name="text" type="java.lang.String" value="Auf der Karte zentrieren"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fireVillagePopupActionEvent"/>
@@ -374,6 +374,16 @@
             <MenuItem class="javax.swing.JMenuItem" name="jAllAddToNoteItem">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Der gew&#xe4;hlten Notiz hinzuf&#xfc;gen"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fireVillagePopupActionEvent"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JSeparator" name="jSeparator8">
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="jCenterVillagesIngameItem">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Im Spiel zentrieren (max. 10 D&#xf6;rfer)"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fireVillagePopupActionEvent"/>

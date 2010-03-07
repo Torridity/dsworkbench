@@ -26,7 +26,8 @@ public abstract class AbstractAttackAlgorithm extends Thread {
     private Hashtable<UnitHolder, List<Village>> sources = null;
     private Hashtable<UnitHolder, List<Village>> fakes = null;
     private List<Village> targets = null;
-    private int maxAttacksPerVillage = 0;
+    private List<Village> fakeTargets = null;
+    private Hashtable<Village, Integer> maxAttacksTable;
     private TimeFrame timeFrame = null;
     boolean fakeOffTargets = false;
     private AlgorithmListener mListener = null;
@@ -36,14 +37,16 @@ public abstract class AbstractAttackAlgorithm extends Thread {
             Hashtable<UnitHolder, List<Village>> pSources,
             Hashtable<UnitHolder, List<Village>> pFakes,
             List<Village> pTargets,
-            int pMaxAttacksPerVillage,
+            List<Village> pFakedTargets,
+            Hashtable<Village, Integer> pMaxAttacksTable,
             TimeFrame pTimeFrame,
             boolean pFakeOffTargets,
             AlgorithmLogPanel pLogPanel) {
         sources = pSources;
         fakes = pFakes;
         targets = pTargets;
-        maxAttacksPerVillage = pMaxAttacksPerVillage;
+        fakeTargets = pFakedTargets;
+        maxAttacksTable = pMaxAttacksTable;
         timeFrame = pTimeFrame;
         fakeOffTargets = pFakeOffTargets;
         mLogPanel = pLogPanel;
@@ -53,7 +56,8 @@ public abstract class AbstractAttackAlgorithm extends Thread {
             Hashtable<UnitHolder, List<Village>> pSources,
             Hashtable<UnitHolder, List<Village>> pFakes,
             List<Village> pTargets,
-            int pMaxAttacksPerVillage,
+            List<Village> pFakeTargets,
+            Hashtable<Village, Integer> pMaxAttacksTable,
             TimeFrame pTimeFrame,
             boolean pFakeOffTargets);
 
@@ -121,7 +125,7 @@ public abstract class AbstractAttackAlgorithm extends Thread {
     @Override
     public void run() {
         try {
-            results = calculateAttacks(sources, fakes, targets, maxAttacksPerVillage, timeFrame, fakeOffTargets);
+            results = calculateAttacks(sources, fakes, targets, fakeTargets, maxAttacksTable, timeFrame, fakeOffTargets);
         } catch (Exception e) {
             //an error occured
             logger.error("An error occured during calculation", e);

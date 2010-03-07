@@ -317,6 +317,7 @@ public class MapRenderer extends Thread {
                             }
                         }
                     }
+
                     //draw live layer -> always on top
                     renderLiveLayer(g2d);
                     g2d.drawImage(mLayers.get(LIVE_LAYER), 0, 0, null);
@@ -333,6 +334,7 @@ public class MapRenderer extends Thread {
                     Graphics2D g2d2 = (Graphics2D) mFrontBuffer.getGraphics();
                     prepareGraphics(g2d2);
                     g2d2.drawImage(mBackBuffer, 0, 0, null);
+
                     MapPanel.getSingleton().updateComplete(pos, mFrontBuffer);
                     g2d2.dispose();
                     g2d.dispose();
@@ -852,7 +854,6 @@ public class MapRenderer extends Thread {
         }
         g2d.setStroke(s);
         //</editor-fold>
-
         g2d.dispose();
     }
 

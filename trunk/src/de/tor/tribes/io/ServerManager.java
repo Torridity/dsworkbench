@@ -36,13 +36,13 @@ public class ServerManager {
             return;
         }
         SERVERS = DatabaseInterface.getServerInfo();
-        DatabaseServerEntry el = new DatabaseServerEntry();
+    /*    DatabaseServerEntry el = new DatabaseServerEntry();
         el.setServerID("de55");
         el.setServerURL("http://de55.die-staemme.de");
         el.setAcceptanceRiseSpeed(1.0);
         el.setDataVersion(0);
         el.setNightBonus((byte) 1);
-        SERVERS.add(el);
+        SERVERS.add(el);*/
         if (SERVERS != null && !SERVERS.isEmpty()) {
             SERVERS_UPDATED = true;
         }

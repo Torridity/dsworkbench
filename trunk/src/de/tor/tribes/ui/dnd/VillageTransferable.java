@@ -5,6 +5,8 @@
 package de.tor.tribes.ui.dnd;
 
 import de.tor.tribes.types.Village;
+import de.tor.tribes.util.DSCalculator;
+import de.tor.tribes.util.ServerSettings;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
@@ -53,7 +55,12 @@ public class VillageTransferable implements Transferable {
         if (flavor.equals(villageDataFlavor)) {
             return villages;
         } else if (flavor.equals(DataFlavor.stringFlavor)) {
-            return villages.get(0).getX() + "|" + villages.get(0).getY();
+            if (ServerSettings.getSingleton().getCoordType() != 2) {
+                int[] coord = DSCalculator.xyToHierarchical(villages.get(0).getX(), villages.get(0).getY());
+                return coord[0] + ":" + coord[1] + ":" + coord[2];
+            } else {
+                return villages.get(0).getX() + "|" + villages.get(0).getY();
+            }
         } else {
             throw new UnsupportedFlavorException(flavor);
         }

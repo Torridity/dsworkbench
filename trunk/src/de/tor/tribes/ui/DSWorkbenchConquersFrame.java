@@ -18,6 +18,7 @@ import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.models.ConquersTableModel;
 import de.tor.tribes.ui.renderer.SortableTableHeaderRenderer;
+import de.tor.tribes.util.BrowserCommandSender;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
@@ -176,6 +177,7 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
         jGreyConquersLabel = new javax.swing.JLabel();
         jFriendlyConquersLabel = new javax.swing.JLabel();
         jButton2 = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
         jConquersFrameAlwaysOnTop = new javax.swing.JCheckBox();
 
         jFilterDialog.setTitle("Eroberungen filtern");
@@ -479,7 +481,7 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
                 "Title 1", "Title 2", "Title 3", "Title 4", "Title 5"
             }
         ));
-        jConquersTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jConquersTable.setSelectionMode(javax.swing.ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         jScrollPane1.setViewportView(jConquersTable);
 
         jButton1.setBackground(new java.awt.Color(239, 235, 223));
@@ -516,6 +518,18 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
             }
         });
 
+        jButton3.setBackground(new java.awt.Color(239, 235, 223));
+        jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_browser.png"))); // NOI18N
+        jButton3.setToolTipText("Gewählte Dörfer InGame zentrieren");
+        jButton3.setMaximumSize(new java.awt.Dimension(59, 35));
+        jButton3.setMinimumSize(new java.awt.Dimension(59, 35));
+        jButton3.setPreferredSize(new java.awt.Dimension(59, 35));
+        jButton3.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireCenterVillagesIngameEvent(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -524,10 +538,12 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 454, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 458, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addContainerGap())
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
@@ -544,6 +560,8 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 355, Short.MAX_VALUE))
@@ -594,7 +612,7 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
 
     private void fireCenterConqueredVillageEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCenterConqueredVillageEvent
         int[] rows = jConquersTable.getSelectedRows();
-        if (rows.length != 1) {
+        if (rows == null || rows.length == 0) {
             return;
         }
         int row = jConquersTable.convertRowIndexToModel(rows[0]);
@@ -763,6 +781,28 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
         }
     }//GEN-LAST:event_fireFilterChangedEvent
 
+    private void fireCenterVillagesIngameEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCenterVillagesIngameEvent
+        int[] rows = jConquersTable.getSelectedRows();
+        if (rows == null || rows.length == 0) {
+            return;
+        }
+        int cnt = 0;
+        for (int r : rows) {
+            int row = jConquersTable.convertRowIndexToModel(r);
+            Conquer c = ConquersTableModel.getSingleton().getConquerAtRow(row);
+
+            if (c != null) {
+                Village v = DataHolder.getSingleton().getVillagesById().get(c.getVillageID());
+                BrowserCommandSender.centerVillage(v);
+            }
+            cnt++;
+            if (cnt == 10) {
+                //max. 10 villages
+                return;
+            }
+        }
+    }//GEN-LAST:event_fireCenterVillagesIngameEvent
+
     protected void setupConquersPanel() {
         jConquersTable.invalidate();
         jConquersTable.setModel(new DefaultTableModel());
@@ -875,6 +915,7 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
     private javax.swing.JButton jApplyFiltersButton;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton7;
     private javax.swing.JCheckBox jConquersFrameAlwaysOnTop;
     private javax.swing.JTable jConquersTable;

@@ -22,7 +22,6 @@ $$PARAMETER_LOCATION
 $$DATA_LOCATION
 
 
-
 var icons = {
 		outgoing: 'data:image/png;base64,'+
 'iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAsSAAALEgHS3X78AAAA' +
@@ -172,7 +171,7 @@ function Rectangle(startX, startY, endX, endY) {
 }
 
 Array.prototype.contains = function (element) {
-		if(element.x1 != 'undefined'){
+	if(typeof element.x1 != 'undefined'){
 		//line processing
 		for (var i = 0; i < this.length; i++) {
 			if (this[i].equals(element)) {
@@ -181,6 +180,7 @@ Array.prototype.contains = function (element) {
 		}
 		return false;
 		}
+		
 		for (var i = 0; i < this.length; i++) {
 			if (this[i] == element) {
 				return true;
@@ -801,10 +801,9 @@ if(typeof unsafeWindow != 'undefined'){
  		//check all attacks
  		for(var i = 0;i<allElems.length;i++){
  			var attacksForElem = getAttacksForVillage(allElems[i]);	
- 			
  			//add elem to attacked elems
- 			if(attacksForElem.length > 0){
- 				attackedElems.push(allElems[i]);
+ 			if(attacksForElem.length > 0 && !doneElems.contains(allElems[i])){
+ 	 			attackedElems.push(allElems[i]);
  				doneElems.push(allElems[i]);
  				//check if at least one attack is still valid
  				var valid = 0;

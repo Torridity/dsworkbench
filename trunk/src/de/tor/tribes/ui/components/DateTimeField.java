@@ -16,7 +16,6 @@ import java.awt.event.ComponentEvent;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -32,12 +31,15 @@ public class DateTimeField extends javax.swing.JPanel {
     private JDialog dlg;
     private SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
     private SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss 'Uhr'");
+    private boolean timeEnabled = true;
 
     /** Creates new form DateTimeField */
     public DateTimeField() {
         initComponents();
         jDateField.setText(dateFormat.format(Calendar.getInstance().getTime()));
         jTimeField.setText(timeFormat.format(Calendar.getInstance().getTime()));
+        jChangeTime.setEnabled(timeEnabled);
+        jTimeField.setEnabled(timeEnabled);
     }
 
     final class Listener extends ComponentAdapter {
@@ -124,6 +126,38 @@ public class DateTimeField extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    public void setTimeEnabled(boolean pValue) {
+        timeEnabled = pValue;
+        jChangeTime.setEnabled(timeEnabled);
+        jTimeField.setEnabled(timeEnabled);
+    }
+
+    public Date getSelectedDate() {
+        try {
+            Date date = dateFormat.parse(jDateField.getText());
+            Date time = timeFormat.parse(jTimeField.getText());
+            Calendar c = Calendar.getInstance();
+            c.setTime(date);
+            Calendar result = Calendar.getInstance();
+            result.set(Calendar.DAY_OF_MONTH, c.get(Calendar.DAY_OF_MONTH));
+            result.set(Calendar.MONTH, c.get(Calendar.MONTH));
+            result.set(Calendar.YEAR, c.get(Calendar.YEAR));
+            c.setTime(time);
+            result.set(Calendar.HOUR_OF_DAY, c.get(Calendar.HOUR_OF_DAY));
+            result.set(Calendar.MINUTE, c.get(Calendar.MINUTE));
+            result.set(Calendar.SECOND, c.get(Calendar.SECOND));
+            
+            return result.getTime();
+        } catch (Exception e) {
+            return Calendar.getInstance().getTime();
+        }
+    }
+
+    public void setDate(Date pDate) {
+        jDateField.setText(dateFormat.format(pDate));
+        jTimeField.setText(timeFormat.format(pDate));
+    }
+
     private void fireChangeDateTimeEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireChangeDateTimeEvent
         if (evt.getSource() == jChangeDate) {
             try {
@@ -143,8 +177,11 @@ public class DateTimeField extends javax.swing.JPanel {
             dlg.getContentPane().add(p);
 
         } else {
+            if (!timeEnabled) {
+                return;
+            }
             try {
-                tp = new TimePicker(dateFormat.parse(jTimeField.getText()));
+                tp = new TimePicker(timeFormat.parse(jTimeField.getText()));
             } catch (Exception e) {
                 tp = new TimePicker();
             }

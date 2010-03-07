@@ -47,7 +47,7 @@ public class ClipboardWatch extends Thread {
                 String data = (String) t.getTransferData(DataFlavor.stringFlavor);
 
                 if ((data.length() > 10) && (data.length() != lastDataLength)) {
-                    if (!data.equals(recentlyParsedData)) {
+                    if (recentlyParsedData == null || !data.equals(recentlyParsedData)) {
                         if (ReportParser.parseReport(data)) {
                             //report parsed, clean clipboard
                             logger.info("Report successfully parsed.");

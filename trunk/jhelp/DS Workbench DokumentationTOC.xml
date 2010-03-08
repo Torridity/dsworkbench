@@ -125,6 +125,8 @@
    <tocitem text="Berichtsdatenbank " target="pages.reports_view" image="images.tictac_orange">
     <tocitem text="Berichte filtern " target="pages.reports_view_filters" image="images.tictac_grey"/>
 
+    <tocitem text="Berichte auswerten " target="pages.reports_view_stats" image="images.tictac_grey"/>
+
    </tocitem>
   </tocitem>
   <tocitem text="Shortcuts " target="pages.shortcuts" image="images.tictac_orange"/>

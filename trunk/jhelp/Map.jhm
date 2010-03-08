@@ -120,6 +120,8 @@
 
 <mapID target="pages.form_view" url="pages/form_view.html"/>
 
+<mapID target="pages.reports_view_stats" url="pages/reports_view_stats.html"/>
+
 <mapID target="pages.reports_view" url="pages/reports_view.html"/>
 
 <mapID target="pages.attack_planer_settings" url="pages/attack_planer_settings.html"/>

@@ -185,7 +185,6 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
 
         jAttackTable.addMouseListener(l);
         jScrollPane2.addMouseListener(l);
-
         //restore export properties
         String prop = GlobalOptions.getProperty("attack.script.draw.vectors");
         jDrawAttackVectors.setSelected((prop == null) ? true : Boolean.parseBoolean(prop));
@@ -1157,8 +1156,11 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        jScriptExportDialog.setTitle(bundle.getString("DSWorkbenchAttackFrame.jScriptExportDialog.title")); // NOI18N
+
         jDrawAttackVectors.setSelected(true);
         jDrawAttackVectors.setText(bundle.getString("DSWorkbenchAttackFrame.jDrawAttackVectors.text")); // NOI18N
+        jDrawAttackVectors.setOpaque(false);
 
         jAttackVectorWidth.setModel(new javax.swing.SpinnerNumberModel(5, 1, 10, 1));
 
@@ -1166,21 +1168,27 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
 
         jShowAttacksInPopup.setSelected(true);
         jShowAttacksInPopup.setText(bundle.getString("DSWorkbenchAttackFrame.jShowAttacksInPopup.text")); // NOI18N
+        jShowAttacksInPopup.setOpaque(false);
 
         jShowAttacksInVillageInfo.setSelected(true);
         jShowAttacksInVillageInfo.setText(bundle.getString("DSWorkbenchAttackFrame.jShowAttacksInVillageInfo.text")); // NOI18N
+        jShowAttacksInVillageInfo.setOpaque(false);
 
         jShowAttacksOnConfirmPage.setSelected(true);
         jShowAttacksOnConfirmPage.setText(bundle.getString("DSWorkbenchAttackFrame.jShowAttacksOnConfirmPage.text")); // NOI18N
+        jShowAttacksOnConfirmPage.setOpaque(false);
 
         jShowAttacksInPlace.setSelected(true);
         jShowAttacksInPlace.setText(bundle.getString("DSWorkbenchAttackFrame.jShowAttacksInPlace.text")); // NOI18N
+        jShowAttacksInPlace.setOpaque(false);
 
         jShowAttackOnMap.setSelected(true);
         jShowAttackOnMap.setText(bundle.getString("DSWorkbenchAttackFrame.jShowAttackOnMap.text")); // NOI18N
+        jShowAttackOnMap.setOpaque(false);
 
         jShowAttacksInOverview.setSelected(true);
         jShowAttacksInOverview.setText(bundle.getString("DSWorkbenchAttackFrame.jShowAttacksInOverview.text")); // NOI18N
+        jShowAttacksInOverview.setOpaque(false);
 
         jDoScriptExportButton.setText(bundle.getString("DSWorkbenchAttackFrame.jDoScriptExportButton.text")); // NOI18N
         jDoScriptExportButton.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -1215,7 +1223,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
                     .addComponent(jShowAttacksInPlace)
                     .addComponent(jShowAttackOnMap)
                     .addComponent(jShowAttacksInOverview))
-                .addContainerGap(107, Short.MAX_VALUE))
+                .addContainerGap(114, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jScriptExportDialogLayout.createSequentialGroup()
                 .addContainerGap(210, Short.MAX_VALUE)
                 .addComponent(jButton14)
@@ -1325,11 +1333,14 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
             }
         });
 
+        jScrollPane4.setBorder(null);
         jScrollPane4.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        jScrollPane4.setOpaque(false);
 
-        jTaskPane1.setOpaque(false);
+        jTaskPane1.setBackground(new java.awt.Color(239, 235, 223));
         com.l2fprod.common.swing.PercentLayout percentLayout1 = new com.l2fprod.common.swing.PercentLayout();
         percentLayout1.setOrientation(1);
+        percentLayout1.setGap(14);
         jTaskPane1.setLayout(percentLayout1);
 
         jTaskPaneGroup1.setTitle(bundle.getString("DSWorkbenchAttackFrame.jTaskPaneGroup1.title")); // NOI18N
@@ -2669,7 +2680,7 @@ private void fireDoExportAsScriptEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
         }
         if (AttackScriptWriter.writeAttackScript(attacks, jDrawAttackVectors.isSelected(), width, true, Color.GREEN, Color.RED, jShowAttacksInPopup.isSelected(), jShowAttacksInVillageInfo.isSelected(), jShowAttacksOnConfirmPage.isSelected(), jShowAttacksInPlace.isSelected(), jShowAttackOnMap.isSelected(), jShowAttacksInOverview.isSelected())) {
             if (System.getProperty("os.name").startsWith("Windows")) {
-                if (JOptionPaneHelper.showQuestionConfirmBox(this, "Script erfolgreich nach 'attack_info.user.js' geschrieben.\nDenke bitte daran, das Script in deinem Browser einzufügen/zu aktualisieren!\nMöchtest du das Speicherverzeichnis des Scripts nun im Explorer öffnen?", "Information", "Nein", "Ja") == JOptionPane.YES_OPTION) {
+                if (JOptionPaneHelper.showQuestionConfirmBox(this, "Script erfolgreich nach 'zz_attack_info.user.js' geschrieben.\nDenke bitte daran, das Script in deinem Browser einzufügen/zu aktualisieren!\nMöchtest du das Speicherverzeichnis des Scripts nun im Explorer öffnen?", "Information", "Nein", "Ja") == JOptionPane.YES_OPTION) {
                     try {
                         Runtime.getRuntime().exec("explorer.exe .\\");
                     } catch (Exception e) {

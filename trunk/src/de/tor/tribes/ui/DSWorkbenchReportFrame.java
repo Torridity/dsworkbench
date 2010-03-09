@@ -170,7 +170,10 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         });
 
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
-        // GlobalOptions.getHelpBroker().enableHelpKey(jSelectionFilterDialog.getRootPane(), "pages.attack_select_filter", GlobalOptions.getHelpBroker().getHelpSet());
+        GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.reports_view", GlobalOptions.getHelpBroker().getHelpSet());
+        GlobalOptions.getHelpBroker().enableHelpKey(jFilterDialog.getRootPane(), "pages.reports_view_filters", GlobalOptions.getHelpBroker().getHelpSet());
+        GlobalOptions.getHelpBroker().enableHelpKey(jCreateStatsFrame.getRootPane(), "pages.reports_view_stats", GlobalOptions.getHelpBroker().getHelpSet());
+
         // </editor-fold>
         jMoveToSetDialog.pack();
         jRenameReportSetDialog.pack();
@@ -948,7 +951,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
                 .addContainerGap())
         );
 
-        setTitle("Berichtdatenbank");
+        setTitle("Berichtsdatenbank");
 
         jPanel1.setBackground(new java.awt.Color(239, 235, 223));
 
@@ -993,6 +996,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
             }
         });
 
+        jTaskPane1.setOpaque(false);
         com.l2fprod.common.swing.PercentLayout percentLayout1 = new com.l2fprod.common.swing.PercentLayout();
         percentLayout1.setGap(14);
         percentLayout1.setOrientation(1);
@@ -1214,7 +1218,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
             ReportManagerTableModel.getSingleton().removeRow(row);
             jReportTable.revalidate();
         }
-        ReportManager.getSingleton().forceUpdate( ReportManagerTableModel.getSingleton().getActiveReportSet());
+        ReportManager.getSingleton().forceUpdate(ReportManagerTableModel.getSingleton().getActiveReportSet());
 
     }//GEN-LAST:event_fireRemoveReportsEvent
 
@@ -1772,7 +1776,6 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
     public void fireVillagesDraggedEvent(List<Village> pVillages, Point pDropLocation) {
         System.out.println(pVillages);
     }
-
 
     static class TribeStatResult {
 

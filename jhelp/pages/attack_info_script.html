@@ -30,12 +30,19 @@
         <td colspan="2">&nbsp;</td>
       </tr>
       <tr>
-        <td colspan="2">Dieses Userscript bietet euch die M&ouml;glichkeit, in <em>DS Workbench</em> geplante Angriffe im Spiel anzeigen zu lassen, um auch dort den &Uuml;berblick zu behalten. Die Erstellung des Scripts funktioniert &uuml;ber den in der <a href="attack_view.html#export_attack_info"><em>Angriffs&uuml;bersicht</em></a> beschriebenen Button. &Uuml;ber diesen Button werden alle markierten Angriffe verwendet und das Script '<strong><em>attack_info.user.js</em></strong>' wird direkt im <em>DS Workbench</em> Verzeichnis erstellt. Nun m&uuml;sst ihr das Script noch in euren Browser einf&uuml;gen. </td>
+        <td colspan="2">Dieses Userscript bietet euch die M&ouml;glichkeit, in <em>DS Workbench</em> geplante Angriffe im Spiel anzeigen zu lassen, um auch dort den &Uuml;berblick zu behalten. Die Erstellung des Scripts funktioniert &uuml;ber den in der <a href="attack_view.html#export_attack_info"><em>Angriffs&uuml;bersicht</em></a> beschriebenen Button. &Uuml;ber diesen Button werden alle markierten Angriffe verwendet und das Script '<strong><em>zz_attack_info.user.js</em></strong>' wird direkt im <em>DS Workbench</em> Verzeichnis erstellt. Nun m&uuml;sst ihr das Script noch in euren Browser einf&uuml;gen. </td>
       </tr>
       <tr>
         <td colspan="2">&nbsp;</td>
       </tr>
-	   <tr>
+	   <tr valign="middle">
+        <td style="padding:10px 10px 10px 10px;background-color:#E1D5BE" width="10%"><div align="center"><img src="../images/information.png" width="24" height="24"></div></td>
+        <td style="padding:10px 10px 10px 10px;background-color:#E1D5BE">Bevor ihr das Script in eurem Browser einf&uuml;gt achtet bitte darauf, dass bisherige Script-Versionen gel&ouml;scht wurden. Da das Userscript bis Version 2.0 den Namen <strong><em>'attack_info.user.js</em></strong>' hatte, w&uuml;rde es durch das neue Script nicht &uuml;berschrieben werden.</td>
+      </tr>
+	    <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+	  <tr>
         <td colspan="2"><h3 style="color:#953333">Installation unter Firefox</h3></td>
       </tr>
 	  <tr>
@@ -74,8 +81,20 @@
 	   <tr>
         <td colspan="2">&nbsp;</td>
       </tr>
+	   <tr>
+        <td colspan="2">Das Script greift an mehreren Stellen in die Darstellung im Spiel ein. An welchen Stellen dies geschieht k&ouml;nnt ihr beim Export festlegen. Hierf&uuml;r gibt es die folgenden Optionen: </td>
+      </tr>
+	   <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+	   <tr>
+        <td colspan="2"><img src="../images/screens/attack_script_settings.gif" width="416" height="278"></td>
+      </tr>
+	   <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
 	    <tr>
-        <td colspan="2">Das Script greift an mehreren Stellen in die Darstellung im Spiel ein. Zum einen werden in den &Uuml;bersichten <em>Kombiniert, Produktion, Truppen, Geb&auml;ude, Forschung und Gruppen</em> (alle nur PA) bzw. in der <em>&Uuml;bersicht aller D&ouml;rfer</em> (non-PA) farbige Symbole vor den Dorfnamen eingeblendet die angeben, ob aus einem Dorf Angriffe geplant sind oder nicht und ob noch Angriffe ausstehen. Ein Beispiel daf&uuml;r seht ihr im folgenden Screenshot: </td>
+        <td colspan="2"> Je nachdem was ihr de-/aktiviert seht ihr zum Beispiel in den &Uuml;bersichten <em>Kombiniert, Produktion, Truppen, Geb&auml;ude, Forschung und Gruppen</em> (alle nur PA) bzw. in der <em>&Uuml;bersicht aller D&ouml;rfer</em> (non-PA) farbige Symbole vor den Dorfnamen eingeblendet die angeben, ob aus einem Dorf Angriffe geplant sind oder nicht und ob noch Angriffe ausstehen. Ein Beispiel daf&uuml;r seht ihr im folgenden Screenshot: </td>
       </tr>
 	   <tr>
         <td colspan="2">&nbsp;</td>
@@ -92,8 +111,8 @@
           <span class="Stil1">Rot</span>: Geplanten Angriffe, die bereits alle abgeschickt sein sollen <br>
           <span class="Stil2">Gr&uuml;n</span>:  Geplante Angriffe, die noch abgeschickt werden m&uuml;ssen<br>
           <span class="Stil4">Braun</span>: Keine geplanten Angriffe <br>
-          <br></td>
-      </tr>
+          </td>
+	   </tr>
       <tr>
         <td colspan="2">Wenn ihr mit der Maus &uuml;ber ein Symbol fahrt wird zudem einen Tooltip angezeigt der euch sagt, wieviele Angriffe aus einem Dorf noch abgeschickt werden m&uuml;ssen. Klickt ihr auf das Symbol werden ihr direkt zum Versammlungsplatz des Dorfes weitergeleitet, bei dem euch die zweite &Auml;nderung der Darstellung erwartet, wie sie im folgenden gezeigt ist: </td>
       </tr>
@@ -107,7 +126,22 @@
         <td colspan="2">&nbsp;</td>
       </tr>
 	   <tr>
-        <td colspan="2">Das Userscript blendet Im Versammlungsplatz jeden Dorfes, aus dem Angriffe geplant wurden, eine zus&auml;tzliche Tabelle &uuml;ber der Tabelle der Truppenbewegungen ein. In dieser Tabelle seht ihr die Angriffe die noch abgeschickt werden, sowie die Angriffe die bereits abgelaufen sind. Eine automatische L&ouml;schung wird momentan <u>nicht</u> durchgef&uuml;hrt! </td>
+        <td colspan="2">Das Userscript blendet, sofern die entsprechende Option aktiviert ist, im Versammlungsplatz jeden Dorfes, aus dem Angriffe geplant wurden, eine zus&auml;tzliche Tabelle &uuml;ber der Tabelle der Truppenbewegungen ein. In dieser Tabelle seht ihr die Angriffe die noch abgeschickt werden, sowie die Angriffe die bereits abgelaufen sind. Eine automatische L&ouml;schung wird momentan <u>nicht</u> durchgef&uuml;hrt! <br>
+          Die beiden Darstellungsoptionen <em>Angriffe auf der Angriffsbest&auml;tigungsseite</em> anzeigen und <em>Angriffe in den Dorfinformationen anzeigen</em> erm&ouml;glichen es, auf der Seite mit der man einen Angriff letztendlich abschickt die oben erkennbare Tabelle zu sehen, um das Timing genau zu bestimmen bzw. per Klick auf ein Dorf der Karte direkt in den Dorfinformationen die anstehenden Angriffe zu sehen. <br>
+          Weiterhin          bewirken einige Optionen (<em>Angriffsvektoren einzeichnen</em>, <em>Angriffe im Kartenpopup einzeichnen</em>, <em>Anzahl der Angriffe auf der Karte anzeigen</em>) die Darstellung von Angriffsinformationen auf der Hauptkarte im Spiel, was wiefolgt aussehen kann:          </td>
+      </tr>
+	   <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+	   <tr>
+        <td colspan="2"><img src="../images/screens/attack_script_map.gif" width="635" height="336"></td>
+      </tr>
+	   <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+	   <tr>
+        <td colspan="2">Im gezeigten Screenshot seht ihr die Anzeige der Anzahl der Angriffe in den linken unteren Ecke des Dorfes. Angriffe auf ein Dorf werden rot gekennzeichnet, Angriffe aus einem Dorf gr&uuml;n. Die vordere Zahl gibt die Anzahl der abgeschickten Angriffe an, w&auml;hrend die hintere Zahl die Gesamtanzahl der Angriffe beinhaltet. Ebenso wie die F&auml;rbung der Anzahl der Angriffe werden die Angriffsvektoren mit einem Farbverlauf von Gr&uuml;n zu Rot vom Start  zum Ziel des Angriffes eingezeichnet. M&uuml;ssen sehr viele Angriffe dargestellt werden, so werden die Angriffsvektoren mit steigender Zahl der Angriffe blasser eingezeichnet, um die &Uuml;bersicht zu wahren. Dadurch werden maximal 15 Angriffsvektoren in einem Kartenausschnitt auf einmal dargestellt. <br>
+          Detailierte Informationen zu dem anstehenden Angriffen erh&auml;lt man zudem im Kartenpopup. Hierzu muss man mit der Maus in das K&auml;stchen zeigen, das die Anzahl der Angriffe darstellt. Dadurch wird das Kartenpopup so modifiziert, wie es im Screenshot zu sehen ist. F&auml;hrt man mit der Maus &uuml;ber die Dorfgrafik au&szlig;erhalb des K&auml;stchens, bekommt man das normale Popup ohne zus&auml;tzliche Informationen zu sehen.</td>
       </tr>
 	   <tr>
         <td colspan="2">&nbsp;</td>

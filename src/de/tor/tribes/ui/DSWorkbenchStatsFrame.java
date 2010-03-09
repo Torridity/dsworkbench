@@ -621,6 +621,7 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
         jChartPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jChartPanel.setLayout(new java.awt.BorderLayout());
 
+        jTaskPane1.setOpaque(false);
         com.l2fprod.common.swing.PercentLayout percentLayout1 = new com.l2fprod.common.swing.PercentLayout();
         percentLayout1.setGap(14);
         percentLayout1.setOrientation(1);
@@ -652,6 +653,7 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
         });
         jTaskPaneGroup1.getContentPane().add(jButton3);
 
+        jButton2.setBackground(new java.awt.Color(239, 235, 223));
         jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/beginning.png"))); // NOI18N
         jButton2.setToolTipText("Markierten Datenpunkt als Start des ausgewählten Bereichs verwenden");
         jButton2.setMaximumSize(new java.awt.Dimension(49, 33));
@@ -664,6 +666,7 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
         });
         jTaskPaneGroup1.getContentPane().add(jButton2);
 
+        jButton4.setBackground(new java.awt.Color(239, 235, 223));
         jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/end.png"))); // NOI18N
         jButton4.setToolTipText("Markierten Datenpunkt als Ende des ausgewählten Bereichs verwenden");
         jButton4.setMaximumSize(new java.awt.Dimension(49, 33));
@@ -676,6 +679,7 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
         });
         jTaskPaneGroup1.getContentPane().add(jButton4);
 
+        jButton5.setBackground(new java.awt.Color(239, 235, 223));
         jButton5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/delete_region.png"))); // NOI18N
         jButton5.setToolTipText("Ausgewählten Bereich löschen");
         jButton5.setMaximumSize(new java.awt.Dimension(49, 33));
@@ -688,6 +692,7 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
         });
         jTaskPaneGroup1.getContentPane().add(jButton5);
 
+        jExportToClipboardButton.setBackground(new java.awt.Color(239, 235, 223));
         jExportToClipboardButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/medal.png"))); // NOI18N
         jExportToClipboardButton.setToolTipText("Statistiken erzeugen");
         jExportToClipboardButton.setMaximumSize(new java.awt.Dimension(49, 33));
@@ -849,7 +854,7 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jTaskPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 657, Short.MAX_VALUE)
+                    .addComponent(jTaskPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 659, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)

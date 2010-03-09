@@ -1031,7 +1031,7 @@
     </Container>
   </NonVisualComponents>
   <Properties>
-    <Property name="title" type="java.lang.String" value="Berichtdatenbank"/>
+    <Property name="title" type="java.lang.String" value="Berichtsdatenbank"/>
   </Properties>
   <SyntheticProperties>
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
@@ -1212,6 +1212,9 @@
           </Events>
         </Component>
         <Container class="com.l2fprod.common.swing.JTaskPane" name="jTaskPane1">
+          <Properties>
+            <Property name="opaque" type="boolean" value="false"/>
+          </Properties>
           <SubComponents>
             <Container class="com.l2fprod.common.swing.JTaskPaneGroup" name="jTaskPaneGroup1">
               <Properties>

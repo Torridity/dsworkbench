@@ -1349,6 +1349,11 @@
       </SubComponents>
     </Container>
     <Container class="javax.swing.JDialog" name="jScriptExportDialog">
+      <Properties>
+        <Property name="title" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+          <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jScriptExportDialog.title" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+        </Property>
+      </Properties>
 
       <Layout>
         <DimensionLayout dim="0">
@@ -1370,7 +1375,7 @@
                       <Component id="jShowAttackOnMap" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Component id="jShowAttacksInOverview" alignment="0" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="107" max="32767" attributes="0"/>
+                  <EmptySpace pref="114" max="32767" attributes="0"/>
               </Group>
               <Group type="102" alignment="1" attributes="0">
                   <EmptySpace pref="210" max="32767" attributes="0"/>
@@ -1419,6 +1424,7 @@
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
               <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jDrawAttackVectors.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
             </Property>
+            <Property name="opaque" type="boolean" value="false"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JSpinner" name="jAttackVectorWidth">
@@ -1441,6 +1447,7 @@
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
               <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jShowAttacksInPopup.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
             </Property>
+            <Property name="opaque" type="boolean" value="false"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JCheckBox" name="jShowAttacksInVillageInfo">
@@ -1449,6 +1456,7 @@
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
               <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jShowAttacksInVillageInfo.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
             </Property>
+            <Property name="opaque" type="boolean" value="false"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JCheckBox" name="jShowAttacksOnConfirmPage">
@@ -1457,6 +1465,7 @@
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
               <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jShowAttacksOnConfirmPage.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
             </Property>
+            <Property name="opaque" type="boolean" value="false"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JCheckBox" name="jShowAttacksInPlace">
@@ -1465,6 +1474,7 @@
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
               <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jShowAttacksInPlace.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
             </Property>
+            <Property name="opaque" type="boolean" value="false"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JCheckBox" name="jShowAttackOnMap">
@@ -1473,6 +1483,7 @@
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
               <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jShowAttackOnMap.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
             </Property>
+            <Property name="opaque" type="boolean" value="false"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JCheckBox" name="jShowAttacksInOverview">
@@ -1481,6 +1492,7 @@
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
               <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jShowAttacksInOverview.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
             </Property>
+            <Property name="opaque" type="boolean" value="false"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JButton" name="jDoScriptExportButton">
@@ -1750,14 +1762,20 @@
         </Component>
         <Container class="javax.swing.JScrollPane" name="jScrollPane4">
           <Properties>
+            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+              <Border info="null"/>
+            </Property>
             <Property name="horizontalScrollBarPolicy" type="int" value="31"/>
+            <Property name="opaque" type="boolean" value="false"/>
           </Properties>
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
           <SubComponents>
             <Container class="com.l2fprod.common.swing.JTaskPane" name="jTaskPane1">
               <Properties>
-                <Property name="opaque" type="boolean" value="false"/>
+                <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                  <Color blue="df" green="eb" red="ef" type="rgb"/>
+                </Property>
               </Properties>
               <SubComponents>
                 <Container class="com.l2fprod.common.swing.JTaskPaneGroup" name="jTaskPaneGroup1">
@@ -2738,7 +2756,20 @@
                   </Parameters>
                 </CodeStatement>
                 <CodeStatement>
-                  <CodeExpression id="37_jTaskPane1">
+                  <CodeExpression id="35_percentLayout1"/>
+                  <StatementProvider type="CodeMethod">
+                    <CodeMethod name="setGap" class="com.l2fprod.common.swing.PercentLayout" parameterTypes="int"/>
+                  </StatementProvider>
+                  <Parameters>
+                    <CodeExpression id="37">
+                      <ExpressionOrigin>
+                        <Value type="int" value="14"/>
+                      </ExpressionOrigin>
+                    </CodeExpression>
+                  </Parameters>
+                </CodeStatement>
+                <CodeStatement>
+                  <CodeExpression id="38_jTaskPane1">
                     <CodeVariable name="jTaskPane1" type="8194" declaredType="com.l2fprod.common.swing.JTaskPane"/>
                     <ExpressionOrigin>
                       <ExpressionProvider type="ComponentRef">
@@ -2754,7 +2785,7 @@
                   </Parameters>
                 </CodeStatement>
                 <CodeStatement>
-                  <CodeExpression id="37_jTaskPane1"/>
+                  <CodeExpression id="38_jTaskPane1"/>
                   <StatementProvider type="CodeMethod">
                     <CodeMethod name="add" class="java.awt.Container" parameterTypes="java.awt.Component"/>
                   </StatementProvider>
@@ -2763,7 +2794,7 @@
                   </Parameters>
                 </CodeStatement>
                 <CodeStatement>
-                  <CodeExpression id="37_jTaskPane1"/>
+                  <CodeExpression id="38_jTaskPane1"/>
                   <StatementProvider type="CodeMethod">
                     <CodeMethod name="add" class="java.awt.Container" parameterTypes="java.awt.Component"/>
                   </StatementProvider>
@@ -2772,7 +2803,7 @@
                   </Parameters>
                 </CodeStatement>
                 <CodeStatement>
-                  <CodeExpression id="37_jTaskPane1"/>
+                  <CodeExpression id="38_jTaskPane1"/>
                   <StatementProvider type="CodeMethod">
                     <CodeMethod name="add" class="java.awt.Container" parameterTypes="java.awt.Component"/>
                   </StatementProvider>
@@ -2781,7 +2812,7 @@
                   </Parameters>
                 </CodeStatement>
                 <CodeStatement>
-                  <CodeExpression id="37_jTaskPane1"/>
+                  <CodeExpression id="38_jTaskPane1"/>
                   <StatementProvider type="CodeMethod">
                     <CodeMethod name="add" class="java.awt.Container" parameterTypes="java.awt.Component"/>
                   </StatementProvider>

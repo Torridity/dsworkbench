@@ -488,7 +488,7 @@
                   </Group>
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
-                      <Component id="jSettingsTabbedPane" pref="562" max="32767" attributes="0"/>
+                      <Component id="jSettingsTabbedPane" pref="568" max="32767" attributes="0"/>
                   </Group>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
@@ -545,7 +545,7 @@
                   <Group type="102" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jScrollPane3" pref="537" max="32767" attributes="0"/>
+                          <Component id="jScrollPane3" pref="543" max="32767" attributes="0"/>
                           <Group type="102" alignment="0" attributes="0">
                               <Group type="103" groupAlignment="0" max="-2" attributes="0">
                                   <Component id="jAccountNameLabel" max="32767" attributes="1"/>
@@ -582,7 +582,7 @@
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jCheckAccountButton" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="241" max="32767" attributes="0"/>
+                      <EmptySpace pref="228" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -695,16 +695,16 @@
                                       </Group>
                                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="1" attributes="0">
-                                          <Component id="jDownloadDataButton" pref="229" max="32767" attributes="0"/>
-                                          <Component id="jSelectServerButton" alignment="0" pref="229" max="32767" attributes="0"/>
+                                          <Component id="jDownloadDataButton" pref="235" max="32767" attributes="0"/>
+                                          <Component id="jSelectServerButton" alignment="0" pref="235" max="32767" attributes="0"/>
                                       </Group>
                                   </Group>
-                                  <Component id="jScrollPane1" alignment="0" pref="537" max="32767" attributes="0"/>
+                                  <Component id="jScrollPane1" alignment="0" pref="543" max="32767" attributes="0"/>
                               </Group>
                           </Group>
                           <Group type="102" alignment="1" attributes="0">
                               <EmptySpace min="-2" pref="318" max="-2" attributes="0"/>
-                              <Component id="jDownloadLiveDataButton" pref="229" max="32767" attributes="0"/>
+                              <Component id="jDownloadLiveDataButton" pref="235" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
@@ -729,7 +729,7 @@
                       <EmptySpace min="-2" max="-2" attributes="0"/>
                       <Component id="jDownloadLiveDataButton" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
-                      <Component id="jScrollPane1" pref="338" max="32767" attributes="0"/>
+                      <Component id="jScrollPane1" pref="341" max="32767" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="jCheckForUpdatesBox" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
@@ -770,6 +770,7 @@
                   <Color blue="df" green="eb" red="ef" type="rgb"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Server ausw&#xe4;hlen"/>
+                <Property name="toolTipText" type="java.lang.String" value="Daten des markierten Servers von der Festplatte laden"/>
               </Properties>
               <Events>
                 <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fireSelectServerEvent"/>
@@ -797,6 +798,7 @@
                   <Color blue="df" green="eb" red="ef" type="rgb"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Daten aktualisieren"/>
+                <Property name="toolTipText" type="java.lang.String" value="Daten des markierten Servers aktualisieren"/>
               </Properties>
               <Events>
                 <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fireDownloadDataEvent"/>
@@ -818,7 +820,7 @@
                   <Color blue="df" green="eb" red="ef" type="rgb"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Daten von www.die-st&#xe4;mme.de"/>
-                <Property name="toolTipText" type="java.lang.String" value="Daten direkt von den DS Servern laden"/>
+                <Property name="toolTipText" type="java.lang.String" value="Daten des markierten Servers direkt von den DS Servern laden"/>
               </Properties>
               <Events>
                 <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fireDownloadLiveDataEvent"/>
@@ -870,7 +872,7 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jPanel1" max="32767" attributes="1"/>
+                          <Component id="jPanel1" pref="127" max="32767" attributes="1"/>
                           <Component id="jPanel2" alignment="0" min="-2" max="-2" attributes="1"/>
                       </Group>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
@@ -945,7 +947,7 @@
                 </Component>
                 <Component class="javax.swing.JCheckBox" name="jShowBarbarianBox">
                   <Properties>
-                    <Property name="toolTipText" type="java.lang.String" value="Anzeige der Eignung von D&#xf6;rfern abh&#xe4;ngig von den darin vorhandenen Truppen"/>
+                    <Property name="toolTipText" type="java.lang.String" value="Anzeige von Barbarend&#xf6;rfern auf der Karte"/>
                     <Property name="opaque" type="boolean" value="false"/>
                   </Properties>
                   <Events>
@@ -1057,9 +1059,10 @@
             <Component class="javax.swing.JComboBox" name="jDefaultMarkBox">
               <Properties>
                 <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-                  <StringArray count="2">
-                    <StringItem index="0" value="Wei&#xdf;"/>
+                  <StringArray count="3">
+                    <StringItem index="0" value="DS 6.0"/>
                     <StringItem index="1" value="Rot"/>
+                    <StringItem index="2" value="Wei&#xdf;"/>
                   </StringArray>
                 </Property>
                 <Property name="toolTipText" type="java.lang.String" value="Standardfarbe von Dorfmarkierungen"/>
@@ -1086,24 +1089,28 @@
                 <Component class="javax.swing.JCheckBox" name="jShowPopupRanks">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Erweiterte Informationen anzeigen"/>
+                    <Property name="toolTipText" type="java.lang.String" value="Anzeige von Gesamtpunkten und Platzierungen f&#xfc;r Spieler und Stamm"/>
                     <Property name="opaque" type="boolean" value="false"/>
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JCheckBox" name="jShowPopupConquers">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Besiegte Gegner anzeigen"/>
+                    <Property name="toolTipText" type="java.lang.String" value="Besiegte Gegner des Spielers im Angriff und der Verteididung anzeigen"/>
                     <Property name="opaque" type="boolean" value="false"/>
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JCheckBox" name="jShowPopupMoral">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Moral anzeigen"/>
+                    <Property name="toolTipText" type="java.lang.String" value="Moral anzeigen"/>
                     <Property name="opaque" type="boolean" value="false"/>
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JCheckBox" name="jShowPopupFarmSpace">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Bauernhof F&#xfc;llstand anzeigen"/>
+                    <Property name="toolTipText" type="java.lang.String" value="F&#xfc;llstand des Bauernhofes eines Dorfes anzeigen"/>
                     <Property name="opaque" type="boolean" value="false"/>
                   </Properties>
                 </Component>
@@ -1133,6 +1140,7 @@
                     <Component class="javax.swing.JTextField" name="jMaxFarmSpace">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="20000"/>
+                        <Property name="toolTipText" type="java.lang.String" value="Anzahl der durch Truppen belegten Bauernhofpl&#xe4;tze, bei der ein Dorf zu 100% gef&#xfc;llt ist"/>
                       </Properties>
                     </Component>
                   </SubComponents>
@@ -1170,7 +1178,7 @@
                                       <Component id="jAttackMovementLabel" alignment="0" max="32767" attributes="1"/>
                                       <Component id="jLabel9" alignment="0" max="32767" attributes="1"/>
                                   </Group>
-                                  <Component id="jLabel21" pref="240" max="32767" attributes="1"/>
+                                  <Component id="jLabel21" pref="242" max="32767" attributes="1"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
@@ -1180,12 +1188,12 @@
                           </Group>
                       </Group>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jScrollPane2" pref="272" max="32767" attributes="2"/>
-                          <Component id="jShowLiveCountdown" pref="272" max="32767" attributes="0"/>
-                          <Component id="jDrawAttacksByDefaultBox" alignment="0" pref="272" max="32767" attributes="1"/>
-                          <Component id="jShowAttackMovementBox" alignment="1" pref="272" max="32767" attributes="1"/>
+                          <Component id="jScrollPane2" pref="274" max="32767" attributes="2"/>
+                          <Component id="jShowLiveCountdown" pref="274" max="32767" attributes="0"/>
+                          <Component id="jDrawAttacksByDefaultBox" alignment="0" pref="274" max="32767" attributes="1"/>
+                          <Component id="jShowAttackMovementBox" alignment="1" pref="274" max="32767" attributes="1"/>
                       </Group>
-                      <EmptySpace pref="31" max="32767" attributes="0"/>
+                      <EmptySpace pref="33" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -1329,7 +1337,7 @@
                       <EmptySpace min="-2" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
-                              <Component id="jPanel4" pref="537" max="32767" attributes="0"/>
+                              <Component id="jPanel4" pref="543" max="32767" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
                           <Group type="102" alignment="0" attributes="0">
@@ -1345,10 +1353,10 @@
                                       </Group>
                                       <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="jProxyPassword" alignment="0" pref="212" max="32767" attributes="2"/>
-                                          <Component id="jProxyUser" alignment="0" pref="212" max="32767" attributes="2"/>
-                                          <Component id="jProxyTypeChooser" alignment="0" pref="212" max="32767" attributes="2"/>
-                                          <Component id="jProxyHost" alignment="0" pref="212" max="32767" attributes="2"/>
+                                          <Component id="jProxyPassword" alignment="0" pref="217" max="32767" attributes="2"/>
+                                          <Component id="jProxyUser" alignment="0" pref="217" max="32767" attributes="2"/>
+                                          <Component id="jProxyTypeChooser" alignment="0" pref="217" max="32767" attributes="2"/>
+                                          <Component id="jProxyHost" alignment="0" pref="217" max="32767" attributes="2"/>
                                           <Component id="jRefeshNetworkButton" alignment="1" min="-2" max="-2" attributes="0"/>
                                       </Group>
                                       <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
@@ -1397,7 +1405,7 @@
                       <Component id="jRefeshNetworkButton" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="jPanel4" min="-2" pref="97" max="-2" attributes="0"/>
-                      <EmptySpace pref="137" max="32767" attributes="0"/>
+                      <EmptySpace pref="138" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -1556,7 +1564,7 @@
                               <Group type="102" alignment="0" attributes="0">
                                   <Component id="jLabel5" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                  <Component id="jBrowserPath" pref="363" max="32767" attributes="0"/>
+                                  <Component id="jBrowserPath" pref="369" max="32767" attributes="0"/>
                                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                                   <Component id="jButton1" min="-2" max="-2" attributes="0"/>
                               </Group>
@@ -1666,7 +1674,7 @@
                       <Component id="jPanel7" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jPanel8" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="219" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="222" max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -1694,9 +1702,9 @@
                           </Group>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="jFooterPath" pref="373" max="32767" attributes="1"/>
-                              <Component id="jBlockPath" alignment="0" pref="373" max="32767" attributes="1"/>
-                              <Component id="jHeaderPath" alignment="0" pref="373" max="32767" attributes="1"/>
+                              <Component id="jFooterPath" pref="379" max="32767" attributes="1"/>
+                              <Component id="jBlockPath" alignment="0" pref="379" max="32767" attributes="1"/>
+                              <Component id="jHeaderPath" alignment="0" pref="379" max="32767" attributes="1"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
@@ -1947,7 +1955,7 @@
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="jLabel20" min="-2" max="-2" attributes="0"/>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                          <Component id="jScrollPane4" pref="451" max="32767" attributes="0"/>
+                          <Component id="jScrollPane4" pref="457" max="32767" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
                   </Group>
@@ -2046,7 +2054,7 @@
                               </Group>
                           </Group>
                       </Group>
-                      <EmptySpace pref="130" max="32767" attributes="0"/>
+                      <EmptySpace pref="134" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -2262,6 +2270,7 @@
           <Color blue="df" green="eb" red="ef" type="rgb"/>
         </Property>
         <Property name="text" type="java.lang.String" value="OK"/>
+        <Property name="toolTipText" type="java.lang.String" value="Einstellungen &#xfc;bernehmen und speichern"/>
         <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
           <Dimension value="[85, 23]"/>
         </Property>
@@ -2282,6 +2291,7 @@
           <Color blue="df" green="eb" red="ef" type="rgb"/>
         </Property>
         <Property name="text" type="java.lang.String" value="Abbrechen"/>
+        <Property name="toolTipText" type="java.lang.String" value="Einstellungen verwerfen"/>
       </Properties>
       <Events>
         <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fireCloseEvent"/>
@@ -2293,7 +2303,7 @@
           <Color blue="df" green="eb" red="ef" type="rgb"/>
         </Property>
         <Property name="text" type="java.lang.String" value="Neuen Account erstellen"/>
-        <Property name="toolTipText" type="java.lang.String" value="DS Workbench Account erstellen"/>
+        <Property name="toolTipText" type="java.lang.String" value="Einen neuen DS Workbench Account erstellen"/>
       </Properties>
       <Events>
         <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fireCreateAccountEvent"/>
@@ -2305,6 +2315,7 @@
           <Color blue="df" green="eb" red="ef" type="rgb"/>
         </Property>
         <Property name="text" type="java.lang.String" value="Passwort &#xe4;ndern"/>
+        <Property name="toolTipText" type="java.lang.String" value="Passwort  f&#xfc;r deinen DS Workbench Account &#xe4;ndern"/>
       </Properties>
       <Events>
         <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fireChangePasswordEvent"/>

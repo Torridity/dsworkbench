@@ -13,7 +13,7 @@ import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.mark.MarkerManager;
 
 /**
- *
+ * @TODO (DIFF) Added enemy marker color
  * @author  Jejkal
  */
 public class MarkerAddFrame extends javax.swing.JFrame {
@@ -52,6 +52,7 @@ public class MarkerAddFrame extends javax.swing.JFrame {
         jAllyName = new javax.swing.JLabel();
         jNapButton = new javax.swing.JButton();
         jBndButton = new javax.swing.JButton();
+        jEnemyButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
@@ -99,6 +100,7 @@ public class MarkerAddFrame extends javax.swing.JFrame {
 
         jNapButton.setBackground(new java.awt.Color(127, 0, 127));
         jNapButton.setForeground(new java.awt.Color(255, 255, 255));
+        jNapButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/nap.png"))); // NOI18N
         jNapButton.setText(bundle.getString("MarkerAddFrame.jNapButton.text")); // NOI18N
         jNapButton.setToolTipText(bundle.getString("MarkerAddFrame.jNapButton.toolTipText")); // NOI18N
         jNapButton.setMargin(new java.awt.Insets(2, 2, 2, 2));
@@ -110,10 +112,27 @@ public class MarkerAddFrame extends javax.swing.JFrame {
 
         jBndButton.setBackground(new java.awt.Color(0, 160, 244));
         jBndButton.setForeground(new java.awt.Color(255, 255, 255));
+        jBndButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/handshake.png"))); // NOI18N
         jBndButton.setText(bundle.getString("MarkerAddFrame.jBndButton.text")); // NOI18N
         jBndButton.setToolTipText(bundle.getString("MarkerAddFrame.jBndButton.toolTipText")); // NOI18N
-        jBndButton.setMargin(new java.awt.Insets(2, 2, 2, 2));
+        jBndButton.setIconTextGap(0);
+        jBndButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
         jBndButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireSetDiplomacyColorEvent(evt);
+            }
+        });
+
+        jEnemyButton.setBackground(new java.awt.Color(255, 0, 0));
+        jEnemyButton.setForeground(new java.awt.Color(255, 255, 255));
+        jEnemyButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/enemy.png"))); // NOI18N
+        jEnemyButton.setText(bundle.getString("MarkerAddFrame.jEnemyButton.text")); // NOI18N
+        jEnemyButton.setToolTipText(bundle.getString("MarkerAddFrame.jEnemyButton.toolTipText")); // NOI18N
+        jEnemyButton.setMargin(new java.awt.Insets(2, 2, 2, 2));
+        jEnemyButton.setMaximumSize(new java.awt.Dimension(31, 23));
+        jEnemyButton.setMinimumSize(new java.awt.Dimension(31, 23));
+        jEnemyButton.setPreferredSize(new java.awt.Dimension(31, 23));
+        jEnemyButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireSetDiplomacyColorEvent(evt);
             }
@@ -126,21 +145,23 @@ public class MarkerAddFrame extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jTribeColorPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 238, Short.MAX_VALUE)
+                    .addComponent(jTribeColorPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 275, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jMarkTribe)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jTribeName, javax.swing.GroupLayout.DEFAULT_SIZE, 125, Short.MAX_VALUE))
+                        .addComponent(jTribeName, javax.swing.GroupLayout.DEFAULT_SIZE, 162, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jMarkAlly)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jAllyName, javax.swing.GroupLayout.DEFAULT_SIZE, 125, Short.MAX_VALUE))
+                        .addComponent(jAllyName, javax.swing.GroupLayout.DEFAULT_SIZE, 162, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jCancelButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 102, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 139, Short.MAX_VALUE)
                         .addComponent(jOKButton))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jAllyColorPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 164, Short.MAX_VALUE)
+                        .addComponent(jAllyColorPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jEnemyButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jNapButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -162,14 +183,17 @@ public class MarkerAddFrame extends javax.swing.JFrame {
                     .addComponent(jAllyName))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jBndButton, javax.swing.GroupLayout.DEFAULT_SIZE, 25, Short.MAX_VALUE)
-                        .addComponent(jNapButton, javax.swing.GroupLayout.DEFAULT_SIZE, 23, Short.MAX_VALUE))
-                    .addComponent(jAllyColorPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jCancelButton)
-                    .addComponent(jOKButton))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(jBndButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jNapButton))
+                            .addComponent(jAllyColorPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jCancelButton)
+                            .addComponent(jOKButton)))
+                    .addComponent(jEnemyButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
@@ -243,18 +267,20 @@ private void jCancelButtonfireAbortMarkEvent(java.awt.event.MouseEvent evt) {//G
 }//GEN-LAST:event_jCancelButtonfireAbortMarkEvent
 
 private void fireSetDiplomacyColorEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSetDiplomacyColorEvent
-    if(evt.getSource() == jNapButton){
-        mAllyColorChooser.setColor(new Color(127,0,127));
-    }else{
-        mAllyColorChooser.setColor(new Color(0,160,244));
+    if (evt.getSource() == jNapButton) {
+        mAllyColorChooser.setColor(new Color(127, 0, 127));
+    } else if (evt.getSource() == jBndButton) {
+        mAllyColorChooser.setColor(new Color(0, 160, 244));
+    } else {
+        mAllyColorChooser.setColor(Color.RED);
     }
 }//GEN-LAST:event_fireSetDiplomacyColorEvent
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel jAllyColorPanel;
     private javax.swing.JLabel jAllyName;
     private javax.swing.JButton jBndButton;
     private javax.swing.JButton jCancelButton;
+    private javax.swing.JButton jEnemyButton;
     private javax.swing.JCheckBox jMarkAlly;
     private javax.swing.JCheckBox jMarkTribe;
     private javax.swing.JButton jNapButton;

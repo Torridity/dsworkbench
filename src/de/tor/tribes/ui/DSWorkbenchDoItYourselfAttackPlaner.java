@@ -452,6 +452,7 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
                 .addContainerGap())
         );
 
+        jTaskPane1.setOpaque(false);
         com.l2fprod.common.swing.PercentLayout percentLayout5 = new com.l2fprod.common.swing.PercentLayout();
         percentLayout5.setGap(14);
         percentLayout5.setOrientation(1);

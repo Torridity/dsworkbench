@@ -354,6 +354,7 @@ public class SettingsPanel extends javax.swing.JPanel {
         jLabel1.setText("Startdatum");
 
         jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/remove.gif"))); // NOI18N
+        jButton2.setToolTipText("Gewählten Zeitrahmen entfernen");
         jButton2.setMaximumSize(new java.awt.Dimension(23, 23));
         jButton2.setMinimumSize(new java.awt.Dimension(23, 23));
         jButton2.setPreferredSize(new java.awt.Dimension(23, 23));
@@ -368,6 +369,7 @@ public class SettingsPanel extends javax.swing.JPanel {
         jLabel2.setText("Abschickzeitfenster");
 
         jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/add.gif"))); // NOI18N
+        jButton1.setToolTipText("Abschickzeitrahmen hinzufügen");
         jButton1.setMaximumSize(new java.awt.Dimension(36, 36));
         jButton1.setMinimumSize(new java.awt.Dimension(36, 36));
         jButton1.setPreferredSize(new java.awt.Dimension(36, 36));
@@ -380,6 +382,7 @@ public class SettingsPanel extends javax.swing.JPanel {
         frameValidityGroup.add(jEveryDayValid);
         jEveryDayValid.setSelected(true);
         jEveryDayValid.setText("Jeder Tag");
+        jEveryDayValid.setToolTipText("Abschickzeitrahmen für jeden Tag gültig");
         jEveryDayValid.setOpaque(false);
         jEveryDayValid.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
@@ -398,13 +401,16 @@ public class SettingsPanel extends javax.swing.JPanel {
 
         jLabel7.setText("Nur Spieler");
 
+        jTribeTimeFrameBox.setToolTipText("Spieler, für den der Abschickzeitrahmen gilt");
         jTribeTimeFrameBox.setMaximumSize(new java.awt.Dimension(150, 22));
         jTribeTimeFrameBox.setMinimumSize(new java.awt.Dimension(150, 22));
         jTribeTimeFrameBox.setPreferredSize(new java.awt.Dimension(150, 22));
 
         jValidAtDay.setModel(new javax.swing.SpinnerDateModel());
+        jValidAtDay.setToolTipText("Festes Datum, an dem der Abschickzeitrahmen gilt");
         jValidAtDay.setEnabled(false);
 
+        jSendTime.setToolTipText("Datum zu dem der erste Angriff frühestens abgeschickt werden soll");
         jSendTime.setOpaque(false);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -477,6 +483,9 @@ public class SettingsPanel extends javax.swing.JPanel {
 
         jLabel4.setText("Ankunftszeitrahmen");
 
+        jArriveTimeFrame.setToolTipText("Ankunftszeitrahmen bei variabler Ankunftszeit");
+
+        jArriveTime.setToolTipText("Ankunftszeit der Truppen");
         jArriveTime.setOpaque(false);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -514,7 +523,7 @@ public class SettingsPanel extends javax.swing.JPanel {
         jLabel5.setText("Angriffe pro Dorf");
 
         jAttackPerVillageSpinner.setModel(new javax.swing.SpinnerNumberModel(1, 1, 100, 1));
-        jAttackPerVillageSpinner.setToolTipText("Maximale Anzahl von Angriffen die einem Zieldorf zugewiesen wird");
+        jAttackPerVillageSpinner.setToolTipText("<html>Maximale Anzahl von Angriffen die einem Zieldorf zugewiesen wird.<br/>\nDiese Einstellung kann jedoch unter Ziele für jedes Zieldorf getrennt festgelegt werden.\n</html>");
         jAttackPerVillageSpinner.setMaximumSize(new java.awt.Dimension(100, 20));
         jAttackPerVillageSpinner.setMinimumSize(new java.awt.Dimension(100, 20));
         jAttackPerVillageSpinner.setPreferredSize(new java.awt.Dimension(100, 20));

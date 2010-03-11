@@ -159,9 +159,17 @@ public class TimeFrame {
         arriveEnd.set(Calendar.MINUTE, 59);
         arriveEnd.set(Calendar.SECOND, 59);
         arriveEnd.set(Calendar.MILLISECOND, 999);
+        boolean first = true;
 
         while (!l.isEmpty()) {
             long s = l.remove(0);
+            if (first) {
+                //use start time in first iteration
+                if (s < start) {
+                    s = start;
+                    first = false;
+                }
+            }
             long e = l.remove(0);
             //System.out.println("Start: " + f.format(new Date(s)));
             //System.out.println("End: " + f.format(new Date(e)));

@@ -172,8 +172,10 @@ public class ReportParser {
                     result.setBuildingAfter(buildingAfter);
                 } catch (Exception e) {
                 }
-            } else if (line.startsWith("Veränderung der Zustimmung")) {
+            } else if (line.startsWith("Veränderung der Zustimmung") || line.startsWith("Zustimmung:")) {
                 line = line.replaceAll("Veränderung der Zustimmung", "").trim().replaceAll("Zustimmung gesunken von", "").replaceAll("auf", "");
+                //version 6.0
+                line = line.replaceAll("Zustimmung:", "").replaceAll("Gesunken von", "");
                 StringTokenizer acceptT = new StringTokenizer(line, " \t");
                 try {
                     result.setAcceptanceBefore(Byte.parseByte(acceptT.nextToken()));

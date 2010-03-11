@@ -1085,11 +1085,16 @@ public class MapRenderer extends Thread {
         Color DEFAULT = null;
         if (pDrawStandard) {
             try {
-                if (Integer.parseInt(GlobalOptions.getProperty("default.mark")) == 1) {
+                int mark = Integer.parseInt(GlobalOptions.getProperty("default.mark"));
+                if (mark == 0) {
+                    DEFAULT = Constants.DS_DEFAULT_MARKER;
+                } else if (mark == 1) {
                     DEFAULT = Color.RED;
+                } else if (mark == 2) {
+                    DEFAULT = Color.WHITE;
                 }
             } catch (Exception e) {
-                DEFAULT = Color.WHITE;
+                DEFAULT = Constants.DS_DEFAULT_MARKER;
             }
         }
         g2d.setColor(new Color(0, 0, 0, 0));
@@ -2129,6 +2134,7 @@ public class MapRenderer extends Thread {
                             }
                             popupVillage = mouseVillage;
                             JToolTip tt = new JToolTip();
+
                             tt.setTipText(popupVillage.getExtendedTooltip());
                             PopupFactory popupFactory = PopupFactory.getSharedInstance();
                             infoPopup = popupFactory.getPopup(MapPanel.getSingleton(), tt, MouseInfo.getPointerInfo().getLocation().x + 10, MouseInfo.getPointerInfo().getLocation().y + 10);

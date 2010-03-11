@@ -351,6 +351,9 @@
           </SubComponents>
         </Container>
         <Container class="com.l2fprod.common.swing.JTaskPane" name="jTaskPane1">
+          <Properties>
+            <Property name="opaque" type="boolean" value="false"/>
+          </Properties>
           <SubComponents>
             <Container class="com.l2fprod.common.swing.JTaskPaneGroup" name="jTaskPaneGroup1">
               <Properties>

@@ -10,6 +10,7 @@ import de.tor.tribes.php.ScreenUploadInterface;
 import de.tor.tribes.types.Marker;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.util.BrowserCommandSender;
+import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.ServerSettings;
@@ -813,13 +814,18 @@ class MinimapRepaintThread extends Thread {
             showBarbarian = Boolean.parseBoolean(GlobalOptions.getProperty("show.barbarian"));
         } catch (Exception e) {
         }
-        Color DEFAULT = Color.WHITE;
+        Color DEFAULT = Constants.DS_DEFAULT_MARKER;
         try {
-            if (Integer.parseInt(GlobalOptions.getProperty("default.mark")) == 1) {
+            int mark = Integer.parseInt(GlobalOptions.getProperty("default.mark"));
+            if (mark == 0) {
+                DEFAULT = Constants.DS_DEFAULT_MARKER;
+            } else if (mark == 1) {
                 DEFAULT = Color.RED;
+            } else if (mark == 2) {
+                DEFAULT = Color.WHITE;
             }
         } catch (Exception e) {
-            DEFAULT = Color.WHITE;
+            DEFAULT = Constants.DS_DEFAULT_MARKER;
         }
 
         double wField = ServerSettings.getSingleton().getMapDimension().getWidth() / (double) visiblePart.width;

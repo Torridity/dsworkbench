@@ -1418,7 +1418,7 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Algorit
                         .addComponent(jSetSourceNoFakeButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jSetSourceFakeButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 303, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 306, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -1583,6 +1583,7 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Algorit
         jFilterTargetButton.setBackground(new java.awt.Color(239, 235, 223));
         jFilterTargetButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/filter_off.png"))); // NOI18N
         jFilterTargetButton.setText(bundle.getString("TribeTribeAttackFrame.jFilterTargetButton.text")); // NOI18N
+        jFilterTargetButton.setToolTipText(bundle.getString("TribeTribeAttackFrame.jFilterTargetButton.toolTipText")); // NOI18N
         jFilterTargetButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireFilterByAttackPlansEvent(evt);
@@ -1590,10 +1591,15 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Algorit
         });
 
         jAllTargetsComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Alle", ">= 3.000 Punkte", ">= 5.000 Punkte", ">= 7.000 Punkte", " ", " ", " " }));
+        jAllTargetsComboBox.setToolTipText(bundle.getString("TribeTribeAttackFrame.jAllTargetsComboBox.toolTipText")); // NOI18N
 
         jSetTargetNoFakeButton.setBackground(new java.awt.Color(239, 235, 223));
         jSetTargetNoFakeButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/no_fake.png"))); // NOI18N
         jSetTargetNoFakeButton.setText(bundle.getString("TribeTribeAttackFrame.jSetTargetNoFakeButton.text")); // NOI18N
+        jSetTargetNoFakeButton.setToolTipText(bundle.getString("TribeTribeAttackFrame.jSetTargetNoFakeButton.toolTipText")); // NOI18N
+        jSetTargetNoFakeButton.setMaximumSize(new java.awt.Dimension(57, 33));
+        jSetTargetNoFakeButton.setMinimumSize(new java.awt.Dimension(57, 33));
+        jSetTargetNoFakeButton.setPreferredSize(new java.awt.Dimension(57, 33));
         jSetTargetNoFakeButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireChangeFakeStateEvent(evt);
@@ -1603,6 +1609,7 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Algorit
         jSetTargetFakeButton.setBackground(new java.awt.Color(239, 235, 223));
         jSetTargetFakeButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/fake.png"))); // NOI18N
         jSetTargetFakeButton.setText(bundle.getString("TribeTribeAttackFrame.jSetTargetFakeButton.text")); // NOI18N
+        jSetTargetFakeButton.setToolTipText(bundle.getString("TribeTribeAttackFrame.jSetTargetFakeButton.toolTipText")); // NOI18N
         jSetTargetFakeButton.setMaximumSize(new java.awt.Dimension(57, 33));
         jSetTargetFakeButton.setMinimumSize(new java.awt.Dimension(57, 33));
         jSetTargetFakeButton.setPreferredSize(new java.awt.Dimension(57, 33));
@@ -1654,7 +1661,7 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Algorit
                 .addGroup(jTargetPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jTargetPanelLayout.createSequentialGroup()
-                        .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 761, Short.MAX_VALUE)
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 759, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jTargetPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jIncrementAttackCountButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -1681,7 +1688,7 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Algorit
                     .addGroup(jTargetPanelLayout.createSequentialGroup()
                         .addComponent(jFilterTargetButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jSetTargetNoFakeButton)
+                        .addComponent(jSetTargetNoFakeButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jSetTargetFakeButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -1690,7 +1697,7 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Algorit
                         .addComponent(jDecrementAttackCountButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jResetAttackCountEvent))
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 387, Short.MAX_VALUE))
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 390, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)

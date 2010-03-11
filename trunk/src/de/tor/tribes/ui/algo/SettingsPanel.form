@@ -157,6 +157,7 @@
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/res/remove.gif"/>
             </Property>
+            <Property name="toolTipText" type="java.lang.String" value="Gew&#xe4;hlten Zeitrahmen entfernen"/>
             <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
               <Dimension value="[23, 23]"/>
             </Property>
@@ -199,6 +200,7 @@
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/res/add.gif"/>
             </Property>
+            <Property name="toolTipText" type="java.lang.String" value="Abschickzeitrahmen hinzuf&#xfc;gen"/>
             <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
               <Dimension value="[36, 36]"/>
             </Property>
@@ -220,6 +222,7 @@
             </Property>
             <Property name="selected" type="boolean" value="true"/>
             <Property name="text" type="java.lang.String" value="Jeder Tag"/>
+            <Property name="toolTipText" type="java.lang.String" value="Abschickzeitrahmen f&#xfc;r jeden Tag g&#xfc;ltig"/>
             <Property name="opaque" type="boolean" value="false"/>
           </Properties>
           <Events>
@@ -248,6 +251,7 @@
             <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
               <StringArray count="0"/>
             </Property>
+            <Property name="toolTipText" type="java.lang.String" value="Spieler, f&#xfc;r den der Abschickzeitrahmen gilt"/>
             <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
               <Dimension value="[150, 22]"/>
             </Property>
@@ -264,11 +268,13 @@
             <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.editors2.SpinnerModelEditor">
               <SpinnerModel initial="now" stepSize="5" type="date"/>
             </Property>
+            <Property name="toolTipText" type="java.lang.String" value="Festes Datum, an dem der Abschickzeitrahmen gilt"/>
             <Property name="enabled" type="boolean" value="false"/>
           </Properties>
         </Component>
         <Component class="de.tor.tribes.ui.components.DateTimeField" name="jSendTime">
           <Properties>
+            <Property name="toolTipText" type="java.lang.String" value="Datum zu dem der erste Angriff fr&#xfc;hestens abgeschickt werden soll"/>
             <Property name="opaque" type="boolean" value="false"/>
           </Properties>
         </Component>
@@ -339,9 +345,13 @@
           </Properties>
         </Component>
         <Component class="com.visutools.nav.bislider.BiSlider" name="jArriveTimeFrame">
+          <Properties>
+            <Property name="toolTipText" type="java.lang.String" value="Ankunftszeitrahmen bei variabler Ankunftszeit"/>
+          </Properties>
         </Component>
         <Component class="de.tor.tribes.ui.components.DateTimeField" name="jArriveTime">
           <Properties>
+            <Property name="toolTipText" type="java.lang.String" value="Ankunftszeit der Truppen"/>
             <Property name="opaque" type="boolean" value="false"/>
           </Properties>
         </Component>
@@ -422,7 +432,7 @@
             <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.editors2.SpinnerModelEditor">
               <SpinnerModel initial="1" maximum="100" minimum="1" numberType="java.lang.Integer" stepSize="1" type="number"/>
             </Property>
-            <Property name="toolTipText" type="java.lang.String" value="Maximale Anzahl von Angriffen die einem Zieldorf zugewiesen wird"/>
+            <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;Maximale Anzahl von Angriffen die einem Zieldorf zugewiesen wird.&lt;br/&gt;&#xa;Diese Einstellung kann jedoch unter Ziele f&#xfc;r jedes Zieldorf getrennt festgelegt werden.&#xa;&lt;/html&gt;"/>
             <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
               <Dimension value="[100, 20]"/>
             </Property>

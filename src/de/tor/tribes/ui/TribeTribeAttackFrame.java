@@ -2359,7 +2359,7 @@ private void fireGetTargetVillagesFromClipboardEvent(java.awt.event.MouseEvent e
             for (Village v : villages) {
                 Tribe victim = v.getTribe();
                 if (victim != null) {
-                    ((DefaultTableModel) jVictimTable.getModel()).addRow(new Object[]{victim, v});
+                    ((DefaultTableModel) jVictimTable.getModel()).addRow(new Object[]{victim, v, jMarkTargetAsFake.isSelected(), mSettingsPanel.getAttacksPerVillage()});
                 }
 
             }

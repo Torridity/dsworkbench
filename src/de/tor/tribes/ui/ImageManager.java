@@ -236,7 +236,7 @@ public class ImageManager {
 
     public static Cursor createVillageDragCursor(int pVillageCount) {
         try {
-            Image i = ImageIO.read(new File("H:/Software/DSWorkbench/graphics/cursors/village_drag.png"));
+            Image i = ImageIO.read(new File("graphics/cursors/village_drag.png"));
             i.getGraphics().setColor(Color.BLACK);
             i.getGraphics().drawString(Integer.toString(pVillageCount), 5, 12);
             return Toolkit.getDefaultToolkit().createCustomCursor(i, new Point(0, 0), "Village");

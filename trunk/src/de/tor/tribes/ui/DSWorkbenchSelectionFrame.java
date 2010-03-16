@@ -361,7 +361,7 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
                         .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jYStart, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 95, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 103, Short.MAX_VALUE)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(jLabel4)
@@ -428,7 +428,7 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 428, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 432, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -684,18 +684,21 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
     }//GEN-LAST:event_fireAlwaysOnTopChangedEvent
 
     private void fireSelectionToAttackPlannerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSelectionToAttackPlannerEvent
-        if (JOptionPaneHelper.showQuestionConfirmBox(this, "Dörfer als Herkunft oder Ziel einfügen?", "Dörfer übertragen", "Ziel", "Herkunft") == JOptionPane.NO_OPTION) {
+        int res = JOptionPaneHelper.showQuestionConfirmBox(this, "Dörfer als Herkunft oder Ziel einfügen?", "Dörfer übertragen", "Ziel", "Herkunft");
+        if (res == JOptionPane.NO_OPTION) {
             if (!DSWorkbenchMainFrame.getSingleton().getAttackPlaner().isVisible()) {
                 DSWorkbenchMainFrame.getSingleton().getAttackPlaner().setup();
                 DSWorkbenchMainFrame.getSingleton().getAttackPlaner().setVisible(true);
             }
             DSWorkbenchMainFrame.getSingleton().getAttackPlaner().fireAddTargetsEvent(getSelectedElements());
-        } else {
+        } else if (res == JOptionPane.YES_OPTION) {
             if (!DSWorkbenchMainFrame.getSingleton().getAttackPlaner().isVisible()) {
                 DSWorkbenchMainFrame.getSingleton().getAttackPlaner().setup();
                 DSWorkbenchMainFrame.getSingleton().getAttackPlaner().setVisible(true);
             }
             DSWorkbenchMainFrame.getSingleton().getAttackPlaner().fireAddSourcesEvent(getSelectedElements());
+        } else {
+            //return;
         }
     }//GEN-LAST:event_fireSelectionToAttackPlannerEvent
 

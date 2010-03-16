@@ -14,8 +14,6 @@
 
 <mapID target="pages.church_view" url="pages/church_view.html"/>
 
-<mapID target="pages.tables" url="pages/tables.html"/>
-
 <mapID target="pages.settings" url="pages/settings.html"/>
 
 <mapID target="pages.map_tools_zoom_minimap" url="pages/map_tools.html#zoom_minimap"/>

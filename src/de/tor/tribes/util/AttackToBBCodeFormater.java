@@ -16,7 +16,7 @@ import java.util.Date;
  */
 public class AttackToBBCodeFormater {
 
-    public static final String STANDARD_TEMPLATE = "%TYPE% von %ATTACKER% aus %SOURCE% mit %UNIT% auf %DEFENDER% in %TARGET% startet am [color=red]%SEND%[/color] und kommt am [color=green]%ARRIVE%[/color] an (%PLACE%)";
+    public static final String STANDARD_TEMPLATE = "%TYPE% von %ATTACKER% aus %SOURCE% mit %UNIT% auf %DEFENDER% in %TARGET% startet am [color=#ff0e0e]%SEND%[/color] und kommt am [color=#2eb92e]%ARRIVE%[/color] an (%PLACE%)";
 
     public static String formatAttack(Attack pAttack, String pServerURL, boolean pExtended) {
         String sendtime = null;

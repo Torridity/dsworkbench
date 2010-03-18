@@ -869,8 +869,8 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         List<Village> villages = VillageParser.parse(jComandArea.getText());
         if (villages == null || villages.isEmpty() || villages.size() < 2) {
             jParserInfo.setBackground(Color.YELLOW);
-            jParserInfo.setText("Keine Dörfer gefunden.\n" +
-                    "Möglicherweise handelt es sich nicht um einen gültigen Angriffsbefehl.");
+            jParserInfo.setText("Keine Dörfer gefunden.\n"
+                    + "Möglicherweise handelt es sich nicht um einen gültigen Angriffsbefehl.");
             return;
         }
         Village source = villages.get(0);
@@ -886,7 +886,12 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
             String arrive = null;
 
             if (selection == null) {
-                String arriveLine = text.substring(text.indexOf("Ankunft:"));
+                String arriveLine = null;
+                if (text.indexOf("Ankunft:") > -1) {
+                    arriveLine = text.substring(text.indexOf("Ankunft:"));
+                } else {
+                    arriveLine = text.substring(text.indexOf("Ankunftszeit:"));
+                }
                 StringTokenizer tokenizer = new StringTokenizer(arriveLine, " \t");
                 tokenizer.nextToken();
                 String date = tokenizer.nextToken();

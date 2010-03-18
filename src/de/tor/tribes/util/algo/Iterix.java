@@ -130,8 +130,14 @@ public class Iterix extends AbstractAttackAlgorithm {
                 //long s = System.currentTimeMillis();
                 logText(" - Suche optimale Herkunft-Ziel Kombinationen");
                 round = 1;
+                int maxMappings = countMappings(mappings);
                 while (!solve(ramAndCataSources, pTargets, mappings, result)) {
                     Thread.sleep(10);
+                    int currentMappings = countMappings(mappings);
+                    updateStatus(currentMappings, maxMappings);
+                    if (isAborted()) {
+                        break;
+                    }
                     //System.out.println(" Loop: " + (System.currentTimeMillis() - s));
                 }
                 //System.out.println("solved: " + (System.currentTimeMillis() - s));
@@ -218,6 +224,10 @@ public class Iterix extends AbstractAttackAlgorithm {
             }
         }//end of off assignment
 
+        if (isAborted()) {
+            return movementList;
+        }
+
         if (!pFakeOffTargets) {
             //remove all off targets
             pTargets.clear();
@@ -268,8 +278,14 @@ public class Iterix extends AbstractAttackAlgorithm {
         try {
 //            long s = System.currentTimeMillis();
             logText(" - Suche optimale Herkunft-Ziel Kombinationen");
+            int maxMappings = countMappings(mappings);
             while (!solve(ramAndCataFakes, pTargets, mappings, result)) {
                 Thread.sleep(10);
+                int currentMappings = countMappings(mappings);
+                updateStatus(currentMappings, maxMappings);
+                if (isAborted()) {
+                    break;
+                }
                 //              System.out.println(" Loop: " + (System.currentTimeMillis() - s));
             }
             //        System.out.println("solved: " + (System.currentTimeMillis() - s));
@@ -623,6 +639,17 @@ public class Iterix extends AbstractAttackAlgorithm {
         return count;
     }
 
+    /**Count all elements inside one array*/
+    private int countMappings(double[][] pMappings) {
+        int count = 0;
+        for (int i = 0; i < pMappings.length; i++) {
+            for (int j = 0; j < pMappings[0].length; j++) {
+                count += (pMappings[i][j] != 0) ? 1 : 0;
+            }
+        }
+        return count;
+    }
+
     /**Build array of source (row) element sums*/
     private int[] buildSourceMappings(double[][] pMappings) {
         int[] sourceMappings = new int[pMappings.length];
@@ -677,8 +704,8 @@ public class Iterix extends AbstractAttackAlgorithm {
     }
 
     private void colorSelectedValues(int pSourceIdx, int pTargetIdx) {
-        for (int i = 0; i <
-                mappings.length; i++) {
+        for (int i = 0; i
+                < mappings.length; i++) {
             for (int j = 0; j < mappings[0].length; j++) {
                 if (i == pSourceIdx || j == pTargetIdx) {
                     labels[i][j].setBackground(Color.BLUE);

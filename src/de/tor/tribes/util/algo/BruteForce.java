@@ -49,7 +49,11 @@ public class BruteForce extends AbstractAttackAlgorithm {
 
             if (sources != null) {
                 logInfo(" - Verwende " + sources.size() + " Herkunftsdörfer");
+                int maxRuns = sources.size();
+                int currentRun = 0;
                 for (Village source : sources) {
+                    currentRun++;
+                    updateStatus(currentRun, maxRuns);
                     //time when the attacks should arrive
                     long arrive = pTimeFrame.getEnd();
                     Village vTarget = null;
@@ -181,7 +185,11 @@ public class BruteForce extends AbstractAttackAlgorithm {
             UnitHolder unit = unitKeys.nextElement();
             List<Village> sources = pFakes.get(unit);
             if (sources != null) {
+                int maxRuns = sources.size();
+                int currentRun = 0;
                 for (Village source : sources) {
+                    currentRun++;
+                    updateStatus(currentRun, maxRuns);
                     //time when the attacks should arrive
                     long arrive = pTimeFrame.getEnd();
                     //max. number of attacks per target village

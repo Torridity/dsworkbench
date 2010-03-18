@@ -368,7 +368,6 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Algorit
         jCopyToClipboardAsBBButton = new javax.swing.JButton();
         jAddToAttacksButton = new javax.swing.JButton();
         jCopyToClipboardButton = new javax.swing.JButton();
-        jAddToAttacksButton1 = new javax.swing.JButton();
         jTransferToAttackManagerDialog = new javax.swing.JDialog();
         jLabel2 = new javax.swing.JLabel();
         jAttackPlansBox = new javax.swing.JComboBox();
@@ -620,15 +619,6 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Algorit
             }
         });
 
-        jAddToAttacksButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/text_align_left.png"))); // NOI18N
-        jAddToAttacksButton1.setText(bundle.getString("TribeTribeAttackFrame.jAddToAttacksButton1.text")); // NOI18N
-        jAddToAttacksButton1.setToolTipText(bundle.getString("TribeTribeAttackFrame.jAddToAttacksButton1.toolTipText")); // NOI18N
-        jAddToAttacksButton1.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireShowCalculationLogEvent(evt);
-            }
-        });
-
         javax.swing.GroupLayout jResultFrameLayout = new javax.swing.GroupLayout(jResultFrame.getContentPane());
         jResultFrame.getContentPane().setLayout(jResultFrameLayout);
         jResultFrameLayout.setHorizontalGroup(
@@ -637,8 +627,6 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Algorit
                 .addContainerGap()
                 .addGroup(jResultFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jResultFrameLayout.createSequentialGroup()
-                        .addComponent(jAddToAttacksButton1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 261, Short.MAX_VALUE)
                         .addComponent(jAddToAttacksButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jCopyToClipboardButton)
@@ -658,13 +646,11 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Algorit
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 260, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jResultFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(jResultFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jCloseResultsButton)
-                        .addComponent(jCopyToClipboardAsBBButton)
-                        .addComponent(jCopyToClipboardButton)
-                        .addComponent(jAddToAttacksButton))
-                    .addComponent(jAddToAttacksButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jResultFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jCloseResultsButton)
+                    .addComponent(jCopyToClipboardAsBBButton)
+                    .addComponent(jCopyToClipboardButton)
+                    .addComponent(jAddToAttacksButton))
                 .addContainerGap())
         );
 
@@ -1418,7 +1404,7 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Algorit
                         .addComponent(jSetSourceNoFakeButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jSetSourceFakeButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 306, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 303, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -1429,7 +1415,7 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Algorit
                         .addComponent(jButton3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jButton15))
                 .addGap(20, 20, 20)
-                .addComponent(jLabel20)
+                .addComponent(jLabel20, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -1623,9 +1609,6 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Algorit
         jIncrementAttackCountButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/add_attack.png"))); // NOI18N
         jIncrementAttackCountButton.setText(bundle.getString("TribeTribeAttackFrame.jIncrementAttackCountButton.text")); // NOI18N
         jIncrementAttackCountButton.setToolTipText(bundle.getString("TribeTribeAttackFrame.jIncrementAttackCountButton.toolTipText")); // NOI18N
-        jIncrementAttackCountButton.setMaximumSize(new java.awt.Dimension(57, 33));
-        jIncrementAttackCountButton.setMinimumSize(new java.awt.Dimension(57, 33));
-        jIncrementAttackCountButton.setPreferredSize(new java.awt.Dimension(57, 33));
         jIncrementAttackCountButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireChangeAttackCountEvent(evt);
@@ -1661,7 +1644,7 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Algorit
                 .addGroup(jTargetPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jTargetPanelLayout.createSequentialGroup()
-                        .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 759, Short.MAX_VALUE)
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 761, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jTargetPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jIncrementAttackCountButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -1692,12 +1675,12 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Algorit
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jSetTargetFakeButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jIncrementAttackCountButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jIncrementAttackCountButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jDecrementAttackCountButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jResetAttackCountEvent))
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 390, Short.MAX_VALUE))
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 387, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -1773,8 +1756,8 @@ private void fireRemoveAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
             return;
         }
 
-        for (int i = rows.length - 1; i >=
-                0; i--) {
+        for (int i = rows.length - 1; i
+                >= 0; i--) {
             jAttacksTable.invalidate();
             int row = jAttacksTable.convertRowIndexToModel(rows[i]);
             ((DefaultTableModel) jAttacksTable.getModel()).removeRow(row);
@@ -1786,6 +1769,7 @@ private void fireRemoveAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
 
 private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCalculateAttackEvent
     if (!jCalculateButton.isEnabled()) {
+        logger.debug("Button disabled. Calculation is still running...");
         return;
     }
     //algorithm calculation
@@ -1793,12 +1777,14 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
     DefaultTableModel victimModel = (DefaultTableModel) jVictimTable.getModel();
     DefaultTableModel attackModel = (DefaultTableModel) jAttacksTable.getModel();
     if (attackModel.getRowCount() == 0) {
+        logger.warn("Validation of attacker tab failed");
         JOptionPaneHelper.showErrorBox(this, "Keine Herkunftsdörfer ausgewählt", "Fehler");
         jTabbedPane1.setSelectedIndex(0);
         return;
     }
 
     if (victimModel.getRowCount() == 0) {
+        logger.warn("Validation of victim tab failed");
         JOptionPaneHelper.showErrorBox(this, "Keine Ziele ausgewählt", "Fehler");
         jTabbedPane1.setSelectedIndex(1);
         return;
@@ -1806,9 +1792,9 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
     }
 
     if (!mSettingsPanel.validatePanel()) {
+        logger.warn("Validation of settings tab failed");
         jTabbedPane1.setSelectedIndex(2);
         return;
-
     }
 
     //reading values
@@ -1875,7 +1861,6 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
         if (!u.getPlainName().equals("ram") && !u.getPlainName().equals("catapult")) {
             useMiscUnits = true;
             break;
-
         }
     }
     if (!useMiscUnits) {
@@ -1905,22 +1890,26 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
         logger.info("Using 'BruteForce' calculation");
         algo = new BruteForce();
         supportMiscUnits = true;
+        logPanel.setAbortable(false);
     } else {
         logger.info("Using 'systematic' calculation");
         algo = new Iterix();
         supportMiscUnits = false;
+        logPanel.setAbortable(true);
     }
 
     //check misc-units criteria
     if (useMiscUnits && !supportMiscUnits) {
-        if (JOptionPaneHelper.showQuestionConfirmBox(this, "Der gewählte Algorithmus unterstützt nur Rammen und Katapulte als angreifende Einheiten.\n" +
-                "Dörfer für die eine andere Einheit gewählt wurde werden ignoriert.\n" +
-                "Trotzdem fortfahren?", "Warnung", "Nein", "Ja") == JOptionPane.NO_OPTION) {
+        if (JOptionPaneHelper.showQuestionConfirmBox(this, "Der gewählte Algorithmus unterstützt nur Rammen und Katapulte als angreifende Einheiten.\n"
+                + "Dörfer für die eine andere Einheit gewählt wurde werden ignoriert.\n"
+                + "Trotzdem fortfahren?", "Warnung", "Nein", "Ja") == JOptionPane.NO_OPTION) {
+            logger.debug("User aborted calculation due to algorithm");
             return;
         }
     }
     mSettingsPanel.storeProperties();
     logPanel.clear();
+
     algo.initialize(sources,
             fakes,
             victimVillages,
@@ -1938,6 +1927,11 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
             jCalculatingProgressBar.setIndeterminate(true);
         }
     });
+    JFrame f = new JFrame("Informationen zur Berechnung");
+    f.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+    f.add(logPanel);
+    f.pack();
+    f.setVisible(true);
     algo.execute(this);
 
 
@@ -2003,8 +1997,8 @@ private void fireAttacksToClipboardEvent(java.awt.event.MouseEvent evt) {//GEN-F
         int cnt = t.countTokens();
         if (cnt > 500) {
 
-            if (JOptionPaneHelper.showQuestionConfirmBox(jResultFrame, "Die ausgewählten Angriffe benötigen mehr als 500 BB-Codes\n" +
-                    "und können daher im Spiel (Forum/IGM/Notizen) nicht auf einmal dargestellt werden.\nTrotzdem exportieren?", "Zu viele BB-Codes", "Nein", "Ja") == JOptionPane.NO_OPTION) {
+            if (JOptionPaneHelper.showQuestionConfirmBox(jResultFrame, "Die ausgewählten Angriffe benötigen mehr als 500 BB-Codes\n"
+                    + "und können daher im Spiel (Forum/IGM/Notizen) nicht auf einmal dargestellt werden.\nTrotzdem exportieren?", "Zu viele BB-Codes", "Nein", "Ja") == JOptionPane.NO_OPTION) {
                 return;
             }
 
@@ -2025,8 +2019,8 @@ private void fireUnformattedAttacksToClipboardEvent(java.awt.event.MouseEvent ev
     try {
         DefaultTableModel resultModel = (DefaultTableModel) jResultsTable.getModel();
         StringBuffer buffer = new StringBuffer();
-        for (int i = 0; i <
-                resultModel.getRowCount(); i++) {
+        for (int i = 0; i
+                < resultModel.getRowCount(); i++) {
             Village sVillage = (Village) resultModel.getValueAt(i, 0);
             UnitHolder sUnit = (UnitHolder) resultModel.getValueAt(i, 1);
             Village tVillage = (Village) resultModel.getValueAt(i, 2);
@@ -2396,8 +2390,8 @@ private void fireSynchWithAttackPlansEvent(java.awt.event.MouseEvent evt) {//GEN
         DefaultTableModel model = (DefaultTableModel) jAttackPlanTable.getModel();
 
         List<String> selectedPlans = new LinkedList<String>();
-        for (int i = 0; i <
-                jAttackPlanTable.getRowCount(); i++) {
+        for (int i = 0; i
+                < jAttackPlanTable.getRowCount(); i++) {
             int row = jAttackPlanTable.convertRowIndexToModel(i);
             if ((Boolean) model.getValueAt(row, 1)) {
                 selectedPlans.add((String) model.getValueAt(row, 0));
@@ -2417,8 +2411,8 @@ private void fireSynchWithAttackPlansEvent(java.awt.event.MouseEvent evt) {//GEN
             //process all attacks
             for (Attack a : attacks) {
                 //search attack source village in all table rows
-                for (int i = 0; i <
-                        jAttacksTable.getRowCount(); i++) {
+                for (int i = 0; i
+                        < jAttacksTable.getRowCount(); i++) {
                     Village v = (Village) jAttacksTable.getValueAt(i, 0);
                     if (a.getSource().equals(v)) {
                         if (!toRemove.contains(i)) {
@@ -2461,8 +2455,8 @@ private void fireSynchWithAttackPlansEvent(java.awt.event.MouseEvent evt) {//GEN
         DefaultTableModel model = (DefaultTableModel) jAttackPlanTable.getModel();
 
         List<String> selectedPlans = new LinkedList<String>();
-        for (int i = 0; i <
-                jAttackPlanTable.getRowCount(); i++) {
+        for (int i = 0; i
+                < jAttackPlanTable.getRowCount(); i++) {
             int row = jAttackPlanTable.convertRowIndexToModel(i);
             if ((Boolean) model.getValueAt(row, 1)) {
                 selectedPlans.add((String) model.getValueAt(row, 0));
@@ -2482,8 +2476,8 @@ private void fireSynchWithAttackPlansEvent(java.awt.event.MouseEvent evt) {//GEN
             //process all attacks
             for (Attack a : attacks) {
                 //search attack target village in all table rows
-                for (int i = 0; i <
-                        jVictimTable.getRowCount(); i++) {
+                for (int i = 0; i
+                        < jVictimTable.getRowCount(); i++) {
                     Village v = (Village) jVictimTable.getValueAt(i, 1);
                     if (a.getTarget().equals(v)) {
                         if (!toRemove.contains(i)) {
@@ -2742,14 +2736,6 @@ private void fireApplyTroopFiltersEvent(java.awt.event.MouseEvent evt) {//GEN-FI
     jFilterFrame.setVisible(false);
 }//GEN-LAST:event_fireApplyTroopFiltersEvent
 
-private void fireShowCalculationLogEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireShowCalculationLogEvent
-    JFrame f = new JFrame();
-    f.setTitle("Informationen zur Berechnung");
-    f.add(logPanel);
-    f.pack();
-    f.setVisible(true);
-}//GEN-LAST:event_fireShowCalculationLogEvent
-
 private void fireClosingEvent(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_fireClosingEvent
     mSettingsPanel.storeProperties();
 }//GEN-LAST:event_fireClosingEvent
@@ -2791,8 +2777,8 @@ private void fireChangeAttackCountEvent(java.awt.event.MouseEvent evt) {//GEN-FI
         jVictimTable.invalidate();
         int size = jTargetVillageList.getModel().getSize();
         List<Village> validTargets = new LinkedList<Village>();
-        for (int i = 0; i <
-                size; i++) {
+        for (int i = 0; i
+                < size; i++) {
             Village victimVillage = (Village) jTargetVillageList.getModel().getElementAt(i);
             int idx = jAllTargetsComboBox.getSelectedIndex();
             boolean add = false;
@@ -2834,8 +2820,8 @@ private void fireChangeAttackCountEvent(java.awt.event.MouseEvent evt) {//GEN-FI
         for (Village v : pVillages) {
             if (v != null && v.getTribe() != null) {
                 boolean contains = false;
-                for (int row = 0; row <
-                        victimModel.getRowCount(); row++) {
+                for (int row = 0; row
+                        < victimModel.getRowCount(); row++) {
                     if (victimModel.getValueAt(row, 1).equals(v)) {
                         contains = true;
                         break;
@@ -3563,17 +3549,17 @@ private void fireChangeAttackCountEvent(java.awt.event.MouseEvent evt) {//GEN-FI
             if (jTabbedPane1.getSelectedIndex() == 0) {
                 UnitHolder uSource = (UnitHolder) jTroopsList.getSelectedItem();
                 /*for (Village village : villages) {
-                    if (village != null && village.getTribe() != null) {
-                        ((DefaultTableModel) jAttacksTable.getModel()).addRow(new Object[]{village, uSource, jMarkAsFakeBox.isSelected()});
-                        mSettingsPanel.addTribe(village.getTribe());
-                    }
+                if (village != null && village.getTribe() != null) {
+                ((DefaultTableModel) jAttacksTable.getModel()).addRow(new Object[]{village, uSource, jMarkAsFakeBox.isSelected()});
+                mSettingsPanel.addTribe(village.getTribe());
+                }
                 }*/
                 fireAddSourcesEvent(villages);
             } else if (jTabbedPane1.getSelectedIndex() == 1) {
                 /*for (Village village : villages) {
-                    if (village != null && village.getTribe() != null) {
-                        ((DefaultTableModel) jVictimTable.getModel()).addRow(new Object[]{village.getTribe(), village});
-                    }
+                if (village != null && village.getTribe() != null) {
+                ((DefaultTableModel) jVictimTable.getModel()).addRow(new Object[]{village.getTribe(), village});
+                }
                 }*/
                 fireAddTargetsEvent(villages);
             }
@@ -3620,7 +3606,6 @@ private void fireChangeAttackCountEvent(java.awt.event.MouseEvent evt) {//GEN-FI
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup attackTypeGroup;
     private javax.swing.JButton jAddToAttacksButton;
-    private javax.swing.JButton jAddToAttacksButton1;
     private javax.swing.JComboBox jAllTargetsComboBox;
     private javax.swing.JButton jApplyFiltersButton;
     private javax.swing.JDialog jAttackPlanSelectionDialog;

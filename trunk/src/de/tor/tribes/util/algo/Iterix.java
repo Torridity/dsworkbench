@@ -135,6 +135,7 @@ public class Iterix extends AbstractAttackAlgorithm {
                     Thread.sleep(10);
                     int currentMappings = countMappings(mappings);
                     updateStatus(currentMappings, maxMappings);
+                    logInfo("   * " + currentMappings + " von " + maxMappings + " verbleibende Kombinationen");
                     if (isAborted()) {
                         break;
                     }
@@ -283,6 +284,7 @@ public class Iterix extends AbstractAttackAlgorithm {
                 Thread.sleep(10);
                 int currentMappings = countMappings(mappings);
                 updateStatus(currentMappings, maxMappings);
+                logInfo("   * " + currentMappings + " von " + maxMappings + " verbleibende Kombinationen");
                 if (isAborted()) {
                     break;
                 }
@@ -704,8 +706,7 @@ public class Iterix extends AbstractAttackAlgorithm {
     }
 
     private void colorSelectedValues(int pSourceIdx, int pTargetIdx) {
-        for (int i = 0; i
-                < mappings.length; i++) {
+        for (int i = 0; i < mappings.length; i++) {
             for (int j = 0; j < mappings[0].length; j++) {
                 if (i == pSourceIdx || j == pTargetIdx) {
                     labels[i][j].setBackground(Color.BLUE);

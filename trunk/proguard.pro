@@ -21,17 +21,17 @@
 -flattenpackagehierarchy dswb
 
 
-# Keep - Applications. Keep all application classes, along with their 'main'
-# methods.
--keepclasseswithmembers public class de.tor.tribes.ui.DSWorkbenchSplashScreen {
-    public static void main(java.lang.String[]);
-}
-
 # Also keep - Enumerations. Keep the special static methods that are required in
 # enumeration classes.
 -keepclassmembers class * extends java.lang.Enum {
     public static **[] values();
     public static ** valueOf(java.lang.String);
+}
+
+# Keep - Applications. Keep all application classes, along with their 'main'
+# methods.
+-keepclasseswithmembers public class de.tor.tribes.ui.DSWorkbenchSplashScreen {
+    public static void main(java.lang.String[]);
 }
 
 # Also keep - Swing UI L&F. Keep all extensions of javax.swing.plaf.ComponentUI,

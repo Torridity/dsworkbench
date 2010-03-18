@@ -37,11 +37,11 @@ public class ColoredDateCellRenderer implements TableCellRenderer {
 
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-        if (column != 3) {
+       /* if (column != 3) {
             Component c = defaultRenderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
             ((JLabel) c).setText(specialFormat.format((Date) value));
             return c;
-        }
+        }*/
 
         Component c = coloredRenderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 

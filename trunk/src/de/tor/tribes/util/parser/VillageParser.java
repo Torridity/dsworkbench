@@ -25,7 +25,7 @@ public class VillageParser {
         StringTokenizer lines = new StringTokenizer(pVillagesString, "\n\r");
         while (lines.hasMoreTokens()) {
             if (ServerSettings.getSingleton().getCoordType() != 2) {
-                StringTokenizer t = new StringTokenizer(lines.nextToken(), " \t");
+                StringTokenizer t = new StringTokenizer(lines.nextToken(), " []\t");
                 Village lastLineVillage = null;
                 while (t.hasMoreTokens()) {
                     try {
@@ -47,7 +47,7 @@ public class VillageParser {
                     villages.add(lastLineVillage);
                 }
             } else {
-                StringTokenizer t = new StringTokenizer(lines.nextToken(), " \t");
+                StringTokenizer t = new StringTokenizer(lines.nextToken(), " []\t");
                 Village lastLineVillage = null;
                 while (t.hasMoreTokens()) {
                     try {

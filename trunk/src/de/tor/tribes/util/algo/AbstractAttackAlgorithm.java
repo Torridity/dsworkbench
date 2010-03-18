@@ -79,6 +79,19 @@ public abstract class AbstractAttackAlgorithm extends Thread {
         }
     }
 
+    public void updateStatus(int pCurrentStatus, int pMaxStatus) {
+        if (mLogPanel != null) {
+            mLogPanel.updateStatus(pCurrentStatus, pMaxStatus);
+        }
+    }
+
+    public boolean isAborted() {
+        if (mLogPanel != null) {
+            return mLogPanel.isAborted();
+        }
+        return false;
+    }
+
     public TimeFrame getTimeFrame() {
         return timeFrame;
     }

@@ -16,8 +16,6 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="1" attributes="0">
-                          <Component id="jAddToAttacksButton1" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace pref="261" max="32767" attributes="0"/>
                           <Component id="jAddToAttacksButton" min="-2" max="-2" attributes="0"/>
                           <EmptySpace min="-2" max="-2" attributes="0"/>
                           <Component id="jCopyToClipboardButton" min="-2" max="-2" attributes="0"/>
@@ -41,14 +39,11 @@
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Component id="jScrollPane2" pref="260" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="1" attributes="0">
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jCloseResultsButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jCopyToClipboardAsBBButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jCopyToClipboardButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jAddToAttacksButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <Component id="jAddToAttacksButton1" min="-2" pref="33" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="jCloseResultsButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="jCopyToClipboardAsBBButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="jCopyToClipboardButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="jAddToAttacksButton" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -319,22 +314,6 @@
           </Properties>
           <Events>
             <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fireUnformattedAttacksToClipboardEvent"/>
-          </Events>
-        </Component>
-        <Component class="javax.swing.JButton" name="jAddToAttacksButton1">
-          <Properties>
-            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/res/ui/text_align_left.png"/>
-            </Property>
-            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="TribeTribeAttackFrame.jAddToAttacksButton1.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
-            </Property>
-            <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="TribeTribeAttackFrame.jAddToAttacksButton1.toolTipText" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
-            </Property>
-          </Properties>
-          <Events>
-            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fireShowCalculationLogEvent"/>
           </Events>
         </Component>
       </SubComponents>
@@ -1101,7 +1080,7 @@
                               <EmptySpace min="-2" max="-2" attributes="0"/>
                               <Component id="jSetSourceFakeButton" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <Component id="jScrollPane1" alignment="1" pref="306" max="32767" attributes="0"/>
+                          <Component id="jScrollPane1" alignment="1" pref="303" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jPanel1" min="-2" max="-2" attributes="1"/>
@@ -1832,7 +1811,7 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="jPanel6" alignment="0" max="32767" attributes="0"/>
                           <Group type="102" alignment="1" attributes="0">
-                              <Component id="jScrollPane3" pref="759" max="32767" attributes="0"/>
+                              <Component id="jScrollPane3" pref="761" max="32767" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" max="-2" attributes="0">
                                   <Component id="jIncrementAttackCountButton" max="32767" attributes="1"/>
@@ -1875,7 +1854,7 @@
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="jResetAttackCountEvent" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <Component id="jScrollPane3" pref="390" max="32767" attributes="0"/>
+                          <Component id="jScrollPane3" pref="387" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jPanel6" min="-2" max="-2" attributes="1"/>
@@ -2313,15 +2292,6 @@
                 </Property>
                 <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
                   <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="TribeTribeAttackFrame.jIncrementAttackCountButton.toolTipText" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
-                </Property>
-                <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                  <Dimension value="[57, 33]"/>
-                </Property>
-                <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                  <Dimension value="[57, 33]"/>
-                </Property>
-                <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                  <Dimension value="[57, 33]"/>
                 </Property>
               </Properties>
               <Events>

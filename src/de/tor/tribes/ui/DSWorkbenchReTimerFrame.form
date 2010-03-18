@@ -568,8 +568,8 @@
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="jScrollPane2" alignment="0" pref="450" max="32767" attributes="1"/>
-                              <Component id="jScrollPane1" alignment="0" pref="450" max="32767" attributes="1"/>
+                              <Component id="jScrollPane2" alignment="0" pref="452" max="32767" attributes="1"/>
+                              <Component id="jScrollPane1" alignment="0" pref="452" max="32767" attributes="1"/>
                           </Group>
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
@@ -658,11 +658,11 @@
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jReturnField" pref="209" max="32767" attributes="0"/>
-                          <Component id="jArriveField" alignment="0" pref="209" max="32767" attributes="0"/>
-                          <Component id="jSourceVillage" alignment="0" pref="209" max="32767" attributes="0"/>
-                          <Component id="jTargetVillage" alignment="0" pref="209" max="32767" attributes="0"/>
-                          <Component id="jEstSendTime" alignment="1" pref="209" max="32767" attributes="0"/>
+                          <Component id="jReturnField" pref="211" max="32767" attributes="0"/>
+                          <Component id="jArriveField" alignment="0" pref="211" max="32767" attributes="0"/>
+                          <Component id="jSourceVillage" alignment="0" pref="211" max="32767" attributes="0"/>
+                          <Component id="jTargetVillage" alignment="0" pref="211" max="32767" attributes="0"/>
+                          <Component id="jEstSendTime" alignment="1" pref="211" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
                       <Component id="jPanel3" min="-2" max="-2" attributes="0"/>

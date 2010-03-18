@@ -186,12 +186,21 @@ public class MapRenderer extends Thread {
         mapRedrawRequired = true;
     }
     long rendered = 0;
+    long sleepTime = 50;
 
     /**Render loop*/
     @Override
     public void run() {
         logger.debug("Entering render loop");
         while (true) {
+            //get global max. fps
+            int fps = 10;
+            try {
+                fps = Integer.parseInt(GlobalOptions.getProperty("max.fps"));
+            } catch (Exception e) {
+                fps = 10;
+            }
+
             try {
                 int w = MapPanel.getSingleton().getWidth();
                 int h = MapPanel.getSingleton().getHeight();
@@ -242,7 +251,7 @@ public class MapRenderer extends Thread {
                     }
 
                     boolean mapDrawn = false;
-
+                    long s = System.currentTimeMillis();
                     for (Integer layer : drawOrder) {
                         if (layer == 0) {
                             if (mapDrawn) {
@@ -320,7 +329,9 @@ public class MapRenderer extends Thread {
 
                     //draw live layer -> always on top
                     renderLiveLayer(g2d);
+
                     g2d.drawImage(mLayers.get(LIVE_LAYER), 0, 0, null);
+                    s = System.currentTimeMillis();
                     //render selection
                     de.tor.tribes.types.Rectangle selection = MapPanel.getSingleton().getSelectionRect();
                     if (selection != null) {
@@ -336,6 +347,7 @@ public class MapRenderer extends Thread {
                     g2d2.drawImage(mBackBuffer, 0, 0, null);
 
                     MapPanel.getSingleton().updateComplete(pos, mFrontBuffer);
+
                     g2d2.dispose();
                     g2d.dispose();
                     MapPanel.getSingleton().repaint();
@@ -345,26 +357,28 @@ public class MapRenderer extends Thread {
                 logger.error("Redrawing map failed", t);
             }
             try {
-                Thread.sleep(40);
+                Thread.sleep(sleepTime);
             } catch (InterruptedException ie) {
             }
 
-            /*  if (rendered == 0) {
-            frames++;
-            rendered = System.currentTimeMillis();
+            //FPS steering
+            if (rendered == 0) {
+                frames++;
+                rendered = System.currentTimeMillis();
             } else {
-            frames++;
-            long dur = System.currentTimeMillis() - rendered;
-            if (dur >= 1000) {
-            if (frames < 10 && sleepTime > 10) {
-            sleepTime -= 10;
-            } else {
-            sleepTime += 10;
+                frames++;
+                long dur = System.currentTimeMillis() - rendered;
+                if (dur >= 1000) {
+                    //  System.out.println("Frames: " + frames + ", Sleep:  " +  sleepTime);
+                    if (frames < fps && sleepTime > 40) {
+                        sleepTime -= 10;
+                    } else {
+                        sleepTime += 10;
+                    }
+                    rendered = System.currentTimeMillis();
+                    frames = 0;
+                }
             }
-            rendered = System.currentTimeMillis();
-            frames = 0;
-            }
-            }*/
         }
     }
     int frames = 0;
@@ -2757,7 +2771,6 @@ public class MapRenderer extends Thread {
                 g2d.drawString(runtimeValue, pX + x + 2 + (int) Math.rint(w / 2.0 - troopBounds.getWidth() / 2.0), pY + pDy + 2 + 25 + (int) Math.rint(troopBounds.getHeight() / 2.0));
                 x += w;
                 unitCount++;
-
             }
 
 
@@ -2768,15 +2781,15 @@ public class MapRenderer extends Thread {
 
     /**Prepare any g2d object with same parameters*/
     private void prepareGraphics(Graphics2D pG2d) {
-        pG2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        pG2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
         pG2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
         // Speed
-        pG2d.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_DEFAULT);
-        pG2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_DEFAULT);
-        pG2d.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_DEFAULT);
+        pG2d.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED);
+        pG2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+        pG2d.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_SPEED);
         pG2d.setRenderingHint(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_DISABLE);
         pG2d.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_DEFAULT);
-        pG2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_DEFAULT);
+        pG2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
     }
 }
 

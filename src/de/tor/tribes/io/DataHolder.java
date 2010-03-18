@@ -149,22 +149,23 @@ public class DataHolder {
                     //bonus_new field not found. Set to old type
                     currentBonusType = 0;
                 }
-
             } else {
                 if (GlobalOptions.isOfflineMode()) {
                     fireDataHolderEvents("Servereinstellungen nicht gefunden. Download im Offline-Modus nicht möglich.");
                     return false;
                 } else {
                     //download settings.xml
+                    logger.debug("Server settings do not exist");
                     String sURL = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
                     new File(DataHolder.getSingleton().getDataDirectory()).mkdirs();
                     fireDataHolderEvents("Lese Server Einstellungen");
                     URL file = new URL(sURL + "/interface.php?func=get_config");
+                    logger.debug("Try downloading server settings from " + sURL + "/interface.php?func=get_config");
                     downloadDataFile(file, "settings_tmp.xml");
                     new File("settings_tmp.xml").renameTo(settings);
 
                     if (!ServerSettings.getSingleton().loadSettings(GlobalOptions.getSelectedServer())) {
-                        throw new Exception();
+                        throw new Exception("Failed to load server settings");
                     }
 
                     /*Document d = JaxenUtils.getDocument(settings);

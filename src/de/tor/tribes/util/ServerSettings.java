@@ -35,6 +35,7 @@ public class ServerSettings {
 
     public boolean loadSettings(String pServerID) {
         try {
+            logger.debug("Loading server settings");
             setServerID(pServerID);
             String serverPath = Constants.SERVER_DIR + "/" + SERVER_ID + "/settings.xml";
             logger.debug("Parse server settings from '" + serverPath + "'");

@@ -108,11 +108,16 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Algorit
     private JButton filterSource = null;
     private AlgorithmLogPanel logPanel = null;
     private DragSource dragSource;
+    private JFrame mLogFrame = null;
 
     /** Creates new form TribeTribeAttackFrame */
     public TribeTribeAttackFrame() {
         initComponents();
         logPanel = new AlgorithmLogPanel();
+        mLogFrame = new JFrame("Informationen zur Berechnung");
+        mLogFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        mLogFrame.add(logPanel);
+        mLogFrame.pack();
         mSettingsPanel = new SettingsPanel();
         // mMiscPanel = new MiscSettingsPanel();
         jTabbedPane1.addTab("Einstellungen", new ImageIcon(this.getClass().getResource("/res/settings.png")), mSettingsPanel);
@@ -1756,8 +1761,7 @@ private void fireRemoveAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
             return;
         }
 
-        for (int i = rows.length - 1; i
-                >= 0; i--) {
+        for (int i = rows.length - 1; i >= 0; i--) {
             jAttacksTable.invalidate();
             int row = jAttacksTable.convertRowIndexToModel(rows[i]);
             ((DefaultTableModel) jAttacksTable.getModel()).removeRow(row);
@@ -1900,9 +1904,7 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
 
     //check misc-units criteria
     if (useMiscUnits && !supportMiscUnits) {
-        if (JOptionPaneHelper.showQuestionConfirmBox(this, "Der gewählte Algorithmus unterstützt nur Rammen und Katapulte als angreifende Einheiten.\n"
-                + "Dörfer für die eine andere Einheit gewählt wurde werden ignoriert.\n"
-                + "Trotzdem fortfahren?", "Warnung", "Nein", "Ja") == JOptionPane.NO_OPTION) {
+        if (JOptionPaneHelper.showQuestionConfirmBox(this, "Der gewählte Algorithmus unterstützt nur Rammen und Katapulte als angreifende Einheiten.\n" + "Dörfer für die eine andere Einheit gewählt wurde werden ignoriert.\n" + "Trotzdem fortfahren?", "Warnung", "Nein", "Ja") == JOptionPane.NO_OPTION) {
             logger.debug("User aborted calculation due to algorithm");
             return;
         }
@@ -1925,13 +1927,11 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
             jCalculateButton.setEnabled(false);
             jCalculatingProgressBar.setString("Berechnung läuft...");
             jCalculatingProgressBar.setIndeterminate(true);
+            mLogFrame.toFront();
         }
     });
-    JFrame f = new JFrame("Informationen zur Berechnung");
-    f.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-    f.add(logPanel);
-    f.pack();
-    f.setVisible(true);
+
+    mLogFrame.setVisible(true);
     algo.execute(this);
 
 
@@ -1997,8 +1997,7 @@ private void fireAttacksToClipboardEvent(java.awt.event.MouseEvent evt) {//GEN-F
         int cnt = t.countTokens();
         if (cnt > 500) {
 
-            if (JOptionPaneHelper.showQuestionConfirmBox(jResultFrame, "Die ausgewählten Angriffe benötigen mehr als 500 BB-Codes\n"
-                    + "und können daher im Spiel (Forum/IGM/Notizen) nicht auf einmal dargestellt werden.\nTrotzdem exportieren?", "Zu viele BB-Codes", "Nein", "Ja") == JOptionPane.NO_OPTION) {
+            if (JOptionPaneHelper.showQuestionConfirmBox(jResultFrame, "Die ausgewählten Angriffe benötigen mehr als 500 BB-Codes\n" + "und können daher im Spiel (Forum/IGM/Notizen) nicht auf einmal dargestellt werden.\nTrotzdem exportieren?", "Zu viele BB-Codes", "Nein", "Ja") == JOptionPane.NO_OPTION) {
                 return;
             }
 
@@ -2019,8 +2018,7 @@ private void fireUnformattedAttacksToClipboardEvent(java.awt.event.MouseEvent ev
     try {
         DefaultTableModel resultModel = (DefaultTableModel) jResultsTable.getModel();
         StringBuffer buffer = new StringBuffer();
-        for (int i = 0; i
-                < resultModel.getRowCount(); i++) {
+        for (int i = 0; i < resultModel.getRowCount(); i++) {
             Village sVillage = (Village) resultModel.getValueAt(i, 0);
             UnitHolder sUnit = (UnitHolder) resultModel.getValueAt(i, 1);
             Village tVillage = (Village) resultModel.getValueAt(i, 2);
@@ -2390,8 +2388,7 @@ private void fireSynchWithAttackPlansEvent(java.awt.event.MouseEvent evt) {//GEN
         DefaultTableModel model = (DefaultTableModel) jAttackPlanTable.getModel();
 
         List<String> selectedPlans = new LinkedList<String>();
-        for (int i = 0; i
-                < jAttackPlanTable.getRowCount(); i++) {
+        for (int i = 0; i < jAttackPlanTable.getRowCount(); i++) {
             int row = jAttackPlanTable.convertRowIndexToModel(i);
             if ((Boolean) model.getValueAt(row, 1)) {
                 selectedPlans.add((String) model.getValueAt(row, 0));
@@ -2411,8 +2408,7 @@ private void fireSynchWithAttackPlansEvent(java.awt.event.MouseEvent evt) {//GEN
             //process all attacks
             for (Attack a : attacks) {
                 //search attack source village in all table rows
-                for (int i = 0; i
-                        < jAttacksTable.getRowCount(); i++) {
+                for (int i = 0; i < jAttacksTable.getRowCount(); i++) {
                     Village v = (Village) jAttacksTable.getValueAt(i, 0);
                     if (a.getSource().equals(v)) {
                         if (!toRemove.contains(i)) {
@@ -2455,8 +2451,7 @@ private void fireSynchWithAttackPlansEvent(java.awt.event.MouseEvent evt) {//GEN
         DefaultTableModel model = (DefaultTableModel) jAttackPlanTable.getModel();
 
         List<String> selectedPlans = new LinkedList<String>();
-        for (int i = 0; i
-                < jAttackPlanTable.getRowCount(); i++) {
+        for (int i = 0; i < jAttackPlanTable.getRowCount(); i++) {
             int row = jAttackPlanTable.convertRowIndexToModel(i);
             if ((Boolean) model.getValueAt(row, 1)) {
                 selectedPlans.add((String) model.getValueAt(row, 0));
@@ -2476,8 +2471,7 @@ private void fireSynchWithAttackPlansEvent(java.awt.event.MouseEvent evt) {//GEN
             //process all attacks
             for (Attack a : attacks) {
                 //search attack target village in all table rows
-                for (int i = 0; i
-                        < jVictimTable.getRowCount(); i++) {
+                for (int i = 0; i < jVictimTable.getRowCount(); i++) {
                     Village v = (Village) jVictimTable.getValueAt(i, 1);
                     if (a.getTarget().equals(v)) {
                         if (!toRemove.contains(i)) {
@@ -2777,8 +2771,7 @@ private void fireChangeAttackCountEvent(java.awt.event.MouseEvent evt) {//GEN-FI
         jVictimTable.invalidate();
         int size = jTargetVillageList.getModel().getSize();
         List<Village> validTargets = new LinkedList<Village>();
-        for (int i = 0; i
-                < size; i++) {
+        for (int i = 0; i < size; i++) {
             Village victimVillage = (Village) jTargetVillageList.getModel().getElementAt(i);
             int idx = jAllTargetsComboBox.getSelectedIndex();
             boolean add = false;
@@ -2820,8 +2813,7 @@ private void fireChangeAttackCountEvent(java.awt.event.MouseEvent evt) {//GEN-FI
         for (Village v : pVillages) {
             if (v != null && v.getTribe() != null) {
                 boolean contains = false;
-                for (int row = 0; row
-                        < victimModel.getRowCount(); row++) {
+                for (int row = 0; row < victimModel.getRowCount(); row++) {
                     if (victimModel.getValueAt(row, 1).equals(v)) {
                         contains = true;
                         break;

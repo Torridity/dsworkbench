@@ -346,14 +346,9 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
      */
     public static void main(String args[]) {
         Locale.setDefault(Locale.GERMAN);
-        try {
-            //delete old help file
-            new File("lib/DS Workbench Dokumentation_help.jar").delete();
-        } catch (Exception e) {
-        }
 
-        /* System.setProperty("sun.java2d.d3d", "true");
-        System.setProperty("sun.java2d.opengl", "false");*/
+         //System.setProperty("sun.java2d.d3d", "true");
+      //  System.setProperty("sun.java2d.opengl", "true");
 
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());

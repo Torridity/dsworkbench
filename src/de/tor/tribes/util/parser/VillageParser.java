@@ -76,5 +76,7 @@ public class VillageParser {
         /*   Transferable t = (Transferable) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
         System.out.println(VillageParser.parse((String) t.getTransferData(DataFlavor.stringFlavor)));
          */
+        String text = "[village](422|324)[/village]";
+        System.out.println(text.matches(".{0,}\\({0,1}[0-9]{1,3}\\|[0-9]{1,3}\\){0,1}.{0,}"));
     }
 }

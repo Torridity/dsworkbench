@@ -86,7 +86,6 @@ public class SettingsPanel extends javax.swing.JPanel {
         GlobalOptions.addProperty(server + ".attack.frame.arrive.date", Long.toString(jArriveTime.getSelectedDate().getTime()));
         GlobalOptions.addProperty(server + ".attack.frame.arrive.frame.min", Double.toString(jArriveTimeFrame.getMinimumColoredValue()));
         GlobalOptions.addProperty(server + ".attack.frame.arrive.frame.max", Double.toString(jArriveTimeFrame.getMaximumColoredValue()));
-        GlobalOptions.addProperty(server + ".attack.frame.attacks.per.village", Integer.toString((Integer) jAttackPerVillageSpinner.getValue()));
         GlobalOptions.addProperty(server + ".attack.frame.var.arrive.time", Boolean.toString(jVariableArriveTimeBox.isSelected()));
         GlobalOptions.addProperty(server + ".attack.frame.algo.type", Integer.toString(jAlgoBox.getSelectedIndex()));
         GlobalOptions.addProperty(server + ".attack.frame.fake.off.targets", Boolean.toString(jFakeOffTargetsBox.isSelected()));
@@ -101,11 +100,15 @@ public class SettingsPanel extends javax.swing.JPanel {
     public void restoreProperties() {
         try {
             String server = GlobalOptions.getSelectedServer();
-            jSendTime.setDate(new Date(Long.parseLong(GlobalOptions.getProperty(server + ".attack.frame.start.date"))));
+            long start = Long.parseLong(GlobalOptions.getProperty(server + ".attack.frame.start.date"));
+            if (start < System.currentTimeMillis()) {
+                //set start to 5 min in future if start is in past
+                start = System.currentTimeMillis() + 1000 * 60 * 5;
+            }
+            jSendTime.setDate(new Date(start));
             jArriveTime.setDate(new Date(Long.parseLong(GlobalOptions.getProperty(server + ".attack.frame.arrive.date"))));
             jArriveTimeFrame.setMinimumColoredValue(Double.parseDouble(GlobalOptions.getProperty(server + ".attack.frame.arrive.frame.min")));
             jArriveTimeFrame.setMaximumColoredValue(Double.parseDouble(GlobalOptions.getProperty(server + ".attack.frame.arrive.frame.max")));
-            jAttackPerVillageSpinner.setValue(Integer.parseInt(GlobalOptions.getProperty(server + ".attack.frame.attacks.per.village")));
             jAlgoBox.setSelectedIndex(Integer.parseInt(GlobalOptions.getProperty(server + ".attack.frame.algo.type")));
             jVariableArriveTimeBox.setSelected(Boolean.parseBoolean(GlobalOptions.getProperty(server + ".attack.frame.var.arrive.time")));
             jFakeOffTargetsBox.setSelected(Boolean.parseBoolean(GlobalOptions.getProperty(server + ".attack.frame.fake.off.targets")));
@@ -306,11 +309,6 @@ public class SettingsPanel extends javax.swing.JPanel {
         return jFakeOffTargetsBox.isSelected();
     }
 
-    /**Return the max. number of attacks per village*/
-    public int getAttacksPerVillage() {
-        return (Integer) jAttackPerVillageSpinner.getValue();
-    }
-
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -341,8 +339,6 @@ public class SettingsPanel extends javax.swing.JPanel {
         jArriveTimeFrame = new com.visutools.nav.bislider.BiSlider();
         jArriveTime = new de.tor.tribes.ui.components.DateTimeField();
         jPanel3 = new javax.swing.JPanel();
-        jLabel5 = new javax.swing.JLabel();
-        jAttackPerVillageSpinner = new javax.swing.JSpinner();
         jVariableArriveTimeBox = new javax.swing.JCheckBox();
         jLabel6 = new javax.swing.JLabel();
         jAlgoBox = new javax.swing.JComboBox();
@@ -421,9 +417,9 @@ public class SettingsPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 98, Short.MAX_VALUE)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 83, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jSendTime, javax.swing.GroupLayout.DEFAULT_SIZE, 258, Short.MAX_VALUE)
+                        .addComponent(jSendTime, javax.swing.GroupLayout.DEFAULT_SIZE, 241, Short.MAX_VALUE)
                         .addGap(56, 56, 56))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel2)
@@ -432,7 +428,7 @@ public class SettingsPanel extends javax.swing.JPanel {
                             .addComponent(jEveryDayValid)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jSendTimeFrame, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 257, Short.MAX_VALUE)
+                                    .addComponent(jSendTimeFrame, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 225, Short.MAX_VALUE)
                                     .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, 0, 0, Short.MAX_VALUE)
                                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
                                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
@@ -440,8 +436,8 @@ public class SettingsPanel extends javax.swing.JPanel {
                                             .addComponent(jOnlyValidAt, javax.swing.GroupLayout.Alignment.LEADING))
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(jTribeTimeFrameBox, 0, 184, Short.MAX_VALUE)
-                                            .addComponent(jValidAtDay, javax.swing.GroupLayout.DEFAULT_SIZE, 184, Short.MAX_VALUE))))
+                                            .addComponent(jTribeTimeFrameBox, 0, 152, Short.MAX_VALUE)
+                                            .addComponent(jValidAtDay, javax.swing.GroupLayout.DEFAULT_SIZE, 152, Short.MAX_VALUE))))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -457,7 +453,7 @@ public class SettingsPanel extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel2)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScrollPane1)
                     .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -499,8 +495,8 @@ public class SettingsPanel extends javax.swing.JPanel {
                     .addComponent(jLabel4))
                 .addGap(10, 10, 10)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jArriveTimeFrame, javax.swing.GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
-                    .addComponent(jArriveTime, javax.swing.GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE))
+                    .addComponent(jArriveTimeFrame, javax.swing.GroupLayout.DEFAULT_SIZE, 268, Short.MAX_VALUE)
+                    .addComponent(jArriveTime, javax.swing.GroupLayout.DEFAULT_SIZE, 268, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -520,14 +516,6 @@ public class SettingsPanel extends javax.swing.JPanel {
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(new java.awt.Color(0, 0, 0), null), "Sonstige Einstellungen", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 12))); // NOI18N
         jPanel3.setOpaque(false);
 
-        jLabel5.setText("Angriffe pro Dorf");
-
-        jAttackPerVillageSpinner.setModel(new javax.swing.SpinnerNumberModel(1, 1, 100, 1));
-        jAttackPerVillageSpinner.setToolTipText("<html>Maximale Anzahl von Angriffen die einem Zieldorf zugewiesen wird.<br/>\nDiese Einstellung kann jedoch unter Ziele für jedes Zieldorf getrennt festgelegt werden.\n</html>");
-        jAttackPerVillageSpinner.setMaximumSize(new java.awt.Dimension(100, 20));
-        jAttackPerVillageSpinner.setMinimumSize(new java.awt.Dimension(100, 20));
-        jAttackPerVillageSpinner.setPreferredSize(new java.awt.Dimension(100, 20));
-
         jVariableArriveTimeBox.setText("Variable Ankunftszeit");
         jVariableArriveTimeBox.setToolTipText("Variable Ankunftszeit verwenden");
         jVariableArriveTimeBox.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
@@ -544,7 +532,6 @@ public class SettingsPanel extends javax.swing.JPanel {
         jLabel6.setText("Zielsuche");
 
         jAlgoBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Zufällig", "Systematisch" }));
-        jAlgoBox.setSelectedIndex(1);
         jAlgoBox.setToolTipText("Komplexität der Berechnung");
         jAlgoBox.setMaximumSize(new java.awt.Dimension(100, 20));
         jAlgoBox.setMinimumSize(new java.awt.Dimension(100, 20));
@@ -566,26 +553,17 @@ public class SettingsPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jVariableArriveTimeBox)
-                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addGroup(jPanel3Layout.createSequentialGroup()
-                            .addComponent(jLabel6)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jAlgoBox, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel3Layout.createSequentialGroup()
-                            .addComponent(jLabel5)
-                            .addGap(50, 50, 50)
-                            .addComponent(jAttackPerVillageSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jLabel6)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 7, Short.MAX_VALUE)
+                        .addComponent(jAlgoBox, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jFakeOffTargetsBox))
-                .addContainerGap(67, Short.MAX_VALUE))
+                .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel5)
-                    .addComponent(jAttackPerVillageSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
                 .addComponent(jVariableArriveTimeBox)
                 .addGap(18, 18, 18)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -593,7 +571,7 @@ public class SettingsPanel extends javax.swing.JPanel {
                     .addComponent(jAlgoBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(jFakeOffTargetsBox)
-                .addContainerGap(155, Short.MAX_VALUE))
+                .addContainerGap(197, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -606,7 +584,7 @@ public class SettingsPanel extends javax.swing.JPanel {
                     .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
-                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -618,7 +596,7 @@ public class SettingsPanel extends javax.swing.JPanel {
                     .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -721,7 +699,6 @@ public class SettingsPanel extends javax.swing.JPanel {
     private javax.swing.JComboBox jAlgoBox;
     private de.tor.tribes.ui.components.DateTimeField jArriveTime;
     private com.visutools.nav.bislider.BiSlider jArriveTimeFrame;
-    private javax.swing.JSpinner jAttackPerVillageSpinner;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JRadioButton jEveryDayValid;
@@ -730,7 +707,6 @@ public class SettingsPanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JRadioButton jOnlyValidAt;

@@ -1180,25 +1180,30 @@ public class MapRenderer extends Thread {
                 Rectangle vRect = villagePositions.get(v);
                 if (t != null) {
                     if (DEFAULT != null) {
+                        //no mark-on-top mode
                         g2d.setColor(DEFAULT);
                         g2d.fillRect(vRect.x, vRect.y, vRect.width, vRect.height);
                     } else {
+                        //mark-on-top mode
                         if (!minimapSkin) {
                             if (emptyRect == null) {
+                                //get transparent region to copy
                                 Image du = GlobalOptions.getSkin().getImage(Skin.ID_DEFAULT_UNDERGROUND, currentZoom);
                                 g2d.drawImage(du, vRect.x, vRect.y, null);
-                                if (MapPanel.getSingleton().getBounds().contains(new Rectangle(vRect.x - 10, vRect.y - du.getHeight(null) + 10, du.getWidth(null) + 2, du.getHeight(null) + 2))) {
+                                if (MapPanel.getSingleton().getBounds().contains(new Rectangle(vRect.x - 10, vRect.y - 10, du.getWidth(null) + 10, du.getHeight(null) + 10))) {
                                     emptyRect = (Rectangle) vRect.clone();
                                 }
                             } else {
                                 g2d.copyArea(emptyRect.x, emptyRect.y, emptyRect.width, emptyRect.height, vRect.x - emptyRect.x, vRect.y - emptyRect.y);
                             }
                         } else {
+                            //for minimap skin use uniform color
                             g2d.setColor(new Color(35, 125, 0));
                             g2d.fillRect(vRect.x, vRect.y, vRect.width, vRect.height);
                         }
                     }
                 } else {
+                    //barbarian marker
                     g2d.setColor(Color.LIGHT_GRAY);
                     g2d.fillRect(vRect.x, vRect.y, vRect.width, vRect.height);
                 }
@@ -2360,8 +2365,7 @@ public class MapRenderer extends Thread {
         } else {
             value = "verlassen";
             drawPopupField(g2d, mouseVillage, metrics, xc, yc, null, value, width, dy);
-            dy +=
-                    19;
+            dy +=         19;
         }
 
         Note n = NoteManager.getSingleton().getNoteForVillage(mouseVillage);
@@ -2407,8 +2411,7 @@ public class MapRenderer extends Thread {
                         if (first && symbol >= 0) {
                             //draw icon for first line if exists
                             drawNoteField(g2d, metrics, xc, yc, ImageManager.getNoteSymbol(symbol), l, width, dy);
-                            first =
-                                    false;
+                            first =     false;
                         } else {
                             drawNoteField(g2d, metrics, xc, yc, null, l, width, dy);
                         }

@@ -1584,6 +1584,30 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
                     inVillage.put(unit, amount);
                 }
             }
+
+            if (!report.areAttackersHidden()) {
+                //put attackers to troop manager
+                Tribe attacker = report.getAttacker();
+                Tribe user = DSWorkbenchMainFrame.getSingleton().getCurrentUser();
+                if (attacker != null && user != null) {
+                    if (!attacker.equals(user)) {
+                        //assign surviving troops to enemy village
+                        Hashtable<UnitHolder, Integer> attackers = report.getAttackers();
+                        Hashtable<UnitHolder, Integer> diedAttackers = report.getDiedAttackers();
+                        Village source = report.getSourceVillage();
+                        VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(source);
+                        if (holder == null) {
+                            TroopsManager.getSingleton().addTroopsForVillage(source, new LinkedList<Integer>());
+                            holder = TroopsManager.getSingleton().getTroopsForVillage(source);
+                        }
+                        Hashtable<UnitHolder, Integer> inVillage = holder.getTroopsInVillage();
+                        for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
+                            int amount = attackers.get(unit) - diedAttackers.get(unit);
+                            inVillage.put(unit, amount);
+                        }
+                    }
+                }
+            }
         }
         JOptionPaneHelper.showInformationBox(this, "Truppen übertragen", "Information");
         TroopsManager.getSingleton().forceUpdate();

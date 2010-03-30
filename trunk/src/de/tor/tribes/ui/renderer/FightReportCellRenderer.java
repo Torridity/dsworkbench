@@ -40,7 +40,6 @@ public class FightReportCellRenderer extends DefaultTableCellRenderer {
         Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         JLabel label = (JLabel) c;
         FightReport rep = (FightReport) value;
-
         try {
             label.setText("");
             if (rep.areAttackersHidden()) {
@@ -56,6 +55,7 @@ public class FightReportCellRenderer extends DefaultTableCellRenderer {
             }
             label.setToolTipText(FightReportHTMLToolTipGenerator.buildToolTip(rep));
         } catch (Exception e) {
+            e.printStackTrace();
         }
         return label;
     }

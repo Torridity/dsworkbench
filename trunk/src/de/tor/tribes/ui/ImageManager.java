@@ -13,6 +13,7 @@ import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
 import javax.imageio.ImageIO;
@@ -25,6 +26,7 @@ import org.apache.log4j.Logger;
 public class ImageManager {
 
     private static Logger logger = Logger.getLogger("TextureManager");    //mappanel default
+    private static URL[] NOTE_URLS = null;
     // <editor-fold defaultstate="collapsed" desc="Basic map tool IDs">
     public final static int CURSOR_DEFAULT = 0;
     public final static int CURSOR_MARK = 1;
@@ -117,6 +119,45 @@ public class ImageManager {
     public final static int NOTE_SYMBOL_CHECK = 28;
     public final static int NOTE_SYMBOL_EYE = 29;
     public final static int NOTE_SYMBOL_NO_EYE = 30;
+
+    static {
+        try {
+            NOTE_URLS = new URL[]{
+                        new File("graphics/icons/spear.png").toURI().toURL(),
+                        new File("graphics/icons/sword.png").toURI().toURL(),
+                        new File("graphics/icons/axe.png").toURI().toURL(),
+                        new File("graphics/icons/archer.png").toURI().toURL(),
+                        new File("graphics/icons/spy.png").toURI().toURL(),
+                        new File("graphics/icons/light.png").toURI().toURL(),
+                        new File("graphics/icons/marcher.png").toURI().toURL(),
+                        new File("graphics/icons/heavy.png").toURI().toURL(),
+                        new File("graphics/icons/ram.png").toURI().toURL(),
+                        new File("graphics/icons/cata.png").toURI().toURL(),
+                        new File("graphics/icons/knight.png").toURI().toURL(),
+                        new File("graphics/icons/snob.png").toURI().toURL(),
+                        new File("graphics/icons/def_cav.png").toURI().toURL(),
+                        new File("graphics/icons/def_archer.png").toURI().toURL(),
+                        ImageManager.class.getResource("/res/ui/fake.png"),
+                        ImageManager.class.getResource("/res/ally.png"),
+                        ImageManager.class.getResource("/res/barracks.png"),
+                        new File("graphics/icons/move_out.png").toURI().toURL(),
+                        new File("graphics/icons/move_in.png").toURI().toURL(),
+                        ImageManager.class.getResource("/res/ui/bullet_ball_blue.png"),
+                        ImageManager.class.getResource("/res/ui/bullet_ball_green.png"),
+                        ImageManager.class.getResource("/res/ui/bullet_ball_yellow.png"),
+                        ImageManager.class.getResource("/res/ui/bullet_ball_red.png"),
+                        ImageManager.class.getResource("/res/ui/bullet_ball_grey.png"),
+                        new File("graphics/icons/warning.png").toURI().toURL(),
+                        ImageManager.class.getResource("/res/die.png"),
+                        ImageManager.class.getResource("/res/add.gif"),
+                        ImageManager.class.getResource("/res/remove.gif"),
+                        ImageManager.class.getResource("/res/checkbox.png"),
+                        ImageManager.class.getResource("/res/ui/eye.png"),
+                        ImageManager.class.getResource("/res/ui/eye_forbidden.png")};
+        } catch (Exception e) {
+            NOTE_URLS = null;
+        }
+    }
     //</editor-fold>
     private static final List<Cursor> CURSORS = new LinkedList<Cursor>();
     private static final List<ImageIcon> CURSOR_IMAGES = new LinkedList<ImageIcon>();
@@ -197,7 +238,10 @@ public class ImageManager {
     }
 
     public static void loadNoteSymbols() throws Exception {
-        NOTE_SYMBOLS.add(ImageIO.read(new File("graphics/icons/def_cav.png")));
+        for (URL u : NOTE_URLS) {
+            NOTE_SYMBOLS.add(ImageIO.read(u));
+        }
+        /* NOTE_SYMBOLS.add(ImageIO.read(new File("graphics/icons/def_cav.png")));
         NOTE_SYMBOLS.add(ImageIO.read(new File("graphics/icons/def_archer.png")));
         NOTE_SYMBOLS.add(ImageIO.read(ImageManager.class.getResourceAsStream("/res/ui/fake.png")));
         NOTE_SYMBOLS.add(ImageIO.read(ImageManager.class.getResourceAsStream("/res/ally.png")));
@@ -215,7 +259,11 @@ public class ImageManager {
         NOTE_SYMBOLS.add(ImageIO.read(ImageManager.class.getResourceAsStream("/res/remove.gif")));
         NOTE_SYMBOLS.add(ImageIO.read(ImageManager.class.getResourceAsStream("/res/checkbox.png")));
         NOTE_SYMBOLS.add(ImageIO.read(ImageManager.class.getResourceAsStream("/res/ui/eye.png")));
-        NOTE_SYMBOLS.add(ImageIO.read(ImageManager.class.getResourceAsStream("/res/ui/eye_forbidden.png")));
+        NOTE_SYMBOLS.add(ImageIO.read(ImageManager.class.getResourceAsStream("/res/ui/eye_forbidden.png")));*/
+    }
+
+    public static URL getNoteImageURL(int pNoteId) {
+        return NOTE_URLS[pNoteId];
     }
 
     public static BufferedImage getNoteIcon(int v) {
@@ -268,7 +316,7 @@ public class ImageManager {
 
             for (BufferedImage i : UNIT_IMAGES) {
                 //add unit icon to note symbol
-                NOTE_SYMBOLS.add(i);
+                //  NOTE_SYMBOLS.add(i);
                 //add scaled icon to icon list
                 UNIT_ICONS.add(new ImageIcon(i.getScaledInstance(i.getWidth(), i.getHeight(), BufferedImage.SCALE_DEFAULT)));
             }

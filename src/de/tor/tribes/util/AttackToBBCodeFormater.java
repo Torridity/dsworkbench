@@ -8,6 +8,7 @@ import de.tor.tribes.io.ServerManager;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.Village;
+import java.awt.Color;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -25,6 +26,9 @@ public class AttackToBBCodeFormater {
         if (template == null) {
             template = STANDARD_TEMPLATE;
         }
+        //bot protection
+        template = template.replaceAll("red", getRandomRed());
+        template = template.replaceAll("green", getRandomGreen());
 
         Date aTime = pAttack.getArriveTime();
         Date sTime = new Date(aTime.getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(pAttack.getSource(), pAttack.getTarget(), pAttack.getUnit().getSpeed()) * 1000));
@@ -165,5 +169,28 @@ public class AttackToBBCodeFormater {
         template += "\n";
 
         return template;
+    }
+
+    public static String getRandomRed() {
+        Color c = Color.decode("#ff0e0e");
+        int randomColor = c.getRGB() + (int) Math.rint(Math.random() * 10);
+        return "#" + Integer.toHexString(new Color(randomColor).getRGB()).substring(2);
+    }
+
+    public static String getRandomGreen() {
+        Color c = Color.decode("#2eb92e");
+        int randomColor = c.getRGB() + (int) Math.rint(Math.random() * 10);
+        return "#" + Integer.toHexString(new Color(randomColor).getRGB()).substring(2);
+    }
+
+    public static void main(String[] args) {
+        String tesst = "red";
+        Color c = Color.decode("#ff0e0e");
+        System.out.println(c);
+        System.out.println(c.getRGB());
+        int c2 = c.getRGB() + (int) Math.rint(Math.random() * 10);
+        System.out.println(new Color(c2));
+        System.out.println(Integer.toHexString(new Color(c2).getRGB()));
+        //System.out.println(tesst.replaceAll("red", "#ff0e0e"));
     }
 }

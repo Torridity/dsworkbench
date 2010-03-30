@@ -191,24 +191,29 @@ public class FightReportHTMLToolTipGenerator {
         onTheWayTable += "<tr>";
         outsideTable += "<tr>";
 
+
         String headerRow = "<tr>";
         String onTheWayRow = "<tr>";
 
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
             headerRow += "<td style=\"background-color:#E1D5BE;\"><img src=\"" + FightReportHTMLToolTipGenerator.class.getResource("/res/ui/" + unit.getPlainName() + ".png") + "\"/></td>";
-            int amount = pReport.getDefendersOnTheWay().get(unit);
+
+            int amount = 0;
+            if (pReport.whereDefendersOnTheWay()) {
+                amount = pReport.getDefendersOnTheWay().get(unit);
+            }
             if (amount == 0) {
                 onTheWayRow += "<td style=\"color:#DED3B9;\">" + amount + "</td>";
             } else {
                 onTheWayRow += "<td>" + amount + "</td>";
             }
-
         }
         headerRow += "</tr>";
         onTheWayRow += "</tr>";
 
         onTheWayTable += headerRow;
         onTheWayTable += onTheWayRow;
+
         onTheWayTable += "</table>";
         res = "<tr>";
         res += "<td colspan=\"5\"><b>Truppen des Verteidigers, die unterwegs waren:</td>";

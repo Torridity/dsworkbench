@@ -67,7 +67,7 @@ public class AlgorithmLogPanel extends javax.swing.JPanel {
             StyledDocument doc = jTextPane1.getStyledDocument();
             doc.insertString(doc.getLength(), "(" + dateFormat.format(new Date(System.currentTimeMillis())) + ") " + pText + "\n", doc.getStyle("Default"));
             scroll();
-        } catch (Exception e) {
+        } catch (Throwable e) {
         }
     }
 
@@ -76,7 +76,7 @@ public class AlgorithmLogPanel extends javax.swing.JPanel {
             StyledDocument doc = jTextPane1.getStyledDocument();
             doc.insertString(doc.getLength(), "(" + dateFormat.format(new Date(System.currentTimeMillis())) + ") " + pText + "\n", doc.getStyle("Info"));
             scroll();
-        } catch (Exception e) {
+        } catch (Throwable e) {
         }
     }
 
@@ -85,7 +85,7 @@ public class AlgorithmLogPanel extends javax.swing.JPanel {
             StyledDocument doc = jTextPane1.getStyledDocument();
             doc.insertString(doc.getLength(), "(" + dateFormat.format(new Date(System.currentTimeMillis())) + ") " + pText + "\n", doc.getStyle("Error"));
             scroll();
-        } catch (Exception e) {
+        } catch (Throwable e) {
         }
     }
 

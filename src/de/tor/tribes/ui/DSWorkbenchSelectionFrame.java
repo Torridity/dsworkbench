@@ -18,6 +18,7 @@ import de.tor.tribes.types.NoAlly;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
+import de.tor.tribes.ui.dnd.VillageTransferable;
 import de.tor.tribes.ui.tree.AllyNode;
 import de.tor.tribes.ui.tree.NodeCellRenderer;
 import de.tor.tribes.ui.tree.SelectionTreeRootNode;
@@ -31,11 +32,18 @@ import de.tor.tribes.util.VillageSelectionListener;
 import de.tor.tribes.util.html.SelectionHTMLExporter;
 import de.tor.tribes.util.parser.VillageParser;
 import de.tor.tribes.util.tag.TagManager;
+import java.awt.Cursor;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
+import java.awt.dnd.DnDConstants;
+import java.awt.dnd.DragGestureEvent;
+import java.awt.dnd.DragGestureListener;
+import java.awt.dnd.DragSource;
+import java.awt.dnd.DragSourceDragEvent;
+import java.awt.dnd.DragSourceDropEvent;
 import java.io.File;
 import java.text.NumberFormat;
 import java.util.Collections;
@@ -52,13 +60,14 @@ import org.apache.log4j.Logger;
 /**
  * @author Charon
  */
-public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implements VillageSelectionListener {
+public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implements VillageSelectionListener, DragGestureListener {
 
     private static Logger logger = Logger.getLogger("SelectionFrame");
     private static DSWorkbenchSelectionFrame SINGLETON = null;
     private SelectionTreeRootNode mRoot = null;
     private List<Village> treeData = null;
     private boolean treeMode = true;
+    private DragSource dragSource;
 
     public static synchronized DSWorkbenchSelectionFrame getSingleton() {
         if (SINGLETON == null) {
@@ -78,6 +87,11 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
         }
         treeData = new LinkedList<Village>();
         jSelectionTree.setCellRenderer(new NodeCellRenderer());
+        dragSource = DragSource.getDefaultDragSource();
+        dragSource.createDefaultDragGestureRecognizer(jSelectionTree, // What component
+                DnDConstants.ACTION_COPY_OR_MOVE, // What drag types?
+                this);// the listener
+
         buildTree();
         //<editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
         GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.selection_tool", GlobalOptions.getHelpBroker().getHelpSet());
@@ -173,7 +187,6 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
         jExportAllyBox = new javax.swing.JCheckBox();
         jExportPointsBox = new javax.swing.JCheckBox();
         jExportHTMLButton = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -306,15 +319,6 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
                 .addContainerGap())
         );
 
-        jButton4.setBackground(new java.awt.Color(239, 235, 223));
-        jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_overview.png"))); // NOI18N
-        jButton4.setToolTipText("Markierte Elemente in Angriffsplaner übertragen");
-        jButton4.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireSelectionToAttackPlannerEvent(evt);
-            }
-        });
-
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Bereichsauswahl"));
         jPanel3.setOpaque(false);
 
@@ -361,7 +365,7 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
                         .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jYStart, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 95, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 103, Short.MAX_VALUE)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(jLabel4)
@@ -428,13 +432,11 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 428, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 432, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addComponent(jButton1)
-                        .addComponent(jButton4)
-                        .addComponent(jViewTypeButton))
+                    .addComponent(jButton1)
+                    .addComponent(jViewTypeButton)
                     .addComponent(jViewTypeButton1))
                 .addContainerGap())
         );
@@ -445,8 +447,6 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jButton1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton4)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jViewTypeButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -527,8 +527,7 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
                 //handle vista problem
                 chooser = new JFileChooser(dir);
             } catch (Exception e) {
-                JOptionPaneHelper.showErrorBox(this, "Konnte Dateiauswahldialog nicht öffnen.\nMöglicherweise verwendest du Windows Vista. Ist dies der Fall, beende DS Workbench, klicke mit der rechten Maustaste auf DSWorkbench.exe,\n"
-                        + "wähle 'Eigenschaften' und deaktiviere dort unter 'Kompatibilität' den Windows XP Kompatibilitätsmodus.", "Fehler");
+                JOptionPaneHelper.showErrorBox(this, "Konnte Dateiauswahldialog nicht öffnen.\nMöglicherweise verwendest du Windows Vista. Ist dies der Fall, beende DS Workbench, klicke mit der rechten Maustaste auf DSWorkbench.exe,\n" + "wähle 'Eigenschaften' und deaktiviere dort unter 'Kompatibilität' den Windows XP Kompatibilitätsmodus.", "Fehler");
                 return;
             }
 
@@ -622,8 +621,7 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
                         int cnt = t.countTokens();
                         boolean doExport = true;
                         if (cnt > 500) {
-                            if (JOptionPaneHelper.showQuestionConfirmBox(this, "Die ausgewählten Dörfer benötigen mehr als 500 BB-Codes\n"
-                                    + "und können daher im Spiel (Forum/IGM/Notizen) nicht auf einmal dargestellt werden.\nTrotzdem exportieren?", "Zu viele BB-Codes", "Nein", "Ja") == JOptionPane.NO_OPTION) {
+                            if (JOptionPaneHelper.showQuestionConfirmBox(this, "Die ausgewählten Dörfer benötigen mehr als 500 BB-Codes\n" + "und können daher im Spiel (Forum/IGM/Notizen) nicht auf einmal dargestellt werden.\nTrotzdem exportieren?", "Zu viele BB-Codes", "Nein", "Ja") == JOptionPane.NO_OPTION) {
                                 doExport = false;
                             }
                         }
@@ -682,9 +680,8 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
     private void fireAlwaysOnTopChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireAlwaysOnTopChangedEvent
         setAlwaysOnTop(!isAlwaysOnTop());
     }//GEN-LAST:event_fireAlwaysOnTopChangedEvent
-
-    private void fireSelectionToAttackPlannerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSelectionToAttackPlannerEvent
-        int res = JOptionPaneHelper.showQuestionConfirmBox(this, "Dörfer als Herkunft oder Ziel einfügen?", "Dörfer übertragen", "Ziel", "Herkunft");
+/*
+  int res = JOptionPaneHelper.showQuestionConfirmBox(this, "Dörfer als Herkunft oder Ziel einfügen?", "Dörfer übertragen", "Ziel", "Herkunft");
         if (res == JOptionPane.NO_OPTION) {
             if (!DSWorkbenchMainFrame.getSingleton().getAttackPlaner().isVisible()) {
                 DSWorkbenchMainFrame.getSingleton().getAttackPlaner().setup();
@@ -700,7 +697,7 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
         } else {
             //return;
         }
-    }//GEN-LAST:event_fireSelectionToAttackPlannerEvent
+ */
 
     private void fireSelectRegionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSelectRegionEvent
         try {
@@ -814,7 +811,6 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
     private javax.swing.JCheckBox jAlwaysOnTopBox;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton4;
     private javax.swing.JCheckBox jExportAllyBox;
     private javax.swing.JButton jExportBBButton;
     private javax.swing.JButton jExportHTMLButton;
@@ -873,11 +869,12 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
         } catch (Exception e) {
         //occurs if no rect was opened by selection tool -> ignore
         }*/
+        addVillages(DataHolder.getSingleton().getVillagesInRegion(pStart, pEnd));
 
-        for (Village v : DataHolder.getSingleton().getVillagesInRegion(pStart, pEnd)) {
-            treeData.add(v);
+        /* for (Village v : ) {
+        treeData.add(v);
         }
-        buildTree();
+        buildTree();*/
     }
 
     public void addVillages(List<Village> pVillages) {
@@ -898,6 +895,35 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
         }
         Collections.sort(treeData, Village.ALLY_TRIBE_VILLAGE_COMPARATOR);
         buildTree();
+    }
+
+    @Override
+    public void dragGestureRecognized(DragGestureEvent dge) {
+
+        List<Village> v = getSelectedElements();
+        if (v == null) {
+            return;
+        }
+        Cursor c = null;
+        if (!v.isEmpty()) {
+            c = ImageManager.createVillageDragCursor(v.size());
+            setCursor(c);
+            dge.startDrag(c, new VillageTransferable(v), this);
+        }
+    }
+
+    @Override
+    public void dragEnter(DragSourceDragEvent dsde) {
+    }
+
+    @Override
+    public void dragOver(DragSourceDragEvent dsde) {
+    }
+
+    @Override
+    public void dragDropEnd(DragSourceDropEvent dsde) {
+        setCursor(Cursor.getDefaultCursor());
+        // MapPanel.getSingleton().setCurrentCursor(MapPanel.getSingleton().getCurrentCursor());
     }
 }
 

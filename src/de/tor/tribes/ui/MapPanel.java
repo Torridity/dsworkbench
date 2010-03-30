@@ -114,7 +114,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
     private AttackAddFrame attackAddFrame = null;
     private boolean positionUpdate = false;
     private de.tor.tribes.types.Rectangle selectionRect = null;
-    private VillageSelectionListener mVillageSelectionListener = null;
+    // private VillageSelectionListener mVillageSelectionListener = null;
     private String sMapShotType = null;
     private File mMapShotFile = null;
     private boolean bMapSHotPlaned = false;
@@ -156,7 +156,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
         jCopyEnemyAlly.setSelected(true);
         jCopyBarbarian.setSelected(true);
         jCopyVillagesDialog.pack();
-        mVillageSelectionListener = DSWorkbenchSelectionFrame.getSingleton();
+        // mVillageSelectionListener = DSWorkbenchSelectionFrame.getSingleton();
         markedVillages = new LinkedList<Village>();
         initListeners();
     }
@@ -249,32 +249,44 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                 }/* else {
                 DSWorkbenchMainFrame.getSingleton().switchPanel();
                 }*/
+
+                int tmpCursor = (spaceDown) ? ImageManager.CURSOR_DEFAULT : iCurrentCursor;
+
                 Village v = getVillageAtMousePos();
-                if (e.getButton() == MouseEvent.BUTTON1 && shiftDown) {
+                if (!shiftDown && !MenuRenderer.getSingleton().isVisible()) {
+                    //left click, no shift and no opened menu clears selected villages
+                    markedVillages.clear();
+                    DSWorkbenchSelectionFrame.getSingleton().clear();
+                }
+
+                if (tmpCursor == ImageManager.CURSOR_SELECTION) {
+                    //add current mouse village if there is one
                     if (v != null) {
                         if (!markedVillages.contains(v)) {
                             markedVillages.add(v);
                         } else {
                             markedVillages.remove(v);
                         }
-                    } else {
-                        markedVillages.clear();
-                    }
-                    return;
-                } else if (!shiftDown && v == null && !MenuRenderer.getSingleton().isVisible()) {
+                    } /*else if (!MenuRenderer.getSingleton().isVisible()) {
                     markedVillages.clear();
-                }
+                    }*/
+                    return;
+                }/* else if (!shiftDown && v == null && !MenuRenderer.getSingleton().isVisible()) {
+                markedVillages.clear();
+                DSWorkbenchSelectionFrame.getSingleton().clear();
+                }*/
 
                 if (MenuRenderer.getSingleton().isVisible()) {
                     return;
                 }
+
                 int unit = -1;
                 boolean isAttack = false;
                 if (!spaceDown) {
                     isAttack = isAttackCursor();
                 }
 
-                int tmpCursor = (spaceDown) ? ImageManager.CURSOR_DEFAULT : iCurrentCursor;
+
                 switch (tmpCursor) {
                     case ImageManager.CURSOR_DEFAULT: {
                         //center village on click with default cursor
@@ -472,6 +484,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                     case ImageManager.CURSOR_SELECTION: {
                         if (!shiftDown) {
                             markedVillages.clear();
+                            DSWorkbenchSelectionFrame.getSingleton().clear();
                         }
                         selectionRect = new de.tor.tribes.types.Rectangle();
                         selectionRect.setDrawColor(Color.YELLOW);
@@ -583,14 +596,15 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                             int ye = (int) Math.floor(selectionRect.getYPosEnd());
 
                             //notify selection listener (see DSWorkbenchSelectionFrame)
-                            // mVillageSelectionListener.fireSelectionFinishedEvent(new Point(xs, ys), new Point(xe, ye));
+
+                            DSWorkbenchSelectionFrame.getSingleton().fireSelectionFinishedEvent(new Point(xs, ys), new Point(xe, ye));
                             List<Village> villages = DataHolder.getSingleton().getVillagesInRegion(new Point(xs, ys), new Point(xe, ye));
                             for (Village v : villages) {
                                 if (!markedVillages.contains(v)) {
                                     markedVillages.add(v);
                                 }
                             }
-                            //  DSWorkbenchSelectionFrame.getSingleton().toFront();
+                            DSWorkbenchSelectionFrame.getSingleton().toFront();
                             selectionRect = null;
                             break;
                         }
@@ -1543,7 +1557,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
             if (v != null) {
                 DSWorkbenchMainFrame.getSingleton().centerVillage(v);
             }
-        }else if (evt.getSource() == jCurrentToAttackPlanerAsSourceItem) {
+        } else if (evt.getSource() == jCurrentToAttackPlanerAsSourceItem) {
             Village v = actionMenuVillage;
             if (v != null) {
                 if (v.getTribe() == null) {
@@ -1993,27 +2007,23 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
 
     @Override
     public void dragEnter(DragSourceDragEvent dsde) {
-      
     }
 
     @Override
     public void dragOver(DragSourceDragEvent dsde) {
-      
     }
 
     @Override
     public void dropActionChanged(DragSourceDragEvent dsde) {
-      
     }
 
     @Override
     public void dragExit(DragSourceEvent dse) {
-       
     }
 
     @Override
     public void dragDropEnd(DragSourceDropEvent dsde) {
-       setCurrentCursor(getCurrentCursor());
+        setCurrentCursor(getCurrentCursor());
     }
 
     @Override
@@ -2025,17 +2035,14 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
 
     @Override
     public void dragOver(DropTargetDragEvent dtde) {
-      
     }
 
     @Override
     public void dropActionChanged(DropTargetDragEvent dtde) {
-       
     }
 
     @Override
     public void dragExit(DropTargetEvent dte) {
-      
     }
 
     @Override

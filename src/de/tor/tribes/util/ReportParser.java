@@ -24,7 +24,7 @@ public class ReportParser {
     public static boolean parseReport(String pData) {
         try {
             FightReport r = parse(pData);
-    
+
             if (!r.isValid()) {
                 throw new Exception("No valid report data found");
             }
@@ -47,6 +47,7 @@ public class ReportParser {
         boolean defenderPart = false;
         boolean troopsOnTheWayPart = false;
         boolean troopsOutside = false;
+        boolean haveTime = false;
         int serverTroopCount = 12;
         FightReport result = new FightReport();
         while (t.hasMoreTokens()) {
@@ -57,11 +58,12 @@ public class ReportParser {
                 try {
                     Date d = f.parse(line);
                     result.setTimestamp(d.getTime());
+                    haveTime = true;
                 } catch (Exception e) {
                     result.setTimestamp(0l);
                 }
             } else if (line.startsWith("Der Angreifer hat gewonnen")) {
-               // System.out.println("Won");
+                // System.out.println("Won");
                 result.setWon(true);
             } else if (line.startsWith("Der Verteidiger hat gewonnen")) {
                 //System.out.println("Lost");
@@ -88,7 +90,7 @@ public class ReportParser {
                 //System.out.println("LuckPart");
                 luckPart = true;
             } else if (line.startsWith("Moral")) {
-               // System.out.println("Moral");
+                // System.out.println("Moral");
                 line = line.replaceAll("Moral:", "").trim().replaceAll("%", "");
                 try {
                     double moral = Double.parseDouble(line);
@@ -102,7 +104,7 @@ public class ReportParser {
                 result.setAttacker(DataHolder.getSingleton().getTribeByName(line));
             } else if (line.startsWith("Dorf") || line.startsWith("Herkunft") || line.startsWith("Ziel")) {
                 line = line.replaceAll("Dorf:", "").replaceAll("Herkunft:", "").replaceAll("Ziel:", "").trim();
-               // System.out.println("Village " +line);
+                // System.out.println("Village " +line);
                 if (attackerPart) {
                     result.setSourceVillage(VillageParser.parse(line).get(0));
                 } else if (defenderPart) {
@@ -110,7 +112,7 @@ public class ReportParser {
                 }
             } else if (line.startsWith("Anzahl")) {
                 line = line.replaceAll("Anzahl:", "").trim();
-               // System.out.println("Amoi" +line);
+                // System.out.println("Amoi" +line);
                 if (attackerPart) {
                     String[] troops = line.split("\t");
                     if (troops.length == serverTroopCount) {
@@ -139,7 +141,7 @@ public class ReportParser {
             } else if (line.startsWith("Verteidiger")) {
                 defenderPart = true;
                 line = line.replaceAll("Verteidiger:", "").trim();
-               // System.out.println("Def " + line);
+                // System.out.println("Def " + line);
                 result.setDefender(DataHolder.getSingleton().getTribeByName(line));
             } else if (line.startsWith("Schaden durch Rammböcke")) {
                 line = line.replaceAll("Schaden durch Rammböcke:", "").trim();
@@ -215,6 +217,19 @@ public class ReportParser {
                 result.setDefenders(parseUnits(unknownDefender));
                 result.setDiedDefenders(parseUnits(unknownDefender));
             } else {
+
+                if (!haveTime) {
+                    line = line.trim();
+                    SimpleDateFormat f = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
+                    try {
+                        Date d = f.parse(line);
+                        result.setTimestamp(d.getTime());
+                        haveTime = true;
+                    } catch (Exception e) {
+                        result.setTimestamp(0l);
+                    }
+                }
+
                 if (troopsOnTheWayPart) {
                     String[] troops = line.split("\t");
                     if (troops.length == serverTroopCount) {

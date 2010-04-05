@@ -3129,6 +3129,24 @@ private void fireChangeAttackCountEvent(java.awt.event.MouseEvent evt) {//GEN-FI
                     int red = (int) Math.rint((float) LAST_SEGMENT.getRed() * (1.0f - posv) + (float) Color.YELLOW.getRed() * posv);
                     int green = (int) Math.rint((float) LAST_SEGMENT.getGreen() * (1.0f - posv) + (float) Color.YELLOW.getGreen() * posv);
                     int blue = (int) Math.rint((float) LAST_SEGMENT.getBlue() * (1.0f - posv) + (float) Color.YELLOW.getBlue() * posv);
+                    if (red < 0) {
+                        red = 0;
+                    }
+                    if (green < 0) {
+                        green = 0;
+                    }
+                    if (blue < 0) {
+                        blue = 0;
+                    }
+                    if (red > 254) {
+                        red = 254;
+                    }
+                    if (green > 254) {
+                        green = 254;
+                    }
+                    if (blue > 254) {
+                        blue = 254;
+                    }
                     back = new Color(red, green, blue);
                 }
                 DefaultTableCellRenderer renderer = ((DefaultTableCellRenderer) c);

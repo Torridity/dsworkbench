@@ -50,6 +50,7 @@ import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
+import java.awt.ImageCapabilities;
 import java.awt.MouseInfo;
 import java.awt.Paint;
 import java.awt.PaintContext;
@@ -181,6 +182,34 @@ public class MapRenderer extends Thread {
         return buffy;
     }
 
+    private BufferedImage optimizeImage(BufferedImage image) {
+        // obtain the current system graphical settings
+        GraphicsConfiguration gfx_config = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().
+                getDefaultConfiguration();
+
+        /*
+         * if image is already compatible and optimized for current system
+         * settings, simply return it
+         */
+        if (image.getColorModel().equals(gfx_config.getColorModel())) {
+            return image;
+        }
+
+        // image is not optimized, so create a new image that is
+        BufferedImage new_image = gfx_config.createCompatibleImage(
+                image.getWidth(), image.getHeight(), image.getTransparency());
+
+        // get the graphics context of the new image to draw the old image on
+        Graphics2D g2d = (Graphics2D) new_image.getGraphics();
+
+        // actually draw the image and dispose of context no longer needed
+        g2d.drawImage(image, 0, 0, null);
+        g2d.dispose();
+
+        // return the new optimized image
+        return new_image;
+    }
+
     /**Complete redraw on resize or scroll*/
     public void initiateRedraw(int pType) {
         mapRedrawRequired = true;
@@ -209,9 +238,8 @@ public class MapRenderer extends Thread {
 
                     if (mBackBuffer == null) {
                         //create main buffer during first iteration
-                        mBackBuffer = getBufferedImage(w, h, Transparency.OPAQUE);//MapPanel.getSingleton().createImage(w, h)
-                        mFrontBuffer = getBufferedImage(w, h, Transparency.OPAQUE);
-
+                        mBackBuffer = getBufferedImage(w, h, Transparency.TRANSLUCENT);//MapPanel.getSingleton().createImage(w, h)
+                        mFrontBuffer = getBufferedImage(w, h, Transparency.TRANSLUCENT);
                         g2d = (Graphics2D) mBackBuffer.getGraphics();
                         prepareGraphics(g2d);
                         //set redraw required flag if nothin was drawn yet
@@ -221,8 +249,8 @@ public class MapRenderer extends Thread {
                         //if not re-create main buffer
                         if (mBackBuffer.getWidth(null) != w || mBackBuffer.getHeight(null) != h) {
                             //map panel has resized
-                            mBackBuffer = getBufferedImage(w, h, Transparency.OPAQUE);//MapPanel.getSingleton().createImage(w, h);
-                            mFrontBuffer = getBufferedImage(w, h, Transparency.OPAQUE);
+                            mBackBuffer = getBufferedImage(w, h, Transparency.TRANSLUCENT);//MapPanel.getSingleton().createImage(w, h);
+                            mFrontBuffer = getBufferedImage(w, h, Transparency.TRANSLUCENT);
                             g2d = (Graphics2D) mBackBuffer.getGraphics();
                             prepareGraphics(g2d);
                             //set redraw required flag if size has changed
@@ -342,13 +370,14 @@ public class MapRenderer extends Thread {
 
                     //notify MapPanel to bring buffer to screen
                     Hashtable<Village, Rectangle> pos = (Hashtable<Village, Rectangle>) villagePositions.clone();
-                    Graphics2D g2d2 = (Graphics2D) mFrontBuffer.getGraphics();
+                    mFrontBuffer = optimizeImage(mBackBuffer);
+                    /*Graphics2D g2d2 = (Graphics2D) mFrontBuffer.getGraphics();
                     prepareGraphics(g2d2);
-                    g2d2.drawImage(mBackBuffer, 0, 0, null);
+                    g2d2.drawImage(mBackBuffer, 0, 0, null);*/
 
                     MapPanel.getSingleton().updateComplete(pos, mFrontBuffer);
 
-                    g2d2.dispose();
+                   // g2d2.dispose();
                     g2d.dispose();
                     MapPanel.getSingleton().repaint();
                 }
@@ -2365,7 +2394,7 @@ public class MapRenderer extends Thread {
         } else {
             value = "verlassen";
             drawPopupField(g2d, mouseVillage, metrics, xc, yc, null, value, width, dy);
-            dy +=         19;
+            dy += 19;
         }
 
         Note n = NoteManager.getSingleton().getNoteForVillage(mouseVillage);
@@ -2411,7 +2440,7 @@ public class MapRenderer extends Thread {
                         if (first && symbol >= 0) {
                             //draw icon for first line if exists
                             drawNoteField(g2d, metrics, xc, yc, ImageManager.getNoteSymbol(symbol), l, width, dy);
-                            first =     false;
+                            first = false;
                         } else {
                             drawNoteField(g2d, metrics, xc, yc, null, l, width, dy);
                         }

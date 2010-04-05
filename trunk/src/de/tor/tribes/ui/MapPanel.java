@@ -1743,7 +1743,8 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
     public void paint(Graphics g) {
         try {
             //clean map
-            g.fillRect(0, 0, getWidth(), getHeight());
+            Graphics2D g2d = (Graphics2D)g;
+            g2d.fillRect(0, 0, getWidth(), getHeight());
             //calculate move direction if mouse is dragged outside the map
 
             if ((isOutside) && (mouseDown) && (iCurrentCursor != ImageManager.CURSOR_DEFAULT)) {
@@ -1785,7 +1786,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
             }
 
             //draw off-screen image of map
-            Graphics2D g2d = (Graphics2D) g;
+           // Graphics2D g2d = (Graphics2D) g;
             g2d.drawImage(mBuffer, 0, 0, null);
             g2d.dispose();
         } catch (Exception e) {

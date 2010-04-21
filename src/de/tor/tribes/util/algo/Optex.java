@@ -55,13 +55,13 @@ public class Optex<S extends Source, D extends Destination> {
             throw new Exception("The algorithm mustn't be executed more than once per instance!");
         }
 
-   //     System.out.println("Approximation...");
+        //     System.out.println("Approximation...");
         this.vam();
-    //    System.out.println("Approximation complete...");
+        //    System.out.println("Approximation complete...");
 
-    //    System.out.println("Optimization...");
+        //    System.out.println("Optimization...");
         this.optimize();
-     //   System.out.println("Optimization complete...");
+        //   System.out.println("Optimization complete...");
 
         this.executed = true;
     }
@@ -78,7 +78,7 @@ public class Optex<S extends Source, D extends Destination> {
         while (improvement) {
             improvement = false;
 
-        //    System.out.println("  Round " + count);
+            //    System.out.println("  Round " + count);
             count += 1;
 
             if (count == 102) {
@@ -97,7 +97,7 @@ public class Optex<S extends Source, D extends Destination> {
                                 Destination o_d = o.getDestination();
                                 if (this._getCosts(s1, o_d) < this._getCosts(s2, o_d)) {
                                     int swap_amount = 0;
-                                    swap_amount = Math.min(s1.waresAvailable(), o.amount);
+                                    swap_amount = Math.min(s1.waresAvailable(o_d), o.amount);
 
                                     s2.removeOrder(o_d, swap_amount);
                                     s1.addOrder(o_d, swap_amount);
@@ -198,12 +198,12 @@ public class Optex<S extends Source, D extends Destination> {
 
             if (biggest_s.waresAvailable() == 0) {
                 if (_sources.remove(biggest_s)) {
-         //           System.out.println("Removed source " + biggest_s.toString());
+                    //           System.out.println("Removed source " + biggest_s.toString());
                 }
             }
             if (biggest_s_d.remainingNeeds() == 0) {
                 if (_destinations.remove(biggest_s_d)) {
-             //       System.out.println("Removed destination " + biggest_s_d.toString());
+                    //       System.out.println("Removed destination " + biggest_s_d.toString());
                 }
             }
         }

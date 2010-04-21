@@ -92,12 +92,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumn;
 
 /**
- * @TODO (DIFF) Redesign of attack planer
- * @TODO (DIFF) New algorithm
- * @TODO (DIFF) Settings are stored now
- * @TODO (DIFF) Introduce for target "All but <1000, <2000" Button/ComboBOx
- * @TODO (DIFF) Added target fake col
- * @TODO (DIFF) Add attack amount for each village in target list
+ 
  * @author Jejkal
  */
 public class TribeTribeAttackFrame extends javax.swing.JFrame implements AlgorithmListener, DropTargetListener, DragGestureListener, DragSourceListener {

@@ -138,6 +138,7 @@ public class MapRenderer extends Thread {
 
     public MapRenderer() {
         mVisibleVillages = new Village[iVillagesX][iVillagesY];
+
         setPriority(Thread.MIN_PRIORITY);
         setDaemon(true);
         try {
@@ -444,7 +445,6 @@ public class MapRenderer extends Thread {
         //add small buffer
         iVillagesX++;
         iVillagesY++;
-
         //village start
         int xStartVillage = (int) Math.floor(dCenterX - iVillagesX / 2.0);
         int yStartVillage = (int) Math.floor(dCenterY - iVillagesY / 2.0);

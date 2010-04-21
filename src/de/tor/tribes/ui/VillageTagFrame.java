@@ -18,7 +18,6 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 
 /**
- *@TODO (DIFF) Added multi village tagging
  * @author  Charon
  */
 public class VillageTagFrame extends javax.swing.JFrame implements TagManagerListener {

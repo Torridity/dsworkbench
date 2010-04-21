@@ -126,13 +126,19 @@ public class StandardAttackElement {
             haveTroopInfo = false;
         }
 
-        Hashtable<UnitHolder, Integer> ownTroops = holder.getOwnTroops();
+        Hashtable<UnitHolder, Integer> ownTroops = null;
+        if (haveTroopInfo) {
+            holder.getOwnTroops();
+        }
         if (ownTroops == null) {
             //no troops in village
             haveTroopInfo = false;
         }
 
-        Integer availableAmount = ownTroops.get(unit);
+        Integer availableAmount = 0;
+        if (haveTroopInfo) {
+            availableAmount = ownTroops.get(unit);
+        }
         if (availableAmount == 0) {
             //no troops in village
             haveTroopInfo = false;

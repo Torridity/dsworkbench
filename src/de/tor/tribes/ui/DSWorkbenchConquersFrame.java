@@ -46,6 +46,7 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -126,6 +127,10 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
         pack();
     }
 
+    public JPanel getView(){
+        return jConquersPanel;
+    }
+
     public static synchronized DSWorkbenchConquersFrame getSingleton() {
         if (SINGLETON == null) {
             SINGLETON = new DSWorkbenchConquersFrame();
@@ -169,7 +174,7 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
         jShowOwnEnoblements = new javax.swing.JCheckBox();
         jApplyFiltersButton = new javax.swing.JButton();
         jButton7 = new javax.swing.JButton();
-        jPanel1 = new javax.swing.JPanel();
+        jConquersPanel = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jConquersTable = new javax.swing.JTable();
         jButton1 = new javax.swing.JButton();
@@ -471,7 +476,7 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
 
         setTitle("Eroberungen");
 
-        jPanel1.setBackground(new java.awt.Color(239, 235, 223));
+        jConquersPanel.setBackground(new java.awt.Color(239, 235, 223));
 
         jConquersTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -521,47 +526,44 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
         jButton3.setBackground(new java.awt.Color(239, 235, 223));
         jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_browser.png"))); // NOI18N
         jButton3.setToolTipText("Gewählte Dörfer InGame zentrieren");
-        jButton3.setMaximumSize(new java.awt.Dimension(59, 35));
-        jButton3.setMinimumSize(new java.awt.Dimension(59, 35));
-        jButton3.setPreferredSize(new java.awt.Dimension(59, 35));
         jButton3.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireCenterVillagesIngameEvent(evt);
             }
         });
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+        javax.swing.GroupLayout jConquersPanelLayout = new javax.swing.GroupLayout(jConquersPanel);
+        jConquersPanel.setLayout(jConquersPanelLayout);
+        jConquersPanelLayout.setHorizontalGroup(
+            jConquersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jConquersPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addGroup(jConquersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jConquersPanelLayout.createSequentialGroup()
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 458, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addGroup(jConquersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jConquersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addContainerGap())
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jConquersPanelLayout.createSequentialGroup()
+                        .addGroup(jConquersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jFriendlyConquersLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 454, Short.MAX_VALUE)
                             .addComponent(jGreyConquersLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 454, Short.MAX_VALUE)
                             .addComponent(jLastUpdateLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 454, Short.MAX_VALUE))
                         .addGap(79, 79, 79))))
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+        jConquersPanelLayout.setVerticalGroup(
+            jConquersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jConquersPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGroup(jConquersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jConquersPanelLayout.createSequentialGroup()
                         .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jButton3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 355, Short.MAX_VALUE))
@@ -590,14 +592,14 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jConquersFrameAlwaysOnTop)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jConquersPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jConquersPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jConquersFrameAlwaysOnTop)
                 .addContainerGap())
@@ -918,6 +920,7 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton7;
     private javax.swing.JCheckBox jConquersFrameAlwaysOnTop;
+    private javax.swing.JPanel jConquersPanel;
     private javax.swing.JTable jConquersTable;
     private javax.swing.JTextField jEndContinent;
     private javax.swing.JDialog jFilterDialog;
@@ -926,7 +929,6 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLastUpdateLabel;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;

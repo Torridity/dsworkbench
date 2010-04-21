@@ -59,6 +59,7 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JSpinner.DateEditor;
 import javax.swing.JTable;
 import javax.swing.event.ChangeEvent;
@@ -70,9 +71,6 @@ import org.apache.log4j.Logger;
 
 // -Dsun.java2d.d3d=true -Dsun.java2d.translaccel=true -Dsun.java2d.ddforcevram=true
 /**
- * @TODO (DIFF) Checked slow countdown refresh!
- * @TODO (DIFF) Correct moving of attacks to another plan
- * @TODO (DIFF) Improved std attack frame and added fake-def
  * @author  Charon
  */
 public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements AttackManagerListener {
@@ -210,6 +208,10 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
 // </editor-fold>
         jStandardAttackDialog.pack();
         pack();
+    }
+
+    public JPanel getView(){
+        return jAttackPanel;
     }
 
     /** This method is called from within the constructor to
@@ -1261,8 +1263,6 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         setTitle(bundle.getString("DSWorkbenchAttackFrame.title")); // NOI18N
 
         jAttackPanel.setBackground(new java.awt.Color(239, 235, 223));
-        jAttackPanel.setMaximumSize(new java.awt.Dimension(750, 377));
-        jAttackPanel.setMinimumSize(new java.awt.Dimension(750, 377));
         jAttackPanel.setRequestFocusEnabled(false);
 
         jAttackTable.setBackground(new java.awt.Color(236, 233, 216));

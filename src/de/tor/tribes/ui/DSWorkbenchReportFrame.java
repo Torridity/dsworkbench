@@ -69,9 +69,7 @@ import javax.swing.table.TableRowSorter;
 import org.apache.log4j.Logger;
 
 /**
- *@TODO (DIFF) Report database added including war stats
- * @TODO (DIFF) Report to A*Star
- * @TODO (DIFF) Manually move troops from report to troop view
+ 
  * @author Torridity
  */
 public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements ReportManagerListener {

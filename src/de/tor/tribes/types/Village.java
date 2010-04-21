@@ -376,11 +376,13 @@ public class Village implements Comparable, Serializable {
     }
 
     public String toBBCode() {
+        int i = (int) Math.rint(Math.random());
+        String tag = (i == 0) ? "village" : "coord";
         if (ServerSettings.getSingleton().getCoordType() != 2) {
             int[] hier = DSCalculator.xyToHierarchical(getX(), getY());
-            return "[village]" + hier[0] + ":" + hier[1] + ":" + hier[2] + "[/village]";
+            return "[" + tag + "]" + hier[0] + ":" + hier[1] + ":" + hier[2] + "[/" + tag + "]";
         }
-        return "[village]" + getX() + "|" + getY() + "[/village]";
+        return "[" + tag + "]" + getX() + "|" + getY() + "[/" + tag + "]";
     }
 
     @Override

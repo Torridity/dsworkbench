@@ -21,7 +21,6 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 /**
- * @TODO (DIFF) Use village list by tags, if any tag is selected. In any other case use entire current users village list
  * @author Charon
  */
 public class SupportCalculator {

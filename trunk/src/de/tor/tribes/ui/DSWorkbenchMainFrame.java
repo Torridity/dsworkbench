@@ -63,7 +63,6 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
-import java.util.Properties;
 import java.util.Vector;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListCellRenderer;
@@ -79,8 +78,6 @@ import javax.swing.table.DefaultTableModel;
 
 /**
  * @TODO (1.5?) Add min number to troop filter in attack planer????
- * @TODO (DIFF) Main size and settings stored
- * @TODO (DIFF) Global: Table cell popups for village, tribe and ally
  * @author  Charon
  */
 public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
@@ -625,6 +622,8 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             DSWorkbenchDoItYourselfAttackPlaner.getSingleton().setupAttackPlaner();
             DSWorkbenchReTimerFrame.getSingleton().setup();
             DSWorkbenchReportFrame.getSingleton().setup();
+            DSWorkbenchSupportCoordinator.getSingleton().setup();
+            DSWorkbenchSOSRequestAnalyzer.getSingleton().setup();
             //update attack planner
             if (mTribeTribeAttackFrame != null) {
                 mTribeTribeAttackFrame.setup();
@@ -751,6 +750,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         DSWorkbenchFormFrame.getSingleton().addFrameListener(this);
         DSWorkbenchStatsFrame.getSingleton().addFrameListener(this);
         DSWorkbenchReportFrame.getSingleton().addFrameListener(this);
+
     }
 
     /**Setup main map and mini map*/
@@ -1032,6 +1032,8 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jDistanceItem = new javax.swing.JMenuItem();
         jDoItYourselfAttackPlanerItem = new javax.swing.JMenuItem();
         jReTimeToolEvent = new javax.swing.JMenuItem();
+        jSupportCoordinator = new javax.swing.JMenuItem();
+        jSOSAnalyzerItem = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
         jShowAttackFrame = new javax.swing.JCheckBoxMenuItem();
         jShowMarkerFrame = new javax.swing.JCheckBoxMenuItem();
@@ -2146,6 +2148,24 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         });
         jMenu3.add(jReTimeToolEvent);
 
+        jSupportCoordinator.setBackground(new java.awt.Color(239, 235, 223));
+        jSupportCoordinator.setText(bundle.getString("DSWorkbenchMainFrame.jSupportCoordinator.text_1")); // NOI18N
+        jSupportCoordinator.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fireToolsActionEvent(evt);
+            }
+        });
+        jMenu3.add(jSupportCoordinator);
+
+        jSOSAnalyzerItem.setBackground(new java.awt.Color(239, 235, 223));
+        jSOSAnalyzerItem.setText(bundle.getString("DSWorkbenchMainFrame.jSOSAnalyzerItem.text_1")); // NOI18N
+        jSOSAnalyzerItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fireToolsActionEvent(evt);
+            }
+        });
+        jMenu3.add(jSOSAnalyzerItem);
+
         jMenuBar1.add(jMenu3);
 
         jMenu2.setBackground(new java.awt.Color(225, 213, 190));
@@ -2507,6 +2527,10 @@ private void fireToolsActionEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:e
         DSWorkbenchDoItYourselfAttackPlaner.getSingleton().setVisible(true);
     } else if (evt.getSource() == jReTimeToolEvent) {
         DSWorkbenchReTimerFrame.getSingleton().setVisible(true);
+    } else if (evt.getSource() == jSupportCoordinator) {
+        DSWorkbenchSupportCoordinator.getSingleton().setVisible(true);
+    } else if (evt.getSource() == jSOSAnalyzerItem) {
+        DSWorkbenchSOSRequestAnalyzer.getSingleton().setVisible(true);
     }
 }//GEN-LAST:event_fireToolsActionEvent
 
@@ -3535,6 +3559,7 @@ private void fireShowRulerChangedEvent(javax.swing.event.ChangeEvent evt) {//GEN
     private javax.swing.JMenuItem jReTimeToolEvent;
     private javax.swing.JButton jRefreshButton;
     private javax.swing.JButton jRemoveROIButton;
+    private javax.swing.JMenuItem jSOSAnalyzerItem;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
@@ -3558,6 +3583,7 @@ private void fireShowRulerChangedEvent(javax.swing.event.ChangeEvent evt) {//GEN
     private javax.swing.JCheckBoxMenuItem jShowTagFrame;
     private javax.swing.JCheckBoxMenuItem jShowTroopsFrame;
     private javax.swing.JMenuItem jStartAStarItem;
+    private javax.swing.JMenuItem jSupportCoordinator;
     private javax.swing.JTable jTable1;
     private com.l2fprod.common.swing.JTaskPane jTaskPane1;
     private javax.swing.JMenuItem jTribeTribeAttackItem;

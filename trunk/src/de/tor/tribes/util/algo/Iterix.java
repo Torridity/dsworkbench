@@ -475,7 +475,7 @@ public class Iterix extends AbstractAttackAlgorithm {
     public int solveRecursive(List<Village> pSources, List<Village> pTargets, double[][] pMappings, double[][] pResults, int pIndex, boolean recurse) {
         //get source list for solving
         List<Integer> idxs = selectSources(pMappings, pResults);
-        if (idxs.size() < 1) {
+        if (idxs.size() < 1 || isAborted()) {
             return countResults(pResults);
         }
         //get target mappings

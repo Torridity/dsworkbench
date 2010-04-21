@@ -18,7 +18,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 /**
- *
+ *@TODO (2.1) Add HR on attack confirm page in template
  * @author Charon
  */
 public class AttackScriptWriter {

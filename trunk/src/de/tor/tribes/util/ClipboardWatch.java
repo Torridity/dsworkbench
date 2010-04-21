@@ -4,8 +4,10 @@
  */
 package de.tor.tribes.util;
 
+import de.tor.tribes.util.parser.ReportParser;
 import de.tor.tribes.util.parser.GroupParser;
 import de.tor.tribes.util.parser.NonPAPlaceParser;
+import de.tor.tribes.util.parser.SOSParser;
 import de.tor.tribes.util.parser.SupportParser;
 import de.tor.tribes.util.parser.TroopsParser;
 import java.awt.Toolkit;
@@ -73,6 +75,7 @@ public class ClipboardWatch extends Thread {
                 }
             } catch (Exception e) {
                 //no usable data
+                e.printStackTrace();
             }
             try {
                 Thread.sleep(1000);

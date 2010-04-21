@@ -2,7 +2,6 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package de.tor.tribes.util.algo;
 
 import java.util.List;
@@ -29,53 +28,58 @@ import java.util.List;
  * @see stp.Destination
  */
 public interface Source {
-	/**
-	 * Should add a new order to destination d or increase an order to
-	 * destination d, if such an order already exists. After all,
-	 * there should be only one order per destination!
-	 * In fact, you dont have to follow this recommendation, but implementation
-	 * will be far easier, if you do. (See stp.Source documentation also
-	 * for a more detailed explanation.)
-	 *
-	 * @param d
-	 * @param amount
-	 */
-	public void addOrder(Destination d, int amount);
 
-	/**
-	 * Decreases the amount of ordered wares to destination d.
-	 *
-	 * @param d
-	 * @param amount
-	 */
-	public void removeOrder(Destination d, int amount);
+    /**
+     * Should add a new order to destination d or increase an order to
+     * destination d, if such an order already exists. After all,
+     * there should be only one order per destination!
+     * In fact, you dont have to follow this recommendation, but implementation
+     * will be far easier, if you do. (See stp.Source documentation also
+     * for a more detailed explanation.)
+     *
+     * @param d
+     * @param amount
+     */
+    public void addOrder(Destination d, int amount);
 
-	/**
-	 * Removes a whole order.
-	 *
-	 * @param o
-	 */
-	public void removeOrder(Order o);
+    /**
+     * Decreases the amount of ordered wares to destination d.
+     *
+     * @param d
+     * @param amount
+     */
+    public void removeOrder(Destination d, int amount);
 
-	/**
-	 * Returns the amount of wares, which are not yet ordered (and therefore
-	 * still available).
-	 *
-	 * @return
-	 */
-	public int waresAvailable();
+    /**
+     * Removes a whole order.
+     *
+     * @param o
+     */
+    public void removeOrder(Order o);
 
-	/**
-	 * Returns the amount of ordered wares.
-	 *
-	 * @return
-	 */
-	public int getOrdered();
+    /**
+     * Returns the amount of wares, which are not yet ordered (and therefore
+     * still available).
+     *
+     * @return
+     */
+    public int waresAvailable();
 
-	/**
-	 * Returns the internal list of orders.
-	 *
-	 * @return
-	 */
-	public List<Order> getOrders();
+    public int waresAvailable(Destination d);
+
+    /**
+     * Returns the amount of ordered wares.
+     *
+     * @return
+     */
+    public int getOrdered();
+
+    /**
+     * Returns the internal list of orders.
+     *
+     * @return
+     */
+    public List<Order> getOrders();
+
+    public boolean mappingExists(Destination d);
 }

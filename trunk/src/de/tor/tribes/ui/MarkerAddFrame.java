@@ -13,7 +13,6 @@ import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.mark.MarkerManager;
 
 /**
- * @TODO (DIFF) Added enemy marker color
  * @author  Jejkal
  */
 public class MarkerAddFrame extends javax.swing.JFrame {

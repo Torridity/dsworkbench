@@ -48,7 +48,6 @@ import javax.swing.table.TableRowSorter;
 import org.apache.log4j.Logger;
 
 /**
- * @TODO (DIFF) Added troop amount filter
  * @author Jejkal
  */
 public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements TagManagerListener {

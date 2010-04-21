@@ -78,11 +78,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 /**
- * @TODO (DIFF) Troops to A*Star in map popup
- * @TODO (DIFF) Added new popup
- * @TODO (DIFF) Added ruler
- * @TODO (DIFF) Added fancy "mark all tribes villages" feature
- * @TODO (DIFF) Fixed form drawing issues (line intersection, overlay issue)
+
  * @author Charon
  */
 public class MapPanel extends JPanel implements DragGestureListener, // For recognizing the start of drags

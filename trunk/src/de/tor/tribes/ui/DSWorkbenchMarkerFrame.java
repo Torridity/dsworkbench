@@ -32,6 +32,7 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JPanel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableCellRenderer;
@@ -119,6 +120,9 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
         return SINGLETON;
     }
 
+    public JPanel getView(){
+        return jMarkerPanel;
+    }
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is

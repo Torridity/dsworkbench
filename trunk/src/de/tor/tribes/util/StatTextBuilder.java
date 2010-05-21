@@ -683,7 +683,11 @@ public class StatTextBuilder {
             result += (pUseBBCodes) ? (s.getParent().getTribe().toBBCode() + ", ") : (s.getParent().getTribe().toString() + ", ");
         }
         //remove last comma
-        result = result.substring(0, result.lastIndexOf(","));
+        int idx = result.lastIndexOf(",");
+        if (idx > 0) {
+            result = result.substring(0, idx);
+        }
+
         nf.setMinimumFractionDigits(2);
         nf.setMaximumFractionDigits(2);
         if (pUseBBCodes) {

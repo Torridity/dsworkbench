@@ -13,11 +13,21 @@ package de.tor.tribes.ui;
 import de.tor.tribes.types.SOSRequest;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
+import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.parser.SOSParser;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Point;
+import java.util.Date;
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
+import javax.swing.DefaultListModel;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
 /**
  *
@@ -26,6 +36,7 @@ import java.util.List;
 public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
 
     public static DSWorkbenchSOSRequestAnalyzer SINGLETON = null;
+    private Hashtable<Tribe, SOSRequest> currentRequests;
 
     public static synchronized DSWorkbenchSOSRequestAnalyzer getSingleton() {
         if (SINGLETON == null) {
@@ -34,8 +45,9 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
         return SINGLETON;
     }
 
-    public void setup(){
-        
+    public void setup() {
+        currentRequests = null;
+        updateView();
     }
 
     /** Creates new form DSWorkbenchSOSRequestAnalyzer */
@@ -71,10 +83,12 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
         jTroopsInfoField = new javax.swing.JTextPane();
         jLabel6 = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
-        jAttacksTable = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        jAttacksTableScrollPanel = new javax.swing.JScrollPane();
+        jAttacksTable = new javax.swing.JTable();
+        jTaskPane1 = new com.l2fprod.common.swing.JTaskPane();
+        jTaskPaneGroup1 = new com.l2fprod.common.swing.JTaskPaneGroup();
+        jCleanupAttacksButton = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("SOS Analyzer");
 
         jPanel1.setBackground(new java.awt.Color(239, 235, 223));
@@ -101,7 +115,11 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
         jScrollPane2.setMinimumSize(new java.awt.Dimension(130, 132));
         jScrollPane2.setPreferredSize(new java.awt.Dimension(130, 132));
 
-        jDefenderList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jDefenderList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                fireDefenderSelectionChangedEvent(evt);
+            }
+        });
         jScrollPane2.setViewportView(jDefenderList);
 
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -111,7 +129,11 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
         jScrollPane3.setMinimumSize(new java.awt.Dimension(130, 132));
         jScrollPane3.setPreferredSize(new java.awt.Dimension(130, 132));
 
-        jTargetList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jTargetList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                fireTargetChangedEvent(evt);
+            }
+        });
         jScrollPane3.setViewportView(jTargetList);
 
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -145,7 +167,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jWallLevel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE))
+                    .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 348, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
@@ -156,26 +178,23 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
                     .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE)
-                    .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE))
+                    .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, 83, Short.MAX_VALUE)
+                    .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 83, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
         jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("Angriffe"));
         jPanel4.setOpaque(false);
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        jAttacksTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "Angreifer", "Herkunft", "Ankunft"
             }
         ));
-        jAttacksTable.setViewportView(jTable1);
+        jAttacksTableScrollPanel.setViewportView(jAttacksTable);
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -183,13 +202,13 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jAttacksTable, javax.swing.GroupLayout.DEFAULT_SIZE, 324, Short.MAX_VALUE)
+                .addComponent(jAttacksTableScrollPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 372, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
-                .addComponent(jAttacksTable, javax.swing.GroupLayout.DEFAULT_SIZE, 162, Short.MAX_VALUE)
+                .addComponent(jAttacksTableScrollPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 138, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -208,8 +227,8 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
                     .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -220,14 +239,38 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
                     .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 381, Short.MAX_VALUE)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 381, Short.MAX_VALUE)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 335, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 335, Short.MAX_VALUE)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
         );
+
+        jTaskPane1.setOpaque(false);
+        com.l2fprod.common.swing.PercentLayout percentLayout1 = new com.l2fprod.common.swing.PercentLayout();
+        percentLayout1.setGap(14);
+        percentLayout1.setOrientation(1);
+        jTaskPane1.setLayout(percentLayout1);
+
+        com.l2fprod.common.swing.PercentLayout percentLayout2 = new com.l2fprod.common.swing.PercentLayout();
+        percentLayout2.setOrientation(1);
+        jTaskPaneGroup1.getContentPane().setLayout(percentLayout2);
+
+        jCleanupAttacksButton.setBackground(new java.awt.Color(239, 235, 223));
+        jCleanupAttacksButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/garbage.png"))); // NOI18N
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("de/tor/tribes/ui/Bundle"); // NOI18N
+        jCleanupAttacksButton.setText(bundle.getString("DSWorkbenchAttackFrame.jCleanupAttacksButton.text")); // NOI18N
+        jCleanupAttacksButton.setToolTipText(bundle.getString("DSWorkbenchAttackFrame.jCleanupAttacksButton.toolTipText")); // NOI18N
+        jCleanupAttacksButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jCleanupAttacksButtonfireCleanUpAttacksEvent(evt);
+            }
+        });
+        jTaskPaneGroup1.getContentPane().add(jCleanupAttacksButton);
+
+        jTaskPane1.add(jTaskPaneGroup1);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -236,26 +279,31 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addGap(18, 18, 18)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jStatusLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 592, Short.MAX_VALUE)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 592, Short.MAX_VALUE))))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 640, Short.MAX_VALUE)
+                            .addComponent(jStatusLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 640, Short.MAX_VALUE)))
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jTaskPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jStatusLabel)
-                .addGap(18, 18, 18)
-                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jTaskPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 530, Short.MAX_VALUE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jStatusLabel)
+                        .addGap(18, 18, 18)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
         );
 
@@ -280,8 +328,8 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void fireSosTextChangedEvent(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_fireSosTextChangedEvent
-        Hashtable<Tribe, SOSRequest> requests = SOSParser.parse(jSosTextField.getText());
-        if (requests == null || requests.isEmpty()) {
+        currentRequests = SOSParser.parse(jSosTextField.getText());
+        if (currentRequests == null || currentRequests.isEmpty()) {
             jStatusLabel.setText("Keine gültigen SOS Anfrage(n) gefunden");
             jStatusLabel.setBackground(Color.RED);
         } else {
@@ -289,8 +337,100 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
             jStatusLabel.setBackground(Color.GREEN);
         }
 
-        jTroopsInfoField.setText(requests.toString());
+        updateView();
     }//GEN-LAST:event_fireSosTextChangedEvent
+
+    private void fireDefenderSelectionChangedEvent(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_fireDefenderSelectionChangedEvent
+
+        Tribe t = (Tribe) jDefenderList.getSelectedValue();
+        if (t == null || currentRequests == null) {
+            return;
+        }
+        SOSRequest request = currentRequests.get(t);
+        DefaultListModel targetModel = new DefaultListModel();
+        Enumeration<Village> targetVillages = request.getTargets();
+        while (targetVillages.hasMoreElements()) {
+            targetModel.addElement(targetVillages.nextElement());
+        }
+
+        jTargetList.setModel(targetModel);
+    }//GEN-LAST:event_fireDefenderSelectionChangedEvent
+
+    private void fireTargetChangedEvent(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_fireTargetChangedEvent
+
+        Object[] targets = jTargetList.getSelectedValues();
+        if (targets == null || currentRequests == null) {
+            return;
+        }
+        DefaultTableModel model = new javax.swing.table.DefaultTableModel(
+                new Object[][]{},
+                new String[]{
+                    "Herkunft", "Einheit", "Ankunft"
+                }) {
+
+            Class[] types = new Class[]{
+                Tribe.class, Village.class, Date.class
+            };
+
+            @Override
+            public Class getColumnClass(int columnIndex) {
+                return types[columnIndex];
+            }
+        };
+
+        String troopInfo = "";
+        for (Object o : targets) {
+            Village target = (Village) o;
+            SOSRequest request = currentRequests.get(target.getTribe());
+            SOSRequest.TargetInformation info = request.getTargetInformation(target);
+            jWallLevel.setText(Integer.toString(info.getWallLevel()));
+            troopInfo += info.getTroopInformationAsHTML() + "<BR/>";
+            for (SOSRequest.TimedAttack attack : info.getAttacks()) {
+                model.addRow(new Object[]{attack.getSource().getTribe(), attack.getSource(), new Date(attack.getlArriveTime())});
+            }
+        }
+
+        jTroopsInfoField.setText("<html>" + troopInfo + "</html>");
+        jAttacksTable.setModel(model);
+        TableRowSorter<TableModel> attackSorter = new TableRowSorter<TableModel>(jAttacksTable.getModel());
+        jAttacksTable.setRowSorter(attackSorter);
+        DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
+
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
+                DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
+                r.setText("<html><b>" + r.getText() + "</b></html>");
+                c.setBackground(Constants.DS_BACK);
+                return c;
+            }
+        };
+
+        for (int i = 0; i < jAttacksTable.getColumnCount(); i++) {
+            jAttacksTable.getColumn(jAttacksTable.getColumnName(i)).setHeaderRenderer(headerRenderer);
+        }
+    }//GEN-LAST:event_fireTargetChangedEvent
+
+    private void jCleanupAttacksButtonfireCleanUpAttacksEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jCleanupAttacksButtonfireCleanUpAttacksEvent
+
+    }//GEN-LAST:event_jCleanupAttacksButtonfireCleanUpAttacksEvent
+
+    private void updateView() {
+        // currentRequests
+        if (currentRequests == null) {
+            return;
+        }
+        Enumeration<Tribe> tribes = currentRequests.keys();
+        DefaultListModel defenderModel = new DefaultListModel();
+        while (tribes.hasMoreElements()) {
+            SOSRequest request = currentRequests.get(tribes.nextElement());
+            defenderModel.addElement(request.getDefender());
+        }
+        jDefenderList.setModel(defenderModel);
+        jTargetList.setModel(new DefaultListModel());
+        jTroopsInfoField.setText("");
+        jAttacksTable.setModel(new DefaultTableModel(0, 0));
+    }
 
     /**
      * @param args the command line arguments
@@ -308,7 +448,9 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
     public void fireVillagesDraggedEvent(List<Village> pVillages, Point pDropLocation) {
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JScrollPane jAttacksTable;
+    private javax.swing.JTable jAttacksTable;
+    private javax.swing.JScrollPane jAttacksTableScrollPanel;
+    private javax.swing.JButton jCleanupAttacksButton;
     private javax.swing.JList jDefenderList;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -325,8 +467,9 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
     private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JTextArea jSosTextField;
     private javax.swing.JLabel jStatusLabel;
-    private javax.swing.JTable jTable1;
     private javax.swing.JList jTargetList;
+    private com.l2fprod.common.swing.JTaskPane jTaskPane1;
+    private com.l2fprod.common.swing.JTaskPaneGroup jTaskPaneGroup1;
     private javax.swing.JTextPane jTroopsInfoField;
     private javax.swing.JLabel jWallLevel;
     // End of variables declaration//GEN-END:variables

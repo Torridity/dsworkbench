@@ -4,6 +4,7 @@
  */
 package de.tor.tribes.types;
 
+import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -120,6 +121,19 @@ public class SOSRequest {
          */
         public void addTroopInformation(UnitHolder pUnit, Integer pAmount) {
             troops.put(pUnit, pAmount);
+        }
+
+        public String getTroopInformationAsHTML() {
+            StringBuffer b = new StringBuffer();
+
+            for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
+                Integer amount = troops.get(unit);
+                if (amount != null) {
+                    b.append("<img src=\"" + SOSRequest.class.getResource("/res/ui/" + unit.getPlainName() + ".png") + "\"/>&nbsp;" + amount + "\n");
+                }
+            }
+
+            return b.toString();
         }
 
         @Override

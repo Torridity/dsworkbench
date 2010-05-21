@@ -76,7 +76,6 @@ public class SOSParser {
             if (line.indexOf("Verteidiger") > -1) {
                 //start new support request
                 if (currentRequest != null) {
-                    System.out.println("PUTTING REQUEST " + currentRequest);
                     requests.put(currentRequest.getDefender(), currentRequest);
                 }
 
@@ -157,7 +156,6 @@ public class SOSParser {
             System.out.println("Putting final Request");
             requests.put(currentRequest.getDefender(), currentRequest);
         }*/
-        System.out.println(requests);
         return requests;
     }
 

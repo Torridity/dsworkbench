@@ -778,6 +778,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
     @Override
     public void setVisible(boolean v) {
         logger.info("Setting MainWindow visible");
+        boolean t = true;
 
         super.setVisible(v);
         if (v) {
@@ -919,6 +920,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             MapPanel.getDoubleton().addNotify();
             MapPanel.getDoubleton().initBuffer();*/
         }
+
     }
 
     /** This method is called from within the constructor to
@@ -3082,6 +3084,7 @@ private void fireDSWorkbenchClosingEvent(java.awt.event.WindowEvent evt) {//GEN-
     GlobalOptions.addProperty("last.x", getCurrentPosition()[0]);
     GlobalOptions.addProperty("last.y", getCurrentPosition()[1]);
     System.exit(0);
+
 }//GEN-LAST:event_fireDSWorkbenchClosingEvent
 
 private void firePanelMin(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_firePanelMin

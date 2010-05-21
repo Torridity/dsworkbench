@@ -376,6 +376,7 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
                     MinimapRepaintThread.getSingleton().update();
                     return;
                 }
+
                 mBuffer = mBuffer.getScaledInstance(getWidth(), getHeight(), BufferedImage.SCALE_SMOOTH);
             } else if ((mBuffer.getWidth(null) != getWidth()) || (mBuffer.getHeight(null) != getHeight())) {
                 mZoomFrame.setMinimap(pBuffer);
@@ -806,7 +807,7 @@ class MinimapRepaintThread extends Thread {
         }
 
         if (ServerSettings.getSingleton().getMapDimension() == null) {
-            //could not draw minimap if dimensions are not loaded yet
+//could not draw minimap if dimensions are not loaded yet
             return false;
         }
         boolean showBarbarian = true;
@@ -831,8 +832,6 @@ class MinimapRepaintThread extends Thread {
         double wField = ServerSettings.getSingleton().getMapDimension().getWidth() / (double) visiblePart.width;
         double hField = ServerSettings.getSingleton().getMapDimension().getHeight() / (double) visiblePart.height;
 
-        //  for (int i = 0; i < ServerSettings.getSingleton().getMapDimension().getWidth(); i++) {
-        //  for (int j = 0; j < ServerSettings.getSingleton().getMapDimension().getHeight(); j++) {
         for (int i = visiblePart.x; i < (visiblePart.width + visiblePart.x); i++) {
             for (int j = visiblePart.y; j < (visiblePart.height + visiblePart.y); j++) {
                 Village v = mVisibleVillages[i][j];
@@ -844,7 +843,7 @@ class MinimapRepaintThread extends Thread {
                     } else {
                         Village currentUserVillage = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage();
                         if ((currentUserVillage != null) && (v.getTribe().toString().equals(currentUserVillage.getTribe().toString()))) {
-                            //village is owned by current player. mark it dependent on settings
+//village is owned by current player. mark it dependent on settings
                             if ((markPlayer) || (markedOnly)) {
                                 mark = Color.YELLOW;
                             }
@@ -875,12 +874,10 @@ class MinimapRepaintThread extends Thread {
                                 g2d.setColor(new Color(35, 125, 0));
                             }
                         }
-                        // g2d.fillRect(i, j, 1, 1);
                         g2d.fillRect((int) Math.round((i - visiblePart.x) * wField), (int) Math.round((j - visiblePart.y) * hField), (int) Math.round(wField), (int) Math.round(hField));
                     } else {
                         if (showBarbarian) {
                             g2d.setColor(Color.BLACK);
-                            //  g2d.fillRect(i, j, 1, 1);
                             g2d.fillRect((int) Math.round((i - visiblePart.x) * wField), (int) Math.round((j - visiblePart.y) * hField), (int) Math.round(wField), (int) Math.round(hField));
                         }
                     }
@@ -940,34 +937,6 @@ class MinimapRepaintThread extends Thread {
                         g2d.drawRect(cx, cy, (int) Math.round(wk * wField), (int) Math.round(hk * hField));
                     }
                 }
-                /*  for (int i = 0; i < 10; i++) {
-                for (int j = 0; j < 10; j++) {
-                g2d.setComposite(a);
-
-                String conti = "K" + (j * 10 + i);
-                Rectangle2D bounds = g2d.getFontMetrics(t).getStringBounds(conti, g2d);
-
-                g2d.drawString(conti, (int) Math.rint(i * fact * 10 + mid - bounds.getWidth() / 2), (int) Math.rint(j * fact * 10 + mid + bounds.getHeight() / 2));
-                g2d.setComposite(c);
-                int wk = 100;
-                int hk = 100;
-
-                if (coordType != 2) {
-                wk = 50;
-                hk = 50;
-                }
-                if (i == 9) {
-                wk -= 1;
-                }
-                if (j == 9) {
-                hk -= 1;
-                }
-
-                int cx = (i * fact * 10);
-                int cy = (j * fact * 10);
-                g2d.drawRect(cx, cy, wk, hk);
-                }
-                }*/
                 g2d.setFont(f);
             }
         } catch (Exception e) {

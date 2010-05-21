@@ -191,7 +191,6 @@ public class AttackManager {
 
     public void saveTroopMovementsToDisk(String pFile) {
         try {
-
             FileWriter w = new FileWriter(pFile);
             w.write("<plans>\n");
             Enumeration<String> plans = mAttackPlans.keys();

@@ -16,6 +16,8 @@ import java.util.List;
  */
 public class DatabaseManager {
 
+    
+
     public static void main(String[] args) {
         ObjectContainer db = Db4oEmbedded.openFile(Db4oEmbedded.newConfiguration(), "database.dbo");
         try {

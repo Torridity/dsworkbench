@@ -81,6 +81,7 @@ import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Vector;
 import javax.swing.DefaultListModel;
@@ -2731,6 +2732,7 @@ private void fireApplyTroopFiltersEvent(java.awt.event.MouseEvent evt) {//GEN-FI
         }
 
         jAttacksTable.invalidate();
+        Collections.sort(rowsToRemove);
         for (int i = rowsToRemove.size() - 1; i >= 0; i--) {
             int row = rowsToRemove.get(i);
             ((DefaultTableModel) jAttacksTable.getModel()).removeRow(row);

@@ -378,7 +378,7 @@ public class MapRenderer extends Thread {
 
                     MapPanel.getSingleton().updateComplete(pos, mFrontBuffer);
 
-                   // g2d2.dispose();
+                    // g2d2.dispose();
                     g2d.dispose();
                     MapPanel.getSingleton().repaint();
                 }
@@ -935,8 +935,8 @@ public class MapRenderer extends Thread {
             }
         }
 
-        if (tagsize > GlobalOptions.getSkin().getCurrentFieldHeight() ||
-                tagsize > GlobalOptions.getSkin().getCurrentFieldWidth()) {
+        if (tagsize > GlobalOptions.getSkin().getCurrentFieldHeight()
+                || tagsize > GlobalOptions.getSkin().getCurrentFieldWidth()) {
             return;
         }
         Hashtable<Integer, Point> copyRegions = new Hashtable<Integer, Point>();
@@ -1038,18 +1038,17 @@ public class MapRenderer extends Thread {
             return;
         }
 
-        BufferedImage layer = null;
+        BufferedImage layer = mLayers.get(NOTE_LAYER);
         Graphics2D g2d = null;
         //prepare drawing buffer
-        if (mLayers.get(NOTE_LAYER) == null) {
-            layer = getBufferedImage(wb, hb, Transparency.TRANSLUCENT);//new BufferedImage(wb, hb, BufferedImage.TYPE_INT_ARGB);
+        if (layer == null) {
+            layer = getBufferedImage(wb, hb + 100, Transparency.TRANSLUCENT);//new BufferedImage(wb, hb, BufferedImage.TYPE_INT_ARGB);
             mLayers.put(NOTE_LAYER, layer);
             g2d = layer.createGraphics();
             prepareGraphics(g2d);
         } else {
-            layer = mLayers.get(NOTE_LAYER);
-            if (layer.getWidth() != wb || layer.getHeight() != hb) {
-                layer = getBufferedImage(wb, hb, Transparency.TRANSLUCENT);//new BufferedImage(wb, hb, BufferedImage.TYPE_INT_ARGB);
+            if (layer.getWidth() != wb || layer.getHeight() != hb + 100) {
+                layer = getBufferedImage(wb, hb + 100, Transparency.TRANSLUCENT);//new BufferedImage(wb, hb, BufferedImage.TYPE_INT_ARGB);
                 mLayers.put(NOTE_LAYER, layer);
                 g2d = layer.createGraphics();
                 prepareGraphics(g2d);
@@ -1057,7 +1056,7 @@ public class MapRenderer extends Thread {
                 g2d = (Graphics2D) layer.getGraphics();
                 Composite c = g2d.getComposite();
                 g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.CLEAR, 1.0f));
-                g2d.fillRect(0, 0, wb, hb);
+                g2d.fillRect(0, 0, wb, hb + 100);
                 g2d.setComposite(c);
             }
         }
@@ -1065,31 +1064,54 @@ public class MapRenderer extends Thread {
         //render note icons
         Enumeration<Village> keys = villagePositions.keys();
         Hashtable<Integer, Rectangle> markPositions = new Hashtable<Integer, Rectangle>();
+        long s = System.currentTimeMillis();
+        for (int i = 0; i < 6; i++) {
+            BufferedImage icon = ImageManager.getNoteIcon(i);
+            g2d.drawImage(icon, i * 32, hb + 50, null);
+        }
         while (keys.hasMoreElements()) {
             Village v = keys.nextElement();
             Rectangle villageRect = villagePositions.get(v);
             Note n = NoteManager.getSingleton().getNoteForVillage(v);
             if (n != null) {
-                int nodeIcon = n.getMapMarker();
+                int noteIcon = n.getMapMarker();
                 int markX = villageRect.x + (int) Math.round(villageRect.width / 2);
                 int markY = villageRect.y + (int) Math.round(villageRect.height / 2);
-                Rectangle rect = markPositions.get(nodeIcon);
+                //        Rectangle rect = markPositions.get(nodeIcon);
 
-                if (rect == null) {
-                    //sometimes the icons seemed to be null
-                    BufferedImage icon = ImageManager.getNoteIcon(nodeIcon);
-                    if (icon != null) {
-                        if (MapPanel.getSingleton().getBounds().contains(new Rectangle(markX - 10, markY - icon.getHeight() + 10, icon.getWidth() + 2, icon.getHeight() + 2))) {
-                            rect = new Rectangle(markX, markY, icon.getWidth(), icon.getHeight());
-                            markPositions.put(nodeIcon, rect);
-                        }
-                        g2d.drawImage(icon, markX - 10, markY - icon.getHeight() + 10, null);
-                    }
-                } else {
-                    g2d.copyArea(rect.x - 10, rect.y - rect.height + 10, rect.width, rect.height, markX - rect.x, markY - rect.y);
+                //      if (rect == null) {
+                //sometimes the icons seemed to be null
+                BufferedImage icon = ImageManager.getNoteIcon(noteIcon);
+
+                if (icon != null) {
+                    //   Image img = icon.getScaledInstance((int) Math.round(villageRect.width / 2), (int) Math.round(villageRect.height / 2), BufferedImage.SCALE_DEFAULT);
+
+                    //            if (MapPanel.getSingleton().getBounds().contains(new Rectangle(markX - 10, markY - icon.getHeight() + 10, icon.getWidth() + 2, icon.getHeight() + 2))) {
+                    //                  rect = new Rectangle(markX, markY, icon.getWidth(null), icon.getHeight(null));
+                    //     g2d.setColor(Color.MAGENTA);
+                    //     g2d.drawRect(rect.x - 10, rect.y - rect.height + 10, rect.width, rect.height);
+                    //                 markPositions.put(nodeIcon, rect);
+                    //            }
+                    g2d.copyArea(noteIcon * 32, hb + 50, icon.getWidth(), icon.getHeight(), markX - noteIcon * 32, markY - hb + 10);
+                    //            g2d.drawImage(icon, markX - 10, markY - icon.getHeight(null) + 10, null);
                 }
+                //} else {
+                // Rectangle r1 = new Rectangle(rect.x - 10, rect.y - rect.height + 10, rect.width, rect.height);
+                //  Rectangle r2 = new Rectangle(markX - rect.x, markY - rect.y, rect.width, rect.height);
+                //  g2d.copyArea(r1.x, r1.y, r1.width, r1.height, r2.x, r2.y);
+                    /*
+                if (!r1.intersects(r2)) {
+                g2d.copyArea(r1.x, r1.y, r1.width, r1.height, r2.x, r2.y);
+                } else {
+                BufferedImage icon = ImageManager.getNoteIcon(nodeIcon);
+                g2d.drawImage(icon, markX - 10, markY - icon.getHeight() + 10, null);
+                g2d.setColor(Color.MAGENTA);
+                g2d.drawRect(markX - 10, markY - icon.getHeight() + 10, r2.width, r2.height);
+                }*/
+                //  }
             }
         }
+        System.out.println("DUR: " + (System.currentTimeMillis() - s));
     }
 
     /**Render marker layer -> drawn on same buffer as map*/
@@ -2281,8 +2303,8 @@ public class MapRenderer extends Thread {
         if ((tags != null) && (!tags.isEmpty())) {
             value = "";
             List<String> tagLines = new LinkedList<String>();
-            for (int i = 0; i <
-                    tags.size(); i++) {
+            for (int i = 0; i
+                    < tags.size(); i++) {
                 bounds = metrics.getStringBounds(value + tags.get(i) + ", ", g2d);
                 if (bounds.getWidth() > 260) {
                     tagLines.add(value);
@@ -2307,8 +2329,8 @@ public class MapRenderer extends Thread {
                 drawPopupField(g2d, mouseVillage, metrics, xc, yc, "Tags", line, width, dy);
 
                 int lines = tagLines.size();
-                for (int i = 0; i <
-                        lines - 1; i++) {
+                for (int i = 0; i
+                        < lines - 1; i++) {
                     dy += 19;
                     drawPopupField(g2d, mouseVillage, metrics, xc, yc, "", tagLines.remove(0), width, dy);
                 }

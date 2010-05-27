@@ -19,6 +19,7 @@ import java.util.Hashtable;
 import java.util.StringTokenizer;
 
 /**
+ * @TODO (Diff) Fixed report parser for old worlds
  * @author Torridity
  */
 public class ReportParser {
@@ -50,7 +51,7 @@ public class ReportParser {
         boolean troopsOnTheWayPart = false;
         boolean troopsOutside = false;
         boolean haveTime = false;
-        int serverTroopCount = 12;
+        int serverTroopCount = DataHolder.getSingleton().getUnits().size();
         FightReport result = new FightReport();
         while (t.hasMoreTokens()) {
             String line = t.nextToken().trim();
@@ -71,16 +72,15 @@ public class ReportParser {
                 //System.out.println("Lost");
                 result.setWon(false);
             } else if (line.startsWith("Glück")) {
-               // System.out.println("Luck");
+                //System.out.println("Luck");
                 line = line.replaceAll("Glück \\(aus Sicht des Angreifers\\)", "").replaceAll("Glück \\(aus Sicht des Verteidigers\\)", "").trim();
                 if (line.indexOf("%") > 0) {
                     //negative luck is in same line, try it!
                     try {
-
-                        double luck = Double.parseDouble(line.trim().replaceAll("%", ""));
-                        //System.out.println("Luck: " + luck);
+                        double luck = Double.parseDouble(line.replaceAll("Glück", "").replaceAll("%", "").trim());
                         result.setLuck(luck);
                     } catch (Exception e) {
+                       // e.printStackTrace();
                         result.setLuck(0.0);
                     }
                     luckPart = false;
@@ -256,9 +256,12 @@ public class ReportParser {
                     if (line.indexOf("%") > 0) {
                         luckPart = false;
                         try {
-                            double luck = Double.parseDouble(line.trim().replaceAll("%", ""));
+                           // System.out.println("LuckLine " + line);
+                            double luck = Double.parseDouble(line.replaceAll("Pech", "").replaceAll("%", "").trim());
+                           // System.out.println("L " + luck);
                             result.setLuck(luck);
                         } catch (Exception e) {
+                          //  e.printStackTrace();
                             result.setLuck(0.0);
                         }
                     }

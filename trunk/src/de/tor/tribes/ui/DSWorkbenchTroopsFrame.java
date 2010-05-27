@@ -51,6 +51,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
 /**
+ * @TODO (DIFF) Slow troop removing fixed
  * @author  Jejkal
  */
 public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements TroopsManagerListener, TagManagerListener {
@@ -485,10 +486,12 @@ private void fireRemoveTroopsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
 
     jTroopsTable.editingCanceled(new ChangeEvent(this));
     jTroopsTable.invalidate();
+    List<Integer> vIds = new LinkedList<Integer>();
     for (int r = rows.length - 1; r >= 0; r--) {
         int row = jTroopsTable.convertRowIndexToModel(rows[r]);
-        TroopsManagerTableModel.getSingleton().removeRow(row);
+        vIds.add(row);
     }
+    TroopsManagerTableModel.getSingleton().removeRows(vIds.toArray(new Integer[]{}));
     jTroopsTable.revalidate();
     jTroopsTable.repaint();//.updateUI();
 }//GEN-LAST:event_fireRemoveTroopsEvent
@@ -601,8 +604,8 @@ private void fireCopyTroopInformationToClipboardEvent(java.awt.event.MouseEvent 
         StringTokenizer t = new StringTokenizer(result, "[");
         int cnt = t.countTokens();
         if (cnt > 500) {
-            if (JOptionPaneHelper.showQuestionConfirmBox(this, "Die ausgewählten Truppeninformationen benötigen mehr als 500 BB-Codes\n" +
-                    "und können daher im Spiel (Forum/IGM/Notizen) nicht auf einmal dargestellt werden.\nTrotzdem exportieren?", "Zu viele BB-Codes", "Nein", "Ja") == JOptionPane.NO_OPTION) {
+            if (JOptionPaneHelper.showQuestionConfirmBox(this, "Die ausgewählten Truppeninformationen benötigen mehr als 500 BB-Codes\n"
+                    + "und können daher im Spiel (Forum/IGM/Notizen) nicht auf einmal dargestellt werden.\nTrotzdem exportieren?", "Zu viele BB-Codes", "Nein", "Ja") == JOptionPane.NO_OPTION) {
                 return;
             }
         }

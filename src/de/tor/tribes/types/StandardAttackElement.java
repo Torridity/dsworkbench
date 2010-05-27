@@ -15,6 +15,7 @@ import org.apache.log4j.Logger;
 import org.jdom.Element;
 
 /**
+ * @TODO (DIFF) Fixed error handling of no troops are available (fixed 'Cannot open browser' bug)
  * @author Charon
  */
 public class StandardAttackElement {
@@ -123,25 +124,26 @@ public class StandardAttackElement {
         boolean haveTroopInfo = true;
         if (holder == null) {
             //no info available
-            haveTroopInfo = false;
+            //haveTroopInfo = false;
+            if (logger.isDebugEnabled()) {
+                logger.debug("No troop information found for village '" + pVillage + "'");
+            }
+            return 0;
         }
 
-        Hashtable<UnitHolder, Integer> ownTroops = null;
-        if (haveTroopInfo) {
-            holder.getOwnTroops();
-        }
+        Hashtable<UnitHolder, Integer> ownTroops = holder.getOwnTroops();
+
         if (ownTroops == null) {
             //no troops in village
-            haveTroopInfo = false;
+            logger.debug("No own troops found for village '" + pVillage + "'");
+            return 0;
         }
 
-        Integer availableAmount = 0;
-        if (haveTroopInfo) {
-            availableAmount = ownTroops.get(unit);
-        }
+        Integer availableAmount = ownTroops.get(unit);
+
         if (availableAmount == 0) {
-            //no troops in village
-            haveTroopInfo = false;
+            //no troops of this type in village
+            return 0;
         }
 
         if (fixedAmount != -1) {
@@ -158,13 +160,9 @@ public class StandardAttackElement {
                 }
             }
         } else {
-            if (!haveTroopInfo) {
-                logger.debug("Not having troop information or unit " + getUnit() + "  amount is 0. Dynamic amount not available.");
-                return 0;
-            }
             //dyn amount
             if (dynamicAmount.equals(ALL_TROOPS)) {
-                //return all
+                //return all troops
                 return availableAmount;
             } else if (dynamicAmount.startsWith(ALL_TROOPS + " - ")) {
                 //return all minus X
@@ -174,7 +172,7 @@ public class StandardAttackElement {
                     //enough troops avail
                     return availableAmount - substract;
                 } else {
-                    //substract larger than avail count
+                    //substract larger than avail. count
                     return 0;
                 }
             } else if (dynamicAmount.indexOf("%") > -1) {

@@ -25,6 +25,8 @@ import java.util.TimerTask;
 import org.apache.log4j.Level;
 import org.apache.log4j.RollingFileAppender;
 import javax.swing.*;
+import org.pushingpixels.substance.api.SubstanceLookAndFeel;
+import org.pushingpixels.substance.api.skin.BusinessBlackSteelSkin;
 
 /**
  * @author  Jejkal
@@ -261,8 +263,8 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
             String name = GlobalOptions.getProperty("account.name");
             String password = GlobalOptions.getProperty("account.password");
             if (DatabaseInterface.checkUser(name, password) != DatabaseInterface.ID_SUCCESS) {
-                JOptionPaneHelper.showErrorBox(this, "Die Accountvalidierung ist fehlgeschlagen.\n" +
-                        "Bitte überprüfe deine Account- und Netzwerkeinstellungen und versuches es erneut.",
+                JOptionPaneHelper.showErrorBox(this, "Die Accountvalidierung ist fehlgeschlagen.\n"
+                        + "Bitte überprüfe deine Account- und Netzwerkeinstellungen und versuches es erneut.",
                         "Fehler");
                 checkForUpdates = false;
             } else {
@@ -328,8 +330,8 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
                 double version = DatabaseInterface.getCurrentVersion();
 
                 if (version > 0 && version > Constants.VERSION) {
-                    NotifierFrame.doNotification("Eine neue Version (" + version + ") von DS Workbench ist verfügbar.\n" +
-                            "Klicke auf das Update Icon um \'http://www.dsworkbench.de\' im Browser zu öffnen.", NotifierFrame.NOTIFY_UPDATE);
+                    NotifierFrame.doNotification("Eine neue Version (" + version + ") von DS Workbench ist verfügbar.\n"
+                            + "Klicke auf das Update Icon um \'http://www.dsworkbench.de\' im Browser zu öffnen.", NotifierFrame.NOTIFY_UPDATE);
                 }
             }
             return true;
@@ -347,13 +349,14 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
     public static void main(String args[]) {
         Locale.setDefault(Locale.GERMAN);
 
-         //System.setProperty("sun.java2d.d3d", "true");
-      //  System.setProperty("sun.java2d.opengl", "true");
+        //System.setProperty("sun.java2d.d3d", "true");
+        //  System.setProperty("sun.java2d.opengl", "true");
 
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
         }
+
 
         Font f = new Font("SansSerif", Font.PLAIN, 11);
         UIManager.put("Label.font", f);
@@ -442,7 +445,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
         } catch (IOException ioe) {
         }
 
-        java.awt.EventQueue.invokeLater(new Runnable() {
+        SwingUtilities.invokeLater(new Runnable() {
 
             @Override
             public void run() {

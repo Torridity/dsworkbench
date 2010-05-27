@@ -95,7 +95,13 @@ public class TroopsManager {
     }
 
     public void removeTroopsForVillage(Village pVillage) {
-        mTroops.remove(pVillage);
+        removeTroopsForVillages(new Village[]{pVillage});
+    }
+
+    public void removeTroopsForVillages(Village[] pVillages) {
+        for (Village v : pVillages) {
+            mTroops.remove(v);
+        }
         fireTroopsChangedEvents();
     }
 
@@ -151,7 +157,7 @@ public class TroopsManager {
         }
         }
         }*/
-        
+
         Enumeration<Village> keys = mTroops.keys();
         List<Village> valid = new LinkedList<Village>();
         while (keys.hasMoreElements()) {
@@ -235,20 +241,6 @@ public class TroopsManager {
             try {
                 Document d = JaxenUtils.getDocument(troopsFile);
                 for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//villages/village")) {
-                    /*        //get basic village without merged information
-                    Village v = DataHolder.getSingleton().getVillagesById().get(Integer.parseInt(e.getChild("id").getText()));
-                    Date state = Calendar.getInstance().getTime();
-                    try {
-                    state = new Date(Long.parseLong(e.getChild("state").getText()));
-                    } catch (Exception ie) {
-                    }
-                    //get correct village
-                    v = DataHolder.getSingleton().getVillages()[v.getX()][v.getY()];
-                    List<Integer> troops = new LinkedList<Integer>();
-                    for (Element t : (List<Element>) JaxenUtils.getNodes(e, "troops/troop")) {
-                    troops.add(Integer.parseInt(t.getText()));
-                    }
-                    mTroops.put(v, new VillageTroopsHolder(v, troops, state));*/
                     VillageTroopsHolder holder = VillageTroopsHolder.fromXml(e);
                     mTroops.put(holder.getVillage(), holder);
                 }
@@ -274,19 +266,6 @@ public class TroopsManager {
             Document d = JaxenUtils.getDocument(pFile);
             for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//troops/villages/village")) {
                 //get basic village without merged information
-              /*  Village v = DataHolder.getSingleton().getVillagesById().get(Integer.parseInt(e.getChild("id").getText()));
-                Date state = Calendar.getInstance().getTime();
-                try {
-                state = new Date(Long.parseLong(e.getChild("state").getText()));
-                } catch (Exception ie) {
-                }
-                //get correct village
-                v = DataHolder.getSingleton().getVillages()[v.getX()][v.getY()];
-                List<Integer> troops = new LinkedList<Integer>();
-                for (Element t : (List<Element>) JaxenUtils.getNodes(e, "troops/troop")) {
-                troops.add(Integer.parseInt(t.getText()));
-                }
-                mTroops.put(v, new VillageTroopsHolder(v, state));*/
                 VillageTroopsHolder holder = VillageTroopsHolder.fromXml(e);
                 mTroops.put(holder.getVillage(), holder);
             }

@@ -148,7 +148,22 @@ public class TroopsManagerTableModel extends AbstractTableModel {
         if (v != null) {
             TroopsManager.getSingleton().removeTroopsForVillage(v);
         }
+    }
 
+    public void removeRows(Integer[] pRows) {
+        List<Village> villages = new LinkedList<Village>();
+        for (Integer row : pRows) {
+            Village v = null;
+            if (filteredVillages != null) {
+                v = filteredVillages[row];
+            } else {
+                v = TroopsManager.getSingleton().getVillages()[row];
+            }
+            if (v != null && !villages.contains(v)) {
+                villages.add(v);
+            }
+        }
+        TroopsManager.getSingleton().removeTroopsForVillages(villages.toArray(new Village[]{}));
     }
 
     @Override

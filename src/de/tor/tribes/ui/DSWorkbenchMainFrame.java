@@ -680,13 +680,24 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                 long dataVersion = new File(path).lastModified();
                 long oneDayAgo = System.currentTimeMillis() - 1000 * 60 * 60 * 24;
                 if (dataVersion < oneDayAgo) {
-                    JOptionPaneHelper.showWarningBox(this, "Deine Weltdaten sind älter als 24 Stunden.\n" +
-                            "Es wird empfohlen, sie sobald wie möglich zu aktualisieren.", "Warnung");
+                    JOptionPaneHelper.showWarningBox(this, "Deine Weltdaten sind älter als 24 Stunden.\n"
+                            + "Es wird empfohlen, sie sobald wie möglich zu aktualisieren.", "Warnung");
                 }
             }
         } catch (Exception e) {
             logger.error("Error while refreshing server settings", e);
         }
+
+
+
+     /*  while (TroopsManager.getSingleton().getEntryCount() < 1000) {
+            int vid = (int) Math.rint(1000000 * Math.random());
+            Village v = DataHolder.getSingleton().getVillagesById().get(vid);
+            if (v != null) {
+                TroopsManager.getSingleton().addTroopsForVillage(v, new LinkedList<Integer>());
+            }
+        }*/
+
     }
 
     /**Update UI depending on online state*/
@@ -2596,8 +2607,8 @@ private void fireCreateMapShotEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
         try {
             chooser = new JFileChooser(dir);
         } catch (Exception e) {
-            JOptionPaneHelper.showErrorBox(this, "Konnte Dateiauswahldialog nicht öffnen.\nMöglicherweise verwendest du Windows Vista. Ist dies der Fall, beende DS Workbench, klicke mit der rechten Maustaste auf DSWorkbench.exe,\n" +
-                    "wähle 'Eigenschaften' und deaktiviere dort unter 'Kompatibilität' den Windows XP Kompatibilitätsmodus.", "Fehler");
+            JOptionPaneHelper.showErrorBox(this, "Konnte Dateiauswahldialog nicht öffnen.\nMöglicherweise verwendest du Windows Vista. Ist dies der Fall, beende DS Workbench, klicke mit der rechten Maustaste auf DSWorkbench.exe,\n"
+                    + "wähle 'Eigenschaften' und deaktiviere dort unter 'Kompatibilität' den Windows XP Kompatibilitätsmodus.", "Fehler");
             return;
         }
         chooser.setDialogTitle("Speichern unter...");
@@ -2682,8 +2693,8 @@ private void fireShowImportDialogEvent(java.awt.event.ActionEvent evt) {//GEN-FI
     try {
         chooser = new JFileChooser(dir);
     } catch (Exception e) {
-        JOptionPaneHelper.showErrorBox(this, "Konnte Dateiauswahldialog nicht öffnen.\nMöglicherweise verwendest du Windows Vista. Ist dies der Fall, beende DS Workbench, klicke mit der rechten Maustaste auf DSWorkbench.exe,\n" +
-                "wähle 'Eigenschaften' und deaktiviere dort unter 'Kompatibilität' den Windows XP Kompatibilitätsmodus.", "Fehler");
+        JOptionPaneHelper.showErrorBox(this, "Konnte Dateiauswahldialog nicht öffnen.\nMöglicherweise verwendest du Windows Vista. Ist dies der Fall, beende DS Workbench, klicke mit der rechten Maustaste auf DSWorkbench.exe,\n"
+                + "wähle 'Eigenschaften' und deaktiviere dort unter 'Kompatibilität' den Windows XP Kompatibilitätsmodus.", "Fehler");
         return;
     }
     chooser.setDialogTitle("Datei auswählen");
@@ -2715,8 +2726,8 @@ private void fireShowImportDialogEvent(java.awt.event.ActionEvent evt) {//GEN-FI
 
             File target = new File(file);
 
-            String extension = JOptionPane.showInputDialog(this, "Welche Kennzeichnung sollen importierte Angriffspläne und Tags erhalten?\n" +
-                    "Lass das Eingabefeld leer oder drücke 'Abbrechen', um sie unverändert zu importieren.", "Kennzeichnung festlegen", JOptionPane.INFORMATION_MESSAGE);
+            String extension = JOptionPane.showInputDialog(this, "Welche Kennzeichnung sollen importierte Angriffspläne und Tags erhalten?\n"
+                    + "Lass das Eingabefeld leer oder drücke 'Abbrechen', um sie unverändert zu importieren.", "Kennzeichnung festlegen", JOptionPane.INFORMATION_MESSAGE);
             if (extension != null && extension.length() > 0) {
                 logger.debug("Using import extension '" + extension + "'");
             } else {
@@ -2816,8 +2827,8 @@ private void fireExportEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_f
         try {
             chooser = new JFileChooser(dir);
         } catch (Exception e) {
-            JOptionPaneHelper.showErrorBox(this, "Konnte Dateiauswahldialog nicht öffnen.\nMöglicherweise verwendest du Windows Vista. Ist dies der Fall, beende DS Workbench, klicke mit der rechten Maustaste auf DSWorkbench.exe,\n" +
-                    "wähle 'Eigenschaften' und deaktiviere dort unter 'Kompatibilität' den Windows XP Kompatibilitätsmodus.", "Fehler");
+            JOptionPaneHelper.showErrorBox(this, "Konnte Dateiauswahldialog nicht öffnen.\nMöglicherweise verwendest du Windows Vista. Ist dies der Fall, beende DS Workbench, klicke mit der rechten Maustaste auf DSWorkbench.exe,\n"
+                    + "wähle 'Eigenschaften' und deaktiviere dort unter 'Kompatibilität' den Windows XP Kompatibilitätsmodus.", "Fehler");
             return;
         }
         chooser.setDialogTitle("Datei auswählen");
@@ -3445,18 +3456,18 @@ private void fireShowRulerChangedEvent(javax.swing.event.ChangeEvent evt) {//GEN
                 if (result.indexOf("view.php") > 0) {
                     try {
                         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(result), null);
-                        JOptionPaneHelper.showInformationBox(parent, "Kartengrafik erfolgreich Online gestellt.\n" +
-                                "Der Zugriffslink (" + result + ")\n" +
-                                "wurde in die Zwischenablage kopiert.", "Information");
+                        JOptionPaneHelper.showInformationBox(parent, "Kartengrafik erfolgreich Online gestellt.\n"
+                                + "Der Zugriffslink (" + result + ")\n"
+                                + "wurde in die Zwischenablage kopiert.", "Information");
                         BrowserCommandSender.openPage(result);
                     } catch (Exception e) {
-                        JOptionPaneHelper.showWarningBox(parent, "Fehler beim Kopieren des Links in die Zwischenablage.\n" +
-                                "Der Zugriffslink lautet: " + result, "Link nicht kopiert werden");
+                        JOptionPaneHelper.showWarningBox(parent, "Fehler beim Kopieren des Links in die Zwischenablage.\n"
+                                + "Der Zugriffslink lautet: " + result, "Link nicht kopiert werden");
                     }
 
                 } else {
-                    JOptionPaneHelper.showErrorBox(parent, "Kartengrafik konnte nicht Online gestellt werden.\n" +
-                            "Fehler: " + result, "Fehler");
+                    JOptionPaneHelper.showErrorBox(parent, "Kartengrafik konnte nicht Online gestellt werden.\n"
+                            + "Fehler: " + result, "Fehler");
                 }
 
             }

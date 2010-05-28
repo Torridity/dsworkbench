@@ -48,6 +48,7 @@ import javax.swing.table.TableRowSorter;
 import org.apache.log4j.Logger;
 
 /**
+ * @TODO (DIFF) Fixed time parsing for second-based servers
  * @author Jejkal
  */
 public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements TagManagerListener {
@@ -878,7 +879,8 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         jTargetVillage.setText(target.toString());
         boolean fromSelection = false;
         Date arriveDate = null;
-        SimpleDateFormat f = new SimpleDateFormat("dd.MM.yy HH:mm:ss:SSS");
+        SimpleDateFormat f_new = new SimpleDateFormat("dd.MM.yy HH:mm:ss:SSS");
+        SimpleDateFormat f_old = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
         try {
             String text = jComandArea.getText();
             String selection = jComandArea.getSelectedText();
@@ -900,10 +902,16 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
                 fromSelection = true;
                 arrive = selection;
             }
-
-            arriveDate = f.parse(arrive);
-            f = new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss.SSS");
-            jArriveField.setText(f.format(arriveDate));
+            try {
+                arriveDate = f_new.parse(arrive);
+                f_new = new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss.SSS");
+                jArriveField.setText(f_new.format(arriveDate));
+            } catch (Exception old_style) {
+                //parsing failed...maybe we are on an old server
+                arriveDate = f_old.parse(arrive);
+                f_old = new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss");
+                jArriveField.setText(f_old.format(arriveDate));
+            }
             jParserInfo.setBackground(Color.GREEN);
             jParserInfo.setText("Angriffsbefehl erfolgreich gelesen.");
         } catch (Exception e) {
@@ -945,7 +953,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         Ziel	Spieler:	Rattenfutter
         Dorf:	020 Rattennest (476|850) K84
         Dauer:	0:18:00
-        Ankunft:	22.12.09 20:00:38:362
+        Ankunft:	30.05.10 20:00:38
         Ankunft in:	0:17:55
          */
         UnitHolder spy = DataHolder.getSingleton().getUnitByPlainName("spy");

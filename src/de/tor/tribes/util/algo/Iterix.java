@@ -287,8 +287,8 @@ public class Iterix extends AbstractAttackAlgorithm {
                 logInfo("   * " + currentMappings + " von " + maxMappings + " verbleibende Kombinationen");
                 if (isAborted()) {
                     break;
-                }
                 //              System.out.println(" Loop: " + (System.currentTimeMillis() - s));
+                }
             }
             //        System.out.println("solved: " + (System.currentTimeMillis() - s));
             /* int[] sourceMappings = buildSourceMappings(mappings);

@@ -25,8 +25,6 @@ import java.util.TimerTask;
 import org.apache.log4j.Level;
 import org.apache.log4j.RollingFileAppender;
 import javax.swing.*;
-import org.pushingpixels.substance.api.SubstanceLookAndFeel;
-import org.pushingpixels.substance.api.skin.BusinessBlackSteelSkin;
 
 /**
  * @author  Jejkal

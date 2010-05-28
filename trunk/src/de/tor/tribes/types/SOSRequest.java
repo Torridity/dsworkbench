@@ -6,6 +6,7 @@ package de.tor.tribes.types;
 
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
+import de.tor.tribes.util.support.SOSFormater;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Enumeration;
@@ -53,6 +54,18 @@ public class SOSRequest {
 
     public Enumeration<Village> getTargets() {
         return attacks.keys();
+    }
+
+    public String toBBCode() {
+        StringBuffer buffer = new StringBuffer();
+        Enumeration<Village> targets = getTargets();
+        while (targets.hasMoreElements()) {
+            Village target = targets.nextElement();
+            TargetInformation targetInfo = getTargetInformation(target);
+            buffer.append(SOSFormater.format(target, targetInfo));
+            buffer.append("\n\n");
+        }
+        return buffer.toString();
     }
 
     @Override

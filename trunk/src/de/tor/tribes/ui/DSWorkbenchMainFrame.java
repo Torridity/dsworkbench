@@ -543,6 +543,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
     jPanel1.repaint();
     }*/
 
+  
     public void storeProperties() {
         GlobalOptions.addProperty("main.size.width", Integer.toString(getWidth()));
         GlobalOptions.addProperty("main.size.height", Integer.toString(getHeight()));
@@ -690,12 +691,12 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
 
 
 
-     /*  while (TroopsManager.getSingleton().getEntryCount() < 1000) {
-            int vid = (int) Math.rint(1000000 * Math.random());
-            Village v = DataHolder.getSingleton().getVillagesById().get(vid);
-            if (v != null) {
-                TroopsManager.getSingleton().addTroopsForVillage(v, new LinkedList<Integer>());
-            }
+        /*  while (TroopsManager.getSingleton().getEntryCount() < 1000) {
+        int vid = (int) Math.rint(1000000 * Math.random());
+        Village v = DataHolder.getSingleton().getVillagesById().get(vid);
+        if (v != null) {
+        TroopsManager.getSingleton().addTroopsForVillage(v, new LinkedList<Integer>());
+        }
         }*/
 
     }

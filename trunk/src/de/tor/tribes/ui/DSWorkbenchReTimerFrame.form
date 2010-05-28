@@ -1035,7 +1035,7 @@
                           <Component id="jRelationBox" alignment="1" max="32767" attributes="1"/>
                           <Component id="jScrollPane3" alignment="1" pref="131" max="32767" attributes="1"/>
                       </Group>
-                      <EmptySpace pref="72" max="32767" attributes="0"/>
+                      <EmptySpace pref="74" max="32767" attributes="0"/>
                       <Component id="jLabel8" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="1" max="-2" attributes="0">

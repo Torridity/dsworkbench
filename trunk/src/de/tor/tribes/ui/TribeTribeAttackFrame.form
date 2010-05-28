@@ -1080,7 +1080,7 @@
                               <EmptySpace min="-2" max="-2" attributes="0"/>
                               <Component id="jSetSourceFakeButton" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <Component id="jScrollPane1" alignment="1" pref="312" max="32767" attributes="0"/>
+                          <Component id="jScrollPane1" alignment="1" pref="314" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jPanel1" min="-2" max="-2" attributes="1"/>
@@ -1811,7 +1811,7 @@
                       <Group type="103" groupAlignment="1" attributes="0">
                           <Component id="jPanel6" alignment="0" max="32767" attributes="0"/>
                           <Group type="102" alignment="1" attributes="0">
-                              <Component id="jScrollPane3" pref="763" max="32767" attributes="0"/>
+                              <Component id="jScrollPane3" pref="765" max="32767" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" max="-2" attributes="0">
                                   <Component id="jIncrementAttackCountButton" max="32767" attributes="1"/>
@@ -1924,15 +1924,15 @@
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="jScrollPane9" alignment="0" pref="182" max="32767" attributes="1"/>
-                              <Component id="jScrollPane8" alignment="1" pref="182" max="32767" attributes="1"/>
+                              <Component id="jScrollPane9" alignment="0" pref="184" max="32767" attributes="1"/>
+                              <Component id="jScrollPane8" alignment="1" pref="184" max="32767" attributes="1"/>
                               <Component id="jLabel24" alignment="0" min="-2" max="-2" attributes="0"/>
                               <Component id="jLabel23" alignment="0" min="-2" max="-2" attributes="0"/>
                               <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
                               <Group type="102" alignment="1" attributes="1">
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Component id="jTargetAllyLabel" min="-2" pref="19" max="-2" attributes="0"/>
-                                      <Component id="jScrollPane7" pref="156" max="32767" attributes="1"/>
+                                      <Component id="jScrollPane7" pref="158" max="32767" attributes="1"/>
                                   </Group>
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="3" attributes="0">
@@ -2119,7 +2119,7 @@
                 <Component class="javax.swing.JSpinner" name="jMaxAttacksPerVillage">
                   <Properties>
                     <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.editors2.SpinnerModelEditor">
-                      <SpinnerModel initial="1" maximum="100" minimum="1" numberType="java.lang.Integer" stepSize="1" type="number"/>
+                      <SpinnerModel initial="1" maximum="1000" minimum="1" numberType="java.lang.Integer" stepSize="1" type="number"/>
                     </Property>
                   </Properties>
                 </Component>

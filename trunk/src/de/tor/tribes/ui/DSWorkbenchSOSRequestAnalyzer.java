@@ -412,7 +412,6 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
     }//GEN-LAST:event_fireTargetChangedEvent
 
     private void jCleanupAttacksButtonfireCleanUpAttacksEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jCleanupAttacksButtonfireCleanUpAttacksEvent
-
     }//GEN-LAST:event_jCleanupAttacksButtonfireCleanUpAttacksEvent
 
     private void updateView() {
@@ -424,6 +423,10 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
         DefaultListModel defenderModel = new DefaultListModel();
         while (tribes.hasMoreElements()) {
             SOSRequest request = currentRequests.get(tribes.nextElement());
+            System.out.println(request.toBBCode());
+            System.out.println("");
+            System.out.println("-----------");
+            System.out.println("");
             defenderModel.addElement(request.getDefender());
         }
         jDefenderList.setModel(defenderModel);

@@ -171,12 +171,36 @@ public class UnitHolder implements Serializable {
         this.carry = carry;
     }
 
+    public boolean isInfantry() {
+        String plain = getPlainName();
+        if (plain == null) {
+            return false;
+        }
+        return plain.equals("spear") || plain.equals("sword") || plain.equals("archer") || plain.equals("axe");
+    }
+
+    public boolean isCavalry() {
+        String plain = getPlainName();
+        if (plain == null) {
+            return false;
+        }
+        return plain.equals("spy") || plain.equals("light") || plain.equals("marcher") || plain.equals("heavy");
+    }
+
+    public boolean isOther() {
+        return !isInfantry() && !isCavalry();
+    }
+
     public double getBuildTime() {
         return buildTime;
     }
 
     public void setBuildTime(double buildTime) {
         this.buildTime = buildTime;
+    }
+
+    public String toBBCode() {
+        return "[unit]" + getPlainName() + "[/unit]";
     }
 
     @Override

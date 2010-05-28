@@ -275,11 +275,14 @@ public class NoteManager {
             return null;
         }
         for (Note n : notes) {
-            for (Integer id : n.getVillageIds()) {
-                if (id == pVillage.getId()) {
-                    return n;
-                }
+            if (n.getVillageIds().contains(pVillage.getId())) {
+                return n;
             }
+            /*for (Integer id : n.getVillageIds()) {
+            if (id == pVillage.getId()) {
+            return n;
+            }
+            }*/
         }
         return null;
     }

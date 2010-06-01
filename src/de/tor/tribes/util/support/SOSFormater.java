@@ -7,13 +7,16 @@ package de.tor.tribes.util.support;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.ServerManager;
 import de.tor.tribes.io.UnitHolder;
+import de.tor.tribes.types.SOSRequest;
 import de.tor.tribes.types.SOSRequest.TargetInformation;
 import de.tor.tribes.types.SOSRequest.TimedAttack;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.util.GlobalOptions;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 /**
  *
@@ -21,7 +24,7 @@ import java.util.Date;
  */
 public class SOSFormater {
 
-    public static String format(Village pTarget, TargetInformation pTargetInformation) {
+    public static String format(Village pTarget, TargetInformation pTargetInformation, boolean pDetailed) {
         StringBuffer buffer = new StringBuffer();
         String serverURL = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
         //main quote
@@ -42,32 +45,29 @@ public class SOSFormater {
         //build first-last-attack
         buffer.append("[size=12]\n");
 
-        //get first and last attack
-        long first = Long.MAX_VALUE;
-        int firstId = 0;
-        long last = Long.MIN_VALUE;
-        int lastId = 0;
-        int cnt = 0;
-        for (TimedAttack attack : pTargetInformation.getAttacks()) {
-            long arrive = attack.getlArriveTime();
-            if (arrive < first) {
-                first = arrive;
-                firstId = cnt;
-            }
-            if (arrive > last) {
-                last = arrive;
-                lastId = cnt;
-            }
-            cnt++;
-        }
+        List<TimedAttack> attacks = pTargetInformation.getAttacks();
+
+        Collections.sort(attacks, SOSRequest.ARRIVE_TIME_COMPARATOR);
 
         //add first and last attack information
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss.SSS");
-        buffer.append("[img]" + serverURL + "/graphic/map/attack.png[/img] " + dateFormat.format(new Date(pTargetInformation.getAttacks().get(firstId).getlArriveTime())) + "\n");
-        buffer.append("[img]" + serverURL + "/graphic/map/return.png[/img] " + dateFormat.format(new Date(pTargetInformation.getAttacks().get(lastId).getlArriveTime())) + "\n");
+        buffer.append("[img]" + serverURL + "/graphic/map/attack.png[/img] " + dateFormat.format(new Date(attacks.get(0).getlArriveTime())) + "\n");
+        if (pDetailed && attacks.size() > 2) {
+            buffer.append("[/size]\n");
+            //add details for all attacks
+            for (int i = 0; i < attacks.size(); i++) {
+                try {
+                    TimedAttack attack = attacks.get(i);
+                    buffer.append(attack.getSource().toBBCode() + " (" + attack.getSource().getTribe().toBBCode() + ") " + dateFormat.format(new Date(attack.getlArriveTime())) + "\n");
+                } catch (Exception e) {
+                }
+            }
+            buffer.append("[size=12]\n");
+        }
+        buffer.append("[img]" + serverURL + "/graphic/map/return.png[/img] " + dateFormat.format(new Date(attacks.get(attacks.size() - 1).getlArriveTime())) + "\n");
         buffer.append("[/size]\n");
         buffer.append("[/quote]\n");
-        return buffer.toString();
+        return buffer.toString().trim();
     }
 
     private static String buildUnitInfo(TargetInformation pTargetInfo) {

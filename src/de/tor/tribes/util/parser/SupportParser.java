@@ -14,6 +14,7 @@ import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.util.Hashtable;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.StringTokenizer;
 
 /**
@@ -28,13 +29,12 @@ public class SupportParser {
     [070]PICO (80|476) K40 	152	172	0	261	0	0	0	0	0	0	0	0
     [002]PICO (78|424) K40 	eigene	5549	4381	0	4375	2	0	0	364	0	0	0	0	Truppen
     [004]PICO (70|468) K40 	eigene	404	28	0	1842	2	0	0	0	0	0	0	4	Truppen
-  */
+     */
     public static boolean parse(String pTroopsString) {
         StringTokenizer lineTok = new StringTokenizer(pTroopsString, "\n\r");
         Village v = null;
         boolean retValue = false;
         while (lineTok.hasMoreElements()) {
-
             //parse single line for village
             String line = lineTok.nextToken();
             if (line.indexOf("eigene") > 0) {
@@ -58,6 +58,8 @@ public class SupportParser {
                         if (holder == null) {
                             TroopsManager.getSingleton().addTroopsForVillageFast(v, new LinkedList<Integer>());
                             holder = TroopsManager.getSingleton().getTroopsForVillage(v);
+                        } else {
+                            holder.clearSupportTargets();
                         }
                         holder.setOwnTroops(own);
                         //one valid information parsed
@@ -65,14 +67,19 @@ public class SupportParser {
                     }//end troops == null
                 }//end host == null
             } else {
-                //might be support target village
                 if (v != null) {
+                    //might be support target village
+                    VillageTroopsHolder holder = null;
+                    holder = TroopsManager.getSingleton().getTroopsForVillage(v);
+                    if (holder != null) {
+                        //remove existing supports
+                        holder.clearSupportTargets();
+                    }
                     Village supportTarget = extractVillage(line);
                     if (supportTarget != null) {
                         Hashtable<UnitHolder, Integer> support = parseUnits(line.replaceAll(EscapeChars.forRegex(supportTarget.toString()), "").trim());
                         if (support != null) {
                             //only add valid troop information
-                            VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(v);
                             if (holder == null) {
                                 TroopsManager.getSingleton().addTroopsForVillageFast(v, new LinkedList<Integer>());
                                 holder = TroopsManager.getSingleton().getTroopsForVillage(v);
@@ -203,13 +210,13 @@ public class SupportParser {
         System.out.println("SB " + s);
         System.out.println(s.replaceAll(v, ""));
 
-    /*  String token = "(120|192)";
-    System.out.println(token.matches("\\(*[0-9]{1,3}\\|[0-9]{1,3}\\)*"));
-    token = "(12:23:12)";
-    System.out.println(token.matches("\\(*[0-9]{1,2}\\:[0-9]{1,2}\\:[0-9]{1,2}\\)*"));
-     */
+        /*  String token = "(120|192)";
+        System.out.println(token.matches("\\(*[0-9]{1,3}\\|[0-9]{1,3}\\)*"));
+        token = "(12:23:12)";
+        System.out.println(token.matches("\\(*[0-9]{1,2}\\:[0-9]{1,2}\\:[0-9]{1,2}\\)*"));
+         */
 
-    // TroopsParser.parse(pTroopsString);
+        // TroopsParser.parse(pTroopsString);
     }
     /*
     kirscheye3	435|447 FaNtAsY wOrLd ... <3	Schwere Kavallerie	Torridity	436|444 FaNtAsY wOrLd ... 12	02.10.08 23:06:46

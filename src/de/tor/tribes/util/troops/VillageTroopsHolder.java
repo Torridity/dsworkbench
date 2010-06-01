@@ -249,7 +249,7 @@ public class VillageTroopsHolder {
             VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(v);
             if (holder != null) {
                 //remove support from this village
-                holder.getSupports().remove(this);
+                holder.getSupports().remove(getVillage());
                 holder.updateSupportValues();
             }
         }
@@ -366,12 +366,12 @@ public class VillageTroopsHolder {
         int result = 0;
         while (units.hasMoreElements()) {
             UnitHolder unit = units.nextElement();
-            if (unit.getPlainName().equals("axe") ||
-                    unit.getPlainName().equals("light") ||
-                    unit.getPlainName().equals("marcher") ||
-                    unit.getPlainName().equals("heavy") ||
-                    unit.getPlainName().equals("ram") ||
-                    unit.getPlainName().equals("catapult")) {
+            if (unit.getPlainName().equals("axe")
+                    || unit.getPlainName().equals("light")
+                    || unit.getPlainName().equals("marcher")
+                    || unit.getPlainName().equals("heavy")
+                    || unit.getPlainName().equals("ram")
+                    || unit.getPlainName().equals("catapult")) {
                 result += unit.getAttack() * active.get(unit);
             }
         }

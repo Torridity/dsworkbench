@@ -37,12 +37,6 @@ public class ColoredDateCellRenderer implements TableCellRenderer {
 
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-       /* if (column != 3) {
-            Component c = defaultRenderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-            ((JLabel) c).setText(specialFormat.format((Date) value));
-            return c;
-        }*/
-
         Component c = coloredRenderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 
         JLabel renderComponent = ((JLabel) c);
@@ -50,25 +44,7 @@ public class ColoredDateCellRenderer implements TableCellRenderer {
         long t = d.getTime();
         long now = System.currentTimeMillis();
         renderComponent.setText(specialFormat.format(d));
-        /*
-        if (t <= now) {
-        renderComponent.setBackground(Color.RED);
-        } else if (t - TEN_MINUTES > now) {
-        //more than 10 minutes in past, do nothing
-        c = defaultRenderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-        ((JLabel) c).setText(specialFormat.format((Date) value));
-        return c;
-        } else {
-        //do gradient calculation
-        long diff = t - now;
-        float posv = 100.0f * (float) diff / (float) TEN_MINUTES;
-        posv = (int) ((int) posv / 10) * 10;
-        posv /= 100;
-        int r = (int) Math.rint((float) LAST_SEGMENT.getRed() * (1.0f - posv) + (float) Color.YELLOW.getRed() * posv);
-        int g = (int) Math.rint((float) LAST_SEGMENT.getGreen() * (1.0f - posv) + (float) Color.YELLOW.getGreen() * posv);
-        int b = (int) Math.rint((float) LAST_SEGMENT.getBlue() * (1.0f - posv) + (float) Color.YELLOW.getBlue() * posv);
-        renderComponent.setBackground(new Color(r, g, b));
-        }*/
+
         if (t <= now) {
             renderComponent.setBackground(Color.DARK_GRAY);
         } else if (t - now <= 1 * MINUTE) {

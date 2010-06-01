@@ -22,6 +22,7 @@ import de.tor.tribes.util.StatTextBuilder;
 import de.tor.tribes.util.stat.StatManager;
 import java.awt.Color;
 import java.awt.Point;
+import java.io.File;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -366,7 +367,6 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
         jTaskPane1 = new com.l2fprod.common.swing.JTaskPane();
         jTaskPaneGroup1 = new com.l2fprod.common.swing.JTaskPaneGroup();
         jButton1 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
@@ -643,16 +643,6 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
         });
         jTaskPaneGroup1.getContentPane().add(jButton1);
 
-        jButton3.setBackground(new java.awt.Color(239, 235, 223));
-        jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/replace2.png"))); // NOI18N
-        jButton3.setToolTipText("Aktuelle Daten in Statistiken aufnehmen");
-        jButton3.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireTakeSnapshotEvent(evt);
-            }
-        });
-        jTaskPaneGroup1.getContentPane().add(jButton3);
-
         jButton2.setBackground(new java.awt.Color(239, 235, 223));
         jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/beginning.png"))); // NOI18N
         jButton2.setToolTipText("Markierten Datenpunkt als Start des ausgewählten Bereichs verwenden");
@@ -863,7 +853,7 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
                                 .addComponent(jScrollPane2))
                             .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jChartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 521, Short.MAX_VALUE)))
+                        .addComponent(jChartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 523, Short.MAX_VALUE)))
                 .addContainerGap())
         );
 
@@ -893,13 +883,6 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void fireTakeSnapshotEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireTakeSnapshotEvent
-        StatManager.getSingleton().takeSnapshot();
-        jAllyList.getSelectionModel().clearSelection();
-        jAllyList.getSelectionModel().setValueIsAdjusting(false);
-        JOptionPaneHelper.showInformationBox(this, "Aktuelle Daten wurden hinzugefügt", "Information");
-    }//GEN-LAST:event_fireTakeSnapshotEvent
 
     private void fireRemoveMonitoredElementEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireRemoveMonitoredElementEvent
         //remove tribe element(s)
@@ -1130,7 +1113,6 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
     @Override
     public void fireVillagesDraggedEvent(List<Village> pVillages, Point pDropLocation) {
     }
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JList jAllyList;
     private javax.swing.JCheckBox jAlwaysOnTopBox;
@@ -1138,7 +1120,6 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
     private javax.swing.JTextArea jBashOffArea;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton8;

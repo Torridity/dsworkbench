@@ -168,8 +168,8 @@
                       </Group>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jScrollPane3" alignment="1" pref="344" max="32767" attributes="0"/>
-                          <Component id="jScrollPane2" alignment="1" pref="344" max="32767" attributes="0"/>
+                          <Component id="jScrollPane3" alignment="1" pref="345" max="32767" attributes="0"/>
+                          <Component id="jScrollPane2" alignment="1" pref="345" max="32767" attributes="0"/>
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="jPanel3" max="32767" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
@@ -275,8 +275,12 @@
                           </Group>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="jWallLevelBar" pref="344" max="32767" attributes="0"/>
-                              <Component id="jScrollPane5" alignment="0" pref="344" max="32767" attributes="0"/>
+                              <Component id="jScrollPane5" pref="344" max="32767" attributes="0"/>
+                              <Group type="102" alignment="1" attributes="0">
+                                  <Component id="jWallLevelBar" pref="314" max="32767" attributes="0"/>
+                                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                  <Component id="jWallLevelText" min="-2" max="-2" attributes="0"/>
+                              </Group>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
@@ -288,12 +292,15 @@
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="1" attributes="0">
                               <Component id="jLabel4" min="-2" max="-2" attributes="1"/>
-                              <Component id="jWallLevelBar" min="-2" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="jWallLevelBar" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jWallLevelText" alignment="3" min="-2" pref="16" max="-2" attributes="0"/>
+                              </Group>
                           </Group>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="1" attributes="0">
-                              <Component id="jLabel6" pref="93" max="32767" attributes="1"/>
-                              <Component id="jScrollPane5" alignment="1" pref="93" max="32767" attributes="0"/>
+                              <Component id="jLabel6" pref="96" max="32767" attributes="1"/>
+                              <Component id="jScrollPane5" alignment="1" pref="96" max="32767" attributes="0"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
@@ -343,9 +350,21 @@
                       </Border>
                     </Property>
                     <Property name="borderPainted" type="boolean" value="false"/>
-                    <Property name="opaque" type="boolean" value="true"/>
                     <Property name="string" type="java.lang.String" value="0"/>
-                    <Property name="stringPainted" type="boolean" value="true"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JLabel" name="jWallLevelText">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="0"/>
+                    <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                      <Dimension value="[20, 14]"/>
+                    </Property>
+                    <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                      <Dimension value="[20, 14]"/>
+                    </Property>
+                    <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                      <Dimension value="[20, 14]"/>
+                    </Property>
                   </Properties>
                 </Component>
               </SubComponents>
@@ -373,7 +392,7 @@
                 <DimensionLayout dim="1">
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
-                          <Component id="jAttacksTableScrollPanel" pref="126" max="32767" attributes="0"/>
+                          <Component id="jAttacksTableScrollPanel" pref="131" max="32767" attributes="0"/>
                           <EmptySpace min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>

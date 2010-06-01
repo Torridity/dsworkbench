@@ -32,7 +32,7 @@ public class SOSFormater {
         //village info size
         buffer.append("[size=12]");
         //village info (<SOS_IMG> <VILLAGE_BB> (<ATT_IMG> <ATT_COUNT>)
-        buffer.append("[img]" + serverURL + "/graphic/reqdef.png[/img] " + pTarget.toBBCode() + " ([img]" + serverURL + "/graphic/unit/att.png[/img]" + pTargetInformation.getAttacks().size() + ")\n");
+        buffer.append("[img]" + serverURL + "/graphic/reqdef.png[/img] " + pTarget.toBBCode() + " ([img]" + serverURL + "/graphic/unit/att.png[/img] " + pTargetInformation.getAttacks().size() + ")\n");
         buffer.append("[/size]\n");
         //village details quote
         buffer.append("[quote]");

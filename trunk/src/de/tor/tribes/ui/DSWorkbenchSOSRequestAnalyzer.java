@@ -78,10 +78,10 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
         jLabel3 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
-        jWallLevel = new javax.swing.JLabel();
         jScrollPane5 = new javax.swing.JScrollPane();
         jTroopsInfoField = new javax.swing.JTextPane();
         jLabel6 = new javax.swing.JLabel();
+        jWallLevelBar = new javax.swing.JProgressBar();
         jPanel4 = new javax.swing.JPanel();
         jAttacksTableScrollPanel = new javax.swing.JScrollPane();
         jAttacksTable = new javax.swing.JTable();
@@ -144,16 +144,20 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
 
         jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/wall.png"))); // NOI18N
 
-        jWallLevel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jWallLevel.setText("20");
-        jWallLevel.setMaximumSize(new java.awt.Dimension(16, 16));
-        jWallLevel.setMinimumSize(new java.awt.Dimension(16, 16));
-        jWallLevel.setPreferredSize(new java.awt.Dimension(16, 16));
-
         jTroopsInfoField.setContentType("text/html");
+        jTroopsInfoField.setToolTipText("Truppen im Dorf");
         jScrollPane5.setViewportView(jTroopsInfoField);
 
         jLabel6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/face.png"))); // NOI18N
+
+        jWallLevelBar.setForeground(new java.awt.Color(0, 204, 0));
+        jWallLevelBar.setMaximum(20);
+        jWallLevelBar.setToolTipText("Wallstufe");
+        jWallLevelBar.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        jWallLevelBar.setBorderPainted(false);
+        jWallLevelBar.setOpaque(true);
+        jWallLevelBar.setString("0");
+        jWallLevelBar.setStringPainted(true);
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -164,22 +168,23 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel4)
                     .addComponent(jLabel6))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jWallLevel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 348, Short.MAX_VALUE))
+                    .addComponent(jWallLevelBar, javax.swing.GroupLayout.DEFAULT_SIZE, 344, Short.MAX_VALUE)
+                    .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 344, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jWallLevel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, 83, Short.MAX_VALUE)
-                    .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 83, Short.MAX_VALUE))
+                .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel4)
+                    .addComponent(jWallLevelBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, 93, Short.MAX_VALUE)
+                    .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 93, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -208,7 +213,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
-                .addComponent(jAttacksTableScrollPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 138, Short.MAX_VALUE)
+                .addComponent(jAttacksTableScrollPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 126, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -239,8 +244,8 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
                     .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 335, Short.MAX_VALUE)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 335, Short.MAX_VALUE)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 344, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 344, Short.MAX_VALUE)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -295,7 +300,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jTaskPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 530, Short.MAX_VALUE)
+                    .addComponent(jTaskPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 540, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1)
@@ -383,7 +388,14 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
             Village target = (Village) o;
             SOSRequest request = currentRequests.get(target.getTribe());
             SOSRequest.TargetInformation info = request.getTargetInformation(target);
-            jWallLevel.setText(Integer.toString(info.getWallLevel()));
+            int wall = info.getWallLevel();
+            jWallLevelBar.setString(Integer.toString(wall));
+            jWallLevelBar.setValue(wall);
+            int fac = Math.abs(wall - 20) + 1;
+            fac = (fac > 20) ? 20 : fac;
+            int r = 240 - (fac * 24);//((wall >= 10) ? (10 + (20 - wall)) : wall) * 24;
+            int g = wall * 10;
+            jWallLevelBar.setForeground(new Color(r, g, 0));
             troopInfo += info.getTroopInformationAsHTML() + "<BR/>";
             for (SOSRequest.TimedAttack attack : info.getAttacks()) {
                 model.addRow(new Object[]{attack.getSource().getTribe(), attack.getSource(), new Date(attack.getlArriveTime())});
@@ -419,14 +431,15 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
         if (currentRequests == null) {
             return;
         }
+
         Enumeration<Tribe> tribes = currentRequests.keys();
         DefaultListModel defenderModel = new DefaultListModel();
         while (tribes.hasMoreElements()) {
             SOSRequest request = currentRequests.get(tribes.nextElement());
-            System.out.println(request.toBBCode());
+            /* System.out.println(request.toBBCode());
             System.out.println("");
             System.out.println("-----------");
-            System.out.println("");
+            System.out.println("");*/
             defenderModel.addElement(request.getDefender());
         }
         jDefenderList.setModel(defenderModel);
@@ -474,6 +487,6 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
     private com.l2fprod.common.swing.JTaskPane jTaskPane1;
     private com.l2fprod.common.swing.JTaskPaneGroup jTaskPaneGroup1;
     private javax.swing.JTextPane jTroopsInfoField;
-    private javax.swing.JLabel jWallLevel;
+    private javax.swing.JProgressBar jWallLevelBar;
     // End of variables declaration//GEN-END:variables
 }

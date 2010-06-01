@@ -52,6 +52,7 @@ import javax.swing.table.TableColumn;
 
 /**
  * @TODO (DIFF) Slow troop removing fixed
+ * @TODO (DIFF) Supports are updated on new troop parsing
  * @author  Jejkal
  */
 public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements TroopsManagerListener, TagManagerListener {

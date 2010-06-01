@@ -29,6 +29,7 @@ public class NoTag extends Tag {
         super(pName, pShowOnMap);
     }
 
+    @Override
     public List<Integer> getVillageIDs() {
         List<Integer> ids = new LinkedList<Integer>();
         Tribe user = DSWorkbenchMainFrame.getSingleton().getCurrentUser();
@@ -42,6 +43,7 @@ public class NoTag extends Tag {
         return ids;
     }
 
+    @Override
     public boolean tagsVillage(int pVillageID) {
         Village v = DataHolder.getSingleton().getVillagesById().get(pVillageID);
         if (v == null) {
@@ -51,7 +53,8 @@ public class NoTag extends Tag {
         return (tagList == null || tagList.isEmpty());
     }
 
+    @Override
     public String toString() {
-        return "Kein Stamm";
+        return "Kein Tag";
     }
 }

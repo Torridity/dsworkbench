@@ -17,10 +17,10 @@ import java.util.List;
 import de.tor.tribes.types.Fake;
 import de.tor.tribes.types.Off;
 import java.util.Collections;
-import java.util.Random;
 import org.apache.log4j.Logger;
 
 /**
+ * @TODO (DIFF) Bugfix: Fake assignment for random arrive time fixed
  * @author Charon
  */
 public class BruteForce extends AbstractAttackAlgorithm {
@@ -205,7 +205,7 @@ public class BruteForce extends AbstractAttackAlgorithm {
                             Date sendTime = new Date(arrive - (long) time * 1000);
                             if (pTimeFrame.isVariableArriveTime()) {
                                 //calculate possible arrive time and store it in sendTime
-                                sendTime = pTimeFrame.getRandomArriveTime(Math.round(time * 60000.0), source.getTribe(), new LinkedList<Long>());
+                                sendTime = pTimeFrame.getRandomArriveTime(Math.round(time * 1000.0), source.getTribe(), new LinkedList<Long>());
                                 if (sendTime == null) {
                                     //no arrive time found, set send time to 1.1.1970
                                     sendTime = new Date(0);

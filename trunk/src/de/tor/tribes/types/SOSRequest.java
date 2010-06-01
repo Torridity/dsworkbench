@@ -6,8 +6,10 @@ package de.tor.tribes.types;
 
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
+import de.tor.tribes.types.TribeStatsElement.Stats;
 import de.tor.tribes.util.support.SOSFormater;
 import java.text.SimpleDateFormat;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -57,12 +59,16 @@ public class SOSRequest {
     }
 
     public String toBBCode() {
+        return toBBCode(true);
+    }
+
+    public String toBBCode(boolean pDetailed) {
         StringBuffer buffer = new StringBuffer();
         Enumeration<Village> targets = getTargets();
         while (targets.hasMoreElements()) {
             Village target = targets.nextElement();
             TargetInformation targetInfo = getTargetInformation(target);
-            buffer.append(SOSFormater.format(target, targetInfo));
+            buffer.append(SOSFormater.format(target, targetInfo, pDetailed));
             buffer.append("\n\n");
         }
         return buffer.toString();
@@ -171,6 +177,15 @@ public class SOSRequest {
             return result;
         }
     }
+    public static final Comparator<TimedAttack> ARRIVE_TIME_COMPARATOR = new ArriveTimeComparator();
+
+    private static class ArriveTimeComparator implements Comparator<TimedAttack>, java.io.Serializable {
+
+        @Override
+        public int compare(TimedAttack s1, TimedAttack s2) {
+            return s2.getlArriveTime().compareTo(s1.getlArriveTime());
+        }
+    }
 
     public class TimedAttack {
 
@@ -199,7 +214,7 @@ public class SOSRequest {
         /**
          * @return the lArriveTime
          */
-        public long getlArriveTime() {
+        public Long getlArriveTime() {
             return lArriveTime;
         }
 

@@ -52,7 +52,6 @@ public class TribeStatsElement {
                 short rankDef = Short.parseShort(data[7]);
                 elem.addLoadedData(timestamp, rank, points, villages, bashOff, rankOff, bashDef, rankDef);
             }
-
         } catch (Exception e) {
             return null;
         } finally {
@@ -94,9 +93,9 @@ public class TribeStatsElement {
             last.setTimeInMillis(lastValue);
             Calendar current = Calendar.getInstance();
             current.setTimeInMillis(pTimestamp);
-            if (last.get(Calendar.DAY_OF_MONTH) == current.get(Calendar.DAY_OF_MONTH) &&
-                    last.get(Calendar.MONTH) == current.get(Calendar.MONTH) &&
-                    last.get(Calendar.YEAR) == current.get(Calendar.YEAR)) {
+            if (last.get(Calendar.DAY_OF_MONTH) == current.get(Calendar.DAY_OF_MONTH)
+                    && last.get(Calendar.MONTH) == current.get(Calendar.MONTH)
+                    && last.get(Calendar.YEAR) == current.get(Calendar.YEAR)) {
                 //replace last value due to it is from the same day
                 int duplicatedIdx = timestampList.size() - 1;
                 timestampList.remove(duplicatedIdx);

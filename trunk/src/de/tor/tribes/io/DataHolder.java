@@ -16,6 +16,7 @@ import de.tor.tribes.ui.DSWorkbenchSettingsDialog;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ServerSettings;
+import de.tor.tribes.util.stat.StatManager;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.awt.Point;
 import java.io.BufferedReader;
@@ -910,7 +911,7 @@ public class DataHolder {
                     mVillages[v.getX()][v.getY()] = v;
                 } catch (Exception e) {
                     //ignore invalid village
-                    }
+                }
             }
             r.close();
             logger.debug(" - Finished parsing villages");
@@ -937,7 +938,7 @@ public class DataHolder {
                         mTribes.put(t.getId(), t);
                     } catch (Exception e) {
                         //ignore invalid tribe
-                        }
+                    }
                 }
             } catch (Throwable t) {
             }
@@ -962,7 +963,7 @@ public class DataHolder {
                     mAllies.put(a.getId(), a);
                 } catch (Exception e) {
                     //ignore invalid ally
-                    }
+                }
             }
             logger.debug(" - Finished parsing allies");
             r.close();

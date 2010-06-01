@@ -414,7 +414,6 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
         }
 
         RollingFileAppender a = new org.apache.log4j.RollingFileAppender();
-        //a.setLayout(new org.apache.log4j.PatternLayout("%d [%t] %-5p %C{6} (%F:%L) - %m%n"));
         a.setLayout(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c - %m%n"));
         try {
             a.setFile("./log/dsworkbench.log", true, true, 1024);

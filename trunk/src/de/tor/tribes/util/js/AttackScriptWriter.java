@@ -6,6 +6,7 @@ package de.tor.tribes.util.js;
 
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.util.DSCalculator;
+import de.tor.tribes.util.ServerSettings;
 import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -44,9 +45,9 @@ public class AttackScriptWriter {
             BufferedReader r = new BufferedReader(new InputStreamReader(new FileInputStream("./scripts/show.tmpl")));
             String line = "";
             while ((line = r.readLine()) != null) {
-              //  if (line != null && !line.trim().startsWith("//") && !line.trim().startsWith("*") && !line.trim().startsWith("/*") && !line.trim().startsWith("*/")) {
-                    tmpl += line + "\n";
-              //  }
+                //  if (line != null && !line.trim().startsWith("//") && !line.trim().startsWith("*") && !line.trim().startsWith("/*") && !line.trim().startsWith("*/")) {
+                tmpl += line + "\n";
+                //  }
             }
             r.close();
         } catch (Exception e) {
@@ -93,7 +94,12 @@ public class AttackScriptWriter {
             block += "'unit':'" + a.getUnit().getPlainName() + ".png',\n";
             //times
             long sendTime = a.getArriveTime().getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(a.getSource(), a.getTarget(), a.getUnit().getSpeed()) * 1000);
-            SimpleDateFormat df = new SimpleDateFormat("dd.MM.yy HH:mm:ss.SSS");
+            SimpleDateFormat df = null;
+            if (ServerSettings.getSingleton().isMillisArrival()) {
+                df = new SimpleDateFormat("dd.MM.yy HH:mm:ss.SSS");
+            } else {
+                df = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
+            }
             block += "'send':'" + df.format(new Date(sendTime)) + "',\n";
             block += "'arrive':'" + df.format(a.getArriveTime()) + "',\n";
             block += "'expired':" + (long) Math.floor((long) sendTime / 1000) + "\n";

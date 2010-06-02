@@ -33,11 +33,21 @@ public class AttackToBBCodeFormater {
         Date aTime = pAttack.getArriveTime();
         Date sTime = new Date(aTime.getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(pAttack.getSource(), pAttack.getTarget(), pAttack.getUnit().getSpeed()) * 1000));
         if (pExtended) {
-            sendtime = new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss.'[size=8]'SSS'[/size]'").format(sTime);
-            arrivetime = new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss.'[size=8]'SSS'[/size]'").format(aTime);
+            if (ServerSettings.getSingleton().isMillisArrival()) {
+                sendtime = new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss.'[size=8]'SSS'[/size]'").format(sTime);
+                arrivetime = new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss.'[size=8]'SSS'[/size]'").format(aTime);
+            } else {
+                sendtime = new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss").format(sTime);
+                arrivetime = new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss").format(aTime);
+            }
         } else {
-            sendtime = new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss.SSS").format(sTime);
-            arrivetime = new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss.SSS").format(aTime);
+            if (ServerSettings.getSingleton().isMillisArrival()) {
+                sendtime = new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss.SSS").format(sTime);
+                arrivetime = new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss.SSS").format(aTime);
+            } else {
+                sendtime = new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss").format(sTime);
+                arrivetime = new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss").format(aTime);
+            }
         }
 
         switch (pAttack.getType()) {

@@ -23,6 +23,7 @@ import de.tor.tribes.ui.renderer.UnitListCellRenderer;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
+import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.attack.AttackManager;
 import de.tor.tribes.util.parser.VillageParser;
 import de.tor.tribes.util.tag.TagManager;
@@ -41,6 +42,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
+import javax.swing.JCheckBox;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
@@ -879,8 +881,12 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         jTargetVillage.setText(target.toString());
         boolean fromSelection = false;
         Date arriveDate = null;
-        SimpleDateFormat f_new = new SimpleDateFormat("dd.MM.yy HH:mm:ss:SSS");
-        SimpleDateFormat f_old = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
+        SimpleDateFormat f = null;
+        if (ServerSettings.getSingleton().isMillisArrival()) {
+            f = new SimpleDateFormat("dd.MM.yy HH:mm:ss:SSS");
+        } else {
+            f = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
+        }
         try {
             String text = jComandArea.getText();
             String selection = jComandArea.getSelectedText();
@@ -902,16 +908,8 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
                 fromSelection = true;
                 arrive = selection;
             }
-            try {
-                arriveDate = f_new.parse(arrive);
-                f_new = new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss.SSS");
-                jArriveField.setText(f_new.format(arriveDate));
-            } catch (Exception old_style) {
-                //parsing failed...maybe we are on an old server
-                arriveDate = f_old.parse(arrive);
-                f_old = new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss");
-                jArriveField.setText(f_old.format(arriveDate));
-            }
+            arriveDate = f.parse(arrive);
+            jArriveField.setText(f.format(arriveDate));
             jParserInfo.setBackground(Color.GREEN);
             jParserInfo.setText("Angriffsbefehl erfolgreich gelesen.");
         } catch (Exception e) {
@@ -929,92 +927,35 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         //calc possible units
         double dist = DSCalculator.calculateDistance(source, target);
 
-        UnitHolder axe = DataHolder.getSingleton().getUnitByPlainName("axe");
-        long dur = (long) Math.floor(dist * axe.getSpeed() * 60000.0);
-        if (arriveDate.getTime() - dur > System.currentTimeMillis()) {
-            //send time would be in future, unit not possible
-            jAxeBox.setEnabled(false);
-        } else {
-            jAxeBox.setEnabled(true);
+        Hashtable<String, JCheckBox> unitsCheckboxMappings = new Hashtable<String, JCheckBox>();
+
+        unitsCheckboxMappings.put("axe", jAxeBox);
+        unitsCheckboxMappings.put("sword", jSwordBox);
+        unitsCheckboxMappings.put("spy", jSpyBox);
+        unitsCheckboxMappings.put("light", jLightBox);
+        unitsCheckboxMappings.put("heavy", jHeavyBox);
+        unitsCheckboxMappings.put("ram", jRamBox);
+        unitsCheckboxMappings.put("knight", jPalaBox);
+        unitsCheckboxMappings.put("snob", jSnobBox);
+
+        Enumeration<String> unitKeys = unitsCheckboxMappings.keys();
+        while (unitKeys.hasMoreElements()) {
+            String plainName = unitKeys.nextElement();
+            JCheckBox unitBox = unitsCheckboxMappings.get(plainName);
+            UnitHolder unit = DataHolder.getSingleton().getUnitByPlainName(plainName);
+            if (unit != null) {
+                long dur = (long) Math.floor(dist * unit.getSpeed() * 60000.0);
+                if (arriveDate.getTime() - dur > System.currentTimeMillis()) {
+                    unitBox.setEnabled(false);
+                } else {
+                    unitBox.setEnabled(true);
+                }
+            } else {
+                unitBox.setEnabled(false);
+            }
         }
 
-
-        UnitHolder sword = DataHolder.getSingleton().getUnitByPlainName("sword");
-        dur = (long) Math.floor(dist * sword.getSpeed() * 60000.0);
-        if (arriveDate.getTime() - dur > System.currentTimeMillis()) {
-            //send time would be in future, unit not possible
-            jSwordBox.setEnabled(false);
-        } else {
-            jSwordBox.setEnabled(true);
-        }
-        /*
-        Herkunft	Spieler:	Rattenfutter
-        Dorf:	065 Rattennest (474|850) K84
-        Ziel	Spieler:	Rattenfutter
-        Dorf:	020 Rattennest (476|850) K84
-        Dauer:	0:18:00
-        Ankunft:	30.05.10 20:00:38
-        Ankunft in:	0:17:55
-         */
-        UnitHolder spy = DataHolder.getSingleton().getUnitByPlainName("spy");
-        dur = (long) Math.floor(dist * spy.getSpeed() * 60000.0);
-        if (arriveDate.getTime() - dur > System.currentTimeMillis()) {
-            //send time would be in future, unit not possible
-            jSpyBox.setEnabled(false);
-        } else {
-            jSpyBox.setEnabled(true);
-        }
-
-        UnitHolder light = DataHolder.getSingleton().getUnitByPlainName("light");
-        dur = (long) Math.floor(dist * light.getSpeed() * 60000.0);
-        if (arriveDate.getTime() - dur > System.currentTimeMillis()) {
-            //send time would be in future, unit not possible
-            jLightBox.setEnabled(false);
-        } else {
-            jLightBox.setEnabled(true);
-        }
-
-        UnitHolder heavy = DataHolder.getSingleton().getUnitByPlainName("heavy");
-        dur = (long) Math.floor(dist * heavy.getSpeed() * 60000.0);
-        if (arriveDate.getTime() - dur > System.currentTimeMillis()) {
-            //send time would be in future, unit not possible
-            jHeavyBox.setEnabled(false);
-        } else {
-            jHeavyBox.setEnabled(true);
-        }
-
-
-        UnitHolder ram = DataHolder.getSingleton().getUnitByPlainName("ram");
-        dur = (long) Math.floor(dist * ram.getSpeed() * 60000.0);
-        if (arriveDate.getTime() - dur > System.currentTimeMillis()) {
-            //send time would be in future, unit not possible
-            jRamBox.setEnabled(false);
-        } else {
-            jRamBox.setEnabled(true);
-        }
-
-        UnitHolder pala = DataHolder.getSingleton().getUnitByPlainName("knight");
-        dur = (long) Math.floor(dist * pala.getSpeed() * 60000.0);
-        if (arriveDate.getTime() - dur > System.currentTimeMillis()) {
-            //send time would be in future, unit not possible
-            jPalaBox.setEnabled(false);
-        } else {
-            jPalaBox.setEnabled(true);
-        }
-
-        UnitHolder snob = DataHolder.getSingleton().getUnitByPlainName("snob");
-        dur = (long) Math.floor(dist * snob.getSpeed() * 60000.0);
-        if (arriveDate.getTime() - dur > System.currentTimeMillis()) {
-            //send time would be in future, unit not possible
-            jSnobBox.setEnabled(false);
-        } else {
-            jSnobBox.setEnabled(true);
-        }
-
-        /*if (jSnobBox.isEnabled()) {
-        jSnobBox.setSelected(true);
-        fireEstUnitChangedEvent(new ItemEvent(jSnobBox, 0, null, 0));
-        } else*/ if (jRamBox.isEnabled()) {
+        if (jRamBox.isEnabled()) {
             jRamBox.setSelected(true);
             fireEstUnitChangedEvent(new ItemEvent(jRamBox, 0, null, 0));
         } else if (jAxeBox.isEnabled()) {
@@ -1024,8 +965,6 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
             jSpyBox.setSelected(true);
             jEstSendTime.setText("(unbekannt)");
         }
-
-
     }//GEN-LAST:event_fireComandDataChangedEvent
 
     private void fireEstUnitChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireEstUnitChangedEvent
@@ -1047,7 +986,13 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         } else if (evt.getSource() == jSnobBox) {
             unit = DataHolder.getSingleton().getUnitByPlainName("snob");
         }
-        SimpleDateFormat f = new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss.SSS");
+        SimpleDateFormat f = null;
+
+        if (ServerSettings.getSingleton().isMillisArrival()) {
+            f = new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss.SSS");
+        } else {
+            f = new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss");
+        }
         try {
             Date arrive = f.parse(jArriveField.getText());
             Village source = VillageParser.parse(jSourceVillage.getText()).get(0);
@@ -1065,7 +1010,6 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
             jEstSendTime.setText("(unbekannt)");
             jReturnField.setText("(unbekannt)");
         }
-
     }//GEN-LAST:event_fireEstUnitChangedEvent
 
     private void fireCalculateReTimingsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCalculateReTimingsEvent
@@ -1123,7 +1067,12 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         for (Village candidate : candidates) {
             double dist = DSCalculator.calculateDistance(candidate, target);
             long runtime = Math.round(dist * unit.getSpeed() * 60000.0);
-            SimpleDateFormat f = new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss.SSS");
+            SimpleDateFormat f = null;
+            if (ServerSettings.getSingleton().isMillisArrival()) {
+                f = new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss.SSS");
+            } else {
+                f = new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss");
+            }
             VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(candidate);
             boolean useVillage = true;
             if (holder != null) {

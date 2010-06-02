@@ -2034,7 +2034,12 @@ private void fireUnformattedAttacksToClipboardEvent(java.awt.event.MouseEvent ev
             Village tVillage = (Village) resultModel.getValueAt(i, 2);
             Date dTime = (Date) resultModel.getValueAt(i, 3);
             int type = (Integer) resultModel.getValueAt(i, 4);
-            String time = new SimpleDateFormat("dd.MM.yy HH:mm:ss.SSS").format(dTime);
+            String time = null;
+            if (ServerSettings.getSingleton().isMillisArrival()) {
+                time = new SimpleDateFormat("dd.MM.yy HH:mm:ss.SSS").format(dTime);
+            } else {
+                time = new SimpleDateFormat("dd.MM.yy HH:mm:ss").format(dTime);
+            }
 
             switch (type) {
                 case Attack.CLEAN_TYPE: {
@@ -2902,7 +2907,12 @@ private void fireChangeAttackCountEvent(java.awt.event.MouseEvent evt) {//GEN-FI
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
                 Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-                SimpleDateFormat f = new SimpleDateFormat("dd.MM.yy HH:mm:ss.SSS");
+                SimpleDateFormat f = null;
+                if (ServerSettings.getSingleton().isMillisArrival()) {
+                    f = new SimpleDateFormat("dd.MM.yy HH:mm:ss.SSS");
+                } else {
+                    f = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
+                }
                 Boolean impossible = (Boolean) table.getModel().getValueAt(row, 5);
                 if (impossible.booleanValue()) {
                     c.setBackground(Color.RED);

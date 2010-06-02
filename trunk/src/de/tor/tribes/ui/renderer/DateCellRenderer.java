@@ -4,6 +4,7 @@
  */
 package de.tor.tribes.ui.renderer;
 
+import de.tor.tribes.util.ServerSettings;
 import java.text.SimpleDateFormat;
 import javax.swing.table.DefaultTableCellRenderer;
 
@@ -17,6 +18,9 @@ public class DateCellRenderer extends DefaultTableCellRenderer {
 
     public DateCellRenderer() {
         super();
+        if (!ServerSettings.getSingleton().isMillisArrival()) {
+            specialFormat = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
+        }
     }
 
     public DateCellRenderer(String pPattern) {

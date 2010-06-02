@@ -439,7 +439,7 @@ public class VillageSupportFrame extends javax.swing.JFrame {
         for (Object o : jTagsList.getSelectedValues()) {
             allowedTags.add((Tag) o);
         }
-       
+
         List<SupportCalculator.SupportMovement> movements = SupportCalculator.calculateSupport(mCurrentVillage, arrive, defOnly, allowedTags, minUnitCnt);
         if ((movements == null) || (movements.size() == 0)) {
             JOptionPaneHelper.showWarningBox(this, "Mit den eingestellten Parametern ist keine Unterstützung möglich.", "Warnung");
@@ -481,7 +481,12 @@ public class VillageSupportFrame extends javax.swing.JFrame {
                     Village source = (Village) jSupportTable.getValueAt(row, 0);
                     UnitHolder sUnit = (UnitHolder) jSupportTable.getValueAt(row, 1);
                     Date sTime = (Date) jSupportTable.getValueAt(row, 2);
-                    String sendtime = new SimpleDateFormat("dd.MM.yy HH:mm:ss.SSS").format(sTime);
+                    String sendtime = null;
+                    if (ServerSettings.getSingleton().isMillisArrival()) {
+                        sendtime = new SimpleDateFormat("dd.MM.yy HH:mm:ss.SSS").format(sTime);
+                    } else {
+                        sendtime = new SimpleDateFormat("dd.MM.yy HH:mm:ss").format(sTime);
+                    }
                     String v = jTargetVillage.getText();
                     String coord = v.substring(v.lastIndexOf("(") + 1, v.lastIndexOf(")")).trim();
                     String[] pos = coord.split("\\|");
@@ -548,9 +553,17 @@ public class VillageSupportFrame extends javax.swing.JFrame {
                 Date arrive = new SimpleDateFormat("dd.MM.yy HH:mm:ss").parse(jArriveTime.getText());
                 buffer.append("Geplante Ankunft: ");
                 if (extended) {
-                    buffer.append(new SimpleDateFormat("'[color=green]'dd.MM.yy 'um' HH:mm:ss.'[size=8]'SSS'[/size][/color]'").format(arrive) + "[/quote]\n\n");
+                    if (ServerSettings.getSingleton().isMillisArrival()) {
+                        buffer.append(new SimpleDateFormat("'[color=green]'dd.MM.yy 'um' HH:mm:ss.'[size=8]'SSS'[/size][/color]'").format(arrive) + "[/quote]\n\n");
+                    } else {
+                        buffer.append(new SimpleDateFormat("'[color=green]'dd.MM.yy 'um' HH:mm:ss'[/color]'").format(arrive) + "[/quote]\n\n");
+                    }
                 } else {
-                    buffer.append(new SimpleDateFormat("'[color=green]'dd.MM.yy 'um' HH:mm:ss.SSS'[/color]'").format(arrive) + "[/quote]\n\n");
+                    if (ServerSettings.getSingleton().isMillisArrival()) {
+                        buffer.append(new SimpleDateFormat("'[color=green]'dd.MM.yy 'um' HH:mm:ss.SSS'[/color]'").format(arrive) + "[/quote]\n\n");
+                    } else {
+                        buffer.append(new SimpleDateFormat("'[color=green]'dd.MM.yy 'um' HH:mm:ss'[/color]'").format(arrive) + "[/quote]\n\n");
+                    }
                 }
 
                 String sUrl = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
@@ -562,9 +575,17 @@ public class VillageSupportFrame extends javax.swing.JFrame {
                     buffer.append("");
                     String sendtime = "";
                     if (extended) {
-                        sendtime = new SimpleDateFormat("'[color=red]'dd.MM.yy 'um' HH:mm:ss.'[size=8]'SSS'[/size][/color]'").format(sendTime);
+                        if (ServerSettings.getSingleton().isMillisArrival()) {
+                            sendtime = new SimpleDateFormat("'[color=red]'dd.MM.yy 'um' HH:mm:ss.'[size=8]'SSS'[/size][/color]'").format(sendTime);
+                        } else {
+                            sendtime = new SimpleDateFormat("'[color=red]'dd.MM.yy 'um' HH:mm:ss'[/color]'").format(sendTime);
+                        }
                     } else {
-                        sendtime = new SimpleDateFormat("'[color=red]'dd.MM.yy 'um' HH:mm:ss.SSS'[/color]'").format(sendTime);
+                        if (ServerSettings.getSingleton().isMillisArrival()) {
+                            sendtime = new SimpleDateFormat("'[color=red]'dd.MM.yy 'um' HH:mm:ss.SSS'[/color]'").format(sendTime);
+                        } else {
+                            sendtime = new SimpleDateFormat("'[color=red]'dd.MM.yy 'um' HH:mm:ss'[/color]'").format(sendTime);
+                        }
                     }
                     buffer.append("Unterstützung aus ");
                     buffer.append(source.toBBCode());
@@ -594,8 +615,8 @@ public class VillageSupportFrame extends javax.swing.JFrame {
                 StringTokenizer t = new StringTokenizer(b, "[");
                 int cnt = t.countTokens();
                 if (cnt > 500) {
-                    if (JOptionPaneHelper.showQuestionConfirmBox(jResultDialog, "Die zu exportierenden Unterstützungen benötigen mehr als 500 BB-Codes\n" +
-                            "und können daher im Spiel (Forum/IGM/Notizen) nicht auf einmal dargestellt werden.\nTrotzdem exportieren?", "Zu viele BB-Codes", "Nein", "Ja") == JOptionPane.NO_OPTION) {
+                    if (JOptionPaneHelper.showQuestionConfirmBox(jResultDialog, "Die zu exportierenden Unterstützungen benötigen mehr als 500 BB-Codes\n"
+                            + "und können daher im Spiel (Forum/IGM/Notizen) nicht auf einmal dargestellt werden.\nTrotzdem exportieren?", "Zu viele BB-Codes", "Nein", "Ja") == JOptionPane.NO_OPTION) {
                         return;
                     }
                 }
@@ -721,7 +742,11 @@ public class VillageSupportFrame extends javax.swing.JFrame {
             jSupportTable.getColumn(jSupportTable.getColumnName(i)).setHeaderRenderer(headerRenderer);
         }
 
-        jSupportTable.setDefaultRenderer(Date.class, new DateCellRenderer("dd.MM.yy HH:mm:ss.SSS"));
+        if (ServerSettings.getSingleton().isMillisArrival()) {
+            jSupportTable.setDefaultRenderer(Date.class, new DateCellRenderer("dd.MM.yy HH:mm:ss.SSS"));
+        } else {
+            jSupportTable.setDefaultRenderer(Date.class, new DateCellRenderer("dd.MM.yy HH:mm:ss"));
+        }
         for (SupportCalculator.SupportMovement movement : pMovements) {
             Village village = movement.getSource();
             UnitHolder unit = movement.getUnit();

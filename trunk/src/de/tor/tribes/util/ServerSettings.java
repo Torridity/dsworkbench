@@ -7,6 +7,7 @@ package de.tor.tribes.util;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.awt.Dimension;
 import java.io.File;
+import java.text.SimpleDateFormat;
 import org.apache.log4j.Logger;
 import org.jdom.Document;
 
@@ -24,6 +25,7 @@ public class ServerSettings {
     private int BONUS_NEW = 0;
     private int SNOB_RANGE = 70;
     private boolean church = false;
+    private boolean millisArrival = true;
     private static ServerSettings SINGLETON = null;
 
     public static synchronized ServerSettings getSingleton() {
@@ -69,6 +71,12 @@ public class ServerSettings {
                 setChurch(Integer.parseInt(JaxenUtils.getNodeValue(d, "//game/church")) == 1);
             } catch (Exception inner) {
                 setChurch(false);
+            }
+            logger.debug(" - reading millis setting");
+            try {
+                setMillisArrival(Integer.parseInt(JaxenUtils.getNodeValue(d, "//misc/millis_arrival")) == 1);
+            } catch (Exception inner) {
+                setMillisArrival(true);
             }
         } catch (Exception e) {
             logger.error("Failed to load server settings", e);
@@ -137,5 +145,13 @@ public class ServerSettings {
 
     public boolean isChurch() {
         return church;
+    }
+
+    public void setMillisArrival(boolean v) {
+        millisArrival = v;
+    }
+
+    public boolean isMillisArrival() {
+        return millisArrival;
     }
 }

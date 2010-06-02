@@ -12,6 +12,7 @@ import de.tor.tribes.types.SOSRequest.TargetInformation;
 import de.tor.tribes.types.SOSRequest.TimedAttack;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.util.GlobalOptions;
+import de.tor.tribes.util.ServerSettings;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
@@ -50,7 +51,12 @@ public class SOSFormater {
         Collections.sort(attacks, SOSRequest.ARRIVE_TIME_COMPARATOR);
 
         //add first and last attack information
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss.SSS");
+        SimpleDateFormat dateFormat = null;
+        if (ServerSettings.getSingleton().isMillisArrival()) {
+            dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss.SSS");
+        } else {
+            dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+        }
         buffer.append("[img]" + serverURL + "/graphic/map/attack.png[/img] " + dateFormat.format(new Date(attacks.get(0).getlArriveTime())) + "\n");
         if (pDetailed && attacks.size() > 2) {
             buffer.append("[/size]\n");

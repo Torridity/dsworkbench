@@ -66,7 +66,6 @@ import java.awt.dnd.DropTarget;
 import java.awt.dnd.DropTargetListener;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
-import java.awt.image.VolatileImage;
 import java.io.File;
 import java.text.NumberFormat;
 import java.util.Arrays;
@@ -81,6 +80,7 @@ import javax.swing.JPanel;
 
  * @author Charon
  */
+//public class MapPanel extends JPanel implements DragGestureListener, // For recognizing the start of drags
 public class MapPanel extends JPanel implements DragGestureListener, // For recognizing the start of drags
         DragSourceListener, // For processing drag source events
         DropTargetListener // For processing drop target events
@@ -88,7 +88,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
 // <editor-fold defaultstate="collapsed" desc=" Member variables ">
 
     private static Logger logger = Logger.getLogger("MapCanvas");
-     private BufferedImage mBuffer = null;
+    private BufferedImage mBuffer = null;
     //private VolatileImage mBuffer = null;
     private double dCenterX = 500.0;
     private double dCenterY = 500.0;
@@ -131,7 +131,6 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
         if (SINGLETON == null) {
             SINGLETON = new MapPanel();
         }
-
         return SINGLETON;
     }
 
@@ -226,7 +225,8 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
 
         // <editor-fold defaultstate="collapsed" desc="MouseListener for cursor events">
 
-        addMouseListener(new MouseListener() {
+         //mCanvas.
+                 addMouseListener(new MouseListener() {
 
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -676,12 +676,14 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
             }
         });
 
-        addMouseListener(MenuRenderer.getSingleton());
+        //mCanvas.
+                addMouseListener(MenuRenderer.getSingleton());
         //</editor-fold>
 
 
         // <editor-fold defaultstate="collapsed" desc=" MouseMotionListener for dragging operations ">
-        addMouseMotionListener(new MouseMotionListener() {
+         //mCanvas.
+                 addMouseMotionListener(new MouseMotionListener() {
 
             @Override
             public void mouseDragged(MouseEvent e) {
@@ -800,7 +802,8 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
             }
         });
 
-        addMouseMotionListener(MenuRenderer.getSingleton());
+        //mCanvas.
+                addMouseMotionListener(MenuRenderer.getSingleton());
 
         //<editor-fold>
     }
@@ -1276,7 +1279,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
 
         jVillageActionsMenu.add(jMarkedVillageSubmenu);
 
-        setLayout(null);
+        setLayout(new java.awt.BorderLayout());
     }// </editor-fold>//GEN-END:initComponents
 
     private void fireVillageExportEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireVillageExportEvent
@@ -1798,6 +1801,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
 
         if (mMapRenderer == null) {
             logger.info("Creating MapRenderer");
+        //    mMapRenderer = new MapRenderer(mCanvas);
             mMapRenderer = new MapRenderer();
             mMapRenderer.start();
         }
@@ -1908,7 +1912,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
 
     /**Update operation perfomed by the RepaintThread was completed*/
     public void updateComplete(Hashtable<Village, Rectangle> pPositions, BufferedImage pBuffer) {
-    //public void updateComplete(Hashtable<Village, Rectangle> pPositions, VolatileImage pBuffer) {
+        //public void updateComplete(Hashtable<Village, Rectangle> pPositions, VolatileImage pBuffer) {
         mBuffer = pBuffer;
         mVillagePositions = pPositions;
         if (bMapSHotPlaned) {

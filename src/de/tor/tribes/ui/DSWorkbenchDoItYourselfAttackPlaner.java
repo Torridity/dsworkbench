@@ -89,21 +89,7 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
             //setting not available
         }
         mHeaderRenderer = new SortableTableHeaderRenderer();
-        /*DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
 
-        @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-        Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
-        c.setBackground(Constants.DS_BACK);
-        DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
-        r.setText("<html><b>" + r.getText() + "</b></html>");
-        return c;
-        }
-        };
-
-        for (int i = 0; i < 7; i++) {
-        mHeaderRenderers.add(headerRenderer);
-        }*/
         fireRebuildTableEvent();
         // jAttackTable.setDefaultRenderer(Village.class, new VillageCellRenderer());
         jAttackTable.setDefaultEditor(Village.class, new DefaultCellEditor(new JTextField("")));
@@ -791,8 +777,16 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
                     Date aTime = attacks.get(row).getArriveTime();
                     Date sTime = new Date(aTime.getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(sVillage, tVillage, sUnit.getSpeed()) * 1000));
                     int type = attacks.get(row).getType();
-                    String sendtime = new SimpleDateFormat("dd.MM.yy HH:mm:ss.SSS").format(sTime);
-                    String arrivetime = new SimpleDateFormat("dd.MM.yy HH:mm:ss.SSS").format(aTime);
+                    String sendtime = null;
+                    String arrivetime = null;
+
+                    if (ServerSettings.getSingleton().isMillisArrival()) {
+                        sendtime = new SimpleDateFormat("dd.MM.yy HH:mm:ss.SSS").format(sTime);
+                        arrivetime = new SimpleDateFormat("dd.MM.yy HH:mm:ss.SSS").format(aTime);
+                    } else {
+                        sendtime = new SimpleDateFormat("dd.MM.yy HH:mm:ss").format(sTime);
+                        arrivetime = new SimpleDateFormat("dd.MM.yy HH:mm:ss").format(aTime);
+                    }
 
                     switch (type) {
                         case Attack.CLEAN_TYPE: {
@@ -886,8 +880,8 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
                 StringTokenizer t = new StringTokenizer(b, "[");
                 int cnt = t.countTokens();
                 if (cnt > 500) {
-                    if (JOptionPaneHelper.showQuestionConfirmBox(this, "Die ausgewählten Angriffe benötigen mehr als 500 BB-Codes\n" +
-                            "und können daher im Spiel (Forum/IGM/Notizen) nicht auf einmal dargestellt werden.\nTrotzdem exportieren?", "Zu viele BB-Codes", "Nein", "Ja") == JOptionPane.NO_OPTION) {
+                    if (JOptionPaneHelper.showQuestionConfirmBox(this, "Die ausgewählten Angriffe benötigen mehr als 500 BB-Codes\n"
+                            + "und können daher im Spiel (Forum/IGM/Notizen) nicht auf einmal dargestellt werden.\nTrotzdem exportieren?", "Zu viele BB-Codes", "Nein", "Ja") == JOptionPane.NO_OPTION) {
                         return;
                     }
                 }
@@ -914,8 +908,8 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
         try {
             chooser = new JFileChooser(dir);
         } catch (Exception e) {
-            JOptionPaneHelper.showErrorBox(this, "Konnte Dateiauswahldialog nicht öffnen.\nMöglicherweise verwendest du Windows Vista. Ist dies der Fall, beende DS Workbench, klicke mit der rechten Maustaste auf DSWorkbench.exe,\n" +
-                    "wähle 'Eigenschaften' und deaktiviere dort unter 'Kompatibilität' den Windows XP Kompatibilitätsmodus.", "Fehler");
+            JOptionPaneHelper.showErrorBox(this, "Konnte Dateiauswahldialog nicht öffnen.\nMöglicherweise verwendest du Windows Vista. Ist dies der Fall, beende DS Workbench, klicke mit der rechten Maustaste auf DSWorkbench.exe,\n"
+                    + "wähle 'Eigenschaften' und deaktiviere dort unter 'Kompatibilität' den Windows XP Kompatibilitätsmodus.", "Fehler");
             return;
         }
 

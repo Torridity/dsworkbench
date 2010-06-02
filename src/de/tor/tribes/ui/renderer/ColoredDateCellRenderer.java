@@ -4,6 +4,7 @@
  */
 package de.tor.tribes.ui.renderer;
 
+import de.tor.tribes.util.ServerSettings;
 import java.awt.Color;
 import java.awt.Component;
 import java.text.SimpleDateFormat;
@@ -28,6 +29,9 @@ public class ColoredDateCellRenderer implements TableCellRenderer {
         //super();
         coloredRenderer = new DefaultTableCellRenderer();
         defaultRenderer = new DefaultTableCellRenderer();
+        if (!ServerSettings.getSingleton().isMillisArrival()) {
+            specialFormat = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
+        }
     }
 
     public ColoredDateCellRenderer(String pPattern) {

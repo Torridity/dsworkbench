@@ -41,6 +41,7 @@ import de.tor.tribes.util.html.AttackPlanHTMLExporter;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.IGMSender;
 import de.tor.tribes.util.JOptionPaneHelper;
+import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.js.AttackScriptWriter;
 import java.awt.Color;
 import java.awt.Component;
@@ -210,7 +211,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         pack();
     }
 
-    public JPanel getView(){
+    public JPanel getView() {
         return jAttackPanel;
     }
 
@@ -1748,9 +1749,15 @@ private void fireCopyUnformatedToClipboardEvent(java.awt.event.MouseEvent evt) {
                 Date aTime = attacks.get(row).getArriveTime();
                 Date sTime = new Date(aTime.getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(sVillage, tVillage, sUnit.getSpeed()) * 1000));
                 int type = attacks.get(row).getType();
-                String sendtime = new SimpleDateFormat("dd.MM.yy HH:mm:ss.SSS").format(sTime);
-                String arrivetime = new SimpleDateFormat("dd.MM.yy HH:mm:ss.SSS").format(aTime);
-
+                String sendtime = null;
+                String arrivetime = null;
+                if (ServerSettings.getSingleton().isMillisArrival()) {
+                    sendtime = new SimpleDateFormat("dd.MM.yy HH:mm:ss.SSS").format(sTime);
+                    arrivetime = new SimpleDateFormat("dd.MM.yy HH:mm:ss.SSS").format(aTime);
+                } else {
+                    sendtime = new SimpleDateFormat("dd.MM.yy HH:mm:ss").format(sTime);
+                    arrivetime = new SimpleDateFormat("dd.MM.yy HH:mm:ss").format(aTime);
+                }
                 switch (type) {
                     case Attack.CLEAN_TYPE: {
                         buffer.append("(Clean-Off)");
@@ -1850,8 +1857,8 @@ private void fireCopyAsBBCodeToClipboardEvent(java.awt.event.MouseEvent evt) {//
             StringTokenizer t = new StringTokenizer(b, "[");
             int cnt = t.countTokens();
             if (cnt > 500) {
-                if (JOptionPaneHelper.showQuestionConfirmBox(this, "Die ausgewählten Angriffe benötigen mehr als 500 BB-Codes\n" +
-                        "und können daher im Spiel (Forum/IGM/Notizen) nicht auf einmal dargestellt werden.\nTrotzdem exportieren?", "Zu viele BB-Codes", "Nein", "Ja") == JOptionPane.NO_OPTION) {
+                if (JOptionPaneHelper.showQuestionConfirmBox(this, "Die ausgewählten Angriffe benötigen mehr als 500 BB-Codes\n"
+                        + "und können daher im Spiel (Forum/IGM/Notizen) nicht auf einmal dargestellt werden.\nTrotzdem exportieren?", "Zu viele BB-Codes", "Nein", "Ja") == JOptionPane.NO_OPTION) {
                     return;
                 }
             }
@@ -2070,8 +2077,8 @@ private void fireFlipMarkEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
 
     //assign the values of the selected list to the table
     jAttackTable.getSelectionModel().setValueIsAdjusting(true);
-    for (int i = 0; i <
-            cnt; i++) {
+    for (int i = 0; i
+            < cnt; i++) {
         Integer iV = new Integer(i);
         if (selected.contains(iV)) {
             jAttackTable.getSelectionModel().addSelectionInterval(i, i);
@@ -2088,8 +2095,8 @@ private void fireSelectNoneAllEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
         if (jSourceVillageTable.getRowCount() > 0) {
             //update source table values that all villages are selected
             jSourceVillageTable.invalidate();
-            for (int i = 0; i <
-                    jSourceVillageTable.getRowCount(); i++) {
+            for (int i = 0; i
+                    < jSourceVillageTable.getRowCount(); i++) {
                 jSourceVillageTable.getModel().setValueAt(Boolean.TRUE, i, 1);
             }
 
@@ -2110,8 +2117,8 @@ private void fireSelectNoneAllEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
         //update target table values that all villages are selected
         if (jTargetVillageTable.getRowCount() > 0) {
             jTargetVillageTable.invalidate();
-            for (int i = 0; i <
-                    jTargetVillageTable.getRowCount(); i++) {
+            for (int i = 0; i
+                    < jTargetVillageTable.getRowCount(); i++) {
                 jTargetVillageTable.getModel().setValueAt(Boolean.TRUE, i, 1);
             }
 
@@ -2122,8 +2129,8 @@ private void fireSelectNoneAllEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
     } else if (evt.getSource() == jNoTargetVillageButton) {
         //update target table values that all villages are unselected
         jTargetVillageTable.invalidate();
-        for (int i = 0; i <
-                jTargetVillageTable.getRowCount(); i++) {
+        for (int i = 0; i
+                < jTargetVillageTable.getRowCount(); i++) {
             jTargetVillageTable.getModel().setValueAt(Boolean.FALSE, i, 1);
         }
 
@@ -2254,8 +2261,8 @@ private void fireRemoveAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
     }
 
 
-    if (JOptionPaneHelper.showQuestionConfirmBox(this, "Willst du den Angriffsplan '" + selection + "' und alle enthaltenen Angriffe\n" +
-            "wirklich löschen?", "Angriffsplan löschen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
+    if (JOptionPaneHelper.showQuestionConfirmBox(this, "Willst du den Angriffsplan '" + selection + "' und alle enthaltenen Angriffe\n"
+            + "wirklich löschen?", "Angriffsplan löschen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
         AttackManagerTableModel.getSingleton().setActiveAttackPlan(AttackManager.DEFAULT_PLAN_ID);
         AttackManager.getSingleton().removePlan(selection);
         buildAttackPlanList();
@@ -2284,8 +2291,8 @@ private void fireActiveAttackChangedEvent(java.awt.event.ItemEvent evt) {//GEN-F
 private void fireAddNewAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireAddNewAttackPlanEvent
     String name = jAttackPlanName.getText();
     if (AttackManager.getSingleton().getAttackPlan(name) != null) {
-        JOptionPaneHelper.showWarningBox(jAddPlanDialog, "Ein Plan mit dem angegebenen Namen existiert bereits.\n" +
-                "Bitte wähle einen anderen Namen oder lösche zuerst den bestehenden Plan.", "Warnung");
+        JOptionPaneHelper.showWarningBox(jAddPlanDialog, "Ein Plan mit dem angegebenen Namen existiert bereits.\n"
+                + "Bitte wähle einen anderen Namen oder lösche zuerst den bestehenden Plan.", "Warnung");
         return;
 
     }
@@ -2301,8 +2308,8 @@ private void fireRenameEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_f
     String selection = (String) jActiveAttackPlan.getSelectedItem();
     String newName = jNewPlanName.getText();
     if (AttackManager.getSingleton().getAttackPlan(newName) != null) {
-        JOptionPaneHelper.showWarningBox(jRenamePlanDialog, "Ein Plan mit dem Namen '" + newName + "' existiert bereits.\n" +
-                "Bitte wähle einen anderen Namen oder lösche zuerst den bestehenden Plan.", "Warnung");
+        JOptionPaneHelper.showWarningBox(jRenamePlanDialog, "Ein Plan mit dem Namen '" + newName + "' existiert bereits.\n"
+                + "Bitte wähle einen anderen Namen oder lösche zuerst den bestehenden Plan.", "Warnung");
         return;
 
     }
@@ -2461,8 +2468,8 @@ private void fireWriteToHTMLEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
     try {
         chooser = new JFileChooser(dir);
     } catch (Exception e) {
-        JOptionPaneHelper.showErrorBox(this, "Konnte Dateiauswahldialog nicht öffnen.\nMöglicherweise verwendest du Windows Vista. Ist dies der Fall, beende DS Workbench, klicke mit der rechten Maustaste auf DSWorkbench.exe,\n" +
-                "wähle 'Eigenschaften' und deaktiviere dort unter 'Kompatibilität' den Windows XP Kompatibilitätsmodus.", "Fehler");
+        JOptionPaneHelper.showErrorBox(this, "Konnte Dateiauswahldialog nicht öffnen.\nMöglicherweise verwendest du Windows Vista. Ist dies der Fall, beende DS Workbench, klicke mit der rechten Maustaste auf DSWorkbench.exe,\n"
+                + "wähle 'Eigenschaften' und deaktiviere dort unter 'Kompatibilität' den Windows XP Kompatibilitätsmodus.", "Fehler");
         return;
     }
 

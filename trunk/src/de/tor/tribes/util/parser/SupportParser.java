@@ -118,7 +118,7 @@ public class SupportParser {
     }
 
     private static Village extractVillage(String pLine) {
-        //tokenize line by tab and space
+      /*  //tokenize line by tab and space
         StringTokenizer elemTok = new StringTokenizer(pLine, " \t");
         //try to find village line
         String nextToken = null;
@@ -132,6 +132,7 @@ public class SupportParser {
             if (elemTok.hasMoreTokens()) {
                 nextToken = elemTok.nextToken();
             }
+
 
             //search village
             if (currentToken.startsWith("(") && currentToken.endsWith(")")) {
@@ -152,7 +153,14 @@ public class SupportParser {
                 }
             }
         }
-        return null;
+        return null;*/
+
+         List<Village> villages = VillageParser.parse(pLine);
+         switch(villages.size()){
+             case 0: return null;
+             case 2: return villages.get(1);
+             default:return villages.get(0);
+         }
     }
 
     private static Hashtable<UnitHolder, Integer> parseUnits(String pLine) {

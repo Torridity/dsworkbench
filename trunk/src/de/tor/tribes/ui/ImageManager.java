@@ -57,6 +57,7 @@ public class ImageManager {
     public final static int ICON_CATA = 9;
     public final static int ICON_KNIGHT = 10;
     public final static int ICON_SNOB = 11;
+    public final static int ICON_UNKNOWN = 12;
     //</editor-fold>
     // <editor-fold defaultstate="collapsed" desc="Minimap cursor IDs">
     public final static int CURSOR_MOVE = 13;
@@ -313,7 +314,7 @@ public class ImageManager {
             UNIT_IMAGES.add(ImageIO.read(new File("graphics/icons/cata.png")));//9
             UNIT_IMAGES.add(ImageIO.read(new File("graphics/icons/knight.png")));//10
             UNIT_IMAGES.add(ImageIO.read(new File("graphics/icons/snob.png")));//11
-
+            UNIT_IMAGES.add(ImageIO.read(new File("graphics/icons/unknown.png")));//12
             for (BufferedImage i : UNIT_IMAGES) {
                 //add unit icon to note symbol
                 //  NOTE_SYMBOLS.add(i);
@@ -350,7 +351,7 @@ public class ImageManager {
                 case 8:
                     return UNIT_ICONS.get(11);
                 default:
-                    return null;
+                    return UNIT_ICONS.get(12);
             }
         } else {
             return UNIT_ICONS.get(pId);
@@ -381,7 +382,7 @@ public class ImageManager {
                 case 8:
                     return UNIT_ICONS.get(11);
                 default:
-                    return null;
+                    return UNIT_ICONS.get(12);
             }
         } else {
             return UNIT_ICONS.get(pId);
@@ -417,7 +418,7 @@ public class ImageManager {
                 case 8:
                     return UNIT_IMAGES.get(11);
                 default:
-                    return null;
+                    return UNIT_IMAGES.get(12);
             }
         } else {
             return UNIT_IMAGES.get(pId);
@@ -452,9 +453,9 @@ public class ImageManager {
             return UNIT_ICONS.get(ICON_SNOB);
         } else if (pUnit.getPlainName().equals("knight")) {
             return UNIT_ICONS.get(ICON_KNIGHT);
+        } else {
+            return UNIT_ICONS.get(ICON_UNKNOWN);
         }
-        //unknown unit
-        return null;
     }
 
     public static BufferedImage getUnitImage(UnitHolder pUnit) {
@@ -485,8 +486,9 @@ public class ImageManager {
             return UNIT_IMAGES.get(ICON_SNOB);
         } else if (pUnit.getPlainName().equals("knight")) {
             return UNIT_IMAGES.get(ICON_KNIGHT);
+        } else {
+            return UNIT_IMAGES.get(ICON_UNKNOWN);
         }
-        //unknown unit
-        return null;
+
     }
 }

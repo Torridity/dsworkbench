@@ -11,6 +11,7 @@ package de.tor.tribes.io;
 import de.tor.tribes.php.DatabaseInterface;
 import de.tor.tribes.types.Ally;
 import de.tor.tribes.types.Tribe;
+import de.tor.tribes.types.UnknownUnit;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.DSWorkbenchSettingsDialog;
 import de.tor.tribes.util.Constants;
@@ -1293,7 +1294,7 @@ public class DataHolder {
                 return u;
             }
         }
-        return null;
+        return UnknownUnit.getSingleton();
     }
 
     /**Get the ID of a unit*/

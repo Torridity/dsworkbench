@@ -526,7 +526,7 @@ public class Iterix extends AbstractAttackAlgorithm {
         selectedSource = sourceIdx;
         selectedTarget = targetID;
 
-        if (recurse) {
+        if (recurse && !isAborted()) {
             //solve until all attacks are assigned
             return solveRecursive(pSources, pTargets, pMappings, pResults, 0, recurse);
         } else {

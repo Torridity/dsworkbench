@@ -20,10 +20,9 @@ import javax.swing.JTable;
 public class VillageCellEditor extends DefaultCellEditor {//extends AbstractCellEditor implements TableCellEditor {
 
     //private JComboBox comboComponent = null;
-
     public VillageCellEditor() {
         super(new JComboBox());
-
+        setClickCountToStart(2);
         // <editor-fold defaultstate="collapsed" desc=" Old Stuff ">
         /*  comboComponent = new javax.swing.JComboBox() {
 

@@ -434,8 +434,8 @@
                   <Group type="102" alignment="1" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jLabel14" alignment="1" pref="60" max="32767" attributes="1"/>
-                          <Component id="jLabel5" alignment="1" pref="60" max="32767" attributes="1"/>
+                          <Component id="jLabel14" alignment="1" pref="114" max="32767" attributes="1"/>
+                          <Component id="jLabel5" alignment="1" pref="114" max="32767" attributes="1"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
@@ -555,21 +555,21 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jLabel8" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="jArriveDateField" pref="158" max="32767" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
+                      <EmptySpace type="unrelated" max="32767" attributes="0"/>
+                      <Component id="jArriveDateField" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jLabel8" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jArriveDateField" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                          <Component id="jLabel8" alignment="0" max="32767" attributes="1"/>
+                          <Component id="jArriveDateField" alignment="0" max="32767" attributes="1"/>
                       </Group>
-                      <EmptySpace max="32767" attributes="0"/>
+                      <EmptySpace min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -583,14 +583,8 @@
                 <Property name="enabled" type="boolean" value="false"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JSpinner" name="jArriveDateField">
+            <Component class="de.tor.tribes.ui.components.DateTimeField" name="jArriveDateField">
               <Properties>
-                <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.editors2.SpinnerModelEditor">
-                  <SpinnerModel initial="now" minimum="now" stepSize="12" type="date"/>
-                </Property>
-                <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jArriveDateField.toolTipText" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
-                </Property>
                 <Property name="enabled" type="boolean" value="false"/>
               </Properties>
             </Component>
@@ -660,13 +654,13 @@
                   <Group type="102" alignment="1" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="1" attributes="0">
-                          <Component id="jNotRandomToNightBonus" alignment="0" pref="251" max="32767" attributes="0"/>
+                          <Component id="jNotRandomToNightBonus" alignment="0" pref="299" max="32767" attributes="0"/>
                           <Group type="102" alignment="1" attributes="0">
                               <Component id="jLabel17" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
                               <Component id="jLabel18" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="jRandomField" pref="116" max="32767" attributes="0"/>
+                              <Component id="jRandomField" pref="164" max="32767" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="jLabel19" min="-2" max="-2" attributes="0"/>
                           </Group>
@@ -1144,8 +1138,8 @@
               <Group type="102" alignment="1" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="1" attributes="0">
-                      <Component id="jScrollPane6" alignment="0" pref="472" max="32767" attributes="0"/>
-                      <Component id="jScrollPane5" alignment="0" pref="472" max="32767" attributes="0"/>
+                      <Component id="jScrollPane6" alignment="0" pref="530" max="32767" attributes="0"/>
+                      <Component id="jScrollPane5" alignment="0" pref="530" max="32767" attributes="0"/>
                       <Component id="jButton11" alignment="1" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
@@ -1183,6 +1177,9 @@
                     <Column editable="true" title="Title 3" type="java.lang.Object"/>
                     <Column editable="true" title="Title 4" type="java.lang.Object"/>
                   </Table>
+                </Property>
+                <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jStandardAttackTable.toolTipText" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
                 </Property>
               </Properties>
             </Component>
@@ -1517,6 +1514,288 @@
         </Component>
       </SubComponents>
     </Container>
+    <Container class="javax.swing.JDialog" name="jChangeAttackTypeDialog">
+      <Properties>
+        <Property name="title" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+          <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jChangeAttackTypeDialog.title" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+        </Property>
+      </Properties>
+
+      <Layout>
+        <DimensionLayout dim="0">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="102" attributes="0">
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                      <Component id="jPanel6" max="32767" attributes="1"/>
+                      <Component id="jAdeptTypeBox" alignment="0" max="32767" attributes="1"/>
+                  </Group>
+                  <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="jAdeptUnitPanel" max="32767" attributes="1"/>
+                      <Component id="jAdeptUnitBox" alignment="0" min="-2" max="-2" attributes="1"/>
+                  </Group>
+                  <EmptySpace min="-2" pref="11" max="-2" attributes="0"/>
+              </Group>
+              <Group type="102" alignment="1" attributes="0">
+                  <EmptySpace pref="49" max="32767" attributes="0"/>
+                  <Component id="jButton15" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="jAcceptChangeUnitTypeButton" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+        <DimensionLayout dim="1">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="102" alignment="1" attributes="0">
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="jAdeptTypeBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="jAdeptUnitBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="1" attributes="0">
+                      <Component id="jPanel6" pref="132" max="32767" attributes="1"/>
+                      <Component id="jAdeptUnitPanel" alignment="1" max="32767" attributes="1"/>
+                  </Group>
+                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="jAcceptChangeUnitTypeButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="jButton15" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace min="-2" max="-2" attributes="0"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+      </Layout>
+      <SubComponents>
+        <Container class="javax.swing.JPanel" name="jPanel6">
+          <Properties>
+            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+              <Border info="org.netbeans.modules.form.compat2.border.EtchedBorderInfo">
+                <EtchetBorder/>
+              </Border>
+            </Property>
+          </Properties>
+
+          <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridLayout">
+            <Property name="columns" type="int" value="2"/>
+            <Property name="rows" type="int" value="6"/>
+          </Layout>
+          <SubComponents>
+            <Component class="javax.swing.JRadioButton" name="jNoType">
+              <Properties>
+                <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+                  <ComponentRef name="buttonGroup2"/>
+                </Property>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jNoType.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                </Property>
+                <Property name="opaque" type="boolean" value="false"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="jLabel23">
+              <Properties>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jLabel23.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                </Property>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JRadioButton" name="jAttackType">
+              <Properties>
+                <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+                  <ComponentRef name="buttonGroup2"/>
+                </Property>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jAttackType.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                </Property>
+                <Property name="opaque" type="boolean" value="false"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="jLabel28">
+              <Properties>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/res/ui/axe.png"/>
+                </Property>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jLabel28.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                </Property>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JRadioButton" name="jEnobleType">
+              <Properties>
+                <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+                  <ComponentRef name="buttonGroup2"/>
+                </Property>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jEnobleType.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                </Property>
+                <Property name="opaque" type="boolean" value="false"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="jLabel24">
+              <Properties>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/res/ui/snob.png"/>
+                </Property>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jLabel24.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                </Property>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JRadioButton" name="jDefType">
+              <Properties>
+                <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+                  <ComponentRef name="buttonGroup2"/>
+                </Property>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jDefType.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                </Property>
+                <Property name="opaque" type="boolean" value="false"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="jLabel25">
+              <Properties>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/res/ally.png"/>
+                </Property>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jLabel25.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                </Property>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JRadioButton" name="jFakeType">
+              <Properties>
+                <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+                  <ComponentRef name="buttonGroup2"/>
+                </Property>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jFakeType.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                </Property>
+                <Property name="opaque" type="boolean" value="false"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="jLabel26">
+              <Properties>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/res/ui/fake.png"/>
+                </Property>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jLabel26.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                </Property>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JRadioButton" name="jFakeDefType">
+              <Properties>
+                <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+                  <ComponentRef name="buttonGroup2"/>
+                </Property>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jFakeDefType.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                </Property>
+                <Property name="opaque" type="boolean" value="false"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="jLabel27">
+              <Properties>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/res/ui/def_fake.png"/>
+                </Property>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jLabel27.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                </Property>
+              </Properties>
+            </Component>
+          </SubComponents>
+        </Container>
+        <Container class="javax.swing.JPanel" name="jAdeptUnitPanel">
+          <Properties>
+            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+              <Border info="org.netbeans.modules.form.compat2.border.EtchedBorderInfo">
+                <EtchetBorder/>
+              </Border>
+            </Property>
+          </Properties>
+
+          <Layout>
+            <DimensionLayout dim="0">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="jUnitBox" pref="87" max="32767" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                  </Group>
+              </Group>
+            </DimensionLayout>
+            <DimensionLayout dim="1">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="jUnitBox" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace pref="95" max="32767" attributes="0"/>
+                  </Group>
+              </Group>
+            </DimensionLayout>
+          </Layout>
+          <SubComponents>
+            <Component class="javax.swing.JComboBox" name="jUnitBox">
+              <Properties>
+                <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+                  <StringArray count="0"/>
+                </Property>
+                <Property name="enabled" type="boolean" value="false"/>
+              </Properties>
+            </Component>
+          </SubComponents>
+        </Container>
+        <Component class="javax.swing.JButton" name="jAcceptChangeUnitTypeButton">
+          <Properties>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jAcceptChangeUnitTypeButton.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+            </Property>
+          </Properties>
+          <Events>
+            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fireChangeUnitTypeEvent"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="jButton15">
+          <Properties>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jButton15.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+            </Property>
+          </Properties>
+          <Events>
+            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fireChangeUnitTypeEvent"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JCheckBox" name="jAdeptTypeBox">
+          <Properties>
+            <Property name="selected" type="boolean" value="true"/>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jAdeptTypeBox.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+            </Property>
+            <Property name="opaque" type="boolean" value="false"/>
+          </Properties>
+          <Events>
+            <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="fireEnableDisableAdeptTypeEvent"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JCheckBox" name="jAdeptUnitBox">
+          <Properties>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jAdeptUnitBox.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+            </Property>
+            <Property name="opaque" type="boolean" value="false"/>
+          </Properties>
+          <Events>
+            <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="fireEnableDisableChangeUnitEvent"/>
+          </Events>
+        </Component>
+      </SubComponents>
+    </Container>
+    <Component class="javax.swing.ButtonGroup" name="buttonGroup2">
+    </Component>
   </NonVisualComponents>
   <Properties>
     <Property name="title" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
@@ -1899,6 +2178,25 @@
                         <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fireChangeTimesEvent"/>
                       </Events>
                     </Component>
+                    <Component class="javax.swing.JButton" name="jChangeArrivalButton1">
+                      <Properties>
+                        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                          <Color blue="df" green="eb" red="ef" type="rgb"/>
+                        </Property>
+                        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                          <Image iconType="3" name="/res/ui/standard_attacks.png"/>
+                        </Property>
+                        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                          <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jChangeArrivalButton1.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                        </Property>
+                        <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                          <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jChangeArrivalButton1.toolTipText" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                        </Property>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fireChangeAttackTypeEvent"/>
+                      </Events>
+                    </Component>
                   </SubComponents>
                   <LayoutCode>
                     <CodeStatement>
@@ -2025,6 +2323,22 @@
                           <ExpressionOrigin>
                             <ExpressionProvider type="ComponentRef">
                               <ComponentRef name="jChangeArrivalButton"/>
+                            </ExpressionProvider>
+                          </ExpressionOrigin>
+                        </CodeExpression>
+                      </Parameters>
+                    </CodeStatement>
+                    <CodeStatement>
+                      <CodeExpression id="3"/>
+                      <StatementProvider type="CodeMethod">
+                        <CodeMethod name="add" class="java.awt.Container" parameterTypes="java.awt.Component"/>
+                      </StatementProvider>
+                      <Parameters>
+                        <CodeExpression id="10_jChangeArrivalButton1">
+                          <CodeVariable name="jChangeArrivalButton1" type="8194" declaredType="javax.swing.JButton"/>
+                          <ExpressionOrigin>
+                            <ExpressionProvider type="ComponentRef">
+                              <ComponentRef name="jChangeArrivalButton1"/>
                             </ExpressionProvider>
                           </ExpressionOrigin>
                         </CodeExpression>
@@ -2162,7 +2476,7 @@
                   </SubComponents>
                   <LayoutCode>
                     <CodeStatement>
-                      <CodeExpression id="10_percentLayout3">
+                      <CodeExpression id="11_percentLayout3">
                         <CodeVariable name="percentLayout3" type="4096" declaredType="com.l2fprod.common.swing.PercentLayout"/>
                         <ExpressionOrigin>
                           <ExpressionProvider type="CodeConstructor">
@@ -2171,16 +2485,16 @@
                         </ExpressionOrigin>
                       </CodeExpression>
                       <StatementProvider type="CodeExpression">
-                        <CodeExpression id="10_percentLayout3"/>
+                        <CodeExpression id="11_percentLayout3"/>
                       </StatementProvider>
                     </CodeStatement>
                     <CodeStatement>
-                      <CodeExpression id="10_percentLayout3"/>
+                      <CodeExpression id="11_percentLayout3"/>
                       <StatementProvider type="CodeMethod">
                         <CodeMethod name="setOrientation" class="com.l2fprod.common.swing.PercentLayout" parameterTypes="int"/>
                       </StatementProvider>
                       <Parameters>
-                        <CodeExpression id="11">
+                        <CodeExpression id="12">
                           <ExpressionOrigin>
                             <Value type="int" value="1"/>
                           </ExpressionOrigin>
@@ -2188,9 +2502,9 @@
                       </Parameters>
                     </CodeStatement>
                     <CodeStatement>
-                      <CodeExpression id="12">
+                      <CodeExpression id="13">
                         <ExpressionOrigin>
-                          <CodeExpression id="13_jTaskPaneGroup2">
+                          <CodeExpression id="14_jTaskPaneGroup2">
                             <CodeVariable name="jTaskPaneGroup2" type="8194" declaredType="com.l2fprod.common.swing.JTaskPaneGroup"/>
                             <ExpressionOrigin>
                               <ExpressionProvider type="ComponentRef">
@@ -2207,16 +2521,16 @@
                         <CodeMethod name="setLayout" class="java.awt.Container" parameterTypes="java.awt.LayoutManager"/>
                       </StatementProvider>
                       <Parameters>
-                        <CodeExpression id="10_percentLayout3"/>
+                        <CodeExpression id="11_percentLayout3"/>
                       </Parameters>
                     </CodeStatement>
                     <CodeStatement>
-                      <CodeExpression id="12"/>
+                      <CodeExpression id="13"/>
                       <StatementProvider type="CodeMethod">
                         <CodeMethod name="add" class="java.awt.Container" parameterTypes="java.awt.Component"/>
                       </StatementProvider>
                       <Parameters>
-                        <CodeExpression id="14_jMarkAllButton">
+                        <CodeExpression id="15_jMarkAllButton">
                           <CodeVariable name="jMarkAllButton" type="8194" declaredType="javax.swing.JButton"/>
                           <ExpressionOrigin>
                             <ExpressionProvider type="ComponentRef">
@@ -2227,12 +2541,12 @@
                       </Parameters>
                     </CodeStatement>
                     <CodeStatement>
-                      <CodeExpression id="12"/>
+                      <CodeExpression id="13"/>
                       <StatementProvider type="CodeMethod">
                         <CodeMethod name="add" class="java.awt.Container" parameterTypes="java.awt.Component"/>
                       </StatementProvider>
                       <Parameters>
-                        <CodeExpression id="15_jMarkFilteredButton">
+                        <CodeExpression id="16_jMarkFilteredButton">
                           <CodeVariable name="jMarkFilteredButton" type="8194" declaredType="javax.swing.JButton"/>
                           <ExpressionOrigin>
                             <ExpressionProvider type="ComponentRef">
@@ -2243,12 +2557,12 @@
                       </Parameters>
                     </CodeStatement>
                     <CodeStatement>
-                      <CodeExpression id="12"/>
+                      <CodeExpression id="13"/>
                       <StatementProvider type="CodeMethod">
                         <CodeMethod name="add" class="java.awt.Container" parameterTypes="java.awt.Component"/>
                       </StatementProvider>
                       <Parameters>
-                        <CodeExpression id="16_jFlipMarkButton">
+                        <CodeExpression id="17_jFlipMarkButton">
                           <CodeVariable name="jFlipMarkButton" type="8194" declaredType="javax.swing.JButton"/>
                           <ExpressionOrigin>
                             <ExpressionProvider type="ComponentRef">
@@ -2259,12 +2573,12 @@
                       </Parameters>
                     </CodeStatement>
                     <CodeStatement>
-                      <CodeExpression id="12"/>
+                      <CodeExpression id="13"/>
                       <StatementProvider type="CodeMethod">
                         <CodeMethod name="add" class="java.awt.Container" parameterTypes="java.awt.Component"/>
                       </StatementProvider>
                       <Parameters>
-                        <CodeExpression id="17_jDrawMarkedButton">
+                        <CodeExpression id="18_jDrawMarkedButton">
                           <CodeVariable name="jDrawMarkedButton" type="8194" declaredType="javax.swing.JButton"/>
                           <ExpressionOrigin>
                             <ExpressionProvider type="ComponentRef">
@@ -2275,12 +2589,12 @@
                       </Parameters>
                     </CodeStatement>
                     <CodeStatement>
-                      <CodeExpression id="12"/>
+                      <CodeExpression id="13"/>
                       <StatementProvider type="CodeMethod">
                         <CodeMethod name="add" class="java.awt.Container" parameterTypes="java.awt.Component"/>
                       </StatementProvider>
                       <Parameters>
-                        <CodeExpression id="18_jNotDrawMarkedButton">
+                        <CodeExpression id="19_jNotDrawMarkedButton">
                           <CodeVariable name="jNotDrawMarkedButton" type="8194" declaredType="javax.swing.JButton"/>
                           <ExpressionOrigin>
                             <ExpressionProvider type="ComponentRef">
@@ -2349,7 +2663,7 @@
                         <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fireCopyAsBBCodeToClipboardEvent"/>
                       </Events>
                     </Component>
-                    <Component class="javax.swing.JButton" name="jCopyBBCodeToClipboardButton1">
+                    <Component class="javax.swing.JButton" name="jCopyToHTMLButton">
                       <Properties>
                         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                           <Color blue="df" green="eb" red="ef" type="rgb"/>
@@ -2358,10 +2672,10 @@
                           <Image iconType="3" name="/res/ui/att_HTML.png"/>
                         </Property>
                         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                          <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jCopyBBCodeToClipboardButton1.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                          <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jCopyToHTMLButton.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
                         </Property>
                         <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                          <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jCopyBBCodeToClipboardButton1.toolTipText" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                          <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jCopyToHTMLButton.toolTipText" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
                         </Property>
                         <Property name="horizontalTextPosition" type="int" value="0"/>
                       </Properties>
@@ -2374,7 +2688,7 @@
                         <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fireWriteToHTMLEvent"/>
                       </Events>
                     </Component>
-                    <Component class="javax.swing.JButton" name="jCopyBBCodeToClipboardButton2">
+                    <Component class="javax.swing.JButton" name="jCopyToIGMButton">
                       <Properties>
                         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                           <Color blue="df" green="eb" red="ef" type="rgb"/>
@@ -2383,15 +2697,35 @@
                           <Image iconType="3" name="/res/ui/atts_igm.png"/>
                         </Property>
                         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                          <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jCopyBBCodeToClipboardButton2.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                          <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jCopyToIGMButton.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
                         </Property>
                         <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                          <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jCopyBBCodeToClipboardButton2.toolTipText" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                          <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jCopyToIGMButton.toolTipText" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
                         </Property>
                         <Property name="horizontalTextPosition" type="int" value="0"/>
                       </Properties>
                       <Events>
                         <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fireSendAttacksAsIGMEvent"/>
+                      </Events>
+                    </Component>
+                    <Component class="javax.swing.JButton" name="jCopyToReTimeButton">
+                      <Properties>
+                        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                          <Color blue="df" green="eb" red="ef" type="rgb"/>
+                        </Property>
+                        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                          <Image iconType="3" name="/res/ui/re-time.png"/>
+                        </Property>
+                        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                          <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jCopyToReTimeButton.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                        </Property>
+                        <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                          <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchAttackFrame.jCopyToReTimeButton.toolTipText" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                        </Property>
+                        <Property name="horizontalTextPosition" type="int" value="0"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fireSendAttackToReTimeToolEvent"/>
                       </Events>
                     </Component>
                     <Component class="javax.swing.JButton" name="jSendAttackButton">
@@ -2459,7 +2793,7 @@
                   </SubComponents>
                   <LayoutCode>
                     <CodeStatement>
-                      <CodeExpression id="19_percentLayout4">
+                      <CodeExpression id="20_percentLayout4">
                         <CodeVariable name="percentLayout4" type="4096" declaredType="com.l2fprod.common.swing.PercentLayout"/>
                         <ExpressionOrigin>
                           <ExpressionProvider type="CodeConstructor">
@@ -2468,16 +2802,16 @@
                         </ExpressionOrigin>
                       </CodeExpression>
                       <StatementProvider type="CodeExpression">
-                        <CodeExpression id="19_percentLayout4"/>
+                        <CodeExpression id="20_percentLayout4"/>
                       </StatementProvider>
                     </CodeStatement>
                     <CodeStatement>
-                      <CodeExpression id="19_percentLayout4"/>
+                      <CodeExpression id="20_percentLayout4"/>
                       <StatementProvider type="CodeMethod">
                         <CodeMethod name="setOrientation" class="com.l2fprod.common.swing.PercentLayout" parameterTypes="int"/>
                       </StatementProvider>
                       <Parameters>
-                        <CodeExpression id="20">
+                        <CodeExpression id="21">
                           <ExpressionOrigin>
                             <Value type="int" value="1"/>
                           </ExpressionOrigin>
@@ -2485,9 +2819,9 @@
                       </Parameters>
                     </CodeStatement>
                     <CodeStatement>
-                      <CodeExpression id="21">
+                      <CodeExpression id="22">
                         <ExpressionOrigin>
-                          <CodeExpression id="22_jTaskPaneGroup3">
+                          <CodeExpression id="23_jTaskPaneGroup3">
                             <CodeVariable name="jTaskPaneGroup3" type="8194" declaredType="com.l2fprod.common.swing.JTaskPaneGroup"/>
                             <ExpressionOrigin>
                               <ExpressionProvider type="ComponentRef">
@@ -2504,16 +2838,16 @@
                         <CodeMethod name="setLayout" class="java.awt.Container" parameterTypes="java.awt.LayoutManager"/>
                       </StatementProvider>
                       <Parameters>
-                        <CodeExpression id="19_percentLayout4"/>
+                        <CodeExpression id="20_percentLayout4"/>
                       </Parameters>
                     </CodeStatement>
                     <CodeStatement>
-                      <CodeExpression id="21"/>
+                      <CodeExpression id="22"/>
                       <StatementProvider type="CodeMethod">
                         <CodeMethod name="add" class="java.awt.Container" parameterTypes="java.awt.Component"/>
                       </StatementProvider>
                       <Parameters>
-                        <CodeExpression id="23_jCopyUnformattedToClipboardButton">
+                        <CodeExpression id="24_jCopyUnformattedToClipboardButton">
                           <CodeVariable name="jCopyUnformattedToClipboardButton" type="8194" declaredType="javax.swing.JButton"/>
                           <ExpressionOrigin>
                             <ExpressionProvider type="ComponentRef">
@@ -2524,12 +2858,12 @@
                       </Parameters>
                     </CodeStatement>
                     <CodeStatement>
-                      <CodeExpression id="21"/>
+                      <CodeExpression id="22"/>
                       <StatementProvider type="CodeMethod">
                         <CodeMethod name="add" class="java.awt.Container" parameterTypes="java.awt.Component"/>
                       </StatementProvider>
                       <Parameters>
-                        <CodeExpression id="24_jCopyBBCodeToClipboardButton">
+                        <CodeExpression id="25_jCopyBBCodeToClipboardButton">
                           <CodeVariable name="jCopyBBCodeToClipboardButton" type="8194" declaredType="javax.swing.JButton"/>
                           <ExpressionOrigin>
                             <ExpressionProvider type="ComponentRef">
@@ -2540,44 +2874,60 @@
                       </Parameters>
                     </CodeStatement>
                     <CodeStatement>
-                      <CodeExpression id="21"/>
+                      <CodeExpression id="22"/>
                       <StatementProvider type="CodeMethod">
                         <CodeMethod name="add" class="java.awt.Container" parameterTypes="java.awt.Component"/>
                       </StatementProvider>
                       <Parameters>
-                        <CodeExpression id="25_jCopyBBCodeToClipboardButton1">
-                          <CodeVariable name="jCopyBBCodeToClipboardButton1" type="8194" declaredType="javax.swing.JButton"/>
+                        <CodeExpression id="26_jCopyToHTMLButton">
+                          <CodeVariable name="jCopyToHTMLButton" type="8194" declaredType="javax.swing.JButton"/>
                           <ExpressionOrigin>
                             <ExpressionProvider type="ComponentRef">
-                              <ComponentRef name="jCopyBBCodeToClipboardButton1"/>
+                              <ComponentRef name="jCopyToHTMLButton"/>
                             </ExpressionProvider>
                           </ExpressionOrigin>
                         </CodeExpression>
                       </Parameters>
                     </CodeStatement>
                     <CodeStatement>
-                      <CodeExpression id="21"/>
+                      <CodeExpression id="22"/>
                       <StatementProvider type="CodeMethod">
                         <CodeMethod name="add" class="java.awt.Container" parameterTypes="java.awt.Component"/>
                       </StatementProvider>
                       <Parameters>
-                        <CodeExpression id="26_jCopyBBCodeToClipboardButton2">
-                          <CodeVariable name="jCopyBBCodeToClipboardButton2" type="8194" declaredType="javax.swing.JButton"/>
+                        <CodeExpression id="27_jCopyToIGMButton">
+                          <CodeVariable name="jCopyToIGMButton" type="8194" declaredType="javax.swing.JButton"/>
                           <ExpressionOrigin>
                             <ExpressionProvider type="ComponentRef">
-                              <ComponentRef name="jCopyBBCodeToClipboardButton2"/>
+                              <ComponentRef name="jCopyToIGMButton"/>
                             </ExpressionProvider>
                           </ExpressionOrigin>
                         </CodeExpression>
                       </Parameters>
                     </CodeStatement>
                     <CodeStatement>
-                      <CodeExpression id="21"/>
+                      <CodeExpression id="22"/>
                       <StatementProvider type="CodeMethod">
                         <CodeMethod name="add" class="java.awt.Container" parameterTypes="java.awt.Component"/>
                       </StatementProvider>
                       <Parameters>
-                        <CodeExpression id="27_jSendAttackButton">
+                        <CodeExpression id="28_jCopyToReTimeButton">
+                          <CodeVariable name="jCopyToReTimeButton" type="8194" declaredType="javax.swing.JButton"/>
+                          <ExpressionOrigin>
+                            <ExpressionProvider type="ComponentRef">
+                              <ComponentRef name="jCopyToReTimeButton"/>
+                            </ExpressionProvider>
+                          </ExpressionOrigin>
+                        </CodeExpression>
+                      </Parameters>
+                    </CodeStatement>
+                    <CodeStatement>
+                      <CodeExpression id="22"/>
+                      <StatementProvider type="CodeMethod">
+                        <CodeMethod name="add" class="java.awt.Container" parameterTypes="java.awt.Component"/>
+                      </StatementProvider>
+                      <Parameters>
+                        <CodeExpression id="29_jSendAttackButton">
                           <CodeVariable name="jSendAttackButton" type="8194" declaredType="javax.swing.JButton"/>
                           <ExpressionOrigin>
                             <ExpressionProvider type="ComponentRef">
@@ -2588,12 +2938,12 @@
                       </Parameters>
                     </CodeStatement>
                     <CodeStatement>
-                      <CodeExpression id="21"/>
+                      <CodeExpression id="22"/>
                       <StatementProvider type="CodeMethod">
                         <CodeMethod name="add" class="java.awt.Container" parameterTypes="java.awt.Component"/>
                       </StatementProvider>
                       <Parameters>
-                        <CodeExpression id="28_jAttacksToScriptButton">
+                        <CodeExpression id="30_jAttacksToScriptButton">
                           <CodeVariable name="jAttacksToScriptButton" type="8194" declaredType="javax.swing.JButton"/>
                           <ExpressionOrigin>
                             <ExpressionProvider type="ComponentRef">
@@ -2604,12 +2954,12 @@
                       </Parameters>
                     </CodeStatement>
                     <CodeStatement>
-                      <CodeExpression id="21"/>
+                      <CodeExpression id="22"/>
                       <StatementProvider type="CodeMethod">
                         <CodeMethod name="add" class="java.awt.Container" parameterTypes="java.awt.Component"/>
                       </StatementProvider>
                       <Parameters>
-                        <CodeExpression id="29_jDefaultTroopsButton">
+                        <CodeExpression id="31_jDefaultTroopsButton">
                           <CodeVariable name="jDefaultTroopsButton" type="8194" declaredType="javax.swing.JButton"/>
                           <ExpressionOrigin>
                             <ExpressionProvider type="ComponentRef">
@@ -2655,7 +3005,7 @@
                   </SubComponents>
                   <LayoutCode>
                     <CodeStatement>
-                      <CodeExpression id="30_percentLayout5">
+                      <CodeExpression id="32_percentLayout5">
                         <CodeVariable name="percentLayout5" type="4096" declaredType="com.l2fprod.common.swing.PercentLayout"/>
                         <ExpressionOrigin>
                           <ExpressionProvider type="CodeConstructor">
@@ -2664,16 +3014,16 @@
                         </ExpressionOrigin>
                       </CodeExpression>
                       <StatementProvider type="CodeExpression">
-                        <CodeExpression id="30_percentLayout5"/>
+                        <CodeExpression id="32_percentLayout5"/>
                       </StatementProvider>
                     </CodeStatement>
                     <CodeStatement>
-                      <CodeExpression id="30_percentLayout5"/>
+                      <CodeExpression id="32_percentLayout5"/>
                       <StatementProvider type="CodeMethod">
                         <CodeMethod name="setOrientation" class="com.l2fprod.common.swing.PercentLayout" parameterTypes="int"/>
                       </StatementProvider>
                       <Parameters>
-                        <CodeExpression id="31">
+                        <CodeExpression id="33">
                           <ExpressionOrigin>
                             <Value type="int" value="1"/>
                           </ExpressionOrigin>
@@ -2681,9 +3031,9 @@
                       </Parameters>
                     </CodeStatement>
                     <CodeStatement>
-                      <CodeExpression id="32">
+                      <CodeExpression id="34">
                         <ExpressionOrigin>
-                          <CodeExpression id="33_jTaskPaneGroup4">
+                          <CodeExpression id="35_jTaskPaneGroup4">
                             <CodeVariable name="jTaskPaneGroup4" type="8194" declaredType="com.l2fprod.common.swing.JTaskPaneGroup"/>
                             <ExpressionOrigin>
                               <ExpressionProvider type="ComponentRef">
@@ -2700,16 +3050,16 @@
                         <CodeMethod name="setLayout" class="java.awt.Container" parameterTypes="java.awt.LayoutManager"/>
                       </StatementProvider>
                       <Parameters>
-                        <CodeExpression id="30_percentLayout5"/>
+                        <CodeExpression id="32_percentLayout5"/>
                       </Parameters>
                     </CodeStatement>
                     <CodeStatement>
-                      <CodeExpression id="32"/>
+                      <CodeExpression id="34"/>
                       <StatementProvider type="CodeMethod">
                         <CodeMethod name="add" class="java.awt.Container" parameterTypes="java.awt.Component"/>
                       </StatementProvider>
                       <Parameters>
-                        <CodeExpression id="34_jNotifyButton">
+                        <CodeExpression id="36_jNotifyButton">
                           <CodeVariable name="jNotifyButton" type="8194" declaredType="javax.swing.JToggleButton"/>
                           <ExpressionOrigin>
                             <ExpressionProvider type="ComponentRef">
@@ -2724,7 +3074,7 @@
               </SubComponents>
               <LayoutCode>
                 <CodeStatement>
-                  <CodeExpression id="35_percentLayout1">
+                  <CodeExpression id="37_percentLayout1">
                     <CodeVariable name="percentLayout1" type="4096" declaredType="com.l2fprod.common.swing.PercentLayout"/>
                     <ExpressionOrigin>
                       <ExpressionProvider type="CodeConstructor">
@@ -2733,16 +3083,16 @@
                     </ExpressionOrigin>
                   </CodeExpression>
                   <StatementProvider type="CodeExpression">
-                    <CodeExpression id="35_percentLayout1"/>
+                    <CodeExpression id="37_percentLayout1"/>
                   </StatementProvider>
                 </CodeStatement>
                 <CodeStatement>
-                  <CodeExpression id="35_percentLayout1"/>
+                  <CodeExpression id="37_percentLayout1"/>
                   <StatementProvider type="CodeMethod">
                     <CodeMethod name="setOrientation" class="com.l2fprod.common.swing.PercentLayout" parameterTypes="int"/>
                   </StatementProvider>
                   <Parameters>
-                    <CodeExpression id="36">
+                    <CodeExpression id="38">
                       <ExpressionOrigin>
                         <Value type="int" value="1"/>
                       </ExpressionOrigin>
@@ -2750,12 +3100,12 @@
                   </Parameters>
                 </CodeStatement>
                 <CodeStatement>
-                  <CodeExpression id="35_percentLayout1"/>
+                  <CodeExpression id="37_percentLayout1"/>
                   <StatementProvider type="CodeMethod">
                     <CodeMethod name="setGap" class="com.l2fprod.common.swing.PercentLayout" parameterTypes="int"/>
                   </StatementProvider>
                   <Parameters>
-                    <CodeExpression id="37">
+                    <CodeExpression id="39">
                       <ExpressionOrigin>
                         <Value type="int" value="14"/>
                       </ExpressionOrigin>
@@ -2763,7 +3113,7 @@
                   </Parameters>
                 </CodeStatement>
                 <CodeStatement>
-                  <CodeExpression id="38_jTaskPane1">
+                  <CodeExpression id="40_jTaskPane1">
                     <CodeVariable name="jTaskPane1" type="8194" declaredType="com.l2fprod.common.swing.JTaskPane"/>
                     <ExpressionOrigin>
                       <ExpressionProvider type="ComponentRef">
@@ -2775,11 +3125,11 @@
                     <CodeMethod name="setLayout" class="java.awt.Container" parameterTypes="java.awt.LayoutManager"/>
                   </StatementProvider>
                   <Parameters>
-                    <CodeExpression id="35_percentLayout1"/>
+                    <CodeExpression id="37_percentLayout1"/>
                   </Parameters>
                 </CodeStatement>
                 <CodeStatement>
-                  <CodeExpression id="38_jTaskPane1"/>
+                  <CodeExpression id="40_jTaskPane1"/>
                   <StatementProvider type="CodeMethod">
                     <CodeMethod name="add" class="java.awt.Container" parameterTypes="java.awt.Component"/>
                   </StatementProvider>
@@ -2788,30 +3138,30 @@
                   </Parameters>
                 </CodeStatement>
                 <CodeStatement>
-                  <CodeExpression id="38_jTaskPane1"/>
+                  <CodeExpression id="40_jTaskPane1"/>
                   <StatementProvider type="CodeMethod">
                     <CodeMethod name="add" class="java.awt.Container" parameterTypes="java.awt.Component"/>
                   </StatementProvider>
                   <Parameters>
-                    <CodeExpression id="13_jTaskPaneGroup2"/>
+                    <CodeExpression id="14_jTaskPaneGroup2"/>
                   </Parameters>
                 </CodeStatement>
                 <CodeStatement>
-                  <CodeExpression id="38_jTaskPane1"/>
+                  <CodeExpression id="40_jTaskPane1"/>
                   <StatementProvider type="CodeMethod">
                     <CodeMethod name="add" class="java.awt.Container" parameterTypes="java.awt.Component"/>
                   </StatementProvider>
                   <Parameters>
-                    <CodeExpression id="22_jTaskPaneGroup3"/>
+                    <CodeExpression id="23_jTaskPaneGroup3"/>
                   </Parameters>
                 </CodeStatement>
                 <CodeStatement>
-                  <CodeExpression id="38_jTaskPane1"/>
+                  <CodeExpression id="40_jTaskPane1"/>
                   <StatementProvider type="CodeMethod">
                     <CodeMethod name="add" class="java.awt.Container" parameterTypes="java.awt.Component"/>
                   </StatementProvider>
                   <Parameters>
-                    <CodeExpression id="33_jTaskPaneGroup4"/>
+                    <CodeExpression id="35_jTaskPaneGroup4"/>
                   </Parameters>
                 </CodeStatement>
               </LayoutCode>

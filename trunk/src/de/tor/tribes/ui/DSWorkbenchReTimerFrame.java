@@ -871,12 +871,18 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         List<Village> villages = VillageParser.parse(jComandArea.getText());
         if (villages == null || villages.isEmpty() || villages.size() < 2) {
             jParserInfo.setBackground(Color.YELLOW);
-            jParserInfo.setText("Keine Dörfer gefunden.\n"
-                    + "Möglicherweise handelt es sich nicht um einen gültigen Angriffsbefehl.");
+            jParserInfo.setText("Keine Dörfer gefunden.\n" + "Möglicherweise handelt es sich nicht um einen gültigen Angriffsbefehl.");
             return;
         }
+
+
         Village source = villages.get(0);
         Village target = villages.get(1);
+        if (jComandArea.getText().indexOf("1. Angriff") > -1) {
+            //change village order for SOS requests
+            source = villages.get(1);
+            target = villages.get(0);
+        }
         jSourceVillage.setText(source.toString());
         jTargetVillage.setText(target.toString());
         boolean fromSelection = false;
@@ -989,9 +995,9 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         SimpleDateFormat f = null;
 
         if (ServerSettings.getSingleton().isMillisArrival()) {
-            f = new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss.SSS");
+            f = new SimpleDateFormat("dd.MM.yy HH:mm:ss:SSS");
         } else {
-            f = new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss");
+            f = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
         }
         try {
             Date arrive = f.parse(jArriveField.getText());
@@ -1004,6 +1010,11 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
             ret /= 1000;
             ret = Math.round(ret + .5);
             ret *= 1000;
+            if (ServerSettings.getSingleton().isMillisArrival()) {
+                f = new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss:SSS");
+            } else {
+                f = new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss");
+            }
             jEstSendTime.setText("~ " + f.format(new Date(send)));
             jReturnField.setText("~ " + f.format(new Date((long) ret)));
         } catch (Exception e) {
@@ -1061,7 +1072,6 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
             return;
         }
         UnitHolder unit = (UnitHolder) jUnitBox.getSelectedItem();
-
         Hashtable<Village, Date> timings = new Hashtable<Village, Date>();
 
         for (Village candidate : candidates) {
@@ -1069,7 +1079,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
             long runtime = Math.round(dist * unit.getSpeed() * 60000.0);
             SimpleDateFormat f = null;
             if (ServerSettings.getSingleton().isMillisArrival()) {
-                f = new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss.SSS");
+                f = new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss:SSS");
             } else {
                 f = new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss");
             }
@@ -1254,6 +1264,11 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         jFilterDialog.setLocationRelativeTo(jResultFrame);
         jFilterDialog.setVisible(true);
     }//GEN-LAST:event_fireShowFilterDialogEvent
+
+    public void setCustomAttack(String pAttack) {
+        jComandArea.setText(pAttack);
+        fireComandDataChangedEvent(null);
+    }
 
     private void buildResults(Hashtable<Village, Date> pTimings, Village pTarget, UnitHolder pUnit) {
         DefaultTableModel resultModel = new javax.swing.table.DefaultTableModel(

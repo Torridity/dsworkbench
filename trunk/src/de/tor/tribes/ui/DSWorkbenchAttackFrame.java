@@ -5,11 +5,13 @@
  */
 package de.tor.tribes.ui;
 
+import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.ServerManager;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.StandardAttackElement;
 import de.tor.tribes.types.Tribe;
+import de.tor.tribes.types.UnknownUnit;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.editors.AttackTypeCellEditor;
 import de.tor.tribes.ui.models.AttackManagerTableModel;
@@ -34,6 +36,7 @@ import de.tor.tribes.ui.renderer.ColoredDateCellRenderer;
 import de.tor.tribes.ui.renderer.SortableTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.StandardAttackTypeCellRenderer;
 import de.tor.tribes.ui.renderer.UnitCellRenderer;
+import de.tor.tribes.ui.renderer.UnitListCellRenderer;
 import de.tor.tribes.ui.renderer.UnitTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.VillageCellRenderer;
 import de.tor.tribes.util.AttackToBBCodeFormater;
@@ -72,6 +75,9 @@ import org.apache.log4j.Logger;
 
 // -Dsun.java2d.d3d=true -Dsun.java2d.translaccel=true -Dsun.java2d.ddforcevram=true
 /**
+ * @TODO (DIFF) Confirm message for removing expired attacks
+ * @TODO (DIFF) Removed limit for attacks to browser feature
+ * @TODO (DIFF) Changing of attack type and unit implemented
  * @author  Charon
  */
 public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements AttackManagerListener {
@@ -93,7 +99,6 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
     DSWorkbenchAttackFrame() {
         initComponents();
         getContentPane().setBackground(Constants.DS_BACK);
-
         try {
             jAttackFrameAlwaysOnTop.setSelected(Boolean.parseBoolean(GlobalOptions.getProperty("attack.frame.alwaysOnTop")));
             setAlwaysOnTop(jAttackFrameAlwaysOnTop.isSelected());
@@ -153,8 +158,8 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         mCountdownThread = new CountdownThread();
         mCountdownThread.setDaemon(true);
         mCountdownThread.start();
+        jArriveDateField.setDate(Calendar.getInstance().getTime());
 
-        jArriveDateField.setEditor(new DateEditor(jArriveDateField, "dd.MM.yy HH:mm:ss"));
         MouseListener l = new MouseListener() {
 
             @Override
@@ -162,6 +167,15 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
                 if (e.getButton() == MouseEvent.BUTTON3 || e.getButton() == MouseEvent.BUTTON2) {
                     AttackManagerTableModel.getSingleton().getPopup().show(jAttackTable, e.getX(), e.getY());
                     AttackManagerTableModel.getSingleton().getPopup().requestFocusInWindow();
+                } else {
+                    int r = jAttackTable.rowAtPoint(e.getPoint());
+                    int c = jAttackTable.columnAtPoint(e.getPoint());
+                    try {
+                        Village v = (Village) jAttackTable.getValueAt(r, c);
+                        DSWorkbenchMainFrame.getSingleton().centerVillage(v);
+                    } catch (Exception ee) {
+                        //no village
+                    }
                 }
             }
 
@@ -257,7 +271,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         jSecondsField = new javax.swing.JSpinner();
         jPanel4 = new javax.swing.JPanel();
         jLabel8 = new javax.swing.JLabel();
-        jArriveDateField = new javax.swing.JSpinner();
+        jArriveDateField = new de.tor.tribes.ui.components.DateTimeField();
         jModifyArrivalOption = new javax.swing.JRadioButton();
         jMoveTimeOption = new javax.swing.JRadioButton();
         jRandomizeOption = new javax.swing.JRadioButton();
@@ -317,6 +331,27 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         jShowAttacksInOverview = new javax.swing.JCheckBox();
         jDoScriptExportButton = new javax.swing.JButton();
         jButton14 = new javax.swing.JButton();
+        jChangeAttackTypeDialog = new javax.swing.JDialog();
+        jPanel6 = new javax.swing.JPanel();
+        jNoType = new javax.swing.JRadioButton();
+        jLabel23 = new javax.swing.JLabel();
+        jAttackType = new javax.swing.JRadioButton();
+        jLabel28 = new javax.swing.JLabel();
+        jEnobleType = new javax.swing.JRadioButton();
+        jLabel24 = new javax.swing.JLabel();
+        jDefType = new javax.swing.JRadioButton();
+        jLabel25 = new javax.swing.JLabel();
+        jFakeType = new javax.swing.JRadioButton();
+        jLabel26 = new javax.swing.JLabel();
+        jFakeDefType = new javax.swing.JRadioButton();
+        jLabel27 = new javax.swing.JLabel();
+        jAdeptUnitPanel = new javax.swing.JPanel();
+        jUnitBox = new javax.swing.JComboBox();
+        jAcceptChangeUnitTypeButton = new javax.swing.JButton();
+        jButton15 = new javax.swing.JButton();
+        jAdeptTypeBox = new javax.swing.JCheckBox();
+        jAdeptUnitBox = new javax.swing.JCheckBox();
+        buttonGroup2 = new javax.swing.ButtonGroup();
         jAttackPanel = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jAttackTable = new javax.swing.JTable();
@@ -333,6 +368,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         jCopyAttackButton = new javax.swing.JButton();
         jMoveAttacksButton = new javax.swing.JButton();
         jChangeArrivalButton = new javax.swing.JButton();
+        jChangeArrivalButton1 = new javax.swing.JButton();
         jTaskPaneGroup2 = new com.l2fprod.common.swing.JTaskPaneGroup();
         jMarkAllButton = new javax.swing.JButton();
         jMarkFilteredButton = new javax.swing.JButton();
@@ -342,8 +378,9 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         jTaskPaneGroup3 = new com.l2fprod.common.swing.JTaskPaneGroup();
         jCopyUnformattedToClipboardButton = new javax.swing.JButton();
         jCopyBBCodeToClipboardButton = new javax.swing.JButton();
-        jCopyBBCodeToClipboardButton1 = new javax.swing.JButton();
-        jCopyBBCodeToClipboardButton2 = new javax.swing.JButton();
+        jCopyToHTMLButton = new javax.swing.JButton();
+        jCopyToIGMButton = new javax.swing.JButton();
+        jCopyToReTimeButton = new javax.swing.JButton();
         jSendAttackButton = new javax.swing.JButton();
         jAttacksToScriptButton = new javax.swing.JButton();
         jDefaultTroopsButton = new javax.swing.JButton();
@@ -615,8 +652,8 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel14, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 60, Short.MAX_VALUE)
-                    .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 60, Short.MAX_VALUE))
+                    .addComponent(jLabel14, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 114, Short.MAX_VALUE)
+                    .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 114, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jMinuteField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -656,8 +693,6 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         jLabel8.setText(bundle.getString("DSWorkbenchAttackFrame.jLabel8.text")); // NOI18N
         jLabel8.setEnabled(false);
 
-        jArriveDateField.setModel(new javax.swing.SpinnerDateModel(new java.util.Date(), new java.util.Date(), null, java.util.Calendar.MINUTE));
-        jArriveDateField.setToolTipText(bundle.getString("DSWorkbenchAttackFrame.jArriveDateField.toolTipText")); // NOI18N
         jArriveDateField.setEnabled(false);
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
@@ -667,18 +702,18 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel8)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jArriveDateField, javax.swing.GroupLayout.DEFAULT_SIZE, 158, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jArriveDateField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel8)
-                    .addComponent(jArriveDateField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(jLabel8, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jArriveDateField, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         buttonGroup1.add(jModifyArrivalOption);
@@ -739,13 +774,13 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jNotRandomToNightBonus, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 251, Short.MAX_VALUE)
+                    .addComponent(jNotRandomToNightBonus, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 299, Short.MAX_VALUE)
                     .addGroup(jPanel5Layout.createSequentialGroup()
                         .addComponent(jLabel17)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jLabel18)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jRandomField, javax.swing.GroupLayout.DEFAULT_SIZE, 116, Short.MAX_VALUE)
+                        .addComponent(jRandomField, javax.swing.GroupLayout.DEFAULT_SIZE, 164, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel19)))
                 .addContainerGap())
@@ -1049,6 +1084,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        jStandardAttackTable.setToolTipText(bundle.getString("DSWorkbenchAttackFrame.jStandardAttackTable.toolTipText")); // NOI18N
         jScrollPane5.setViewportView(jStandardAttackTable);
 
         jButton11.setText(bundle.getString("DSWorkbenchAttackFrame.jButton11.text")); // NOI18N
@@ -1079,8 +1115,8 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jStandardAttackDialogLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jStandardAttackDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane6, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 472, Short.MAX_VALUE)
-                    .addComponent(jScrollPane5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 472, Short.MAX_VALUE)
+                    .addComponent(jScrollPane6, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 530, Short.MAX_VALUE)
+                    .addComponent(jScrollPane5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 530, Short.MAX_VALUE)
                     .addComponent(jButton11))
                 .addContainerGap())
         );
@@ -1261,6 +1297,155 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        jChangeAttackTypeDialog.setTitle(bundle.getString("DSWorkbenchAttackFrame.jChangeAttackTypeDialog.title")); // NOI18N
+
+        jPanel6.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        jPanel6.setLayout(new java.awt.GridLayout(6, 2));
+
+        buttonGroup2.add(jNoType);
+        jNoType.setText(bundle.getString("DSWorkbenchAttackFrame.jNoType.text")); // NOI18N
+        jNoType.setOpaque(false);
+        jPanel6.add(jNoType);
+
+        jLabel23.setText(bundle.getString("DSWorkbenchAttackFrame.jLabel23.text")); // NOI18N
+        jPanel6.add(jLabel23);
+
+        buttonGroup2.add(jAttackType);
+        jAttackType.setText(bundle.getString("DSWorkbenchAttackFrame.jAttackType.text")); // NOI18N
+        jAttackType.setOpaque(false);
+        jPanel6.add(jAttackType);
+
+        jLabel28.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/axe.png"))); // NOI18N
+        jLabel28.setText(bundle.getString("DSWorkbenchAttackFrame.jLabel28.text")); // NOI18N
+        jPanel6.add(jLabel28);
+
+        buttonGroup2.add(jEnobleType);
+        jEnobleType.setText(bundle.getString("DSWorkbenchAttackFrame.jEnobleType.text")); // NOI18N
+        jEnobleType.setOpaque(false);
+        jPanel6.add(jEnobleType);
+
+        jLabel24.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/snob.png"))); // NOI18N
+        jLabel24.setText(bundle.getString("DSWorkbenchAttackFrame.jLabel24.text")); // NOI18N
+        jPanel6.add(jLabel24);
+
+        buttonGroup2.add(jDefType);
+        jDefType.setText(bundle.getString("DSWorkbenchAttackFrame.jDefType.text")); // NOI18N
+        jDefType.setOpaque(false);
+        jPanel6.add(jDefType);
+
+        jLabel25.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ally.png"))); // NOI18N
+        jLabel25.setText(bundle.getString("DSWorkbenchAttackFrame.jLabel25.text")); // NOI18N
+        jPanel6.add(jLabel25);
+
+        buttonGroup2.add(jFakeType);
+        jFakeType.setText(bundle.getString("DSWorkbenchAttackFrame.jFakeType.text")); // NOI18N
+        jFakeType.setOpaque(false);
+        jPanel6.add(jFakeType);
+
+        jLabel26.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/fake.png"))); // NOI18N
+        jLabel26.setText(bundle.getString("DSWorkbenchAttackFrame.jLabel26.text")); // NOI18N
+        jPanel6.add(jLabel26);
+
+        buttonGroup2.add(jFakeDefType);
+        jFakeDefType.setText(bundle.getString("DSWorkbenchAttackFrame.jFakeDefType.text")); // NOI18N
+        jFakeDefType.setOpaque(false);
+        jPanel6.add(jFakeDefType);
+
+        jLabel27.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/def_fake.png"))); // NOI18N
+        jLabel27.setText(bundle.getString("DSWorkbenchAttackFrame.jLabel27.text")); // NOI18N
+        jPanel6.add(jLabel27);
+
+        jAdeptUnitPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        jUnitBox.setEnabled(false);
+
+        javax.swing.GroupLayout jAdeptUnitPanelLayout = new javax.swing.GroupLayout(jAdeptUnitPanel);
+        jAdeptUnitPanel.setLayout(jAdeptUnitPanelLayout);
+        jAdeptUnitPanelLayout.setHorizontalGroup(
+            jAdeptUnitPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jAdeptUnitPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jUnitBox, 0, 87, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        jAdeptUnitPanelLayout.setVerticalGroup(
+            jAdeptUnitPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jAdeptUnitPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jUnitBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(95, Short.MAX_VALUE))
+        );
+
+        jAcceptChangeUnitTypeButton.setText(bundle.getString("DSWorkbenchAttackFrame.jAcceptChangeUnitTypeButton.text")); // NOI18N
+        jAcceptChangeUnitTypeButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireChangeUnitTypeEvent(evt);
+            }
+        });
+
+        jButton15.setText(bundle.getString("DSWorkbenchAttackFrame.jButton15.text")); // NOI18N
+        jButton15.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireChangeUnitTypeEvent(evt);
+            }
+        });
+
+        jAdeptTypeBox.setSelected(true);
+        jAdeptTypeBox.setText(bundle.getString("DSWorkbenchAttackFrame.jAdeptTypeBox.text")); // NOI18N
+        jAdeptTypeBox.setOpaque(false);
+        jAdeptTypeBox.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                fireEnableDisableAdeptTypeEvent(evt);
+            }
+        });
+
+        jAdeptUnitBox.setText(bundle.getString("DSWorkbenchAttackFrame.jAdeptUnitBox.text")); // NOI18N
+        jAdeptUnitBox.setOpaque(false);
+        jAdeptUnitBox.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                fireEnableDisableChangeUnitEvent(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jChangeAttackTypeDialogLayout = new javax.swing.GroupLayout(jChangeAttackTypeDialog.getContentPane());
+        jChangeAttackTypeDialog.getContentPane().setLayout(jChangeAttackTypeDialogLayout);
+        jChangeAttackTypeDialogLayout.setHorizontalGroup(
+            jChangeAttackTypeDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jChangeAttackTypeDialogLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jChangeAttackTypeDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jAdeptTypeBox, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addGroup(jChangeAttackTypeDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jAdeptUnitPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jAdeptUnitBox))
+                .addGap(11, 11, 11))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jChangeAttackTypeDialogLayout.createSequentialGroup()
+                .addContainerGap(49, Short.MAX_VALUE)
+                .addComponent(jButton15)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jAcceptChangeUnitTypeButton)
+                .addContainerGap())
+        );
+        jChangeAttackTypeDialogLayout.setVerticalGroup(
+            jChangeAttackTypeDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jChangeAttackTypeDialogLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jChangeAttackTypeDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jAdeptTypeBox)
+                    .addComponent(jAdeptUnitBox))
+                .addGap(10, 10, 10)
+                .addGroup(jChangeAttackTypeDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, 132, Short.MAX_VALUE)
+                    .addComponent(jAdeptUnitPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addGroup(jChangeAttackTypeDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jAcceptChangeUnitTypeButton)
+                    .addComponent(jButton15))
+                .addContainerGap())
+        );
+
         setTitle(bundle.getString("DSWorkbenchAttackFrame.title")); // NOI18N
 
         jAttackPanel.setBackground(new java.awt.Color(239, 235, 223));
@@ -1409,6 +1594,17 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         jTaskPaneGroup1.getContentPane().add(jChangeArrivalButton);
         jChangeArrivalButton.getAccessibleContext().setAccessibleDescription(bundle.getString("DSWorkbenchAttackFrame.jChangeArrivalButton.AccessibleContext.accessibleDescription")); // NOI18N
 
+        jChangeArrivalButton1.setBackground(new java.awt.Color(239, 235, 223));
+        jChangeArrivalButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/standard_attacks.png"))); // NOI18N
+        jChangeArrivalButton1.setText(bundle.getString("DSWorkbenchAttackFrame.jChangeArrivalButton1.text")); // NOI18N
+        jChangeArrivalButton1.setToolTipText(bundle.getString("DSWorkbenchAttackFrame.jChangeArrivalButton1.toolTipText")); // NOI18N
+        jChangeArrivalButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireChangeAttackTypeEvent(evt);
+            }
+        });
+        jTaskPaneGroup1.getContentPane().add(jChangeArrivalButton1);
+
         jTaskPane1.add(jTaskPaneGroup1);
 
         jTaskPaneGroup2.setTitle(bundle.getString("DSWorkbenchAttackFrame.jTaskPaneGroup2.title")); // NOI18N
@@ -1509,30 +1705,42 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         jTaskPaneGroup3.getContentPane().add(jCopyBBCodeToClipboardButton);
         jCopyBBCodeToClipboardButton.getAccessibleContext().setAccessibleDescription(bundle.getString("DSWorkbenchAttackFrame.jCopyBBCodeToClipboardButton.AccessibleContext.accessibleDescription")); // NOI18N
 
-        jCopyBBCodeToClipboardButton1.setBackground(new java.awt.Color(239, 235, 223));
-        jCopyBBCodeToClipboardButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_HTML.png"))); // NOI18N
-        jCopyBBCodeToClipboardButton1.setText(bundle.getString("DSWorkbenchAttackFrame.jCopyBBCodeToClipboardButton1.text")); // NOI18N
-        jCopyBBCodeToClipboardButton1.setToolTipText(bundle.getString("DSWorkbenchAttackFrame.jCopyBBCodeToClipboardButton1.toolTipText")); // NOI18N
-        jCopyBBCodeToClipboardButton1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jCopyBBCodeToClipboardButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+        jCopyToHTMLButton.setBackground(new java.awt.Color(239, 235, 223));
+        jCopyToHTMLButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_HTML.png"))); // NOI18N
+        jCopyToHTMLButton.setText(bundle.getString("DSWorkbenchAttackFrame.jCopyToHTMLButton.text")); // NOI18N
+        jCopyToHTMLButton.setToolTipText(bundle.getString("DSWorkbenchAttackFrame.jCopyToHTMLButton.toolTipText")); // NOI18N
+        jCopyToHTMLButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jCopyToHTMLButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireWriteToHTMLEvent(evt);
             }
         });
-        jTaskPaneGroup3.getContentPane().add(jCopyBBCodeToClipboardButton1);
-        jCopyBBCodeToClipboardButton1.getAccessibleContext().setAccessibleDescription(bundle.getString("DSWorkbenchAttackFrame.jCopyBBCodeToClipboardButton1.AccessibleContext.accessibleDescription")); // NOI18N
+        jTaskPaneGroup3.getContentPane().add(jCopyToHTMLButton);
+        jCopyToHTMLButton.getAccessibleContext().setAccessibleDescription(bundle.getString("DSWorkbenchAttackFrame.jCopyBBCodeToClipboardButton1.AccessibleContext.accessibleDescription")); // NOI18N
 
-        jCopyBBCodeToClipboardButton2.setBackground(new java.awt.Color(239, 235, 223));
-        jCopyBBCodeToClipboardButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/atts_igm.png"))); // NOI18N
-        jCopyBBCodeToClipboardButton2.setText(bundle.getString("DSWorkbenchAttackFrame.jCopyBBCodeToClipboardButton2.text")); // NOI18N
-        jCopyBBCodeToClipboardButton2.setToolTipText(bundle.getString("DSWorkbenchAttackFrame.jCopyBBCodeToClipboardButton2.toolTipText")); // NOI18N
-        jCopyBBCodeToClipboardButton2.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jCopyBBCodeToClipboardButton2.addMouseListener(new java.awt.event.MouseAdapter() {
+        jCopyToIGMButton.setBackground(new java.awt.Color(239, 235, 223));
+        jCopyToIGMButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/atts_igm.png"))); // NOI18N
+        jCopyToIGMButton.setText(bundle.getString("DSWorkbenchAttackFrame.jCopyToIGMButton.text")); // NOI18N
+        jCopyToIGMButton.setToolTipText(bundle.getString("DSWorkbenchAttackFrame.jCopyToIGMButton.toolTipText")); // NOI18N
+        jCopyToIGMButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jCopyToIGMButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireSendAttacksAsIGMEvent(evt);
             }
         });
-        jTaskPaneGroup3.getContentPane().add(jCopyBBCodeToClipboardButton2);
+        jTaskPaneGroup3.getContentPane().add(jCopyToIGMButton);
+
+        jCopyToReTimeButton.setBackground(new java.awt.Color(239, 235, 223));
+        jCopyToReTimeButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/re-time.png"))); // NOI18N
+        jCopyToReTimeButton.setText(bundle.getString("DSWorkbenchAttackFrame.jCopyToReTimeButton.text")); // NOI18N
+        jCopyToReTimeButton.setToolTipText(bundle.getString("DSWorkbenchAttackFrame.jCopyToReTimeButton.toolTipText")); // NOI18N
+        jCopyToReTimeButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jCopyToReTimeButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireSendAttackToReTimeToolEvent(evt);
+            }
+        });
+        jTaskPaneGroup3.getContentPane().add(jCopyToReTimeButton);
 
         jSendAttackButton.setBackground(new java.awt.Color(239, 235, 223));
         jSendAttackButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_browser.png"))); // NOI18N
@@ -1693,9 +1901,10 @@ private void fireSendAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:eve
         return;
     }
 
-    if (selectedRows.length > 10) {
-        JOptionPaneHelper.showInformationBox(this, "Es dürfen maximal 10 Angriffe auf einmal in den Browser übertragen werden.", "Maximum überschritten");
-        return;
+    if (selectedRows.length > 30) {
+        if (JOptionPaneHelper.showQuestionConfirmBox(this, "Du möchtest mehr als 30 Angriffe in den Browser übertragen.\nDies kann, besonders auf älteren Rechnern, zu Problemen und Abstürzen führen.\nWillst du wirklich fortfahren?", "Information", "Nein", "Ja") == JOptionPane.NO_OPTION) {
+            return;
+        }
     }
 
     for (Integer selectedRow : selectedRows) {
@@ -1706,6 +1915,10 @@ private void fireSendAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:eve
             Village target = a.getTarget();
             int type = a.getType();
             BrowserCommandSender.sendTroops(source, target, type);
+            try {
+                Thread.sleep(100);
+            } catch (Exception e) {
+            }
         }
     }
 }//GEN-LAST:event_fireSendAttackEvent
@@ -1857,8 +2070,7 @@ private void fireCopyAsBBCodeToClipboardEvent(java.awt.event.MouseEvent evt) {//
             StringTokenizer t = new StringTokenizer(b, "[");
             int cnt = t.countTokens();
             if (cnt > 500) {
-                if (JOptionPaneHelper.showQuestionConfirmBox(this, "Die ausgewählten Angriffe benötigen mehr als 500 BB-Codes\n"
-                        + "und können daher im Spiel (Forum/IGM/Notizen) nicht auf einmal dargestellt werden.\nTrotzdem exportieren?", "Zu viele BB-Codes", "Nein", "Ja") == JOptionPane.NO_OPTION) {
+                if (JOptionPaneHelper.showQuestionConfirmBox(this, "Die ausgewählten Angriffe benötigen mehr als 500 BB-Codes\n" + "und können daher im Spiel (Forum/IGM/Notizen) nicht auf einmal dargestellt werden.\nTrotzdem exportieren?", "Zu viele BB-Codes", "Nein", "Ja") == JOptionPane.NO_OPTION) {
                     return;
                 }
             }
@@ -2077,8 +2289,7 @@ private void fireFlipMarkEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
 
     //assign the values of the selected list to the table
     jAttackTable.getSelectionModel().setValueIsAdjusting(true);
-    for (int i = 0; i
-            < cnt; i++) {
+    for (int i = 0; i < cnt; i++) {
         Integer iV = new Integer(i);
         if (selected.contains(iV)) {
             jAttackTable.getSelectionModel().addSelectionInterval(i, i);
@@ -2095,8 +2306,7 @@ private void fireSelectNoneAllEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
         if (jSourceVillageTable.getRowCount() > 0) {
             //update source table values that all villages are selected
             jSourceVillageTable.invalidate();
-            for (int i = 0; i
-                    < jSourceVillageTable.getRowCount(); i++) {
+            for (int i = 0; i < jSourceVillageTable.getRowCount(); i++) {
                 jSourceVillageTable.getModel().setValueAt(Boolean.TRUE, i, 1);
             }
 
@@ -2117,8 +2327,7 @@ private void fireSelectNoneAllEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
         //update target table values that all villages are selected
         if (jTargetVillageTable.getRowCount() > 0) {
             jTargetVillageTable.invalidate();
-            for (int i = 0; i
-                    < jTargetVillageTable.getRowCount(); i++) {
+            for (int i = 0; i < jTargetVillageTable.getRowCount(); i++) {
                 jTargetVillageTable.getModel().setValueAt(Boolean.TRUE, i, 1);
             }
 
@@ -2129,8 +2338,7 @@ private void fireSelectNoneAllEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
     } else if (evt.getSource() == jNoTargetVillageButton) {
         //update target table values that all villages are unselected
         jTargetVillageTable.invalidate();
-        for (int i = 0; i
-                < jTargetVillageTable.getRowCount(); i++) {
+        for (int i = 0; i < jTargetVillageTable.getRowCount(); i++) {
             jTargetVillageTable.getModel().setValueAt(Boolean.FALSE, i, 1);
         }
 
@@ -2165,7 +2373,7 @@ private void fireCloseTimeChangeDialogEvent(java.awt.event.MouseEvent evt) {//GE
                 jAttackTable.revalidate();
                 jAttackTable.repaint();//.updateUI();
             } else if (jModifyArrivalOption.isSelected()) {
-                Date arrive = (Date) jArriveDateField.getValue();
+                Date arrive = jArriveDateField.getSelectedDate();
                 jAttackTable.invalidate();
                 for (int i : rows) {
                     int row = jAttackTable.convertRowIndexToModel(i);
@@ -2261,8 +2469,7 @@ private void fireRemoveAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
     }
 
 
-    if (JOptionPaneHelper.showQuestionConfirmBox(this, "Willst du den Angriffsplan '" + selection + "' und alle enthaltenen Angriffe\n"
-            + "wirklich löschen?", "Angriffsplan löschen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
+    if (JOptionPaneHelper.showQuestionConfirmBox(this, "Willst du den Angriffsplan '" + selection + "' und alle enthaltenen Angriffe\n" + "wirklich löschen?", "Angriffsplan löschen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
         AttackManagerTableModel.getSingleton().setActiveAttackPlan(AttackManager.DEFAULT_PLAN_ID);
         AttackManager.getSingleton().removePlan(selection);
         buildAttackPlanList();
@@ -2291,8 +2498,7 @@ private void fireActiveAttackChangedEvent(java.awt.event.ItemEvent evt) {//GEN-F
 private void fireAddNewAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireAddNewAttackPlanEvent
     String name = jAttackPlanName.getText();
     if (AttackManager.getSingleton().getAttackPlan(name) != null) {
-        JOptionPaneHelper.showWarningBox(jAddPlanDialog, "Ein Plan mit dem angegebenen Namen existiert bereits.\n"
-                + "Bitte wähle einen anderen Namen oder lösche zuerst den bestehenden Plan.", "Warnung");
+        JOptionPaneHelper.showWarningBox(jAddPlanDialog, "Ein Plan mit dem angegebenen Namen existiert bereits.\n" + "Bitte wähle einen anderen Namen oder lösche zuerst den bestehenden Plan.", "Warnung");
         return;
 
     }
@@ -2308,8 +2514,7 @@ private void fireRenameEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_f
     String selection = (String) jActiveAttackPlan.getSelectedItem();
     String newName = jNewPlanName.getText();
     if (AttackManager.getSingleton().getAttackPlan(newName) != null) {
-        JOptionPaneHelper.showWarningBox(jRenamePlanDialog, "Ein Plan mit dem Namen '" + newName + "' existiert bereits.\n"
-                + "Bitte wähle einen anderen Namen oder lösche zuerst den bestehenden Plan.", "Warnung");
+        JOptionPaneHelper.showWarningBox(jRenamePlanDialog, "Ein Plan mit dem Namen '" + newName + "' existiert bereits.\n" + "Bitte wähle einen anderen Namen oder lösche zuerst den bestehenden Plan.", "Warnung");
         return;
 
     }
@@ -2468,8 +2673,7 @@ private void fireWriteToHTMLEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
     try {
         chooser = new JFileChooser(dir);
     } catch (Exception e) {
-        JOptionPaneHelper.showErrorBox(this, "Konnte Dateiauswahldialog nicht öffnen.\nMöglicherweise verwendest du Windows Vista. Ist dies der Fall, beende DS Workbench, klicke mit der rechten Maustaste auf DSWorkbench.exe,\n"
-                + "wähle 'Eigenschaften' und deaktiviere dort unter 'Kompatibilität' den Windows XP Kompatibilitätsmodus.", "Fehler");
+        JOptionPaneHelper.showErrorBox(this, "Konnte Dateiauswahldialog nicht öffnen.\nMöglicherweise verwendest du Windows Vista. Ist dies der Fall, beende DS Workbench, klicke mit der rechten Maustaste auf DSWorkbench.exe,\n" + "wähle 'Eigenschaften' und deaktiviere dort unter 'Kompatibilität' den Windows XP Kompatibilitätsmodus.", "Fehler");
         return;
     }
 
@@ -2538,6 +2742,15 @@ private void fireCleanUpAttacksEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST
         }
     }
 
+    if (toRemove.isEmpty()) {
+        return;
+    }
+    String message = (toRemove.size() == 1) ? "1 Angriff entfernen?" : toRemove.size() + " Angriffe entfernen?";
+
+    if (JOptionPaneHelper.showQuestionConfirmBox(this, message, "Abgelaufene Angriffe entfernen", "Nein", "Ja") == JOptionPane.NO_OPTION) {
+        return;
+    }
+
     logger.debug("Cleaning up " + toRemove.size() + " attacks");
 
     for (Attack a : toRemove) {
@@ -2545,8 +2758,6 @@ private void fireCleanUpAttacksEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST
     }
 
     AttackManager.getSingleton().forceUpdate(selectedPlan);
-
-
 }//GEN-LAST:event_fireCleanUpAttacksEvent
 
 private void fireSetStandardAttacksEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSetStandardAttacksEvent
@@ -2565,6 +2776,7 @@ private void fireSetStandardAttacksEvent(java.awt.event.MouseEvent evt) {//GEN-F
         jStandardAttackTable.setRowHeight(20);
         jStandardAttackDialog.setLocationRelativeTo(this);
         jStandardAttackDialog.setVisible(true);
+
     } catch (Exception e) {
     }
 }//GEN-LAST:event_fireSetStandardAttacksEvent
@@ -2716,6 +2928,107 @@ private void fireDoExportAsScriptEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
 
 }//GEN-LAST:event_fireDoExportAsScriptEvent
 
+private void fireChangeAttackTypeEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireChangeAttackTypeEvent
+    int[] rows = jAttackTable.getSelectedRows();
+    if ((rows == null) || (rows.length < 1)) {
+        return;
+    }
+    jChangeAttackTypeDialog.setLocationRelativeTo(this);
+    jChangeAttackTypeDialog.pack();
+    jChangeAttackTypeDialog.setVisible(true);
+}//GEN-LAST:event_fireChangeAttackTypeEvent
+
+private void fireChangeUnitTypeEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireChangeUnitTypeEvent
+    if (evt.getSource() == jAcceptChangeUnitTypeButton) {
+        int newType = -2;
+        if (jAdeptTypeBox.isSelected()) {
+            if (jNoType.isSelected()) {
+                newType = Attack.NO_TYPE;
+            } else if (jAttackType.isSelected()) {
+                newType = Attack.CLEAN_TYPE;
+            } else if (jEnobleType.isSelected()) {
+                newType = Attack.SNOB_TYPE;
+            } else if (jDefType.isSelected()) {
+                newType = Attack.SUPPORT_TYPE;
+            } else if (jFakeType.isSelected()) {
+                newType = Attack.FAKE_TYPE;
+            } else if (jFakeDefType.isSelected()) {
+                newType = Attack.FAKE_DEFF_TYPE;
+            }
+        }
+        UnitHolder newUnit = null;
+        if (jAdeptUnitBox.isSelected()) {
+            newUnit = (UnitHolder) jUnitBox.getSelectedItem();
+        }
+
+
+        int[] rows = jAttackTable.getSelectedRows();
+        if ((rows != null) || (rows.length > 0)) {
+            List<Attack> attacks = AttackManager.getSingleton().getAttackPlan(AttackManagerTableModel.getSingleton().getActiveAttackPlan());
+            for (int i : rows) {
+                int row = jAttackTable.convertRowIndexToModel(i);
+                Attack a = attacks.get(row);
+                if (newType != -2) {
+                    a.setType(newType);
+                }
+                if (newUnit != null) {
+                    a.setUnit(newUnit);
+                }
+            }
+            jAttackTable.revalidate();
+            jAttackTable.repaint();//.updateUI();
+        }
+    }
+    jChangeAttackTypeDialog.setVisible(false);
+}//GEN-LAST:event_fireChangeUnitTypeEvent
+
+private void fireEnableDisableChangeUnitEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireEnableDisableChangeUnitEvent
+
+    jUnitBox.setEnabled(jAdeptUnitBox.isSelected());
+}//GEN-LAST:event_fireEnableDisableChangeUnitEvent
+
+private void fireEnableDisableAdeptTypeEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireEnableDisableAdeptTypeEvent
+
+    jNoType.setEnabled(jAdeptTypeBox.isSelected());
+    jAttackType.setEnabled(jAdeptTypeBox.isSelected());
+    jEnobleType.setEnabled(jAdeptTypeBox.isSelected());
+    jDefType.setEnabled(jAdeptTypeBox.isSelected());
+    jFakeType.setEnabled(jAdeptTypeBox.isSelected());
+    jFakeDefType.setEnabled(jAdeptTypeBox.isSelected());
+}//GEN-LAST:event_fireEnableDisableAdeptTypeEvent
+
+private void fireSendAttackToReTimeToolEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSendAttackToReTimeToolEvent
+    String selectedPlan = AttackManagerTableModel.getSingleton().getActiveAttackPlan();
+    if (selectedPlan == null) {
+        return;
+    }
+    int row = jAttackTable.getSelectedRow();
+    if (row == -1) {
+        return;
+    }
+    row = jAttackTable.convertRowIndexToModel(row);
+    Attack a = AttackManager.getSingleton().getAttackPlan(selectedPlan).get(row);
+    if (a == null) {
+        return;
+    }
+
+    StringBuffer b = new StringBuffer();
+    b.append("Herkunft: " + a.getSource().toString() + "\n");
+    b.append("Ziel: " + a.getTarget().toString() + "\n");
+    SimpleDateFormat f = null;
+    if (ServerSettings.getSingleton().isMillisArrival()) {
+        f = new SimpleDateFormat("dd.MM.yy HH:mm:ss:SSS");
+    } else {
+        f = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
+    }
+    b.append("Ankunft: " + f.format(a.getArriveTime()) + "\n");
+    DSWorkbenchReTimerFrame.getSingleton().setCustomAttack(b.toString());
+    if (!DSWorkbenchReTimerFrame.getSingleton().isVisible()) {
+        DSWorkbenchReTimerFrame.getSingleton().setVisible(true);
+    }
+
+}//GEN-LAST:event_fireSendAttackToReTimeToolEvent
+
     public JDialog getStandardAttackDialog() {
         return jStandardAttackDialog;
     }
@@ -2792,42 +3105,15 @@ private void fireDoExportAsScriptEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
         jAttackTable.setDefaultEditor(UnitHolder.class, new UnitCellEditor());
         jAttackTable.setDefaultRenderer(UnitHolder.class, new UnitCellRenderer());
         jAttackTable.setDefaultEditor(Village.class, new VillageCellEditor());
-        /*JComboBox box = new JComboBox();
-        jAttackTable.setDefaultEditor(Village.class, new DefaultCellEditor(box) {
-
-        @Override
-        public Component getTableCellEditorComponent(
-        JTable table,
-        Object value,
-        boolean isSelected,
-        int row,
-        int column) {
-        Village current = (Village) value;
-        Tribe t = current.getTribe();
-        Village[] villages = null;
-        if (t != null) {
-        //use tribes villages
-        villages = t.getVillageList();
-        } else {
-        //use single village (barbarian)
-        villages = new Village[]{current};
-        }
-        Arrays.sort(villages);
-        DefaultComboBoxModel model = new DefaultComboBoxModel(villages);
-        ((JComboBox) editorComponent).setModel(model);
-        ((JComboBox) editorComponent).setSelectedItem(value);
-
-
-        return super.getTableCellEditorComponent(table, value,
-        isSelected, row, column);
-        }
-        });*/
-
 
         jAttackTable.setDefaultRenderer(Village.class, new VillageCellRenderer());
         jAttackTable.setDefaultRenderer(Integer.class, new AttackTypeCellRenderer());
         jAttackTable.setDefaultEditor(Integer.class, new AttackTypeCellEditor());
 
+        DefaultComboBoxModel model = new DefaultComboBoxModel(DataHolder.getSingleton().getUnits().toArray(new UnitHolder[]{}));
+        model.insertElementAt(UnknownUnit.getSingleton(), 0);
+        jUnitBox.setModel(model);
+        jUnitBox.setRenderer(new UnitListCellRenderer());
         AttackManager.getSingleton().forceUpdate(null);
         buildAttackPlanList();
         jActiveAttackPlan.setSelectedItem(AttackManager.DEFAULT_PLAN_ID);
@@ -2874,17 +3160,23 @@ private void fireDoExportAsScriptEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.ButtonGroup buttonGroup2;
     private javax.swing.JTextField jAPIKey;
+    private javax.swing.JButton jAcceptChangeUnitTypeButton;
     private javax.swing.JComboBox jActiveAttackPlan;
     private javax.swing.JDialog jAddPlanDialog;
     private javax.swing.JButton jAddRemoveButton;
+    private javax.swing.JCheckBox jAdeptTypeBox;
+    private javax.swing.JCheckBox jAdeptUnitBox;
+    private javax.swing.JPanel jAdeptUnitPanel;
     private javax.swing.JButton jAllSourceVillageButton;
     private javax.swing.JButton jAllTargetVillageButton;
-    private javax.swing.JSpinner jArriveDateField;
+    private de.tor.tribes.ui.components.DateTimeField jArriveDateField;
     private javax.swing.JCheckBox jAttackFrameAlwaysOnTop;
     private javax.swing.JPanel jAttackPanel;
     private javax.swing.JTextField jAttackPlanName;
     private javax.swing.JTable jAttackTable;
+    private javax.swing.JRadioButton jAttackType;
     private javax.swing.JSpinner jAttackVectorWidth;
     private javax.swing.JButton jAttacksToScriptButton;
     private javax.swing.JButton jButton1;
@@ -2892,6 +3184,7 @@ private void fireDoExportAsScriptEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
     private javax.swing.JButton jButton11;
     private javax.swing.JButton jButton13;
     private javax.swing.JButton jButton14;
+    private javax.swing.JButton jButton15;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
@@ -2903,22 +3196,29 @@ private void fireDoExportAsScriptEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
     private javax.swing.JButton jCancelButton;
     private javax.swing.JButton jCancelCopyButton;
     private javax.swing.JButton jChangeArrivalButton;
+    private javax.swing.JButton jChangeArrivalButton1;
+    private javax.swing.JDialog jChangeAttackTypeDialog;
     private javax.swing.JButton jCleanupAttacksButton;
     private javax.swing.JButton jCopyAttackButton;
     private javax.swing.JButton jCopyBBCodeToClipboardButton;
-    private javax.swing.JButton jCopyBBCodeToClipboardButton1;
-    private javax.swing.JButton jCopyBBCodeToClipboardButton2;
     private javax.swing.JButton jCopyButton;
     private javax.swing.JComboBox jCopyTargetBox;
+    private javax.swing.JButton jCopyToHTMLButton;
+    private javax.swing.JButton jCopyToIGMButton;
     private javax.swing.JDialog jCopyToPlanDialog;
+    private javax.swing.JButton jCopyToReTimeButton;
     private javax.swing.JButton jCopyUnformattedToClipboardButton;
     private javax.swing.JTextField jCurrentPlanBox;
     private javax.swing.JTextField jCurrentPlanField;
     private javax.swing.JSpinner jDayField;
+    private javax.swing.JRadioButton jDefType;
     private javax.swing.JButton jDefaultTroopsButton;
     private javax.swing.JButton jDoScriptExportButton;
     private javax.swing.JCheckBox jDrawAttackVectors;
     private javax.swing.JButton jDrawMarkedButton;
+    private javax.swing.JRadioButton jEnobleType;
+    private javax.swing.JRadioButton jFakeDefType;
+    private javax.swing.JRadioButton jFakeType;
     private javax.swing.JButton jFlipMarkButton;
     private javax.swing.JSpinner jHourField;
     private javax.swing.JLabel jLabel1;
@@ -2936,6 +3236,12 @@ private void fireDoExportAsScriptEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
     private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel22;
+    private javax.swing.JLabel jLabel23;
+    private javax.swing.JLabel jLabel24;
+    private javax.swing.JLabel jLabel25;
+    private javax.swing.JLabel jLabel26;
+    private javax.swing.JLabel jLabel27;
+    private javax.swing.JLabel jLabel28;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -2954,6 +3260,7 @@ private void fireDoExportAsScriptEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
     private javax.swing.JTextField jNewPlanName;
     private javax.swing.JButton jNoSourceVillageButton;
     private javax.swing.JButton jNoTargetVillageButton;
+    private javax.swing.JRadioButton jNoType;
     private javax.swing.JButton jNotDrawMarkedButton;
     private javax.swing.JCheckBox jNotRandomToNightBonus;
     private javax.swing.JToggleButton jNotifyButton;
@@ -2963,6 +3270,7 @@ private void fireDoExportAsScriptEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel6;
     private javax.swing.JFormattedTextField jRandomField;
     private javax.swing.JRadioButton jRandomizeOption;
     private javax.swing.JButton jRemoveAttackButton;
@@ -2999,6 +3307,7 @@ private void fireDoExportAsScriptEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
     private com.l2fprod.common.swing.JTaskPaneGroup jTaskPaneGroup4;
     private javax.swing.JTextPane jTextPane1;
     private javax.swing.JDialog jTimeChangeDialog;
+    private javax.swing.JComboBox jUnitBox;
     // End of variables declaration//GEN-END:variables
 }
 

@@ -4,24 +4,27 @@
  */
 package de.tor.tribes.ui.renderer;
 
+import de.tor.tribes.util.Constants;
+import java.awt.Color;
 import java.awt.Component;
 import java.util.LinkedList;
 import java.util.List;
-import javax.swing.DefaultListCellRenderer;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.ListCellRenderer;
 import javax.swing.SwingConstants;
 
 /**
  *
  * @author Torridity
  */
-public class AttackTypeListCellRenderer extends DefaultListCellRenderer {
+public class AttackTypeListCellRenderer extends JLabel implements ListCellRenderer {
 
     private List<ImageIcon> icons = null;
 
     public AttackTypeListCellRenderer() {
+        super();
         try {
             icons = new LinkedList<ImageIcon>();
             icons.add(new ImageIcon("./graphics/icons/axe.png"));
@@ -36,29 +39,36 @@ public class AttackTypeListCellRenderer extends DefaultListCellRenderer {
 
     @Override
     public Component getListCellRendererComponent(JList list, Object pValue, int pIndex, boolean pSelected, boolean pHasFocus) {
-        Component c = super.getListCellRendererComponent(list, pValue, pIndex, pSelected, pHasFocus);
         try {
             Integer type = (Integer) pValue;
-            ((JLabel) c).setHorizontalAlignment(SwingConstants.CENTER);
+            setHorizontalAlignment(SwingConstants.CENTER);
+            setOpaque(true);
+            if (pSelected) {
+                setForeground(list.getSelectionForeground());
+                super.setBackground(list.getSelectionBackground());
+            } else {
+                setBackground(list.getBackground());
+                setForeground(list.getForeground());
+            }
             if (type == 0) {
                 //no icon!?
-                ((JLabel) c).setText("-");
-                ((JLabel) c).setIcon(null);
+                setText("-");
+                setIcon(null);
             } else {
                 int pos = type - 1;
                 if (pos >= 0) {
-                    ((JLabel) c).setText("");
-                    ((JLabel) c).setIcon(icons.get(pos));
+                    setText("");
+                    setIcon(icons.get(pos));
                 } else {
-                    ((JLabel) c).setText("-");
-                    ((JLabel) c).setIcon(null);
+                    setText("-");
+                    setIcon(null);
                 }
             }
         } catch (Exception e) {
             //cast problem
         }
 
-        return c;
+        return this;
 
     }
 }

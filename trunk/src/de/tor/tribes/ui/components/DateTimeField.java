@@ -77,10 +77,10 @@ public class DateTimeField extends javax.swing.JPanel {
         jChangeDate = new javax.swing.JButton();
         jChangeTime = new javax.swing.JButton();
 
-        jDateField.setMinimumSize(new java.awt.Dimension(80, 20));
+        jDateField.setMinimumSize(new java.awt.Dimension(10, 20));
         jDateField.setPreferredSize(new java.awt.Dimension(80, 20));
 
-        jTimeField.setMinimumSize(new java.awt.Dimension(80, 20));
+        jTimeField.setMinimumSize(new java.awt.Dimension(10, 20));
         jTimeField.setPreferredSize(new java.awt.Dimension(80, 20));
 
         jChangeDate.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/calendar_31.png"))); // NOI18N
@@ -126,10 +126,29 @@ public class DateTimeField extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    @Override
+    public void setEnabled(boolean pValue) {
+        super.setEnabled(pValue);
+        jDateField.setEnabled(pValue);
+        jChangeDate.setEnabled(pValue);
+        if (timeEnabled) {
+            jChangeTime.setEnabled(pValue);
+            jTimeField.setEnabled(pValue);
+        } else {
+            jChangeTime.setEnabled(false);
+            jTimeField.setEnabled(false);
+        }
+    }
+
     public void setTimeEnabled(boolean pValue) {
         timeEnabled = pValue;
         jChangeTime.setEnabled(timeEnabled);
         jTimeField.setEnabled(timeEnabled);
+        /* if (!timeEnabled) {
+        jTimeField.setEnabled(false);
+        } else {
+        jTimeField.setEnabled(timeEnabled);
+        }*/
     }
 
     public Date getSelectedDate() {
@@ -146,7 +165,7 @@ public class DateTimeField extends javax.swing.JPanel {
             result.set(Calendar.HOUR_OF_DAY, c.get(Calendar.HOUR_OF_DAY));
             result.set(Calendar.MINUTE, c.get(Calendar.MINUTE));
             result.set(Calendar.SECOND, c.get(Calendar.SECOND));
-            
+
             return result.getTime();
         } catch (Exception e) {
             return Calendar.getInstance().getTime();
@@ -159,6 +178,9 @@ public class DateTimeField extends javax.swing.JPanel {
     }
 
     private void fireChangeDateTimeEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireChangeDateTimeEvent
+        if (!isEnabled()) {
+            return;
+        }
         if (evt.getSource() == jChangeDate) {
             try {
                 dp = new DatePicker(dateFormat.parse(jDateField.getText()));

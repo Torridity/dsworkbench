@@ -151,11 +151,11 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
-                          <Component id="jPanel2" min="-2" max="-2" attributes="0"/>
+                          <Component id="jPanel2" max="32767" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="jPanel3" max="32767" attributes="0"/>
                       </Group>
-                      <Component id="jScrollPane1" pref="536" max="32767" attributes="0"/>
+                      <Component id="jScrollPane1" pref="666" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="jTaskPane1" min="-2" max="-2" attributes="0"/>
@@ -170,11 +170,11 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Component id="jTaskPane1" alignment="0" pref="509" max="32767" attributes="0"/>
                       <Group type="102" alignment="1" attributes="0">
-                          <Component id="jScrollPane1" pref="298" max="32767" attributes="0"/>
+                          <Component id="jScrollPane1" pref="299" max="32767" attributes="0"/>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="1" max="-2" attributes="0">
                               <Component id="jPanel3" max="32767" attributes="1"/>
-                              <Component id="jPanel2" alignment="1" max="32767" attributes="1"/>
+                              <Component id="jPanel2" alignment="1" pref="199" max="32767" attributes="1"/>
                           </Group>
                       </Group>
                   </Group>
@@ -245,14 +245,11 @@
                           </Group>
                       </Group>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jButton1" alignment="1" pref="141" max="32767" attributes="0"/>
-                          <Component id="jUnitBox" pref="141" max="32767" attributes="0"/>
-                          <Component id="jSourceVillage" pref="141" max="32767" attributes="0"/>
-                          <Component id="jTargetVillage" pref="141" max="32767" attributes="0"/>
-                          <Group type="102" alignment="1" attributes="0">
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="jArriveTime" pref="141" max="32767" attributes="1"/>
-                          </Group>
+                          <Component id="jButton1" alignment="1" pref="206" max="32767" attributes="0"/>
+                          <Component id="jUnitBox" pref="206" max="32767" attributes="0"/>
+                          <Component id="jSourceVillage" pref="206" max="32767" attributes="0"/>
+                          <Component id="jTargetVillage" pref="206" max="32767" attributes="0"/>
+                          <Component id="jArriveTime" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -271,10 +268,10 @@
                           <Component id="jTargetVillage" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jLabel4" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jArriveTime" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="1" attributes="0">
+                          <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
+                          <Component id="jArriveTime" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
@@ -321,14 +318,6 @@
                 <Property name="text" type="java.lang.String" value="Ankunft"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JSpinner" name="jArriveTime">
-              <Properties>
-                <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.editors2.SpinnerModelEditor">
-                  <SpinnerModel initial="1261419683565" stepSize="14" type="date"/>
-                </Property>
-                <Property name="toolTipText" type="java.lang.String" value="Ankunftszeit des Angriffs"/>
-              </Properties>
-            </Component>
             <Component class="javax.swing.JComboBox" name="jUnitBox">
               <Properties>
                 <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
@@ -347,6 +336,8 @@
               <Events>
                 <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fireAddAttackEvent"/>
               </Events>
+            </Component>
+            <Component class="de.tor.tribes.ui.components.DateTimeField" name="jArriveTime">
             </Component>
           </SubComponents>
         </Container>
@@ -758,18 +749,18 @@
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" attributes="0">
-                              <Component id="jNewArriveSpinner" pref="141" max="32767" attributes="1"/>
-                              <EmptySpace max="-2" attributes="0"/>
+                          <Group type="102" alignment="1" attributes="0">
+                              <Component id="jNewArriveSpinner" max="32767" attributes="0"/>
+                              <EmptySpace max="32767" attributes="0"/>
                               <Component id="jAdeptTimeButton" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <Group type="102" alignment="1" attributes="0">
-                              <Component id="jUnitComboBox" pref="141" max="32767" attributes="1"/>
+                              <Component id="jUnitComboBox" pref="206" max="32767" attributes="1"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="jAdeptUnitButton" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <Group type="102" alignment="1" attributes="0">
-                              <Component id="jAttackTypeComboBox" pref="141" max="32767" attributes="1"/>
+                              <Component id="jAttackTypeComboBox" pref="206" max="32767" attributes="1"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="jAdeptTypeButton" min="-2" max="-2" attributes="0"/>
                           </Group>
@@ -785,9 +776,9 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="jAdeptTimeButton" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="jLabel7" min="-2" pref="22" max="-2" attributes="0"/>
-                          <Component id="jNewArriveSpinner" min="-2" pref="25" max="-2" attributes="0"/>
+                          <Component id="jNewArriveSpinner" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="jAdeptUnitButton" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Group type="103" alignment="0" groupAlignment="3" attributes="0">
@@ -803,7 +794,7 @@
                               <Component id="jAttackTypeComboBox" alignment="3" min="-2" pref="25" max="-2" attributes="0"/>
                           </Group>
                       </Group>
-                      <EmptySpace pref="65" max="32767" attributes="0"/>
+                      <EmptySpace pref="70" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -812,13 +803,6 @@
             <Component class="javax.swing.JLabel" name="jLabel7">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Ankunftszeit"/>
-              </Properties>
-            </Component>
-            <Component class="javax.swing.JSpinner" name="jNewArriveSpinner">
-              <Properties>
-                <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.editors2.SpinnerModelEditor">
-                  <SpinnerModel initial="now" stepSize="14" type="date"/>
-                </Property>
               </Properties>
             </Component>
             <Component class="javax.swing.JButton" name="jAdeptTimeButton">
@@ -904,6 +888,8 @@
               <Events>
                 <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fireAdeptEvent"/>
               </Events>
+            </Component>
+            <Component class="de.tor.tribes.ui.components.DateTimeField" name="jNewArriveSpinner">
             </Component>
           </SubComponents>
         </Container>

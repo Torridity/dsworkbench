@@ -72,9 +72,9 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
-                          <Component id="jLabel1" pref="83" max="32767" attributes="1"/>
+                          <Component id="jLabel1" pref="110" max="32767" attributes="1"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="jSendTime" pref="241" max="32767" attributes="0"/>
+                          <Component id="jSendTime" pref="268" max="32767" attributes="0"/>
                           <EmptySpace min="-2" pref="56" max="-2" attributes="0"/>
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
@@ -84,17 +84,17 @@
                               <Component id="jEveryDayValid" alignment="0" min="-2" max="-2" attributes="0"/>
                               <Group type="102" alignment="1" attributes="0">
                                   <Group type="103" groupAlignment="1" attributes="0">
-                                      <Component id="jSendTimeFrame" alignment="0" pref="225" max="32767" attributes="1"/>
+                                      <Component id="jSendTimeFrame" alignment="0" pref="279" max="32767" attributes="1"/>
                                       <Component id="jScrollPane1" alignment="0" min="0" pref="0" max="32767" attributes="1"/>
                                       <Group type="102" alignment="0" attributes="0">
-                                          <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                                              <Component id="jLabel7" alignment="0" max="32767" attributes="1"/>
-                                              <Component id="jOnlyValidAt" alignment="0" min="-2" max="-2" attributes="1"/>
-                                          </Group>
-                                          <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
                                           <Group type="103" groupAlignment="0" attributes="0">
-                                              <Component id="jTribeTimeFrameBox" pref="152" max="32767" attributes="0"/>
-                                              <Component id="jValidAtDay" alignment="0" pref="152" max="32767" attributes="0"/>
+                                              <Component id="jLabel7" min="-2" max="-2" attributes="1"/>
+                                              <Component id="jOnlyValidAt" min="-2" max="-2" attributes="1"/>
+                                          </Group>
+                                          <EmptySpace max="-2" attributes="0"/>
+                                          <Group type="103" groupAlignment="0" attributes="0">
+                                              <Component id="jValidAtDay" min="-2" max="-2" attributes="0"/>
+                                              <Component id="jTribeTimeFrameBox" alignment="0" pref="214" max="32767" attributes="0"/>
                                           </Group>
                                       </Group>
                                   </Group>
@@ -129,19 +129,19 @@
                       <Component id="jButton1" max="32767" attributes="1"/>
                       <Component id="jSendTimeFrame" alignment="0" min="-2" max="-2" attributes="1"/>
                   </Group>
-                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
                   <Component id="jEveryDayValid" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="jOnlyValidAt" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="jValidAtDay" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                      <Component id="jOnlyValidAt" min="0" pref="0" max="32767" attributes="1"/>
+                      <Component id="jValidAtDay" alignment="0" max="32767" attributes="1"/>
                   </Group>
                   <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="jLabel7" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="jTribeTimeFrameBox" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="18" max="32767" attributes="0"/>
+                  <EmptySpace pref="22" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -263,19 +263,15 @@
             </Property>
           </Properties>
         </Component>
-        <Component class="javax.swing.JSpinner" name="jValidAtDay">
-          <Properties>
-            <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.editors2.SpinnerModelEditor">
-              <SpinnerModel initial="now" stepSize="5" type="date"/>
-            </Property>
-            <Property name="toolTipText" type="java.lang.String" value="Festes Datum, an dem der Abschickzeitrahmen gilt"/>
-            <Property name="enabled" type="boolean" value="false"/>
-          </Properties>
-        </Component>
         <Component class="de.tor.tribes.ui.components.DateTimeField" name="jSendTime">
           <Properties>
             <Property name="toolTipText" type="java.lang.String" value="Datum zu dem der erste Angriff fr&#xfc;hestens abgeschickt werden soll"/>
             <Property name="opaque" type="boolean" value="false"/>
+          </Properties>
+        </Component>
+        <Component class="de.tor.tribes.ui.components.DateTimeField" name="jValidAtDay">
+          <Properties>
+            <Property name="enabled" type="boolean" value="false"/>
           </Properties>
         </Component>
       </SubComponents>
@@ -308,8 +304,8 @@
                   </Group>
                   <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="jArriveTimeFrame" pref="268" max="32767" attributes="1"/>
-                      <Component id="jArriveTime" alignment="0" pref="268" max="32767" attributes="1"/>
+                      <Component id="jArriveTimeFrame" pref="322" max="32767" attributes="1"/>
+                      <Component id="jArriveTime" alignment="0" pref="322" max="32767" attributes="1"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>

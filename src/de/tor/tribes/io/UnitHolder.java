@@ -5,6 +5,7 @@
 package de.tor.tribes.io;
 
 import java.io.Serializable;
+import javax.lang.model.element.UnknownElementException;
 import org.jdom.Element;
 
 /**
@@ -27,6 +28,9 @@ public class UnitHolder implements Serializable {
     private double defenseArcher = 0;
     private double carry = 0;
     private double buildTime = 0;
+
+    public UnitHolder() {
+    }
 
     public UnitHolder(Element pElement) throws Exception {
         try {

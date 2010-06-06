@@ -58,7 +58,7 @@ public class SOSFormater {
             dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
         }
         buffer.append("[img]" + serverURL + "/graphic/map/attack.png[/img] " + dateFormat.format(new Date(attacks.get(0).getlArriveTime())) + "\n");
-        if (pDetailed && attacks.size() > 2) {
+        if (pDetailed) {
             buffer.append("[/size]\n");
             //add details for all attacks
             for (int i = 0; i < attacks.size(); i++) {

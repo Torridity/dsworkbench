@@ -144,12 +144,10 @@
                       <Group type="103" groupAlignment="1" attributes="0">
                           <Component id="jExportHTMLButton" alignment="1" min="-2" max="-2" attributes="1"/>
                           <Group type="102" alignment="1" attributes="0">
-                              <Component id="jExportOwnerBox" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
-                              <Component id="jExportAllyBox" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace type="separate" max="-2" attributes="0"/>
-                              <Component id="jExportPointsBox" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="45" max="32767" attributes="0"/>
+                              <Component id="jLabel5" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                              <Component id="jExportFormatField" pref="226" max="32767" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
                               <Component id="jExportUnformattedButton" min="-2" max="-2" attributes="1"/>
                               <EmptySpace min="-2" max="-2" attributes="0"/>
                               <Component id="jExportBBButton" min="-2" max="-2" attributes="1"/>
@@ -164,16 +162,19 @@
                   <Group type="102" alignment="1" attributes="0">
                       <Group type="103" groupAlignment="1" attributes="0">
                           <Component id="jExportBBButton" alignment="0" min="-2" max="-2" attributes="1"/>
-                          <Group type="103" alignment="0" groupAlignment="0" max="-2" attributes="0">
-                              <Component id="jExportOwnerBox" alignment="0" max="32767" attributes="1"/>
-                              <Component id="jExportUnformattedButton" alignment="0" min="-2" max="-2" attributes="1"/>
-                              <Component id="jExportAllyBox" alignment="1" max="32767" attributes="1"/>
-                              <Component id="jExportPointsBox" alignment="3" min="-2" pref="34" max="-2" attributes="0"/>
-                          </Group>
+                          <Component id="jExportUnformattedButton" alignment="0" min="-2" max="-2" attributes="1"/>
                       </Group>
                       <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
                       <Component id="jExportHTMLButton" min="-2" pref="35" max="-2" attributes="1"/>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="jExportFormatField" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabel5" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace pref="61" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -207,27 +208,6 @@
                 <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fireExportEvent"/>
               </Events>
             </Component>
-            <Component class="javax.swing.JCheckBox" name="jExportOwnerBox">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Besitzer"/>
-                <Property name="toolTipText" type="java.lang.String" value="Besitzer exportieren"/>
-                <Property name="opaque" type="boolean" value="false"/>
-              </Properties>
-            </Component>
-            <Component class="javax.swing.JCheckBox" name="jExportAllyBox">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Stamm"/>
-                <Property name="toolTipText" type="java.lang.String" value="Stammname exportieren"/>
-                <Property name="opaque" type="boolean" value="false"/>
-              </Properties>
-            </Component>
-            <Component class="javax.swing.JCheckBox" name="jExportPointsBox">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Dorfpunkte"/>
-                <Property name="toolTipText" type="java.lang.String" value="Dorfpunkte exportieren"/>
-                <Property name="opaque" type="boolean" value="false"/>
-              </Properties>
-            </Component>
             <Component class="javax.swing.JButton" name="jExportHTMLButton">
               <Properties>
                 <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
@@ -241,6 +221,17 @@
               <Events>
                 <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fireExportEvent"/>
               </Events>
+            </Component>
+            <Component class="javax.swing.JTextField" name="jExportFormatField">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="%TRIBE% %VILLAGE% %POINTS%"/>
+                <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;&lt;b&gt;%TRIBE%&lt;/b&gt;: Besitzer&lt;br/&gt;&#xa;&lt;b&gt;%ALLY%&lt;/b&gt;: Stamm&lt;br/&gt;&#xa;&lt;b&gt;%VILLAGE%&lt;/b&gt;: Dorfname und -koordinaten&lt;br/&gt;&#xa;&lt;b&gt;%X%&lt;/b&gt;: X-Koordinate&lt;br/&gt;&#xa;&lt;b&gt;%Y%&lt;/b&gt;: Y-Koordinate&lt;br/&gt;&#xa;&lt;b&gt;%POINTS%&lt;/b&gt;: Dorfpunkte&#xa;&lt;/html&gt;"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="jLabel5">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Format"/>
+              </Properties>
             </Component>
           </SubComponents>
         </Container>

@@ -6,9 +6,9 @@ package de.tor.tribes.types;
 
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
-import de.tor.tribes.types.TribeStatsElement.Stats;
 import de.tor.tribes.util.support.SOSFormater;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Enumeration;
@@ -74,6 +74,17 @@ public class SOSRequest {
         return buffer.toString();
     }
 
+    public String toBBCode(Village pTarget, boolean pDetailed) {
+        StringBuffer buffer = new StringBuffer();
+        Village target = pTarget;
+        TargetInformation targetInfo = getTargetInformation(target);
+        if (targetInfo == null) {
+            return "";
+        }
+        buffer.append(SOSFormater.format(target, targetInfo, pDetailed));
+        return buffer.toString();
+    }
+
     @Override
     public String toString() {
         String result = "Verteidiger: " + getDefender() + "\n";
@@ -112,6 +123,7 @@ public class SOSRequest {
          */
         public void addAttack(Village pSource, Date pArrive) {
             attacks.add(new TimedAttack(pSource, pArrive));
+            Collections.sort(attacks, SOSRequest.ARRIVE_TIME_COMPARATOR);
         }
 
         /**

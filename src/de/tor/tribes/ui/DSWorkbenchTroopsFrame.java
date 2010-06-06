@@ -7,6 +7,7 @@ package de.tor.tribes.ui;
 
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.ServerManager;
+import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.NoTag;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.Tribe;
@@ -30,6 +31,7 @@ import de.tor.tribes.ui.renderer.TribeCellRenderer;
 import de.tor.tribes.ui.renderer.VillageCellRenderer;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.TroopInformationToBBCodeFormater;
+import de.tor.tribes.util.html.VillageHTMLTooltipGenerator;
 import de.tor.tribes.util.tag.TagManager;
 import de.tor.tribes.util.tag.TagManagerListener;
 import de.tor.tribes.util.troops.TroopsManager;
@@ -178,6 +180,9 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
         jTagList = new javax.swing.JList();
         jLabel11 = new javax.swing.JLabel();
         jRelationType = new javax.swing.JCheckBox();
+        jPanel3 = new javax.swing.JPanel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        jSumPane = new javax.swing.JEditorPane();
 
         jAddTroopsDialog.setTitle("Dorf  hinzufügen");
         jAddTroopsDialog.setAlwaysOnTop(true);
@@ -251,6 +256,7 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        jTroopsTable.setToolTipText("TESTTEST");
         jTroopsTable.setOpaque(false);
         jTroopsTable.setSelectionMode(javax.swing.ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         jScrollPane1.setViewportView(jTroopsTable);
@@ -351,6 +357,27 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
             }
         });
 
+        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Summe"));
+        jPanel3.setOpaque(false);
+
+        jScrollPane3.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+
+        jSumPane.setBorder(null);
+        jSumPane.setContentType("text/html");
+        jSumPane.setEditable(false);
+        jScrollPane3.setViewportView(jSumPane);
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 138, Short.MAX_VALUE)
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 148, Short.MAX_VALUE)
+        );
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -363,34 +390,35 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jLabel4))
-                                    .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jLabel6))
-                                    .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jLabel8)))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 222, Short.MAX_VALUE)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel2)
-                                    .addComponent(jLabel11))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
+                                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel4))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel6))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel8))
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabel10)
-                                .addGap(261, 261, 261)))
+                                .addComponent(jLabel10)))
+                        .addGap(18, 18, 18)
+                        .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel2)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(39, 39, 39)
+                                .addComponent(jLabel11)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 250, Short.MAX_VALUE)
                             .addComponent(jTroopsViewTypeBox, 0, 250, Short.MAX_VALUE)
                             .addComponent(jRelationType, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 766, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 731, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addComponent(jButton2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -413,10 +441,10 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 323, Short.MAX_VALUE)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 286, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                     .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -439,8 +467,10 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
                                     .addComponent(jLabel2))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel11))))))
+                                    .addComponent(jLabel11)
+                                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 141, Short.MAX_VALUE)))
+                            .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jRelationType)
                 .addContainerGap())
@@ -450,11 +480,11 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jTroopsInformationAlwaysOnTop))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jTroopsInformationAlwaysOnTop, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -493,6 +523,7 @@ private void fireRemoveTroopsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
         vIds.add(row);
     }
     TroopsManagerTableModel.getSingleton().removeRows(vIds.toArray(new Integer[]{}));
+
     jTroopsTable.revalidate();
     jTroopsTable.repaint();//.updateUI();
 }//GEN-LAST:event_fireRemoveTroopsEvent
@@ -572,6 +603,7 @@ private void fireChangeViewTypeEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:
         }
 
         TroopsManagerTableModel.getSingleton().setViewType(index);
+        updateSumTooltip();
     }
 }//GEN-LAST:event_fireChangeViewTypeEvent
 
@@ -605,8 +637,7 @@ private void fireCopyTroopInformationToClipboardEvent(java.awt.event.MouseEvent 
         StringTokenizer t = new StringTokenizer(result, "[");
         int cnt = t.countTokens();
         if (cnt > 500) {
-            if (JOptionPaneHelper.showQuestionConfirmBox(this, "Die ausgewählten Truppeninformationen benötigen mehr als 500 BB-Codes\n"
-                    + "und können daher im Spiel (Forum/IGM/Notizen) nicht auf einmal dargestellt werden.\nTrotzdem exportieren?", "Zu viele BB-Codes", "Nein", "Ja") == JOptionPane.NO_OPTION) {
+            if (JOptionPaneHelper.showQuestionConfirmBox(this, "Die ausgewählten Truppeninformationen benötigen mehr als 500 BB-Codes\n" + "und können daher im Spiel (Forum/IGM/Notizen) nicht auf einmal dargestellt werden.\nTrotzdem exportieren?", "Zu viele BB-Codes", "Nein", "Ja") == JOptionPane.NO_OPTION) {
                 return;
             }
         }
@@ -633,7 +664,9 @@ private void fireRelationChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST
 
         for (int row : rows) {
             row = jTroopsTable.convertRowIndexToModel(row);
-            villages.add((Village) TroopsManagerTableModel.getSingleton().getValueAt(row, 1));
+            Village v = (Village) TroopsManagerTableModel.getSingleton().getValueAt(row, 1);
+            System.out.println(v);
+            villages.add(v);
         }
         return villages;
     }
@@ -678,7 +711,7 @@ private void fireRelationChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST
         jTroopsTable.invalidate();
         jTroopsTable.setModel(new DefaultTableModel());
         jTroopsTable.revalidate();
-
+        jTroopsTable.invalidate();
         jTroopsTable.setModel(TroopsManagerTableModel.getSingleton());
         TroopsManager.getSingleton().addTroopsManagerListener(this);
         //setup renderer and general view
@@ -751,13 +784,38 @@ private void fireRelationChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST
                     selection.add((Tag) tag);
                 }
                 TroopsManagerTableModel.getSingleton().setVisibleTags(selection, jRelationType.isSelected());
+                updateSumTooltip();
                 TroopsManagerTableModel.getSingleton().fireTableDataChanged();
             }
         });
 
-
-        jTroopsTable.revalidate();
+        TroopsManagerTableModel.getSingleton().updateSum();
+        updateSumTooltip();
         TroopsManager.getSingleton().forceUpdate();
+        TroopsManagerTableModel.getSingleton().fireTableDataChanged();
+        jTroopsTable.revalidate();
+    }
+
+    private void updateSumTooltip() {
+        String tooltip = "<html>";
+        tooltip += "<table style=\"background-color:#FFFFFF;font-size:95%;font-family:Verdana\">";
+        NumberFormat nf = NumberFormat.getInstance();
+        nf.setMinimumFractionDigits(0);
+        nf.setMaximumFractionDigits(0);
+        for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
+            tooltip += "<tr>";
+            tooltip += "<td><div align=\"center\"><img src=\"" + VillageHTMLTooltipGenerator.class.getResource("/res/ui/" + unit.getPlainName() + ".png") + "\"/></div></td>";
+            Integer v = TroopsManagerTableModel.getSingleton().getSummedAmounts().get(unit);
+            if (v == null) {
+                v = 0;
+            }
+            tooltip += "<td><div align=\"center\">" + nf.format(v) + "</div></td>";
+            tooltip += "</tr>";
+        }
+
+        tooltip += "</table>";
+        tooltip += "</html>";
+        jSumPane.setText(tooltip);
     }
 
     private void buildTagList() {
@@ -781,6 +839,7 @@ private void fireRelationChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST
             }
 
             jTroopsTable.revalidate();
+            updateSumTooltip();
             jTroopsTable.repaint();//.updateUI();
         } catch (Exception e) {
             logger.error("Failed to update troops table", e);
@@ -808,9 +867,12 @@ private void fireRelationChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JCheckBox jRelationType;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JEditorPane jSumPane;
     private javax.swing.JList jTagList;
     private javax.swing.JCheckBox jTroopsInformationAlwaysOnTop;
     private javax.swing.JTable jTroopsTable;

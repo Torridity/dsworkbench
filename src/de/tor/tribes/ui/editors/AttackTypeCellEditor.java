@@ -6,6 +6,7 @@ package de.tor.tribes.ui.editors;
 
 import java.awt.Component;
 import java.awt.KeyboardFocusManager;
+import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -16,6 +17,7 @@ import java.util.LinkedList;
 import java.util.List;
 import javax.swing.AbstractCellEditor;
 import javax.swing.BorderFactory;
+import javax.swing.ComboBoxEditor;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.ImageIcon;

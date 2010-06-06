@@ -90,6 +90,28 @@ public class VillageSupportFrame extends javax.swing.JFrame {
         setVisible(true);
     }
 
+    public void showSupportFrame(Village pTarget, long pArriveTime) {
+        mCurrentVillage = pTarget;
+        setTitle("Unterstützung für " + mCurrentVillage);
+        jScrollPane1.getViewport().setBackground(Constants.DS_BACK_LIGHT);
+        DefaultListModel model = new DefaultListModel();
+        for (Tag t : TagManager.getSingleton().getTags()) {
+            model.addElement(t);
+        }
+        jTagsList.setModel(model);
+        //select all
+        jTagsList.getSelectionModel().setSelectionInterval(0, TagManager.getSingleton().getTags().size() - 1);
+        SimpleDateFormat dateFormat = null;
+        if (ServerSettings.getSingleton().isMillisArrival()) {
+            dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss.SSS");
+        } else {
+            dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+        }
+        jArriveTime.setText(dateFormat.format(new Date(pArriveTime)));
+        jResultDialog.pack();
+        setVisible(true);
+    }
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -615,8 +637,7 @@ public class VillageSupportFrame extends javax.swing.JFrame {
                 StringTokenizer t = new StringTokenizer(b, "[");
                 int cnt = t.countTokens();
                 if (cnt > 500) {
-                    if (JOptionPaneHelper.showQuestionConfirmBox(jResultDialog, "Die zu exportierenden Unterstützungen benötigen mehr als 500 BB-Codes\n"
-                            + "und können daher im Spiel (Forum/IGM/Notizen) nicht auf einmal dargestellt werden.\nTrotzdem exportieren?", "Zu viele BB-Codes", "Nein", "Ja") == JOptionPane.NO_OPTION) {
+                    if (JOptionPaneHelper.showQuestionConfirmBox(jResultDialog, "Die zu exportierenden Unterstützungen benötigen mehr als 500 BB-Codes\n" + "und können daher im Spiel (Forum/IGM/Notizen) nicht auf einmal dargestellt werden.\nTrotzdem exportieren?", "Zu viele BB-Codes", "Nein", "Ja") == JOptionPane.NO_OPTION) {
                         return;
                     }
                 }

@@ -114,13 +114,9 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
                 }
             }
         });
-        jArriveTime.setModel(new javax.swing.SpinnerDateModel(new java.util.Date(), null, null, java.util.Calendar.SECOND));
-        jNewArriveSpinner.setModel(new javax.swing.SpinnerDateModel(new java.util.Date(), null, null, java.util.Calendar.SECOND));
 
-        ((DateEditor) jArriveTime.getEditor()).getFormat().applyPattern("dd.MM.yy HH:mm:ss");
-        jArriveTime.setValue(Calendar.getInstance().getTime());
-        ((DateEditor) jNewArriveSpinner.getEditor()).getFormat().applyPattern("dd.MM.yy HH:mm:ss");
-        jNewArriveSpinner.setValue(Calendar.getInstance().getTime());
+        jArriveTime.setDate(Calendar.getInstance().getTime());
+        jNewArriveSpinner.setDate(Calendar.getInstance().getTime());
         MouseListener l = new MouseListener() {
 
             @Override
@@ -255,9 +251,9 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
         jTargetVillage = new javax.swing.JFormattedTextField();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
-        jArriveTime = new javax.swing.JSpinner();
         jUnitBox = new javax.swing.JComboBox();
         jButton1 = new javax.swing.JButton();
+        jArriveTime = new de.tor.tribes.ui.components.DateTimeField();
         jTaskPane1 = new com.l2fprod.common.swing.JTaskPane();
         jTaskPaneGroup1 = new com.l2fprod.common.swing.JTaskPaneGroup();
         jButton2 = new javax.swing.JButton();
@@ -269,7 +265,6 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
         jButton6 = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
-        jNewArriveSpinner = new javax.swing.JSpinner();
         jAdeptTimeButton = new javax.swing.JButton();
         jLabel8 = new javax.swing.JLabel();
         jUnitComboBox = new javax.swing.JComboBox();
@@ -277,6 +272,7 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
         jLabel9 = new javax.swing.JLabel();
         jAttackTypeComboBox = new javax.swing.JComboBox();
         jAdeptTypeButton = new javax.swing.JButton();
+        jNewArriveSpinner = new de.tor.tribes.ui.components.DateTimeField();
         jAlwaysOnTopBox = new javax.swing.JCheckBox();
 
         jLabel5.setText("Existierender Plan");
@@ -372,9 +368,6 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
 
         jLabel4.setText("Ankunft");
 
-        jArriveTime.setModel(new javax.swing.SpinnerDateModel(new java.util.Date(1261419683565L), null, null, java.util.Calendar.MILLISECOND));
-        jArriveTime.setToolTipText("Ankunftszeit des Angriffs");
-
         jUnitBox.setToolTipText("Langsamste Einheit");
 
         jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/add.gif"))); // NOI18N
@@ -405,13 +398,11 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
                         .addComponent(jLabel3)
                         .addGap(49, 49, 49)))
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 141, Short.MAX_VALUE)
-                    .addComponent(jUnitBox, 0, 141, Short.MAX_VALUE)
-                    .addComponent(jSourceVillage, javax.swing.GroupLayout.DEFAULT_SIZE, 141, Short.MAX_VALUE)
-                    .addComponent(jTargetVillage, javax.swing.GroupLayout.DEFAULT_SIZE, 141, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jArriveTime, javax.swing.GroupLayout.DEFAULT_SIZE, 141, Short.MAX_VALUE)))
+                    .addComponent(jButton1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 206, Short.MAX_VALUE)
+                    .addComponent(jUnitBox, 0, 206, Short.MAX_VALUE)
+                    .addComponent(jSourceVillage, javax.swing.GroupLayout.DEFAULT_SIZE, 206, Short.MAX_VALUE)
+                    .addComponent(jTargetVillage, javax.swing.GroupLayout.DEFAULT_SIZE, 206, Short.MAX_VALUE)
+                    .addComponent(jArriveTime, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -425,8 +416,8 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jTargetVillage, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jLabel4)
                     .addComponent(jArriveTime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -519,8 +510,6 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
 
         jLabel7.setText("Ankunftszeit");
 
-        jNewArriveSpinner.setModel(new javax.swing.SpinnerDateModel(new java.util.Date(), null, null, java.util.Calendar.MILLISECOND));
-
         jAdeptTimeButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/checkbox.png"))); // NOI18N
         jAdeptTimeButton.setToolTipText("Ankunftszeit für alle markierten Angriffe anpassen");
         jAdeptTimeButton.setMaximumSize(new java.awt.Dimension(25, 25));
@@ -570,16 +559,16 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
                     .addComponent(jLabel8))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jNewArriveSpinner, javax.swing.GroupLayout.DEFAULT_SIZE, 141, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                        .addComponent(jNewArriveSpinner, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jAdeptTimeButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                        .addComponent(jUnitComboBox, 0, 141, Short.MAX_VALUE)
+                        .addComponent(jUnitComboBox, 0, 206, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jAdeptUnitButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                        .addComponent(jAttackTypeComboBox, 0, 141, Short.MAX_VALUE)
+                        .addComponent(jAttackTypeComboBox, 0, 206, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jAdeptTypeButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
@@ -591,8 +580,8 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jAdeptTimeButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jNewArriveSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addComponent(jNewArriveSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jAdeptUnitButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -604,7 +593,7 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
                     .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jAttackTypeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(65, Short.MAX_VALUE))
+                .addContainerGap(70, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -615,10 +604,10 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 536, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 666, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jTaskPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -628,13 +617,13 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jTaskPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 508, Short.MAX_VALUE)
+                    .addComponent(jTaskPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 509, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 298, Short.MAX_VALUE)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 299, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 199, Short.MAX_VALUE))))
                 .addContainerGap())
         );
 
@@ -687,7 +676,7 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
             JOptionPaneHelper.showWarningBox(this, "Kein gültiges Zieldorf gewählt.", "Warnung");
             return;
         }
-        Date arrive = (Date) jArriveTime.getValue();
+        Date arrive = jArriveTime.getSelectedDate();
         if (arrive.getTime() < System.currentTimeMillis()) {
             JOptionPaneHelper.showWarningBox(this, "Ankunftszeit darf nicht in der Vergangenheit liegen.", "Warnung");
             return;
@@ -880,8 +869,7 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
                 StringTokenizer t = new StringTokenizer(b, "[");
                 int cnt = t.countTokens();
                 if (cnt > 500) {
-                    if (JOptionPaneHelper.showQuestionConfirmBox(this, "Die ausgewählten Angriffe benötigen mehr als 500 BB-Codes\n"
-                            + "und können daher im Spiel (Forum/IGM/Notizen) nicht auf einmal dargestellt werden.\nTrotzdem exportieren?", "Zu viele BB-Codes", "Nein", "Ja") == JOptionPane.NO_OPTION) {
+                    if (JOptionPaneHelper.showQuestionConfirmBox(this, "Die ausgewählten Angriffe benötigen mehr als 500 BB-Codes\n" + "und können daher im Spiel (Forum/IGM/Notizen) nicht auf einmal dargestellt werden.\nTrotzdem exportieren?", "Zu viele BB-Codes", "Nein", "Ja") == JOptionPane.NO_OPTION) {
                         return;
                     }
                 }
@@ -908,8 +896,7 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
         try {
             chooser = new JFileChooser(dir);
         } catch (Exception e) {
-            JOptionPaneHelper.showErrorBox(this, "Konnte Dateiauswahldialog nicht öffnen.\nMöglicherweise verwendest du Windows Vista. Ist dies der Fall, beende DS Workbench, klicke mit der rechten Maustaste auf DSWorkbench.exe,\n"
-                    + "wähle 'Eigenschaften' und deaktiviere dort unter 'Kompatibilität' den Windows XP Kompatibilitätsmodus.", "Fehler");
+            JOptionPaneHelper.showErrorBox(this, "Konnte Dateiauswahldialog nicht öffnen.\nMöglicherweise verwendest du Windows Vista. Ist dies der Fall, beende DS Workbench, klicke mit der rechten Maustaste auf DSWorkbench.exe,\n" + "wähle 'Eigenschaften' und deaktiviere dort unter 'Kompatibilität' den Windows XP Kompatibilitätsmodus.", "Fehler");
             return;
         }
 
@@ -1016,7 +1003,7 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
             return;
         }
         if (evt.getSource() == jAdeptTimeButton) {
-            Date newArrive = (Date) jNewArriveSpinner.getValue();
+            Date newArrive = jNewArriveSpinner.getSelectedDate();
             if (newArrive.getTime() < System.currentTimeMillis()) {
                 JOptionPaneHelper.showInformationBox(this, "Ankunftszeit darf nicht in der Vergangenheit liegen.", "Information");
                 return;
@@ -1076,7 +1063,7 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
     private javax.swing.JButton jAdeptTypeButton;
     private javax.swing.JButton jAdeptUnitButton;
     private javax.swing.JCheckBox jAlwaysOnTopBox;
-    private javax.swing.JSpinner jArriveTime;
+    private de.tor.tribes.ui.components.DateTimeField jArriveTime;
     private javax.swing.JTable jAttackTable;
     private javax.swing.JComboBox jAttackTypeComboBox;
     private javax.swing.JButton jButton1;
@@ -1096,7 +1083,7 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
-    private javax.swing.JSpinner jNewArriveSpinner;
+    private de.tor.tribes.ui.components.DateTimeField jNewArriveSpinner;
     private javax.swing.JTextField jNewPlanField;
     private javax.swing.JButton jOKButton;
     private javax.swing.JPanel jPanel1;

@@ -10,17 +10,29 @@
  */
 package de.tor.tribes.ui;
 
+import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.SOSRequest;
 import de.tor.tribes.types.Tribe;
+import de.tor.tribes.types.UnknownUnit;
 import de.tor.tribes.types.Village;
+import de.tor.tribes.ui.models.AttackManagerTableModel;
+import de.tor.tribes.ui.renderer.DateCellRenderer;
 import de.tor.tribes.util.Constants;
+import de.tor.tribes.util.JOptionPaneHelper;
+import de.tor.tribes.util.ServerSettings;
+import de.tor.tribes.util.attack.AttackManager;
 import de.tor.tribes.util.parser.SOSParser;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Point;
+import java.awt.Toolkit;
+import java.awt.datatransfer.StringSelection;
+import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.LinkedList;
 import java.util.List;
 import javax.swing.DefaultListModel;
 import javax.swing.JTable;
@@ -28,13 +40,15 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
+import org.apache.log4j.Logger;
 
 /**
- *
+ *@TODO (DIFF) Implemented SOS analyzer
  * @author Torridity
  */
 public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
 
+    private static Logger logger = Logger.getLogger("SOSRequestAnalyzer ");
     public static DSWorkbenchSOSRequestAnalyzer SINGLETON = null;
     private Hashtable<Tribe, SOSRequest> currentRequests;
 
@@ -89,6 +103,9 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
         jTaskPane1 = new com.l2fprod.common.swing.JTaskPane();
         jTaskPaneGroup1 = new com.l2fprod.common.swing.JTaskPaneGroup();
         jCleanupAttacksButton = new javax.swing.JButton();
+        jCleanupAttacksButton1 = new javax.swing.JButton();
+        jCleanupAttacksButton2 = new javax.swing.JButton();
+        jCleanupAttacksButton3 = new javax.swing.JButton();
 
         setTitle("SOS Analyzer");
 
@@ -106,7 +123,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
         });
         jScrollPane1.setViewportView(jSosTextField);
 
-        jStatusLabel.setText("Bitte SOS Anfrage in Eingbefeld einfügen");
+        jStatusLabel.setText("Bitte SOS Anfrage in Eingabefeld einfügen");
         jStatusLabel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Gefundene SOS Anfragen"));
@@ -268,21 +285,64 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
         percentLayout1.setOrientation(1);
         jTaskPane1.setLayout(percentLayout1);
 
+        jTaskPaneGroup1.setTitle("Übertragen");
         com.l2fprod.common.swing.PercentLayout percentLayout2 = new com.l2fprod.common.swing.PercentLayout();
         percentLayout2.setOrientation(1);
         jTaskPaneGroup1.getContentPane().setLayout(percentLayout2);
 
         jCleanupAttacksButton.setBackground(new java.awt.Color(239, 235, 223));
-        jCleanupAttacksButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/garbage.png"))); // NOI18N
+        jCleanupAttacksButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_clipboardBB.png"))); // NOI18N
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("de/tor/tribes/ui/Bundle"); // NOI18N
         jCleanupAttacksButton.setText(bundle.getString("DSWorkbenchAttackFrame.jCleanupAttacksButton.text")); // NOI18N
         jCleanupAttacksButton.setToolTipText(bundle.getString("DSWorkbenchAttackFrame.jCleanupAttacksButton.toolTipText")); // NOI18N
         jCleanupAttacksButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jCleanupAttacksButtonfireCleanUpAttacksEvent(evt);
+                fireCopySupportsToClipboardEvent(evt);
             }
         });
         jTaskPaneGroup1.getContentPane().add(jCleanupAttacksButton);
+
+        jCleanupAttacksButton1.setBackground(new java.awt.Color(239, 235, 223));
+        jCleanupAttacksButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/support_tool.png"))); // NOI18N
+        jCleanupAttacksButton1.setText(bundle.getString("DSWorkbenchAttackFrame.jCleanupAttacksButton.text")); // NOI18N
+        jCleanupAttacksButton1.setToolTipText(bundle.getString("DSWorkbenchAttackFrame.jCleanupAttacksButton.toolTipText")); // NOI18N
+        jCleanupAttacksButton1.setMaximumSize(new java.awt.Dimension(59, 35));
+        jCleanupAttacksButton1.setMinimumSize(new java.awt.Dimension(59, 35));
+        jCleanupAttacksButton1.setPreferredSize(new java.awt.Dimension(59, 35));
+        jCleanupAttacksButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireOpenSupportToolEvent(evt);
+            }
+        });
+        jTaskPaneGroup1.getContentPane().add(jCleanupAttacksButton1);
+
+        jCleanupAttacksButton2.setBackground(new java.awt.Color(239, 235, 223));
+        jCleanupAttacksButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/re-time.png"))); // NOI18N
+        jCleanupAttacksButton2.setText(bundle.getString("DSWorkbenchAttackFrame.jCleanupAttacksButton.text")); // NOI18N
+        jCleanupAttacksButton2.setToolTipText(bundle.getString("DSWorkbenchAttackFrame.jCleanupAttacksButton.toolTipText")); // NOI18N
+        jCleanupAttacksButton2.setMaximumSize(new java.awt.Dimension(59, 35));
+        jCleanupAttacksButton2.setMinimumSize(new java.awt.Dimension(59, 35));
+        jCleanupAttacksButton2.setPreferredSize(new java.awt.Dimension(59, 35));
+        jCleanupAttacksButton2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireMoveAttackToReTimeToolEvent(evt);
+            }
+        });
+        jTaskPaneGroup1.getContentPane().add(jCleanupAttacksButton2);
+
+        jCleanupAttacksButton3.setBackground(new java.awt.Color(239, 235, 223));
+        jCleanupAttacksButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_overview.png"))); // NOI18N
+        jCleanupAttacksButton3.setText(bundle.getString("DSWorkbenchAttackFrame.jCleanupAttacksButton.text")); // NOI18N
+        jCleanupAttacksButton3.setToolTipText(bundle.getString("DSWorkbenchAttackFrame.jCleanupAttacksButton.toolTipText")); // NOI18N
+        jCleanupAttacksButton3.setMaximumSize(new java.awt.Dimension(59, 35));
+        jCleanupAttacksButton3.setMinimumSize(new java.awt.Dimension(59, 35));
+        jCleanupAttacksButton3.setPreferredSize(new java.awt.Dimension(59, 35));
+        jCleanupAttacksButton3.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireCopyToAttackViewEvent(evt);
+            }
+        });
+        jTaskPaneGroup1.getContentPane().add(jCleanupAttacksButton3);
 
         jTaskPane1.add(jTaskPaneGroup1);
 
@@ -355,7 +415,6 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
     }//GEN-LAST:event_fireSosTextChangedEvent
 
     private void fireDefenderSelectionChangedEvent(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_fireDefenderSelectionChangedEvent
-
         Tribe t = (Tribe) jDefenderList.getSelectedValue();
         if (t == null || currentRequests == null) {
             return;
@@ -379,7 +438,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
         DefaultTableModel model = new javax.swing.table.DefaultTableModel(
                 new Object[][]{},
                 new String[]{
-                    "Herkunft", "Einheit", "Ankunft"
+                    "Angreifer", "Herkunft", "Ankunft"
                 }) {
 
             Class[] types = new Class[]{
@@ -396,6 +455,34 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
         for (Object o : targets) {
             Village target = (Village) o;
             SOSRequest request = currentRequests.get(target.getTribe());
+            if (target == null) {
+                return;
+            }
+            if (request == null) {
+                jTroopsInfoField.setText("<html>Fehler beim Lesen der Anfrage. M&ouml;glicherweise wurde das Dorf geadelt.<BR/><u>Aktueller Besitzer:</u> " + target.getTribe() + "</html>");
+                jWallLevelText.setText(Integer.toString(0));
+                jWallLevelBar.setValue(0);
+                jAttacksTable.setModel(model);
+
+                TableRowSorter<TableModel> attackSorter = new TableRowSorter<TableModel>(jAttacksTable.getModel());
+                jAttacksTable.setRowSorter(attackSorter);
+                DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
+
+                    @Override
+                    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                        Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
+                        DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
+                        r.setText("<html><b>" + r.getText() + "</b></html>");
+                        c.setBackground(Constants.DS_BACK);
+                        return c;
+                    }
+                };
+                for (int i = 0; i < jAttacksTable.getColumnCount(); i++) {
+                    jAttacksTable.getColumn(jAttacksTable.getColumnName(i)).setHeaderRenderer(headerRenderer);
+                }
+                return;
+            }
+            jAttacksTable.getTableHeader().setReorderingAllowed(false);
             SOSRequest.TargetInformation info = request.getTargetInformation(target);
             int wall = info.getWallLevel();
             jWallLevelText.setText(Integer.toString(wall));
@@ -421,6 +508,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
 
         jTroopsInfoField.setText("<html>" + troopInfo + "</html>");
         jAttacksTable.setModel(model);
+        jAttacksTable.setDefaultRenderer(Date.class, new DateCellRenderer());
         TableRowSorter<TableModel> attackSorter = new TableRowSorter<TableModel>(jAttacksTable.getModel());
         jAttacksTable.setRowSorter(attackSorter);
         DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
@@ -440,8 +528,255 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
         }
     }//GEN-LAST:event_fireTargetChangedEvent
 
-    private void jCleanupAttacksButtonfireCleanUpAttacksEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jCleanupAttacksButtonfireCleanUpAttacksEvent
-    }//GEN-LAST:event_jCleanupAttacksButtonfireCleanUpAttacksEvent
+    private void fireCopySupportsToClipboardEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCopySupportsToClipboardEvent
+        if (currentRequests == null) {
+            return;
+        }
+        try {
+            Object[] targetVillages = jTargetList.getSelectedValues();
+            StringBuffer buffer = new StringBuffer();
+            if (targetVillages != null && targetVillages.length > 0) {
+                //copy single target villages
+                List<Village> relevantTargets = new LinkedList<Village>();
+                for (Object o : targetVillages) {
+                    relevantTargets.add((Village) o);
+                }
+                Enumeration<Tribe> requestKeys = currentRequests.keys();
+
+                while (requestKeys.hasMoreElements()) {
+                    Tribe t = requestKeys.nextElement();
+                    SOSRequest request = currentRequests.get(t);
+                    Enumeration<Village> targets = request.getTargets();
+                    while (targets.hasMoreElements()) {
+                        Village target = targets.nextElement();
+                        if (relevantTargets.contains(target)) {
+                            String bbCode = request.toBBCode(target, true);
+                            buffer.append(bbCode.trim() + "\n");
+                        }
+                    }
+                }
+            } else {
+                Object[] targetTribes = jDefenderList.getSelectedValues();
+                if (targetTribes == null && targetTribes.length == 0) {
+                    JOptionPaneHelper.showInformationBox(this, "Keine Verteidiger oder Ziele ausgewählt.", "Fehler");
+                    return;
+                }
+
+                /*
+                [b]Verteidiger[/b]
+                Name: [player]Rattenfutter[/player]
+                Stamm: [ally][KdS][/ally]
+                Punkte: 2668029
+
+                [b]Angegriffenes Dorf[/b]
+                [coord]477|849[/coord]
+                Punkte: 10019
+                Stufe des Walls: 20
+
+
+                [b]Anwesende Truppen[/b]
+                [unit]spear[/unit] 4000
+                [unit]sword[/unit] 3700
+                [unit]archer[/unit] 3159
+                [unit]spy[/unit] 400
+                [unit]heavy[/unit] 1500
+
+                [b]1. Angriff[/b]
+                Angreifer: [player]Rattenfutter[/player]
+                Stamm: [ally][KdS][/ally]
+                Punkte: 2668029
+                Herkunft: [coord]476|850[/coord]
+                Ankunftszeit: 03.06.10 15:00:38:268
+                [b]2. Angriff[/b]
+                Angreifer: [player]Rattenfutter[/player]
+                Stamm: [ally][KdS][/ally]
+                Punkte: 2668029
+                Herkunft: [coord]476|850[/coord]
+                Ankunftszeit: 03.06.10 15:01:12:146
+                [b]Angegriffenes Dorf[/b]
+                [coord]474|850[/coord]
+                Punkte: 10019
+                Stufe des Walls: 20
+
+
+                [b]Anwesende Truppen[/b]
+                [unit]spear[/unit] 1700
+                [unit]sword[/unit] 1700
+                [unit]archer[/unit] 1998
+                [unit]spy[/unit] 165
+                [unit]heavy[/unit] 761
+
+                [b]1. Angriff[/b]
+                Angreifer: [player]Rattenfutter[/player]
+                Stamm: [ally][KdS][/ally]
+                Punkte: 2668029
+                Herkunft: [coord]476|850[/coord]
+                Ankunftszeit: 03.06.10 15:11:22:560
+                [b]Angegriffenes Dorf[/b]
+                [coord]477|852[/coord]
+                Punkte: 10019
+                Stufe des Walls: 20
+
+
+                [b]Anwesende Truppen[/b]
+                [unit]axe[/unit] 2956
+                [unit]spy[/unit] 200
+                [unit]light[/unit] 1500
+                [unit]ram[/unit] 300
+                [unit]catapult[/unit] 50
+
+                [b]1. Angriff[/b]
+                Angreifer: [player]Rattenfutter[/player]
+                Stamm: [ally][KdS][/ally]
+                Punkte: 2668029
+                Herkunft: [coord]476|850[/coord]
+                Ankunftszeit: 03.06.10 15:15:49:234
+                 */
+                for (Object o : targetTribes) {
+                    Tribe t = (Tribe) o;
+                    SOSRequest request = currentRequests.get(t);
+                    String bbCode = request.toBBCode(true);
+                    buffer.append(bbCode.trim() + "\n");
+                }
+            }
+
+
+            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(buffer.toString()), null);
+            String result = "Daten in Zwischenablage kopiert.";
+            JOptionPaneHelper.showInformationBox(this, result, "Information");
+        } catch (Exception e) {
+            logger.error("Error while copying support to clipboard", e);
+            JOptionPaneHelper.showInformationBox(this, "Fehler beim kopieren in die Zwischenablage", "Fehler");
+        }
+    }//GEN-LAST:event_fireCopySupportsToClipboardEvent
+
+    private void fireOpenSupportToolEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireOpenSupportToolEvent
+        if (currentRequests == null) {
+            return;
+        }
+
+        Village targetVillage = (Village) jTargetList.getSelectedValue();
+        if (targetVillage == null) {
+            return;
+        }
+
+        Tribe t = targetVillage.getTribe();
+        SOSRequest request = currentRequests.get(t);
+        if (request == null) {
+            JOptionPaneHelper.showInformationBox(this, "Fehler beim Lesen der Anfrage. Möglicherweise wurde das Dorf bereits geadelt.", "Fehler");
+            return;
+        }
+        SOSRequest.TargetInformation info = request.getTargetInformation(targetVillage);
+        if (info.getAttacks() == null || info.getAttacks().size() == 0) {
+            return;
+        }
+        SOSRequest.TimedAttack attack = info.getAttacks().get(0);
+
+        VillageSupportFrame.getSingleton().showSupportFrame(targetVillage, attack.getlArriveTime());
+
+    }//GEN-LAST:event_fireOpenSupportToolEvent
+
+    private void fireMoveAttackToReTimeToolEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireMoveAttackToReTimeToolEvent
+        boolean haveTarget = false;
+        boolean haveSource = false;
+        boolean haveArrive = false;
+        try {
+            Village target = (Village) jTargetList.getSelectedValue();
+            if (target == null) {
+                throw new Exception("No target selected");
+            }
+            haveTarget = true;
+            int row = jAttacksTable.convertRowIndexToModel(jAttacksTable.getSelectedRow());
+
+            Village source = (Village) jAttacksTable.getValueAt(row, 1);
+            haveSource = true;
+            Date arrive = (Date) jAttacksTable.getValueAt(row, 2);
+            haveArrive = true;
+            StringBuffer b = new StringBuffer();
+            b.append("Herkunft: " + source.toString() + "\n");
+            b.append("Ziel: " + target.toString() + "\n");
+            SimpleDateFormat f = null;
+            if (ServerSettings.getSingleton().isMillisArrival()) {
+                f = new SimpleDateFormat("dd.MM.yy HH:mm:ss:SSS");
+            } else {
+                f = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
+            }
+            b.append("Ankunft: " + f.format(arrive) + "\n");
+            DSWorkbenchReTimerFrame.getSingleton().setCustomAttack(b.toString());
+            if (!DSWorkbenchReTimerFrame.getSingleton().isVisible()) {
+                DSWorkbenchReTimerFrame.getSingleton().setVisible(true);
+            }
+
+        } catch (Exception e) {
+            logger.error("Failed to submit SOS attack to re-time tool", e);
+            String message = "Fehler beim Übertragen in das ReTime Werkzeug.";
+            if (!haveTarget) {
+                message += "\nKein Ziel ausgewählt?";
+            } else if (!haveSource || !haveArrive) {
+                message += "\nKeinen Angriff ausgewählt?";
+            }
+            JOptionPaneHelper.showErrorBox(this, message, "Fehler");
+        }
+
+    }//GEN-LAST:event_fireMoveAttackToReTimeToolEvent
+
+    private void fireCopyToAttackViewEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCopyToAttackViewEvent
+
+        Tribe defender = (Tribe) jDefenderList.getSelectedValue();
+        Object[] aTargets = (Object[]) jTargetList.getSelectedValues();
+        int[] rows = jAttacksTable.getSelectedRows();
+
+        List<Village> sources = new LinkedList<Village>();
+        if (rows != null && rows.length > 0) {
+            for (int row : rows) {
+                int r = jAttacksTable.convertRowIndexToModel(row);
+                Village source = (Village) jAttacksTable.getValueAt(r, 1);
+                sources.add(source);
+            }
+        }
+
+        List<Village> targets = new LinkedList<Village>();
+        if (aTargets != null && aTargets.length > 0) {
+            for (Object target : aTargets) {
+                targets.add((Village) target);
+            }
+        }
+        if (defender == null) {
+            JOptionPaneHelper.showInformationBox(this, "Kein Verteidiger gewählt", "Fehler");
+            return;
+        }
+
+        //build attacks
+        List<Attack> attacks = new LinkedList<Attack>();
+        SOSRequest request = currentRequests.get(defender);
+
+        //use all targets
+        Enumeration<Village> targetEnum = request.getTargets();
+        while (targetEnum.hasMoreElements()) {
+            Village target = targetEnum.nextElement();
+            if (targets.isEmpty() || targets.contains(target)) {
+                SOSRequest.TargetInformation info = request.getTargetInformation(target);
+                List<SOSRequest.TimedAttack> targetAttacks = info.getAttacks();
+                for (SOSRequest.TimedAttack ta : targetAttacks) {
+                    if (!sources.isEmpty() && sources.contains(ta.getSource())) {
+                        Attack a = new Attack();
+                        a.setSource(ta.getSource());
+                        a.setTarget(target);
+                        a.setArriveTime(new Date(ta.getlArriveTime()));
+                        a.setUnit(UnknownUnit.getSingleton());
+                        a.setType(Attack.NO_TYPE);
+                        attacks.add(a);
+                    }
+                }
+            }
+        }
+
+        for (Attack a : attacks) {
+            AttackManager.getSingleton().addAttackFast(a.getSource(), a.getTarget(), a.getUnit(), a.getArriveTime());
+        }
+        AttackManager.getSingleton().forceUpdate(null);
+        // DSWorkbenchAttackFrame.getSingleton().fireAttacksChangedEvent(null);
+    }//GEN-LAST:event_fireCopyToAttackViewEvent
 
     private void updateView() {
         // currentRequests
@@ -484,6 +819,9 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
     private javax.swing.JTable jAttacksTable;
     private javax.swing.JScrollPane jAttacksTableScrollPanel;
     private javax.swing.JButton jCleanupAttacksButton;
+    private javax.swing.JButton jCleanupAttacksButton1;
+    private javax.swing.JButton jCleanupAttacksButton2;
+    private javax.swing.JButton jCleanupAttacksButton3;
     private javax.swing.JList jDefenderList;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;

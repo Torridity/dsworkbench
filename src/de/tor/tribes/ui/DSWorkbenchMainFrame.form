@@ -690,19 +690,6 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fireToolsActionEvent"/>
               </Events>
             </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="jSupportCoordinator">
-              <Properties>
-                <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                  <Color blue="df" green="eb" red="ef" type="rgb"/>
-                </Property>
-                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="DSWorkbenchMainFrame.jSupportCoordinator.text_1" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
-                </Property>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fireToolsActionEvent"/>
-              </Events>
-            </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="jSOSAnalyzerItem">
               <Properties>
                 <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
@@ -1082,7 +1069,7 @@
                                   <Component id="jRefreshButton" min="-2" max="-2" attributes="1"/>
                                   <Component id="jCenterCoordinateIngame" min="-2" max="-2" attributes="1"/>
                               </Group>
-                              <EmptySpace max="32767" attributes="0"/>
+                              <EmptySpace pref="12" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -1568,13 +1555,13 @@
                           <Group type="102" alignment="1" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="1" attributes="0">
-                                  <Component id="jCurrentPlayer" alignment="0" max="32767" attributes="0"/>
-                                  <Component id="jCurrentPlayerVillages" alignment="0" pref="155" max="32767" attributes="0"/>
+                                  <Component id="jCurrentPlayer" alignment="0" pref="218" max="32767" attributes="0"/>
+                                  <Component id="jCurrentPlayerVillages" alignment="0" pref="218" max="32767" attributes="0"/>
                                   <Group type="102" alignment="1" attributes="0">
                                       <Component id="jCurrentToolLabel" min="-2" max="-2" attributes="1"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="jButton1" min="-2" max="-2" attributes="1"/>
-                                      <EmptySpace pref="27" max="32767" attributes="0"/>
+                                      <EmptySpace pref="90" max="32767" attributes="0"/>
                                       <Component id="jCenterIngameButton" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="jOnlineLabel" min="-2" max="-2" attributes="0"/>
@@ -1856,7 +1843,7 @@
                                   <Component id="jHighlightTribeVillages" alignment="0" max="32767" attributes="1"/>
                                   <Component id="jShowMapPopup" alignment="0" max="32767" attributes="1"/>
                               </Group>
-                              <EmptySpace pref="17" max="32767" attributes="0"/>
+                              <EmptySpace pref="16" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>

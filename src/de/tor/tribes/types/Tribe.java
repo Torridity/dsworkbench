@@ -22,7 +22,7 @@ import java.util.StringTokenizer;
  *
  * @author Charon
  */
-public class Tribe implements Comparable,Serializable {
+public class Tribe implements Comparable, Serializable {
 
     private int id = 0;
     private String name = null;

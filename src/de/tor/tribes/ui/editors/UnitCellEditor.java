@@ -6,6 +6,7 @@ package de.tor.tribes.ui.editors;
 
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
+import de.tor.tribes.types.UnknownUnit;
 import de.tor.tribes.ui.renderer.UnitListCellRenderer;
 import java.awt.Component;
 import java.awt.KeyboardFocusManager;
@@ -48,6 +49,7 @@ public class UnitCellEditor extends AbstractCellEditor implements TableCellEdito
             public void processFocusEvent(FocusEvent fe) {
             }
         };
+        model.addElement(UnknownUnit.getSingleton());
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
             model.addElement(unit);
         }
@@ -89,8 +91,6 @@ public class UnitCellEditor extends AbstractCellEditor implements TableCellEdito
     public Object getCellEditorValue() {
         return comboComponent.getSelectedItem();
     }
-
-
 
     @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {

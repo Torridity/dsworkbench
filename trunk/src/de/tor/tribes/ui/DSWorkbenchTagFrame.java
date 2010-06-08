@@ -17,6 +17,7 @@ import de.tor.tribes.types.TagMapMarker;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.editors.TagMapMarkerCellEditor;
 import de.tor.tribes.ui.models.TagTableModel;
+import de.tor.tribes.ui.renderer.AlternatingColorCellRenderer;
 import de.tor.tribes.ui.renderer.SortableTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.TagMapMarkerRenderer;
 import de.tor.tribes.util.Constants;
@@ -65,31 +66,18 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
         } catch (Exception e) {
             //setting not available
         }
-        mHeaderRenderer = new SortableTableHeaderRenderer();/*new LinkedList<TableCellRenderer>();
-
-        DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
-
-        @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-        Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
-        c.setBackground(Constants.DS_BACK);
-        DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
-        r.setText("<html><b>" + r.getText() + "</b></html>");
-        return c;
-        }
-        };*/
+        mHeaderRenderer = new SortableTableHeaderRenderer();
 
         jTagTable.setColumnSelectionAllowed(false);
         jTagTable.setModel(TagTableModel.getSingleton());
         TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>();
         jTagTable.setRowSorter(sorter);
 
-        /*for (int i = 0; i < jTagTable.getColumnCount(); i++) {
-        mHeaderRenderers.add(mHeaderRenderer);
-        }*/
-
         jTagTable.setDefaultRenderer(TagMapMarker.class, new TagMapMarkerRenderer());
         jTagTable.setDefaultEditor(TagMapMarker.class, new TagMapMarkerCellEditor());
+        jTagTable.setDefaultRenderer(String.class, new AlternatingColorCellRenderer());
+        jTagTable.setDefaultRenderer(Integer.class, new AlternatingColorCellRenderer());
+        jTagTable.setDefaultRenderer(Boolean.class, new AlternatingColorCellRenderer());
 
         MouseListener l = new MouseListener() {
 

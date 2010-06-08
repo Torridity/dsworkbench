@@ -28,13 +28,24 @@ public class UnitCellRenderer extends JComboBox implements TableCellRenderer {
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         setModel(new DefaultComboBoxModel(new Object[]{value}));
         setBorder(BorderFactory.createEmptyBorder());
-        if (isSelected) {
+        if (!isSelected) {
+            if (row % 2 == 0) {
+                setBackground(Constants.DS_ROW_B);
+            } else {
+                setBackground(Constants.DS_ROW_A);
+            }
+        } else {
             setForeground(table.getSelectionForeground());
             super.setBackground(table.getSelectionBackground());
-        } else {
-            setBackground(table.getBackground());
-            setForeground(table.getForeground());
         }
+
+        /*if (isSelected) {
+        setForeground(table.getSelectionForeground());
+        super.setBackground(table.getSelectionBackground());
+        } else {
+        setBackground(table.getBackground());
+        setForeground(table.getForeground());
+        }*/
         setSelectedItem(value);
         return this;
     }

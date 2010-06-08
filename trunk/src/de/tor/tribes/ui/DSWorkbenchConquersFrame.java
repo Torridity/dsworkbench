@@ -127,7 +127,7 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
         pack();
     }
 
-    public JPanel getView(){
+    public JPanel getView() {
         return jConquersPanel;
     }
 
@@ -862,11 +862,11 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
         List<Ally> allies = new LinkedList<Ally>();
         while (allyIds.hasMoreElements()) {
             Ally a = DataHolder.getSingleton().getAllies().get(allyIds.nextElement());
-            if (a != null &&
-                    (pFilter == null ||
-                    (pFilter.length() == 0) ||
-                    (a.getName().toLowerCase().indexOf(pFilter.toLowerCase()) >= 0) ||
-                    (a.getTag().toLowerCase().indexOf(pFilter.toLowerCase()) >= 0))) {
+            if (a != null
+                    && (pFilter == null
+                    || (pFilter.length() == 0)
+                    || (a.getName().toLowerCase().indexOf(pFilter.toLowerCase()) >= 0)
+                    || (a.getTag().toLowerCase().indexOf(pFilter.toLowerCase()) >= 0))) {
                 allies.add(a);
             }
 
@@ -881,10 +881,10 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
         List<Tribe> tribes = new LinkedList<Tribe>();
         while (tribeIds.hasMoreElements()) {
             Tribe t = DataHolder.getSingleton().getTribes().get(tribeIds.nextElement());
-            if (t != null &&
-                    (pFilter == null ||
-                    (pFilter.length() == 0) ||
-                    (t.getName().toLowerCase().indexOf(pFilter.toLowerCase()) >= 0))) {
+            if (t != null
+                    && (pFilter == null
+                    || (pFilter.length() == 0)
+                    || (t.getName().toLowerCase().indexOf(pFilter.toLowerCase()) >= 0))) {
                 tribes.add(t);
             }
 
@@ -961,6 +961,13 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
                 Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
                 try {
                     row = jConquersTable.convertRowIndexToModel(row);
+                    if (!isSelected) {
+                        if (row % 2 == 0) {
+                            c.setBackground(Constants.DS_ROW_B);
+                        } else {
+                            c.setBackground(Constants.DS_ROW_A);
+                        }
+                    }
                     Conquer con = ConquerManager.getSingleton().getConquer(row);
                     Tribe loser = DataHolder.getSingleton().getTribes().get(con.getLoser());
                     if (loser == null) {
@@ -969,12 +976,13 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
                         Tribe winner = DataHolder.getSingleton().getTribes().get(con.getWinner());
                         if (loser != null && winner != null) {
                             if (loser.getId() == winner.getId()) {
+                                //self enoblement
                                 c.setBackground(Color.GREEN);
                             } else if (loser.getAllyID() == winner.getAllyID()) {
+                                //internal enoblement v1?
                                 if (loser.getAllyID() != 0 && winner.getAllyID() != 0) {
                                     c.setBackground(Color.CYAN);
                                 }
-
                             } else {
                                 Ally loserAlly = loser.getAlly();
                                 Ally winnerAlly = winner.getAlly();
@@ -982,9 +990,9 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
                                     String lAllyName = loserAlly.getName().toLowerCase();
                                     String wAllyName = winnerAlly.getName().toLowerCase();
                                     if (lAllyName.indexOf(wAllyName) > -1 || wAllyName.indexOf(lAllyName) > -1) {
+                                        //internal enoblement v2
                                         c.setBackground(Color.CYAN);
                                     }
-
                                 }
                             }
                         }

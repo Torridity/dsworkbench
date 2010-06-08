@@ -6,13 +6,10 @@ package de.tor.tribes.ui.renderer;
 
 import de.tor.tribes.util.Constants;
 import java.awt.Component;
-import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
 import javax.swing.JTable;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import org.apache.log4j.Logger;
 
@@ -22,22 +19,8 @@ import org.apache.log4j.Logger;
 public class AttackTypeCellRenderer extends JComboBox implements TableCellRenderer {
 
     private static Logger logger = Logger.getLogger("AttackDialog (TypeRenderer)");
-   // private DefaultTableCellRenderer renderer = new DefaultTableCellRenderer();
-    //private List<ImageIcon> icons = null;
 
     public AttackTypeCellRenderer() {
-        /*try {
-        icons = new LinkedList<ImageIcon>();
-        icons.add(new ImageIcon("./graphics/icons/axe.png"));
-        icons.add(new ImageIcon("./graphics/icons/snob.png"));
-        icons.add(new ImageIcon("./graphics/icons/def.png"));
-        icons.add(new ImageIcon("./graphics/icons/fake.png"));
-        icons.add(new ImageIcon("./graphics/icons/def_fake.png"));
-        icons.add(new ImageIcon("./graphics/icons/spy.png"));
-        } catch (Exception e) {
-        logger.warn("Failed to load attack type icons");
-        icons = null;
-        }*/
         super();
         setRenderer(new AttackTypeListCellRenderer());
         setBackground(Constants.DS_BACK);
@@ -71,13 +54,24 @@ public class AttackTypeCellRenderer extends JComboBox implements TableCellRender
 
         setModel(new DefaultComboBoxModel(new Object[]{value}));
         setBorder(BorderFactory.createEmptyBorder());
-        if (isSelected) {
+        if (!isSelected) {
+            if (row % 2 == 0) {
+                setBackground(Constants.DS_ROW_B);
+            } else {
+                setBackground(Constants.DS_ROW_A);
+            }
+        } else {
             setForeground(table.getSelectionForeground());
             super.setBackground(table.getSelectionBackground());
-        } else {
-            setBackground(table.getBackground());
-            setForeground(table.getForeground());
         }
+
+        /* if (isSelected) {
+        setForeground(table.getSelectionForeground());
+        super.setBackground(table.getSelectionBackground());
+        } else {
+        setBackground(table.getBackground());
+        setForeground(table.getForeground());
+        }*/
         setSelectedItem(value);
         return this;
     }

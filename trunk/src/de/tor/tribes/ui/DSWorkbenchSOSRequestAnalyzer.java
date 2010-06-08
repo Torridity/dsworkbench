@@ -35,6 +35,7 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.DefaultListModel;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -562,6 +563,8 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
                     return;
                 }
 
+                boolean showDetails = (JOptionPaneHelper.showQuestionConfirmBox(this, "Sollen alle Einzelangriffe aufgeführt werden?", "Detailierter Export", "Nein", "Ja") == JOptionPane.YES_OPTION);
+
                 /*
                 [b]Verteidiger[/b]
                 Name: [player]Rattenfutter[/player]
@@ -635,7 +638,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
                 for (Object o : targetTribes) {
                     Tribe t = (Tribe) o;
                     SOSRequest request = currentRequests.get(t);
-                    String bbCode = request.toBBCode(true);
+                    String bbCode = request.toBBCode(showDetails);
                     buffer.append(bbCode.trim() + "\n");
                 }
             }

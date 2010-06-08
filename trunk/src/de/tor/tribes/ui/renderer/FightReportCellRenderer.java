@@ -5,6 +5,7 @@
 package de.tor.tribes.ui.renderer;
 
 import de.tor.tribes.types.FightReport;
+import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.html.FightReportHTMLToolTipGenerator;
 import java.awt.Component;
 import javax.swing.ImageIcon;
@@ -39,6 +40,13 @@ public class FightReportCellRenderer extends DefaultTableCellRenderer {
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         JLabel label = (JLabel) c;
+        if (!isSelected) {
+            if (row % 2 == 0) {
+                label.setBackground(Constants.DS_ROW_B);
+            } else {
+                label.setBackground(Constants.DS_ROW_A);
+            }
+        }
         FightReport rep = (FightReport) value;
         try {
             label.setText("");

@@ -16,6 +16,7 @@ import de.tor.tribes.types.NoAlly;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.renderer.AllyCellRenderer;
+import de.tor.tribes.ui.renderer.AlternatingColorCellRenderer;
 import de.tor.tribes.ui.renderer.SortableTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.TribeCellRenderer;
 import de.tor.tribes.ui.renderer.VillageCellRenderer;
@@ -145,24 +146,30 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
                 Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-                if (row % 2 == 0 && !isSelected) {
-                    c.setBackground(Constants.DS_BACK_LIGHT);
+                JLabel label = (JLabel) c;
+                if (!isSelected) {
+                    if (row % 2 == 0) {
+                        label.setBackground(Constants.DS_ROW_B);
+                    } else {
+                        label.setBackground(Constants.DS_ROW_A);
+                    }
                 }
                 NumberFormat nf = NumberFormat.getInstance();
                 nf.setMaximumFractionDigits(0);
                 nf.setMinimumFractionDigits(0);
-                JLabel f = (JLabel) c;
-                f.setText(nf.format(value));
 
-                return f;
+                label.setText(nf.format(value));
+
+                return label;
             }
         };
         jRankTable.setDefaultRenderer(Integer.class, renderer);
         jRankTable.setDefaultRenderer(Double.class, renderer);
-        /*  jRankTable.setDefaultRenderer(Village.class, new VillageCellRenderer());
+        jRankTable.setDefaultRenderer(Village.class, new VillageCellRenderer());
         jRankTable.setDefaultRenderer(Tribe.class, new TribeCellRenderer());
-        jRankTable.setDefaultRenderer(Ally.class, new AllyCellRenderer());*/
-        DefaultTableCellRenderer renderer2 = new DefaultTableCellRenderer() {
+        jRankTable.setDefaultRenderer(Ally.class, new AllyCellRenderer());
+        jRankTable.setDefaultRenderer(String.class, new AlternatingColorCellRenderer());
+   /*     DefaultTableCellRenderer renderer2 = new DefaultTableCellRenderer() {
 
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
@@ -183,7 +190,7 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame {
             }
         };
         jRankTable.setDefaultRenderer(Object.class, renderer2);
-
+*/
         sorter.toggleSortOrder(0);
     }
 
@@ -790,4 +797,4 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame {
     private javax.swing.JComboBox jRankTypeBox;
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
-    }
+}

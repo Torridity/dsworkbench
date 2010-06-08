@@ -8,6 +8,7 @@ package de.tor.tribes.ui;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.ServerManager;
 import de.tor.tribes.io.UnitHolder;
+import de.tor.tribes.types.Ally;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.StandardAttackElement;
 import de.tor.tribes.types.Tribe;
@@ -31,10 +32,13 @@ import de.tor.tribes.ui.editors.StandardAttackElementEditor;
 import de.tor.tribes.ui.editors.UnitCellEditor;
 import de.tor.tribes.ui.editors.VillageCellEditor;
 import de.tor.tribes.ui.models.StandardAttackTableModel;
+import de.tor.tribes.ui.renderer.AllyCellRenderer;
+import de.tor.tribes.ui.renderer.AlternatingColorCellRenderer;
 import de.tor.tribes.ui.renderer.AttackTypeCellRenderer;
 import de.tor.tribes.ui.renderer.ColoredDateCellRenderer;
 import de.tor.tribes.ui.renderer.SortableTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.StandardAttackTypeCellRenderer;
+import de.tor.tribes.ui.renderer.TribeCellRenderer;
 import de.tor.tribes.ui.renderer.UnitCellRenderer;
 import de.tor.tribes.ui.renderer.UnitListCellRenderer;
 import de.tor.tribes.ui.renderer.UnitTableHeaderRenderer;
@@ -64,7 +68,6 @@ import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JSpinner.DateEditor;
 import javax.swing.JTable;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionListener;
@@ -3108,8 +3111,10 @@ private void fireSendAttackToReTimeToolEvent(java.awt.event.MouseEvent evt) {//G
 
         jAttackTable.setDefaultRenderer(Village.class, new VillageCellRenderer());
         jAttackTable.setDefaultRenderer(Integer.class, new AttackTypeCellRenderer());
+        jAttackTable.setDefaultRenderer(Ally.class, new AllyCellRenderer());
+        jAttackTable.setDefaultRenderer(Tribe.class, new TribeCellRenderer());
         jAttackTable.setDefaultEditor(Integer.class, new AttackTypeCellEditor());
-
+        jAttackTable.setDefaultRenderer(String.class, new AlternatingColorCellRenderer());
         DefaultComboBoxModel model = new DefaultComboBoxModel(DataHolder.getSingleton().getUnits().toArray(new UnitHolder[]{}));
         model.insertElementAt(UnknownUnit.getSingleton(), 0);
         jUnitBox.setModel(model);
@@ -3117,6 +3122,7 @@ private void fireSendAttackToReTimeToolEvent(java.awt.event.MouseEvent evt) {//G
         AttackManager.getSingleton().forceUpdate(null);
         buildAttackPlanList();
         jActiveAttackPlan.setSelectedItem(AttackManager.DEFAULT_PLAN_ID);
+        jAttackTable.setRowHeight(24);
     }
 
     public void buildAttackPlanList() {

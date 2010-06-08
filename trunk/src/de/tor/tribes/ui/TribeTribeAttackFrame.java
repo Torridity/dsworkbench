@@ -2909,7 +2909,7 @@ private void fireChangeAttackCountEvent(java.awt.event.MouseEvent evt) {//GEN-FI
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
                 //Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-                Component c = new DateCellRenderer("dd.MM.yy HH:mm:ss.SSS").getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                Component c = new DateCellRenderer().getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
                 /* SimpleDateFormat f = null;
                 if (ServerSettings.getSingleton().isMillisArrival()) {
                 f = new SimpleDateFormat("dd.MM.yy HH:mm:ss.SSS");

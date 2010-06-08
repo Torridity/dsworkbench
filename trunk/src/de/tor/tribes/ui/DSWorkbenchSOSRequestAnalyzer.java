@@ -16,6 +16,7 @@ import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.UnknownUnit;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.models.AttackManagerTableModel;
+import de.tor.tribes.ui.renderer.AlternatingColorCellRenderer;
 import de.tor.tribes.ui.renderer.DateCellRenderer;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.JOptionPaneHelper;
@@ -510,6 +511,9 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
         jTroopsInfoField.setText("<html>" + troopInfo + "</html>");
         jAttacksTable.setModel(model);
         jAttacksTable.setDefaultRenderer(Date.class, new DateCellRenderer());
+        AlternatingColorCellRenderer rend = new AlternatingColorCellRenderer();
+        jAttacksTable.setDefaultRenderer(Tribe.class, rend);
+        jAttacksTable.setDefaultRenderer(Village.class, rend);
         TableRowSorter<TableModel> attackSorter = new TableRowSorter<TableModel>(jAttacksTable.getModel());
         jAttacksTable.setRowSorter(attackSorter);
         DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {

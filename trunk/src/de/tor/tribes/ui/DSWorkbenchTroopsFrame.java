@@ -13,6 +13,7 @@ import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.models.TroopsManagerTableModel;
+import de.tor.tribes.ui.renderer.DateCellRenderer;
 import de.tor.tribes.util.Constants;
 import javax.swing.table.DefaultTableCellRenderer;
 import org.apache.log4j.Logger;
@@ -42,6 +43,7 @@ import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 import java.text.NumberFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.StringTokenizer;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
@@ -97,6 +99,7 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
         jTroopsTable.setDefaultRenderer(Float.class, new PercentCellRenderer());
         jTroopsTable.setDefaultRenderer(Tribe.class, new TribeCellRenderer());
         jTroopsTable.setDefaultRenderer(Village.class, new VillageCellRenderer());
+        jTroopsTable.setDefaultRenderer(Date.class, new DateCellRenderer("dd.MM.yy"));
         jTroopsTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 
             @Override
@@ -665,7 +668,6 @@ private void fireRelationChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST
         for (int row : rows) {
             row = jTroopsTable.convertRowIndexToModel(row);
             Village v = (Village) TroopsManagerTableModel.getSingleton().getValueAt(row, 1);
-            System.out.println(v);
             villages.add(v);
         }
         return villages;

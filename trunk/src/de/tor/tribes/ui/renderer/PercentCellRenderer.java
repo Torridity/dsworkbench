@@ -37,7 +37,7 @@ public class PercentCellRenderer extends DefaultTableCellRenderer {
         Graphics2D g2d = (Graphics2D) g;
         String t = getText();
         try {
-            g2d.setColor(Constants.DS_BACK_LIGHT);
+            g2d.setColor(Constants.DS_ROW_B);
             g2d.fillRect(0, 0, getWidth(), getHeight());
             float v = Float.parseFloat(t);
             if (v <= 0.1f) {

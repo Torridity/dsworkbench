@@ -6,7 +6,6 @@ package de.tor.tribes.ui.editors;
 
 import java.awt.Component;
 import java.awt.KeyboardFocusManager;
-import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -15,9 +14,8 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.util.LinkedList;
 import java.util.List;
-import javax.swing.AbstractCellEditor;
 import javax.swing.BorderFactory;
-import javax.swing.ComboBoxEditor;
+import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.ImageIcon;
@@ -27,20 +25,21 @@ import javax.swing.JList;
 import javax.swing.JTable;
 import javax.swing.ListCellRenderer;
 import javax.swing.SwingConstants;
-import javax.swing.table.TableCellEditor;
 import org.apache.log4j.Logger;
 
 /**
  *
  * @author Jejkal
  */
-public class AttackTypeCellEditor extends AbstractCellEditor implements TableCellEditor {
+public class AttackTypeCellEditor extends DefaultCellEditor {
 
     private static Logger logger = Logger.getLogger("AttackDialog (TypeEditor)");
     private JComboBox comboComponent = null;
     private List<ImageIcon> icons = null;
 
     public AttackTypeCellEditor() {
+        super(new JComboBox());
+        setClickCountToStart(2);
         try {
             icons = new LinkedList<ImageIcon>();
             icons.add(new ImageIcon("./graphics/icons/axe.png"));

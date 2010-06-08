@@ -195,7 +195,7 @@ public class SOSRequest {
 
         @Override
         public int compare(TimedAttack s1, TimedAttack s2) {
-            return s2.getlArriveTime().compareTo(s1.getlArriveTime());
+            return s1.getlArriveTime().compareTo(s2.getlArriveTime());
         }
     }
 

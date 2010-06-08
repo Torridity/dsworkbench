@@ -16,23 +16,24 @@ import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
-import javax.swing.AbstractCellEditor;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JTable;
-import javax.swing.table.TableCellEditor;
 
 /**
  *
  * @author Jejkal
  */
-public class UnitCellEditor extends AbstractCellEditor implements TableCellEditor {
+//public class UnitCellEditor extends AbstractCellEditor implements TableCellEditor {
+public class UnitCellEditor extends DefaultCellEditor {
 
     private JComboBox comboComponent = null;
 
     public UnitCellEditor() {
+        super(new JComboBox());
+        setClickCountToStart(2);
         DefaultComboBoxModel model = new DefaultComboBoxModel();
         comboComponent = new javax.swing.JComboBox() {
 

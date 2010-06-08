@@ -8,6 +8,7 @@ import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Toolkit;
@@ -456,6 +457,15 @@ public class ImageManager {
         } else {
             return UNIT_ICONS.get(ICON_UNKNOWN);
         }
+    }
+
+    public static ImageIcon getUnitIcon(UnitHolder pUnit, int pWidth, int pHeight) {
+        Image img = getUnitIcon(pUnit).getImage().getScaledInstance(pWidth, pHeight, Image.SCALE_DEFAULT);
+        BufferedImage bi = new BufferedImage(pWidth, pHeight, BufferedImage.TYPE_INT_ARGB);
+        Graphics g = bi.createGraphics();
+        g.drawImage(img, 0, 0, null);
+        g.dispose();
+        return new ImageIcon(bi);
     }
 
     public static BufferedImage getUnitImage(UnitHolder pUnit) {

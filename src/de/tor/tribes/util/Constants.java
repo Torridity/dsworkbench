@@ -17,12 +17,12 @@ public class Constants {
     public final static String VERSION_ADDITION = "10";
     public final static Color DS_BACK = new Color(225, 213, 190);
     public final static Color DS_BACK_LIGHT = new Color(239, 235, 223);
+    public final static Color DS_ROW_A = new Color(246, 235, 202);
+    public final static Color DS_ROW_B = new Color(251, 244, 221);
     public final static Color DS_DEFAULT_MARKER = new Color(130, 60, 10);
-
     public final static String SERVER_DIR = "./servers";
     public static Hashtable<String, Integer> LAYERS = null;
     public final static int LAYER_COUNT = 10;
-
 
     static {
         LAYERS = new Hashtable<String, Integer>();

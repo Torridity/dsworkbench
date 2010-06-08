@@ -191,7 +191,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
 
         jReportTable.setDefaultRenderer(Boolean.class, new ReportWallCataCellRenderer());
         jReportTable.setDefaultRenderer(Byte.class, new ReportWallCataCellRenderer());
-        jReportTable.setRowHeight(20);
+        jReportTable.setRowHeight(24);
         ReportManager.getSingleton().forceUpdate(null);
         buildReportSetList();
         jReportSetBox.setSelectedItem(ReportManager.DEFAULT_SET);

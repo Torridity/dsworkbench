@@ -6,11 +6,11 @@ package de.tor.tribes.ui.renderer;
 
 import de.tor.tribes.types.FightReport;
 import de.tor.tribes.ui.models.ReportManagerTableModel;
+import de.tor.tribes.util.Constants;
 import java.awt.Component;
 import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
-import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
@@ -42,38 +42,23 @@ public class ReportWallCataCellRenderer implements TableCellRenderer {
         Component c = renderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         JLabel l = new JLabel();
         l.setOpaque(true);
-        l.setForeground(c.getForeground());
-        l.setBackground(c.getBackground());
+
+        if (!isSelected) {
+            if (row % 2 == 0) {
+                l.setBackground(Constants.DS_ROW_B);
+            } else {
+                l.setBackground(Constants.DS_ROW_A);
+            }
+        } else {
+            l.setForeground(c.getForeground());
+            l.setBackground(c.getBackground());
+        }
+
         if (hasFocus) {
             l.requestFocus();
         }
         try {
             l.setHorizontalAlignment(SwingConstants.CENTER);
-            /* int icon = -1;
-            Boolean val = (Boolean) value;
-            if (column == table.getColumnCount() - 1) {
-            icon = 2;
-            } else if (column == table.getColumnCount() - 2) {
-            icon = 1;
-            } else if (column == table.getColumnCount() - 3) {
-            icon = 0;
-            }
-
-            if (icon == -1) {
-            //no icon!?
-            l.setText("-");
-            l.setIcon(null);
-            } else {
-            if (val) {
-            l.setText("");
-            l.setIcon(icons.get(icon));
-            } else {
-            l.setText("-");
-            l.setIcon(null);
-            }
-            }*/
-
-
             byte v = (Byte) value;
             StringBuffer text = new StringBuffer();
             text.append("<html>");

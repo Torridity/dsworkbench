@@ -20,7 +20,9 @@ import de.tor.tribes.ui.dnd.VillageTransferable;
 import de.tor.tribes.ui.editors.AttackTypeCellEditor;
 import de.tor.tribes.ui.editors.FakeCellEditor;
 import de.tor.tribes.ui.editors.UnitCellEditor;
+import de.tor.tribes.ui.renderer.AlternatingColorCellRenderer;
 import de.tor.tribes.ui.renderer.AttackTypeCellRenderer;
+import de.tor.tribes.ui.renderer.DateCellRenderer;
 import de.tor.tribes.ui.renderer.FakeCellRenderer;
 import de.tor.tribes.ui.renderer.TribeCellRenderer;
 import de.tor.tribes.ui.renderer.UnitCellRenderer;
@@ -81,9 +83,7 @@ import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.Vector;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -329,12 +329,13 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Algorit
             jAttacksTable.setDefaultRenderer(Boolean.class, new FakeCellRenderer());
             jAttacksTable.setDefaultRenderer(Village.class, new VillageCellRenderer());
 
-            jAttacksTable.setRowHeight(20);
-            jVictimTable.setRowHeight(20);
+            jAttacksTable.setRowHeight(24);
+            jVictimTable.setRowHeight(24);
             jVictimTable.setDefaultRenderer(Tribe.class, new TribeCellRenderer());
             jVictimTable.setDefaultRenderer(Village.class, new VillageCellRenderer());
             jVictimTable.setDefaultEditor(Boolean.class, new FakeCellEditor());
             jVictimTable.setDefaultRenderer(Boolean.class, new FakeCellRenderer());
+            jVictimTable.setDefaultRenderer(Integer.class, new AlternatingColorCellRenderer());
             DefaultComboBoxModel unitModel = new DefaultComboBoxModel(DataHolder.getSingleton().getUnits().toArray(new UnitHolder[]{}));
             jTroopsList.setModel(unitModel);
             jTroopsList.setSelectedItem(DataHolder.getSingleton().getUnitByPlainName("ram"));
@@ -1722,7 +1723,7 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Algorit
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jTabbedPane1, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jTabbedPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 853, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jCalculatingProgressBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -1733,7 +1734,7 @@ public class TribeTribeAttackFrame extends javax.swing.JFrame implements Algorit
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jTabbedPane1)
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 651, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jCalculatingProgressBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -2892,11 +2893,12 @@ private void fireChangeAttackCountEvent(java.awt.event.MouseEvent evt) {//GEN-FI
 
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-                Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                //Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                Component c = new AlternatingColorCellRenderer().getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
                 c.setForeground(Color.WHITE);
-                DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
-                r.setText("");
-                r.setVisible(false);
+                //DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
+                // r.setText("");
+                // r.setVisible(false);
                 // r.setText(r.getText());
                 return c;
             }
@@ -2906,42 +2908,33 @@ private void fireChangeAttackCountEvent(java.awt.event.MouseEvent evt) {//GEN-FI
 
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-                Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-                SimpleDateFormat f = null;
+                //Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                Component c = new DateCellRenderer("dd.MM.yy HH:mm:ss.SSS").getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                /* SimpleDateFormat f = null;
                 if (ServerSettings.getSingleton().isMillisArrival()) {
-                    f = new SimpleDateFormat("dd.MM.yy HH:mm:ss.SSS");
+                f = new SimpleDateFormat("dd.MM.yy HH:mm:ss.SSS");
                 } else {
-                    f = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
-                }
+                f = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
+                }*/
                 Boolean impossible = (Boolean) table.getModel().getValueAt(row, 5);
                 if (impossible.booleanValue()) {
                     c.setBackground(Color.RED);
                 }
 
-                DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
-                r.setText((value == null) ? "" : f.format(value));
+                /*DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
+                r.setText((value == null) ? "" : f.format(value));*/
                 return c;
             }
         };
 
-        jResultsTable.setDefaultRenderer(Date.class,
-                renderer);
-
-
-
-        jResultsTable.setDefaultRenderer(Boolean.class,
-                invis);
-
-
-
-        jResultsTable.setDefaultRenderer(Integer.class,
-                new AttackTypeCellRenderer());
+        jResultsTable.setDefaultRenderer(Date.class, renderer);
+        jResultsTable.setDefaultRenderer(Boolean.class, invis);
+        jResultsTable.setDefaultRenderer(Integer.class, new AttackTypeCellRenderer());
         jResultsTable.setDefaultEditor(Integer.class, new AttackTypeCellEditor());
         jResultsTable.setDefaultRenderer(UnitHolder.class, new UnitCellRenderer());
         jResultsTable.setDefaultEditor(UnitHolder.class, new UnitCellEditor());
         jResultsTable.setDefaultRenderer(Village.class, new VillageCellRenderer());
-        jResultsTable.setRowHeight(
-                20);
+        jResultsTable.setRowHeight(24);
 
         //jResultsTable.setDefaultRenderer(Date.class, new DateCellRenderer());
 
@@ -2964,9 +2957,7 @@ private void fireChangeAttackCountEvent(java.awt.event.MouseEvent evt) {//GEN-FI
         TableColumn tc = jResultsTable.getColumnModel().getColumn(5);
 
         tc.setPreferredWidth(0);
-
         tc.setMaxWidth(0);
-
         tc.setWidth(0);
 
         tc.setResizable(false);
@@ -2986,22 +2977,11 @@ private void fireChangeAttackCountEvent(java.awt.event.MouseEvent evt) {//GEN-FI
                 return c;
             }
         };
-        for (int i = 0;
-                i < jResultsTable.getColumnCount();
-                i++) {
+        for (int i = 0; i < jResultsTable.getColumnCount(); i++) {
             jResultsTable.getColumn(jResultsTable.getColumnName(i)).setHeaderRenderer(headerRenderer);
         }
         jResultsTable.revalidate();
-        jResultFrame.setVisible(
-                true);
-
-
-
-
-
-
-
-
+        jResultFrame.setVisible(true);
 
         if (impossibleAttacks > 0) {
             String message = "";

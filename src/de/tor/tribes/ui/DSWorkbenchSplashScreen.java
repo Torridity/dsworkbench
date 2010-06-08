@@ -351,11 +351,12 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
         //  System.setProperty("sun.java2d.opengl", "true");
 
         try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
         }
 
-
+         
+       
         Font f = new Font("SansSerif", Font.PLAIN, 11);
         UIManager.put("Label.font", f);
         UIManager.put("TextField.font", f);

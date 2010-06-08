@@ -4,6 +4,7 @@
  */
 package de.tor.tribes.ui.renderer;
 
+import de.tor.tribes.util.Constants;
 import java.awt.Component;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -36,13 +37,22 @@ public class FakeCellRenderer extends DefaultTableCellRenderer {
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         Component c = renderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-        ((JLabel) c).setText("");
+        JLabel label = ((JLabel) c);
+        label.setText("");
+
+        if (!isSelected) {
+            if (row % 2 == 0) {
+                label.setBackground(Constants.DS_ROW_B);
+            } else {
+                label.setBackground(Constants.DS_ROW_A);
+            }
+        }
         try {
             boolean v = (Boolean) value;
-            ((JLabel) c).setIcon(((v) ? fakeIcon : noFakeIcon));
-            ((JLabel) c).setHorizontalAlignment(SwingConstants.CENTER);
+            label.setIcon(((v) ? fakeIcon : noFakeIcon));
+            label.setHorizontalAlignment(SwingConstants.CENTER);
         } catch (Exception e) {
         }
-        return c;
+        return label;
     }
 }

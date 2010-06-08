@@ -225,8 +225,8 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
 
         // <editor-fold defaultstate="collapsed" desc="MouseListener for cursor events">
 
-         //mCanvas.
-                 addMouseListener(new MouseListener() {
+        //mCanvas.
+        addMouseListener(new MouseListener() {
 
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -677,13 +677,13 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
         });
 
         //mCanvas.
-                addMouseListener(MenuRenderer.getSingleton());
+        addMouseListener(MenuRenderer.getSingleton());
         //</editor-fold>
 
 
         // <editor-fold defaultstate="collapsed" desc=" MouseMotionListener for dragging operations ">
-         //mCanvas.
-                 addMouseMotionListener(new MouseMotionListener() {
+        //mCanvas.
+        addMouseMotionListener(new MouseMotionListener() {
 
             @Override
             public void mouseDragged(MouseEvent e) {
@@ -803,7 +803,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
         });
 
         //mCanvas.
-                addMouseMotionListener(MenuRenderer.getSingleton());
+        addMouseMotionListener(MenuRenderer.getSingleton());
 
         //<editor-fold>
     }
@@ -1801,7 +1801,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
 
         if (mMapRenderer == null) {
             logger.info("Creating MapRenderer");
-        //    mMapRenderer = new MapRenderer(mCanvas);
+            //    mMapRenderer = new MapRenderer(mCanvas);
             mMapRenderer = new MapRenderer();
             mMapRenderer.start();
         }

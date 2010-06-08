@@ -7,6 +7,7 @@ package de.tor.tribes.ui.renderer;
 import de.tor.tribes.types.TagMapMarker;
 import de.tor.tribes.ui.ImageManager;
 import de.tor.tribes.ui.editors.TagMapMarkerEditorImpl;
+import de.tor.tribes.util.Constants;
 import java.awt.Color;
 import java.awt.Component;
 import javax.swing.ImageIcon;
@@ -31,12 +32,12 @@ public class TagMapMarkerRenderer implements TableCellRenderer {
         TagMapMarker tagMarker = (TagMapMarker) value;
         Color selectColor = tagMarker.getTagColor();
         if (selectColor == null) {
-            if (isSelected) {
-                c.setForeground(table.getSelectionForeground());
-                c.setBackground(table.getSelectionBackground());
-            } else {
-                c.setForeground(Color.BLACK);
-                c.setBackground(Color.WHITE);
+            if (!isSelected) {
+                if (row % 2 == 0) {
+                    c.setBackground(Constants.DS_ROW_B);
+                } else {
+                    c.setBackground(Constants.DS_ROW_A);
+                }
             }
         } else {
             if (isSelected) {

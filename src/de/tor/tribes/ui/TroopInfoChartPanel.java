@@ -40,6 +40,7 @@ public class TroopInfoChartPanel extends javax.swing.JPanel {
         village = v;
     }
 
+    @Override
     public void paint(Graphics g) {
         super.paint(g);
         Graphics2D g2d = (Graphics2D) g;
@@ -49,7 +50,7 @@ public class TroopInfoChartPanel extends javax.swing.JPanel {
         c.add(Color.YELLOW);
         c.add(Color.BLUE);
         VillageTroopsHolder holder = null;
-        g2d.setColor(Constants.DS_BACK);
+        g2d.setColor(Constants.DS_ROW_B);
         g2d.fillRect(0, 0, getBounds().width, getBounds().height);
         if (village != null) {
             holder = TroopsManager.getSingleton().getTroopsForVillage(village);

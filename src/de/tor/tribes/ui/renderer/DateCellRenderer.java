@@ -8,6 +8,7 @@ import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.ServerSettings;
 import java.awt.Component;
 import java.text.SimpleDateFormat;
+import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
@@ -23,6 +24,8 @@ public class DateCellRenderer extends DefaultTableCellRenderer {
         super();
         if (!ServerSettings.getSingleton().isMillisArrival()) {
             specialFormat = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
+        } else {
+            specialFormat = new SimpleDateFormat("dd.MM.yy HH:mm:ss.SSS");
         }
     }
 

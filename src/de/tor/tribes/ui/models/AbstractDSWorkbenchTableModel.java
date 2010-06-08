@@ -104,6 +104,14 @@ public abstract class AbstractDSWorkbenchTableModel extends AbstractTableModel {
         }
     }
 
+    public boolean isColVisible(int pId) {
+        try {
+            return visibleColumns[pId];
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     /**Return the right-click popup to register it for a tables ScrollPane and the table itself*/
     public JPopupMenu getPopup() {
         return popup;

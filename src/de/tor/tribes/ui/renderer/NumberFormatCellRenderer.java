@@ -4,7 +4,10 @@
  */
 package de.tor.tribes.ui.renderer;
 
+import de.tor.tribes.util.Constants;
+import java.awt.Component;
 import java.text.NumberFormat;
+import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
 /**
@@ -27,13 +30,26 @@ public class NumberFormatCellRenderer extends DefaultTableCellRenderer {
     }
 
     @Override
+    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+        Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+        if (!isSelected) {
+            if (row % 2 == 0) {
+                c.setBackground(Constants.DS_ROW_B);
+            } else {
+                c.setBackground(Constants.DS_ROW_A);
+            }
+        }
+        return c;
+    }
+
+    @Override
     public void setValue(Object value) {
         try {
             setText(format.format(value));
         } catch (Exception e) {
-            if(value != null){
-            setText(value.toString());
-            }else{
+            if (value != null) {
+                setText(value.toString());
+            } else {
                 setText("0");
             }
         }

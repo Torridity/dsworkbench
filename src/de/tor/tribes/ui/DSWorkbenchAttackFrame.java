@@ -69,6 +69,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -3108,13 +3109,17 @@ private void fireSendAttackToReTimeToolEvent(java.awt.event.MouseEvent evt) {//G
         jAttackTable.setDefaultEditor(UnitHolder.class, new UnitCellEditor());
         jAttackTable.setDefaultRenderer(UnitHolder.class, new UnitCellRenderer());
         jAttackTable.setDefaultEditor(Village.class, new VillageCellEditor());
-
-        jAttackTable.setDefaultRenderer(Village.class, new VillageCellRenderer());
+        AlternatingColorCellRenderer rend = new AlternatingColorCellRenderer();
+        // jAttackTable.setDefaultRenderer(Village.class, new VillageCellRenderer());
+        jAttackTable.setDefaultRenderer(Village.class, rend);
         jAttackTable.setDefaultRenderer(Integer.class, new AttackTypeCellRenderer());
-        jAttackTable.setDefaultRenderer(Ally.class, new AllyCellRenderer());
-        jAttackTable.setDefaultRenderer(Tribe.class, new TribeCellRenderer());
+        // jAttackTable.setDefaultRenderer(Ally.class, new AllyCellRenderer());
+        // jAttackTable.setDefaultRenderer(Tribe.class, new TribeCellRenderer());
+        jAttackTable.setDefaultRenderer(Ally.class, rend);
+        jAttackTable.setDefaultRenderer(Tribe.class, rend);
         jAttackTable.setDefaultEditor(Integer.class, new AttackTypeCellEditor());
-        jAttackTable.setDefaultRenderer(String.class, new AlternatingColorCellRenderer());
+        //  jAttackTable.setDefaultRenderer(String.class, new AlternatingColorCellRenderer());
+        jAttackTable.setDefaultRenderer(String.class, rend);
         DefaultComboBoxModel model = new DefaultComboBoxModel(DataHolder.getSingleton().getUnits().toArray(new UnitHolder[]{}));
         model.insertElementAt(UnknownUnit.getSingleton(), 0);
         jUnitBox.setModel(model);
@@ -3162,7 +3167,14 @@ private void fireSendAttackToReTimeToolEvent(java.awt.event.MouseEvent evt) {//G
     }
 
     protected void updateCountdown() {
-        jAttackTable.repaint();
+        //  AttackManagerTableModel.getSingleton().fireTableDataChanged();
+        SwingUtilities.invokeLater(new Runnable() {
+
+            public void run() {
+                jAttackTable.repaint(100);
+            }
+        });
+
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
@@ -3438,7 +3450,7 @@ class CountdownThread extends Thread {
     public void run() {
         while (true) {
             try {
-                if (showCountdown && DSWorkbenchAttackFrame.getSingleton().isVisible()) {
+                if (showCountdown && DSWorkbenchAttackFrame.getSingleton().isVisible() && AttackManagerTableModel.getSingleton().isColVisible(11)) {
                     DSWorkbenchAttackFrame.getSingleton().updateCountdown();
                     sleep(100);
                 } else {

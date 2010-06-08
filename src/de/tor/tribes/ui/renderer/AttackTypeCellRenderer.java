@@ -4,26 +4,40 @@
  */
 package de.tor.tribes.ui.renderer;
 
+import de.tor.tribes.ui.ImageManager;
 import de.tor.tribes.util.Constants;
 import java.awt.Component;
-import javax.swing.BorderFactory;
-import javax.swing.DefaultComboBoxModel;
+import java.util.LinkedList;
+import java.util.List;
+import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JTable;
+import javax.swing.SwingConstants;
 import javax.swing.table.TableCellRenderer;
 import org.apache.log4j.Logger;
 
 /**
  * @author Jejkal
  */
-public class AttackTypeCellRenderer extends JComboBox implements TableCellRenderer {
+public class AttackTypeCellRenderer extends JLabel implements TableCellRenderer {
 
     private static Logger logger = Logger.getLogger("AttackDialog (TypeRenderer)");
+    private List<ImageIcon> icons = null;
 
     public AttackTypeCellRenderer() {
         super();
-        setRenderer(new AttackTypeListCellRenderer());
-        setBackground(Constants.DS_BACK);
+        //setBackground(Constants.DS_BACK);
+        try {
+            icons = new LinkedList<ImageIcon>();
+            icons.add(new ImageIcon("./graphics/icons/axe.png"));
+            icons.add(new ImageIcon("./graphics/icons/snob.png"));
+            icons.add(new ImageIcon("./graphics/icons/def.png"));
+            icons.add(new ImageIcon("./graphics/icons/fake.png"));
+            icons.add(new ImageIcon("./graphics/icons/def_fake.png"));
+        } catch (Exception e) {
+            icons = null;
+        }
     }
 
     @Override
@@ -52,8 +66,26 @@ public class AttackTypeCellRenderer extends JComboBox implements TableCellRender
         }
         return c;*/
 
-        setModel(new DefaultComboBoxModel(new Object[]{value}));
-        setBorder(BorderFactory.createEmptyBorder());
+        // setModel(new DefaultComboBoxModel(new Object[]{value}));
+        // setBorder(BorderFactory.createEmptyBorder());
+        setHorizontalAlignment(SwingConstants.CENTER);
+        setOpaque(true);
+        Integer type = (Integer) value;
+        if (type == 0) {
+            //no icon!?
+            setText("-");
+            setIcon(null);
+        } else {
+            int pos = type - 1;
+            if (pos >= 0) {
+                setText("");
+                setIcon(icons.get(pos));
+            } else {
+                setText("-");
+                setIcon(null);
+            }
+        }
+
         if (!isSelected) {
             if (row % 2 == 0) {
                 setBackground(Constants.DS_ROW_B);
@@ -72,7 +104,7 @@ public class AttackTypeCellRenderer extends JComboBox implements TableCellRender
         setBackground(table.getBackground());
         setForeground(table.getForeground());
         }*/
-        setSelectedItem(value);
+        //setSelectedItem(value);
         return this;
     }
 }

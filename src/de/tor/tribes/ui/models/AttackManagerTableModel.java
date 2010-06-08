@@ -63,7 +63,6 @@ public class AttackManagerTableModel extends AbstractDSWorkbenchTableModel {
     }
 
     AttackManagerTableModel() {
-
         AttackManager.getSingleton().addAttackManagerListener(new AttackManagerListener() {
 
             @Override
@@ -177,10 +176,6 @@ public class AttackManagerTableModel extends AbstractDSWorkbenchTableModel {
                     long sendTime = a.getArriveTime().getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(a.getSource(), a.getTarget(), a.getUnit().getSpeed()) * 1000);
                     long t = sendTime - System.currentTimeMillis();
                     t = (t <= 0) ? 0 : t;
-
-                    /*if(t == 0){
-                        t = a.getArriveTime().getTime() - System.currentTimeMillis();
-                    }*/
 
                     if (t != 0) {
                         long h = (int) Math.floor((double) t / (double) (1000 * 60 * 60));

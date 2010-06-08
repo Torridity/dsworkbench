@@ -16,10 +16,12 @@ import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.NoTag;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.Village;
+import de.tor.tribes.ui.renderer.AlternatingColorCellRenderer;
 import de.tor.tribes.ui.renderer.DateCellRenderer;
 import de.tor.tribes.ui.renderer.SortableTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.UnitCellRenderer;
 import de.tor.tribes.ui.renderer.UnitListCellRenderer;
+import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
@@ -31,9 +33,11 @@ import de.tor.tribes.util.tag.TagManagerListener;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Point;
 import java.awt.event.ItemEvent;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -43,6 +47,7 @@ import java.util.StringTokenizer;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JCheckBox;
+import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
@@ -114,6 +119,63 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         jFilterUnitBox.setRenderer(new UnitListCellRenderer());
         jFilterList.setModel(new DefaultListModel());
 // </editor-fold>
+
+        // <editor-fold defaultstate="collapsed" desc="Build attack plan table">
+        DefaultTableModel attackPlabTableModel = new javax.swing.table.DefaultTableModel(
+                new Object[][]{},
+                new String[]{
+                    "Angriffsplan", "Abgleichen"}) {
+
+            Class[] types = new Class[]{
+                String.class, Boolean.class
+            };
+
+            @Override
+            public Class getColumnClass(int columnIndex) {
+                return types[columnIndex];
+            }
+
+            @Override
+            public boolean isCellEditable(int row, int col) {
+                if (col == 0) {
+                    return false;
+                }
+                return true;
+            }
+        };
+
+        jAttackPlanTable.invalidate();
+        Enumeration<String> plans = AttackManager.getSingleton().getPlans();
+        List<String> planList = new LinkedList<String>();
+        while (plans.hasMoreElements()) {
+            planList.add(plans.nextElement());
+        }
+
+        Collections.sort(planList);
+        for (String plan : planList) {
+            attackPlabTableModel.addRow(new Object[]{plan, false});
+        }
+
+        jAttackPlanTable.setModel(attackPlabTableModel);
+        jAttackPlanTable.revalidate();
+        DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
+
+            @Override
+            public Component getTableCellRendererComponent(
+                    JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
+                String t = ((DefaultTableCellRenderer) c).getText();
+                ((DefaultTableCellRenderer) c).setText(t);
+                c.setBackground(Constants.DS_BACK);
+                DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
+                r.setText("<html><b>" + r.getText() + "</b></html>");
+                return c;
+            }
+        };
+        for (int i = 0; i < jAttackPlanTable.getColumnCount(); i++) {
+            jAttackPlanTable.getColumn(jAttackPlanTable.getColumnName(i)).setHeaderRenderer(headerRenderer);
+        }
+        // </editor-fold>
     }
 
     /** This method is called from within the constructor to
@@ -156,6 +218,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         jFilterList = new javax.swing.JList();
         jLabel28 = new javax.swing.JLabel();
         jButton18 = new javax.swing.JButton();
+        jPanel7 = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jComandArea = new javax.swing.JTextArea();
@@ -191,6 +254,9 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         jUnitBox = new javax.swing.JComboBox();
         jLabel8 = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        jAttackPlanTable = new javax.swing.JTable();
+        jLabel12 = new javax.swing.JLabel();
         jMainAlwaysOnTopBox = new javax.swing.JCheckBox();
 
         jResultFrame.setTitle("Re-Timing Ergebnisse");
@@ -492,6 +558,17 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
                 .addContainerGap())
         );
 
+        javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
+        jPanel7.setLayout(jPanel7Layout);
+        jPanel7Layout.setHorizontalGroup(
+            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 203, Short.MAX_VALUE)
+        );
+        jPanel7Layout.setVerticalGroup(
+            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 169, Short.MAX_VALUE)
+        );
+
         setTitle("Re-Time Werkzeug");
 
         jPanel1.setBackground(new java.awt.Color(239, 235, 223));
@@ -672,11 +749,11 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
                     .addComponent(jLabel9))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jReturnField, javax.swing.GroupLayout.DEFAULT_SIZE, 209, Short.MAX_VALUE)
-                    .addComponent(jArriveField, javax.swing.GroupLayout.DEFAULT_SIZE, 209, Short.MAX_VALUE)
-                    .addComponent(jSourceVillage, javax.swing.GroupLayout.DEFAULT_SIZE, 209, Short.MAX_VALUE)
-                    .addComponent(jTargetVillage, javax.swing.GroupLayout.DEFAULT_SIZE, 209, Short.MAX_VALUE)
-                    .addComponent(jEstSendTime, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 209, Short.MAX_VALUE))
+                    .addComponent(jReturnField, javax.swing.GroupLayout.DEFAULT_SIZE, 260, Short.MAX_VALUE)
+                    .addComponent(jArriveField, javax.swing.GroupLayout.DEFAULT_SIZE, 260, Short.MAX_VALUE)
+                    .addComponent(jSourceVillage, javax.swing.GroupLayout.DEFAULT_SIZE, 260, Short.MAX_VALUE)
+                    .addComponent(jTargetVillage, javax.swing.GroupLayout.DEFAULT_SIZE, 260, Short.MAX_VALUE)
+                    .addComponent(jEstSendTime, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 260, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -759,6 +836,21 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
             }
         });
 
+        jAttackPlanTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2"
+            }
+        ));
+        jScrollPane4.setViewportView(jAttackPlanTable);
+
+        jLabel12.setText("Abgleichen mit");
+
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
@@ -769,13 +861,16 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jRelationBox, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 131, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 72, Short.MAX_VALUE)
-                .addComponent(jLabel8)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jButton1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jUnitBox, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.TRAILING, 0, 0, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel12)
+                    .addComponent(jLabel8))
+                .addGap(14, 14, 14)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 193, Short.MAX_VALUE)
+                    .addComponent(jButton1)
+                    .addComponent(jUnitBox, 0, 193, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
@@ -783,11 +878,16 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 133, Short.MAX_VALUE)
                     .addComponent(jLabel7)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 127, Short.MAX_VALUE)
-                    .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jUnitBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel8)))
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jUnitBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel8))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 102, Short.MAX_VALUE)
+                            .addComponent(jLabel12))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jRelationBox)
@@ -808,8 +908,8 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 450, Short.MAX_VALUE)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 450, Short.MAX_VALUE)))
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 501, Short.MAX_VALUE)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 501, Short.MAX_VALUE)))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(13, 13, 13)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -822,8 +922,8 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 73, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 73, Short.MAX_VALUE))
+                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 63, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 63, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1024,6 +1124,38 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
     }//GEN-LAST:event_fireEstUnitChangedEvent
 
     private void fireCalculateReTimingsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCalculateReTimingsEvent
+
+
+        DefaultTableModel model = (DefaultTableModel) jAttackPlanTable.getModel();
+
+        List<String> selectedPlans = new LinkedList<String>();
+        for (int i = 0; i < jAttackPlanTable.getRowCount(); i++) {
+            int row = jAttackPlanTable.convertRowIndexToModel(i);
+            if ((Boolean) model.getValueAt(row, 1)) {
+                selectedPlans.add((String) model.getValueAt(row, 0));
+            }
+        }
+
+        // Enumeration<String> plans = AttackManager.getSingleton().getPlans();
+        List<Village> ignore = new LinkedList<Village>();
+        //process all plans
+        //  while (plans.hasMoreElements()) {
+        for (String plan : selectedPlans) {
+            //String plan = plans.nextElement();
+            logger.debug("Checking plan '" + plan + "'");
+            List<Attack> attacks = AttackManager.getSingleton().getAttackPlan(plan);
+
+            //process all attacks
+            for (Attack a : attacks) {
+                if (!ignore.contains(a.getSource())) {
+                    ignore.add(a.getSource());
+
+                }
+            }
+        }
+
+
+
         Object[] tags = jTagList.getSelectedValues();
         if (tags == null || tags.length == 0) {
             JOptionPaneHelper.showInformationBox(this, "Keine Dorfgruppe ausgewählt", "Information");
@@ -1037,7 +1169,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
             for (Integer id : ids) {
                 //add all villages tagged by current tag
                 Village v = DataHolder.getSingleton().getVillagesById().get(id);
-                if (!candidates.contains(v)) {
+                if (!candidates.contains(v) && !ignore.contains(v)) {
                     candidates.add(v);
                 }
             }
@@ -1300,6 +1432,8 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
             resultModel.addRow(new Object[]{source, pUnit, pTarget, send});
         }
         jResultTable.setDefaultRenderer(UnitHolder.class, new UnitCellRenderer());
+        AlternatingColorCellRenderer rend = new AlternatingColorCellRenderer();
+        jResultTable.setDefaultRenderer(Village.class, rend);
         jResultTable.setDefaultRenderer(Date.class, new DateCellRenderer());
         jResultTable.setRowHeight(20);
         DefaultTableCellRenderer headerRenderer = new SortableTableHeaderRenderer();/*DefaultTableCellRenderer() {
@@ -1343,6 +1477,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
     private javax.swing.JButton jApplyFiltersButton;
     private javax.swing.JTextField jArriveField;
     private javax.swing.JDialog jAttackPlanSelectionDialog;
+    private javax.swing.JTable jAttackPlanTable;
     private javax.swing.JCheckBox jAxeBox;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton17;
@@ -1363,6 +1498,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel25;
     private javax.swing.JLabel jLabel26;
@@ -1387,6 +1523,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
+    private javax.swing.JPanel jPanel7;
     private javax.swing.JTextPane jParserInfo;
     private javax.swing.JCheckBox jRamBox;
     private javax.swing.JCheckBox jRelationBox;
@@ -1397,6 +1534,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
     private javax.swing.JScrollPane jScrollPane14;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JCheckBox jSnobBox;
     private javax.swing.JTextField jSourceVillage;

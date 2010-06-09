@@ -2434,7 +2434,7 @@ private void fireZoomEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fir
         checkZoomRange();
 
         dZoomFactor = Double.parseDouble(NumberFormat.getInstance().format(dZoomFactor).replaceAll(",", "."));
-
+        //System.out.println("Main: " + dZoomFactor);
         double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getBasicFieldWidth() * dZoomFactor;
         double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getBasicFieldHeight() * dZoomFactor;
         int xPos = Integer.parseInt(jCenterX.getText());
@@ -2455,7 +2455,6 @@ private void fireZoomEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fir
         checkZoomRange();
 
         dZoomFactor = Double.parseDouble(NumberFormat.getInstance().format(dZoomFactor).replaceAll(",", "."));
-
         double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getBasicFieldWidth() * dZoomFactor;
         double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getBasicFieldHeight() * dZoomFactor;
         int xPos = Integer.parseInt(jCenterX.getText());

@@ -261,8 +261,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
             String name = GlobalOptions.getProperty("account.name");
             String password = GlobalOptions.getProperty("account.password");
             if (DatabaseInterface.checkUser(name, password) != DatabaseInterface.ID_SUCCESS) {
-                JOptionPaneHelper.showErrorBox(this, "Die Accountvalidierung ist fehlgeschlagen.\n"
-                        + "Bitte überprüfe deine Account- und Netzwerkeinstellungen und versuches es erneut.",
+                JOptionPaneHelper.showErrorBox(this, "Die Accountvalidierung ist fehlgeschlagen.\n" + "Bitte überprüfe deine Account- und Netzwerkeinstellungen und versuches es erneut.",
                         "Fehler");
                 checkForUpdates = false;
             } else {
@@ -328,8 +327,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
                 double version = DatabaseInterface.getCurrentVersion();
 
                 if (version > 0 && version > Constants.VERSION) {
-                    NotifierFrame.doNotification("Eine neue Version (" + version + ") von DS Workbench ist verfügbar.\n"
-                            + "Klicke auf das Update Icon um \'http://www.dsworkbench.de\' im Browser zu öffnen.", NotifierFrame.NOTIFY_UPDATE);
+                    NotifierFrame.doNotification("Eine neue Version (" + version + ") von DS Workbench ist verfügbar.\n" + "Klicke auf das Update Icon um \'http://www.dsworkbench.de\' im Browser zu öffnen.", NotifierFrame.NOTIFY_UPDATE);
                 }
             }
             return true;
@@ -351,12 +349,12 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
         //  System.setProperty("sun.java2d.opengl", "true");
 
         try {
-        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
         }
 
-         
-       
+
+
         Font f = new Font("SansSerif", Font.PLAIN, 11);
         UIManager.put("Label.font", f);
         UIManager.put("TextField.font", f);
@@ -420,18 +418,16 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
             a.setFile("./log/dsworkbench.log", true, true, 1024);
             switch (mode) {
                 case 0: {
-                    Logger.getLogger("de.tor").setLevel(Level.INFO);
-                    Logger.getLogger("dswb").setLevel(Level.INFO);
+                    Logger.getRootLogger().setLevel(Level.INFO);
                     break;
                 }
                 case 1: {
-                    Logger.getLogger("de.tor").setLevel(Level.DEBUG);
-                    Logger.getLogger("dswb").setLevel(Level.DEBUG);
+                    Logger.getRootLogger().setLevel(Level.DEBUG);
+
                     break;
                 }
                 default: {
-                    Logger.getLogger("de.tor").setLevel(Level.ERROR);
-                    Logger.getLogger("dswb").setLevel(Level.ERROR);
+                    Logger.getRootLogger().setLevel(Level.ERROR);
                     break;
                 }
             }

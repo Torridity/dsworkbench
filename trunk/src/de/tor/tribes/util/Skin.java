@@ -184,9 +184,9 @@ public class Skin {
                 }
 
             }
-        //  mCache = new Hashtable<Double, Hashtable<Integer, Image>>();
-        //  mCache.put(1.0, mTextures);
-        //try loading units, ignore exceptions due to not all skins have all units
+            //  mCache = new Hashtable<Double, Hashtable<Integer, Image>>();
+            //  mCache.put(1.0, mTextures);
+            //try loading units, ignore exceptions due to not all skins have all units
         } catch (IOException ioe) {
             throw new Exception("Fehler beim laden des Grafikpaketes");
         } catch (Exception e) {
@@ -219,6 +219,14 @@ public class Skin {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    public int getCurrentFieldWidth(double pZoom) {
+        return (int) (iFieldWidth / pZoom);
+    }
+
+    public int getCurrentFieldHeight(double pZoom) {
+        return (int) (iFieldHeight / pZoom);
     }
 
     public int getCurrentFieldWidth() {

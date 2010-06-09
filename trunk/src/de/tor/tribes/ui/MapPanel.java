@@ -561,20 +561,10 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                 boolean isAttack = false;
                 int tmpCursor = (spaceDown) ? ImageManager.CURSOR_DEFAULT : iCurrentCursor;
 
-                if ((tmpCursor == ImageManager.CURSOR_DRAW_LINE)
-                        || (tmpCursor == ImageManager.CURSOR_DRAW_RECT)
-                        || (tmpCursor == ImageManager.CURSOR_DRAW_CIRCLE)
-                        || (tmpCursor == ImageManager.CURSOR_DRAW_TEXT)
-                        || (tmpCursor == ImageManager.CURSOR_DRAW_FREEFORM)) {
+                if ((tmpCursor == ImageManager.CURSOR_DRAW_LINE) || (tmpCursor == ImageManager.CURSOR_DRAW_RECT) || (tmpCursor == ImageManager.CURSOR_DRAW_CIRCLE) || (tmpCursor == ImageManager.CURSOR_DRAW_TEXT) || (tmpCursor == ImageManager.CURSOR_DRAW_FREEFORM)) {
                     FormConfigFrame.getSingleton().purge();
                 } else {
-                    if ((tmpCursor == ImageManager.CURSOR_ATTACK_AXE)
-                            || (tmpCursor == ImageManager.CURSOR_ATTACK_SWORD)
-                            || (tmpCursor == ImageManager.CURSOR_ATTACK_SPY)
-                            || (tmpCursor == ImageManager.CURSOR_ATTACK_LIGHT)
-                            || (tmpCursor == ImageManager.CURSOR_ATTACK_HEAVY)
-                            || (tmpCursor == ImageManager.CURSOR_ATTACK_RAM)
-                            || (tmpCursor == ImageManager.CURSOR_ATTACK_SNOB)) {
+                    if ((tmpCursor == ImageManager.CURSOR_ATTACK_AXE) || (tmpCursor == ImageManager.CURSOR_ATTACK_SWORD) || (tmpCursor == ImageManager.CURSOR_ATTACK_SPY) || (tmpCursor == ImageManager.CURSOR_ATTACK_LIGHT) || (tmpCursor == ImageManager.CURSOR_ATTACK_HEAVY) || (tmpCursor == ImageManager.CURSOR_ATTACK_RAM) || (tmpCursor == ImageManager.CURSOR_ATTACK_SNOB)) {
                         isAttack = true;
                     }
 
@@ -809,13 +799,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
     }
 
     public boolean isAttackCursor() {
-        return ((iCurrentCursor == ImageManager.CURSOR_ATTACK_AXE)
-                || (iCurrentCursor == ImageManager.CURSOR_ATTACK_SWORD)
-                || (iCurrentCursor == ImageManager.CURSOR_ATTACK_SPY)
-                || (iCurrentCursor == ImageManager.CURSOR_ATTACK_LIGHT)
-                || (iCurrentCursor == ImageManager.CURSOR_ATTACK_HEAVY)
-                || (iCurrentCursor == ImageManager.CURSOR_ATTACK_RAM)
-                || (iCurrentCursor == ImageManager.CURSOR_ATTACK_SNOB));
+        return ((iCurrentCursor == ImageManager.CURSOR_ATTACK_AXE) || (iCurrentCursor == ImageManager.CURSOR_ATTACK_SWORD) || (iCurrentCursor == ImageManager.CURSOR_ATTACK_SPY) || (iCurrentCursor == ImageManager.CURSOR_ATTACK_LIGHT) || (iCurrentCursor == ImageManager.CURSOR_ATTACK_HEAVY) || (iCurrentCursor == ImageManager.CURSOR_ATTACK_RAM) || (iCurrentCursor == ImageManager.CURSOR_ATTACK_SNOB));
     }
 
     protected void resetServerDependendSettings() {
@@ -1366,8 +1350,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                     int cnt = t.countTokens();
                     boolean doExport = true;
                     if (cnt > 500) {
-                        if (JOptionPaneHelper.showQuestionConfirmBox(jCopyVillagesDialog, "Die ausgewählten Dörfer benötigen mehr als 500 BB-Codes\n"
-                                + "und können daher im Spiel (Forum/IGM/Notizen) nicht auf einmal dargestellt werden.\nTrotzdem exportieren?", "Zu viele BB-Codes", "Nein", "Ja") == JOptionPane.NO_OPTION) {
+                        if (JOptionPaneHelper.showQuestionConfirmBox(jCopyVillagesDialog, "Die ausgewählten Dörfer benötigen mehr als 500 BB-Codes\n" + "und können daher im Spiel (Forum/IGM/Notizen) nicht auf einmal dargestellt werden.\nTrotzdem exportieren?", "Zu viele BB-Codes", "Nein", "Ja") == JOptionPane.NO_OPTION) {
                             doExport = false;
                         }
                     }

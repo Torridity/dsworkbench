@@ -5,6 +5,7 @@
  */
 package de.tor.tribes.ui;
 
+import com.sun.j3d.utils.geometry.ColorCube;
 import de.tor.tribes.dssim.ui.DSWorkbenchSimulatorFrame;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
@@ -53,6 +54,7 @@ import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
@@ -73,6 +75,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
 import javax.imageio.ImageIO;
+import javax.media.j3d.BranchGroup;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
@@ -80,8 +83,8 @@ import javax.swing.JPanel;
 
  * @author Charon
  */
-//public class MapPanel extends JPanel implements DragGestureListener, // For recognizing the start of drags
 public class MapPanel extends JPanel implements DragGestureListener, // For recognizing the start of drags
+
         DragSourceListener, // For processing drag source events
         DropTargetListener // For processing drop target events
 {
@@ -138,6 +141,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
     MapPanel() {
         super();
         initComponents();
+
 
         logger.info("Creating MapPanel");
         mMapPanelListeners = new LinkedList<MapPanelListener>();
@@ -1263,7 +1267,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
 
         jVillageActionsMenu.add(jMarkedVillageSubmenu);
 
-        setLayout(new java.awt.BorderLayout());
+       // setLayout(new java.awt.BorderLayout());
     }// </editor-fold>//GEN-END:initComponents
 
     private void fireVillageExportEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireVillageExportEvent

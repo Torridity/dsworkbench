@@ -372,7 +372,7 @@ public class MapRenderer extends Thread {
                     }
 
                     boolean mapDrawn = false;
-                    long s = System.currentTimeMillis();
+                    // long s = System.currentTimeMillis();
                     for (Integer layer : drawOrder) {
                         if (layer == 0) {
                             if (mapDrawn) {
@@ -470,7 +470,6 @@ public class MapRenderer extends Thread {
                     renderLiveLayer(g2d);
                     g2d.drawImage(mLayers.get(LIVE_LAYER), 0, 0, null);
 
-
                     //    logger.info(" - LIVE " + (System.currentTimeMillis() - s));
                     // s = System.currentTimeMillis();
                     //render selection
@@ -484,6 +483,8 @@ public class MapRenderer extends Thread {
                     //notify MapPanel to bring buffer to screen
                     Hashtable<Village, Rectangle> pos = (Hashtable<Village, Rectangle>) villagePositions.clone();
                     mFrontBuffer = optimizeImage(mBackBuffer);
+                    //MapPanel.getSingleton().getGraphics2D().drawAndFlushImage(mFrontBuffer, 0, 0, null);
+                    //MapPanel.getSingleton().swap();
                     // logger.info(" - OPTIMIZE " + (System.currentTimeMillis() - s));
                     // Graphics2D cg = (Graphics2D) strategy.getDrawGraphics();
 
@@ -495,12 +496,18 @@ public class MapRenderer extends Thread {
                     g2d.dispose();
                     // cg.dispose();
                     // strategy.show();
+
                     MapPanel.getSingleton().repaint();
                     //       logger.info(" - DONE! " + (System.currentTimeMillis() - s));
 
                 }
                 if (alpha > 0.0f) {
                     alpha -= .05f;
+                    if (alpha < 0.0f) {
+                        alpha = 0.0f;
+                    }
+                } else {
+                    alpha = 0.0f;
                 }
             } catch (Throwable t) {
                 lRenderedLast = 0;
@@ -2279,6 +2286,8 @@ public class MapRenderer extends Thread {
         /*  if (Boolean.parseBoolean(GlobalOptions.getProperty("show.map.popup"))) {
         renderVillageInfo(g2d, mouseVillage);
         }*/
+
+
         if (Boolean.parseBoolean(GlobalOptions.getProperty("show.map.popup"))) {
             try {
                 if (DSWorkbenchMainFrame.getSingleton().isActive() && MapPanel.getSingleton().getMousePosition() != null) {
@@ -2327,8 +2336,8 @@ public class MapRenderer extends Thread {
         //if (bi == null) {
         renderChartInfo(g2d);
         //  }
-     //   g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
-       // g2d.drawImage(bi, 50, 50, null);
+        //   g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
+        // g2d.drawImage(bi, 50, 50, null);
         // System.out.println("D " + (System.currentTimeMillis() - s));
     }
 
@@ -2339,7 +2348,7 @@ public class MapRenderer extends Thread {
         while (keys.hasMoreElements()) {
             Ally a = keys.nextElement();
             Integer v = allyCount.get(a);
-            dataset.setValue(a.toString(), new Double((double) v / (double) allies * 100));
+            dataset.setValue(a.getTag(), new Double((double) v / (double) allies * 100));
         }
         /* dataset.setValue("One", new Double(43.2));
         dataset.setValue("Two", new Double(10.0));
@@ -2362,11 +2371,19 @@ public class MapRenderer extends Thread {
         plot.setBackgroundPaint(null);
         plot.setShadowPaint(null);
         plot.setInteriorGap(0.0);
-
+        plot.setLabelGap(0.0);
+        /*plot.getL
+        plot.setLabelFont(g2d.getFont().deriveFont(10.0f));*/
+        plot.setSectionPaint("[KdS]", Color.CYAN);
+        //plot.setLabel
         //plot.setLabelGenerator(null);
+        //plot.setMaximumLabelWidth(30.0);
+        //plot.getLabelDistributor().distributeLabels(10.0, 20.0);
         //chart.draw(g2d, new Rectangle2D.Float(20, 20, 100, 100));
-         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
-        chart.draw(g2d, new Rectangle2D.Float(50, 50, 400, 400));
+      //  g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
+
+      //  bi = chart.createBufferedImage(240, 240);
+       // g2d.drawImage(bi, 30, 30, null);
     }
     BufferedImage bi;
 }

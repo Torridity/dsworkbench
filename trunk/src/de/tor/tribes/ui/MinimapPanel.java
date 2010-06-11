@@ -37,6 +37,7 @@ import java.awt.event.MouseWheelListener;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import javax.imageio.ImageIO;
@@ -68,6 +69,11 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
     private Rectangle2D rDrag = null;
     private Rectangle rVisiblePart = null;
     boolean zoomed = false;
+    boolean showControls = false;
+    private static final int ID_MINIMAP = 0;
+    private static final int ID_ALLY_CHART = 1;
+    private static final int ID_TRIBE_CHART = 2;
+    private Hashtable<Integer, Rectangle> minimapButtons = new Hashtable<Integer, Rectangle>();
 
     public static synchronized MinimapPanel getSingleton() {
         if (SINGLETON == null) {
@@ -84,6 +90,10 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
         mToolChangeListeners = new LinkedList<ToolChangeListener>();
         setCursor(ImageManager.getCursor(iCurrentCursor));
         mScreenshotPanel = new ScreenshotPanel();
+        minimapButtons.put(ID_MINIMAP, new Rectangle(2, 2, 26, 26));
+        minimapButtons.put(ID_ALLY_CHART, new Rectangle(30, 2, 26, 26));
+        minimapButtons.put(ID_TRIBE_CHART, new Rectangle(60, 2, 26, 26));
+
         jPanel1.add(mScreenshotPanel);
         int mapWidth = (int) ServerSettings.getSingleton().getMapDimension().getWidth();
         int mapHeight = (int) ServerSettings.getSingleton().getMapDimension().getHeight();
@@ -244,6 +254,16 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
                         }
                     }
                 }
+
+                if (new Rectangle(0, 0, 88, 30).contains(e.getPoint())) {
+                    showControls = true;
+                    repaint();
+                } else {
+                    if (showControls) {
+                        showControls = false;
+                        repaint();
+                    }
+                }
             }
         });
 
@@ -348,7 +368,30 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
                     g2d.drawRect((int) rDrag.getMinX(), (int) rDrag.getMinY(), (int) (rDrag.getWidth() - rDrag.getX()), (int) (rDrag.getWidth() - rDrag.getX()));
                 }
             }
+
+
+            if (showControls) {
+            } else {
+                g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .2f));
+               
+            }
+
+            g2d.setColor(Color.WHITE);
+            g2d.fillRect(0, 0, 88, 30);
+            g2d.setColor(Color.BLUE);
+            Rectangle r = minimapButtons.get(ID_MINIMAP);
+            g2d.fillRect(r.x, r.y, r.width, r.height);
+            g2d.setColor(Color.RED);
+            r = minimapButtons.get(ID_ALLY_CHART);
+            g2d.fillRect(r.x, r.y, r.width, r.height);
+            g2d.setColor(Color.YELLOW);
+            r = minimapButtons.get(ID_TRIBE_CHART);
+            g2d.fillRect(r.x, r.y, r.width, r.height);
+
             g2d.dispose();
+
+
+
         } catch (Exception e) {
             logger.error("Failed painting Minimap", e);
         }
@@ -613,8 +656,8 @@ private void fireSaveScreenshotEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST
     try {
         chooser = new JFileChooser(dir);
     } catch (Exception e) {
-        JOptionPaneHelper.showErrorBox(this, "Konnte Dateiauswahldialog nicht öffnen.\nMöglicherweise verwendest du Windows Vista. Ist dies der Fall, beende DS Workbench, klicke mit der rechten Maustaste auf DSWorkbench.exe,\n" +
-                "wähle 'Eigenschaften' und deaktiviere dort unter 'Kompatibilität' den Windows XP Kompatibilitätsmodus.", "Fehler");
+        JOptionPaneHelper.showErrorBox(this, "Konnte Dateiauswahldialog nicht öffnen.\nMöglicherweise verwendest du Windows Vista. Ist dies der Fall, beende DS Workbench, klicke mit der rechten Maustaste auf DSWorkbench.exe,\n"
+                + "wähle 'Eigenschaften' und deaktiviere dort unter 'Kompatibilität' den Windows XP Kompatibilitätsmodus.", "Fehler");
         return;
     }
     chooser.setDialogTitle("Speichern unter...");
@@ -679,17 +722,17 @@ private void firePutScreenOnlineEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
         if (result.indexOf("view.php") > 0) {
             try {
                 Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(result), null);
-                JOptionPaneHelper.showInformationBox(jScreenshotControl, "Kartengrafik erfolgreich Online gestellt.\n" +
-                        "Der Zugriffslink (" + result + ")\n" +
-                        "wurde in die Zwischenablage kopiert.", "Information");
+                JOptionPaneHelper.showInformationBox(jScreenshotControl, "Kartengrafik erfolgreich Online gestellt.\n"
+                        + "Der Zugriffslink (" + result + ")\n"
+                        + "wurde in die Zwischenablage kopiert.", "Information");
                 BrowserCommandSender.openPage(result);
             } catch (Exception e) {
-                JOptionPaneHelper.showWarningBox(jScreenshotControl, "Fehler beim Kopieren des Links in die Zwischenablage." +
-                        "Der Zugriffslink lautet: " + result, "Warnung");
+                JOptionPaneHelper.showWarningBox(jScreenshotControl, "Fehler beim Kopieren des Links in die Zwischenablage."
+                        + "Der Zugriffslink lautet: " + result, "Warnung");
             }
         } else {
-            JOptionPaneHelper.showErrorBox(this, "Kartengrafik konnte nicht Online gestellt werden.\n" +
-                    "Fehler: " + result, "Fehler");
+            JOptionPaneHelper.showErrorBox(this, "Kartengrafik konnte nicht Online gestellt werden.\n"
+                    + "Fehler: " + result, "Fehler");
         }
     }
 

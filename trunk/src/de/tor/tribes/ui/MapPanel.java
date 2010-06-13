@@ -5,7 +5,6 @@
  */
 package de.tor.tribes.ui;
 
-import com.sun.j3d.utils.geometry.ColorCube;
 import de.tor.tribes.dssim.ui.DSWorkbenchSimulatorFrame;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
@@ -54,7 +53,6 @@ import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Cursor;
-import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
@@ -75,7 +73,6 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
 import javax.imageio.ImageIO;
-import javax.media.j3d.BranchGroup;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 

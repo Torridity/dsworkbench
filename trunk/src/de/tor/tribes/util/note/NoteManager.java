@@ -286,4 +286,17 @@ public class NoteManager {
         }
         return null;
     }
+
+    public List<Note> getNotesForVillage(Village pVillage) {
+        if (pVillage == null) {
+            return null;
+        }
+        List<Note> noteList = new LinkedList<Note>();
+        for (Note n : notes) {
+            if (n.getVillageIds().contains(pVillage.getId())) {
+                noteList.add(n);
+            }
+        }
+        return noteList;
+    }
 }

@@ -7,7 +7,9 @@ package de.tor.tribes.ui;
 
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.php.ScreenUploadInterface;
+import de.tor.tribes.types.Ally;
 import de.tor.tribes.types.Marker;
+import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.util.BrowserCommandSender;
 import de.tor.tribes.util.Constants;
@@ -37,6 +39,8 @@ import java.awt.event.MouseWheelListener;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.text.NumberFormat;
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
@@ -45,6 +49,11 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 import org.apache.log4j.Logger;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.labels.StandardPieSectionLabelGenerator;
+import org.jfree.chart.plot.PiePlot;
+import org.jfree.data.general.DefaultPieDataset;
 
 /**
  * @author  jejkal
@@ -74,6 +83,10 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
     private static final int ID_ALLY_CHART = 1;
     private static final int ID_TRIBE_CHART = 2;
     private Hashtable<Integer, Rectangle> minimapButtons = new Hashtable<Integer, Rectangle>();
+    private Hashtable<Integer, BufferedImage> minimapIcons = new Hashtable<Integer, BufferedImage>();
+    private int iCurrentView = ID_MINIMAP;
+    private BufferedImage mChartImage;
+    private int lastHash = 0;
 
     public static synchronized MinimapPanel getSingleton() {
         if (SINGLETON == null) {
@@ -93,7 +106,12 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
         minimapButtons.put(ID_MINIMAP, new Rectangle(2, 2, 26, 26));
         minimapButtons.put(ID_ALLY_CHART, new Rectangle(30, 2, 26, 26));
         minimapButtons.put(ID_TRIBE_CHART, new Rectangle(60, 2, 26, 26));
-
+        try {
+            minimapIcons.put(ID_MINIMAP, ImageIO.read(new File("./graphics/icons/minimap.png")));
+            minimapIcons.put(ID_ALLY_CHART, ImageIO.read(new File("./graphics/icons/ally_chart.png")));
+            minimapIcons.put(ID_TRIBE_CHART, ImageIO.read(new File("./graphics/icons/tribe_chart.png")));
+        } catch (Exception e) {
+        }
         jPanel1.add(mScreenshotPanel);
         int mapWidth = (int) ServerSettings.getSingleton().getMapDimension().getWidth();
         int mapHeight = (int) ServerSettings.getSingleton().getMapDimension().getHeight();
@@ -108,18 +126,37 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
 
             @Override
             public void mouseClicked(MouseEvent e) {
-                Point p = mousePosToMapPosition(e.getX(), e.getY());
-                DSWorkbenchMainFrame.getSingleton().centerPosition(p.x, p.y);
+                if (!showControls) {
+                    Point p = mousePosToMapPosition(e.getX(), e.getY());
+                    DSWorkbenchMainFrame.getSingleton().centerPosition(p.x, p.y);
 
-                if (mZoomFrame != null) {
-                    if (mZoomFrame.isVisible()) {
-                        mZoomFrame.toFront();
+                    if (mZoomFrame != null) {
+                        if (mZoomFrame.isVisible()) {
+                            mZoomFrame.toFront();
+                        }
+                    }
+                } else {
+                    if (minimapButtons.get(ID_MINIMAP).contains(e.getPoint())) {
+                        iCurrentView = ID_MINIMAP;
+                        mBuffer = null;
+                        MinimapRepaintThread.getSingleton().update();
+                    } else if (minimapButtons.get(ID_ALLY_CHART).contains(e.getPoint())) {
+                        iCurrentView = ID_ALLY_CHART;
+                        lastHash = 0;
+                        updateComplete(null);
+                    } else if (minimapButtons.get(ID_TRIBE_CHART).contains(e.getPoint())) {
+                        iCurrentView = ID_TRIBE_CHART;
+                        lastHash = 0;
+                        updateComplete(null);
                     }
                 }
             }
 
             @Override
             public void mousePressed(MouseEvent e) {
+                if (iCurrentView != ID_MINIMAP) {
+                    return;
+                }
                 if (iCurrentCursor == ImageManager.CURSOR_SHOT || iCurrentCursor == ImageManager.CURSOR_ZOOM) {
                     iXDown = e.getX();
                     iYDown = e.getY();
@@ -128,6 +165,9 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
 
             @Override
             public void mouseReleased(MouseEvent e) {
+                if (iCurrentView != ID_MINIMAP) {
+                    return;
+                }
                 if (rDrag == null) {
                     return;
                 }
@@ -184,6 +224,9 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
 
             @Override
             public void mouseEntered(MouseEvent e) {
+                if (iCurrentView != ID_MINIMAP) {
+                    return;
+                }
                 switch (iCurrentCursor) {
                     case ImageManager.CURSOR_ZOOM: {
                         if (mZoomFrame != null) {
@@ -210,6 +253,9 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
 
             @Override
             public void mouseDragged(MouseEvent e) {
+                if (iCurrentView != ID_MINIMAP) {
+                    return;
+                }
                 switch (iCurrentCursor) {
                     case ImageManager.CURSOR_MOVE: {
                         Point p = mousePosToMapPosition(e.getX(), e.getY());
@@ -231,30 +277,31 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
 
             @Override
             public void mouseMoved(MouseEvent e) {
-                switch (iCurrentCursor) {
-                    case ImageManager.CURSOR_ZOOM: {
-                        if (mZoomFrame != null) {
-                            if (!mZoomFrame.isVisible()) {
-                                mZoomFrame.setVisible(true);
-                            }
-                            int mapWidth = (int) ServerSettings.getSingleton().getMapDimension().getWidth();
-                            int mapHeight = (int) ServerSettings.getSingleton().getMapDimension().getHeight();
+                if (iCurrentView == ID_MINIMAP) {
+                    switch (iCurrentCursor) {
+                        case ImageManager.CURSOR_ZOOM: {
+                            if (mZoomFrame != null) {
+                                if (!mZoomFrame.isVisible()) {
+                                    mZoomFrame.setVisible(true);
+                                }
+                                int mapWidth = (int) ServerSettings.getSingleton().getMapDimension().getWidth();
+                                int mapHeight = (int) ServerSettings.getSingleton().getMapDimension().getHeight();
 
-                            int x = (int) Math.rint((double) mapWidth / (double) getWidth() * (double) e.getX());
-                            int y = (int) Math.rint((double) mapHeight / (double) getHeight() * (double) e.getY());
-                            mZoomFrame.updatePosition(x, y);
+                                int x = (int) Math.rint((double) mapWidth / (double) getWidth() * (double) e.getX());
+                                int y = (int) Math.rint((double) mapHeight / (double) getHeight() * (double) e.getY());
+                                mZoomFrame.updatePosition(x, y);
+                            }
+                            break;
                         }
-                        break;
-                    }
-                    default: {
-                        if (mZoomFrame != null) {
-                            if (mZoomFrame.isVisible()) {
-                                mZoomFrame.setVisible(false);
+                        default: {
+                            if (mZoomFrame != null) {
+                                if (mZoomFrame.isVisible()) {
+                                    mZoomFrame.setVisible(false);
+                                }
                             }
                         }
                     }
                 }
-
                 if (new Rectangle(0, 0, 88, 30).contains(e.getPoint())) {
                     showControls = true;
                     repaint();
@@ -264,6 +311,7 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
                         repaint();
                     }
                 }
+
             }
         });
 
@@ -271,6 +319,9 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
 
             @Override
             public void mouseWheelMoved(MouseWheelEvent e) {
+                if (iCurrentView != ID_MINIMAP) {
+                    return;
+                }
                 iCurrentCursor += e.getWheelRotation();
                 if (iCurrentCursor == ImageManager.CURSOR_DEFAULT + e.getWheelRotation()) {
                     if (e.getWheelRotation() < 0) {
@@ -343,55 +394,71 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
     public void paint(Graphics g) {
         try {
             Graphics2D g2d = (Graphics2D) g;
+            g2d.clearRect(0, 0, getWidth(), getHeight());
             g2d.drawImage(mBuffer, 0, 0, null);
+            if (iCurrentView == ID_MINIMAP) {
+                g2d.setColor(Color.YELLOW);
+                int mapWidth = rVisiblePart.width;
+                int mapHeight = rVisiblePart.height;
 
-            g2d.setColor(Color.YELLOW);
-            int mapWidth = rVisiblePart.width;
-            int mapHeight = rVisiblePart.height;
+                int w = (int) Math.rint(((double) getWidth() / mapWidth) * (double) iWidth);
+                int h = (int) Math.rint(((double) getHeight() / mapHeight) * (double) iHeight);
 
-            int w = (int) Math.rint(((double) getWidth() / mapWidth) * (double) iWidth);
-            int h = (int) Math.rint(((double) getHeight() / mapHeight) * (double) iHeight);
+                double posX = ((double) getWidth() / mapWidth * (double) (iX - rVisiblePart.x)) - w / 2;
+                double posY = ((double) getHeight() / mapHeight * (double) (iY - rVisiblePart.y)) - h / 2;
 
-            double posX = ((double) getWidth() / mapWidth * (double) (iX - rVisiblePart.x)) - w / 2;
-            double posY = ((double) getHeight() / mapHeight * (double) (iY - rVisiblePart.y)) - h / 2;
+                g2d.drawRect((int) Math.rint(posX), (int) Math.rint(posY), w, h);
 
-            g2d.drawRect((int) Math.rint(posX), (int) Math.rint(posY), w, h);
-
-            if (iCurrentCursor == ImageManager.CURSOR_SHOT) {
-                if (rDrag != null) {
-                    g2d.setColor(Color.ORANGE);
-                    g2d.drawRect((int) rDrag.getMinX(), (int) rDrag.getMinY(), (int) (rDrag.getWidth() - rDrag.getX()), (int) (rDrag.getHeight() - rDrag.getY()));
-                }
-            } else if (iCurrentCursor == ImageManager.CURSOR_ZOOM) {
-                if (rDrag != null) {
-                    g2d.setColor(Color.CYAN);
-                    g2d.drawRect((int) rDrag.getMinX(), (int) rDrag.getMinY(), (int) (rDrag.getWidth() - rDrag.getX()), (int) (rDrag.getWidth() - rDrag.getX()));
+                if (iCurrentCursor == ImageManager.CURSOR_SHOT) {
+                    if (rDrag != null) {
+                        g2d.setColor(Color.ORANGE);
+                        g2d.drawRect((int) rDrag.getMinX(), (int) rDrag.getMinY(), (int) (rDrag.getWidth() - rDrag.getX()), (int) (rDrag.getHeight() - rDrag.getY()));
+                    }
+                } else if (iCurrentCursor == ImageManager.CURSOR_ZOOM) {
+                    if (rDrag != null) {
+                        g2d.setColor(Color.CYAN);
+                        g2d.drawRect((int) rDrag.getMinX(), (int) rDrag.getMinY(), (int) (rDrag.getWidth() - rDrag.getX()), (int) (rDrag.getWidth() - rDrag.getX()));
+                    }
                 }
             }
 
-
-            if (showControls) {
-            } else {
+            if (!showControls) {
                 g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .2f));
-               
             }
 
             g2d.setColor(Color.WHITE);
             g2d.fillRect(0, 0, 88, 30);
-            g2d.setColor(Color.BLUE);
+            g2d.setColor(Color.BLACK);
             Rectangle r = minimapButtons.get(ID_MINIMAP);
-            g2d.fillRect(r.x, r.y, r.width, r.height);
-            g2d.setColor(Color.RED);
+
+            if (getMousePosition() != null && r.contains(getMousePosition())) {
+                g2d.setColor(Color.YELLOW);
+                g2d.fillRect(r.x, r.y, r.width, r.height);
+                g2d.setColor(Color.BLACK);
+            }
+            g2d.drawImage(minimapIcons.get(ID_MINIMAP), r.x, r.y, null);
+            g2d.drawRect(r.x, r.y, r.width, r.height);
+
+            //g2d.setColor(Color.RED);
             r = minimapButtons.get(ID_ALLY_CHART);
-            g2d.fillRect(r.x, r.y, r.width, r.height);
-            g2d.setColor(Color.YELLOW);
+            if (getMousePosition() != null && r.contains(getMousePosition())) {
+                g2d.setColor(Color.YELLOW);
+                g2d.fillRect(r.x, r.y, r.width, r.height);
+                g2d.setColor(Color.BLACK);
+            }
+            g2d.drawImage(minimapIcons.get(ID_ALLY_CHART), r.x, r.y, null);
+            g2d.drawRect(r.x, r.y, r.width, r.height);
+            // g2d.setColor(Color.YELLOW);
             r = minimapButtons.get(ID_TRIBE_CHART);
-            g2d.fillRect(r.x, r.y, r.width, r.height);
+            if (getMousePosition() != null && r.contains(getMousePosition())) {
+                g2d.setColor(Color.YELLOW);
+                g2d.fillRect(r.x, r.y, r.width, r.height);
+                g2d.setColor(Color.BLACK);
+            }
+            g2d.drawImage(minimapIcons.get(ID_TRIBE_CHART), r.x, r.y, null);
+            g2d.drawRect(r.x, r.y, r.width, r.height);
 
             g2d.dispose();
-
-
-
         } catch (Exception e) {
             logger.error("Failed painting Minimap", e);
         }
@@ -408,33 +475,173 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
 
     protected void updateComplete(BufferedImage pBuffer) {
         try {
-            if (mZoomFrame == null) {
-                mZoomFrame = new MinimapZoomFrame(pBuffer);
-                mZoomFrame.setSize(300, 300);
-                mZoomFrame.setLocation(0, 0);
-            }
-            if (mBuffer == null) {
-                mBuffer = pBuffer;
-                if (pBuffer == null) {
-                    MinimapRepaintThread.getSingleton().update();
-                    return;
+            if (iCurrentView == ID_MINIMAP) {
+                if (mZoomFrame == null) {
+                    mZoomFrame = new MinimapZoomFrame(pBuffer);
+                    mZoomFrame.setSize(300, 300);
+                    mZoomFrame.setLocation(0, 0);
+                }
+                if (mBuffer == null) {
+                    mBuffer = pBuffer;
+                    if (pBuffer == null) {
+                        MinimapRepaintThread.getSingleton().update();
+                        return;
+                    }
+
+                    mBuffer = mBuffer.getScaledInstance(getWidth(), getHeight(), BufferedImage.SCALE_SMOOTH);
+                } else if ((mBuffer.getWidth(null) != getWidth()) || (mBuffer.getHeight(null) != getHeight())) {
+                    mZoomFrame.setMinimap(pBuffer);
+                    mBuffer = mBuffer.getScaledInstance(getWidth(), getHeight(), BufferedImage.SCALE_SMOOTH);
+                } else if (doRedraw) {
+                    mZoomFrame.setMinimap(pBuffer);
+                    mBuffer = pBuffer;
+                    mBuffer = mBuffer.getScaledInstance(getWidth(), getHeight(), BufferedImage.SCALE_SMOOTH);
                 }
 
-                mBuffer = mBuffer.getScaledInstance(getWidth(), getHeight(), BufferedImage.SCALE_SMOOTH);
-            } else if ((mBuffer.getWidth(null) != getWidth()) || (mBuffer.getHeight(null) != getHeight())) {
-                mZoomFrame.setMinimap(pBuffer);
-                mBuffer = mBuffer.getScaledInstance(getWidth(), getHeight(), BufferedImage.SCALE_SMOOTH);
-            } else if (doRedraw) {
-                mZoomFrame.setMinimap(pBuffer);
-                mBuffer = pBuffer;
-                mBuffer = mBuffer.getScaledInstance(getWidth(), getHeight(), BufferedImage.SCALE_SMOOTH);
+            } else {
+                // long s = System.currentTimeMillis();
+                int hash = MapPanel.getSingleton().getMapRenderer().getAllyCount().hashCode();
+                if (lastHash != hash) {
+                    renderChartInfo();
+                    mBuffer = mChartImage;
+                    lastHash = hash;
+                }
+                // System.out.println("dur " + (System.currentTimeMillis() - s));
             }
-            doRedraw = false;
             repaint();
+            doRedraw = false;
         } catch (Exception e) {
             logger.error("Exception while updating Minimap", e);
             //ignore
         }
+    }
+
+    private void renderChartInfo() {
+        Hashtable<Object, Marker> marks = new Hashtable<Object, Marker>();
+        DefaultPieDataset dataset = buildDataset(marks);
+
+        JFreeChart chart = ChartFactory.createPieChart(
+                null, // chart title
+                dataset, // data
+                true, // include legend
+                true,
+                false);
+        chart.setBackgroundPaint(null);
+        //chart.setBorderStroke(null);
+        chart.setBorderVisible(false);
+        final PiePlot plot = (PiePlot) chart.getPlot();
+        // plot.setBackgroundPaint(null);
+        //  plot.setShadowPaint(null);
+
+        Enumeration<Object> markKeys = marks.keys();
+        while (markKeys.hasMoreElements()) {
+            if (iCurrentView == ID_ALLY_CHART) {
+                Ally a = (Ally) markKeys.nextElement();
+                plot.setSectionPaint(a.getTag(), marks.get(a).getMarkerColor());
+            } else {
+                Tribe t = (Tribe) markKeys.nextElement();
+                plot.setSectionPaint(t.getName(), marks.get(t).getMarkerColor());
+            }
+        }
+        //plot.setCircular(true);
+        //  plot.setMaximumLabelWidth(30.0);
+     /*   plot.setLabelGenerator(new StandardPieSectionLabelGenerator(
+        "{0} = {2}", NumberFormat.getNumberInstance(), NumberFormat.getPercentInstance()));*/
+        //   chart.getLegend().setVerticalAlignment(VerticalAlignment.CENTER);
+        //  chart.getLegend().setPosition(RectangleEdge.RIGHT);
+        // plot.setMaximumLabelWidth(20.0);
+        plot.setLabelGenerator(null);
+        plot.setBackgroundPaint(Constants.DS_BACK);
+        /*plot.setInteriorGap(0.0);
+        plot.setLabelGap(0.0);*/
+        plot.setLegendLabelGenerator(new StandardPieSectionLabelGenerator(
+                "{0} = {2}", NumberFormat.getNumberInstance(), NumberFormat.getPercentInstance()));
+
+        /*plot.getL
+        plot.setLabelFont(g2d.getFont().deriveFont(10.0f));*/
+
+
+        //plot.setLabelGenerator(null);
+
+        //plot.setMaximumLabelWidth(30.0);
+        //plot.getLabelDistributor().distributeLabels(10.0, 20.0);
+        //chart.draw(g2d, new Rectangle2D.Float(20, 20, 100, 100));
+
+        //  g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
+        plot.setOutlineVisible(false);
+        mChartImage = chart.createBufferedImage(getWidth(), getHeight());
+        //chart.draw(g2d, new Rectangle2D.Float(50, 50, 400, 400));
+        //g2d.drawImage(bi, 30, 30, null);
+
+        //  g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
+
+        //bi = chart.createBufferedImage(240, 240);
+        // g2d.drawImage(bi, 30, 30, null);
+    }
+
+    private DefaultPieDataset buildDataset(Hashtable<Object, Marker> marks) {
+        DefaultPieDataset dataset = new DefaultPieDataset();
+        if (iCurrentView == ID_ALLY_CHART) {
+            Hashtable<Ally, Integer> allyCount = MapPanel.getSingleton().getMapRenderer().getAllyCount();
+            int overallVillages = 0;
+            Enumeration<Ally> keys = allyCount.keys();
+            //count all villages
+            while (keys.hasMoreElements()) {
+                overallVillages += allyCount.get(keys.nextElement());
+            }
+            keys = allyCount.keys();
+            double rest = 0;
+            // Hashtable<Ally, Marker> marks = new Hashtable<Ally, Marker>();
+            while (keys.hasMoreElements()) {
+                Ally a = keys.nextElement();
+                Integer v = allyCount.get(a);
+
+                Double perc = new Double((double) v / (double) overallVillages * 100);
+                if (perc > 5.0) {
+                    dataset.setValue(a.getTag(), perc);
+                    Marker m = MarkerManager.getSingleton().getMarker(a);
+                    if (m != null) {
+                        marks.put(a, m);
+                    }
+                    dataset.setValue(a.getTag(), new Double((double) v / (double) overallVillages * 100));
+                } else {
+                    rest += perc;
+                }
+            }
+
+            dataset.setValue("Sonstige", rest);
+        } else {
+
+            Hashtable<Tribe, Integer> tribeCount = MapPanel.getSingleton().getMapRenderer().getTribeCount();
+            int overallVillages = 0;
+            Enumeration<Tribe> keys = tribeCount.keys();
+            //count all villages
+            while (keys.hasMoreElements()) {
+                overallVillages += tribeCount.get(keys.nextElement());
+            }
+            keys = tribeCount.keys();
+            double rest = 0;
+            //  Hashtable<Tribe, Marker> marks = new Hashtable<Tribe, Marker>();
+            while (keys.hasMoreElements()) {
+                Tribe t = keys.nextElement();
+                Integer v = tribeCount.get(t);
+
+                Double perc = new Double((double) v / (double) overallVillages * 100);
+                if (perc > 5.0) {
+                    dataset.setValue(t.getName(), perc);
+                    Marker m = MarkerManager.getSingleton().getMarker(t);
+                    if (m != null) {
+                        marks.put(t, m);
+                    }
+                    dataset.setValue(t.getName(), new Double((double) v / (double) overallVillages * 100));
+                } else {
+                    rest += perc;
+                }
+            }
+
+            dataset.setValue("Sonstige", rest);
+        }
+        return dataset;
     }
 
     public void redraw() {
@@ -656,8 +863,7 @@ private void fireSaveScreenshotEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST
     try {
         chooser = new JFileChooser(dir);
     } catch (Exception e) {
-        JOptionPaneHelper.showErrorBox(this, "Konnte Dateiauswahldialog nicht öffnen.\nMöglicherweise verwendest du Windows Vista. Ist dies der Fall, beende DS Workbench, klicke mit der rechten Maustaste auf DSWorkbench.exe,\n"
-                + "wähle 'Eigenschaften' und deaktiviere dort unter 'Kompatibilität' den Windows XP Kompatibilitätsmodus.", "Fehler");
+        JOptionPaneHelper.showErrorBox(this, "Konnte Dateiauswahldialog nicht öffnen.\nMöglicherweise verwendest du Windows Vista. Ist dies der Fall, beende DS Workbench, klicke mit der rechten Maustaste auf DSWorkbench.exe,\n" + "wähle 'Eigenschaften' und deaktiviere dort unter 'Kompatibilität' den Windows XP Kompatibilitätsmodus.", "Fehler");
         return;
     }
     chooser.setDialogTitle("Speichern unter...");
@@ -722,17 +928,13 @@ private void firePutScreenOnlineEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
         if (result.indexOf("view.php") > 0) {
             try {
                 Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(result), null);
-                JOptionPaneHelper.showInformationBox(jScreenshotControl, "Kartengrafik erfolgreich Online gestellt.\n"
-                        + "Der Zugriffslink (" + result + ")\n"
-                        + "wurde in die Zwischenablage kopiert.", "Information");
+                JOptionPaneHelper.showInformationBox(jScreenshotControl, "Kartengrafik erfolgreich Online gestellt.\n" + "Der Zugriffslink (" + result + ")\n" + "wurde in die Zwischenablage kopiert.", "Information");
                 BrowserCommandSender.openPage(result);
             } catch (Exception e) {
-                JOptionPaneHelper.showWarningBox(jScreenshotControl, "Fehler beim Kopieren des Links in die Zwischenablage."
-                        + "Der Zugriffslink lautet: " + result, "Warnung");
+                JOptionPaneHelper.showWarningBox(jScreenshotControl, "Fehler beim Kopieren des Links in die Zwischenablage." + "Der Zugriffslink lautet: " + result, "Warnung");
             }
         } else {
-            JOptionPaneHelper.showErrorBox(this, "Kartengrafik konnte nicht Online gestellt werden.\n"
-                    + "Fehler: " + result, "Fehler");
+            JOptionPaneHelper.showErrorBox(this, "Kartengrafik konnte nicht Online gestellt werden.\n" + "Fehler: " + result, "Fehler");
         }
     }
 
@@ -827,7 +1029,7 @@ class MinimapRepaintThread extends Thread {
     private boolean redraw() {
         Village[][] mVisibleVillages = DataHolder.getSingleton().getVillages();
 
-        if (mVisibleVillages == null) {
+        if (mVisibleVillages == null || mBuffer == null) {
             return false;
         }
 

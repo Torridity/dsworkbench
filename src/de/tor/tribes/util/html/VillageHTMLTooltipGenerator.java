@@ -282,24 +282,33 @@ public class VillageHTMLTooltipGenerator {
     }
 
     static String buildNotes(Village pVillage) {
-        Note n = NoteManager.getSingleton().getNoteForVillage(pVillage);
-        if (n == null) {
-            return "";
-        }
-        try {
-            String res = "<tr>\n";
-            String text = n.getNoteText();
-            text = text.replaceAll("\n", "<br/>");
-            if (n.getNoteSymbol() == -1) {
-                res += "<td colspan='3' bgcolor='#F7F5BF'>" + text + "</td>\n";
-            } else {
-                res += "<td bgcolor='#F7F5BF'>" + "<img src=\"" + ImageManager.getNoteImageURL(n.getNoteSymbol()) + "\"/>" + "</td>\n";
-                res += "<td colspan='2' bgcolor='#F7F5BF'>" + text + "</td>\n";
+        List<Note> notes = NoteManager.getSingleton().getNotesForVillage(pVillage);
+        String lines = "";
+        for (Note n : notes) {
+            //Note n = NoteManager.getSingleton().getNoteForVillage(pVillage);
+            if (n == null) {
+                return "";
             }
-            res += "</tr>\n";
-            return res;
-        } catch (Exception e) {
-            return "";
+            try {
+                String res = "<tr>\n";
+                String text = n.getNoteText();
+                if (text == null) {
+                    text = "";
+                }
+                text = text.replaceAll("\n", "<br/>");
+                if (n.getNoteSymbol() == -1) {
+                    res += "<td colspan='3' bgcolor='#F7F5BF'>" + text + "</td>\n";
+                } else {
+                    res += "<td bgcolor='#F7F5BF'>" + "<img src=\"" + ImageManager.getNoteImageURL(n.getNoteSymbol()) + "\"/>" + "</td>\n";
+                    res += "<td colspan='2' bgcolor='#F7F5BF'>" + text + "</td>\n";
+                }
+                res += "</tr>\n";
+                // return res;
+                lines += res;
+            } catch (Exception e) {
+                return "";
+            }
         }
+        return lines;
     }
 }

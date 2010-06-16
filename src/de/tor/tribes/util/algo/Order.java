@@ -2,7 +2,6 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package de.tor.tribes.util.algo;
 
 /**
@@ -14,28 +13,34 @@ package de.tor.tribes.util.algo;
  * @author Robert Nitsch <dev@robertnitsch.de>
  */
 public class Order {
-	protected Destination destination;
-	protected int amount;
 
-	public Order(Destination d, int amount) {
-		this.destination = d;
-		this.amount = amount;
-	}
+    protected Destination destination;
+    protected int amount;
 
-	public Destination getDestination() {
-		return destination;
-	}
+    public Order(Destination d, int amount) {
+        this.destination = d;
+        this.amount = amount;
+    }
 
-	public void setDestination(Destination destination) {
-		this.destination = destination;
-	}
+    public Destination getDestination() {
+        return destination;
+    }
 
-	public int getAmount() {
-		return amount;
-	}
+    public void setDestination(Destination destination) {
+        this.destination = destination;
+    }
 
-	public void setAmount(int amount) {
-		this.amount = amount;
-	}
+    public int getAmount() {
+        return amount;
+    }
+
+    public void setAmount(int amount) {
+        this.amount = amount;
+    }
+
+    public String toString() {
+        String res = "(" + getAmount() + ") -> " + destination;
+        return res;
+    }
 }
 

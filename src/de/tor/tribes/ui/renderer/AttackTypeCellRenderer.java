@@ -4,13 +4,12 @@
  */
 package de.tor.tribes.ui.renderer;
 
-import de.tor.tribes.ui.ImageManager;
+import de.tor.tribes.types.Attack;
 import de.tor.tribes.util.Constants;
 import java.awt.Component;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.ImageIcon;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
@@ -35,6 +34,7 @@ public class AttackTypeCellRenderer extends JLabel implements TableCellRenderer 
             icons.add(new ImageIcon("./graphics/icons/def.png"));
             icons.add(new ImageIcon("./graphics/icons/fake.png"));
             icons.add(new ImageIcon("./graphics/icons/def_fake.png"));
+            icons.add(new ImageIcon("./graphics/icons/spy.png"));
         } catch (Exception e) {
             icons = null;
         }
@@ -89,22 +89,28 @@ public class AttackTypeCellRenderer extends JLabel implements TableCellRenderer 
         if (!isSelected) {
             if (row % 2 == 0) {
                 setBackground(Constants.DS_ROW_B);
+
+
             } else {
                 setBackground(Constants.DS_ROW_A);
+
+
             }
         } else {
             setForeground(table.getSelectionForeground());
-            super.setBackground(table.getSelectionBackground());
-        }
 
-        /* if (isSelected) {
+
+            super.setBackground(table.getSelectionBackground());
+
+
+        } /* if (isSelected) {
         setForeground(table.getSelectionForeground());
         super.setBackground(table.getSelectionBackground());
         } else {
         setBackground(table.getBackground());
         setForeground(table.getForeground());
-        }*/
-        //setSelectedItem(value);
+        }*/ //setSelectedItem(value);
         return this;
+
     }
 }

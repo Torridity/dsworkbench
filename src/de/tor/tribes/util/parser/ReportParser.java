@@ -80,7 +80,7 @@ public class ReportParser {
                         double luck = Double.parseDouble(line.replaceAll("Glück", "").replaceAll("%", "").trim());
                         result.setLuck(luck);
                     } catch (Exception e) {
-                       // e.printStackTrace();
+                        // e.printStackTrace();
                         result.setLuck(0.0);
                     }
                     luckPart = false;
@@ -249,19 +249,19 @@ public class ReportParser {
                             result.addDefendersOutside(v, parseUnits(troops));
                         }
                     } catch (Exception e) {
+                        //no additional troops outside
                         troopsOutside = false;
-                        e.printStackTrace();
                     }
                 } else if (luckPart) {
                     if (line.indexOf("%") > 0) {
                         luckPart = false;
                         try {
-                           // System.out.println("LuckLine " + line);
+                            // System.out.println("LuckLine " + line);
                             double luck = Double.parseDouble(line.replaceAll("Pech", "").replaceAll("%", "").trim());
-                           // System.out.println("L " + luck);
+                            // System.out.println("L " + luck);
                             result.setLuck(luck);
                         } catch (Exception e) {
-                          //  e.printStackTrace();
+                            //  e.printStackTrace();
                             result.setLuck(0.0);
                         }
                     }

@@ -69,7 +69,7 @@ import javax.swing.table.TableRowSorter;
 import org.apache.log4j.Logger;
 
 /**
- 
+
  * @author Torridity
  */
 public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements ReportManagerListener {
@@ -214,10 +214,10 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         List<Tribe> tribes = new LinkedList<Tribe>();
         while (tribeIds.hasMoreElements()) {
             Tribe t = DataHolder.getSingleton().getTribes().get(tribeIds.nextElement());
-            if (t != null &&
-                    (pFilter == null ||
-                    (pFilter.length() == 0) ||
-                    (t.getName().toLowerCase().indexOf(pFilter.toLowerCase()) >= 0))) {
+            if (t != null
+                    && (pFilter == null
+                    || (pFilter.length() == 0)
+                    || (t.getName().toLowerCase().indexOf(pFilter.toLowerCase()) >= 0))) {
                 tribes.add(t);
             }
 
@@ -1251,8 +1251,8 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
             return;
         }
 
-        if (JOptionPaneHelper.showQuestionConfirmBox(this, "Willst du das Berichtsset '" + selection + "' und alle enthaltenen Berichte\n" +
-                "wirklich löschen?", "Berichtsset löschen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
+        if (JOptionPaneHelper.showQuestionConfirmBox(this, "Willst du das Berichtsset '" + selection + "' und alle enthaltenen Berichte\n"
+                + "wirklich löschen?", "Berichtsset löschen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
             ReportManagerTableModel.getSingleton().setActiveReportSet(ReportManager.DEFAULT_SET);
             ReportManager.getSingleton().removeReportSet(selection);
             buildReportSetList();
@@ -1310,6 +1310,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
                     }
                     jReportTable.revalidate();
                 }
+                ReportManager.getSingleton().forceUpdate(ReportManagerTableModel.getSingleton().getActiveReportSet());
             } catch (Exception e) {
                 logger.error("Failed to move reports", e);
             }
@@ -1327,8 +1328,8 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         if (evt.getSource() == jDoAddNewSetButton) {
             String name = jNewReportSetField.getText();
             if (ReportManager.getSingleton().getReportSet(name) != null) {
-                JOptionPaneHelper.showWarningBox(jAddReportSetDialog, "Ein Set mit dem angegebenen Namen existiert bereits.\n" +
-                        "Bitte wähle einen anderen Namen oder lösche zuerst das bestehende Set.", "Warnung");
+                JOptionPaneHelper.showWarningBox(jAddReportSetDialog, "Ein Set mit dem angegebenen Namen existiert bereits.\n"
+                        + "Bitte wähle einen anderen Namen oder lösche zuerst das bestehende Set.", "Warnung");
                 return;
             }
 
@@ -1343,8 +1344,8 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
             String selection = (String) jReportSetBox.getSelectedItem();
             String newName = jNewSetNameField.getText();
             if (ReportManager.getSingleton().getReportSet(newName) != null) {
-                JOptionPaneHelper.showWarningBox(jRenameReportSetDialog, "Ein Set mit dem Namen '" + newName + "' existiert bereits.\n" +
-                        "Bitte wähle einen anderen Namen oder lösche zuerst das bestehende Set.", "Warnung");
+                JOptionPaneHelper.showWarningBox(jRenameReportSetDialog, "Ein Set mit dem Namen '" + newName + "' existiert bereits.\n"
+                        + "Bitte wähle einen anderen Namen oder lösche zuerst das bestehende Set.", "Warnung");
                 return;
 
             }

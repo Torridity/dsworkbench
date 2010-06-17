@@ -24,6 +24,7 @@ import de.tor.tribes.ui.DSWorkbenchTroopsFrame;
 import de.tor.tribes.ui.FormConfigFrame;
 import de.tor.tribes.ui.ImageManager;
 import de.tor.tribes.ui.MapPanel;
+import de.tor.tribes.ui.TwoD.ShapeStroke;
 import de.tor.tribes.ui.models.TroopsManagerTableModel;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.DSCalculator;
@@ -55,6 +56,7 @@ import java.awt.PaintContext;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.Toolkit;
 import java.awt.Transparency;
@@ -85,12 +87,6 @@ import javax.swing.JToolTip;
 import javax.swing.Popup;
 import javax.swing.PopupFactory;
 import org.apache.log4j.Logger;
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.plot.PiePlot;
-import org.jfree.data.general.DefaultPieDataset;
-import org.jfree.ui.RectangleEdge;
-import org.jfree.ui.VerticalAlignment;
 
 /**Map Renderer which supports "dirty layers" defining which layer has to be redrawn.<BR/>
  * Layer order with z-ID:<BR/>
@@ -753,10 +749,10 @@ public class MapRenderer extends Thread {
         boolean minimapSkin = GlobalOptions.getSkin().isMinimapSkin();
 
         // <editor-fold defaultstate="collapsed" desc="Village drawing">
-        for (int i = 0; i <
-                iVillagesX; i++) {
-            for (int j = 0; j <
-                    iVillagesY; j++) {
+        for (int i = 0; i
+                < iVillagesX; i++) {
+            for (int j = 0; j
+                    < iVillagesY; j++) {
                 Village v = mVisibleVillages[i][j];
                 boolean drawVillage = true;
 
@@ -1259,8 +1255,8 @@ public class MapRenderer extends Thread {
             //render note icons
             Enumeration<Village> keys = villagePositions.keys();
 
-            for (int i = 0; i <
-                    6; i++) {
+            for (int i = 0; i
+                    < 6; i++) {
                 BufferedImage icon = ImageManager.getNoteIcon(i);
                 g2d.drawImage(icon, i * 32, hb + 68, null);
             }
@@ -1690,9 +1686,36 @@ public class MapRenderer extends Thread {
             } catch (Exception e) {
                 unitColor = Color.RED;
             }
-
             attackColors.put(unit.getName(), unitColor);
         }
+
+        GeneralPath p = new GeneralPath();
+        p.moveTo(0, 0);
+        p.lineTo(10, 5);
+        p.lineTo(0, 10);
+        p.lineTo(0, 0);
+        ShapeStroke stroke_attack = new ShapeStroke(
+                new Shape[]{
+                    /*new Rectangle2D.Float(0, 0, 10, 10),
+                    new Ellipse2D.Float(0, 0, 4, 4)*/
+                    p,
+                    new Rectangle2D.Float(0, 0, 10, 2)
+                },
+                10.0f);
+        p = new GeneralPath();
+        p.moveTo(0, 0);
+        p.lineTo(5, 3);
+        p.lineTo(0, 6);
+        p.lineTo(0, 0);
+        ShapeStroke stroke_fake = new ShapeStroke(
+                new Shape[]{
+                    /*new Rectangle2D.Float(0, 0, 10, 10),
+                    new Ellipse2D.Float(0, 0, 4, 4)*/
+                    p,
+                    new Rectangle2D.Float(0, 0, 10, 2)
+                },
+                20.0f);
+
 
         Enumeration<String> keys = AttackManager.getSingleton().getPlans();
         while (keys.hasMoreElements()) {
@@ -1727,43 +1750,46 @@ public class MapRenderer extends Thread {
                                 //attack running
                                 long runTime = System.currentTimeMillis() - start;
                                 double perc = 100 * runTime / dur;
-                                perc /=
-                                        100;
+                                perc /= 100;
                                 double xTar = xStart + (xEnd - xStart) * perc;
                                 double yTar = yStart + (yEnd - yStart) * perc;
-                                unitXPos =
-                                        (int) xTar - unitIcon.getIconWidth() / 2;
-                                unitYPos =
-                                        (int) yTar - unitIcon.getIconHeight() / 2;
+                                unitXPos = (int) xTar - unitIcon.getIconWidth() / 2;
+                                unitYPos = (int) yTar - unitIcon.getIconHeight() / 2;
                             } else if ((start > System.currentTimeMillis()) && (arrive > current)) {
                                 //attack not running, draw unit between source and target
                                 double perc = .5;
                                 double xTar = xStart + (xEnd - xStart) * perc;
                                 double yTar = yStart + (yEnd - yStart) * perc;
-                                unitXPos =
-                                        (int) xTar - unitIcon.getIconWidth() / 2;
-                                unitYPos =
-                                        (int) yTar - unitIcon.getIconHeight() / 2;
+                                unitXPos = (int) xTar - unitIcon.getIconWidth() / 2;
+                                unitYPos = (int) yTar - unitIcon.getIconHeight() / 2;
                             } else {
                                 //attack arrived
                                 unitXPos = (int) xEnd - unitIcon.getIconWidth() / 2;
-                                unitYPos =
-                                        (int) yEnd - unitIcon.getIconHeight() / 2;
+                                unitYPos = (int) yEnd - unitIcon.getIconHeight() / 2;
                             }
 
                         }
                     }
 
                     g2d.setColor(attackColors.get(attack.getUnit().getName()));
+                    if (attack.getType() == Attack.FAKE_TYPE || attack.getType() == Attack.FAKE_DEFF_TYPE) {
+                        /* g2d.setStroke(new BasicStroke(3.0f, BasicStroke.CAP_BUTT,
+                        BasicStroke.JOIN_MITER, 10.0f, dash, 0.0f));*/
+                        g2d.setStroke(stroke_fake);
+                    } else {
+                        g2d.setStroke(stroke_attack);
+                    }
+
+
                     g2d.drawLine((int) Math.rint(xStart), (int) Math.rint(yStart), (int) Math.rint(xEnd), (int) Math.rint(yEnd));
-                    g2d.setColor(Color.YELLOW);
+                    /*g2d.setColor(Color.YELLOW);
                     if (bounds.contains(attackLine.getP1())) {
-                        g2d.fillRect((int) Math.rint(xStart) - 3, (int) Math.rint(yStart) - 1, 6, 6);
+                    g2d.fillRect((int) Math.rint(xStart) - 3, (int) Math.rint(yStart) - 1, 6, 6);
                     }
 
                     if (bounds.contains(attackLine.getP2())) {
-                        g2d.fillOval((int) xEnd - 3, (int) yEnd - 3, 6, 6);
-                    }
+                    g2d.fillOval((int) xEnd - 3, (int) yEnd - 3, 6, 6);
+                    }*/
 
                     if (unitIcon != null) {
                         g2d.drawImage(unitIcon.getImage(), unitXPos, unitYPos, null);
@@ -2371,10 +2397,10 @@ public class MapRenderer extends Thread {
             double rulerEnd = -1 * currentFieldHeight * (viewStartPoint.y - yVillage);
             Composite com = g2d.getComposite();
             Color c = g2d.getColor();
-            for (int i = 0; i <
-                    mVisibleVillages.length; i++) {
-                for (int j = 0; j <
-                        mVisibleVillages[0].length; j++) {
+            for (int i = 0; i
+                    < mVisibleVillages.length; i++) {
+                for (int j = 0; j
+                        < mVisibleVillages[0].length; j++) {
                     if (i == 0) {
                         //draw vertical ruler
                         if ((yVillage + j) % 2 == 0) {
@@ -2446,10 +2472,10 @@ public class MapRenderer extends Thread {
 
             g2d.setComposite(com);
             g2d.setColor(Color.BLACK);
-            for (int i = 0; i <
-                    mVisibleVillages.length; i++) {
-                for (int j = 0; j <
-                        mVisibleVillages[0].length; j++) {
+            for (int i = 0; i
+                    < mVisibleVillages.length; i++) {
+                for (int j = 0; j
+                        < mVisibleVillages[0].length; j++) {
                     if (i == 0 && j != 0) {
                         //draw vertical values
                         if ((yVillage + j) % 2 == 0) {

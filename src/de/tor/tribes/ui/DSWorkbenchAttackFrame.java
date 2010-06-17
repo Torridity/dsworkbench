@@ -35,6 +35,7 @@ import de.tor.tribes.ui.models.StandardAttackTableModel;
 import de.tor.tribes.ui.renderer.AllyCellRenderer;
 import de.tor.tribes.ui.renderer.AlternatingColorCellRenderer;
 import de.tor.tribes.ui.renderer.AttackTypeCellRenderer;
+import de.tor.tribes.ui.renderer.BooleanCellRenderer;
 import de.tor.tribes.ui.renderer.ColoredDateCellRenderer;
 import de.tor.tribes.ui.renderer.SortableTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.StandardAttackTypeCellRenderer;
@@ -3120,6 +3121,7 @@ private void fireSendAttackToReTimeToolEvent(java.awt.event.MouseEvent evt) {//G
         jAttackTable.setDefaultEditor(Integer.class, new AttackTypeCellEditor());
         //  jAttackTable.setDefaultRenderer(String.class, new AlternatingColorCellRenderer());
         jAttackTable.setDefaultRenderer(String.class, rend);
+        jAttackTable.setDefaultRenderer(Boolean.class, new BooleanCellRenderer());
         DefaultComboBoxModel model = new DefaultComboBoxModel(DataHolder.getSingleton().getUnits().toArray(new UnitHolder[]{}));
         model.insertElementAt(UnknownUnit.getSingleton(), 0);
         jUnitBox.setModel(model);

@@ -19,9 +19,122 @@ public class MerchantDistributor {
     }
 
     public void calculate(List<VillageMerchantInfo> pInfos) {
-         int[] targetRes = new int[]{50000, 60000, 30000};
-        int[] minRemainRes = new int[]{20000, 20000, 20000};
+        int[] targetRes = new int[]{100000, 100000, 100000};
+        int[] minRemainRes = new int[]{100000, 100000, 100000};
 
+        int woodSum = 0;
+        int claySum = 0;
+        int ironSum = 0;
+        for (VillageMerchantInfo info : pInfos) {
+            System.out.println(info);
+            woodSum += info.getWoodStock();
+            claySum += info.getClayStock();
+            ironSum += info.getIronStock();
+        }
+        targetRes = new int[]{(int) Math.rint(woodSum / pInfos.size()), (int) Math.rint(claySum / pInfos.size()), (int) Math.rint(ironSum / pInfos.size())};
+        minRemainRes = targetRes;
+
+        System.out.println("Target: " + targetRes[0] + "/" + targetRes[1] + "/" + targetRes[2]);
+
+        ArrayList<MerchantSource> sources = new ArrayList<MerchantSource>();
+        ArrayList<MerchantDestination> destinations = new ArrayList<MerchantDestination>();
+        for (int i = 0; i < targetRes.length; i++) {
+            sources.clear();
+            destinations.clear();
+            for (VillageMerchantInfo info : pInfos) {
+                int res = 0;
+                switch (i) {
+                    case 0:
+                        res = info.getWoodStock();
+                        break;
+                    case 1:
+                        res = info.getClayStock();
+                        break;
+                    case 2:
+                        res = info.getIronStock();
+                        break;
+                }
+
+                int maxAvailable = res - minRemainRes[i];
+                int maxDelivery = info.getAvailableMerchants() * 1000;//(int) Math.rint((double) info.getAvailableMerchants() / 3.0) * 1000;
+                if (maxAvailable < 0) {
+                    int need = (int) (Math.round((double) Math.abs(targetRes[i] - res) / 1000.0)) * 1000;
+                   
+                    //    System.out.println("Receiver " + info + " -> " + need);
+                   
+                    //set to destination list
+                    MerchantDestination d = new MerchantDestination(new Coordinate(info.getVillage().getX(), info.getVillage().getY()), need);
+                    destinations.add(d);
+                } else {
+
+                    if (maxAvailable > maxDelivery) {
+                       
+                        //    System.out.println("Deliverer " + info + " -> " + maxDelivery);
+                        
+                        //use max capacity
+                        // System.out.println("MAXDE " + maxDelivery + " -> " + info.getVillage());
+                        MerchantSource s = new MerchantSource(new Coordinate(info.getVillage().getX(), info.getVillage().getY()), maxDelivery);
+                        sources.add(s);
+                    } else {
+                        //use max available
+                        maxAvailable = (int) (Math.round((double) maxAvailable / 1000.0)) * 1000;
+                       
+                          //  System.out.println("Deliverer " + info + " -> " + maxAvailable);
+                       
+//System.out.println("MAXA " + maxAvailable + " -> " + info.getVillage());
+                        MerchantSource s = new MerchantSource(new Coordinate(info.getVillage().getX(), info.getVillage().getY()), maxAvailable);
+                        sources.add(s);
+                    }
+                }
+            }
+            //calculate
+            if (sources.isEmpty() || destinations.isEmpty()) {
+                //  System.out.println("Nothing todo in round " + i);
+            } else {
+                new MerchantDistributor().calculate(sources, destinations);
+                for (MerchantSource source : sources) {
+                    for (Order o : source.getOrders()) {
+                        int amount = o.getAmount();
+                        int needMerchants = amount / 1000;
+                        MerchantDestination d = (MerchantDestination) o.getDestination();
+                        //System.out.println(source + " " + o);
+                        for (VillageMerchantInfo info : pInfos) {
+                            if (info.getVillage().getX() == source.getC().getX() && info.getVillage().getY() == source.getC().getY()) {
+                                switch (i) {
+                                    case 0:
+                                        info.setWoodStock(info.getWoodStock() - amount);
+                                        break;
+                                    case 1:
+                                        info.setClayStock(info.getClayStock() - amount);
+                                        break;
+                                    case 2:
+                                        info.setIronStock(info.getIronStock() - amount);
+                                        break;
+                                }
+                                info.setAvailableMerchants(info.getAvailableMerchants() - needMerchants);
+                            } else if (info.getVillage().getX() == d.getC().getX() && info.getVillage().getY() == d.getC().getY()) {
+                                switch (i) {
+                                    case 0:
+                                        info.setWoodStock(info.getWoodStock() + amount);
+                                        break;
+                                    case 1:
+                                        info.setClayStock(info.getClayStock() + amount);
+                                        break;
+                                    case 2:
+                                        info.setIronStock(info.getIronStock() + amount);
+                                        break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            System.out.println("Round done");
+        }
+        System.out.println("=================");
+        for (VillageMerchantInfo info : pInfos) {
+            System.out.println(info);
+        }
     }
 
     public void calculate(ArrayList<MerchantSource> pSources, ArrayList<MerchantDestination> pDestinations) {
@@ -35,33 +148,11 @@ public class MerchantDistributor {
             e.printStackTrace();
         }
 
-        for (MerchantSource source : pSources) {
-            for (Order o : source.getOrders()) {
-                System.out.println(source + " " + o);
-            }
+        /*  for (MerchantSource source : pSources) {
+        for (Order o : source.getOrders()) {
+        System.out.println(source + " " + o);
         }
-    }
-
-    private ArrayList<MerchantSource> prepareSourceList() {
-        MerchantSource source = new MerchantSource(new Coordinate(0, 0), 100);
-        MerchantSource source1 = new MerchantSource(new Coordinate(0, 1), 100);
-        MerchantSource source2 = new MerchantSource(new Coordinate(0, 2), 100);
-        ArrayList<MerchantSource> sources = new ArrayList<MerchantSource>();
-        sources.add(source);
-        sources.add(source1);
-        sources.add(source2);
-        return sources;
-    }
-
-    private ArrayList<MerchantDestination> prepareDestinationList() {
-        MerchantDestination destination = new MerchantDestination(new Coordinate(1, 0), 50);
-        MerchantDestination destination1 = new MerchantDestination(new Coordinate(0, 0), 200);
-        MerchantDestination destination2 = new MerchantDestination(new Coordinate(1, 2), 50);
-        ArrayList<MerchantDestination> destinations = new ArrayList<MerchantDestination>();
-        destinations.add(destination);
-        destinations.add(destination1);
-        destinations.add(destination2);
-        return destinations;
+        }*/
     }
 
     public Hashtable<Destination, Double>[] calulateCosts(
@@ -84,8 +175,8 @@ public class MerchantDistributor {
     public static void main(String[] args) {
 
         //overall settings
-        int[] targetRes = new int[]{50000, 60000, 30000};
-        int[] minRemainRes = new int[]{20000, 20000, 20000};
+        int[] targetRes = new int[]{100000, 150000, 100000};
+        int[] minRemainRes = new int[]{100000, 150000, 100000};
 
         //source settings
         Coordinate s1Coord = new Coordinate(0, 0);
@@ -147,7 +238,14 @@ public class MerchantDistributor {
             new MerchantDistributor().calculate(sources, destinations);
             System.out.println("--------Round Done--------");
         }
-
+        /*
+        Offs: Hier entlang! (434|876) K84  	7.28	10.251	92.154 36.371 154.905 	400000	235/235	5212/20476	am 21.06. um 16:21 Uhr
+        Offs: Hier entlang! (436|880) K84  	10.82	10.387	171.896 195.970 175.433 400000	235/235	6312/24000	am 21.06. um 06:50 Uhr
+        Rattennest (-1|33) (485|866) K84  	58.55	10.019	71.270 323.198 263.667 	400000	110/110	16981/24000
+        Rattennest (-31|45) (455|878) K84  	28.28	10.019	96.649 385.743 222.033 	400000	110/110	18441/24000
+        Rattennest (-32|15) (454|848) K84  	37.48	10.019	23.599 219.792 160.859 	400000	110/110	10091/24000
+        Rattennest (-33|44) (453|877) K84  	26.17	10.019	134.644 400.000 161.743 400000	110/110	17641/24000
+         */
 
     }
 }

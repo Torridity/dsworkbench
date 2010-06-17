@@ -1596,9 +1596,6 @@ public class MapRenderer extends Thread {
             //limit to 100%
             percOfMax = (percOfMax > 1) ? 1 : percOfMax;
 
-            //calculate density color
-            int r = (int) Math.rint((1 - percOfMax) * 255);
-            int g = (int) Math.rint(percOfMax * 255);
             //the less the density is the more alpha comes to its full value
             int alpha2 = (int) Math.rint((1 - percOfMax) * 255);
             if (alpha2 < 60) {
@@ -1607,10 +1604,6 @@ public class MapRenderer extends Thread {
             }
 
             double half = (double) maxDef / 2.0;
-            boolean lessThanHalf = true;
-            if (defIn >= half) {
-                lessThanHalf = false;
-            }
 
             Color col = null;
             if (defIn <= maxDef && defIn > half) {

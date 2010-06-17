@@ -4,8 +4,10 @@
  */
 package de.tor.tribes.util.algo;
 
+import de.tor.tribes.util.parser.MerchantParser.VillageMerchantInfo;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 
 /**
  *
@@ -14,6 +16,12 @@ import java.util.Hashtable;
 public class MerchantDistributor {
 
     public MerchantDistributor() {
+    }
+
+    public void calculate(List<VillageMerchantInfo> pInfos) {
+         int[] targetRes = new int[]{50000, 60000, 30000};
+        int[] minRemainRes = new int[]{20000, 20000, 20000};
+
     }
 
     public void calculate(ArrayList<MerchantSource> pSources, ArrayList<MerchantDestination> pDestinations) {

@@ -59,6 +59,7 @@ import java.awt.Component;
 import java.awt.Rectangle;
 import java.awt.datatransfer.StringSelection;
 import java.io.FileWriter;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -477,9 +478,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         }
 
         try {
-            jRadarSpinner.setEditor(new JSpinner.DateEditor(jRadarSpinner, "HH'h' mm'min'"));
             String val = GlobalOptions.getProperty("radar.size");
-            Calendar c = Calendar.getInstance();
             int hour = 1;
             int min = 0;
             if (val != null) {
@@ -489,12 +488,11 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             } else {
                 throw new Exception();
             }
-            c.set(0, 0, 0, hour, min);
-            jRadarSpinner.setValue(c.getTime());
+            jHourField.setText(Integer.toString(hour));
+            jMinuteField.setText(Integer.toString(min));
         } catch (Exception e) {
-            Calendar c = Calendar.getInstance();
-            c.set(0, 0, 0, 1, 0);
-            jRadarSpinner.setValue(c.getTime());
+            jHourField.setText("1");
+            jMinuteField.setText("0");
             GlobalOptions.addProperty("radar.size", "60");
         }
 
@@ -966,9 +964,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jAddNewROIButton = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
         jCustomPanel = new javax.swing.JPanel();
-        jScrollPane5 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
-        jButton4 = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         jMinimapPanel = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
@@ -1004,7 +999,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jPanel2 = new javax.swing.JPanel();
         jShowMapPopup = new javax.swing.JCheckBox();
         jLabel5 = new javax.swing.JLabel();
-        jRadarSpinner = new javax.swing.JSpinner();
         jScrollPane3 = new javax.swing.JScrollPane();
         jLayerList = new javax.swing.JList();
         jLabel10 = new javax.swing.JLabel();
@@ -1014,6 +1008,10 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jGraphicPacks = new javax.swing.JComboBox();
         jHighlightTribeVillages = new javax.swing.JCheckBox();
         jShowRuler = new javax.swing.JCheckBox();
+        jHourField = new javax.swing.JTextField();
+        jMinuteField = new javax.swing.JTextField();
+        jLabel11 = new javax.swing.JLabel();
+        jLabel13 = new javax.swing.JLabel();
         jROIGroup = new com.l2fprod.common.swing.JTaskPaneGroup();
         jPanel3 = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
@@ -1310,45 +1308,15 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ));
-        jScrollPane5.setViewportView(jTable1);
-
-        jButton4.setText(bundle.getString("DSWorkbenchMainFrame.jButton4.text")); // NOI18N
-        jButton4.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                switchPanel(evt);
-            }
-        });
-
         javax.swing.GroupLayout jCustomPanelLayout = new javax.swing.GroupLayout(jCustomPanel);
         jCustomPanel.setLayout(jCustomPanelLayout);
         jCustomPanelLayout.setHorizontalGroup(
             jCustomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jCustomPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jCustomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 552, Short.MAX_VALUE)
-                    .addComponent(jButton4))
-                .addContainerGap())
+            .addGap(0, 572, Short.MAX_VALUE)
         );
         jCustomPanelLayout.setVerticalGroup(
             jCustomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jCustomPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 445, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jButton4)
-                .addContainerGap())
+            .addGap(0, 501, Short.MAX_VALUE)
         );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -1583,7 +1551,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                 .addGroup(jNavigationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jRefreshButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jCenterCoordinateIngame, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(12, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jNavigationPanelLayout.setVerticalGroup(
             jNavigationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1705,13 +1673,13 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jInformationPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jInformationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jCurrentPlayer, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 218, Short.MAX_VALUE)
-                    .addComponent(jCurrentPlayerVillages, javax.swing.GroupLayout.Alignment.LEADING, 0, 218, Short.MAX_VALUE)
+                    .addComponent(jCurrentPlayer, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jCurrentPlayerVillages, javax.swing.GroupLayout.Alignment.LEADING, 0, 155, Short.MAX_VALUE)
                     .addGroup(jInformationPanelLayout.createSequentialGroup()
                         .addComponent(jCurrentToolLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 90, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27, Short.MAX_VALUE)
                         .addComponent(jCenterIngameButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jOnlineLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -1758,13 +1726,6 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         });
 
         jLabel5.setText(bundle.getString("DSWorkbenchMainFrame.jLabel5.text")); // NOI18N
-
-        jRadarSpinner.setModel(new javax.swing.SpinnerDateModel());
-        jRadarSpinner.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                fireRadarSpinnerChangedEvent(evt);
-            }
-        });
 
         jLayerList.setModel(new javax.swing.AbstractListModel() {
             String[] strings = { " " };
@@ -1829,33 +1790,69 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             }
         });
 
+        jHourField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        jHourField.setText(bundle.getString("DSWorkbenchMainFrame.jHourField.text")); // NOI18N
+        jHourField.setMaximumSize(new java.awt.Dimension(24, 20));
+        jHourField.setMinimumSize(new java.awt.Dimension(24, 20));
+        jHourField.setPreferredSize(new java.awt.Dimension(24, 20));
+        jHourField.addCaretListener(new javax.swing.event.CaretListener() {
+            public void caretUpdate(javax.swing.event.CaretEvent evt) {
+                fireRadarValueChangedEvent(evt);
+            }
+        });
+
+        jMinuteField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        jMinuteField.setText(bundle.getString("DSWorkbenchMainFrame.jMinuteField.text")); // NOI18N
+        jMinuteField.setMaximumSize(new java.awt.Dimension(24, 20));
+        jMinuteField.setMinimumSize(new java.awt.Dimension(24, 20));
+        jMinuteField.setPreferredSize(new java.awt.Dimension(24, 20));
+        jMinuteField.addCaretListener(new javax.swing.event.CaretListener() {
+            public void caretUpdate(javax.swing.event.CaretEvent evt) {
+                fireRadarValueChangedEvent(evt);
+            }
+        });
+
+        jLabel11.setText(bundle.getString("DSWorkbenchMainFrame.jLabel11.text")); // NOI18N
+
+        jLabel13.setText(bundle.getString("DSWorkbenchMainFrame.jLabel13.text")); // NOI18N
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jShowRuler, javax.swing.GroupLayout.DEFAULT_SIZE, 213, Short.MAX_VALUE)
+                        .addGap(6, 6, 6))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jLabel12)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jGraphicPacks, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(jGraphicPacks, 0, 154, Short.MAX_VALUE))
+                    .addComponent(jHighlightTribeVillages, javax.swing.GroupLayout.DEFAULT_SIZE, 219, Short.MAX_VALUE)
+                    .addComponent(jShowMapPopup, javax.swing.GroupLayout.DEFAULT_SIZE, 219, Short.MAX_VALUE)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel5)
-                        .addGap(10, 10, 10)
-                        .addComponent(jRadarSpinner))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel10)
-                        .addGap(14, 14, 14)
-                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
+                                .addComponent(jLabel5)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 41, Short.MAX_VALUE)
+                                .addComponent(jHourField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel11)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jMinuteField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel13))
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
+                                .addComponent(jLabel10)
+                                .addGap(14, 14, 14)
+                                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 140, Short.MAX_VALUE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLayerUpButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLayerDownButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(jShowRuler, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jHighlightTribeVillages, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jShowMapPopup, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(16, Short.MAX_VALUE))
+                            .addComponent(jLayerDownButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1873,7 +1870,10 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
-                    .addComponent(jRadarSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel13)
+                    .addComponent(jHourField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel11)
+                    .addComponent(jMinuteField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel10)
@@ -2300,7 +2300,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 681, Short.MAX_VALUE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 677, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addComponent(jScrollPane2, 0, 0, Short.MAX_VALUE)
@@ -3063,13 +3063,6 @@ private void fireROISelectedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:eve
     }
 }//GEN-LAST:event_fireROISelectedEvent
 
-private void fireRadarSpinnerChangedEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireRadarSpinnerChangedEvent
-    Calendar c = Calendar.getInstance();
-    c.setTime((Date) jRadarSpinner.getValue());
-    int r = c.get(Calendar.HOUR_OF_DAY) * 60 + c.get(Calendar.MINUTE);
-    GlobalOptions.addProperty("radar.size", Integer.toString(r));
-}//GEN-LAST:event_fireRadarSpinnerChangedEvent
-
 private void fireDSWorkbenchClosingEvent(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_fireDSWorkbenchClosingEvent
     logger.debug("Shutting down DSWorkbench");
     GlobalOptions.addProperty("zoom.factor", Double.toString(getZoomFactor()));
@@ -3189,13 +3182,30 @@ private void fireHighlightTribeVillagesChangedEvent(javax.swing.event.ChangeEven
     GlobalOptions.addProperty("highlight.tribes.villages", Boolean.toString(jHighlightTribeVillages.isSelected()));
 }//GEN-LAST:event_fireHighlightTribeVillagesChangedEvent
 
-private void switchPanel(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_switchPanel
-    //  switchPanel();
-}//GEN-LAST:event_switchPanel
-
 private void fireShowRulerChangedEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireShowRulerChangedEvent
     GlobalOptions.addProperty("show.ruler", Boolean.toString(jShowRuler.isSelected()));
 }//GEN-LAST:event_fireShowRulerChangedEvent
+
+private void fireRadarValueChangedEvent(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_fireRadarValueChangedEvent
+    int hours = 1;
+    try {
+        hours = Integer.parseInt(jHourField.getText());
+    } catch (Exception e) {
+        //failed to read hours
+        return;
+    }
+    int minutes = 0;
+    try {
+        minutes = Integer.parseInt(jMinuteField.getText());
+    } catch (Exception e) {
+        //failed to read minutes
+        return;
+    }
+
+    GlobalOptions.addProperty("radar.size", Integer.toString(hours * 60 + minutes));
+
+
+}//GEN-LAST:event_fireRadarValueChangedEvent
 
     private void propagateLayerOrder() {
         DefaultListModel model = ((DefaultListModel) jLayerList.getModel());
@@ -3472,7 +3482,6 @@ private void fireShowRulerChangedEvent(javax.swing.event.ChangeEvent evt) {//GEN
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jCancelExportButton;
     private javax.swing.JButton jCenterCoordinateIngame;
@@ -3496,11 +3505,14 @@ private void fireShowRulerChangedEvent(javax.swing.event.ChangeEvent evt) {//GEN
     private javax.swing.JComboBox jGraphicPacks;
     private javax.swing.JMenuItem jHelpItem;
     private javax.swing.JCheckBox jHighlightTribeVillages;
+    private javax.swing.JTextField jHourField;
     private com.l2fprod.common.swing.JTaskPaneGroup jInformationGroup;
     private javax.swing.JPanel jInformationPanel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -3525,6 +3537,7 @@ private void fireShowRulerChangedEvent(javax.swing.event.ChangeEvent evt) {//GEN
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;
     private javax.swing.JPanel jMinimapPanel;
+    private javax.swing.JTextField jMinuteField;
     private javax.swing.JButton jMoveE;
     private javax.swing.JButton jMoveE1;
     private javax.swing.JButton jMoveN;
@@ -3546,7 +3559,6 @@ private void fireShowRulerChangedEvent(javax.swing.event.ChangeEvent evt) {//GEN
     private javax.swing.JComboBox jROIPosition;
     private javax.swing.JTextField jROIRegion;
     private javax.swing.JTextField jROITextField;
-    private javax.swing.JSpinner jRadarSpinner;
     private javax.swing.JMenuItem jReTimeToolEvent;
     private javax.swing.JButton jRefreshButton;
     private javax.swing.JButton jRemoveROIButton;
@@ -3555,7 +3567,6 @@ private void fireShowRulerChangedEvent(javax.swing.event.ChangeEvent evt) {//GEN
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
-    private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JMenuItem jSearchItem;
     private javax.swing.JMenuItem jSelectionOverviewItem;
     private javax.swing.JSeparator jSeparator1;
@@ -3574,7 +3585,6 @@ private void fireShowRulerChangedEvent(javax.swing.event.ChangeEvent evt) {//GEN
     private javax.swing.JCheckBoxMenuItem jShowTagFrame;
     private javax.swing.JCheckBoxMenuItem jShowTroopsFrame;
     private javax.swing.JMenuItem jStartAStarItem;
-    private javax.swing.JTable jTable1;
     private com.l2fprod.common.swing.JTaskPane jTaskPane1;
     private javax.swing.JMenuItem jTribeTribeAttackItem;
     private com.l2fprod.common.swing.JTaskPaneGroup jUVGroup;

@@ -25,6 +25,7 @@ import javax.swing.JFrame;
  */
 public class OptexWrapper extends AbstractAttackAlgorithm {
 
+   
     public Hashtable<Village, List<Village>> calculateSupports(List<Village> pSources, List<Village> pTargets, int pMaxSplit, int pMaxSupports) {
         Hashtable<Village, List<Village>> supports = new Hashtable<Village, List<Village>>();
         boolean improving = true;

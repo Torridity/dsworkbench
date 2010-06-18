@@ -18,6 +18,7 @@ import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.models.AttackManagerTableModel;
 import de.tor.tribes.ui.renderer.AlternatingColorCellRenderer;
 import de.tor.tribes.ui.renderer.DateCellRenderer;
+import de.tor.tribes.ui.renderer.SortableTableHeaderRenderer;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.ServerSettings;
@@ -468,17 +469,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
 
                 TableRowSorter<TableModel> attackSorter = new TableRowSorter<TableModel>(jAttacksTable.getModel());
                 jAttacksTable.setRowSorter(attackSorter);
-                DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
-
-                    @Override
-                    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-                        Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
-                        DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
-                        r.setText("<html><b>" + r.getText() + "</b></html>");
-                        c.setBackground(Constants.DS_BACK);
-                        return c;
-                    }
-                };
+                DefaultTableCellRenderer headerRenderer = new SortableTableHeaderRenderer();
                 for (int i = 0; i < jAttacksTable.getColumnCount(); i++) {
                     jAttacksTable.getColumn(jAttacksTable.getColumnName(i)).setHeaderRenderer(headerRenderer);
                 }
@@ -516,17 +507,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
         jAttacksTable.setDefaultRenderer(Village.class, rend);
         TableRowSorter<TableModel> attackSorter = new TableRowSorter<TableModel>(jAttacksTable.getModel());
         jAttacksTable.setRowSorter(attackSorter);
-        DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
-
-            @Override
-            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-                Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
-                DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
-                r.setText("<html><b>" + r.getText() + "</b></html>");
-                c.setBackground(Constants.DS_BACK);
-                return c;
-            }
-        };
+        DefaultTableCellRenderer headerRenderer = new SortableTableHeaderRenderer();
 
         for (int i = 0; i < jAttacksTable.getColumnCount(); i++) {
             jAttacksTable.getColumn(jAttacksTable.getColumnName(i)).setHeaderRenderer(headerRenderer);

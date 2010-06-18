@@ -3078,18 +3078,7 @@ private void fireSendAttackToReTimeToolEvent(java.awt.event.MouseEvent evt) {//G
         //set model and header renders
         pTable.setModel(model);
 
-        DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
-
-            @Override
-            public Component getTableCellRendererComponent(
-                    JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-                Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
-                c.setBackground(Constants.DS_BACK);
-                DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
-                r.setText("<html><b>" + r.getText() + "</b></html>");
-                return c;
-            }
-        };
+        DefaultTableCellRenderer headerRenderer = new SortableTableHeaderRenderer();
 
         for (int i = 0; i < pTable.getColumnCount(); i++) {
             pTable.getColumn(pTable.getColumnName(i)).setHeaderRenderer(headerRenderer);

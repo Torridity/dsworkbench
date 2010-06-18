@@ -69,22 +69,7 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
         adapter.addGhostDropListener(this);*/
 
         mHeaderRenderer = new SortableTableHeaderRenderer();
-        /*DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
-
-        @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-        Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
-        c.setBackground(Constants.DS_BACK);
-        DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
-        r.setText("<html><b>" + r.getText() + "</b></html>");
-        return c;
-        }
-        };
-
-        for (int i = 0; i < 2; i++) {
-        mHeaderRenderers.add(headerRenderer);
-        }*/
-
+       
         jMarkerTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 
             @Override

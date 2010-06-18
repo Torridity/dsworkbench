@@ -17,6 +17,7 @@ import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.renderer.DateCellRenderer;
+import de.tor.tribes.ui.renderer.SortableTableHeaderRenderer;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.SupportCalculator;
@@ -748,18 +749,8 @@ public class VillageSupportFrame extends javax.swing.JFrame {
 
         jSupportTable.setModel(model);
         jSupportTable.setRowSorter(new TableRowSorter(model));
+        DefaultTableCellRenderer headerRenderer = new SortableTableHeaderRenderer();
         for (int i = 0; i < jSupportTable.getColumnCount(); i++) {
-            DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
-
-                @Override
-                public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-                    Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
-                    c.setBackground(Constants.DS_BACK);
-                    DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
-                    r.setText("<html><b>" + r.getText() + "</b></html>");
-                    return c;
-                }
-            };
             jSupportTable.getColumn(jSupportTable.getColumnName(i)).setHeaderRenderer(headerRenderer);
         }
 

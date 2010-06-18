@@ -69,18 +69,7 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame {
         TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(DistanceTableModel.getSingleton());
         jDistanceTable.setRowSorter(sorter);
         headerRenderer = new SortableTableHeaderRenderer();
-        /*DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
-
-        @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-        Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
-        c.setBackground(Constants.DS_BACK);
-        DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
-        r.setHorizontalAlignment(JLabel.CENTER);
-        return r;
-        }
-        };*/
-
+       
         int w0 = 100;
         try {
             for (Village v : DSWorkbenchMainFrame.getSingleton().getCurrentUser().getVillageList()) {

@@ -6,7 +6,9 @@ package de.tor.tribes.util.algo;
 
 import de.tor.tribes.util.parser.MerchantParser.VillageMerchantInfo;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Hashtable;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -18,26 +20,19 @@ public class MerchantDistributor {
     public MerchantDistributor() {
     }
 
-    public void calculate(List<VillageMerchantInfo> pInfos) {
-        int[] targetRes = new int[]{100000, 100000, 100000};
-        int[] minRemainRes = new int[]{100000, 100000, 100000};
+    public List<List<MerchantSource>> calculate(List<VillageMerchantInfo> pInfos, int[] pTargetRes, int[] pRemainRes) {
+        return calculate(pInfos, new LinkedList<de.tor.tribes.types.Village>(), new LinkedList<de.tor.tribes.types.Village>(), pTargetRes, pRemainRes);
+    }
 
-        int woodSum = 0;
-        int claySum = 0;
-        int ironSum = 0;
-        for (VillageMerchantInfo info : pInfos) {
-            System.out.println(info);
-            woodSum += info.getWoodStock();
-            claySum += info.getClayStock();
-            ironSum += info.getIronStock();
-        }
-        targetRes = new int[]{(int) Math.rint(woodSum / pInfos.size()), (int) Math.rint(claySum / pInfos.size()), (int) Math.rint(ironSum / pInfos.size())};
-        minRemainRes = targetRes;
+    public List<List<MerchantSource>> calculate(List<VillageMerchantInfo> pInfos, List<de.tor.tribes.types.Village> pIncomingOnly, List<de.tor.tribes.types.Village> pOutgoingOnly, int[] pTargetRes, int[] pRemainRes) {
+        int[] targetRes = pTargetRes;//new int[]{100000, 100000, 100000};
+        int[] minRemainRes = pRemainRes;//new int[]{100000, 100000, 100000};
 
         System.out.println("Target: " + targetRes[0] + "/" + targetRes[1] + "/" + targetRes[2]);
 
         ArrayList<MerchantSource> sources = new ArrayList<MerchantSource>();
         ArrayList<MerchantDestination> destinations = new ArrayList<MerchantDestination>();
+        List<List<MerchantSource>> results = new LinkedList<List<MerchantSource>>();
         for (int i = 0; i < targetRes.length; i++) {
             sources.clear();
             destinations.clear();
@@ -58,32 +53,35 @@ public class MerchantDistributor {
                 int maxAvailable = res - minRemainRes[i];
                 int maxDelivery = info.getAvailableMerchants() * 1000;//(int) Math.rint((double) info.getAvailableMerchants() / 3.0) * 1000;
                 if (maxAvailable < 0) {
-                    int need = (int) (Math.round((double) Math.abs(targetRes[i] - res) / 1000.0)) * 1000;
-                   
-                    //    System.out.println("Receiver " + info + " -> " + need);
-                   
-                    //set to destination list
-                    MerchantDestination d = new MerchantDestination(new Coordinate(info.getVillage().getX(), info.getVillage().getY()), need);
-                    destinations.add(d);
+                    //check if target value fits into the stash
+                    int targetValue = targetRes[i];
+                    if (targetRes[i] > info.getStashCapacity()) {
+                        targetValue = info.getStashCapacity();
+                    }
+                    int need = (int) (Math.round((double) Math.abs(targetValue - res) / 1000.0)) * 1000;
+                    if (need > 0 && !pOutgoingOnly.contains(info.getVillage())) {
+                        //System.out.println("Receiver " + info + " -> " + need);
+                        //add to destination list
+                        MerchantDestination d = new MerchantDestination(new Coordinate(info.getVillage().getX(), info.getVillage().getY()), need);
+                        destinations.add(d);
+                    }
                 } else {
 
                     if (maxAvailable > maxDelivery) {
-                       
                         //    System.out.println("Deliverer " + info + " -> " + maxDelivery);
-                        
                         //use max capacity
-                        // System.out.println("MAXDE " + maxDelivery + " -> " + info.getVillage());
-                        MerchantSource s = new MerchantSource(new Coordinate(info.getVillage().getX(), info.getVillage().getY()), maxDelivery);
-                        sources.add(s);
+                        if (!pIncomingOnly.contains(info.getVillage())) {
+                            MerchantSource s = new MerchantSource(new Coordinate(info.getVillage().getX(), info.getVillage().getY()), maxDelivery);
+                            sources.add(s);
+                        }
                     } else {
                         //use max available
                         maxAvailable = (int) (Math.round((double) maxAvailable / 1000.0)) * 1000;
-                       
-                          //  System.out.println("Deliverer " + info + " -> " + maxAvailable);
-                       
-//System.out.println("MAXA " + maxAvailable + " -> " + info.getVillage());
-                        MerchantSource s = new MerchantSource(new Coordinate(info.getVillage().getX(), info.getVillage().getY()), maxAvailable);
-                        sources.add(s);
+                        //  System.out.println("Deliverer " + info + " -> " + maxAvailable);
+                        if (!pIncomingOnly.contains(info.getVillage())) {
+                            MerchantSource s = new MerchantSource(new Coordinate(info.getVillage().getX(), info.getVillage().getY()), maxAvailable);
+                            sources.add(s);
+                        }
                     }
                 }
             }
@@ -92,6 +90,11 @@ public class MerchantDistributor {
                 //  System.out.println("Nothing todo in round " + i);
             } else {
                 new MerchantDistributor().calculate(sources, destinations);
+                List<MerchantSource> sourcesCopy = new LinkedList<MerchantSource>(sources);
+                results.add(sourcesCopy);
+                //Collections.copy(sources, sources);
+
+                // <editor-fold defaultstate="collapsed" desc=" Result building">
                 for (MerchantSource source : sources) {
                     for (Order o : source.getOrders()) {
                         int amount = o.getAmount();
@@ -128,6 +131,7 @@ public class MerchantDistributor {
                         }
                     }
                 }
+                // </editor-fold>
             }
             System.out.println("Round done");
         }
@@ -135,6 +139,7 @@ public class MerchantDistributor {
         for (VillageMerchantInfo info : pInfos) {
             System.out.println(info);
         }
+        return results;
     }
 
     public void calculate(ArrayList<MerchantSource> pSources, ArrayList<MerchantDestination> pDestinations) {

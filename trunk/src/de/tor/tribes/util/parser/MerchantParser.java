@@ -20,7 +20,7 @@ import java.util.StringTokenizer;
  */
 public class MerchantParser {
 
-    public static boolean parse(String pProductionString) {
+    public static List<VillageMerchantInfo> parse(String pProductionString) {
         StringTokenizer lineTok = new StringTokenizer(pProductionString, "\n\r");
         List<VillageMerchantInfo> infos = new LinkedList<VillageMerchantInfo>();
         while (lineTok.hasMoreElements()) {
@@ -62,13 +62,10 @@ public class MerchantParser {
                 VillageMerchantInfo info = new VillageMerchantInfo(v, stashCapacity, woodStock, clayStock, ironStock, availMerchants, overallMerchants);
                 infos.add(info);
             } catch (Exception e) {
-              //  e.printStackTrace();
+                //  e.printStackTrace();
             }
         }
-
-        new MerchantDistributor().calculate(infos);
-
-        return true;
+        return infos;
     }
 
     public static void main(String[] args) throws Exception {

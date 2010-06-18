@@ -621,6 +621,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
             DSWorkbenchReTimerFrame.getSingleton().setup();
             DSWorkbenchReportFrame.getSingleton().setup();
             DSWorkbenchSOSRequestAnalyzer.getSingleton().setup();
+            DSWorkbenchMerchantDistibutor.getSingleton().setup();
             //update attack planner
             if (mTribeTribeAttackFrame != null) {
                 mTribeTribeAttackFrame.setup();
@@ -1042,6 +1043,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jDoItYourselfAttackPlanerItem = new javax.swing.JMenuItem();
         jReTimeToolEvent = new javax.swing.JMenuItem();
         jSOSAnalyzerItem = new javax.swing.JMenuItem();
+        jMerchantDistributorItem = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
         jShowAttackFrame = new javax.swing.JCheckBoxMenuItem();
         jShowMarkerFrame = new javax.swing.JCheckBoxMenuItem();
@@ -2167,6 +2169,15 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         });
         jMenu3.add(jSOSAnalyzerItem);
 
+        jMerchantDistributorItem.setBackground(new java.awt.Color(239, 235, 223));
+        jMerchantDistributorItem.setText(bundle.getString("DSWorkbenchMainFrame.jMerchantDistributorItem.text_1")); // NOI18N
+        jMerchantDistributorItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fireToolsActionEvent(evt);
+            }
+        });
+        jMenu3.add(jMerchantDistributorItem);
+
         jMenuBar1.add(jMenu3);
 
         jMenu2.setBackground(new java.awt.Color(225, 213, 190));
@@ -2529,6 +2540,8 @@ private void fireToolsActionEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:e
         DSWorkbenchReTimerFrame.getSingleton().setVisible(true);
     } else if (evt.getSource() == jSOSAnalyzerItem) {
         DSWorkbenchSOSRequestAnalyzer.getSingleton().setVisible(true);
+    } else if (evt.getSource() == jMerchantDistributorItem) {
+        DSWorkbenchMerchantDistibutor.getSingleton().setVisible(true);
     }
 }//GEN-LAST:event_fireToolsActionEvent
 
@@ -3536,6 +3549,7 @@ private void fireRadarValueChangedEvent(javax.swing.event.CaretEvent evt) {//GEN
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;
+    private javax.swing.JMenuItem jMerchantDistributorItem;
     private javax.swing.JPanel jMinimapPanel;
     private javax.swing.JTextField jMinuteField;
     private javax.swing.JButton jMoveE;

@@ -55,8 +55,7 @@ public class MerchantSource extends Village implements Source {
             if (o.getDestination() == d) {
                 o.setAmount(o.getAmount() + amount);
                 this.ordered += amount;
-                //		System.out.println("Increased order (amount: " + Integer.toString(amount) + ") at " + this.c.toString() + " to " + ((TargetVillage) d).getC().toString());
-
+                //System.out.println("Increased order (amount: " + Integer.toString(amount) + ") at " + this.c.toString() + " to " + ((TargetVillage) d).getC().toString());
                 return;
             }
         }

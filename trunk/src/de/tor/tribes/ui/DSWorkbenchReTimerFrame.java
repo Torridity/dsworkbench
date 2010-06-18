@@ -158,20 +158,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
 
         jAttackPlanTable.setModel(attackPlabTableModel);
         jAttackPlanTable.revalidate();
-        DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
-
-            @Override
-            public Component getTableCellRendererComponent(
-                    JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-                Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
-                String t = ((DefaultTableCellRenderer) c).getText();
-                ((DefaultTableCellRenderer) c).setText(t);
-                c.setBackground(Constants.DS_BACK);
-                DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
-                r.setText("<html><b>" + r.getText() + "</b></html>");
-                return c;
-            }
-        };
+        DefaultTableCellRenderer headerRenderer = new SortableTableHeaderRenderer();
         for (int i = 0; i < jAttackPlanTable.getColumnCount(); i++) {
             jAttackPlanTable.getColumn(jAttackPlanTable.getColumnName(i)).setHeaderRenderer(headerRenderer);
         }
@@ -1436,19 +1423,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         jResultTable.setDefaultRenderer(Village.class, rend);
         jResultTable.setDefaultRenderer(Date.class, new DateCellRenderer());
         jResultTable.setRowHeight(20);
-        DefaultTableCellRenderer headerRenderer = new SortableTableHeaderRenderer();/*DefaultTableCellRenderer() {
-
-        @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-        Component c = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, hasFocus, hasFocus, row, row);
-        String t = ((DefaultTableCellRenderer) c).getText();
-        ((DefaultTableCellRenderer) c).setText(t);
-        c.setBackground(Constants.DS_BACK);
-        DefaultTableCellRenderer r = ((DefaultTableCellRenderer) c);
-        r.setText("<html><b>" + r.getText() + "</b></html>");
-        return c;
-        }
-        };*/
+        DefaultTableCellRenderer headerRenderer = new SortableTableHeaderRenderer();
         for (int i = 0; i < jResultTable.getColumnCount(); i++) {
             jResultTable.getColumn(jResultTable.getColumnName(i)).setHeaderRenderer(headerRenderer);
         }

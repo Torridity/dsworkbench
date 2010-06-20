@@ -57,11 +57,11 @@ public class Optex<S extends Source, D extends Destination> {
 
         //System.out.println("Approximation...");
         this.vam();
-       // System.out.println("Approximation complete...");
+        //  System.out.println("Approximation complete...");
 
-       // System.out.println("Optimization...");
+        //System.out.println("Optimization...");
         this.optimize();
-       // System.out.println("Optimization complete...");
+        // System.out.println("Optimization complete...");
 
         this.executed = true;
     }
@@ -94,17 +94,43 @@ public class Optex<S extends Source, D extends Destination> {
                             Iterator<Order> i = s2.getOrders().iterator();
                             while (i.hasNext()) {
                                 Order o = i.next();
-                                Destination o_d = o.getDestination();
-                                if (this._getCosts(s1, o_d) < this._getCosts(s2, o_d)) {
-                                    int swap_amount = 0;
-                                    swap_amount = Math.min(s1.waresAvailable(o_d), o.amount);
+                                int val = o.getAmount();
+                                if (val > 0) {
+                                    Destination o_d = o.getDestination();
+                                    //if (s1.waresAvailable(o_d) > o.amount && s1.getOrdered() > 0) {
 
-                                    s2.removeOrder(o_d, swap_amount);
-                                    s1.addOrder(o_d, swap_amount);
+                                    /* if (s1 != s2 &&
+                                    s1.waresAvailable(o_d) == 0 &&
+                                    s1.getOrdered() > 0 &&
+                                    s1.waresAvailable() >= val) {
+                                    // System.out.println("Move " + o.amount + " from " + s2 + " to " + s1 + " for dest " + o.getDestination() + " (" + s1.getOrdered() + "/" + s1.waresAvailable() + ")");
+                                    //remove one delivery if possible
+                                    //System.out.println("Before: " + s1.getOrdered() + "/" + s1.waresAvailable() + "/" + s2.getOrdered() + "/" + s2.waresAvailable());
 
+                                    s2.removeOrder(o_d, val);
+                                    s1.addOrder(o_d, val);
+                                    //    System.out.println("After: " + s1.getOrdered() + "/" + s1.waresAvailable() + "/" + s2.getOrdered() + "/" + s2.waresAvailable());
+                                    //System.out.println("Ord now: " + s2.getOrdered() + "/" + s1.getOrdered());
                                     improvement = true;
+                                    } else */
+                                    if (this._getCosts(s1, o_d) < this._getCosts(s2, o_d)) {
+                                        // if (s1.getOrdered() > 0) {
+                                        int swap_amount = 0;
+                                        //swap_amount = Math.min(s1.waresAvailable(o_d), o.amount);
+                                        swap_amount = Math.min(s1.waresAvailable(), o.amount);
+
+                                        s2.removeOrder(o_d, swap_amount);
+                                        s1.addOrder(o_d, swap_amount);
+
+                                        improvement = true;
+                                        //}
+                                    }
                                 }
                             }
+                            /*int r = s2.removeEmptyOrders();
+                            if (r > 0) {
+                            System.out.println("Remove: " + r + " for " + s2);
+                            }*/
                         }
                     }
                 }
@@ -196,14 +222,16 @@ public class Optex<S extends Source, D extends Destination> {
                 biggest_s_d.addOrdered(amountOrdered);
             }
 
-            if (biggest_s.waresAvailable() == 0) {
+            //  System.out.println("BIGGES SRC " + biggest_s.toString() + " (" + biggest_s.waresAvailable() + ")");
+            if (biggest_s.waresAvailable() <= 0) {
                 if (_sources.remove(biggest_s)) {
-                    //System.out.println("Removed source " + biggest_s.toString());
+                    //   System.out.println("Removed source " + biggest_s.toString());
                 }
             }
+            // System.out.println("BIGGES DEST " + biggest_s_d.toString() + " (" + biggest_s_d.remainingNeeds() + ")");
             if (biggest_s_d.remainingNeeds() == 0) {
                 if (_destinations.remove(biggest_s_d)) {
-                    //System.out.println("Removed destination " + biggest_s_d.toString());
+                    //      System.out.println("Removed destination " + biggest_s_d.toString());
                 }
             }
         }

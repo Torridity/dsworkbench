@@ -4,6 +4,7 @@
 // @include        http://de*.die-staemme.de/game.php?*screen=place*
 // @include        http://de*.die-staemme.de/game.php?screen=place*
 // @include        http://de*.die-staemme.de/game.php?*screen=place
+// @include        http://de*.die-staemme.de/game.php?*screen=market&mode=send*
 // @exclude        http://de*.die-staemme.de/game.php?*screen=place&mode=units
 // @exclude        http://de*.die-staemme.de/game.php?*screen=place&mode=sim
 // @exclude        http://de*.die-staemme.de/game.php?*screen=place&mode=neighbor
@@ -20,6 +21,7 @@ addLoadEvent(function() {
   getArgs();
 });
 }
+
 
 //parse arguments
 function getArgs() { 
@@ -42,13 +44,15 @@ function getArgs() {
 }
 if(type == 0){
   doInsertUnitsAction();
+}else if(type == 1){
+  doInsertResourcesAction();
 }
 } 
 
 function doInsertUnitsAction(){
                              
  //all available units
-   units = new Array("spear", "sword", "axe", "archer", "spy", "light", "marcher", "heavy", "ram", "catapult", "knight", "snob");
+   units = new Array("spear", "sword", "axe", "archer", "spy","light", "marcher", "heavy", "ram", "catapult", "knight", "snob");
    //go through all units
 
    for (var i = 0; i < units.length; ++i){
@@ -66,6 +70,20 @@ insertUnit(field, parseInt(args[units[i]]));
       }
    }
 }
+
+function doInsertResourcesAction(){
+ //insert valid value
+if(window.navigator.userAgent.indexOf("Firefox") > -1){
+    unsafeWindow.insertNumber(document.getElementsByName('wood')[0],args['wood']);
+		unsafeWindow.insertNumber(document.getElementsByName('stone')[0], args['clay']);
+		unsafeWindow.insertNumber(document.getElementsByName('iron')[0], args['iron']);
+}else{
+		insertNumber(document.forms[0].wood, args['wood']);
+		insertNumber(document.forms[0].stone, args['clay']);
+		insertNumber(document.forms[0].iron, args['iron']);
+}
+      }
+
 
 function addLoadEvent(func) {
 var oldonload;

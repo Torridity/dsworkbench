@@ -23,7 +23,6 @@ import org.jdom.Document;
 import org.jdom.Element;
 
 /**
- * @TODO (2.0) Check why sometimes attacks are not stored
  * @author Charon
  */
 public class StandardAttackManager {

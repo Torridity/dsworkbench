@@ -19,7 +19,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 /**
- *@TODO (2.2) Correct attack script to new version (no array.contains and no attack vector drawing)
+ *@TODO (DIFF) Correct attack script to new version (no array.contains and no attack vector drawing)
  * @author Charon
  */
 public class AttackScriptWriter {

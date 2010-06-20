@@ -170,25 +170,6 @@ function Rectangle(startX, startY, endX, endY) {
 	}
 }
 
-Array.prototype.contains = function (element) {
-	if(typeof element.x1 != 'undefined'){
-		//line processing
-		for (var i = 0; i < this.length; i++) {
-			if (this[i].equals(element)) {
-				return true;
-			}
-		}
-		return false;
-		}
-		
-		for (var i = 0; i < this.length; i++) {
-			if (this[i] == element) {
-				return true;
-			}
-		}
-		return false;
-}
-
 /*****************************/
 /*ENDOF Custom types and prototypes*/
 /*****************************/
@@ -282,7 +263,7 @@ if(typeof unsafeWindow != 'undefined'){
 					if(clazz == 'main'){
 						//found main table
 						mainTable = tables[i];
-					}else if(clazz == 'vis left'){
+					}else if(clazz == 'vis'){
 						//found info table
 						infoTable = tables[i];
 					}
@@ -652,12 +633,12 @@ if(typeof unsafeWindow != 'undefined'){
 			}
 		}	
 
-		drawAttacksOnCanvas(canvas, bounds, fieldWidth, fieldHeight);
+		//drawAttacksOnCanvas(canvas, bounds, fieldWidth, fieldHeight);
 	}
 
 
 
-	function drawAttacksOnCanvas(canvas, bounds, fieldWidth, fieldHeight){
+	/*function drawAttacksOnCanvas(canvas, bounds, fieldWidth, fieldHeight){
 	if(drawAttacks != 1){
 		return;
 	}
@@ -676,7 +657,7 @@ if(typeof unsafeWindow != 'undefined'){
 	for(var i=0;i<attacks.length;i++){
 		var attack = attacks[i];
 		var attackVector = new Line(attack.xs, attack.ys, attack.xt,attack.yt);
-		if(bounds.intersectsLine(attackVector) == true && drawnVectors.contains(attackVector) == false){
+		if(bounds.intersectsLine(attackVector) == true && drawnVectors.indexOf(attackVector) >= 0){
 			shownAttacks++;
 			drawnVectors.push(attackVector);
 			var drawPosXS = (attackVector.x1 - bounds.x1) * fieldWidth + fieldWidth / 2 + (attackVector.x1 - bounds.x1);
@@ -708,7 +689,7 @@ if(typeof unsafeWindow != 'undefined'){
 	ctx.strokeStyle = styleBefore;
 	ctx.globalAlpha = alphaBefore;
 	ctx.restore();
-}
+}*/
 
   /**Append attack information to map popup
   *MouseEvent evt: MouseEvent caught by the mouseover listener
@@ -802,7 +783,7 @@ if(typeof unsafeWindow != 'undefined'){
  		for(var i = 0;i<allElems.length;i++){
  			var attacksForElem = getAttacksForVillage(allElems[i]);	
  			//add elem to attacked elems
- 			if(attacksForElem.length > 0 && !doneElems.contains(allElems[i])){
+ 			if(attacksForElem.length > 0 && doneElems.indexOf(allElems[i]) < 0){
  	 			attackedElems.push(allElems[i]);
  				doneElems.push(allElems[i]);
  				//check if at least one attack is still valid
@@ -839,7 +820,7 @@ if(typeof unsafeWindow != 'undefined'){
  		
  	//add no-attack indicators
 	for (var i = 0; i < allElems.length; i++){
-		if(!attackedElems.contains(allElems[i])){
+		if(attackedElems.indexOf(allElems[i]) < 0){
 			var node = document.getElementById('label_' + allElems[i]);
 			var img = document.createElement("img");
 			img.setAttribute('src', 'graphic/overview/prod_avail.png?1');

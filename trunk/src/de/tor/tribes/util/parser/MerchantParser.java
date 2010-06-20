@@ -4,9 +4,8 @@
  */
 package de.tor.tribes.util.parser;
 
+import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Village;
-import de.tor.tribes.util.algo.MerchantDestination;
-import de.tor.tribes.util.algo.MerchantDistributor;
 import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -84,17 +83,34 @@ public class MerchantParser {
     Rattennest (-32|15) (454|848) K84  	37.48	10.019	123.599 79.792 160.859 	400000	110/110	10091/24000
     Rattennest (-33|44) (453|877) K84  	26.17	10.019	134.644 180.000 161.743 400000	110/110	17641/24000
      */
-    public static class VillageMerchantInfo {
+    public static class VillageMerchantInfo implements Cloneable {
 
+        /**
+         * @return the direction
+         */
+        public Direction getDirection() {
+            return direction;
+        }
+
+        /**
+         * @param direction the direction to set
+         */
+        public void setDirection(Direction direction) {
+            this.direction = direction;
+        }
+
+        public enum Direction {
+
+            INCOMING, OUTGOING, BOTH
+        }
         private Village village = null;
-        private int x = 0;
-        private int y = 0;
         private int stashCapacity = 0;
         private int woodStock = 0;
         private int clayStock = 0;
         private int ironStock = 0;
         private int overallMerchants = 0;
         private int availableMerchants = 0;
+        private Direction direction = Direction.BOTH;
 
         public VillageMerchantInfo(Village pVillage, int pStashCapacity, int pWoodStock, int pClayStock, int pIronStock, int pAvailMerchants, int pMaxMerchants) {
             setVillage(pVillage);
@@ -117,7 +133,7 @@ public class MerchantParser {
          * @param village the village to set
          */
         public void setVillage(Village village) {
-            this.village = village;
+            this.village = DataHolder.getSingleton().getVillages()[village.getX()][village.getY()];
         }
 
         /**
@@ -202,6 +218,12 @@ public class MerchantParser {
          */
         public void setAvailableMerchants(int availableMerchants) {
             this.availableMerchants = availableMerchants;
+        }
+
+        public VillageMerchantInfo clone() {
+            VillageMerchantInfo info = new VillageMerchantInfo(village, stashCapacity, woodStock, clayStock, ironStock, availableMerchants, overallMerchants);
+            info.setDirection(getDirection());
+            return info;
         }
 
         public String toString() {

@@ -15,7 +15,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * @TODO (2.0) Check for start time if using random timeframe
  * @author Jejkal
  */
 public class TimeFrame {

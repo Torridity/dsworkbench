@@ -8,6 +8,7 @@ import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.ServerManager;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Village;
+import de.tor.tribes.ui.DSWorkbenchMerchantDistibutor.Transport;
 import de.tor.tribes.util.attack.StandardAttackManager;
 import java.awt.Desktop;
 import java.net.URI;
@@ -38,6 +39,58 @@ public class BrowserCommandSender {
                 url += "&" + unit.getPlainName() + "=" + amount;
             }
             url += "&ts=" + System.currentTimeMillis();
+            String browser = GlobalOptions.getProperty("default.browser");
+            if (browser == null || browser.length() < 1) {
+                Desktop.getDesktop().browse(new URI(url));
+            } else {
+                Runtime.getRuntime().exec(new String[]{browser, url});
+            }
+        } catch (Throwable t) {
+            JOptionPaneHelper.showErrorBox(null, "Fehler beim Öffnen des Browsers", "Fehler");
+            logger.error("Failed to open browser window", t);
+        }
+    }
+
+    public static void sendRes(Village pSource, Village pTarget, int pWood, int pClay, int pIron) {
+        try {
+            String baseURL = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
+            logger.debug("Transfer resources to browser for village '" + pSource + "' to '" + pTarget);
+            String url = baseURL + "/game.php?village=";
+            int uvID = GlobalOptions.getUVID();
+            if (uvID >= 0) {
+                url = baseURL + "/game.php?t=" + uvID + "&village=";
+            }
+            url += pSource.getId() + "&screen=market&mode=send&target=" + pTarget.getId();
+            url += "&type=1";
+            url += "&wood=" + pWood;
+            url += "&clay=" + pClay;
+            url += "&iron=" + pIron;
+            String browser = GlobalOptions.getProperty("default.browser");
+            if (browser == null || browser.length() < 1) {
+                Desktop.getDesktop().browse(new URI(url));
+            } else {
+                Runtime.getRuntime().exec(new String[]{browser, url});
+            }
+        } catch (Throwable t) {
+            JOptionPaneHelper.showErrorBox(null, "Fehler beim Öffnen des Browsers", "Fehler");
+            logger.error("Failed to open browser window", t);
+        }
+    }
+
+    public static void sendRes(Village pSource, Village pTarget, Transport pTrans) {
+        try {
+            String baseURL = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
+            logger.debug("Transfer resources to browser for village '" + pSource + "' to '" + pTarget);
+            String url = baseURL + "/game.php?village=";
+            int uvID = GlobalOptions.getUVID();
+            if (uvID >= 0) {
+                url = baseURL + "/game.php?t=" + uvID + "&village=";
+            }
+            url += pSource.getId() + "&screen=market&mode=send&target=" + pTarget.getId();
+            url += "&type=1";
+            url += "&wood=" + pTrans.getSingleTransports().get(0).getAmount();
+            url += "&clay=" + pTrans.getSingleTransports().get(1).getAmount();
+            url += "&iron=" + pTrans.getSingleTransports().get(2).getAmount();
             String browser = GlobalOptions.getProperty("default.browser");
             if (browser == null || browser.length() < 1) {
                 Desktop.getDesktop().browse(new URI(url));

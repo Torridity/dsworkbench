@@ -81,5 +81,7 @@ public interface Source {
      */
     public List<Order> getOrders();
 
+    public int removeEmptyOrders();
+
     public boolean mappingExists(Destination d);
 }

@@ -8,7 +8,7 @@ package de.tor.tribes.util.algo;
  *
  * @author Robert Nitsch <dev@robertnitsch.de>
  */
-public class MerchantDestination extends Village implements Destination {
+public class MerchantDestination extends Village implements Destination, Comparable<MerchantDestination> {
 
     /**
      * The source's coordinate.
@@ -43,6 +43,11 @@ public class MerchantDestination extends Village implements Destination {
 
     public void setNeeded(int needed) {
         this.needs = needed;
+    }
+
+    @Override
+    public int compareTo(MerchantDestination o) {
+        return getC().compareTo(o.getC());
     }
 }
 

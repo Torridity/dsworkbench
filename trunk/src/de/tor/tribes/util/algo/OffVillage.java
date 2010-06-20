@@ -75,6 +75,10 @@ public class OffVillage extends Village implements Source {
         }
     }
 
+    public int removeEmptyOrders() {
+        return 0;
+    }
+
     public void removeOrder(Order o) {
         //	System.out.println("Removed order at " + this.c.toString() + " to " + ((TargetVillage)o.getDestination()).getC().toString());
         this.ordered -= o.getAmount();

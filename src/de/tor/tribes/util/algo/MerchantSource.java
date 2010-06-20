@@ -11,7 +11,7 @@ import java.util.Iterator;
  *
  * @author Robert Nitsch <dev@robertnitsch.de>
  */
-public class MerchantSource extends Village implements Source {
+public class MerchantSource extends Village implements Source, Comparable<MerchantSource> {
 
     /**
      * The source's coordinate.
@@ -48,7 +48,7 @@ public class MerchantSource extends Village implements Source {
         if (amount == 0) {
             return;
         }
-       
+
         Iterator<Order> i = this.orders.iterator();
         while (i.hasNext()) {
             Order o = i.next();
@@ -87,6 +87,18 @@ public class MerchantSource extends Village implements Source {
     }
 
     @Override
+    public int removeEmptyOrders() {
+        int removed = 0;
+        for (Order o : orders.toArray(new Order[]{})) {
+            if (o.getAmount() <= 0) {
+                orders.remove(o);
+                removed++;
+            }
+        }
+        return removed;
+    }
+
+    @Override
     public int waresAvailable() {
         return this.wares - this.ordered;
     }
@@ -111,5 +123,10 @@ public class MerchantSource extends Village implements Source {
     @Override
     public ArrayList<Order> getOrders() {
         return this.orders;
+    }
+
+    @Override
+    public int compareTo(MerchantSource o) {
+        return getC().compareTo(o.getC());
     }
 }

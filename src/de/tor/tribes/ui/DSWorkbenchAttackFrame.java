@@ -204,11 +204,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         jAttackTable.addMouseListener(l);
         jScrollPane2.addMouseListener(l);
         //restore export properties
-        String prop = GlobalOptions.getProperty("attack.script.draw.vectors");
-        jDrawAttackVectors.setSelected((prop == null) ? true : Boolean.parseBoolean(prop));
-        prop = GlobalOptions.getProperty("attack.script.vectors.width");
-        jAttackVectorWidth.setValue((prop == null) ? new Integer(5) : Integer.parseInt(prop));
-        prop = GlobalOptions.getProperty("attack.script.attacks.in.popup");
+        String prop = GlobalOptions.getProperty("attack.script.attacks.in.popup");
         jShowAttacksInPopup.setSelected((prop == null) ? true : Boolean.parseBoolean(prop));
         prop = GlobalOptions.getProperty("attack.script.attacks.in.village.info");
         jShowAttacksInVillageInfo.setSelected((prop == null) ? true : Boolean.parseBoolean(prop));
@@ -325,9 +321,6 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         jSendButton = new javax.swing.JButton();
         jButton13 = new javax.swing.JButton();
         jScriptExportDialog = new javax.swing.JDialog();
-        jDrawAttackVectors = new javax.swing.JCheckBox();
-        jAttackVectorWidth = new javax.swing.JSpinner();
-        jLabel21 = new javax.swing.JLabel();
         jShowAttacksInPopup = new javax.swing.JCheckBox();
         jShowAttacksInVillageInfo = new javax.swing.JCheckBox();
         jShowAttacksOnConfirmPage = new javax.swing.JCheckBox();
@@ -1202,14 +1195,6 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
 
         jScriptExportDialog.setTitle(bundle.getString("DSWorkbenchAttackFrame.jScriptExportDialog.title")); // NOI18N
 
-        jDrawAttackVectors.setSelected(true);
-        jDrawAttackVectors.setText(bundle.getString("DSWorkbenchAttackFrame.jDrawAttackVectors.text")); // NOI18N
-        jDrawAttackVectors.setOpaque(false);
-
-        jAttackVectorWidth.setModel(new javax.swing.SpinnerNumberModel(5, 1, 10, 1));
-
-        jLabel21.setText(bundle.getString("DSWorkbenchAttackFrame.jLabel21.text")); // NOI18N
-
         jShowAttacksInPopup.setSelected(true);
         jShowAttacksInPopup.setText(bundle.getString("DSWorkbenchAttackFrame.jShowAttacksInPopup.text")); // NOI18N
         jShowAttacksInPopup.setOpaque(false);
@@ -1255,19 +1240,13 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
             .addGroup(jScriptExportDialogLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jScriptExportDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jScriptExportDialogLayout.createSequentialGroup()
-                        .addComponent(jDrawAttackVectors)
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel21)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jAttackVectorWidth, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jShowAttacksInPopup)
                     .addComponent(jShowAttacksInVillageInfo)
                     .addComponent(jShowAttacksOnConfirmPage)
                     .addComponent(jShowAttacksInPlace)
                     .addComponent(jShowAttackOnMap)
                     .addComponent(jShowAttacksInOverview))
-                .addContainerGap(114, Short.MAX_VALUE))
+                .addContainerGap(123, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jScriptExportDialogLayout.createSequentialGroup()
                 .addContainerGap(210, Short.MAX_VALUE)
                 .addComponent(jButton14)
@@ -1279,11 +1258,6 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
             jScriptExportDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jScriptExportDialogLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jScriptExportDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jDrawAttackVectors)
-                    .addComponent(jLabel21)
-                    .addComponent(jAttackVectorWidth, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jShowAttacksInPopup)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jShowAttacksInVillageInfo)
@@ -1299,7 +1273,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
                 .addGroup(jScriptExportDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jDoScriptExportButton)
                     .addComponent(jButton14))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         jChangeAttackTypeDialog.setTitle(bundle.getString("DSWorkbenchAttackFrame.jChangeAttackTypeDialog.title")); // NOI18N
@@ -2896,13 +2870,8 @@ private void fireDoExportAsScriptEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
             Attack a = AttackManager.getSingleton().getAttackPlan(selectedPlan).get(row);
             attacks.add(a);
         }
-        try {
-            width = (Integer) jAttackVectorWidth.getValue();
-        } catch (Exception e) {
-            jAttackVectorWidth.setValue(new Integer(5));
-            width = 5;
-        }
-        if (AttackScriptWriter.writeAttackScript(attacks, jDrawAttackVectors.isSelected(), width, true, Color.GREEN, Color.RED, jShowAttacksInPopup.isSelected(), jShowAttacksInVillageInfo.isSelected(), jShowAttacksOnConfirmPage.isSelected(), jShowAttacksInPlace.isSelected(), jShowAttackOnMap.isSelected(), jShowAttacksInOverview.isSelected())) {
+       
+        if (AttackScriptWriter.writeAttackScript(attacks, false, width, true, Color.GREEN, Color.RED, jShowAttacksInPopup.isSelected(), jShowAttacksInVillageInfo.isSelected(), jShowAttacksOnConfirmPage.isSelected(), jShowAttacksInPlace.isSelected(), jShowAttackOnMap.isSelected(), jShowAttacksInOverview.isSelected())) {
             if (System.getProperty("os.name").startsWith("Windows")) {
                 if (JOptionPaneHelper.showQuestionConfirmBox(this, "Script erfolgreich nach 'zz_attack_info.user.js' geschrieben.\nDenke bitte daran, das Script in deinem Browser einzufügen/zu aktualisieren!\nMöchtest du das Speicherverzeichnis des Scripts nun im Explorer öffnen?", "Information", "Nein", "Ja") == JOptionPane.YES_OPTION) {
                     try {
@@ -2920,7 +2889,7 @@ private void fireDoExportAsScriptEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
     }
 
     //store properties
-    GlobalOptions.addProperty("attack.script.draw.vectors", Boolean.toString(jDrawAttackVectors.isSelected()));
+    GlobalOptions.addProperty("attack.script.draw.vectors", Boolean.toString(false));
     GlobalOptions.addProperty("attack.script.vectors.width", Integer.toString(width));
     GlobalOptions.addProperty("attack.script.attacks.in.popup", Boolean.toString(jShowAttacksInPopup.isSelected()));
     GlobalOptions.addProperty("attack.script.attacks.in.village.info", Boolean.toString(jShowAttacksInVillageInfo.isSelected()));
@@ -3186,7 +3155,6 @@ private void fireSendAttackToReTimeToolEvent(java.awt.event.MouseEvent evt) {//G
     private javax.swing.JTextField jAttackPlanName;
     private javax.swing.JTable jAttackTable;
     private javax.swing.JRadioButton jAttackType;
-    private javax.swing.JSpinner jAttackVectorWidth;
     private javax.swing.JButton jAttacksToScriptButton;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton10;
@@ -3223,7 +3191,6 @@ private void fireSendAttackToReTimeToolEvent(java.awt.event.MouseEvent evt) {//G
     private javax.swing.JRadioButton jDefType;
     private javax.swing.JButton jDefaultTroopsButton;
     private javax.swing.JButton jDoScriptExportButton;
-    private javax.swing.JCheckBox jDrawAttackVectors;
     private javax.swing.JButton jDrawMarkedButton;
     private javax.swing.JRadioButton jEnobleType;
     private javax.swing.JRadioButton jFakeDefType;
@@ -3243,7 +3210,6 @@ private void fireSendAttackToReTimeToolEvent(java.awt.event.MouseEvent evt) {//G
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel20;
-    private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel22;
     private javax.swing.JLabel jLabel23;
     private javax.swing.JLabel jLabel24;

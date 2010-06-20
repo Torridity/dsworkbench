@@ -27,9 +27,13 @@ public class MerchantDistributor {
     public List<List<MerchantSource>> calculate(List<VillageMerchantInfo> pInfos, List<de.tor.tribes.types.Village> pIncomingOnly, List<de.tor.tribes.types.Village> pOutgoingOnly, int[] pTargetRes, int[] pRemainRes) {
         int[] targetRes = pTargetRes;//new int[]{100000, 100000, 100000};
         int[] minRemainRes = pRemainRes;//new int[]{100000, 100000, 100000};
-
+        /* for (VillageMerchantInfo info : pInfos) {
+        System.out.println(info);
+        }
         System.out.println("Target: " + targetRes[0] + "/" + targetRes[1] + "/" + targetRes[2]);
-
+         */
+        // System.out.println("INCO " + pIncomingOnly);
+        //  System.out.println("OUTO " + pOutgoingOnly);
         ArrayList<MerchantSource> sources = new ArrayList<MerchantSource>();
         ArrayList<MerchantDestination> destinations = new ArrayList<MerchantDestination>();
         List<List<MerchantSource>> results = new LinkedList<List<MerchantSource>>();
@@ -49,45 +53,65 @@ public class MerchantDistributor {
                         res = info.getIronStock();
                         break;
                 }
-
-                int maxAvailable = res - minRemainRes[i];
-                int maxDelivery = info.getAvailableMerchants() * 1000;//(int) Math.rint((double) info.getAvailableMerchants() / 3.0) * 1000;
-                if (maxAvailable < 0) {
+                int targetValue = targetRes[i];
+                int maxAvailable = (int) (Math.round((double) Math.abs(res - minRemainRes[i]) / 1000.0 + .5));
+                int maxDelivery = info.getAvailableMerchants();
+                //try to add receiver
+                if (maxAvailable < 0 || res < targetValue) {
+                    // System.out.println("< 0 or target for " + info.getVillage());
                     //check if target value fits into the stash
-                    int targetValue = targetRes[i];
+
                     if (targetRes[i] > info.getStashCapacity()) {
                         targetValue = info.getStashCapacity();
                     }
-                    int need = (int) (Math.round((double) Math.abs(targetValue - res) / 1000.0)) * 1000;
+
+                    // System.out.println("Res: " + res + "/" + targetValue);
+                    int need = (int) (Math.round((double) Math.abs(targetValue - res) / 1000.0 + .5));
+                    if (res + need > info.getStashCapacity()) {
+                        need -= (res + need - info.getStashCapacity());
+                    }
+
+                    // System.out.println("Need for " + info.getVillage() + ": " + need);
                     if (need > 0 && !pOutgoingOnly.contains(info.getVillage())) {
-                        //System.out.println("Receiver " + info + " -> " + need);
+                        // System.out.println("Receiver " + info + " -> " + need);
                         //add to destination list
+
                         MerchantDestination d = new MerchantDestination(new Coordinate(info.getVillage().getX(), info.getVillage().getY()), need);
                         destinations.add(d);
                     }
-                } else {
+                }
 
-                    if (maxAvailable > maxDelivery) {
-                        //    System.out.println("Deliverer " + info + " -> " + maxDelivery);
-                        //use max capacity
-                        if (!pIncomingOnly.contains(info.getVillage())) {
-                            MerchantSource s = new MerchantSource(new Coordinate(info.getVillage().getX(), info.getVillage().getY()), maxDelivery);
-                            sources.add(s);
-                        }
-                    } else {
-                        //use max available
-                        maxAvailable = (int) (Math.round((double) maxAvailable / 1000.0)) * 1000;
-                        //  System.out.println("Deliverer " + info + " -> " + maxAvailable);
-                        if (!pIncomingOnly.contains(info.getVillage())) {
-                            MerchantSource s = new MerchantSource(new Coordinate(info.getVillage().getX(), info.getVillage().getY()), maxAvailable);
-                            sources.add(s);
-                        }
+                //try to add sender
+
+                if (maxAvailable > maxDelivery) {
+                    // System.out.println("> maxDe for " + info.getVillage() + " ( " + maxDelivery + ")");
+                    //    System.out.println("Deliverer " + info + " -> " + maxDelivery);
+                    //use max capacity
+                    if (!pIncomingOnly.contains(info.getVillage()) && maxAvailable > 0) {
+                       // System.out.println("Deliverer " + info.getVillage() + " -> " + maxAvailable);
+                        MerchantSource s = new MerchantSource(new Coordinate(info.getVillage().getX(), info.getVillage().getY()), maxDelivery);
+                        sources.add(s);
                     }
+                } else {
+                    //use max available
+                    // System.out.println("< maxDe for " + info.getVillage());
+                    /*if (maxAvailable > maxDelivery) {
+                        maxAvailable = maxDelivery;
+                    }*/
+                    // System.out.println(" - maxA " + maxAvailable);
+                   // System.out.println("Deliverer " + info + " -> " + maxAvailable);
+                    if (!pIncomingOnly.contains(info.getVillage()) && maxAvailable > 0) {
+                        //     System.out.println("Deliverer " + info.getVillage() + " -> " + maxAvailable);
+                        MerchantSource s = new MerchantSource(new Coordinate(info.getVillage().getX(), info.getVillage().getY()), maxAvailable);
+                        sources.add(s);
+                    }
+
                 }
             }
             //calculate
             if (sources.isEmpty() || destinations.isEmpty()) {
-                //  System.out.println("Nothing todo in round " + i);
+                // System.out.println("Nothing todo in round " + i);
+                results.add(new LinkedList<MerchantSource>());
             } else {
                 new MerchantDistributor().calculate(sources, destinations);
                 List<MerchantSource> sourcesCopy = new LinkedList<MerchantSource>(sources);
@@ -98,33 +122,34 @@ public class MerchantDistributor {
                 for (MerchantSource source : sources) {
                     for (Order o : source.getOrders()) {
                         int amount = o.getAmount();
-                        int needMerchants = amount / 1000;
+
+                        int needMerchants = amount;
                         MerchantDestination d = (MerchantDestination) o.getDestination();
                         //System.out.println(source + " " + o);
                         for (VillageMerchantInfo info : pInfos) {
                             if (info.getVillage().getX() == source.getC().getX() && info.getVillage().getY() == source.getC().getY()) {
                                 switch (i) {
                                     case 0:
-                                        info.setWoodStock(info.getWoodStock() - amount);
+                                        info.setWoodStock(info.getWoodStock() - amount * 1000);
                                         break;
                                     case 1:
-                                        info.setClayStock(info.getClayStock() - amount);
+                                        info.setClayStock(info.getClayStock() - amount * 1000);
                                         break;
                                     case 2:
-                                        info.setIronStock(info.getIronStock() - amount);
+                                        info.setIronStock(info.getIronStock() - amount * 1000);
                                         break;
                                 }
                                 info.setAvailableMerchants(info.getAvailableMerchants() - needMerchants);
                             } else if (info.getVillage().getX() == d.getC().getX() && info.getVillage().getY() == d.getC().getY()) {
                                 switch (i) {
                                     case 0:
-                                        info.setWoodStock(info.getWoodStock() + amount);
+                                        info.setWoodStock(info.getWoodStock() + amount * 1000);
                                         break;
                                     case 1:
-                                        info.setClayStock(info.getClayStock() + amount);
+                                        info.setClayStock(info.getClayStock() + amount * 1000);
                                         break;
                                     case 2:
-                                        info.setIronStock(info.getIronStock() + amount);
+                                        info.setIronStock(info.getIronStock() + amount * 1000);
                                         break;
                                 }
                             }
@@ -133,12 +158,12 @@ public class MerchantDistributor {
                 }
                 // </editor-fold>
             }
-            System.out.println("Round done");
+            // System.out.println("Round done");
         }
-        System.out.println("=================");
-        for (VillageMerchantInfo info : pInfos) {
-            System.out.println(info);
-        }
+        // System.out.println("=================");
+        /* for (VillageMerchantInfo info : pInfos) {
+        System.out.println(info);
+        }*/
         return results;
     }
 

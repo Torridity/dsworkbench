@@ -4,8 +4,8 @@
  */
 package de.tor.tribes.ui.renderer;
 
-import de.tor.tribes.ui.DSWorkbenchMerchantDistibutor.Direction;
 import de.tor.tribes.util.Constants;
+import de.tor.tribes.util.parser.MerchantParser.VillageMerchantInfo;
 import java.awt.Component;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -52,13 +52,13 @@ public class TradeDirectionCellRenderer extends DefaultTableCellRenderer {
                 label.setBackground(Constants.DS_ROW_A);
             }
         }
-        Direction dir = (Direction) value;
+        VillageMerchantInfo.Direction dir = (VillageMerchantInfo.Direction) value;
 
-        if (dir == Direction.BOTH) {
+        if (dir == VillageMerchantInfo.Direction.BOTH) {
             label.setIcon(tradeBoth);
-        } else if (dir == Direction.INCOMING) {
+        } else if (dir == VillageMerchantInfo.Direction.INCOMING) {
             label.setIcon(tradeIn);
-        } else if (dir == Direction.OUTGOING) {
+        } else if (dir == VillageMerchantInfo.Direction.OUTGOING) {
             label.setIcon(tradeOut);
         }
         label.setHorizontalAlignment(SwingConstants.CENTER);

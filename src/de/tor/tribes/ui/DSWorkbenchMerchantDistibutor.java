@@ -14,11 +14,16 @@ import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.renderer.AlternatingColorCellRenderer;
 import de.tor.tribes.ui.renderer.NumberFormatCellRenderer;
+import de.tor.tribes.ui.renderer.TransportCellRenderer;
 import de.tor.tribes.ui.renderer.SortableTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.TradeDirectionCellRenderer;
+import de.tor.tribes.ui.renderer.VillageCellRenderer;
+import de.tor.tribes.util.BrowserCommandSender;
 import de.tor.tribes.util.JOptionPaneHelper;
+import de.tor.tribes.util.algo.MerchantDestination;
 import de.tor.tribes.util.algo.MerchantDistributor;
 import de.tor.tribes.util.algo.MerchantSource;
+import de.tor.tribes.util.algo.Order;
 import de.tor.tribes.util.parser.MerchantParser;
 import de.tor.tribes.util.parser.MerchantParser.VillageMerchantInfo;
 import java.awt.Point;
@@ -28,15 +33,18 @@ import java.awt.datatransfer.Transferable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
+import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import org.apache.log4j.Logger;
 
 /**
- *
+ *@TODO (DIFF) Added merchant distributor
  * @author Jejkal
  */
 public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame {
@@ -52,11 +60,6 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame {
         return SINGLETON;
     }
 
-    public enum Direction {
-
-        INCOMING, OUTGOING, BOTH
-    }
-
     /** Creates new form DSWorkbenchMerchantDistibutor */
     DSWorkbenchMerchantDistibutor() {
         initComponents();
@@ -64,7 +67,9 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame {
 
     public void setup() {
         merchantInfos.clear();
-        rebuildTable();
+
+        rebuildTable(jMerchantDataTable, new LinkedList<VillageMerchantInfo>());
+        buildResults(new LinkedList<VillageMerchantInfo>(), new LinkedList<List<MerchantSource>>(), new int[]{0, 0, 0});
     }
 
     /** This method is called from within the constructor to
@@ -77,12 +82,30 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame {
     private void initComponents() {
 
         buttonGroup1 = new javax.swing.ButtonGroup();
+        jResultFrame = new javax.swing.JFrame();
+        jPanel3 = new javax.swing.JPanel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jResultsTable = new javax.swing.JTable();
+        jPanel4 = new javax.swing.JPanel();
+        jLabel8 = new javax.swing.JLabel();
+        jLabel9 = new javax.swing.JLabel();
+        jLabel10 = new javax.swing.JLabel();
+        jUsedMerchants = new javax.swing.JLabel();
+        jUsedTransports = new javax.swing.JLabel();
+        jPerfectResults = new javax.swing.JLabel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        jResultsDataTable = new javax.swing.JTable();
+        jLabel11 = new javax.swing.JLabel();
+        jLabel12 = new javax.swing.JLabel();
+        jButton1 = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jMerchantDataTable = new javax.swing.JTable();
         jTaskPane1 = new com.l2fprod.common.swing.JTaskPane();
         jTaskPaneGroup2 = new com.l2fprod.common.swing.JTaskPaneGroup();
-        jButton4 = new javax.swing.JButton();
+        jInsertBothButton = new javax.swing.JButton();
+        jInsertReceiveButton = new javax.swing.JButton();
+        jInsertSendButton = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
         jTaskPaneGroup1 = new com.l2fprod.common.swing.JTaskPaneGroup();
         jTradeBothButton = new javax.swing.JButton();
@@ -105,6 +128,147 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame {
         jRemainIron = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
+
+        jResultFrame.setTitle("Errechnete Transporte");
+
+        jPanel3.setBackground(new java.awt.Color(239, 235, 223));
+        jPanel3.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        jResultsTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane2.setViewportView(jResultsTable);
+
+        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("Sonstige Ergebnisse"));
+        jPanel4.setOpaque(false);
+
+        jLabel8.setText("Verwendete Händler");
+
+        jLabel9.setText("Verwendete Transporte");
+
+        jLabel10.setText("Optimale Ergebnisse");
+
+        jUsedMerchants.setMaximumSize(new java.awt.Dimension(40, 14));
+        jUsedMerchants.setMinimumSize(new java.awt.Dimension(40, 14));
+        jUsedMerchants.setPreferredSize(new java.awt.Dimension(40, 14));
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jUsedMerchants, javax.swing.GroupLayout.DEFAULT_SIZE, 332, Short.MAX_VALUE)
+                    .addComponent(jUsedTransports, javax.swing.GroupLayout.DEFAULT_SIZE, 332, Short.MAX_VALUE)
+                    .addComponent(jPerfectResults, javax.swing.GroupLayout.DEFAULT_SIZE, 332, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel8)
+                    .addComponent(jUsedMerchants, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel9)
+                    .addComponent(jUsedTransports))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel10)
+                    .addComponent(jPerfectResults))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        jResultsDataTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane3.setViewportView(jResultsDataTable);
+
+        jLabel11.setText("<html><b>Resultierende Rohstoffverteilung</b></html>");
+
+        jLabel12.setText("<html><b>Durchzuführende Transporte</b></html>");
+
+        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_browser.png"))); // NOI18N
+        jButton1.setToolTipText("Markierte Transporte in den Browser übertragen");
+        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireTransferTransportsToBrowserEvent(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jPanel4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 496, Short.MAX_VALUE)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 496, Short.MAX_VALUE)
+                    .addComponent(jLabel11, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 496, Short.MAX_VALUE)
+                    .addComponent(jLabel12, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 496, Short.MAX_VALUE)
+                    .addComponent(jButton1))
+                .addContainerGap())
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel12)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 116, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton1)
+                .addGap(26, 26, 26)
+                .addComponent(jLabel11)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 126, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+
+        javax.swing.GroupLayout jResultFrameLayout = new javax.swing.GroupLayout(jResultFrame.getContentPane());
+        jResultFrame.getContentPane().setLayout(jResultFrameLayout);
+        jResultFrameLayout.setHorizontalGroup(
+            jResultFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jResultFrameLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        jResultFrameLayout.setVerticalGroup(
+            jResultFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jResultFrameLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
 
         setTitle("Ressourcenverteiler");
 
@@ -135,15 +299,35 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame {
         percentLayout3.setOrientation(1);
         jTaskPaneGroup2.getContentPane().setLayout(percentLayout3);
 
-        jButton4.setBackground(new java.awt.Color(239, 235, 223));
-        jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/from_clipboard.png"))); // NOI18N
-        jButton4.setToolTipText("Daten aus der Zwischenablage lesen");
-        jButton4.addMouseListener(new java.awt.event.MouseAdapter() {
+        jInsertBothButton.setBackground(new java.awt.Color(239, 235, 223));
+        jInsertBothButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/res_both_from_clipboard.png"))); // NOI18N
+        jInsertBothButton.setToolTipText("Daten aus der Zwischenablage lesen (Empfang und Lieferung)");
+        jInsertBothButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireReadDataEvent(evt);
             }
         });
-        jTaskPaneGroup2.getContentPane().add(jButton4);
+        jTaskPaneGroup2.getContentPane().add(jInsertBothButton);
+
+        jInsertReceiveButton.setBackground(new java.awt.Color(239, 235, 223));
+        jInsertReceiveButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/res_in_from_clipboard.png"))); // NOI18N
+        jInsertReceiveButton.setToolTipText("Daten aus der Zwischenablage lesen (Nur Empfang)");
+        jInsertReceiveButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireReadDataEvent(evt);
+            }
+        });
+        jTaskPaneGroup2.getContentPane().add(jInsertReceiveButton);
+
+        jInsertSendButton.setBackground(new java.awt.Color(239, 235, 223));
+        jInsertSendButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/res_out_from_clipboard.png"))); // NOI18N
+        jInsertSendButton.setToolTipText("Daten aus der Zwischenablage lesen (Nur Lieferung)");
+        jInsertSendButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireReadDataEvent(evt);
+            }
+        });
+        jTaskPaneGroup2.getContentPane().add(jInsertSendButton);
 
         jButton5.setBackground(new java.awt.Color(239, 235, 223));
         jButton5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_remove.png"))); // NOI18N
@@ -209,7 +393,7 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame {
 
         jButton6.setBackground(new java.awt.Color(239, 235, 223));
         jButton6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_validate.png"))); // NOI18N
-        jButton6.setToolTipText("Daten aus der Zwischenablage lesen");
+        jButton6.setToolTipText("Notwendige Transporte berechnen");
         jButton6.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireCalculateEvent(evt);
@@ -227,7 +411,7 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame {
         });
 
         buttonGroup1.add(jAdjustingDistribution);
-        jAdjustingDistribution.setText("Angleichung");
+        jAdjustingDistribution.setText("Gewünschter Lagerbestand");
         jAdjustingDistribution.setOpaque(false);
         jAdjustingDistribution.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
@@ -263,27 +447,35 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame {
         jLabel3.setEnabled(false);
 
         jRemainWood.setText("100000");
+        jRemainWood.setEnabled(false);
         jRemainWood.setMaximumSize(new java.awt.Dimension(50, 20));
         jRemainWood.setMinimumSize(new java.awt.Dimension(50, 20));
         jRemainWood.setPreferredSize(new java.awt.Dimension(50, 20));
 
         jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/lehm.png"))); // NOI18N
+        jLabel4.setEnabled(false);
 
         jRemainClay.setText("100000");
+        jRemainClay.setEnabled(false);
         jRemainClay.setMaximumSize(new java.awt.Dimension(50, 20));
         jRemainClay.setMinimumSize(new java.awt.Dimension(50, 20));
         jRemainClay.setPreferredSize(new java.awt.Dimension(50, 20));
 
         jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/eisen.png"))); // NOI18N
+        jLabel5.setEnabled(false);
 
         jRemainIron.setText("100000");
+        jRemainIron.setEnabled(false);
         jRemainIron.setMaximumSize(new java.awt.Dimension(50, 20));
         jRemainIron.setMinimumSize(new java.awt.Dimension(50, 20));
         jRemainIron.setPreferredSize(new java.awt.Dimension(50, 20));
 
         jLabel6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/holz.png"))); // NOI18N
+        jLabel6.setEnabled(false);
 
+        jLabel7.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel7.setText("Min. Füllstand");
+        jLabel7.setEnabled(false);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -321,8 +513,10 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame {
                         .addComponent(jLabel5)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jRemainIron, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(78, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addContainerGap(435, Short.MAX_VALUE)
+                .addComponent(jButton6)
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -331,30 +525,27 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame {
                 .addContainerGap()
                 .addComponent(jEqualDistribution)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jAdjustingDistribution)
+                    .addComponent(jTargetWood, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1)
+                    .addComponent(jTargetClay, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2)
+                    .addComponent(jTargetIron, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3))
+                .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                        .addComponent(jButton6)
-                        .addContainerGap())
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jAdjustingDistribution)
-                            .addComponent(jTargetWood, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel1)
-                            .addComponent(jTargetClay, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel2)
-                            .addComponent(jTargetIron, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel3))
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, 20, Short.MAX_VALUE)
-                            .addComponent(jRemainWood, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jRemainClay, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jRemainIron, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(jLabel6)
-                                .addComponent(jLabel4)
-                                .addComponent(jLabel5)))
-                        .addGap(84, 84, 84))))
+                    .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, 20, Short.MAX_VALUE)
+                    .addComponent(jRemainWood, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jRemainClay, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jRemainIron, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel6)
+                        .addComponent(jLabel4)
+                        .addComponent(jLabel5)))
+                .addGap(18, 18, 18)
+                .addComponent(jButton6)
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -365,7 +556,7 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame {
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 491, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jTaskPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -376,10 +567,10 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame {
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 237, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jTaskPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 457, Short.MAX_VALUE))
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 347, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jTaskPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 538, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -409,8 +600,22 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame {
             String data = (String) t.getTransferData(DataFlavor.stringFlavor);
             List<VillageMerchantInfo> infos = MerchantParser.parse(data);
             if (!infos.isEmpty()) {
-                Collections.addAll(merchantInfos, infos.toArray(new VillageMerchantInfo[]{}));
-                rebuildTable();
+                if (evt.getSource() == jInsertBothButton) {
+                    Collections.addAll(merchantInfos, infos.toArray(new VillageMerchantInfo[]{}));
+                } else if (evt.getSource() == jInsertSendButton) {
+                    for (VillageMerchantInfo info : infos) {
+                        info.setDirection(VillageMerchantInfo.Direction.OUTGOING);
+                    }
+                    Collections.addAll(merchantInfos, infos.toArray(new VillageMerchantInfo[]{}));
+                } else if (evt.getSource() == jInsertReceiveButton) {
+                    for (VillageMerchantInfo info : infos) {
+                        info.setDirection(VillageMerchantInfo.Direction.INCOMING);
+                    }
+                    Collections.addAll(merchantInfos, infos.toArray(new VillageMerchantInfo[]{}));
+                }
+                rebuildTable(jMerchantDataTable, merchantInfos);
+                String message = (infos.size() == 1) ? "1 Eintrag gelesen." : infos.size() + " Einträge gelesen.";
+                JOptionPaneHelper.showInformationBox(this, message, "Information");
             }
 
         } catch (Exception e) {
@@ -420,13 +625,13 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame {
     }//GEN-LAST:event_fireReadDataEvent
 
     private void fireChangeTradeDirectionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireChangeTradeDirectionEvent
-        Direction dir = Direction.BOTH;
+        VillageMerchantInfo.Direction dir = VillageMerchantInfo.Direction.BOTH;
         if (evt.getSource() == jTradeBothButton) {
-            dir = Direction.BOTH;
+            dir = VillageMerchantInfo.Direction.BOTH;
         } else if (evt.getSource() == jTradeInButton) {
-            dir = Direction.INCOMING;
+            dir = VillageMerchantInfo.Direction.INCOMING;
         } else if (evt.getSource() == jTradeOutButton) {
-            dir = Direction.OUTGOING;
+            dir = VillageMerchantInfo.Direction.OUTGOING;
         }
 
         int[] rows = jMerchantDataTable.getSelectedRows();
@@ -435,10 +640,10 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame {
         }
 
         for (int i = 0; i < rows.length; i++) {
-            //int row = jMerchantDataTable.convertRowIndexToModel(rows[i]);
-            jMerchantDataTable.setValueAt(dir, rows[i], 6);
+            int row = jMerchantDataTable.convertRowIndexToModel(rows[i]);
+            merchantInfos.get(row).setDirection(dir);
         }
-
+        rebuildTable(jMerchantDataTable, merchantInfos);
     }//GEN-LAST:event_fireChangeTradeDirectionEvent
 
     private void fireRemoveMarkedEntriesEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireRemoveMarkedEntriesEvent
@@ -473,18 +678,17 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame {
 
     private void fireCalculateEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCalculateEvent
 
-        DefaultTableModel model = (DefaultTableModel) jMerchantDataTable.getModel();
         ArrayList<Village> incomingOnly = new ArrayList<Village>();
         ArrayList<Village> outgoingOnly = new ArrayList<Village>();
-        for (int i = 0; i < model.getRowCount(); i++) {
-            int row = jMerchantDataTable.convertRowIndexToModel(i);
-            Direction dir = (Direction) model.getValueAt(row, 6);
-            if (dir == Direction.INCOMING) {
-                incomingOnly.add((Village) model.getValueAt(row, 0));
-            } else if (dir == Direction.OUTGOING) {
-                outgoingOnly.add((Village) model.getValueAt(row, 0));
+
+        for (VillageMerchantInfo info : merchantInfos) {
+            if (info.getDirection() == VillageMerchantInfo.Direction.INCOMING) {
+                incomingOnly.add(info.getVillage());
+            } else if (info.getDirection() == VillageMerchantInfo.Direction.OUTGOING) {
+                outgoingOnly.add(info.getVillage());
             }
         }
+
         int[] targetRes = null;
         int[] remainRes = null;
         if (jAdjustingDistribution.isSelected()) {
@@ -506,11 +710,15 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame {
             remainRes = targetRes;
         }
 
-        List<VillageMerchantInfo> copy = new LinkedList<VillageMerchantInfo>(merchantInfos);
+        List<VillageMerchantInfo> copy = new LinkedList<VillageMerchantInfo>();
+        for (int i = 0; i < merchantInfos.size(); i++) {
+            copy.add(merchantInfos.get(i).clone());
+        }
+        //   Collections.copy(copy, merchantInfos);
+        //  System.out.println(merchantInfos);
+
         List<List<MerchantSource>> results = new MerchantDistributor().calculate(copy, incomingOnly, outgoingOnly, targetRes, remainRes);
-
-
-        // rebuildTable();
+        buildResults(copy, results, targetRes);
 
     }//GEN-LAST:event_fireCalculateEvent
 
@@ -518,17 +726,47 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame {
         jTargetWood.setEnabled(jAdjustingDistribution.isSelected());
         jTargetClay.setEnabled(jAdjustingDistribution.isSelected());
         jTargetIron.setEnabled(jAdjustingDistribution.isSelected());
+        jLabel1.setEnabled(jAdjustingDistribution.isSelected());
+        jLabel2.setEnabled(jAdjustingDistribution.isSelected());
+        jLabel3.setEnabled(jAdjustingDistribution.isSelected());
+        jLabel4.setEnabled(jAdjustingDistribution.isSelected());
+        jLabel5.setEnabled(jAdjustingDistribution.isSelected());
+        jLabel6.setEnabled(jAdjustingDistribution.isSelected());
+        jLabel7.setEnabled(jAdjustingDistribution.isSelected());
+        jRemainWood.setEnabled(jAdjustingDistribution.isSelected());
+        jRemainClay.setEnabled(jAdjustingDistribution.isSelected());
+        jRemainIron.setEnabled(jAdjustingDistribution.isSelected());
+
     }//GEN-LAST:event_fireCalculationTypeChangedEvent
 
-    private void rebuildTable() {
-        DefaultTableModel model = new javax.swing.table.DefaultTableModel(
+    private void fireTransferTransportsToBrowserEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireTransferTransportsToBrowserEvent
+
+
+        int[] rows = jResultsTable.getSelectedRows();
+        if (rows == null || rows.length == 0) {
+            return;
+        }
+        for (int i = 0; i < rows.length; i++) {
+            //int row = jMerchantDataTable.convertRowIndexToModel(rows[i]);
+            Village source = (Village) jResultsTable.getValueAt(rows[i], 0);
+            Village target = (Village) jResultsTable.getValueAt(rows[i], 2);
+            Transport trans = (Transport) jResultsTable.getValueAt(rows[i], 1);
+
+            BrowserCommandSender.sendRes(source, target, trans);
+        }
+
+    }//GEN-LAST:event_fireTransferTransportsToBrowserEvent
+
+    private void rebuildTable(JTable pTable, List<VillageMerchantInfo> pMerchantInfos) {
+        DefaultTableModel model = null;
+        model = new javax.swing.table.DefaultTableModel(
                 new Object[][]{},
                 new String[]{
                     "Dorf", "Holz", "Lehm", "Eisen", "Speicher", "Händler", "Handelsrichtung"
                 }) {
 
             Class[] types = new Class[]{
-                Village.class, Integer.class, Integer.class, Integer.class, Integer.class, String.class, Direction.class
+                Village.class, Integer.class, Integer.class, Integer.class, Integer.class, String.class, VillageMerchantInfo.Direction.class
             };
 
             @Override
@@ -542,45 +780,235 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame {
             }
         };
 
-        for (VillageMerchantInfo info : merchantInfos) {
+        for (VillageMerchantInfo info : pMerchantInfos) {
             //add table rows
-
-            Direction dir = Direction.BOTH;
-            int v = (int) Math.rint(3 * Math.random());
-            switch (v) {
-                case 0:
-                    dir = Direction.BOTH;
-                    break;
-                case 1:
-                    dir = Direction.INCOMING;
-                    break;
-                case 2:
-                    dir = Direction.OUTGOING;
-                    break;
-            }
-            model.addRow(new Object[]{DataHolder.getSingleton().getVillages()[info.getVillage().getX()][info.getVillage().getY()], info.getWoodStock(), info.getClayStock(), info.getIronStock(), info.getStashCapacity(), info.getAvailableMerchants() + "/" + info.getOverallMerchants(), dir});
+            model.addRow(new Object[]{DataHolder.getSingleton().getVillages()[info.getVillage().getX()][info.getVillage().getY()], info.getWoodStock(), info.getClayStock(), info.getIronStock(), info.getStashCapacity(), info.getAvailableMerchants() + "/" + info.getOverallMerchants(), info.getDirection()});
         }
 
         //set model
-        jMerchantDataTable.setModel(model);
-        jMerchantDataTable.setRowHeight(20);
+        pTable.setModel(model);
+        pTable.setRowHeight(20);
         //set sorter
         TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>();
-        jMerchantDataTable.setRowSorter(sorter);
+
+        pTable.setRowSorter(sorter);
+
         sorter.setModel(model);
         //set cell renderers
         AlternatingColorCellRenderer rend = new AlternatingColorCellRenderer();
-        jMerchantDataTable.setDefaultRenderer(Village.class, rend);
-        jMerchantDataTable.setDefaultRenderer(String.class, rend);
-        jMerchantDataTable.setDefaultRenderer(Direction.class, new TradeDirectionCellRenderer());
-        jMerchantDataTable.setDefaultRenderer(Integer.class, new NumberFormatCellRenderer());
+
+        pTable.setDefaultRenderer(Village.class, rend);
+        pTable.setDefaultRenderer(String.class, rend);
+        pTable.setDefaultRenderer(VillageMerchantInfo.Direction.class, new TradeDirectionCellRenderer());
+        pTable.setDefaultRenderer(Integer.class, new NumberFormatCellRenderer());
 
         //build table header
-
         SortableTableHeaderRenderer mHeaderRenderer = new SortableTableHeaderRenderer();
-        for (int i = 0; i < jMerchantDataTable.getColumnCount(); i++) {
 
-            jMerchantDataTable.getColumn(jMerchantDataTable.getColumnName(i)).setHeaderRenderer(mHeaderRenderer);
+        for (int i = 0; i < pTable.getColumnCount(); i++) {
+            pTable.getColumn(pTable.getColumnName(i)).setHeaderRenderer(mHeaderRenderer);
+        }
+    }
+
+    public static class Resource {
+
+        public enum Type {
+
+            WOOD, CLAY, IRON
+        }
+        private int amount;
+        private Type type;
+
+        public Resource(int pAmount, Type pType) {
+            setAmount(pAmount);
+            setType(pType);
+        }
+
+        /**
+         * @return the amount
+         */
+        public int getAmount() {
+            return amount;
+        }
+
+        /**
+         * @param amount the amount to set
+         */
+        public void setAmount(int amount) {
+            this.amount = amount;
+        }
+
+        /**
+         * @return the type
+         */
+        public Type getType() {
+            return type;
+        }
+
+        /**
+         * @param type the type to set
+         */
+        public void setType(Type type) {
+            this.type = type;
+        }
+    }
+
+    public static class Transport {
+
+        private List<Resource> resourceTransports;
+
+        public Transport(List<Resource> pResourceTransports) {
+            setSingleTransports(pResourceTransports);
+        }
+
+        /**
+         * @return the amount
+         */
+        public List<Resource> getSingleTransports() {
+            return resourceTransports;
+        }
+
+        /**
+         * @param amount the amount to set
+         */
+        public void setSingleTransports(List<Resource> pTransports) {
+            resourceTransports = new LinkedList<Resource>();
+            resourceTransports.add(new Resource(0, Resource.Type.WOOD));
+            resourceTransports.add(new Resource(0, Resource.Type.CLAY));
+            resourceTransports.add(new Resource(0, Resource.Type.IRON));
+            for (Resource r : pTransports) {
+                if (r.getType() == Resource.Type.WOOD) {
+                    resourceTransports.get(0).setAmount(r.getAmount());
+                } else if (r.getType() == Resource.Type.CLAY) {
+                    resourceTransports.get(1).setAmount(r.getAmount());
+                } else if (r.getType() == Resource.Type.IRON) {
+                    resourceTransports.get(2).setAmount(r.getAmount());
+                }
+            }
+        }
+
+        public boolean hasGoods() {
+            return resourceTransports.get(0).getAmount() > 0 || resourceTransports.get(1).getAmount() > 0 || resourceTransports.get(2).getAmount() > 0;
+        }
+    }
+
+    private void buildResults(List<VillageMerchantInfo> pInfos, List<List<MerchantSource>> pResults, int[] pTargetRes) {
+
+        DefaultTableModel model = new javax.swing.table.DefaultTableModel(
+                new Object[][]{},
+                new String[]{
+                    "Herkunft", "Rohstoff", "Ziel"
+                }) {
+
+            Class[] types = new Class[]{
+                Village.class, Transport.class, Village.class
+            };
+
+            @Override
+            public Class getColumnClass(int columnIndex) {
+                return types[columnIndex];
+            }
+
+            @Override
+            public boolean isCellEditable(int row, int col) {
+                return false;
+            }
+        };
+
+        int usedMerchants = 0;
+        int usedTransports = 0;
+        if (!pResults.isEmpty()) {
+            Hashtable<Village, Hashtable<Village, List<Resource>>> transports = new Hashtable<Village, Hashtable<Village, List<Resource>>>();
+            for (int i = 0; i < 3; i++) {
+                Resource.Type current = null;
+                switch (i) {
+                    case 0:
+                        current = Resource.Type.WOOD;
+                        break;
+                    case 1:
+                        current = Resource.Type.CLAY;
+                        break;
+                    case 2:
+                        current = Resource.Type.IRON;
+                        break;
+                }
+                List<MerchantSource> resultForResource = pResults.get(i);
+
+                for (MerchantSource source : resultForResource) {
+                    Village sourceVillage = DataHolder.getSingleton().getVillages()[source.getC().getX()][source.getC().getY()];
+                    Hashtable<Village, List<Resource>> transportsForSource = transports.get(sourceVillage);
+
+                    if (transportsForSource == null) {
+                        transportsForSource = new Hashtable<Village, List<Resource>>();
+                        transports.put(sourceVillage, transportsForSource);
+                    }
+
+                    for (Order order : source.getOrders()) {
+                        // Village sourceVillage = DataHolder.getSingleton().getVillages()[source.getC().getX()][source.getC().getY()];
+                        MerchantDestination dest = (MerchantDestination) order.getDestination();
+                        Village targetVillage = DataHolder.getSingleton().getVillages()[dest.getC().getX()][dest.getC().getY()];
+                        List<Resource> transportsFromSourceToDest = transportsForSource.get(targetVillage);
+                        if (transportsFromSourceToDest == null) {
+                            transportsFromSourceToDest = new LinkedList<Resource>();
+                            transportsForSource.put(targetVillage, transportsFromSourceToDest);
+                        }
+                        int amount = order.getAmount();
+                        int merchants = amount;
+                        if (merchants > 0) {
+                            Resource res = new Resource(merchants * 1000, current);
+                            transportsFromSourceToDest.add(res);
+                            // Village targetVillage = DataHolder.getSingleton().getVillages()[dest.getC().getX()][dest.getC().getY()];
+                            //  model.addRow(new Object[]{sourceVillage, res, targetVillage});
+                            usedTransports++;
+                            usedMerchants += merchants;
+                        }
+                    }
+                }
+            }
+
+            // System.out.println(transports);
+            Enumeration<Village> sourceKeys = transports.keys();
+            while (sourceKeys.hasMoreElements()) {
+                Village sourceVillage = sourceKeys.nextElement();
+
+                Hashtable<Village, List<Resource>> transportsFromSource = transports.get(sourceVillage);
+                Enumeration<Village> destKeys = transportsFromSource.keys();
+                while (destKeys.hasMoreElements()) {
+                    Village targetVillage = destKeys.nextElement();
+                    // Village targetVillage = DataHolder.getSingleton().getVillages()[dest.getC().getX()][dest.getC().getY()];
+                    Transport trans = new Transport(transportsFromSource.get(targetVillage));
+                    if (trans.hasGoods()) {
+                        model.addRow(new Object[]{sourceVillage, trans, targetVillage});
+                    }
+                }
+            }
+        }
+        jResultsTable.setModel(model);
+        int perfectResults = 0;
+        for (VillageMerchantInfo info : pInfos) {
+            if (info.getWoodStock() >= pTargetRes[0] && info.getClayStock() >= pTargetRes[1] && info.getIronStock() >= pTargetRes[2]) {
+                perfectResults++;
+            }
+        }
+        //set additional infos
+        jUsedMerchants.setText(Integer.toString(usedMerchants));
+        jUsedTransports.setText(Integer.toString(usedTransports));
+        jPerfectResults.setText(Integer.toString(perfectResults));
+
+        //set sorter
+        TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>();
+        jResultsTable.setRowSorter(sorter);
+        sorter.setModel(model);
+        jResultsTable.setDefaultRenderer(Village.class, new VillageCellRenderer());
+        jResultsTable.setDefaultRenderer(Transport.class, new TransportCellRenderer());
+        SortableTableHeaderRenderer mHeaderRenderer = new SortableTableHeaderRenderer();
+        for (int i = 0; i < jResultsTable.getColumnCount(); i++) {
+            jResultsTable.getColumn(jResultsTable.getColumnName(i)).setHeaderRenderer(mHeaderRenderer);
+        }
+        rebuildTable(jResultsDataTable, pInfos);
+        jResultFrame.pack();
+        if (!pResults.isEmpty()) {
+            jResultFrame.setVisible(true);
         }
     }
 
@@ -590,24 +1018,40 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JRadioButton jAdjustingDistribution;
-    private javax.swing.JButton jButton4;
+    private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
     private javax.swing.JRadioButton jEqualDistribution;
+    private javax.swing.JButton jInsertBothButton;
+    private javax.swing.JButton jInsertReceiveButton;
+    private javax.swing.JButton jInsertSendButton;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JTable jMerchantDataTable;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JLabel jPerfectResults;
     private javax.swing.JTextField jRemainClay;
     private javax.swing.JTextField jRemainIron;
     private javax.swing.JTextField jRemainWood;
+    private javax.swing.JFrame jResultFrame;
+    private javax.swing.JTable jResultsDataTable;
+    private javax.swing.JTable jResultsTable;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTextField jTargetClay;
     private javax.swing.JTextField jTargetIron;
     private javax.swing.JTextField jTargetWood;
@@ -617,5 +1061,7 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame {
     private javax.swing.JButton jTradeBothButton;
     private javax.swing.JButton jTradeInButton;
     private javax.swing.JButton jTradeOutButton;
+    private javax.swing.JLabel jUsedMerchants;
+    private javax.swing.JLabel jUsedTransports;
     // End of variables declaration//GEN-END:variables
 }

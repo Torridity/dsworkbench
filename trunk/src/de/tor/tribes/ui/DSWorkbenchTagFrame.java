@@ -12,12 +12,14 @@ package de.tor.tribes.ui;
 
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.ServerManager;
+import de.tor.tribes.types.Barbarians;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.TagMapMarker;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.editors.TagMapMarkerCellEditor;
 import de.tor.tribes.ui.models.TagTableModel;
 import de.tor.tribes.ui.renderer.AlternatingColorCellRenderer;
+import de.tor.tribes.ui.renderer.BooleanCellRenderer;
 import de.tor.tribes.ui.renderer.SortableTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.TagMapMarkerRenderer;
 import de.tor.tribes.util.Constants;
@@ -26,7 +28,6 @@ import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.TagToBBCodeFormater;
 import de.tor.tribes.util.parser.VillageParser;
 import de.tor.tribes.util.tag.TagManager;
-import java.awt.Component;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
@@ -73,11 +74,12 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
         TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>();
         jTagTable.setRowSorter(sorter);
 
+        AlternatingColorCellRenderer rend = new AlternatingColorCellRenderer();
         jTagTable.setDefaultRenderer(TagMapMarker.class, new TagMapMarkerRenderer());
         jTagTable.setDefaultEditor(TagMapMarker.class, new TagMapMarkerCellEditor());
-        jTagTable.setDefaultRenderer(String.class, new AlternatingColorCellRenderer());
-        jTagTable.setDefaultRenderer(Integer.class, new AlternatingColorCellRenderer());
-        jTagTable.setDefaultRenderer(Boolean.class, new AlternatingColorCellRenderer());
+        jTagTable.setDefaultRenderer(String.class, rend);
+        jTagTable.setDefaultRenderer(Integer.class, rend);
+        jTagTable.setDefaultRenderer(Boolean.class, new BooleanCellRenderer());
 
         MouseListener l = new MouseListener() {
 
@@ -613,7 +615,7 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame {
                     String name = (String) TagTableModel.getSingleton().getOriginalValueAt(row, 0);
                     Tag t = TagManager.getSingleton().getTagByName(name);
                     for (Village v : pVillages) {
-                        if (v != null && v.getTribe() != null) {
+                        if (v != null && v.getTribe() != Barbarians.getSingleton()) {
                             t.tagVillage(v.getId());
                         }
                     }

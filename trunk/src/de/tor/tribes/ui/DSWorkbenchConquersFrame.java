@@ -12,6 +12,7 @@ package de.tor.tribes.ui;
 
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Ally;
+import de.tor.tribes.types.Barbarians;
 import de.tor.tribes.types.Conquer;
 import de.tor.tribes.types.NoAlly;
 import de.tor.tribes.types.Tribe;
@@ -753,7 +754,7 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
             //add tribe
             jTribeSelection.firePopupMenuCanceled();
             Tribe t = (Tribe) jTribeSelection.getSelectedItem();
-            if (t != null) {
+            if (t != Barbarians.getSingleton()) {
                 if (((DefaultListModel) jTribeList.getModel()).indexOf(t) < 0) {
                     ((DefaultListModel) jTribeList.getModel()).addElement(t);
                 }
@@ -761,7 +762,7 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
         } else {
             //remove tribe
             Tribe t = (Tribe) jTribeList.getSelectedValue();
-            if (t != null) {
+            if (t != Barbarians.getSingleton()) {
                 if (JOptionPaneHelper.showQuestionConfirmBox(jFilterDialog, "Gewählten Spieler entfernen?", "Spieler entfernen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
                     ((DefaultListModel) jTribeList.getModel()).removeElement(t);
                 }
@@ -881,7 +882,7 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
         List<Tribe> tribes = new LinkedList<Tribe>();
         while (tribeIds.hasMoreElements()) {
             Tribe t = DataHolder.getSingleton().getTribes().get(tribeIds.nextElement());
-            if (t != null
+            if (t != Barbarians.getSingleton()
                     && (pFilter == null
                     || (pFilter.length() == 0)
                     || (t.getName().toLowerCase().indexOf(pFilter.toLowerCase()) >= 0))) {

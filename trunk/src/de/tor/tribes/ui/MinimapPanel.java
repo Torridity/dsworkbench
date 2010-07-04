@@ -8,6 +8,7 @@ package de.tor.tribes.ui;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.php.ScreenUploadInterface;
 import de.tor.tribes.types.Ally;
+import de.tor.tribes.types.Barbarians;
 import de.tor.tribes.types.Marker;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
@@ -1083,7 +1084,7 @@ class MinimapRepaintThread extends Thread {
                 if (v != null) {
                     Color mark = null;
                     boolean isLeft = false;
-                    if (v.getTribe() == null) {
+                    if (v.getTribe() == Barbarians.getSingleton()) {
                         isLeft = true;
                     } else {
                         Village currentUserVillage = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage();

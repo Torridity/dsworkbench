@@ -10,6 +10,7 @@ import de.tor.tribes.io.WorldDecorationHolder;
 import de.tor.tribes.types.AbstractForm;
 import de.tor.tribes.types.Ally;
 import de.tor.tribes.types.Attack;
+import de.tor.tribes.types.BarbarianAlly;
 import de.tor.tribes.types.Barbarians;
 import de.tor.tribes.types.Church;
 import de.tor.tribes.types.Conquer;
@@ -608,7 +609,7 @@ public class MapRenderer extends Thread {
                     mVisibleVillages[x][y] = DataHolder.getSingleton().getVillages()[i][j];
                     if (mVisibleVillages[x][y] != null) {
                         Tribe t = mVisibleVillages[x][y].getTribe();
-                        if (t != null) {
+                        if (t != Barbarians.getSingleton()) {
                             if (tribeCount.get(t) == null) {
                                 tribeCount.put(t, 1);
                             } else {
@@ -635,6 +636,10 @@ public class MapRenderer extends Thread {
         viewStartPoint = new Point2D.Double(dXStart, dYStart);
 
         MapPanel.getSingleton().updateVirtualBounds(viewStartPoint);
+    }
+
+    public double getCurrentZoom() {
+        return currentZoom;
     }
 
     public Hashtable<Tribe, Integer> getTribeCount() {
@@ -749,17 +754,15 @@ public class MapRenderer extends Thread {
         boolean minimapSkin = GlobalOptions.getSkin().isMinimapSkin();
 
         // <editor-fold defaultstate="collapsed" desc="Village drawing">
-        for (int i = 0; i
-                < iVillagesX; i++) {
-            for (int j = 0; j
-                    < iVillagesY; j++) {
+        for (int i = 0; i < iVillagesX; i++) {
+            for (int j = 0; j < iVillagesY; j++) {
                 Village v = mVisibleVillages[i][j];
                 boolean drawVillage = true;
 
                 // <editor-fold defaultstate="collapsed" desc=" Check if village should be drawn ">
                 //check for barbarian
                 if (!showBarbarian) {
-                    if ((v != null) && (v.getTribe() == null)) {
+                    if ((v != null) && (v.getTribe() == Barbarians.getSingleton())) {
                         drawVillage = false;
                     }
 
@@ -768,13 +771,13 @@ public class MapRenderer extends Thread {
                 if (drawVillage && markedOnly) {
                     if (v != null && currentUserVillage != null) {
                         //valid village
-                        if (v.getTribe() != null) {
+                        if (v.getTribe() != Barbarians.getSingleton()) {
                             if (!v.getTribe().equals(currentUserVillage.getTribe())) {
                                 //check tribe marker
                                 Marker m = MarkerManager.getSingleton().getMarker(v.getTribe());
                                 if (m == null) {
                                     //tribe is not marked check ally marker
-                                    if (v.getTribe().getAlly() != null) {
+                                    if (v.getTribe().getAlly() != null && v.getTribe().getAlly() != BarbarianAlly.getSingleton()) {
                                         m = MarkerManager.getSingleton().getMarker(v.getTribe().getAlly());
                                         if (m == null) {
                                             //tribe and ally are not marked
@@ -871,7 +874,7 @@ public class MapRenderer extends Thread {
                     v.setVisibleOnMap(drawVillage);
                     if (drawVillage) {
                         boolean isLeft = false;
-                        if (v.getTribe() == null) {
+                        if (v.getTribe() == Barbarians.getSingleton()) {
                             isLeft = true;
                         }
 
@@ -1255,8 +1258,7 @@ public class MapRenderer extends Thread {
             //render note icons
             Enumeration<Village> keys = villagePositions.keys();
 
-            for (int i = 0; i
-                    < 6; i++) {
+            for (int i = 0; i < 6; i++) {
                 BufferedImage icon = ImageManager.getNoteIcon(i);
                 g2d.drawImage(icon, i * 32, hb + 68, null);
             }
@@ -1374,12 +1376,9 @@ public class MapRenderer extends Thread {
         while (villages.hasMoreElements()) {
             long s = System.currentTimeMillis();
             Village v = villages.nextElement();
-            own =
-                    false;
-            tribe =
-                    null;
-            ally =
-                    null;
+            own = false;
+            tribe = null;
+            ally = null;
             Tribe t = (v == null) ? null : v.getTribe();
             Color markerColor = null;
             if (currentUserVillage != null && t == currentUserVillage.getTribe()) {
@@ -1391,7 +1390,7 @@ public class MapRenderer extends Thread {
 
                 own = true;
             } else {
-                if (t != null) {
+                if (t != Barbarians.getSingleton()) {
                     tribe = MarkerManager.getSingleton().getMarker(t);
                     if (t.getAlly() != null) {
                         ally = MarkerManager.getSingleton().getMarker(t.getAlly());
@@ -1436,7 +1435,7 @@ public class MapRenderer extends Thread {
 
             } else {
                 Rectangle vRect = villagePositions.get(v);
-                if (t != null) {
+                if (t != Barbarians.getSingleton()) {
                     if (DEFAULT != null) {
                         //no mark-on-top mode
                         g2d.setColor(DEFAULT);
@@ -2031,7 +2030,7 @@ public class MapRenderer extends Thread {
             // <editor-fold defaultstate="collapsed" desc=" Check if village should be drawn ">
             //check for barbarian
             if (!showBarbarian) {
-                if ((v != null) && (v.getTribe() == null)) {
+                if ((v != null) && (v.getTribe() == Barbarians.getSingleton())) {
                     drawVillage = false;
                 }
 
@@ -2040,13 +2039,13 @@ public class MapRenderer extends Thread {
             if (drawVillage && markedOnly) {
                 if (v != null && currentUserVillage != null) {
                     //valid village
-                    if (v.getTribe() != null) {
+                    if (v.getTribe() != Barbarians.getSingleton()) {
                         if (!v.getTribe().equals(currentUserVillage.getTribe())) {
                             //check tribe marker
                             Marker m = MarkerManager.getSingleton().getMarker(v.getTribe());
                             if (m == null) {
                                 //tribe is not marked check ally marker
-                                if (v.getTribe().getAlly() != null) {
+                                if (v.getTribe().getAlly() != null && v.getTribe().getAlly() != BarbarianAlly.getSingleton()) {
                                     m = MarkerManager.getSingleton().getMarker(v.getTribe().getAlly());
                                     if (m == null) {
                                         //tribe and ally are not marked
@@ -2390,10 +2389,8 @@ public class MapRenderer extends Thread {
             double rulerEnd = -1 * currentFieldHeight * (viewStartPoint.y - yVillage);
             Composite com = g2d.getComposite();
             Color c = g2d.getColor();
-            for (int i = 0; i
-                    < mVisibleVillages.length; i++) {
-                for (int j = 0; j
-                        < mVisibleVillages[0].length; j++) {
+            for (int i = 0; i < mVisibleVillages.length; i++) {
+                for (int j = 0; j < mVisibleVillages[0].length; j++) {
                     if (i == 0) {
                         //draw vertical ruler
                         if ((yVillage + j) % 2 == 0) {
@@ -2465,10 +2462,8 @@ public class MapRenderer extends Thread {
 
             g2d.setComposite(com);
             g2d.setColor(Color.BLACK);
-            for (int i = 0; i
-                    < mVisibleVillages.length; i++) {
-                for (int j = 0; j
-                        < mVisibleVillages[0].length; j++) {
+            for (int i = 0; i < mVisibleVillages.length; i++) {
+                for (int j = 0; j < mVisibleVillages[0].length; j++) {
                     if (i == 0 && j != 0) {
                         //draw vertical values
                         if ((yVillage + j) % 2 == 0) {
@@ -2526,8 +2521,7 @@ public class MapRenderer extends Thread {
                     if (mouseVillage == null) {
                         if (infoPopup != null) {
                             infoPopup.hide();
-                            infoPopup =
-                                    null;
+                            infoPopup = null;
                         }
 
                         popupVillage = null;
@@ -2542,8 +2536,7 @@ public class MapRenderer extends Thread {
 
                             tt.setTipText(popupVillage.getExtendedTooltip());
                             PopupFactory popupFactory = PopupFactory.getSharedInstance();
-                            infoPopup =
-                                    popupFactory.getPopup(MapPanel.getSingleton(), tt, MouseInfo.getPointerInfo().getLocation().x + 10, MouseInfo.getPointerInfo().getLocation().y + 10);
+                            infoPopup = popupFactory.getPopup(MapPanel.getSingleton(), tt, MouseInfo.getPointerInfo().getLocation().x + 10, MouseInfo.getPointerInfo().getLocation().y + 10);
                             infoPopup.show();
                         }
 

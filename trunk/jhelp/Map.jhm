@@ -48,6 +48,8 @@
 
 <mapID target="pages.tools" url="pages/tools.html"/>
 
+<mapID target="pages.sos_analyzer" url="pages/sos_analyzer.html"/>
+
 <mapID target="pages.notes_view" url="pages/notes_view.html"/>
 
 <mapID target="pages.map_settings_show_continents" url="pages/map_settings.html#show_continents"/>
@@ -140,6 +142,8 @@
 
 <mapID target="pages.shortcuts" url="pages/shortcuts.html"/>
 
+<mapID target="pages.minimap_basics" url="pages/minimap_basics.html"/>
+
 <mapID target="pages.attack_planer_blitzkrieg" url="pages/attack_planer_blitzkrieg.html"/>
 
 <mapID target="pages.retime_tool" url="pages/retime_tool.html"/>
@@ -170,6 +174,8 @@
 
 <mapID target="pages.tag_view" url="pages/tag_view.html"/>
 
+<mapID target="pages.merchant_distributor" url="pages/merchant_distributor.html"/>
+
 <mapID target="pages.map_tools_church" url="pages/map_tools.html#church"/>
 
 <mapID target="pages.import_ingame_groups" url="pages/import_ingame.html#groups"/>
@@ -183,6 +189,8 @@
 <mapID target="pages.attack_planer_results_details_sources" url="pages/attack_planer_results_details_sources.html"/>
 
 <mapID target="images.help" url="images/help.png"/>
+
+<mapID target="images.trade_out" url="images/trade_out.png"/>
 
 <mapID target="images.tools.mark" url="images/tools/mark.png"/>
 
@@ -310,6 +318,8 @@
 
 <mapID target="images.tools.attack_axe" url="images/tools/attack_axe.png"/>
 
+<mapID target="images.re-time" url="images/re-time.png"/>
+
 <mapID target="images.tools.selection" url="images/tools/selection.png"/>
 
 <mapID target="images.mark" url="images/mark.png"/>
@@ -356,6 +366,8 @@
 
 <mapID target="images.shortcuts.Shift5" url="images/shortcuts/Shift5.gif"/>
 
+<mapID target="images.trade_in" url="images/trade_in.png"/>
+
 <mapID target="images.shortcuts.Shift6" url="images/shortcuts/Shift6.gif"/>
 
 <mapID target="images.shortcuts.Shift7" url="images/shortcuts/Shift7.gif"/>
@@ -401,6 +413,8 @@
 <mapID target="images.shortcuts.F10" url="images/shortcuts/F10.gif"/>
 
 <mapID target="images.information" url="images/information.png"/>
+
+<mapID target="images.trade_both" url="images/trade_both.png"/>
 
 <mapID target="images.tools.booty" url="images/tools/booty.png"/>
 

@@ -287,7 +287,7 @@ public class Iterix extends AbstractAttackAlgorithm {
                 logInfo("   * " + currentMappings + " von " + maxMappings + " verbleibende Kombinationen");
                 if (isAborted()) {
                     break;
-                //              System.out.println(" Loop: " + (System.currentTimeMillis() - s));
+                    //              System.out.println(" Loop: " + (System.currentTimeMillis() - s));
                 }
             }
             //        System.out.println("solved: " + (System.currentTimeMillis() - s));
@@ -362,7 +362,13 @@ public class Iterix extends AbstractAttackAlgorithm {
         int cnt = 0;
         List<Long> usedDates = new LinkedList<Long>();
         for (int i = 0; i < pSources.size(); i++) {
+            if (isAborted()) {
+                break;
+            }
             for (int j = 0; j < pTargets.size(); j++) {
+                if (isAborted()) {
+                    break;
+                }
                 double dist = DSCalculator.calculateDistance(pSources.get(i), pTargets.get(j));
                 double runtime = dist * ram.getSpeed() * 60000;
                 if (pTimeFrame.isVariableArriveTime()) {

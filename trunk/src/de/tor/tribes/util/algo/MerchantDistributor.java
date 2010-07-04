@@ -54,7 +54,7 @@ public class MerchantDistributor {
                         break;
                 }
                 int targetValue = targetRes[i];
-                int maxAvailable = (int) (Math.round((double) Math.abs(res - minRemainRes[i]) / 1000.0 + .5));
+                int maxAvailable = (int) (Math.round((double) (res - minRemainRes[i]) / 1000.0 + .5));
                 int maxDelivery = info.getAvailableMerchants();
                 //try to add receiver
                 if (maxAvailable < 0 || res < targetValue) {
@@ -66,7 +66,10 @@ public class MerchantDistributor {
                     }
 
                     // System.out.println("Res: " + res + "/" + targetValue);
-                    int need = (int) (Math.round((double) Math.abs(targetValue - res) / 1000.0 + .5));
+                    int need = (int) (Math.round((double) (targetValue - res) / 1000.0 + .5));
+                    if (need < 0) {
+                        need = 0;
+                    }
                     if (res + need > info.getStashCapacity()) {
                         need -= (res + need - info.getStashCapacity());
                     }
@@ -88,7 +91,7 @@ public class MerchantDistributor {
                     //    System.out.println("Deliverer " + info + " -> " + maxDelivery);
                     //use max capacity
                     if (!pIncomingOnly.contains(info.getVillage()) && maxAvailable > 0) {
-                       // System.out.println("Deliverer " + info.getVillage() + " -> " + maxAvailable);
+                        // System.out.println("Deliverer " + info.getVillage() + " -> " + maxAvailable);
                         MerchantSource s = new MerchantSource(new Coordinate(info.getVillage().getX(), info.getVillage().getY()), maxDelivery);
                         sources.add(s);
                     }
@@ -96,10 +99,10 @@ public class MerchantDistributor {
                     //use max available
                     // System.out.println("< maxDe for " + info.getVillage());
                     /*if (maxAvailable > maxDelivery) {
-                        maxAvailable = maxDelivery;
+                    maxAvailable = maxDelivery;
                     }*/
                     // System.out.println(" - maxA " + maxAvailable);
-                   // System.out.println("Deliverer " + info + " -> " + maxAvailable);
+                    // System.out.println("Deliverer " + info + " -> " + maxAvailable);
                     if (!pIncomingOnly.contains(info.getVillage()) && maxAvailable > 0) {
                         //     System.out.println("Deliverer " + info.getVillage() + " -> " + maxAvailable);
                         MerchantSource s = new MerchantSource(new Coordinate(info.getVillage().getX(), info.getVillage().getY()), maxAvailable);

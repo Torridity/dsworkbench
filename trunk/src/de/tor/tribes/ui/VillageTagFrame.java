@@ -6,6 +6,7 @@
 package de.tor.tribes.ui;
 
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.types.Barbarians;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.Tribe;
@@ -243,7 +244,7 @@ private void fireAddTagEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_f
 
         for (int i = 0; i < jVillageList.getItemCount(); i++) {
             Village v = (Village) jVillageList.getItemAt(i);
-            if (v.getTribe() != null) {
+            if (v.getTribe() != Barbarians.getSingleton()) {
                 TagManager.getSingleton().addTag(v, tag.getName());
             }
         }
@@ -270,7 +271,7 @@ private void fireRemoveTagEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:even
     if (jPlayerName.getText().equals("Mehrfachauswahl")) {
         for (int i = 0; i < jVillageList.getItemCount(); i++) {
             Village v = (Village) jVillageList.getItemAt(i);
-            if (v.getTribe() != null) {
+            if (v.getTribe() != Barbarians.getSingleton()) {
                 TagManager.getSingleton().removeTag(v, selectedTag.getName());
             }
         }

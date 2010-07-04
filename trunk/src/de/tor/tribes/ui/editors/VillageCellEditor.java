@@ -4,6 +4,7 @@
  */
 package de.tor.tribes.ui.editors;
 
+import de.tor.tribes.types.Barbarians;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
 import java.awt.Component;
@@ -79,8 +80,9 @@ public class VillageCellEditor extends DefaultCellEditor {//extends AbstractCell
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
         Village current = (Village) value;
         Tribe t = current.getTribe();
+
         Village[] villages = null;
-        if (t != null) {
+        if (t != Barbarians.getSingleton()) {
             //use tribes villages
             villages = t.getVillageList();
         } else {

@@ -47,8 +47,9 @@ public class ServerManager {
         el.setDataVersion(0);
         el.setNightBonus((byte) 1);
         SERVERS.add(el);*/
-        BufferedReader r = new BufferedReader(new FileReader("servers.txt"));
+        BufferedReader r = null;
         try {
+            r = new BufferedReader(new FileReader("servers.txt"));
             int cnt = 0;
             String line = "";
             while ((line = r.readLine()) != null) {
@@ -63,7 +64,7 @@ public class ServerManager {
                 cnt++;
             }
             logger.info("Read " + cnt + " external servers");
-        } catch (Exception e) {
+        } catch (Throwable e) {
             logger.error("Failed to read external servers", e);
         } finally {
             try {

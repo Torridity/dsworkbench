@@ -6,6 +6,7 @@ package de.tor.tribes.util.report;
 
 import de.tor.tribes.types.FightReport;
 import de.tor.tribes.types.ReportSet;
+import de.tor.tribes.ui.DSWorkbenchReportFrame;
 import de.tor.tribes.ui.models.ReportManagerTableModel;
 import de.tor.tribes.util.FilterableManager;
 import de.tor.tribes.util.xml.JaxenUtils;
@@ -93,6 +94,61 @@ public class ReportManager extends FilterableManager<FightReport, ReportFilterIn
         }
     }
 
+    public boolean importReports(File pFile, String pExtension) {
+        if (pFile == null) {
+            logger.error("File argument is 'null'");
+            return false;
+        }
+        logger.debug("Importing reports");
+        try {
+            Document d = JaxenUtils.getDocument(pFile);
+            for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//reportSets/reportSet")) {
+                try {
+                    ReportSet s = ReportSet.fromXml(e);
+                    s.setName(s.getName() + pExtension);
+                    ReportSet set = reportSets.get(s.getName());
+                    if (set == null) {
+                        //add new report set
+                        reportSets.put(s.getName(), s);
+                    } else {
+                        //add reports to existing set
+                        for (FightReport report : s.getReports()) {
+                            set.addReport(report);
+                        }
+                    }
+                } catch (Exception inner) {
+                    //ignored, reports invalid
+                    }
+            }
+            logger.debug("Reports imported successfully");
+            DSWorkbenchReportFrame.getSingleton().fireReportsChangedEvent(DEFAULT_SET);
+            return true;
+        } catch (Exception e) {
+            logger.error("Failed to import reports", e);
+            DSWorkbenchReportFrame.getSingleton().fireReportsChangedEvent(DEFAULT_SET);
+            return false;
+        }
+    }
+
+    public String getExportData(String[] pSets) {
+        logger.debug("Generating report export data");
+
+        String result = "<reportSets>\n";
+        for (String set : pSets) {
+            ReportSet s = reportSets.get(set);
+            try {
+                String xml = s.toXml();
+                if (xml != null) {
+                    result += xml + "\n";
+                }
+            } catch (Exception e) {
+            }
+        }
+        result += "</reportSets>\n";
+        logger.debug("Export data generated successfully");
+        return result;
+    }
+
     /**Load markers to file
      */
     public void saveReportsToFile(String pFile) {
@@ -105,7 +161,6 @@ public class ReportManager extends FilterableManager<FightReport, ReportFilterIn
             logger.debug("Writing reports to '" + pFile + "'");
         }
         try {
-
             FileWriter w = new FileWriter(pFile);
             w.write("<reportSets>\n");
             Enumeration<String> setKeys = reportSets.keys();
@@ -213,6 +268,7 @@ public class ReportManager extends FilterableManager<FightReport, ReportFilterIn
             plan = DEFAULT_SET;
         }
 
+        updateFilters();
         ReportManagerListener[] listeners = mManagerListeners.toArray(new ReportManagerListener[]{});
         for (ReportManagerListener listener : listeners) {
             listener.fireReportsChangedEvent(plan);

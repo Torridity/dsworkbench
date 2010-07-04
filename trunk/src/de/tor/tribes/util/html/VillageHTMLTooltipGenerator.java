@@ -7,6 +7,8 @@ package de.tor.tribes.util.html;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Ally;
+import de.tor.tribes.types.BarbarianAlly;
+import de.tor.tribes.types.Barbarians;
 import de.tor.tribes.types.Conquer;
 import de.tor.tribes.types.Marker;
 import de.tor.tribes.types.Note;
@@ -50,7 +52,7 @@ public class VillageHTMLTooltipGenerator {
         nf.setMinimumFractionDigits(0);
         nf.setMaximumFractionDigits(0);
         res += buildInfoRow("Punkte:", nf.format(pVillage.getPoints()), false);
-        if (pVillage.getTribe() != null) {
+        if (pVillage.getTribe() != Barbarians.getSingleton()) {
             res += buildInfoRow("Besitzer:", pVillage.getTribe(), showRanks);
             if (showConquers) {
                 res += buildSubInfoRow("Besiegte Gegner (Off):", nf.format(pVillage.getTribe().getKillsAtt()) + " (" + nf.format(pVillage.getTribe().getRankAtt()) + ". Platz)");

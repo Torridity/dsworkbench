@@ -9,6 +9,7 @@ import de.tor.tribes.dssim.ui.DSWorkbenchSimulatorFrame;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Ally;
+import de.tor.tribes.types.Barbarians;
 import de.tor.tribes.types.Church;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
@@ -291,7 +292,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                         //Village current = getVillageAtMousePos();
                         if (v != null) {
                             Tribe t = DSWorkbenchMainFrame.getSingleton().getCurrentUser();
-                            if ((v != null) && (v.getTribe() != null) && (t != null) && (t.equals(v.getTribe()))) {
+                            if ((v != null) && (v.getTribe() != Barbarians.getSingleton()) && (t != Barbarians.getSingleton()) && (t.equals(v.getTribe()))) {
                                 DSWorkbenchMainFrame.getSingleton().setCurrentUserVillage(v);
                             }
                         }
@@ -300,7 +301,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                     case ImageManager.CURSOR_MARK: {
                         // Village current = getVillageAtMousePos();
                         if (v != null) {
-                            if (v.getTribe() == null) {
+                            if (v.getTribe() == Barbarians.getSingleton()) {
                                 //empty village
                                 return;
                             }
@@ -313,7 +314,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                     case ImageManager.CURSOR_TAG: {
                         //  Village current = getVillageAtMousePos();
                         if (v != null) {
-                            if (v.getTribe() == null) {
+                            if (v.getTribe() == Barbarians.getSingleton()) {
                                 //empty village
                                 return;
                             }
@@ -331,7 +332,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                     case ImageManager.CURSOR_SUPPORT: {
                         // Village current = getVillageAtMousePos();
                         if (v != null) {
-                            if (v.getTribe() == null) {
+                            if (v.getTribe() == Barbarians.getSingleton()) {
                                 //empty village
                                 return;
                             }
@@ -1280,19 +1281,19 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                 for (Village v : exportVillageList) {
                     boolean doExport = false;
                     if (jCopyBarbarian.isSelected()) {
-                        if (v.getTribe() == null) {
+                        if (v.getTribe() == Barbarians.getSingleton()) {
                             //is barbarian
                             doExport = true;
                         }
                     }
                     if (jCopyOwn.isSelected()) {
-                        if (v.getTribe() != null && v.getTribe().equals(own)) {
+                        if (v.getTribe() != Barbarians.getSingleton() && v.getTribe().equals(own)) {
                             //no barbarian, village tribe equals own
                             doExport = true;
                         }
                     }
                     if (jCopyOwnAlly.isSelected()) {
-                        if (v.getTribe() != null && own.getAlly() != null && v.getTribe().getAlly() != null && v.getTribe().getAlly().equals(own.getAlly())) {
+                        if (v.getTribe() != Barbarians.getSingleton() && own.getAlly() != null && v.getTribe().getAlly() != null && v.getTribe().getAlly().equals(own.getAlly())) {
                             //no barbarian, own ally not null, village ally not null, village ally equals own
                             if (!jCopyOwn.isSelected()) {
                                 //if own is not selected don't use own villages!
@@ -1312,7 +1313,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                     }
 
                     if (jCopyEnemyAlly.isSelected()) {
-                        if (v.getTribe() != null && v.getTribe().getAlly() == null || !v.getTribe().getAlly().equals(own.getAlly())) {
+                        if (v.getTribe() != Barbarians.getSingleton() && v.getTribe().getAlly() == null || !v.getTribe().getAlly().equals(own.getAlly())) {
                             //no barbarien, no ally or ally not equal own ally
                             doExport = true;
                         }
@@ -1326,7 +1327,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                         } else {
                             result += "\t";
                         }
-                        if (jExportTribeName.isSelected() && v.getTribe() != null) {
+                        if (jExportTribeName.isSelected() && v.getTribe() != Barbarians.getSingleton()) {
                             result += v.getTribe().toBBCode() + " ";
                         } else {
                             if (jExportTribeName.isSelected()) {
@@ -1335,7 +1336,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                                 result += "\t";
                             }
                         }
-                        if (jExportAllyName.isSelected() && v.getTribe() != null && v.getTribe().getAlly() != null) {
+                        if (jExportAllyName.isSelected() && v.getTribe() != Barbarians.getSingleton() && v.getTribe().getAlly() != null) {
                             result += v.getTribe().getAlly().toBBCode() + "\n";
                         } else {
                             if (jExportAllyName.isSelected()) {
@@ -1368,19 +1369,19 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                 for (Village v : exportVillageList) {
                     boolean doExport = false;
                     if (jCopyBarbarian.isSelected()) {
-                        if (v.getTribe() == null) {
+                        if (v.getTribe() == Barbarians.getSingleton()) {
                             //is barbarian
                             doExport = true;
                         }
                     }
                     if (jCopyOwn.isSelected()) {
-                        if (v.getTribe() != null && v.getTribe().equals(own)) {
+                        if (v.getTribe() != Barbarians.getSingleton() && v.getTribe().equals(own)) {
                             //no barbarian, village tribe equals own
                             doExport = true;
                         }
                     }
                     if (jCopyOwnAlly.isSelected()) {
-                        if (v.getTribe() != null && own.getAlly() != null && v.getTribe().getAlly() != null && v.getTribe().getAlly().equals(own.getAlly())) {
+                        if (v.getTribe() != Barbarians.getSingleton() && own.getAlly() != null && v.getTribe().getAlly() != null && v.getTribe().getAlly().equals(own.getAlly())) {
                             //no barbarian, own ally not null, village ally not null, village ally equals own
                             doExport = true;
                         }
@@ -1388,7 +1389,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
 
 
                     if (jCopyEnemyAlly.isSelected()) {
-                        if ((v.getTribe() != null && v.getTribe().getAlly() == null) || (v.getTribe() != null && v.getTribe().getAlly() != null && !v.getTribe().getAlly().equals(own.getAlly()))) {
+                        if ((v.getTribe() != Barbarians.getSingleton() && v.getTribe().getAlly() == null) || (v.getTribe() != Barbarians.getSingleton() && v.getTribe().getAlly() != null && !v.getTribe().getAlly().equals(own.getAlly()))) {
                             //no barbarien, no ally or ally not equal own ally
                             doExport = true;
                         }
@@ -1402,7 +1403,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                         } else {
                             result += "\t";
                         }
-                        if (jExportTribeName.isSelected() && v.getTribe() != null) {
+                        if (jExportTribeName.isSelected() && v.getTribe() != Barbarians.getSingleton()) {
                             result += v.getTribe() + "\t";
                         } else {
                             if (jExportTribeName.isSelected()) {
@@ -1411,7 +1412,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                                 result += "\t";
                             }
                         }
-                        if (jExportAllyName.isSelected() && v.getTribe() != null && v.getTribe().getAlly() != null) {
+                        if (jExportAllyName.isSelected() && v.getTribe() != Barbarians.getSingleton() && v.getTribe().getAlly() != null) {
                             result += v.getTribe().getAlly() + "\n";
                         } else {
                             if (jExportAllyName.isSelected()) {
@@ -1445,7 +1446,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
             Village v = actionMenuVillage;
             if (v != null) {
 
-                if (v.getTribe() != null) {
+                if (v.getTribe() != Barbarians.getSingleton()) {
                     try {
                         String text = "";
                         Village[] list = v.getTribe().getVillageList();
@@ -1471,7 +1472,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
             Village v = actionMenuVillage;
             if (v != null) {
 
-                if (v.getTribe() != null) {
+                if (v.getTribe() != Barbarians.getSingleton()) {
                     try {
                         String text = "";
                         Village[] list = v.getTribe().getVillageList();
@@ -1490,13 +1491,13 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
             }
         } else if (evt.getSource() == jMonitorPlayerItem) {
             Village v = actionMenuVillage;
-            if (v != null && v.getTribe() != null) {
+            if (v != null && v.getTribe() != Barbarians.getSingleton()) {
                 StatManager.getSingleton().monitorTribe(v.getTribe());
                 DSWorkbenchStatsFrame.getSingleton().setup();
             }
         } else if (evt.getSource() == jMonitorAllyItem) {
             Village v = actionMenuVillage;
-            if (v != null && v.getTribe() != null) {
+            if (v != null && v.getTribe() != Barbarians.getSingleton()) {
                 Ally a = v.getTribe().getAlly();
                 if (a == null) {
                     StatManager.getSingleton().monitorTribe(v.getTribe());
@@ -1544,7 +1545,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
         } else if (evt.getSource() == jCurrentToAttackPlanerAsSourceItem) {
             Village v = actionMenuVillage;
             if (v != null) {
-                if (v.getTribe() == null) {
+                if (v.getTribe() == Barbarians.getSingleton()) {
                     JOptionPaneHelper.showInformationBox(this, "Angriffe von Barbarendörfern können nicht geplant werden.", "Information");
                     return;
                 }
@@ -1561,7 +1562,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
         } else if (evt.getSource() == jCurrentToAttackPlanerAsTargetItem) {
             Village v = actionMenuVillage;
             if (v != null) {
-                if (v.getTribe() == null) {
+                if (v.getTribe() == Barbarians.getSingleton()) {
                     JOptionPaneHelper.showInformationBox(this, "Angriffe auf Barbarendörfer können nicht geplant werden.", "Information");
                     return;
                 }

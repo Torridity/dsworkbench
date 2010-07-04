@@ -108,17 +108,18 @@ public class MarkerManager {
         }
         logger.debug("Importing markers");
         try {
-            //boolean overwriteMarkers = Boolean.parseBoolean(GlobalOptions.getProperty("import.replace.markers"));
+            boolean overwriteMarkers = Boolean.parseBoolean(GlobalOptions.getProperty("import.replace.markers"));
             Document d = JaxenUtils.getDocument(pFile);
             for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//markerSets/markerSet")) {
                 try {
                     MarkerSet m = MarkerSet.fromXml(e);
                     m.setSetName(m.getSetName() + pExtension);
-                    // check if tribe/ally still exists
-                    //MarkerSet exist = markers.get(m.getSetName());
-                    // if (exist == null || overwriteMarkers) {
-                    markers.put(m.getSetName(), m);
-                    // }
+                    MarkerSet exist = markers.get(m.getSetName());
+                    //replace existing markers
+                    if (exist == null || overwriteMarkers) {
+                        logger.debug("Adding/Replacing existing marker set '" + m.getSetName() + "'");
+                        markers.put(m.getSetName(), m);
+                    }
                 } catch (Exception inner) {
                     //ignored, marker invalid
                     }

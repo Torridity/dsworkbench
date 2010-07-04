@@ -10,6 +10,7 @@ package de.tor.tribes.io;
 
 import de.tor.tribes.php.DatabaseInterface;
 import de.tor.tribes.types.Ally;
+import de.tor.tribes.types.Barbarians;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.UnknownUnit;
 import de.tor.tribes.types.Village;
@@ -17,7 +18,6 @@ import de.tor.tribes.ui.DSWorkbenchSettingsDialog;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ServerSettings;
-import de.tor.tribes.util.stat.StatManager;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.awt.Point;
 import java.io.BufferedReader;
@@ -62,6 +62,7 @@ public class DataHolder {
     private static DataHolder SINGLETON = null;
     private boolean loading = false;
     private int currentBonusType = 0;
+    private boolean DATA_VALID = false;
 
     public static synchronized DataHolder getSingleton() {
         if (SINGLETON == null) {
@@ -93,6 +94,11 @@ public class DataHolder {
 
         mBuildings = new LinkedList<BuildingHolder>();
         mUnits = new LinkedList<UnitHolder>();
+        DATA_VALID = false;
+    }
+
+    public boolean isDataValid() {
+        return DATA_VALID;
     }
 
     public synchronized void addDataHolderListener(DataHolderListener pListener) {
@@ -830,7 +836,6 @@ public class DataHolder {
 
     private boolean downloadLiveData() {
         URL file = null;
-        String serverID = GlobalOptions.getSelectedServer();
         String serverDir = getDataDirectory();
         logger.info("Using server dir '" + serverDir + "'");
         new File(serverDir).mkdirs();
@@ -1071,6 +1076,7 @@ public class DataHolder {
         }
 
         logger.debug("Removed " + toRemove.size() + " empty allies");
+        DATA_VALID = true;
     }
 
     /**Download one single file from a URL*/
@@ -1204,7 +1210,7 @@ public class DataHolder {
             for (int x = xStart; x <= xEnd; x++) {
                 for (int y = yStart; y <= yEnd; y++) {
                     Village v = getVillages()[x][y];
-                    if ((v != null && v.getTribe() == null) && !showBarbarian) {
+                    if ((v != null && v.getTribe() == Barbarians.getSingleton()) && !showBarbarian) {
                         //dont select barbarians if they are not visible
                     } else {
                         if (v != null && !marked.contains(v)) {
@@ -1233,8 +1239,7 @@ public class DataHolder {
     }
 
     public void removeTempData() {
-        /*  mVillagesTable.clear();
-        mVillagesTable = null;*/
+        System.gc();
         System.gc();
     }
 

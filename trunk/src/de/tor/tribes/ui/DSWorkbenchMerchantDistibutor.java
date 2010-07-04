@@ -19,6 +19,7 @@ import de.tor.tribes.ui.renderer.SortableTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.TradeDirectionCellRenderer;
 import de.tor.tribes.ui.renderer.VillageCellRenderer;
 import de.tor.tribes.util.BrowserCommandSender;
+import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.algo.MerchantDestination;
 import de.tor.tribes.util.algo.MerchantDistributor;
@@ -63,6 +64,10 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame {
     /** Creates new form DSWorkbenchMerchantDistibutor */
     DSWorkbenchMerchantDistibutor() {
         initComponents();
+
+          // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
+        GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.merchant_distributor", GlobalOptions.getHelpBroker().getHelpSet());
+        // </editor-fold>
     }
 
     public void setup() {
@@ -270,7 +275,7 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame {
                 .addContainerGap())
         );
 
-        setTitle("Ressourcenverteiler");
+        setTitle("Rohstoffverteiler");
 
         jPanel1.setBackground(new java.awt.Color(239, 235, 223));
 
@@ -692,8 +697,13 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame {
         int[] targetRes = null;
         int[] remainRes = null;
         if (jAdjustingDistribution.isSelected()) {
-            targetRes = new int[]{Integer.parseInt(jTargetWood.getText()), Integer.parseInt(jTargetClay.getText()), Integer.parseInt(jTargetIron.getText())};
-            remainRes = new int[]{Integer.parseInt(jRemainWood.getText()), Integer.parseInt(jRemainClay.getText()), Integer.parseInt(jRemainIron.getText())};
+            try {
+                targetRes = new int[]{Integer.parseInt(jTargetWood.getText()), Integer.parseInt(jTargetClay.getText()), Integer.parseInt(jTargetIron.getText())};
+                remainRes = new int[]{Integer.parseInt(jRemainWood.getText()), Integer.parseInt(jRemainClay.getText()), Integer.parseInt(jRemainIron.getText())};
+            } catch (Exception e) {
+                JOptionPaneHelper.showWarningBox(this, "Ressourcenangaben fehlerhaft", "Fehler");
+                return;
+            }
         } else {
             int woodSum = 0;
             int claySum = 0;

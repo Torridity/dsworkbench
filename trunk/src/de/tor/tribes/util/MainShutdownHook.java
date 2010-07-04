@@ -4,6 +4,7 @@
  */
 package de.tor.tribes.util;
 
+import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.ui.DSWorkbenchAttackFrame;
 import de.tor.tribes.ui.DSWorkbenchChurchFrame;
 import de.tor.tribes.ui.DSWorkbenchConquersFrame;
@@ -23,7 +24,7 @@ import de.tor.tribes.ui.DSWorkbenchStatsFrame;
 import de.tor.tribes.ui.DSWorkbenchTagFrame;
 
 /**
- *@TODO (2.1) Store user data only if it was loaded successfully
+ *@TODO (DIFF) Store user data only if it was loaded successfully
  * @author Charon
  */
 public class MainShutdownHook extends Thread {
@@ -38,6 +39,10 @@ public class MainShutdownHook extends Thread {
     public void run() {
         try {
             logger.info("Performing ShutdownHook");
+            if (!DataHolder.getSingleton().isDataValid()) {
+                logger.error("Server data seems to be invalid. No user data will be stored!");
+                return;
+            }
             GlobalOptions.saveUserData();
             GlobalOptions.addProperty("attack.frame.visible", Boolean.toString(DSWorkbenchAttackFrame.getSingleton().isVisible()));
             GlobalOptions.addProperty("marker.frame.visible", Boolean.toString(DSWorkbenchMarkerFrame.getSingleton().isVisible()));

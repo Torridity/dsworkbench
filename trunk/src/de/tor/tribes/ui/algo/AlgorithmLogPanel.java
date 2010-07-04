@@ -52,8 +52,11 @@ public class AlgorithmLogPanel extends javax.swing.JPanel {
     }
 
     public void clear() {
-        jTextPane1.setText("");
-        aborted = false;
+        try {
+            jTextPane1.setText("");
+            aborted = false;
+        } catch (Exception e) {
+        }
     }
 
     public boolean isAborted() {
@@ -100,8 +103,11 @@ public class AlgorithmLogPanel extends javax.swing.JPanel {
     }
 
     public void updateStatus(int pCurrentStatus, int pMaxStatus) {
-        jStatusProgress.setMaximum(pMaxStatus);
-        jStatusProgress.setValue(pMaxStatus - pCurrentStatus);
+        try {
+            jStatusProgress.setMaximum(pMaxStatus);
+            jStatusProgress.setValue(pMaxStatus - pCurrentStatus);
+        } catch (Exception e) {
+        }
     }
 
     /** This method is called from within the constructor to
@@ -134,9 +140,9 @@ public class AlgorithmLogPanel extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 435, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 440, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jStatusProgress, javax.swing.GroupLayout.DEFAULT_SIZE, 284, Short.MAX_VALUE)
+                        .addComponent(jStatusProgress, javax.swing.GroupLayout.DEFAULT_SIZE, 289, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())

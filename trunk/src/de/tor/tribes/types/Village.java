@@ -205,6 +205,9 @@ public class Village implements Comparable, Serializable {
     }
 
     public Tribe getTribe() {
+        if(tribe == null){
+            return Barbarians.getSingleton();
+        }
         return tribe;
     }
 

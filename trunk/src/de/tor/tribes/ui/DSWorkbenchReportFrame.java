@@ -14,6 +14,7 @@ import de.tor.tribes.dssim.ui.DSWorkbenchSimulatorFrame;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Ally;
+import de.tor.tribes.types.Barbarians;
 import de.tor.tribes.types.FightReport;
 import de.tor.tribes.types.FightStats;
 import de.tor.tribes.types.ReportSet;
@@ -155,7 +156,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         });
 
         headerRenderer = new SortableTableHeaderRenderer();
-        fireReportsChangedEvent(null);
+        fireReportsChangedEvent(ReportManager.DEFAULT_SET);
 
         jList1.addListSelectionListener(new ListSelectionListener() {
 
@@ -214,10 +215,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         List<Tribe> tribes = new LinkedList<Tribe>();
         while (tribeIds.hasMoreElements()) {
             Tribe t = DataHolder.getSingleton().getTribes().get(tribeIds.nextElement());
-            if (t != null
-                    && (pFilter == null
-                    || (pFilter.length() == 0)
-                    || (t.getName().toLowerCase().indexOf(pFilter.toLowerCase()) >= 0))) {
+            if (t != Barbarians.getSingleton() && (pFilter == null || (pFilter.length() == 0) || (t.getName().toLowerCase().indexOf(pFilter.toLowerCase()) >= 0))) {
                 tribes.add(t);
             }
 
@@ -1251,14 +1249,14 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
             return;
         }
 
-        if (JOptionPaneHelper.showQuestionConfirmBox(this, "Willst du das Berichtsset '" + selection + "' und alle enthaltenen Berichte\n"
-                + "wirklich löschen?", "Berichtsset löschen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
+        if (JOptionPaneHelper.showQuestionConfirmBox(this, "Willst du das Berichtsset '" + selection + "' und alle enthaltenen Berichte\n" + "wirklich löschen?", "Berichtsset löschen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
             ReportManagerTableModel.getSingleton().setActiveReportSet(ReportManager.DEFAULT_SET);
             ReportManager.getSingleton().removeReportSet(selection);
             buildReportSetList();
 
             jReportSetBox.setSelectedIndex(0);
         }
+        fireReportsChangedEvent(null);
     }//GEN-LAST:event_fireRemoveReportSetEvent
 
     private void fireRenameReportSetEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireRenameReportSetEvent
@@ -1328,8 +1326,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         if (evt.getSource() == jDoAddNewSetButton) {
             String name = jNewReportSetField.getText();
             if (ReportManager.getSingleton().getReportSet(name) != null) {
-                JOptionPaneHelper.showWarningBox(jAddReportSetDialog, "Ein Set mit dem angegebenen Namen existiert bereits.\n"
-                        + "Bitte wähle einen anderen Namen oder lösche zuerst das bestehende Set.", "Warnung");
+                JOptionPaneHelper.showWarningBox(jAddReportSetDialog, "Ein Set mit dem angegebenen Namen existiert bereits.\n" + "Bitte wähle einen anderen Namen oder lösche zuerst das bestehende Set.", "Warnung");
                 return;
             }
 
@@ -1344,8 +1341,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
             String selection = (String) jReportSetBox.getSelectedItem();
             String newName = jNewSetNameField.getText();
             if (ReportManager.getSingleton().getReportSet(newName) != null) {
-                JOptionPaneHelper.showWarningBox(jRenameReportSetDialog, "Ein Set mit dem Namen '" + newName + "' existiert bereits.\n"
-                        + "Bitte wähle einen anderen Namen oder lösche zuerst das bestehende Set.", "Warnung");
+                JOptionPaneHelper.showWarningBox(jRenameReportSetDialog, "Ein Set mit dem Namen '" + newName + "' existiert bereits.\n" + "Bitte wähle einen anderen Namen oder lösche zuerst das bestehende Set.", "Warnung");
                 return;
 
             }
@@ -1444,7 +1440,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
             //add tribe
             jTribeSelectionBox.firePopupMenuCanceled();
             Tribe t = (Tribe) jTribeSelectionBox.getSelectedItem();
-            if (t != null) {
+            if (t != Barbarians.getSingleton()) {
                 if (((DefaultListModel) jTribeList.getModel()).indexOf(t) < 0) {
                     ((DefaultListModel) jTribeList.getModel()).addElement(t);
                 }
@@ -2287,5 +2283,6 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         } catch (Exception e) {
             logger.error("Failed to update attacks table", e);
         }
+        buildReportSetList();
     }
 }

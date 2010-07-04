@@ -21,6 +21,7 @@ import java.util.Hashtable;
 import javax.imageio.ImageIO;
 import org.apache.log4j.Logger;
 import de.tor.tribes.ui.DSWorkbenchSettingsDialog;
+import de.tor.tribes.ui.MapPanel;
 
 /**
  * @author Charon
@@ -230,11 +231,11 @@ public class Skin {
     }
 
     public int getCurrentFieldWidth() {
-        return (int) (iFieldWidth / DSWorkbenchMainFrame.getSingleton().getZoomFactor());
+        return (int) (iFieldWidth / MapPanel.getSingleton().getMapRenderer().getCurrentZoom());//DSWorkbenchMainFrame.getSingleton().getZoomFactor());
     }
 
     public int getCurrentFieldHeight() {
-        return (int) (iFieldHeight / DSWorkbenchMainFrame.getSingleton().getZoomFactor());
+        return (int) (iFieldHeight / MapPanel.getSingleton().getMapRenderer().getCurrentZoom());//DSWorkbenchMainFrame.getSingleton().getZoomFactor());
     }
 
     public int getBasicFieldWidth() {
@@ -246,7 +247,7 @@ public class Skin {
     }
 
     public Point2D.Double getError() {
-        double z = DSWorkbenchMainFrame.getSingleton().getZoomFactor();
+        double z = MapPanel.getSingleton().getMapRenderer().getCurrentZoom();//DSWorkbenchMainFrame.getSingleton().getZoomFactor();
         //get real size of one scaled texture
         double w = getBasicFieldWidth() / z;
         double h = getBasicFieldHeight() / z;

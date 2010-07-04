@@ -7,6 +7,7 @@ package de.tor.tribes.ui;
 
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
+import de.tor.tribes.types.Barbarians;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.DSCalculator;
@@ -128,7 +129,7 @@ public class AttackAddFrame extends javax.swing.JFrame {
                 pSources.remove(source);
             } else if (source.equals(pTarget)) {
                 pSources.remove(source);
-            } else if (source.getTribe() == null) {
+            } else if (source.getTribe() == Barbarians.getSingleton()) {
                 pSources.remove(source);
             }
         }
@@ -158,7 +159,7 @@ public class AttackAddFrame extends javax.swing.JFrame {
 
         mTarget = pTarget;
         jSourceVillage.setText(mSources.length + " gewählte Dörfer");
-        if (pTarget.getTribe() != null) {
+        if (pTarget.getTribe() != Barbarians.getSingleton()) {
             jTargetVillage.setText(pTarget.getTribe() + " (" + pTarget + ")");
         } else {
             jTargetVillage.setText("Barbarendorf" + " (" + pTarget.getX() + "|" + pTarget.getY() + ")");
@@ -197,7 +198,7 @@ public class AttackAddFrame extends javax.swing.JFrame {
         if (pSource.equals(pTarget)) {
             return;
         }
-        if (pSource.getTribe() == null) {
+        if (pSource.getTribe() == Barbarians.getSingleton()) {
             //empty villages cannot attack
             return;
         }
@@ -219,7 +220,7 @@ public class AttackAddFrame extends javax.swing.JFrame {
         mSource = pSource;
         mTarget = pTarget;
         jSourceVillage.setText(pSource.getTribe() + " (" + pSource + ")");
-        if (pTarget.getTribe() != null) {
+        if (pTarget.getTribe() != Barbarians.getSingleton()) {
             jTargetVillage.setText(pTarget.getTribe() + " (" + pTarget + ")");
         } else {
             jTargetVillage.setText("Barbarendorf" + " (" + pTarget.getX() + "|" + pTarget.getY() + ")");

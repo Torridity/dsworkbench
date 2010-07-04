@@ -7,6 +7,7 @@ package de.tor.tribes.util;
 import de.tor.tribes.io.ServerManager;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Attack;
+import de.tor.tribes.types.Barbarians;
 import de.tor.tribes.types.Village;
 import java.awt.Color;
 import java.text.SimpleDateFormat;
@@ -72,7 +73,7 @@ public class AttackToBBCodeFormater {
             }
         }
 
-        if (pAttack.getSource().getTribe() != null) {
+        if (pAttack.getSource().getTribe() != Barbarians.getSingleton()) {
             template = template.replaceAll("%ATTACKER%", pAttack.getSource().getTribe().toBBCode());
         } else {
             template = template.replaceAll("%ATTACKER%", "Barbaren");
@@ -83,7 +84,7 @@ public class AttackToBBCodeFormater {
         } else {
             template = template.replaceAll("%UNIT%", pAttack.getUnit().getName());
         }
-        if (pAttack.getTarget().getTribe() != null) {
+        if (pAttack.getTarget().getTribe() != Barbarians.getSingleton()) {
             template = template.replaceAll("%DEFENDER%", pAttack.getTarget().getTribe().toBBCode());
         } else {
             template = template.replaceAll("%DEFENDER%", "Barbaren");
@@ -146,7 +147,7 @@ public class AttackToBBCodeFormater {
             }
         }
 
-        if (pSource.getTribe() != null) {
+        if (pSource.getTribe() != Barbarians.getSingleton()) {
             template = template.replaceAll("%ATTACKER%", pSource.getTribe().toBBCode());
         } else {
             template = template.replaceAll("%ATTACKER%", "Barbaren");
@@ -157,7 +158,7 @@ public class AttackToBBCodeFormater {
         } else {
             template = template.replaceAll("%UNIT%", pUnit.getName());
         }
-        if (pTarget.getTribe() != null) {
+        if (pTarget.getTribe() != Barbarians.getSingleton()) {
             template = template.replaceAll("%DEFENDER%", pTarget.getTribe().toBBCode());
         } else {
             template = template.replaceAll("%DEFENDER%", "Barbaren");

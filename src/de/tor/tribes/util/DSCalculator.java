@@ -24,15 +24,16 @@ public class DSCalculator {
     }
 
     public static double calculateMoveTimeInMinutes(Village pSource, Village pTarget, double pMinPerField) {
-        return calculateDistance(pSource, pTarget) * pMinPerField;
+        return calculateMoveTimeInSeconds(pSource, pTarget, pMinPerField) / 60.0;
+        //calculateDistance(pSource, pTarget) * pMinPerField;
     }
 
     public static double calculateMoveTimeInSeconds(Village pSource, Village pTarget, double pMinPerField) {
-        return calculateDistance(pSource, pTarget) * pMinPerField * 60.0;
-    }
-
-    public static double calculateMoveTimeInHours(Village pSource, Village pTarget, double pMinPerField) {
-        return calculateDistance(pSource, pTarget) * pMinPerField / 60.0;
+        if (ServerSettings.getSingleton().isMillisArrival()) {
+            return calculateDistance(pSource, pTarget) * pMinPerField * 60.0;
+        } else {
+            return Math.floor(calculateDistance(pSource, pTarget) * pMinPerField * 60.0);
+        }
     }
 
     public static Point calculateCenterOfMass(List<Village> pVillages) {

@@ -4,11 +4,11 @@
  */
 package de.tor.tribes.util;
 
-import com.db4o.Db4oEmbedded;
+/*import com.db4o.Db4oEmbedded;
 import com.db4o.ObjectContainer;
 import com.db4o.query.Predicate;
 import de.tor.tribes.types.Tribe;
-import java.util.List;
+import java.util.List;*/
 
 /**
  *
@@ -19,7 +19,7 @@ public class DatabaseManager {
     
 
     public static void main(String[] args) {
-        ObjectContainer db = Db4oEmbedded.openFile(Db4oEmbedded.newConfiguration(), "database.dbo");
+       /* ObjectContainer db = Db4oEmbedded.openFile(Db4oEmbedded.newConfiguration(), "database.dbo");
         try {
             /* for (int i = 0; i < 1000; i++) {
             Tribe t = new Tribe();
@@ -31,7 +31,7 @@ public class DatabaseManager {
             db.store(t);
             }*/
             //  ObjectSet result = db.queryByExample(new Tribe());
-            List<Tribe> tribes = db.query(new Predicate<Tribe>() {
+ /*           List<Tribe> tribes = db.query(new Predicate<Tribe>() {
 
                 public boolean match(Tribe tribe) {
                     return tribe.getId() == 10;
@@ -88,6 +88,6 @@ public class DatabaseManager {
 
         } finally {
             db.close();
-        }
+        }*/
     }
 }

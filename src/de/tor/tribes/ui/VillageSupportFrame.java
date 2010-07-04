@@ -14,6 +14,7 @@ import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.ServerManager;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Attack;
+import de.tor.tribes.types.Barbarians;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.renderer.DateCellRenderer;
@@ -24,7 +25,6 @@ import de.tor.tribes.util.SupportCalculator;
 import de.tor.tribes.util.tag.TagManager;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
-import java.awt.Component;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 import java.text.NumberFormat;
@@ -41,7 +41,6 @@ import java.util.StringTokenizer;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
-import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
@@ -517,7 +516,7 @@ public class VillageSupportFrame extends javax.swing.JFrame {
                     int y = Integer.parseInt(pos[1]);
                     Village target = DataHolder.getSingleton().getVillages()[x][y];
 
-                    if (source.getTribe() == null) {
+                    if (source.getTribe() == Barbarians.getSingleton()) {
                         buffer.append("Barbaren");
                     } else {
                         buffer.append(source.getTribe());
@@ -525,7 +524,7 @@ public class VillageSupportFrame extends javax.swing.JFrame {
                     buffer.append("\t");
                     buffer.append(source);
                     buffer.append("\t");
-                    if (target.getTribe() == null) {
+                    if (target.getTribe() == Barbarians.getSingleton()) {
                         buffer.append("Barbaren");
                     } else {
                         buffer.append(target.getTribe());

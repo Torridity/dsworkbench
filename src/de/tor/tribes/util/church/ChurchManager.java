@@ -5,6 +5,7 @@
 package de.tor.tribes.util.church;
 
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.types.Barbarians;
 import de.tor.tribes.types.Church;
 import de.tor.tribes.types.Marker;
 import de.tor.tribes.types.Tribe;
@@ -235,11 +236,11 @@ public class ChurchManager {
             Tribe t = pVillage.getTribe();
 
             Marker m = MarkerManager.getSingleton().getMarker(t);
-            if (m == null && t != null) {
+            if (m == null && t != Barbarians.getSingleton()) {
                 m = MarkerManager.getSingleton().getMarker(t.getAlly());
             }
             try {
-                if (t != null && t.equals(DSWorkbenchMainFrame.getSingleton().getCurrentUser())) {
+                if (t != Barbarians.getSingleton() && t.equals(DSWorkbenchMainFrame.getSingleton().getCurrentUser())) {
                     //set marker null again if own village
                     m = null;
                 }
@@ -250,7 +251,7 @@ public class ChurchManager {
                 //set range to marker color
                 c.setRangeColor(m.getMarkerColor());
             } else {
-                if (t != null) {
+                if (t != Barbarians.getSingleton()) {
                     //set range to default enemy color (RED/WHITE)
                     Color DEFAULT = Color.WHITE;
                     try {
@@ -326,7 +327,7 @@ public class ChurchManager {
             Integer range = c.getRange();
             Village v = DataHolder.getSingleton().getVillagesById().get(c.getVillageId());
             Color col = c.getRangeColor();
-            String tribe = (v.getTribe() == null) ? "Barbaren" : v.getTribe().getName();
+            String tribe = (v.getTribe() == Barbarians.getSingleton()) ? "Barbaren" : v.getTribe().getName();
             model.addRow(new Object[]{tribe, v, range, col});
         }
         return model;

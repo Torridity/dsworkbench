@@ -14,6 +14,7 @@ import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.ServerManager;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Attack;
+import de.tor.tribes.types.Barbarians;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.editors.AttackTypeCellEditor;
 import de.tor.tribes.ui.editors.DateSpinEditor;
@@ -793,7 +794,7 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
                         }
                     }
 
-                    if (sVillage.getTribe() == null) {
+                    if (sVillage.getTribe() == Barbarians.getSingleton()) {
                         buffer.append("Barbaren");
                     } else {
                         buffer.append(sVillage.getTribe());
@@ -803,7 +804,7 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
                     buffer.append("\t");
                     buffer.append(sUnit);
                     buffer.append("\t");
-                    if (tVillage.getTribe() == null) {
+                    if (tVillage.getTribe() == Barbarians.getSingleton()) {
                         buffer.append("Barbaren");
                     } else {
                         buffer.append(tVillage.getTribe());

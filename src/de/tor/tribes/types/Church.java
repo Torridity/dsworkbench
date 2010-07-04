@@ -48,7 +48,7 @@ public class Church {
                     Village v = DataHolder.getSingleton().getVillagesById().get(getVillageId());
                     if (v != null) {
                         Tribe t = v.getTribe();
-                        if (t != null && t.equals(DSWorkbenchMainFrame.getSingleton().getCurrentUser())) {
+                        if (t != Barbarians.getSingleton() && t.equals(DSWorkbenchMainFrame.getSingleton().getCurrentUser())) {
                             DEFAULT = Color.YELLOW;
                         }
                     }

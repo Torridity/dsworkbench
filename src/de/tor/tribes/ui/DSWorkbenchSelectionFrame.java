@@ -660,13 +660,13 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
                 Ally a = ((AllyNode) o).getUserObject();
                 Village[] copy = treeData.toArray(new Village[]{});
                 for (Village v : copy) {
-                    if (v.getTribe() == null && a.equals(BarbarianAlly.getSingleton())) {
+                    if (v.getTribe() == Barbarians.getSingleton() && a.equals(BarbarianAlly.getSingleton())) {
                         //remove barbarian ally member
                         result.add(v);
-                    } else if (v.getTribe() != null && v.getTribe().getAlly() == null && a.equals(NoAlly.getSingleton())) {
+                    } else if (v.getTribe() != Barbarians.getSingleton() && v.getTribe().getAlly() == null && a.equals(NoAlly.getSingleton())) {
                         //remove no-ally member
                         result.add(v);
-                    } else if (v.getTribe() != null && v.getTribe().getAlly() != null && a.equals(v.getTribe().getAlly())) {
+                    } else if (v.getTribe() != Barbarians.getSingleton() && v.getTribe().getAlly() != null && a.equals(v.getTribe().getAlly())) {
                         //remove if ally is equal
                         result.add(v);
                     }
@@ -675,10 +675,10 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
                 Tribe t = ((TribeNode) o).getUserObject();
                 Village[] copy = treeData.toArray(new Village[]{});
                 for (Village v : copy) {
-                    if (v.getTribe() == null && t.equals(Barbarians.getSingleton())) {
+                    if (v.getTribe() == Barbarians.getSingleton() && t.equals(Barbarians.getSingleton())) {
                         //if village is barbarian village and selected tribe are barbs, remove village
                         result.add(v);
-                    } else if (v.getTribe() != null && v.getTribe().equals(t)) {
+                    } else if (v.getTribe() != Barbarians.getSingleton() && v.getTribe().equals(t)) {
                         //selected tribe are no barbs, so check tribes to be equal
                         result.add(v);
                     }
@@ -799,7 +799,7 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
             showBarbarian = true;
         }
         for (Village v : pVillages) {
-            if ((v != null && v.getTribe() == null) && !showBarbarian) {
+            if ((v != null && v.getTribe() == Barbarians.getSingleton()) && !showBarbarian) {
                 //dont select barbarians if they are not visible
             } else {
                 if (v != null && !treeData.contains(v)) {

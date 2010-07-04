@@ -10,6 +10,7 @@ import de.tor.tribes.io.ServerManager;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Ally;
 import de.tor.tribes.types.Attack;
+import de.tor.tribes.types.Barbarians;
 import de.tor.tribes.types.StandardAttackElement;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.UnknownUnit;
@@ -32,18 +33,15 @@ import de.tor.tribes.ui.editors.StandardAttackElementEditor;
 import de.tor.tribes.ui.editors.UnitCellEditor;
 import de.tor.tribes.ui.editors.VillageCellEditor;
 import de.tor.tribes.ui.models.StandardAttackTableModel;
-import de.tor.tribes.ui.renderer.AllyCellRenderer;
 import de.tor.tribes.ui.renderer.AlternatingColorCellRenderer;
 import de.tor.tribes.ui.renderer.AttackTypeCellRenderer;
 import de.tor.tribes.ui.renderer.BooleanCellRenderer;
 import de.tor.tribes.ui.renderer.ColoredDateCellRenderer;
 import de.tor.tribes.ui.renderer.SortableTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.StandardAttackTypeCellRenderer;
-import de.tor.tribes.ui.renderer.TribeCellRenderer;
 import de.tor.tribes.ui.renderer.UnitCellRenderer;
 import de.tor.tribes.ui.renderer.UnitListCellRenderer;
 import de.tor.tribes.ui.renderer.UnitTableHeaderRenderer;
-import de.tor.tribes.ui.renderer.VillageCellRenderer;
 import de.tor.tribes.util.AttackToBBCodeFormater;
 import de.tor.tribes.util.html.AttackPlanHTMLExporter;
 import de.tor.tribes.util.DSCalculator;
@@ -52,7 +50,6 @@ import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.js.AttackScriptWriter;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
@@ -1973,7 +1970,7 @@ private void fireCopyUnformatedToClipboardEvent(java.awt.event.MouseEvent evt) {
                     }
                 }
 
-                if (sVillage.getTribe() == null) {
+                if (sVillage.getTribe() == Barbarians.getSingleton()) {
                     buffer.append("Barbaren");
                 } else {
                     buffer.append(sVillage.getTribe());
@@ -1983,7 +1980,7 @@ private void fireCopyUnformatedToClipboardEvent(java.awt.event.MouseEvent evt) {
                 buffer.append("\t");
                 buffer.append(sUnit);
                 buffer.append("\t");
-                if (tVillage.getTribe() == null) {
+                if (tVillage.getTribe() == Barbarians.getSingleton()) {
                     buffer.append("Barbaren");
                 } else {
                     buffer.append(tVillage.getTribe());
@@ -2204,7 +2201,7 @@ private void fireSelectFilteredEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST
     //search attacks for source and target tribes
     for (Attack a : attacks) {
         Tribe s = a.getSource().getTribe();
-        if (s != null) {
+        if (s != Barbarians.getSingleton()) {
             if (!sourceTribes.contains(s)) {
                 sourceTribes.add(s);
             }
@@ -2215,7 +2212,7 @@ private void fireSelectFilteredEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST
             }
         }
         Tribe t = a.getTarget().getTribe();
-        if (t != null) {
+        if (t != Barbarians.getSingleton()) {
             if (!targetTribes.contains(t)) {
                 targetTribes.add(t);
             }

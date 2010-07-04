@@ -12,6 +12,7 @@ import java.io.Serializable;
 import java.util.Date;
 import org.jdom.Element;
 import de.tor.tribes.util.GlobalOptions;
+import de.tor.tribes.util.ServerSettings;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -94,7 +95,11 @@ public class Attack implements Serializable {
     }
 
     public void setArriveTime(Date arriveTime) {
-        this.arriveTime = arriveTime;
+        if (ServerSettings.getSingleton().isMillisArrival()) {
+            this.arriveTime = arriveTime;
+        } else {
+            this.arriveTime = new Date((long) Math.floor((double) arriveTime.getTime() / 1000.0) * 1000l);
+        }
     }
 
     public boolean isShowOnMap() {

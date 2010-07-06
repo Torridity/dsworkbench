@@ -46,6 +46,9 @@ import org.apache.log4j.Logger;
 
 /**
  *@TODO (DIFF) Added merchant distributor
+ * @TODO (2.1) Add "ignore transports < X" field
+ * @TODO (2.1) Add confirm box on removing villages
+ * @TODO (2.1) Add confirm box on impossible calculation
  * @author Jejkal
  */
 public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame {
@@ -792,6 +795,7 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame {
 
         for (VillageMerchantInfo info : pMerchantInfos) {
             //add table rows
+           // System.out.println(info);
             model.addRow(new Object[]{DataHolder.getSingleton().getVillages()[info.getVillage().getX()][info.getVillage().getY()], info.getWoodStock(), info.getClayStock(), info.getIronStock(), info.getStashCapacity(), info.getAvailableMerchants() + "/" + info.getOverallMerchants(), info.getDirection()});
         }
 

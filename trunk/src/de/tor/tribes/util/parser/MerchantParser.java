@@ -228,7 +228,7 @@ public class MerchantParser {
 
         public String toString() {
             String res = getVillage() + " ";
-            res += getWoodStock() + ", " + getClayStock() + ", " + getIronStock() + " (" + getStashCapacity() + ") " + getAvailableMerchants() + "/" + getOverallMerchants();
+            res += getVillage() + ": " + getWoodStock() + ", " + getClayStock() + ", " + getIronStock() + " (" + getStashCapacity() + ") " + getAvailableMerchants() + "/" + getOverallMerchants();
             return res;
         }
     }

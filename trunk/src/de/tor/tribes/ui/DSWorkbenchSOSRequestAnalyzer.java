@@ -43,6 +43,8 @@ import org.apache.log4j.Logger;
 
 /**
  *@TODO (DIFF) Implemented SOS analyzer
+ * @TODO (2.1) Confirm box on submit to attack view
+ * @TODO (2.1) Correct tooltips for buttons
  * @author Torridity
  */
 public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {

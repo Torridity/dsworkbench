@@ -88,14 +88,20 @@ public class Optex<S extends Source, D extends Destination> {
 
 
             for (S s1 : this.sources) {
+                // System.out.println(s1);
+                // System.out.println("Source");
                 if (s1.waresAvailable() > 0) {
+                    //     System.out.println("Have Wares");
                     for (S s2 : this.sources) {
                         if (s2.getOrdered() > 0) {
+                            //    System.out.println("HAVE ORDER");
                             Iterator<Order> i = s2.getOrders().iterator();
                             while (i.hasNext()) {
                                 Order o = i.next();
                                 int val = o.getAmount();
+                                //   System.out.println("TEST!");
                                 if (val > 0) {
+                                    // System.out.println("Optimize");
                                     Destination o_d = o.getDestination();
                                     //if (s1.waresAvailable(o_d) > o.amount && s1.getOrdered() > 0) {
 
@@ -113,7 +119,11 @@ public class Optex<S extends Source, D extends Destination> {
                                     //System.out.println("Ord now: " + s2.getOrdered() + "/" + s1.getOrdered());
                                     improvement = true;
                                     } else */
-                                    if (this._getCosts(s1, o_d) < this._getCosts(s2, o_d)) {
+                                    double fact = 1.0;// Math.pow(Math.E, ((val - 5) / -2)) + 1;// (e^-((x-5) / 2) + 1)
+                                    //  System.out.println("Order: " + val + " -> " + fact);
+                                    double c1 = this._getCosts(s1, o_d);
+                                    double c2 = this._getCosts(s2, o_d) * fact;
+                                    if (c1 < c2) {
                                         // if (s1.getOrdered() > 0) {
                                         int swap_amount = 0;
                                         //swap_amount = Math.min(s1.waresAvailable(o_d), o.amount);
@@ -131,9 +141,13 @@ public class Optex<S extends Source, D extends Destination> {
                             if (r > 0) {
                             System.out.println("Remove: " + r + " for " + s2);
                             }*/
-                        }
+                        }/*else{
+                        System.out.println("No Order");
+                        }*/
                     }
-                }
+                }/*else{
+                System.out.println("Full!");
+                }*/
             }
         }
     }
@@ -217,6 +231,7 @@ public class Optex<S extends Source, D extends Destination> {
             }
 
             int amountOrdered = Math.min(biggest_s.waresAvailable(), biggest_s_d.remainingNeeds());
+           // double fact = Math.pow(Math.E, (((double)amountOrdered - 5) / -2)) + 1;// (e^-((x-5) / 2) + 1)
             if (amountOrdered > 0) {
                 biggest_s.addOrder(biggest_s_d, amountOrdered);
                 biggest_s_d.addOrdered(amountOrdered);

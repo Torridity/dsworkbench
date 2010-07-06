@@ -98,7 +98,8 @@ import org.apache.log4j.Logger;
  * 4: Misc. Extended Map Decoration: e.g. troop qualification or active village marker
  * 5: Live Layer: Redraw in every drawing cycle e.g. Drag line, tool popup(?), (troop movement?)
  * 6-16: Free assignable
- * @TODO (DIFF) Fixed note icon drawing
+ * @TODO (2.1) Check note symbol drawing (village marks layer must be visible? notes are lazy if village mark layer is below notes layer?
+ *
  * @author Charon
  */
 public class MapRenderer extends Thread {

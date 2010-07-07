@@ -45,6 +45,8 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -57,6 +59,7 @@ import org.jfree.chart.plot.PiePlot;
 import org.jfree.data.general.DefaultPieDataset;
 
 /**
+ * @TODO (2.1) Handle map switch buttons location (Handle by right-click!)
  * @author  jejkal
  */
 public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerListener {
@@ -127,7 +130,11 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
 
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (!showControls) {
+                if (!showControls && iCurrentView == ID_MINIMAP) {
+                    if (timer != null) {
+                        timer.cancel();
+                        timer = null;
+                    }
                     Point p = mousePosToMapPosition(e.getX(), e.getY());
                     DSWorkbenchMainFrame.getSingleton().centerPosition(p.x, p.y);
 
@@ -304,8 +311,21 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
                     }
                 }
                 if (new Rectangle(0, 0, 88, 30).contains(e.getPoint())) {
-                    showControls = true;
-                    repaint();
+                    if (timer == null && !showControls) {
+                        timer = new Timer();
+                        final Point pos = e.getPoint();
+                        timer.schedule(new TimerTask() {
+
+                            public void run() {
+                                Point mp = getMousePosition();
+                                if (mp != null && mp.distance(pos) < 10.0 && new Rectangle(0, 0, 88, 30).contains(mp)) {
+                                    showControls();
+                                } else {
+                                    timerExpired();
+                                }
+                            }
+                        }, 2000);
+                    }
                 } else {
                     if (showControls) {
                         showControls = false;
@@ -349,6 +369,17 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
                 setCurrentCursor(iCurrentCursor);
             }
         });
+    }
+    private Timer timer = null;
+
+    private void showControls() {
+        showControls = true;
+        timer = null;
+        repaint();
+    }
+
+    private void timerExpired() {
+        timer = null;
     }
 
     public synchronized void addMinimapListener(MinimapListener pListener) {

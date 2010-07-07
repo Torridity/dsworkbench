@@ -215,8 +215,7 @@ public class Skin {
             }
 
             return cache.get(pID);*/
-            Image ret = mTextures.get(pID).getScaledInstance((int) (iFieldWidth / pScaling), (int) (iFieldHeight / pScaling), BufferedImage.SCALE_FAST);
-            return ret;
+            return mTextures.get(pID).getScaledInstance((int) (iFieldWidth / pScaling), (int) (iFieldHeight / pScaling), BufferedImage.SCALE_DEFAULT);
         } catch (Exception e) {
             return null;
         }

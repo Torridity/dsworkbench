@@ -98,7 +98,7 @@ import org.apache.log4j.Logger;
  * 4: Misc. Extended Map Decoration: e.g. troop qualification or active village marker
  * 5: Live Layer: Redraw in every drawing cycle e.g. Drag line, tool popup(?), (troop movement?)
  * 6-16: Free assignable
- * @TODO (2.1) Check note symbol drawing (village marks layer must be visible? notes are lazy if village mark layer is below notes layer?
+ * @TODO (DIFF) Check note symbol drawing (village marks layer must be visible? notes are lazy if village mark layer is below notes layer?
  *
  * @author Charon
  */
@@ -403,7 +403,6 @@ public class MapRenderer extends Thread {
                             if (mapDrawn) {
                                 //only draw layer if map is drawn
                                 //If not, this layer is hidden behind the map
-                                renderNoteMarkers();
                                 g2d.drawImage(mLayers.get(TAG_MARKER_LAYER), 0, 0, null);
                             }
                             //  logger.info(" - TAG " + (System.currentTimeMillis() - s));
@@ -428,6 +427,7 @@ public class MapRenderer extends Thread {
                             if (mapDrawn) {
                                 //only draw layer if map is drawn
                                 //If not, this layer is hidden behind the map
+                                renderNoteMarkers();
                                 g2d.drawImage(mLayers.get(NOTE_LAYER), 0, 0, null);
                                 // System.out.println("DTN " + (System.currentTimeMillis() - s));
                             }
@@ -1105,8 +1105,7 @@ public class MapRenderer extends Thread {
             if (layer.getWidth() != wb || layer.getHeight() != hb) {
                 layer = getBufferedImage(wb, hb, Transparency.TRANSLUCENT);//new BufferedImage(wb, hb, BufferedImage.TYPE_INT_ARGB);
                 mLayers.put(TAG_MARKER_LAYER, layer);
-                g2d =
-                        layer.createGraphics();
+                g2d = layer.createGraphics();
                 prepareGraphics(g2d);
             } else {
                 g2d = (Graphics2D) layer.getGraphics();
@@ -1234,8 +1233,7 @@ public class MapRenderer extends Thread {
         if (layer == null) {
             layer = getBufferedImage(wb, hb + 100, Transparency.TRANSLUCENT);//new BufferedImage(wb, hb, BufferedImage.TYPE_INT_ARGB);
             mLayers.put(NOTE_LAYER, layer);
-            g2d =
-                    layer.createGraphics();
+            g2d = layer.createGraphics();
             prepareGraphics(g2d);
         } else {
             if (layer.getWidth() != wb || layer.getHeight() != hb + 100) {

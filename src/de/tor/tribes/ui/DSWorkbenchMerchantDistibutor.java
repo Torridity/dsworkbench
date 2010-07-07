@@ -38,6 +38,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
@@ -46,9 +47,9 @@ import org.apache.log4j.Logger;
 
 /**
  *@TODO (DIFF) Added merchant distributor
- * @TODO (2.1) Add "ignore transports < X" field
- * @TODO (2.1) Add confirm box on removing villages
- * @TODO (2.1) Add confirm box on impossible calculation
+ * @TODO (DIFF) Add "ignore transports < X" field
+ * @TODO (DIFF) Add confirm box on removing villages
+ * @TODO (DIFF) Add confirm box on impossible calculation
  * @author Jejkal
  */
 public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame {
@@ -632,24 +633,76 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame {
             Transferable t = (Transferable) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
             String data = (String) t.getTransferData(DataFlavor.stringFlavor);
             List<VillageMerchantInfo> infos = MerchantParser.parse(data);
-            if (!infos.isEmpty()) {
-                if (evt.getSource() == jInsertBothButton) {
-                    Collections.addAll(merchantInfos, infos.toArray(new VillageMerchantInfo[]{}));
-                } else if (evt.getSource() == jInsertSendButton) {
-                    for (VillageMerchantInfo info : infos) {
-                        info.setDirection(VillageMerchantInfo.Direction.OUTGOING);
-                    }
-                    Collections.addAll(merchantInfos, infos.toArray(new VillageMerchantInfo[]{}));
-                } else if (evt.getSource() == jInsertReceiveButton) {
-                    for (VillageMerchantInfo info : infos) {
-                        info.setDirection(VillageMerchantInfo.Direction.INCOMING);
-                    }
-                    Collections.addAll(merchantInfos, infos.toArray(new VillageMerchantInfo[]{}));
-                }
-                rebuildTable(jMerchantDataTable, merchantInfos);
-                String message = (infos.size() == 1) ? "1 Eintrag gelesen." : infos.size() + " Einträge gelesen.";
-                JOptionPaneHelper.showInformationBox(this, message, "Information");
+            if (infos.isEmpty()) {
+                JOptionPaneHelper.showInformationBox(this, "Keine Einträge gefunden", "Information");
+                return;
             }
+
+            VillageMerchantInfo.Direction currentDir = VillageMerchantInfo.Direction.BOTH;
+            if (evt.getSource() == jInsertSendButton) {
+                currentDir = VillageMerchantInfo.Direction.OUTGOING;
+            } else if (evt.getSource() == jInsertReceiveButton) {
+                currentDir = VillageMerchantInfo.Direction.INCOMING;
+            }
+
+            int changesToBoth = 0;
+            int dirChanges = 0;
+            for (VillageMerchantInfo existingInfo : merchantInfos) {
+                VillageMerchantInfo toRemove = null;
+                for (VillageMerchantInfo newInfo : infos) {
+                    if (existingInfo.getVillage().equals(newInfo.getVillage())) {
+                        //info exists
+                        if (existingInfo.getDirection() == VillageMerchantInfo.Direction.INCOMING && currentDir == VillageMerchantInfo.Direction.OUTGOING ||
+                                existingInfo.getDirection() == VillageMerchantInfo.Direction.OUTGOING && currentDir == VillageMerchantInfo.Direction.INCOMING) {
+                            //village acceptes only one and gets the other -> change to both
+                            existingInfo.setDirection(VillageMerchantInfo.Direction.BOTH);
+                            changesToBoth++;
+                        } else if (existingInfo.getDirection() != currentDir) {
+                            //set to new direction
+                            existingInfo.setDirection(currentDir);
+                            dirChanges++;
+                        }
+
+                        toRemove = newInfo;
+                        break;
+                    } else {
+                        newInfo.setDirection(currentDir);
+                    }
+                }
+
+                if (toRemove != null) {
+                    infos.remove(toRemove);
+                }
+            }
+            int newInfos = infos.size();
+            Collections.addAll(merchantInfos, infos.toArray(new VillageMerchantInfo[]{}));
+
+            /* if (!infos.isEmpty()) {
+            if (evt.getSource() == jInsertBothButton) {
+            Collections.addAll(merchantInfos, infos.toArray(new VillageMerchantInfo[]{}));
+            } else if (evt.getSource() == jInsertSendButton) {
+            for (VillageMerchantInfo info : infos) {
+            info.setDirection(VillageMerchantInfo.Direction.OUTGOING);
+            }
+            Collections.addAll(merchantInfos, infos.toArray(new VillageMerchantInfo[]{}));
+            } else if (evt.getSource() == jInsertReceiveButton) {
+            for (VillageMerchantInfo info : infos) {
+            info.setDirection(VillageMerchantInfo.Direction.INCOMING);
+            }
+            Collections.addAll(merchantInfos, infos.toArray(new VillageMerchantInfo[]{}));
+            }*/
+            rebuildTable(jMerchantDataTable, merchantInfos);
+            String message = "";
+            if (newInfos == 0 && changesToBoth == 0 && dirChanges == 0) {
+                message = "Keine Veränderung durch neue Einträge";
+            } else {
+                message = "Veränderung der erfassten Dörfer:\n";
+                message += " * " + newInfos + ((newInfos == 1) ? " neuer Eintrag\n" : " neue Einträge\n");
+                message += " * " + changesToBoth + " Wechsel zu 'Lieferant+Empfänger'\n";
+                message += " * " + dirChanges + " Wechsel der Handelsrichtung\n";
+            }
+            JOptionPaneHelper.showInformationBox(this, message, "Information");
+            // }
 
         } catch (Exception e) {
             logger.error("Failed to read merchant data", e);
@@ -686,6 +739,9 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame {
             return;
         }
 
+        if (JOptionPaneHelper.showQuestionConfirmBox(this, (rows.length + ((rows.length == 1) ? " Eintrag wirklich löschen?" : " Einträge wirklich löschen?")), "Einträge löschen", "Nein", "Ja") == JOptionPane.NO_OPTION) {
+            return;
+        }
         Arrays.sort(rows);
         List<Village> villagesToRemove = new LinkedList<Village>();
         DefaultTableModel model = ((DefaultTableModel) jMerchantDataTable.getModel());
@@ -755,6 +811,13 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame {
         //   Collections.copy(copy, merchantInfos);
         //  System.out.println(merchantInfos);
 
+        if (incomingOnly.isEmpty()) {
+            JOptionPaneHelper.showInformationBox(this, "Keine Rohstoffempfänger angegeben", "Fehler");
+            return;
+        } else if (outgoingOnly.isEmpty()) {
+            JOptionPaneHelper.showInformationBox(this, "Keine Rohstofflieferanten angegeben", "Fehler");
+            return;
+        }
         List<List<MerchantSource>> results = new MerchantDistributor().calculate(copy, incomingOnly, outgoingOnly, targetRes, remainRes);
         buildResults(copy, results, targetRes);
 
@@ -1023,14 +1086,13 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame {
                     Village targetVillage = destKeys.nextElement();
                     // Village targetVillage = DataHolder.getSingleton().getVillages()[dest.getC().getX()][dest.getC().getY()];
                     Transport trans = new Transport(transportsFromSource.get(targetVillage));
-
-
                     if (trans.hasGoods()) {
-                        Object[] row = null;
                         if (jIgnoreTransportsButton.isSelected()) {
                             int amount = trans.getSingleTransports().get(0).getAmount() + trans.getSingleTransports().get(1).getAmount() + trans.getSingleTransports().get(2).getAmount();
                             if (amount >= minAmount) {
                                 model.addRow(new Object[]{sourceVillage, trans, targetVillage});
+                            } else {
+                                usedTransports--;
                             }
                         } else {
                             model.addRow(new Object[]{sourceVillage, trans, targetVillage});

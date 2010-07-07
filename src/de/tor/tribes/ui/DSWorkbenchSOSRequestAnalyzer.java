@@ -10,14 +10,17 @@
  */
 package de.tor.tribes.ui;
 
+import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.SOSRequest;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.UnknownUnit;
 import de.tor.tribes.types.Village;
+import de.tor.tribes.ui.models.AttackManagerTableModel;
 import de.tor.tribes.ui.renderer.AlternatingColorCellRenderer;
 import de.tor.tribes.ui.renderer.DateCellRenderer;
 import de.tor.tribes.ui.renderer.SortableTableHeaderRenderer;
+import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.ServerSettings;
@@ -42,9 +45,9 @@ import javax.swing.table.TableRowSorter;
 import org.apache.log4j.Logger;
 
 /**
- *@TODO (DIFF) Implemented SOS analyzer
- * @TODO (2.1) Confirm box on submit to attack view
- * @TODO (2.1) Correct tooltips for buttons
+ * @TODO (DIFF) Implemented SOS analyzer
+ * @TODO (DIFF) Confirm box on submit to attack view
+ * @TODO (DIFF) Correct tooltips for buttons
  * @author Torridity
  */
 public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
@@ -69,7 +72,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
     DSWorkbenchSOSRequestAnalyzer() {
         initComponents();
 
-            // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
+        // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
         GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.sos_analyzer", GlobalOptions.getHelpBroker().getHelpSet());
         // </editor-fold>
     }
@@ -111,6 +114,8 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
         jCleanupAttacksButton1 = new javax.swing.JButton();
         jCleanupAttacksButton2 = new javax.swing.JButton();
         jCleanupAttacksButton3 = new javax.swing.JButton();
+        jTaskPaneGroup2 = new com.l2fprod.common.swing.JTaskPaneGroup();
+        jCleanupAttacksButton4 = new javax.swing.JButton();
 
         setTitle("SOS Analyzer");
 
@@ -214,8 +219,8 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
                         .addComponent(jWallLevelText, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, 96, Short.MAX_VALUE)
-                    .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 96, Short.MAX_VALUE))
+                    .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, 98, Short.MAX_VALUE)
+                    .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 98, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -244,7 +249,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
-                .addComponent(jAttacksTableScrollPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 131, Short.MAX_VALUE)
+                .addComponent(jAttacksTableScrollPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 134, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -275,8 +280,8 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
                     .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 345, Short.MAX_VALUE)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 345, Short.MAX_VALUE)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 350, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 350, Short.MAX_VALUE)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -325,9 +330,6 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
         jCleanupAttacksButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/re-time.png"))); // NOI18N
         jCleanupAttacksButton2.setText(bundle.getString("DSWorkbenchAttackFrame.jCleanupAttacksButton.text")); // NOI18N
         jCleanupAttacksButton2.setToolTipText(bundle.getString("DSWorkbenchAttackFrame.jCleanupAttacksButton.toolTipText")); // NOI18N
-        jCleanupAttacksButton2.setMaximumSize(new java.awt.Dimension(59, 35));
-        jCleanupAttacksButton2.setMinimumSize(new java.awt.Dimension(59, 35));
-        jCleanupAttacksButton2.setPreferredSize(new java.awt.Dimension(59, 35));
         jCleanupAttacksButton2.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireMoveAttackToReTimeToolEvent(evt);
@@ -339,9 +341,6 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
         jCleanupAttacksButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_overview.png"))); // NOI18N
         jCleanupAttacksButton3.setText(bundle.getString("DSWorkbenchAttackFrame.jCleanupAttacksButton.text")); // NOI18N
         jCleanupAttacksButton3.setToolTipText(bundle.getString("DSWorkbenchAttackFrame.jCleanupAttacksButton.toolTipText")); // NOI18N
-        jCleanupAttacksButton3.setMaximumSize(new java.awt.Dimension(59, 35));
-        jCleanupAttacksButton3.setMinimumSize(new java.awt.Dimension(59, 35));
-        jCleanupAttacksButton3.setPreferredSize(new java.awt.Dimension(59, 35));
         jCleanupAttacksButton3.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireCopyToAttackViewEvent(evt);
@@ -350,6 +349,25 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
         jTaskPaneGroup1.getContentPane().add(jCleanupAttacksButton3);
 
         jTaskPane1.add(jTaskPaneGroup1);
+
+        jTaskPaneGroup2.setTitle("Sonstiges");
+        com.l2fprod.common.swing.PercentLayout percentLayout3 = new com.l2fprod.common.swing.PercentLayout();
+        percentLayout3.setGap(2);
+        percentLayout3.setOrientation(1);
+        jTaskPaneGroup2.getContentPane().setLayout(percentLayout3);
+
+        jCleanupAttacksButton4.setBackground(new java.awt.Color(239, 235, 223));
+        jCleanupAttacksButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_overview.png"))); // NOI18N
+        jCleanupAttacksButton4.setText(bundle.getString("DSWorkbenchAttackFrame.jCleanupAttacksButton.text")); // NOI18N
+        jCleanupAttacksButton4.setToolTipText(bundle.getString("DSWorkbenchAttackFrame.jCleanupAttacksButton.toolTipText")); // NOI18N
+        jCleanupAttacksButton4.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireFindFakesEvent(evt);
+            }
+        });
+        jTaskPaneGroup2.getContentPane().add(jCleanupAttacksButton4);
+
+        jTaskPane1.add(jTaskPaneGroup2);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -374,7 +392,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jTaskPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 540, Short.MAX_VALUE)
+                    .addComponent(jTaskPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 545, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1)
@@ -760,14 +778,56 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
                 }
             }
         }
-
+        int added = 0;
+        String activePlan = AttackManagerTableModel.getSingleton().getActiveAttackPlan();
         for (Attack a : attacks) {
-            AttackManager.getSingleton().addAttackFast(a.getSource(), a.getTarget(), a.getUnit(), a.getArriveTime());
+            AttackManager.getSingleton().addAttackFast(a.getSource(), a.getTarget(), a.getUnit(), a.getArriveTime(), activePlan);
+            added++;
         }
         AttackManager.getSingleton().forceUpdate(null);
+        if (added > 0) {
+            JOptionPaneHelper.showInformationBox(this, added + ((added == 1) ? " Angriff" : " Angriffe") + " in Angriffsplan '" + activePlan + "' eingefügt.", "Information");
+        }
         // DSWorkbenchAttackFrame.getSingleton().fireAttacksChangedEvent(null);
     }//GEN-LAST:event_fireCopyToAttackViewEvent
 
+    private void fireFindFakesEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireFindFakesEvent
+        findFakes();
+    }//GEN-LAST:event_fireFindFakesEvent
+
+    /*
+    [b]Verteidiger[/b]
+    Name: [player]Rattenfutter[/player]
+    Stamm: [ally][KdS][/ally]
+    Punkte: 2830057
+
+    [b]Angegriffenes Dorf[/b]
+    [coord]438|899[/coord]
+    Punkte: 10019
+    Stufe des Walls: 20
+
+
+    [b]Anwesende Truppen[/b]
+    [unit]spear[/unit] 26
+    [unit]axe[/unit] 6700
+    [unit]spy[/unit] 200
+    [unit]light[/unit] 2500
+    [unit]marcher[/unit] 300
+    [unit]catapult[/unit] 50
+
+    [b]1. Angriff[/b]
+    Angreifer: [player]Rattenfutter[/player]
+    Stamm: [ally][KdS][/ally]
+    Punkte: 2830057
+    Herkunft: [coord]440|899[/coord]
+    Ankunftszeit: 07.07.10 20:42:54:551
+    [b]2. Angriff[/b]
+    Angreifer: [player]Rattenfutter[/player]
+    Stamm: [ally][KdS][/ally]
+    Punkte: 2830057
+    Herkunft: [coord]440|899[/coord]
+    Ankunftszeit: 07.07.10 20:42:58:526
+     */
     private void updateView() {
         // currentRequests
         if (currentRequests == null) {
@@ -788,6 +848,55 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
         jTargetList.setModel(new DefaultListModel());
         jTroopsInfoField.setText("");
         jAttacksTable.setModel(new DefaultTableModel(0, 0));
+    }
+
+    private void findFakes() {
+        Tribe t = (Tribe) jDefenderList.getSelectedValue();
+        if (t == null) {
+            return;
+        }
+
+        SOSRequest request = currentRequests.get(t);
+        Enumeration<Village> targets = request.getTargets();
+        List<Village> attackSources = new LinkedList<Village>();
+        List<Village> fakeTargets = new LinkedList<Village>();
+        List<Village> fakeSources = new LinkedList<Village>();
+        while (targets.hasMoreElements()) {
+            Village target = targets.nextElement();
+            System.out.println("Check target " + target);
+            SOSRequest.TargetInformation targetInfo = request.getTargetInformation(target);
+            for (SOSRequest.TimedAttack attack : targetInfo.getAttacks()) {
+                System.out.println("New Attack from " + attack.getSource());
+                if (attackSources.contains(attack.getSource())) {
+                    //possible fake?
+                    long sendTime = attack.getlArriveTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(attack.getSource(), target, DataHolder.getSingleton().getUnitByPlainName("snob").getSpeed()) * 1000);
+                    System.out.println("SendTime: " + new SimpleDateFormat("HH:mm:ss").format(new Date(sendTime)));
+                    if (sendTime > System.currentTimeMillis()) {
+                        System.out.println("Possible Fake");
+                        if (!fakeSources.contains(attack.getSource())) {
+                            System.out.println("Add fake source");
+                            fakeSources.add(attack.getSource());
+                        }
+                        if (!fakeTargets.contains(target)) {
+                            System.out.println("Add fake target");
+                            fakeTargets.add(target);
+                        }
+                    }else{
+                        System.out.println("Snob?");
+                    }
+                } else {
+                    //add new source
+                    System.out.println("New source");
+                    attackSources.add(attack.getSource());
+                }
+                System.out.println("----");
+            }
+        }
+
+        System.out.println("FakeSources: " + fakeSources);
+        System.out.println("FakeTargets: " + fakeTargets);
+
+
     }
 
     /**
@@ -812,6 +921,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
     private javax.swing.JButton jCleanupAttacksButton1;
     private javax.swing.JButton jCleanupAttacksButton2;
     private javax.swing.JButton jCleanupAttacksButton3;
+    private javax.swing.JButton jCleanupAttacksButton4;
     private javax.swing.JList jDefenderList;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -831,6 +941,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
     private javax.swing.JList jTargetList;
     private com.l2fprod.common.swing.JTaskPane jTaskPane1;
     private com.l2fprod.common.swing.JTaskPaneGroup jTaskPaneGroup1;
+    private com.l2fprod.common.swing.JTaskPaneGroup jTaskPaneGroup2;
     private javax.swing.JTextPane jTroopsInfoField;
     private javax.swing.JProgressBar jWallLevelBar;
     private javax.swing.JLabel jWallLevelText;

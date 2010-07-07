@@ -74,4 +74,10 @@ public class ReportSet {
     public synchronized void removeReport(FightReport pReport) {
         reports.remove(pReport);
     }
+
+    public String toString() {
+        String res = "Name: " + getName() + "\n";
+        res += "Reports: " + getReports().length + "\n";
+        return res;
+    }
 }

@@ -4,6 +4,8 @@
  */
 package de.tor.tribes.util.report;
 
+import com.db4o.Db4oEmbedded;
+import com.db4o.ObjectContainer;
 import de.tor.tribes.types.FightReport;
 import de.tor.tribes.types.ReportSet;
 import de.tor.tribes.ui.DSWorkbenchReportFrame;
@@ -84,6 +86,21 @@ public class ReportManager extends FilterableManager<FightReport, ReportFilterIn
                 }
                 logger.debug("Reports successfully loaded");
                 forceUpdate(DEFAULT_SET);
+                ObjectContainer db = Db4oEmbedded.openFile(Db4oEmbedded.newConfiguration(), "database.dbo");
+                try {
+                    Enumeration<String> sets = reportSets.keys();
+                    long s = System.currentTimeMillis();
+                    while (sets.hasMoreElements()) {
+                        ReportSet set = reportSets.get(sets.nextElement());
+                        for (FightReport rep : set.getReports()) {
+                            rep.setWon((Math.random() > .5));
+                        }
+
+                        db.store(set);
+                    }
+                } finally {
+                    db.close();
+                }
             } catch (Exception e) {
                 logger.error("Failed to load Reports", e);
             }
@@ -118,7 +135,7 @@ public class ReportManager extends FilterableManager<FightReport, ReportFilterIn
                     }
                 } catch (Exception inner) {
                     //ignored, reports invalid
-                    }
+                }
             }
             logger.debug("Reports imported successfully");
             DSWorkbenchReportFrame.getSingleton().fireReportsChangedEvent(DEFAULT_SET);

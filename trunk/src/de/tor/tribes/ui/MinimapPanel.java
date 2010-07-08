@@ -45,8 +45,6 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -59,7 +57,7 @@ import org.jfree.chart.plot.PiePlot;
 import org.jfree.data.general.DefaultPieDataset;
 
 /**
- * @TODO (2.1) Handle map switch buttons location (Handle by right-click!)
+ * @TODO (DIFF) Handle map switch buttons location (Handle by right-click!)
  * @author  jejkal
  */
 public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerListener {
@@ -130,11 +128,14 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
 
             @Override
             public void mouseClicked(MouseEvent e) {
+                if (!showControls && e.getButton() != MouseEvent.BUTTON1) {
+                    //show controls
+                    Point p = e.getPoint();
+                    p.translate(-5, -5);
+                    showControls(p);
+                    return;
+                }
                 if (!showControls && iCurrentView == ID_MINIMAP) {
-                    if (timer != null) {
-                        timer.cancel();
-                        timer = null;
-                    }
                     Point p = mousePosToMapPosition(e.getX(), e.getY());
                     DSWorkbenchMainFrame.getSingleton().centerPosition(p.x, p.y);
 
@@ -147,14 +148,17 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
                     if (minimapButtons.get(ID_MINIMAP).contains(e.getPoint())) {
                         iCurrentView = ID_MINIMAP;
                         mBuffer = null;
+                        showControls = false;
                         MinimapRepaintThread.getSingleton().update();
                     } else if (minimapButtons.get(ID_ALLY_CHART).contains(e.getPoint())) {
                         iCurrentView = ID_ALLY_CHART;
                         lastHash = 0;
+                        showControls = false;
                         updateComplete(null);
                     } else if (minimapButtons.get(ID_TRIBE_CHART).contains(e.getPoint())) {
                         iCurrentView = ID_TRIBE_CHART;
                         lastHash = 0;
+                        showControls = false;
                         updateComplete(null);
                     }
                 }
@@ -310,76 +314,62 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
                         }
                     }
                 }
-                if (new Rectangle(0, 0, 88, 30).contains(e.getPoint())) {
-                    if (timer == null && !showControls) {
-                        timer = new Timer();
-                        final Point pos = e.getPoint();
-                        timer.schedule(new TimerTask() {
+                Point location = minimapButtons.get(ID_MINIMAP).getLocation();
+                location.translate(-2, -2);
+                if (!new Rectangle(location.x, location.y, 88, 30).contains(e.getPoint())) {
+                    //hide controls
+                    showControls = false;
+                    repaint();
+                }
+            }
+        });
 
-                            public void run() {
-                                Point mp = getMousePosition();
-                                if (mp != null && mp.distance(pos) < 10.0 && new Rectangle(0, 0, 88, 30).contains(mp)) {
-                                    showControls();
-                                } else {
-                                    timerExpired();
+        addMouseWheelListener(
+                new MouseWheelListener() {
+
+                    @Override
+                    public void mouseWheelMoved(MouseWheelEvent e) {
+
+
+
+                        if (iCurrentView != ID_MINIMAP) {
+                            return;
+                        }
+                        iCurrentCursor += e.getWheelRotation();
+                        if (iCurrentCursor == ImageManager.CURSOR_DEFAULT + e.getWheelRotation()) {
+                            if (e.getWheelRotation() < 0) {
+                                iCurrentCursor = ImageManager.CURSOR_SHOT;
+                            } else {
+                                iCurrentCursor = ImageManager.CURSOR_MOVE;
+                            }
+                        } else if (iCurrentCursor < ImageManager.CURSOR_MOVE) {
+                            iCurrentCursor = ImageManager.CURSOR_DEFAULT;
+                        } else if (iCurrentCursor > ImageManager.CURSOR_SHOT) {
+                            iCurrentCursor = ImageManager.CURSOR_DEFAULT;
+                        }
+                        if (iCurrentCursor != ImageManager.CURSOR_ZOOM) {
+                            if (mZoomFrame != null) {
+                                if (mZoomFrame.isVisible()) {
+                                    mZoomFrame.setVisible(false);
                                 }
                             }
-                        }, 2000);
-                    }
-                } else {
-                    if (showControls) {
-                        showControls = false;
-                        repaint();
-                    }
-                }
-
-            }
-        });
-
-        addMouseWheelListener(new MouseWheelListener() {
-
-            @Override
-            public void mouseWheelMoved(MouseWheelEvent e) {
-                if (iCurrentView != ID_MINIMAP) {
-                    return;
-                }
-                iCurrentCursor += e.getWheelRotation();
-                if (iCurrentCursor == ImageManager.CURSOR_DEFAULT + e.getWheelRotation()) {
-                    if (e.getWheelRotation() < 0) {
-                        iCurrentCursor = ImageManager.CURSOR_SHOT;
-                    } else {
-                        iCurrentCursor = ImageManager.CURSOR_MOVE;
-                    }
-                } else if (iCurrentCursor < ImageManager.CURSOR_MOVE) {
-                    iCurrentCursor = ImageManager.CURSOR_DEFAULT;
-                } else if (iCurrentCursor > ImageManager.CURSOR_SHOT) {
-                    iCurrentCursor = ImageManager.CURSOR_DEFAULT;
-                }
-                if (iCurrentCursor != ImageManager.CURSOR_ZOOM) {
-                    if (mZoomFrame != null) {
-                        if (mZoomFrame.isVisible()) {
-                            mZoomFrame.setVisible(false);
+                        } else {
+                            if (mZoomFrame != null) {
+                                mZoomFrame.setVisible(true);
+                            }
                         }
+                        setCurrentCursor(iCurrentCursor);
                     }
-                } else {
-                    if (mZoomFrame != null) {
-                        mZoomFrame.setVisible(true);
-                    }
-                }
-                setCurrentCursor(iCurrentCursor);
-            }
-        });
-    }
-    private Timer timer = null;
+                });
 
-    private void showControls() {
+    }
+
+    private void showControls(Point p) {
+        minimapButtons.get(ID_MINIMAP).setLocation(p.x + 2, p.y + 2);
+        minimapButtons.get(ID_ALLY_CHART).setLocation(p.x + 30, p.y + 2);
+        minimapButtons.get(ID_TRIBE_CHART).setLocation(p.x + 60, p.y + 2);
         showControls = true;
-        timer = null;
         repaint();
-    }
-
-    private void timerExpired() {
-        timer = null;
     }
 
     public synchronized void addMinimapListener(MinimapListener pListener) {
@@ -402,10 +392,12 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
         int x = rVisiblePart.x;
         int y = rVisiblePart.y;
         //calc dots per village
+
         double dpvx = (double) getWidth() / (double) rVisiblePart.width;
         double dpvy = (double) getHeight() / (double) rVisiblePart.height;
         x += (int) Math.round(pX / dpvx);
         y += (int) Math.round(pY / dpvy);
+
         return new Point(x, y);
     }
 
@@ -428,8 +420,11 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
             Graphics2D g2d = (Graphics2D) g;
             g2d.clearRect(0, 0, getWidth(), getHeight());
             g2d.drawImage(mBuffer, 0, 0, null);
+
             if (iCurrentView == ID_MINIMAP) {
                 g2d.setColor(Color.YELLOW);
+
+
                 int mapWidth = rVisiblePart.width;
                 int mapHeight = rVisiblePart.height;
 
@@ -454,43 +449,50 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
                 }
             }
 
-            if (!showControls) {
-                g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .2f));
-            }
-
-            g2d.setColor(Color.WHITE);
-            g2d.fillRect(0, 0, 88, 30);
-            g2d.setColor(Color.BLACK);
-            Rectangle r = minimapButtons.get(ID_MINIMAP);
-
-            if (getMousePosition() != null && r.contains(getMousePosition())) {
-                g2d.setColor(Color.YELLOW);
-                g2d.fillRect(r.x, r.y, r.width, r.height);
+            if (showControls) {
+                //g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .2f));
+                Rectangle r = minimapButtons.get(ID_MINIMAP);
+                g2d.setColor(Color.WHITE);
+                Point menuPos = r.getLocation();
+                menuPos.translate(-2, -2);
+                //draw border
+                g2d.fillRect(menuPos.x, menuPos.y, 88, 30);
                 g2d.setColor(Color.BLACK);
-            }
-            g2d.drawImage(minimapIcons.get(ID_MINIMAP), r.x, r.y, null);
-            g2d.drawRect(r.x, r.y, r.width, r.height);
+                //check if mouse is inside minimap button
+                if (getMousePosition() != null && r.contains(getMousePosition())) {
+                    g2d.setColor(Color.YELLOW);
+                    g2d.fillRect(r.x, r.y, r.width, r.height);
+                    g2d.setColor(Color.BLACK);
+                }
+                g2d.drawImage(minimapIcons.get(ID_MINIMAP), r.x, r.y, null);
+                g2d.drawRect(r.x, r.y, r.width, r.height);
 
-            //g2d.setColor(Color.RED);
-            r = minimapButtons.get(ID_ALLY_CHART);
-            if (getMousePosition() != null && r.contains(getMousePosition())) {
-                g2d.setColor(Color.YELLOW);
-                g2d.fillRect(r.x, r.y, r.width, r.height);
-                g2d.setColor(Color.BLACK);
-            }
-            g2d.drawImage(minimapIcons.get(ID_ALLY_CHART), r.x, r.y, null);
-            g2d.drawRect(r.x, r.y, r.width, r.height);
-            // g2d.setColor(Color.YELLOW);
-            r = minimapButtons.get(ID_TRIBE_CHART);
-            if (getMousePosition() != null && r.contains(getMousePosition())) {
-                g2d.setColor(Color.YELLOW);
-                g2d.fillRect(r.x, r.y, r.width, r.height);
-                g2d.setColor(Color.BLACK);
-            }
-            g2d.drawImage(minimapIcons.get(ID_TRIBE_CHART), r.x, r.y, null);
-            g2d.drawRect(r.x, r.y, r.width, r.height);
 
+                r = minimapButtons.get(ID_ALLY_CHART);
+                //check if mouse is inside ally chart button
+                if (getMousePosition() != null && r.contains(getMousePosition())) {
+                    g2d.setColor(Color.YELLOW);
+                    g2d.fillRect(r.x, r.y, r.width, r.height);
+                    g2d.setColor(Color.BLACK);
+                }
+                g2d.drawImage(minimapIcons.get(ID_ALLY_CHART), r.x, r.y, null);
+                g2d.drawRect(r.x, r.y, r.width, r.height);
+
+                r = minimapButtons.get(ID_TRIBE_CHART);
+                //check if mouse is inside tribe chart button
+                if (getMousePosition() != null && r.contains(getMousePosition())) {
+                    g2d.setColor(Color.YELLOW);
+                    g2d.fillRect(r.x, r.y, r.width, r.height);
+                    g2d.setColor(Color.BLACK);
+
+
+                }
+                g2d.drawImage(minimapIcons.get(ID_TRIBE_CHART), r.x, r.y, null);
+                g2d.drawRect(r.x, r.y, r.width, r.height);
+            }
             g2d.dispose();
+
+
         } catch (Exception e) {
             logger.error("Failed painting Minimap", e);
         }
@@ -515,6 +517,7 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
                 }
                 if (mBuffer == null) {
                     mBuffer = pBuffer;
+
                     if (pBuffer == null) {
                         MinimapRepaintThread.getSingleton().update();
                         return;
@@ -542,9 +545,12 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
             }
             repaint();
             doRedraw = false;
+
         } catch (Exception e) {
             logger.error("Exception while updating Minimap", e);
             //ignore
+
+
         }
     }
 
@@ -566,6 +572,8 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
         //  plot.setShadowPaint(null);
 
         Enumeration<Object> markKeys = marks.keys();
+
+
         while (markKeys.hasMoreElements()) {
             if (iCurrentView == ID_ALLY_CHART) {
                 Ally a = (Ally) markKeys.nextElement();
@@ -613,6 +621,8 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
 
     private DefaultPieDataset buildDataset(Hashtable<Object, Marker> marks) {
         DefaultPieDataset dataset = new DefaultPieDataset();
+
+
         if (iCurrentView == ID_ALLY_CHART) {
             Hashtable<Ally, Integer> allyCount = MapPanel.getSingleton().getMapRenderer().getAllyCount();
             int overallVillages = 0;
@@ -622,16 +632,19 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
                 overallVillages += allyCount.get(keys.nextElement());
             }
             keys = allyCount.keys();
+
             double rest = 0;
             // Hashtable<Ally, Marker> marks = new Hashtable<Ally, Marker>();
+
             while (keys.hasMoreElements()) {
                 Ally a = keys.nextElement();
                 Integer v = allyCount.get(a);
-
                 Double perc = new Double((double) v / (double) overallVillages * 100);
+
                 if (perc > 5.0) {
                     dataset.setValue(a.getTag(), perc);
                     Marker m = MarkerManager.getSingleton().getMarker(a);
+
                     if (m != null) {
                         marks.put(a, m);
                     }
@@ -643,17 +656,20 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
 
             dataset.setValue("Sonstige", rest);
         } else {
-
             Hashtable<Tribe, Integer> tribeCount = MapPanel.getSingleton().getMapRenderer().getTribeCount();
+
             int overallVillages = 0;
             Enumeration<Tribe> keys = tribeCount.keys();
             //count all villages
+
             while (keys.hasMoreElements()) {
                 overallVillages += tribeCount.get(keys.nextElement());
             }
             keys = tribeCount.keys();
+
             double rest = 0;
             //  Hashtable<Tribe, Marker> marks = new Hashtable<Tribe, Marker>();
+
             while (keys.hasMoreElements()) {
                 Tribe t = keys.nextElement();
                 Integer v = tribeCount.get(t);
@@ -678,6 +694,7 @@ public class MinimapPanel extends javax.swing.JPanel implements MarkerManagerLis
 
     public void redraw() {
         doRedraw = true;
+
         try {
             MinimapRepaintThread.getSingleton().update();
         } catch (Exception e) {
@@ -885,7 +902,6 @@ private void fireCloseScreenshotEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
     jScreenshotPreview.setVisible(false);
     jScreenshotControl.setVisible(false);
 }//GEN-LAST:event_fireCloseScreenshotEvent
-
 private void fireSaveScreenshotEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSaveScreenshotEvent
     String dir = GlobalOptions.getProperty("screen.dir");
     if (dir == null) {
@@ -917,7 +933,11 @@ private void fireSaveScreenshotEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST
             return "*." + type;
         }
     });
+
+
     int ret = chooser.showSaveDialog(jScreenshotControl);
+
+
     if (ret == JFileChooser.APPROVE_OPTION) {
         try {
             File f = chooser.getSelectedFile();
@@ -934,6 +954,8 @@ private void fireSaveScreenshotEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST
             }
             ImageIO.write(mScreenshotPanel.getResult(jTransparancySlider.getValue()), type, target);
             GlobalOptions.addProperty("screen.dir", target.getParent());
+
+
         } catch (Exception e) {
             logger.error("Failed to write map shot", e);
         }
@@ -943,11 +965,9 @@ private void fireSaveScreenshotEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST
 private void fireMapPreviewClosingEvent(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_fireMapPreviewClosingEvent
     jScreenshotControl.setVisible(false);
 }//GEN-LAST:event_fireMapPreviewClosingEvent
-
 private void fireScreenshotControlClosingEvent(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_fireScreenshotControlClosingEvent
     jScreenshotPreview.setVisible(false);
 }//GEN-LAST:event_fireScreenshotControlClosingEvent
-
 private void firePutScreenOnlineEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_firePutScreenOnlineEvent
     try {
         ImageIO.write(mScreenshotPanel.getResult(jTransparancySlider.getValue()), "png", new File("tmp.png"));
@@ -956,12 +976,15 @@ private void firePutScreenOnlineEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
         return;
     }
     String result = ScreenUploadInterface.upload("tmp.png");
+
     if (result != null) {
         if (result.indexOf("view.php") > 0) {
             try {
                 Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(result), null);
                 JOptionPaneHelper.showInformationBox(jScreenshotControl, "Kartengrafik erfolgreich Online gestellt.\n" + "Der Zugriffslink (" + result + ")\n" + "wurde in die Zwischenablage kopiert.", "Information");
                 BrowserCommandSender.openPage(result);
+
+
             } catch (Exception e) {
                 JOptionPaneHelper.showWarningBox(jScreenshotControl, "Fehler beim Kopieren des Links in die Zwischenablage." + "Der Zugriffslink lautet: " + result, "Warnung");
             }

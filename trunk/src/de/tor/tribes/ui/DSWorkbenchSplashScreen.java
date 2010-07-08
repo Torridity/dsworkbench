@@ -344,7 +344,6 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
      */
     public static void main(String args[]) {
         Locale.setDefault(Locale.GERMAN);
-
         //System.setProperty("sun.java2d.d3d", "true");
         //  System.setProperty("sun.java2d.opengl", "true");
 

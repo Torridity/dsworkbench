@@ -48,33 +48,33 @@ public class TroopsParser {
             if (v != null) {
                 //parse 4 village lines!
                 line = line.trim();
-                if (line.trim().startsWith("eigene") || line.trim().startsWith("eigeni")) {
+                if (line.trim().startsWith(ParserVariableManager.getSingleton().getProperty("troops.own"))) {
                     int cnt = 0;
-                    for (int i : parseUnits(line.replaceAll("eigene", "").replaceAll("eigeni", "").trim())) {
+                    for (int i : parseUnits(line.replaceAll(ParserVariableManager.getSingleton().getProperty("troops.own"), "").trim())) {
                         //own units in village
                         //troops.add(i);
                         ownTroops.put(DataHolder.getSingleton().getUnits().get(cnt), i);
                         cnt++;
                     }
-                } else if (line.trim().startsWith("im Dorf")) {
+                } else if (line.trim().startsWith(ParserVariableManager.getSingleton().getProperty("troops.in.village"))) {
                     int cnt = 0;
-                    for (int i : parseUnits(line.replaceAll("im Dorf", "").trim())) {
+                    for (int i : parseUnits(line.replaceAll(ParserVariableManager.getSingleton().getProperty("troops.in.village"), "").trim())) {
                         //all units in village       
                         troopsInVillage.put(DataHolder.getSingleton().getUnits().get(cnt), i);
                         cnt++;
                     }
-                } else if (line.trim().startsWith("auswärts") || line.trim().startsWith("uswärts")) {
+                } else if (line.trim().startsWith(ParserVariableManager.getSingleton().getProperty("troops.outside"))) {
                     int cnt = 0;
-                    for (int i : parseUnits(line.replaceAll("auswärts", "").replaceAll("uswärts", "").trim())) {
+                    for (int i : parseUnits(line.replaceAll(ParserVariableManager.getSingleton().getProperty("troops.outside"), "").trim())) {
                         //own units in other village  
                         troopsOutside.put(DataHolder.getSingleton().getUnits().get(cnt), i);
                         cnt++;
                     }
-                } else if (line.trim().startsWith("unterwegs") || line.trim().startsWith("untrwägs")) {
+                } else if (line.trim().startsWith(ParserVariableManager.getSingleton().getProperty("troops.on.the.way"))) {
                     // int[] underway = parseUnits(line.replaceAll("unterwegs", "").trim());
                     int cnt = 0;
                     //own units on the way
-                    for (int i : parseUnits(line.replaceAll("unterwegs", "").replaceAll("untrwägs", "").trim())) {
+                    for (int i : parseUnits(line.replaceAll(ParserVariableManager.getSingleton().getProperty("troops.on.the.way"), "").trim())) {
                         //troops.set(i, troops.get(i) + underway[i]);
                         troopsOnTheWay.put(DataHolder.getSingleton().getUnits().get(cnt), i);
                         cnt++;
@@ -168,7 +168,7 @@ public class TroopsParser {
     }
 
     private static int[] parseUnits(String pLine) {
-        String line = pLine.replaceAll("eigene", "").replaceAll("Befehle", "").replaceAll("Truppen", "").replaceAll("Befäu", "").replaceAll("Truppe", "");
+        String line = pLine.replaceAll(ParserVariableManager.getSingleton().getProperty("troops.own"), "").replaceAll(ParserVariableManager.getSingleton().getProperty("troops.commands"), "").replaceAll(ParserVariableManager.getSingleton().getProperty("troops"), "");
         StringTokenizer t = new StringTokenizer(line, " \t");
         int uCount = DataHolder.getSingleton().getUnits().size();
         int[] units = new int[uCount];

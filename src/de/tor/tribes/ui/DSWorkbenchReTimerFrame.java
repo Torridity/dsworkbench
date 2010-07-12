@@ -21,19 +21,18 @@ import de.tor.tribes.ui.renderer.DateCellRenderer;
 import de.tor.tribes.ui.renderer.SortableTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.UnitCellRenderer;
 import de.tor.tribes.ui.renderer.UnitListCellRenderer;
-import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.attack.AttackManager;
+import de.tor.tribes.util.parser.ParserVariableManager;
 import de.tor.tribes.util.parser.VillageParser;
 import de.tor.tribes.util.tag.TagManager;
 import de.tor.tribes.util.tag.TagManagerListener;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Point;
 import java.awt.event.ItemEvent;
 import java.text.SimpleDateFormat;
@@ -47,7 +46,6 @@ import java.util.StringTokenizer;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JCheckBox;
-import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
@@ -962,10 +960,9 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
             return;
         }
 
-
         Village source = villages.get(0);
         Village target = villages.get(1);
-        if (jComandArea.getText().indexOf("1. Angriff") > -1) {
+        if (jComandArea.getText().indexOf(ParserVariableManager.getSingleton().getProperty("sos.arrive.time")) > -1) {
             //change village order for SOS requests
             source = villages.get(1);
             target = villages.get(0);
@@ -975,11 +972,12 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         boolean fromSelection = false;
         Date arriveDate = null;
         SimpleDateFormat f = null;
-        if (ServerSettings.getSingleton().isMillisArrival()) {
-            f = new SimpleDateFormat("dd.MM.yy HH:mm:ss:SSS");
+        if (!ServerSettings.getSingleton().isMillisArrival()) {
+            f = new SimpleDateFormat(ParserVariableManager.getSingleton().getProperty("sos.date.format"));
         } else {
-            f = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
+            f = new SimpleDateFormat(ParserVariableManager.getSingleton().getProperty("sos.date.format.ms"));
         }
+
         try {
             String text = jComandArea.getText();
             String selection = jComandArea.getSelectedText();
@@ -987,10 +985,10 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
 
             if (selection == null) {
                 String arriveLine = null;
-                if (text.indexOf("Ankunft:") > -1) {
-                    arriveLine = text.substring(text.indexOf("Ankunft:"));
+                if (text.indexOf(ParserVariableManager.getSingleton().getProperty("attack.arrive.time")) > -1) {
+                    arriveLine = text.substring(text.indexOf(ParserVariableManager.getSingleton().getProperty("attack.arrive.time")));
                 } else {
-                    arriveLine = text.substring(text.indexOf("Ankunftszeit:"));
+                    arriveLine = text.substring(text.indexOf(ParserVariableManager.getSingleton().getProperty("sos.arrive.time")));
                 }
                 StringTokenizer tokenizer = new StringTokenizer(arriveLine, " \t");
                 tokenizer.nextToken();

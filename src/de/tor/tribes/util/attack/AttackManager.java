@@ -191,25 +191,26 @@ public class AttackManager {
 
     public void saveTroopMovementsToDisk(String pFile) {
         try {
-            FileWriter w = new FileWriter(pFile);
-            w.write("<plans>\n");
+            StringBuffer b = new StringBuffer();
+            b.append("<plans>\n");
             Enumeration<String> plans = mAttackPlans.keys();
             while (plans.hasMoreElements()) {
                 String key = plans.nextElement();
-                w.write("<plan key=\"" + URLEncoder.encode(key, "UTF-8") + "\">\n");
+                b.append("<plan key=\"" + URLEncoder.encode(key, "UTF-8") + "\">\n");
                 List<Attack> attacks = mAttackPlans.get(key);
-
-                w.write("<attacks>\n");
+                b.append("<attacks>\n");
                 for (Attack a : attacks) {
-
-                    w.write(a.toXml() + "\n");
+                    b.append(a.toXml() + "\n");
                 }
 
-                w.write("</attacks>\n");
-                w.write("</plan>\n");
+                b.append("</attacks>\n");
+                b.append("</plan>\n");
             }
 
-            w.write("</plans>\n");
+            b.append("</plans>\n");
+            //write data to file
+            FileWriter w = new FileWriter(pFile);
+            w.write(b.toString());
             w.flush();
             w.close();
         } catch (Exception e) {

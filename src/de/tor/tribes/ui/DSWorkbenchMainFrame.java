@@ -1059,6 +1059,7 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         jMenu4 = new javax.swing.JMenu();
         jHelpItem = new javax.swing.JMenuItem();
         jAboutItem = new javax.swing.JMenuItem();
+        jDonateButton = new javax.swing.JMenuItem();
 
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("de/tor/tribes/ui/Bundle"); // NOI18N
         jLabel3.setText(bundle.getString("DSWorkbenchMainFrame.jLabel3.text")); // NOI18N
@@ -2325,6 +2326,15 @@ public class DSWorkbenchMainFrame extends javax.swing.JFrame implements
         });
         jMenu4.add(jAboutItem);
 
+        jDonateButton.setBackground(new java.awt.Color(239, 235, 223));
+        jDonateButton.setText(bundle.getString("DSWorkbenchMainFrame.jDonateButton.text_1")); // NOI18N
+        jDonateButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fireDoDonationEvent(evt);
+            }
+        });
+        jMenu4.add(jDonateButton);
+
         jMenuBar1.add(jMenu4);
 
         setJMenuBar(jMenuBar1);
@@ -3288,6 +3298,10 @@ private void fireRadarValueChangedEvent(javax.swing.event.CaretEvent evt) {//GEN
 
 }//GEN-LAST:event_fireRadarValueChangedEvent
 
+private void fireDoDonationEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireDoDonationEvent
+   BrowserCommandSender.openPage("https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=4434173");
+}//GEN-LAST:event_fireDoDonationEvent
+
     private void propagateLayerOrder() {
         DefaultListModel model = ((DefaultListModel) jLayerList.getModel());
 
@@ -3576,6 +3590,7 @@ private void fireRadarValueChangedEvent(javax.swing.event.CaretEvent evt) {//GEN
     private javax.swing.JPanel jCustomPanel;
     private javax.swing.JMenuItem jDistanceItem;
     private javax.swing.JMenuItem jDoItYourselfAttackPlanerItem;
+    private javax.swing.JMenuItem jDonateButton;
     private javax.swing.JButton jExportButton;
     private javax.swing.JDialog jExportDialog;
     private javax.swing.JCheckBox jExportForms;

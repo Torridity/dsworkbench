@@ -45,7 +45,7 @@ public class NonPAPlaceParser {
                 }
             } else {
                 //have current village, find troops
-                if (currentLine.trim().startsWith("Aus diesem Dorf")) {
+                if (currentLine.trim().startsWith(ParserVariableManager.getSingleton().getProperty("troops.place.from.village"))) {
                     //get own troops from this village
                     int[] ownInVillage = parseUnits(currentLine);
                     int cnt = 0;
@@ -57,7 +57,7 @@ public class NonPAPlaceParser {
                     //get troops from other villages till "Insgesamt" is reached
                     while (true) {
                         currentLine = lineTok.nextToken();
-                        if (currentLine.trim().startsWith("Insgesamt")) {
+                        if (currentLine.trim().startsWith(ParserVariableManager.getSingleton().getProperty("troops.place.overall"))) {
                             //get all troops in village
                             int[] allInVillage = parseUnits(currentLine);
                             cnt = 0;
@@ -90,7 +90,7 @@ public class NonPAPlaceParser {
                             return false;
                         }
                     }
-                } else if (currentLine.trim().startsWith("Truppen in anderen Dörfern")) {
+                } else if (currentLine.trim().startsWith(ParserVariableManager.getSingleton().getProperty("troops.place.in.other.villages"))) {
                     while (true) {
                         currentLine = lineTok.nextToken();
                         //get troops in other village
@@ -243,7 +243,7 @@ public class NonPAPlaceParser {
     }
 
     private static int[] parseUnits(String pLine) {
-        String line = pLine.replaceAll("Aus diesem Dorf", "").replaceAll("Insgesamt", "");
+        String line = pLine.replaceAll(ParserVariableManager.getSingleton().getProperty("troops.place.from.village"), "").replaceAll(ParserVariableManager.getSingleton().getProperty("troops.place.overall"), "");
         StringTokenizer t = new StringTokenizer(line, " \t");
         int uCount = DataHolder.getSingleton().getUnits().size();
 

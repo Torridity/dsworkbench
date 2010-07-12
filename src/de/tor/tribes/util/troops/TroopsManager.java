@@ -306,17 +306,19 @@ public class TroopsManager {
 
     public void saveTroopsToFile(String pFile) {
         try {
-            FileWriter w = new FileWriter(pFile);
-            w.write("<villages>\n");
+
+            StringBuffer b = new StringBuffer();
+            b.append("<villages>\n");
             Enumeration<Village> villages = mTroops.keys();
             while (villages.hasMoreElements()) {
                 Village v = villages.nextElement();
                 VillageTroopsHolder holder = mTroops.get(v);
-                w.write(holder.toXml());
+                b.append(holder.toXml());
 
             }
-            //close all
-            w.write("</villages>\n");
+            b.append("</villages>\n");
+            FileWriter w = new FileWriter(pFile);
+            w.write(b.toString());
             w.flush();
             w.close();
         } catch (Exception e) {

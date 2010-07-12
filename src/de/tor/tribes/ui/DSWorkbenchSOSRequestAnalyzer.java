@@ -18,6 +18,7 @@ import de.tor.tribes.types.UnknownUnit;
 import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.models.AttackManagerTableModel;
 import de.tor.tribes.ui.renderer.AlternatingColorCellRenderer;
+import de.tor.tribes.ui.renderer.AttackTypeCellRenderer;
 import de.tor.tribes.ui.renderer.DateCellRenderer;
 import de.tor.tribes.ui.renderer.SortableTableHeaderRenderer;
 import de.tor.tribes.util.DSCalculator;
@@ -25,6 +26,7 @@ import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.attack.AttackManager;
+import de.tor.tribes.util.parser.ParserVariableManager;
 import de.tor.tribes.util.parser.SOSParser;
 import java.awt.Color;
 import java.awt.Point;
@@ -114,8 +116,6 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
         jCleanupAttacksButton1 = new javax.swing.JButton();
         jCleanupAttacksButton2 = new javax.swing.JButton();
         jCleanupAttacksButton3 = new javax.swing.JButton();
-        jTaskPaneGroup2 = new com.l2fprod.common.swing.JTaskPaneGroup();
-        jCleanupAttacksButton4 = new javax.swing.JButton();
 
         setTitle("SOS Analyzer");
 
@@ -350,25 +350,6 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
 
         jTaskPane1.add(jTaskPaneGroup1);
 
-        jTaskPaneGroup2.setTitle("Sonstiges");
-        com.l2fprod.common.swing.PercentLayout percentLayout3 = new com.l2fprod.common.swing.PercentLayout();
-        percentLayout3.setGap(2);
-        percentLayout3.setOrientation(1);
-        jTaskPaneGroup2.getContentPane().setLayout(percentLayout3);
-
-        jCleanupAttacksButton4.setBackground(new java.awt.Color(239, 235, 223));
-        jCleanupAttacksButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/att_overview.png"))); // NOI18N
-        jCleanupAttacksButton4.setText(bundle.getString("DSWorkbenchAttackFrame.jCleanupAttacksButton.text")); // NOI18N
-        jCleanupAttacksButton4.setToolTipText(bundle.getString("DSWorkbenchAttackFrame.jCleanupAttacksButton.toolTipText")); // NOI18N
-        jCleanupAttacksButton4.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireFindFakesEvent(evt);
-            }
-        });
-        jTaskPaneGroup2.getContentPane().add(jCleanupAttacksButton4);
-
-        jTaskPane1.add(jTaskPaneGroup2);
-
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -461,12 +442,17 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
         DefaultTableModel model = new javax.swing.table.DefaultTableModel(
                 new Object[][]{},
                 new String[]{
-                    "Angreifer", "Herkunft", "Ankunft"
+                    "Angreifer", "Herkunft", "Ankunft", "Typ"
                 }) {
 
             Class[] types = new Class[]{
-                Tribe.class, Village.class, Date.class
+                Tribe.class, Village.class, Date.class, Integer.class
             };
+
+            @Override
+            public boolean isCellEditable(int row, int col) {
+                return false;
+            }
 
             @Override
             public Class getColumnClass(int columnIndex) {
@@ -495,6 +481,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
                 }
                 return;
             }
+            jAttacksTable.setRowHeight(18);
             jAttacksTable.getTableHeader().setReorderingAllowed(false);
             SOSRequest.TargetInformation info = request.getTargetInformation(target);
             int wall = info.getWallLevel();
@@ -515,13 +502,20 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
             jWallLevelBar.setForeground(new Color(r, g, 0));
             troopInfo += info.getTroopInformationAsHTML() + "<BR/>";
             for (SOSRequest.TimedAttack attack : info.getAttacks()) {
-                model.addRow(new Object[]{attack.getSource().getTribe(), attack.getSource(), new Date(attack.getlArriveTime())});
+                int guessedType = Attack.NO_TYPE;
+                if (attack.isPossibleFake()) {
+                    guessedType = Attack.FAKE_TYPE;
+                } else if (attack.isPossibleSnob()) {
+                    guessedType = Attack.SNOB_TYPE;
+                }
+                model.addRow(new Object[]{attack.getSource().getTribe(), attack.getSource(), new Date(attack.getlArriveTime()), guessedType});
             }
         }
 
         jTroopsInfoField.setText("<html>" + troopInfo + "</html>");
         jAttacksTable.setModel(model);
         jAttacksTable.setDefaultRenderer(Date.class, new DateCellRenderer());
+        jAttacksTable.setDefaultRenderer(Integer.class, new AttackTypeCellRenderer());
         AlternatingColorCellRenderer rend = new AlternatingColorCellRenderer();
         jAttacksTable.setDefaultRenderer(Tribe.class, rend);
         jAttacksTable.setDefaultRenderer(Village.class, rend);
@@ -538,6 +532,8 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
         if (currentRequests == null) {
             return;
         }
+        boolean showDetails = (JOptionPaneHelper.showQuestionConfirmBox(this, "Sollen alle Einzelangriffe aufgeführt werden?", "Detailierter Export", "Nein", "Ja") == JOptionPane.YES_OPTION);
+
         try {
             Object[] targetVillages = jTargetList.getSelectedValues();
             StringBuffer buffer = new StringBuffer();
@@ -556,7 +552,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
                     while (targets.hasMoreElements()) {
                         Village target = targets.nextElement();
                         if (relevantTargets.contains(target)) {
-                            String bbCode = request.toBBCode(target, true);
+                            String bbCode = request.toBBCode(target, showDetails);
                             buffer.append(bbCode.trim() + "\n");
                         }
                     }
@@ -568,78 +564,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
                     return;
                 }
 
-                boolean showDetails = (JOptionPaneHelper.showQuestionConfirmBox(this, "Sollen alle Einzelangriffe aufgeführt werden?", "Detailierter Export", "Nein", "Ja") == JOptionPane.YES_OPTION);
 
-                /*
-                [b]Verteidiger[/b]
-                Name: [player]Rattenfutter[/player]
-                Stamm: [ally][KdS][/ally]
-                Punkte: 2668029
-
-                [b]Angegriffenes Dorf[/b]
-                [coord]477|849[/coord]
-                Punkte: 10019
-                Stufe des Walls: 20
-
-
-                [b]Anwesende Truppen[/b]
-                [unit]spear[/unit] 4000
-                [unit]sword[/unit] 3700
-                [unit]archer[/unit] 3159
-                [unit]spy[/unit] 400
-                [unit]heavy[/unit] 1500
-
-                [b]1. Angriff[/b]
-                Angreifer: [player]Rattenfutter[/player]
-                Stamm: [ally][KdS][/ally]
-                Punkte: 2668029
-                Herkunft: [coord]476|850[/coord]
-                Ankunftszeit: 03.06.10 15:00:38:268
-                [b]2. Angriff[/b]
-                Angreifer: [player]Rattenfutter[/player]
-                Stamm: [ally][KdS][/ally]
-                Punkte: 2668029
-                Herkunft: [coord]476|850[/coord]
-                Ankunftszeit: 03.06.10 15:01:12:146
-                [b]Angegriffenes Dorf[/b]
-                [coord]474|850[/coord]
-                Punkte: 10019
-                Stufe des Walls: 20
-
-
-                [b]Anwesende Truppen[/b]
-                [unit]spear[/unit] 1700
-                [unit]sword[/unit] 1700
-                [unit]archer[/unit] 1998
-                [unit]spy[/unit] 165
-                [unit]heavy[/unit] 761
-
-                [b]1. Angriff[/b]
-                Angreifer: [player]Rattenfutter[/player]
-                Stamm: [ally][KdS][/ally]
-                Punkte: 2668029
-                Herkunft: [coord]476|850[/coord]
-                Ankunftszeit: 03.06.10 15:11:22:560
-                [b]Angegriffenes Dorf[/b]
-                [coord]477|852[/coord]
-                Punkte: 10019
-                Stufe des Walls: 20
-
-
-                [b]Anwesende Truppen[/b]
-                [unit]axe[/unit] 2956
-                [unit]spy[/unit] 200
-                [unit]light[/unit] 1500
-                [unit]ram[/unit] 300
-                [unit]catapult[/unit] 50
-
-                [b]1. Angriff[/b]
-                Angreifer: [player]Rattenfutter[/player]
-                Stamm: [ally][KdS][/ally]
-                Punkte: 2668029
-                Herkunft: [coord]476|850[/coord]
-                Ankunftszeit: 03.06.10 15:15:49:234
-                 */
                 for (Object o : targetTribes) {
                     Tribe t = (Tribe) o;
                     SOSRequest request = currentRequests.get(t);
@@ -701,15 +626,16 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
             Date arrive = (Date) jAttacksTable.getValueAt(row, 2);
             haveArrive = true;
             StringBuffer b = new StringBuffer();
-            b.append("Herkunft: " + source.toString() + "\n");
+
+            b.append(ParserVariableManager.getSingleton().getProperty("de.sos.source") + " " + source.toString() + "\n");
             b.append("Ziel: " + target.toString() + "\n");
             SimpleDateFormat f = null;
-            if (ServerSettings.getSingleton().isMillisArrival()) {
-                f = new SimpleDateFormat("dd.MM.yy HH:mm:ss:SSS");
+            if (!ServerSettings.getSingleton().isMillisArrival()) {
+                f = new SimpleDateFormat(ParserVariableManager.getSingleton().getProperty("sos.date.format"));
             } else {
-                f = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
+                f = new SimpleDateFormat(ParserVariableManager.getSingleton().getProperty("sos.date.format.ms"));
             }
-            b.append("Ankunft: " + f.format(arrive) + "\n");
+            b.append(ParserVariableManager.getSingleton().getProperty("de.attack.arrive.time") + " " + f.format(arrive) + "\n");
             DSWorkbenchReTimerFrame.getSingleton().setCustomAttack(b.toString());
             if (!DSWorkbenchReTimerFrame.getSingleton().isVisible()) {
                 DSWorkbenchReTimerFrame.getSingleton().setVisible(true);
@@ -772,7 +698,11 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
                         a.setTarget(target);
                         a.setArriveTime(new Date(ta.getlArriveTime()));
                         a.setUnit(UnknownUnit.getSingleton());
-                        a.setType(Attack.NO_TYPE);
+                        if (ta.isPossibleFake()) {
+                            a.setType(Attack.FAKE_TYPE);
+                        } else {
+                            a.setType(Attack.NO_TYPE);
+                        }
                         attacks.add(a);
                     }
                 }
@@ -791,45 +721,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
         // DSWorkbenchAttackFrame.getSingleton().fireAttacksChangedEvent(null);
     }//GEN-LAST:event_fireCopyToAttackViewEvent
 
-    private void fireFindFakesEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireFindFakesEvent
-        findFakes();
-    }//GEN-LAST:event_fireFindFakesEvent
-
-    /*
-    [b]Verteidiger[/b]
-    Name: [player]Rattenfutter[/player]
-    Stamm: [ally][KdS][/ally]
-    Punkte: 2830057
-
-    [b]Angegriffenes Dorf[/b]
-    [coord]438|899[/coord]
-    Punkte: 10019
-    Stufe des Walls: 20
-
-
-    [b]Anwesende Truppen[/b]
-    [unit]spear[/unit] 26
-    [unit]axe[/unit] 6700
-    [unit]spy[/unit] 200
-    [unit]light[/unit] 2500
-    [unit]marcher[/unit] 300
-    [unit]catapult[/unit] 50
-
-    [b]1. Angriff[/b]
-    Angreifer: [player]Rattenfutter[/player]
-    Stamm: [ally][KdS][/ally]
-    Punkte: 2830057
-    Herkunft: [coord]440|899[/coord]
-    Ankunftszeit: 07.07.10 20:42:54:551
-    [b]2. Angriff[/b]
-    Angreifer: [player]Rattenfutter[/player]
-    Stamm: [ally][KdS][/ally]
-    Punkte: 2830057
-    Herkunft: [coord]440|899[/coord]
-    Ankunftszeit: 07.07.10 20:42:58:526
-     */
     private void updateView() {
-        // currentRequests
         if (currentRequests == null) {
             return;
         }
@@ -838,10 +730,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
         DefaultListModel defenderModel = new DefaultListModel();
         while (tribes.hasMoreElements()) {
             SOSRequest request = currentRequests.get(tribes.nextElement());
-            /* System.out.println(request.toBBCode());
-            System.out.println("");
-            System.out.println("-----------");
-            System.out.println("");*/
+            findFakes(request);
             defenderModel.addElement(request.getDefender());
         }
         jDefenderList.setModel(defenderModel);
@@ -850,53 +739,31 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
         jAttacksTable.setModel(new DefaultTableModel(0, 0));
     }
 
-    private void findFakes() {
-        Tribe t = (Tribe) jDefenderList.getSelectedValue();
-        if (t == null) {
-            return;
-        }
-
-        SOSRequest request = currentRequests.get(t);
-        Enumeration<Village> targets = request.getTargets();
+    private void findFakes(SOSRequest pRequest) {
+        Enumeration<Village> targets = pRequest.getTargets();
         List<Village> attackSources = new LinkedList<Village>();
-        List<Village> fakeTargets = new LinkedList<Village>();
-        List<Village> fakeSources = new LinkedList<Village>();
         while (targets.hasMoreElements()) {
             Village target = targets.nextElement();
-            System.out.println("Check target " + target);
-            SOSRequest.TargetInformation targetInfo = request.getTargetInformation(target);
+            SOSRequest.TargetInformation targetInfo = pRequest.getTargetInformation(target);
             for (SOSRequest.TimedAttack attack : targetInfo.getAttacks()) {
-                System.out.println("New Attack from " + attack.getSource());
                 if (attackSources.contains(attack.getSource())) {
-                    //possible fake?
-                    long sendTime = attack.getlArriveTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(attack.getSource(), target, DataHolder.getSingleton().getUnitByPlainName("snob").getSpeed()) * 1000);
-                    System.out.println("SendTime: " + new SimpleDateFormat("HH:mm:ss").format(new Date(sendTime)));
-                    if (sendTime > System.currentTimeMillis()) {
-                        System.out.println("Possible Fake");
-                        if (!fakeSources.contains(attack.getSource())) {
-                            System.out.println("Add fake source");
-                            fakeSources.add(attack.getSource());
-                        }
-                        if (!fakeTargets.contains(target)) {
-                            System.out.println("Add fake target");
-                            fakeTargets.add(target);
-                        }
-                    }else{
-                        System.out.println("Snob?");
+                    //check for possible fake
+                    long sendTime = attack.getlArriveTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(attack.getSource(), target, DataHolder.getSingleton().getUnitByPlainName("ram").getSpeed()) * 1000);
+                    if (sendTime < System.currentTimeMillis()) {
+                        attack.setPossibleSnob(false);
+                        attack.setPossibleFake(true);
+                    } else {
+                        attack.setPossibleSnob(true);
+                        attack.setPossibleFake(false);
                     }
                 } else {
-                    //add new source
-                    System.out.println("New source");
+                    //add unknown source
                     attackSources.add(attack.getSource());
+                    attack.setPossibleFake(false);
+                    attack.setPossibleSnob(false);
                 }
-                System.out.println("----");
             }
         }
-
-        System.out.println("FakeSources: " + fakeSources);
-        System.out.println("FakeTargets: " + fakeTargets);
-
-
     }
 
     /**
@@ -921,7 +788,6 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
     private javax.swing.JButton jCleanupAttacksButton1;
     private javax.swing.JButton jCleanupAttacksButton2;
     private javax.swing.JButton jCleanupAttacksButton3;
-    private javax.swing.JButton jCleanupAttacksButton4;
     private javax.swing.JList jDefenderList;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -941,7 +807,6 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
     private javax.swing.JList jTargetList;
     private com.l2fprod.common.swing.JTaskPane jTaskPane1;
     private com.l2fprod.common.swing.JTaskPaneGroup jTaskPaneGroup1;
-    private com.l2fprod.common.swing.JTaskPaneGroup jTaskPaneGroup2;
     private javax.swing.JTextPane jTroopsInfoField;
     private javax.swing.JProgressBar jWallLevelBar;
     private javax.swing.JLabel jWallLevelText;

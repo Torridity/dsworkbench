@@ -43,7 +43,7 @@ public class GroupParser {
             //parse single line for village
             String line = lineTok.nextToken();
             //german and suisse
-            if (line.trim().endsWith("bearbeiten") || line.trim().endsWith("bearbeite")) {
+            if (line.trim().endsWith(ParserVariableManager.getSingleton().getProperty("groups.edit"))) {
                 // System.out.println(line);
                 try {
                     //tokenize line by tab

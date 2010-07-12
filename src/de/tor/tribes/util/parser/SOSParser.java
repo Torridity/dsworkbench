@@ -9,6 +9,7 @@ import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.SOSRequest;
 import de.tor.tribes.types.Tribe;
 import de.tor.tribes.types.Village;
+import de.tor.tribes.util.ServerSettings;
 import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -71,9 +72,16 @@ public class SOSParser {
         boolean waitForTroops = false;
         Village source = null;
         Village target = null;
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yy HH:mm:ss:SSS");
+
+        SimpleDateFormat dateFormat = null;
+        if (!ServerSettings.getSingleton().isMillisArrival()) {
+            dateFormat = new SimpleDateFormat(ParserVariableManager.getSingleton().getProperty("sos.date.format"));
+        } else {
+            dateFormat = new SimpleDateFormat(ParserVariableManager.getSingleton().getProperty("sos.date.format.ms"));
+        }
+        
         for (String line : lines) {
-            if (line.indexOf("Verteidiger") > -1) {
+            if (line.indexOf(ParserVariableManager.getSingleton().getProperty("sos.defender")) > -1) {
                 //start new support request
                 if (currentRequest != null) {
                     requests.put(currentRequest.getDefender(), currentRequest);
@@ -81,9 +89,9 @@ public class SOSParser {
 
                 currentRequest = new SOSRequest();
                 //  System.out.println("Create new reuqest");
-            } else if (line.indexOf("Name:") > -1) {
+            } else if (line.indexOf(ParserVariableManager.getSingleton().getProperty("sos.name")) > -1) {
                 //defender name
-                String defender = line.replaceAll("Name:", "").replaceAll("\\[player\\]", "").replaceAll("\\[\\/player\\]", "").trim();
+                String defender = line.replaceAll(ParserVariableManager.getSingleton().getProperty("sos.name"), "").replaceAll("\\[player\\]", "").replaceAll("\\[\\/player\\]", "").trim();
                 // System.out.println("Defender: " + defender);
                 Tribe defTribe = DataHolder.getSingleton().getTribeByName(defender);
                 if (requests.get(defTribe) != null) {
@@ -92,34 +100,34 @@ public class SOSParser {
                     currentRequest.setDefender(defTribe);
                     requests.put(defTribe, currentRequest);
                 }
-            } else if (line.indexOf("Angegriffenes Dorf") > -1) {
+            } else if (line.indexOf(ParserVariableManager.getSingleton().getProperty("sos.destination")) > -1) {
                 //new target village
                 waitForTarget = true;
                 //  System.out.println("Wait for target");
-            } else if (line.indexOf("Herkunft:") > -1) {
+            } else if (line.indexOf(ParserVariableManager.getSingleton().getProperty("sos.source")) > -1) {
                 List<Village> sourceVillage = VillageParser.parse(line);
                 if (sourceVillage.size() > 0) {
                     //set target
                     source = sourceVillage.get(0);
                     //System.out.println("source: " + source);
                 }
-            } else if (line.indexOf("Ankunftszeit:") > -1) {
+            } else if (line.indexOf(ParserVariableManager.getSingleton().getProperty("sos.arrive.time")) > -1) {
                 //arrive time
                 try {
-                    String arrive = line.replaceAll("Ankunftszeit:", "").trim();
+                    String arrive = line.replaceAll(ParserVariableManager.getSingleton().getProperty("sos.arrive.time"), "").trim();
                     Date arriveDate = dateFormat.parse(arrive);
                     // System.out.println("Got arrive");
                     currentRequest.getTargetInformation(target).addAttack(source, arriveDate);
                 } catch (Exception e) {
                     //  System.out.println("NO ARRIVE!!");
                 }
-            } else if (line.indexOf("Stufe des Walls:") > -1) {
+            } else if (line.indexOf(ParserVariableManager.getSingleton().getProperty("sos.wall.level")) > -1) {
                 try {
-                    int wallLevel = Integer.parseInt(line.replaceAll("Stufe des Walls:", "").trim());
+                    int wallLevel = Integer.parseInt(line.replaceAll(ParserVariableManager.getSingleton().getProperty("sos.wall.level"), "").trim());
                     currentRequest.getTargetInformation(target).setWallLevel(wallLevel);
                 } catch (Exception e) {
                 }
-            } else if (line.indexOf("Anwesende Truppen") > -1) {
+            } else if (line.indexOf(ParserVariableManager.getSingleton().getProperty("sos.troops.in.village")) > -1) {
                 // System.out.println("WAIT FOR TROOPS");
                 waitForTroops = true;
             } else {
@@ -152,9 +160,9 @@ public class SOSParser {
             }
         }
 
-      /*  if (currentRequest != null) {
-            System.out.println("Putting final Request");
-            requests.put(currentRequest.getDefender(), currentRequest);
+        /*  if (currentRequest != null) {
+        System.out.println("Putting final Request");
+        requests.put(currentRequest.getDefender(), currentRequest);
         }*/
         return requests;
     }

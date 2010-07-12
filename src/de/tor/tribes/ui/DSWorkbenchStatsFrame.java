@@ -22,10 +22,12 @@ import de.tor.tribes.util.StatTextBuilder;
 import de.tor.tribes.util.stat.StatManager;
 import java.awt.Color;
 import java.awt.Point;
-import java.io.File;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
@@ -51,6 +53,7 @@ import org.jfree.data.xy.XYDataset;
 import org.jfree.ui.RectangleInsets;
 
 /**
+ * @TODO (DIFF) Fixed stats time frame problems
  * @author Torridity
  */
 public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
@@ -69,6 +72,26 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
 
     DSWorkbenchStatsFrame() {
         initComponents();
+        addKeyListener(new KeyListener() {
+
+            @Override
+            public void keyTyped(KeyEvent e) {
+                System.out.println("TY " + e.getKeyCode());
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                System.out.println("KEY " + e.getKeyCode());
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+                System.out.println("RE " + e.getKeyCode());
+                if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                    setVisible(false);
+                }
+            }
+        });
         try {
             jAlwaysOnTopBox.setSelected(Boolean.parseBoolean(GlobalOptions.getProperty("stats.frame.alwaysOnTop")));
             setAlwaysOnTop(jAlwaysOnTopBox.isSelected());
@@ -107,6 +130,13 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
             }
         });
 
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.HOUR_OF_DAY, 0);
+        c.set(Calendar.MINUTE, 0);
+        c.set(Calendar.SECOND, 0);
+        c.set(Calendar.MILLISECOND, 0);
+        jStartDate.setDate(c.getTime());
+        jEndDate.setDate(c.getTime());
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
         GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.stats_view", GlobalOptions.getHelpBroker().getHelpSet());
         // </editor-fold>
@@ -330,9 +360,7 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
         jStatsTribeList = new javax.swing.JList();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
-        jStatStartDate = new javax.swing.JSpinner();
         jLabel5 = new javax.swing.JLabel();
-        jStatEndDate = new javax.swing.JSpinner();
         jWeeklyStats = new javax.swing.JButton();
         jMonthlyStats = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
@@ -356,6 +384,8 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
         jPanel10 = new javax.swing.JPanel();
         jUseBBCodesBox = new javax.swing.JCheckBox();
         jButton8 = new javax.swing.JButton();
+        jStartDate = new de.tor.tribes.ui.components.DateTimeField();
+        jEndDate = new de.tor.tribes.ui.components.DateTimeField();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -398,14 +428,13 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
 
         jLabel4.setText("Zeitraum (Start)");
 
-        jStatStartDate.setModel(new javax.swing.SpinnerDateModel(new java.util.Date(), null, null, java.util.Calendar.MINUTE));
-
         jLabel5.setText("Zeitraum (Ende)");
-
-        jStatEndDate.setModel(new javax.swing.SpinnerDateModel());
 
         jWeeklyStats.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/calendar_7.png"))); // NOI18N
         jWeeklyStats.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
+        jWeeklyStats.setMaximumSize(new java.awt.Dimension(40, 25));
+        jWeeklyStats.setMinimumSize(new java.awt.Dimension(40, 25));
+        jWeeklyStats.setPreferredSize(new java.awt.Dimension(40, 25));
         jWeeklyStats.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireChangeStatTimeEvent(evt);
@@ -413,6 +442,9 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
         });
 
         jMonthlyStats.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/calendar_31.png"))); // NOI18N
+        jMonthlyStats.setMaximumSize(new java.awt.Dimension(40, 25));
+        jMonthlyStats.setMinimumSize(new java.awt.Dimension(40, 25));
+        jMonthlyStats.setPreferredSize(new java.awt.Dimension(40, 25));
         jMonthlyStats.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireChangeStatTimeEvent(evt);
@@ -477,7 +509,7 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 406, Short.MAX_VALUE)
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 433, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
@@ -503,7 +535,7 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
             .addGroup(jPanel10Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jUseBBCodesBox)
-                .addContainerGap(291, Short.MAX_VALUE))
+                .addContainerGap(318, Short.MAX_VALUE))
         );
         jPanel10Layout.setVerticalGroup(
             jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -521,6 +553,10 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
             }
         });
 
+        jStartDate.setTimeEnabled(false);
+
+        jEndDate.setTimeEnabled(false);
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -531,21 +567,24 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
                     .addComponent(jPanel10, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel4)
-                            .addComponent(jLabel5)
-                            .addComponent(jLabel3))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jUsedTribes, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jStatStartDate, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jStatEndDate, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(jWeeklyStats)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel3)
+                                    .addComponent(jLabel5)
+                                    .addComponent(jLabel4))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jMonthlyStats)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 151, Short.MAX_VALUE))
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(jEndDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jStartDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jUsedTribes, javax.swing.GroupLayout.PREFERRED_SIZE, 206, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(jWeeklyStats, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jMonthlyStats, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 142, Short.MAX_VALUE))
                     .addComponent(jButton8, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addContainerGap())
         );
@@ -559,17 +598,17 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
                             .addComponent(jUsedTribes, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel3))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel4)
-                            .addComponent(jStatStartDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel5)
-                            .addComponent(jStatEndDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jStartDate, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jEndDate, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jWeeklyStats)
-                            .addComponent(jMonthlyStats)))
+                            .addComponent(jMonthlyStats, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jWeeklyStats, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel10, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -844,7 +883,7 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jTaskPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 659, Short.MAX_VALUE)
+                    .addComponent(jTaskPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 661, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -1057,8 +1096,8 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
     }//GEN-LAST:event_fireCreateStatisticsEvent
 
     private void fireGenerateStatsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireGenerateStatsEvent
-        long start = ((Date) jStatStartDate.getValue()).getTime();
-        long end = ((Date) jStatEndDate.getValue()).getTime();
+        long start = jStartDate.getSelectedDate().getTime();
+        long end = jEndDate.getSelectedDate().getTime();
         List<Tribe> usedTribes = new LinkedList<Tribe>();
         if (jUsedTribes.getSelectedIndex() == 0 || jUsedTribes.getSelectedIndex() == 2) {
             //use all (if index == 2 select top 10 later
@@ -1097,15 +1136,15 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
         if (evt.getSource() == jWeeklyStats) {
             //remove one week from end date
             long oneWeek = 1000l * 60l * 60l * 24l * 7l;
-            Date end = (Date) jStatEndDate.getValue();
+            Date end = (Date) jEndDate.getSelectedDate();
             long start = end.getTime() - oneWeek;
-            jStatStartDate.setValue(new Date(start));
+            jStartDate.setDate(new Date(start));
         } else {
             //remove one month from end date
             long oneMonth = 1000l * 60l * 60l * 24l * 31l;
-            Date end = (Date) jStatEndDate.getValue();
+            Date end = (Date) jEndDate.getSelectedDate();
             long start = end.getTime() - oneMonth;
-            jStatStartDate.setValue(new Date(start));
+            jEndDate.setDate(new Date(start));
         }
 
     }//GEN-LAST:event_fireChangeStatTimeEvent
@@ -1124,6 +1163,7 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton8;
     private javax.swing.JPanel jChartPanel;
+    private de.tor.tribes.ui.components.DateTimeField jEndDate;
     private javax.swing.JButton jExportToClipboardButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -1161,8 +1201,7 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
     private javax.swing.JCheckBox jShowRankDef;
     private javax.swing.JCheckBox jShowRankOff;
     private javax.swing.JCheckBox jShowVillages;
-    private javax.swing.JSpinner jStatEndDate;
-    private javax.swing.JSpinner jStatStartDate;
+    private de.tor.tribes.ui.components.DateTimeField jStartDate;
     private javax.swing.JFrame jStatsCreateFrame;
     private javax.swing.JList jStatsTribeList;
     private javax.swing.JTabbedPane jTabbedPane1;

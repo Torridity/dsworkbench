@@ -95,6 +95,9 @@ public class Attack implements Serializable {
     }
 
     public void setArriveTime(Date arriveTime) {
+        if (arriveTime == null) {
+            return;
+        }
         if (ServerSettings.getSingleton().isMillisArrival()) {
             this.arriveTime = arriveTime;
         } else {

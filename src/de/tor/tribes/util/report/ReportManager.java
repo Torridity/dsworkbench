@@ -86,21 +86,21 @@ public class ReportManager extends FilterableManager<FightReport, ReportFilterIn
                 }
                 logger.debug("Reports successfully loaded");
                 forceUpdate(DEFAULT_SET);
-                ObjectContainer db = Db4oEmbedded.openFile(Db4oEmbedded.newConfiguration(), "database.dbo");
+                /* ObjectContainer db = Db4oEmbedded.openFile(Db4oEmbedded.newConfiguration(), "database.dbo");
                 try {
-                    Enumeration<String> sets = reportSets.keys();
-                    long s = System.currentTimeMillis();
-                    while (sets.hasMoreElements()) {
-                        ReportSet set = reportSets.get(sets.nextElement());
-                        for (FightReport rep : set.getReports()) {
-                            rep.setWon((Math.random() > .5));
-                        }
-
-                        db.store(set);
-                    }
-                } finally {
-                    db.close();
+                Enumeration<String> sets = reportSets.keys();
+                long s = System.currentTimeMillis();
+                while (sets.hasMoreElements()) {
+                ReportSet set = reportSets.get(sets.nextElement());
+                for (FightReport rep : set.getReports()) {
+                rep.setWon((Math.random() > .5));
                 }
+
+                db.store(set);
+                }
+                } finally {
+                db.close();
+                }*/
             } catch (Exception e) {
                 logger.error("Failed to load Reports", e);
             }
@@ -178,14 +178,17 @@ public class ReportManager extends FilterableManager<FightReport, ReportFilterIn
             logger.debug("Writing reports to '" + pFile + "'");
         }
         try {
-            FileWriter w = new FileWriter(pFile);
-            w.write("<reportSets>\n");
+            StringBuffer b = new StringBuffer();
+            b.append("<reportSets>\n");
             Enumeration<String> setKeys = reportSets.keys();
             while (setKeys.hasMoreElements()) {
                 ReportSet set = reportSets.get(setKeys.nextElement());
-                w.write(set.toXml());
+                b.append(set.toXml());
             }
-            w.write("</reportSets>");
+            b.append("</reportSets>");
+            //writing data to file
+            FileWriter w = new FileWriter(pFile);
+            w.write(b.toString());
             w.flush();
             w.close();
             logger.debug("Reports successfully saved");

@@ -170,12 +170,15 @@ public class TagManager {
         }
         try {
             logger.debug("Writing tags to '" + pFile + "'");
-            FileWriter w = new FileWriter(pFile);
-            w.write("<tags>\n");
+
+            StringBuffer b = new StringBuffer();
+            b.append("<tags>\n");
             for (Tag t : mTags) {
-                w.write(t.toXml());
+                b.append(t.toXml());
             }
-            w.write("</tags>\n");
+            b.append("</tags>\n");
+            FileWriter w = new FileWriter(pFile);
+            w.write(b.toString());
             w.flush();
             w.close();
             logger.debug("Tags successfully saved");

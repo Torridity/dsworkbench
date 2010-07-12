@@ -180,12 +180,16 @@ public class ChurchManager {
             logger.debug("Writing churches to '" + pFile + "'");
         }
         try {
-            FileWriter w = new FileWriter(pFile);
-            w.write("<churches>\n");
+            StringBuffer b = new StringBuffer();
+
+            b.append("<churches>\n");
             for (Church c : churches) {
-                w.write(c.toXml() + "\n");
+                b.append(c.toXml() + "\n");
             }
-            w.write("</churches>");
+            b.append("</churches>");
+            //write data to file
+            FileWriter w = new FileWriter(pFile);
+            w.write(b.toString());
             w.flush();
             w.close();
             logger.debug("Churches successfully saved");
@@ -246,7 +250,7 @@ public class ChurchManager {
                 }
             } catch (Exception ignore) {
             }
-            
+
             if (m != null) {
                 //set range to marker color
                 c.setRangeColor(m.getMarkerColor());
@@ -259,10 +263,10 @@ public class ChurchManager {
                             DEFAULT = Color.RED;
                         }
                         try {
-                                Tribe tr = pVillage.getTribe();
-                                if (tr != null && tr.equals(DSWorkbenchMainFrame.getSingleton().getCurrentUser())) {
-                                    DEFAULT = Color.YELLOW;
-                                }
+                            Tribe tr = pVillage.getTribe();
+                            if (tr != null && tr.equals(DSWorkbenchMainFrame.getSingleton().getCurrentUser())) {
+                                DEFAULT = Color.YELLOW;
+                            }
                         } catch (Exception ignore) {
                         }
                     } catch (Exception inner) {

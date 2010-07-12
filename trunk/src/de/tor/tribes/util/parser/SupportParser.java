@@ -37,7 +37,7 @@ public class SupportParser {
         while (lineTok.hasMoreElements()) {
             //parse single line for village
             String line = lineTok.nextToken();
-            if (line.indexOf("eigene") > 0) {
+            if (line.indexOf(ParserVariableManager.getSingleton().getProperty("troops.own")) > 0) {
                 //might be troop hosting village
                 //tokenize line by tab and space
                 Village before = v;
@@ -51,7 +51,7 @@ public class SupportParser {
                 }
 
                 if (v != null) {
-                    Hashtable<UnitHolder, Integer> own = parseUnits(line.substring(line.indexOf("eigene")).trim());
+                    Hashtable<UnitHolder, Integer> own = parseUnits(line.substring(line.indexOf(ParserVariableManager.getSingleton().getProperty("troops.own"))).trim());
                     if (own != null) {
                         //only add valid troop information
                         VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(v);
@@ -164,7 +164,7 @@ public class SupportParser {
     }
 
     private static Hashtable<UnitHolder, Integer> parseUnits(String pLine) {
-        String line = pLine.replaceAll("eigene", "").replaceAll("Befehle", "").replaceAll("Truppen", "");
+        String line = pLine.replaceAll(ParserVariableManager.getSingleton().getProperty("troops.own"), "").replaceAll(ParserVariableManager.getSingleton().getProperty("troops.commands"), "").replaceAll(ParserVariableManager.getSingleton().getProperty("troops"), "");
         StringTokenizer t = new StringTokenizer(line, " \t");
         int uCount = DataHolder.getSingleton().getUnits().size();
         Hashtable<UnitHolder, Integer> units = new Hashtable<UnitHolder, Integer>();

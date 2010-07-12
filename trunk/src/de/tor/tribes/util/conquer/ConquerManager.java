@@ -96,37 +96,6 @@ public class ConquerManager extends FilterableManager<Conquer, ConquerFilterInte
         }
     }
 
-    /* public void setFilters(List<ConquerFilterInterface> pFilters) {
-    filters.clear();
-    filters = new LinkedList<ConquerFilterInterface>(pFilters);
-    updateFilters();
-    }*/
-
-    /* public void updateFilters() {
-    Conquer[] aConquers = conquers.toArray(new Conquer[]{});
-    List<Conquer> filtered = new LinkedList<Conquer>();
-    for (Conquer c : aConquers) {
-    if (filters == null || filters.isEmpty()) {
-    //no filters defined
-    filtered.add(c);
-    } else {
-    //use all filters
-    boolean valid = true;
-    for (ConquerFilterInterface f : filters) {
-    if (!f.isValid(c)) {
-    //conquer is invalid for the current filter
-    valid = false;
-    break;
-    }
-    }
-    if (valid) {
-    //only add if conquer is valid for all filters
-    filtered.add(c);
-    }
-    }
-    }
-    filteredList = filtered.toArray(new Conquer[]{});
-    }*/
     public void loadConquersFromFile(String pFile) {
         conquers.clear();
         //filteredList = new Conquer[]{};
@@ -218,20 +187,22 @@ public class ConquerManager extends FilterableManager<Conquer, ConquerFilterInte
         }
 
         try {
-            FileWriter w = new FileWriter(pFile);
-            w.write("<conquers>\n");
-            w.write("<lastUpdate>" + getLastUpdate() + "</lastUpdate>\n");
+
+            StringBuffer b = new StringBuffer();
+            b.append("<conquers>\n");
+            b.append("<lastUpdate>" + getLastUpdate() + "</lastUpdate>\n");
             Conquer[] conquerA = conquers.toArray(new Conquer[]{});
             for (Conquer c : conquerA) {
                 if (c != null) {
                     String xml = c.toXml();
                     if (xml != null) {
-                        w.write(xml + "\n");
-                        w.flush();
+                        b.append(xml + "\n");
                     }
                 }
             }
-            w.write("</conquers>");
+            b.append("</conquers>");
+            FileWriter w = new FileWriter(pFile);
+            w.write(b.toString());
             w.flush();
             w.close();
             logger.debug("Conquers successfully saved");

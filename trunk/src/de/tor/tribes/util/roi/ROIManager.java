@@ -85,14 +85,17 @@ public class ROIManager {
             logger.debug("Writing ROIs to '" + pFile + "'");
         }
         try {
-            FileWriter w = new FileWriter(pFile);
-            w.write("<rois>\n");
+
+            StringBuffer b = new StringBuffer();
+            b.append("<rois>\n");
 
             for (String r : rois) {
                 String text = URLEncoder.encode(r, "UTF-8");
-                w.write("<roi>" + text + "</roi>\n");
+                b.append("<roi>" + text + "</roi>\n");
             }
-            w.write("</rois>");
+            b.append("</rois>");
+            FileWriter w = new FileWriter(pFile);
+            w.write(b.toString());
             w.flush();
             w.close();
             logger.debug("ROIs successfully saved");

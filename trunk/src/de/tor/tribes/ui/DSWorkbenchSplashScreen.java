@@ -12,7 +12,11 @@ import de.tor.tribes.io.DataHolderListener;
 import de.tor.tribes.php.DatabaseInterface;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.JOptionPaneHelper;
+import java.awt.AWTEvent;
+import java.awt.EventQueue;
 import java.awt.Font;
+import java.awt.Toolkit;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
@@ -27,6 +31,7 @@ import org.apache.log4j.RollingFileAppender;
 import javax.swing.*;
 
 /**
+ * @TODO (DIFF) "Close everything by ESC" added
  * @author  Jejkal
  */
 public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataHolderListener {
@@ -347,6 +352,34 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
         //System.setProperty("sun.java2d.d3d", "true");
         //  System.setProperty("sun.java2d.opengl", "true");
 
+        //add global ESC listener
+        Toolkit.getDefaultToolkit().getSystemEventQueue().push(
+                new EventQueue() {
+
+                    protected void dispatchEvent(AWTEvent event) {
+                        if (event instanceof KeyEvent) {
+                            KeyEvent keyEvent = (KeyEvent) event;
+
+                            if ((keyEvent.getID() == KeyEvent.KEY_PRESSED) &&
+                                    ((keyEvent).getKeyCode() == KeyEvent.VK_ESCAPE)) {
+                                try {
+                                    JFrame source = (JFrame) keyEvent.getSource();
+                                    if (source != DSWorkbenchMainFrame.getSingleton()) {
+                                        source.setVisible(false);
+                                    }
+                                } catch (Exception e) {
+                                    try {
+                                        JDialog source = (JDialog) keyEvent.getSource();
+                                        source.setVisible(false);
+                                    } catch (Exception inner) {
+                                    }
+                                }
+                            }
+
+                        }
+                        super.dispatchEvent(event);
+                    }
+                });
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {

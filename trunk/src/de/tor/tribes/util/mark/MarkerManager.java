@@ -173,14 +173,17 @@ public class MarkerManager {
             logger.debug("Writing markers to '" + pFile + "'");
         }
         try {
-            FileWriter w = new FileWriter(pFile);
-            w.write("<markerSets>\n");
+
+            StringBuffer b = new StringBuffer();
+            b.append("<markerSets>\n");
             Enumeration<String> setKeys = markers.keys();
             while (setKeys.hasMoreElements()) {
                 MarkerSet set = markers.get(setKeys.nextElement());
-                w.write(set.toXml());
+                b.append(set.toXml());
             }
-            w.write("</markerSets>");
+            b.append("</markerSets>");
+            FileWriter w = new FileWriter(pFile);
+            w.write(b.toString());
             w.flush();
             w.close();
             logger.debug("Markers successfully saved");

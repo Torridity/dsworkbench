@@ -251,13 +251,13 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame {
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jLabel12)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 116, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton1)
                 .addGap(26, 26, 26)
-                .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jLabel11)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 126, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -490,7 +490,7 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame {
         jLabel7.setEnabled(false);
 
         jMinTransportAmount.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jMinTransportAmount.setText("1000");
+        jMinTransportAmount.setText("10000");
         jMinTransportAmount.setMaximumSize(new java.awt.Dimension(40, 20));
         jMinTransportAmount.setMinimumSize(new java.awt.Dimension(40, 20));
         jMinTransportAmount.setPreferredSize(new java.awt.Dimension(40, 20));
@@ -645,15 +645,17 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame {
                 currentDir = VillageMerchantInfo.Direction.INCOMING;
             }
 
+
             int changesToBoth = 0;
             int dirChanges = 0;
             for (VillageMerchantInfo existingInfo : merchantInfos) {
                 VillageMerchantInfo toRemove = null;
                 for (VillageMerchantInfo newInfo : infos) {
+                    newInfo.setDirection(currentDir);
                     if (existingInfo.getVillage().equals(newInfo.getVillage())) {
                         //info exists
-                        if (existingInfo.getDirection() == VillageMerchantInfo.Direction.INCOMING && currentDir == VillageMerchantInfo.Direction.OUTGOING ||
-                                existingInfo.getDirection() == VillageMerchantInfo.Direction.OUTGOING && currentDir == VillageMerchantInfo.Direction.INCOMING) {
+                        if (existingInfo.getDirection() == VillageMerchantInfo.Direction.INCOMING && newInfo.getDirection() == VillageMerchantInfo.Direction.OUTGOING ||
+                                existingInfo.getDirection() == VillageMerchantInfo.Direction.OUTGOING && newInfo.getDirection() == VillageMerchantInfo.Direction.INCOMING) {
                             //village acceptes only one and gets the other -> change to both
                             existingInfo.setDirection(VillageMerchantInfo.Direction.BOTH);
                             changesToBoth++;
@@ -662,11 +664,8 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame {
                             existingInfo.setDirection(currentDir);
                             dirChanges++;
                         }
-
                         toRemove = newInfo;
                         break;
-                    } else {
-                        newInfo.setDirection(currentDir);
                     }
                 }
 
@@ -769,12 +768,18 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame {
 
         ArrayList<Village> incomingOnly = new ArrayList<Village>();
         ArrayList<Village> outgoingOnly = new ArrayList<Village>();
-
+        int dualDirectionVillages = 0;
+        if (merchantInfos.size() < 2) {
+            JOptionPaneHelper.showInformationBox(this, "Es müssen mindestens 2 Dörfer ausgewählt sein.", "Information");
+            return;
+        }
         for (VillageMerchantInfo info : merchantInfos) {
             if (info.getDirection() == VillageMerchantInfo.Direction.INCOMING) {
                 incomingOnly.add(info.getVillage());
             } else if (info.getDirection() == VillageMerchantInfo.Direction.OUTGOING) {
                 outgoingOnly.add(info.getVillage());
+            } else {
+                dualDirectionVillages++;
             }
         }
 
@@ -811,13 +816,18 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame {
         //   Collections.copy(copy, merchantInfos);
         //  System.out.println(merchantInfos);
 
-        if (incomingOnly.isEmpty()) {
+
+        if (incomingOnly.isEmpty() && dualDirectionVillages < 1) {
             JOptionPaneHelper.showInformationBox(this, "Keine Rohstoffempfänger angegeben", "Fehler");
             return;
-        } else if (outgoingOnly.isEmpty()) {
+        } else if (outgoingOnly.isEmpty() && dualDirectionVillages < 1) {
             JOptionPaneHelper.showInformationBox(this, "Keine Rohstofflieferanten angegeben", "Fehler");
             return;
+        } else if (incomingOnly.isEmpty() && outgoingOnly.isEmpty() && dualDirectionVillages < 2) {
+            JOptionPaneHelper.showInformationBox(this, "Es müssen mindestens 2 Dörfer ausgewählt sein.", "Information");
+            return;
         }
+
         List<List<MerchantSource>> results = new MerchantDistributor().calculate(copy, incomingOnly, outgoingOnly, targetRes, remainRes);
         buildResults(copy, results, targetRes);
 

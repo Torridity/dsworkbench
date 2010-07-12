@@ -32,7 +32,7 @@ public class DSCalculator {
         if (ServerSettings.getSingleton().isMillisArrival()) {
             return calculateDistance(pSource, pTarget) * pMinPerField * 60.0;
         } else {
-            return Math.floor(calculateDistance(pSource, pTarget) * pMinPerField * 60.0);
+            return Math.round(calculateDistance(pSource, pTarget) * pMinPerField * 60.0);
         }
     }
 

@@ -258,7 +258,7 @@ public class TribeStatsElement {
                 startIndex = cnt;
             }
             if (timestamp > pEnd && endIndex == -1) {
-                endIndex = cnt - 1;
+                endIndex = cnt;
             }
             if (startIndex > -1 && endIndex > -1) {
                 //have both indices

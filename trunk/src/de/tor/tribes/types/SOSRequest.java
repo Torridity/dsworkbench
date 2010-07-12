@@ -203,6 +203,8 @@ public class SOSRequest {
 
         private Village mSource = null;
         private long lArriveTime = 0;
+        private boolean possibleFake = false;
+        private boolean possibleSnob = false;
 
         public TimedAttack(Village pSource, Date pArriveTime) {
             mSource = pSource;
@@ -235,6 +237,34 @@ public class SOSRequest {
          */
         public void setlArriveTime(long lArriveTime) {
             this.lArriveTime = lArriveTime;
+        }
+
+        /**
+         * @return the possibleFake
+         */
+        public boolean isPossibleFake() {
+            return possibleFake;
+        }
+
+        /**
+         * @param possibleFake the possibleFake to set
+         */
+        public void setPossibleFake(boolean possibleFake) {
+            this.possibleFake = possibleFake;
+        }
+
+        /**
+         * @return the possibleSnob
+         */
+        public boolean isPossibleSnob() {
+            return possibleSnob;
+        }
+
+        /**
+         * @param possibleSnob the possibleSnob to set
+         */
+        public void setPossibleSnob(boolean possibleSnob) {
+            this.possibleSnob = possibleSnob;
         }
     }
 }

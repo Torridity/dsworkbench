@@ -90,16 +90,19 @@ public class NoteManager {
             logger.debug("Writing notes to '" + pFile + "'");
         }
         try {
-            FileWriter w = new FileWriter(pFile);
-            w.write("<notes>\n");
+
+            StringBuffer b = new StringBuffer();
+            b.append("<notes>\n");
             Note[] aNotes = notes.toArray(new Note[]{});
             for (Note n : aNotes) {
                 String xml = n.toXml();
                 if (xml != null) {
-                    w.write(xml + "\n");
+                    b.append(xml + "\n");
                 }
             }
-            w.write("</notes>");
+            b.append("</notes>");
+            FileWriter w = new FileWriter(pFile);
+            w.write(b.toString());
             w.flush();
             w.close();
             logger.debug("Notes successfully saved");

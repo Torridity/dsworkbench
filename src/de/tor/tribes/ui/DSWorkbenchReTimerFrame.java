@@ -990,6 +990,19 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
                 } else {
                     arriveLine = text.substring(text.indexOf(ParserVariableManager.getSingleton().getProperty("sos.arrive.time")));
                 }
+              
+                /*
+                Befehl
+                Herkunft	Spieler:	Rattenfutter
+                Dorf:	#2.3# (440|899) K84
+                Ziel	Spieler:	Rattenfutter
+                Dorf:	Zweitermond (436|892) K84
+                Dauer:	4:01:52
+                Ankunft:	15.07.10 23:49:34:507
+                Ankunft in:	4:01:50
+                » abbrechen
+                » Versammlungsplatz
+                 */
                 StringTokenizer tokenizer = new StringTokenizer(arriveLine, " \t");
                 tokenizer.nextToken();
                 String date = tokenizer.nextToken();
@@ -1000,6 +1013,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
                 arrive = selection;
             }
             arriveDate = f.parse(arrive);
+           
             jArriveField.setText(f.format(arriveDate));
             jParserInfo.setBackground(Color.GREEN);
             jParserInfo.setText("Angriffsbefehl erfolgreich gelesen.");
@@ -1079,18 +1093,18 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         }
         SimpleDateFormat f = null;
 
-        if (ServerSettings.getSingleton().isMillisArrival()) {
-            f = new SimpleDateFormat("dd.MM.yy HH:mm:ss:SSS");
+        if (!ServerSettings.getSingleton().isMillisArrival()) {
+            f = new SimpleDateFormat(ParserVariableManager.getSingleton().getProperty("sos.date.format"));
         } else {
-            f = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
+            f = new SimpleDateFormat(ParserVariableManager.getSingleton().getProperty("sos.date.format.ms"));
         }
         try {
             Date arrive = f.parse(jArriveField.getText());
             Village source = VillageParser.parse(jSourceVillage.getText()).get(0);
             Village target = VillageParser.parse(jTargetVillage.getText()).get(0);
-            double dist = DSCalculator.calculateDistance(source, target);
-            long dur = (long) Math.floor(dist * unit.getSpeed() * 60000.0);
-            long send = arrive.getTime() - dur;
+            // double dist = DSCalculator.calculateDistance(source, target);
+            double dur = DSCalculator.calculateMoveTimeInSeconds(source, target, unit.getSpeed()) * 1000.0;
+            long send = arrive.getTime() - (long) dur;
             double ret = (double) arrive.getTime() + (double) dur;
             ret /= 1000;
             ret = Math.round(ret + .5);

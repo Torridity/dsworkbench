@@ -81,7 +81,6 @@ public class IGMSender {
                 data = new byte[1024];
             }
 
-            System.out.println(returnString);
             return (returnString.startsWith("Nachricht erfolgreich"));
         } catch (Exception e) {
             e.printStackTrace();

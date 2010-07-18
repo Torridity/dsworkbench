@@ -70,7 +70,7 @@ public class VillageRenderPanel extends javax.swing.JPanel {
     }
 
     private void fireClickEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireClickEvent
-        System.out.println("CLICK");
+       
     }//GEN-LAST:event_fireClickEvent
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

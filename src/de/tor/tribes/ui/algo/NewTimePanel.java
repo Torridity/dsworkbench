@@ -59,19 +59,15 @@ public class NewTimePanel extends javax.swing.JPanel {
                     Point c = new Point((int) (getSize().getWidth() / 2), (int) (getSize().getHeight() / 2));
                     Point p = e.getPoint();
                     double dist = c.distance(p);
-                    System.out.println(c);
-                    System.out.println(p);
-                    System.out.println(dist);
+                   
                     double alpha = Math.acos((p.x - c.x) / dist);
                     double adeg = Math.toDegrees(alpha);
-                    System.out.println("a: " + adeg);
                     alpha = (alpha - Math.PI / 2d) / (Math.PI / 180d * -1);
                     double hours = alpha / (360 / 12);
 
                     if (adeg > 0 && adeg <= 90) {
                         hours = 6 - hours;
                     } else if (adeg > 90 && adeg <= 180) {
-                        System.out.println("here " + hours);
                         hours = 6 + Math.abs(hours);
                     } else if (adeg > 180 && adeg <= 270) {
                         
@@ -86,7 +82,6 @@ public class NewTimePanel extends javax.swing.JPanel {
                     ///alpha = -alpha * Math.PI / 180d + Math.PI / 2d;
                     //alpha = -alpha + Math.toRadians(90);
 
-                   System.out.println("H: " + hours);
                 } else {
                 }
             }

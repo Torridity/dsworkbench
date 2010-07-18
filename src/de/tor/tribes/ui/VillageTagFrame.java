@@ -312,16 +312,7 @@ private void fireVillageSelectionChangedEvent(java.awt.event.ItemEvent evt) {//G
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
-        /* java.awt.EventQueue.invokeLater(new Runnable() {
-
-        public void run() {
-        new VillageTagFrame().setVisible(true);
-        }
-        });*/
-
-        System.out.println(Math.round(4.496529606));
-    }
+   
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;

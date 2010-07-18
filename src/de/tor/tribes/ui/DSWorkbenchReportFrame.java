@@ -1793,7 +1793,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
 
     @Override
     public void fireVillagesDraggedEvent(List<Village> pVillages, Point pDropLocation) {
-        System.out.println(pVillages);
+        
     }
 
     static class TribeStatResult {

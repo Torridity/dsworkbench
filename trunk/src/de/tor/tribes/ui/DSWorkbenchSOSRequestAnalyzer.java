@@ -627,7 +627,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
             haveArrive = true;
             StringBuffer b = new StringBuffer();
 
-            b.append(ParserVariableManager.getSingleton().getProperty("de.sos.source") + " " + source.toString() + "\n");
+            b.append(ParserVariableManager.getSingleton().getProperty("sos.source") + " " + source.toString() + "\n");
             b.append("Ziel: " + target.toString() + "\n");
             SimpleDateFormat f = null;
             if (!ServerSettings.getSingleton().isMillisArrival()) {
@@ -635,7 +635,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame {
             } else {
                 f = new SimpleDateFormat(ParserVariableManager.getSingleton().getProperty("sos.date.format.ms"));
             }
-            b.append(ParserVariableManager.getSingleton().getProperty("de.attack.arrive.time") + " " + f.format(arrive) + "\n");
+            b.append(ParserVariableManager.getSingleton().getProperty("attack.arrive.time") + " " + f.format(arrive) + "\n");
             DSWorkbenchReTimerFrame.getSingleton().setCustomAttack(b.toString());
             if (!DSWorkbenchReTimerFrame.getSingleton().isVisible()) {
                 DSWorkbenchReTimerFrame.getSingleton().setVisible(true);

@@ -72,26 +72,7 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame {
 
     DSWorkbenchStatsFrame() {
         initComponents();
-        addKeyListener(new KeyListener() {
-
-            @Override
-            public void keyTyped(KeyEvent e) {
-                System.out.println("TY " + e.getKeyCode());
-            }
-
-            @Override
-            public void keyPressed(KeyEvent e) {
-                System.out.println("KEY " + e.getKeyCode());
-            }
-
-            @Override
-            public void keyReleased(KeyEvent e) {
-                System.out.println("RE " + e.getKeyCode());
-                if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-                    setVisible(false);
-                }
-            }
-        });
+       
         try {
             jAlwaysOnTopBox.setSelected(Boolean.parseBoolean(GlobalOptions.getProperty("stats.frame.alwaysOnTop")));
             setAlwaysOnTop(jAlwaysOnTopBox.isSelected());

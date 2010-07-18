@@ -173,23 +173,18 @@ public class RoundShape implements Shape {
                 switch (type) {
                     case PathIterator.SEG_CLOSE:
                         res.closePath();
-                        System.out.println("SEG_CLOSE");
                         break;
                     case PathIterator.SEG_CUBICTO:
                         res.curveTo(x1, y1, x2, y2, x3, y3);
-                        System.out.println("SEG_CUBICTO");
                         break;
                     case PathIterator.SEG_LINETO:
                         res.lineTo(x1, y1);
-                        System.out.println("SEG_LINETO");
                         break;
                     case PathIterator.SEG_MOVETO:
                         res.moveTo(x1, y1);
-                        System.out.println("SEG_MOVETO");
                         break;
                     case PathIterator.SEG_QUADTO:
                         res.quadTo(x1, y1, x2, y2);
-                        System.out.println("SEG_QUADTO");
                         break;
                 }
                 pIter.next();

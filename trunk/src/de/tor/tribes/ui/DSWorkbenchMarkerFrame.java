@@ -605,7 +605,6 @@ private void fireCloseAddRenameDialogEvent(java.awt.event.MouseEvent evt) {//GEN
 
     @Override
     public void ghostDropped(GhostDropEvent e) {
-        System.out.println("DROPPED " + e.getAction());
 
     }
 }

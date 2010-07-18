@@ -438,7 +438,6 @@ public class TimePicker extends Canvas
         _$3631 = false;
         if(mouseevent.getY() < _$3599 - _$3593.getHeight() / 2 && _$3565 > _$3557)
         {
-            System.out.println("HERE");
             _$3565--;
             _$3567--;
             if(s1 != -1)

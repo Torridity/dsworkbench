@@ -340,7 +340,6 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
             logger.fatal("Fatal error while running DS Workbench", th);
             JOptionPaneHelper.showErrorBox(self, "Ein schwerwiegender Fehler ist aufgetreten.\nMöglicherweise ist deine DS Workbench Installation defekt. Bitte kontaktiere den Entwickler.", "Fehler");
             return false;
-
         }
     }
 
@@ -384,8 +383,6 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
         }
-
-
 
         Font f = new Font("SansSerif", Font.PLAIN, 11);
         UIManager.put("Label.font", f);

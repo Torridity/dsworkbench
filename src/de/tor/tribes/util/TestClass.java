@@ -23,12 +23,18 @@ public class TestClass {
     public static void main(String[] args) throws Exception {
 
 
-        Runtime.getRuntime().exec(new String[]{"C:/Programme/Internet Explorer/iexplore.exe", "http://www.heise.de"});
-      
+        //Runtime.getRuntime().exec(new String[]{"C:/Programme/Internet Explorer/iexplore.exe", "http://www.heise.de"});
 
+        File dest = new File("C:/Users/Torridity/die stämme/dsworkbench/./servers/de25/settings.xml");
+        System.out.println(new File("settings_tmp.xml").exists());
+        System.out.println(dest.getCanonicalPath());
+        if (new File("settings_tmp.xml").renameTo(dest)) {
+            System.out.println("SUCCESS");
+        } else {
+            System.out.println("FAIL");
+        }
 
-
-         if(true){
+        if (true) {
             return;
         }
 

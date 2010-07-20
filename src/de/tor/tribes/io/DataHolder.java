@@ -170,7 +170,9 @@ public class DataHolder {
                     URL file = new URL(sURL + "/interface.php?func=get_config");
                     logger.debug("Try downloading server settings from " + sURL + "/interface.php?func=get_config");
                     downloadDataFile(file, "settings_tmp.xml");
-                    new File("settings_tmp.xml").renameTo(settings);
+                    //new File("settings_tmp.xml").renameTo(settings);
+
+                    copyFile(new File("settings_tmp.xml"), settings);
 
                     if (!ServerSettings.getSingleton().loadSettings(GlobalOptions.getSelectedServer())) {
                         throw new Exception("Failed to load server settings");
@@ -670,8 +672,8 @@ public class DataHolder {
 
             file = new URL(sURL + "/interface.php?func=get_config");
             downloadDataFile(file, "settings_tmp.xml");
-            new File("settings_tmp.xml").renameTo(target);
-
+            //new File("settings_tmp.xml").renameTo(target);
+            copyFile(new File("settings_tmp.xml"), target);
             if (!serverSupported()) {
                 return false;
             }
@@ -778,7 +780,8 @@ public class DataHolder {
                 if (target.exists()) {
                     target.delete();
                 }
-                new File("kill_att.tmp").renameTo(target);
+                // new File("kill_att.tmp").renameTo(target);
+                copyFile(new File("kill_att.tmp"), target);
                 logger.debug(" - Finished downloading conquers (off)");
                 // </editor-fold>
 
@@ -791,7 +794,8 @@ public class DataHolder {
                 if (target.exists()) {
                     target.delete();
                 }
-                new File("kill_def.tmp").renameTo(target);
+                // new File("kill_def.tmp").renameTo(target);
+                copyFile(new File("kill_def.tmp"), target);
                 logger.debug(" - Finished downloading conquers (def)");
                 // </editor-fold>
 
@@ -810,7 +814,8 @@ public class DataHolder {
                 file = new URL(sURL + "/interface.php?func=get_unit_info");
                 downloadDataFile(file, "units_tmp.xml");
 
-                new File("units_tmp.xml").renameTo(target);
+                //  new File("units_tmp.xml").renameTo(target);
+                copyFile(new File("units_tmp.xml"), target);
             }
 
             //download building information, but only once
@@ -820,7 +825,8 @@ public class DataHolder {
                 fireDataHolderEvents("Lade Information über Gebäude");
                 file = new URL(sURL + "/interface.php?func=get_building_info");
                 downloadDataFile(file, "buildings_tmp.xml");
-                new File("buildings_tmp.xml").renameTo(target);
+                //  new File("buildings_tmp.xml").renameTo(target);
+                copyFile(new File("buildings_tmp.xml"), target);
             }
             //</editor-fold>
 
@@ -886,8 +892,8 @@ public class DataHolder {
 
             file = new URL(sURL + "/interface.php?func=get_config");
             downloadDataFile(file, "settings_tmp.xml");
-            new File("settings_tmp.xml").renameTo(target);
-
+            //new File("settings_tmp.xml").renameTo(target);
+            copyFile(new File("settings_tmp.xml"), target);
             if (!serverSupported()) {
                 return false;
             }
@@ -985,7 +991,8 @@ public class DataHolder {
             if (target.exists()) {
                 target.delete();
             }
-            new File("kill_att.tmp").renameTo(target);
+            //  new File("kill_att.tmp").renameTo(target);
+            copyFile(new File("kill_att.tmp"), target);
             logger.debug(" - Finished downloading conquers (off)");
             // </editor-fold>
 
@@ -998,7 +1005,8 @@ public class DataHolder {
             if (target.exists()) {
                 target.delete();
             }
-            new File("kill_def.tmp").renameTo(target);
+            //   new File("kill_def.tmp").renameTo(target);
+            copyFile(new File("kill_def.tmp"), target);
             logger.debug(" - Finished downloading conquers (def)");
             // </editor-fold>
 
@@ -1012,7 +1020,8 @@ public class DataHolder {
                 file = new URL(sURL + "/interface.php?func=get_unit_info");
                 downloadDataFile(file, "units_tmp.xml");
 
-                new File("units_tmp.xml").renameTo(target);
+                //new File("units_tmp.xml").renameTo(target);
+                copyFile(new File("units_tmp.xml"), target);
             }
 
             //download building information, but only once
@@ -1022,7 +1031,8 @@ public class DataHolder {
                 fireDataHolderEvents("Lade Information über Gebäude");
                 file = new URL(sURL + "/interface.php?func=get_building_info");
                 downloadDataFile(file, "buildings_tmp.xml");
-                new File("buildings_tmp.xml").renameTo(target);
+                // new File("buildings_tmp.xml").renameTo(target);
+                copyFile(new File("buildings_tmp.xml"), target);
             }
             //</editor-fold>
 
@@ -1112,6 +1122,9 @@ public class DataHolder {
         tempWriter.flush();
         try {
             isr.close();
+        } catch (Exception e) {
+        }
+        try {
             tempWriter.close();
         } catch (Exception e) {
         }
@@ -1177,6 +1190,37 @@ public class DataHolder {
         logger.error("Failed to load buildings", outer);
         fireDataHolderEvents("Laden der Gebäude fehlgeschlagen");
         }*/
+    }
+
+    public void copyFile(File pSource, File pDestination) {
+        FileInputStream fin = null;
+        FileOutputStream fout = null;
+        try {
+            fin = new FileInputStream(pSource);
+            fout = new FileOutputStream(pDestination);
+            byte[] data = new byte[1024];
+
+            int bytesRead = 0;
+            while (bytesRead >= 0) {
+                bytesRead = fin.read(data);
+                if (bytesRead != -1) {
+                    fout.write(data, 0, bytesRead);
+                }
+
+            }
+            fout.flush();
+        } catch (Exception e) {
+            logger.error("Failed to copy file '" + pSource.getPath() + "' to '" + pDestination.getPath() + "'");
+        } finally {
+            try {
+                fin.close();
+            } catch (Exception ignored) {
+            }
+            try {
+                fout.close();
+            } catch (Exception ignored) {
+            }
+        }
     }
 
     /**Get all villages<BR>

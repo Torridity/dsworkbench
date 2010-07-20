@@ -77,6 +77,8 @@ public class SettingsPanel extends javax.swing.JPanel {
         c.setTimeInMillis(System.currentTimeMillis() + 2 * 60 * 60 * 1000);
         jArriveTime.setDate(c.getTime());
         jTribeTimeFrameBox.setModel(new DefaultComboBoxModel(new Object[]{"Alle"}));
+        jSendTimeFrame.setSound(false);
+        jArriveTimeFrame.setSound(false);
         restoreProperties();
     }
 
@@ -210,8 +212,8 @@ public class SettingsPanel extends javax.swing.JPanel {
         boolean result = true;
 
         if (jSendTimeFramesList.getModel().getSize() == 0) {
-            if (JOptionPaneHelper.showQuestionConfirmBox(this, "Es muss mindestens ein Abschickzeitfenster angegebene werden.\n" +
-                    "Soll der Standardzeitrahmen (8 - 24 Uhr) verwendet werden?", "Fehlendes Zeitfenster", "Nein", "Ja") == JOptionPane.YES_OPTION) {
+            if (JOptionPaneHelper.showQuestionConfirmBox(this, "Es muss mindestens ein Abschickzeitfenster angegebene werden.\n"
+                    + "Soll der Standardzeitrahmen (8 - 24 Uhr) verwendet werden?", "Fehlendes Zeitfenster", "Nein", "Ja") == JOptionPane.YES_OPTION) {
                 TimeSpan span = new TimeSpan(new Point(8, 24));
                 ((DefaultListModel) jSendTimeFramesList.getModel()).addElement(span);
             } else {
@@ -221,8 +223,8 @@ public class SettingsPanel extends javax.swing.JPanel {
 
         Date sendTime = jSendTime.getSelectedDate();
         if (sendTime.getTime() < System.currentTimeMillis()) {
-            if (JOptionPaneHelper.showQuestionConfirmBox(this, "Die Startzeit liegt in der Vergangenheit. Daher könnten Abschickzeitpunkte bestimmt werden,\n" +
-                    "die nicht eingehalten werden können. Trotzdem fortfahren?", "Startzeit in Vergangenheit", "Nein", "Ja") == JOptionPane.YES_OPTION) {
+            if (JOptionPaneHelper.showQuestionConfirmBox(this, "Die Startzeit liegt in der Vergangenheit. Daher könnten Abschickzeitpunkte bestimmt werden,\n"
+                    + "die nicht eingehalten werden können. Trotzdem fortfahren?", "Startzeit in Vergangenheit", "Nein", "Ja") == JOptionPane.YES_OPTION) {
             } else {
                 result = false;
             }
@@ -232,14 +234,14 @@ public class SettingsPanel extends javax.swing.JPanel {
         Date arrive = jArriveTime.getSelectedDate();
         if (sendTime.getTime() >= arrive.getTime()) {
             //check if start is after arrive
-            JOptionPaneHelper.showWarningBox(this, "Die Startzeit ist größer als/identisch mit der Ankunftszeit.\n" +
-                    "Du musst dies korrigieren bevor du fortfahren kannst.", "Startzeit in nach Ankunftszeit");
+            JOptionPaneHelper.showWarningBox(this, "Die Startzeit ist größer als/identisch mit der Ankunftszeit.\n"
+                    + "Du musst dies korrigieren bevor du fortfahren kannst.", "Startzeit in nach Ankunftszeit");
             result = false;
         } else {
             //check difference between start and arrive
             if (Math.abs(sendTime.getTime() - arrive.getTime()) < 30 * 60 * 1000) {
-                if (JOptionPaneHelper.showQuestionConfirmBox(this, "Der Abstand zwischen Start- und Ankunftszeit ist extrem klein (< 30 Minuten).\n" +
-                        "Höchstwahrscheinlich werden keine Ergebnisse gefunden. Trotzdem fortfahren?", "Start- und Endzeit zu dicht beieinander", "Nein", "Ja") == JOptionPane.YES_OPTION) {
+                if (JOptionPaneHelper.showQuestionConfirmBox(this, "Der Abstand zwischen Start- und Ankunftszeit ist extrem klein (< 30 Minuten).\n"
+                        + "Höchstwahrscheinlich werden keine Ergebnisse gefunden. Trotzdem fortfahren?", "Start- und Endzeit zu dicht beieinander", "Nein", "Ja") == JOptionPane.YES_OPTION) {
                 } else {
                     result = false;
                 }
@@ -299,8 +301,8 @@ public class SettingsPanel extends javax.swing.JPanel {
             }
         }
         if (mightBeInNightBonus) {
-            if (JOptionPaneHelper.showQuestionConfirmBox(this, "Die angegebene Ankunftszeit kann unter Umständen im Nachbonus " + nightTime + " liegen.\n" +
-                    "Willst du die Ankunftszeit entsprechend korrigieren?", "Nachtbonus", "Nein", "Ja") == JOptionPane.YES_OPTION) {
+            if (JOptionPaneHelper.showQuestionConfirmBox(this, "Die angegebene Ankunftszeit kann unter Umständen im Nachbonus " + nightTime + " liegen.\n"
+                    + "Willst du die Ankunftszeit entsprechend korrigieren?", "Nachtbonus", "Nein", "Ja") == JOptionPane.YES_OPTION) {
                 //correction requested
                 result = false;
             }
@@ -656,12 +658,12 @@ public class SettingsPanel extends javax.swing.JPanel {
             if (jEveryDayValid.isSelected()) {
                 span = new TimeSpan(new Point(min, max), t);
             } else {
-                span = new TimeSpan( jValidAtDay.getSelectedDate(), new Point(min, max), t);
+                span = new TimeSpan(jValidAtDay.getSelectedDate(), new Point(min, max), t);
             }
             model.addElement(span);
         } else {
-            JOptionPaneHelper.showWarningBox(this, "Das gewählte Zeitfenster überschneidet sich mit dem " + intersection + ". Eintrag.\n" +
-                    "Bitte wähle die Zeitfenster so, dass es zu keinen Überschneidungen kommt.", "Überschneidung");
+            JOptionPaneHelper.showWarningBox(this, "Das gewählte Zeitfenster überschneidet sich mit dem " + intersection + ". Eintrag.\n"
+                    + "Bitte wähle die Zeitfenster so, dass es zu keinen Überschneidungen kommt.", "Überschneidung");
         }
     }//GEN-LAST:event_fireAddNewTimeFrameEvent
 

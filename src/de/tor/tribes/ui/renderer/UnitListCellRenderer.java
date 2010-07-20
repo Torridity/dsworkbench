@@ -51,7 +51,6 @@ public class UnitListCellRenderer extends JLabel implements ListCellRenderer {
             }
         } catch (Exception e) {
             //cast problem
-            e.printStackTrace();
         }
 
         return this;

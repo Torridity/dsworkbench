@@ -44,7 +44,7 @@ public class GroupParser {
             String line = lineTok.nextToken();
             //german and suisse
             if (line.trim().endsWith(ParserVariableManager.getSingleton().getProperty("groups.edit"))) {
-                // System.out.println(line);
+                System.out.println(line);
                 try {
                     //tokenize line by tab
                     StringTokenizer elemTok = new StringTokenizer(line.trim(), "\t");
@@ -61,11 +61,11 @@ public class GroupParser {
                         //group count found, next token must be groups
 
                         groupsToken = elemTok.nextToken().trim();
-                        //   System.out.println(" Groups:" + groupsToken);
+                           System.out.println(" Groups:" + groupsToken);
                     } catch (Exception e) {
                         //group count not found (Google Chrome uses 2 tabs after village)
                         //take next tokes as group count
-                        //    e.printStackTrace();
+                            e.printStackTrace();
                         groupCountToken = elemTok.nextToken().trim();
                         groupsToken = elemTok.nextToken().trim();
                     }

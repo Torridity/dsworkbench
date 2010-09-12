@@ -71,7 +71,9 @@ import java.io.File;
 import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.StringTokenizer;
 import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
@@ -117,7 +119,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
     private File mMapShotFile = null;
     private boolean bMapSHotPlaned = false;
     private MapShotListener mMapShotListener = null;
-    private Hashtable<Village, Rectangle> mVillagePositions = null;
+    private HashMap<Village, Rectangle> mVillagePositions = null;
     private List<Village> exportVillageList = null;
     private Village radarVillage = null;
     private boolean spaceDown = false;
@@ -699,8 +701,8 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                         if ((mouseDownPoint == null) || (location == null)) {
                             break;
                         }
-                        double dx = (double) location.getX() - (double) mouseDownPoint.getX();
-                        double dy = (double) location.getY() - (double) mouseDownPoint.getY();
+                        double dx = location.getX() - mouseDownPoint.getX();
+                        double dy = location.getY() - mouseDownPoint.getY();
                         mouseDownPoint = location;
 
                         double w = GlobalOptions.getSkin().getCurrentFieldWidth();
@@ -1853,13 +1855,13 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
             Point mouse = MouseInfo.getPointerInfo().getLocation();
             mouse.x -= getLocationOnScreen().x;
             mouse.y -= getLocationOnScreen().y;
-            Enumeration<Village> villages = mVillagePositions.keys();
-            while (villages.hasMoreElements()) {
-                Village current = villages.nextElement();
+            Iterator<Village> villages = mVillagePositions.keySet().iterator();
+
+            while (villages.hasNext()) {
+                Village current = villages.next();
                 if (mVillagePositions.get(current).contains(mouse.x, mouse.y)) {
                     return current;
                 }
-
             }
 
         } catch (Exception e) {
@@ -1879,10 +1881,10 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
         }
 
         try {
-            Enumeration<Village> villages = mVillagePositions.keys();
+            Iterator<Village> villages = mVillagePositions.keySet().iterator();
 
-            while (villages.hasMoreElements()) {
-                Village current = villages.nextElement();
+            while (villages.hasNext()) {
+                Village current = villages.next();
                 if (mVillagePositions.get(current).contains(pPos)) {
                     return current;
                 }
@@ -1896,7 +1898,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
     }
 
     /**Update operation perfomed by the RepaintThread was completed*/
-    public void updateComplete(Hashtable<Village, Rectangle> pPositions, BufferedImage pBuffer) {
+    public void updateComplete(HashMap<Village, Rectangle> pPositions, BufferedImage pBuffer) {
         //public void updateComplete(Hashtable<Village, Rectangle> pPositions, VolatileImage pBuffer) {
         mBuffer = pBuffer;
         mVillagePositions = pPositions;

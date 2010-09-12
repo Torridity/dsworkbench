@@ -6,6 +6,9 @@ package de.tor.tribes.types;
 
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
+import de.tor.tribes.php.json.JSONArray;
+import de.tor.tribes.php.json.JSONException;
+import de.tor.tribes.php.json.JSONObject;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.io.Serializable;
@@ -13,6 +16,7 @@ import java.util.Date;
 import org.jdom.Element;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ServerSettings;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -157,6 +161,19 @@ public class Attack implements Serializable {
     </attack>
      */
 
+    public JSONObject toJSON(String pOwner, String pPlanID) throws Exception {
+        JSONObject a = new JSONObject();
+        a.put("owner", URLEncoder.encode(pOwner, "UTF-8"));
+        a.put("source", getSource().getId());
+        a.put("target", getTarget().getId());
+        a.put("arrive", getArriveTime().getTime());
+        a.put("type", getType());
+        a.put("unit", getUnit().getPlainName());
+        a.put("plan", URLEncoder.encode(pPlanID, "UTF-8"));
+        return a;
+    }
+
+    @Override
     public String toString() {
         /* long send = getArriveTime().getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(getSource(), getTarget(), getUnit().getSpeed()) * 1000);
         SimpleDateFormat f = new SimpleDateFormat("dd.MM.yy HH:mm:ss");

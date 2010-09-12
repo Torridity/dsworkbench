@@ -10,15 +10,12 @@ package de.tor.tribes.types;
 
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.ui.DSWorkbenchMainFrame;
-import de.tor.tribes.ui.dnd.VillageTransferable;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ServerSettings;
+import de.tor.tribes.util.Skin;
 import de.tor.tribes.util.html.VillageHTMLTooltipGenerator;
 import de.tor.tribes.util.tag.TagManager;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.geom.Rectangle2D;
 import java.io.Serializable;
 import java.net.URLDecoder;
@@ -80,7 +77,7 @@ public class Village implements Comparable, Serializable {
     }
 
     public String toPlainData() {
-        StringBuffer b = new StringBuffer();
+        StringBuilder b = new StringBuilder();
         b.append(getId());
         b.append(",");
         try {
@@ -205,7 +202,7 @@ public class Village implements Comparable, Serializable {
     }
 
     public Tribe getTribe() {
-        if(tribe == null){
+        if (tribe == null) {
             return Barbarians.getSingleton();
         }
         return tribe;
@@ -240,7 +237,7 @@ public class Village implements Comparable, Serializable {
         b.append(",");
         List<Tag> tags = TagManager.getSingleton().getTags(this);
         b.append("<b>Tags:</b> ");
-        if ((tags == null) || (tags.size() == 0)) {
+        if ((tags == null) || (tags.isEmpty())) {
             b.append("keine, ");
         } else {
             for (int i = 0; i < tags.size(); i++) {
@@ -419,7 +416,6 @@ public class Village implements Comparable, Serializable {
                 //left hand side is no village, compare strings
                 return toString().toLowerCase().compareTo(o.toString().toLowerCase());
             }
-
         }
     }
 
@@ -435,6 +431,100 @@ public class Village implements Comparable, Serializable {
      */
     public void setVisibleOnMap(boolean visibleOnMap) {
         this.visibleOnMap = visibleOnMap;
+    }
+
+    public int getGraphicsType() {
+        int graphicsType = Skin.ID_V1;
+   
+        boolean isLeft = false;
+        if (getTribe() == Barbarians.getSingleton()) {
+            isLeft = true;
+        }
+
+        if (getPoints() < 300) {
+            if (!isLeft) {
+                //changed
+                if (getType() != 0) {
+                    graphicsType = Skin.ID_B1;
+                }
+            } else {
+                if (getType() == 0) {
+                    graphicsType = Skin.ID_V1_LEFT;
+                } else {
+                    graphicsType = Skin.ID_B1_LEFT;
+                }
+            }
+        } else if (getPoints() < 1000) {
+            graphicsType = Skin.ID_V2;
+            if (!isLeft) {
+                if (getType() != 0) {
+                    graphicsType = Skin.ID_B2;
+                }
+            } else {
+                if (getType() == 0) {
+                    graphicsType = Skin.ID_V2_LEFT;
+                } else {
+                    graphicsType = Skin.ID_B2_LEFT;
+                }
+            }
+        } else if (getPoints() < 3000) {
+            graphicsType = Skin.ID_V3;
+            if (!isLeft) {
+                if (getType() != 0) {
+                    graphicsType = Skin.ID_B3;
+                }
+            } else {
+                if (getType() == 0) {
+                    graphicsType = Skin.ID_V3_LEFT;
+                } else {
+                    graphicsType = Skin.ID_B3_LEFT;
+                }
+            }
+        } else if (getPoints() < 9000) {
+            graphicsType = Skin.ID_V4;
+            if (!isLeft) {
+                if (getType() != 0) {
+                    graphicsType = Skin.ID_B4;
+                }
+            } else {
+                if (getType() == 0) {
+                    graphicsType = Skin.ID_V4_LEFT;
+                } else {
+                    graphicsType = Skin.ID_B4_LEFT;
+                }
+            }
+        } else if (getPoints() < 11000) {
+            graphicsType = Skin.ID_V5;
+            if (!isLeft) {
+                if (getType() != 0) {
+                    graphicsType = Skin.ID_B5;
+                }
+            } else {
+                if (getType() == 0) {
+                    graphicsType = Skin.ID_V5_LEFT;
+                } else {
+                    graphicsType = Skin.ID_B5_LEFT;
+                }
+            }
+        } else {
+            graphicsType = Skin.ID_V6;
+            if (!isLeft) {
+                if (getType() != 0) {
+                    graphicsType = Skin.ID_B6;
+                }
+
+            } else {
+                if (getType() == 0) {
+                    graphicsType = Skin.ID_V6_LEFT;
+                } else {
+                    graphicsType = Skin.ID_B6_LEFT;
+                }
+
+            }
+        }
+
+
+        return graphicsType;
     }
 
     private static class CaseInsensitiveComparator implements Comparator<Village>, java.io.Serializable {

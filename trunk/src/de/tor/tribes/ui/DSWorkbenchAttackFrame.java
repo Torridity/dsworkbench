@@ -8,6 +8,8 @@ package de.tor.tribes.ui;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.ServerManager;
 import de.tor.tribes.io.UnitHolder;
+import de.tor.tribes.php.json.JSONArray;
+import de.tor.tribes.php.json.JSONObject;
 import de.tor.tribes.types.Ally;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.Barbarians;
@@ -1924,6 +1926,31 @@ private void fireDrawSelectedEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
 }//GEN-LAST:event_fireDrawSelectedEvent
 
 private void fireCopyUnformatedToClipboardEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCopyUnformatedToClipboardEvent
+
+  /*  try {
+        int[] rows = jAttackTable.getSelectedRows();
+        if ((rows != null) && (rows.length > 0)) {
+            JSONArray ar = new JSONArray();
+            String plan = AttackManagerTableModel.getSingleton().getActiveAttackPlan();
+            List<Attack> attacks = AttackManager.getSingleton().getAttackPlan(plan);
+
+            for (int i : rows) {
+                int row = jAttackTable.convertRowIndexToModel(i);
+                Attack a = attacks.get(row);
+                JSONObject o = a.toJSON("Torridity", plan);
+                ar.put(o);
+            }
+             System.out.println(ar.toString());
+        }
+
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    if (true) {
+        return;
+    }
+*/
+
     try {
         int[] rows = jAttackTable.getSelectedRows();
         if ((rows != null) && (rows.length > 0)) {
@@ -2867,7 +2894,7 @@ private void fireDoExportAsScriptEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
             Attack a = AttackManager.getSingleton().getAttackPlan(selectedPlan).get(row);
             attacks.add(a);
         }
-       
+
         if (AttackScriptWriter.writeAttackScript(attacks, false, width, true, Color.GREEN, Color.RED, jShowAttacksInPopup.isSelected(), jShowAttacksInVillageInfo.isSelected(), jShowAttacksOnConfirmPage.isSelected(), jShowAttacksInPlace.isSelected(), jShowAttackOnMap.isSelected(), jShowAttacksInOverview.isSelected())) {
             if (System.getProperty("os.name").startsWith("Windows")) {
                 if (JOptionPaneHelper.showQuestionConfirmBox(this, "Script erfolgreich nach 'zz_attack_info.user.js' geschrieben.\nDenke bitte daran, das Script in deinem Browser einzufügen/zu aktualisieren!\nMöchtest du das Speicherverzeichnis des Scripts nun im Explorer öffnen?", "Information", "Nein", "Ja") == JOptionPane.YES_OPTION) {

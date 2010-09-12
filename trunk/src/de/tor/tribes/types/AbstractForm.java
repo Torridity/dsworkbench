@@ -4,9 +4,11 @@
  */
 package de.tor.tribes.types;
 
+import de.tor.tribes.io.DataHolder;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import org.apache.log4j.Logger;
 import org.jdom.Element;
 
@@ -70,6 +72,23 @@ public abstract class AbstractForm {
     protected abstract String getFormXml();
 
     public abstract java.awt.Rectangle getBounds();
+
+
+     public ArrayList<Village> getContainedVillages() {
+        java.awt.Rectangle bounds = getBounds();
+        ArrayList<Village> v = new ArrayList<Village>();
+        Village[][] villages = DataHolder.getSingleton().getVillages();
+        for (int x = bounds.x; x <= bounds.x + bounds.width; x++) {
+            for (int y = bounds.y; y <= bounds.y + bounds.height; y++) {
+                Village vi = villages[x][y];
+                if (vi != null) {
+                    v.add(vi);
+                }
+            }
+        }
+
+        return v;
+    }
 
     public void checkShowMode(Graphics2D g2d, Color pColor) {
         if (isShowMode()) {

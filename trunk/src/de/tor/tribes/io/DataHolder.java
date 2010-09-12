@@ -1092,7 +1092,7 @@ public class DataHolder {
     /**Download one single file from a URL*/
     private void downloadDataFile(URL pSource, String pLocalName) throws Exception {
         URLConnection ucon = pSource.openConnection(DSWorkbenchSettingsDialog.getSingleton().getWebProxy());
-        ucon.setConnectTimeout(3000);
+        ucon.setConnectTimeout(10000);
         ucon.setReadTimeout(20000);
         FileOutputStream tempWriter = new FileOutputStream(pLocalName);
         InputStream isr = ucon.getInputStream();

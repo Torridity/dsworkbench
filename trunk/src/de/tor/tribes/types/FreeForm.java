@@ -178,7 +178,9 @@ public class FreeForm extends AbstractForm {
         for (int i = 1; i < points.size(); i++) {
             p.lineTo(points.get(i).x, points.get(i).y);
         }
-        return p.getBounds();
+        Rectangle2D r2d = p.getBounds2D();
+        return new java.awt.Rectangle((int) r2d.getX(), (int) r2d.getY(), (int) r2d.getWidth(), (int) r2d.getHeight());
+
     }
 
     /**For reading from XML only*/
@@ -254,7 +256,7 @@ public class FreeForm extends AbstractForm {
 
     @Override
     public void setXPos(double xPos) {
-        if (points.size() == 0) {
+        if (points.isEmpty()) {
             points.add(0, new Point2D.Double(xPos, 0.0));
         } else {
             Point2D.Double p0 = points.get(0);
@@ -273,7 +275,7 @@ public class FreeForm extends AbstractForm {
 
     @Override
     public void setYPos(double yPos) {
-        if (points.size() == 0) {
+        if (points.isEmpty()) {
             points.add(0, new Point2D.Double(0.0, yPos));
         } else {
             Point2D.Double p0 = points.get(0);
@@ -411,7 +413,7 @@ public class FreeForm extends AbstractForm {
     /**
      * @param bClosed the bClosed to set
      */
-    public void setBClosed(boolean closed) {
+    public void setBClosed(boolean bClosed) {
         this.closed = closed;
     }
 }

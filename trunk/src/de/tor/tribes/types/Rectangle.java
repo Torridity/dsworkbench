@@ -4,6 +4,7 @@
  */
 package de.tor.tribes.types;
 
+import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.ui.MapPanel;
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
@@ -18,6 +19,7 @@ import org.jdom.Element;
 import de.tor.tribes.ui.DSWorkbenchMainFrame;
 import java.awt.Font;
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
 
 /**
  *
@@ -70,10 +72,11 @@ public class Rectangle extends AbstractForm {
         if (getXPos() < 0 || getYPos() < 0 || xPosEnd < 0 || yPosEnd < 0) {
             return;
         }
+        System.out.println(getContainedVillages());
         Point s = MapPanel.getSingleton().virtualPosToSceenPos(getXPos(), getYPos());
         Point e = MapPanel.getSingleton().virtualPosToSceenPos(getXPosEnd(), getYPosEnd());
-        int x = (int) ((s.x < e.x) ? s.x : e.x);
-        int y = (int) ((s.y < e.y) ? s.y : e.y);
+        int x = ((s.x < e.x) ? s.x : e.x);
+        int y = ((s.y < e.y) ? s.y : e.y);
         int w = (int) Math.rint(Math.abs(s.x - e.x));
         int h = (int) Math.rint(Math.abs(s.y - e.y));
         java.awt.Rectangle mapBounds = MapPanel.getSingleton().getBounds();

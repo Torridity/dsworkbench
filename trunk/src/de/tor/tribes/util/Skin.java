@@ -8,7 +8,6 @@
  */
 package de.tor.tribes.util;
 
-import de.tor.tribes.ui.DSWorkbenchMainFrame;
 import de.tor.tribes.ui.SkinPreviewFrame;
 import java.awt.Image;
 import java.awt.Point;
@@ -16,12 +15,17 @@ import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.Enumeration;
-import java.util.Hashtable;
 import javax.imageio.ImageIO;
 import org.apache.log4j.Logger;
 import de.tor.tribes.ui.DSWorkbenchSettingsDialog;
 import de.tor.tribes.ui.MapPanel;
+import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.Transparency;
+import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * @author Charon
@@ -86,8 +90,9 @@ public class Skin {
     private final String DEFAULT_UNDERGROUND = "default_underground.png";
     private final int TEXTURE_COUNT = 25;
     private static String BASE_PATH = "graphics/skins";
-    private Hashtable<Integer, BufferedImage> mTextures = null;
+    private HashMap<Integer, BufferedImage> mTextures = null;
     private String sSkinID = null;
+    private HashMap<Integer, HashMap<Double, BufferedImage>> cache = new HashMap<Integer, HashMap<Double, BufferedImage>>();
 
     public Skin() throws Exception {
         loadSkin("default");
@@ -132,7 +137,7 @@ public class Skin {
         sSkinID = MINIMAP_SKIN_ID;
         iFieldWidth = 10;
         iFieldHeight = 10;
-        mTextures = new Hashtable<Integer, BufferedImage>();
+        mTextures = new HashMap<Integer, BufferedImage>();
     }
 
     private void loadSkin(String pSkinID) throws Exception {
@@ -142,7 +147,7 @@ public class Skin {
 
         sSkinID = pSkinID;
         String path = BASE_PATH + "/" + pSkinID;
-        mTextures = new Hashtable<Integer, BufferedImage>();
+        mTextures = new HashMap<Integer, BufferedImage>();
         try {
             mTextures.put(ID_DEFAULT_UNDERGROUND, ImageIO.read(new File(path + "/" + DEFAULT_UNDERGROUND)));
             iFieldWidth = mTextures.get(0).getWidth(null);
@@ -176,9 +181,9 @@ public class Skin {
                 throw new Exception("#Texturen < " + TEXTURE_COUNT);
             }
 
-            Enumeration<Integer> imageIDs = mTextures.keys();
-            while (imageIDs.hasMoreElements()) {
-                Integer id = imageIDs.nextElement();
+            Iterator<Integer> imageIDs = mTextures.keySet().iterator();
+            while (imageIDs.hasNext()) {
+                Integer id = imageIDs.next();
                 Image current = mTextures.get(id);
                 if ((current.getWidth(null) != iFieldWidth) || (current.getHeight(null) != iFieldHeight)) {
                     throw new Exception("Textur " + id + " hat nicht die erwartete Größe " + iFieldWidth + "x" + iFieldHeight);
@@ -197,25 +202,27 @@ public class Skin {
     }
 
     public Image getImage(int pID, double pScaling) {
-        if (pScaling == 1) {
-            return mTextures.get(pID);
-        }
         try {
-            /*
-            Hashtable<Integer, Image> cache = mCache.get(pScaling);
-            if (cache != null) {
-            if (cache.get(pID) == null) {
-            cache.put(pID, mTextures.get(pID).getScaledInstance((int) (iFieldWidth / pScaling), (int) (iFieldHeight / pScaling), BufferedImage.SCALE_FAST));
+            HashMap<Double, BufferedImage> imageCache = cache.get(pID);
+            if (imageCache == null) {
+                imageCache = new HashMap<Double, BufferedImage>();
+                cache.put(pID, imageCache);
             }
 
-            } else {
-            cache = new Hashtable<Integer, Image>();
-            cache.put(pID, mTextures.get(pID).getScaledInstance((int) (iFieldWidth / pScaling), (int) (iFieldHeight / pScaling), BufferedImage.SCALE_FAST));
-            mCache.put(pScaling, cache);
+            BufferedImage cached = imageCache.get(pScaling);
+            if (cached == null) {
+                Image scaled = mTextures.get(pID).getScaledInstance((int) (iFieldWidth / pScaling), (int) (iFieldHeight / pScaling), BufferedImage.SCALE_DEFAULT);
+
+                GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+                GraphicsConfiguration gc = gd.getDefaultConfiguration();
+                cached = gc.createCompatibleImage(scaled.getWidth(null), scaled.getHeight(null), Transparency.BITMASK);
+                Graphics2D g = cached.createGraphics();
+                g.drawImage(scaled, 0, 0, null);
+                g.dispose();
+                imageCache.put(pScaling, cached);
             }
 
-            return cache.get(pID);*/
-            return mTextures.get(pID).getScaledInstance((int) (iFieldWidth / pScaling), (int) (iFieldHeight / pScaling), BufferedImage.SCALE_DEFAULT);
+            return cached;
         } catch (Exception e) {
             return null;
         }

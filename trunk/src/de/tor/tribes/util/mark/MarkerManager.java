@@ -6,9 +6,11 @@ package de.tor.tribes.util.mark;
 
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Ally;
+import de.tor.tribes.types.Barbarians;
 import de.tor.tribes.types.Marker;
 import de.tor.tribes.types.MarkerSet;
 import de.tor.tribes.types.Tribe;
+import de.tor.tribes.types.Village;
 import de.tor.tribes.ui.DSWorkbenchMarkerFrame;
 import de.tor.tribes.ui.MapPanel;
 import de.tor.tribes.ui.MinimapPanel;
@@ -19,7 +21,6 @@ import de.tor.tribes.util.xml.JaxenUtils;
 import java.awt.Color;
 import java.io.File;
 import java.io.FileWriter;
-import java.net.URLEncoder;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;
@@ -380,6 +381,34 @@ public class MarkerManager {
 
         for (Marker m : set) {
             if ((m.getMarkerType() == Marker.ALLY_MARKER_TYPE) && (m.getMarkerID() == pAlly.getId())) {
+                return m;
+            }
+        }
+        //no marker found
+        return null;
+    }
+
+    public Marker getMarker(Village pVillage) {
+        if (pVillage == null) {
+            return null;
+        }
+
+        Tribe tribe = pVillage.getTribe();
+
+        if (tribe.equals(Barbarians.getSingleton())) {
+            //barbarians cannot be marked
+            return null;
+        }
+
+        Ally ally = tribe.getAlly();
+        
+        Marker[] set = getMarkerSet();
+
+        for (Marker m : set) {
+            if ((m.getMarkerType() == Marker.TRIBE_MARKER_TYPE) && (m.getMarkerID() == tribe.getId())) {
+                return m;
+            }
+            if (ally != null && (m.getMarkerType() == Marker.ALLY_MARKER_TYPE) && (m.getMarkerID() == ally.getId())) {
                 return m;
             }
         }

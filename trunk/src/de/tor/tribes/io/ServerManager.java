@@ -72,7 +72,6 @@ public class ServerManager {
             } catch (Exception ignore) {
             }
         }
-
         if (SERVERS != null && !SERVERS.isEmpty()) {
             SERVERS_UPDATED = true;
         }

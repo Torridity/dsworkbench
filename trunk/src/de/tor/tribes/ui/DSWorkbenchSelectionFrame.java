@@ -46,12 +46,10 @@ import java.awt.dnd.DragSource;
 import java.awt.dnd.DragSourceDragEvent;
 import java.awt.dnd.DragSourceDropEvent;
 import java.io.File;
-import java.text.NumberFormat;
 import java.util.Collections;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.StringTokenizer;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultTreeModel;
@@ -59,7 +57,7 @@ import javax.swing.tree.TreePath;
 import org.apache.log4j.Logger;
 
 /**
- * @TODO (DIFF) Custom export format
+ * @TODO (DIFF) Fixed problem when one tag was applied to villages of two users
  * @author Charon
  */
 public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implements VillageSelectionListener, DragGestureListener {
@@ -117,7 +115,8 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
             //add all villages
             Hashtable<Ally, AllyNode> allyNodes = new Hashtable<Ally, AllyNode>();
             Hashtable<Tribe, TribeNode> tribeNodes = new Hashtable<Tribe, TribeNode>();
-            Hashtable<Tag, TagNode> tagNodes = new Hashtable<Tag, TagNode>();
+            Hashtable<Tribe, Hashtable<Tag, TagNode>> tagNodes = new Hashtable<Tribe, Hashtable<Tag, TagNode>>();
+
             List<Village> used = new LinkedList<Village>();
 
             for (Village v : treeData) {
@@ -147,11 +146,17 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
                 boolean hasTag = false;
                 for (Tag tag : TagManager.getSingleton().getTags(v)) {
                     hasTag = true;
-                    TagNode tagNode = tagNodes.get(tag);
+
+                    Hashtable<Tag, TagNode> nodes = tagNodes.get(t);
+                    if (nodes == null) {
+                        nodes = new Hashtable<Tag, TagNode>();
+                        tagNodes.put(t, nodes);
+                    }
+                    TagNode tagNode = nodes.get(tag);
                     if (tagNode == null) {
                         //new tribe
                         tagNode = new TagNode(tag);
-                        tagNodes.put(tag, tagNode);
+                        nodes.put(tag, tagNode);
                         tNode.add(tagNode);
                     }
                     tagNode.add(new VillageNode(v));
@@ -163,7 +168,6 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
                 }
                 used.add(v);
             }
-
         } else {
             //simple view
             for (Village v : treeData) {
@@ -840,12 +844,3 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
         // MapPanel.getSingleton().setCurrentCursor(MapPanel.getSingleton().getCurrentCursor());
     }
 }
-
-
-
-
-
-
-
-
-

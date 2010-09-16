@@ -673,6 +673,7 @@ public class MapRenderer extends Thread {
         HashMap<Integer, Point> copyRegions = new HashMap<Integer, Point>();
         HashMap<Integer, Point> copyRegionsMap = new HashMap<Integer, Point>();
         villagePositions = new HashMap<Village, Rectangle>();
+
         int contSpacing = 100;
         if (ServerSettings.getSingleton().getCoordType() != 2) {
             contSpacing = 50;
@@ -786,6 +787,7 @@ public class MapRenderer extends Thread {
                     } else {
                         s = System.currentTimeMillis();
                         g2d.copyArea(p.x, p.y, width, height, (int) Math.floor(x + dx - p.x), (int) Math.floor(y + dy - p.y));
+
                         drawTime += (System.currentTimeMillis() - s);
 
                     }
@@ -2029,8 +2031,7 @@ public class MapRenderer extends Thread {
             if (layer.getWidth() != wb || layer.getHeight() != hb) {
                 layer = getBufferedImage(wb, hb, Transparency.TRANSLUCENT);//new BufferedImage(wb, hb, BufferedImage.TYPE_INT_ARGB);
                 mLayers.put(LIVE_LAYER, layer);
-                g2d =
-                        layer.createGraphics();
+                g2d = layer.createGraphics();
                 prepareGraphics(g2d);
             } else {
                 g2d = (Graphics2D) layer.getGraphics();
@@ -2183,6 +2184,7 @@ public class MapRenderer extends Thread {
                     double yi = Math.sin(Math.toRadians(270 + cnt * 10)) * diam / 2;
                     c.setXPos(xp);
                     c.setYPos(yp);
+                    c.setFilled(true);
                     c.setXPosEnd(xp + diam);
                     c.setYPosEnd(yp + diam);
                     Color co = Color.RED;
@@ -2191,14 +2193,14 @@ public class MapRenderer extends Thread {
                     } catch (Exception e) {
                     }
                     c.setDrawColor(co);
+                    c.setDrawAlpha(0.5f);
                     c.renderForm(g2d);
                     Image unit = ImageManager.getUnitIcon(u).getImage();
                     Point p = MapPanel.getSingleton().virtualPosToSceenPos((cx + xi), (cy + yi));
                     g2d.drawImage(unit, p.x - (int) ((double) unit.getWidth(null) / 2), (int) ((double) p.y - unit.getHeight(null) / 2), null);
                     cnt++;
-
                 }
-
+                g2d.setClip(null);
 
             } catch (Exception e) {
             }
@@ -2429,7 +2431,7 @@ class RoundGradientPaint implements Paint {
     protected Color mPointColor, mBackgroundColor;
 
     public RoundGradientPaint(double x, double y, Color pointColor,
-            Point2D radius, Color backgroundColor) {
+                              Point2D radius, Color backgroundColor) {
         if (radius.distance(0, 0) <= 0) {
             throw new IllegalArgumentException("Radius must be greater than 0.");
         }
@@ -2441,7 +2443,7 @@ class RoundGradientPaint implements Paint {
 
     @Override
     public PaintContext createContext(ColorModel cm, Rectangle deviceBounds,
-            Rectangle2D userBounds, AffineTransform xform, RenderingHints hints) {
+                                      Rectangle2D userBounds, AffineTransform xform, RenderingHints hints) {
         Point2D transformedPoint = xform.transform(point, null);
         Point2D transformedRadius = xform.deltaTransform(mRadius, null);
         return new RoundGradientContext(transformedPoint, mPointColor,

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.1" encoding="UTF-8" ?>
 
 <Form version="1.6" maxVersion="1.6" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
   <NonVisualComponents>
@@ -17,7 +17,9 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="1" attributes="0">
                           <Component id="jAddToAttacksButton1" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace pref="251" max="32767" attributes="0"/>
+                          <EmptySpace pref="48" max="32767" attributes="0"/>
+                          <Component id="jFullTargetsOnly" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Component id="jAddToAttacksButton" min="-2" max="-2" attributes="0"/>
                           <EmptySpace min="-2" max="-2" attributes="0"/>
                           <Component id="jCopyToClipboardButton" min="-2" max="-2" attributes="0"/>
@@ -49,6 +51,7 @@
                           <Component id="jAddToAttacksButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <Component id="jAddToAttacksButton1" min="-2" pref="35" max="-2" attributes="0"/>
+                      <Component id="jFullTargetsOnly" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -336,6 +339,16 @@
           <Events>
             <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fireReOpenLogPanelEvent"/>
           </Events>
+        </Component>
+        <Component class="javax.swing.JCheckBox" name="jFullTargetsOnly">
+          <Properties>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="TribeTribeAttackFrame.jFullTargetsOnly.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+            </Property>
+            <Property name="horizontalAlignment" type="int" value="2"/>
+            <Property name="horizontalTextPosition" type="int" value="2"/>
+            <Property name="opaque" type="boolean" value="false"/>
+          </Properties>
         </Component>
       </SubComponents>
     </Container>
@@ -981,6 +994,8 @@
               <Group type="103" groupAlignment="1" attributes="0">
                   <Component id="jTabbedPane1" alignment="0" pref="853" max="32767" attributes="0"/>
                   <Group type="102" alignment="1" attributes="0">
+                      <Component id="jInfoLabel" pref="604" max="32767" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="jCalculatingProgressBar" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="jCalculateButton" min="-2" max="-2" attributes="0"/>
@@ -994,10 +1009,13 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="1" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="jTabbedPane1" pref="651" max="32767" attributes="0"/>
+              <Component id="jTabbedPane1" pref="654" max="32767" attributes="0"/>
               <EmptySpace min="-2" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                  <Component id="jCalculatingProgressBar" min="-2" max="-2" attributes="1"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="jCalculatingProgressBar" alignment="3" min="-2" max="-2" attributes="1"/>
+                      <Component id="jInfoLabel" alignment="3" min="-2" pref="20" max="-2" attributes="0"/>
+                  </Group>
                   <Component id="jCalculateButton" alignment="0" max="32767" attributes="1"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
@@ -1832,7 +1850,7 @@
                       <Group type="103" groupAlignment="1" attributes="0">
                           <Component id="jPanel6" alignment="0" max="32767" attributes="0"/>
                           <Group type="102" alignment="1" attributes="0">
-                              <Component id="jScrollPane3" pref="763" max="32767" attributes="0"/>
+                              <Component id="jScrollPane3" pref="765" max="32767" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" max="-2" attributes="0">
                                   <Component id="jIncrementAttackCountButton" max="32767" attributes="1"/>
@@ -1875,7 +1893,7 @@
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="jResetAttackCountEvent" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <Component id="jScrollPane3" pref="350" max="32767" attributes="0"/>
+                          <Component id="jScrollPane3" pref="346" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="jPanel6" max="32767" attributes="1"/>
@@ -1945,15 +1963,15 @@
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="jScrollPane9" alignment="0" pref="186" max="32767" attributes="1"/>
-                              <Component id="jScrollPane8" alignment="1" pref="186" max="32767" attributes="1"/>
+                              <Component id="jScrollPane9" alignment="0" pref="190" max="32767" attributes="1"/>
+                              <Component id="jScrollPane8" alignment="1" pref="190" max="32767" attributes="1"/>
                               <Component id="jLabel24" alignment="0" min="-2" max="-2" attributes="0"/>
                               <Component id="jLabel23" alignment="0" min="-2" max="-2" attributes="0"/>
                               <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
                               <Group type="102" alignment="1" attributes="1">
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Component id="jTargetAllyLabel" min="-2" pref="19" max="-2" attributes="0"/>
-                                      <Component id="jScrollPane7" pref="160" max="32767" attributes="1"/>
+                                      <Component id="jScrollPane7" pref="164" max="32767" attributes="1"/>
                                   </Group>
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="3" attributes="0">
@@ -1962,7 +1980,7 @@
                                   </Group>
                               </Group>
                               <Group type="102" alignment="0" attributes="0">
-                                  <Component id="jScrollPane10" pref="131" max="32767" attributes="1"/>
+                                  <Component id="jScrollPane10" pref="133" max="32767" attributes="1"/>
                                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                                   <Component id="jMarkTargetAsFake" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
@@ -2400,6 +2418,16 @@
           <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="TribeTribeAttackFrame.jCalculatingProgressBar.string" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
         </Property>
         <Property name="stringPainted" type="boolean" value="true"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jInfoLabel">
+      <Properties>
+        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+          <Image iconType="3" name="/res/ui/information.png"/>
+        </Property>
+        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+          <ResourceString bundle="de/tor/tribes/ui/Bundle.properties" key="TribeTribeAttackFrame.jInfoLabel.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+        </Property>
       </Properties>
     </Component>
   </SubComponents>

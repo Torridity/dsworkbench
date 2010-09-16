@@ -645,17 +645,19 @@ public class DSWorkbenchMerchantDistibutor extends AbstractDSWorkbenchFrame {
                 currentDir = VillageMerchantInfo.Direction.INCOMING;
             }
 
+            for (VillageMerchantInfo newInfo : infos) {
+                newInfo.setDirection(currentDir);
+            }
 
             int changesToBoth = 0;
             int dirChanges = 0;
             for (VillageMerchantInfo existingInfo : merchantInfos) {
                 VillageMerchantInfo toRemove = null;
                 for (VillageMerchantInfo newInfo : infos) {
-                    newInfo.setDirection(currentDir);
                     if (existingInfo.getVillage().equals(newInfo.getVillage())) {
                         //info exists
-                        if (existingInfo.getDirection() == VillageMerchantInfo.Direction.INCOMING && newInfo.getDirection() == VillageMerchantInfo.Direction.OUTGOING ||
-                                existingInfo.getDirection() == VillageMerchantInfo.Direction.OUTGOING && newInfo.getDirection() == VillageMerchantInfo.Direction.INCOMING) {
+                        if (existingInfo.getDirection() == VillageMerchantInfo.Direction.INCOMING && newInfo.getDirection() == VillageMerchantInfo.Direction.OUTGOING
+                                || existingInfo.getDirection() == VillageMerchantInfo.Direction.OUTGOING && newInfo.getDirection() == VillageMerchantInfo.Direction.INCOMING) {
                             //village acceptes only one and gets the other -> change to both
                             existingInfo.setDirection(VillageMerchantInfo.Direction.BOTH);
                             changesToBoth++;

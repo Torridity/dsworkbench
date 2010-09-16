@@ -57,7 +57,7 @@ public class Circle extends AbstractForm {
             l.setFilled(Boolean.parseBoolean(elem.getTextTrim()));
             elem = e.getChild("textSize");
             l.setTextSize(Integer.parseInt(elem.getTextTrim()));
-             elem = e.getChild("drawName");
+            elem = e.getChild("drawName");
             l.setDrawName(Boolean.parseBoolean(elem.getTextTrim()));
             return l;
         } catch (Exception ex) {
@@ -93,12 +93,13 @@ public class Circle extends AbstractForm {
         g2d.setStroke(getStroke());
         checkShowMode(g2d, getDrawColor());
 
+
         if (isFilled()) {
             g2d.fillOval(x, y, w, h);
         } else {
             g2d.drawOval(x, y, w, h);
         }
-
+        g2d.setClip(new Ellipse2D.Float(x, y, w, h));
         if (isDrawName()) {
             g2d.setColor(getTextColor());
             g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, getTextAlpha()));

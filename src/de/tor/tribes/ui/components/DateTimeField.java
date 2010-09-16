@@ -19,6 +19,8 @@ import java.util.Date;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
 
 /**
  *
@@ -38,6 +40,8 @@ public class DateTimeField extends javax.swing.JPanel {
         initComponents();
         jDateField.setText(dateFormat.format(Calendar.getInstance().getTime()));
         jTimeField.setText(timeFormat.format(Calendar.getInstance().getTime()));
+        jDateField.setEditable(false);
+        jTimeField.setEditable(false);
         jChangeTime.setEnabled(timeEnabled);
         jTimeField.setEnabled(timeEnabled);
     }

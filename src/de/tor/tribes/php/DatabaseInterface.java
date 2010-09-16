@@ -19,9 +19,8 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.apache.log4j.xml.DOMConfigurator;
 
 /**
  *
@@ -64,7 +63,7 @@ public class DatabaseInterface {
             // URL of CGI-Bin script.
             url = new URL(INTERFACE_URL);
             // URL connection channel.
-            urlConn = url.openConnection();//DSWorkbenchSettingsDialog.getSingleton().getWebProxy());
+            urlConn = url.openConnection(DSWorkbenchSettingsDialog.getSingleton().getWebProxy());
             // urlConn = url.openConnection();
             // Let the run-time system (RTS) know that we want input.
             urlConn.setDoInput(true);
@@ -78,6 +77,7 @@ public class DatabaseInterface {
             printout = new DataOutputStream(urlConn.getOutputStream());
             Enumeration<String> keys = pArguments.keys();
             String content = "";
+
             while (keys.hasMoreElements()) {
                 String key = keys.nextElement();
                 String value = pArguments.get(key);
@@ -93,15 +93,14 @@ public class DatabaseInterface {
             input = new BufferedReader(new InputStreamReader(urlConn.getInputStream()));
             String str;
             while ((str = input.readLine()) != null) {
-                 lines.add(str);
+                lines.add(str);
             }
             input.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Throwable t) {
             if (urlConn != null) {
                 logger.error("Failed calling interface. HTTP Status " + urlConn.getHeaderField(0));
             } else {
-                logger.error("Failed calling interface before connect", e);
+                logger.error("Failed calling interface before connect", t);
             }
             return ID_WEB_CONNECTION_FAILED;
         } finally {
@@ -550,14 +549,19 @@ public class DatabaseInterface {
     }
 
     public static void main(String[] args) throws Exception {
+
+        DOMConfigurator.configure("log4j.xml");
+        /* System.setProperty("proxyUse", "true");
+
         ConsoleAppender a = new ConsoleAppender();
         a.setLayout(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c - %m%n"));
         Logger.getRootLogger().removeAllAppenders();
         Logger.getRootLogger().addAppender(a);
         Logger.getRootLogger().setLevel(Level.DEBUG);
-     
+
 
         /* System.setProperty("proxyUse", "true");
+
         System.setProperty("proxyHost", "proxy.fzk.de");
         System.setProperty("proxyPort", "8000");*/
 
@@ -570,9 +574,21 @@ public class DatabaseInterface {
         }*/
 
 
+
         /* List<DatabaseServerEntry> info = DatabaseInterface.getServerInfo();
+
+        /* List<DatabaseServerEntry> info = DatabaseInterface.getServerInfo();
+
         for (DatabaseServerEntry in : info) {
+
         System.out.println("ID: " + in.getServerID());
+        System.out.println("URL: " + in.getServerURL());
+        System.out.println("Rise: " + in.getAcceptanceRiseSpeed());
+        System.out.println("Night: " + in.getNightBonus());
+        System.out.println("--------");
+        }*/
+
+        /*   System.out.println("ID: " + in.getServerID());
         System.out.println("URL: " + in.getServerURL());
         System.out.println("Rise: " + in.getAcceptanceRiseSpeed());
         System.out.println("Night: " + in.getNightBonus());
@@ -581,8 +597,14 @@ public class DatabaseInterface {
         //System.out.println(DatabaseInterface.listServers());
         //  System.out.println(DatabaseInterface.checkUser("Torridity", "cfcaef487fc66a6d8295e8e3f68b4db9"));
         //System.out.println(DatabaseInterface.addUser("Torridity", "cfcaef487fc66a6d8295e8e3f68b4db9"));
+
+        // System.out.println(DatabaseInterface.getProperty("min_version"));
+        System.out.println(DatabaseInterface.getUserDataVersion("ulkminister", "de63"));
+        //System.out.println(DatabaseInterface.getDownloadURL("de26"));
+
         System.out.println(DatabaseInterface.getUserDataVersion("Torridity", "de43"));
         //System.out.println(DatabaseInterface.getDownloadURL("de26"));
+
         /*long versionU = DatabaseInterface.getUserDataVersion("Torridity", "de8");
         if (versionU > 0) {
         System.out.println("User: " + new SimpleDateFormat("dd.MM.yyyy - HH:mm:ss").format(new Date(versionU)));

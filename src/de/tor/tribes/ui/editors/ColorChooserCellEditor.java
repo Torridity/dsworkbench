@@ -15,7 +15,7 @@ import net.java.dev.colorchooser.ColorChooser;
 
 /**
  *
- * @author Charon
+ * @author Jejkal
  */
 public class ColorChooserCellEditor extends AbstractCellEditor implements TableCellEditor {
 

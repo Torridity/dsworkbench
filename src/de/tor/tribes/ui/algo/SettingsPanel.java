@@ -20,7 +20,6 @@ import de.tor.tribes.util.algo.TimeFrame;
 import java.awt.Point;
 import java.awt.geom.Line2D;
 import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -30,12 +29,14 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.JSpinner.DateEditor;
+import org.apache.log4j.Logger;
 
 /**
  * @author Jejkal
  */
 public class SettingsPanel extends javax.swing.JPanel {
+
+    private static Logger logger = Logger.getLogger("AttackPlannerSettings");
 
     /** Creates new form TimePanel */
     public SettingsPanel() {
@@ -223,6 +224,7 @@ public class SettingsPanel extends javax.swing.JPanel {
 
         Date sendTime = jSendTime.getSelectedDate();
         if (sendTime.getTime() < System.currentTimeMillis()) {
+            logger.warn("Start time in past (" + sendTime.getTime() + ")");
             if (JOptionPaneHelper.showQuestionConfirmBox(this, "Die Startzeit liegt in der Vergangenheit. Daher könnten Abschickzeitpunkte bestimmt werden,\n"
                     + "die nicht eingehalten werden können. Trotzdem fortfahren?", "Startzeit in Vergangenheit", "Nein", "Ja") == JOptionPane.YES_OPTION) {
             } else {
@@ -233,6 +235,7 @@ public class SettingsPanel extends javax.swing.JPanel {
         //check min case
         Date arrive = jArriveTime.getSelectedDate();
         if (sendTime.getTime() >= arrive.getTime()) {
+            logger.warn("Start time BEQ arrive time (" + sendTime.getTime() + " >= " + arrive.getTime() + ")");
             //check if start is after arrive
             JOptionPaneHelper.showWarningBox(this, "Die Startzeit ist größer als/identisch mit der Ankunftszeit.\n"
                     + "Du musst dies korrigieren bevor du fortfahren kannst.", "Startzeit in nach Ankunftszeit");
@@ -240,6 +243,7 @@ public class SettingsPanel extends javax.swing.JPanel {
         } else {
             //check difference between start and arrive
             if (Math.abs(sendTime.getTime() - arrive.getTime()) < 30 * 60 * 1000) {
+                logger.warn("dist(start-arrive) too small (" + sendTime.getTime() + " - " + arrive.getTime() + " < 30 * 60000)");
                 if (JOptionPaneHelper.showQuestionConfirmBox(this, "Der Abstand zwischen Start- und Ankunftszeit ist extrem klein (< 30 Minuten).\n"
                         + "Höchstwahrscheinlich werden keine Ergebnisse gefunden. Trotzdem fortfahren?", "Start- und Endzeit zu dicht beieinander", "Nein", "Ja") == JOptionPane.YES_OPTION) {
                 } else {

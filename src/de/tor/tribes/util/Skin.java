@@ -62,6 +62,7 @@ public class Skin {
     public static int ID_B4_LEFT = 22;
     public static int ID_B5_LEFT = 23;
     public static int ID_B6_LEFT = 24;
+    public static int ID_ARMY_CAMP = 99;
     /**Filenames*/
     private final String V1_FILE = "v1.png";
     private final String V2_FILE = "v2.png";
@@ -87,10 +88,12 @@ public class Skin {
     private final String B4_LEFT_FILE = "b4_left.png";
     private final String B5_LEFT_FILE = "b5_left.png";
     private final String B6_LEFT_FILE = "b6_left.png";
+    private final String ARMY_CAMP = "graphics/world/army_camp.png";
     private final String DEFAULT_UNDERGROUND = "default_underground.png";
     private final int TEXTURE_COUNT = 25;
     private static String BASE_PATH = "graphics/skins";
     private HashMap<Integer, BufferedImage> mTextures = null;
+    private BufferedImage ARMY_CAMP_IMAGE = null;
     private String sSkinID = null;
     private HashMap<Integer, HashMap<Double, BufferedImage>> cache = new HashMap<Integer, HashMap<Double, BufferedImage>>();
 
@@ -193,6 +196,7 @@ public class Skin {
             //  mCache = new Hashtable<Double, Hashtable<Integer, Image>>();
             //  mCache.put(1.0, mTextures);
             //try loading units, ignore exceptions due to not all skins have all units
+            ARMY_CAMP_IMAGE = ImageIO.read(new File(ARMY_CAMP));
         } catch (IOException ioe) {
             throw new Exception("Fehler beim laden des Grafikpaketes");
         } catch (Exception e) {
@@ -202,6 +206,11 @@ public class Skin {
     }
 
     public Image getImage(int pID, double pScaling) {
+
+        if (pID == ID_ARMY_CAMP) {
+            //return army camp
+            return ARMY_CAMP_IMAGE.getScaledInstance((int) (iFieldWidth * .7 / pScaling), (int) (iFieldHeight * .7 / pScaling), BufferedImage.SCALE_DEFAULT);
+        }
         try {
             HashMap<Double, BufferedImage> imageCache = cache.get(pID);
             if (imageCache == null) {

@@ -355,7 +355,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
         Toolkit.getDefaultToolkit().getSystemEventQueue().push(
                 new EventQueue() {
 
-                    protected void dispatchEvent(AWTEvent event) {
+            protected void dispatchEvent(AWTEvent event) {
                         if (event instanceof KeyEvent) {
                             KeyEvent keyEvent = (KeyEvent) event;
 
